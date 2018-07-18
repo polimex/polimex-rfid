@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <data>
+        <record id="hr_rfid_view_door_form_inherit_hr_attendance_rfid" model="ir.ui.view">
+            <field name="name">hr.rfid.door.hr.attendance.rfid.door.attendance</field>
+            <field name="model">hr.rfid.door</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_door_view_form" />
+            <field name="arch" type="xml">
+
+                <xpath expr="//group//field[@name='card_type']" position="after">
+                    <field name="attendance"
+                           groups="hr_rfid.hr_rfid_group_officer" />
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>
