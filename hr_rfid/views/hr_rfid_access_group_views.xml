@@ -1,95 +1,95 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <odoo>
-    <data>
+  <data>
 
-        <record id="hr_rfid_access_group_view_form" model="ir.ui.view">
-            <field name="name">hr.rfid.access.group.form</field>
-            <field name="model">hr.rfid.access.group</field>
-            <field name="arch" type="xml">
-                <form string="Access Groups">
-                    <group>
-                        <field name="name" />
-                    </group>
+    <record id="hr_rfid_access_group_view_form" model="ir.ui.view">
+      <field name="name">hr.rfid.access.group.form</field>
+      <field name="model">hr.rfid.access.group</field>
+      <field name="arch" type="xml">
+        <form string="Access Groups">
+          <group>
+            <field name="name" />
+          </group>
 
-                    <notebook>
-                        <page string="Doors">
-                            <field name="door_ids" context="{'access_group_id': id}">
-                                <tree string="Doors group has access to">
-                                    <field name="door_id" />
-                                    <field name="time_schedule_id" />
-                                </tree>
-                            </field>
-                        </page>
-
-                        <page string="Departments">
-                            <field name="department_ids">
-                                <tree string="Departments assigned to this access group">
-                                    <field name="name" />
-                                    <field name="note" />
-                                </tree>
-                            </field>
-                        </page>
-
-                        <page string="Departments (default)"
-                              help="Departments that have this access group as the default one">
-                            <field name="default_department_ids" readonly="1">
-                                <tree>
-                                    <field name="name" />
-                                    <field name="note" />
-                                </tree>
-                            </field>
-                        </page>
-
-                        <page string="Users" help="Users assigned to this access group">
-                            <field name="user_ids" readonly="1">
-                                <tree>
-                                    <field name="name" />
-                                    <field name="display_name" />
-                                    <field name="department_id" />
-                                    <field name="job_id" />
-                                </tree>
-                            </field>
-                        </page>
-
-                    </notebook>
-                </form>
-            </field>
-        </record>
-
-        <record id="hr_rfid_access_group_view_tree" model="ir.ui.view">
-            <field name="name">hr.rfid.access.group.form</field>
-            <field name="model">hr.rfid.access.group</field>
-            <field name="arch" type="xml">
-                <tree string="Access Groups">
-                    <field name="name" />
+          <notebook>
+            <page string="Doors">
+              <field name="door_ids" context="{'access_group_id': id}">
+                <tree string="Doors group has access to">
+                  <field name="door_id" />
+                  <field name="time_schedule_id" />
                 </tree>
-            </field>
-        </record>
+              </field>
+            </page>
 
-        <record id="hr_rfid_access_group_view_search" model="ir.ui.view">
-            <field name="name">hr.rfid.access.group.search</field>
-            <field name="model">hr.rfid.access.group</field>
-            <field name="arch" type="xml">
-                <search string="Access Groups">
-                    <field name="name" />
-                </search>
-            </field>
-        </record>
+            <page string="Departments">
+              <field name="department_ids">
+                <tree string="Departments assigned to this access group">
+                  <field name="name" />
+                  <field name="note" />
+                </tree>
+              </field>
+            </page>
 
-        <record id="hr_rfid_access_group_door_rel_view_form" model="ir.ui.view">
-            <field name="name">hr.rfid.access.group.door.rel.form</field>
-            <field name="model">hr.rfid.access.group.door.rel</field>
-            <field name="arch" type="xml">
-                <form>
-                    <group>
-                        <field name="access_group_id" />
-                        <field name="door_id" />
-                        <field name="time_schedule_id" />
-                    </group>
-                </form>
-            </field>
-        </record>
+            <page string="Departments (default)"
+                help="Departments that have this access group as the default one">
+              <field name="default_department_ids" readonly="1">
+                <tree>
+                  <field name="name" />
+                  <field name="note" />
+                </tree>
+              </field>
+            </page>
 
-    </data>
+            <page string="Users" help="Users assigned to this access group">
+              <field name="user_ids" readonly="1">
+                <tree>
+                  <field name="name" />
+                  <field name="display_name" />
+                  <field name="department_id" />
+                  <field name="job_id" />
+                </tree>
+              </field>
+            </page>
+
+          </notebook>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_access_group_view_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.access.group.form</field>
+      <field name="model">hr.rfid.access.group</field>
+      <field name="arch" type="xml">
+        <tree string="Access Groups">
+          <field name="name" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="hr_rfid_access_group_view_search" model="ir.ui.view">
+      <field name="name">hr.rfid.access.group.search</field>
+      <field name="model">hr.rfid.access.group</field>
+      <field name="arch" type="xml">
+        <search string="Access Groups">
+          <field name="name" />
+        </search>
+      </field>
+    </record>
+
+    <record id="hr_rfid_access_group_door_rel_view_form" model="ir.ui.view">
+      <field name="name">hr.rfid.access.group.door.rel.form</field>
+      <field name="model">hr.rfid.access.group.door.rel</field>
+      <field name="arch" type="xml">
+        <form>
+          <group>
+            <field name="access_group_id" />
+            <field name="door_id" />
+            <field name="time_schedule_id" />
+          </group>
+        </form>
+      </field>
+    </record>
+
+  </data>
 </odoo>
