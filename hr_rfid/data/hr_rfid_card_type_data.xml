@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <odoo>
-    <data>
+  <data>
 
-        <record id="hr_rfid_card_type_def" model="hr.rfid.card.type">
-            <field name="name">Card</field>
-        </record>
+    <record id="hr_rfid_card_type_def" model="hr.rfid.card.type">
+      <field name="name">Card</field>
+    </record>
 
-        <record id="hr_rfid_card_type_1" model="hr.rfid.card.type">
-            <field name="name">MIFARE</field>
-        </record>
+    <record id="hr_rfid_card_type_1" model="hr.rfid.card.type">
+      <field name="name">MIFARE</field>
+    </record>
 
-        <record id="hr_rfid_card_type_2" model="hr.rfid.card.type">
-            <field name="name">Amplitude</field>
-        </record>
+    <record id="hr_rfid_card_type_2" model="hr.rfid.card.type">
+      <field name="name">Amplitude</field>
+    </record>
 
-        <!-- TODO Other card types? -->
-
-    </data>
+  </data>
 </odoo>

@@ -1,46 +1,46 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <odoo>
-    <data>
-        <record id="hr_view_employee_form_inherit_hr_rfid" model="ir.ui.view">
-            <field name="name">hr.employee.rfid.info</field>
-            <field name="model">hr.employee</field>
-            <field name="inherit_id" ref="hr.view_employee_form" />
-            <field name="arch" type="xml">
-                <notebook position="inside">
-                    <page string="RFID Info" groups="hr.group_hr_user">
-                        <group>
-                            <field name="hr_rfid_pin_code" groups="hr_rfid.hr_rfid_group_manager" />
-                            <field name="hr_rfid_access_group_id"
-                                   domain="[('department_ids', 'in', [department_id])]"
-                                   groups="hr_rfid.hr_rfid_group_officer" />
-                        </group>
-                        <notebook>
+  <data>
+    <record id="hr_view_employee_form_inherit_hr_rfid" model="ir.ui.view">
+      <field name="name">hr.employee.rfid.info</field>
+      <field name="model">hr.employee</field>
+      <field name="inherit_id" ref="hr.view_employee_form" />
+      <field name="arch" type="xml">
+        <notebook position="inside">
+          <page string="RFID Info" groups="hr.group_hr_user">
+            <group>
+              <field name="hr_rfid_pin_code" groups="hr_rfid.hr_rfid_group_manager" />
+              <field name="hr_rfid_access_group_id"
+                   domain="[('department_ids', 'in', [department_id])]"
+                   groups="hr_rfid.hr_rfid_group_officer" />
+            </group>
+            <notebook>
 
-                            <page string="Cards" groups="hr_rfid.hr_rfid_group_officer">
-                                <field name="hr_rfid_card_ids" context="{'employee_id': id}">
-                                    <tree string="Cards belonging to user">
-                                        <field name="number" />
-                                        <field name="card_type" />
-                                    </tree>
-                                </field>
-                            </page>
+              <page string="Cards" groups="hr_rfid.hr_rfid_group_officer">
+                <field name="hr_rfid_card_ids" context="{'employee_id': id}">
+                  <tree string="Cards belonging to user">
+                    <field name="number" />
+                    <field name="card_type" />
+                  </tree>
+                </field>
+              </page>
 
-                            <page string="Events" groups="hr_rfid.hr_rfid_group_officer">
-                                <field name="hr_rfid_event_ids" readonly="1">
-                                    <tree>
-                                        <field name="event_action" />
-                                        <field name="door_id" />
-                                        <field name="card_id" />
-                                        <field name="event_time" />
-                                    </tree>
-                                </field>
-                            </page>
+              <page string="Events" groups="hr_rfid.hr_rfid_group_officer">
+                <field name="hr_rfid_event_ids" readonly="1">
+                  <tree>
+                    <field name="event_action" />
+                    <field name="door_id" />
+                    <field name="card_id" />
+                    <field name="event_time" />
+                  </tree>
+                </field>
+              </page>
 
-                        </notebook>
-                    </page>
-                </notebook>
-            </field>
-        </record>
-    </data>
+            </notebook>
+          </page>
+        </notebook>
+      </field>
+    </record>
+  </data>
 </odoo>
