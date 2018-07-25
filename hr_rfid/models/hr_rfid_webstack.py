@@ -88,6 +88,14 @@ class HrRfidWebstack(models.Model):
     _sql_constraints = [ ('rfid_webstack_serial_unique', 'unique(serial)',
                           'Serial number for webstacks must be unique!') ]
 
+    @api.one
+    def action_set_active(self):
+        self.ws_active = True
+
+    @api.one
+    def action_set_inactive(self):
+        self.ws_active = False
+
 
 class HrRfidController(models.Model):
     _name = 'hr.rfid.ctrl'

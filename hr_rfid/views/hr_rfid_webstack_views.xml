@@ -9,6 +9,15 @@
       <field name="arch" type="xml">
         <form string="RFID Modules" create="false">
 
+          <header>
+            <button name="action_set_active" type="object"
+                    attrs="{'invisible': [('ws_active','=', True)]}"
+                    string="Set module to active" />
+            <button name="action_set_inactive" type="object"
+                    attrs="{'invisible': [('ws_active','=', False)]}"
+                    string="Set module to inactive" />
+          </header>
+
           <group>
             <field name="name" />
             <field name="serial" readonly="1" />
