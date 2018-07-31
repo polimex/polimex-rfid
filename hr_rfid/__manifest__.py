@@ -8,10 +8,6 @@
     'author': 'Polimex',
     'license': 'GPL-3',
 
-    'description': """\
-       Description
-       """,
-
     'website': 'securitybulgaria.com',
 
     'depends': [ 'base', 'hr' ],
