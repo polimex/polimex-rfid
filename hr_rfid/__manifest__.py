@@ -31,6 +31,10 @@
     ],
 
     'demo': [ ],
+    
+    "images": [
+        'static/images/main_screenshot.png',
+    ],
 
     'installable': True,
     'auto_install': False,
