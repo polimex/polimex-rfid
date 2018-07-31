@@ -96,7 +96,7 @@
     </p>
 
     <ol type="1">
-      <li><p>Install the RFID Access Control app:</p><img style="display:block;margin:0px auto;max-width:100%;" src="../images/tut_01.png" /></li>
+      <li><p>Install the RFID Access Control app:</p><img style="display:block;margin:0px auto;max-width:100%;" src="tut_01.png" /></li>
 
       <li>
         <p>
@@ -107,17 +107,17 @@
           All administrators can change these settings.
         </p>
         <ol type="a">
-          <li class="oe_mt16"><p>Go to Odoo Settings:                        </p><img style="display:block;margin:0px auto;max-width:100%;" src="../images/tut_02.png" /></li>
-          <li class="oe_mt16"><p>Go to Users:                                </p><img style="display:block;margin:0px auto;max-width:100%;" src="../images/tut_03.png" /></li>
+          <li class="oe_mt16"><p>Go to Odoo Settings:                        </p><img style="display:block;margin:0px auto;max-width:100%;" src="tut_02.png" /></li>
+          <li class="oe_mt16"><p>Go to Users:                                </p><img style="display:block;margin:0px auto;max-width:100%;" src="tut_03.png" /></li>
           <li class="oe_mt16"><p>Click on the user you want to give access to</p></li>
-          <li class="oe_mt16"><p>Click on edit:                              </p><img style="display:block;margin:0px auto;max-width:100%;" src="../images/tut_04.png" /></li>
+          <li class="oe_mt16"><p>Click on edit:                              </p><img style="display:block;margin:0px auto;max-width:100%;" src="tut_04.png" /></li>
           <li class="oe_mt16">
             <p>In the "RFID Access" menu, set the permissions accordingly:</p>
             <ul>
               <li class="oe_mt8">Officer allows the user access to the User and the System events only.</li>
               <li class="oe_mt8 oe_mb8">Manager allows the user access to all the menus.</li>
             </ul>
-            <img style="display:block;margin:0px auto;width:100%;" src="../images/tut_06.png" />
+            <img style="display:block;margin:0px auto;width:100%;" src="tut_06.png" />
           </li>
         </ol>
       </li>
@@ -134,7 +134,7 @@
           <li><span style="font-weight:bold;">Note:</span> Please change *your.odoo.server* with a link or an ip to the odoo server</li>
           <li><span style="font-weight:bold;">Note:</span> Polimex TCP/IP Interface Module currently work through HTTP and not HTTPS.</li>
         </ul>
-        <img style="display:block;margin:0px auto;max-width:100%;" src="../images/tut_07.png" />
+        <img style="display:block;margin:0px auto;max-width:100%;" src="tut_07.png" />
       </li>
     </ol>
   </div>
@@ -155,11 +155,11 @@
       <li class="oe_mt8">After scanning for controllers on your Polimex TCP/IP Interface Module, create an event on the controller (touch your card/tag to one of the readers on some controller)</li>
       <li class="oe_mt8">
         The Polimex TCP/IP Interface Module will send the event to Odoo, it should appear on the Modules page:
-        <img style="display:block;margin:0px auto;max-width:100%;" src="../images/tut_08.png" />
+        <img style="display:block;margin:0px auto;max-width:100%;" src="tut_08.png" />
       </li>
       <li class="oe_mt8">
         Click on the newly created module (you should recognize it using the Serial Number) and click on the "Set module to active" button. If the button is missing then the module is already active:
-        <img style="display:block;margin:0px auto;max-width:100%;" src="../images/tut_10.png" />
+        <img style="display:block;margin:0px auto;max-width:100%;" src="tut_10.png" />
       </li>
       <li class="oe_mt8">Your module is now active and Odoo will accept events from it.</li>
     </ol>
@@ -182,19 +182,19 @@
       <li class="oe_mt8">Touch your Tag/Card with the controller connected to your Polimex TCP/IP Interface Module. The device will now send an event to Odoo.</li>
       <li class="oe_mt8">
         Under System Events an event should appear on the top of type "Could not find a card with this number":
-        <img style="display:block;margin:0px auto;max-width:100%;" src="../images/tut_09.png" />
+        <img style="display:block;margin:0px auto;max-width:100%;" src="tut_09.png" />
       </li>
       <li class="oe_mt8">
         Copy the card number from the json object in the description:
-        <img style="display:block;margin:0px auto;max-width:100%;" src="../images/tut_11.png" />
+        <img style="display:block;margin:0px auto;max-width:100%;" src="tut_11.png" />
       </li>
       <li class="oe_mt8">
         Go to cards and click on "create":
-        <img style="display:block;margin:0px auto;max-width:100%;" src="../images/tut_12.png" />
+        <img style="display:block;margin:0px auto;max-width:100%;" src="tut_12.png" />
       </li>
       <li class="oe_mt8">
         Paste the card number under "Card Number", choose a card owner (a person from the HR module) and a card type:
-        <img style="display:block;margin:0px auto;max-width:100%;" src="../images/tut_13.png" />
+        <img style="display:block;margin:0px auto;max-width:100%;" src="tut_13.png" />
       </li>
       <li class="oe_mt8">After pressing the save button, your card will be created.</li>
     </ol>

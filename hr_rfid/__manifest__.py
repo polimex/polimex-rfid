@@ -30,19 +30,6 @@
     
     "images": [
         'static/images/main_screenshot.png',
-        'static/images/tut_01.png',
-        'static/images/tut_02.png',
-        'static/images/tut_03.png',
-        'static/images/tut_04.png',
-        'static/images/tut_05.png',
-        'static/images/tut_06.png',
-        'static/images/tut_07.png',
-        'static/images/tut_08.png',
-        'static/images/tut_09.png',
-        'static/images/tut_10.png',
-        'static/images/tut_11.png',
-        'static/images/tut_12.png',
-        'static/images/tut_13.png',
     ],
 
     'installable': True,
