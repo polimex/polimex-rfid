@@ -6,77 +6,77 @@
     <record id="hr_rfid_card_action" model="ir.actions.act_window">
       <field name="name">Cards</field>
       <field name="res_model">hr.rfid.card</field>
-      <field name="field_type">form</field>
+      <field name="view_type">form</field> 
       <field name="view_mode">tree,form,search</field>
     </record>
 
     <record id="hr_rfid_card_type_action" model="ir.actions.act_window">
       <field name="name">Card Types</field>
       <field name="res_model">hr.rfid.card.type</field>
-      <field name="field_type">form</field>
+      <field name="view_type">form</field> 
       <field name="view_mode">tree,form,search</field>
     </record>
 
     <record id="hr_rfid_access_group_action" model="ir.actions.act_window">
       <field name="name">Access Groups</field>
       <field name="res_model">hr.rfid.access.group</field>
-      <field name="field_type">form</field>
+      <field name="view_type">form</field> 
       <field name="view_mode">tree,form,search</field>
     </record>
 
     <record id="hr_rfid_webstack_action" model="ir.actions.act_window">
       <field name="name">Modules</field>
       <field name="res_model">hr.rfid.webstack</field>
-      <field name="field_type">form</field>
+      <field name="view_type">form</field> 
       <field name="view_mode">tree,form,search,calendar</field>
     </record>
 
     <record id="hr_rfid_ctrl_action" model="ir.actions.act_window">
       <field name="name">Controllers</field>
       <field name="res_model">hr.rfid.ctrl</field>
-      <field name="field_type">form</field>
+      <field name="view_type">form</field> 
       <field name="view_mode">tree,form,search</field>
     </record>
 
     <record id="hr_rfid_door_action" model="ir.actions.act_window">
       <field name="name">Doors</field>
       <field name="res_model">hr.rfid.door</field>
-      <field name="field_type">form</field>
+      <field name="view_type">form</field> 
       <field name="view_mode">tree,form,search</field>
     </record>
 
     <record id="hr_rfid_time_schedule_action" model="ir.actions.act_window">
       <field name="name">Time Schedules</field>
       <field name="res_model">hr.rfid.time.schedule</field>
-      <field name="field_type">form</field>
+      <field name="view_type">form</field> 
       <field name="view_mode">tree,form,search</field>
     </record>
 
     <record id="hr_rfid_reader_action" model="ir.actions.act_window">
       <field name="name">Readers</field>
       <field name="res_model">hr.rfid.reader</field>
-      <field name="field_type">form</field>
+			<field name="view_type">form</field> 
       <field name="view_mode">tree,form,search</field>
     </record>
 
     <record id="hr_rfid_event_user_action" model="ir.actions.act_window">
       <field name="name">User Events</field>
       <field name="res_model">hr.rfid.event.user</field>
-      <field name="field_type">form</field>
+			<field name="view_type">form</field> 
       <field name="view_mode">tree,form,search,calendar</field>
     </record>
 
     <record id="hr_rfid_event_system_action" model="ir.actions.act_window">
       <field name="name">System Events</field>
       <field name="res_model">hr.rfid.event.system</field>
-      <field name="field_type">form</field>
+			<field name="view_type">form</field>      
       <field name="view_mode">tree,form,search,calendar</field>
     </record>
 
     <record id="hr_rfid_command_action" model="ir.actions.act_window">
       <field name="name">Commands to Modules</field>
       <field name="res_model">hr.rfid.command</field>
-      <field name="field_type">form</field>
+      <field name="view_type">form</field> 
       <field name="view_mode">tree,form,search,calendar</field>
     </record>
 
