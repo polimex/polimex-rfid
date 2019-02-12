@@ -320,7 +320,7 @@ class HrRfidDoor(models.Model):
                             commands_env.add_card(door.id, acc_gr_rel. time_schedule_id.id,
                                                   user.hr_rfid_pin_code, card_id=card.id)
 
-            for rel_id, prev_acc_gr_id in old_acc_gr_ids.iteritems():
+            for rel_id, prev_acc_gr_id in old_acc_gr_ids.items():
                 acc_gr_door_rel_env.access_group_changed(rel_id, prev_acc_gr_id)
 
             for rel_id in old_ts_ids:

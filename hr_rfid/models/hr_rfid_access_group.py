@@ -80,7 +80,7 @@ class HrRfidAccessGroup(models.Model):
 
             super(HrRfidAccessGroup, acc_gr).write(vals)
 
-            for rel_id, prev_door_id in old_door_ids.iteritems():
+            for rel_id, prev_door_id in old_door_ids.items():
                 acc_gr_door_rel_env.door_changed(rel_id, prev_door_id)
 
             for rel_id in old_ts_ids:
