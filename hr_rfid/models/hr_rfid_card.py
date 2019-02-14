@@ -153,7 +153,7 @@ class HrRfidCard(models.Model):
 
         for door_rel in card.user_id.hr_rfid_access_group_id.door_ids:
             door = door_rel.door_id
-            cmd_env.add_card(door.id, door_rel.time_schedule_id, card.user_id.hr_rfid_pin_code,
+            cmd_env.add_card(door.id, door_rel.time_schedule_id.id, card.user_id.hr_rfid_pin_code,
                              card_id=card.id)
 
         return card
