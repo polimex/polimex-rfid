@@ -7,7 +7,6 @@ import json
 
 
 class WebRfidController(http.Controller):
-
     @http.route(['/hr/rfid/event'], type='json', auth='none', method=['POST'], csrf=False)
     def post_event(self, **post):
         # TODO Safety exit if something is missing from the post dictionary
