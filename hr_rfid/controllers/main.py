@@ -7,7 +7,6 @@ import json
 
 
 class WebRfidController(http.Controller):
-
     @http.route(['/hr/rfid/event'], type='json', auth='none', method=['POST'], csrf=False)
     def post_event(self, **post):
         webstacks_env = request.env['hr.rfid.webstack'].sudo()
