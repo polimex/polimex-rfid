@@ -29,10 +29,17 @@ class HrRfidCard(models.Model):
 
     user_id = fields.Many2one(
         'hr.employee',
-        string='Card Owner',
-        required=True,
+        string='Card Owner (employee)',
         ondelete='cascade',
         default=_get_cur_employee_id,
+    )
+
+    # TODO Constraint function that makes sure only user_id or contact_id is set
+    contact_id = fields.Many2one(
+        'res.partner',
+        string='Card Owner (contact)',
+        ondelete='cascade',
+        default=0,
     )
 
     user_event_ids = fields.One2many(
@@ -40,6 +47,26 @@ class HrRfidCard(models.Model):
         'card_id',
         string='Events',
         help='Events concerning this user',
+    )
+
+    # TODO Manage this in a cron and if activate_on < current time, activate in the create and write methods
+    activate_on = fields.Datetime(
+        string='Active on',
+        help='Date and time the card will be activated on',
+    )
+
+    # TODO Manage this in a cron, and if deactivate_on < current
+    # time, deactivate in the write and create methods
+    deactivate_on = fields.Datetime(
+        string='Deactivate on',
+        help='Date and time the card will be deactivated on',
+    )
+
+    # TODO When changed, send a create/delete card command. Also, ask whether it should fight with
+    # activate_on or deactivate_on in the cron, or should the cron just check if the date was recent
+    active = fields.Boolean(
+        string='Active',
+        help='Whether the card is active or not',
     )
 
     # TODO Implement at some point

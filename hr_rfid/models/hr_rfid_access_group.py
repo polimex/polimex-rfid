@@ -30,6 +30,13 @@ class HrRfidAccessGroup(models.Model):
         help='Users part of this access group',
     )
 
+    contact_ids = fields.One2many(  # TODO When changed, in the write and create methods add and remove cards
+        'res.partner',
+        'hr_rfid_access_group_id',
+        string='Contacts',
+        help='Contacts part of this access group'
+    )
+
     door_ids = fields.One2many(
         'hr.rfid.access.group.door.rel',
         'access_group_id',
@@ -49,6 +56,13 @@ class HrRfidAccessGroup(models.Model):
         string='Departments',
         help='Departments assigned to this access group',
     )
+
+    # TODO COMPLICATED, add/remove cards when changing this!
+    # inherited_access_groups = fields.Many2many(
+    #     'hr.rfid.access.group',
+    #     string='Inherited access groups',
+    #     help='Access group that this one inherits',
+    # )
 
     @api.multi
     @api.constrains('door_ids')
@@ -204,6 +218,15 @@ class HrRfidAccessGroupDoorRel(models.Model):
         ret = super(HrRfidAccessGroupDoorRel, self).unlink()
         return ret
 
+
+class TimeSchedule(models.Model):
+    _name = 'hr.rfid.time.schedule'
+
+    name = fields.Char(
+        string='Name',
+        help='Label to easily distinguish the time schedule',
+        required=True,
+    )
 
 
 

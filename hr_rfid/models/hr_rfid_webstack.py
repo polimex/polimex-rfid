@@ -85,6 +85,10 @@ class HrRfidWebstack(models.Model):
         help='Commands that have been or are in queue to send to this module.',
     )
 
+    http_link = fields.Char(
+        compute='_compute_http_link'
+    )
+
     _sql_constraints = [ ('rfid_webstack_serial_unique', 'unique(serial)',
                           'Serial number for webstacks must be unique!') ]
 
@@ -95,6 +99,16 @@ class HrRfidWebstack(models.Model):
     @api.one
     def action_set_inactive(self):
         self.ws_active = False
+
+    @api.multi
+    def _compute_http_link(self):
+        for record in self:
+            if record.last_ip != '':
+                link = 'http://' + record.last_ip + '/'
+                # record.http_link = '<a href="' + link + '">' + link + '</a>'
+                record.http_link = link
+            else:
+                record.http_link = ''
 
 
 class HrRfidController(models.Model):
@@ -432,8 +446,14 @@ class HrRfidUserEvent(models.Model):
         'hr.employee',
         string='User',
         help='User affected by this event',
-        required=True,
         ondelete='cascade'
+    )
+
+    contact_id = fields.Many2one(
+        'res.partner',
+        string='Contact',
+        help='Contact affected by this event',
+        ondelete='cascade',
     )
 
     door_id = fields.Many2one(

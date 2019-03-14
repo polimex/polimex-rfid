@@ -52,6 +52,15 @@
               </field>
             </page>
 
+            <page string="Contacts" help="Contacts assigned to this access group">
+              <field name="contact_ids" readonly="1">
+                <tree>
+                  <field name="name" />
+                  <!-- TODO Some other info of the contacts -->
+                </tree>
+              </field>
+            </page>
+
           </notebook>
         </form>
       </field>
