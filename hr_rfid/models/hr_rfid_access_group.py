@@ -7,6 +7,7 @@ _logger = logging.getLogger(__name__)
 
 class HrRfidAccessGroup(models.Model):
     _name = 'hr.rfid.access.group'
+    _inherit = ['mail.thread']
 
     def access_group_generate_name(self):
         env = self.env['hr.rfid.access.group'].search([])
@@ -21,6 +22,7 @@ class HrRfidAccessGroup(models.Model):
         help='A label to help differentiate between access groups',
         default=access_group_generate_name,
         limit=32,
+        track_visibility='onchange',
     )
 
     user_ids = fields.One2many(
@@ -57,6 +59,15 @@ class HrRfidAccessGroup(models.Model):
         help='Departments assigned to this access group',
     )
 
+    # TODO When this changes, add/delete cards in the write/create/unlink methods
+    time_schedule_id = fields.Many2one(
+        'hr.rfid.time.schedule',
+        string='Time Schedule',
+        help='Which time schedule the users in this group will use',
+        track_visibility='onchange',
+    )
+
+    # TODO Can't have a many2many connection with yourself?
     # TODO COMPLICATED, add/remove cards when changing this!
     # inherited_access_groups = fields.Many2many(
     #     'hr.rfid.access.group',
@@ -217,16 +228,6 @@ class HrRfidAccessGroupDoorRel(models.Model):
 
         ret = super(HrRfidAccessGroupDoorRel, self).unlink()
         return ret
-
-
-class TimeSchedule(models.Model):
-    _name = 'hr.rfid.time.schedule'
-
-    name = fields.Char(
-        string='Name',
-        help='Label to easily distinguish the time schedule',
-        required=True,
-    )
 
 
 

@@ -13,9 +13,14 @@
             <field name="user_id" />
             <field name="contact_id" />
             <field name="card_type" />
+            <field name="active" />
             <field name="activate_on" />
             <field name="deactivate_on" />
           </group>
+          <div class="oe_chatter">
+            <field name="message_follower_ids" widget="mail_followers" />
+            <field name="message_ids" widget="mail_thread" />
+          </div>
         </form>
       </field>
     </record>
@@ -68,6 +73,10 @@
               <field name="contact_id" />
             </tree>
           </field>
+          <div class="oe_chatter">
+            <field name="message_follower_ids" widget="mail_followers" />
+            <field name="message_ids" widget="mail_thread" />
+          </div>
         </form>
       </field>
     </record>

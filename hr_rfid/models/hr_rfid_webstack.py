@@ -8,12 +8,14 @@ _logger = logging.getLogger(__name__)
 
 class HrRfidWebstack(models.Model):
     _name = 'hr.rfid.webstack'
+    _inherit = ['mail.thread']
 
     name = fields.Char(
         string='Name',
         help='A label to easily differentiate modules',
         required=True,
         index=True,
+        track_visibility='onchange',
     )
 
     serial = fields.Char(
@@ -30,19 +32,20 @@ class HrRfidWebstack(models.Model):
         limit=4,
         index=True,
         required=True,
+        track_visibility='onchange',
     )
 
     ws_active = fields.Boolean(
         string='Active',
         help='Will accept events from module if true',
         default=False,
+        track_visibility='onchange',
     )
 
     version = fields.Char(
         string='Version',
         help='Software version of the module',
         limit=6,
-        readonly=True,
     )
 
     behind_nat = fields.Boolean(
@@ -113,6 +116,7 @@ class HrRfidWebstack(models.Model):
 
 class HrRfidController(models.Model):
     _name = 'hr.rfid.ctrl'
+    _inherit = ['mail.thread']
 
     hw_types = [ ('1', 'iCON200'), ('2', 'iCON150'), ('3', 'iCON150'), ('4', 'iCON140'),
                  ('5', 'iCON120'), ('6', 'iCON110'), ('7', 'iCON160'), ('8', 'iCON170'),
@@ -134,6 +138,7 @@ class HrRfidController(models.Model):
         help='Label to easily distinguish the controller',
         required=True,
         index=True,
+        track_visibility='onchange',
     )
 
     ctrl_id = fields.Integer(
@@ -246,12 +251,14 @@ class HrRfidController(models.Model):
 class HrRfidDoor(models.Model):
     _name = 'hr.rfid.door'
     _description = 'Information about doors'
+    _inherit = ['mail.thread']
 
     name = fields.Char(
         string='Name',
         help='A label to easily differentiate doors',
         required=True,
         intex=True,
+        track_visibility='onchange',
     )
 
     number = fields.Integer(
@@ -267,6 +274,7 @@ class HrRfidDoor(models.Model):
         help='Only cards of this type this door will open to',
         default=lambda self: self.env.ref('hr_rfid.hr_rfid_card_type_def').id,
         ondelete='set null',
+        track_visibility='onchange',
     )
 
     controller_id = fields.Many2one(
@@ -345,16 +353,18 @@ class HrRfidDoor(models.Model):
 
 class HrRfidTimeSchedule(models.Model):
     _name = 'hr.rfid.time.schedule'
+    _inherit = ['mail.thread']
 
     name = fields.Char(
         string='Name',
         help='Label for the time schedule',
         required=True,
+        track_visibility='onchange',
     )
 
     number = fields.Integer(
         required=True,
-        readonly=True
+        readonly=True,
     )
 
     access_group_door_ids = fields.One2many(
@@ -371,6 +381,7 @@ class HrRfidTimeSchedule(models.Model):
 
 class HrRfidReader(models.Model):
     _name = 'hr.rfid.reader'
+    _inherit = ['mail.thread']
 
     reader_types = [
         ('0', 'In'),
@@ -381,6 +392,7 @@ class HrRfidReader(models.Model):
         string='Reader name',
         help='Label to differentiate readers',
         default='Reader',
+        track_visibility='onchange',
     )
 
     number = fields.Integer(
@@ -559,7 +571,7 @@ class HrRfidSystemEvent(models.Model):
     def _compute_sys_ev_name(self):
         for record in self:
             record.name = str(record.webstack_id.name) + '-' + str(record.controller_id.name) +\
-                          ' at ' + record.timestamp
+                          ' at ' + str(record.timestamp)
 
 
 class HrRfidCommands(models.Model):
@@ -722,7 +734,7 @@ class HrRfidCommands(models.Model):
 
     @api.model
     def create_d1_cmd(self, ws_id, ctrl_id, card_num, pin_code, ts_code, rights_data, rights_mask):
-        self.create({
+        self.create([{
             'webstack_id': ws_id,
             'controller_id': ctrl_id,
             'cmd': 'D1',
@@ -732,7 +744,7 @@ class HrRfidCommands(models.Model):
             'ts_code': ts_code,
             'rights_data': rights_data,
             'rights_mask': rights_mask,
-        })
+        }])
 
     @api.model
     def add_remove_card(self, card_number, ctrl_id, pin_code, ts_code, rights_mask, rights_data):
@@ -771,15 +783,17 @@ class HrRfidCommands(models.Model):
             old_cmd.write(write_dict)
 
     @api.model
-    def add_card(self, door_id, ts_id, pin_code, card_number=None, card_type=None, card_id=None):
+    def add_card(self, door_id, ts_id, pin_code, card_id):
         door = self.env['hr.rfid.door'].browse(door_id)
 
         time_schedule = self.env['hr.rfid.time.schedule'].browse(ts_id)
 
-        if card_id is not None:
-            card = self.env['hr.rfid.card'].browse(card_id)
-            card_number = card.number
-            card_type = card.card_type
+        if card_id is None:
+            return
+
+        card = self.env['hr.rfid.card'].browse(card_id)
+        card_number = card.number
+        card_type = card.card_type
 
         if card_type != door.card_type:
             return

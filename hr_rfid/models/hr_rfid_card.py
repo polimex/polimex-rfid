@@ -5,6 +5,7 @@ from odoo import models, fields, api, exceptions
 class HrRfidCard(models.Model):
     _name = 'hr.rfid.card'
     _description = 'Information about cards'
+    _inherit = ['mail.thread']
 
     def _get_cur_employee_id(self):
         return self.env.context.get('employee_id', None)
@@ -17,7 +18,8 @@ class HrRfidCard(models.Model):
         string='Card Number',
         required=True,
         limit=10,
-        index=True
+        index=True,
+        track_visibility='onchange',
     )
 
     card_type = fields.Many2one(
@@ -25,6 +27,7 @@ class HrRfidCard(models.Model):
         string='Card type',
         help='Only doors that support this type will be able to open this card',
         default=lambda self: self.env.ref('hr_rfid.hr_rfid_card_type_def').id,
+        track_visibility='onchange',
     )
 
     user_id = fields.Many2one(
@@ -32,6 +35,7 @@ class HrRfidCard(models.Model):
         string='Card Owner (employee)',
         ondelete='cascade',
         default=_get_cur_employee_id,
+        track_visibility='onchange',
     )
 
     # TODO Constraint function that makes sure only user_id or contact_id is set
@@ -40,6 +44,7 @@ class HrRfidCard(models.Model):
         string='Card Owner (contact)',
         ondelete='cascade',
         default=0,
+        track_visibility='onchange',
     )
 
     user_event_ids = fields.One2many(
@@ -51,8 +56,9 @@ class HrRfidCard(models.Model):
 
     # TODO Manage this in a cron and if activate_on < current time, activate in the create and write methods
     activate_on = fields.Datetime(
-        string='Active on',
+        string='Activate on',
         help='Date and time the card will be activated on',
+        track_visibility='onchange',
     )
 
     # TODO Manage this in a cron, and if deactivate_on < current
@@ -60,6 +66,7 @@ class HrRfidCard(models.Model):
     deactivate_on = fields.Datetime(
         string='Deactivate on',
         help='Date and time the card will be deactivated on',
+        track_visibility='onchange',
     )
 
     # TODO When changed, send a create/delete card command. Also, ask whether it should fight with
@@ -67,6 +74,7 @@ class HrRfidCard(models.Model):
     active = fields.Boolean(
         string='Active',
         help='Whether the card is active or not',
+        track_visibility='onchange',
     )
 
     # TODO Implement at some point
@@ -101,10 +109,11 @@ class HrRfidCard(models.Model):
         cmd_env = self.env['hr.rfid.command']
 
         for card in self:
-            for door_rel in card.user_id.hr_rfid_access_group_id.door_ids:
-                door = door_rel.door_id
-                cmd_env.remove_card(door.id, door_rel.time_schedule_id.id,
-                                    card.user_id.hr_rfid_pin_code, card_id=card.id)
+            if card.active is True:
+                for door_rel in card.user_id.hr_rfid_access_group_id.door_ids:
+                    door = door_rel.door_id
+                    cmd_env.remove_card(door.id, door_rel.time_schedule_id.id,
+                                        card.user_id.hr_rfid_pin_code, card_id=card.id)
 
         return super(HrRfidCard, self).unlink()
 
@@ -178,21 +187,24 @@ class HrRfidCard(models.Model):
         card = super(HrRfidCard, self).create(vals)
         cmd_env = self.env['hr.rfid.command']
 
-        for door_rel in card.user_id.hr_rfid_access_group_id.door_ids:
-            door = door_rel.door_id
-            cmd_env.add_card(door.id, door_rel.time_schedule_id.id, card.user_id.hr_rfid_pin_code,
-                             card_id=card.id)
+        if card.active is True:
+            for door_rel in card.user_id.hr_rfid_access_group_id.door_ids:
+                door = door_rel.door_id
+                cmd_env.add_card(door.id, door_rel.time_schedule_id.id,
+                                 card.user_id.hr_rfid_pin_code, card_id=card.id)
 
         return card
 
 
 class HrRfidCardType(models.Model):
     _name = 'hr.rfid.card.type'
+    _inherit = ['mail.thread']
 
     name = fields.Char(
         string='Type Name',
         help='Label to differentiate types with',
         required=True,
+        track_visibility='onchange',
     )
 
     card_ids = fields.One2many(
