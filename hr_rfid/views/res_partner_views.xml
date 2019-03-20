@@ -12,28 +12,28 @@
             <group>
               <field name="hr_rfid_pin_code" groups="hr_rfid.hr_rfid_view_rfid_pin_code_data" />
               <field name="hr_rfid_access_group_id" />
-              <notebook>
-                <page string="Cards">
-                  <field name="hr_rfid_card_ids" context="{'employee_id': id}">
-                    <tree string="Cards belonging to user">
-                      <field name="number" />
-                      <field name="card_type" />
-                    </tree>
-                  </field>
-                </page>
-
-                <page string="Events">
-                  <field name="hr_rfid_event_ids" readonly="1">
-                    <tree>
-                      <field name="event_action" />
-                      <field name="door_id" />
-                      <field name="card_id" />
-                      <field name="event_time" />
-                    </tree>
-                  </field>
-                </page>
-              </notebook>
             </group>
+            <notebook>
+              <page string="Cards">
+                <field name="hr_rfid_card_ids" context="{'employee_id': id}">
+                  <tree string="Cards belonging to user">
+                    <field name="number" />
+                    <field name="card_type" />
+                  </tree>
+                </field>
+              </page>
+
+              <page string="Events">
+                <field name="hr_rfid_event_ids" readonly="1">
+                  <tree>
+                    <field name="event_action" />
+                    <field name="door_id" />
+                    <field name="card_id" />
+                    <field name="event_time" />
+                  </tree>
+                </field>
+              </page>
+            </notebook>
           </page>
         </notebook>
       </field>

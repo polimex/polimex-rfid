@@ -32,7 +32,7 @@ class HrRfidAccessGroup(models.Model):
         help='Users part of this access group',
     )
 
-    contact_ids = fields.One2many(  # TODO When changed, in the write and create methods add and remove cards
+    contact_ids = fields.One2many(
         'res.partner',
         'hr_rfid_access_group_id',
         string='Contacts',
@@ -57,14 +57,6 @@ class HrRfidAccessGroup(models.Model):
         'hr.department',
         string='Departments',
         help='Departments assigned to this access group',
-    )
-
-    # TODO When this changes, add/delete cards in the write/create/unlink methods
-    time_schedule_id = fields.Many2one(
-        'hr.rfid.time.schedule',
-        string='Time Schedule',
-        help='Which time schedule the users in this group will use',
-        track_visibility='onchange',
     )
 
     # TODO Can't have a many2many connection with yourself?

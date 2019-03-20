@@ -401,7 +401,7 @@ class HrRfidReader(models.Model):
         index=True,
     )
 
-    # TODO Change to just 'type'
+    # TODO Rename to just 'type'
     reader_type = fields.Selection(
         selection=reader_types,
         string='Reader type',
@@ -783,17 +783,17 @@ class HrRfidCommands(models.Model):
             old_cmd.write(write_dict)
 
     @api.model
-    def add_card(self, door_id, ts_id, pin_code, card_id):
+    def add_card(self, door_id, ts_id, pin_code, card_id, ignore_active=False):
         door = self.env['hr.rfid.door'].browse(door_id)
 
         time_schedule = self.env['hr.rfid.time.schedule'].browse(ts_id)
 
-        if card_id is None:
-            return
-
         card = self.env['hr.rfid.card'].browse(card_id)
         card_number = card.number
         card_type = card.card_type
+
+        if ignore_active is False and card.card_active is False:
+            return
 
         if card_type != door.card_type:
             return
@@ -804,7 +804,7 @@ class HrRfidCommands(models.Model):
                                  1 << (reader.number-1), 1 << (reader.number-1))
 
     @api.model
-    def remove_card(self, door_id, ts_id, pin_code, card_number=None, card_id=None):
+    def remove_card(self, door_id, ts_id, pin_code, card_number=None, card_id=None, ignore_active=False):
         door = self.env['hr.rfid.door'].browse(door_id)
 
         time_schedule = self.env['hr.rfid.time.schedule'].browse(ts_id)
@@ -812,6 +812,8 @@ class HrRfidCommands(models.Model):
         if card_id is not None:
             card = self.env['hr.rfid.card'].browse(card_id)
             card_number = card.number
+            if ignore_active is False and card.card_active is False:
+                return
 
         for reader in door.reader_ids:
             ts_code = str(time_schedule.number << ((reader.number-1) * 8))
