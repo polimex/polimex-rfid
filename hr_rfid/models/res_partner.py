@@ -52,7 +52,7 @@ class ResPartner(models.Model):
     def create(self, vals):
         command_env = self.env['hr.rfid.command']
         contact = super(ResPartner, self).create(vals)
-        for door_rel in contact.hr_rfid_access_group_id.door_ids:
+        for door_rel in contact.hr_rfid_access_group_id.all_door_ids:
             door = door_rel.door_id
             ts = door_rel.time_schedule_id
             pin = contact.hr_rfid_pin_code
@@ -88,7 +88,7 @@ class ResPartner(models.Model):
                 added_cards = new_card_ids - old_card_ids
                 removed_cards = old_card_ids - new_card_ids
 
-                for door_rel in contact.hr_rfid_access_group_id.door_ids:
+                for door_rel in contact.hr_rfid_access_group_id.all_door_ids:
                     door = door_rel.door_id
                     ts = door_rel.time_schedule_id
                     pin = contact.hr_rfid_pin_code
@@ -101,13 +101,13 @@ class ResPartner(models.Model):
 
             if prev_access_group_id is not None:
                 prev_acc_gr = acc_gr_env.browse(prev_access_group_id)
-                for door_rel in prev_acc_gr.door_ids:
+                for door_rel in prev_acc_gr.all_door_ids:
                     door = door_rel.door_id
                     ts = door_rel.time_schedule_id
                     pin = contact.hr_rfid_pin_code
                     for card in contact.hr_rfid_card_ids:
                         cmd_env.remove_card(door.id, ts.id, pin, card_id=card.id)
-                for door_rel in contact.hr_rfid_access_group_id.door_ids:
+                for door_rel in contact.hr_rfid_access_group_id.all_door_ids:
                     door = door_rel.door_id
                     ts = door_rel.time_schedule_id
                     pin = contact.hr_rfid_pin_code
@@ -115,7 +115,7 @@ class ResPartner(models.Model):
                         cmd_env.add_card(door.id, ts.id, pin, card.id)
 
             if 'hr_rfid_pin_code' in vals:
-                for door_rel in contact.hr_rfid_access_group_id.door_ids:
+                for door_rel in contact.hr_rfid_access_group_id.all_door_ids:
                     door = door_rel.door_id
                     ts = door_rel.time_schedule_id
                     pin = contact.hr_rfid_pin_code
@@ -128,7 +128,7 @@ class ResPartner(models.Model):
     def unlink(self):
         command_env = self.env['hr.rfid.command']
         for contact in self:
-            for door_rel in contact.hr_rfid_access_group_id.door_ids:
+            for door_rel in contact.hr_rfid_access_group_id.all_door_ids:
                 door = door_rel.door_id
                 ts = door_rel.time_schedule_id
                 pin = contact.hr_rfid_pin_code

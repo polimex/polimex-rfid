@@ -458,7 +458,7 @@ class HrRfidUserEvent(models.Model):
         'hr.employee',
         string='User',
         help='User affected by this event',
-        ondelete='cascade'
+        ondelete='cascade',
     )
 
     contact_id = fields.Many2one(

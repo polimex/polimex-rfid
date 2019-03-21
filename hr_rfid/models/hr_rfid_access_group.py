@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, exceptions
 import logging
+import queue
 
 _logger = logging.getLogger(__name__)
 
@@ -59,13 +60,21 @@ class HrRfidAccessGroup(models.Model):
         help='Departments assigned to this access group',
     )
 
-    # TODO Can't have a many2many connection with yourself?
-    # TODO COMPLICATED, add/remove cards when changing this!
-    # inherited_access_groups = fields.Many2many(
-    #     'hr.rfid.access.group',
-    #     string='Inherited access groups',
-    #     help='Access group that this one inherits',
-    # )
+    inherited_access_groups = fields.Many2many(
+        comodel_name='hr.rfid.access.group',
+        relation='access_group_inheritance',
+        column1='inheritor',
+        column2='inherited',
+        string='Inherited access groups',
+    )
+
+    all_door_ids = fields.Many2many(
+        'hr.rfid.access.group.door.rel',
+        string='All doors',
+        help='All doors, including inherited ones',
+        compute='_compute_all_doors',
+        store=True,
+    )
 
     @api.multi
     @api.constrains('door_ids')
@@ -78,6 +87,42 @@ class HrRfidAccessGroup(models.Model):
                                                      'it is already linked to.')
                 door_id_list.append(rel.door_id.id)
 
+    # TODO Maybe use BFS instead of DFS to remove the recursion aspect?
+    @api.depends('door_ids', 'inherited_access_groups')
+    def _compute_all_doors(self):
+        door_ids = set()
+        HrRfidAccessGroup._check_all_doors_rec(door_ids, [], self)
+        self.all_door_ids = self.env['hr.rfid.access.group.door.rel'].browse(list(door_ids))
+
+    @staticmethod
+    def _check_all_doors_rec(door_ids: set, checked_ids: list, acc_gr):
+        if acc_gr.id in checked_ids:
+            return
+        checked_ids.append(acc_gr.id)
+        for door in acc_gr.door_ids:
+            door_ids.add(door.id)
+        for rec_gr in acc_gr.inherited_access_groups:
+            HrRfidAccessGroup._check_all_doors_rec(door_ids, checked_ids, rec_gr)
+
+    @api.one
+    @api.constrains('inherited_access_groups')
+    def _check_inherited_access_groups(self):
+        acc_env = self.env['hr.rfid.access.group']
+        to_check = queue.Queue()
+        for acc_gr in self.inherited_access_groups:
+            to_check.put(acc_gr.id)
+        while not to_check.empty():
+            check_id = to_check.get()
+            if self.id == check_id:
+                # TODO Show the path to the circular reference, we need DFS for that i think *gulp*
+                raise exceptions.ValidationError('Circular reference found in the inherited access groups!')
+            acc_gr = acc_env.browse(check_id)
+            for acc_gr in acc_gr.inherited_access_groups:
+                to_check.put(acc_gr.id)
+
+    # TODO Create the "create" method
+
+    # TODO Update write method to update shit when inherited access groups are changed
     @api.multi
     def write(self, vals):
         for acc_gr in self:
@@ -108,7 +153,7 @@ class HrRfidAccessGroup(models.Model):
     @api.multi
     def unlink(self):
         for acc_gr in self:
-            acc_gr.door_ids.unlink()
+            acc_gr.all_door_ids.unlink()
 
         return super(HrRfidAccessGroup, self).unlink()
 

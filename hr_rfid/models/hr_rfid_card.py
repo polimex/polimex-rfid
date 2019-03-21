@@ -76,6 +76,7 @@ class HrRfidCard(models.Model):
         string='Active',
         help='Whether the card is active or not',
         track_visibility='onchange',
+        default=True,
     )
 
     # TODO Implement at some point
@@ -93,6 +94,10 @@ class HrRfidCard(models.Model):
         if len(self.user_id) == 1:
             return OwnerType.Employee
         return OwnerType.Contact
+
+    @api.one
+    def toggle_card_active(self):
+        self.card_active = not self.card_active
 
     @api.multi
     @api.constrains('number')
@@ -121,7 +126,7 @@ class HrRfidCard(models.Model):
         for card in self:
             owner = card.get_owner()
             if card.card_active is True:
-                for door_rel in owner.hr_rfid_access_group_id.door_ids:
+                for door_rel in owner.hr_rfid_access_group_id.all_door_ids:
                     door = door_rel.door_id
                     ts = door_rel.time_schedule_id
                     pin = owner.hr_rfid_pin_code
@@ -131,9 +136,9 @@ class HrRfidCard(models.Model):
     @api.multi
     def write(self, vals):
         cmd_env       = self.env['hr.rfid.command']
-        new_number    = vals.get('number',     None)
-        new_card_type = vals.get('card_type',  None)
-        new_active    = vals.get('card_active',None)
+        new_number    = vals.get('number',      None)
+        new_card_type = vals.get('card_type',   None)
+        new_active    = vals.get('card_active', None)
 
         invalid_user_and_contact_msg = 'Card user and contact cannot both be set' \
                                        ' in the same time, and cannot both be empty.'
@@ -157,13 +162,13 @@ class HrRfidCard(models.Model):
             new_owner_type = card.get_owner_type()
 
             if new_owner_type != old_owner_type or new_owner != old_owner:
-                for door_rel in old_owner.hr_rfid_access_group_id.door_ids:
+                for door_rel in old_owner.hr_rfid_access_group_id.all_door_ids:
                     door = door_rel.door_id
                     ts = door_rel.time_schedule_id
                     pin = old_owner.hr_rfid_pin_code
                     if door.card_type.id == old_card_type_id:
                         cmd_env.remove_card(door.id, ts.id, pin, card_number=old_number)
-                for door_rel in new_owner.hr_rfid_access_group_id.door_ids:
+                for door_rel in new_owner.hr_rfid_access_group_id.all_door_ids:
                     door = door_rel.door_id
                     ts = door_rel.time_schedule_id
                     pin = old_owner.hr_rfid_pin_code
@@ -172,7 +177,7 @@ class HrRfidCard(models.Model):
                 continue
 
             if new_number is not None and new_number != old_number:
-                for door_rel in new_owner.hr_rfid_access_group_id.door_ids:
+                for door_rel in new_owner.hr_rfid_access_group_id.all_door_ids:
                     door = door_rel.door_id
                     ts = door_rel.time_schedule_id
                     pin = new_owner.hr_rfid_pin_code
@@ -183,7 +188,7 @@ class HrRfidCard(models.Model):
                 continue
 
             if new_card_type is not None and new_card_type != old_card_type_id:
-                for door_rel in new_owner.hr_rfid_access_group_id.door_ids:
+                for door_rel in new_owner.hr_rfid_access_group_id.all_door_ids:
                     door = door_rel.door_id
                     ts = door_rel.time_schedule_id
                     pin = new_owner.hr_rfid_pin_code
@@ -194,7 +199,7 @@ class HrRfidCard(models.Model):
                 continue
 
             if new_active is not None and new_active != old_active:
-                for door_rel in new_owner.hr_rfid_access_group_id.door_ids:
+                for door_rel in new_owner.hr_rfid_access_group_id.all_door_ids:
                     door = door_rel.door_id
                     ts = door_rel.time_schedule_id
                     pin = new_owner.hr_rfid_pin_code
@@ -223,7 +228,7 @@ class HrRfidCard(models.Model):
             card_owner = card.get_owner()
 
             if card.card_active is True:
-                for door_rel in card_owner.hr_rfid_access_group_id.door_ids:
+                for door_rel in card_owner.hr_rfid_access_group_id.all_door_ids:
                     door = door_rel.door_id
                     ts = door_rel.time_schedule_id
                     pin = card_owner.hr_rfid_pin_code
