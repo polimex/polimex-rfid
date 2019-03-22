@@ -163,6 +163,7 @@ class HrRfidAccessGroup(models.Model):
             added_doors = new_doors - old_doors
             removed_doors = old_doors - new_doors
 
+            # TODO Create commands for access group inheritors
             HrRfidAccessGroup._create_add_door_commands(acc_gr, added_doors)
             HrRfidAccessGroup._create_remove_door_commands(acc_gr, removed_doors)
         return True
