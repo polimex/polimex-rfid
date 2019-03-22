@@ -77,7 +77,7 @@ class HrEmployee(models.Model):
         records = self.env['hr.employee']
         for vals in vals_list:
             command_env = self.env['hr.rfid.command']
-            user = super(HrEmployee, self).create(vals)
+            user = super(HrEmployee, self).create([vals])
             records += user
 
             for door_rel in user.hr_rfid_access_group_id.all_door_ids:

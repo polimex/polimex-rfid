@@ -10,7 +10,7 @@ class HrRfidUserEvent(models.Model):
     def create(self, vals_list):
         records = self.env['hr.rfid.event.user']
         for vals in vals_list:
-            ev = super(HrRfidUserEvent, self).create(vals)
+            ev = super(HrRfidUserEvent, self).create([vals])
             records += ev
 
             if ev.door_id.attendance is True and ev.event_action == '1':

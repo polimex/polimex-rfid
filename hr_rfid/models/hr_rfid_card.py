@@ -222,7 +222,7 @@ class HrRfidCard(models.Model):
 
         records = self.env['hr.rfid.card']
         for val in vals:
-            card = super(HrRfidCard, self).create(val)
+            card = super(HrRfidCard, self).create([val])
             cmd_env = self.env['hr.rfid.command']
             records = records + card
             card_owner = card.get_owner()

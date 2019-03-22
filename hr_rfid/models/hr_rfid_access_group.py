@@ -68,6 +68,15 @@ class HrRfidAccessGroup(models.Model):
         string='Inherited access groups',
     )
 
+    inheritor_access_groups = fields.Many2many(
+        comodel_name='hr.rfid.access.group',
+        relation='access_group_inheritance',
+        column1='inherited',
+        column2='inheritor',
+        string='Inheritors',
+        help='Access groups that have inherited this one',
+    )
+
     all_door_ids = fields.Many2many(
         'hr.rfid.access.group.door.rel',
         string='All doors',
@@ -120,36 +129,45 @@ class HrRfidAccessGroup(models.Model):
             for acc_gr in acc_gr.inherited_access_groups:
                 to_check.put(acc_gr.id)
 
-    # TODO Create the "create" method
+    @staticmethod
+    def _create_door_command(acc_gr, door_rels, command):
+        for user in acc_gr.user_ids:
+            pin = user.hr_rfid_pin_code
+            for card in user.hr_rfid_card_ids:
+                for door_rel in door_rels:
+                    door_id = door_rel.door_id.id
+                    ts_id = door_rel.time_schedule_id.id
+                    command(door_id, ts_id, pin, card_id=card.id)
 
-    # TODO Update write method to update shit when inherited access groups are changed
+    @staticmethod
+    def _create_add_door_commands(acc_gr, door_rels):
+        cmd_env = acc_gr.env['hr.rfid.command']
+        HrRfidAccessGroup._create_door_command(acc_gr, door_rels, cmd_env.add_card)
+
+    @staticmethod
+    def _create_remove_door_commands(acc_gr, door_rels):
+        cmd_env = acc_gr.env['hr.rfid.command']
+        HrRfidAccessGroup._create_door_command(acc_gr, door_rels, cmd_env.remove_card)
+
+    # NOTE No need for create method because we can't add users or contacts on creation anyway
+
     @api.multi
     def write(self, vals):
         for acc_gr in self:
-            old_door_ids = {}
-            old_ts_ids = set()
-            acc_gr_door_rel_env = self.env['hr.rfid.access.group.door.rel']
-
-            if 'door_ids' in vals:
-                door_id_changes = vals['door_ids']
-
-                for change in door_id_changes:
-                    if change[0] == 1:
-                        if 'door_id' in change[2]:
-                            old_door_ids[change[1]] = change[2]['door_id']
-                        if 'time_schedule_id' in change[2]:
-                            old_ts_ids.add(change[2]['time_schedule_id'])
+            old_doors = self.all_door_ids
 
             super(HrRfidAccessGroup, acc_gr).write(vals)
 
-            for rel_id, prev_door_id in old_door_ids.items():
-                acc_gr_door_rel_env.door_changed(rel_id, prev_door_id)
+            new_doors = self.all_door_ids
 
-            for rel_id in old_ts_ids:
-                acc_gr_door_rel_env.time_schedule_changed(rel_id)
+            added_doors = new_doors - old_doors
+            removed_doors = old_doors - new_doors
 
+            HrRfidAccessGroup._create_add_door_commands(acc_gr, added_doors)
+            HrRfidAccessGroup._create_remove_door_commands(acc_gr, removed_doors)
         return True
 
+    # TODO Check if we actually need this unlink?
     @api.multi
     def unlink(self):
         for acc_gr in self:
@@ -191,18 +209,6 @@ class HrRfidAccessGroupDoorRel(models.Model):
         ondelete='cascade',
     )
 
-    @api.model_create_multi
-    @api.returns('self', lambda value: value.id)
-    def create(self, vals_list):
-        records = self.env['hr.rfid.access.group.door.rel']
-        for vals in vals_list:
-            rec = super(HrRfidAccessGroupDoorRel, self).create(vals)
-            # Pretend the time schedule changed, it does the same bloody thing
-            # as creating the thing anyway
-            self.time_schedule_changed(rec.id)
-            records += rec
-        return records
-
     @api.model
     def time_schedule_changed(self, rel_id):
         """
@@ -237,11 +243,11 @@ class HrRfidAccessGroupDoorRel(models.Model):
 
     @api.model
     def access_group_changed(self, rel_id, prev_acc_gr_id):
-        """
-        Call after you change the access_group
-        :param rel_id: The id of the access group
-        :param prev_acc_gr_id: The id of the previous access group
-        """
+        # """
+        # Call after you change the access_group
+        # :param rel_id: The id of the access group
+        # :param prev_acc_gr_id: The id of the previous access group
+        # """
         rel = self.env['hr.rfid.access.group.door.rel'].browse(rel_id)
         prev_acc_gr = self.env['hr.rfid.access.group'].browse(prev_acc_gr_id)
         cmd_env = self.env['hr.rfid.command']
@@ -255,6 +261,44 @@ class HrRfidAccessGroupDoorRel(models.Model):
             for card in user.hr_rfid_card_ids:
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
                                  user.hr_rfid_pin_code, card_id=card.id)
+
+    @api.model_create_multi
+    @api.returns('self', lambda value: value.id)
+    def create(self, vals_list):
+        records = self.env['hr.rfid.access.group.door.rel']
+        for vals in vals_list:
+            rec = super(HrRfidAccessGroupDoorRel, self).create([vals])
+            # Pretend the time schedule changed, it does the same bloody thing
+            # as creating the thing anyway
+            self.time_schedule_changed(rec.id)
+            records += rec
+        return records
+
+    @api.multi
+    def write(self, vals):
+        for rel in self:
+            old_acc_gr_id = rel.access_group_id.id
+            old_door_id = rel.door_id.id
+            old_ts_id = rel.time_schedule_id.id
+
+            super(HrRfidAccessGroupDoorRel, rel).write(vals)
+
+            new_acc_gr_id = rel.access_group_id.id
+            new_door_id = rel.door_id.id
+            new_ts_id = rel.time_schedule_id.id
+
+            env = self.env['hr.rfid.access.groupd.door.rel']
+
+            if old_acc_gr_id != new_acc_gr_id:
+                env.access_group_changed(rel, old_acc_gr_id)
+
+            if old_door_id != new_door_id:
+                env.door_changed(rel, old_door_id)
+
+            if old_ts_id != new_ts_id:
+                env.time_schedule_changed(rel)
+
+        return True
 
     @api.multi
     def unlink(self):

@@ -53,7 +53,7 @@ class ResPartner(models.Model):
         records = self.env['res.partner']
         for vals in vals_list:
             command_env = self.env['hr.rfid.command']
-            contact = super(ResPartner, self).create(vals)
+            contact = super(ResPartner, self).create([vals])
             records += contact
             for door_rel in contact.hr_rfid_access_group_id.all_door_ids:
                 door = door_rel.door_id
