@@ -163,9 +163,24 @@ class HrRfidAccessGroup(models.Model):
             added_doors = new_doors - old_doors
             removed_doors = old_doors - new_doors
 
-            # TODO Create commands for access group inheritors
-            HrRfidAccessGroup._create_add_door_commands(acc_gr, added_doors)
-            HrRfidAccessGroup._create_remove_door_commands(acc_gr, removed_doors)
+            env = self.env['hr.rfid.access.group']
+            completed_groups = [ ]
+            acc_gr_to_complete = queue.Queue()
+            acc_gr_to_complete.put(acc_gr.id)
+
+            while not acc_gr_to_complete.empty():
+                # inh_id = inheritor_id, inh = inheritor
+                inh_id = acc_gr_to_complete.get()
+                if inh_id in completed_groups:
+                    continue
+                completed_groups.append(inh_id)
+                inh = env.browse(inh_id)
+                HrRfidAccessGroup._create_add_door_commands(inh, added_doors)
+                HrRfidAccessGroup._create_remove_door_commands(inh, removed_doors)
+
+                for upper_inh in inh.inheritor_access_groups:
+                    acc_gr_to_complete.put(upper_inh.id)
+
         return True
 
     # TODO Check if we actually need this unlink?
