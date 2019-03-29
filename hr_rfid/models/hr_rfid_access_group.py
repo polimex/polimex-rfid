@@ -96,7 +96,6 @@ class HrRfidAccessGroup(models.Model):
                                                      'it is already linked to.')
                 door_id_list.append(rel.door_id.id)
 
-    # TODO Maybe use BFS instead of DFS to remove the recursion aspect?
     @api.depends('door_ids', 'inherited_access_groups')
     def _compute_all_doors(self):
         door_ids = set()
@@ -116,18 +115,38 @@ class HrRfidAccessGroup(models.Model):
     @api.one
     @api.constrains('inherited_access_groups')
     def _check_inherited_access_groups(self):
-        acc_env = self.env['hr.rfid.access.group']
-        to_check = queue.Queue()
-        for acc_gr in self.inherited_access_groups:
-            to_check.put(acc_gr.id)
-        while not to_check.empty():
-            check_id = to_check.get()
-            if self.id == check_id:
-                # TODO Show the path to the circular reference, we need DFS for that i think *gulp*
-                raise exceptions.ValidationError('Circular reference found in the inherited access groups!')
-            acc_gr = acc_env.browse(check_id)
-            for acc_gr in acc_gr.inherited_access_groups:
-                to_check.put(acc_gr.id)
+        env = self.env['hr.rfid.access.group']
+        group_order = []
+        ret = HrRfidAccessGroup._check_inherited_access_groups_rec(self, [], group_order)
+        if ret is True:
+            err = 'Circular reference found in the inherited access groups:'
+            for acc_gr_id in group_order:
+                acc_gr = env.browse(acc_gr_id)
+                err += '\n-> '
+                err += acc_gr.name
+            raise exceptions.ValidationError(err)
+
+    @staticmethod
+    def _check_inherited_access_groups_rec(acc_gr, visited_groups: list, group_order: list, orig_id=None):
+        group_order.append(acc_gr.id)
+        if acc_gr.id == orig_id:
+            return True
+        if orig_id is None:
+            orig_id = acc_gr.id
+
+        if acc_gr.id in visited_groups:
+            return False
+
+        visited_groups.append(acc_gr.id)
+
+        for inh_gr in acc_gr.inherited_access_groups:
+            res = HrRfidAccessGroup._check_inherited_access_groups_rec(inh_gr, visited_groups,
+                                                                       group_order, orig_id)
+            if res is True:
+                return True
+
+        group_order.pop()
+        return False
 
     @staticmethod
     def _create_door_command(acc_gr, door_rels, command):
