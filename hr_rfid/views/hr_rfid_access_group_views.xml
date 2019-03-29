@@ -52,7 +52,48 @@
               </field>
             </page>
 
+            <page string="Contacts" help="Contacts assigned to this access group">
+              <field name="contact_ids" readonly="1">
+                <tree>
+                  <field name="name" />
+                  <field name="parent_id" />
+                  <field name="function" />
+                </tree>
+              </field>
+            </page>
+
           </notebook>
+          <notebook>
+            <page string="Inherited Access Groups">
+              <field name="inherited_access_groups">
+                <tree>
+                  <field name="name" />
+                </tree>
+              </field>
+            </page>
+
+            <page string="All Doors">
+              <field name="all_door_ids" readonly="1">
+                <tree string="Doors group has access to">
+                  <field name="door_id" />
+                  <field name="time_schedule_id" />
+                </tree>
+              </field>
+            </page>
+
+            <page string="Inheritor Access Groups">
+              <field name="inheritor_access_groups" readonly="1">
+                <tree>
+                  <field name="name" />
+                </tree>
+              </field>
+            </page>
+          </notebook>
+
+          <div class="oe_chatter">
+            <field name="message_follower_ids" widget="mail_followers" />
+            <field name="message_ids" widget="mail_thread" />
+          </div>
         </form>
       </field>
     </record>
