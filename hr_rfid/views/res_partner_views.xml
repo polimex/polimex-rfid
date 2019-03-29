@@ -2,17 +2,16 @@
 
 <odoo>
   <data>
-    <record id="hr_view_employee_form_inherit_hr_rfid" model="ir.ui.view">
-      <field name="name">hr.employee.rfid.info</field>
-      <field name="model">hr.employee</field>
-      <field name="inherit_id" ref="hr.view_employee_form" />
+    <record id="hr_view_contact_form_inherit_hr_rfid" model="ir.ui.view">
+      <field name="name">res.partner.rfid.info</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_partner_form" />
       <field name="arch" type="xml">
         <notebook position="inside">
           <page string="RFID Info" groups="hr_rfid.hr_rfid_view_rfid_data">
             <group>
               <field name="hr_rfid_pin_code" groups="hr_rfid.hr_rfid_view_rfid_pin_code_data" />
-              <field name="hr_rfid_access_group_id"
-                     domain="[('department_ids', 'in', [department_id])]" />
+              <field name="hr_rfid_access_group_id" />
             </group>
             <notebook>
               <page string="Cards">
