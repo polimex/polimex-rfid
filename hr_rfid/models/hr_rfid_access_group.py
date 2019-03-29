@@ -297,18 +297,6 @@ class HrRfidAccessGroupDoorRel(models.Model):
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
                                  user.hr_rfid_pin_code, card_id=card.id)
 
-    @api.model_create_multi
-    @api.returns('self', lambda value: value.id)
-    def create(self, vals_list):
-        records = self.env['hr.rfid.access.group.door.rel']
-        for vals in vals_list:
-            rec = super(HrRfidAccessGroupDoorRel, self).create([vals])
-            # Pretend the time schedule changed, it does the same bloody thing
-            # as creating the thing anyway
-            self.time_schedule_changed(rec.id)
-            records += rec
-        return records
-
     @api.multi
     def write(self, vals):
         for rel in self:
@@ -347,6 +335,7 @@ class HrRfidAccessGroupDoorRel(models.Model):
 
         ret = super(HrRfidAccessGroupDoorRel, self).unlink()
         return ret
+
 
 
 

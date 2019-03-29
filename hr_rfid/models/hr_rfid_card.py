@@ -123,6 +123,7 @@ class HrRfidCard(models.Model):
     @api.multi
     def unlink(self):
         cmd_env = self.env['hr.rfid.command']
+
         for card in self:
             owner = card.get_owner()
             if card.card_active is True:
@@ -300,6 +301,10 @@ class HrRfidCardType(models.Model):
                                                  'Please change the doors/cards types first.')
 
         return super(HrRfidCardType, self).unlink()
+
+
+
+
 
 
 
