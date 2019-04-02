@@ -8,9 +8,11 @@ class OwnerType(Enum):
     Employee = 1
     Contact = 2
 
+
 class HrRfidCard(models.Model):
     _name = 'hr.rfid.card'
     _description = 'Information about cards'
+    _inherit = ['mail.thread']
 
     def _get_cur_employee_id(self):
         return self.env.context.get('employee_id', None)
