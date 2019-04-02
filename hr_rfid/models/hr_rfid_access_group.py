@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, exceptions
 import logging
-import Queue
+import queue
 
 _logger = logging.getLogger(__name__)
 
@@ -184,7 +184,7 @@ class HrRfidAccessGroup(models.Model):
 
             env = self.env['hr.rfid.access.group']
             completed_groups = [ ]
-            acc_gr_to_complete = Queue.Queue()
+            acc_gr_to_complete = queue.Queue()
             acc_gr_to_complete.put(acc_gr.id)
 
             while not acc_gr_to_complete.empty():
