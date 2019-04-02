@@ -47,21 +47,18 @@ class ResPartner(models.Model):
             except ValueError:
                 raise exceptions.ValidationError('Invalid pin code, digits must be from 0 to 9')
 
-    @api.model_create_multi
+    @api.model
     @api.returns('self', lambda value: value.id)
-    def create(self, vals_list):
-        records = self.env['res.partner']
-        for vals in vals_list:
-            command_env = self.env['hr.rfid.command']
-            contact = super(ResPartner, self).create([vals])
-            records += contact
-            for door_rel in contact.hr_rfid_access_group_id.all_door_ids:
-                door = door_rel.door_id
-                ts = door_rel.time_schedule_id
-                pin = contact.hr_rfid_pin_code
-                for card in contact.hr_rfid_card_ids:
-                    command_env.add_card(door.id, ts.id, pin, card.id)
-        return records
+    def create(self, vals):
+        command_env = self.env['hr.rfid.command']
+        contact = super(ResPartner, self).create(vals)
+        for door_rel in contact.hr_rfid_access_group_id.all_door_ids:
+            door = door_rel.door_id
+            ts = door_rel.time_schedule_id
+            pin = contact.hr_rfid_pin_code
+            for card in contact.hr_rfid_card_ids:
+                command_env.add_card(door.id, ts.id, pin, card.id)
+        return contact
 
     @api.multi
     def write(self, vals):

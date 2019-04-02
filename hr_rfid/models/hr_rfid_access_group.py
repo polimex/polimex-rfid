@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, exceptions
 import logging
-import queue
+import Queue
 
 _logger = logging.getLogger(__name__)
 
@@ -103,7 +103,7 @@ class HrRfidAccessGroup(models.Model):
         self.all_door_ids = self.env['hr.rfid.access.group.door.rel'].browse(list(door_ids))
 
     @staticmethod
-    def _check_all_doors_rec(door_ids: set, checked_ids: list, acc_gr):
+    def _check_all_doors_rec(door_ids, checked_ids, acc_gr):
         if acc_gr.id in checked_ids:
             return
         checked_ids.append(acc_gr.id)
@@ -127,7 +127,7 @@ class HrRfidAccessGroup(models.Model):
             raise exceptions.ValidationError(err)
 
     @staticmethod
-    def _check_inherited_access_groups_rec(acc_gr, visited_groups: list, group_order: list, orig_id=None):
+    def _check_inherited_access_groups_rec(acc_gr, visited_groups, group_order, orig_id=None):
         group_order.append(acc_gr.id)
         if acc_gr.id == orig_id:
             return True
@@ -184,7 +184,7 @@ class HrRfidAccessGroup(models.Model):
 
             env = self.env['hr.rfid.access.group']
             completed_groups = [ ]
-            acc_gr_to_complete = queue.Queue()
+            acc_gr_to_complete = Queue.Queue()
             acc_gr_to_complete.put(acc_gr.id)
 
             while not acc_gr_to_complete.empty():

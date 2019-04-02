@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, exceptions
 from datetime import timedelta
-from enum import Enum
 
 
-class OwnerType(Enum):
-    Employee = 1
-    Contact = 2
+Employee = 1
+Contact = 2
 
 
 class HrRfidCard(models.Model):
@@ -92,8 +90,8 @@ class HrRfidCard(models.Model):
 
     def get_owner_type(self):
         if len(self.user_id) == 1:
-            return OwnerType.Employee
-        return OwnerType.Contact
+            return Employee
+        return Contact
 
     @api.one
     def toggle_card_active(self):
@@ -220,7 +218,7 @@ class HrRfidCard(models.Model):
                 raise exceptions.ValidationError('Card user and contact cannot both be set '
                                                  'in the same time, and cannot both be empty.')
 
-        card = super(HrRfidCard, self).create([val])
+        card = super(HrRfidCard, self).create(val)
         cmd_env = self.env['hr.rfid.command']
         card_owner = card.get_owner()
 
