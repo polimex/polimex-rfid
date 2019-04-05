@@ -9,14 +9,27 @@
       <field name="sequence">3</field>
     </record>
 
+    <record id="hr_rfid_view_rfid_data" model="res.groups">
+      <field name="name">View RFID data in users</field>
+      <field name="category_id" ref="base.module_category_hidden" />
+    </record>
+
+    <record id="hr_rfid_view_rfid_pin_code_data" model="res.groups">
+      <field name="name">View RFID pin code data in users</field>
+      <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_view_rfid_data'))]" />
+      <field name="category_id" ref="base.module_category_hidden" />
+    </record>
+
     <record id="hr_rfid_group_officer" model="res.groups">
       <field name="name">Officer</field>
+      <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_view_rfid_data'))]" />
       <field name="category_id" ref="hr_rfid_management" />
     </record>
 
     <record id="hr_rfid_group_manager" model="res.groups">
       <field name="name">Manager</field>
-      <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_group_officer'))]" />
+      <field name="implied_ids"
+             eval="[(4, ref('hr_rfid.hr_rfid_group_officer')), (4, ref('hr_rfid.hr_rfid_view_rfid_data')), (4, ref('hr_rfid.hr_rfid_view_rfid_pin_code_data'))]" />
       <field name="users" eval="[(4, ref('base.user_root'))]"/>
       <field name="category_id" ref="hr_rfid_management" />
     </record>
