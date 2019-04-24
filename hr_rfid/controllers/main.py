@@ -344,6 +344,7 @@ class WebRfidController(http.Controller):
             return { 'status': 400 }
 
         if not webstack.ws_active:
+            webstack.write(ws_db_update_dict)
             report_sys_ev('Webstack is not active')
             return { 'status': 400 }
 
