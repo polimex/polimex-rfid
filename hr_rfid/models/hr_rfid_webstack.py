@@ -2,6 +2,7 @@
 from odoo import models, fields, api, exceptions
 from datetime import timedelta
 import logging
+import socket
 
 _logger = logging.getLogger(__name__)
 
@@ -64,7 +65,6 @@ class HrRfidWebstack(models.Model):
     updated_at = fields.Datetime(
         string='Last Update',
         help='The last date we received an event from the module',
-        required=True,
     )
 
     controllers = fields.One2many(
@@ -112,6 +112,41 @@ class HrRfidWebstack(models.Model):
                 record.http_link = link
             else:
                 record.http_link = ''
+
+    @api.model
+    def _module_discovery(self):
+        udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        udp_sock.bind(("", 30303))
+
+        send_msg = b'Discovery:'
+        res = udp_sock.sendto(send_msg, ('<broadcast>', 30303))
+        if res is False:
+            udp_sock.close()
+            return
+
+        while True:
+            udp_sock.settimeout(0.5)
+            try:
+                data, addr = udp_sock.recvfrom(1024)
+                data = data.decode().split('\n')[:-1]
+                data = list(map(str.strip, data))
+                if len(data) == 0 or len(data) > 100:
+                    continue
+                if len(self.search([('serial', '=', data[4])])) > 0:
+                    continue
+                module = {
+                    'last_ip': addr[0],
+                    'name':    data[0],
+                    'version': data[3],
+                    'serial':  data[4],
+                    'key': '0000',
+                }
+                self.create(module)
+            except socket.timeout:
+                break
+
+        udp_sock.close()
 
 
 class HrRfidController(models.Model):
