@@ -47,7 +47,13 @@ class HrDepartment(models.Model):
             for dep in self:
                 for user in dep.member_ids:
                     if user.hr_rfid_access_group_id not in dep.hr_rfid_allowed_access_groups:
-                        user.write({ 'hr_rfid_access_group_id': None })
+                        user.write({ 'hr_rfid_access_group_id': dep.hr_rfid_default_access_group })
+
+        if 'hr_rfid_default_access_group' in vals:
+            for dep in self:
+                for user in dep.member_ids:
+                    if len(user.hr_rfid_access_group_id) == 0:
+                        user.write({ 'hr_rfid_access_group_id': dep.hr_rfid_default_access_group })
 
         return res
 
