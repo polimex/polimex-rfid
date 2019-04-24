@@ -2,18 +2,40 @@
 
 <odoo>
   <data>
+
     <record id="hr_rfid_view_door_form_inherit_hr_attendance_multi_rfid" model="ir.ui.view">
-      <field name="name">hr.rfid.door.hr.attendance.rfid.door.attendance</field>
+      <field name="name">hr.rfid.door.hr.attendance.multi.rfid.door.attendance</field>
       <field name="model">hr.rfid.door</field>
       <field name="inherit_id" ref="hr_rfid.hr_rfid_door_view_form" />
       <field name="arch" type="xml">
-
         <xpath expr="//group//field[@name='card_type']" position="after">
           <field name="attendance"
-               groups="hr_rfid.hr_rfid_group_officer" />
+               groups="hr_rfid.hr_rfid_group_officer_dep" />
         </xpath>
-
       </field>
     </record>
+
+    <record id="hr_rfid_view_user_ev_form_inherit_hr_attendance_multi_rfid" model="ir.ui.view">
+      <field name="name">hr.rfid.ev.usr.hr.attendance.multi.rfid.ev.usr.in.or.out.form</field>
+      <field name="model">hr.rfid.event.user</field>
+      <field name="inherit_id" ref="hr_rfid.hr_rfid_user_ev_view_form" />
+      <field name="arch" type="xml">
+        <xpath expr="//group//field[@name='name']" position="after">
+          <field name="in_or_out" />
+        </xpath>
+      </field>
+    </record>
+
+    <record id="hr_rfid_view_user_ev_tree_inherit_hr_attendance_multi_rfid" model="ir.ui.view">
+      <field name="name">hr.rfid.ev.usr.hr.attendance.multi.rfid.ev.usr.in.or.out.tree</field>
+      <field name="model">hr.rfid.event.user</field>
+      <field name="inherit_id" ref="hr_rfid.hr_rfid_user_ev_view_tree" />
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='door_id']" position="after">
+          <field name="in_or_out" />
+        </xpath>
+      </field>
+    </record>
+
   </data>
 </odoo>
