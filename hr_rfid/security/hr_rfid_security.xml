@@ -20,9 +20,17 @@
       <field name="category_id" ref="base.module_category_hidden" />
     </record>
 
+    <record id="hr_rfid_group_officer_dep" model="res.groups">
+      <field name="name">Officer (Own department)</field>
+      <field name="implied_ids"
+             eval="[(4, ref('hr_rfid.hr_rfid_view_rfid_data'))]" />
+      <field name="category_id" ref="hr_rfid_management" />
+    </record>
+
     <record id="hr_rfid_group_officer" model="res.groups">
       <field name="name">Officer</field>
-      <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_view_rfid_data'))]" />
+      <field name="implied_ids"
+             eval="[(4, ref('hr_rfid.hr_rfid_group_officer_dep')), (4, ref('hr_rfid.hr_rfid_view_rfid_data'))]" />
       <field name="category_id" ref="hr_rfid_management" />
     </record>
 
@@ -32,6 +40,18 @@
              eval="[(4, ref('hr_rfid.hr_rfid_group_officer')), (4, ref('hr_rfid.hr_rfid_view_rfid_data')), (4, ref('hr_rfid.hr_rfid_view_rfid_pin_code_data'))]" />
       <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
       <field name="category_id" ref="hr_rfid_management" />
+    </record>
+
+    <record id="hr_rfid_group_officer_dep_card" model="ir.rule">
+      <field name="name">hr.rfid.group.officer.dep.card</field>
+      <field name="display_name">HrRfid: Access to own department's cards</field>
+      <field name="model_id" ref="model_hr_rfid_card" />
+      <field name="domain_force">[('user_id.department_id.id', 'in', user.employee_ids.mapped('department_id.id'))]</field>
+      <field name="perm_create" eval="True" />
+      <field name="perm_write" eval="True" />
+      <field name="perm_read" eval="True" />
+      <field name="perm_unlink" eval="True" />
+      <field name="groups" eval="[(4, ref('hr_rfid_group_officer_dep'))]" />
     </record>
 
   </data>
