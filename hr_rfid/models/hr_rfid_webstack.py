@@ -201,7 +201,6 @@ class HrRfidWebstack(models.Model):
         for record in self:
             if record.last_ip != '' and record.last_ip is not False:
                 link = 'http://' + record.last_ip + '/'
-                # record.http_link = '<a href="' + link + '">' + link + '</a>'
                 record.http_link = link
             else:
                 record.http_link = ''
