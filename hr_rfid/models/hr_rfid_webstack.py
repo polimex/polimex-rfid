@@ -121,9 +121,12 @@ class HrRfidWebstack(models.Model):
     @api.one
     def action_set_webstack_settings(self):
         odoo_url = str(self.env['ir.config_parameter'].get_param('web.base.url'))
-        ___, odoo_url, odoo_port = odoo_url.split(':')
-        odoo_url = odoo_url[2:]
-        odoo_port = int(odoo_port, 10)
+        splits = odoo_url.split(':')
+        odoo_url = splits[1][2:]
+        if len(splits) == 3:
+            odoo_port = int(splits[2], 10)
+        else:
+            odoo_port = 80
         odoo_url += '/hr/rfid/event'
 
         if self.module_username is False:
@@ -220,7 +223,7 @@ class HrRfidWebstack(models.Model):
             try:
                 data, addr = udp_sock.recvfrom(1024)
                 data = data.decode().split('\n')[:-1]
-                data = list(map(str.strip, data))
+                data = list(map(str.strip, map(str, data)))
                 if len(data) == 0 or len(data) > 100:
                     continue
                 if len(self.search([('serial', '=', data[4])])) > 0:
