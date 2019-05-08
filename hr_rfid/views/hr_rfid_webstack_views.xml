@@ -16,6 +16,9 @@
             <button name="action_set_inactive" type="object"
                     attrs="{'invisible': [('ws_active','=', False)]}"
                     string="Set module to inactive" />
+            <button name="action_set_webstack_settings" type="object"
+                    string="Setup module for this odoo"
+                    help="Set the webstack up to work with this odoo. Module username and password must be set to the admin username and password on the module. Last ip must be set to the correct ip of the module" />
           </header>
 
           <group>
@@ -25,9 +28,11 @@
             <field name="key" />
             <field name="version" readonly="1" />
             <field name="behind_nat" />
-            <field name="last_ip" readonly="1" />
+            <field name="last_ip" />
             <field name="updated_at" readonly="1" />
             <field name="http_link" readonly="1" widget="url" />
+            <field name="module_username" />
+            <field name="module_password" password="True" />
           </group>
 
           <notebook>
