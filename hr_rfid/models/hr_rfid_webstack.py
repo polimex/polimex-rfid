@@ -3,6 +3,9 @@ from odoo import models, fields, api, exceptions
 from datetime import timedelta
 import logging
 import socket
+import http.client
+import json
+import base64
 
 _logger = logging.getLogger(__name__)
 
@@ -92,6 +95,18 @@ class HrRfidWebstack(models.Model):
         compute='_compute_http_link'
     )
 
+    module_username = fields.Char(
+        string='Module Username',
+        help='Username for the admin account for the module',
+        default='admin',
+    )
+
+    module_password = fields.Char(
+        string='Module Password',
+        help='Password for the admin account for the module',
+        default='',
+    )
+
     _sql_constraints = [ ('rfid_webstack_serial_unique', 'unique(serial)',
                           'Serial number for webstacks must be unique!') ]
 
@@ -103,10 +118,85 @@ class HrRfidWebstack(models.Model):
     def action_set_inactive(self):
         self.ws_active = False
 
+    @api.one
+    def action_set_webstack_settings(self):
+        odoo_url = str(self.env['ir.config_parameter'].get_param('web.base.url'))
+        ___, odoo_url, odoo_port = odoo_url.split(':')
+        odoo_url = odoo_url[2:]
+        odoo_port = int(odoo_port, 10)
+        odoo_url += '/hr/rfid/event'
+
+        if self.module_username is False:
+            username = ''
+        else:
+            username = str(self.module_username)
+
+        if self.module_password is False:
+            password = ''
+        else:
+            password = str(self.module_password)
+
+        auth = base64.b64encode((username + ':' + password).encode())
+        auth = auth.decode()
+        req_headers = { "content-type": "application/json", "Authorization": "Basic " + str(auth) }
+        host = str(self.last_ip)
+        js_uart_conf = json.dumps([
+            {
+                "br": 9600,
+                "db": 3,
+                "fc": 0,
+                "ft": 122,
+                "port": 0,
+                "pr": 0,
+                "rt": False,
+                "sb": 1,
+                "usage": 0
+            }, {
+                "br": 9600,
+                "db": 3,
+                "fc": 0,
+                "ft": 122,
+                "port": 2,
+                "pr": 0,
+                "rt": False,
+                "sb": 1,
+                "usage": 1
+            }
+        ])
+
+        config_params = 'sdk=1&stsd=1&sdts=1&stsu=' + odoo_url + '&prt=' \
+                        + str(odoo_port) + '&hb=1&thb=60&br=1&odoo=1'
+        try:
+            conn = http.client.HTTPConnection(str(host), 80, timeout=2)
+            conn.request("POST", "/protect/uart/conf", js_uart_conf, req_headers)
+            response = conn.getresponse()
+            code = response.getcode()
+            body = response.read()
+            if code != 200:
+                raise exceptions.ValidationError('When trying to setup /protect/uart/conf the module '
+                                                 'returned code ' + str(code) + ' with body:\n' +
+                                                 body.decode())
+
+            conn = http.client.HTTPConnection(str(host), 80, timeout=2)
+            conn.request("POST", "/protect/config.htm", config_params, req_headers)
+            response = conn.getresponse()
+            code = response.getcode()
+            body = response.read()
+            if code != 200:
+                raise exceptions.ValidationError('When trying to setup /protect/config.htm the module '
+                                                 'returned code ' + str(code) + ' with body:\n' +
+                                                 body.decode())
+        except socket.timeout:
+            raise exceptions.ValidationError('Could not connect to the module. '
+                                             "Check if it is turned on or if it's on a different ip.")
+        except (socket.error, socket.gaierror, socket.herror) as e:
+            raise exceptions.ValidationError('Error while trying to connect to the module.'
+                                             ' Information:\n' + str(e))
+
     @api.multi
     def _compute_http_link(self):
         for record in self:
-            if record.last_ip != '':
+            if record.last_ip != '' and record.last_ip is not False:
                 link = 'http://' + record.last_ip + '/'
                 # record.http_link = '<a href="' + link + '">' + link + '</a>'
                 record.http_link = link
