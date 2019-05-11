@@ -91,14 +91,14 @@
 
     <menuitem id="hr_rfid_main_menu"
               name="RFID System"
-              groups="hr_rfid_group_officer_dep"
+              groups="hr_rfid_group_officer"
               web_icon="hr_rfid,static/description/icon.png" />
 
     <menuitem id="hr_rfid_menu_cards"
               name="Cards"
               parent="hr_rfid_main_menu"
               action="hr_rfid_card_action"
-              groups="hr_rfid_group_officer_dep"
+              groups="hr_rfid_group_officer"
               sequence="0"/>
 
     <menuitem id="hr_rfid_menu_card_types"
@@ -167,14 +167,14 @@
               name="User Events"
               parent="hr_rfid_main_menu"
               action="hr_rfid_event_user_action"
-              groups="hr_rfid_group_officer_dep"
+              groups="hr_rfid_group_officer"
               sequence="8" />
 
     <menuitem id="hr_rfid_menu_system_events"
               name="System Events"
               parent="hr_rfid_main_menu"
               action="hr_rfid_event_system_action"
-              groups="hr_rfid_group_officer_dep"
+              groups="hr_rfid_group_officer"
               sequence="9" />
 
     <menuitem id="hr_rfid_menu_commands"
