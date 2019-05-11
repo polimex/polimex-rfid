@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, exceptions
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 
 Employee = 1
@@ -62,6 +62,7 @@ class HrRfidCard(models.Model):
         string='Activate on',
         help='Date and time the card will be activated on',
         track_visibility='onchange',
+        default=lambda self: datetime.now(),
     )
 
     deactivate_on = fields.Datetime(
