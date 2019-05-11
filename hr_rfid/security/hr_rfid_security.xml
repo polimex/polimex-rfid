@@ -23,7 +23,7 @@
     <record id="hr_rfid_group_officer" model="res.groups">
       <field name="name">Officer</field>
       <field name="implied_ids"
-             eval="[(4, ref('hr_rfid.hr_rfid_group_officer_dep')), (4, ref('hr_rfid.hr_rfid_view_rfid_data'))]" />
+             eval="[(4, ref('hr_rfid.hr_rfid_view_rfid_data'))]" />
       <field name="category_id" ref="hr_rfid_management" />
     </record>
 
