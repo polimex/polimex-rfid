@@ -765,7 +765,7 @@ class HrRfidCommands(models.Model):
         ('12', 'Controller Busy, Local Menu Active or Master Card Mode in Use'),
         ('13', '1-Wire Error'),
         ('14', 'Unknown Command'),
-        ('20', 'No Response from controller Controller (WebSDK)'),
+        ('20', 'No Response from controller (WebSDK)'),
         ('21', 'Bad JSON Structure (WebSDK)'),
         ('22', 'Bad CRC from Controller (WebSDK)'),
         ('23', 'Bridge is Currently in Use (WebSDK)'),
