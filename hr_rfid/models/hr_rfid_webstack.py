@@ -13,6 +13,7 @@ _logger = logging.getLogger(__name__)
 class HrRfidWebstack(models.Model):
     _name = 'hr.rfid.webstack'
     _inherit = ['mail.thread']
+    _description = 'Module'
 
     name = fields.Char(
         string='Name',
@@ -244,6 +245,7 @@ class HrRfidWebstack(models.Model):
 class HrRfidController(models.Model):
     _name = 'hr.rfid.ctrl'
     _inherit = ['mail.thread']
+    _description = 'Controller'
 
     hw_types = [ ('1', 'iCON200'), ('2', 'iCON150'), ('3', 'iCON150'), ('4', 'iCON140'),
                  ('5', 'iCON120'), ('6', 'iCON110'), ('7', 'iCON160'), ('8', 'iCON170'),
@@ -377,7 +379,7 @@ class HrRfidController(models.Model):
 
 class HrRfidDoor(models.Model):
     _name = 'hr.rfid.door'
-    _description = 'Information about doors'
+    _description = 'Door'
     _inherit = ['mail.thread']
 
     name = fields.Char(
@@ -481,6 +483,7 @@ class HrRfidDoor(models.Model):
 class HrRfidTimeSchedule(models.Model):
     _name = 'hr.rfid.time.schedule'
     _inherit = ['mail.thread']
+    _description = 'Time Schedule'
 
     name = fields.Char(
         string='Name',
@@ -509,6 +512,7 @@ class HrRfidTimeSchedule(models.Model):
 class HrRfidReader(models.Model):
     _name = 'hr.rfid.reader'
     _inherit = ['mail.thread']
+    _description = 'Reader'
 
     reader_types = [
         ('0', 'In'),
@@ -568,7 +572,7 @@ class HrRfidReader(models.Model):
 
 class HrRfidUserEvent(models.Model):
     _name = 'hr.rfid.event.user'
-    _description = "Rfid User Events"
+    _description = "Rfid User Event"
     _order = 'event_time desc'
 
     name = fields.Char(
@@ -659,7 +663,7 @@ class HrRfidUserEvent(models.Model):
 
 class HrRfidSystemEvent(models.Model):
     _name = 'hr.rfid.event.system'
-    _description = 'Rfid System Events'
+    _description = 'Rfid System Event'
     _order = 'timestamp desc'
 
     name = fields.Char(
@@ -705,6 +709,7 @@ class HrRfidCommands(models.Model):
     # Commands we have queued up to send to the controllers
     _name = 'hr.rfid.command'
     _order = 'status desc, cr_timestamp asc, id'
+    _description = 'Command to controller'
 
     commands = [
         ('F0', 'Read System Information'),
