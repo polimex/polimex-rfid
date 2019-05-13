@@ -95,7 +95,8 @@ class HrRfidWebstack(models.Model):
         compute='_compute_http_link'
     )
 
-    module_username = fields.Char(
+    module_username = fields.Selection(
+        selection=[ ('admin', 'admin'), ('sdk', 'sdk') ],
         string='Module Username',
         help='Username for the admin account for the module',
         default='admin',
