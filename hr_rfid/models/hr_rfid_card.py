@@ -11,7 +11,7 @@ class OwnerType(Enum):
 
 class HrRfidCard(models.Model):
     _name = 'hr.rfid.card'
-    _description = 'Information about cards'
+    _description = 'Card'
     _inherit = ['mail.thread']
 
     def _get_cur_employee_id(self):
@@ -265,6 +265,7 @@ class HrRfidCard(models.Model):
 class HrRfidCardType(models.Model):
     _name = 'hr.rfid.card.type'
     _inherit = ['mail.thread']
+    _description = 'Card Type'
 
     name = fields.Char(
         string='Type Name',

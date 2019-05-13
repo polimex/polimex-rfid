@@ -9,6 +9,7 @@ _logger = logging.getLogger(__name__)
 class HrRfidAccessGroup(models.Model):
     _name = 'hr.rfid.access.group'
     _inherit = ['mail.thread']
+    _description = 'Access Group'
 
     def access_group_generate_name(self):
         env = self.env['hr.rfid.access.group'].search([])
