@@ -236,7 +236,8 @@ class HrRfidWebstack(models.Model):
                     'serial':  data[4],
                     'key': '0000',
                 }
-                self.create(module)
+                env = self.env['hr.rfid.webstack'].sudo()
+                env.create(module)
             except socket.timeout:
                 break
 
