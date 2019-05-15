@@ -28,7 +28,6 @@ class HrRfidWebstack(models.Model):
         help='Unique number to differentiate all modules',
         limit=6,
         index=True,
-        required=True,
         readonly=True,
     )
 
@@ -36,7 +35,7 @@ class HrRfidWebstack(models.Model):
         string='Key',
         limit=4,
         index=True,
-        required=True,
+        default='0000',
         track_visibility='onchange',
     )
 
@@ -50,6 +49,12 @@ class HrRfidWebstack(models.Model):
     version = fields.Char(
         string='Version',
         help='Software version of the module',
+        limit=6,
+    )
+
+    hw_version = fields.Char(
+        string='Hardware Version',
+        help='Hardware version of the module',
         limit=6,
     )
 
@@ -97,7 +102,7 @@ class HrRfidWebstack(models.Model):
     )
 
     module_username = fields.Selection(
-        selection=[ ('admin', 'admin'), ('sdk', 'sdk') ],
+        selection=[ ('admin', 'Admin'), ('sdk', 'SDK') ],
         string='Module Username',
         help='Username for the admin account for the module',
         default='admin',
@@ -107,6 +112,13 @@ class HrRfidWebstack(models.Model):
         string='Module Password',
         help='Password for the admin account for the module',
         default='',
+    )
+
+    available = fields.Selection(
+        selection=[ ('u', 'Unavailable'), ('a', 'Available') ],
+        string='Available?',
+        help='Whether the module was available the last time Odoo tried to connect to it.',
+        default='u',
     )
 
     _sql_constraints = [ ('rfid_webstack_serial_unique', 'unique(serial)',
@@ -175,6 +187,7 @@ class HrRfidWebstack(models.Model):
             conn = http.client.HTTPConnection(str(host), 80, timeout=2)
             conn.request("POST", "/protect/uart/conf", js_uart_conf, req_headers)
             response = conn.getresponse()
+            conn.close()
             code = response.getcode()
             body = response.read()
             if code != 200:
@@ -185,6 +198,7 @@ class HrRfidWebstack(models.Model):
             conn = http.client.HTTPConnection(str(host), 80, timeout=2)
             conn.request("POST", "/protect/config.htm", config_params, req_headers)
             response = conn.getresponse()
+            conn.close()
             code = response.getcode()
             body = response.read()
             if code != 200:
@@ -197,6 +211,35 @@ class HrRfidWebstack(models.Model):
         except (socket.error, socket.gaierror, socket.herror) as e:
             raise exceptions.ValidationError('Error while trying to connect to the module.'
                                              ' Information:\n' + str(e))
+
+    @api.one
+    def action_check_if_ws_available(self):
+        host = str(self.last_ip)
+        try:
+            conn = http.client.HTTPConnection(str(host), 80, timeout=2)
+            conn.request("GET", "/config.json")
+            response = conn.getresponse()
+            code = response.getcode()
+            body = response.read()
+            conn.close()
+            if code != 200:
+                raise exceptions.ValidationError('Webstack sent us http code {}'
+                                                 ' when 200 was expected.'.format(code))
+
+            js = json.loads(body.decode())
+            module = {
+                'version': js['sdk']['sdkVersion'],
+                'hw_version': js['sdk']['sdkHardware'],
+                'serial': js['convertor'],
+                'available': 'a',
+            }
+            self.write(module)
+        except socket.timeout:
+            raise exceptions.ValidationError('Could not connect to the webstack')
+        except(socket.error, socket.gaierror, socket.herror) as e:
+            raise exceptions.ValidationError('Unexpected error:\n' + str(e))
+        except KeyError as __:
+            raise exceptions.ValidationError('Information returned by the webstack invalid')
 
     @api.multi
     def _compute_http_link(self):
@@ -230,18 +273,31 @@ class HrRfidWebstack(models.Model):
                 if len(self.search([('serial', '=', data[4])])) > 0:
                     continue
                 module = {
-                    'last_ip': addr[0],
-                    'name':    data[0],
-                    'version': data[3],
-                    'serial':  data[4],
-                    'key': '0000',
+                    'last_ip':    addr[0],
+                    'name':       data[0],
+                    'version':    data[3],
+                    'hw_version': data[2],
+                    'serial':     data[4],
+                    'available': 'u',
                 }
                 env = self.env['hr.rfid.webstack'].sudo()
-                env.create(module)
+                module = env.create(module)
+                try:
+                    module.action_check_if_ws_available()
+                except exceptions.ValidationError as __:
+                    pass
             except socket.timeout:
                 break
 
         udp_sock.close()
+
+    @api.model
+    def _deconfirm_webstack(self, ws):
+        ws.available = 'u'
+
+    @api.model
+    def _confirm_webstack(self, ws):
+        ws.available = 'c'
 
 
 class HrRfidController(models.Model):
