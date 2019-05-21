@@ -18,6 +18,7 @@
         'data/hr_rfid_actions.xml',
         'data/hr_rfid_card_type_data.xml',
         'data/hr_rfid_cron_jobs.xml',
+        'data/hr_rfid_system_parameters.xml',
         'data/hr_rfid_time_schedule_data.xml',
         'views/hr_department_views.xml',
         'views/hr_employee_views.xml',

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api, exceptions
-from datetime import timedelta
+from odoo import api, fields, models, exceptions
+from datetime import datetime, timedelta
 import logging
 import socket
 import http.client
@@ -706,6 +706,21 @@ class HrRfidUserEvent(models.Model):
         compute='_compute_user_ev_action_str',
     )
 
+    @api.model
+    def _delete_old_events(self):
+        event_lifetime = self.env['ir.config_parameter'].get_param('hr_rfid.event_lifetime')
+        if event_lifetime is None:
+            return False
+
+        lifetime = timedelta(days=int(event_lifetime))
+        today = datetime.today()
+        res = self.search([
+            ('event_time', '<', today-lifetime)
+        ])
+        res.unlink()
+
+        return self.env['hr.rfid.event.system'].delete_old_events()
+
     @api.multi
     def _compute_user_ev_name(self):
         for record in self:
@@ -755,6 +770,21 @@ class HrRfidSystemEvent(models.Model):
         string='Description',
         help='Description on why the error happened',
     )
+
+    @api.model
+    def delete_old_events(self):
+        event_lifetime = self.env['ir.config_parameter'].get_param('hr_rfid.event_lifetime')
+        if event_lifetime is None:
+            return False
+
+        lifetime = timedelta(days=int(event_lifetime))
+        today = datetime.today()
+        res = self.search([
+            ('timestamp', '<', today-lifetime)
+        ])
+        res.unlink()
+
+        return True
 
     @api.multi
     def _compute_sys_ev_name(self):

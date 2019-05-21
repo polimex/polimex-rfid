@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api, exceptions
+from odoo import api, fields, models, exceptions
 from datetime import timedelta, datetime
 from enum import Enum
 
