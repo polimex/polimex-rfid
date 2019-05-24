@@ -9,12 +9,12 @@
       <field name="arch" type="xml">
         <notebook position="inside">
           <page string="RFID Info" groups="hr_rfid.hr_rfid_view_rfid_data">
-            <group string="Settings" groups="hr_rfid.hr_rfid_view_rfid_data">
+            <group string="Settings">
               <field name="hr_rfid_pin_code" groups="hr_rfid.hr_rfid_view_rfid_pin_code_data" />
               <field name="hr_rfid_access_group_id"
                      domain="[('department_ids', 'in', [department_id])]" />
             </group>
-            <notebook groups="hr_rfid.hr_rfid_view_rfid_data">
+            <notebook>
               <page string="Cards">
                 <field name="hr_rfid_card_ids" context="{'employee_id': id}">
                   <tree string="Cards belonging to user">
@@ -27,10 +27,10 @@
               <page string="Events">
                 <field name="hr_rfid_event_ids" readonly="1">
                   <tree>
-                    <field name="event_action" />
-                    <field name="door_id" />
-                    <field name="card_id" />
                     <field name="event_time" />
+                    <field name="door_id" />
+                    <field name="event_action" />
+                    <field name="card_id" />
                   </tree>
                 </field>
               </page>

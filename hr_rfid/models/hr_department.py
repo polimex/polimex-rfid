@@ -13,6 +13,7 @@ class HrDepartment(models.Model):
         string='Default Access Group',
         help='Every user added to this department gets this access group by default',
         ondelete='set null',
+        track_visibility='onchange',
     )
 
     hr_rfid_allowed_access_groups = fields.Many2many(
@@ -47,13 +48,13 @@ class HrDepartment(models.Model):
             for dep in self:
                 for user in dep.member_ids:
                     if user.hr_rfid_access_group_id not in dep.hr_rfid_allowed_access_groups:
-                        user.write({ 'hr_rfid_access_group_id': dep.hr_rfid_default_access_group })
+                        user.write({ 'hr_rfid_access_group_id': dep.hr_rfid_default_access_group.id })
 
         if 'hr_rfid_default_access_group' in vals:
             for dep in self:
                 for user in dep.member_ids:
                     if len(user.hr_rfid_access_group_id) == 0:
-                        user.write({ 'hr_rfid_access_group_id': dep.hr_rfid_default_access_group })
+                        user.write({ 'hr_rfid_access_group_id': dep.hr_rfid_default_access_group.id })
 
         return res
 
@@ -65,4 +66,121 @@ class HrDepartment(models.Model):
 
         res = super(HrDepartment, self).unlink()
         return res
+
+    @api.one
+    def remove_def_acc_gr(self):
+        self.hr_rfid_default_access_group -= self.hr_rfid_default_access_group
+
+
+class HrDepartmentAccGrWizard(models.TransientModel):
+    _name = 'hr.department.acc.grs'
+    _description = 'Add or remove access groups to the department'
+
+    def _default_dep(self):
+        return self.env['hr.department'].browse(self._context.get('active_ids'))
+
+    dep_id = fields.Many2one(
+        'hr.department',
+        string='Department',
+        required=True,
+        default=_default_dep
+    )
+
+    acc_grs = fields.Many2many(
+        'hr.rfid.access.group',
+        string='Access groups to add/remove',
+        required=True,
+    )
+
+    @api.multi
+    def add_acc_grs(self):
+        print('self.acc_grs=' + str(self.acc_grs) +
+              ', allo_acc_grs=' + str(self.dep_id.hr_rfid_allowed_access_groups))
+        self.ensure_one()
+        self.dep_id.hr_rfid_allowed_access_groups |= self.acc_grs
+
+    @api.multi
+    def del_acc_grs(self):
+        print('self.acc_grs=' + str(self.acc_grs) +
+              ', allo_acc_grs=' + str(self.dep_id.hr_rfid_allowed_access_groups))
+        self.ensure_one()
+        self.dep_id.hr_rfid_allowed_access_groups -= self.acc_grs
+
+
+class HrDepartmentDefAccGrWizard(models.TransientModel):
+    _name = 'hr.department.def.acc.gr'
+    _description = "Set up the the department's default access group"
+
+    def _default_dep(self):
+        return self.env['hr.department'].browse(self._context.get('active_ids'))
+
+    dep_id = fields.Many2one(
+        'hr.department',
+        string='Department',
+        required=True,
+        default=_default_dep
+    )
+
+    def_acc_gr = fields.Many2one(
+        'hr.rfid.access.group',
+        stirng='New default access group',
+        required=True,
+    )
+
+    @api.multi
+    def change_default_access_group(self):
+        self.ensure_one()
+        self.dep_id.hr_rfid_default_access_group = self.def_acc_gr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

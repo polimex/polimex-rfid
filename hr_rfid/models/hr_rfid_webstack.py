@@ -630,7 +630,7 @@ class HrRfidReader(models.Model):
 
 class HrRfidUserEvent(models.Model):
     _name = 'hr.rfid.event.user'
-    _description = "Rfid User Event"
+    _description = "RFID User Event"
     _order = 'event_time desc'
 
     name = fields.Char(
@@ -736,7 +736,7 @@ class HrRfidUserEvent(models.Model):
 
 class HrRfidSystemEvent(models.Model):
     _name = 'hr.rfid.event.system'
-    _description = 'Rfid System Event'
+    _description = 'RFID System Event'
     _order = 'timestamp desc'
 
     name = fields.Char(

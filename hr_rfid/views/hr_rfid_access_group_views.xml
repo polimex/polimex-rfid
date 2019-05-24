@@ -3,18 +3,97 @@
 <odoo>
   <data>
 
+    <record id="hr_rfid_access_group_add_doors_wiz" model="ir.ui.view">
+      <field name="name">hr.rfid.access.group.add.doors.wiz.form</field>
+      <field name="model">hr.rfid.access.group.wizard</field>
+      <field name="arch" type="xml">
+        <form string="Add Doors">
+          <group>
+            <field name="acc_gr_doors" attrs="{'invisible': True}" />
+            <field name="time_schedule_id" />
+            <field name="door_ids" domain="[('id', 'not in', acc_gr_doors)]">
+              <tree string="Doors group will have access to">
+                <field name="name" />
+                <field name="card_type" />
+                <field name="controller_id" />
+              </tree>
+            </field>
+          </group>
+          <footer>
+            <button name="add_doors" type="object"
+                    string="Add Doors" class="oe_highlight" />
+            <button special="cancel" string="Cancel" />
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_access_group_del_doors_wiz" model="ir.ui.view">
+      <field name="name">hr.rfid.access.group.del.doors.wiz.form</field>
+      <field name="model">hr.rfid.access.group.wizard</field>
+      <field name="arch" type="xml">
+        <form string="Remove Doors">
+          <group>
+            <field name="acc_gr_doors" attrs="{'invisible': True}" />
+            <field name="door_ids" domain="[('id', 'in', acc_gr_doors)]">
+              <tree string="Doors group will no longer have access to">
+                <field name="name" />
+                <field name="card_type" />
+                <field name="controller_id" />
+              </tree>
+            </field>
+          </group>
+          <footer>
+            <button name="del_doors" type="object"
+                    string="Remove Doors" class="oe_highlight" />
+            <button special="cancel" string="Cancel" />
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_access_group_add_doors_wiz_action" model="ir.actions.act_window">
+      <field name="name">Add Doors</field>
+      <field name="res_model">hr.rfid.access.group.wizard</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_rfid_access_group_add_doors_wiz" />
+      <field name="target">new</field>
+    </record>
+
+    <record id="hr_rfid_access_group_del_doors_wiz_action" model="ir.actions.act_window">
+      <field name="name">Remove Doors</field>
+      <field name="res_model">hr.rfid.access.group.wizard</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_rfid_access_group_del_doors_wiz" />
+      <field name="target">new</field>
+    </record>
+
     <record id="hr_rfid_access_group_view_form" model="ir.ui.view">
       <field name="name">hr.rfid.access.group.form</field>
       <field name="model">hr.rfid.access.group</field>
       <field name="arch" type="xml">
         <form string="Access Groups">
+          <header>
+            <button name="%(hr_rfid_access_group_add_doors_wiz_action)d"
+                    id="hr_rfid_access_group_add_doors_btn"
+                    type="action"
+                    string="Add Doors"
+                    class="oe_highlight" />
+            <button name="%(hr_rfid_access_group_del_doors_wiz_action)d"
+                    id="hr_rfid_access_group_del_doors_btn"
+                    type="action"
+                    string="Remove Doors" />
+          </header>
+
           <group>
             <field name="name" />
           </group>
 
           <notebook>
             <page string="Doors">
-              <field name="door_ids" context="{'access_group_id': id}">
+              <field name="door_ids" readonly="1">
                 <tree string="Doors group has access to">
                   <field name="door_id" />
                   <field name="time_schedule_id" />
