@@ -94,16 +94,14 @@ class HrDepartmentAccGrWizard(models.TransientModel):
 
     @api.multi
     def add_acc_grs(self):
-        print('self.acc_grs=' + str(self.acc_grs) +
-              ', allo_acc_grs=' + str(self.dep_id.hr_rfid_allowed_access_groups))
         self.ensure_one()
         self.dep_id.hr_rfid_allowed_access_groups |= self.acc_grs
 
     @api.multi
     def del_acc_grs(self):
-        print('self.acc_grs=' + str(self.acc_grs) +
-              ', allo_acc_grs=' + str(self.dep_id.hr_rfid_allowed_access_groups))
         self.ensure_one()
+        if self.dep_id.hr_rfid_default_access_group in self.acc_grs:
+            self.dep_id.hr_rfid_default_access_group = None
         self.dep_id.hr_rfid_allowed_access_groups -= self.acc_grs
 
 
