@@ -290,11 +290,11 @@ class HrRfidAccessGroupDoorRel(models.Model):
 
     @api.model
     def access_group_changed(self, rel_id, prev_acc_gr_id):
-        # """
-        # Call after you change the access_group
-        # :param rel_id: The id of the access group
-        # :param prev_acc_gr_id: The id of the previous access group
-        # """
+        """
+        Call after you change the access_group
+        :param rel_id: The id of the access group
+        :param prev_acc_gr_id: The id of the previous access group
+        """
         rel = self.browse(rel_id)
         prev_acc_gr = self.env['hr.rfid.access.group'].browse(prev_acc_gr_id)
         cmd_env = self.env['hr.rfid.command']
