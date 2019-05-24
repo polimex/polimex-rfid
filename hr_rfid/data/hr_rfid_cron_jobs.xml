@@ -3,20 +3,6 @@
 <odoo>
   <data>
 
-    <!--<record id="hr_rfid_update_commands_cron" model="ir.cron">-->
-      <!--<field name="name">Check for failed commands to controllers</field>-->
-      <!--<field name="get_active_srs" eval="True" />-->
-      <!--<field name="interval_type">minutes</field>-->
-      <!--<field name="interval_number">1</field>-->
-      <!--<field name="nextcall" eval="(DateTime.now() + timedelta(minutes=1)).strftime('%Y-%m-%d %H:%M:%S')" />-->
-      <!--<field name="numbercall">-1</field>-->
-      <!--<field name="doall" eval="False" />-->
-      <!--<field name="model" eval="'hr.rfid.command'" />-->
-      <!--<field name="function" eval="'_update_commands'" />-->
-      <!--<field name="args" eval="''" />-->
-      <!--<field name="priority">1000</field>-->
-    <!--</recrd>-->
-
     <record id="hr_rfid_set_card_active_inactive_status" model="ir.cron">
       <field name="name">HR RFID: Check if any cards need to be activated or deactivated</field>
       <field name="get_active_srs" eval="True" />
@@ -39,6 +25,19 @@
       <field name="doall" eval="False" />
       <field name="model" eval="'hr.rfid.command'" />
       <field name="function" eval="'_sync_clocks'" />
+      <field name="args" eval="''" />
+      <field name="priority">1000</field>
+    </record>
+
+    <record id="hr_rfid_delete_old_events" model="ir.cron">
+      <field name="name">HR RFID: Delete old events</field>
+      <field name="get_active_srs" eval="True" />
+      <field name="interval_type">hours</field>
+      <field name="interval_number">24</field>
+      <field name="numbercall">-1</field>
+      <field name="doall" eval="False" />
+      <field name="model" eval="'hr.rfid.event.user'" />
+      <field name="function" eval="'_delete_old_events'" />
       <field name="args" eval="''" />
       <field name="priority">1000</field>
     </record>

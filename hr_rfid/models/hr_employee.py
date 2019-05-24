@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api, exceptions
+from odoo import api, fields, models, exceptions
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -13,12 +13,14 @@ class HrEmployee(models.Model):
         help="Pin code for this user, four zeroes means that the user has no pin code.",
         limit=4,
         default='0000',
+        track_visibility='onchange',
     )
 
     hr_rfid_access_group_id = fields.Many2one(
         'hr.rfid.access.group',
         string='Access Group',
         help='Which access group the user is a part of',
+        track_visibility='onchange',
     )
 
     hr_rfid_card_ids = fields.One2many(

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api, exceptions
-from datetime import timedelta
+from odoo import api, fields, models, exceptions
+from datetime import datetime, timedelta
 import logging
 import socket
 import httplib
@@ -28,7 +28,6 @@ class HrRfidWebstack(models.Model):
         help='Unique number to differentiate all modules',
         limit=6,
         index=True,
-        required=True,
         readonly=True,
     )
 
@@ -36,7 +35,7 @@ class HrRfidWebstack(models.Model):
         string='Key',
         limit=4,
         index=True,
-        required=True,
+        default='0000',
         track_visibility='onchange',
     )
 
@@ -50,6 +49,12 @@ class HrRfidWebstack(models.Model):
     version = fields.Char(
         string='Version',
         help='Software version of the module',
+        limit=6,
+    )
+
+    hw_version = fields.Char(
+        string='Hardware Version',
+        help='Hardware version of the module',
         limit=6,
     )
 
@@ -96,7 +101,8 @@ class HrRfidWebstack(models.Model):
         compute='_compute_http_link'
     )
 
-    module_username = fields.Char(
+    module_username = fields.Selection(
+        selection=[ ('admin', 'Admin'), ('sdk', 'SDK') ],
         string='Module Username',
         help='Username for the admin account for the module',
         default='admin',
@@ -106,6 +112,13 @@ class HrRfidWebstack(models.Model):
         string='Module Password',
         help='Password for the admin account for the module',
         default='',
+    )
+
+    available = fields.Selection(
+        selection=[ ('u', 'Unavailable'), ('a', 'Available') ],
+        string='Available?',
+        help='Whether the module was available the last time Odoo tried to connect to it.',
+        default='u',
     )
 
     _sql_constraints = [ ('rfid_webstack_serial_unique', 'unique(serial)',
@@ -197,6 +210,35 @@ class HrRfidWebstack(models.Model):
             raise exceptions.ValidationError('Error while trying to connect to the module.'
                                              ' Information:\n' + str(e))
 
+    @api.one
+    def action_check_if_ws_available(self):
+        host = str(self.last_ip)
+        try:
+            conn = httplib.HTTPConnection(str(host), 80, timeout=2)
+            conn.request("GET", "/config.json")
+            response = conn.getresponse()
+            code = response.status
+            body = response.read()
+            conn.close()
+            if code != 200:
+                raise exceptions.ValidationError('Webstack sent us http code {}'
+                                                 ' when 200 was expected.'.format(code))
+
+            js = json.loads(body.decode())
+            module = {
+                'version': js['sdk']['sdkVersion'],
+                'hw_version': js['sdk']['sdkHardware'],
+                'serial': js['convertor'],
+                'available': 'a',
+            }
+            self.write(module)
+        except socket.timeout:
+            raise exceptions.ValidationError('Could not connect to the webstack')
+        except(socket.error, socket.gaierror, socket.herror), e:
+            raise exceptions.ValidationError('Unexpected error:\n' + str(e))
+        except KeyError, __:
+            raise exceptions.ValidationError('Information returned by the webstack invalid')
+
     @api.multi
     def _compute_http_link(self):
         for record in self:
@@ -229,17 +271,31 @@ class HrRfidWebstack(models.Model):
                 if len(self.search([('serial', '=', data[4])])) > 0:
                     continue
                 module = {
-                    'last_ip': addr[0],
-                    'name':    data[0],
-                    'version': data[3],
-                    'serial':  data[4],
-                    'key': '0000',
+                    'last_ip':    addr[0],
+                    'name':       data[0],
+                    'version':    data[3],
+                    'hw_version': data[2],
+                    'serial':     data[4],
+                    'available': 'u',
                 }
-                self.create(module)
+                env = self.env['hr.rfid.webstack'].sudo()
+                module = env.create(module)
+                try:
+                    module.action_check_if_ws_available()
+                except exceptions.ValidationError as __:
+                    pass
             except socket.timeout:
                 break
 
         udp_sock.close()
+
+    @api.model
+    def _deconfirm_webstack(self, ws):
+        ws.available = 'u'
+
+    @api.model
+    def _confirm_webstack(self, ws):
+        ws.available = 'c'
 
 
 class HrRfidController(models.Model):
@@ -572,7 +628,7 @@ class HrRfidReader(models.Model):
 
 class HrRfidUserEvent(models.Model):
     _name = 'hr.rfid.event.user'
-    _description = "Rfid User Event"
+    _description = "RFID User Event"
     _order = 'event_time desc'
 
     name = fields.Char(
@@ -648,6 +704,21 @@ class HrRfidUserEvent(models.Model):
         compute='_compute_user_ev_action_str',
     )
 
+    @api.model
+    def _delete_old_events(self):
+        event_lifetime = self.env['ir.config_parameter'].get_param('hr_rfid.event_lifetime')
+        if event_lifetime is None:
+            return False
+
+        lifetime = timedelta(days=int(event_lifetime))
+        today = datetime.today()
+        res = self.search([
+            ('event_time', '<', str(today-lifetime))
+        ])
+        res.unlink()
+
+        return self.env['hr.rfid.event.system'].delete_old_events()
+
     @api.multi
     def _compute_user_ev_name(self):
         for record in self:
@@ -663,7 +734,7 @@ class HrRfidUserEvent(models.Model):
 
 class HrRfidSystemEvent(models.Model):
     _name = 'hr.rfid.event.system'
-    _description = 'Rfid System Event'
+    _description = 'RFID System Event'
     _order = 'timestamp desc'
 
     name = fields.Char(
@@ -697,6 +768,21 @@ class HrRfidSystemEvent(models.Model):
         string='Description',
         help='Description on why the error happened',
     )
+
+    @api.model
+    def delete_old_events(self):
+        event_lifetime = self.env['ir.config_parameter'].get_param('hr_rfid.event_lifetime')
+        if event_lifetime is None:
+            return False
+
+        lifetime = timedelta(days=int(event_lifetime))
+        today = datetime.today()
+        res = self.search([
+            ('timestamp', '<', str(today-lifetime))
+        ])
+        res.unlink()
+
+        return True
 
     @api.multi
     def _compute_sys_ev_name(self):

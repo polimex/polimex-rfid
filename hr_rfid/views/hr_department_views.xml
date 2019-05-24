@@ -2,26 +2,143 @@
 
 <odoo>
   <data>
+    <record id="hr_department_add_acc_grs_wiz" model="ir.ui.view">
+      <field name="name">hr.department.add.acc.grs.wiz.form</field>
+      <field name="model">hr.department.acc.grs</field>
+      <field name="arch" type="xml">
+        <form string="Add Access Groups">
+          <group>
+            <field name="dep_id" attrs="{'invisible': True}" />
+            <field name="acc_grs" domain="[('department_ids', 'not in', [dep_id])]">
+              <tree string="Access groups that will be added to the department">
+                <field name="name" />
+              </tree>
+            </field>
+          </group>
+          <footer>
+            <button name="add_acc_grs" type="object"
+                    string="Add Access Groups" class="oe_highlight" />
+            <button special="cancel" string="Cancel" />
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_department_del_acc_grs_wiz" model="ir.ui.view">
+      <field name="name">hr.department.del.acc.grs.wiz.form</field>
+      <field name="model">hr.department.acc.grs</field>
+      <field name="arch" type="xml">
+        <form string="Remove Access Groups">
+          <group>
+            <field name="dep_id" attrs="{'invisible': True}" />
+            <field name="acc_grs" domain="[('department_ids', 'in', [dep_id])]">
+              <tree string="Access groups that will be removed from the department">
+                <field name="name" />
+              </tree>
+            </field>
+          </group>
+          <footer>
+            <button name="del_acc_grs" type="object"
+                    string="Remove Access Groups" class="oe_highlight" />
+            <button special="cancel" string="Cancel" />
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_department_def_acc_gr_wiz" model="ir.ui.view">
+      <field name="name">hr.department.def.acc.gr.wiz.form</field>
+      <field name="model">hr.department.def.acc.gr</field>
+      <field name="arch" type="xml">
+        <form string="Change Default Access Group">
+          <group>
+            <field name="dep_id" attrs="{'invisible': True}" />
+            <field name="def_acc_gr" domain="[('department_ids', 'in', [dep_id])]" />
+          </group>
+          <footer>
+            <button name="change_default_access_group" type="object"
+                    string="Change Default Access Group" class="oe_highlight" />
+            <button special="cancel" string="Cancel" />
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_department_add_acc_grs_wiz_action" model="ir.actions.act_window">
+      <field name="name">Add Access Groups</field>
+      <field name="res_model">hr.department.acc.grs</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_department_add_acc_grs_wiz" />
+      <field name="target">new</field>
+    </record>
+
+    <record id="hr_department_del_acc_grs_wiz_action" model="ir.actions.act_window">
+      <field name="name">Remove Access Groups</field>
+      <field name="res_model">hr.department.acc.grs</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_department_del_acc_grs_wiz" />
+      <field name="target">new</field>
+    </record>
+
+    <record id="hr_department_def_acc_gr_wiz_action" model="ir.actions.act_window">
+      <field name="name">Change Default Access Group</field>
+      <field name="res_model">hr.department.def.acc.gr</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_department_def_acc_gr_wiz" />
+      <field name="target">new</field>
+    </record>
+
     <record id="hr_view_department_form_inherit_hr_rfid" model="ir.ui.view">
       <field name="name">hr.department.hr.rfid.access.group</field>
       <field name="model">hr.department</field>
       <field name="inherit_id" ref="hr.view_department_form" />
       <field name="arch" type="xml">
 
-        <field name="company_id" position="after">
-          <field name="hr_rfid_default_access_group"
-                 groups="hr_rfid.hr_rfid_group_officer"
-                 domain="[('department_ids', 'in', [id])]" />
-        </field>
+          <xpath expr="//div[@name='button_box']" position="before">
+            <button name="%(hr_department_add_acc_grs_wiz_action)d"
+                    id="hr_department_add_acc_grs_btn"
+                    type="action"
+                    string="Add Access Groups"
+                    class="oe_highlight"
+                    groups="hr_rfid.hr_rfid_group_officer" />
+            <button name="%(hr_department_del_acc_grs_wiz_action)d"
+                    id="hr_department_del_acc_grs_btn"
+                    type="action"
+                    string="Remove Access Groups"
+                    groups="hr_rfid.hr_rfid_group_officer" />
+            <button name="%(hr_department_def_acc_gr_wiz_action)d"
+                    id="hr_department_def_acc_gr_btn"
+                    type="action"
+                    string="Change Default Access Group"
+                    class="oe_highlight"
+                    groups="hr_rfid.hr_rfid_group_officer" />
+            <button name="remove_def_acc_gr"
+                    id="hr_department_def_acc_gr_rem_btn"
+                    type="object"
+                    string="Remove Default Access Group" />
+          </xpath>
 
-        <xpath expr="//sheet//group" position="after">
-          <field name="hr_rfid_allowed_access_groups"
-                 groups="hr_rfid.hr_rfid_group_officer" >
-            <tree>
-              <field name="name" />
-            </tree>
+          <field name="company_id" position="after">
+            <field name="hr_rfid_default_access_group"
+                   groups="hr_rfid.hr_rfid_group_officer"
+                   domain="[('department_ids', 'in', [id])]"
+                   readonly="1" />
           </field>
-        </xpath>
+
+          <xpath expr="//sheet//group" position="after">
+            <group string="Available access groups for employees in this department">
+            </group>
+            <field name="hr_rfid_allowed_access_groups"
+                   groups="hr_rfid.hr_rfid_group_officer"
+                   readonly="1">
+              <tree>
+                <field name="name" />
+              </tree>
+            </field>
+          </xpath>
 
       </field>
     </record>

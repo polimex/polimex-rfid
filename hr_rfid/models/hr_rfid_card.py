@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api, exceptions
+from odoo import api, fields, models, exceptions
 from datetime import timedelta, datetime
 
 
@@ -37,7 +37,7 @@ class HrRfidCard(models.Model):
 
     user_id = fields.Many2one(
         'hr.employee',
-        string='Card Owner (employee)',
+        string='Card Owner (Employee)',
         ondelete='cascade',
         default=_get_cur_employee_id,
         track_visibility='onchange',
@@ -45,7 +45,7 @@ class HrRfidCard(models.Model):
 
     contact_id = fields.Many2one(
         'res.partner',
-        string='Card Owner (contact)',
+        string='Card Owner (Partner)',
         ondelete='cascade',
         default=0,
         track_visibility='onchange',

@@ -94,11 +94,6 @@
               groups="hr_rfid_group_officer"
               web_icon="hr_rfid,static/description/icon.png" />
 
-    <!--<menuitem id="hr_rfid_cards_menu"-->
-              <!--name="Cards"-->
-              <!--parent="hr_rfid_main_menu"-->
-              <!--groups="hr_rfid_group_officer" />-->
-
     <menuitem id="hr_rfid_events_menu"
               name="Events"
               parent="hr_rfid_main_menu"
@@ -110,7 +105,7 @@
               parent="hr_rfid_main_menu"
               action="hr_rfid_card_action"
               groups="hr_rfid_group_officer"
-              sequence="2"/3
+              sequence="2" />
 
     <menuitem id="hr_rfid_settings_menu"
               name="Settings"
@@ -170,7 +165,7 @@
               name="Module Discovery"
               parent="hr_rfid_menu_modules_main_menu"
               action="hr_rfid_webstack_discovery_action"
-              groups="hr_rfid_group_manager"
+              groups="hr_rfid_view_module_discovery"
               sequence="1" />
 
     <menuitem id="hr_rfid_menu_controllers"
