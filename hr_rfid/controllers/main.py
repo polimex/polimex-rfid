@@ -9,6 +9,8 @@ import json
 class WebRfidController(http.Controller):
     @http.route(['/hr/rfid/event'], type='json', auth='none', method=['POST'], csrf=False)
     def post_event(self, **post):
+        # TODO Safety exit if something is missing from the post dictionary
+        # try:
         webstacks_env = request.env['hr.rfid.webstack'].sudo()
         webstack = webstacks_env.search([ ('serial', '=', str(post['convertor'])) ])
         ws_db_update_dict = {
@@ -362,3 +364,6 @@ class WebRfidController(http.Controller):
         webstack.write(ws_db_update_dict)
 
         return result
+        # except Exception as e:
+        #     # TODO This is a bad way of handling it
+        #     _log.error("Exception + " + str(e))

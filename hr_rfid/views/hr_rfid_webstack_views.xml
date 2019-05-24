@@ -7,8 +7,7 @@
       <field name="name">hr.rfid.webstack.form</field>
       <field name="model">hr.rfid.webstack</field>
       <field name="arch" type="xml">
-        <form string="RFID Modules" create="false">
-
+        <form string="RFID Modules">
           <header>
             <button name="action_set_active" type="object"
                     attrs="{'invisible': [('ws_active','=', True)]}"
@@ -19,6 +18,11 @@
             <button name="action_set_webstack_settings" type="object"
                     string="Setup module for this odoo"
                     help="Set the webstack up to work with this odoo. Module username and password must be set to the admin username and password on the module. Last ip must be set to the correct ip of the module" />
+            <button name="action_check_if_ws_available" type="object"
+                    attrs="{'invisible': [('available', '=', 'a')]}"
+                    string="Test module connection"
+                    help="Connect to the module and request for information." />
+            <field name="available" widget="statusbar" />
           </header>
 
           <group>
@@ -26,6 +30,7 @@
             <field name="serial" readonly="1" />
             <field name="ws_active" />
             <field name="key" />
+            <field name="hw_version" readonly="1" />
             <field name="version" readonly="1" />
             <field name="behind_nat" />
             <field name="last_ip" />
@@ -83,12 +88,14 @@
       <field name="name">hr.rfid.webstack.tree</field>
       <field name="model">hr.rfid.webstack</field>
       <field name="arch" type="xml">
-        <tree string="RFID Modules" create="false">
+        <tree string="RFID Modules">
           <field name="name" />
           <field name="serial" />
           <field name="ws_active" />
+          <field name="hw_version" />
           <field name="version" />
           <field name="updated_at" />
+          <field name="http_link" />
         </tree>
       </field>
     </record>
@@ -515,8 +522,8 @@
             <field name="error" readonly="1" />
             <field name="cr_timestamp" readonly="1" />
             <field name="ex_timestamp" readonly="1" />
-            <field name="request" readonly="1" />
-            <field name="response" readonly="1" />
+            <field name="request" readonly="1" groups="base.group_system" />
+            <field name="response" readonly="1" groups="base.group_system" />
             <field name="cmd_data" readonly="1" />
           </group>
         </form>

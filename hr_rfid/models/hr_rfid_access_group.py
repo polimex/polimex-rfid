@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api, exceptions
+from odoo import api, fields, models, exceptions
 import logging
 import queue
 
@@ -99,12 +99,13 @@ class HrRfidAccessGroup(models.Model):
 
     @api.depends('door_ids', 'inherited_access_groups')
     def _compute_all_doors(self):
-        door_ids = set()
-        HrRfidAccessGroup._check_all_doors_rec(door_ids, [], self)
-        self.all_door_ids = self.env['hr.rfid.access.group.door.rel'].browse(list(door_ids))
+        for acc_gr in self:
+            door_ids = set()
+            HrRfidAccessGroup._check_all_doors_rec(door_ids, [], acc_gr)
+            acc_gr.all_door_ids = self.env['hr.rfid.access.group.door.rel'].browse(list(door_ids))
 
     @staticmethod
-    def _check_all_doors_rec(door_ids, checked_ids, acc_gr):
+    def _check_all_doors_rec(door_ids: set, checked_ids: list, acc_gr):
         if acc_gr.id in checked_ids:
             return
         checked_ids.append(acc_gr.id)
@@ -128,7 +129,7 @@ class HrRfidAccessGroup(models.Model):
             raise exceptions.ValidationError(err)
 
     @staticmethod
-    def _check_inherited_access_groups_rec(acc_gr, visited_groups, group_order, orig_id=None):
+    def _check_inherited_access_groups_rec(acc_gr, visited_groups: list, group_order: list, orig_id=None):
         group_order.append(acc_gr.id)
         if acc_gr.id == orig_id:
             return True
@@ -216,7 +217,7 @@ class HrRfidAccessGroupDoorRel(models.Model):
     _name = 'hr.rfid.access.group.door.rel'
 
     def _get_cur_access_group_id(self):
-        return self.env.context.get('access_group_id', None)
+        return self.env['hr.rfid.access.group'].browse(self._context.get('active_id'))
 
     def _get_cur_door_id(self):
         return self.env.context.get('door_id', None)
@@ -251,13 +252,17 @@ class HrRfidAccessGroupDoorRel(models.Model):
         Call after you change the time schedule
         :param rel_id: The id of the relation
         """
-        rel = self.env['hr.rfid.access.group.door.rel'].browse(rel_id)
+        rel = self.browse(rel_id)
         cmd_env = self.env['hr.rfid.command']
 
         for user in rel.access_group_id.user_ids:
             for card in user.hr_rfid_card_ids:
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
                                  user.hr_rfid_pin_code, card_id=card.id)
+        for contact in rel.access_group_id.contact_ids:
+            for card in contact.hr_rfid_card_ids:
+                cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
+                                 contact.hr_rfid_pin_code, card_id=card.id)
 
     @api.model
     def door_changed(self, rel_id, prev_door_id):
@@ -266,7 +271,7 @@ class HrRfidAccessGroupDoorRel(models.Model):
         :param rel_id: The id of the relation
         :param prev_door_id: The id of the previous door
         """
-        rel = self.env['hr.rfid.access.group.door.rel'].browse(rel_id)
+        rel = self.browse(rel_id)
         prev_door = self.env['hr.rfid.door'].browse(prev_door_id)
         cmd_env = self.env['hr.rfid.command']
 
@@ -276,6 +281,12 @@ class HrRfidAccessGroupDoorRel(models.Model):
                                     user.hr_rfid_pin_code, card_id=card.id)
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id, user.hr_rfid_pin_code,
                                  card_id=card.id)
+        for contact in rel.access_group_id.contact_ids:
+            for card in contact.hr_rfid_card_ids:
+                cmd_env.remove_card(prev_door.id, rel.time_schedule_id.id,
+                                    contact.hr_rfid_pin_code, card_id=card.id)
+                cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
+                                 contact.hr_rfid_pin_code, card_id=card.id)
 
     @api.model
     def access_group_changed(self, rel_id, prev_acc_gr_id):
@@ -284,7 +295,7 @@ class HrRfidAccessGroupDoorRel(models.Model):
         :param rel_id: The id of the access group
         :param prev_acc_gr_id: The id of the previous access group
         """
-        rel = self.env['hr.rfid.access.group.door.rel'].browse(rel_id)
+        rel = self.browse(rel_id)
         prev_acc_gr = self.env['hr.rfid.access.group'].browse(prev_acc_gr_id)
         cmd_env = self.env['hr.rfid.command']
 
@@ -292,11 +303,27 @@ class HrRfidAccessGroupDoorRel(models.Model):
             for card in user.hr_rfid_card_ids:
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
                                  user.hr_rfid_pin_code, card_id=card.id)
+        for contact in prev_acc_gr.contact_ids:
+            for card in contact.hr_rfid_card_ids:
+                cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
+                                 contact.hr_rfid_pin_code, card_id=card.id)
 
         for user in rel.access_group_id.user_ids:
             for card in user.hr_rfid_card_ids:
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
                                  user.hr_rfid_pin_code, card_id=card.id)
+        for contact in rel.access_group_id.contact_ids:
+            for card in contact.hr_rfid_card_ids:
+                cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
+                                 contact.hr_rfid_pin_code, card_id=card.id)
+
+    @api.model
+    @api.returns('self', lambda value: value.id)
+    def create(self, vals):
+        rel = super(HrRfidAccessGroupDoorRel, self).create(vals)
+        self.time_schedule_changed(rel.id)
+
+        return rel
 
     @api.multi
     def write(self, vals):
@@ -311,16 +338,14 @@ class HrRfidAccessGroupDoorRel(models.Model):
             new_door_id = rel.door_id.id
             new_ts_id = rel.time_schedule_id.id
 
-            env = self.env['hr.rfid.access.groupd.door.rel']
-
             if old_acc_gr_id != new_acc_gr_id:
-                env.access_group_changed(rel, old_acc_gr_id)
+                self.access_group_changed(rel.id, old_acc_gr_id)
 
             if old_door_id != new_door_id:
-                env.door_changed(rel, old_door_id)
+                self.door_changed(rel.id, old_door_id)
 
             if old_ts_id != new_ts_id:
-                env.time_schedule_changed(rel)
+                self.time_schedule_changed(rel.id)
 
         return True
 
@@ -336,6 +361,83 @@ class HrRfidAccessGroupDoorRel(models.Model):
 
         ret = super(HrRfidAccessGroupDoorRel, self).unlink()
         return ret
+
+
+class HrRfidAccessGroupWizard(models.TransientModel):
+    _name = 'hr.rfid.access.group.wizard'
+    _description = 'Add or remove doors to the access group'
+
+    def _default_acc_gr(self):
+        return self.env['hr.rfid.access.group'].browse(self._context.get('active_ids'))
+
+    def _default_acc_gr_doors(self):
+        acc_gr = self._default_acc_gr()
+        doors = self.env['hr.rfid.door']
+        for door_rel in acc_gr.door_ids:
+            doors += door_rel.door_id
+        return doors
+
+    acc_gr_id = fields.Many2many(
+        'hr.rfid.access.group',
+        string='Access Group',
+        required=True,
+        default=_default_acc_gr,
+    )
+
+    door_ids = fields.Many2many(
+        'hr.rfid.door',
+        'my_door_ids',
+        'wiz',
+        'door',
+        string='Doors',
+        help='Which doors to add to the access group',
+        required=True,
+    )
+
+    acc_gr_doors = fields.Many2many(
+        'hr.rfid.door',
+        'custom_door_ids',
+        'wiz',
+        'door',
+        string='All access group doors',
+        default=_default_acc_gr_doors,
+    )
+
+    time_schedule_id = fields.Many2one(
+        'hr.rfid.time.schedule',
+        string='Time Schedule',
+        help='Time schedule for the door/access group combination',
+        required=True,
+        default=lambda self: self.env.ref('hr_rfid.hr_rfid_time_schedule_0').id,
+    )
+
+    @api.multi
+    def add_doors(self):
+        self.ensure_one()
+        rel_env = self.env['hr.rfid.access.group.door.rel']
+        for door in self.door_ids:
+            res = rel_env.search([ ('access_group_id', '=', self.acc_gr_id.id),
+                                   ('door_id', '=', door.id) ])
+            if len(res) == 1:
+                res.time_schedule_id = self.time_schedule_id
+            else:
+                rel_env.create({
+                    'access_group_id': self.acc_gr_id.id,
+                    'door_id': door.id,
+                    'time_schedule_id': self.time_schedule_id.id,
+                })
+        return {}
+
+    @api.multi
+    def del_doors(self):
+        self.ensure_one()
+        rel_env = self.env['hr.rfid.access.group.door.rel']
+        for door in self.door_ids:
+            res = rel_env.search([ ('access_group_id', '=', self.acc_gr_id.id),
+                                   ('door_id', '=', door.id) ])
+            if len(res) > 0:
+                res.unlink()
+
 
 
 
