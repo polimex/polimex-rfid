@@ -480,8 +480,8 @@
       <field name="arch" type="xml">
         <form string="Add card">
           <group>
-            <field name="employee_id" attrs="{'invisible': [('contact_id','!=',None)]}"/>
-            <field name="contact_id" attrs="{'invisible': [('employee_id','!=',None)]}"/>
+            <field name="employee_id" />
+            <field name="contact_id" />
             <field name="card_type" />
             <field name="card_active" />
             <field name="activate_on" />
