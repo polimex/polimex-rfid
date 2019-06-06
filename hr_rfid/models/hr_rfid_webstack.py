@@ -849,7 +849,10 @@ class HrRfidSystemEventWizard(models.TransientModel):
         self.ensure_one()
 
         js = json.loads(self.sys_ev_id.error_description.split('\n')[-1])
-        card_number = js['event']['card']
+        try:
+            card_number = js['event']['card']
+        except KeyError as _:
+            raise exceptions.ValidationError('System event does not have a card number in it')
 
         if len(self.contact_id) == len(self.employee_id):
             raise exceptions.ValidationError('Card cannot have both or neither a contact owner and an employee owner.')
