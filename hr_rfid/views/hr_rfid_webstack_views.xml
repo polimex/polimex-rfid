@@ -451,9 +451,26 @@
       <field name="arch" type="xml">
         <calendar date_start="event_time" date_stop="event_time" color="action_string">
           <field name="user_id" />
-          <field name="door_id" />
+          <field name="door_id">
+            <field name="controller_id" />
+          </field>
           <field name="action_string" />
         </calendar>
+      </field>
+    </record>
+
+    <record id="hr_rfid_user_ev_view_pivot" model="ir.ui.view">
+      <field name="name">hr.rfid.user.ev.pivot</field>
+      <field name="model">hr.rfid.event.user</field>
+      <field name="arch" type="xml">
+        <pivot string="Event" disable_linking="True">
+          <field name="event_time" type="row" />
+          <field name="event_action" type="col" />
+          <!--<field name="ctrl_addr" type="col" />-->
+          <!--<field name="user_id" type="col" />-->
+          <!--<field name="contact_id" type="col" />-->
+          <!--<field name="door_id" type="col" />-->
+        </pivot>
       </field>
     </record>
 

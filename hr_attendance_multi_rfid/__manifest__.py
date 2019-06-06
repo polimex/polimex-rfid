@@ -13,7 +13,7 @@
 
     'website': 'securitybulgaria.com',
 
-    'depends': [ 'base', 'hr', 'hr_rfid', 'hr_attendance' ],
+    'depends': [ 'base', 'hr', 'hr_rfid', 'hr_attendance', 'hr_holidays_public' ],
 
     'data': [ 'views/hr_rfid_webstack_views.xml' ],
 

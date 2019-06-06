@@ -1078,3 +1078,7 @@ class HrRfidCommands(models.Model):
                 'cmd': 'D7',
                 'cr_timestamp': fields.datetime.now(),
             })
+
+
+
+
