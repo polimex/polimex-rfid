@@ -793,6 +793,79 @@ class HrRfidSystemEvent(models.Model):
                           ' at ' + str(record.timestamp)
 
 
+class HrRfidSystemEventWizard(models.TransientModel):
+    _name = 'hr.rfid.event.sys.wiz'
+    _description = 'Add card to employee/contact'
+
+    def _default_sys_ev(self):
+        return self.env['hr.rfid.event.system'].browse(self._context.get('ative_ids'))
+
+    sys_ev_id = fields.Many2one(
+        'hr.rfid.event.system',
+        string='System event',
+        required=True,
+        default=_default_sys_ev,
+    )
+
+    employee_id = fields.Many2one(
+        'hr.employee',
+        string='Card owner (employee)',
+    )
+
+    contact_id = fields.Many2one(
+        'res.partner',
+        stirng='Card owner (contact)',
+    )
+
+    card_type = fields.Many2one(
+        'hr.rfid.card.type',
+        string='Card type',
+        help='Only doors that support this type will be able to open this card',
+        default=lambda self: self.env.ref('hr_rfid.hr_rfid_card_type_def').id,
+    )
+
+    activate_on = fields.Datetime(
+        string='Activate on',
+        help='Date and time the card will be activated on',
+        track_visibility='onchange',
+        default=lambda self: datetime.now(),
+    )
+
+    deactivate_on = fields.Datetime(
+        string='Deactivate on',
+        help='Date and time the card will be deactivated on',
+        track_visibility='onchange',
+    )
+
+    card_active = fields.Boolean(
+        string='Active',
+        help='Whether the card is active or not',
+        track_visibility='onchange',
+        default=True,
+    )
+
+    @api.multi
+    def add_card(self):
+        self.ensure_one()
+
+        js = json.loads(self.sys_ev_id.error_description.split('\n')[-1])
+        card_number = js['event']['card']
+
+        if (self.contact_id is None and self.employee_id is None) \
+                or (self.contact_id is not None and self.employee_id is not None):
+            raise exceptions.ValidationError('Card cannot have both or neither a contact owner and an employee owner.')
+
+        self.env['hr.rfid.card'].create({
+            'number': card_number,
+            'card_type': self.card_type,
+            'employee_id': self.employee_id,
+            'contact_id': self.contact_id,
+            'activate_on': self.activate_on,
+            'deactivate_on': self.deactivate_on,
+            'card_active': self.card_active,
+        })
+
+
 class HrRfidCommands(models.Model):
     # Commands we have queued up to send to the controllers
     _name = 'hr.rfid.command'
