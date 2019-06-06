@@ -798,7 +798,7 @@ class HrRfidSystemEventWizard(models.TransientModel):
     _description = 'Add card to employee/contact'
 
     def _default_sys_ev(self):
-        return self.env['hr.rfid.event.system'].browse(self._context.get('ative_ids'))
+        return self.env['hr.rfid.event.system'].browse(self._context.get('active_ids'))
 
     sys_ev_id = fields.Many2one(
         'hr.rfid.event.system',
@@ -851,11 +851,11 @@ class HrRfidSystemEventWizard(models.TransientModel):
         js = json.loads(self.sys_ev_id.error_description.split('\n')[-1])
         card_number = js['event']['card']
 
-        if (self.contact_id is None and self.employee_id is None) \
-                or (self.contact_id is not None and self.employee_id is not None):
+        if len(self.contact_id) == len(self.employee_id):
             raise exceptions.ValidationError('Card cannot have both or neither a contact owner and an employee owner.')
 
-        self.env['hr.rfid.card'].create({
+        card_env = self.env['hr.rfid.card']
+        card_env.create({
             'number': card_number,
             'card_type': self.card_type,
             'employee_id': self.employee_id,
