@@ -484,20 +484,6 @@
             <field name="controller_id" readonly="1" />
             <field name="timestamp" readonly="1" />
             <field name="error_description" readonly="1" />
-
-            <filter name="last_week" string="Events from last week"
-                    domain="[('timestamp', '>=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]" />
-            <filter name="last_month" string="Events from last month"
-                    domain="[('timestamp', '>=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]" />
-            <filter name="last_year" string="Events from last year"
-                    domain="[('timestamp', '>=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]" />
-            <separator />
-            <filter name="this_day" string="Events from today"
-                    domain="[('timestamp', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('timestamp', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]" />
-            <filter name="this_week" string="Events from this week"
-                    domain="[('timestamp', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('timestamp', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]" />
-            <filter name="this_year" string="Events from this year"
-                    domain="[('timestamp', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('timestamp', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]" />
           </group>
         </form>
       </field>
