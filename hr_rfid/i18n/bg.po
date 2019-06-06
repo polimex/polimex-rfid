@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-06 19:51+0000\n"
-"PO-Revision-Date: 2019-06-06 23:01+0300\n"
+"POT-Creation-Date: 2019-06-06 20:51+0000\n"
+"PO-Revision-Date: 2019-06-07 00:00+0300\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -380,6 +380,12 @@ msgid "Change Default Access Group"
 msgstr "Промяна на групата за достъп по подразбиране"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:129
+#, python-format
+msgid "Circular reference found in the inherited access groups: %s"
+msgstr "Намерена циркулярна връзка със наследените групи: %s"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__cmd
 msgid "Command"
 msgstr "Команда"
@@ -442,6 +448,13 @@ msgstr "Команди от миналата седмица"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
 msgid "Commands from last year"
 msgstr "Команди от миналата година"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
+msgid "Commands from this month"
+msgstr "Команди от този месец"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
@@ -985,21 +998,21 @@ msgstr "Разрешен"
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_department
 msgid "HR Department"
-msgstr "ЧР Отдел"
+msgstr "HR Отдел"
 
 #. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.hr_rfid_set_card_active_inactive_status_ir_actions_server
 #: model:ir.cron,cron_name:hr_rfid.hr_rfid_set_card_active_inactive_status
 #: model:ir.cron,name:hr_rfid.hr_rfid_set_card_active_inactive_status
 msgid "HR RFID: Check if any cards need to be activated or deactivated"
-msgstr ""
+msgstr "HR RFID: Проверка дали някои карти имат нужда да се активират или деактивират"
 
 #. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.hr_rfid_delete_old_events_ir_actions_server
 #: model:ir.cron,cron_name:hr_rfid.hr_rfid_delete_old_events
 #: model:ir.cron,name:hr_rfid.hr_rfid_delete_old_events
 msgid "HR RFID: Delete old events"
-msgstr ""
+msgstr "HR RFID: Изтрий стари събития"
 
 #. module: hr_rfid
 #: model:res.groups,name:hr_rfid.hr_rfid_group_officer_department
@@ -1011,7 +1024,7 @@ msgstr "HR RFID: Показване само на информацията на 
 #: model:ir.cron,cron_name:hr_rfid.hr_rfid_sync_ctrl_clock_cron
 #: model:ir.cron,name:hr_rfid.hr_rfid_sync_ctrl_clock_cron
 msgid "HR RFID: Synchronize controller clocks"
-msgstr ""
+msgstr "HR RFID: Синхронизиране на часовниците на контролерите"
 
 #. module: hr_rfid
 #: model:res.groups,name:hr_rfid.hr_rfid_view_module_discovery
