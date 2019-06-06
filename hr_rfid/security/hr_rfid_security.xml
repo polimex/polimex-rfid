@@ -26,22 +26,21 @@
       <field name="category_id" ref="base.module_category_hidden" />
     </record>
 
+    <record id="hr_rfid_group_officer_department" model="res.groups">
+      <field name="name">Only show own department's information</field>
+      <field name="category_id" ref="base.module_category_hidden" />
+    </record>
+
     <record id="hr_rfid_group_officer" model="res.groups">
       <field name="name">Officer</field>
       <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_view_rfid_data'))]" />
       <field name="category_id" ref="hr_rfid_management" />
     </record>
 
-    <record id="hr_rfid_group_officer_department" model="res.groups">
-      <field name="name">Department Officer</field>
-      <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_group_officer'))]" />
-      <field name="category_id" ref="hr_rfid_management" />
-    </record>
-
     <record id="hr_rfid_group_manager" model="res.groups">
       <field name="name">Manager</field>
       <field name="implied_ids"
-             eval="[(4, ref('hr_rfid.hr_rfid_group_officer_department')), (4, ref('hr_rfid.hr_rfid_view_rfid_data')), (4, ref('hr_rfid.hr_rfid_view_rfid_pin_code_data'))]" />
+             eval="[(4, ref('hr_rfid.hr_rfid_group_officer')), (4, ref('hr_rfid.hr_rfid_view_rfid_data')), (4, ref('hr_rfid.hr_rfid_view_rfid_pin_code_data'))]" />
       <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
       <field name="category_id" ref="hr_rfid_management" />
     </record>
