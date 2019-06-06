@@ -20,6 +20,9 @@ class HrRfidUserEvent(models.Model):
             ev = super(HrRfidUserEvent, self).create([vals])
             records += ev
 
+            if len(ev.contact_id) > 0:
+                continue
+
             if ev.door_id.attendance is True and ev.event_action == '1':
                 if ev.reader_id.reader_type == '0' and ev.employee_id.attendance_state == 'checked_out':
                     ev.in_or_out = '0'
