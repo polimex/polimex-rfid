@@ -857,7 +857,7 @@ class HrRfidSystemEventWizard(models.TransientModel):
         card_env = self.env['hr.rfid.card']
         new_card = {
             'number': card_number,
-            'card_type': self.card_type,
+            'card_type': self.card_type.id,
             'activate_on': self.activate_on,
             'deactivate_on': self.deactivate_on,
             'card_active': self.card_active,
