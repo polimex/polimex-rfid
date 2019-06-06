@@ -438,6 +438,8 @@
                   domain="[('event_time', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('event_time', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]" />
           <filter name="this_week" string="Events from this week"
                   domain="[('event_time', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('event_time', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="this_month" string="Commands from this month"
+                  domain="[('event_time', '&gt;=', context_today().strftime('%%Y-%%m-1'))]" />
           <filter name="this_year" string="Events from this year"
                   domain="[('event_time', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('event_time', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]" />
           <separator />
@@ -557,6 +559,8 @@
                   domain="[('timestamp', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('timestamp', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]" />
           <filter name="this_week" string="Events from this week"
                   domain="[('timestamp', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('timestamp', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="this_month" string="Commands from this month"
+                  domain="[('timestamp', '&gt;=', context_today().strftime('%%Y-%%m-1'))]" />
           <filter name="this_year" string="Events from this year"
                   domain="[('timestamp', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('timestamp', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]" />
         </search>
@@ -647,6 +651,8 @@
                   domain="[('cr_timestamp', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('cr_timestamp', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]" />
           <filter name="this_week" string="Commands from this week"
                   domain="[('cr_timestamp', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('cr_timestamp', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="this_month" string="Commands from this month"
+                  domain="[('cr_timestamp', '&gt;=', context_today().strftime('%%Y-%%m-1'))]" />
           <filter name="this_year" string="Commands from this year"
                   domain="[('cr_timestamp', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('cr_timestamp', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]" />
         </search>

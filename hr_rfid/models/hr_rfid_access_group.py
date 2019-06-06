@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, exceptions
+from odoo import api, fields, models, exceptions, _
 import logging
 import queue
 
@@ -121,11 +121,12 @@ class HrRfidAccessGroup(models.Model):
         group_order = []
         ret = HrRfidAccessGroup._check_inherited_access_groups_rec(self, [], group_order)
         if ret is True:
-            err = 'Circular reference found in the inherited access groups:'
+            err2 = ''
             for acc_gr_id in group_order:
                 acc_gr = env.browse(acc_gr_id)
-                err += '\n-> '
-                err += acc_gr.name
+                err2 += '\n-> '
+                err2 += acc_gr.name
+            err = _('Circular reference found in the inherited access groups: %s') % err2
             raise exceptions.ValidationError(err)
 
     @staticmethod
