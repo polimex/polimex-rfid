@@ -855,15 +855,18 @@ class HrRfidSystemEventWizard(models.TransientModel):
             raise exceptions.ValidationError('Card cannot have both or neither a contact owner and an employee owner.')
 
         card_env = self.env['hr.rfid.card']
-        card_env.create({
+        new_card = {
             'number': card_number,
             'card_type': self.card_type,
-            'employee_id': self.employee_id,
-            'contact_id': self.contact_id,
             'activate_on': self.activate_on,
             'deactivate_on': self.deactivate_on,
             'card_active': self.card_active,
-        })
+        }
+        if len(self.contact_id) > 0:
+            new_card['contact_id'] = self.contact_id.id
+        else:
+            new_card['employee_id'] = self.employee_id.id
+        card_env.create(new_card)
 
 
 class HrRfidCommands(models.Model):
