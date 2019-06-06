@@ -89,6 +89,7 @@
       <field name="res_model">hr.rfid.command</field>
       <field name="view_type">form</field> 
       <field name="view_mode">tree,form,search,calendar</field>
+      <field name="context">{"search_default_this_day":1}</field>
     </record>
 
     <menuitem id="hr_rfid_main_menu"

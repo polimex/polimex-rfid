@@ -572,6 +572,20 @@
           <field name="error" />
           <field name="cr_timestamp" />
           <field name="ex_timestamp" />
+
+          <filter name="last_week" string="Commands from last week"
+                  domain="[('cr_timestamp', '>=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="last_month" string="Commands from last month"
+                  domain="[('cr_timestamp', '>=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="last_year" string="Commands from last year"
+                  domain="[('cr_timestamp', '>=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]" />
+          <separator />
+          <filter name="this_day" string="Commands from today"
+                  domain="[('cr_timestamp', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('cr_timestamp', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="this_week" string="Commands from this week"
+                  domain="[('cr_timestamp', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('cr_timestamp', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="this_year" string="Commands from this year"
+                  domain="[('cr_timestamp', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('cr_timestamp', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]" />
         </search>
       </field>
     </record>
