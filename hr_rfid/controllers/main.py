@@ -134,10 +134,10 @@ class WebRfidController(http.Controller):
                 'event_action': str(event_action),
             }
 
-            if len(card.user_id) == 0:
+            if len(card.employee_id) == 0:
                 event_dict['contact_id'] = card.contact_id.id
             else:
-                event_dict['user_id'] = card.user_id.id
+                event_dict['employee_id'] = card.employee_id.id
 
             ev_env.create(event_dict)
 

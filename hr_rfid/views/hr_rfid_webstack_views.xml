@@ -252,7 +252,7 @@
                 <tree>
                   <field name="event_time" />
                   <field name="ctrl_addr" />
-                  <field name="user_id" />
+                  <field name="employee_id" />
                   <field name="reader_id" />
                   <field name="card_id" />
                 </tree>
@@ -333,7 +333,7 @@
           <field name="user_event_ids" readonly="1">
             <tree>
               <field name="event_time" />
-              <field name="user_id" />
+              <field name="employee_id" />
               <field name="card_id" />
               <field name="door_id" />
             </tree>
@@ -382,7 +382,7 @@
             <field name="event_action" readonly="1" />
             <field name="event_time" readonly="1" />
             <field name="ctrl_addr" readonly="1" />
-            <field name="user_id" readonly="1" />
+            <field name="employee_id" readonly="1" />
             <field name="door_id" readonly="1" />
             <field name="reader_id" readonly="1" />
             <field name="card_id" readonly="1" />
@@ -396,7 +396,7 @@
       <field name="model">hr.rfid.event.user</field>
       <field name="arch" type="xml">
         <tree create="false" delete="false">
-          <field name="user_id" />
+          <field name="employee_id" />
           <field name="door_id" />
           <field name="event_action" />
           <field name="event_time" />
@@ -414,7 +414,7 @@
           <field name="door_id" />
           <field name="event_action" />
           <field name="event_time" />
-          <field name="user_id">
+          <field name="employee_id">
             <field name="name" />
           </field>
           <field name="card_id">
@@ -450,7 +450,7 @@
       <field name="model">hr.rfid.event.user</field>
       <field name="arch" type="xml">
         <calendar date_start="event_time" date_stop="event_time" color="action_string">
-          <field name="user_id" />
+          <field name="employee_id" />
           <field name="door_id">
             <field name="controller_id" />
           </field>
@@ -467,7 +467,7 @@
           <field name="event_time" type="row" />
           <field name="event_action" type="col" />
           <!--<field name="ctrl_addr" type="col" />-->
-          <!--<field name="user_id" type="col" />-->
+          <!--<field name="employee_id" type="col" />-->
           <!--<field name="contact_id" type="col" />-->
           <!--<field name="door_id" type="col" />-->
         </pivot>

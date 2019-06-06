@@ -37,7 +37,7 @@ class HrRfidCard(models.Model):
         track_visibility='onchange',
     )
 
-    user_id = fields.Many2one(
+    employee_id = fields.Many2one(
         'hr.employee',
         string='Card Owner (Employee)',
         ondelete='cascade',
@@ -87,12 +87,12 @@ class HrRfidCard(models.Model):
     # )
 
     def get_owner(self):
-        if len(self.user_id) == 1:
-            return self.user_id
+        if len(self.employee_id) == 1:
+            return self.employee_id
         return self.contact_id
 
     def get_owner_type(self):
-        if len(self.user_id) == 1:
+        if len(self.employee_id) == 1:
             return OwnerType.Employee
         return OwnerType.Contact
 
@@ -153,8 +153,8 @@ class HrRfidCard(models.Model):
             old_card_type_id = card.card_type.id
 
             super(HrRfidCard, card).write(vals)
-            if (len(card.user_id) == len(card.contact_id)
-                    or (len(card.user_id) > 0 and len(card.contact_id) > 0)):
+            if (len(card.employee_id) == len(card.contact_id)
+                    or (len(card.employee_id) > 0 and len(card.contact_id) > 0)):
                 raise exceptions.ValidationError(invalid_user_and_contact_msg)
 
             if new_active == old_active and new_active is False:
@@ -214,7 +214,7 @@ class HrRfidCard(models.Model):
     @api.returns('self', lambda value: value.id)
     def create(self, vals):
         for val in vals:
-            new_user      = val.get('user_id',    None)
+            new_user      = val.get('employee_id',    None)
             new_contact   = val.get('contact_id', None)
 
             if new_user is not None and new_contact is not None:

@@ -521,7 +521,7 @@ class HrRfidDoor(models.Model):
                 commands_env = self.env['hr.rfid.command']
 
                 for acc_gr_rel in door.access_group_ids:
-                    for user in acc_gr_rel.access_group_id.user_ids:
+                    for user in acc_gr_rel.access_group_id.employee_ids:
                         for card in user.hr_rfid_card_ids:
                             if card.card_type.id == old_card_type:
                                 commands_env.remove_card(door.id, acc_gr_rel. time_schedule_id.id,
@@ -643,7 +643,7 @@ class HrRfidUserEvent(models.Model):
         help='ID the controller differentiates itself from the others with on the same webstack'
     )
 
-    user_id = fields.Many2one(
+    employee_id = fields.Many2one(
         'hr.employee',
         string='User',
         help='User affected by this event',
@@ -724,7 +724,7 @@ class HrRfidUserEvent(models.Model):
     @api.multi
     def _compute_user_ev_name(self):
         for record in self:
-            record.name = record.user_id.name + ' - ' + \
+            record.name = record.employee_id.name + ' - ' + \
                           self.action_selection[int(record.event_action)-1][1] +\
                           ' @ ' + record.door_id.name
 

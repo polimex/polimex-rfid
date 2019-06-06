@@ -25,14 +25,14 @@ class HrEmployee(models.Model):
 
     hr_rfid_card_ids = fields.One2many(
         'hr.rfid.card',
-        'user_id',
+        'employee_id',
         string='RFID Card',
         help='Cards owned by the employee',
     )
 
     hr_rfid_event_ids = fields.One2many(
         'hr.rfid.event.user',
-        'user_id',
+        'employee_id',
         string='RFID Events',
         help='Events concerning this employee',
     )

@@ -17,7 +17,7 @@
             </div>
             <group>
               <field name="number" />
-              <field name="user_id" />
+              <field name="employee_id" />
               <field name="contact_id" />
               <field name="card_type" />
               <field name="card_active" />
@@ -39,7 +39,7 @@
       <field name="arch" type="xml">
         <tree string="RFID Card">
           <field name="number" />
-          <field name="user_id" />
+          <field name="employee_id" />
           <field name="contact_id" />
           <field name="card_type" />
           <field name="activate_on" />
@@ -55,7 +55,7 @@
         <search string="RFID Card">
           <field name="number" />
           <field name="card_type" />
-          <field name="user_id">
+          <field name="employee_id">
             <field name="name" />
           </field>
           <field name="contact_id">
@@ -77,7 +77,7 @@
           <field name="card_ids" readonly="1">
             <tree>
               <field name="number" />
-              <field name="user_id" />
+              <field name="employee_id" />
               <field name="contact_id" />
             </tree>
           </field>

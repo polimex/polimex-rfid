@@ -21,11 +21,11 @@ class HrRfidUserEvent(models.Model):
             records += ev
 
             if ev.door_id.attendance is True and ev.event_action == '1':
-                if ev.reader_id.reader_type == '0' and ev.user_id.attendance_state == 'checked_out':
+                if ev.reader_id.reader_type == '0' and ev.employee_id.attendance_state == 'checked_out':
                     ev.in_or_out = '0'
-                    ev.user_id.attendance_action_change_with_date(ev.event_time)
-                elif ev.reader_id.reader_type == '1' and ev.user_id.attendance_state == 'checked_in':
+                    ev.employee_id.attendance_action_change_with_date(ev.event_time)
+                elif ev.reader_id.reader_type == '1' and ev.employee_id.attendance_state == 'checked_in':
                     ev.in_or_out = '1'
-                    ev.user_id.attendance_action_change_with_date(ev.event_time)
+                    ev.employee_id.attendance_action_change_with_date(ev.event_time)
 
         return records
