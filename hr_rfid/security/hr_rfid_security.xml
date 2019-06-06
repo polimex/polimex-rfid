@@ -10,24 +10,24 @@
     </record>
 
     <record id="hr_rfid_view_module_discovery" model="res.groups">
-      <field name="name">View RFID Module Discovery</field>
+      <field name="name">HR RFID: View Module Discovery</field>
       <field name="category_id" ref="base.module_category_hidden" />
       <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
     </record>
 
     <record id="hr_rfid_view_rfid_data" model="res.groups">
-      <field name="name">View RFID data in users</field>
+      <field name="name">HR RFID: View data in users</field>
       <field name="category_id" ref="base.module_category_hidden" />
     </record>
 
     <record id="hr_rfid_view_rfid_pin_code_data" model="res.groups">
-      <field name="name">View RFID pin code data in users</field>
+      <field name="name">HR RFID: View pin code data in users</field>
       <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_view_rfid_data'))]" />
       <field name="category_id" ref="base.module_category_hidden" />
     </record>
 
     <record id="hr_rfid_group_officer_department" model="res.groups">
-      <field name="name">Only show own department's information</field>
+      <field name="name">HR RFID: Only show own department's information</field>
       <field name="category_id" ref="base.module_category_hidden" />
     </record>
 
