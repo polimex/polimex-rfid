@@ -724,9 +724,13 @@ class HrRfidUserEvent(models.Model):
     @api.multi
     def _compute_user_ev_name(self):
         for record in self:
-            record.name = record.employee_id.name + ' - ' + \
-                          self.action_selection[int(record.event_action)-1][1] +\
-                          ' @ ' + record.door_id.name
+            if len(record.employee_id) > 0:
+                record.name = record.employee_id.name
+            else:
+                record.name = record.contact_id.name
+            record.name += ' - ' + \
+                           self.action_selection[int(record.event_action)-1][1] + \
+                           ' @ ' + record.door_id.name
 
     @api.multi
     def _compute_user_ev_action_str(self):
