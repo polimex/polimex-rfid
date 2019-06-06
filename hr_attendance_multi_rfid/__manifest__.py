@@ -16,12 +16,12 @@
     'depends': [ 'base', 'hr', 'hr_rfid', 'hr_attendance', 'hr_holidays_public' ],
 
     'data': [
-        'reports/hr_attendance_theoretical_time_report.xml',
+        'reports/hr_attendance_theoretical_time_report_views.xml',
         'security/hr_attendance_report_theoretical_time_security.xml',
         'security/ir.model.access.csv',
         'views/hr_attendance_views.xml',
         'views/hr_employee_views.xml',
-        'hr_rfid_webstack_views.xml',
+        'views/hr_rfid_webstack_views.xml',
         'views/hr_rfid_webstack_views.xml',
     ],
 
