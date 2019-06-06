@@ -49,7 +49,7 @@
     <record id="hr_rfid_group_officer_department_cards_rule" model="ir.rule">
       <field name="active" eval="True" />
       <field name="name">HR RFID: Only show own department's cards</field>
-      <field name="model_id">hr.rfid.card</field>
+      <field name="model_id" ref="hr_rfid.hr.rfid.card" />
       <field name="domain_force">[('employee_id.department_id.id','=',user.employee_ids.department_id.id)]</field>
       <field name="groups" eval="[(6, 0, [ref('hr_rfid_group_officer_department')])]" />
     </record>
@@ -57,7 +57,7 @@
     <record id="hr_rfid_group_officer_department_cards_rule" model="ir.rule">
       <field name="active" eval="True" />
       <field name="name">HR RFID: Only show department's user events</field>
-      <field name="model_id">hr.rfid.event.user</field>
+      <field name="model_id" ref="hr_rfid.hr.rfid.event.user" />
       <field name="domain_force">[('employee_id.department_id.id','=',user.employee_ids.department_id.id)]</field>
       <field name="groups" eval="[(6, 0, [ref('hr_rfid_group_officer_department')])]" />
     </record>
