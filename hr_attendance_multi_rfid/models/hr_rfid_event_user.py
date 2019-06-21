@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, api, fields
+from datetime import datetime, timedelta
 
 
 class HrRfidUserEvent(models.Model):
@@ -15,6 +16,16 @@ class HrRfidUserEvent(models.Model):
     @api.model_create_multi
     @api.returns('self', lambda value: value.id)
     def create(self, vals_list):
+        def check_check_in(cev):
+            if cev.reader_id.reader_type == '0' and cev.employee_id.attendance_state == 'checked_out':
+                cev.in_or_out = '0'
+                cev.employee_id.attendance_action_change_with_date(cev.event_time)
+
+        def check_check_out(cev):
+            if cev.reader_id.reader_type == '1' and cev.employee_id.attendance_state == 'checked_in':
+                cev.in_or_out = '1'
+                cev.employee_id.attendance_action_change_with_date(cev.event_time)
+
         records = self.env['hr.rfid.event.user']
         for vals in vals_list:
             ev = super(HrRfidUserEvent, self).create([vals])
@@ -24,7 +35,38 @@ class HrRfidUserEvent(models.Model):
                 continue
 
             if ev.door_id.attendance is True and ev.event_action == '1':
-                if ev.reader_id.reader_type == '0' and ev.employee_id.attendance_state == 'checked_out':
+                if ev.reader_id.mode == '03':  # Workcode mode
+                    wc = ev.reader_id.workcode_id
+                    if len(wc) == 0:
+                        continue
+
+                    if wc.user_action == 'stop':
+                        stack = []
+                        last_events = self.search([
+                            ('event_time',  '>=', datetime.now() - timedelta(hours=12)),
+                            ('employee_id', '=' , ev.employee_id),
+                            ('id',          '!=', ev.id),
+                            ('workcode',    '!=', None),
+                        ]).sorted(key=lambda r: r.event_time)
+                        for event in last_events:
+                            action = event.workcode_id.user_action
+                            if action == 'stop':
+                                if len(stack) > 0:
+                                    stack.pop()
+                            else:
+                                stack.append(action)
+
+                        if stack[-1] == 'start':
+                            check_check_out(ev)
+                        else:
+                            check_check_in(ev)
+
+                    elif wc.user_action == 'start':
+                        check_check_out(ev)
+                    elif wc.user_action == 'break':
+                        check_check_in(ev)
+
+                elif ev.reader_id.reader_type == '0' and ev.employee_id.attendance_state == 'checked_out':
                     ev.in_or_out = '0'
                     ev.employee_id.attendance_action_change_with_date(ev.event_time)
                 elif ev.reader_id.reader_type == '1' and ev.employee_id.attendance_state == 'checked_in':

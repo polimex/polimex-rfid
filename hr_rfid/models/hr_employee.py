@@ -66,7 +66,7 @@ class HrEmployee(models.Model):
             if len(pin) != 4:
                 raise exceptions.ValidationError('Pin code must have exactly 4 characters')
 
-            # If char is not a valid hex number, int(char, 16) will raise an error
+            # If char is not a valid decimal number, int(char, 10) will raise an error
             try:
                 for char in str(pin):
                     int(char, 10)

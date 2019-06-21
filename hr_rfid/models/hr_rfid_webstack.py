@@ -577,6 +577,13 @@ class HrRfidReader(models.Model):
         ('1', 'Out'),
     ]
 
+    reader_modes = [
+        ('01', 'Card Only'),
+        ('02', 'Card and Pin'),
+        ('03', 'Card and Workcode'),
+        ('04', 'Card or Pin'),
+    ]
+
     name = fields.Char(
         string='Reader name',
         help='Label to differentiate readers',
@@ -595,6 +602,13 @@ class HrRfidReader(models.Model):
         selection=reader_types,
         string='Reader type',
         help='Type of the reader',
+    )
+
+    mode = fields.Selection(
+        selection=reader_modes,
+        string='Reader mode',
+        help='Mode of the reader',
+        default='01',
     )
 
     controller_id = fields.Many2one(
@@ -627,6 +641,31 @@ class HrRfidReader(models.Model):
                           self.reader_types[int(record.reader_type)][1] + \
                           ' Reader'
 
+    @api.multi
+    def write(self, vals):
+        super(HrRfidReader, self).write(vals)
+
+        controllers = []
+
+        if 'mode' in vals:
+            for reader in self:
+                if reader.controller_id not in controllers:
+                    controllers.append(reader.controller_id)
+
+            for ctrl in controllers:
+                cmd_env = self.env['hr.rfid.command'].sudo()
+
+                data = ''
+                for reader in ctrl.reader_ids:
+                    data = data + str(reader.mode) + '0100'
+
+                cmd_env.create({
+                    'webstack_id': ctrl.webstack_id.id,
+                    'controller_id': ctrl.id,
+                    'cmd': 'D6',
+                    'cmd_data': data,
+                })
+
 
 class HrRfidUserEvent(models.Model):
     _name = 'hr.rfid.event.user'
@@ -641,6 +680,21 @@ class HrRfidUserEvent(models.Model):
         string='Controller ID',
         required=True,
         help='ID the controller differentiates itself from the others with on the same webstack'
+    )
+
+    workcode = fields.Char(
+        string='Workcode (Raw)',
+        help="Workcode that arrived from the event. If you are seeing this version, it means that you haven't created "
+             'a workcode label for this one in the workcodes page.',
+        default='-',
+        readonly=True,
+    )
+
+    workcode_id = fields.Many2one(
+        comodel_name='hr.rfid.workcode',
+        string='Workcode',
+        help='Workcode that arrived from the event',
+        readonly=True,
     )
 
     employee_id = fields.Many2one(
@@ -950,6 +1004,10 @@ class HrRfidCommands(models.Model):
         ('31', 'Incorrect Data Response'),
     ]
 
+    name = fields.Char(
+        compute='_compute_cmd_name',
+    )
+
     webstack_id = fields.Many2one(
         'hr.rfid.webstack',
         string='Module',
@@ -1006,6 +1064,7 @@ class HrRfidCommands(models.Model):
         help='Time at which the command was created',
         readonly=True,
         required=True,
+        default=lambda self: datetime.now(),
     )
 
     ex_timestamp = fields.Datetime(
@@ -1034,6 +1093,16 @@ class HrRfidCommands(models.Model):
     ts_code = fields.Integer()
     rights_data = fields.Integer()
     rights_mask = fields.Integer()
+
+    @api.multi
+    def _compute_card_name(self):
+        def find_desc(cmd):
+            for it in HrRfidCommands.commands:
+                if it[0] == cmd:
+                    return it[1]
+
+        for record in self:
+            record.name = str(record.cmd) + ' ' + find_desc(record.cmd)
 
     @api.model
     def create_d1_cmd(self, ws_id, ctrl_id, card_num, pin_code, ts_code, rights_data, rights_mask):

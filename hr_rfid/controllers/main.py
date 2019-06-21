@@ -9,8 +9,6 @@ import json
 class WebRfidController(http.Controller):
     @http.route(['/hr/rfid/event'], type='json', auth='none', method=['POST'], csrf=False)
     def post_event(self, **post):
-        # TODO Safety exit if something is missing from the post dictionary
-        # try:
         webstacks_env = request.env['hr.rfid.webstack'].sudo()
         webstack = webstacks_env.search([ ('serial', '=', str(post['convertor'])) ])
         ws_db_update_dict = {
@@ -106,6 +104,7 @@ class WebRfidController(http.Controller):
                 return send_command(command, 400)
 
             card_env = request.env['hr.rfid.card'].sudo()
+            workcodes_env = request.env['hr.rfid.workcode'].sudo()
             card = card_env.search([ ('number', '=', post['event']['card']) ])
             reader = None
 
@@ -133,6 +132,15 @@ class WebRfidController(http.Controller):
                 'event_time': post['event']['date'] + ' ' + post['event']['time'],
                 'event_action': str(event_action),
             }
+
+            if reader.mode == '03':  # Card and workcode
+                wc = workcodes_env.search([
+                    ('code', '=', post['event']['dt'])
+                ])
+                if len(wc) == 0:
+                    event_dict['workcode'] = post['event']['dt']
+                else:
+                    event_dict['workcode_id'] = wc.id
 
             if len(card.employee_id) == 0:
                 event_dict['contact_id'] = card.contact_id.id
@@ -306,8 +314,21 @@ class WebRfidController(http.Controller):
                     'controller_id': controller.id,
                     'cmd': 'DC',
                     'cmd_data': '0404',
-                    'cr_timestamp': fields.datetime.now(),
                 })
+
+                cmd_env.create({
+                    'webstack_id': webstack.id,
+                    'controller_id': controller.id,
+                    'cmd': 'F6',
+                })
+
+            if response['c'] == 'F6':
+                data = response['d']
+                readers = [None, None, None, None]
+                for it in controller.reader_ids:
+                    readers[it.number] = it
+                for i in range(4):
+                    readers[i].mode = str(data[i*3:i*3+2])
 
             command.write({
                 'status': 'Success',
@@ -364,6 +385,3 @@ class WebRfidController(http.Controller):
         webstack.write(ws_db_update_dict)
 
         return result
-        # except Exception as e:
-        #     # TODO This is a bad way of handling it
-        #     _log.error("Exception + " + str(e))

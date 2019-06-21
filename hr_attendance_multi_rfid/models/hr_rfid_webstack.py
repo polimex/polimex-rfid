@@ -17,16 +17,15 @@ class HrRfidDoor(models.Model):
         if self.attendance is True:
             has_in = False
             has_out = False
+            has_workcode = False
             for reader in self.reader_ids:
-                if reader.reader_type == '0':
-                    has_in = True
-                elif reader.reader_type == '1':
-                    has_out = True
+                has_workcode = reader.mode        == '03'  # Workcode mode
+                has_in       = reader.reader_type == '0'
+                has_out      = reader.reader_type == '1'
 
-            if has_in is False or has_out is False:
-                self.attendance = False
-                raise exceptions.ValidationError('This door cannot track attendance because it '
-                                                 'does not have both an in and out reader.')
+            if (has_in is False or has_out is False) and has_workcode is False:
+                raise exceptions.ValidationError('This door cannot track attendance because it does not have both '
+                                                 'an in and out reader, or a reader with the mode "Card and workcode".')
 
     @api.multi
     @api.constrains('attendance')

@@ -325,6 +325,7 @@
         <form create="false" delete="false">
           <group>
             <field name="name" />
+            <field name="mode" />
             <field name="number" readonly="1" />
             <field name="controller_id" readonly="1" />
             <field name="reader_type" readonly="1" />
@@ -352,6 +353,7 @@
       <field name="arch" type="xml">
         <tree create="false" delete="false">
           <field name="name" />
+          <field name="mode" />
           <field name="controller_id" />
           <field name="door_id" />
           <field name="reader_type" />
@@ -365,6 +367,7 @@
       <field name="arch" type="xml">
         <search>
           <field name="name" />
+          <field name="mode" />
           <field name="controller_id" />
           <field name="door_id" />
           <field name="reader_type" />
@@ -379,6 +382,10 @@
         <form create="false" delete="false">
           <group>
             <field name="name" />
+            <field name="workcode"
+                   attrs="{'invisible': [('workcode','=', '-')]}" />
+            <field name="workcode_id"
+                   attrs="{'invisible': [('workcode_id','=', False)]}" />
             <field name="event_action" readonly="1" />
             <field name="event_time" readonly="1" />
             <field name="ctrl_addr" readonly="1" />
