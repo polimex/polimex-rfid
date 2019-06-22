@@ -87,6 +87,7 @@ class WebRfidController(http.Controller):
 
             if len(controller) == 0:
                 ctrl_env = request.env['hr.rfid.ctrl'].sudo()
+
                 cmd_env = request.env['hr.rfid.command'].sudo()
                 controller = ctrl_env.create({
                     'name': 'Controller',
@@ -201,6 +202,26 @@ class WebRfidController(http.Controller):
 
                 reader_env = request.env['hr.rfid.reader'].sudo()
                 door_env = request.env['hr.rfid.door'].sudo()
+                ctrl_env = request.env['hr.rfid.ctrl'].sudo()
+
+                def bytes_to_num(start, digits):
+                    digits = digits-1
+                    res = 0
+                    for i in range(digits+1):
+                        multiplier = 10 ** (digits-i)
+                        res = res + int(data[start:start+2], 16) * multiplier
+                        start = start + 2
+                    return res
+
+                serial_num = str(bytes_to_num(4, 4))
+
+                old_ctrl = ctrl_env.search([
+                    ('serial_number', '=', serial_num)
+                ], limit=1)
+
+                if len(old_ctrl) > 0:
+                    old_ctrl.webstack_id = controller.webstack_id
+                    controller.unlick()
 
                 if len(controller.reader_ids):
                     controller.reader_ids.unlink()
@@ -257,17 +278,7 @@ class WebRfidController(http.Controller):
                     last_door = create_door(gen_d_name(4, controller.id), 4, controller.id)
                     create_reader('R4', 4, '0', controller.id)
 
-                def bytes_to_num(start, digits):
-                    digits = digits-1
-                    res = 0
-                    for i in range(digits+1):
-                        multiplier = 10 ** (digits-i)
-                        res = res + int(data[start:start+2], 16) * multiplier
-                        start = start + 2
-                    return res
-
                 hw_ver = str(bytes_to_num(0, 2))
-                serial_num = str(bytes_to_num(4, 4))
                 sw_ver = str(bytes_to_num(12, 3))
                 inputs = bytes_to_num(18, 3)
                 outputs = bytes_to_num(24, 3)

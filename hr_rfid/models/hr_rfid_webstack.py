@@ -304,6 +304,8 @@ class HrRfidController(models.Model):
     _name = 'hr.rfid.ctrl'
     _inherit = ['mail.thread']
     _description = 'Controller'
+    _sql_constraints = [ ('rfid_controller_unique', 'unique(serial_number)',
+                          'Serial numbers must be unique!') ]
 
     hw_types = [ ('1', 'iCON200'), ('2', 'iCON150'), ('3', 'iCON150'), ('4', 'iCON140'),
                  ('5', 'iCON120'), ('6', 'iCON110'), ('7', 'iCON160'), ('8', 'iCON170'),
