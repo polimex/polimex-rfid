@@ -25,6 +25,7 @@
         'views/hr_rfid_access_group_views.xml',
         'views/hr_rfid_card_views.xml',
         'views/hr_rfid_webstack_views.xml',
+        'views/hr_rfid_workcode_views.xml',
         'views/res_partner_views.xml',
     ],
 

@@ -28,11 +28,11 @@ class HrAttendance(models.Model):
             return
 
         if max_att[0][-1] == 'h' and max_att[1][-1] == 'm':
-            h = max_att[0][:-2]
-            m = max_att[1][:-2]
+            h = max_att[0][:-1]
+            m = max_att[1][:-1]
         elif max_att[0][-1] == 'm' and max_att[1][-1] == 'h':
-            h = max_att[1][:-2]
-            m = max_att[0][:-2]
+            h = max_att[1][:-1]
+            m = max_att[0][:-1]
         else:
             return
 

@@ -92,6 +92,13 @@
       <field name="context">{"search_default_this_day":1}</field>
     </record>
 
+    <record id="hr_rfid_workcode_action" model="ir.actions.act_window">
+      <field name="name">Workcodes</field>
+      <field name="res_model">hr.rfid.workcode</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
     <menuitem id="hr_rfid_main_menu"
               name="RFID System"
               groups="hr_rfid_group_officer"
@@ -192,12 +199,19 @@
               groups="hr_rfid_group_manager"
               sequence="6" />
 
+    <menuitem id="hr_rfid_menu_workcodes"
+              name="Workcodes"
+              parent="hr_rfid_settings_menu"
+              action="hr_rfid_workcode_action"
+              groups="hr_rfid_group_manager"
+              sequence="7" />
+
     <menuitem id="hr_rfid_menu_readers"
               name="Readers"
               parent="hr_rfid_settings_menu"
               action="hr_rfid_reader_action"
               groups="hr_rfid_group_manager"
-              sequence="7" />
+              sequence="8" />
 
   </data>
 </odoo>

@@ -13,6 +13,7 @@ class HrRfidWorkcode(models.Model):
         string='Name',
         help='A label to remind what the workcode represents.',
         required=True,
+        track_visibility='onchange',
     )
 
     workcode = fields.Char(
@@ -20,6 +21,8 @@ class HrRfidWorkcode(models.Model):
         help="The actual workcode ",
         limit=4,
         default='0000',
+        readonly=True,
+        track_visibility='onchange',
     )
 
     user_action = fields.Selection(
@@ -31,11 +34,12 @@ class HrRfidWorkcode(models.Model):
         string='User action',
         help='What the user does when he submits this workcode',
         default='stop',
+        track_visibility='onchange',
     )
 
     @api.multi
     @api.constrains('workcode')
-    def _check_pin_code(self):
+    def _check_workcode_code(self):
         for workcode in self:
             wc = workcode.workcode
             if len(wc) != 4:

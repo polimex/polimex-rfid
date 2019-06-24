@@ -649,7 +649,7 @@ class HrRfidReader(models.Model):
 
         controllers = []
 
-        if 'mode' in vals:
+        if 'mode' in vals and ('no_d6_cmd' not in vals or vals['no_d6_cmd'] is False):
             for reader in self:
                 if reader.controller_id not in controllers:
                     controllers.append(reader.controller_id)
@@ -1097,7 +1097,7 @@ class HrRfidCommands(models.Model):
     rights_mask = fields.Integer()
 
     @api.multi
-    def _compute_card_name(self):
+    def _compute_cmd_name(self):
         def find_desc(cmd):
             for it in HrRfidCommands.commands:
                 if it[0] == cmd:

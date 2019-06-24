@@ -136,7 +136,7 @@ class WebRfidController(http.Controller):
 
             if reader.mode == '03':  # Card and workcode
                 wc = workcodes_env.search([
-                    ('code', '=', post['event']['dt'])
+                    ('workcode', '=', post['event']['dt'])
                 ])
                 if len(wc) == 0:
                     event_dict['workcode'] = post['event']['dt']
@@ -337,9 +337,14 @@ class WebRfidController(http.Controller):
                 data = response['d']
                 readers = [None, None, None, None]
                 for it in controller.reader_ids:
-                    readers[it.number] = it
+                    readers[it.number-1] = it
                 for i in range(4):
-                    readers[i].mode = str(data[i*3:i*3+2])
+                    if readers[i] is not None:
+                        mode = str(data[i*6:i*6+2])
+                        readers[i].write({
+                            'mode': mode,
+                            'no_d6_cmd': True,
+                        })
 
             command.write({
                 'status': 'Success',
