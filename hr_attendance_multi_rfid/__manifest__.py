@@ -22,7 +22,6 @@
         'views/hr_attendance_views.xml',
         'views/hr_employee_views.xml',
         'views/hr_rfid_webstack_views.xml',
-        'views/hr_rfid_webstack_views.xml',
         'data/hr_attendance_multi_rfid_cron_jobs.xml',
         'data/hr_attendance_multi_rfid_system_parameters.xml',
     ],
