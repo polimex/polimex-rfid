@@ -83,7 +83,7 @@ class HrDepartmentAccGrWizard(models.TransientModel):
         'hr.department',
         string='Department',
         required=True,
-        default=_default_dep
+        default=_default_dep,
     )
 
     acc_grs = fields.Many2many(

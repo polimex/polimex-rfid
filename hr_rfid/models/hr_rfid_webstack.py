@@ -437,6 +437,38 @@ class HrRfidController(models.Model):
     )
 
 
+class HrRfidDoorOpenCloseWiz(models.TransientModel):
+    _name = 'hr.rfid.door.open.close.wiz'
+    _description = 'Open or close door'
+
+    def _default_doors(self):
+        return self.env['hr.rfid.door'].browse(self._context.get('active_ids'))
+
+    doors = fields.Many2many(
+        'hr.rfid.door',
+        string='Doors to open/close',
+        required=True,
+        default=_default_doors,
+    )
+
+    time = fields.Integer(
+        string='Time',
+        help='Amount of time (in seconds) the doors will stay open or closed. 0 for infinity.',
+        default=3,
+        required=True,
+    )
+
+    # TODO Write a message in mail.thread when door opened?
+    @api.multi
+    def open_doors(self):
+        raise exceptions.ValidationError('Not implemented')
+
+    # TODO Write a message in mail.thread when door closed?
+    @api.multi
+    def close_doors(self):
+        raise exceptions.ValidationError('Not implemented')
+
+
 class HrRfidDoor(models.Model):
     _name = 'hr.rfid.door'
     _description = 'Door'
@@ -538,6 +570,16 @@ class HrRfidDoor(models.Model):
                 acc_gr_door_rel_env.time_schedule_changed(rel_id)
 
         return True
+
+    # TODO Write a message in mail.thread when door opened?
+    @api.multi
+    def open_door(self):
+        raise exceptions.ValidationError('Not implemented')
+
+    # TODO Write a message in mail.thread when door closed?
+    @api.multi
+    def close_door(self):
+        raise exceptions.ValidationError('Not implemented')
 
 
 class HrRfidTimeSchedule(models.Model):

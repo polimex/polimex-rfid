@@ -778,11 +778,62 @@
       </field>
     </record>
 
+    <record id="hr_rfid_door_open_close_wiz_form" model="ir.ui.view">
+      <field name="name">hr.rfid.door.open.close.wiz.form</field>
+      <field name="model">hr.rfid.door.open.close.wiz</field>
+      <field name="arch" type="xml">
+        <form string="Open/close door">
+          <group>
+            <field name="doors">
+              <tree>
+                <field name="name" />
+                <field name="controller_id" />
+                <field name="card_type" />
+              </tree>
+            </field>
+            <field name="time" />
+          </group>
+          <footer>
+            <button name="open_doors" type="object" string="Open doors" class="oe_highlight" />
+            <button name="close_doors" type="object" string="Close doors" class="oe_highlight" />
+            <button special="cancel" string="Cancel" />
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <act_window id="hr_rfid_door_open_close_wiz_act_window"
+                name="Open/Close doors"
+                src_model="hr.rfid.door"
+                res_model="hr.rfid.door.open.close.wiz"
+                view_mode="form"
+                target="new"
+                key2="client_action_multi" />
+
+    <record id="hr_rfid_door_open_close_wiz_action" model="ir.actions.act_window">
+      <field name="name">Open/close door</field>
+      <field name="res_model">hr.rfid.door.open.close.wiz</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_rfid_door_open_close_wiz_form" />
+      <field name="target">new</field>
+    </record>
+
     <record id="hr_rfid_door_view_form" model="ir.ui.view">
       <field name="name">hr.rfid.door.form</field>
       <field name="model">hr.rfid.door</field>
       <field name="arch" type="xml">
         <form create="false" delete="false">
+          <header>
+            <button name="open_door" type="object" string="Open door" help="Will only open for 3 seconds" />
+            <button name="close_door" type="object" string="Close door" help="Will only close for 3 seconds" />
+            <button name="%(hr_rfid_door_open_close_wiz_action)d"
+                    id="hr_rfid_door_open_close_btn"
+                    type="action"
+                    string="Open/Close Door"
+                    class="oe_highlight" />
+          </header>
+
           <group>
             <field name="name" />
             <field name="card_type" />
@@ -839,6 +890,8 @@
           <field name="name" />
           <field name="controller_id" />
           <field name="card_type" />
+          <button name="open_door" type="object" string="Open door" help="Will only open for 3 seconds" />
+          <button name="close_door" type="object" string="Close door" help="Will only close for 3 seconds" />
         </tree>
       </field>
     </record>
