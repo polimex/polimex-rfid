@@ -825,6 +825,7 @@
       <field name="arch" type="xml">
         <form create="false" delete="false">
           <header>
+            <!-- TODO Security group for these buttons -->
             <button name="open_door" type="object" string="Open door" help="Will only open for 3 seconds" />
             <button name="close_door" type="object" string="Close door" help="Will only close for 3 seconds" />
             <button name="%(hr_rfid_door_open_close_wiz_action)d"
@@ -888,6 +889,7 @@
       <field name="model">hr.rfid.door</field>
       <field name="arch" type="xml">
         <tree create="false" delete="false">
+          <!-- TODO Security group for these buttons -->
           <field name="name" />
           <field name="controller_id" />
           <field name="card_type" />
