@@ -6,14 +6,16 @@
       <field name="name">hr.rfid.dialog.box.form</field>
       <field name="model">hr.rfid.wiz.dialog.box</field>
       <field name="arch" type="xml">
-        <div>
-          <h2><field name="title" /></h2>
-          <p><field name="text" /></p>
-        </div>
+        <form>
+          <div>
+            <h2><field name="title" /></h2>
+            <p><field name="text" /></p>
+          </div>
 
-        <footer>
-          <button specia="cancel" string="Close" />
-        </footer>
+          <footer>
+            <button specia="cancel" string="Close" />
+          </footer>
+        </form>
       </field>
     </record>
   </data>
