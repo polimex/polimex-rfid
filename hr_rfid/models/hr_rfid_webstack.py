@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, exceptions
 from datetime import datetime, timedelta
+from ..wizards.helpers import create_and_ret_d_box
 import logging
 import socket
 import http.client
@@ -458,15 +459,17 @@ class HrRfidDoorOpenCloseWiz(models.TransientModel):
         required=True,
     )
 
-    # TODO Write a message in mail.thread when door opened?
     @api.multi
     def open_doors(self):
-        raise exceptions.ValidationError('Not implemented')
+        for door in self.doors:
+            door.open_door()
+        return create_and_ret_d_box(self.env, 'Doors opened', 'Doors successfully opened')
 
-    # TODO Write a message in mail.thread when door closed?
     @api.multi
     def close_doors(self):
-        raise exceptions.ValidationError('Not implemented')
+        for door in self.doors:
+            door.close_door()
+        return create_and_ret_d_box(self.env, 'Door closed', 'Doors successfully closed')
 
 
 class HrRfidDoor(models.Model):
@@ -528,6 +531,12 @@ class HrRfidDoor(models.Model):
         help='Readers that open this door',
     )
 
+    log_opens_closes = fields.Boolean(
+        string='Log Opens/Closes',
+        help='Display on the bottom of the page if anyone opens or closes the door',
+        default=False,
+    )
+
     @api.multi
     def write(self, vals):
         for door in self:
@@ -571,15 +580,60 @@ class HrRfidDoor(models.Model):
 
         return True
 
-    # TODO Write a message in mail.thread when door opened?
     @api.multi
     def open_door(self):
-        raise exceptions.ValidationError('Not implemented')
+        self.ensure_one()
+        if self.controller_id.webstack_id.behind_nat is True:
+            cmd_env = self.env['hr.rfid.command']
+            cmd_env.create([{
+                'webstack_id': self.controller_id.webstack_id.id,
+                'controller_id': self.controller_id.id,
+                'cmd': 'DB',
+                'cmd_data': '%2d0103' % self.number,
+            }])
+            return create_and_ret_d_box(self.env, 'Command creation successful',
+                                        'Because the webstack is behind NAT, we have to wait for the '
+                                        'webstack to call us, so we created a command. The door will open '
+                                        'for 3 seconds as soon as possible.')
+        else:
+            self.change_door_out(1, 3)
+            return create_and_ret_d_box(self.env, 'Door successfully opened',
+                                        'Door will remain opened for 3 seconds.')
 
-    # TODO Write a message in mail.thread when door closed?
     @api.multi
     def close_door(self):
+        self.ensure_one()
+        if self.controller_id.webstack_id.behind_nat is True:
+            cmd_env = self.env['hr.rfid.command']
+            cmd_env.create([{
+                'webstack_id': self.controller_id.webstack_id.id,
+                'controller_id': self.controller_id.id,
+                'cmd': 'DB',
+                'cmd_data': '%2d0003' % self.number,
+            }])
+            return create_and_ret_d_box(self.env, 'Command creation successful',
+                                        'Because the webstack is behind NAT, we have to wait for the '
+                                        'webstack to call us, so we created a command. The door will close '
+                                        'for 3 seconds as soon as possible.')
+        else:
+            self.change_door_out(0, 3)
+            return create_and_ret_d_box(self.env, 'Door successfully closed',
+                                        'Door will remain closed for 3 seconds.')
+
+    @api.multi
+    def change_door_out(self, out: int, time: int):
+        self.ensure_one()
+        self.log_door_change(out, time)
         raise exceptions.ValidationError('Not implemented')
+
+    @api.multi
+    def log_door_change(self, action: int, time: int):
+        """
+        :param action: 0 for door open, 1 for door close
+        """
+        self.ensure_one()
+        if self.log_opens_closes is True:
+            raise exceptions.ValidationError('Not implemented')
 
 
 class HrRfidTimeSchedule(models.Model):
