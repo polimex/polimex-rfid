@@ -4,8 +4,8 @@ from odoo import fields, models
 class DialogBox(models.TransientModel):
     _name = 'hr.rfid.wiz.dialog.box'
 
-    title = fields.Char()
-    text = fields.Char()
+    title = fields.Char(string='Title', readonly=True)
+    text = fields.Char(string='Text', readonly=True)
 
 
 def create_dialog_box(env, title: str, text: str):

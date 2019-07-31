@@ -23,6 +23,7 @@
         'views/hr_employee_views.xml',
         'views/hr_rfid_views.xml',
         'views/res_partner_views.xml',
+        'wizards/hr_rfid_wizard_views.xml',
     ],
 
     'demo': [ ],
