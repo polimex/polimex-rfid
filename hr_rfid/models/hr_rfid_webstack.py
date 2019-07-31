@@ -192,7 +192,7 @@ class HrRfidWebstack(models.Model):
             code = response.getcode()
             body = response.read()
             if code != 200:
-                raise exceptions.ValidationError('When trying to setup /protect/uart/conf the module '
+                raise exceptions.ValidationError('While trying to setup /protect/uart/conf the module '
                                                  'returned code ' + str(code) + ' with body:\n' +
                                                  body.decode())
 
@@ -203,7 +203,7 @@ class HrRfidWebstack(models.Model):
             code = response.getcode()
             body = response.read()
             if code != 200:
-                raise exceptions.ValidationError('When trying to setup /protect/config.htm the module '
+                raise exceptions.ValidationError('While trying to setup /protect/config.htm the module '
                                                  'returned code ' + str(code) + ' with body:\n' +
                                                  body.decode())
         except socket.timeout:
@@ -622,14 +622,63 @@ class HrRfidDoor(models.Model):
 
     @api.multi
     def change_door_out(self, out: int, time: int):
+        """
+        :param out: 0 to open door, 1 to close door
+        :param time: Range: [0, 99]
+        """
         self.ensure_one()
         self.log_door_change(out, time)
-        raise exceptions.ValidationError('Not implemented')
+
+        ws = self.controller_id.webstack_id
+        if ws.module_username is False:
+            username = ''
+        else:
+            username = str(ws.module_username)
+
+        if ws.module_password is False:
+            password = ''
+        else:
+            password = str(ws.module_password)
+
+        auth = base64.b64encode((username + ':' + password).encode())
+        auth = auth.decode()
+        headers = { 'content-type': 'application/json', 'Authorization': 'Basic ' + str(auth) }
+        cmd = json.dumps({
+            'cmd': {
+                'id': self.controller_id.ctrl_id,
+                'c': 'DB',
+                'd': '%02d%02d%02d' % (self.number, out, time),
+            }
+        })
+
+        host = str(ws.last_ip)
+        try:
+            conn = http.client.HTTPConnection(str(host), 80, timeout=2)
+            conn.request('POST', '/cmd.json', cmd, headers)
+            response = conn.getresponse()
+            conn.close()
+            code = response.getcode()
+            body = response.read()
+            if code != 200:
+                raise exceptions.ValidationError('While trying to send the command to the module, '
+                                                 'it returned code ' + str(code) + ' with body:\n'
+                                                 + body.decode())
+
+            body_js = json.loads(body)
+            if body_js['response']['e'] != 0:
+                raise exceptions.ValidationError('Error. Controller returned body:\n' + body)
+        except socket.timeout:
+            raise exceptions.ValidationError('Could not connect to the module. '
+                                             "Check if it is turned on or if it's on a different ip.")
+        except (socket.error, socket.gaierror, socket.herror) as e:
+            raise exceptions.ValidationError('Error while trying to connect to the module.'
+                                             ' Information:\n' + str(e))
 
     @api.multi
     def log_door_change(self, action: int, time: int):
         """
         :param action: 0 for door open, 1 for door close
+        :param time: Range: [0, 99]
         """
         self.ensure_one()
         if self.log_opens_closes is True:
