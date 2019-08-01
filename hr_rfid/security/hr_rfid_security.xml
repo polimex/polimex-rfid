@@ -26,6 +26,11 @@
       <field name="category_id" ref="base.module_category_hidden" />
     </record>
 
+    <record id="hr_rfid_view_door_open_close" model="res.groups">
+      <field name="name">HR RFID: View the door open/close buttons</field>
+      <field name="category_id" ref="base.module_category_hidden" />
+    </record>
+
     <record id="hr_rfid_group_officer_department" model="res.groups">
       <field name="name">HR RFID: Only show own department's information</field>
       <field name="category_id" ref="base.module_category_hidden" />
