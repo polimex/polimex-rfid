@@ -292,6 +292,8 @@ class HrRfidWebstack(models.Model):
 
         udp_sock.close()
 
+        return create_and_ret_d_box(self.env, 'Discovery complete', 'Please refresh the modules list')
+
     @api.model
     def _deconfirm_webstack(self, ws):
         ws.available = 'u'
