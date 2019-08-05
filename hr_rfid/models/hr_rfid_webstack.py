@@ -647,17 +647,18 @@ class HrRfidDoor(models.Model):
         host = str(ws.last_ip)
         try:
             conn = http.client.HTTPConnection(str(host), 80, timeout=2)
-            conn.request('POST', '/cmd.json', cmd, headers)
+            conn.request('POST', '/sdk/cmd.json', cmd, headers)
             response = conn.getresponse()
-            conn.close()
             code = response.getcode()
             body = response.read()
+            conn.close()
             if code != 200:
                 raise exceptions.ValidationError('While trying to send the command to the module, '
                                                  'it returned code ' + str(code) + ' with body:\n'
                                                  + body.decode())
 
-            body_js = json.loads(body)
+            print('body=' + str(body) + ', cmd=' + str(cmd) + ', code=' + str(code))
+            body_js = json.loads(body.decode())
             if body_js['response']['e'] != 0:
                 raise exceptions.ValidationError('Error. Controller returned body:\n' + body)
         except socket.timeout:
