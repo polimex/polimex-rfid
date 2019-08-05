@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, exceptions
+from odoo import api, fields, models, exceptions, _
 from datetime import datetime, timedelta
 from ..wizards.helpers import create_and_ret_d_box
 import logging
@@ -464,13 +464,13 @@ class HrRfidDoorOpenCloseWiz(models.TransientModel):
     @api.multi
     def open_doors(self):
         for door in self.doors:
-            door.open_door()
+            door.open_close_door(out=1, time=self.time)
         return create_and_ret_d_box(self.env, 'Doors opened', 'Doors successfully opened')
 
     @api.multi
     def close_doors(self):
         for door in self.doors:
-            door.close_door()
+            door.open_close_door(out=0, time=self.time)
         return create_and_ret_d_box(self.env, 'Door closed', 'Doors successfully closed')
 
 
@@ -533,12 +533,6 @@ class HrRfidDoor(models.Model):
         help='Readers that open this door',
     )
 
-    log_opens_closes = fields.Boolean(
-        string='Log Opens/Closes',
-        help='Display on the bottom of the page if anyone opens or closes the door',
-        default=False,
-    )
-
     @api.multi
     def write(self, vals):
         for door in self:
@@ -585,42 +579,39 @@ class HrRfidDoor(models.Model):
     @api.multi
     def open_door(self):
         self.ensure_one()
-        if self.controller_id.webstack_id.behind_nat is True:
-            cmd_env = self.env['hr.rfid.command']
-            cmd_env.create([{
-                'webstack_id': self.controller_id.webstack_id.id,
-                'controller_id': self.controller_id.id,
-                'cmd': 'DB',
-                'cmd_data': '%2d0103' % self.number,
-            }])
-            return create_and_ret_d_box(self.env, 'Command creation successful',
-                                        'Because the webstack is behind NAT, we have to wait for the '
-                                        'webstack to call us, so we created a command. The door will open '
-                                        'for 3 seconds as soon as possible.')
-        else:
-            self.change_door_out(1, 3)
-            return create_and_ret_d_box(self.env, 'Door successfully opened',
-                                        'Door will remain opened for 3 seconds.')
+        return self.open_close_door(1, 3)
 
     @api.multi
     def close_door(self):
         self.ensure_one()
+        return self.open_close_door(0, 3)
+
+    @api.multi
+    def open_close_door(self, out: int, time: int):
+        self.ensure_one()
+
         if self.controller_id.webstack_id.behind_nat is True:
-            cmd_env = self.env['hr.rfid.command']
-            cmd_env.create([{
-                'webstack_id': self.controller_id.webstack_id.id,
-                'controller_id': self.controller_id.id,
-                'cmd': 'DB',
-                'cmd_data': '%2d0003' % self.number,
-            }])
-            return create_and_ret_d_box(self.env, 'Command creation successful',
-                                        'Because the webstack is behind NAT, we have to wait for the '
-                                        'webstack to call us, so we created a command. The door will close '
-                                        'for 3 seconds as soon as possible.')
+            self.create_door_out_cmd(out, time)
+            return create_and_ret_d_box(self.env, _('Command creation successful'),
+                                        _('Because the webstack is behind NAT, we have to wait for the '
+                                          'webstack to call us, so we created a command. The door will '
+                                          'open/close for %d seconds as soon as possible.') % time)
         else:
-            self.change_door_out(0, 3)
-            return create_and_ret_d_box(self.env, 'Door successfully closed',
-                                        'Door will remain closed for 3 seconds.')
+            self.change_door_out(out, time)
+            return create_and_ret_d_box(self.env, _('Door successfully opened/closed'),
+                                        _('Door will remain opened/closed for %d seconds.') % time)
+
+    @api.multi
+    def create_door_out_cmd(self, out: int, time: int):
+        self.ensure_one()
+        cmd_env = self.env['hr.rfid.command']
+        cmd_env.create([{
+            'webstack_id': self.controller_id.webstack_id.id,
+            'controller_id': self.controller_id.id,
+            'cmd': 'DB',
+            'cmd_data': '%02d%02d%02d' % (self.number, out, time),
+        }])
+        self.log_door_change(out, time, cmd=True)
 
     @api.multi
     def change_door_out(self, out: int, time: int):
@@ -677,14 +668,35 @@ class HrRfidDoor(models.Model):
                                              ' Information:\n' + str(e))
 
     @api.multi
-    def log_door_change(self, action: int, time: int):
+    def log_door_change(self, action: int, time: int, cmd: bool=False):
         """
-        :param action: 0 for door open, 1 for door close
+        :param action: 1 for door open, 0 for door close
         :param time: Range: [0, 99]
+        :param cmd: If the command was created instead of
         """
         self.ensure_one()
-        if self.log_opens_closes is True:
-            raise exceptions.ValidationError('Not implemented')
+        if time > 0:
+            if cmd is False:
+                if action == 1:
+                    self.message_post(_('Opened the door for %d seconds.') % time)
+                else:
+                    self.message_post(_('Closed the door for %d seconds.') % time)
+            else:
+                if action == 1:
+                    self.message_post(_('Created a command to open the door for %d seconds.') % time)
+                else:
+                    self.message_post(_('Created a command to close the door for %d seconds.') % time)
+        else:
+            if cmd is False:
+                if action == 1:
+                    self.message_post(_('Opened the door.') % time)
+                else:
+                    self.message_post(_('Closed the door.') % time)
+            else:
+                if action == 1:
+                    self.message_post(_('Created a command to open the door.') % time)
+                else:
+                    self.message_post(_('Created a command to close the door.') % time)
 
 
 class HrRfidTimeSchedule(models.Model):

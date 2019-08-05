@@ -29,6 +29,7 @@
     <record id="hr_rfid_view_door_open_close" model="res.groups">
       <field name="name">HR RFID: View the door open/close buttons</field>
       <field name="category_id" ref="base.module_category_hidden" />
+      <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
     </record>
 
     <record id="hr_rfid_group_officer_department" model="res.groups">

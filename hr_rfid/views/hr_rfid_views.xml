@@ -659,6 +659,12 @@
           <field name="version" />
           <field name="updated_at" />
           <field name="http_link" />
+          <button name="action_set_active" type="object"
+                  attrs="{'invisible': [('ws_active','=', True)]}"
+                  string="Set module to active" />
+          <button name="action_set_inactive" type="object"
+                  attrs="{'invisible': [('ws_active','=', False)]}"
+                  string="Set module to inactive" />
         </tree>
       </field>
     </record>
@@ -829,24 +835,23 @@
                     type="object"
                     string="Open door"
                     help="Will only open for 3 seconds"
-                    groups="hr_rfid_view_door_open_close" />
+                    groups="hr_rfid.hr_rfid_view_door_open_close" />
             <button name="close_door"
                     type="object"
                     string="Close door"
                     help="Will only close for 3 seconds"
-                    groups="hr_rfid_view_door_open_close" />
+                    groups="hr_rfid.hr_rfid_view_door_open_close" />
             <button name="%(hr_rfid_door_open_close_wiz_action)d"
                     id="hr_rfid_door_open_close_btn"
                     type="action"
                     string="Open/Close Door"
                     class="oe_highlight"
-                    groups="hr_rfid_view_door_open_close" />
+                    groups="hr_rfid.hr_rfid_view_door_open_close" />
           </header>
 
           <group>
             <field name="name" />
             <field name="card_type" />
-<!--            <field name="log_opens_closes" /> TODO Implement this? -->
             <field name="number" readonly="1" />
             <field name="controller_id" readonly="1" />
           </group>
@@ -904,12 +909,12 @@
                   type="object"
                   string="Open door"
                   help="Will only open for 3 seconds"
-                  groups="hr_rfid_view_door_open_close" />
+                  groups="hr_rfid.hr_rfid_view_door_open_close" />
           <button name="close_door"
                   type="object"
                   string="Close door"
                   help="Will only close for 3 seconds"
-                  groups="hr_rfid_view_door_open_close" />
+                  groups="hr_rfid.hr_rfid_view_door_open_close" />
         </tree>
       </field>
     </record>
