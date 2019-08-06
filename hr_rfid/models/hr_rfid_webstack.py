@@ -1454,8 +1454,9 @@ class HrRfidCommands(models.Model):
 
             if cmd == 'DB':
                 res = find_last_wait(cmd)
-                if len(res) > 0:
-                    res.cmd_data = vals['cmd_data']
+                cmd_data = vals['cmd_data']
+                if len(res) > 0 and res.cmd_data[0] == cmd_data[0] and res.cmd_data[1] == cmd_data[1]:
+                    res.cmd_data = cmd_data
                 else:
                     records += super(HrRfidCommands, self).create([vals])
             else:
