@@ -1330,7 +1330,7 @@
         <form>
           <group>
             <field name="name" />
-            <field name="workcode" />
+            <field name="workcode" attrs="{'readonly':[('id','>',0)]}" />
             <field name="user_action" />
           </group>
           <div class="oe_chatter">

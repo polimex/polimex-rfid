@@ -669,7 +669,7 @@ class HrRfidDoor(models.Model):
                                              ' Information:\n' + str(e))
 
     @api.multi
-    def log_door_change(self, action: int, time: int, cmd: bool=False):
+    def log_door_change(self, action: int, time: int, cmd: bool = False):
         """
         :param action: 1 for door open, 0 for door close
         :param time: Range: [0, 99]

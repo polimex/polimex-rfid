@@ -12,17 +12,15 @@ class HrRfidWorkcode(models.Model):
     name = fields.Char(
         string='Name',
         help='A label to remind what the workcode represents.',
-        required=True,
         track_visibility='onchange',
+        required=True,
     )
 
     workcode = fields.Char(
         string='Workcode',
         help="The actual workcode ",
         limit=4,
-        default='0000',
-        readonly=True,
-        track_visibility='onchange',
+        required=True,
     )
 
     user_action = fields.Selection(
@@ -35,6 +33,7 @@ class HrRfidWorkcode(models.Model):
         help='What the user does when he submits this workcode',
         default='stop',
         track_visibility='onchange',
+        required=True,
     )
 
     @api.multi
