@@ -1458,6 +1458,10 @@ class HrRfidCommands(models.Model):
                     res.cmd_data = vals['cmd_data']
                 else:
                     records += super(HrRfidCommands, self).create([vals])
+            else:
+                records += super(HrRfidCommands, self).create([vals])
+
+        return records
 
 
 
