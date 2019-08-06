@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, exceptions, _
 from datetime import datetime, timedelta
-from ..wizards.helpers import create_and_ret_d_box
+from ..wizards.helpers import create_and_ret_d_box, return_wiz_form_view
 import logging
 import socket
 import http.client
@@ -9,6 +9,87 @@ import json
 import base64
 
 _logger = logging.getLogger(__name__)
+
+
+class HrRfidWebstackDiscovery(models.TransientModel):
+    _name = 'hr.rfid.webstack.discovery'
+    _description = 'Webstack discovery'
+
+    found_webstacks = fields.Many2many(
+        comodel_name='hr.rfid.webstack',
+        relation='hr_rfid_webstack_discovery_all',
+        column1='wiz',
+        column2='ws',
+        string='Found modules',
+        readonly=True,
+        help='Modules that were just found during the discovery process',
+    )
+
+    setup_and_set_to_active = fields.Many2many(
+        comodel_name='hr.rfid.webstack',
+        relation='hr_rfid_webstack_discovery_set',
+        column1='wiz',
+        column2='ws',
+        string='Setup and activate',
+        help='Modules to automatically setup for the odoo and activate',
+    )
+
+    state = fields.Selection(
+        [ ('pre_discovery', 'pre_discovery'), ('post_discovery', 'post_discovery') ],
+        default='pre_discovery'
+    )
+
+    @api.multi
+    def discover(self):
+        udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        udp_sock.bind(("", 30303))
+
+        send_msg = b'Discovery:'
+        res = udp_sock.sendto(send_msg, ('<broadcast>', 30303))
+        if res is False:
+            udp_sock.close()
+            return
+
+        while True:
+            udp_sock.settimeout(0.5)
+            try:
+                data, addr = udp_sock.recvfrom(1024)
+                data = data.decode().split('\n')[:-1]
+                data = list(map(str.strip, data))
+                if len(data) == 0 or len(data) > 100:
+                    continue
+                if len(self.search([('serial', '=', data[4])])) > 0:
+                    continue
+                module = {
+                    'last_ip':    addr[0],
+                    'name':       data[0],
+                    'version':    data[3],
+                    'hw_version': data[2],
+                    'serial':     data[4],
+                    'available': 'u',
+                }
+                env = self.env['hr.rfid.webstack'].sudo()
+                module = env.create(module)
+                self.found_webstacks += module
+                try:
+                    module.action_check_if_ws_available()
+                except exceptions.ValidationError as __:
+                    pass
+            except socket.timeout:
+                break
+
+        udp_sock.close()
+        self.write({ 'state': 'post_discovery' })
+        return return_wiz_form_view(self._name, self.id)
+
+
+    @api.multi
+    def setup_modules(self):
+        self.ensure_one()
+        for ws in self.setup_and_set_to_active:
+            ws.action_set_webstack_settings()
+            ws.action_set_active()
 
 
 class HrRfidWebstack(models.Model):
@@ -250,49 +331,6 @@ class HrRfidWebstack(models.Model):
                 record.http_link = link
             else:
                 record.http_link = ''
-
-    @api.model
-    def _module_discovery(self):
-        udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-        udp_sock.bind(("", 30303))
-
-        send_msg = b'Discovery:'
-        res = udp_sock.sendto(send_msg, ('<broadcast>', 30303))
-        if res is False:
-            udp_sock.close()
-            return
-
-        while True:
-            udp_sock.settimeout(0.5)
-            try:
-                data, addr = udp_sock.recvfrom(1024)
-                data = data.decode().split('\n')[:-1]
-                data = list(map(str.strip, data))
-                if len(data) == 0 or len(data) > 100:
-                    continue
-                if len(self.search([('serial', '=', data[4])])) > 0:
-                    continue
-                module = {
-                    'last_ip':    addr[0],
-                    'name':       data[0],
-                    'version':    data[3],
-                    'hw_version': data[2],
-                    'serial':     data[4],
-                    'available': 'u',
-                }
-                env = self.env['hr.rfid.webstack'].sudo()
-                module = env.create(module)
-                try:
-                    module.action_check_if_ws_available()
-                except exceptions.ValidationError as __:
-                    pass
-            except socket.timeout:
-                break
-
-        udp_sock.close()
-
-        return create_and_ret_d_box(self.env, 'Discovery complete', 'Please refresh the modules list')
 
     @api.model
     def _deconfirm_webstack(self, ws):

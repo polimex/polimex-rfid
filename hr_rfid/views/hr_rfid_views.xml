@@ -35,15 +35,6 @@
       <field name="view_mode">tree,form,search,calendar</field>
     </record>
 
-    <record id="hr_rfid_webstack_discovery_action" model="ir.actions.server">
-      <field name="name">Module Discovery</field>
-      <field name="model_id" ref="model_hr_rfid_webstack" />
-      <field name="state">code</field>
-      <field name="code">
-        model._module_discovery()
-      </field>
-    </record>
-
     <record id="hr_rfid_ctrl_action" model="ir.actions.act_window">
       <field name="name">Controllers</field>
       <field name="res_model">hr.rfid.ctrl</field>
@@ -229,13 +220,6 @@
               action="hr_rfid_webstack_action"
               groups="hr_rfid_group_manager"
               sequence="0" />
-
-    <menuitem id="hr_rfid_menu_modules_discovery"
-              name="Module Discovery"
-              parent="hr_rfid_menu_modules_main_menu"
-              action="hr_rfid_webstack_discovery_action"
-              groups="hr_rfid_view_module_discovery"
-              sequence="10" />
 
     <!--#######################################################
     #####              ACCESS GROUP VIEWS                 #####
@@ -565,6 +549,47 @@
     <!--#######################################################
     #####                 WEBSTACK VIEWS                  #####
     ########################################################-->
+
+    <record id="hr_rfid_webstack_discovery_wiz"  model="ir.ui.view">
+      <field name="name">hr.rfid.webstack.discovery.wiz.form</field>
+      <field name="model">hr.rfid.webstack.discovery</field>
+      <field name="arch" type="xml">
+        <form string="Webstack Discovery">
+          <field name="state" invisible="1" />
+
+          <footer states="pre_discovery">
+            <button name="discover" type="object" string="Begin discovery" class="oe_highlight" />
+            <button special="cancel" string="Cancel" />
+          </footer>
+
+          <group states="post_discovery">
+            <field name="found_webstacks" />
+            <field name="setup_and_set_to_active" domain="[('id','in','found_webstacks')]" />
+          </group>
+
+          <footer states="post_discovery">
+            <button name="setup_modules" type="object" string="Done" class="oe_highlight" />
+          </footer>
+
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_webstack_discovery_action" model="ir.actions.act_window">
+      <field name="name">Modules Discovery</field>
+      <field name="res_model">hr.rfid.webstack.discovery</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_rfid_webstack_discovery_wiz" />
+      <field name="target">new</field>
+    </record>
+
+    <menuitem id="hr_rfid_menu_modules_discovery"
+              name="Module Discovery"
+              parent="hr_rfid_menu_modules_main_menu"
+              action="hr_rfid_webstack_discovery_action"
+              groups="hr_rfid_view_module_discovery"
+              sequence="10" />
 
     <record id="hr_rfid_webstack_view_form" model="ir.ui.view">
       <field name="name">hr.rfid.webstack.form</field>
