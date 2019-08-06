@@ -61,7 +61,7 @@ class HrRfidWebstackDiscovery(models.TransientModel):
                 data = list(map(str.strip, data))
                 if len(data) == 0 or len(data) > 100:
                     continue
-                if len(ws_env([('serial', '=', data[4])])) > 0:
+                if len(ws_env.search([('serial', '=', data[4])])) > 0:
                     continue
                 module = {
                     'last_ip':    addr[0],
