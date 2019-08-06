@@ -93,6 +93,11 @@ class HrRfidWebstackDiscovery(models.TransientModel):
             ws.action_set_webstack_settings()
             ws.action_set_active()
 
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'reload',
+        }
+
 
 class HrRfidWebstack(models.Model):
     _name = 'hr.rfid.webstack'

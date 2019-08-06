@@ -573,7 +573,7 @@
                 <field name="last_ip" />
               </tree>
             </field>
-            <field name="setup_and_set_to_active" domain="[('id','in','found_webstacks')]">
+            <field name="setup_and_set_to_active" domain="[('id','in',found_webstacks)]">
               <tree>
                 <field name="name" />
                 <field name="serial" />
