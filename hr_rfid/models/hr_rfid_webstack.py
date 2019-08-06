@@ -41,6 +41,7 @@ class HrRfidWebstackDiscovery(models.TransientModel):
 
     @api.multi
     def discover(self):
+        self.ensure_one()
         udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         udp_sock.bind(("", 30303))
