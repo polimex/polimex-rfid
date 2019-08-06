@@ -1438,6 +1438,89 @@ class HrRfidCommands(models.Model):
                 'cr_timestamp': fields.datetime.now(),
             })
 
+    @api.model_create_multi
+    def create(self, vals_list: list):
+        def find_last_wait(cmd):
+            return self.search([
+                ('webstack_id', '=', vals['webstack_id']),
+                ('controller_id', '=', vals['controller_id']),
+                ('cmd', '=', cmd),
+                ('status', '=', 'Wait'),
+            ], limit=1)
+
+        records = self.env['hr.rfid.command']
+        for vals in vals_list:
+            cmd = vals['cmd']
+
+            if cmd == 'DB':
+                res = find_last_wait(cmd)
+                if len(res) > 0:
+                    res.cmd_data = vals['cmd_data']
+                else:
+                    records += super(HrRfidCommands, self).create([vals])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
