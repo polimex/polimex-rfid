@@ -51,6 +51,8 @@ class HrRfidWebstackDiscovery(models.TransientModel):
             udp_sock.close()
             return
 
+        ws_env = self.env['hr.rfid.webstack']
+
         while True:
             udp_sock.settimeout(0.5)
             try:
@@ -59,7 +61,7 @@ class HrRfidWebstackDiscovery(models.TransientModel):
                 data = list(map(str.strip, data))
                 if len(data) == 0 or len(data) > 100:
                     continue
-                if len(self.search([('serial', '=', data[4])])) > 0:
+                if len(ws_env([('serial', '=', data[4])])) > 0:
                     continue
                 module = {
                     'last_ip':    addr[0],
@@ -69,7 +71,7 @@ class HrRfidWebstackDiscovery(models.TransientModel):
                     'serial':     data[4],
                     'available': 'u',
                 }
-                env = self.env['hr.rfid.webstack'].sudo()
+                env = ws_env.sudo()
                 module = env.create(module)
                 self.found_webstacks += module
                 try:
