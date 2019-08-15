@@ -57,11 +57,9 @@ class WebRfidController(http.Controller):
             }
 
             if command.cmd == 'D1':
-                ts_code_raw = '{:04X}'.format(command.ts_code)
-
                 card_num = ''.join(list('0' + ch for ch in command.card_number))
                 pin_code = ''.join(list('0' + ch for ch in command.pin_code))
-                ts_code = ''.join(list('0' + ch for ch in ts_code_raw))
+                ts_code = str(command.ts_code)
                 rights_data = '{:02X}'.format(command.rights_data)
                 rights_mask = '{:02X}'.format(command.rights_mask)
 

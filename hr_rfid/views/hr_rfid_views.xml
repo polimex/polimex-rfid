@@ -233,13 +233,7 @@
           <group>
             <field name="acc_gr_doors" attrs="{'invisible': True}" />
             <field name="time_schedule_id" />
-            <field name="door_ids" domain="[('id', 'not in', acc_gr_doors)]">
-              <tree string="Doors group will have access to">
-                <field name="name" />
-                <field name="card_type" />
-                <field name="controller_id" />
-              </tree>
-            </field>
+            <field name="door_ids" domain="[('id', 'not in', acc_gr_doors)]" widget="many2many_tags" />
           </group>
           <footer>
             <button name="add_doors" type="object"
@@ -257,13 +251,7 @@
         <form string="Remove Doors">
           <group>
             <field name="acc_gr_doors" attrs="{'invisible': True}" />
-            <field name="door_ids" domain="[('id', 'in', acc_gr_doors)]">
-              <tree string="Doors group will no longer have access to">
-                <field name="name" />
-                <field name="card_type" />
-                <field name="controller_id" />
-              </tree>
-            </field>
+            <field name="door_ids" domain="[('id', 'in', acc_gr_doors)]" widget="many2many_tags" />
           </group>
           <footer>
             <button name="del_doors" type="object"

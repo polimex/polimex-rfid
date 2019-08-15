@@ -1298,7 +1298,7 @@ class HrRfidCommands(models.Model):
     )
 
     pin_code = fields.Char()
-    ts_code = fields.Integer()
+    ts_code = fields.Char(limit=8)
     rights_data = fields.Integer()
     rights_mask = fields.Integer()
 
@@ -1342,10 +1342,21 @@ class HrRfidCommands(models.Model):
             commands_env.create_d1_cmd(ctrl.webstack_id.id, ctrl.id,
                                        card_number, pin_code, ts_code, rights_data, rights_mask)
         else:
+            new_ts_code = ''
+            if str(ts_code) != '':
+                for i in range(4):
+                    num_old = int(old_cmd.ts_code[i*2:i*2+2], 16)
+                    num_new = int(ts_code[i*2:i*2+2], 16)
+                    if num_new == 0:
+                        num_new = num_old
+                    new_ts_code += '%02X' % num_new
+            else:
+                new_ts_code = old_cmd.ts_code
             write_dict = {
                 'pin_code': pin_code,
-                'ts_code': ts_code,
+                'ts_code': new_ts_code,
             }
+
             new_rights_data = 0
             new_rights_mask = 0
             for i in range(8):
@@ -1379,15 +1390,15 @@ class HrRfidCommands(models.Model):
             return
 
         for reader in door.reader_ids:
-            ts_code = str(time_schedule.number << ((reader.number-1) * 8))
+            ts_code = [0, 0, 0, 0]
+            ts_code[reader.number-1] = time_schedule.number
+            ts_code = '%02X%02X%02X%02X' % (ts_code[0], ts_code[1], ts_code[2], ts_code[3])
             self.add_remove_card(card_number, door.controller_id.id, pin_code, ts_code,
                                  1 << (reader.number-1), 1 << (reader.number-1))
 
     @api.model
     def remove_card(self, door_id, ts_id, pin_code, card_number=None, card_id=None, ignore_active=False):
         door = self.env['hr.rfid.door'].browse(door_id)
-
-        time_schedule = self.env['hr.rfid.time.schedule'].browse(ts_id)
 
         if card_id is not None:
             card = self.env['hr.rfid.card'].browse(card_id)
@@ -1396,8 +1407,7 @@ class HrRfidCommands(models.Model):
                 return
 
         for reader in door.reader_ids:
-            ts_code = str(time_schedule.number << ((reader.number-1) * 8))
-            self.add_remove_card(card_number, door.controller_id.id, pin_code, ts_code,
+            self.add_remove_card(card_number, door.controller_id.id, pin_code, '00000000',
                                  1 << (reader.number-1), 0)
 
     @api.model
