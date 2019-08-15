@@ -15,6 +15,30 @@
       <field name="numbercall">-1</field>
     </record>
 
+    <record id="hr_rfid_employee_acc_gr_expiration" model="ir.cron">
+      <field name="name">HR RFID: Check employee access group expirations</field>
+      <field name="active" eval="True" />
+      <field name="user_id" ref="base.user_root" />
+      <field name="model_id" ref="model_hr_employee" />
+      <field name="state">code</field>
+      <field name="code">model._check_expirations()</field>
+      <field name="interval_type">minutes</field>
+      <field name="interval_number">1</field>
+      <field name="numbercall">-1</field>
+    </record>
+
+    <record id="hr_rfid_contact_acc_gr_expiration" model="ir.cron">
+      <field name="name">HR RFID: Check contact access group expirations</field>
+      <field name="active" eval="True" />
+      <field name="user_id" ref="base.user_root" />
+      <field name="model_id" ref="model_res_partner" />
+      <field name="state">code</field>
+      <field name="code">model._check_expirations()</field>
+      <field name="interval_type">minutes</field>
+      <field name="interval_number">1</field>
+      <field name="numbercall">-1</field>
+    </record>
+
     <record id="hr_rfid_sync_ctrl_clock_cron" model="ir.cron">
       <field name="name">HR RFID: Synchronize controller clocks</field>
       <field name="active" eval="True" />

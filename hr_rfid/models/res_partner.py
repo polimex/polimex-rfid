@@ -10,12 +10,20 @@ class ResPartner(models.Model):
         help="Pin code for this contact, four zeroes means that the contact has no pin code.",
         limit=4,
         default='0000',
+        track_visibility='onchange',
     )
 
     hr_rfid_access_group_id = fields.Many2one(
         'hr.rfid.access.group',
         string='Access Group',
         help='Which access group the contact is a part of',
+        track_visibility='onchange',
+    )
+
+    hr_rfid_access_group_exp = fields.Datetime(
+        string='Access Group Expiration',
+        help='Expiration date for the access group. Access group removed from the contact upon expiration.',
+        track_visibility='onchange',
     )
 
     hr_rfid_card_ids = fields.One2many(
@@ -46,6 +54,15 @@ class ResPartner(models.Model):
                     int(char, 10)
             except ValueError:
                 raise exceptions.ValidationError('Invalid pin code, digits must be from 0 to 9')
+
+    @api.model
+    def _check_expirations(self):
+        self.search([
+            ('hr_rfid_access_group_exp', '<=', fields.Datetime.now())
+        ]).write({
+            'hr_rfid_access_group_id': None,
+            'hr_rfid_access_group_exp': None,
+        })
 
     @api.model_create_multi
     @api.returns('self', lambda value: value.id)
