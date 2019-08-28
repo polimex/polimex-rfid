@@ -23,16 +23,22 @@ class HrEmployee(models.Model):
         track_visibility='onchange',
     )
 
+    hr_rfid_access_group_exp = fields.Datetime(
+        string='Access Group Expiration',
+        help='Expiration date for the access group. Access group removed from the employee upon expiration.',
+        track_visibility='onchange',
+    )
+
     hr_rfid_card_ids = fields.One2many(
         'hr.rfid.card',
-        'user_id',
+        'employee_id',
         string='RFID Card',
         help='Cards owned by the employee',
     )
 
     hr_rfid_event_ids = fields.One2many(
         'hr.rfid.event.user',
-        'user_id',
+        'employee_id',
         string='RFID Events',
         help='Events concerning this employee',
     )
@@ -66,12 +72,21 @@ class HrEmployee(models.Model):
             if len(pin) != 4:
                 raise exceptions.ValidationError('Pin code must have exactly 4 characters')
 
-            # If char is not a valid hex number, int(char, 16) will raise an error
+            # If char is not a valid decimal number, int(char, 10) will raise an error
             try:
                 for char in str(pin):
                     int(char, 10)
             except ValueError:
                 raise exceptions.ValidationError('Invalid pin code, digits must be from 0 to 9')
+
+    @api.model
+    def _check_expirations(self):
+        self.search([
+            ('hr_rfid_access_group_exp', '<=', fields.Datetime.now())
+        ]).write({
+            'hr_rfid_access_group_id': None,
+            'hr_rfid_access_group_exp': None,
+        })
 
     @api.model
     @api.returns('self', lambda value: value.id)

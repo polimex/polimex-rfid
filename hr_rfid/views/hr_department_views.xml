@@ -9,11 +9,7 @@
         <form string="Add Access Groups">
           <group>
             <field name="dep_id" attrs="{'invisible': True}" />
-            <field name="acc_grs" domain="[('department_ids', 'not in', [dep_id])]">
-              <tree string="Access groups that will be added to the department">
-                <field name="name" />
-              </tree>
-            </field>
+            <field name="acc_grs" domain="[('department_ids', 'not in', [dep_id])]" widget="many2many_tags" />
           </group>
           <footer>
             <button name="add_acc_grs" type="object"
@@ -31,11 +27,7 @@
         <form string="Remove Access Groups">
           <group>
             <field name="dep_id" attrs="{'invisible': True}" />
-            <field name="acc_grs" domain="[('department_ids', 'in', [dep_id])]">
-              <tree string="Access groups that will be removed from the department">
-                <field name="name" />
-              </tree>
-            </field>
+            <field name="acc_grs" domain="[('department_ids', 'in', [dep_id])]" widget="many2many_tags" />
           </group>
           <footer>
             <button name="del_acc_grs" type="object"

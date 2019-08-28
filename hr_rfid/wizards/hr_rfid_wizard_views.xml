@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+  <data>
+    <record id="hr_rfid_dialog_box_form" model="ir.ui.view">
+      <field name="name">hr.rfid.dialog.box.form</field>
+      <field name="model">hr.rfid.wiz.dialog.box</field>
+      <field name="arch" type="xml">
+        <form string="">
+          <div>
+            <h2><field name="title" /></h2>
+            <p><field name="text" /></p>
+          </div>
+
+          <footer>
+            <button special="cancel" string="Ok" class="oe_highlight" />
+          </footer>
+        </form>
+      </field>
+    </record>
+  </data>
+</odoo>

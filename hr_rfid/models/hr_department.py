@@ -83,7 +83,7 @@ class HrDepartmentAccGrWizard(models.TransientModel):
         'hr.department',
         string='Department',
         required=True,
-        default=_default_dep
+        default=_default_dep,
     )
 
     acc_grs = fields.Many2many(
@@ -121,7 +121,7 @@ class HrDepartmentDefAccGrWizard(models.TransientModel):
 
     def_acc_gr = fields.Many2one(
         'hr.rfid.access.group',
-        stirng='New default access group',
+        string='New default access group',
         required=True,
     )
 

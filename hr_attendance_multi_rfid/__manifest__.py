@@ -2,7 +2,7 @@
 # noinspection PyStatementEffect
 {
     'name': 'RFID Attendance',
-    'version': '0.2',
+    'version': '0.3',
     'category': 'Human Resources',
     'summary': 'Manage employee attendance',
     'author': 'Polimex',
@@ -13,9 +13,18 @@
 
     'website': 'securitybulgaria.com',
 
-    'depends': [ 'base', 'hr', 'hr_rfid', 'hr_attendance' ],
+    'depends': [ 'base', 'hr', 'hr_rfid', 'hr_attendance', 'hr_holidays_compute_days' ],
 
-    'data': [ 'views/hr_rfid_webstack_views.xml' ],
+    'data': [
+        'reports/hr_attendance_theoretical_time_report_views.xml',
+        'security/hr_attendance_report_theoretical_time_security.xml',
+        'security/ir.model.access.csv',
+        'views/hr_holidays_status_views.xml',
+        'views/hr_employee_views.xml',
+        'views/hr_rfid_webstack_views.xml',
+        'data/hr_attendance_multi_rfid_cron_jobs.xml',
+        'data/hr_attendance_multi_rfid_system_parameters.xml',
+    ],
 
     'demo': [ ],
 

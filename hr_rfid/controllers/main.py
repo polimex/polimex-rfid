@@ -9,8 +9,6 @@ import json
 class WebRfidController(http.Controller):
     @http.route(['/hr/rfid/event'], type='json', auth='none', method=['POST'], csrf=False)
     def post_event(self, **post):
-        # TODO Safety exit if something is missing from the post dictionary
-        # try:
         webstacks_env = request.env['hr.rfid.webstack'].sudo()
         webstack = webstacks_env.search([ ('serial', '=', str(post['convertor'])) ])
         ws_db_update_dict = {
@@ -59,11 +57,9 @@ class WebRfidController(http.Controller):
             }
 
             if command.cmd == 'D1':
-                ts_code_raw = '{:04X}'.format(command.ts_code)
-
                 card_num = ''.join(list('0' + ch for ch in command.card_number))
                 pin_code = ''.join(list('0' + ch for ch in command.pin_code))
-                ts_code = ''.join(list('0' + ch for ch in ts_code_raw))
+                ts_code = str(command.ts_code)
                 rights_data = '{:02X}'.format(command.rights_data)
                 rights_mask = '{:02X}'.format(command.rights_mask)
 
@@ -89,6 +85,7 @@ class WebRfidController(http.Controller):
 
             if len(controller) == 0:
                 ctrl_env = request.env['hr.rfid.ctrl'].sudo()
+
                 cmd_env = request.env['hr.rfid.command'].sudo()
                 controller = ctrl_env.create({
                     'name': 'Controller',
@@ -106,6 +103,7 @@ class WebRfidController(http.Controller):
                 return send_command(command, 400)
 
             card_env = request.env['hr.rfid.card'].sudo()
+            workcodes_env = request.env['hr.rfid.workcode'].sudo()
             card = card_env.search([ ('number', '=', post['event']['card']) ])
             reader = None
 
@@ -134,10 +132,19 @@ class WebRfidController(http.Controller):
                 'event_action': str(event_action),
             }
 
-            if len(card.user_id) == 0:
+            if reader.mode == '03':  # Card and workcode
+                wc = workcodes_env.search([
+                    ('workcode', '=', post['event']['dt'])
+                ])
+                if len(wc) == 0:
+                    event_dict['workcode'] = post['event']['dt']
+                else:
+                    event_dict['workcode_id'] = wc.id
+
+            if len(card.employee_id) == 0:
                 event_dict['contact_id'] = card.contact_id.id
             else:
-                event_dict['user_id'] = card.user_id.id
+                event_dict['employee_id'] = card.employee_id.id
 
             ev_env.create(event_dict)
 
@@ -193,6 +200,26 @@ class WebRfidController(http.Controller):
 
                 reader_env = request.env['hr.rfid.reader'].sudo()
                 door_env = request.env['hr.rfid.door'].sudo()
+                ctrl_env = request.env['hr.rfid.ctrl'].sudo()
+
+                def bytes_to_num(start, digits):
+                    digits = digits-1
+                    res = 0
+                    for i in range(digits+1):
+                        multiplier = 10 ** (digits-i)
+                        res = res + int(data[start:start+2], 16) * multiplier
+                        start = start + 2
+                    return res
+
+                serial_num = str(bytes_to_num(4, 4))
+
+                old_ctrl = ctrl_env.search([
+                    ('serial_number', '=', serial_num)
+                ], limit=1)
+
+                if len(old_ctrl) > 0:
+                    old_ctrl.webstack_id = controller.webstack_id
+                    controller.unlick()
 
                 if len(controller.reader_ids):
                     controller.reader_ids.unlink()
@@ -249,17 +276,7 @@ class WebRfidController(http.Controller):
                     last_door = create_door(gen_d_name(4, controller.id), 4, controller.id)
                     create_reader('R4', 4, '0', controller.id)
 
-                def bytes_to_num(start, digits):
-                    digits = digits-1
-                    res = 0
-                    for i in range(digits+1):
-                        multiplier = 10 ** (digits-i)
-                        res = res + int(data[start:start+2], 16) * multiplier
-                        start = start + 2
-                    return res
-
                 hw_ver = str(bytes_to_num(0, 2))
-                serial_num = str(bytes_to_num(4, 4))
                 sw_ver = str(bytes_to_num(12, 3))
                 inputs = bytes_to_num(18, 3)
                 outputs = bytes_to_num(24, 3)
@@ -306,8 +323,26 @@ class WebRfidController(http.Controller):
                     'controller_id': controller.id,
                     'cmd': 'DC',
                     'cmd_data': '0404',
-                    'cr_timestamp': fields.datetime.now(),
                 })
+
+                cmd_env.create({
+                    'webstack_id': webstack.id,
+                    'controller_id': controller.id,
+                    'cmd': 'F6',
+                })
+
+            if response['c'] == 'F6':
+                data = response['d']
+                readers = [None, None, None, None]
+                for it in controller.reader_ids:
+                    readers[it.number-1] = it
+                for i in range(4):
+                    if readers[i] is not None:
+                        mode = str(data[i*6:i*6+2])
+                        readers[i].write({
+                            'mode': mode,
+                            'no_d6_cmd': True,
+                        })
 
             command.write({
                 'status': 'Success',
@@ -364,6 +399,3 @@ class WebRfidController(http.Controller):
         webstack.write(ws_db_update_dict)
 
         return result
-        # except Exception as e:
-        #     # TODO This is a bad way of handling it
-        #     _log.error("Exception + " + str(e))

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, exceptions
+from odoo import api, fields, models, exceptions, _
 from datetime import datetime, timedelta
+from ..wizards.helpers import create_and_ret_d_box, return_wiz_form_view
 import logging
 import socket
 import httplib
@@ -8,6 +9,95 @@ import json
 import base64
 
 _logger = logging.getLogger(__name__)
+
+
+class HrRfidWebstackDiscovery(models.TransientModel):
+    _name = 'hr.rfid.webstack.discovery'
+    _description = 'Webstack discovery'
+
+    found_webstacks = fields.Many2many(
+        comodel_name='hr.rfid.webstack',
+        relation='hr_rfid_webstack_discovery_all',
+        column1='wiz',
+        column2='ws',
+        string='Found modules',
+        readonly=True,
+        help='Modules that were just found during the discovery process',
+    )
+
+    setup_and_set_to_active = fields.Many2many(
+        comodel_name='hr.rfid.webstack',
+        relation='hr_rfid_webstack_discovery_set',
+        column1='wiz',
+        column2='ws',
+        string='Setup and activate',
+        help='Modules to automatically setup for the odoo and activate',
+    )
+
+    state = fields.Selection(
+        [ ('pre_discovery', 'pre_discovery'), ('post_discovery', 'post_discovery') ],
+        default='pre_discovery'
+    )
+
+    @api.multi
+    def discover(self):
+        self.ensure_one()
+        udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        udp_sock.bind(("", 30303))
+
+        send_msg = b'Discovery:'
+        res = udp_sock.sendto(send_msg, ('<broadcast>', 30303))
+        if res is False:
+            udp_sock.close()
+            return
+
+        ws_env = self.env['hr.rfid.webstack']
+
+        while True:
+            udp_sock.settimeout(0.5)
+            try:
+                data, addr = udp_sock.recvfrom(1024)
+                data = data.decode().split('\n')[:-1]
+                data = list(map(str.strip, map(str, data)))
+                if len(data) == 0 or len(data) > 100:
+                    continue
+                if len(ws_env.search([('serial', '=', data[4])])) > 0:
+                    continue
+                module = {
+                    'last_ip':    addr[0],
+                    'name':       data[0],
+                    'version':    data[3],
+                    'hw_version': data[2],
+                    'serial':     data[4],
+                    'available': 'u',
+                }
+                env = ws_env.sudo()
+                module = env.create(module)
+                self.found_webstacks += module
+                try:
+                    module.action_check_if_ws_available()
+                except exceptions.ValidationError as __:
+                    pass
+            except socket.timeout:
+                break
+
+        udp_sock.close()
+        self.write({ 'state': 'post_discovery' })
+        return return_wiz_form_view(self._name, self.id)
+
+
+    @api.multi
+    def setup_modules(self):
+        self.ensure_one()
+        for ws in self.setup_and_set_to_active:
+            ws.action_set_webstack_settings()
+            ws.action_set_active()
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'reload',
+        }
 
 
 class HrRfidWebstack(models.Model):
@@ -190,7 +280,7 @@ class HrRfidWebstack(models.Model):
             code = response.status
             body = response.read()
             if code != 200:
-                raise exceptions.ValidationError('When trying to setup /protect/uart/conf the module '
+                raise exceptions.ValidationError('While trying to setup /protect/uart/conf the module '
                                                  'returned code ' + str(code) + ' with body:\n' +
                                                  body.decode())
 
@@ -200,7 +290,7 @@ class HrRfidWebstack(models.Model):
             code = response.status
             body = response.read()
             if code != 200:
-                raise exceptions.ValidationError('When trying to setup /protect/config.htm the module '
+                raise exceptions.ValidationError('While trying to setup /protect/config.htm the module '
                                                  'returned code ' + str(code) + ' with body:\n' +
                                                  body.decode())
         except socket.timeout:
@@ -249,47 +339,6 @@ class HrRfidWebstack(models.Model):
                 record.http_link = ''
 
     @api.model
-    def _module_discovery(self):
-        udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-        udp_sock.bind(("", 30303))
-
-        send_msg = b'Discovery:'
-        res = udp_sock.sendto(send_msg, ('<broadcast>', 30303))
-        if res is False:
-            udp_sock.close()
-            return
-
-        while True:
-            udp_sock.settimeout(0.5)
-            try:
-                data, addr = udp_sock.recvfrom(1024)
-                data = data.decode().split('\n')[:-1]
-                data = list(map(str.strip, map(str, data)))
-                if len(data) == 0 or len(data) > 100:
-                    continue
-                if len(self.search([('serial', '=', data[4])])) > 0:
-                    continue
-                module = {
-                    'last_ip':    addr[0],
-                    'name':       data[0],
-                    'version':    data[3],
-                    'hw_version': data[2],
-                    'serial':     data[4],
-                    'available': 'u',
-                }
-                env = self.env['hr.rfid.webstack'].sudo()
-                module = env.create(module)
-                try:
-                    module.action_check_if_ws_available()
-                except exceptions.ValidationError as __:
-                    pass
-            except socket.timeout:
-                break
-
-        udp_sock.close()
-
-    @api.model
     def _deconfirm_webstack(self, ws):
         ws.available = 'u'
 
@@ -302,6 +351,8 @@ class HrRfidController(models.Model):
     _name = 'hr.rfid.ctrl'
     _inherit = ['mail.thread']
     _description = 'Controller'
+    _sql_constraints = [ ('rfid_controller_unique', 'unique(serial_number)',
+                          'Serial numbers must be unique!') ]
 
     hw_types = [ ('1', 'iCON200'), ('2', 'iCON150'), ('3', 'iCON150'), ('4', 'iCON140'),
                  ('5', 'iCON120'), ('6', 'iCON110'), ('7', 'iCON160'), ('8', 'iCON170'),
@@ -433,6 +484,40 @@ class HrRfidController(models.Model):
     )
 
 
+class HrRfidDoorOpenCloseWiz(models.TransientModel):
+    _name = 'hr.rfid.door.open.close.wiz'
+    _description = 'Open or close door'
+
+    def _default_doors(self):
+        return self.env['hr.rfid.door'].browse(self._context.get('active_ids'))
+
+    doors = fields.Many2many(
+        'hr.rfid.door',
+        string='Doors to open/close',
+        required=True,
+        default=_default_doors,
+    )
+
+    time = fields.Integer(
+        string='Time',
+        help='Amount of time (in seconds) the doors will stay open or closed. 0 for infinity.',
+        default=3,
+        required=True,
+    )
+
+    @api.multi
+    def open_doors(self):
+        for door in self.doors:
+            door.open_close_door(out=1, time=self.time)
+        return create_and_ret_d_box(self.env, 'Doors opened', 'Doors successfully opened')
+
+    @api.multi
+    def close_doors(self):
+        for door in self.doors:
+            door.open_close_door(out=0, time=self.time)
+        return create_and_ret_d_box(self.env, 'Door closed', 'Doors successfully closed')
+
+
 class HrRfidDoor(models.Model):
     _name = 'hr.rfid.door'
     _description = 'Door'
@@ -519,7 +604,7 @@ class HrRfidDoor(models.Model):
                 commands_env = self.env['hr.rfid.command']
 
                 for acc_gr_rel in door.access_group_ids:
-                    for user in acc_gr_rel.access_group_id.user_ids:
+                    for user in acc_gr_rel.access_group_id.employee_ids:
                         for card in user.hr_rfid_card_ids:
                             if card.card_type.id == old_card_type:
                                 commands_env.remove_card(door.id, acc_gr_rel. time_schedule_id.id,
@@ -534,6 +619,129 @@ class HrRfidDoor(models.Model):
                 acc_gr_door_rel_env.time_schedule_changed(rel_id)
 
         return True
+
+    @api.multi
+    def open_door(self):
+        self.ensure_one()
+        return self.open_close_door(1, 3)
+
+    @api.multi
+    def close_door(self):
+        self.ensure_one()
+        return self.open_close_door(0, 3)
+
+    @api.multi
+    def open_close_door(self, out, time):
+        self.ensure_one()
+
+        if self.controller_id.webstack_id.behind_nat is True:
+            self.create_door_out_cmd(out, time)
+            return create_and_ret_d_box(self.env, _('Command creation successful'),
+                                        _('Because the webstack is behind NAT, we have to wait for the '
+                                          'webstack to call us, so we created a command. The door will '
+                                          'open/close for %d seconds as soon as possible.') % time)
+        else:
+            self.change_door_out(out, time)
+            return create_and_ret_d_box(self.env, _('Door successfully opened/closed'),
+                                        _('Door will remain opened/closed for %d seconds.') % time)
+
+    @api.multi
+    def create_door_out_cmd(self, out, time):
+        self.ensure_one()
+        cmd_env = self.env['hr.rfid.command']
+        cmd_env.create({
+            'webstack_id': self.controller_id.webstack_id.id,
+            'controller_id': self.controller_id.id,
+            'cmd': 'DB',
+            'cmd_data': '%02d%02d%02d' % (self.number, out, time),
+        })
+        self.log_door_change(out, time, cmd=True)
+
+    @api.multi
+    def change_door_out(self, out, time):
+        """
+        :param out: 0 to open door, 1 to close door
+        :param time: Range: [0, 99]
+        """
+        self.ensure_one()
+        self.log_door_change(out, time)
+
+        ws = self.controller_id.webstack_id
+        if ws.module_username is False:
+            username = ''
+        else:
+            username = str(ws.module_username)
+
+        if ws.module_password is False:
+            password = ''
+        else:
+            password = str(ws.module_password)
+
+        auth = base64.b64encode((username + ':' + password).encode())
+        auth = auth.decode()
+        headers = { 'content-type': 'application/json', 'Authorization': 'Basic ' + str(auth) }
+        cmd = json.dumps({
+            'cmd': {
+                'id': self.controller_id.ctrl_id,
+                'c': 'DB',
+                'd': '%02d%02d%02d' % (self.number, out, time),
+            }
+        })
+
+        host = str(ws.last_ip)
+        try:
+            conn = http.client.HTTPConnection(str(host), 80, timeout=2)
+            conn.request('POST', '/sdk/cmd.json', cmd, headers)
+            response = conn.getresponse()
+            code = response.getcode()
+            body = response.read()
+            conn.close()
+            if code != 200:
+                raise exceptions.ValidationError('While trying to send the command to the module, '
+                                                 'it returned code ' + str(code) + ' with body:\n'
+                                                 + body.decode())
+
+            print('body=' + str(body) + ', cmd=' + str(cmd) + ', code=' + str(code))
+            body_js = json.loads(body.decode())
+            if body_js['response']['e'] != 0:
+                raise exceptions.ValidationError('Error. Controller returned body:\n' + body)
+        except socket.timeout:
+            raise exceptions.ValidationError('Could not connect to the module. '
+                                             "Check if it is turned on or if it's on a different ip.")
+        except (socket.error, socket.gaierror, socket.herror) as e:
+            raise exceptions.ValidationError('Error while trying to connect to the module.'
+                                             ' Information:\n' + str(e))
+
+    @api.multi
+    def log_door_change(self, action, time, cmd = False):
+        """
+        :param action: 1 for door open, 0 for door close
+        :param time: Range: [0, 99]
+        :param cmd: If the command was created instead of
+        """
+        self.ensure_one()
+        if time > 0:
+            if cmd is False:
+                if action == 1:
+                    self.message_post(_('Opened the door for %d seconds.') % time)
+                else:
+                    self.message_post(_('Closed the door for %d seconds.') % time)
+            else:
+                if action == 1:
+                    self.message_post(_('Created a command to open the door for %d seconds.') % time)
+                else:
+                    self.message_post(_('Created a command to close the door for %d seconds.') % time)
+        else:
+            if cmd is False:
+                if action == 1:
+                    self.message_post(_('Opened the door.') % time)
+                else:
+                    self.message_post(_('Closed the door.') % time)
+            else:
+                if action == 1:
+                    self.message_post(_('Created a command to open the door.') % time)
+                else:
+                    self.message_post(_('Created a command to close the door.') % time)
 
 
 class HrRfidTimeSchedule(models.Model):
@@ -575,6 +783,13 @@ class HrRfidReader(models.Model):
         ('1', 'Out'),
     ]
 
+    reader_modes = [
+        ('01', 'Card Only'),
+        ('02', 'Card and Pin'),
+        ('03', 'Card and Workcode'),
+        ('04', 'Card or Pin'),
+    ]
+
     name = fields.Char(
         string='Reader name',
         help='Label to differentiate readers',
@@ -593,6 +808,13 @@ class HrRfidReader(models.Model):
         selection=reader_types,
         string='Reader type',
         help='Type of the reader',
+    )
+
+    mode = fields.Selection(
+        selection=reader_modes,
+        string='Reader mode',
+        help='Mode of the reader',
+        default='01',
     )
 
     controller_id = fields.Many2one(
@@ -625,6 +847,31 @@ class HrRfidReader(models.Model):
                           self.reader_types[int(record.reader_type)][1] + \
                           ' Reader'
 
+    @api.multi
+    def write(self, vals):
+        super(HrRfidReader, self).write(vals)
+
+        controllers = []
+
+        if 'mode' in vals and ('no_d6_cmd' not in vals or vals['no_d6_cmd'] is False):
+            for reader in self:
+                if reader.controller_id not in controllers:
+                    controllers.append(reader.controller_id)
+
+            for ctrl in controllers:
+                cmd_env = self.env['hr.rfid.command'].sudo()
+
+                data = ''
+                for reader in ctrl.reader_ids:
+                    data = data + str(reader.mode) + '0100'
+
+                cmd_env.create({
+                    'webstack_id': ctrl.webstack_id.id,
+                    'controller_id': ctrl.id,
+                    'cmd': 'D6',
+                    'cmd_data': data,
+                })
+
 
 class HrRfidUserEvent(models.Model):
     _name = 'hr.rfid.event.user'
@@ -641,7 +888,22 @@ class HrRfidUserEvent(models.Model):
         help='ID the controller differentiates itself from the others with on the same webstack'
     )
 
-    user_id = fields.Many2one(
+    workcode = fields.Char(
+        string='Workcode (Raw)',
+        help="Workcode that arrived from the event. If you are seeing this version, it means that you haven't created "
+             'a workcode label for this one in the workcodes page.',
+        default='-',
+        readonly=True,
+    )
+
+    workcode_id = fields.Many2one(
+        comodel_name='hr.rfid.workcode',
+        string='Workcode',
+        help='Workcode that arrived from the event',
+        readonly=True,
+    )
+
+    employee_id = fields.Many2one(
         'hr.employee',
         string='User',
         help='User affected by this event',
@@ -722,9 +984,13 @@ class HrRfidUserEvent(models.Model):
     @api.multi
     def _compute_user_ev_name(self):
         for record in self:
-            record.name = record.user_id.name + ' - ' + \
-                          self.action_selection[int(record.event_action)-1][1] +\
-                          ' @ ' + record.door_id.name
+            if len(record.employee_id) > 0:
+                record.name = record.employee_id.name
+            else:
+                record.name = record.contact_id.name
+            record.name += ' - ' + \
+                           self.action_selection[int(record.event_action)-1][1] + \
+                           ' @ ' + record.door_id.name
 
     @api.multi
     def _compute_user_ev_action_str(self):
@@ -778,7 +1044,7 @@ class HrRfidSystemEvent(models.Model):
         lifetime = timedelta(days=int(event_lifetime))
         today = datetime.today()
         res = self.search([
-            ('timestamp', '<', str(today-lifetime))
+            ('timestamp', '<', today-lifetime)
         ])
         res.unlink()
 
@@ -789,6 +1055,85 @@ class HrRfidSystemEvent(models.Model):
         for record in self:
             record.name = str(record.webstack_id.name) + '-' + str(record.controller_id.name) +\
                           ' at ' + str(record.timestamp)
+
+
+class HrRfidSystemEventWizard(models.TransientModel):
+    _name = 'hr.rfid.event.sys.wiz'
+    _description = 'Add card to employee/contact'
+
+    def _default_sys_ev(self):
+        return self.env['hr.rfid.event.system'].browse(self._context.get('active_ids'))
+
+    sys_ev_id = fields.Many2one(
+        'hr.rfid.event.system',
+        string='System event',
+        required=True,
+        default=_default_sys_ev,
+    )
+
+    employee_id = fields.Many2one(
+        'hr.employee',
+        string='Card owner (employee)',
+    )
+
+    contact_id = fields.Many2one(
+        'res.partner',
+        stirng='Card owner (contact)',
+    )
+
+    card_type = fields.Many2one(
+        'hr.rfid.card.type',
+        string='Card type',
+        help='Only doors that support this type will be able to open this card',
+        default=lambda self: self.env.ref('hr_rfid.hr_rfid_card_type_def').id,
+    )
+
+    activate_on = fields.Datetime(
+        string='Activate on',
+        help='Date and time the card will be activated on',
+        track_visibility='onchange',
+        default=lambda self: datetime.now(),
+    )
+
+    deactivate_on = fields.Datetime(
+        string='Deactivate on',
+        help='Date and time the card will be deactivated on',
+        track_visibility='onchange',
+    )
+
+    card_active = fields.Boolean(
+        string='Active',
+        help='Whether the card is active or not',
+        track_visibility='onchange',
+        default=True,
+    )
+
+    @api.multi
+    def add_card(self):
+        self.ensure_one()
+
+        js = json.loads(self.sys_ev_id.error_description.split('\n')[-1])
+        try:
+            card_number = js['event']['card']
+        except KeyError as _:
+            raise exceptions.ValidationError('System event does not have a card number in it')
+
+        if len(self.contact_id) == len(self.employee_id):
+            raise exceptions.ValidationError('Card cannot have both or neither a contact owner and an employee owner.')
+
+        card_env = self.env['hr.rfid.card']
+        new_card = {
+            'number': card_number,
+            'card_type': self.card_type.id,
+            'activate_on': self.activate_on,
+            'deactivate_on': self.deactivate_on,
+            'card_active': self.card_active,
+        }
+        if len(self.contact_id) > 0:
+            new_card['contact_id'] = self.contact_id.id
+        else:
+            new_card['employee_id'] = self.employee_id.id
+        card_env.create(new_card)
 
 
 class HrRfidCommands(models.Model):
@@ -865,6 +1210,10 @@ class HrRfidCommands(models.Model):
         ('31', 'Incorrect Data Response'),
     ]
 
+    name = fields.Char(
+        compute='_compute_cmd_name',
+    )
+
     webstack_id = fields.Many2one(
         'hr.rfid.webstack',
         string='Module',
@@ -921,6 +1270,7 @@ class HrRfidCommands(models.Model):
         help='Time at which the command was created',
         readonly=True,
         required=True,
+        default=lambda self: datetime.now(),
     )
 
     ex_timestamp = fields.Datetime(
@@ -946,9 +1296,19 @@ class HrRfidCommands(models.Model):
     )
 
     pin_code = fields.Char()
-    ts_code = fields.Integer()
+    ts_code = fields.Char(limit=8)
     rights_data = fields.Integer()
     rights_mask = fields.Integer()
+
+    @api.multi
+    def _compute_cmd_name(self):
+        def find_desc(cmd):
+            for it in HrRfidCommands.commands:
+                if it[0] == cmd:
+                    return it[1]
+
+        for record in self:
+            record.name = str(record.cmd) + ' ' + find_desc(record.cmd)
 
     @api.model
     def create_d1_cmd(self, ws_id, ctrl_id, card_num, pin_code, ts_code, rights_data, rights_mask):
@@ -980,10 +1340,21 @@ class HrRfidCommands(models.Model):
             commands_env.create_d1_cmd(ctrl.webstack_id.id, ctrl.id,
                                        card_number, pin_code, ts_code, rights_data, rights_mask)
         else:
+            new_ts_code = ''
+            if str(ts_code) != '':
+                for i in range(4):
+                    num_old = int(old_cmd.ts_code[i*2:i*2+2], 16)
+                    num_new = int(ts_code[i*2:i*2+2], 16)
+                    if num_new == 0:
+                        num_new = num_old
+                    new_ts_code += '%02X' % num_new
+            else:
+                new_ts_code = old_cmd.ts_code
             write_dict = {
                 'pin_code': pin_code,
-                'ts_code': ts_code,
+                'ts_code': new_ts_code,
             }
+
             new_rights_data = 0
             new_rights_mask = 0
             for i in range(8):
@@ -1017,15 +1388,15 @@ class HrRfidCommands(models.Model):
             return
 
         for reader in door.reader_ids:
-            ts_code = str(time_schedule.number << ((reader.number-1) * 8))
+            ts_code = [0, 0, 0, 0]
+            ts_code[reader.number-1] = time_schedule.number
+            ts_code = '%02X%02X%02X%02X' % (ts_code[0], ts_code[1], ts_code[2], ts_code[3])
             self.add_remove_card(card_number, door.controller_id.id, pin_code, ts_code,
                                  1 << (reader.number-1), 1 << (reader.number-1))
 
     @api.model
     def remove_card(self, door_id, ts_id, pin_code, card_number=None, card_id=None, ignore_active=False):
         door = self.env['hr.rfid.door'].browse(door_id)
-
-        time_schedule = self.env['hr.rfid.time.schedule'].browse(ts_id)
 
         if card_id is not None:
             card = self.env['hr.rfid.card'].browse(card_id)
@@ -1034,8 +1405,7 @@ class HrRfidCommands(models.Model):
                 return
 
         for reader in door.reader_ids:
-            ts_code = str(time_schedule.number << ((reader.number-1) * 8))
-            self.add_remove_card(card_number, door.controller_id.id, pin_code, ts_code,
+            self.add_remove_card(card_number, door.controller_id.id, pin_code, '00000000',
                                  1 << (reader.number-1), 0)
 
     @api.model
@@ -1076,3 +1446,92 @@ class HrRfidCommands(models.Model):
                 'cmd': 'D7',
                 'cr_timestamp': fields.datetime.now(),
             })
+
+    @api.model
+    def create(self, vals):
+        def find_last_wait(cmd):
+            return self.search([
+                ('webstack_id', '=', vals['webstack_id']),
+                ('controller_id', '=', vals['controller_id']),
+                ('cmd', '=', cmd),
+                ('status', '=', 'Wait'),
+            ], limit=1)
+
+        cmd = vals['cmd']
+
+        if cmd == 'DB':
+            res = find_last_wait(cmd)
+            cmd_data = vals['cmd_data']
+            if len(res) > 0 and res.cmd_data[0] == cmd_data[0] and res.cmd_data[1] == cmd_data[1]:
+                res.cmd_data = cmd_data
+                return res
+            else:
+                return super(HrRfidCommands, self).create(vals)
+        else:
+            return super(HrRfidCommands, self).create(vals)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

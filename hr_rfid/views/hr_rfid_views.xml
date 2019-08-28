@@ -1,0 +1,1389 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+  <data>
+
+    <!--#######################################################
+    #####                   ACTIONS                       #####
+    ########################################################-->
+
+    <record id="hr_rfid_card_action" model="ir.actions.act_window">
+      <field name="name">Cards</field>
+      <field name="res_model">hr.rfid.card</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search</field>
+    </record>
+
+    <record id="hr_rfid_card_type_action" model="ir.actions.act_window">
+      <field name="name">Card Types</field>
+      <field name="res_model">hr.rfid.card.type</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search</field>
+    </record>
+
+    <record id="hr_rfid_access_group_action" model="ir.actions.act_window">
+      <field name="name">Access Groups</field>
+      <field name="res_model">hr.rfid.access.group</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search</field>
+    </record>
+
+    <record id="hr_rfid_webstack_action" model="ir.actions.act_window">
+      <field name="name">Modules</field>
+      <field name="res_model">hr.rfid.webstack</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search,calendar</field>
+    </record>
+
+    <record id="hr_rfid_ctrl_action" model="ir.actions.act_window">
+      <field name="name">Controllers</field>
+      <field name="res_model">hr.rfid.ctrl</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search</field>
+    </record>
+
+    <record id="hr_rfid_door_action" model="ir.actions.act_window">
+      <field name="name">Doors</field>
+      <field name="res_model">hr.rfid.door</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search</field>
+    </record>
+
+    <record id="hr_rfid_time_schedule_action" model="ir.actions.act_window">
+      <field name="name">Time Schedules</field>
+      <field name="res_model">hr.rfid.time.schedule</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search</field>
+    </record>
+
+    <record id="hr_rfid_reader_action" model="ir.actions.act_window">
+      <field name="name">Readers</field>
+      <field name="res_model">hr.rfid.reader</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search</field>
+    </record>
+
+    <record id="hr_rfid_event_user_action" model="ir.actions.act_window">
+      <field name="name">User Events</field>
+      <field name="res_model">hr.rfid.event.user</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search,calendar,pivot</field>
+      <field name="context">{"search_default_this_day":1}</field>
+    </record>
+
+    <record id="hr_rfid_event_system_action" model="ir.actions.act_window">
+      <field name="name">System Events</field>
+      <field name="res_model">hr.rfid.event.system</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search,calendar,pivot</field>
+      <field name="context">{"search_default_this_day":1}</field>
+    </record>
+
+    <record id="hr_rfid_command_action" model="ir.actions.act_window">
+      <field name="name">Commands to Modules</field>
+      <field name="res_model">hr.rfid.command</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search,calendar</field>
+      <field name="context">{"search_default_this_day":1}</field>
+    </record>
+
+    <record id="hr_rfid_workcode_action" model="ir.actions.act_window">
+      <field name="name">Workcodes</field>
+      <field name="res_model">hr.rfid.workcode</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <!--#######################################################
+    #####                   MENU ITEMS                    #####
+    ########################################################-->
+
+    <menuitem id="hr_rfid_main_menu"
+              name="RFID System"
+              groups="hr_rfid_group_officer"
+              web_icon="hr_rfid,static/description/icon.png" />
+
+    <!--#######################################################
+    #####                    EVENTS                       #####
+    ########################################################-->
+
+    <menuitem id="hr_rfid_events_menu"
+              name="Events"
+              parent="hr_rfid_main_menu"
+              groups="hr_rfid_group_officer"
+              sequence="0" />
+
+    <menuitem id="hr_rfid_menu_user_events"
+              name="User Events"
+              parent="hr_rfid_events_menu"
+              action="hr_rfid_event_user_action"
+              groups="hr_rfid_group_officer"
+              sequence="0" />
+
+    <menuitem id="hr_rfid_menu_system_events"
+              name="System Events"
+              parent="hr_rfid_events_menu"
+              action="hr_rfid_event_system_action"
+              groups="hr_rfid_group_officer"
+              sequence="10" />
+
+    <menuitem id="hr_rfid_menu_commands"
+              name="Commands"
+              parent="hr_rfid_events_menu"
+              action="hr_rfid_command_action"
+              groups="hr_rfid_group_manager"
+              sequence="20" />
+
+    <!--#######################################################
+    #####                    CARDS                        #####
+    ########################################################-->
+
+    <menuitem id="hr_rfid_menu_cards"
+              name="Cards"
+              parent="hr_rfid_main_menu"
+              action="hr_rfid_card_action"
+              groups="hr_rfid_group_officer"
+              sequence="10" />
+
+    <!--#######################################################
+    #####                   SETTINGS                      #####
+    ########################################################-->
+
+    <menuitem id="hr_rfid_settings_menu"
+              name="Settings"
+              parent="hr_rfid_main_menu"
+              groups="hr_rfid_group_officer"
+              sequence="30" />
+
+    <menuitem id="hr_rfid_menu_card_types"
+              name="Card Types"
+              parent="hr_rfid_settings_menu"
+              action="hr_rfid_card_type_action"
+              groups="hr_rfid_group_manager"
+              sequence="0" />
+
+    <menuitem id="hr_rfid_menu_access_groups"
+              name="Access Groups"
+              parent="hr_rfid_settings_menu"
+              action="hr_rfid_access_group_action"
+              groups="hr_rfid_group_manager"
+              sequence="10" />
+
+    <menuitem id="hr_rfid_menu_modules_main_menu"
+              name="Modules"
+              parent="hr_rfid_settings_menu"
+              groups="hr_rfid_group_manager"
+              sequence="20" />
+
+    <menuitem id="hr_rfid_menu_controllers"
+              name="Controllers"
+              parent="hr_rfid_settings_menu"
+              action="hr_rfid_ctrl_action"
+              groups="hr_rfid_group_manager"
+              sequence="30" />
+
+    <menuitem id="hr_rfid_menu_doors"
+              name="Doors"
+              parent="hr_rfid_settings_menu"
+              action="hr_rfid_door_action"
+              groups="hr_rfid_group_manager"
+              sequence="40" />
+
+    <menuitem id="hr_rfid_menu_time_schedules"
+              name="Time Schedules"
+              parent="hr_rfid_settings_menu"
+              action="hr_rfid_time_schedule_action"
+              groups="hr_rfid_group_manager"
+              sequence="50" />
+
+    <menuitem id="hr_rfid_menu_workcodes"
+              name="Workcodes"
+              parent="hr_rfid_settings_menu"
+              action="hr_rfid_workcode_action"
+              groups="hr_rfid_group_manager"
+              sequence="60" />
+
+    <menuitem id="hr_rfid_menu_readers"
+              name="Readers"
+              parent="hr_rfid_settings_menu"
+              action="hr_rfid_reader_action"
+              groups="hr_rfid_group_manager"
+              sequence="70" />
+
+    <!--#######################################################
+    #####                   MODULES                       #####
+    ########################################################-->
+
+    <menuitem id="hr_rfid_menu_modules"
+              name="Modules"
+              parent="hr_rfid_menu_modules_main_menu"
+              action="hr_rfid_webstack_action"
+              groups="hr_rfid_group_manager"
+              sequence="0" />
+
+    <!--#######################################################
+    #####              ACCESS GROUP VIEWS                 #####
+    ########################################################-->
+
+    <record id="hr_rfid_access_group_add_doors_wiz" model="ir.ui.view">
+      <field name="name">hr.rfid.access.group.add.doors.wiz.form</field>
+      <field name="model">hr.rfid.access.group.wizard</field>
+      <field name="arch" type="xml">
+        <form string="Add Doors">
+          <group>
+            <field name="acc_gr_doors" attrs="{'invisible': True}" />
+            <field name="time_schedule_id" />
+            <field name="door_ids" domain="[('id', 'not in', acc_gr_doors)]" widget="many2many_tags" />
+          </group>
+          <footer>
+            <button name="add_doors" type="object"
+                    string="Add Doors" class="oe_highlight" />
+            <button special="cancel" string="Cancel" />
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_access_group_del_doors_wiz" model="ir.ui.view">
+      <field name="name">hr.rfid.access.group.del.doors.wiz.form</field>
+      <field name="model">hr.rfid.access.group.wizard</field>
+      <field name="arch" type="xml">
+        <form string="Remove Doors">
+          <group>
+            <field name="acc_gr_doors" attrs="{'invisible': True}" />
+            <field name="door_ids" domain="[('id', 'in', acc_gr_doors)]" widget="many2many_tags" />
+          </group>
+          <footer>
+            <button name="del_doors" type="object"
+                    string="Remove Doors" class="oe_highlight" />
+            <button special="cancel" string="Cancel" />
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_access_group_add_doors_wiz_action" model="ir.actions.act_window">
+      <field name="name">Add Doors</field>
+      <field name="res_model">hr.rfid.access.group.wizard</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_rfid_access_group_add_doors_wiz" />
+      <field name="target">new</field>
+    </record>
+
+    <record id="hr_rfid_access_group_del_doors_wiz_action" model="ir.actions.act_window">
+      <field name="name">Remove Doors</field>
+      <field name="res_model">hr.rfid.access.group.wizard</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_rfid_access_group_del_doors_wiz" />
+      <field name="target">new</field>
+    </record>
+
+    <record id="hr_rfid_access_group_view_form" model="ir.ui.view">
+      <field name="name">hr.rfid.access.group.form</field>
+      <field name="model">hr.rfid.access.group</field>
+      <field name="arch" type="xml">
+        <form string="Access Groups">
+          <header>
+            <button name="%(hr_rfid_access_group_add_doors_wiz_action)d"
+                    id="hr_rfid_access_group_add_doors_btn"
+                    type="action"
+                    string="Add Doors"
+                    class="oe_highlight" />
+            <button name="%(hr_rfid_access_group_del_doors_wiz_action)d"
+                    id="hr_rfid_access_group_del_doors_btn"
+                    type="action"
+                    string="Remove Doors" />
+          </header>
+
+          <group>
+            <field name="name" />
+          </group>
+
+          <notebook>
+            <page string="Doors">
+              <field name="door_ids" readonly="1">
+                <tree string="Doors group has access to">
+                  <field name="door_id" />
+                  <field name="time_schedule_id" />
+                </tree>
+              </field>
+            </page>
+
+            <page string="Departments">
+              <field name="department_ids">
+                <tree string="Departments assigned to this access group">
+                  <field name="name" />
+                  <field name="note" />
+                </tree>
+              </field>
+            </page>
+
+            <page string="Departments (default)"
+                  help="Departments that have this access group as the default one">
+              <field name="default_department_ids" readonly="1">
+                <tree>
+                  <field name="name" />
+                  <field name="note" />
+                </tree>
+              </field>
+            </page>
+
+            <page string="Users" help="Users assigned to this access group">
+              <field name="employee_ids" readonly="1">
+                <tree>
+                  <field name="name" />
+                  <field name="display_name" />
+                  <field name="department_id" />
+                  <field name="job_id" />
+                </tree>
+              </field>
+            </page>
+
+            <page string="Contacts" help="Contacts assigned to this access group">
+              <field name="contact_ids" readonly="1">
+                <tree>
+                  <field name="name" />
+                  <field name="parent_id" />
+                  <field name="function" />
+                </tree>
+              </field>
+            </page>
+
+          </notebook>
+          <notebook>
+            <page string="Inherited Access Groups">
+              <field name="inherited_access_groups">
+                <tree>
+                  <field name="name" />
+                </tree>
+              </field>
+            </page>
+
+            <page string="All Doors">
+              <field name="all_door_ids" readonly="1">
+                <tree string="Doors group has access to">
+                  <field name="door_id" />
+                  <field name="time_schedule_id" />
+                </tree>
+              </field>
+            </page>
+
+            <page string="Inheritor Access Groups">
+              <field name="inheritor_access_groups" readonly="1">
+                <tree>
+                  <field name="name" />
+                </tree>
+              </field>
+            </page>
+          </notebook>
+
+          <div class="oe_chatter">
+            <field name="message_follower_ids" widget="mail_followers" />
+            <field name="message_ids" widget="mail_thread" />
+          </div>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_access_group_view_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.access.group.form</field>
+      <field name="model">hr.rfid.access.group</field>
+      <field name="arch" type="xml">
+        <tree string="Access Groups">
+          <field name="name" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="hr_rfid_access_group_view_search" model="ir.ui.view">
+      <field name="name">hr.rfid.access.group.search</field>
+      <field name="model">hr.rfid.access.group</field>
+      <field name="arch" type="xml">
+        <search string="Access Groups">
+          <field name="name" />
+        </search>
+      </field>
+    </record>
+
+    <record id="hr_rfid_access_group_door_rel_view_form" model="ir.ui.view">
+      <field name="name">hr.rfid.access.group.door.rel.form</field>
+      <field name="model">hr.rfid.access.group.door.rel</field>
+      <field name="arch" type="xml">
+        <form>
+          <group>
+            <field name="access_group_id" />
+            <field name="door_id" />
+            <field name="time_schedule_id" />
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <!--#######################################################
+    #####                 CARD VIEWS                      #####
+    ########################################################-->
+
+    <record id="hr_rfid_card_view_form" model="ir.ui.view">
+      <field name="name">hr.rfid.card.form</field>
+      <field name="model">hr.rfid.card</field>
+      <field name="arch" type="xml">
+        <form string="RFID Card">
+          <sheet>
+            <div class="oe_button_box" name="button_box">
+              <button name="toggle_card_active" type="object" class="oe_stat_button" icon="fa-archive">
+                <field name="card_active" widget="boolean_button"
+                       options='{"terminology": "archive"}' />
+              </button>
+            </div>
+            <group>
+              <field name="number" />
+              <field name="employee_id" />
+              <field name="contact_id" />
+              <field name="card_type" />
+              <field name="card_active" />
+              <field name="activate_on" />
+              <field name="deactivate_on" />
+            </group>
+          </sheet>
+          <div class="oe_chatter">
+            <field name="message_follower_ids" widget="mail_followers" />
+            <field name="message_ids" widget="mail_thread" />
+          </div>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_card_view_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.card.tree</field>
+      <field name="model">hr.rfid.card</field>
+      <field name="arch" type="xml">
+        <tree string="RFID Card">
+          <field name="number" />
+          <field name="employee_id" />
+          <field name="contact_id" />
+          <field name="card_type" />
+          <field name="activate_on" />
+          <field name="deactivate_on" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="hr_rfid_card_view_search" model="ir.ui.view">
+      <field name="name">hr.rfid.card.search</field>
+      <field name="model">hr.rfid.card</field>
+      <field name="arch" type="xml">
+        <search string="RFID Card">
+          <field name="number" />
+          <field name="card_type" />
+          <field name="employee_id">
+            <field name="name" />
+          </field>
+          <field name="contact_id">
+            <field name="name" />
+          </field>
+        </search>
+      </field>
+    </record>
+
+    <record id="hr_rfid_card_type_view_form" model="ir.ui.view">
+      <field name="name">hr.rfid.card.type.form</field>
+      <field name="model">hr.rfid.card.type</field>
+      <field name="arch" type="xml">
+        <form>
+          <group>
+            <field name="name" />
+          </group>
+
+          <field name="card_ids" readonly="1">
+            <tree>
+              <field name="number" />
+              <field name="employee_id" />
+              <field name="contact_id" />
+            </tree>
+          </field>
+          <div class="oe_chatter">
+            <field name="message_follower_ids" widget="mail_followers" />
+            <field name="message_ids" widget="mail_thread" />
+          </div>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_card_type_view_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.card.type.tree</field>
+      <field name="model">hr.rfid.card.type</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="hr_rfid_card_type_view_search" model="ir.ui.view">
+      <field name="name">hr.rfid.card.type.search</field>
+      <field name="model">hr.rfid.card.type</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="name" />
+          <field name="card_ids">
+            <field name="number" />
+          </field>
+        </search>
+      </field>
+    </record>
+
+    <!--#######################################################
+    #####                 WEBSTACK VIEWS                  #####
+    ########################################################-->
+
+    <record id="hr_rfid_webstack_discovery_wiz"  model="ir.ui.view">
+      <field name="name">hr.rfid.webstack.discovery.wiz.form</field>
+      <field name="model">hr.rfid.webstack.discovery</field>
+      <field name="arch" type="xml">
+        <form string="Webstack Discovery">
+          <field name="state" invisible="1" />
+
+          <footer states="pre_discovery">
+            <button name="discover" type="object" string="Begin discovery" class="oe_highlight" />
+            <button special="cancel" string="Cancel" />
+          </footer>
+
+          <group states="post_discovery">
+            <field name="found_webstacks">
+              <tree>
+                <field name="name" />
+                <field name="serial" />
+                <field name="ws_active" />
+                <field name="hw_version" />
+                <field name="version" />
+                <field name="last_ip" />
+              </tree>
+            </field>
+            <field name="setup_and_set_to_active" domain="[('id','in',found_webstacks)]">
+              <tree>
+                <field name="name" />
+                <field name="serial" />
+                <field name="ws_active" />
+                <field name="hw_version" />
+                <field name="version" />
+                <field name="last_ip" />
+              </tree>
+            </field>
+          </group>
+
+          <footer states="post_discovery">
+            <button name="setup_modules" type="object" string="Done" class="oe_highlight" />
+          </footer>
+
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_webstack_discovery_action" model="ir.actions.act_window">
+      <field name="name">Modules Discovery</field>
+      <field name="res_model">hr.rfid.webstack.discovery</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_rfid_webstack_discovery_wiz" />
+      <field name="target">new</field>
+    </record>
+
+    <menuitem id="hr_rfid_menu_modules_discovery"
+              name="Module Discovery"
+              parent="hr_rfid_menu_modules_main_menu"
+              action="hr_rfid_webstack_discovery_action"
+              groups="hr_rfid_view_module_discovery"
+              sequence="10" />
+
+    <record id="hr_rfid_webstack_view_form" model="ir.ui.view">
+      <field name="name">hr.rfid.webstack.form</field>
+      <field name="model">hr.rfid.webstack</field>
+      <field name="arch" type="xml">
+        <form string="RFID Modules">
+          <header>
+            <button name="action_set_active" type="object"
+                    attrs="{'invisible': [('ws_active','=', True)]}"
+                    string="Set module to active" />
+            <button name="action_set_inactive" type="object"
+                    attrs="{'invisible': [('ws_active','=', False)]}"
+                    string="Set module to inactive" />
+            <button name="action_set_webstack_settings" type="object"
+                    string="Setup module for this odoo"
+                    help="Set the webstack up to work with this odoo. Module username and password must be set to the admin username and password on the module. Last ip must be set to the correct ip of the module" />
+            <button name="action_check_if_ws_available" type="object"
+                    attrs="{'invisible': [('available', '=', 'a')]}"
+                    string="Test module connection"
+                    help="Connect to the module and request for information." />
+            <field name="available" widget="statusbar" />
+          </header>
+
+          <group>
+            <field name="name" />
+            <field name="serial" readonly="1" />
+            <field name="ws_active" />
+            <field name="key" />
+            <field name="hw_version" readonly="1" />
+            <field name="version" readonly="1" />
+            <field name="behind_nat" />
+            <field name="last_ip" />
+            <field name="updated_at" readonly="1" />
+            <field name="http_link" readonly="1" widget="url" />
+            <field name="module_username" />
+            <field name="module_password" password="True" />
+          </group>
+
+          <notebook>
+            <page string="Controllers">
+              <field name="controllers" readonly="1">
+                <tree string="Controllers">
+                  <field name="name" />
+                  <field name="ctrl_id" />
+                  <field name="hw_version" />
+                  <field name="sw_version" />
+                </tree>
+              </field>
+            </page>
+
+            <page string="Error Events">
+              <field name="system_event_ids" readonly="1">
+                <tree string="Error Events">
+                  <field name="controller_id">
+                    <field name="name" string="Controller Name" />
+                  </field>
+                  <field name="timestamp" />
+                  <field name="error_description" />
+                </tree>
+              </field>
+            </page>
+
+            <page string="Commands">
+              <field name="command_ids" readonly="1">
+                <tree string="Commands">
+                  <field name="controller_id" />
+                  <field name="cmd" />
+                  <field name="status" />
+                  <field name="error" />
+                </tree>
+              </field>
+            </page>
+          </notebook>
+
+          <div class="oe_chatter">
+            <field name="message_follower_ids" widget="mail_followers" />
+            <field name="message_ids" widget="mail_thread" />
+          </div>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_webstack_view_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.webstack.tree</field>
+      <field name="model">hr.rfid.webstack</field>
+      <field name="arch" type="xml">
+        <tree string="RFID Modules">
+          <field name="name" />
+          <field name="serial" />
+          <field name="ws_active" />
+          <field name="hw_version" />
+          <field name="version" />
+          <field name="updated_at" />
+          <field name="last_ip" />
+          <button name="action_set_active" type="object"
+                  attrs="{'invisible': [('ws_active','=', True)]}"
+                  string="Set module to active" />
+          <button name="action_set_inactive" type="object"
+                  attrs="{'invisible': [('ws_active','=', False)]}"
+                  string="Set module to inactive" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="hr_rfid_webstack_view_search" model="ir.ui.view">
+      <field name="name">hr.rfid.webstack.search</field>
+      <field name="model">hr.rfid.webstack</field>
+      <field name="arch" type="xml">
+        <search string="RFID Modules">
+          <field name="name" />
+          <field name="serial" />
+          <field name="ws_active" />
+          <field name="version" />
+          <field name="updated_at" />
+        </search>
+      </field>
+    </record>
+
+    <record id="hr_rfid_webstack_view_calendar" model="ir.ui.view">
+      <field name="name">hr.rfid.webstack.calendar</field>
+      <field name="model">hr.rfid.webstack</field>
+      <field name="arch" type="xml">
+        <calendar date_start="updated_at" date_stop="updated_at" color="serial">
+          <field name="name" />
+          <field name="serial" />
+        </calendar>
+      </field>
+    </record>
+
+    <record id="hr_rfid_controller_view_form" model="ir.ui.view">
+      <field name="name">hr.rfid.ctrl.form</field>
+      <field name="model">hr.rfid.ctrl</field>
+      <field name="arch" type="xml">
+        <form string="RFID Controller" create="false">
+          <group>
+            <field name="name" />
+            <field name="ctrl_id" readonly="1" />
+            <field name="serial_number" readonly="1" />
+            <field name="hw_version" readonly="1" />
+            <field name="sw_version" readonly="1" />
+            <field name="readers" readonly="1" />
+            <field name="max_cards_count" readonly="1" />
+            <field name="webstack_id" readonly="1" />
+          </group>
+
+          <notebook>
+            <page string="Doors">
+              <field name="door_ids" readonly="1">
+                <tree string="Doors">
+                  <field name="name" />
+                  <field name="number" />
+                </tree>
+              </field>
+            </page>
+
+            <page string="Readers">
+              <field name="reader_ids" readonly="1">
+                <tree string="Readers">
+                  <field name="number" />
+                  <field name="reader_type" />
+                </tree>
+              </field>
+            </page>
+
+            <page string="Error Events">
+              <field name="system_event_ids" readonly="1">
+                <tree string="Error Events">
+                  <field name="controller_id" />
+                  <field name="timestamp" />
+                  <field name="error_description" />
+                </tree>
+              </field>
+            </page>
+
+            <page string="Commands">
+              <field name="command_ids" readonly="1">
+                <tree string="Commands">
+                  <field name="webstack_id" />
+                  <field name="cmd" />
+                  <field name="status" />
+                  <field name="error" />
+                </tree>
+              </field>
+            </page>
+          </notebook>
+          <div class="oe_chatter">
+            <field name="message_follower_ids" widget="mail_followers" />
+            <field name="message_ids" widget="mail_thread" />
+          </div>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_controller_view_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.ctrl.tree</field>
+      <field name="model">hr.rfid.ctrl</field>
+      <field name="arch" type="xml">
+        <tree string="RFID Controllers" create="false">
+          <field name="name" />
+          <field name="serial_number" />
+          <field name="hw_version" />
+          <field name="sw_version" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="hr_rfid_controller_view_search" model="ir.ui.view">
+      <field name="name">hr.rfid.ctrl.search</field>
+      <field name="model">hr.rfid.ctrl</field>
+      <field name="arch" type="xml">
+        <search string="RFID Controllers">
+          <field name="name" />
+          <field name="serial_number" />
+          <field name="hw_version" />
+          <field name="sw_version" />
+        </search>
+      </field>
+    </record>
+
+    <record id="hr_rfid_door_open_close_wiz_form" model="ir.ui.view">
+      <field name="name">hr.rfid.door.open.close.wiz.form</field>
+      <field name="model">hr.rfid.door.open.close.wiz</field>
+      <field name="arch" type="xml">
+        <form string="Open/close door">
+          <group>
+            <field name="doors">
+              <tree>
+                <field name="name" />
+                <field name="controller_id" />
+                <field name="card_type" />
+              </tree>
+            </field>
+            <field name="time" />
+          </group>
+          <footer>
+            <button name="open_doors" type="object" string="Open doors" class="oe_highlight" />
+            <button name="close_doors" type="object" string="Close doors" class="oe_highlight" />
+            <button special="cancel" string="Cancel" />
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <act_window id="hr_rfid_door_open_close_wiz_act_window"
+                name="Open/Close doors"
+                src_model="hr.rfid.door"
+                res_model="hr.rfid.door.open.close.wiz"
+                view_mode="form"
+                target="new"
+                key2="client_action_multi" />
+
+    <record id="hr_rfid_door_open_close_wiz_action" model="ir.actions.act_window">
+      <field name="name">Open/close door</field>
+      <field name="res_model">hr.rfid.door.open.close.wiz</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_rfid_door_open_close_wiz_form" />
+      <field name="target">new</field>
+    </record>
+
+    <record id="hr_rfid_door_view_form" model="ir.ui.view">
+      <field name="name">hr.rfid.door.form</field>
+      <field name="model">hr.rfid.door</field>
+      <field name="arch" type="xml">
+        <form create="false" delete="false">
+          <header>
+            <button name="open_door"
+                    type="object"
+                    string="Open door"
+                    help="Will only open for 3 seconds"
+                    groups="hr_rfid.hr_rfid_view_door_open_close" />
+            <button name="close_door"
+                    type="object"
+                    string="Close door"
+                    help="Will only close for 3 seconds"
+                    groups="hr_rfid.hr_rfid_view_door_open_close" />
+            <button name="%(hr_rfid_door_open_close_wiz_action)d"
+                    id="hr_rfid_door_open_close_btn"
+                    type="action"
+                    string="Open/Close Door"
+                    class="oe_highlight"
+                    groups="hr_rfid.hr_rfid_view_door_open_close" />
+          </header>
+
+          <group>
+            <field name="name" />
+            <field name="card_type" />
+            <field name="number" readonly="1" />
+            <field name="controller_id" readonly="1" />
+          </group>
+
+          <notebook>
+            <page string="Access Groups">
+              <field name="access_group_ids" context="{'door_id': id}">
+                <tree>
+                  <field name="access_group_id" />
+                  <field name="time_schedule_id" />
+                </tree>
+              </field>
+            </page>
+
+            <page string="Readers">
+              <field name="reader_ids" readonly="1">
+                <tree>
+                  <field name="number" />
+                  <field name="reader_type" />
+                  <field name="controller_id" />
+                </tree>
+              </field>
+            </page>
+
+            <page string="Events">
+              <field name="user_event_ids" readonly="1">
+                <tree>
+                  <field name="event_time" />
+                  <field name="ctrl_addr" />
+                  <field name="employee_id" />
+                  <field name="reader_id" />
+                  <field name="card_id" />
+                </tree>
+              </field>
+            </page>
+          </notebook>
+
+          <div class="oe_chatter">
+            <field name="message_follower_ids" widget="mail_followers" />
+            <field name="message_ids" widget="mail_thread" />
+          </div>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_door_view_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.door.tree</field>
+      <field name="model">hr.rfid.door</field>
+      <field name="arch" type="xml">
+        <tree create="false" delete="false">
+          <field name="name" />
+          <field name="controller_id" />
+          <field name="card_type" />
+          <button name="open_door"
+                  type="object"
+                  string="Open door"
+                  help="Will only open for 3 seconds"
+                  groups="hr_rfid.hr_rfid_view_door_open_close" />
+          <button name="close_door"
+                  type="object"
+                  string="Close door"
+                  help="Will only close for 3 seconds"
+                  groups="hr_rfid.hr_rfid_view_door_open_close" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="hr_rfid_door_view_search" model="ir.ui.view">
+      <field name="name">hr.rfid.door.search</field>
+      <field name="model">hr.rfid.door</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="name" />
+          <field name="controller_id" />
+          <field name="card_type" />
+        </search>
+      </field>
+    </record>
+
+    <record id="hr_rfid_time_schedule_view_form" model="ir.ui.view">
+      <field name="name">hr.rfid.time.schedule.form</field>
+      <field name="model">hr.rfid.time.schedule</field>
+      <field name="arch" type="xml">
+        <form create="false" delete="false">
+          <group>
+            <field name="name" />
+          </group>
+          <div class="oe_chatter">
+            <field name="message_follower_ids" widget="mail_followers" />
+            <field name="message_ids" widget="mail_thread" />
+          </div>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_time_schedule_view_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.time.schedule.tree</field>
+      <field name="model">hr.rfid.time.schedule</field>
+      <field name="arch" type="xml">
+        <tree create="false" delete="false">
+          <field name="name" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="hr_rfid_reader_view_form" model="ir.ui.view">
+      <field name="name">hr.rfid.reader.form</field>
+      <field name="model">hr.rfid.reader</field>
+      <field name="arch" type="xml">
+        <form create="false" delete="false">
+          <group>
+            <field name="name" />
+            <field name="mode" />
+            <field name="number" readonly="1" />
+            <field name="controller_id" readonly="1" />
+            <field name="reader_type" readonly="1" />
+            <field name="door_id" readonly="1" />
+          </group>
+          <field name="user_event_ids" readonly="1">
+            <tree>
+              <field name="event_time" />
+              <field name="employee_id" />
+              <field name="card_id" />
+              <field name="door_id" />
+            </tree>
+          </field>
+          <div class="oe_chatter">
+            <field name="message_follower_ids" widget="mail_followers" />
+            <field name="message_ids" widget="mail_thread" />
+          </div>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_reader_view_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.reader.tree</field>
+      <field name="model">hr.rfid.reader</field>
+      <field name="arch" type="xml">
+        <tree create="false" delete="false">
+          <field name="name" />
+          <field name="mode" />
+          <field name="controller_id" />
+          <field name="door_id" />
+          <field name="reader_type" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="hr_rfid_reader_view_search" model="ir.ui.view">
+      <field name="name">hr.rfid.reader.search</field>
+      <field name="model">hr.rfid.reader</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="name" />
+          <field name="mode" />
+          <field name="controller_id" />
+          <field name="door_id" />
+          <field name="reader_type" />
+        </search>
+      </field>
+    </record>
+
+    <record id="hr_rfid_user_ev_view_form" model="ir.ui.view">
+      <field name="name">hr.rfid.user.ev.form</field>
+      <field name="model">hr.rfid.event.user</field>
+      <field name="arch" type="xml">
+        <form create="false" delete="false">
+          <group>
+            <field name="name" />
+            <field name="workcode"
+                   attrs="{'invisible': [('workcode','=', '-')]}" />
+            <field name="workcode_id"
+                   attrs="{'invisible': [('workcode_id','=', False)]}" />
+            <field name="event_action" readonly="1" />
+            <field name="event_time" readonly="1" />
+            <field name="ctrl_addr" readonly="1" />
+            <field name="employee_id" readonly="1" />
+            <field name="door_id" readonly="1" />
+            <field name="reader_id" readonly="1" />
+            <field name="card_id" readonly="1" />
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_user_ev_view_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.user.ev.tree</field>
+      <field name="model">hr.rfid.event.user</field>
+      <field name="arch" type="xml">
+        <tree create="false" delete="false">
+          <field name="employee_id" />
+          <field name="door_id" />
+          <field name="event_action" />
+          <field name="event_time" />
+          <field name="card_id" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="hr_rfid_user_ev_view_search" model="ir.ui.view">
+      <field name="name">hr.rfid.user.ev.search</field>
+      <field name="model">hr.rfid.event.user</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="name" />
+          <field name="door_id" />
+          <field name="event_action" />
+          <field name="event_time" />
+          <field name="employee_id">
+            <field name="name" />
+          </field>
+          <field name="card_id">
+            <field name="number" />
+            <field name="card_type" />
+          </field>
+
+          <filter name="granted" string="Status: Granted"
+                  domain="[('event_action', '=', '1')]" />
+          <filter name="granted" string="Status: Denied"
+                  domain="[('event_action', '!=', '1')]" />
+          <separator />
+          <filter name="last_week" string="Events from last week"
+                  domain="[('event_time', '>=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="last_month" string="Events from last month"
+                  domain="[('event_time', '>=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="last_year" string="Events from last year"
+                  domain="[('event_time', '>=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]" />
+          <separator />
+          <filter name="this_day" string="Events from today"
+                  domain="[('event_time', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('event_time', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="this_week" string="Events from this week"
+                  domain="[('event_time', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('event_time', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="this_month" string="Events from this month"
+                  domain="[('event_time', '&gt;=', context_today().strftime('%%Y-%%m-1'))]" />
+          <filter name="this_year" string="Events from this year"
+                  domain="[('event_time', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('event_time', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]" />
+          <separator />
+        </search>
+      </field>
+    </record>
+
+    <record id="hr_rfid_user_ev_view_calendar" model="ir.ui.view">
+      <field name="name">hr.rfid.user.ev.calendar</field>
+      <field name="model">hr.rfid.event.user</field>
+      <field name="arch" type="xml">
+        <calendar date_start="event_time" date_stop="event_time" color="action_string">
+          <field name="employee_id" />
+          <field name="door_id">
+            <field name="controller_id" />
+          </field>
+          <field name="action_string" />
+        </calendar>
+      </field>
+    </record>
+
+    <record id="hr_rfid_user_ev_view_pivot" model="ir.ui.view">
+      <field name="name">hr.rfid.user.ev.pivot</field>
+      <field name="model">hr.rfid.event.user</field>
+      <field name="arch" type="xml">
+        <pivot string="Event" disable_linking="True">
+          <field name="event_time" type="row" />
+          <field name="event_action" type="col" />
+        </pivot>
+      </field>
+    </record>
+
+    <record id="hr_rfid_sys_ev_wiz_form" model="ir.ui.view">
+      <field name="name">hr.rfid.sys.ev.add.card.wiz.form</field>
+      <field name="model">hr.rfid.event.sys.wiz</field>
+      <field name="arch" type="xml">
+        <form string="Add card">
+          <group>
+            <field name="employee_id" />
+            <field name="contact_id" />
+            <field name="card_type" />
+            <field name="card_active" />
+            <field name="activate_on" />
+            <field name="deactivate_on" />
+          </group>
+          <footer>
+            <button name="add_card" type="object"
+                    string="Add Card" class="oe_highlight" />
+            <button special="cancel" string="Cancel" />
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_sys_ev_wiz_action" model="ir.actions.act_window">
+      <field name="name">Add Card</field>
+      <field name="res_model">hr.rfid.event.sys.wiz</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_rfid_sys_ev_wiz_form" />
+      <field name="target">new</field>
+    </record>
+
+    <record id="hr_rfid_sys_ev_view_form" model="ir.ui.view">
+      <field name="name">hr.rfid.sys.ev.form</field>
+      <field name="model">hr.rfid.event.system</field>
+      <field name="arch" type="xml">
+        <form create="false" delete="false">
+          <header>
+            <button name="%(hr_rfid_sys_ev_wiz_action)d"
+                    id="hr_rfid_sys_ev_add_card_btn"
+                    type="action"
+                    string="Add Card"
+                    class="oe_highlight" />
+          </header>
+          <group>
+            <field name="webstack_id" readonly="1" />
+            <field name="controller_id" readonly="1" />
+            <field name="timestamp" readonly="1" />
+            <field name="error_description" readonly="1" />
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_sys_ev_view_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.sys.ev.tree</field>
+      <field name="model">hr.rfid.event.system</field>
+      <field name="arch" type="xml">
+        <tree create="false" delete="false">
+          <field name="webstack_id" />
+          <field name="controller_id" />
+          <field name="timestamp" />
+          <field name="error_description" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="hr_rfid_sys_ev_view_search" model="ir.ui.view">
+      <field name="name">hr.rfid.sys.ev.search</field>
+      <field name="model">hr.rfid.event.system</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="webstack_id" />
+          <field name="controller_id" />
+          <field name="timestamp" />
+          <field name="error_description" />
+
+          <filter name="last_week" string="Events from last week"
+                  domain="[('timestamp', '>=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="last_month" string="Events from last month"
+                  domain="[('timestamp', '>=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="last_year" string="Events from last year"
+                  domain="[('timestamp', '>=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]" />
+          <separator />
+          <filter name="this_day" string="Events from today"
+                  domain="[('timestamp', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('timestamp', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="this_week" string="Events from this week"
+                  domain="[('timestamp', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('timestamp', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="this_month" string="Events from this month"
+                  domain="[('timestamp', '&gt;=', context_today().strftime('%%Y-%%m-1'))]" />
+          <filter name="this_year" string="Events from this year"
+                  domain="[('timestamp', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('timestamp', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]" />
+        </search>
+      </field>
+    </record>
+
+    <record id="hr_rfid_sys_ev_view_calendar" model="ir.ui.view">
+      <field name="name">hr.rfid.sys.ev.calendar</field>
+      <field name="model">hr.rfid.event.system</field>
+      <field name="arch" type="xml">
+        <calendar date_start="timestamp" date_stop="timestamp" color="webstack_id">
+          <field name="webstack_id" />
+          <field name="controller_id" />
+        </calendar>
+      </field>
+    </record>
+
+    <record id="hr_rfid_system_ev_view_pivot" model="ir.ui.view">
+      <field name="name">hr.rfid.system.ev.pivot</field>
+      <field name="model">hr.rfid.event.system</field>
+      <field name="arch" type="xml">
+        <pivot string="Event" disable_linking="True">
+          <field name="timestamp" type="row" />
+          <field name="webstack_id" type="col" />
+          <field name="controller_id" type="col" />
+        </pivot>
+      </field>
+    </record>
+
+    <record id="hr_rfid_command_view_form" model="ir.ui.view">
+      <field name="name">hr.rfid.command.form</field>
+      <field name="model">hr.rfid.command</field>
+      <field name="arch" type="xml">
+        <form create="false" delete="false">
+          <group>
+            <field name="webstack_id" readonly="1" />
+            <field name="controller_id" readonly="1" />
+            <field name="cmd" readonly="1" />
+            <field name="status" readonly="1" />
+            <field name="error" readonly="1" />
+            <field name="cr_timestamp" readonly="1" />
+            <field name="ex_timestamp" readonly="1" />
+            <field name="request" readonly="1" groups="base.group_system" />
+            <field name="response" readonly="1" groups="base.group_system" />
+            <field name="cmd_data" readonly="1" />
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_command_view_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.command.tree</field>
+      <field name="model">hr.rfid.command</field>
+      <field name="arch" type="xml">
+        <tree create="false" delete="false">
+          <field name="webstack_id" />
+          <field name="controller_id" />
+          <field name="cmd" />
+          <field name="status" />
+          <field name="error" />
+          <field name="cr_timestamp" />
+          <field name="ex_timestamp" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="hr_rfid_command_view_search" model="ir.ui.view">
+      <field name="name">hr.rfid.command.search</field>
+      <field name="model">hr.rfid.command</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="webstack_id" />
+          <field name="controller_id" />
+          <field name="cmd" />
+          <field name="status" />
+          <field name="error" />
+          <field name="cr_timestamp" />
+          <field name="ex_timestamp" />
+
+          <filter name="last_week" string="Commands from last week"
+                  domain="[('cr_timestamp', '>=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="last_month" string="Commands from last month"
+                  domain="[('cr_timestamp', '>=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="last_year" string="Commands from last year"
+                  domain="[('cr_timestamp', '>=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]" />
+          <separator />
+          <filter name="this_day" string="Commands from today"
+                  domain="[('cr_timestamp', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('cr_timestamp', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="this_week" string="Commands from this week"
+                  domain="[('cr_timestamp', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('cr_timestamp', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="this_month" string="Commands from this month"
+                  domain="[('cr_timestamp', '&gt;=', context_today().strftime('%%Y-%%m-1'))]" />
+          <filter name="this_year" string="Commands from this year"
+                  domain="[('cr_timestamp', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('cr_timestamp', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]" />
+        </search>
+      </field>
+    </record>
+
+    <record id="hr_rfid_command_view_calendar" model="ir.ui.view">
+      <field name="name">hr.rfid.command.calendar</field>
+      <field name="model">hr.rfid.command</field>
+      <field name="arch" type="xml">
+        <calendar date_start="cr_timestamp" date_stop="ex_timestamp" color="webstack_id">
+          <field name="webstack_id" />
+          <field name="controller_id" />
+          <field name="cmd" />
+          <field name="status" />
+          <field name="error" />
+        </calendar>
+      </field>
+    </record>
+
+    <!--#######################################################
+    #####                 WEBSTACK VIEWS                  #####
+    ########################################################-->
+
+    <record id="hr_rfid_workcode_view_form" model="ir.ui.view">
+      <field name="name">hr.rfid.workcode.form</field>
+      <field name="model">hr.rfid.workcode</field>
+      <field name="arch" type="xml">
+        <form>
+          <group>
+            <field name="name" />
+            <field name="workcode" attrs="{'readonly':[('id','>',0)]}" />
+            <field name="user_action" />
+          </group>
+          <div class="oe_chatter">
+            <field name="message_follower_ids" widget="mail_followers" />
+            <field name="message_ids" widget="mail_thread" />
+          </div>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_workcode_view_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.workcode.tree</field>
+      <field name="model">hr.rfid.workcode</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name" />
+          <field name="workcode" />
+          <field name="user_action" />
+        </tree>
+      </field>
+    </record>
+
+
+  </data>
+</odoo>

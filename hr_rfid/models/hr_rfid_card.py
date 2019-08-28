@@ -35,7 +35,7 @@ class HrRfidCard(models.Model):
         track_visibility='onchange',
     )
 
-    user_id = fields.Many2one(
+    employee_id = fields.Many2one(
         'hr.employee',
         string='Card Owner (Employee)',
         ondelete='cascade',
@@ -85,12 +85,12 @@ class HrRfidCard(models.Model):
     # )
 
     def get_owner(self):
-        if len(self.user_id) == 1:
-            return self.user_id
+        if len(self.employee_id) == 1:
+            return self.employee_id
         return self.contact_id
 
     def get_owner_type(self):
-        if len(self.user_id) == 1:
+        if len(self.employee_id) == 1:
             return Employee
         return Contact
 
@@ -211,7 +211,7 @@ class HrRfidCard(models.Model):
     @api.model
     @api.returns('self', lambda value: value.id)
     def create(self, val):
-        new_user      = val.get('user_id',    None)
+        new_user      = val.get('employee_id',    None)
         new_contact   = val.get('contact_id', None)
 
         if new_user is not None and new_contact is not None:

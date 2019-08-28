@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, exceptions
+from odoo import api, fields, models, exceptions, _
 import logging
 import Queue
 
@@ -27,7 +27,7 @@ class HrRfidAccessGroup(models.Model):
         track_visibility='onchange',
     )
 
-    user_ids = fields.One2many(
+    employee_ids = fields.One2many(
         'hr.employee',
         'hr_rfid_access_group_id',
         string='Users',
@@ -121,11 +121,12 @@ class HrRfidAccessGroup(models.Model):
         group_order = []
         ret = HrRfidAccessGroup._check_inherited_access_groups_rec(self, [], group_order)
         if ret is True:
-            err = 'Circular reference found in the inherited access groups:'
+            err2 = ''
             for acc_gr_id in group_order:
                 acc_gr = env.browse(acc_gr_id)
-                err += '\n-> '
-                err += acc_gr.name
+                err2 += '\n-> '
+                err2 += acc_gr.name
+            err = _('Circular reference found in the inherited access groups: %s') % err2
             raise exceptions.ValidationError(err)
 
     @staticmethod
@@ -152,7 +153,7 @@ class HrRfidAccessGroup(models.Model):
 
     @staticmethod
     def _create_door_command(acc_gr, door_rels, command):
-        for user in acc_gr.user_ids:
+        for user in acc_gr.employee_ids:
             pin = user.hr_rfid_pin_code
             for card in user.hr_rfid_card_ids:
                 for door_rel in door_rels:
@@ -255,7 +256,7 @@ class HrRfidAccessGroupDoorRel(models.Model):
         rel = self.browse(rel_id)
         cmd_env = self.env['hr.rfid.command']
 
-        for user in rel.access_group_id.user_ids:
+        for user in rel.access_group_id.employee_ids:
             for card in user.hr_rfid_card_ids:
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
                                  user.hr_rfid_pin_code, card_id=card.id)
@@ -275,7 +276,7 @@ class HrRfidAccessGroupDoorRel(models.Model):
         prev_door = self.env['hr.rfid.door'].browse(prev_door_id)
         cmd_env = self.env['hr.rfid.command']
 
-        for user in rel.access_group_id.user_ids:
+        for user in rel.access_group_id.employee_ids:
             for card in user.hr_rfid_card_ids:
                 cmd_env.remove_card(prev_door.id, rel.time_schedule_id.id,
                                     user.hr_rfid_pin_code, card_id=card.id)
@@ -299,7 +300,7 @@ class HrRfidAccessGroupDoorRel(models.Model):
         prev_acc_gr = self.env['hr.rfid.access.group'].browse(prev_acc_gr_id)
         cmd_env = self.env['hr.rfid.command']
 
-        for user in prev_acc_gr.user_ids:
+        for user in prev_acc_gr.employee_ids:
             for card in user.hr_rfid_card_ids:
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
                                  user.hr_rfid_pin_code, card_id=card.id)
@@ -308,7 +309,7 @@ class HrRfidAccessGroupDoorRel(models.Model):
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
                                  contact.hr_rfid_pin_code, card_id=card.id)
 
-        for user in rel.access_group_id.user_ids:
+        for user in rel.access_group_id.employee_ids:
             for card in user.hr_rfid_card_ids:
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
                                  user.hr_rfid_pin_code, card_id=card.id)
@@ -354,7 +355,7 @@ class HrRfidAccessGroupDoorRel(models.Model):
         cmd_env = self.env['hr.rfid.command']
 
         for rel in self:
-            for user in rel.access_group_id.user_ids:
+            for user in rel.access_group_id.employee_ids:
                 for card in user.hr_rfid_card_ids:
                     cmd_env.remove_card(rel.door_id.id, rel.time_schedule_id.id,
                                         user.hr_rfid_pin_code, card_id=card.id)

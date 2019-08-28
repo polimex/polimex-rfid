@@ -16,6 +16,32 @@
       <field name="priority">1000</field>
     </record>
 
+    <record id="hr_rfid_employee_acc_gr_expiration" model="ir.cron">
+      <field name="name">HR RFID: Check employee access group expirations</field>
+      <field name="get_active_srs" eval="True" />
+      <field name="interval_type">minutes</field>
+      <field name="interval_number">1</field>
+      <field name="numbercall">-1</field>
+      <field name="doall" eval="False" />
+      <field name="model" eval="'hr.employee'" />
+      <field name="function" eval="'_check_expirations'" />
+      <field name="args" eval="''" />
+      <field name="priority">1000</field>
+    </record>
+
+    <record id="hr_rfid_contact_acc_gr_expiration" model="ir.cron">
+      <field name="name">HR RFID: Check contact access group expirations</field>
+      <field name="get_active_srs" eval="True" />
+      <field name="interval_type">minutes</field>
+      <field name="interval_number">1</field>
+      <field name="numbercall">-1</field>
+      <field name="doall" eval="False" />
+      <field name="model" eval="'res.partner'" />
+      <field name="function" eval="'_check_expirations'" />
+      <field name="args" eval="''" />
+      <field name="priority">1000</field>
+    </record>
+
     <record id="hr_rfid_sync_ctrl_clock_cron" model="ir.cron">
       <field name="name">HR RFID: Synchronize controller clocks</field>
       <field name="get_active_srs" eval="True" />
