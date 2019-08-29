@@ -943,6 +943,14 @@ class HrRfidUserEvent(models.Model):
         ondelete='cascade',
     )
 
+    command_id = fields.Many2one(
+        'hr.rfid.command',
+        string='Response',
+        help='Response command',
+        readonly=True,
+        ondelete='set null',
+    )
+
     event_time = fields.Datetime(
         string='Timestamp',
         help='Time the event triggered',
@@ -955,6 +963,7 @@ class HrRfidUserEvent(models.Model):
         ('2', 'Denied'),
         ('3', 'Denied T/S'),
         ('4', 'Denied APB'),
+        ('64', 'Request Instructions'),
     ]
 
     event_action = fields.Selection(
@@ -990,9 +999,12 @@ class HrRfidUserEvent(models.Model):
                 record.name = record.employee_id.name
             else:
                 record.name = record.contact_id.name
-            record.name += ' - ' + \
-                           self.action_selection[int(record.event_action)-1][1] + \
-                           ' @ ' + record.door_id.name
+            record.name += ' - '
+            if record.event_action != '64':
+                record.name += self.action_selection[int(record.event_action)-1][1]
+            else:
+                record.name += 'Request Instructions'
+            record.name += ' @ ' + record.door_id.name
 
     @api.multi
     def _compute_user_ev_action_str(self):
@@ -1110,6 +1122,14 @@ class HrRfidSystemEventWizard(models.TransientModel):
         default=True,
     )
 
+    save_card_to_ctrl = fields.Boolean(
+        string='Save Card to Controllers',
+        help='While activated will save the card to the controllers it has access to.',
+        track_visibility='onchange',
+        default=True,
+        required=True,
+    )
+
     @api.multi
     def add_card(self):
         self.ensure_one()
@@ -1130,6 +1150,7 @@ class HrRfidSystemEventWizard(models.TransientModel):
             'activate_on': self.activate_on,
             'deactivate_on': self.deactivate_on,
             'card_active': self.card_active,
+            'save_card_to_ctrl': self.save_card_to_ctrl,
         }
         if len(self.contact_id) > 0:
             new_card['contact_id'] = self.contact_id.id
@@ -1383,7 +1404,7 @@ class HrRfidCommands(models.Model):
         card_number = card.number
         card_type = card.card_type
 
-        if ignore_active is False and card.card_active is False:
+        if (ignore_active is False and card.card_active is False) or (card.save_card_to_ctrl is False):
             return
 
         if card_type != door.card_type:

@@ -80,11 +80,13 @@ class HrRfidCard(models.Model):
         default=True,
     )
 
-    # TODO Implement at some point
-    # internal_number = fields.Char(
-    #     limit=10,
-    #     index=True
-    # )
+    save_card_to_ctrl = fields.Boolean(
+        string='Save Card to Controllers',
+        help='While activated will save the card to the controllers it has access to.',
+        track_visibility='onchange',
+        default=True,
+        required=True,
+    )
 
     def get_owner(self):
         if len(self.employee_id) == 1:
@@ -138,9 +140,10 @@ class HrRfidCard(models.Model):
     @api.multi
     def write(self, vals):
         cmd_env       = self.env['hr.rfid.command']
-        new_number    = vals.get('number',      None)
-        new_card_type = vals.get('card_type',   None)
-        new_active    = vals.get('card_active', None)
+        new_number    = vals.get('number',            None)
+        new_card_type = vals.get('card_type',         None)
+        new_active    = vals.get('card_active',       None)
+        new_save      = vals.get('save_card_to_ctrl', None)
 
         invalid_user_and_contact_msg = 'Card user and contact cannot both be set' \
                                        ' in the same time, and cannot both be empty.'
@@ -151,6 +154,7 @@ class HrRfidCard(models.Model):
             old_owner_type = card.get_owner_type()
             old_active = card.card_active
             old_card_type_id = card.card_type.id
+            old_save = card.save_card_to_ctrl
 
             super(HrRfidCard, card).write(vals)
             if (len(card.employee_id) == len(card.contact_id)
@@ -159,6 +163,21 @@ class HrRfidCard(models.Model):
 
             if new_active == old_active and new_active is False:
                 continue
+
+            if new_save is not None:
+                if new_save != old_save:
+                    for door_rel in old_owner.hr_rfid_access_group_id.all_door_ids:
+                        door = door_rel.door_id
+                        ts = door_rel.time_schedule_id
+                        pin = old_owner.hr_rfid_pin_code
+                        if new_save is False:
+                            cmd_env.remove_card(door.id, ts.id, pin, card.id)
+                        else:
+                            cmd_env.add_card(door.id, ts.id, pin, card.id)
+                    if new_save is False:
+                        continue
+                if new_save == old_save and old_save is False:
+                    continue
 
             new_owner = card.get_owner()
             new_owner_type = card.get_owner_type()
@@ -228,8 +247,9 @@ class HrRfidCard(models.Model):
             cmd_env = self.env['hr.rfid.command']
             records = records + card
             card_owner = card.get_owner()
+            print(str(card_owner))
 
-            if card.card_active is True:
+            if card.card_active is True and card.save_card_to_ctrl is True:
                 for door_rel in card_owner.hr_rfid_access_group_id.all_door_ids:
                     door = door_rel.door_id
                     ts = door_rel.time_schedule_id

@@ -561,16 +561,9 @@
                 <field name="last_ip" />
               </tree>
             </field>
-            <field name="setup_and_set_to_active" domain="[('id','in',found_webstacks)]">
-              <tree>
-                <field name="name" />
-                <field name="serial" />
-                <field name="ws_active" />
-                <field name="hw_version" />
-                <field name="version" />
-                <field name="last_ip" />
-              </tree>
-            </field>
+            <field name="setup_and_set_to_active"
+                   domain="[('id','in',found_webstacks)]"
+                   widget="many2many_tags" />
           </group>
 
           <footer states="post_discovery">
@@ -1052,10 +1045,8 @@
         <form create="false" delete="false">
           <group>
             <field name="name" />
-            <field name="workcode"
-                   attrs="{'invisible': [('workcode','=', '-')]}" />
-            <field name="workcode_id"
-                   attrs="{'invisible': [('workcode_id','=', False)]}" />
+            <field name="workcode" attrs="{'invisible': [('workcode','=', '-')]}" />
+            <field name="workcode_id" attrs="{'invisible': [('workcode_id','=', False)]}" />
             <field name="event_action" readonly="1" />
             <field name="event_time" readonly="1" />
             <field name="ctrl_addr" readonly="1" />
@@ -1063,6 +1054,7 @@
             <field name="door_id" readonly="1" />
             <field name="reader_id" readonly="1" />
             <field name="card_id" readonly="1" />
+            <field name="command_id" readonly="1" />
           </group>
         </form>
       </field>
@@ -1158,6 +1150,7 @@
             <field name="employee_id" />
             <field name="contact_id" />
             <field name="card_type" />
+            <field name="save_card_to_ctrl" />
             <field name="card_active" />
             <field name="activate_on" />
             <field name="deactivate_on" />

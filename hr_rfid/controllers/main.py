@@ -27,7 +27,7 @@ class WebRfidController(http.Controller):
             report_sys_ev(description, command.controller_id)
             return check_for_unsent_cmd(status_code)
 
-        def check_for_unsent_cmd(status_code):
+        def check_for_unsent_cmd(status_code, event=None):
             commands_env = request.env['hr.rfid.command'].sudo()
 
             if 0 != len(commands_env.search([ ('webstack_id', '=', webstack.id),
@@ -42,6 +42,8 @@ class WebRfidController(http.Controller):
             if len(command) == 0:
                 return { 'status': status_code }
 
+            if event is not None:
+                event.command_id = command
             return send_command(command, status_code)
 
         def send_command(command, status_code):
@@ -80,6 +82,12 @@ class WebRfidController(http.Controller):
             ws_db_update_dict['version'] = str(post['FW'])
             return check_for_unsent_cmd(200)
 
+        def get_card_owner(event_dict: dict, card):
+            if len(card.employee_id) == 0:
+                event_dict['contact_id'] = card.contact_id.id
+            else:
+                event_dict['employee_id'] = card.employee_id.id
+
         def parse_event():
             controller = webstack.controllers.filtered(lambda r: r.ctrl_id == post['event']['id'])
 
@@ -107,12 +115,11 @@ class WebRfidController(http.Controller):
             card = card_env.search([ ('number', '=', post['event']['card']) ])
             reader = None
 
-            if len(card) == 0:
-                report_sys_ev('Could not find a card with that number.', controller)
-                return check_for_unsent_cmd(200)
-
+            reader_num = post['event']['reader']
+            if reader_num == 0:
+                reader_num = ((post['event']['event_n'] - 3) % 4) + 1
             for it in controller.reader_ids:
-                if it.number == post['event']['reader']:
+                if it.number == reader_num:
                     reader = it
                     break
 
@@ -122,7 +129,45 @@ class WebRfidController(http.Controller):
 
             ev_env = request.env['hr.rfid.event.user'].sudo()
 
-            event_action = ((post['event']['event_n'] - 3) % 4) + 1
+            event_action = post['event']['event_n']
+
+            # External db event, controller requests for permission to open or close door
+            if event_action == 64:
+                ret = request.env['hr.rfid.access.group.door.rel'].sudo().search([
+                    ('access_group_id', '=', card.get_owner().hr_rfid_access_group_id.id),
+                    ('door_id', '=', reader.door_id.id)
+                ])
+                # if len(ret) > 0: open door, else close
+                return respond_to_ev_64(len(ret) > 0, controller, reader, card)
+
+            if len(card) == 0:
+                if event_action == 64:
+                    cmd_env = request.env['hr.rfid.command'].sudo()
+                    cmd = {
+                        'webstack_id': controller.webstack_id.id,
+                        'controller_id': controller.id,
+                        'cmd': 'DB',
+                        'status': 'Process',
+                        'ex_timestamp': fields.Datetime.now(),
+                        'cmd_data': '40%02X00' % (4 + 4*(reader.number - 1)),
+                    }
+                    cmd = cmd_env.create(cmd)
+                    cmd_js = {
+                        'status': 200,
+                        'cmd': {
+                                    'id': cmd.controller_id.ctrl_id,
+                                    'c': cmd.cmd,
+                                    'd': cmd.cmd_data,
+                                       }
+                    }
+                    cmd.request = json.dumps(cmd_js)
+                    report_sys_ev('Could not find a card with that number.', controller)
+                    return cmd_js
+
+                report_sys_ev('Could not find a card with that number.', controller)
+                return check_for_unsent_cmd(200)
+
+            event_action = ((event_action - 3) % 4) + 1
             event_dict = {
                 'ctrl_addr': controller.ctrl_id,
                 'door_id': reader.door_id.id,
@@ -141,14 +186,10 @@ class WebRfidController(http.Controller):
                 else:
                     event_dict['workcode_id'] = wc.id
 
-            if len(card.employee_id) == 0:
-                event_dict['contact_id'] = card.contact_id.id
-            else:
-                event_dict['employee_id'] = card.employee_id.id
+            get_card_owner(event_dict, card)
+            event = ev_env.create(event_dict)
 
-            ev_env.create(event_dict)
-
-            return check_for_unsent_cmd(200)
+            return check_for_unsent_cmd(200, event)
 
         def parse_response():
             command_env = request.env['hr.rfid.command'].sudo()
@@ -185,6 +226,7 @@ class WebRfidController(http.Controller):
             if response['c'] == 'F0':
                 data = response['d']
                 ctrl_mode = int(data[42:44], 16)
+                ctrl_mode = ctrl_mode & 0x0F
 
                 if ctrl_mode < 1 or ctrl_mode > 4:
                     return log_cmd_error('F0 command failure, controller sent '
@@ -365,6 +407,41 @@ class WebRfidController(http.Controller):
 
             sys_ev_env.create(sys_ev)
 
+        def respond_to_ev_64(open_door, controller, reader, card):
+            cmd_env = request.env['hr.rfid.command'].sudo()
+            ev_env = request.env['hr.rfid.event.user'].sudo()
+            open_door = 3 if open_door is True else 4
+            cmd = {
+                'webstack_id': controller.webstack_id.id,
+                'controller_id': controller.id,
+                'cmd': 'DB',
+                'status': 'Process',
+                'ex_timestamp': fields.Datetime.now(),
+                'cmd_data': '40%02X00' % (open_door + 4*(reader.number - 1)),
+            }
+            event = {
+                'ctrl_addr': controller.ctrl_id,
+                'door_id': reader.door_id.id,
+                'reader_id': reader.id,
+                'card_id': card.id,
+                'event_time': post['event']['date'] + ' ' + post['event']['time'],
+                'event_action': '64',
+            }
+            get_card_owner(event, card)
+            cmd = cmd_env.create(cmd)
+            cmd_js = {
+                'status': 200,
+                'cmd': {
+                    'id': cmd.controller_id.ctrl_id,
+                    'c': cmd.cmd,
+                    'd': cmd.cmd_data,
+                }
+            }
+            cmd.request = json.dumps(cmd_js)
+            event['command_id'] = cmd.id
+            ev_env.create(event)
+            return cmd_js
+
         if len(webstack) == 0:
             new_webstack = {
                 'name': 'Module ' + str(post['convertor']),
@@ -397,5 +474,4 @@ class WebRfidController(http.Controller):
             result = parse_response()
 
         webstack.write(ws_db_update_dict)
-
         return result
