@@ -6,6 +6,7 @@
     'category': 'Human Resources',
     'summary': 'Manage employee attendance',
     'author': 'Polimex',
+    'license': 'GPL-3',
 
     'description': """
        Description
