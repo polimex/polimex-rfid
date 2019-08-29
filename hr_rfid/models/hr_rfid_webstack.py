@@ -438,6 +438,12 @@ class HrRfidController(models.Model):
         help='The mode of the controller',
     )
 
+    external_db = fields.Boolean(
+        string='External DB',
+        help='If the controller uses the "ExternalDB" feature.',
+        default=False,
+    )
+
     max_cards_count = fields.Integer(
         string='Maximum Cards',
         help='Maximum amount of cards the controller can hold in memory',
@@ -1105,27 +1111,23 @@ class HrRfidSystemEventWizard(models.TransientModel):
     activate_on = fields.Datetime(
         string='Activate on',
         help='Date and time the card will be activated on',
-        track_visibility='onchange',
         default=lambda self: datetime.now(),
     )
 
     deactivate_on = fields.Datetime(
         string='Deactivate on',
         help='Date and time the card will be deactivated on',
-        track_visibility='onchange',
     )
 
     card_active = fields.Boolean(
         string='Active',
         help='Whether the card is active or not',
-        track_visibility='onchange',
         default=True,
     )
 
-    save_card_to_ctrl = fields.Boolean(
-        string='Save Card to Controllers',
-        help='While activated will save the card to the controllers it has access to.',
-        track_visibility='onchange',
+    cloud_card = fields.Boolean(
+        string='Cloud Card',
+        help='A cloud card will not be added to controllers that are in the "externalDB" mode.',
         default=True,
         required=True,
     )
@@ -1150,7 +1152,7 @@ class HrRfidSystemEventWizard(models.TransientModel):
             'activate_on': self.activate_on,
             'deactivate_on': self.deactivate_on,
             'card_active': self.card_active,
-            'save_card_to_ctrl': self.save_card_to_ctrl,
+            'cloud_card': self.cloud_card,
         }
         if len(self.contact_id) > 0:
             new_card['contact_id'] = self.contact_id.id
@@ -1404,10 +1406,13 @@ class HrRfidCommands(models.Model):
         card_number = card.number
         card_type = card.card_type
 
-        if (ignore_active is False and card.card_active is False) or (card.save_card_to_ctrl is False):
+        if ignore_active is False and card.card_active is False:
             return
 
         if card_type != door.card_type:
+            return
+
+        if door.controller_id.external_db is True and card.cloud_card is True:
             return
 
         for reader in door.reader_ids:
@@ -1417,6 +1422,7 @@ class HrRfidCommands(models.Model):
             self.add_remove_card(card_number, door.controller_id.id, pin_code, ts_code,
                                  1 << (reader.number-1), 1 << (reader.number-1))
 
+    # TODO Remove "ts_id"
     @api.model
     def remove_card(self, door_id, ts_id, pin_code, card_number=None, card_id=None, ignore_active=False):
         door = self.env['hr.rfid.door'].browse(door_id)

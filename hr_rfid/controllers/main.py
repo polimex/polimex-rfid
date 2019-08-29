@@ -131,15 +131,6 @@ class WebRfidController(http.Controller):
 
             event_action = post['event']['event_n']
 
-            # External db event, controller requests for permission to open or close door
-            if event_action == 64:
-                ret = request.env['hr.rfid.access.group.door.rel'].sudo().search([
-                    ('access_group_id', '=', card.get_owner().hr_rfid_access_group_id.id),
-                    ('door_id', '=', reader.door_id.id)
-                ])
-                # if len(ret) > 0: open door, else close
-                return respond_to_ev_64(len(ret) > 0, controller, reader, card)
-
             if len(card) == 0:
                 if event_action == 64:
                     cmd_env = request.env['hr.rfid.command'].sudo()
@@ -166,6 +157,15 @@ class WebRfidController(http.Controller):
 
                 report_sys_ev('Could not find a card with that number.', controller)
                 return check_for_unsent_cmd(200)
+
+            # External db event, controller requests for permission to open or close door
+            if event_action == 64:
+                ret = request.env['hr.rfid.access.group.door.rel'].sudo().search([
+                    ('access_group_id', '=', card.get_owner().hr_rfid_access_group_id.id),
+                    ('door_id', '=', reader.door_id.id)
+                ])
+                # if len(ret) > 0: open door, else close
+                return respond_to_ev_64(len(ret) > 0 and card.card_active is True, controller, reader, card)
 
             event_action = ((event_action - 3) % 4) + 1
             event_dict = {
@@ -226,6 +226,7 @@ class WebRfidController(http.Controller):
             if response['c'] == 'F0':
                 data = response['d']
                 ctrl_mode = int(data[42:44], 16)
+                external_db = ctrl_mode & 0x20 > 0
                 ctrl_mode = ctrl_mode & 0x0F
 
                 if ctrl_mode < 1 or ctrl_mode > 4:
@@ -340,6 +341,7 @@ class WebRfidController(http.Controller):
                     'io_table_lines': io_table_lines,
                     'alarm_lines': alarm_lines,
                     'mode': ctrl_mode,
+                    'external_db': external_db,
                     'max_cards_count': max_cards_count,
                     'max_events_count': max_events_count,
                 })

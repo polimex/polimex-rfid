@@ -445,6 +445,7 @@
               <field name="card_active" />
               <field name="activate_on" />
               <field name="deactivate_on" />
+              <field name="cloud_card" />
             </group>
           </sheet>
           <div class="oe_chatter">
@@ -730,6 +731,7 @@
             <field name="hw_version" readonly="1" />
             <field name="sw_version" readonly="1" />
             <field name="readers" readonly="1" />
+            <field name="external_db" readonly="1" />
             <field name="max_cards_count" readonly="1" />
             <field name="webstack_id" readonly="1" />
           </group>
@@ -1150,7 +1152,7 @@
             <field name="employee_id" />
             <field name="contact_id" />
             <field name="card_type" />
-            <field name="save_card_to_ctrl" />
+            <field name="cloud_card" />
             <field name="card_active" />
             <field name="activate_on" />
             <field name="deactivate_on" />

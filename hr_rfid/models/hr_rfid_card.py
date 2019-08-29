@@ -80,9 +80,9 @@ class HrRfidCard(models.Model):
         default=True,
     )
 
-    save_card_to_ctrl = fields.Boolean(
-        string='Save Card to Controllers',
-        help='While activated will save the card to the controllers it has access to.',
+    cloud_card = fields.Boolean(
+        string='Cloud Card',
+        help='A cloud card will not be added to controllers that are in the "externalDB" mode.',
         track_visibility='onchange',
         default=True,
         required=True,
@@ -143,7 +143,6 @@ class HrRfidCard(models.Model):
         new_number    = vals.get('number',            None)
         new_card_type = vals.get('card_type',         None)
         new_active    = vals.get('card_active',       None)
-        new_save      = vals.get('save_card_to_ctrl', None)
 
         invalid_user_and_contact_msg = 'Card user and contact cannot both be set' \
                                        ' in the same time, and cannot both be empty.'
@@ -154,7 +153,7 @@ class HrRfidCard(models.Model):
             old_owner_type = card.get_owner_type()
             old_active = card.card_active
             old_card_type_id = card.card_type.id
-            old_save = card.save_card_to_ctrl
+            old_cloud = card.cloud_card
 
             super(HrRfidCard, card).write(vals)
             if (len(card.employee_id) == len(card.contact_id)
@@ -164,23 +163,9 @@ class HrRfidCard(models.Model):
             if new_active == old_active and new_active is False:
                 continue
 
-            if new_save is not None:
-                if new_save != old_save:
-                    for door_rel in old_owner.hr_rfid_access_group_id.all_door_ids:
-                        door = door_rel.door_id
-                        ts = door_rel.time_schedule_id
-                        pin = old_owner.hr_rfid_pin_code
-                        if new_save is False:
-                            cmd_env.remove_card(door.id, ts.id, pin, card.id)
-                        else:
-                            cmd_env.add_card(door.id, ts.id, pin, card.id)
-                    if new_save is False:
-                        continue
-                if new_save == old_save and old_save is False:
-                    continue
-
             new_owner = card.get_owner()
             new_owner_type = card.get_owner_type()
+            new_cloud = card.cloud_card
 
             if new_owner_type != old_owner_type or new_owner != old_owner:
                 for door_rel in old_owner.hr_rfid_access_group_id.all_door_ids:
@@ -219,6 +204,18 @@ class HrRfidCard(models.Model):
                         cmd_env.add_card(door.id, ts.id, pin, card_id=card.id)
                 continue
 
+            if old_cloud != new_cloud:
+                for door_rel in new_owner.hr_rfid_access_group_id.all_door_ids:
+                    door = door_rel.door_id
+                    if door.controller_id.external_db is False:
+                        continue
+                    ts = door_rel.time_schedule_id
+                    pin = new_owner.hr_rfid_pin_code
+                    if new_cloud is True:
+                        cmd_env.remove_card(door.id, ts.id, pin, card_id=card.id)
+                    else:
+                        cmd_env.add_card(door.id, ts.id, pin, card_id=card.id)
+
             if new_active is not None and new_active != old_active:
                 for door_rel in new_owner.hr_rfid_access_group_id.all_door_ids:
                     door = door_rel.door_id
@@ -249,7 +246,7 @@ class HrRfidCard(models.Model):
             card_owner = card.get_owner()
             print(str(card_owner))
 
-            if card.card_active is True and card.save_card_to_ctrl is True:
+            if card.card_active is True:
                 for door_rel in card_owner.hr_rfid_access_group_id.all_door_ids:
                     door = door_rel.door_id
                     ts = door_rel.time_schedule_id
