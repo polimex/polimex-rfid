@@ -731,25 +731,25 @@ class HrRfidDoor(models.Model):
         if time > 0:
             if cmd is False:
                 if action == 1:
-                    self.message_post(_('Opened the door for %d seconds.') % time)
+                    self.message_post(body=_('Opened the door for %d seconds.') % time)
                 else:
-                    self.message_post(_('Closed the door for %d seconds.') % time)
+                    self.message_post(body=_('Closed the door for %d seconds.') % time)
             else:
                 if action == 1:
-                    self.message_post(_('Created a command to open the door for %d seconds.') % time)
+                    self.message_post(body=_('Created a command to open the door for %d seconds.') % time)
                 else:
-                    self.message_post(_('Created a command to close the door for %d seconds.') % time)
+                    self.message_post(body=_('Created a command to close the door for %d seconds.') % time)
         else:
             if cmd is False:
                 if action == 1:
-                    self.message_post(_('Opened the door.') % time)
+                    self.message_post(body=_('Opened the door.') % time)
                 else:
-                    self.message_post(_('Closed the door.') % time)
+                    self.message_post(body=_('Closed the door.') % time)
             else:
                 if action == 1:
-                    self.message_post(_('Created a command to open the door.') % time)
+                    self.message_post(body=_('Created a command to open the door.') % time)
                 else:
-                    self.message_post(_('Created a command to close the door.') % time)
+                    self.message_post(body=_('Created a command to close the door.') % time)
 
 
 class HrRfidTimeSchedule(models.Model):
