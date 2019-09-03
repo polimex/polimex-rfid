@@ -61,8 +61,7 @@ class HrDepartment(models.Model):
     @api.multi
     def unlink(self):
         for dep in self:
-            for user in dep.member_ids:
-                user.write({ 'hr_rfid_access_group_id': None })
+            dep.member_ids.write({'hr_rfid_access_group_id': None})
 
         res = super(HrDepartment, self).unlink()
         return res
