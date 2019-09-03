@@ -724,6 +724,10 @@
       <field name="model">hr.rfid.ctrl</field>
       <field name="arch" type="xml">
         <form string="RFID Controller" create="false">
+          <header>
+            <button name="button_reload_cards" type="object" string="Reload all cards"
+                    help="Delete all of the cards on the controller and then re-add them." />
+          </header>
           <group>
             <field name="name" />
             <field name="ctrl_id" readonly="1" />

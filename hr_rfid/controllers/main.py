@@ -10,7 +10,6 @@ import traceback
 class WebRfidController(http.Controller):
     @http.route(['/hr/rfid/event'], type='json', auth='none', method=['POST'], csrf=False)
     def post_event(self, **post):
-        print('received=' + str(post))
         webstacks_env = request.env['hr.rfid.webstack'].sudo()
         webstack = webstacks_env.search([ ('serial', '=', str(post['convertor'])) ])
         ws_db_update_dict = {
