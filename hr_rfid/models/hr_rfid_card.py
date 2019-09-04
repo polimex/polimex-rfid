@@ -244,7 +244,6 @@ class HrRfidCard(models.Model):
             cmd_env = self.env['hr.rfid.command']
             records = records + card
             card_owner = card.get_owner()
-            print(str(card_owner))
 
             if card.card_active is True:
                 for door_rel in card_owner.hr_rfid_access_group_id.all_door_ids:

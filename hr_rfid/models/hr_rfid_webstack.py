@@ -741,7 +741,6 @@ class HrRfidDoor(models.Model):
                                                  'it returned code ' + str(code) + ' with body:\n'
                                                  + body.decode())
 
-            print('body=' + str(body) + ', cmd=' + str(cmd) + ', code=' + str(code))
             body_js = json.loads(body.decode())
             if body_js['response']['e'] != 0:
                 raise exceptions.ValidationError('Error. Controller returned body:\n' + body)
