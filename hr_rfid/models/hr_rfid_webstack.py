@@ -728,10 +728,10 @@ class HrRfidDoor(models.Model):
 
         host = str(ws.last_ip)
         try:
-            conn = http.client.HTTPConnection(str(host), 80, timeout=2)
+            conn = httplib.HTTPConnection(str(host), 80, timeout=2)
             conn.request('POST', '/sdk/cmd.json', cmd, headers)
             response = conn.getresponse()
-            code = response.getcode()
+            code = response.status
             body = response.read()
             conn.close()
             if code != 200:
@@ -739,14 +739,13 @@ class HrRfidDoor(models.Model):
                                                  'it returned code ' + str(code) + ' with body:\n'
                                                  + body.decode())
 
-            print('body=' + str(body) + ', cmd=' + str(cmd) + ', code=' + str(code))
             body_js = json.loads(body.decode())
             if body_js['response']['e'] != 0:
                 raise exceptions.ValidationError('Error. Controller returned body:\n' + body)
         except socket.timeout:
             raise exceptions.ValidationError('Could not connect to the module. '
                                              "Check if it is turned on or if it's on a different ip.")
-        except (socket.error, socket.gaierror, socket.herror) as e:
+        except (socket.error, socket.gaierror, socket.herror), e:
             raise exceptions.ValidationError('Error while trying to connect to the module.'
                                              ' Information:\n' + str(e))
 
