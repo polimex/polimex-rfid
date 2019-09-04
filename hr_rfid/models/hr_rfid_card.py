@@ -78,11 +78,13 @@ class HrRfidCard(models.Model):
         default=True,
     )
 
-    # TODO Implement at some point
-    # internal_number = fields.Char(
-    #     limit=10,
-    #     index=True
-    # )
+    cloud_card = fields.Boolean(
+        string='Cloud Card',
+        help='A cloud card will not be added to controllers that are in the "externalDB" mode.',
+        track_visibility='onchange',
+        default=True,
+        required=True,
+    )
 
     def get_owner(self):
         if len(self.employee_id) == 1:
@@ -97,6 +99,16 @@ class HrRfidCard(models.Model):
     @api.one
     def toggle_card_active(self):
         self.card_active = not self.card_active
+
+    @api.multi
+    @api.constrains('employee_id', 'contact_id')
+    def _check_user(self):
+        for card in self:
+            if card.employee_id is not None and card.contact_id is not None:
+                if card.employee_id == card.contact_id or \
+                   (len(card.employee_id) > 0 and len(card.contact_id) > 0):
+                    raise exceptions.ValidationError('Card user and contact cannot both be set '
+                                                     'in the same time, and cannot both be empty.')
 
     @api.multi
     @api.constrains('number')
@@ -149,10 +161,11 @@ class HrRfidCard(models.Model):
             old_owner_type = card.get_owner_type()
             old_active = card.card_active
             old_card_type_id = card.card_type.id
+            old_cloud = card.cloud_card
 
             super(HrRfidCard, card).write(vals)
-            if (len(card.user_id) == len(card.contact_id)
-                    or (len(card.user_id) > 0 and len(card.contact_id) > 0)):
+            if (len(card.employee_id) == len(card.contact_id)
+                    or (len(card.employee_id) > 0 and len(card.contact_id) > 0)):
                 raise exceptions.ValidationError(invalid_user_and_contact_msg)
 
             if new_active == old_active and new_active is False:
@@ -160,6 +173,7 @@ class HrRfidCard(models.Model):
 
             new_owner = card.get_owner()
             new_owner_type = card.get_owner_type()
+            new_cloud = card.cloud_card
 
             if new_owner_type != old_owner_type or new_owner != old_owner:
                 for door_rel in old_owner.hr_rfid_access_group_id.all_door_ids:
@@ -197,6 +211,18 @@ class HrRfidCard(models.Model):
                     if door.card_type.id == card.card_type.id:
                         cmd_env.add_card(door.id, ts.id, pin, card_id=card.id)
                 continue
+
+            if old_cloud != new_cloud:
+                for door_rel in new_owner.hr_rfid_access_group_id.all_door_ids:
+                    door = door_rel.door_id
+                    if door.controller_id.external_db is False:
+                        continue
+                    ts = door_rel.time_schedule_id
+                    pin = new_owner.hr_rfid_pin_code
+                    if new_cloud is True:
+                        cmd_env.remove_card(door.id, ts.id, pin, card_id=card.id)
+                    else:
+                        cmd_env.add_card(door.id, ts.id, pin, card_id=card.id)
 
             if new_active is not None and new_active != old_active:
                 for door_rel in new_owner.hr_rfid_access_group_id.all_door_ids:

@@ -104,7 +104,6 @@ class HrEmployee(models.Model):
 
     @api.multi
     def write(self, vals):
-        # TODO Change default access group when department is changed
         cmd_env = self.env['hr.rfid.command']
         acc_gr_env = self.env['hr.rfid.access.group']
         card_env = self.env['hr.rfid.card']

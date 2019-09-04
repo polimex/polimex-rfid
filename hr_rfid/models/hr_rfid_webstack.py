@@ -436,6 +436,12 @@ class HrRfidController(models.Model):
         help='The mode of the controller',
     )
 
+    external_db = fields.Boolean(
+        string='External DB',
+        help='If the controller uses the "ExternalDB" feature.',
+        default=False,
+    )
+
     max_cards_count = fields.Integer(
         string='Maximum Cards',
         help='Maximum amount of cards the controller can hold in memory',
@@ -482,6 +488,38 @@ class HrRfidController(models.Model):
         string='Commands',
         help='Commands that have been sent to this controller',
     )
+
+    @api.one
+    def button_reload_cards(self):
+        cmd_env = self.env['hr.rfid.command'].sudo()
+
+        cmd_env.create({
+            'webstack_id': self.webstack_id.id,
+            'controller_id': self.id,
+            'cmd': 'DC',
+            'cmd_data': '0303',
+            'cr_timestamp': fields.datetime.now(),
+        })
+
+        cmd_env.create({
+            'webstack_id': self.webstack_id.id,
+            'controller_id': self.id,
+            'cmd': 'DC',
+            'cmd_data': '0404',
+        })
+
+        for door in self.door_ids:
+            for acc_gr_rel in door.access_group_ids:
+                acc_gr = acc_gr_rel.access_group_id
+                ts = acc_gr_rel.time_schedule_id
+                for user in acc_gr.employee_ids:
+                    pin = user.hr_rfid_pin_code
+                    for card in user.hr_rfid_card_ids:
+                        cmd_env.add_card(door.id, ts.id, pin, card.id)
+                for user in acc_gr.contact_ids:
+                    pin = user.hr_rfid_pin_code
+                    for card in user.hr_rfid_card_ids:
+                        cmd_env.add_card(door.id, ts.id, pin, card.id)
 
 
 class HrRfidDoorOpenCloseWiz(models.TransientModel):
@@ -941,6 +979,14 @@ class HrRfidUserEvent(models.Model):
         ondelete='cascade',
     )
 
+    command_id = fields.Many2one(
+        'hr.rfid.command',
+        string='Response',
+        help='Response command',
+        readonly=True,
+        ondelete='set null',
+    )
+
     event_time = fields.Datetime(
         string='Timestamp',
         help='Time the event triggered',
@@ -953,6 +999,7 @@ class HrRfidUserEvent(models.Model):
         ('2', 'Denied'),
         ('3', 'Denied T/S'),
         ('4', 'Denied APB'),
+        ('64', 'Request Instructions'),
     ]
 
     event_action = fields.Selection(
@@ -988,9 +1035,12 @@ class HrRfidUserEvent(models.Model):
                 record.name = record.employee_id.name
             else:
                 record.name = record.contact_id.name
-            record.name += ' - ' + \
-                           self.action_selection[int(record.event_action)-1][1] + \
-                           ' @ ' + record.door_id.name
+            record.name += ' - '
+            if record.event_action != '64':
+                record.name += self.action_selection[int(record.event_action)-1][1]
+            else:
+                record.name += 'Request Instructions'
+            record.name += ' @ ' + record.door_id.name
 
     @api.multi
     def _compute_user_ev_action_str(self):
@@ -1044,7 +1094,7 @@ class HrRfidSystemEvent(models.Model):
         lifetime = timedelta(days=int(event_lifetime))
         today = datetime.today()
         res = self.search([
-            ('timestamp', '<', today-lifetime)
+            ('timestamp', '<', str(today-lifetime))
         ])
         res.unlink()
 
@@ -1108,6 +1158,13 @@ class HrRfidSystemEventWizard(models.TransientModel):
         default=True,
     )
 
+    cloud_card = fields.Boolean(
+        string='Cloud Card',
+        help='A cloud card will not be added to controllers that are in the "externalDB" mode.',
+        default=True,
+        required=True,
+    )
+
     @api.multi
     def add_card(self):
         self.ensure_one()
@@ -1128,6 +1185,7 @@ class HrRfidSystemEventWizard(models.TransientModel):
             'activate_on': self.activate_on,
             'deactivate_on': self.deactivate_on,
             'card_active': self.card_active,
+            'cloud_card': self.cloud_card,
         }
         if len(self.contact_id) > 0:
             new_card['contact_id'] = self.contact_id.id
@@ -1139,7 +1197,6 @@ class HrRfidSystemEventWizard(models.TransientModel):
 class HrRfidCommands(models.Model):
     # Commands we have queued up to send to the controllers
     _name = 'hr.rfid.command'
-    _order = 'status desc, cr_timestamp asc, id'
     _description = 'Command to controller'
 
     commands = [
@@ -1387,6 +1444,9 @@ class HrRfidCommands(models.Model):
         if card_type != door.card_type:
             return
 
+        if door.controller_id.external_db is True and card.cloud_card is True:
+            return
+
         for reader in door.reader_ids:
             ts_code = [0, 0, 0, 0]
             ts_code[reader.number-1] = time_schedule.number
@@ -1394,6 +1454,7 @@ class HrRfidCommands(models.Model):
             self.add_remove_card(card_number, door.controller_id.id, pin_code, ts_code,
                                  1 << (reader.number-1), 1 << (reader.number-1))
 
+    # TODO Remove "ts_id"
     @api.model
     def remove_card(self, door_id, ts_id, pin_code, card_number=None, card_id=None, ignore_active=False):
         door = self.env['hr.rfid.door'].browse(door_id)
