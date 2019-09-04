@@ -1143,17 +1143,20 @@ class HrRfidSystemEventWizard(models.TransientModel):
     activate_on = fields.Datetime(
         string='Activate on',
         help='Date and time the card will be activated on',
+        track_visibility='onchange',
         default=lambda self: datetime.now(),
     )
 
     deactivate_on = fields.Datetime(
         string='Deactivate on',
         help='Date and time the card will be deactivated on',
+        track_visibility='onchange',
     )
 
     card_active = fields.Boolean(
         string='Active',
         help='Whether the card is active or not',
+        track_visibility='onchange',
         default=True,
     )
 
