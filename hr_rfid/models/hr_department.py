@@ -42,26 +42,23 @@ class HrDepartment(models.Model):
 
     @api.multi
     def write(self, vals):
+        acc_gr_rel_env = self.env['hr.rfid.access.group.employee.rel']
         res = super(HrDepartment, self).write(vals)
 
         if 'hr_rfid_allowed_access_groups' in vals:
             for dep in self:
                 for user in dep.member_ids:
-                    if user.hr_rfid_access_group_id not in dep.hr_rfid_allowed_access_groups:
-                        user.write({ 'hr_rfid_access_group_id': dep.hr_rfid_default_access_group.id })
-
-        if 'hr_rfid_default_access_group' in vals:
-            for dep in self:
-                for user in dep.member_ids:
-                    if len(user.hr_rfid_access_group_id) == 0:
-                        user.write({ 'hr_rfid_access_group_id': dep.hr_rfid_default_access_group.id })
+                    for acc_gr_rel in user.hr_rfid_access_group_ids:
+                        acc_gr = acc_gr_rel.access_group_id
+                        if acc_gr not in dep.hr_rfid_allowed_access_groups:
+                            acc_gr_rel.unlink()
 
         return res
 
     @api.multi
     def unlink(self):
         for dep in self:
-            dep.member_ids.write({'hr_rfid_access_group_id': None})
+            map(lambda r: r.hr_rfid_access_group_ids.unlink(), dep.member_ids)
 
         res = super(HrDepartment, self).unlink()
         return res

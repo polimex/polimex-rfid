@@ -330,13 +330,11 @@
               </field>
             </page>
 
-            <page string="Users" help="Users assigned to this access group">
+            <page string="Employees" help="Employees assigned to this access group">
               <field name="employee_ids" readonly="1">
                 <tree>
-                  <field name="name" />
-                  <field name="display_name" />
-                  <field name="department_id" />
-                  <field name="job_id" />
+                  <field name="employee_id" />
+                  <field name="expiration" />
                 </tree>
               </field>
             </page>
@@ -344,9 +342,8 @@
             <page string="Contacts" help="Contacts assigned to this access group">
               <field name="contact_ids" readonly="1">
                 <tree>
-                  <field name="name" />
-                  <field name="parent_id" />
-                  <field name="function" />
+                  <field name="contact_id" />
+                  <field name="expiration" />
                 </tree>
               </field>
             </page>

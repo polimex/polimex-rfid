@@ -16,16 +16,11 @@ class HrEmployee(models.Model):
         track_visibility='onchange',
     )
 
-    hr_rfid_access_group_id = fields.Many2one(
-        'hr.rfid.access.group',
-        string='Access Group',
-        help='Which access group the user is a part of',
-        track_visibility='onchange',
-    )
-
-    hr_rfid_access_group_exp = fields.Datetime(
-        string='Access Group Expiration',
-        help='Expiration date for the access group. Access group removed from the employee upon expiration.',
+    hr_rfid_access_group_ids = fields.One2many(
+        'hr.rfid.access.group.employee.rel',
+        'employee_id',
+        string='Access Groups',
+        help='Which access groups the user is a part of',
         track_visibility='onchange',
     )
 
@@ -43,26 +38,15 @@ class HrEmployee(models.Model):
         help='Events concerning this employee',
     )
 
-    @api.onchange('department_id')
-    def _onchange_department_access_group(self):
-        self.hr_rfid_access_group_id = self.department_id.hr_rfid_default_access_group
-
     @api.multi
-    @api.constrains('hr_rfid_access_group_id')
+    @api.constrains('hr_rfid_access_group_ids')
     def _check_access_group(self):
         for user in self:
-            if user.hr_rfid_access_group_id.id is False:
-                continue
-
-            valid_access_group = False
-            for acc_gr in user.department_id.hr_rfid_allowed_access_groups:
-                if acc_gr.id == user.hr_rfid_access_group_id.id:
-                    valid_access_group = True
-                    break
-
-            if valid_access_group is False:
-                raise exceptions.ValidationError('Access group must be one of the access '
-                                                 'groups assigned to the department!')
+            for acc_gr_rel in user.hr_rfid_access_group_ids:
+                acc_gr = acc_gr_rel.access_group_id
+                if acc_gr not in user.department_id.hr_rfid_allowed_access_groups:
+                    raise exceptions.ValidationError('Access group must be one of the access '
+                                                     'groups assigned to the department!')
 
     @api.multi
     @api.constrains('hr_rfid_pin_code')
@@ -79,15 +63,6 @@ class HrEmployee(models.Model):
             except ValueError:
                 raise exceptions.ValidationError('Invalid pin code, digits must be from 0 to 9')
 
-    @api.model
-    def _check_expirations(self):
-        self.search([
-            ('hr_rfid_access_group_exp', '<=', fields.Datetime.now())
-        ]).write({
-            'hr_rfid_access_group_id': None,
-            'hr_rfid_access_group_exp': None,
-        })
-
     @api.model_create_multi
     @api.returns('self', lambda value: value.id)
     def create(self, vals_list):
@@ -97,26 +72,23 @@ class HrEmployee(models.Model):
             user = super(HrEmployee, self).create([vals])
             records += user
 
-            for door_rel in user.hr_rfid_access_group_id.all_door_ids:
-                door = door_rel.door_id
-                for card in user.hr_rfid_card_ids:
-                    command_env.add_card(door.id, door_rel.time_schedule_id.id,
-                                         user.hr_rfid_pin_code, card_id=card.id)
+            for acc_gr_rel in user.hr_rfid_access_group_ids:
+                acc_gr = acc_gr_rel.access_group_id
+                for door_rel in acc_gr.all_door_ids:
+                    door = door_rel.door_id
+                    for card in user.hr_rfid_card_ids:
+                        command_env.add_card(door.id, door_rel.time_schedule_id.id,
+                                             user.hr_rfid_pin_code, card_id=card.id)
 
         return records
 
     @api.multi
     def write(self, vals):
         cmd_env = self.env['hr.rfid.command']
-        acc_gr_env = self.env['hr.rfid.access.group']
         card_env = self.env['hr.rfid.card']
 
         for user in self:
-            prev_access_group_id = None
             old_card_ids = None
-
-            if 'hr_rfid_access_group_id' in vals:
-                prev_access_group_id = user.hr_rfid_access_group_id.id
 
             if 'hr_rfid_card_ids' in vals:
                 old_card_ids = set()
@@ -133,54 +105,112 @@ class HrEmployee(models.Model):
                 added_cards = new_card_ids - old_card_ids
                 removed_cards = old_card_ids - new_card_ids
 
-                for door_rel in user.hr_rfid_access_group_id.all_door_ids:
-                    door = door_rel.door_id
-                    for card_id in removed_cards:
-                        card = card_env.browse(card_id)
-                        cmd_env.remove_card(door.id, door_rel.time_schedule_id.id,
-                                            user.hr_rfid_pin_code, card_id=card.id)
-                    for card_id in added_cards:
-                        card = card_env.browse(card_id)
-                        cmd_env.add_card(door.id, door_rel.time_schedule_id.id,
-                                         user.hr_rfid_pin_code, card_id=card.id)
-
-            if prev_access_group_id is not None:
-                prev_acc_gr = acc_gr_env.browse(prev_access_group_id)
-                for door_rel in prev_acc_gr.all_door_ids:
-                    door = door_rel.door_id
-                    for card in user.hr_rfid_card_ids:
-                        cmd_env.remove_card(door.id, door_rel.time_schedule_id.id,
-                                            user.hr_rfid_pin_code, card_id=card.id)
-
-                for door_rel in user.hr_rfid_access_group_id.all_door_ids:
-                    door = door_rel.door_id
-                    for card in user.hr_rfid_card_ids:
-                        cmd_env.add_card(door.id, door_rel.time_schedule_id.id,
-                                         user.hr_rfid_pin_code, card_id=card.id)
+                for acc_gr_rel in user.hr_rfid_access_group_ids:
+                    acc_gr = acc_gr_rel.access_group_id
+                    for door_rel in acc_gr.all_door_ids:
+                        door = door_rel.door_id
+                        for card_id in removed_cards:
+                            card = card_env.browse(card_id)
+                            cmd_env.remove_card(door.id, door_rel.time_schedule_id.id,
+                                                user.hr_rfid_pin_code, card_id=card.id)
+                        for card_id in added_cards:
+                            card = card_env.browse(card_id)
+                            cmd_env.add_card(door.id, door_rel.time_schedule_id.id,
+                                             user.hr_rfid_pin_code, card_id=card.id)
 
             if 'hr_rfid_pin_code' in vals:
-                for door_rel in user.hr_rfid_access_group_id.all_door_ids:
-                    door = door_rel.door_id
-                    for card in user.hr_rfid_card_ids:
-                        cmd_env.add_card(door.id, door_rel.time_schedule_id.id,
-                                         user.hr_rfid_pin_code, card_id=card.id)
+                for acc_gr_rel in user.hr_rfid_access_group_ids:
+                    acc_gr = acc_gr_rel.access_group_id
+                    for door_rel in acc_gr.all_door_ids:
+                        door = door_rel.door_id
+                        for card in user.hr_rfid_card_ids:
+                            cmd_env.add_card(door.id, door_rel.time_schedule_id.id,
+                                             user.hr_rfid_pin_code, card_id=card.id)
 
         return True
 
+
+class HrEmployeeAccGrWizard(models.TransientModel):
+    _name = 'hr.employee.acc.grs'
+    _description = 'Add or remove access groups to or from the employee'
+
+    def _default_user(self):
+        return self.env['hr.employee'].browse(self._context.get('active_ids'))
+
+    def _default_allowed_acc_grs(self):
+        employee = self._default_user()
+        cur_acc_grs = employee.hr_rfid_access_group_ids.mapped('access_group_id')
+        if self._context.get('adding_acc_grs', False):
+            return employee.department_id.hr_rfid_allowed_access_groups - cur_acc_grs
+        return cur_acc_grs
+
+    employee_id = fields.Many2one(
+        'hr.employee',
+        string='Employee',
+        required=True,
+        default=_default_user,
+    )
+
+    allowed_acc_grs = fields.Many2many(
+        'hr.rfid.access.group',
+        'hr_employee_acc_grs_allowed_grs_rel',
+        default=_default_allowed_acc_grs,
+    )
+
+    acc_gr_ids = fields.Many2many(
+        'hr.rfid.access.group',
+        'hr_employee_acc_grs_acc_gr_ids_rel',
+        string='Access groups to add/remove',
+        required=True,
+    )
+
+    expiration = fields.Datetime(
+        string='Expiration',
+        help='When the access groups will be removed from the employee.',
+    )
+
+    @api.one
+    def get_doors(self, excluding_acc_grs=None, including_acc_grs=None):
+        if excluding_acc_grs is None:
+            excluding_acc_grs = self.env['hr.rfid.access.group']
+        if including_acc_grs is None:
+            including_acc_grs = self.env['hr.rfid.access.group']
+
+        acc_grs = self.hr_rfid_access_group_ids.mapped('access_group_id')
+        acc_grs = acc_grs - excluding_acc_grs
+        acc_grs = acc_grs + including_acc_grs
+        return acc_grs.mapped('all_door_ids').mapped('door_id')
+
     @api.multi
-    def unlink(self):
-        command_env = self.env['hr.rfid.command']
+    def add_acc_grs(self):
+        self.ensure_one()
+        rel_env = self.env['hr.rfid.access.group.employee.rel']
 
-        for user in self:
-            for door_rel in user.hr_rfid_access_group_id.all_door_ids:
-                door = door_rel.door_id
-                for card in user.hr_rfid_card_ids:
-                    command_env.remove_card(door.id, door_rel.time_schedule_id.id,
-                                            user.hr_rfid_pin_code, card_id=card.id)
+        acc_gr_ids = rel_env.search([
+            ('employee_id', '=', self.employee_id.id),
+            ('access_group_id', 'in', self.acc_gr_ids.ids),
+        ]).mapped('access_group_id')
 
-        return super(HrEmployee, self).unlink()
+        acc_gr_ids = self.acc_gr_ids - acc_gr_ids
 
+        for acc_gr_id in acc_gr_ids:
+            creation_dict = {
+                'employee_id': self.employee_id.id,
+                'access_group_id': acc_gr_id.id,
+            }
+            if self.expiration is not False:
+                creation_dict['expiration'] = str(self.expiration)
+            rel_env.create(creation_dict)
 
+    @api.multi
+    def rem_acc_grs(self):
+        self.ensure_one()
+        rel_env = self.env['hr.rfid.access.group.employee.rel']
+
+        acc_gr_ids = rel_env.search([
+            ('employee_id', '=', self.employee_id.id),
+            ('access_group_id', 'in', self.acc_gr_ids.ids),
+        ]).unlink()
 
 
 
