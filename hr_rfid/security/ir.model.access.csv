@@ -1,6 +1,8 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 hr_rfid_officer_department_card,hr.rfid.officer.department.card,model_hr_rfid_card,hr_rfid.hr_rfid_group_officer_department,1,1,1,1
 hr_rfid_officer_department_access_group,hr.rfid.officer.department.access.group,model_hr_rfid_access_group,hr_rfid.hr_rfid_group_officer_department,1,1,0,0
+hr_rfid_officer_department_access_group_e_rel,hr.rfid.officer.department.access.group.c.rel,model_hr_rfid_access_group_employee_rel,hr_rfid.hr_rfid_group_officer_department,1,1,1,1
+hr_rfid_officer_department_access_group_c_rel,hr.rfid.officer.department.access.group.e.rel,model_hr_rfid_access_group_contact_rel,hr_rfid.hr_rfid_group_officer_department,1,1,1,1
 hr_rfid_officer_department_card_type,hr.rfid.officer.department.card.type,model_hr_rfid_card_type,hr_rfid.hr_rfid_group_officer_department,1,1,0,0
 hr_rfid_officer_department_webstack,hr.rfid.officer.department.webstack,model_hr_rfid_webstack,hr_rfid.hr_rfid_group_officer_department,1,1,0,0
 hr_rfid_officer_department_ctrl,hr.rfid.officer.department.ctrl,model_hr_rfid_ctrl,hr_rfid.hr_rfid_group_officer_department,1,1,0,0
@@ -12,6 +14,8 @@ hr_rfid_officer_department_event_system,hr.rfid.officer.department.event.system,
 hr_rfid_officer_department_command,hr.rfid.officer.department.command,model_hr_rfid_command,hr_rfid.hr_rfid_group_officer_department,1,1,0,0
 hr_rfid_manager_department_card,hr.rfid.manager.department.card,model_hr_rfid_card,hr_rfid.hr_rfid_group_manager_department,1,1,1,1
 hr_rfid_manager_department_access_group,hr.rfid.manager.department.access.group,model_hr_rfid_access_group,hr_rfid.hr_rfid_group_manager_department,1,1,1,1
+hr_rfid_manager_department_access_group_e_rel,hr.rfid.manager.department.access.group.c.rel,model_hr_rfid_access_group_employee_rel,hr_rfid.hr_rfid_group_manager_department,1,1,1,1
+hr_rfid_manager_department_access_group_c_rel,hr.rfid.manager.department.access.group.e.rel,model_hr_rfid_access_group_contact_rel,hr_rfid.hr_rfid_group_manager_department,1,1,1,1
 hr_rfid_manager_department_card_type,hr.rfid.manager.department.card.type,model_hr_rfid_card_type,hr_rfid.hr_rfid_group_manager_department,1,1,1,1
 hr_rfid_manager_department_webstack,hr.rfid.manager.department.webstack,model_hr_rfid_webstack,hr_rfid.hr_rfid_group_manager_department,1,1,1,1
 hr_rfid_manager_department_ctrl,hr.rfid.manager.department.ctrl,model_hr_rfid_ctrl,hr_rfid.hr_rfid_group_manager_department,1,1,1,1
@@ -25,6 +29,8 @@ hr_rfid_manager_department_access_group_door_rel,hr.rfid.manager.department.acce
 hr_rfid_manager_department_time_schedule,hr.rfid.manager.department.time.schedule,model_hr_rfid_time_schedule,hr_rfid.hr_rfid_group_manager_department,1,1,1,1
 hr_rfid_officer_card,hr.rfid.officer.card,model_hr_rfid_card,hr_rfid.hr_rfid_group_officer,1,1,1,1
 hr_rfid_officer_access_group,hr.rfid.officer.access.group,model_hr_rfid_access_group,hr_rfid.hr_rfid_group_officer,1,1,0,0
+hr_rfid_officer_access_group_e_rel,hr.rfid.officer.access.group.c.rel,model_hr_rfid_access_group_employee_rel,hr_rfid.hr_rfid_group_officer,1,1,1,1
+hr_rfid_officer_access_group_c_rel,hr.rfid.officer.access.group.e.rel,model_hr_rfid_access_group_contact_rel,hr_rfid.hr_rfid_group_officer,1,1,1,1
 hr_rfid_officer_card_type,hr.rfid.officer.card.type,model_hr_rfid_card_type,hr_rfid.hr_rfid_group_officer,1,1,0,0
 hr_rfid_officer_webstack,hr.rfid.officer.webstack,model_hr_rfid_webstack,hr_rfid.hr_rfid_group_officer,1,1,0,0
 hr_rfid_officer_ctrl,hr.rfid.officer.ctrl,model_hr_rfid_ctrl,hr_rfid.hr_rfid_group_officer,1,1,0,0
@@ -36,6 +42,8 @@ hr_rfid_officer_event_system,hr.rfid.officer.event.system,model_hr_rfid_event_sy
 hr_rfid_officer_command,hr.rfid.officer.command,model_hr_rfid_command,hr_rfid.hr_rfid_group_officer,1,1,0,0
 hr_rfid_manager_card,hr.rfid.manager.card,model_hr_rfid_card,hr_rfid.hr_rfid_group_manager,1,1,1,1
 hr_rfid_manager_access_group,hr.rfid.manager.access.group,model_hr_rfid_access_group,hr_rfid.hr_rfid_group_manager,1,1,1,1
+hr_rfid_manager_access_group_e_rel,hr.rfid.manager.access.group.c.rel,model_hr_rfid_access_group_employee_rel,hr_rfid.hr_rfid_group_manager,1,1,1,1
+hr_rfid_manager_access_group_c_rel,hr.rfid.manager.access.group.e.rel,model_hr_rfid_access_group_contact_rel,hr_rfid.hr_rfid_group_manager,1,1,1,1
 hr_rfid_manager_card_type,hr.rfid.manager.card.type,model_hr_rfid_card_type,hr_rfid.hr_rfid_group_manager,1,1,1,1
 hr_rfid_manager_webstack,hr.rfid.manager.webstack,model_hr_rfid_webstack,hr_rfid.hr_rfid_group_manager,1,1,1,1
 hr_rfid_manager_ctrl,hr.rfid.manager.ctrl,model_hr_rfid_ctrl,hr_rfid.hr_rfid_group_manager,1,1,1,1
@@ -52,3 +60,5 @@ hr_rfid_view_rfid_data_access_group,hr.rfid.view.rfid.data.access.group,model_hr
 hr_rfid_view_rfid_data_event_user,hr.rfid.view.rfid.data.event.user,model_hr_rfid_event_user,hr_rfid.hr_rfid_view_rfid_data,1,0,0,0
 hr_rfid_system_user_view_card,hr.rfid.system.user.view.card,model_hr_rfid_card,base.group_user,1,0,0,0
 hr_rfid_system_user_view_event,hr.rfid.system.user.view.event,model_hr_rfid_event_user,base.group_user,1,0,0,0
+hr_rfid_system_user_view_access_group_e_rel,hr.rfid.system.user.view.access.group.c.rel,model_hr_rfid_access_group_employee_rel,base.group_user,1,1,1,1
+hr_rfid_system_user_view_access_group_c_rel,hr.rfid.system.user.view.access.group.e.rel,model_hr_rfid_access_group_contact_rel,base.group_user,1,1,1,1

@@ -251,7 +251,9 @@
         <form string="Remove Doors">
           <group>
             <field name="acc_gr_doors" attrs="{'invisible': True}" />
-            <field name="door_ids" domain="[('id', 'in', acc_gr_doors)]" widget="many2many_tags" />
+            <field name="door_ids"
+                   domain="[('id', 'in', acc_gr_doors and acc_gr_doors[0] and acc_gr_doors[0][2] or False)]"
+                   widget="many2many_tags" />
           </group>
           <footer>
             <button name="del_doors" type="object"
@@ -330,13 +332,11 @@
               </field>
             </page>
 
-            <page string="Users" help="Users assigned to this access group">
+            <page string="Employees" help="Employees assigned to this access group">
               <field name="employee_ids" readonly="1">
                 <tree>
-                  <field name="name" />
-                  <field name="display_name" />
-                  <field name="department_id" />
-                  <field name="job_id" />
+                  <field name="employee_id" />
+                  <field name="expiration" />
                 </tree>
               </field>
             </page>
@@ -344,9 +344,8 @@
             <page string="Contacts" help="Contacts assigned to this access group">
               <field name="contact_ids" readonly="1">
                 <tree>
-                  <field name="name" />
-                  <field name="parent_id" />
-                  <field name="function" />
+                  <field name="contact_id" />
+                  <field name="expiration" />
                 </tree>
               </field>
             </page>
@@ -563,7 +562,7 @@
               </tree>
             </field>
             <field name="setup_and_set_to_active"
-                   domain="[('id','in',found_webstacks)]"
+                   domain="[('id','in',found_webstacks[0][2])]"
                    widget="many2many_tags" />
           </group>
 

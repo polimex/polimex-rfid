@@ -2,6 +2,67 @@
 
 <odoo>
   <data>
+    <record id="hr_employee_acc_grs_add_form" model="ir.ui.view">
+      <field name="name">hr.employee.acc.grs.add.form</field>
+      <field name="model">hr.employee.acc.grs</field>
+      <field name="arch" type="xml">
+        <form string="Add Access Groups">
+          <group>
+            <field name="employee_id" attrs="{'invisible': True}" />
+            <field name="allowed_acc_grs" attrs="{'invisible': True}" />
+            <field name="acc_gr_ids"
+                   domain="[('id', 'in', allowed_acc_grs and allowed_acc_grs[0] and allowed_acc_grs[0][2] or False)]"
+                   widget="many2many_tags" />
+            <field name="expiration" />
+          </group>
+          <footer>
+            <button name="add_acc_grs" type="object"
+                    string="Add Access Groups" class="oe_highlight" />
+            <button special="cancel" string="Cancel" />
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_employee_acc_grs_rem_form" model="ir.ui.view">
+      <field name="name">hr.employee.acc.grs.rem.form</field>
+      <field name="model">hr.employee.acc.grs</field>
+      <field name="arch" type="xml">
+        <form string="Remove Access Groups">
+          <group>
+            <field name="employee_id" attrs="{'invisible': True}" />
+            <field name="allowed_acc_grs" attrs="{'invisible': True}" />
+            <field name="acc_gr_ids"
+                   domain="[('id', 'in', allowed_acc_grs and allowed_acc_grs[0] and allowed_acc_grs[0][2] or False)]"
+                   widget="many2many_tags" />
+          </group>
+          <footer>
+            <button name="rem_acc_grs" type="object"
+                    string="Remove Access Groups" class="oe_highlight" />
+            <button special="cancel" string="Cancel" />
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_employee_acc_grs_add_action" model="ir.actions.act_window">
+      <field name="name">Add Access Groups</field>
+      <field name="res_model">hr.employee.acc.grs</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_employee_acc_grs_add_form" />
+      <field name="target">new</field>
+    </record>
+
+    <record id="hr_employee_acc_grs_rem_action" model="ir.actions.act_window">
+      <field name="name">Remove Access Groups</field>
+      <field name="res_model">hr.employee.acc.grs</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_employee_acc_grs_rem_form" />
+      <field name="target">new</field>
+    </record>
+
     <record id="hr_view_employee_form_inherit_hr_rfid" model="ir.ui.view">
       <field name="name">hr.employee.rfid.info</field>
       <field name="model">hr.employee</field>
@@ -9,11 +70,23 @@
       <field name="arch" type="xml">
         <notebook position="inside">
           <page string="RFID Info" groups="hr_rfid.hr_rfid_view_rfid_data">
+            <button name="%(hr_employee_acc_grs_add_action)d"
+                    id="hr_employee_add_acc_grs_btn"
+                    type="action"
+                    string="Add Access Groups"
+                    class="oe_highlight"
+                    context="{'adding_acc_grs':True}"
+                    groups="hr_rfid.hr_rfid_group_officer_department" />
+            <button name="%(hr_employee_acc_grs_rem_action)d"
+                    id="hr_employee_rem_acc_grs_btn"
+                    type="action"
+                    string="Remove Access Groups"
+                    class="oe_highlight"
+                    context="{'adding_acc_grs':False}"
+                    groups="hr_rfid.hr_rfid_group_officer_department" />
             <group string="Settings">
               <field name="hr_rfid_pin_code" groups="hr_rfid.hr_rfid_view_rfid_pin_code_data" />
-              <field name="hr_rfid_access_group_id"
-                     domain="[('department_ids', 'in', [department_id])]" />
-              <field name="hr_rfid_access_group_exp" />
+
             </group>
             <notebook>
               <page string="Cards">
@@ -21,6 +94,15 @@
                   <tree string="Cards belonging to user">
                     <field name="number" />
                     <field name="card_type" />
+                  </tree>
+                </field>
+              </page>
+
+              <page string="Access Groups">
+                <field name="hr_rfid_access_group_ids" readonly="1">
+                  <tree>
+                    <field name="access_group_id" />
+                    <field name="expiration" />
                   </tree>
                 </field>
               </page>

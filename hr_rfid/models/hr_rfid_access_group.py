@@ -28,15 +28,15 @@ class HrRfidAccessGroup(models.Model):
     )
 
     employee_ids = fields.One2many(
-        'hr.employee',
-        'hr_rfid_access_group_id',
+        'hr.rfid.access.group.employee.rel',
+        'access_group_id',
         string='Users',
         help='Users part of this access group',
     )
 
     contact_ids = fields.One2many(
-        'res.partner',
-        'hr_rfid_access_group_id',
+        'hr.rfid.access.group.contact.rel',
+        'access_group_id',
         string='Contacts',
         help='Contacts part of this access group'
     )
@@ -153,7 +153,16 @@ class HrRfidAccessGroup(models.Model):
 
     @staticmethod
     def _create_door_command(acc_gr, door_rels, command):
-        for user in acc_gr.employee_ids:
+        for user_rel in acc_gr.employee_ids:
+            user = user_rel.employee_id
+            pin = user.hr_rfid_pin_code
+            for card in user.hr_rfid_card_ids:
+                for door_rel in door_rels:
+                    door_id = door_rel.door_id.id
+                    ts_id = door_rel.time_schedule_id.id
+                    command(door_id, ts_id, pin, card_id=card.id)
+        for user_rel in acc_gr.contact_ids:
+            user = user_rel.contact_id
             pin = user.hr_rfid_pin_code
             for card in user.hr_rfid_card_ids:
                 for door_rel in door_rels:
@@ -176,7 +185,7 @@ class HrRfidAccessGroup(models.Model):
     @api.multi
     def write(self, vals):
         for acc_gr in self:
-            old_doors = self.all_door_ids
+            old_doors = self.all_door_ids[:]
 
             super(HrRfidAccessGroup, acc_gr).write(vals)
 
@@ -205,17 +214,17 @@ class HrRfidAccessGroup(models.Model):
 
         return True
 
-    # TODO Check if we actually need this unlink?
     @api.multi
     def unlink(self):
-        for acc_gr in self:
-            acc_gr.all_door_ids.unlink()
-
+        self.door_ids.unlink()
+        self.employee_ids.unlink()
+        self.contact_ids.unlink()
         return super(HrRfidAccessGroup, self).unlink()
 
 
 class HrRfidAccessGroupDoorRel(models.Model):
     _name = 'hr.rfid.access.group.door.rel'
+    _description = 'Relation between access groups and doors'
 
     def _get_cur_access_group_id(self):
         return self.env['hr.rfid.access.group'].browse(self._context.get('active_id'))
@@ -256,14 +265,16 @@ class HrRfidAccessGroupDoorRel(models.Model):
         rel = self.browse(rel_id)
         cmd_env = self.env['hr.rfid.command']
 
-        for user in rel.access_group_id.employee_ids:
+        for user_rel in rel.access_group_id.employee_ids:
+            user = user_rel.employee_id
             for card in user.hr_rfid_card_ids:
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
                                  user.hr_rfid_pin_code, card_id=card.id)
-        for contact in rel.access_group_id.contact_ids:
-            for card in contact.hr_rfid_card_ids:
+        for user_rel in rel.access_group_id.contact_ids:
+            user = user_rel.contact_id
+            for card in user.hr_rfid_card_ids:
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
-                                 contact.hr_rfid_pin_code, card_id=card.id)
+                                 user.hr_rfid_pin_code, card_id=card.id)
 
     @api.model
     def door_changed(self, rel_id, prev_door_id):
@@ -276,18 +287,20 @@ class HrRfidAccessGroupDoorRel(models.Model):
         prev_door = self.env['hr.rfid.door'].browse(prev_door_id)
         cmd_env = self.env['hr.rfid.command']
 
-        for user in rel.access_group_id.employee_ids:
+        for user_rel in rel.access_group_id.employee_ids:
+            user = user_rel.employee_id
             for card in user.hr_rfid_card_ids:
                 cmd_env.remove_card(prev_door.id, rel.time_schedule_id.id,
                                     user.hr_rfid_pin_code, card_id=card.id)
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id, user.hr_rfid_pin_code,
                                  card_id=card.id)
-        for contact in rel.access_group_id.contact_ids:
-            for card in contact.hr_rfid_card_ids:
+        for user_rel in rel.access_group_id.contact_ids:
+            user = user_rel.contact_id
+            for card in user.hr_rfid_card_ids:
                 cmd_env.remove_card(prev_door.id, rel.time_schedule_id.id,
-                                    contact.hr_rfid_pin_code, card_id=card.id)
+                                    user.hr_rfid_pin_code, card_id=card.id)
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
-                                 contact.hr_rfid_pin_code, card_id=card.id)
+                                 user.hr_rfid_pin_code, card_id=card.id)
 
     @api.model
     def access_group_changed(self, rel_id, prev_acc_gr_id):
@@ -300,23 +313,26 @@ class HrRfidAccessGroupDoorRel(models.Model):
         prev_acc_gr = self.env['hr.rfid.access.group'].browse(prev_acc_gr_id)
         cmd_env = self.env['hr.rfid.command']
 
-        for user in prev_acc_gr.employee_ids:
+        for user_rel in prev_acc_gr.employee_ids:
+            user = user_rel.employee_id
             for card in user.hr_rfid_card_ids:
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
                                  user.hr_rfid_pin_code, card_id=card.id)
-        for contact in prev_acc_gr.contact_ids:
-            for card in contact.hr_rfid_card_ids:
-                cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
-                                 contact.hr_rfid_pin_code, card_id=card.id)
-
-        for user in rel.access_group_id.employee_ids:
+        for user_rel in prev_acc_gr.contact_ids:
+            user = user_rel.contact_id
             for card in user.hr_rfid_card_ids:
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
                                  user.hr_rfid_pin_code, card_id=card.id)
-        for contact in rel.access_group_id.contact_ids:
-            for card in contact.hr_rfid_card_ids:
+        for user_rel in rel.access_group_id.employee_ids:
+            user = user_rel.employee_id
+            for card in user.hr_rfid_card_ids:
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
-                                 contact.hr_rfid_pin_code, card_id=card.id)
+                                 user.hr_rfid_pin_code, card_id=card.id)
+        for user_rel in rel.access_group_id.contact_ids:
+            user = user_rel.contact_id
+            for card in user.hr_rfid_card_ids:
+                cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
+                                 user.hr_rfid_pin_code, card_id=card.id)
 
     @api.model
     @api.returns('self', lambda value: value.id)
@@ -350,18 +366,251 @@ class HrRfidAccessGroupDoorRel(models.Model):
 
         return True
 
+
+###
+# Possible to have 'hr.rfid.access.group.employee.rel' and '...contact.rel' inherit another model,
+# but then we'll have an empty table in the database. Better to just copy-paste a few fields i guess.
+# Maybe there is a model that does not create a database table?
+###
+
+class HrRfidAccessGroupEmployeeRel(models.Model):
+    _name = 'hr.rfid.access.group.employee.rel'
+    _description = 'Relation between access groups and employees'
+
+    access_group_id = fields.Many2one(
+        'hr.rfid.access.group',
+        string='Access Group',
+        required=True,
+    )
+
+    employee_id = fields.Many2one(
+        'hr.employee',
+        string='Employee',
+        required=True,
+    )
+
+    expiration = fields.Datetime(
+        string='Expiration Date',
+        help='Access group will remove itself from the employee '
+             'on the expiration date. Will never expire if blank.',
+    )
+
+    @api.model
+    def _check_expirations(self):
+        self.search([
+            ('expiration', '<=', fields.Datetime.now())
+        ]).unlink()
+
+    @api.model
+    def create(self, vals):
+        cmd_env = self.env['hr.rfid.command'].sudo()
+
+        rel = super(HrRfidAccessGroupEmployeeRel, self).create(vals)
+
+        user = rel.employee_id
+        user_doors = user.get_doors(rel.access_group_id)
+        for door_rel in rel.access_group_id.all_door_ids:
+            door = door_rel.door_id
+            ts = door_rel.time_schedule_id
+            if door not in user_doors:
+                for card in user.hr_rfid_card_ids:
+                    cmd_env.add_card(door.id, ts.id, user.hr_rfid_pin_code, card_id=card.id)
+
     @api.multi
-    def unlink(self):
-        cmd_env = self.env['hr.rfid.command']
+    def write(self, vals):
+        cmd_env = self.env['hr.rfid.command'].sudo()
 
         for rel in self:
-            for user in rel.access_group_id.employee_ids:
-                for card in user.hr_rfid_card_ids:
-                    cmd_env.remove_card(rel.door_id.id, rel.time_schedule_id.id,
-                                        user.hr_rfid_pin_code, card_id=card.id)
+            old_user = rel.employee_id
+            old_acc_gr = rel.access_group_id
 
-        ret = super(HrRfidAccessGroupDoorRel, self).unlink()
-        return ret
+            super(HrRfidAccessGroupEmployeeRel, self).write(vals)
+
+            new_user = rel.employee_id
+            new_acc_gr = rel.access_group_id
+
+            if new_user != old_user and new_acc_gr != old_acc_gr:
+                new_pin = old_user.hr_rfid_pin_code
+                old_pin = new_user.hr_rfid_pin_code
+                new_user_doors = new_user.get_door(rel.access_group_id)
+                old_user_doors = new_user.get_door(rel.access_group_id)
+                for door_rel in old_acc_gr.all_door_ids:
+                    door = door_rel.door_id
+                    ts = door_rel.time_schedule_id
+                    if door not in old_user_doors:
+                        for card in old_user.hr_rfid_card_ids:
+                            cmd_env.remove_card(door.id, ts.id, old_pin, card_id=card.id)
+                for door_rel in new_acc_gr.all_door_ids:
+                    door = door_rel.door_id
+                    ts = door_rel.time_schedule_id
+                    if door not in new_user_doors:
+                        for card in new_user.hr_rfid_card_ids:
+                            cmd_env.add_card(door.id, ts.id, new_pin, card_id=card.id)
+            elif new_user != old_user:
+                old_pin = old_user.hr_rfid_pin_code
+                new_pin = new_user.hr_rfid_pin_code
+                new_user_doors = new_user.get_door(rel.access_group_id)
+                old_user_doors = new_user.get_door(rel.access_group_id)
+                for door_rel in new_acc_gr.all_door_ids:
+                    door = door_rel.door_id
+                    ts = door_rel.time_schedule_id
+                    if door not in old_user_doors:
+                        for card in old_user.hr_rfid_card_ids:
+                            cmd_env.remove_card(door.id, ts.id, old_pin, card_id=card.id)
+                    if door not in new_user_doors:
+                        for card in new_user.hr_rfid_card_ids:
+                            cmd_env.add_card(door.id, ts.id, new_pin, card_id=card.id)
+            elif new_acc_gr != old_acc_gr:
+                pin = old_user.hr_rfid_pin_code
+                user_doors = new_user.get_doors(excluding_acc_grs=old_acc_gr, including_acc_grs=new_acc_gr)
+                for card in old_user.hr_rfid_card_ids:
+                    for door_rel in old_acc_gr.all_door_ids:
+                        door = door_rel.door_id
+                        ts = door_rel.time_schedule_id
+                        if door not in user_doors:
+                            cmd_env.remove_card(door.id, ts.id, pin, card_id=card.id)
+                    for door_rel in new_acc_gr.all_door_ids:
+                        door = door_rel.door_id
+                        ts = door_rel.time_schedule_id
+                        if door in user_doors:
+                            cmd_env.add_card(door.id, ts.id, pin, card_id=card.id)
+
+    @api.multi
+    def unlink(self):
+        cmd_env = self.env['hr.rfid.command'].sudo()
+
+        for rel in self:
+            user = rel.employee_id
+            user_doors = user.get_doors(rel.access_group_id)
+            for door_rel in rel.access_group_id.all_door_ids:
+                door = door_rel.door_id
+                ts = door_rel.time_schedule_id
+                if door not in user_doors:
+                    for card in user.hr_rfid_card_ids:
+                        cmd_env.remove_card(door.id, ts.id, user.hr_rfid_pin_code, card_id=card.id)
+
+        return super(HrRfidAccessGroupEmployeeRel, self).unlink()
+
+
+class HrRfidAccessGroupContactRel(models.Model):
+    _name = 'hr.rfid.access.group.contact.rel'
+    _description = 'Relation between access groups and contacts'
+
+    access_group_id = fields.Many2one(
+        'hr.rfid.access.group',
+        string='Access Group',
+        required=True,
+        ondelete='cascade',
+    )
+
+    contact_id = fields.Many2one(
+        'res.partner',
+        string='Contact',
+        required=True,
+        ondelete='cascade',
+    )
+
+    expiration = fields.Datetime(
+        string='Expiration Date',
+        help='Access group will remove itself from the contact '
+             'on the expiration date. Will never expire if blank.',
+    )
+
+    @api.model
+    def _check_expirations(self):
+        self.search([
+            ('expiration', '<=', fields.Datetime.now())
+        ]).unlink()
+
+    @api.model
+    def create(self, vals_list):
+        cmd_env = self.env['hr.rfid.command'].sudo()
+
+        rel = super(HrRfidAccessGroupContactRel, self).create(vals_list)
+
+        user = rel.contact_id
+        user_doors = user.get_doors(rel.access_group_id)
+        for door_rel in rel.access_group_id.all_door_ids:
+            door = door_rel.door_id
+            ts = door_rel.time_schedule_id
+            if door not in user_doors:
+                for card in user.hr_rfid_card_ids:
+                    cmd_env.add_card(door.id, ts.id, user.hr_rfid_pin_code, card_id=card.id)
+
+    @api.multi
+    def write(self, vals):
+        cmd_env = self.env['hr.rfid.command'].sudo()
+
+        for rel in self:
+            old_user = rel.contact_id
+            old_acc_gr = rel.access_group_id
+
+            super(HrRfidAccessGroupContactRel, self).write(vals)
+
+            new_user = rel.contact_id
+            new_acc_gr = rel.access_group_id
+
+            if new_user != old_user and new_acc_gr != old_acc_gr:
+                new_pin = old_user.hr_rfid_pin_code
+                old_pin = new_user.hr_rfid_pin_code
+                new_user_doors = new_user.get_door(rel.access_group_id)
+                old_user_doors = new_user.get_door(rel.access_group_id)
+                for door_rel in old_acc_gr.all_door_ids:
+                    door = door_rel.door_id
+                    ts = door_rel.time_schedule_id
+                    if door not in old_user_doors:
+                        for card in old_user.hr_rfid_card_ids:
+                            cmd_env.remove_card(door.id, ts.id, old_pin, card_id=card.id)
+                for door_rel in new_acc_gr.all_door_ids:
+                    door = door_rel.door_id
+                    ts = door_rel.time_schedule_id
+                    if door not in new_user_doors:
+                        for card in new_user.hr_rfid_card_ids:
+                            cmd_env.add_card(door.id, ts.id, new_pin, card_id=card.id)
+            elif new_user != old_user:
+                old_pin = old_user.hr_rfid_pin_code
+                new_pin = new_user.hr_rfid_pin_code
+                new_user_doors = new_user.get_door(rel.access_group_id)
+                old_user_doors = new_user.get_door(rel.access_group_id)
+                for door_rel in new_acc_gr.all_door_ids:
+                    door = door_rel.door_id
+                    ts = door_rel.time_schedule_id
+                    if door not in old_user_doors:
+                        for card in old_user.hr_rfid_card_ids:
+                            cmd_env.remove_card(door.id, ts.id, old_pin, card_id=card.id)
+                    if door not in new_user_doors:
+                        for card in new_user.hr_rfid_card_ids:
+                            cmd_env.add_card(door.id, ts.id, new_pin, card_id=card.id)
+            elif new_acc_gr != old_acc_gr:
+                pin = old_user.hr_rfid_pin_code
+                user_doors = new_user.get_doors(excluding_acc_grs=old_acc_gr, including_acc_grs=new_acc_gr)
+                for card in old_user.hr_rfid_card_ids:
+                    for door_rel in old_acc_gr.all_door_ids:
+                        door = door_rel.door_id
+                        ts = door_rel.time_schedule_id
+                        if door not in user_doors:
+                            cmd_env.remove_card(door.id, ts.id, pin, card_id=card.id)
+                    for door_rel in new_acc_gr.all_door_ids:
+                        door = door_rel.door_id
+                        ts = door_rel.time_schedule_id
+                        if door in user_doors:
+                            cmd_env.add_card(door.id, ts.id, pin, card_id=card.id)
+
+    @api.multi
+    def unlink(self):
+        cmd_env = self.env['hr.rfid.command'].sudo()
+
+        for rel in self:
+            user = rel.contact_id
+            user_doors = user.get_doors(rel.access_group_id)
+            for door_rel in rel.access_group_id.all_door_ids:
+                door = door_rel.door_id
+                ts = door_rel.time_schedule_id
+                if door not in user_doors:
+                    for card in user.hr_rfid_card_ids:
+                        cmd_env.remove_card(door.id, ts.id, user.hr_rfid_pin_code, card_id=card.id)
+
+        return super(HrRfidAccessGroupContactRel, self).unlink()
 
 
 class HrRfidAccessGroupWizard(models.TransientModel):

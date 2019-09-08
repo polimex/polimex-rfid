@@ -162,11 +162,12 @@ class WebRfidController(http.Controller):
                 # External db event, controller requests for permission to open or close door
                 if event_action == 64:
                     ret = request.env['hr.rfid.access.group.door.rel'].sudo().search([
-                        ('access_group_id', '=', card.get_owner().hr_rfid_access_group_id.id),
+                        ('access_group_id', 'in', card.get_owner().hr_rfid_access_group_ids.ids),
                         ('door_id', '=', reader.door_id.id)
                     ])
                     # if len(ret) > 0: open door, else close
-                    return respond_to_ev_64(len(ret) > 0 and card.card_active is True, controller, reader, card)
+                    return respond_to_ev_64(len(ret) > 0 and card.card_active is True,
+                                            controller, reader, card)
 
                 event_action = ((event_action - 3) % 4) + 1
                 event_dict = {

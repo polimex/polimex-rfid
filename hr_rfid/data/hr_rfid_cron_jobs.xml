@@ -6,66 +6,66 @@
     <record id="hr_rfid_set_card_active_inactive_status" model="ir.cron">
       <field name="name">HR RFID: Check if any cards need to be activated or deactivated</field>
       <field name="get_active_srs" eval="True" />
-      <field name="interval_type">minutes</field>
-      <field name="interval_number">1</field>
-      <field name="numbercall">-1</field>
       <field name="doall" eval="False" />
       <field name="model" eval="'hr.rfid.card'" />
       <field name="function" eval="'_update_cards'" />
       <field name="args" eval="''" />
       <field name="priority">1000</field>
+      <field name="interval_type">minutes</field>
+      <field name="interval_number">1</field>
+      <field name="numbercall">-1</field>
     </record>
 
     <record id="hr_rfid_employee_acc_gr_expiration" model="ir.cron">
       <field name="name">HR RFID: Check employee access group expirations</field>
       <field name="get_active_srs" eval="True" />
-      <field name="interval_type">minutes</field>
-      <field name="interval_number">1</field>
-      <field name="numbercall">-1</field>
       <field name="doall" eval="False" />
-      <field name="model" eval="'hr.employee'" />
+      <field name="model" eval="'hr.rfid.access.group.employee.rel'" />
       <field name="function" eval="'_check_expirations'" />
       <field name="args" eval="''" />
       <field name="priority">1000</field>
+      <field name="interval_type">minutes</field>
+      <field name="interval_number">1</field>
+      <field name="numbercall">-1</field>
     </record>
 
     <record id="hr_rfid_contact_acc_gr_expiration" model="ir.cron">
       <field name="name">HR RFID: Check contact access group expirations</field>
       <field name="get_active_srs" eval="True" />
-      <field name="interval_type">minutes</field>
-      <field name="interval_number">1</field>
-      <field name="numbercall">-1</field>
       <field name="doall" eval="False" />
-      <field name="model" eval="'res.partner'" />
+      <field name="model" eval="'hr.rfid.access.group.contact.rel'" />
       <field name="function" eval="'_check_expirations'" />
       <field name="args" eval="''" />
       <field name="priority">1000</field>
+      <field name="interval_type">minutes</field>
+      <field name="interval_number">1</field>
+      <field name="numbercall">-1</field>
     </record>
 
     <record id="hr_rfid_sync_ctrl_clock_cron" model="ir.cron">
       <field name="name">HR RFID: Synchronize controller clocks</field>
       <field name="get_active_srs" eval="True" />
-      <field name="interval_type">hours</field>
-      <field name="interval_number">3</field>
-      <field name="numbercall">-1</field>
       <field name="doall" eval="False" />
       <field name="model" eval="'hr.rfid.command'" />
       <field name="function" eval="'_sync_clocks'" />
       <field name="args" eval="''" />
       <field name="priority">1000</field>
+      <field name="interval_type">hours</field>
+      <field name="interval_number">3</field>
+      <field name="numbercall">-1</field>
     </record>
 
     <record id="hr_rfid_delete_old_events" model="ir.cron">
       <field name="name">HR RFID: Delete old events</field>
       <field name="get_active_srs" eval="True" />
-      <field name="interval_type">hours</field>
-      <field name="interval_number">24</field>
-      <field name="numbercall">-1</field>
       <field name="doall" eval="False" />
       <field name="model" eval="'hr.rfid.event.user'" />
       <field name="function" eval="'_delete_old_events'" />
       <field name="args" eval="''" />
       <field name="priority">1000</field>
+      <field name="interval_type">hours</field>
+      <field name="interval_number">24</field>
+      <field name="numbercall">-1</field>
     </record>
 
   </data>
