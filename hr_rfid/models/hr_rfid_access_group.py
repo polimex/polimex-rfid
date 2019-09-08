@@ -237,7 +237,6 @@ class HrRfidAccessGroupDoorRel(models.Model):
         string='Access Group',
         default=_get_cur_access_group_id,
         required=True,
-        ondelete='cascade',
     )
 
     door_id = fields.Many2one(

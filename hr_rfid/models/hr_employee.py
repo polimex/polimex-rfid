@@ -38,6 +38,18 @@ class HrEmployee(models.Model):
         help='Events concerning this employee',
     )
 
+    @api.one
+    def get_doors(self, excluding_acc_grs=None, including_acc_grs=None):
+        if excluding_acc_grs is None:
+            excluding_acc_grs = self.env['hr.rfid.access.group']
+        if including_acc_grs is None:
+            including_acc_grs = self.env['hr.rfid.access.group']
+
+        acc_grs = self.hr_rfid_access_group_ids.mapped('access_group_id')
+        acc_grs = acc_grs - excluding_acc_grs
+        acc_grs = acc_grs + including_acc_grs
+        return acc_grs.mapped('all_door_ids').mapped('door_id')
+
     @api.multi
     @api.constrains('hr_rfid_access_group_ids')
     def _check_access_group(self):
@@ -168,18 +180,6 @@ class HrEmployeeAccGrWizard(models.TransientModel):
         string='Expiration',
         help='When the access groups will be removed from the employee.',
     )
-
-    @api.one
-    def get_doors(self, excluding_acc_grs=None, including_acc_grs=None):
-        if excluding_acc_grs is None:
-            excluding_acc_grs = self.env['hr.rfid.access.group']
-        if including_acc_grs is None:
-            including_acc_grs = self.env['hr.rfid.access.group']
-
-        acc_grs = self.hr_rfid_access_group_ids.mapped('access_group_id')
-        acc_grs = acc_grs - excluding_acc_grs
-        acc_grs = acc_grs + including_acc_grs
-        return acc_grs.mapped('all_door_ids').mapped('door_id')
 
     @api.multi
     def add_acc_grs(self):

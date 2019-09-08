@@ -103,6 +103,16 @@ class HrRfidCard(models.Model):
         self.card_active = not self.card_active
 
     @api.multi
+    @api.constrains('employee_id', 'contact_id')
+    def _check_user(self):
+        for card in self:
+            if card.employee_id is not None and card.contact_id is not None:
+                if card.employee_id == card.contact_id or \
+                   (len(card.employee_id) > 0 and len(card.contact_id) > 0):
+                    raise exceptions.ValidationError('Card user and contact cannot both be set '
+                                                     'in the same time, and cannot both be empty.')
+
+    @api.multi
     @api.constrains('number')
     def _check_number(self):
         for card in self:
@@ -142,9 +152,9 @@ class HrRfidCard(models.Model):
     @api.multi
     def write(self, vals):
         cmd_env       = self.env['hr.rfid.command']
-        new_number    = vals.get('number',            None)
-        new_card_type = vals.get('card_type',         None)
-        new_active    = vals.get('card_active',       None)
+        new_number    = vals.get('number',      None)
+        new_card_type = vals.get('card_type',   None)
+        new_active    = vals.get('card_active', None)
 
         invalid_user_and_contact_msg = 'Card user and contact cannot both be set' \
                                        ' in the same time, and cannot both be empty.'
