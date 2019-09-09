@@ -1279,6 +1279,7 @@
             <field name="request" readonly="1" groups="base.group_system" />
             <field name="response" readonly="1" groups="base.group_system" />
             <field name="cmd_data" readonly="1" />
+            <field name="retries" readonly="1" />
           </group>
         </form>
       </field>
@@ -1296,6 +1297,7 @@
           <field name="error" />
           <field name="cr_timestamp" />
           <field name="ex_timestamp" />
+          <field name="retries" />
         </tree>
       </field>
     </record>
