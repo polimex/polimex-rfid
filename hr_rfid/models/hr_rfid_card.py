@@ -138,11 +138,13 @@ class HrRfidCard(models.Model):
         for card in self:
             owner = card.get_owner()
             if card.card_active is True:
-                for door_rel in owner.hr_rfid_access_group_id.all_door_ids:
-                    door = door_rel.door_id
-                    ts = door_rel.time_schedule_id
-                    pin = owner.hr_rfid_pin_code
-                    cmd_env.remove_card(door.id, ts.id, pin, card_id=card.id)
+                for acc_gr_rel in owner.hr_rfid_access_group_ids:
+                    acc_gr = acc_gr_rel.access_group_id
+                    for door_rel in acc_gr.all_door_ids:
+                        door = door_rel.door_id
+                        ts = door_rel.time_schedule_id
+                        pin = owner.hr_rfid_pin_code
+                        cmd_env.remove_card(door.id, ts.id, pin, card_id=card.id)
         return super(HrRfidCard, self).unlink()
 
     @api.multi
@@ -176,63 +178,75 @@ class HrRfidCard(models.Model):
             new_cloud = card.cloud_card
 
             if new_owner_type != old_owner_type or new_owner != old_owner:
-                for door_rel in old_owner.hr_rfid_access_group_id.all_door_ids:
-                    door = door_rel.door_id
-                    ts = door_rel.time_schedule_id
-                    pin = old_owner.hr_rfid_pin_code
-                    if door.card_type.id == old_card_type_id:
-                        cmd_env.remove_card(door.id, ts.id, pin, card_number=old_number)
-                for door_rel in new_owner.hr_rfid_access_group_id.all_door_ids:
-                    door = door_rel.door_id
-                    ts = door_rel.time_schedule_id
-                    pin = old_owner.hr_rfid_pin_code
-                    if door.card_type.id == card.card_type.id:
-                        cmd_env.add_card(door.id, ts.id, pin, card.number)
+                for acc_gr_rel in old_owner.hr_rfid_access_group_ids:
+                    acc_gr = acc_gr_rel.access_group_id
+                    for door_rel in acc_gr.all_door_ids:
+                        door = door_rel.door_id
+                        ts = door_rel.time_schedule_id
+                        pin = old_owner.hr_rfid_pin_code
+                        if door.card_type.id == old_card_type_id:
+                            cmd_env.remove_card(door.id, ts.id, pin, card_number=old_number)
+                for acc_gr_rel in new_owner.hr_rfid_access_group_ids:
+                    acc_gr = acc_gr_rel.access_group_id
+                    for door_rel in acc_gr.all_door_ids:
+                        door = door_rel.door_id
+                        ts = door_rel.time_schedule_id
+                        pin = old_owner.hr_rfid_pin_code
+                        if door.card_type.id == card.card_type.id:
+                            cmd_env.add_card(door.id, ts.id, pin, card.number)
                 continue
 
             if new_number is not None and new_number != old_number:
-                for door_rel in new_owner.hr_rfid_access_group_id.all_door_ids:
-                    door = door_rel.door_id
-                    ts = door_rel.time_schedule_id
-                    pin = new_owner.hr_rfid_pin_code
-                    if door.card_type.id == old_card_type_id:
-                        cmd_env.remove_card(door.id, ts.id, pin, card_number=old_number)
-                    if door.card_type.id == card.card_type.id:
-                        cmd_env.add_card(door.id, ts.id, pin, card.id)
+                for acc_gr_rel in new_owner.hr_rfid_access_group_ids:
+                    acc_gr = acc_gr_rel.access_group_id
+                    for door_rel in acc_gr.all_door_ids:
+                        door = door_rel.door_id
+                        ts = door_rel.time_schedule_id
+                        pin = new_owner.hr_rfid_pin_code
+                        if door.card_type.id == old_card_type_id:
+                            cmd_env.remove_card(door.id, ts.id, pin, card_number=old_number)
+                        if door.card_type.id == card.card_type.id:
+                            cmd_env.add_card(door.id, ts.id, pin, card.id)
                 continue
 
             if new_card_type is not None and new_card_type != old_card_type_id:
-                for door_rel in new_owner.hr_rfid_access_group_id.all_door_ids:
-                    door = door_rel.door_id
-                    ts = door_rel.time_schedule_id
-                    pin = new_owner.hr_rfid_pin_code
-                    if door.card_type.id == old_card_type_id:
-                        cmd_env.remove_card(door.id, ts.id, pin, card_number=old_number)
-                    if door.card_type.id == card.card_type.id:
-                        cmd_env.add_card(door.id, ts.id, pin, card_id=card.id)
+                for acc_gr_rel in new_owner.hr_rfid_access_group_ids:
+                    acc_gr = acc_gr_rel.access_group_id
+                    for door_rel in acc_gr.all_door_ids:
+                        door = door_rel.door_id
+                        ts = door_rel.time_schedule_id
+                        pin = new_owner.hr_rfid_pin_code
+                        if door.card_type.id == old_card_type_id:
+                            cmd_env.remove_card(door.id, ts.id, pin, card_number=old_number)
+                        if door.card_type.id == card.card_type.id:
+                            cmd_env.add_card(door.id, ts.id, pin, card_id=card.id)
                 continue
 
             if old_cloud != new_cloud:
-                for door_rel in new_owner.hr_rfid_access_group_id.all_door_ids:
-                    door = door_rel.door_id
-                    if door.controller_id.external_db is False:
-                        continue
-                    ts = door_rel.time_schedule_id
-                    pin = new_owner.hr_rfid_pin_code
-                    if new_cloud is True:
-                        cmd_env.remove_card(door.id, ts.id, pin, card_id=card.id)
-                    else:
-                        cmd_env.add_card(door.id, ts.id, pin, card_id=card.id)
+                for acc_gr_rel in new_owner.hr_rfid_access_group_ids:
+                    acc_gr = acc_gr_rel.access_group_id
+                    for door_rel in acc_gr.all_door_ids:
+                        door = door_rel.door_id
+                        if door.controller_id.external_db is False:
+                            continue
+                        ts = door_rel.time_schedule_id
+                        pin = new_owner.hr_rfid_pin_code
+                        if new_cloud is True:
+                            cmd_env.remove_card(door.id, ts.id, pin, card_id=card.id)
+                        else:
+                            cmd_env.add_card(door.id, ts.id, pin, card_id=card.id)
 
             if new_active is not None and new_active != old_active:
-                for door_rel in new_owner.hr_rfid_access_group_id.all_door_ids:
-                    door = door_rel.door_id
-                    ts = door_rel.time_schedule_id
-                    pin = new_owner.hr_rfid_pin_code
-                    if new_active is True:
-                        cmd_env.add_card(door.id, ts.id, pin, card_id=card.id)
-                    if new_active is False:
-                        cmd_env.remove_card(door.id, ts.id, pin, card_id=card.id, ignore_active=True)
+                for acc_gr_rel in new_owner.hr_rfid_access_group_ids:
+                    acc_gr = acc_gr_rel.access_group_id
+                    for door_rel in acc_gr.all_door_ids:
+                        door = door_rel.door_id
+                        ts = door_rel.time_schedule_id
+                        pin = new_owner.hr_rfid_pin_code
+                        if new_active is True:
+                            cmd_env.add_card(door.id, ts.id, pin, card_id=card.id)
+                        if new_active is False:
+                            cmd_env.remove_card(door.id, ts.id, pin, card_id=card.id, ignore_active=True)
 
     @api.model
     @api.returns('self', lambda value: value.id)
@@ -250,11 +264,13 @@ class HrRfidCard(models.Model):
         card_owner = card.get_owner()
 
         if card.card_active is True:
-            for door_rel in card_owner.hr_rfid_access_group_id.all_door_ids:
-                door = door_rel.door_id
-                ts = door_rel.time_schedule_id
-                pin = card_owner.hr_rfid_pin_code
-                cmd_env.add_card(door.id, ts.id, pin, card_id=card.id)
+            for acc_gr_rel in card_owner.hr_rfid_access_group_ids:
+                acc_gr = acc_gr_rel.access_group_id
+                for door_rel in acc_gr.all_door_ids:
+                    door = door_rel.door_id
+                    ts = door_rel.time_schedule_id
+                    pin = card_owner.hr_rfid_pin_code
+                    cmd_env.add_card(door.id, ts.id, pin, card_id=card.id)
 
         return card
 
