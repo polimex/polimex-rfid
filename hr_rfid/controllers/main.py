@@ -30,10 +30,14 @@ class WebRfidController(http.Controller):
 
             def check_for_unsent_cmd(status_code, event=None):
                 commands_env = request.env['hr.rfid.command'].sudo()
+                
+                processing_comm = commands_env.search([
+                    ('webstack_id', '=', webstack.id),
+                    ('status', '=', 'Process'),
+                ], limit=1)
 
-                if 0 != len(commands_env.search([ ('webstack_id', '=', webstack.id),
-                                                  ('status', '=', 'Process'), ])):
-                    return { 'status': status_code }
+                if len(processing_comm) > 0:
+                    retry_command(processing_comm, status_code, event)
 
                 command = commands_env.search([
                     ('webstack_id', '=', webstack.id),
@@ -45,7 +49,18 @@ class WebRfidController(http.Controller):
 
                 if event is not None:
                     event.command_id = command
-                return send_command(command, status_code)
+                return send_command(status_code, command)
+
+            def retry_command(status_code, cmd, event):
+                if cmd.retries == 5:
+                    cmd.status = 'Failure'
+                    return check_for_unsent_cmd(status_code, event)
+
+                cmd.retries = cmd.retries + 1
+
+                if event is not None:
+                    event.command_id = cmd
+                return send_command(cmd, status_code)
 
             def send_command(command, status_code):
                 command.status = 'Process'

@@ -1351,6 +1351,12 @@ class HrRfidCommands(models.Model):
         index=True,
     )
 
+    retries = fields.Integer(
+        string='Command retries',
+        help='How many times the command failed to run and has been retried',
+        default=0,
+    )
+
     pin_code = fields.Char()
     ts_code = fields.Char(limit=8)
     rights_data = fields.Integer()
