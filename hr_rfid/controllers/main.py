@@ -271,6 +271,16 @@ class WebRfidController(http.Controller):
                             start = start + 2
                         return res
 
+                    hw_ver = str(bytes_to_num(0, 2))
+                    sw_ver = str(bytes_to_num(12, 3))
+                    inputs = bytes_to_num(18, 3)
+                    outputs = bytes_to_num(24, 3)
+                    time_schedules = bytes_to_num(32, 2)
+                    io_table_lines = bytes_to_num(36, 2)
+                    alarm_lines = bytes_to_num(40, 1)
+                    max_cards_count = bytes_to_num(44, 5)
+                    max_events_count = bytes_to_num(54, 5)
+
                     serial_num = str(bytes_to_num(4, 4))
 
                     old_ctrl = ctrl_env.search([
@@ -287,9 +297,10 @@ class WebRfidController(http.Controller):
                     if len(controller.door_ids):
                         controller.door_ids.unlink()
 
-                    last_door = None
-
                     def create_door(name, number, ctrl_id):
+                        # If the controller is a vending controller
+                        if hw_ver == '16':
+                            return None
                         return door_env.create({
                             'name': name,
                             'number': number,
@@ -339,16 +350,6 @@ class WebRfidController(http.Controller):
                         create_reader('R3', 3, '0', controller.id, last_door.id)
                         last_door = create_door(gen_d_name(4, controller.id), 4, controller.id)
                         create_reader('R4', 4, '0', controller.id, last_door.id)
-
-                    hw_ver = str(bytes_to_num(0, 2))
-                    sw_ver = str(bytes_to_num(12, 3))
-                    inputs = bytes_to_num(18, 3)
-                    outputs = bytes_to_num(24, 3)
-                    time_schedules = bytes_to_num(32, 2)
-                    io_table_lines = bytes_to_num(36, 2)
-                    alarm_lines = bytes_to_num(40, 1)
-                    max_cards_count = bytes_to_num(44, 5)
-                    max_events_count = bytes_to_num(54, 5)
 
                     controller.write({
                         'name': 'Controller ' + serial_num + ' ' + str(controller.ctrl_id),
