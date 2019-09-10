@@ -35,6 +35,27 @@ class ResPartner(models.Model):
         help='Events concerning this contact',
     )
 
+    @api.multi
+    def add_acc_gr(self, access_group, expiration=None):
+        rel_env = self.env['hr.rfid.access.group.contact.rel']
+        for contact in self:
+            creation_dict = {
+                'contact_id': contact.id,
+                'access_group_id': access_group.id,
+            }
+            if expiration is not None and expiration is not False:
+                creation_dict['expiration'] = str(expiration)
+            rel_env.create(creation_dict)
+
+    @api.multi
+    def remove_acc_gr(self, access_group):
+        rel_env = self.env['hr.rfid.access.group.contact.rel']
+        for contact in self:
+            rel_env.search([
+                ('contact_id', '=', contact.id),
+                ('access_group_id', '=', access_group.id)
+            ]).unlink()
+
     @api.one
     def get_doors(self, excluding_acc_grs=None, including_acc_grs=None):
         if excluding_acc_grs is None:
@@ -178,13 +199,7 @@ class ResPartnerAccGrWizard(models.TransientModel):
         acc_gr_ids = self.acc_gr_ids - acc_gr_ids
 
         for acc_gr_id in acc_gr_ids:
-            creation_dict = {
-                'contact_id': self.contact_id.id,
-                'access_group_id': acc_gr_id.id,
-            }
-            if self.expiration is not False:
-                creation_dict['expiration'] = str(self.expiration)
-            rel_env.create(creation_dict)
+            self.contact_id.add_acc_gr(acc_gr_id, self.expiration)
 
     @api.multi
     def rem_acc_grs(self):
