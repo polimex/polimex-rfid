@@ -8,8 +8,6 @@ import http.client
 import json
 import base64
 
-_logger = logging.getLogger(__name__)
-
 
 class HrRfidWebstackDiscovery(models.TransientModel):
     _name = 'hr.rfid.webstack.discovery'
@@ -85,7 +83,6 @@ class HrRfidWebstackDiscovery(models.TransientModel):
         udp_sock.close()
         self.write({ 'state': 'post_discovery' })
         return return_wiz_form_view(self._name, self.id)
-
 
     @api.multi
     def setup_modules(self):
@@ -349,6 +346,35 @@ class HrRfidWebstack(models.Model):
         ws.available = 'c'
 
 
+class HrRfidCtrlIoTableRow(models.TransientModel):
+    _name = 'hr.rfid.ctrl.io.table.row'
+    _description = 'Controller IO Table row'
+
+    controller_id = fields.Many2one('hr.rfid.ctrl')
+
+    # Range is from 00 to 99
+    out8 = fields.Integer(string='Out8', required=True)
+    out7 = fields.Integer(string='Out7', required=True)
+    out6 = fields.Integer(string='Out6', required=True)
+    out5 = fields.Integer(string='Out5', required=True)
+    out4 = fields.Integer(string='Out4', required=True)
+    out3 = fields.Integer(string='Out3', required=True)
+    out2 = fields.Integer(string='Out2', required=True)
+    out1 = fields.Integer(string='Out1', required=True)
+
+
+class HrRfidCtrlIoTableWiz(models.TransientModel):
+    _name = 'hr.rfid.ctrl.io.table.wiz'
+    _description = 'Controller IO Table Wizard'
+
+    def _default_ctrl(self):
+        return self.env['hr.rfid.ctrl'].browse(self._context.get('active_ids'))
+
+    controller_id = fields.Many2one('hr.rfid.ctrl', default=_default_ctrl, required=True)
+
+    io_row_ids =
+
+
 class HrRfidController(models.Model):
     _name = 'hr.rfid.ctrl'
     _inherit = ['mail.thread']
@@ -452,6 +478,11 @@ class HrRfidController(models.Model):
     max_events_count = fields.Integer(
         string='Maximum Events',
         help='Maximum amount of events the controller can hold in memory',
+    )
+
+    io_table = fields.Char(
+        string='Input/Output Table',
+        help='Input and output table for the controller.',
     )
 
     webstack_id = fields.Many2one(

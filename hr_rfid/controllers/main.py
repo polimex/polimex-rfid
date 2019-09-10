@@ -373,7 +373,6 @@ class WebRfidController(http.Controller):
                         'webstack_id': webstack.id,
                         'controller_id': controller.id,
                         'cmd': 'D7',
-                        'cr_timestamp': fields.datetime.now(),
                     })
 
                     cmd_env.create({
@@ -381,7 +380,6 @@ class WebRfidController(http.Controller):
                         'controller_id': controller.id,
                         'cmd': 'DC',
                         'cmd_data': '0303',
-                        'cr_timestamp': fields.datetime.now(),
                     })
 
                     cmd_env.create({
@@ -397,6 +395,13 @@ class WebRfidController(http.Controller):
                         'cmd': 'F6',
                     })
 
+                    cmd_env.create({
+                        'webstack_id': webstack.id,
+                        'controller_id': controller.id,
+                        'cmd': 'F9',
+                        'cmd_data': '00'
+                    })
+
                 if response['c'] == 'F6':
                     data = response['d']
                     readers = [None, None, None, None]
@@ -409,6 +414,11 @@ class WebRfidController(http.Controller):
                                 'mode': mode,
                                 'no_d6_cmd': True,
                             })
+
+                if response['c'] == 'F9':
+                    controller.write({
+                        'io_table': response['d']
+                    })
 
                 command.write({
                     'status': 'Success',
