@@ -514,11 +514,13 @@ class HrRfidController(models.Model):
             for acc_gr_rel in door.access_group_ids:
                 acc_gr = acc_gr_rel.access_group_id
                 ts = acc_gr_rel.time_schedule_id
-                for user in acc_gr.employee_ids:
+                for user_rel in acc_gr.employee_ids:
+                    user = user_rel.employee_id
                     pin = user.hr_rfid_pin_code
                     for card in user.hr_rfid_card_ids:
                         cmd_env.add_card(door.id, ts.id, pin, card.id)
-                for user in acc_gr.contact_ids:
+                for user_rel in acc_gr.contact_ids:
+                    user = user_rel.contact_id
                     pin = user.hr_rfid_pin_code
                     for card in user.hr_rfid_card_ids:
                         cmd_env.add_card(door.id, ts.id, pin, card.id)
