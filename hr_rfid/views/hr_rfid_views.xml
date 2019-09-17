@@ -348,6 +348,24 @@
               </field>
             </page>
 
+            <page string="All Employees" help="All employees assigned to this access group, including ones from inheritor access groups">
+              <field name="all_employee_ids" readonly="1">
+                <tree>
+                  <field name="employee_id" />
+                  <field name="expiration" />
+                </tree>
+              </field>
+            </page>
+
+            <page string="All Contacts" help="All contacts assigned to this access group, including ones from inheritor access groups">
+              <field name="all_contact_ids" readonly="1">
+                <tree>
+                  <field name="contact_id" />
+                  <field name="expiration" />
+                </tree>
+              </field>
+            </page>
+
           </notebook>
           <notebook>
             <page string="Inherited Access Groups">
