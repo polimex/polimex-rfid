@@ -83,7 +83,20 @@ class HrRfidAccessGroup(models.Model):
         string='All doors',
         help='All doors, including inherited ones',
         compute='_compute_all_doors',
-        store=True,
+    )
+
+    all_employee_ids = fields.Many2many(
+        'hr.rfid.access.group.employee.rel',
+        string='All employees',
+        help='All employees that use this access group, including the ones from the inheritors',
+        compute='_compute_all_employees',
+    )
+
+    all_contact_ids = fields.Many2many(
+        'hr.rfid.access.group.contact.rel',
+        string='All contacts',
+        help='All contacts that use this access group, including the ones from the inheritors',
+        compute='_compute_all_contacts',
     )
 
     @api.multi
@@ -104,6 +117,20 @@ class HrRfidAccessGroup(models.Model):
             HrRfidAccessGroup._check_all_doors_rec(door_ids, [], acc_gr)
             acc_gr.all_door_ids = self.env['hr.rfid.access.group.door.rel'].browse(list(door_ids))
 
+    @api.depends('employee_ids', 'inheritor_access_groups')
+    def _compute_all_employees(self):
+        for acc_gr in self:
+            employee_ids = set()
+            HrRfidAccessGroup._check_all_employees_rec(employee_ids, [], acc_gr)
+            acc_gr.all_employee_ids = self.env['hr.rfid.access.group.employee.rel'].browse(list(employee_ids))
+
+    @api.depends('contact_ids', 'inheritor_access_groups')
+    def _compute_all_contacts(self):
+        for acc_gr in self:
+            contact_ids = set()
+            HrRfidAccessGroup._check_all_contacts_rec(contact_ids, [], acc_gr)
+            acc_gr.all_contact_ids = self.env['hr.rfid.access.group.contact.rel'].browse(list(contact_ids))
+
     @staticmethod
     def _check_all_doors_rec(door_ids, checked_ids, acc_gr):
         if acc_gr.id in checked_ids:
@@ -113,6 +140,26 @@ class HrRfidAccessGroup(models.Model):
             door_ids.add(door.id)
         for rec_gr in acc_gr.inherited_access_groups:
             HrRfidAccessGroup._check_all_doors_rec(door_ids, checked_ids, rec_gr)
+
+    @staticmethod
+    def _check_all_employees_rec(emp_ids, checked_ids, acc_gr):
+        if acc_gr.id in checked_ids:
+            return
+        checked_ids.append(acc_gr.id)
+        for employee in acc_gr.employee_ids:
+            emp_ids.add(employee.id)
+        for rec_gr in acc_gr.inheritor_access_groups:
+            HrRfidAccessGroup._check_all_employees_rec(emp_ids, checked_ids, rec_gr)
+
+    @staticmethod
+    def _check_all_contacts_rec(contact_ids, checked_ids, acc_gr):
+        if acc_gr.id in checked_ids:
+            return
+        checked_ids.append(acc_gr.id)
+        for contact in acc_gr.contact_ids:
+            contact_ids.add(contact.id)
+        for rec_gr in acc_gr.inheritor_access_groups:
+            HrRfidAccessGroup._check_all_contacts_rec(contact_ids, checked_ids, rec_gr)
 
     @api.one
     @api.constrains('inherited_access_groups')
@@ -153,7 +200,7 @@ class HrRfidAccessGroup(models.Model):
 
     @staticmethod
     def _create_door_command(acc_gr, door_rels, command):
-        for user_rel in acc_gr.employee_ids:
+        for user_rel in acc_gr.all_employee_ids:
             user = user_rel.employee_id
             pin = user.hr_rfid_pin_code
             for card in user.hr_rfid_card_ids:
@@ -161,7 +208,7 @@ class HrRfidAccessGroup(models.Model):
                     door_id = door_rel.door_id.id
                     ts_id = door_rel.time_schedule_id.id
                     command(door_id, ts_id, pin, card_id=card.id)
-        for user_rel in acc_gr.contact_ids:
+        for user_rel in acc_gr.all_contact_ids:
             user = user_rel.contact_id
             pin = user.hr_rfid_pin_code
             for card in user.hr_rfid_card_ids:
@@ -265,12 +312,12 @@ class HrRfidAccessGroupDoorRel(models.Model):
         rel = self.browse(rel_id)
         cmd_env = self.env['hr.rfid.command']
 
-        for user_rel in rel.access_group_id.employee_ids:
+        for user_rel in rel.access_group_id.all_employee_ids:
             user = user_rel.employee_id
             for card in user.hr_rfid_card_ids:
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
                                  user.hr_rfid_pin_code, card_id=card.id)
-        for user_rel in rel.access_group_id.contact_ids:
+        for user_rel in rel.access_group_id.all_contact_ids:
             user = user_rel.contact_id
             for card in user.hr_rfid_card_ids:
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
@@ -287,14 +334,14 @@ class HrRfidAccessGroupDoorRel(models.Model):
         prev_door = self.env['hr.rfid.door'].browse(prev_door_id)
         cmd_env = self.env['hr.rfid.command']
 
-        for user_rel in rel.access_group_id.employee_ids:
+        for user_rel in rel.access_group_id.all_employee_ids:
             user = user_rel.employee_id
             for card in user.hr_rfid_card_ids:
                 cmd_env.remove_card(prev_door.id, rel.time_schedule_id.id,
                                     user.hr_rfid_pin_code, card_id=card.id)
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id, user.hr_rfid_pin_code,
                                  card_id=card.id)
-        for user_rel in rel.access_group_id.contact_ids:
+        for user_rel in rel.access_group_id.all_contact_ids:
             user = user_rel.contact_id
             for card in user.hr_rfid_card_ids:
                 cmd_env.remove_card(prev_door.id, rel.time_schedule_id.id,
@@ -313,22 +360,22 @@ class HrRfidAccessGroupDoorRel(models.Model):
         prev_acc_gr = self.env['hr.rfid.access.group'].browse(prev_acc_gr_id)
         cmd_env = self.env['hr.rfid.command']
 
-        for user_rel in prev_acc_gr.employee_ids:
+        for user_rel in prev_acc_gr.all_employee_ids:
             user = user_rel.employee_id
             for card in user.hr_rfid_card_ids:
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
                                  user.hr_rfid_pin_code, card_id=card.id)
-        for user_rel in prev_acc_gr.contact_ids:
+        for user_rel in prev_acc_gr.all_contact_ids:
             user = user_rel.contact_id
             for card in user.hr_rfid_card_ids:
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
                                  user.hr_rfid_pin_code, card_id=card.id)
-        for user_rel in rel.access_group_id.employee_ids:
+        for user_rel in rel.access_group_id.all_employee_ids:
             user = user_rel.employee_id
             for card in user.hr_rfid_card_ids:
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,
                                  user.hr_rfid_pin_code, card_id=card.id)
-        for user_rel in rel.access_group_id.contact_ids:
+        for user_rel in rel.access_group_id.all_contact_ids:
             user = user_rel.contact_id
             for card in user.hr_rfid_card_ids:
                 cmd_env.add_card(rel.door_id.id, rel.time_schedule_id.id,

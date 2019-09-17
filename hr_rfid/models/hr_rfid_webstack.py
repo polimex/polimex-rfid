@@ -512,12 +512,12 @@ class HrRfidController(models.Model):
             for acc_gr_rel in door.access_group_ids:
                 acc_gr = acc_gr_rel.access_group_id
                 ts = acc_gr_rel.time_schedule_id
-                for user_rel in acc_gr.employee_ids:
+                for user_rel in acc_gr.all_employee_ids:
                     user = user_rel.employee_id
                     pin = user.hr_rfid_pin_code
                     for card in user.hr_rfid_card_ids:
                         cmd_env.add_card(door.id, ts.id, pin, card.id)
-                for user_rel in acc_gr.contact_ids:
+                for user_rel in acc_gr.all_contact_ids:
                     user = user_rel.contact_id
                     pin = user.hr_rfid_pin_code
                     for card in user.hr_rfid_card_ids:
@@ -644,7 +644,7 @@ class HrRfidDoor(models.Model):
                 commands_env = self.env['hr.rfid.command']
 
                 for acc_gr_rel in door.access_group_ids:
-                    for user in acc_gr_rel.access_group_id.employee_ids:
+                    for user in acc_gr_rel.access_group_id.all_employee_ids:
                         for card in user.hr_rfid_card_ids:
                             if card.card_type.id == old_card_type:
                                 commands_env.remove_card(door.id, acc_gr_rel. time_schedule_id.id,
