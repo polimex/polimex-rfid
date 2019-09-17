@@ -721,9 +721,11 @@
       <field name="model">hr.rfid.ctrl.io.table.wiz</field>
       <field name="arch" type="xml">
         <form string="View/Modify IO table">
-          <group>
+          <div>
             <field name="controller_id" invisible="True" />
             <field name="outs" invisible="True" />
+            <h1>IO table:</h1>
+            <br />
             <field name="io_row_ids" widget="one2many_list">
               <tree create="false" delete="false" editable="bottom" >
                 <field name="event_number" />
@@ -737,7 +739,7 @@
                 <field name="out8" attrs="{'column_invisible': [('parent.outs','&lt;',8)]}" />
               </tree>
             </field>
-          </group>
+          </div>
           <footer>
             <button name="save_table" type="object" string="Save" class="oe_highlight" />
             <button special="cancel" string="Close" class="oe_highlight" />
