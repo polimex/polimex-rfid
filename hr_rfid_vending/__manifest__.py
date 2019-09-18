@@ -17,8 +17,11 @@
     'category': 'Uncategorized',
     'version': '0.1',
 
-    'depends': [ 'base', 'hr_rfid' ],
+    'depends': [ 'base', 'hr_rfid', 'stock' ],
 
     'data': [
+        'views/hr_employee_views.xml',
+        'views/hr_rfid_views.xml',
+        'security/ir.model.access.csv',
     ],
 }

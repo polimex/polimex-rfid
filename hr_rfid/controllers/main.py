@@ -305,7 +305,7 @@ class WebRfidController(http.Controller):
                             'name': name,
                             'number': number,
                             'controller_id': ctrl_id,
-                        })
+                        }).id
 
                     def create_reader(name, number, reader_type, ctrl_id, door_id):
                         create_dict = {
@@ -325,31 +325,31 @@ class WebRfidController(http.Controller):
 
                     if ctrl_mode == 1 or ctrl_mode == 3:
                         last_door = create_door(gen_d_name(1, controller.id), 1, controller.id)
-                        create_reader('R1', 1, '0', controller.id, last_door.id)
-                        create_reader('R2', 2, '1', controller.id, last_door.id)
+                        create_reader('R1', 1, '0', controller.id, last_door)
+                        create_reader('R2', 2, '1', controller.id, last_door)
                     elif ctrl_mode == 2 and readers_count == 4:
                         last_door = create_door(gen_d_name(1, controller.id), 1, controller.id)
-                        create_reader('R1', 1, '0', controller.id, last_door.id)
-                        create_reader('R2', 2, '1', controller.id, last_door.id)
+                        create_reader('R1', 1, '0', controller.id, last_door)
+                        create_reader('R2', 2, '1', controller.id, last_door)
                         last_door = create_door(gen_d_name(2, controller.id), 2, controller.id)
-                        create_reader('R3', 3, '0', controller.id, last_door.id)
-                        create_reader('R4', 4, '1', controller.id, last_door.id)
+                        create_reader('R3', 3, '0', controller.id, last_door)
+                        create_reader('R4', 4, '1', controller.id, last_door)
                     else:  # (ctrl_mode == 2 and readers_count == 2) or ctrl_mode == 4
                         last_door = create_door(gen_d_name(1, controller.id), 1, controller.id)
-                        create_reader('R1', 1, '0', controller.id, last_door.id)
+                        create_reader('R1', 1, '0', controller.id, last_door)
                         last_door = create_door(gen_d_name(2, controller.id), 2, controller.id)
-                        create_reader('R2', 2, '0', controller.id, last_door.id)
+                        create_reader('R2', 2, '0', controller.id, last_door)
 
                     if ctrl_mode == 3:
                         last_door = create_door(gen_d_name(2, controller.id), 2, controller.id)
-                        create_reader('R3', 3, '0', controller.id, last_door.id)
+                        create_reader('R3', 3, '0', controller.id, last_door)
                         last_door = create_door(gen_d_name(3, controller.id), 3, controller.id)
-                        create_reader('R4', 4, '0', controller.id, last_door.id)
+                        create_reader('R4', 4, '0', controller.id, last_door)
                     elif ctrl_mode == 4:
                         last_door = create_door(gen_d_name(3, controller.id), 3, controller.id)
-                        create_reader('R3', 3, '0', controller.id, last_door.id)
+                        create_reader('R3', 3, '0', controller.id, last_door)
                         last_door = create_door(gen_d_name(4, controller.id), 4, controller.id)
-                        create_reader('R4', 4, '0', controller.id, last_door.id)
+                        create_reader('R4', 4, '0', controller.id, last_door)
 
                     controller.write({
                         'name': 'Controller ' + serial_num + ' ' + str(controller.ctrl_id),

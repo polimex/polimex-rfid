@@ -10,12 +10,12 @@ class HrRfidVending(WebRfidController):
     def post_event(self, **post):
 
         def ret_super():
-            return super(HrRfidVending, self).post_event(post)
+            return super(HrRfidVending, self).post_event(**post)
 
-        if 'event' in post:
-            ret = parse_event()
-        else:
-            ret = ret_super()
+        # if 'event' in post:
+        #     ret = parse_event()
+        # else:
+        ret = ret_super()
 
         return ret
 

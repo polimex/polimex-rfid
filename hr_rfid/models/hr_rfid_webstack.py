@@ -422,7 +422,7 @@ class HrRfidCtrlIoTableWiz(models.TransientModel):
             creation_dict = { 'event_number': str(int(i / row_len) + 1) }
             for j in range(8, 0, -1):
                 index = i + ((8 - j) * 2)
-                creation_dict['out' + str(j)] = int(io_table[index:index+2])
+                creation_dict['out' + str(j)] = int(io_table[index:index+2], 16)
             rows += rows_env.create(creation_dict)
 
         return rows
@@ -459,9 +459,9 @@ class HrRfidCtrlIoTableWiz(models.TransientModel):
                     raise exceptions.ValidationError(
                         _('%d is not a valid number for the io table. Valid values range from 0 to 99') % out
                     )
-                new_io_table += '%02d' % out
+                new_io_table += '%02X' % out
 
-        self.controller_id.change_io_table(new_io_table)  # TODO Implement this method
+        self.controller_id.change_io_table(new_io_table)
 
 
 class HrRfidController(models.Model):
@@ -1083,7 +1083,6 @@ class HrRfidReader(models.Model):
         'hr.rfid.door',
         string='Door',
         help='Door the reader opens',
-        required=True,
         ondelete='cascade',
     )
 
