@@ -17,14 +17,14 @@
             <br />
             <field name="vending_row_ids" widget="one2many_list">
               <tree create="false" delete="false" editable="bottom" >
+                <field name="item_number1" />
                 <field name="item1" />
-                <field name="price1" />
+                <field name="item_number2" />
                 <field name="item2" />
-                <field name="price2" />
+                <field name="item_number3" />
                 <field name="item3" />
-                <field name="price3" />
+                <field name="item_number4" />
                 <field name="item4" />
-                <field name="price4" />
               </tree>
             </field>
           </div>
@@ -62,9 +62,117 @@
                   attrs="{'invisible':[('hw_version','!=','16')]}" />
         </xpath>
         <group position="inside">
-          <field name="show_price_timeout" attrs="{'invisible':[('hw_version','!=','16')]}" />
-          <field name="scale_factor" attrs="{'invisible':[('hw_version','!=','16')]}" />
+          <field name="show_price_timeout" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}" />
+          <field name="scale_factor" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}" />
+          <field name="cash_contained" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}" />
         </group>
+      </field>
+    </record>
+
+    <record id="hr_rfid_vending_event_action" model="ir.actions.act_window">
+      <field name="name">Vending Events</field>
+      <field name="res_model">hr.rfid.vending.event</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search,pivot,graph</field>
+      <field name="context">{"graph_default_sale_events":1}</field>
+    </record>
+
+    <menuitem id="hr_rfid_vending_menu_events"
+              name="Vending Events"
+              parent="hr_rfid.hr_rfid_events_menu"
+              action="hr_rfid_vending_event_action"
+              groups="hr_rfid.hr_rfid_group_officer_department"
+              sequence="5" />
+
+    <record id="hr_rfid_vending_event_form" model="ir.ui.view">
+      <field name="name">hr.rfid.vending.event.form</field>
+      <field name="model">hr.rfid.vending.event</field>
+      <field name="arch" type="xml">
+        <form create="false" delete="false" write="false">
+          <group>
+            <field name="controller_id" />
+            <field name="event_action" />
+            <field name="event_time" />
+            <field name="transaction_price" attrs="{'invisible':[('transaction_price','&lt;',0)]}" />
+            <field name="employee_id" attrs="{'invisible':[('employee_id','==',False)]}" />
+            <field name="card_id" attrs="{'invisible':[('card_id','==',False)]}" />
+            <field name="item_sold_id" attrs="{'invisible':[('item_sold_id','==',False)]}" />
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_vending_event_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.vending.event.tree</field>
+      <field name="model">hr.rfid.vending.event</field>
+      <field name="arch" type="xml">
+        <tree create="false" delete="false">
+          <field name="controller_id" />
+          <field name="event_action" />
+          <field name="event_time" />
+          <field name="employee_id" />
+          <field name="item_sold_id" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="hr_rfid_vending_event_search" model="ir.ui.view">
+      <field name="name">hr.rfid.vending.event.search</field>
+      <field name="model">hr.rfid.vending.event</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="name" />
+          <field name="event_action" />
+          <field name="event_time" />
+          <field name="employee_id">
+            <field name="name" />
+          </field>
+          <field name="card_id">
+            <field name="number" />
+            <field name="card_type" />
+          </field>
+
+          <filter name="sale_events" string="Transaction events" domain="[('event_action','=','47')]" />
+          <separator />
+          <filter name="last_week" string="Events from last week"
+                  domain="[('event_time', '>=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="last_month" string="Events from last month"
+                  domain="[('event_time', '>=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="last_year" string="Events from last year"
+                  domain="[('event_time', '>=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]" />
+          <separator />
+          <filter name="this_day" string="Events from today"
+                  domain="[('event_time', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('event_time', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="this_week" string="Events from this week"
+                  domain="[('event_time', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('event_time', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="this_month" string="Events from this month"
+                  domain="[('event_time', '&gt;=', context_today().strftime('%%Y-%%m-1'))]" />
+          <filter name="this_year" string="Events from this year"
+                  domain="[('event_time', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('event_time', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]" />
+          <separator />
+        </search>
+      </field>
+    </record>
+
+    <record id="hr_rfid_vending_event_pivot" model="ir.ui.view">
+      <field name="name">hr.rfid.vending.event.pivot</field>
+      <field name="model">hr.rfid.vending.event</field>
+      <field name="arch" type="xml">
+        <pivot string="Event" disable_linking="True">
+          <field name="event_time" type="row" />
+          <field name="event_action" type="col" />
+        </pivot>
+      </field>
+    </record>
+
+    <record id="hr_rfid_vending_graph" model="ir.ui.view">
+      <field name="name">hr.rfid.vending.event.graph</field>
+      <field name="model">hr.rfid.vending.event</field>
+      <field name="arch" type="xml">
+        <graph string="Sales Per Product">
+          <field name="item_sold_id" type="row"/>
+          <field name="transaction_price" type="measure"/>
+        </graph>
       </field>
     </record>
 

@@ -1151,8 +1151,8 @@ class HrRfidUserEvent(models.Model):
 
     employee_id = fields.Many2one(
         'hr.employee',
-        string='User',
-        help='User affected by this event',
+        string='Employee',
+        help='Employee affected by this event',
         ondelete='cascade',
     )
 
@@ -1167,7 +1167,6 @@ class HrRfidUserEvent(models.Model):
         'hr.rfid.door',
         string='Door',
         help='Door affected by this event',
-        required=True,
         ondelete='cascade',
     )
 
@@ -1248,7 +1247,8 @@ class HrRfidUserEvent(models.Model):
                 record.name += self.action_selection[int(record.event_action)-1][1]
             else:
                 record.name += 'Request Instructions'
-            record.name += ' @ ' + record.door_id.name
+            if len(record.door_id) != 0:
+                record.name += ' @ ' + record.door_id.name
 
     @api.multi
     def _compute_user_ev_action_str(self):

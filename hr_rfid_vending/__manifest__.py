@@ -20,6 +20,7 @@
     'depends': [ 'base', 'hr_rfid', 'stock' ],
 
     'data': [
+        'data/hr_rfid_vending_cron_jobs.xml',
         'views/hr_employee_views.xml',
         'views/hr_rfid_views.xml',
         'security/ir.model.access.csv',
