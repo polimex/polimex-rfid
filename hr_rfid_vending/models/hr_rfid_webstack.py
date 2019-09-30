@@ -285,6 +285,10 @@ class VendingEvents(models.Model):
         default=-1,
     )
 
+    item_sold = fields.Integer(
+        string='Item Sold Number',
+    )
+
     employee_id = fields.Many2one(
         'hr.employee',
         string='Employee',
@@ -313,6 +317,10 @@ class VendingEvents(models.Model):
         string='Item Sold',
         help='The item that was sold in the transaction',
         ondelete='set null',
+    )
+
+    input_js = fields.Char(
+        string='Input JSON',
     )
 
     sent_balance = fields.Integer(default=-1)

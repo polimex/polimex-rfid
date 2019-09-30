@@ -7,13 +7,13 @@ from odoo.addons.hr_rfid.controllers.main import WebRfidController
 
 import operator
 import datetime
+import traceback
+import json
 
 
 class HrRfidVending(WebRfidController):
     @http.route(['/hr/rfid/event'], type='json', auth='none', method=['POST'], csrf=False)
     def post_event(self, **post):
-        print('post=' + str(post))
-
         webstacks_env = request.env['hr.rfid.webstack'].sudo()
         cmd_env = request.env['hr.rfid.command'].sudo()
         ev_env = request.env['hr.rfid.vending.event'].sudo()
@@ -24,12 +24,13 @@ class HrRfidVending(WebRfidController):
             return super(HrRfidVending, self).post_event(**post)
 
         def ret_check_for_unsent_cmd(status_code, event=None):
-            return super(HrRfidVending, self).check_for_unsent_cmd(status_code, event)
+            return self._check_for_unsent_cmd(status_code, event)
 
-        def create_ev(controller, event, card, ev_num, item_sold_id=None, transaction_price=None):
+        def create_ev(controller, event, card, ev_num, item_sold_id=None, transaction_price=None,
+                      item_number=None):
             ev = {
-                'action_selection': ev_num,
-                'event_time': event['date'] + event['time'],
+                'event_action': ev_num,
+                'event_time': event['date'] + ' ' + event['time'],
                 'controller_id': controller.id,
             }
             if len(card) > 0:
@@ -39,6 +40,10 @@ class HrRfidVending(WebRfidController):
                 ev['item_sold_id'] = item_sold_id.id
             if transaction_price is not None:
                 ev['transaction_price'] = transaction_price
+            if ev_num == '-1':
+                ev['input_js'] = json.dumps(post)
+            if item_number is not None:
+                ev['item_sold'] = item_number
             return ev_env.create(ev)
 
         def get_employee_balance(employee, controller):
@@ -112,27 +117,28 @@ class HrRfidVending(WebRfidController):
                     return ret_super()
 
                 item_number = int(event['dt'][4:6], 16)
-                row = int(item_number / 4)
+                item_sold = item_number
+                row_num = int(item_number / 4) + 1
                 item_number -= 1
                 item_number %= 4
                 item_number += 1
 
-                if row < 1 or row > 18:
+                if row_num < 1 or row_num > 18:
                     ev = create_ev(controller, event, card, '-1')
                     return ret_check_for_unsent_cmd(status_code, ev)
 
-                rows_env = self.env['hr.rfid.ctrl.io.table.row']
-                row = rows_env.search({
-                    'controller_id': controller.id,
-                    'row_num': row,
-                })
+                rows_env = request.env['hr.rfid.ctrl.vending.row'].sudo()
+                row = rows_env.search([
+                    ('controller_id', '=', controller.id),
+                    ('row_num', '=', row_num)
+                ])
 
                 if len(row) == 0:
                     controller.create_vending_rows()
-                    row = rows_env.search({
-                        'controller_id': controller.id,
-                        'row_num': row,
-                    })
+                    row = rows_env.search([
+                        ('controller_id', '=', controller.id),
+                        ('row_num', '=', row_num)
+                    ])
 
                 if item_number == 1:
                     item = row.item1
@@ -162,13 +168,13 @@ class HrRfidVending(WebRfidController):
                     difference *= controller.scale_factor
                     difference /= 100
                     card.employee_id.hr_rfid_vending_purchase(difference)
-                    ev = create_ev(controller, event, card, '47', item, difference)
+                    ev = create_ev(controller, event, card, '47', item, difference, item_number=item_sold)
                 else:
                     cash = int(event['dt'][10:12], 16)*0x16 + int(event['dt'][12:14], 16)
                     cash *= controller.scale_factor
                     cash /= 100
                     controller.cash_contained = controller.cash_contained + cash
-                    ev = create_ev(controller, event, card, '47', item, cash)
+                    ev = create_ev(controller, event, card, '47', item, cash, item_number=item_sold)
 
                 return ret_check_for_unsent_cmd(status_code, ev)
             # TODO Move into function "deal_with_err_evs"
@@ -179,11 +185,19 @@ class HrRfidVending(WebRfidController):
 
             return ret_super()
 
-        if 'event' in post:
-            ret = parse_event()
-        else:
-            ret = ret_super()
+        try:
+            if 'event' in post:
+                ret = parse_event()
+            else:
+                ret = ret_super()
 
-        print('ret=' + str(ret))
-        return ret
+            return ret
+        except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
+                exceptions.MissingError, exceptions.ValidationError, exceptions.DeferredException) as __:
+            request.env['hr.rfid.event.system'].sudo().create({
+                'webstack_id': self._webstack.id,
+                'timestamp': fields.Datetime.now(),
+                'error_description': traceback.format_exc(),
+            })
+            return { 'status': 500 }
 

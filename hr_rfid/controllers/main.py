@@ -527,3 +527,4 @@ class WebRfidController(http.Controller):
                 'timestamp': fields.Datetime.now(),
                 'error_description': traceback.format_exc(),
             })
+            return { 'status': 500 }
