@@ -718,6 +718,10 @@ class HrRfidAccessGroupWizard(models.TransientModel):
             if len(res) == 1:
                 res.time_schedule_id = self.time_schedule_id
             else:
+                # if controller is of type iCON130 or iCON180
+                if door.controller_id.hw_version in ['17', '10'] and self.time_schedule_id.number > 3:
+                    raise exceptions.ValidationError(_('Door %s can only use the first 3 time schedules') %
+                                                     door.name)
                 rel_env.create({
                     'access_group_id': self.acc_gr_id.id,
                     'door_id': door.id,
