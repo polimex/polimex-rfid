@@ -32,6 +32,7 @@ class HrRfidVending(WebRfidController):
                 'event_action': ev_num,
                 'event_time': event['date'] + ' ' + event['time'],
                 'controller_id': controller.id,
+                'input_js': json.dumps(post),
             }
             if len(card) > 0:
                 ev['card_id'] = card.id
@@ -40,8 +41,6 @@ class HrRfidVending(WebRfidController):
                 ev['item_sold_id'] = item_sold_id.id
             if transaction_price is not None:
                 ev['transaction_price'] = transaction_price
-            if ev_num == '-1':
-                ev['input_js'] = json.dumps(post)
             if item_number is not None:
                 ev['item_sold'] = item_number
             return ev_env.create(ev)

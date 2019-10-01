@@ -98,7 +98,7 @@
             <field name="card_id" attrs="{'invisible':[('card_id','=',False)]}" />
             <field name="item_sold" attrs="{'invisible':[('item_sold_id','!=',False)]}" />
             <field name="item_sold_id" attrs="{'invisible':[('item_sold_id','=',False)]}" />
-            <field name="input_js" attrs="{'invisible':[('event_action','!=','-1')]}" />
+            <field name="input_js" groups="base.group_no_one" />
           </group>
         </form>
       </field>
