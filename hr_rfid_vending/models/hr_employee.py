@@ -71,7 +71,7 @@ class HrEmployee(models.Model):
     # Only displayed if negative_balance is true
     hr_rfid_vending_limit = fields.Float(
         string='Limit',
-        help='User cannot go bellow this value',
+        help='User cannot go in more debt than this value',
     )
 
     hr_rfid_vending_in_attendance = fields.Boolean(
