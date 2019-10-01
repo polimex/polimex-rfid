@@ -70,8 +70,8 @@ class WebRfidController(http.Controller):
 
         if len(controller) == 0:
             ctrl_env = request.env['hr.rfid.ctrl'].sudo()
-
             cmd_env = request.env['hr.rfid.command'].sudo()
+
             controller = ctrl_env.create({
                 'name': 'Controller',
                 'ctrl_id': self._post['event']['id'],
