@@ -1322,9 +1322,9 @@
             <field name="error" readonly="1" />
             <field name="cr_timestamp" readonly="1" />
             <field name="ex_timestamp" readonly="1" />
-            <field name="request" readonly="1" groups="base.group_system" />
-            <field name="response" readonly="1" groups="base.group_system" />
-            <field name="cmd_data" readonly="1" />
+            <field name="request" readonly="1" groups="base.group_no_one" />
+            <field name="response" readonly="1" groups="base.group_no_one" />
+            <field name="cmd_data" readonly="1" groups="base.group_no_one"/>
             <field name="retries" readonly="1" />
           </group>
         </form>

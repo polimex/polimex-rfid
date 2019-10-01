@@ -1122,7 +1122,6 @@ class HrRfidReader(models.Model):
 class HrRfidUserEvent(models.Model):
     _name = 'hr.rfid.event.user'
     _description = "RFID User Event"
-    _order = 'event_time desc'
 
     name = fields.Char(
         compute='_compute_user_ev_name'
@@ -1259,7 +1258,6 @@ class HrRfidUserEvent(models.Model):
 class HrRfidSystemEvent(models.Model):
     _name = 'hr.rfid.event.system'
     _description = 'RFID System Event'
-    _order = 'timestamp desc'
 
     name = fields.Char(
         compute='_compute_sys_ev_name'
@@ -1405,7 +1403,6 @@ class HrRfidSystemEventWizard(models.TransientModel):
 class HrRfidCommands(models.Model):
     # Commands we have queued up to send to the controllers
     _name = 'hr.rfid.command'
-    _order = 'status desc, cr_timestamp asc, id'
     _description = 'Command to controller'
 
     commands = [

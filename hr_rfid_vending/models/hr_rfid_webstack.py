@@ -250,7 +250,6 @@ class ProductTemplate(models.Model):
 class VendingEvents(models.Model):
     _name = 'hr.rfid.vending.event'
     _description = 'RFID Vending Event'
-    _order = 'event_time desc'
 
     action_selection = [
         ('-1', 'Bad Data Error'),
