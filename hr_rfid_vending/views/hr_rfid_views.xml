@@ -135,6 +135,10 @@
           </field>
 
           <filter name="sale_events" string="Transaction events" domain="[('event_action','=','47')]" />
+          <filter name="sale_employee_events" string="Employee Transaction Events"
+                  domain="[('event_action','=','47'),('employee_id','=',False)]" />
+          <filter name="sale_non_employee_events" string="Non-Employee Transaction Events"
+                  domain="[('event_action','=','47'),('employee_id','!=',False)]" />
           <separator />
           <filter name="last_week" string="Events from last week"
                   domain="[('event_time', '>=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]" />
@@ -152,6 +156,19 @@
           <filter name="this_year" string="Events from this year"
                   domain="[('event_time', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('event_time', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]" />
           <separator />
+
+          <newline />
+          <group expand="0" string="Group By">
+            <filter string="Action" name="action" domain="[]" context="{'group_by':'event_action'}" />
+            <filter string="Month" name="event_time" domain="[]" context="{'group_by':'event_time'}" />
+            <filter string="Item Sold" name="item_sold" domain="[]" context="{'group_by':'item_sold_id'}" />
+            <filter string="Transaction Price" name="transaction_price"
+                    domain="[]" context="{'group_by':'transaction_price'}" />
+            <filter string="Employee" name="employee" domain="[]" context="{'group_by':'employee_id'}" />
+            <filter string="Vending Machine" name="vending_machine"
+                    domain="[]" context="{'group_by':'controller_id'}" />
+          </group>
+
         </search>
       </field>
     </record>

@@ -173,7 +173,7 @@ class HrRfidVending(WebRfidController):
 
                 item_number = int(event['dt'][4:6], 16)
                 item_sold = item_number
-                row_num = int(item_number / 4) + 1
+                row_num = int((item_number - 1) / 4) + 1
                 item_num = item_number - 1
                 item_num %= 4
                 item_num += 1
@@ -195,11 +195,11 @@ class HrRfidVending(WebRfidController):
                         ('row_num', '=', row_num)
                     ])
 
-                if item_number == 1:
+                if item_num == 1:
                     item = row.item1
-                elif item_number == 2:
+                elif item_num == 2:
                     item = row.item2
-                elif item_number == 3:
+                elif item_num == 3:
                     item = row.item3
                 else:
                     item = row.item4
@@ -218,7 +218,7 @@ class HrRfidVending(WebRfidController):
                     card.employee_id.hr_rfid_vending_purchase(purchase_money)
                     ev = create_ev(controller, event, card, '47', item, purchase_money, item_number=item_sold)
                 else:
-                    item_price = get_item_price(controller, item, event, item_cost_diff_err_str % item_number)
+                    item_price = get_item_price(controller, item, event, item_missing_err_str % item_number)
                     controller.cash_contained = controller.cash_contained + item_price
                     ev = create_ev(controller, event, card, '47', item, item_price, item_number=item_sold)
 
