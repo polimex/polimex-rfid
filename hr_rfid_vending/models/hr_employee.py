@@ -113,30 +113,36 @@ class HrEmployee(models.Model):
         string='Balance History',
     )
 
+    @api.returns('hr.rfid.vending.balance.history')
     @api.one
-    def hr_rfid_vending_add_to_balance(self, value: float):
+    def hr_rfid_vending_add_to_balance(self, value: float, ev: int = 0):
         """
         Add to the balance of an employee
         :param value: How much to add/subtract to/from the balance. Can be a positive or negative number.
-        :return: True if successful, False otherwise
+        :param ev: Event id, ignored if 0
+        :return: Balance history if successful
         """
         bh_env = self.env['hr.rfid.vending.balance.history']
         self.hr_rfid_vending_balance = self.hr_rfid_vending_balance + value
-        bh_env.create({
+        bh_dict = {
             'balance_change': value,
             'employee_id': self.id,
             'balance_result': self.hr_rfid_vending_balance,
-        })
-        return True
+        }
+        if ev > 0:
+            bh_dict['vending_event_id'] = ev
+        return bh_env.create(bh_dict)
 
+    @api.returns('hr.rfid.vending.balance.history')
     @api.one
-    def hr_rfid_vending_set_balance(self, value: float, max_add: float = 0, min_add: float = 0):
+    def hr_rfid_vending_set_balance(self, value: float, max_add: float = 0, min_add: float = 0, ev: int = 0):
         """
         Set an employee's balance to a specific number, with the option of max_add
         :param value:
         :param max_add:
         :param min_add:
-        :return: True on success, False otherwise
+        :param ev: Event id, ignored if 0
+        :return: Balance history on success
         """
 
         val = value - self.hr_rfid_vending_balance
@@ -145,43 +151,18 @@ class HrEmployee(models.Model):
         if min_add != 0 and val < min_add:
             val = min_add
 
-        return self.hr_rfid_vending_add_to_balance(val)
+        return self.hr_rfid_vending_add_to_balance(val, ev)
 
+    @api.returns('hr.rfid.vending.balance.history')
     @api.one
-    def hr_rfid_vending_purchase(self, cost: float):
+    def hr_rfid_vending_purchase(self, cost: float, ev: int = 0):
         """
         Purchase a product. Subtracts the parameter "cost" from the employee's balance
         :param cost: How much to subtract
-        :return: True on success, False otherwise
+        :param ev: Event id, ignored if 0
+        :return: Balance history on success
         """
-        return self.hr_rfid_vending_add_to_balance(-cost)
-
-    @api.model
-    def _auto_refill(self):
-        employees = self.env['hr.employee'].search([])
-
-        for emp in employees:
-            auto_refill = emp.hr_rfid_vending_auto_refill
-            refill_amount = emp.hr_rfid_vending_refill_amount
-            refill_type = emp.hr_rfid_vending_refill_type
-            refill_max = emp.hr_rfid_vending_refill_max
-
-            if auto_refill is False:
-                continue
-
-            if refill_amount == 0:
-                continue
-
-            if refill_type == 'fixed':
-                emp.hr_rfid_vending_add_to_balance(refill_amount)
-                continue
-
-            if refill_max <= emp.hr_rfid_vending_balance:
-                continue
-
-            difference = refill_max - emp.hr_rfid_vending_balance
-            refill_amount = refill_amount if refill_amount < difference else difference
-            emp.hr_rfid_vending_add_to_balance(refill_amount)
+        return self.hr_rfid_vending_add_to_balance(-cost, ev)
 
 
 class BalanceHistory(models.Model):
@@ -222,12 +203,25 @@ class BalanceHistory(models.Model):
         ondelete='cascade',
         readonly=True,
     )
-    
+
     vending_event_id = fields.Many2one(
         'hr.rfid.vending.event',
         string='Event',
         ondelete='set null',
         readonly=True,
+    )
+
+    auto_refill_id = fields.Many2one(
+        'hr.rfid.vending.auto.refill',
+        string='Auto Refill Event',
+        ondelete='set null',
+        readonly=True,
+    )
+
+    item_id = fields.Many2one(
+        string='Item Sold',
+        compute='_compute_item_sold',
+        store=True,
     )
 
     @api.multi
@@ -238,10 +232,81 @@ class BalanceHistory(models.Model):
             else:
                 it.name = it.person_responsible.name
 
+    @api.multi
+    def _compute_item_sold(self):
+        for it in self:
+            it.item_id = it.vending_event_id.item_sold_id
 
 
+class VendingAutoRefillEvents(models.Model):
+    _name = 'hr.rfid.vending.auto.refill'
+    _description = 'Auto Refill Events'
+    _order = 'id desc'
 
+    name = fields.Char(
+        string='Name',
+        compute='_compute_name',
+    )
 
+    date_created = fields.Datetime(
+        string='Auto Refill Time',
+        compute='_compute_date',
+    )
 
+    auto_refill_total = fields.Integer(
+        string='Total Cash Refilled',
+        required=True,
+        readonly=True,
+    )
 
+    balance_history_ids = fields.One2many(
+        'hr.rfid.vending.balance.history',
+        'auto_refill_id',
+        string='Balance History Changes',
+    )
 
+    @api.model
+    def _auto_refill(self):
+        employees = self.env['hr.employee'].search([])
+        balance_histories = self.env['hr.rfid.vending.balance.history']
+        total_refill = 0.0
+
+        for emp in employees:
+            auto_refill = emp.hr_rfid_vending_auto_refill
+            refill_amount = emp.hr_rfid_vending_refill_amount
+            refill_type = emp.hr_rfid_vending_refill_type
+            refill_max = emp.hr_rfid_vending_refill_max
+
+            if auto_refill is False:
+                continue
+
+            if refill_amount == 0:
+                continue
+
+            if refill_type == 'fixed':
+                bh = emp.hr_rfid_vending_set_balance(refill_amount)
+                bh = bh[0][0]  # TODO Why does the method return a list of a list of what i want??
+                total_refill += bh.balance_change
+                balance_histories += bh
+                continue
+
+            if refill_max <= emp.hr_rfid_vending_balance:
+                continue
+
+            difference = refill_max - emp.hr_rfid_vending_balance
+            refill_amount = refill_amount if refill_amount < difference else difference
+            balance_histories += emp.hr_rfid_vending_add_to_balance(refill_amount)
+            total_refill += refill_amount
+
+        re = self.create([{'auto_refill_total': total_refill}])
+        balance_histories.write({'auto_refill_id': re.id})
+
+    @api.multi
+    def _compute_name(self):
+        for re in self:
+            re.name = 'Auto Refill on ' + str(re.create_date)
+
+    @api.multi
+    def _compute_date(self):
+        for re in self:
+            re.date_created = re.create_date

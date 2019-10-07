@@ -215,8 +215,8 @@ class HrRfidVending(WebRfidController):
                                           % (item.name, item.list_price, calced_price))
                     else:
                         purchase_money = calced_price
-                    card.employee_id.hr_rfid_vending_purchase(purchase_money)
                     ev = create_ev(controller, event, card, '47', item, purchase_money, item_number=item_sold)
+                    card.employee_id.hr_rfid_vending_purchase(purchase_money, ev.id)
                 else:
                     item_price = get_item_price(controller, item, event, item_missing_err_str % item_number)
                     controller.cash_contained = controller.cash_contained + item_price
