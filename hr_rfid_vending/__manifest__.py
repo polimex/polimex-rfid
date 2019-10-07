@@ -15,6 +15,7 @@
     'data': [
         'data/hr_rfid_vending_cron_jobs.xml',
         'data/hr_rfid_vending_sequence.xml',
+        'security/hr_rfid_vending_security.xml',
         'security/ir.model.access.csv',
         'views/hr_employee_views.xml',
         'views/hr_rfid_views.xml',
