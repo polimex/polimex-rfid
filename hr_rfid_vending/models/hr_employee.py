@@ -189,6 +189,11 @@ class BalanceHistory(models.Model):
     _description = 'Balance history for employees'
     _order = 'id desc'
 
+    name = fields.Char(
+        string='Person Responsible/Item',
+        compute='_compute_name',
+    )
+
     person_responsible = fields.Many2one(
         'res.users',
         string='Person responsible for the change',
@@ -217,8 +222,21 @@ class BalanceHistory(models.Model):
         ondelete='cascade',
         readonly=True,
     )
+    
+    vending_event_id = fields.Many2one(
+        'hr.rfid.vending.event',
+        string='Event',
+        ondelete='set null',
+        readonly=True,
+    )
 
-
+    @api.multi
+    def _compute_name(self):
+        for it in self:
+            if len(it.vending_event_id) > 0 and len(it.vending_event_id.item_sold_id) > 0:
+                it.name = it.vending_event_id.item_sold_id.name
+            else:
+                it.name = it.person_responsible.name
 
 
 
