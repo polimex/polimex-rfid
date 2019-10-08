@@ -11,18 +11,9 @@
       span.underline{text-decoration: underline;}
       div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
-  <link rel="stylesheet" href="file:////app/share/uberwriter/data/media/github-md.css">
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
-  <style>
-    .task-list-item {
-      list-style-type: none;
-    }
-    .task-list-item-checkbox {
-      margin-left: -1.6em;
-    }
-  </style>
 </head>
 <body>
 <style>
@@ -81,57 +72,37 @@ img {
 </div>
 <center>
 <p><img src="./icon.png" /></p>
-<h1 id="rfid-access-control">RFID Access Control</h1>
+<h1 id="rfid-access-control"><span class="header-section-number">1</span> RFID Access Control</h1>
 </center>
 <hr />
-<h2 id="brief-description">Brief description</h2>
-<p>RFID Access App is a TCP/IP interface Module with which you can receive information, real time, about all employees or partners of the company - their current access by authorization in building/rooms, done work, or employee’s current condition - who is sick, on a paid leave or didn’t come to work. The Module is a required support for the Polimex Holding’s controller(which use our http based WEBSDK protocol) and LAN Modules.</p>
-<h2 id="features">Features</h2>
-<p>With RFID Access App, you can:</p>
+<h2 id="brief-description"><span class="header-section-number">1.1</span> Brief description</h2>
+<p>RFID Access App is a TCP/IP interface Module with which you can receive information, real time, about all employees or partners of the company - their current access by authorization in building/rooms, done work, or employee’s current condition - who is sick, on a paid leave or didn’t come to work. The Module is a required support for the Polimex Holding’s controller (which uses our http based WEBSDK protocol) and LAN Modules.</p>
+<h2 id="features"><span class="header-section-number">1.2</span> Features</h2>
+<p>With the RFID Access App, you can:</p>
 <ul>
-<li>
-<p>Gain information about the entrance of the company’s building/rooms or specific places;</p>
-</li>
-<li>
-<p>Create different access groups, and set each employee or partner to some of those groups, where each access group corresponds to access to one or more doors of the company’s building;</p>
-</li>
-<li>
-<p>Give expiration date of a given access group;</p>
-</li>
-<li>
-<p>Import cards and their owners using excel, or csv files, or create them manually;</p>
-</li>
-<li>
-<p>Control the access of each department in the company;</p>
-</li>
-<li>
-<p>Setting Time schedules;</p>
-</li>
-<li>
-<p>… and optionally you can get access to the vending machine at the office;</p>
-</li>
+<li><p>Gain information about the entrance of the company’s building/rooms or specific places;</p></li>
+<li><p>Create different access groups, and set each employee or partner to some of those groups, where each access group corresponds to access to one or more doors of the company’s building;</p></li>
+<li><p>Give expiration date of a given access group;</p></li>
+<li><p>Import cards and their owners using excel, or csv files, or create them manually;</p></li>
+<li><p>Control the access of each department in the company;</p></li>
+<li><p>Setting Time schedules;</p></li>
+<li><p>… and optionally you can get access to the vending machine at the office;</p></li>
 </ul>
 <p>And all that you can get on any platform, from anywhere - real time.</p>
 <p><a href="#explained">Click</a> here to learn more about the features.</p>
 <div id="install">
 
 </div>
-<h2 id="steps-of-installation">Steps of installation</h2>
+<h2 id="steps-of-installation"><span class="header-section-number">1.3</span> Steps of installation</h2>
 <ul>
-<li>
-<a href="#basics"><strong>Basics</strong></a>
-</li>
-<li>
-<a href="#sdk"><strong>SDK Settings(Activation of Polimex TCP/IP Interface Module)</strong></a>
-</li>
-<li>
-<a href="#add"><strong>Adding a card</strong></a>
-</li>
+<li><a href="#basics"><strong>Basics</strong></a></li>
+<li><a href="#sdk"><strong>SDK Settings(Activation of Polimex TCP/IP Interface Module)</strong></a></li>
+<li><a href="#add"><strong>Adding a card</strong></a></li>
 </ul>
 <hr />
 <div id="basics">
 <p></a></p>
-<h3 id="basics">Basics</h3>
+<h3 id="basics"><span class="header-section-number">1.3.1</span> Basics</h3>
 <ol type="1">
 <li>Go to your Odoo page, and login. (make sure you have <a href="https://www.odoo.com/documentation/12.0/setup/install.html">odoo</a>)</li>
 </ol>
@@ -153,12 +124,12 @@ img {
 <ol start="5" type="1">
 <li><p>Click search (or press enter).</p></li>
 <li><p>You will get two results, the RFID attendance and RFID Access control.</p></li>
-<li><p>Click on the installation icon of the second result.</p></li>
+<li><p>Click on the installation icon of RFID Access Control.</p></li>
 </ol>
 <p><img src="./result_search_rfid.png" /></p>
 <ol start="8" type="1">
 <li><p>Now you need to wait odoo to install all dependencies.</p></li>
-<li><p>After installation, odoo will redirect you back to your index page. Click again to the top left corner of the page. You have two new installed options - RFID System, and Attendances.</p></li>
+<li><p>After installation, odoo will redirect you back to your index page. Click again to the top left corner of the page. You have at least one new option - RFID System.</p></li>
 </ol>
 <p><img src="./odoo_index.png" /></p>
 <ol start="10" type="1">
@@ -166,28 +137,26 @@ img {
 </ol>
 <p><img src="./rfid_option.png" /></p>
 <ol start="11" type="1">
-<li>Your page now should look like this, where you get as options (the menu):</li>
+<li>Your page now should look like this:</li>
 </ol>
 <p><img src="./rfid_index.png" /></p>
-<h4 id="events">Events</h4>
+<h4 id="events"><span class="header-section-number">1.3.1.1</span> Events</h4>
 <p>Clicking on that menu, gives you a list with other 3 sub-menus.</p>
 <p><img src="./events_menu.png" /></p>
-<h5 id="user-events">User Events</h5>
+<h5 id="user-events"><span class="header-section-number">1.3.1.1.1</span> User Events</h5>
 <p>Lists all times in which someone tried to enter the building/floor at some of the doors, when, number of the card, and etc.</p>
 <p><img src="./user_events.png" /></p>
-<h5 id="system-events">System Events</h5>
+<h5 id="system-events"><span class="header-section-number">1.3.1.1.2</span> System Events</h5>
 <p>Lists all errors raised in the system, for example if the Webstack is not active, and someone tries to get access, or someone is trying to authorize with a card, which is not in the system.</p>
 <p><img src="./system_events.png" /></p>
-<h5 id="commands">Commands</h5>
-<h4 id="cards">Cards</h4>
+<h5 id="commands"><span class="header-section-number">1.3.1.1.3</span> Commands</h5>
+<h4 id="cards"><span class="header-section-number">1.3.1.2</span> Cards</h4>
 <p>If you click to that menu, your page should look like this.</p>
 <p><img src="./cards_index.png" /></p>
 <p>There are two options in that page: * Creating a card (Create button)</p>
 <p><img src="./create_card.png" /></p>
 <ul>
-<li>
-Or importing cards (Import button)
-</li>
+<li>Or importing cards (Import button)</li>
 </ul>
 <p><img src="./import_card.png" /></p>
 <p>Click on <code>Create</code>. You should see the following form:</p>
@@ -218,7 +187,7 @@ Or importing cards (Import button)
 </tr>
 <tr class="odd">
 <td>Card Owner (Contact/Partner)</td>
-<td>If the card is for a partner of the company, again - you can write its name or select it from the list, which you get after clicking on the empty field next to the label.</td>
+<td>If the card is for a partner of the company, again - you can write its name or select it from the list, which you get after clicking on the empty field nex2t to the label.</td>
 </tr>
 <tr class="even">
 <td>Active</td>
@@ -243,16 +212,16 @@ Or importing cards (Import button)
 <div id="sdk">
 
 </div>
-<h3 id="sdk-settings">SDK settings</h3>
+<h3 id="sdk-settings"><span class="header-section-number">1.3.2</span> SDK settings</h3>
 <ol type="1">
 <li>Go to your Polimex TCP/IP Interface Module /Get the IP of the Module and write it to your web browser, press Enter/.</li>
 </ol>
 <p><img src="./polimex_index.png" /></p>
 <ol start="2" type="1">
 <li><p>Go to the right top corner of the page - login, and click it.</p></li>
-<li><p>By default you can login as admin /without giving any passwords/. If you want you can change those options.</p></li>
+<li><p>The default username is ‘admin’ and by default there is no password.</p></li>
 <li><p>There is a menu on the top page including Setup, IO Control and Device Manager.</p></li>
-<li><p>Click on the Setup and find the Services option, click on it.</p></li>
+<li><p>Hover over Setup and find the Services option, click on it.</p></li>
 </ol>
 <p><img src="./service_menu.png" /></p>
 <ol start="6" type="1">
@@ -275,14 +244,10 @@ Or importing cards (Import button)
 <li>After finishing, check the system by touching your card/tag to some of the controllers.</li>
 </ol>
 <hr />
-<p><img src="./important.png" /> <strong>From steps 14-16 you must have</strong></p>
+<p><img src="./important.png" /> <strong>For steps 14-16 you must have</strong></p>
 <ul>
-<li>
-<p>Manager access to the RFID Access control app</p>
-</li>
-<li>
-<p>a controller connected to your Polimex TCP/IP Interface Module.</p>
-</li>
+<li><p>Manager access to the RFID Access control app</p></li>
+<li><p>a controller connected to your Polimex TCP/IP Interface Module.</p></li>
 </ul>
 <hr />
 <ol start="14" type="1">
@@ -299,25 +264,17 @@ Or importing cards (Import button)
 <div id="add">
 
 </div>
-<h3 id="add-a-card-to-odoo">Add a card to Odoo</h3>
+<h3 id="add-a-card-to-odoo"><span class="header-section-number">1.3.3</span> Add a card to Odoo</h3>
 <hr />
 <p><img src="./important.png" /> <strong>You must have</strong></p>
 <ul>
-<li>
-<p>Manager access to the RFID Access Control App</p>
-</li>
-<li>
-<p>a controller that can read cards connected with your Polimex TCP/IP Interface Module</p>
-</li>
+<li><p>Manager access to the RFID Access Control App</p></li>
+<li><p>a controller that can read cards connected with your Polimex TCP/IP Interface Module</p></li>
 </ul>
 <p><img src="./important.png" /> <strong>Your Polimex TCP/IP Interface Module must</strong></p>
 <ul>
-<li>
-<p>be linked with Odoo</p>
-</li>
-<li>
-<p>be active</p>
-</li>
+<li><p>be linked with Odoo</p></li>
+<li><p>be active</p></li>
 </ul>
 <hr />
 <ol type="1">
@@ -356,8 +313,8 @@ Or importing cards (Import button)
 <div id="explained">
 
 </div>
-<h2 id="features-1">Features</h2>
-<h3 id="card-types">Card Types</h3>
+<h2 id="features-1"><span class="header-section-number">1.4</span> Features</h2>
+<h3 id="card-types"><span class="header-section-number">1.4.1</span> Card Types</h3>
 <table>
 <thead>
 <tr class="header">
@@ -397,7 +354,7 @@ Or importing cards (Import button)
 </tr>
 </tbody>
 </table>
-<h3 id="departments">Departments</h3>
+<h3 id="departments"><span class="header-section-number">1.4.2</span> Departments</h3>
 <p>Let’s say your company is divided by departments, and each department is responsible for different kind of job in the company, and each department works at a different floor in the company’s building. So you want each employee, who works at a particular department, to have access only to the entrance of the building and entrance to the floor to which his department works. So now we will show how to manage department access groups, and how to add each of the company employees to that group.</p>
 <p><img src="./important.png" /> If you don’t have <strong>RFID Access App</strong> installed, <a href="#install">click here</a></p>
 <ol type="1">
@@ -427,22 +384,14 @@ Or importing cards (Import button)
 </ol>
 <p><img src="./acc_group_options.png" /></p>
 <ul>
-<li>
-<p>Add one or more access groups; (1. Add Access Groups)</p>
-</li>
-<li>
-<p>Remove one or more access groups; (2. Remove Access Groups)</p>
-</li>
-<li>
-<p>Change the default access group; (3. Change the default access group)</p>
-</li>
-<li>
-<p>Remove the default access group; (4. Remove default access group)</p>
-</li>
+<li><p>Add one or more access groups; (1. Add Access Groups)</p></li>
+<li><p>Remove one or more access groups; (2. Remove Access Groups)</p></li>
+<li><p>Change the default access group; (3. Change the default access group)</p></li>
+<li><p>Remove the default access group; (4. Remove default access group)</p></li>
 </ul>
 <p><strong>What is the difference between adding access group and changing the default access group?</strong></p>
 <p>When adding an employee to some department, that employee gets the default access group of the department (each department has its own access group). If you want to add the employee to some other access group, you need to choose the option <code>Add Access groups</code> from the employee’s page (check below in <code>Employee Access Group</code>)).</p>
-<h3 id="owner">Owner</h3>
+<h3 id="owner"><span class="header-section-number">1.4.3</span> Owner</h3>
 <p>If each department (or almost each) in your company has a manager(or managers), you can give him (them) privilege, for each new employee of the department, to give access to that employee, to the building and department’s floor.</p>
 <ol type="1">
 <li>Go to your Odoo page, and login. (make sure you have <a href="https://www.odoo.com/documentation/12.0/setup/install.html">odoo</a>)</li>
@@ -477,152 +426,21 @@ Or importing cards (Import button)
 <li>There are four possible options.</li>
 </ol>
 <ul>
-<li>
-<p><strong>Officer</strong></p>
-</li>
-<li>
-Read/Update/Create/Remove Cards of the Department
-</li>
-<li>
-Read/Update Access Groups of the Department
-</li>
-<li>
-Read/Update Card Types of the Department
-</li>
-<li>
-Read/Update Webstack of the Department
-</li>
-<li>
-Read/Update Controllers of the Department
-</li>
-<li>
-Read/Update Workcodes of the Department
-</li>
-<li>
-Read/Update User Events of the Department
-</li>
-<li>
-Read/Update System Events of the Department
-</li>
-<li>
-<p>Read/Update Commands of the Department</p>
-</li>
-<li>
-<p><strong>Officer own department</strong></p>
-</li>
-<li>
-Read/Update/Create/Remove Cards of the Department
-</li>
-<li>
-Read/Update Access Groups of the Department
-</li>
-<li>
-Read/Update Card Types of the Department
-</li>
-<li>
-Read/Update Webstack of the Department
-</li>
-<li>
-Read/Update Controllers of the Department
-</li>
-<li>
-Read/Update Workcodes of the Department
-</li>
-<li>
-Read/Update User Events of the Department
-</li>
-<li>
-Read/Update System Events of the Department
-</li>
-<li>
-<p>Read/Update Commands of the Department</p>
-</li>
-<li>
-<p><strong>Manager own department</strong></p>
-</li>
-<li>
-Read/Update/Create/Remove Cards of the Department
-</li>
-<li>
-Read/Update/Create/Remove Access Groups of the Department
-</li>
-<li>
-Read/Update/Create/Remove Card Types of the Department
-</li>
-<li>
-Read/Update/Create/Remove Webstack of the Department
-</li>
-<li>
-Read/Update/Create/Remove Controllers of the Department
-</li>
-<li>
-Read/Update/Create/Remove Workcodes of the Department
-</li>
-<li>
-Read/Update/Create/Remove User Events of the Department
-</li>
-<li>
-Read/Update/Create/Remove System Events of the Department
-</li>
-<li>
-Read/Update/Create/Remove Commands of the Department
-</li>
-<li>
-<p>Read/Update Password of each Employee</p>
-</li>
-<li>
-<p><strong>Manager</strong></p>
-<ul>
-<li>
-Read/Update/Create/Remove Department
-</li>
-<li>
-Read/Update/Create/Remove Employee
-</li>
-<li>
-Read/Update/Create/Remove Access Group
-</li>
-<li>
-Read/Update/Create/Remove Cards
-</li>
-<li>
-Read/Update/Create/Remove Modules
-</li>
-<li>
-Read/Update/Create/Remove Card Types
-</li>
-<li>
-Read/Update/Create/Remove Controllers
-</li>
-<li>
-Read/Update/Create/Remove Doors
-</li>
-<li>
-Read/Update/Create/Remove Web stack
-</li>
-<li>
-Read/Update/Create/Remove Card Time Schedules
-</li>
-<li>
-Read/Update/Create/Remove Work Codes
-</li>
-<li>
-Read/Update/Create/Remove Readers
-</li>
-<li>
-Read/Update/Create/Remove User Events
-</li>
-<li>
-Read/Update/Create/Remove System Events
-</li>
-<li>
-Read/Update/Create/Remove Commands
-</li>
-</ul>
-</li>
+<li><strong>Officer</strong>: Allows access to the following things:
+<ol type="1">
+<li>Ability to view, modify, create or delete cards.</li>
+<li>Ability to view user events.</li>
+<li>Ability to view system events.</li>
+<li>Ability to add or remove access groups from employees or contacts.</li>
+<li>Ability to add or remove access groups from departments.</li>
+<li>Ability to change the default access group of a department.</li>
+</ol></li>
+<li><strong>Officer own department</strong>: Same as above but only for the user’s own department</li>
+<li><strong>Manager</strong>: Allows access to virtually anything that the module has.</li>
+<li><strong>Manager own department</strong>: Same as above but only for the user’s own department</li>
 </ul>
 <p>Choose one of them, and click <code>Save</code>.</p>
-<h3 id="employee-access-group">Employee Access Group</h3>
+<h3 id="employee-access-group"><span class="header-section-number">1.4.4</span> Employee Access Group</h3>
 <p>By default, when choosing a department of the employee, he/she gets the default access group of that department. If you want to add more access groups(or to remove some) to that employee, you need to do that from the employee’s page.</p>
 <ol type="1">
 <li>Go to your Odoo page, and login. (make sure you have <a href="https://www.odoo.com/documentation/12.0/setup/install.html">odoo</a>)</li>
@@ -650,7 +468,7 @@ Read/Update/Create/Remove Commands
 <p><img src="./rem_acc_group_employee.png" /></p>
 <p><a href="#top">Go back to the beginning of the page</a></p>
 <hr />
-<h2 id="github">Github</h2>
+<h2 id="github"><span class="header-section-number">1.5</span> Github</h2>
 <p>If you have any problems, questions or suggestions, you can follow us on <a href="https://github.com/polimex/odoo_apps"><img src="./github.png" /></a>.</p>
 <script>
 

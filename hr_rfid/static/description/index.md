@@ -61,12 +61,12 @@ img {
 
 RFID Access App is a TCP/IP interface Module with which you can receive information, real time, about all employees or partners of the company - their 
 current access by authorization in building/rooms, done work, or employee's current condition - who is sick, on a paid leave or didn't come to work.
-The Module is a required support for the Polimex Holding's controller(which use our http based WEBSDK protocol) and LAN Modules.
+The Module is a required support for the Polimex Holding's controller (which uses our http based WEBSDK protocol) and LAN Modules.
 
 
 ## Features
 
-With RFID Access App, you can:
+With the RFID Access App, you can:
 
 * Gain information about the entrance of the company's building/rooms or specific places;
 
@@ -123,14 +123,14 @@ And all that you can get on any platform, from anywhere - real time.
 
 6. You will get two results, the RFID attendance and RFID Access control.
 
-7. Click on the installation icon of the second result.
+7. Click on the installation icon of RFID Access Control.
 
 ![](./result_search_rfid.png)
 
 8. Now you need to wait odoo to install all dependencies.
 
 9. After installation, odoo will redirect you back to your index page.
-Click again to the top left corner of the page. You have two new installed options - RFID System, and Attendances.
+Click again to the top left corner of the page. You have at least one new option - RFID System.
 
 ![](./odoo_index.png)
 
@@ -138,7 +138,7 @@ Click again to the top left corner of the page. You have two new installed optio
 
 ![](./rfid_option.png)
 
-11. Your page now should look like this, where you get as options (the menu):
+11. Your page now should look like this:
 
 ![](./rfid_index.png)
 
@@ -160,7 +160,6 @@ Lists all errors raised in the system, for example if the Webstack is not active
 ![](./system_events.png)
 
 ##### Commands
-
 
 #### Cards
 
@@ -188,7 +187,7 @@ The fields included in the form, are:
 |---|---|
 |Card Number	   | Number of the card  |
 |Card Owner (Employee)   |  If the card is for employee of the company, you can write, or find the employee by clicking on the field. You will get a list with employees of the company. If you don't find it, click on the search option of the list. |
-|Card Owner (Contact/Partner)   | If the card is for a partner of the company, again - you can write its name or select it from the list, which you get after clicking on the empty field next to the label.  |
+|Card Owner (Contact/Partner)   | If the card is for a partner of the company, again - you can write its name or select it from the list, which you get after clicking on the empty field nex2t to the label.  |
 | Active     |  By default is set to active. If you want the card to become active, after specified time, change that in Active on (the next option) and uncheck option in Active.   |
 |Active on    |  Sets the starting date from which the card will be active from  |
 | Deactivate on | Sets the ending date, when the card will no more be active |
@@ -208,11 +207,11 @@ The fields included in the form, are:
 
 2. Go to the right top corner of the page - login, and click it.
 
-3. By default you can login as admin /without giving any passwords/. If you want you can change those options.
+3. The default username is 'admin' and by default there is no password.
 
 4. There is a menu on the top page including Setup, IO Control and Device Manager.
 
-5. Click on the Setup and find the Services option, click on it.
+5. Hover over Setup and find the Services option, click on it.
 
 ![](./service_menu.png)
 
@@ -240,7 +239,7 @@ The fields included in the form, are:
 
 ---
 
-![](./important.png) **From steps 14-16 you must have**
+![](./important.png) **For steps 14-16 you must have**
 
 * Manager access to the RFID Access control app
 
@@ -427,61 +426,16 @@ If each department (or almost each) in your company has a manager(or managers), 
 
 9. There are four possible options.
 
-* **Officer**
-
-*	Read/Update/Create/Remove Cards of the Department
-*	Read/Update Access Groups of the Department
-*	Read/Update Card Types of the Department
-*	Read/Update Webstack of the Department
-*	Read/Update Controllers of the Department
-*	Read/Update Workcodes of the Department
-*	Read/Update User Events of the Department
-*	Read/Update System Events of the Department
-*	Read/Update Commands of the Department
-
-* **Officer own department**
-
-*	Read/Update/Create/Remove Cards of the Department
-*	Read/Update Access Groups of the Department
-*	Read/Update Card Types of the Department
-*	Read/Update Webstack of the Department
-*	Read/Update Controllers of the Department
-*	Read/Update Workcodes of the Department
-*	Read/Update User Events of the Department
-*	Read/Update System Events of the Department
-*	Read/Update Commands of the Department
-
-
-* **Manager own department**
-
-*	Read/Update/Create/Remove Cards of the Department
-*	Read/Update/Create/Remove Access Groups of the Department
-*	Read/Update/Create/Remove Card Types of the Department
-*	Read/Update/Create/Remove Webstack of the Department
-*	Read/Update/Create/Remove Controllers of the Department
-*	Read/Update/Create/Remove Workcodes of the Department
-*	Read/Update/Create/Remove User Events of the Department
-*	Read/Update/Create/Remove System Events of the Department
-*	Read/Update/Create/Remove Commands of the Department
-*	Read/Update Password of each Employee
-
-* **Manager**
-
-	* Read/Update/Create/Remove Department
-	* Read/Update/Create/Remove Employee
-	* Read/Update/Create/Remove Access Group
-	* Read/Update/Create/Remove Cards
-	* Read/Update/Create/Remove Modules
-	* Read/Update/Create/Remove Card Types
-	* Read/Update/Create/Remove Controllers
-	* Read/Update/Create/Remove Doors
-	* Read/Update/Create/Remove Web stack
-	* Read/Update/Create/Remove Card Time Schedules
-	* Read/Update/Create/Remove Work Codes
-	* Read/Update/Create/Remove Readers
-	* Read/Update/Create/Remove User Events
-	* Read/Update/Create/Remove System Events
-	* Read/Update/Create/Remove Commands
+* **Officer**: Allows access to the following things:
+	1. Ability to view, modify, create or delete cards.
+	1. Ability to view user events.
+	1. Ability to view system events.
+	1. Ability to add or remove access groups from employees or contacts.
+	1. Ability to add or remove access groups from departments.
+	1. Ability to change the default access group of a department.
+* **Officer own department**: Same as above but only for the user's own department
+* **Manager**: Allows access to virtually anything that the module has.
+* **Manager own department**: Same as above but only for the user's own department
 
 Choose one of them, and click `Save`.
 
