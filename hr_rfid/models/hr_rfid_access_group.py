@@ -99,6 +99,34 @@ class HrRfidAccessGroup(models.Model):
         compute='_compute_all_contacts',
     )
 
+    @api.one
+    def add_doors(self, door_ids, time_schedule):
+        rel_env = self.env['hr.rfid.access.group.door.rel']
+        for door in door_ids:
+            res = rel_env.search([ ('access_group_id', '=', self.id),
+                                   ('door_id', '=', door.id) ])
+            if len(res) == 1:
+                res.time_schedule_id = time_schedule
+            else:
+                # if controller is of type iCON130 or iCON180
+                if door.controller_id.hw_version in ['17', '10'] and time_schedule.number > 3:
+                    raise exceptions.ValidationError(_('Door %s can only use the first 3 time schedules') %
+                                                     door.name)
+                rel_env.create({
+                    'access_group_id': self.id,
+                    'door_id': door.id,
+                    'time_schedule_id': time_schedule.id,
+                })
+
+    @api.one
+    def del_door(self, door_ids):
+        rel_env = self.env['hr.rfid.access.group.door.rel']
+        for door in door_ids:
+            res = rel_env.search([ ('access_group_id', '=', self.id),
+                                   ('door_id', '=', door.id) ])
+            if len(res) > 0:
+                res.unlink()
+
     @api.multi
     @api.constrains('door_ids')
     def _door_ids_constrains(self):
@@ -711,51 +739,9 @@ class HrRfidAccessGroupWizard(models.TransientModel):
     @api.multi
     def add_doors(self):
         self.ensure_one()
-        rel_env = self.env['hr.rfid.access.group.door.rel']
-        for door in self.door_ids:
-            res = rel_env.search([ ('access_group_id', '=', self.acc_gr_id.id),
-                                   ('door_id', '=', door.id) ])
-            if len(res) == 1:
-                res.time_schedule_id = self.time_schedule_id
-            else:
-                # if controller is of type iCON130 or iCON180
-                if door.controller_id.hw_version in ['17', '10'] and self.time_schedule_id.number > 3:
-                    raise exceptions.ValidationError(_('Door %s can only use the first 3 time schedules') %
-                                                     door.name)
-                rel_env.create({
-                    'access_group_id': self.acc_gr_id.id,
-                    'door_id': door.id,
-                    'time_schedule_id': self.time_schedule_id.id,
-                })
-        return {}
+        self.acc_gr_id.add_doors(self.door_ids, self.time_schedule_id)
 
     @api.multi
     def del_doors(self):
         self.ensure_one()
-        rel_env = self.env['hr.rfid.access.group.door.rel']
-        for door in self.door_ids:
-            res = rel_env.search([ ('access_group_id', '=', self.acc_gr_id.id),
-                                   ('door_id', '=', door.id) ])
-            if len(res) > 0:
-                res.unlink()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        self.acc_gr_id.del_doors(self.door_ids)
