@@ -42,7 +42,6 @@ class HrDepartment(models.Model):
 
     @api.multi
     def write(self, vals):
-        acc_gr_rel_env = self.env['hr.rfid.access.group.employee.rel']
         res = super(HrDepartment, self).write(vals)
 
         if 'hr_rfid_allowed_access_groups' in vals:
@@ -126,55 +125,11 @@ class HrDepartmentDefAccGrWizard(models.TransientModel):
         self.ensure_one()
         self.dep_id.hr_rfid_default_access_group = self.def_acc_gr
 
+    @api.multi
+    def change_and_apply_def_acc_gr(self):
+        self.ensure_one()
+        self.dep_id.hr_rfid_default_access_group = self.def_acc_gr
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        for emp in self.dep_id.member_ids:
+            if len(emp.hr_rfid_access_group_ids) == 0:
+                emp.add_acc_gr(self.def_acc_gr)

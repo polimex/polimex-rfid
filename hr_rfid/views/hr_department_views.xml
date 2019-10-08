@@ -50,6 +50,9 @@
           <footer>
             <button name="change_default_access_group" type="object"
                     string="Change Default Access Group" class="oe_highlight" />
+            <button name="change_and_apply_def_acc_gr" type="object"
+                    string="Change and Apply" class="oe_highlight"
+                    help="Adds access group to employees in the department without any access groups" />
             <button special="cancel" string="Cancel" />
           </footer>
         </form>
