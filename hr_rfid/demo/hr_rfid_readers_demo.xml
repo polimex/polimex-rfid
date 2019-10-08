@@ -1,0 +1,58 @@
+<odoo>
+	<data>
+
+		<record id="hr_rfid_reader_1" model="hr.rfid.reader">
+			<field name="name">Reader 0326984074</field>
+			<field name="mode">01</field>
+			<field name="number">1</field>
+			<field name="reader_type">0</field>
+			<field name="door_id" ref="hr_rfid_door_1" />
+			<field name="controller_id" ref="hr_rfid_controller_1" />
+		</record>
+
+		<record id="hr_rfid_reader_2" model="hr.rfid.reader">
+			<field name="name">Reader 4168231425</field>
+			<field name="mode">01</field>
+			<field name="number">2</field>
+			<field name="reader_type">1</field>
+			<field name="door_id" ref="hr_rfid_door_1" />
+			<field name="controller_id" ref="hr_rfid_controller_1" />
+		</record>
+
+		<record id="hr_rfid_reader_3" model="hr.rfid.reader">
+			<field name="name">Reader 5368409668</field>
+			<field name="mode">01</field>
+			<field name="number">3</field>
+			<field name="reader_type">0</field>
+			<field name="door_id" ref="hr_rfid_door_2" />
+			<field name="controller_id" ref="hr_rfid_controller_2" />
+		</record>
+
+		<record id="hr_rfid_reader_4" model="hr.rfid.reader">
+			<field name="name">Reader 8194078743</field>
+			<field name="mode">01</field>
+			<field name="number">4</field>
+			<field name="reader_type">1</field>
+			<field name="door_id" ref="hr_rfid_door_2" />
+			<field name="controller_id" ref="hr_rfid_controller_2" />
+		</record>
+
+		<record id="hr_rfid_reader_5" model="hr.rfid.reader">
+			<field name="name">Reader 1703944815</field>
+			<field name="mode">01</field>
+			<field name="number">5</field>
+			<field name="reader_type">0</field>
+			<field name="door_id" ref="hr_rfid_door_3" />
+			<field name="controller_id" ref="hr_rfid_controller_3" />
+		</record>
+
+		<record id="hr_rfid_reader_6" model="hr.rfid.reader">
+			<field name="name">Reader 1025788839</field>
+			<field name="mode">01</field>
+			<field name="number">6</field>
+			<field name="reader_type">1</field>
+			<field name="door_id" ref="hr_rfid_door_3" />
+			<field name="controller_id" ref="hr_rfid_controller_3" />
+		</record>
+	</data>
+</odoo>

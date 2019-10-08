@@ -1,0 +1,10 @@
+<odoo>
+	<data>
+		<record id="hr_rfid_system_event_1" model="hr.rfid.event.system">
+			<field name="name" ref="hr_rfid_module_1" />
+			<field name="webstack_id" ref="hr_rfid_module_1" />
+			<field name="timestamp" eval="DateTime.now()" />
+			<field name="error_description">Webstack is not active.</field>
+		</record>
+	</data>
+</odoo>

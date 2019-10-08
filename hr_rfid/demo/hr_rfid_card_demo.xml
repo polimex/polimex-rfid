@@ -1,0 +1,47 @@
+<odoo>
+	<data>
+		<record id="hr_rfid_card_1" model="hr.rfid.card">
+			<field name="number">0375457399</field>
+			<field name="employee_id" ref="hr.employee_mit" />
+			<field name="card_type" ref="hr_rfid_card_type_def" />
+		</record>
+		<record id="hr_rfid_card_2" model="hr.rfid.card">
+			<field name="number">8273339796</field>
+			<field name="employee_id" ref="hr.employee_chs" />
+			<field name="card_type" ref="hr_rfid_card_type_def" />
+			<field name="card_active">false</field>
+			<field name="cloud_card">false</field>
+		</record>
+		<record id="hr_rfid_card_3" model="hr.rfid.card">
+			<field name="number">7912907885</field>
+			<field name="employee_id" ref="hr.employee_qdp" />
+			<field name="card_type" ref="hr_rfid_card_type_3" />
+			<field name="cloud_card">false</field>
+		</record>
+		<record id="hr_rfid_card_4" model="hr.rfid.card">
+			<field name="number">7314104910</field>
+			<field name="employee_id" ref="hr.employee_fpi" />
+			<field name="card_type" ref="hr_rfid_card_type_2" />
+			<field name="card_active">false</field>
+			<field name="activate_on" eval="DateTime(2029,10,10).strftime('%Y-%m-%d')" />
+		</record>
+		<record id="hr_rfid_card_5" model="hr.rfid.card">
+			<field name="number">3775859296</field>
+			<field name="employee_id" ref="hr.employee_jep" />
+			<field name="card_type" ref="hr_rfid_card_type_2" />
+			<field name="deactivate_on" eval="DateTime(2029,10,10).strftime('%Y-%m-%d')" />
+		</record>
+		<record id="hr_rfid_card_6" model="hr.rfid.card">
+			<field name="number">4102492539</field>
+			<field name="contact_id" ref="hr.employee_hne" />
+			<field name="card_type" ref="hr_rfid_card_type_1" />
+			<field name="card_active">false</field>
+			<field name="deactivate_on" eval="DateTime(2039,10,10).strftime('%Y-%m-%d')" />
+		</record>
+		<record id="hr_rfid_card_7" model="hr.rfid.card">
+			<field name="number">7438744255</field>
+			<field name="contact_id" ref="hr.employee_jgo" />
+			<field name="card_type" ref="hr_rfid_card_type_1" />
+		</record>
+	</data>
+</odoo>

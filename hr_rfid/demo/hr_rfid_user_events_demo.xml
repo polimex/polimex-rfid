@@ -1,0 +1,47 @@
+<odoo>
+	<data>
+		<record id="hr_rfid_user_event_1" model="hr.rfid.event.user">
+			<field name="name" ref="hr.employee_mit" />
+			<field name="card_id" ref="hr_rfid_card_1" />
+			<field name="ctrl_addr" ref="hr_rfid_controller_1" />
+			<field name="reader_id" ref="hr_rfid_reader_1" />
+			<field name="employee_id" ref="hr.employee_mit" />
+			<field name="event_action">1</field>
+			<field name="event_time" eval="DateTime.now()" />
+			<field name="door_id" ref="hr_rfid_door_1" />
+		</record>
+
+		<record id="hr_rfid_user_event_2" model="hr.rfid.event.user">
+			<field name="name" ref="hr.employee_fpi" />
+			<field name="card_id" ref="hr_rfid_card_4" />
+			<field name="ctrl_addr" ref="hr_rfid_controller_1" />
+			<field name="reader_id" ref="hr_rfid_reader_1" />
+			<field name="employee_id" ref="hr.employee_fpi" />
+			<field name="event_action">2</field>
+			<field name="event_time" eval="DateTime.now()" />
+			<field name="door_id" ref="hr_rfid_door_1" />
+		</record>
+
+		<record id="hr_rfid_user_event_3" model="hr.rfid.event.user">
+			<field name="name" ref="hr.employee_hne" />
+			<field name="card_id" ref="hr_rfid_card_6" />
+			<field name="ctrl_addr" ref="hr_rfid_controller_3" />
+			<field name="reader_id" ref="hr_rfid_reader_3" />
+			<field name="employee_id" ref="hr.employee_hne" />
+			<field name="event_action">2</field>
+			<field name="event_time" eval="DateTime.now()" />
+			<field name="door_id" ref="hr_rfid_door_2" />
+		</record>
+
+		<record id="hr_rfid_user_event_4" model="hr.rfid.event.user">
+			<field name="name" ref="hr.employee_jep" />
+			<field name="card_id" ref="hr_rfid_card_5" />
+			<field name="ctrl_addr" ref="hr_rfid_controller_3" />
+			<field name="reader_id" ref="hr_rfid_reader_5" />
+			<field name="employee_id" ref="hr.employee_jep" />
+			<field name="event_action">1</field>
+			<field name="event_time" eval="DateTime.now()" />
+			<field name="door_id" ref="hr_rfid_door_3" />
+		</record>
+	</data>
+</odoo>
