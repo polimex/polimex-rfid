@@ -219,9 +219,11 @@ class BalanceHistory(models.Model):
     )
 
     item_id = fields.Many2one(
+        'product.template',
         string='Item Sold',
         compute='_compute_item_sold',
         store=True,
+        ondelete='set null',
     )
 
     @api.multi

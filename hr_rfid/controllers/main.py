@@ -123,7 +123,7 @@ class WebRfidController(http.Controller):
                     'status': 200,
                     'cmd': {
                         'id': cmd.controller_id.ctrl_id,
-                        'c': cmd.cmd,
+                        'c': cmd.cmd[:2],
                         'd': cmd.cmd_data,
                     }
                 }
@@ -427,7 +427,7 @@ class WebRfidController(http.Controller):
             'status': 200,
             'cmd': {
                 'id': cmd.controller_id.ctrl_id,
-                'c': cmd.cmd,
+                'c': cmd.cmd[:2],
                 'd': cmd.cmd_data,
             }
         }
@@ -451,7 +451,7 @@ class WebRfidController(http.Controller):
             'status': status_code,
             'cmd': {
                 'id': command.controller_id.ctrl_id,
-                'c': command.cmd,
+                'c': command.cmd[:2],
                 'd': command.cmd_data,
             }
         }

@@ -1436,6 +1436,7 @@ class HrRfidCommands(models.Model):
         ('D9', 'Write Input/Output Table'),
         ('DA', 'Delete Last Event'),
         ('DB', 'Open Output'),
+        ('DB2', 'Sending Balance To Vending Machine'),
         ('DC', 'System Initialization'),
         ('DD', 'Write Input Flags'),
         ('DE', 'Write Anti-Passback Mode'),

@@ -156,7 +156,7 @@ class HrRfidVending(WebRfidController):
                 cmd = cmd_env.create({
                     'webstack_id': webstack.id,
                     'controller_id': controller.id,
-                    'cmd': 'DB',
+                    'cmd': 'DB2',
                     'cmd_data': '4000' + card_number + balance_str,
                 })
                 ev.command_id = cmd

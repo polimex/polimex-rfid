@@ -23,7 +23,9 @@
 
     'demo': [ ],
 
-    'images': [ ],
+    "images": [
+        'static/images/main_screenshot.png',
+    ],
 
     'installable': True,
     'application': False,
