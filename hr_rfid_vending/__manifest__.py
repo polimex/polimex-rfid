@@ -2,15 +2,15 @@
 # noinspection PyStatementEffect
 {
     'name': 'RFID Vending Control',
-    'version': '0.3',
+    'version': '0.1',
     'category': 'Vending',
-    'summary': 'Manage vending machines',
+    'summary': 'Manage EXECUTIVE based vending machines',
     'author': 'Polimex',
     'license': 'GPL-3',
 
     'website': 'http://www.securitybulgaria.com',
 
-    'depends': [ 'base', 'hr_rfid', 'stock' ],
+    'depends': [ 'base', 'hr_rfid', 'stock', 'hr_attendance' ],
 
     'data': [
         'data/hr_rfid_vending_cron_jobs.xml',
