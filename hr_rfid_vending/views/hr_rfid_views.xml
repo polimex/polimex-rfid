@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <menuitem id="hr_rfid_vending_menu"
+              name="Vending"
+              parent="hr_rfid.hr_rfid_events_menu"
+              groups="hr_rfid.hr_rfid_group_officer_department"
+              sequence="100" />
+
+    <record id="hr_rfid_ctrl_vending_prices_wiz" model="ir.ui.view">
+      <field name="name">hr.rfid.ctrl.vending.settings.wiz</field>
+      <field name="model">hr.rfid.ctrl.vending.settings</field>
+      <field name="arch" type="xml">
+        <form string="Vending Settings">
+          <div>
+            <h3>Vending settings:</h3>
+            <group>
+              <field name="show_price_timeout" />
+              <field name="scale_factor" />
+            </group>
+            <h3>Vending prices table:</h3>
+            <br />
+            <field name="vending_row_ids" widget="one2many_list">
+              <tree create="0" delete="0" editable="bottom" >
+                <field name="item_number1" />
+                <field name="item1" />
+                <field name="item_number2" />
+                <field name="item2" />
+                <field name="item_number3" />
+                <field name="item3" />
+                <field name="item_number4" />
+                <field name="item4" />
+              </tree>
+            </field>
+          </div>
+          <footer>
+            <button name="save_settings" type="object" string="Save" class="oe_highlight" />
+            <button special="cancel" string="Close" class="oe_highlight" />
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_ctrl_vending_prices_wiz_action" model="ir.actions.act_window">
+      <field name="name">Change Vending Settings</field>
+      <field name="res_model">hr.rfid.ctrl.vending.settings</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_rfid_ctrl_vending_prices_wiz" />
+      <field name="target">new</field>
+    </record>
+
+    <record id="hr_rfid_ctrl_view_form_inherit_hr_rfid_vending" model="ir.ui.view">
+      <field name="name">hr.rfid.ctrl.vending.info</field>
+      <field name="model">hr.rfid.ctrl</field>
+      <field name="inherit_id" ref="hr_rfid.hr_rfid_controller_view_form" />
+      <field name="arch" type="xml">
+        <xpath expr="//button[@id='hr_rfid_view_modify_io_table_btn']" position="attributes">
+          <!-- If controller is a vending controller, turn this button invisible -->
+          <attribute name="attrs">{'invisible':[('hw_version','=','16')]}</attribute>
+        </xpath>
+        <xpath expr="//button[@id='hr_rfid_view_modify_io_table_btn']" position="after">
+          <button name="%(hr_rfid_ctrl_vending_prices_wiz_action)d"
+                  id="hr_rfid_vending_settings_btn"
+                  type="action"
+                  string="Change Vending Settings"
+                  attrs="{'invisible':[('hw_version','!=','16')]}" />
+        </xpath>
+        <group position="inside">
+          <field name="show_price_timeout" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}" />
+          <field name="scale_factor" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}" />
+          <field name="cash_contained" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}" />
+        </group>
+      </field>
+    </record>
+
+    <record id="hr_rfid_vending_event_action" model="ir.actions.act_window">
+      <field name="name">Vending Events</field>
+      <field name="res_model">hr.rfid.vending.event</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search,pivot,graph</field>
+      <field name="context">{"graph_default_sale_events":1}</field>
+    </record>
+
+    <menuitem id="hr_rfid_vending_menu_events"
+              name="Vending Events"
+              parent="hr_rfid_vending_menu"
+              action="hr_rfid_vending_event_action"
+              groups="hr_rfid.hr_rfid_group_officer_department"
+              sequence="0" />
+
+    <record id="hr_rfid_vending_event_form" model="ir.ui.view">
+      <field name="name">hr.rfid.vending.event.form</field>
+      <field name="model">hr.rfid.vending.event</field>
+      <field name="arch" type="xml">
+        <form create="0" delete="0" write="0">
+          <group>
+            <field name="controller_id" />
+            <field name="event_action" />
+            <field name="event_time" />
+            <field name="transaction_price" attrs="{'invisible':[('transaction_price','&lt;',0)]}" />
+            <field name="employee_id" attrs="{'invisible':[('employee_id','=',False)]}" />
+            <field name="card_id" attrs="{'invisible':[('card_id','=',False)]}" />
+            <field name="item_sold" attrs="{'invisible':[('item_sold_id','!=',False)]}" />
+            <field name="item_sold_id" attrs="{'invisible':[('item_sold_id','=',False)]}" />
+            <field name="input_js" groups="base.group_no_one" />
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_vending_event_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.vending.event.tree</field>
+      <field name="model">hr.rfid.vending.event</field>
+      <field name="arch" type="xml">
+        <tree create="0" delete="0">
+          <field name="controller_id" />
+          <field name="event_action" />
+          <field name="event_time" />
+          <field name="employee_id" />
+          <field name="item_sold_id" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="hr_rfid_vending_event_search" model="ir.ui.view">
+      <field name="name">hr.rfid.vending.event.search</field>
+      <field name="model">hr.rfid.vending.event</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="name" />
+          <field name="event_action" />
+          <field name="event_time" />
+          <field name="employee_id">
+            <field name="name" />
+          </field>
+          <field name="card_id">
+            <field name="number" />
+            <field name="card_type" />
+          </field>
+
+          <filter name="sale_events" string="Transaction events" domain="[('event_action','=','47')]" />
+          <filter name="sale_employee_events" string="Employee Transaction Events"
+                  domain="[('event_action','=','47'),('employee_id','=',False)]" />
+          <filter name="sale_non_employee_events" string="Non-Employee Transaction Events"
+                  domain="[('event_action','=','47'),('employee_id','!=',False)]" />
+          <separator />
+          <filter name="last_week" string="Events from last week"
+                  domain="[('event_time', '>=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="last_month" string="Events from last month"
+                  domain="[('event_time', '>=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="last_year" string="Events from last year"
+                  domain="[('event_time', '>=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]" />
+          <separator />
+          <filter name="this_day" string="Events from today"
+                  domain="[('event_time', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('event_time', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="this_week" string="Events from this week"
+                  domain="[('event_time', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('event_time', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="this_month" string="Events from this month"
+                  domain="[('event_time', '&gt;=', context_today().strftime('%%Y-%%m-1'))]" />
+          <filter name="this_year" string="Events from this year"
+                  domain="[('event_time', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('event_time', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]" />
+          <separator />
+
+          <newline />
+          <group expand="0" string="Group By">
+            <filter string="Action" name="action" domain="[]" context="{'group_by':'event_action'}" />
+            <filter string="Month" name="event_time" domain="[]" context="{'group_by':'event_time'}" />
+            <filter string="Item Sold" name="item_sold" domain="[]" context="{'group_by':'item_sold_id'}" />
+            <filter string="Transaction Price" name="transaction_price"
+                    domain="[]" context="{'group_by':'transaction_price'}" />
+            <filter string="Employee" name="employee" domain="[]" context="{'group_by':'employee_id'}" />
+            <filter string="Vending Machine" name="vending_machine"
+                    domain="[]" context="{'group_by':'controller_id'}" />
+          </group>
+
+        </search>
+      </field>
+    </record>
+
+    <record id="hr_rfid_vending_event_pivot" model="ir.ui.view">
+      <field name="name">hr.rfid.vending.event.pivot</field>
+      <field name="model">hr.rfid.vending.event</field>
+      <field name="arch" type="xml">
+        <pivot string="Event" disable_linking="True">
+          <field name="event_time" type="row" />
+          <field name="event_action" type="col" />
+        </pivot>
+      </field>
+    </record>
+
+    <record id="hr_rfid_vending_event_graph" model="ir.ui.view">
+      <field name="name">hr.rfid.vending.event.graph</field>
+      <field name="model">hr.rfid.vending.event</field>
+      <field name="arch" type="xml">
+        <graph string="Sales Per Product">
+          <field name="item_sold_id" type="row"/>
+          <field name="transaction_price" type="measure"/>
+        </graph>
+      </field>
+    </record>
+
+    <record id="hr_rfid_vending_auto_refill_action" model="ir.actions.act_window">
+      <field name="name">Vending Auto Refill Events</field>
+      <field name="res_model">hr.rfid.vending.auto.refill</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="hr_rfid_vending_menu_auto_refill"
+              name="Vending Auto Refill Events"
+              parent="hr_rfid_vending_menu"
+              action="hr_rfid_vending_auto_refill_action"
+              groups="hr_rfid.hr_rfid_group_manager_department"
+              sequence="10" />
+
+    <record id="hr_rfid_vending_auto_refill_form" model="ir.ui.view">
+      <field name="name">hr.rfid.vending.auto.refill.form</field>
+      <field name="model">hr.rfid.vending.auto.refill</field>
+      <field name="arch" type="xml">
+        <form create="0" delete="0" write="0">
+          <group>
+            <field name="date_created" />
+            <field name="auto_refill_total" />
+            <field name="balance_history_ids">
+              <tree create="0" delete="0" write="0">
+                <field name="employee_id" />
+                <field name="balance_change" />
+                <field name="balance_result" />
+              </tree>
+            </field>
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_vending_auto_refill_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.vending.auto.refill.tree</field>
+      <field name="model">hr.rfid.vending.auto.refill</field>
+      <field name="arch" type="xml">
+        <tree create="0" delete="0">
+          <field name="date_created" />
+          <field name="auto_refill_total" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="hr_rfid_vending_balance_history_action" model="ir.actions.act_window">
+      <field name="name">Vending Balance History</field>
+      <field name="res_model">hr.rfid.vending.balance.history</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,graph</field>
+    </record>
+
+    <menuitem id="hr_rfid_vending_menu_balance_history"
+              name="Vending Balance History"
+              parent="hr_rfid_vending_menu"
+              action="hr_rfid_vending_balance_history_action"
+              groups="hr_rfid.hr_rfid_group_officer_department"
+              sequence="20" />
+
+    <record id="hr_rfid_vending_balance_history_form" model="ir.ui.view">
+      <field name="name">hr.rfid.vending.balance.history.form</field>
+      <field name="model">hr.rfid.vending.balance.history</field>
+      <field name="arch" type="xml">
+        <form create="0" delete="0" write="0">
+          <group>
+            <field name="name" />
+            <field name="person_responsible" />
+            <field name="balance_change" />
+            <field name="balance_result" />
+            <field name="employee_id" />
+            <field name="vending_event_id" />
+            <field name="auto_refill_id" />
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_vending_balance_history_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.vending.balance.history.tree</field>
+      <field name="model">hr.rfid.vending.balance.history</field>
+      <field name="arch" type="xml">
+        <tree create="0" delete="0">
+          <field name="name" />
+          <field name="balance_change" />
+          <field name="balance_result" />
+          <field name="employee_id" />
+          <field name="auto_refill_id" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="hr_rfid_vending_balance_history_search" model="ir.ui.view">
+      <field name="name">hr.rfid.vending.balance.history.search</field>
+      <field name="model">hr.rfid.vending.balance.history</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="person_responsible" />
+          <field name="employee_id" />
+          <field name="vending_event_id">
+            <field name="item_sold_id" />
+          </field>
+
+          <filter name="auto_refill" string="Auto Refills" domain="[('auto_refill_id','!=',False)]" />
+          <separator />
+          <filter name="last_week" string="Events from last week"
+                  domain="[('create_date', '>=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="last_month" string="Events from last month"
+                  domain="[('create_date', '>=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="last_year" string="Events from last year"
+                  domain="[('create_date', '>=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]" />
+          <separator />
+          <filter name="this_day" string="Events from today"
+                  domain="[('create_date', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('create_date', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="this_week" string="Events from this week"
+                  domain="[('create_date', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('create_date', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="this_month" string="Events from this month"
+                  domain="[('create_date', '&gt;=', context_today().strftime('%%Y-%%m-1'))]" />
+          <filter name="this_year" string="Events from this year"
+                  domain="[('create_date', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('create_date', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]" />
+          <separator />
+
+          <newline />
+          <group expand="0" string="Group By">
+            <filter string="Month" name="create_date" domain="[]" context="{'group_by':'create_date'}" />
+            <filter string="Person Responsible" name="person_responsible"
+                    domain="[]" context="{'group_by':'person_responsible'}" />
+            <filter string="Employee" name="employee_id" domain="[]" context="{'group_by':'employee_id'}" />
+            <filter string="Item Sold" name="item_sold" domain="[]" context="{'group_by':'item_id'}" />
+          </group>
+
+        </search>
+      </field>
+    </record>
+
+    <record id="hr_rfid_vending_balance_history_graph" model="ir.ui.view">
+      <field name="name">hr.rfid.vending.balance.history.graph</field>
+      <field name="model">hr.rfid.vending.balance.history</field>
+      <field name="arch" type="xml">
+        <graph string="Balance Changes Per Employee">
+          <field name="employee_id" type="row"/>
+          <field name="balance_change" type="measure"/>
+        </graph>
+      </field>
+    </record>
+
+  </data>
+</odoo>

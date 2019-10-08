@@ -8,8 +8,6 @@ import http.client
 import json
 import base64
 
-_logger = logging.getLogger(__name__)
-
 
 class HrRfidWebstackDiscovery(models.TransientModel):
     _name = 'hr.rfid.webstack.discovery'
@@ -85,7 +83,6 @@ class HrRfidWebstackDiscovery(models.TransientModel):
         udp_sock.close()
         self.write({ 'state': 'post_discovery' })
         return return_wiz_form_view(self._name, self.id)
-
 
     @api.multi
     def setup_modules(self):
@@ -349,6 +346,124 @@ class HrRfidWebstack(models.Model):
         ws.available = 'c'
 
 
+class HrRfidCtrlIoTableRow(models.TransientModel):
+    _name = 'hr.rfid.ctrl.io.table.row'
+    _description = 'Controller IO Table row'
+
+    event_codes = [
+        ('1' , "Duress"),
+        ('2' , "Duress Error"),
+        ('3' , "Reader #1 Card OK"),
+        ('4' , "Reader #1 Card Error"),
+        ('5' , "Reader #1 TS Error"),
+        ('6' , "Reader #1 APB Error"),
+        ('7' , "Reader #2 Card OK"),
+        ('8' , "Reader #2 Card Error"),
+        ('9' , "Reader #2 TS Error"),
+        ('10', "Reader #2 APB Error"),
+        ('11', "Reader #3 Card OK"),
+        ('12', "Reader #3 Card Error"),
+        ('13', "Reader #3 TS Error"),
+        ('14', "Reader #3 APB Error"),
+        ('15', "Reader #4 Card OK"),
+        ('16', "Reader #4 Card Error"),
+        ('17', "Reader #4 TS Error"),
+        ('18', "Reader #4 APB Error"),
+        ('19', "Emergency Input"),
+        ('20', "Arm On Siren"),
+        ('21', "Exit Button 1"),
+        ('22', "Exit Button 2"),
+        ('23', "Exit Button 3"),
+        ('24', "Exit Button 4"),
+        ('25', "Door Overtime"),
+        ('26', "Door Forced Open"),
+        ('27', "On Delay"),
+        ('28', "Off Delay"),
+    ]
+
+    event_number = fields.Selection(
+        selection=event_codes,
+        string='Event Number',
+        help='What the outs are set to when this event occurs',
+        required=True,
+        readonly=True,
+    )
+
+    # Range is from 00 to 99
+    out8 = fields.Integer(string='Out8', required=True)
+    out7 = fields.Integer(string='Out7', required=True)
+    out6 = fields.Integer(string='Out6', required=True)
+    out5 = fields.Integer(string='Out5', required=True)
+    out4 = fields.Integer(string='Out4', required=True)
+    out3 = fields.Integer(string='Out3', required=True)
+    out2 = fields.Integer(string='Out2', required=True)
+    out1 = fields.Integer(string='Out1', required=True)
+
+
+class HrRfidCtrlIoTableWiz(models.TransientModel):
+    _name = 'hr.rfid.ctrl.io.table.wiz'
+    _description = 'Controller IO Table Wizard'
+
+    def _default_ctrl(self):
+        return self.env['hr.rfid.ctrl'].browse(self._context.get('active_ids'))
+
+    def _generate_io_table(self):
+        rows_env = self.env['hr.rfid.ctrl.io.table.row']
+        row_len = 8 * 2  # 8 outs, 2 symbols each to display the number
+        ctrl = self._default_ctrl()
+
+        if len(ctrl.io_table) % row_len != 0:
+            raise exceptions.ValidationError('Controller does now have an input/output table loaded!')
+
+        io_table = ctrl.io_table
+        rows = rows_env
+
+        for i in range(0, len(ctrl.io_table), row_len):
+            creation_dict = { 'event_number': str(int(i / row_len) + 1) }
+            for j in range(8, 0, -1):
+                index = i + ((8 - j) * 2)
+                creation_dict['out' + str(j)] = int(io_table[index:index+2], 16)
+            rows += rows_env.create(creation_dict)
+
+        return rows
+
+    def _default_outs(self):
+        return self._default_ctrl().outputs
+
+    controller_id = fields.Many2one(
+        'hr.rfid.ctrl',
+        default=_default_ctrl,
+        required=True
+    )
+
+    io_row_ids = fields.Many2many(
+        'hr.rfid.ctrl.io.table.row',
+        string='IO Table',
+        default=_generate_io_table,
+    )
+
+    outs = fields.Integer(
+        default=_default_outs,
+    )
+
+    @api.multi
+    def save_table(self):
+        self.ensure_one()
+
+        new_io_table = ''
+
+        for row in self.io_row_ids:
+            outs = [ row.out8, row.out7, row.out6, row.out5, row.out4, row.out3, row.out2, row.out1 ]
+            for out in outs:
+                if out < 0 or out > 99:
+                    raise exceptions.ValidationError(
+                        _('%d is not a valid number for the io table. Valid values range from 0 to 99') % out
+                    )
+                new_io_table += '%02X' % out
+
+        self.controller_id.change_io_table(new_io_table)
+
+
 class HrRfidController(models.Model):
     _name = 'hr.rfid.ctrl'
     _inherit = ['mail.thread']
@@ -454,6 +569,14 @@ class HrRfidController(models.Model):
         help='Maximum amount of events the controller can hold in memory',
     )
 
+    # Warning, don't change this field manually unless you know how to create a
+    # command to change the io table for the controller or are looking to avoid exactly that.
+    # You can use the change_io_table method to automatically create a command
+    io_table = fields.Char(
+        string='Input/Output Table',
+        help='Input and output table for the controller.',
+    )
+
     webstack_id = fields.Many2one(
         'hr.rfid.webstack',
         string='Module',
@@ -491,6 +614,64 @@ class HrRfidController(models.Model):
         help='Commands that have been sent to this controller',
     )
 
+    @api.model
+    def get_default_io_table(self, hw_type, sw_version, mode):
+        io_tables = {
+            # iCON110
+            '6': {
+                1: [
+                    (734, '0000000000000000000000000000000000000000000000030000000000000300000000000000030000000000000003000000000000000003000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000040463000000000000030000000000000000030000000000000000000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000000300'),
+                ],
+                2: [
+                    (734, '0000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000300000000000000000000000000000000000000000000000000000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000046363000000000000030000000000000000030000000000000000000000000000030000000000000003000000000000000000000000000000000000000000000003000000000000000300'),
+                ],
+            },
+            # Turnstile
+            '9': {
+                1: [
+                    (734, '0000000003030303050505050000000000000000000000030000000300000000000000030000000000000003000000000000000000000300000003000000000000000300000000000000030000000000000000000003000000030000000000000003000000000000000300000000000000000000030000000300000000000000030000000000000003000000000000000000000063636363000000000000000000000000000000030000000000000300000000000003000000000000030000000404040401010101040404040000000000000000000000000000000000000000'),
+                    (740, '0000000003030303050505050000000000000000000000030000000300000000000000030000000000000003000000000000000000000300000003000000000000000300000000000000030000000000000000000003000000030000000000000003000000000000000300000000000000000000030000000300000000000000030000000000000003000000000000000000000063636363000000000305030500000000000000030000000000000300000000000003000000000000030000000404040401010101040404040000000000000000000000000000000000000000'),
+                ]
+            },
+            # iCON115
+            '11': {
+                1: [
+                    (734, '0000000000000000000000000000000000000000000000030000000000000300000000000000030000000000000003000000000000000003000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000006363000000000000000000000000000000030000000000000000000000000000030000000000000003000000000000000300000000000000030000000000000000000000000000000000'),
+                ],
+                2: [
+                    (734, '0000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000300000000000000000000000000000000000000000000000000000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000006363000000000000000000000000000000030000000000000000000000000000030000000000000003000000000000000000000000000000000000000000000000000000000000000000'),
+                ],
+            },
+            # iCON50
+            '12': {
+                1: [
+                    (734, '0000000000000003000000000000030000000000000000030000000000000300000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'),
+                ],
+            },
+            # iCON130
+            '17': {
+                2: [
+                    (734, '0000000000000303000005050000000000000000000000030000000300000000000000030000000000000003000000000000000000000003000000030000000000000003000000000000000300000000000000000003000000000300000000000000030000000000000003000000000000000000000300000000030000000000000003000000000000000300000000000000000000006363000000000000000000000000000000030000000000000300000000000000000000000000000000000000010100000303000001010000030300000000000000000000000000000000'),
+                ],
+                3: [
+                    (734, '0000000000030303000505050000000000000000000000030000000300000000000000030000000000000003000000000000000000000003000000030000000000000003000000000000000300000000000000000003000000000300000000000000030000000000000003000000000000000000030000000003000000000000000300000000000000030000000000000000000000636363000000000000000000000000000000030000000000000300000000000003000000000000000000000001010100030303000101010003030300000000000000000000000000000000'),
+                ],
+                4: [
+                    (734, '0000000003030303050505050000000000000000000000030000000300000000000000030000000000000003000000000000000000000300000003000000000000000300000000000000030000000000000000000003000000030000000000000003000000000000000300000000000000000000030000000300000000000000030000000000000003000000000000000000000063636363000000000000000000000000000000030000000000000300000000000003000000000000030000000101010103030303010101010303030300000000000000000000000000000000'),
+                ],
+            },
+        }
+
+        if hw_type not in io_tables or mode not in io_tables[hw_type]:
+            return ''
+
+        sw_versions = io_tables[hw_type][mode]
+        io_table = ''
+        for sw_v, io_t in sw_versions:
+            if sw_version > sw_v:
+                io_table = io_t
+        return io_table
+
     @api.one
     def button_reload_cards(self):
         cmd_env = self.env['hr.rfid.command'].sudo()
@@ -524,6 +705,33 @@ class HrRfidController(models.Model):
                     pin = user.hr_rfid_pin_code
                     for card in user.hr_rfid_card_ids:
                         cmd_env.add_card(door.id, ts.id, pin, card.id)
+
+    @api.multi
+    def change_io_table(self, new_io_table):
+        cmd_env = self.env['hr.rfid.command'].sudo()
+        cmd_data = '00' + new_io_table
+
+        for ctrl in self:
+            if ctrl.io_table == new_io_table:
+                continue
+
+            if len(ctrl.io_table) != len(new_io_table):
+                raise exceptions.ValidationError(
+                    'Io table lengths are different, this should never happen????'
+                )
+
+            ctrl.io_table = new_io_table
+            cmd_env.create({
+                'webstack_id': ctrl.webstack_id.id,
+                'controller_id': ctrl.id,
+                'cmd': 'D9',
+                'cmd_data': cmd_data,
+            })
+
+    @api.multi
+    def write(self, vals):
+        # TODO Check if mode is being changed, change io table if so
+        return super(HrRfidController, self).write(vals)
 
 
 class HrRfidDoorOpenCloseWiz(models.TransientModel):
@@ -877,7 +1085,6 @@ class HrRfidReader(models.Model):
         'hr.rfid.door',
         string='Door',
         help='Door the reader opens',
-        required=True,
         ondelete='cascade',
     )
 
@@ -917,7 +1124,7 @@ class HrRfidReader(models.Model):
 class HrRfidUserEvent(models.Model):
     _name = 'hr.rfid.event.user'
     _description = "RFID User Event"
-    _order = 'event_time desc'
+    _order = 'id desc'
 
     name = fields.Char(
         compute='_compute_user_ev_name'
@@ -946,8 +1153,8 @@ class HrRfidUserEvent(models.Model):
 
     employee_id = fields.Many2one(
         'hr.employee',
-        string='User',
-        help='User affected by this event',
+        string='Employee',
+        help='Employee affected by this event',
         ondelete='cascade',
     )
 
@@ -962,7 +1169,6 @@ class HrRfidUserEvent(models.Model):
         'hr.rfid.door',
         string='Door',
         help='Door affected by this event',
-        required=True,
         ondelete='cascade',
     )
 
@@ -1043,7 +1249,8 @@ class HrRfidUserEvent(models.Model):
                 record.name += self.action_selection[int(record.event_action)-1][1]
             else:
                 record.name += 'Request Instructions'
-            record.name += ' @ ' + record.door_id.name
+            if len(record.door_id) != 0:
+                record.name += ' @ ' + record.door_id.name
 
     @api.multi
     def _compute_user_ev_action_str(self):
@@ -1054,7 +1261,7 @@ class HrRfidUserEvent(models.Model):
 class HrRfidSystemEvent(models.Model):
     _name = 'hr.rfid.event.system'
     _description = 'RFID System Event'
-    _order = 'timestamp desc'
+    _order = 'id desc'
 
     name = fields.Char(
         compute='_compute_sys_ev_name'
@@ -1200,8 +1407,8 @@ class HrRfidSystemEventWizard(models.TransientModel):
 class HrRfidCommands(models.Model):
     # Commands we have queued up to send to the controllers
     _name = 'hr.rfid.command'
-    _order = 'status desc, cr_timestamp asc, id'
     _description = 'Command to controller'
+    _order = 'id desc'
 
     commands = [
         ('F0', 'Read System Information'),
@@ -1231,6 +1438,7 @@ class HrRfidCommands(models.Model):
         ('D9', 'Write Input/Output Table'),
         ('DA', 'Delete Last Event'),
         ('DB', 'Open Output'),
+        ('DB2', 'Sending Balance To Vending Machine'),
         ('DC', 'System Initialization'),
         ('DD', 'Write Input Flags'),
         ('DE', 'Write Anti-Passback Mode'),
@@ -1536,6 +1744,13 @@ class HrRfidCommands(models.Model):
                 res = find_last_wait(cmd)
                 cmd_data = vals['cmd_data']
                 if len(res) > 0 and res.cmd_data[0] == cmd_data[0] and res.cmd_data[1] == cmd_data[1]:
+                    res.cmd_data = cmd_data
+                else:
+                    records += super(HrRfidCommands, self).create([vals])
+            elif cmd == 'D9':
+                res = find_last_wait(cmd)
+                if len(res) > 0:
+                    cmd_data = vals['cmd_data']
                     res.cmd_data = cmd_data
                 else:
                     records += super(HrRfidCommands, self).create([vals])

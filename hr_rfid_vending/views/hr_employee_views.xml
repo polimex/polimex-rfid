@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <record id="hr_employee_vending_balance_change_form" model="ir.ui.view">
+      <field name="name">hr.employee.vending.balance.change.form</field>
+      <field name="model">hr.employee.vending.balance.wiz</field>
+      <field name="arch" type="xml">
+        <form string="Change Vending Balance">
+          <group>
+            <field name="value" />
+          </group>
+          <footer>
+            <button name="add_value" type="object"
+                    string="Add" class="oe_highlight" />
+            <button name="subtract_value" type="object"
+                    string="Subtract" class="oe_highlight" />
+            <button special="cancel" string="Cancel" />
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_employee_vending_balance_set_form" model="ir.ui.view">
+      <field name="name">hr.employee.vending.balance.set.form</field>
+      <field name="model">hr.employee.vending.balance.wiz</field>
+      <field name="arch" type="xml">
+        <form string="Set Vending Balance">
+          <group>
+            <field name="value" />
+          </group>
+          <footer>
+            <button name="set_value" type="object"
+                    string="Set to" class="oe_highlight" />
+            <button special="cancel" string="Cancel" />
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_employee_vending_balance_change_action" model="ir.actions.act_window">
+      <field name="name">Change vending balance</field>
+      <field name="res_model">hr.employee.vending.balance.wiz</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_employee_vending_balance_change_form" />
+      <field name="target">new</field>
+    </record>
+
+    <record id="hr_employee_vending_balance_set_action" model="ir.actions.act_window">
+      <field name="name">Set vending balance</field>
+      <field name="res_model">hr.employee.vending.balance.wiz</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_employee_vending_balance_set_form" />
+      <field name="target">new</field>
+    </record>
+
+    <record id="hr_view_employee_form_inherit_hr_rfid_vending" model="ir.ui.view">
+      <field name="name">hr.employee.vending.info</field>
+      <field name="model">hr.employee</field>
+      <field name="inherit_id" ref="hr.view_employee_form"/>
+      <field name="arch" type="xml">
+        <notebook position="inside">
+          <page string="Vending" groups="hr_rfid.hr_rfid_group_officer_department">
+            <button name="%(hr_employee_vending_balance_change_action)d"
+                    id="hr_employee_vending_balance_btn"
+                    type="action"
+                    string="Add/Subtract from balance"
+                    context="{'setting_balance':False}"
+                    groups="hr_rfid.hr_rfid_group_officer_department" />
+            <button name="%(hr_employee_vending_balance_set_action)d"
+                    id="hr_employee_vending_balance_fixed_btn"
+                    type="action"
+                    string="Set balance to"
+                    context="{'setting_balance':True}"
+                    groups="hr_rfid.hr_rfid_group_officer_department" />
+
+            <group string="Settings">
+              <field name="hr_rfid_vending_balance" readonly="1" />
+              <field name="hr_rfid_vending_negative_balance" />
+              <field name="hr_rfid_vending_limit"
+                     attrs="{'invisible':[('hr_rfid_vending_negative_balance','=',False)]}" />
+              <field name="hr_rfid_vending_in_attendance" />
+              <field name="hr_rfid_vending_auto_refill" />
+              <field name="hr_rfid_vending_refill_amount"
+                     attrs="{'invisible':[('hr_rfid_vending_auto_refill','=',False)]}" />
+              <field name="hr_rfid_vending_refill_type"
+                     attrs="{'invisible':[('hr_rfid_vending_auto_refill','=',False)]}" />
+              <field name="hr_rfid_vending_refill_max"
+                     attrs="{'invisible':['|',('hr_rfid_vending_auto_refill','=',False),('hr_rfid_vending_refill_type','=','fixed')]}" />
+              <field name="hr_rfid_vending_balance_history" readonly="1">
+                <tree default_order="id desc" create="0" delete="0">
+                  <field name="name" />
+                  <field name="balance_change" />
+                  <field name="balance_result" />
+                  <field name="create_date" string="Operation Date" />
+                </tree>
+              </field>
+            </group>
+          </page>
+        </notebook>
+      </field>
+    </record>
+
+  </data>
+</odoo>
