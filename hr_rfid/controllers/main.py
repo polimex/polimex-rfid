@@ -187,6 +187,12 @@ class WebRfidController(http.Controller):
                                        ('status', '=', 'Process'),
                                        ('cmd', '=', response['c']), ], limit=1)
 
+        if len(command) == 0 and response['c'] == 'DB':
+            command = command_env.search([ ('webstack_id', '=', self._webstack.id),
+                                           ('controller_id', '=', controller.id),
+                                           ('status', '=', 'Process'),
+                                           ('cmd', '=', 'DB2'), ], limit=1)
+
         if len(command) == 0:
             self._report_sys_ev('Controller sent us a response to a command we never sent')
             return self._check_for_unsent_cmd(200)
