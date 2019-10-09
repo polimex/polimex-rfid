@@ -1120,6 +1120,7 @@ class HrRfidSystemEventWizard(models.TransientModel):
         string='System event',
         required=True,
         default=_default_sys_ev,
+        ondelete='cascade',
     )
 
     employee_id = fields.Many2one(
