@@ -125,7 +125,7 @@ class HrAttendanceExportWizard(models.TransientModel):
                                                 str(attendance.hr_rfid_user_event_check_out_id.employee_id.identification_id), 
                                                 "1", "изход",'----'])
                     filecontent.append(check_out)
-            filecontent = base64.encodebytes('\n'.join(filecontent).encode('utf-8'))
+            filecontent = base64.encodebytes('\n'.join(filecontent).encode('windows-1251'))
             return filename, filecontent
 
 
@@ -154,7 +154,7 @@ class HrAttendanceExportWizard(models.TransientModel):
                                                 datetime.strftime(attendance.check_out, ' %H:%M')])
                     filecontent.append(check_out)
 
-            filecontent = base64.encodebytes('\n'.join(filecontent).encode('utf-8'))
+            filecontent = base64.encodebytes('\n'.join(filecontent).encode('windows-1251'))
             return filename, filecontent
 
 
