@@ -6,9 +6,9 @@ class HrEmployee(models.Model):
 
     theoretical_hours_start_date = fields.Date(
         help="Fill this field for setting a manual start date for computing "
-             "the theoretical hours independently from the attendances. If "
-             "not filled, employee creation date or the calendar start date "
-             "will be used (the greatest of both).",
+        "the theoretical hours independently from the attendances. If "
+        "not filled, employee creation date or the calendar start date "
+        "will be used (the greatest of both)."
     )
 
     @api.multi
@@ -18,25 +18,32 @@ class HrEmployee(models.Model):
             Check Out: modify check_out field of appropriate attendance record
         """
         if len(self) > 1:
-            raise exceptions.UserError(_('Cannot perform check in or check '
-                                         'out on multiple employees.'))
+            raise exceptions.UserError(
+                _("Cannot perform check in or check " "out on multiple employees.")
+            )
 
-        if self.attendance_state != 'checked_in':
+        if self.attendance_state != "checked_in":
             vals = {
-                'employee_id': self.id,
-                'check_in': action_date,
-                'hr_rfid_user_event_check_in_id': hr_rfid_user_event_id,
+                "employee_id": self.id,
+                "check_in": action_date,
+                "hr_rfid_user_event_check_in_id": hr_rfid_user_event_id,
             }
-            return self.env['hr.attendance'].create(vals)
+            return self.env["hr.attendance"].create(vals)
         else:
-            attendance = self.env['hr.attendance'].search([ ('employee_id', '=', self.id),
-                                                            ('check_out', '=', False) ], limit=1)
+            attendance = self.env["hr.attendance"].search(
+                [("employee_id", "=", self.id), ("check_out", "=", False)], limit=1
+            )
             if attendance:
                 attendance.check_out = action_date
                 attendance.hr_rfid_user_event_check_out_id = hr_rfid_user_event_id
             else:
-                raise exceptions.UserError(_('Cannot perform check out on %(empl_name)s, '
-                                             'could not find corresponding check in. Your '
-                                             'attendances have probably been modified manually'
-                                             ' by human resources.') % {'empl_name': self.name, })
+                raise exceptions.UserError(
+                    _(
+                        "Cannot perform check out on %(empl_name)s, "
+                        "could not find corresponding check in. Your "
+                        "attendances have probably been modified manually"
+                        " by human resources."
+                    )
+                    % {"empl_name": self.name}
+                )
             return attendance
