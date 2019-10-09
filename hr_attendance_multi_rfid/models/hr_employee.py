@@ -12,7 +12,7 @@ class HrEmployee(models.Model):
     )
 
     @api.multi
-    def attendance_action_change_with_date(self, action_date):
+    def attendance_action_change_with_date(self, action_date, hr_rfid_user_event_id):
         """ Check In/Check Out action
             Check In: create a new attendance record
             Check Out: modify check_out field of appropriate attendance record
@@ -25,6 +25,7 @@ class HrEmployee(models.Model):
             vals = {
                 'employee_id': self.id,
                 'check_in': action_date,
+                'hr_rfid_user_event_check_in_id': hr_rfid_user_event_id,
             }
             return self.env['hr.attendance'].create(vals)
         else:
@@ -32,6 +33,7 @@ class HrEmployee(models.Model):
                                                             ('check_out', '=', False) ], limit=1)
             if attendance:
                 attendance.check_out = action_date
+                attendance.hr_rfid_user_event_check_out_id = hr_rfid_user_event_id
             else:
                 raise exceptions.UserError(_('Cannot perform check out on %(empl_name)s, '
                                              'could not find corresponding check in. Your '

@@ -19,12 +19,12 @@ class HrRfidUserEvent(models.Model):
         def check_check_in(cev):
             if cev.employee_id.attendance_state == 'checked_out':
                 cev.in_or_out = '0'
-                cev.employee_id.attendance_action_change_with_date(cev.event_time)
+                cev.employee_id.attendance_action_change_with_date(cev.event_time, cev.id)
 
         def check_check_out(cev):
             if cev.employee_id.attendance_state == 'checked_in':
                 cev.in_or_out = '1'
-                cev.employee_id.attendance_action_change_with_date(cev.event_time)
+                cev.employee_id.attendance_action_change_with_date(cev.event_time, cev.id)
 
         records = self.env['hr.rfid.event.user']
         for vals in vals_list:
