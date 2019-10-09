@@ -607,16 +607,17 @@
         <form string="RFID Modules">
           <header>
             <button name="action_set_active" type="object"
-                    attrs="{'invisible': [('ws_active','=', True)]}"
+                    attrs="{'invisible': [ |,('ws_active','=',False),('behind_nat','=',True)]}"
                     string="Set module to active" />
             <button name="action_set_inactive" type="object"
-                    attrs="{'invisible': [('ws_active','=', False)]}"
+                    attrs="{'invisible': [ |,('ws_active','=',False),('behind_nat','=',True)]}"
                     string="Set module to inactive" />
             <button name="action_set_webstack_settings" type="object"
                     string="Setup module for this odoo"
+                    attrs="{'invisible': [('behind_nat','=',True)]}"
                     help="Set the webstack up to work with this odoo. Module username and password must be set to the admin username and password on the module. Last ip must be set to the correct ip of the module" />
             <button name="action_check_if_ws_available" type="object"
-                    attrs="{'invisible': [('available', '=', 'a')]}"
+                    attrs="{'invisible': [ |,('behind_nat','=',True),('available', '=', 'a')]}"
                     string="Test module connection"
                     help="Connect to the module and request for information." />
             <field name="available" widget="statusbar" />
