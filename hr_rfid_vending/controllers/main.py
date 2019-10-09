@@ -15,7 +15,6 @@ import json
 class HrRfidVending(WebRfidController):
     @http.route(['/hr/rfid/event'], type='json', auth='none', method=['POST'], csrf=False)
     def post_event(self, **post):
-        print('post=' + str(post))
         webstacks_env = request.env['hr.rfid.webstack'].sudo()
         cmd_env = request.env['hr.rfid.command'].sudo()
         ev_env = request.env['hr.rfid.vending.event'].sudo()
@@ -237,7 +236,6 @@ class HrRfidVending(WebRfidController):
             else:
                 ret = ret_super()
 
-            print('ret=' + str(ret))
             return ret
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
                 exceptions.MissingError, exceptions.ValidationError, exceptions.DeferredException) as __:
