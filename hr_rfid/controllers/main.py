@@ -90,6 +90,17 @@ class WebRfidController(http.Controller):
         workcodes_env = request.env['hr.rfid.workcode'].sudo()
         card = card_env.search([ ('number', '=', self._post['event']['card']) ])
         reader = None
+        event_action = self._post['event']['event_n']
+
+        if event_action == 30:
+            cmd_env = request.env['hr.rfid.command'].sudo()
+            self._report_sys_ev('Controller restarted', controller)
+            cmd_env.create({
+                'webstack_id': self._webstack.id,
+                'controller_id': controller.id,
+                'cmd': 'D7',
+            })
+            return self._check_for_unsent_cmd(200)
 
         reader_num = self._post['event']['reader']
         if reader_num == 0:
@@ -104,8 +115,6 @@ class WebRfidController(http.Controller):
             return self._check_for_unsent_cmd(200)
 
         ev_env = request.env['hr.rfid.event.user'].sudo()
-
-        event_action = self._post['event']['event_n']
 
         if len(card) == 0:
             if event_action == 64 and controller.hw_version != self._vending_hw_version:

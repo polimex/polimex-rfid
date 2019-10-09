@@ -448,8 +448,8 @@
           <sheet>
             <group>
               <field name="number" />
-              <field name="employee_id" />
-              <field name="contact_id" />
+              <field name="employee_id" attrs="{'invisible':[('contact_id','!=',False)]}" />
+              <field name="contact_id" attrs="{'invisible':[('employee_id','!=',False)]}"  />
               <field name="card_type" />
               <field name="card_active" />
               <field name="activate_on" />
@@ -1104,7 +1104,7 @@
       <field name="name">hr.rfid.user.ev.form</field>
       <field name="model">hr.rfid.event.user</field>
       <field name="arch" type="xml">
-        <form create="false" delete="false">
+        <form  create="0" delete="0" edit="0">
           <group>
             <field name="name" />
             <field name="workcode" attrs="{'invisible': [('workcode','=', '-')]}" />
@@ -1207,7 +1207,7 @@
       <field name="name">hr.rfid.sys.ev.add.card.wiz.form</field>
       <field name="model">hr.rfid.event.sys.wiz</field>
       <field name="arch" type="xml">
-        <form string="Add card">
+        <form string="Add card" create="0" delete="0" edit="0">
           <group>
             <field name="employee_id" />
             <field name="contact_id" />
@@ -1239,7 +1239,7 @@
       <field name="name">hr.rfid.sys.ev.form</field>
       <field name="model">hr.rfid.event.system</field>
       <field name="arch" type="xml">
-        <form create="false" delete="false">
+        <form create="0" delete="0" edit="0">
           <header>
             <button name="%(hr_rfid_sys_ev_wiz_action)d"
                     id="hr_rfid_sys_ev_add_card_btn"
@@ -1326,7 +1326,7 @@
       <field name="name">hr.rfid.command.form</field>
       <field name="model">hr.rfid.command</field>
       <field name="arch" type="xml">
-        <form create="false" delete="false">
+        <form create="0" delete="0" edit="0">
           <group>
             <field name="webstack_id" readonly="1" />
             <field name="controller_id" readonly="1" />

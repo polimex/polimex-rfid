@@ -681,7 +681,6 @@ class HrRfidController(models.Model):
             'controller_id': self.id,
             'cmd': 'DC',
             'cmd_data': '0303',
-            'cr_timestamp': fields.datetime.now(),
         })
 
         cmd_env.create({
@@ -1592,7 +1591,6 @@ class HrRfidCommands(models.Model):
             'webstack_id': ws_id,
             'controller_id': ctrl_id,
             'cmd': 'D1',
-            'cr_timestamp': fields.datetime.now(),
             'card_number': card_num,
             'pin_code': pin_code,
             'ts_code': ts_code,
@@ -1724,7 +1722,6 @@ class HrRfidCommands(models.Model):
                 'webstack_id': ctrl.webstack_id.id,
                 'controller_id': ctrl.id,
                 'cmd': 'D7',
-                'cr_timestamp': fields.datetime.now(),
             })
 
     @api.model_create_multi
@@ -1759,69 +1756,3 @@ class HrRfidCommands(models.Model):
                 records += super(HrRfidCommands, self).create([vals])
 
         return records
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
