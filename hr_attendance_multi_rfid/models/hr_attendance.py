@@ -121,8 +121,8 @@ class HrAttendanceExportWizard(models.TransientModel):
                 if attendance.check_out:
                     check_out = separator.join(["{}2".format(attendance.id), str(attendance.check_out.day), str(attendance.check_out.month), 
                                                 str(attendance.check_out.year), str(attendance.check_out.hour), str(attendance.check_out.minute),
-                                                str(attendance.check_out.second), str(attendance.hr_rfid_user_event_check_in_id.employee_id.barcode),
-                                                str(attendance.hr_rfid_user_event_check_in_id.employee_id.identification_id), 
+                                                str(attendance.check_out.second), str(attendance.hr_rfid_user_event_check_out_id.employee_id.barcode),
+                                                str(attendance.hr_rfid_user_event_check_out_id.employee_id.identification_id), 
                                                 "1", "изход",'----'])
                     filecontent.append(check_out)
             filecontent = base64.encodebytes('\n'.join(filecontent).encode('utf-8'))
@@ -142,7 +142,7 @@ class HrAttendanceExportWizard(models.TransientModel):
                                             str(attendance.hr_rfid_user_event_check_in_id.employee_id.barcode),
                                             attendance.employee_id.display_name, 'вход', 
                                             datetime.strftime(attendance.check_in, '%d.%m.%y'),
-                                            datetime.strftime(attendance.check_out, ' %H:%M')])
+                                            datetime.strftime(attendance.check_in, ' %H:%M')])
                     
                 filecontent.append(check_in)
 
@@ -150,7 +150,7 @@ class HrAttendanceExportWizard(models.TransientModel):
                     check_out = separator.join(["М: 001", "ENTERANCE", 
                                                 str(attendance.hr_rfid_user_event_check_in_id.employee_id.barcode),
                                                 attendance.employee_id.display_name, 'изход', 
-                                                datetime.strftime(attendance.check_in, '%d.%m.%y'),
+                                                datetime.strftime(attendance.check_out, '%d.%m.%y'),
                                                 datetime.strftime(attendance.check_out, ' %H:%M')])
                     filecontent.append(check_out)
 
