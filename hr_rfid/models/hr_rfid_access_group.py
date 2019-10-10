@@ -61,6 +61,7 @@ class HrRfidAccessGroup(models.Model):
         help='Departments assigned to this access group',
     )
 
+    # TODO Rename to inherited_ids
     inherited_access_groups = fields.Many2many(
         comodel_name='hr.rfid.access.group',
         relation='access_group_inheritance',
@@ -69,6 +70,7 @@ class HrRfidAccessGroup(models.Model):
         string='Inherited access groups',
     )
 
+    # TODO Rename to inheritor_ids
     inheritor_access_groups = fields.Many2many(
         comodel_name='hr.rfid.access.group',
         relation='access_group_inheritance',
@@ -117,6 +119,7 @@ class HrRfidAccessGroup(models.Model):
                     'door_id': door.id,
                     'time_schedule_id': time_schedule.id,
                 }])
+        self.check_for_ts_inconsistencies()
 
     @api.one
     def del_doors(self, door_ids):
@@ -190,19 +193,59 @@ class HrRfidAccessGroup(models.Model):
             HrRfidAccessGroup._check_all_contacts_rec(contact_ids, checked_ids, rec_gr)
 
     @api.one
+    def check_for_ts_inconsistencies(self):
+        def get_highest_acc_grs(_gr):
+            if len(_gr.inheritor_access_groups) == 0:
+                return _gr
+
+            _hg = self.env['hr.rfid.access.group']
+            for _acc_gr in _gr.inheritor_access_groups:
+                if len(_acc_gr.inheritor_access_groups) == 0:
+                    _hg += _acc_gr
+                else:
+                    _hg += get_highest_acc_grs(_acc_gr)
+            return _hg
+        
+        def check_tses(_gr1, _gr2):
+            _doors1 = _gr1.door_ids
+            _doors2 = _gr2.door_ids
+            _door_rel_env = self.env['hr.rfid.access.group.door.rel']
+            _door_rel_env.check_for_ts_inconsistencies(_doors1, _doors2)
+
+        def iterate_acc_grs(_gr, _checked_groups):
+            for _gr2 in _gr.inherited_access_groups:
+                if _gr2 in _checked_groups:
+                    continue
+                _checked_groups.append(_gr2)
+                check_tses(_gr, _gr2)
+                iterate_acc_grs(_gr2, _checked_groups)
+
+        highest_groups = get_highest_acc_grs(self)
+        print('highest_groups=' + str(highest_groups))
+        for acc_gr in highest_groups:
+            iterate_acc_grs(acc_gr, [])
+        employees = self.all_employee_ids.mapped('employee_id')
+        contacts = self.all_contact_ids.mapped('contact_id')
+        employees.mapped(lambda r: r.check_for_ts_inconsistencies())
+        contacts.mapped(lambda r: r.check_for_ts_inconsistencies())
+
+    @api.multi
     @api.constrains('inherited_access_groups')
     def _check_inherited_access_groups(self):
         env = self.env['hr.rfid.access.group']
-        group_order = []
-        ret = HrRfidAccessGroup._check_inherited_access_groups_rec(self, [], group_order)
-        if ret is True:
-            err2 = ''
-            for acc_gr_id in group_order:
-                acc_gr = env.browse(acc_gr_id)
-                err2 += '\n-> '
-                err2 += acc_gr.name
-            err = _('Circular reference found in the inherited access groups: %s') % err2
-            raise exceptions.ValidationError(err)
+        for acc_gr in self:
+            group_order = []
+            ret = HrRfidAccessGroup._check_inherited_access_groups_rec(acc_gr, [], group_order)
+            if ret is True:
+                err2 = ''
+                for acc_gr_id in group_order:
+                    acc_gr = env.browse(acc_gr_id)
+                    err2 += '\n-> '
+                    err2 += acc_gr.name
+                err = _('Circular reference found in the inherited access groups: %s') % err2
+                raise exceptions.ValidationError(err)
+
+            acc_gr.check_for_ts_inconsistencies()
 
     @staticmethod
     def _check_inherited_access_groups_rec(acc_gr, visited_groups: list, group_order: list, orig_id=None):
@@ -330,6 +373,18 @@ class HrRfidAccessGroupDoorRel(models.Model):
         required=True,
         ondelete='cascade',
     )
+
+    @api.model
+    def check_for_ts_inconsistencies(self, rels1, rels2):
+        for door_rel in rels1:
+            for door_rel2 in rels2[:]:
+                if door_rel.door_id == door_rel2.door_id:
+                    if door_rel.time_schedule_id != door_rel2.time_schedule_id:
+                        raise exceptions.ValidationError(
+                            _('Time schedule does not match for door "%s" in access groups "%s" and "%s"')
+                            % (door_rel.door_id.name, door_rel.access_group_id.name,
+                               door_rel2.access_group_id.name))
+                    rels2 -= door_rel2
 
     @api.model
     def time_schedule_changed(self, rel_id):

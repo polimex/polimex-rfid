@@ -39,6 +39,7 @@ class HrEmployee(models.Model):
     def add_acc_gr(self, access_group, expiration=None):
         rel_env = self.env['hr.rfid.access.group.employee.rel']
         for emp in self:
+            emp.check_for_ts_inconsistencies_when_adding(access_group)
             creation_dict = {
                 'employee_id': emp.id,
                 'access_group_id': access_group.id,
@@ -68,10 +69,32 @@ class HrEmployee(models.Model):
         acc_grs = acc_grs + including_acc_grs
         return acc_grs.mapped('all_door_ids').mapped('door_id')
 
+    @api.one
+    def check_for_ts_inconsistencies_when_adding(self, new_acc_grs):
+        acc_gr_door_rel_env = self.env['hr.rfid.access.group.door.rel']
+        acc_grs = self.hr_rfid_access_group_ids.mapped('access_group_id')
+        for acc_gr1 in acc_grs:
+            for acc_gr2 in new_acc_grs:
+                door_rels1 = acc_gr1.all_door_ids
+                door_rels2 = acc_gr2.all_door_ids
+                acc_gr_door_rel_env.check_for_ts_inconsistencies(door_rels1, door_rels2)
+
+    @api.one
+    def check_for_ts_inconsistencies(self):
+        acc_gr_door_rel_env = self.env['hr.rfid.access.group.door.rel']
+        acc_grs = self.hr_rfid_access_group_ids.mapped('access_group_id')
+        for i in range(len(acc_grs)):
+            for j in range(i+1, len(acc_grs)):
+                door_rels1 = acc_grs[i].all_door_ids
+                door_rels2 = acc_grs[j].all_door_ids
+                acc_gr_door_rel_env.check_for_ts_inconsistencies(door_rels1, door_rels2)
+
     @api.multi
     @api.constrains('hr_rfid_access_group_ids')
     def _check_access_group(self):
         for user in self:
+            user.check_for_ts_inconsistencies()
+
             for acc_gr_rel in user.hr_rfid_access_group_ids:
                 acc_gr = acc_gr_rel.access_group_id
                 if acc_gr not in user.department_id.hr_rfid_allowed_access_groups:
