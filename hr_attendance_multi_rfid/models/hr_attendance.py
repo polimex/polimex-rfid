@@ -114,7 +114,7 @@ class HrAttendanceExportWizard(models.TransientModel):
         Exports attendances depending from the given from - to date, export format and separator.
         """
 
-        def export_acc2omz(attendances, separator):
+        def export_acc2omz(attendances, separator, encoding):
             """
             Retrurns the name of the file and its content, encoded.
             """
@@ -167,11 +167,11 @@ class HrAttendanceExportWizard(models.TransientModel):
                     )
                     filecontent.append(check_out)
             filecontent = base64.encodebytes(
-                "\n".join(filecontent).encode("windows-1251")
+                "\n".join(filecontent).encode(encoding)
             )
             return filename, filecontent
 
-        def export_enersys(attendances, separator):
+        def export_enersys(attendances, separator, encoding):
             """
             Retrurns the name of the file and its content, encoded.
             """
@@ -213,7 +213,7 @@ class HrAttendanceExportWizard(models.TransientModel):
                     filecontent.append(check_out)
 
             filecontent = base64.encodebytes(
-                "\n".join(filecontent).encode("windows-1251")
+                "\n".join(filecontent).encode(encoding)
             )
             return filename, filecontent
 
@@ -234,15 +234,16 @@ class HrAttendanceExportWizard(models.TransientModel):
             to_date = this.to_date
 
         separator = ","
+        encoding = "windows-1251"
         export_format = this.export_format
         attendances = this.env["hr.attendance"].search(
             [("create_date", ">=", from_date), ("create_date", "<=", to_date)]
         )
 
         if export_format == "acc2omz":
-            filename, filecontent = export_acc2omz(attendances, separator)
+            filename, filecontent = export_acc2omz(attendances, separator, encoding)
         elif export_format == "enersys":
-            filename, filecontent = export_enersys(attendances, separator)
+            filename, filecontent = export_enersys(attendances, separator, encoding)
 
         if not filecontent:
             this.write(
