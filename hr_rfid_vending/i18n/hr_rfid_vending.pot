@@ -1,0 +1,706 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* hr_rfid_vending
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-10-10 15:21+0000\n"
+"PO-Revision-Date: 2019-10-10 15:21+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__event_action
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Action"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_change_form
+msgid "Add"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_view_employee_form_inherit_hr_rfid_vending
+msgid "Add/Subtract from balance"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl__show_price_timeout
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__show_price_timeout
+msgid "After how long the vending machine will stop showing the product price on the screen"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_balance
+msgid "Amount of money an employee can spend on the vending machine"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_auto_refill
+msgid "Auto Refill"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__auto_refill_id
+msgid "Auto Refill Event"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_rfid_vending_auto_refill
+msgid "Auto Refill Events"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__date_created
+msgid "Auto Refill Time"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+msgid "Auto Refills"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_auto_refill
+msgid "Automatically refill balance monthly"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: selection:hr.rfid.vending.event,event_action:0
+msgid "Bad Data Error"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_graph
+msgid "Balance Changes Per Employee"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_balance_history
+msgid "Balance History"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__balance_history_ids
+msgid "Balance History Changes"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_change
+msgid "Balance change"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_rfid_vending_balance_history
+msgid "Balance history for employees"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_result
+msgid "Balance result"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_change_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_set_form
+msgid "Cancel"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__card_id
+msgid "Card"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__cash_contained
+msgid "Cash Contained"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_change_form
+msgid "Change Vending Balance"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.actions.act_window,name:hr_rfid_vending.hr_rfid_ctrl_vending_prices_wiz_action
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_view_form_inherit_hr_rfid_vending
+msgid "Change Vending Settings"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.actions.act_window,name:hr_rfid_vending.hr_employee_vending_balance_change_action
+msgid "Change vending balance"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_vending_prices_wiz
+msgid "Close"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_rfid_ctrl
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__controller_id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__controller_id
+msgid "Controller"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__name
+msgid "Document Name"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_employee
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__employee_id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__employee_id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__employee_id
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Employee"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Employee Transaction Events"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: selection:hr.rfid.vending.event,event_action:0
+msgid "Error"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__vending_event_id
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_pivot
+msgid "Event"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Events from last month"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Events from last week"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Events from last year"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Events from this month"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Events from this week"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Events from this year"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Events from today"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: selection:hr.employee,hr_rfid_vending_refill_type:0
+msgid "Fixed type"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_type
+msgid "Fixed type just adds the refill amount to the user's balance every month. Up To type adds to the user's balance every month with a maximum the auto refill will never go over."
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Group By"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.actions.server,name:hr_rfid_vending.hr_rfid_vending_delete_old_events_ir_actions_server
+#: model:ir.cron,cron_name:hr_rfid_vending.hr_rfid_vending_delete_old_events
+#: model:ir.cron,name:hr_rfid_vending.hr_rfid_vending_delete_old_events
+msgid "HR RFID Vending: Delete old events"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.actions.server,name:hr_rfid_vending.hr_rfid_vending_employees_auto_refill_ir_actions_server
+#: model:ir.cron,cron_name:hr_rfid_vending.hr_rfid_vending_employees_auto_refill
+#: model:ir.cron,name:hr_rfid_vending.hr_rfid_vending_employees_auto_refill
+msgid "HR RFID Vending: Employees Auto Refill"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_amount
+msgid "How much money to be added to the person's balance"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_result
+msgid "How much the balance was after the change"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_change
+msgid "How much was deposited/withdrawn from the employee's balance"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__id
+msgid "ID"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__input_js
+msgid "Input JSON"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: code:addons/hr_rfid_vending/controllers/main.py:26
+#, python-format
+msgid "Item %s has the cost of %f but vending reported it costs %f!"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__item_id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__item_sold_id
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Item Sold"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__item_sold
+msgid "Item Sold Number"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: code:addons/hr_rfid_vending/controllers/main.py:25
+#, python-format
+msgid "Item number %d missing from vending machine configuration"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item1
+msgid "Item#1"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item2
+msgid "Item#2"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item3
+msgid "Item#3"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item4
+msgid "Item#4"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__vending_row_ids
+msgid "Item/Price"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz____last_update
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row____last_update
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings____last_update
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill____last_update
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history____last_update
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event____last_update
+msgid "Last Modified on"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_limit
+msgid "Limit"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Month"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__name
+msgid "Name"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_negative_balance
+msgid "Negative Balance"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Non-Employee Transaction Events"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_in_attendance
+msgid "Only allow the user to perform vending transactions while attending"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_in_attendance
+msgid "Only while attending"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_view_employee_form_inherit_hr_rfid_vending
+msgid "Operation Date"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+msgid "Person Responsible"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__name
+msgid "Person Responsible/Item"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__person_responsible
+msgid "Person responsible for the change"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_product_template
+msgid "Product Template"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: selection:hr.rfid.vending.event,event_action:0
+msgid "Purchase Complete"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_rfid_vending_event
+msgid "RFID Vending Event"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_amount
+msgid "Refill Amount"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_max
+msgid "Refill Max"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_type
+msgid "Refill Type"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: selection:hr.rfid.vending.event,event_action:0
+msgid "Requesting User Balance"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__command_id
+msgid "Response"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__row_num
+msgid "Row Num"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_graph
+msgid "Sales Per Product"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_vending_prices_wiz
+msgid "Save"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__scale_factor
+msgid "Scale Factor"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__sent_balance
+msgid "Sent Balance"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_set_form
+msgid "Set Vending Balance"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_view_employee_form_inherit_hr_rfid_vending
+msgid "Set balance to"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_set_form
+msgid "Set to"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.actions.act_window,name:hr_rfid_vending.hr_employee_vending_balance_set_action
+msgid "Set vending balance"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_view_employee_form_inherit_hr_rfid_vending
+msgid "Settings"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__show_price_timeout
+msgid "Show Price Timeout"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_change_form
+msgid "Subtract"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl__cash_contained
+msgid "The amount of cash the vending machine currently contains"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__item_sold_id
+msgid "The item that was sold in the transaction"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_max
+msgid "The limit of cash the auto refill should never go over"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: code:addons/hr_rfid_vending/models/hr_rfid_webstack.py:177
+#, python-format
+msgid "The value of %s is invalid. Must be between 0 and 255"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__event_time
+msgid "Time the event triggered"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__event_time
+msgid "Timestamp"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__auto_refill_total
+msgid "Total Cash Refilled"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__transaction_price
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Transaction Price"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Transaction events"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: selection:hr.employee,hr_rfid_vending_refill_type:0
+msgid "Up To type"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_limit
+msgid "User cannot go in more debt than this value"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__value
+msgid "Value"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.ui.menu,name:hr_rfid_vending.hr_rfid_vending_menu
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_view_employee_form_inherit_hr_rfid_vending
+msgid "Vending"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__show_price_timeout
+msgid "Vending \"Show Price\" Timeout"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.actions.act_window,name:hr_rfid_vending.hr_rfid_vending_auto_refill_action
+#: model:ir.ui.menu,name:hr_rfid_vending.hr_rfid_vending_menu_auto_refill
+msgid "Vending Auto Refill Events"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_balance
+msgid "Vending Balance"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.actions.act_window,name:hr_rfid_vending.hr_rfid_vending_balance_history_action
+#: model:ir.ui.menu,name:hr_rfid_vending.hr_rfid_vending_menu_balance_history
+msgid "Vending Balance History"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.actions.act_window,name:hr_rfid_vending.hr_rfid_vending_event_action
+#: model:ir.ui.menu,name:hr_rfid_vending.hr_rfid_vending_menu_events
+msgid "Vending Events"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__controller_id
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Vending Machine"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_rfid_ctrl_vending_row
+msgid "Vending Machine Row"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_rfid_ctrl_vending_settings
+msgid "Vending Machine Settings"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__scale_factor
+msgid "Vending Scale Factor"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_vending_prices_wiz
+msgid "Vending Settings"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_vending_prices_wiz
+msgid "Vending prices table:"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_vending_prices_wiz
+msgid "Vending settings:"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__event_action
+msgid "What happened to trigger the event"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_negative_balance
+msgid "Whether the user is allowed to have a negative balance or not"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_employee_vending_balance_wiz
+msgid "hr.employee.vending.balance.wiz"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: code:addons/hr_rfid_vending/models/hr_rfid_webstack.py:203
+#, python-format
+msgid "item %s: %f is not a valid price. Must be between %f and %f"
+msgstr ""
+
+
