@@ -119,7 +119,7 @@ class HrRfidAccessGroup(models.Model):
                 })
 
     @api.one
-    def del_door(self, door_ids):
+    def del_doors(self, door_ids):
         rel_env = self.env['hr.rfid.access.group.door.rel']
         for door in door_ids:
             res = rel_env.search([ ('access_group_id', '=', self.id),
