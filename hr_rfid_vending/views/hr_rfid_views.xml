@@ -99,6 +99,8 @@
             <field name="controller_id" />
             <field name="event_action" />
             <field name="event_time" />
+            <field name="create_date" readonly="1" string="Receive Date"
+                   help="Time odoo received the event" />
             <field name="transaction_price" attrs="{'invisible':[('transaction_price','&lt;',0)]}" />
             <field name="employee_id" attrs="{'invisible':[('employee_id','=',False)]}" />
             <field name="card_id" attrs="{'invisible':[('card_id','=',False)]}" />

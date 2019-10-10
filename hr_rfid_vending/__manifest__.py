@@ -6,7 +6,7 @@
     'category': 'Vending',
     'summary': 'Manage EXECUTIVE based vending machines',
     'author': 'Polimex',
-    'license': 'GPL-3',
+    'license': 'AGPL-3',
 
     'website': 'http://www.securitybulgaria.com',
 
