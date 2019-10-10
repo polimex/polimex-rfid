@@ -1111,6 +1111,8 @@
             <field name="workcode_id" attrs="{'invisible': [('workcode_id','=', False)]}" />
             <field name="event_action" readonly="1" />
             <field name="event_time" readonly="1" />
+            <field name="create_date" readonly="1" string="Receive Date"
+                   help="Time odoo received the event" />
             <field name="ctrl_addr" readonly="1" />
             <field name="employee_id" readonly="1" />
             <field name="door_id" readonly="1" />

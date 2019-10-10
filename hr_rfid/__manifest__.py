@@ -6,7 +6,7 @@
     'category': 'Human Resources',
     'summary': 'Manage employee access control',
     'author': 'Polimex',
-    'license': 'GPL-3',
+    'license': 'AGPL-3',
 
     'website': 'https://www.securitybulgaria.com/',
 
