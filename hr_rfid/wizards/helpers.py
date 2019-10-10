@@ -3,6 +3,7 @@ from odoo import fields, models
 
 class DialogBox(models.TransientModel):
     _name = 'hr.rfid.wiz.dialog.box'
+    _description = 'Dialog box wizard helper'
 
     text = fields.Char(string='Text', readonly=True)
 

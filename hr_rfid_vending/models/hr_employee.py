@@ -4,6 +4,7 @@ from odoo import api, fields, models, exceptions
 
 class VendingBalanceWiz(models.TransientModel):
     _name = 'hr.employee.vending.balance.wiz'
+    _description = 'Employee balance setter'
 
     def _default_employee(self):
         return self.env['hr.employee'].browse(self._context.get('active_ids'))

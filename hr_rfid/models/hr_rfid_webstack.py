@@ -2,7 +2,6 @@
 from odoo import api, fields, models, exceptions, _
 from datetime import datetime, timedelta
 from ..wizards.helpers import create_and_ret_d_box, return_wiz_form_view
-import logging
 import socket
 import http.client
 import json
