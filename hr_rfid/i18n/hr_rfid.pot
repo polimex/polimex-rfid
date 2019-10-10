@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-06 21:00+0000\n"
-"PO-Revision-Date: 2019-06-06 21:00+0000\n"
+"POT-Creation-Date: 2019-10-10 15:49+0000\n"
+"PO-Revision-Date: 2019-10-10 15:49+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,8 +16,20 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:459
+#, python-format
+msgid "%d is not a valid number for the io table. Valid values range from 0 to 99"
+msgstr ""
+
+#. module: hr_rfid
 #: selection:hr.rfid.command,error:0
 msgid "1-Wire Error"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__cloud_card
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_sys_wiz__cloud_card
+msgid "A cloud card will not be added to controllers that are in the \"externalDB\" mode."
 msgstr ""
 
 #. module: hr_rfid
@@ -36,17 +48,23 @@ msgid "A label to help differentiate between access groups"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__name
+msgid "A label to remind what the workcode represents."
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__ctrl_id
 msgid "A number to distinguish the controller from others on the same module"
 msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_access_group
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_employee__hr_rfid_access_group_id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__access_group_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_door_rel__access_group_id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_employee_rel__access_group_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_wizard__acc_gr_id
-#: model:ir.model.fields,field_description:hr_rfid.field_res_partner__hr_rfid_access_group_id
-#: model:ir.model.fields,field_description:hr_rfid.field_res_users__hr_rfid_access_group_id
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner__hr_rfid_access_group_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_res_users__hr_rfid_access_group_ids
 msgid "Access Group"
 msgstr ""
 
@@ -57,12 +75,25 @@ msgstr ""
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_access_group_action
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_employee__hr_rfid_access_group_ids
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_access_groups
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_search
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_tree
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_contact_form_inherit_hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_employee_form_inherit_hr_rfid
 msgid "Access Groups"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_contact_rel__expiration
+msgid "Access group will remove itself from the contact on the expiration date. Will never expire if blank."
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_employee_rel__expiration
+msgid "Access group will remove itself from the employee on the expiration date. Will never expire if blank."
 msgstr ""
 
 #. module: hr_rfid
@@ -71,17 +102,9 @@ msgid "Access groups that have inherited this one"
 msgstr ""
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_department_add_acc_grs_wiz
-msgid "Access groups that will be added to the department"
-msgstr ""
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_department_del_acc_grs_wiz
-msgid "Access groups that will be removed from the department"
-msgstr ""
-
-#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_acc_grs__acc_grs
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_employee_acc_grs__acc_gr_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_acc_grs__acc_gr_ids
 msgid "Access groups to add/remove"
 msgstr ""
 
@@ -99,6 +122,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_needaction
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_needaction
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_needaction
 msgid "Action Needed"
 msgstr ""
 
@@ -122,8 +146,14 @@ msgstr ""
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_department_add_acc_grs_wiz_action
+#: model:ir.actions.act_window,name:hr_rfid.hr_employee_acc_grs_add_action
+#: model:ir.actions.act_window,name:hr_rfid.res_partner_acc_grs_add_action
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_department_add_acc_grs_wiz
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_employee_acc_grs_add_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_contact_form_inherit_hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_department_form_inherit_hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_employee_form_inherit_hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_partner_acc_grs_add_form
 msgid "Add Access Groups"
 msgstr ""
 
@@ -152,6 +182,16 @@ msgid "Add card to employee/contact"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_res_partner_acc_grs
+msgid "Add or remove access groups to or from the contact"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_hr_employee_acc_grs
+msgid "Add or remove access groups to or from the employee"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_department_acc_grs
 msgid "Add or remove access groups to the department"
 msgstr ""
@@ -172,6 +212,11 @@ msgid "Additional data sent to the controller"
 msgstr ""
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_department_def_acc_gr_wiz
+msgid "Adds access group to employees in the department without any access groups"
+msgstr ""
+
+#. module: hr_rfid
 #: selection:hr.rfid.webstack,module_username:0
 msgid "Admin"
 msgstr ""
@@ -188,12 +233,37 @@ msgstr ""
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
+msgid "All Contacts"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
 msgid "All Doors"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
+msgid "All Employees"
 msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_wizard__acc_gr_doors
 msgid "All access group doors"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__all_contact_ids
+msgid "All contacts"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
+msgid "All contacts assigned to this access group, including ones from inheritor access groups"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__all_contact_ids
+msgid "All contacts that use this access group, including the ones from the inheritors"
 msgstr ""
 
 #. module: hr_rfid
@@ -207,6 +277,37 @@ msgid "All doors, including inherited ones"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__all_employee_ids
+msgid "All employees"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
+msgid "All employees assigned to this access group, including ones from inheritor access groups"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__all_employee_ids
+msgid "All employees that use this access group, including the ones from the inheritors"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_employee_acc_grs__allowed_acc_grs
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_acc_grs__allowed_acc_grs
+msgid "Allowed Acc Grs"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door_open_close_wiz__time
+msgid "Amount of time (in seconds) the doors will stay open or closed. 0 for infinity."
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Arm On Siren"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__message_attachment_count
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__message_attachment_count
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__message_attachment_count
@@ -215,6 +316,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_attachment_count
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_attachment_count
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_attachment_count
 msgid "Attachment Count"
 msgstr ""
 
@@ -244,6 +346,17 @@ msgid "Bad JSON Structure (WebSDK)"
 msgstr ""
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:888
+#, python-format
+msgid "Because the webstack is behind NAT, we have to wait for the webstack to call us, so we created a command. The door will open/close for %d seconds as soon as possible."
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_discovery_wiz
+msgid "Begin discovery"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__behind_nat
 msgid "Behind NAT"
 msgstr ""
@@ -262,9 +375,15 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_department_add_acc_grs_wiz
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_department_def_acc_gr_wiz
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_department_del_acc_grs_wiz
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_employee_acc_grs_add_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_employee_acc_grs_rem_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_add_doors_wiz
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_del_doors_wiz
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_open_close_wiz_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_wiz_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_discovery_wiz
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_partner_acc_grs_add_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_partner_acc_grs_rem_form
 msgid "Cancel"
 msgstr ""
 
@@ -283,6 +402,11 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__number
 msgid "Card Number"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.reader,mode:0
+msgid "Card Only"
 msgstr ""
 
 #. module: hr_rfid
@@ -312,8 +436,23 @@ msgid "Card affected by this event"
 msgstr ""
 
 #. module: hr_rfid
+#: selection:hr.rfid.reader,mode:0
+msgid "Card and Pin"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.reader,mode:0
+msgid "Card and Workcode"
+msgstr ""
+
+#. module: hr_rfid
 #: sql_constraint:hr.rfid.card:0
 msgid "Card numbers must be unique!"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.reader,mode:0
+msgid "Card or Pin"
 msgstr ""
 
 #. module: hr_rfid
@@ -364,9 +503,13 @@ msgid "Cards of this card type"
 msgstr ""
 
 #. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_employee__hr_rfid_card_ids
 #: model:ir.model.fields,help:hr_rfid.field_res_partner__hr_rfid_card_ids
 #: model:ir.model.fields,help:hr_rfid.field_res_users__hr_rfid_card_ids
+msgid "Cards owned by the contact"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_employee__hr_rfid_card_ids
 msgid "Cards owned by the employee"
 msgstr ""
 
@@ -378,9 +521,53 @@ msgid "Change Default Access Group"
 msgstr ""
 
 #. module: hr_rfid
-#: code:addons/hr_rfid/models/hr_rfid_access_group.py:129
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_department_def_acc_gr_wiz
+msgid "Change and Apply"
+msgstr ""
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:204
 #, python-format
 msgid "Circular reference found in the inherited access groups: %s"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_io_table_wiz
+msgid "Close"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_tree
+msgid "Close door"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_open_close_wiz_form
+msgid "Close doors"
+msgstr ""
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:975
+#, python-format
+msgid "Closed the door for %d seconds."
+msgstr ""
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:986
+#, python-format
+msgid "Closed the door."
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__cloud_card
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz__cloud_card
+msgid "Cloud Card"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.workcode,user_action:0
+msgid "Coming to work"
 msgstr ""
 
 #. module: hr_rfid
@@ -409,8 +596,19 @@ msgid "Command Waiting for Webstack Communication"
 msgstr ""
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:887
+#, python-format
+msgid "Command creation successful"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__cmd_data
 msgid "Command data"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__retries
+msgid "Command retries"
 msgstr ""
 
 #. module: hr_rfid
@@ -449,8 +647,6 @@ msgstr ""
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_search
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
 msgid "Commands from this month"
 msgstr ""
 
@@ -491,8 +687,10 @@ msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_res_partner
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__contact_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz__contact_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__contact_id
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_acc_grs__contact_id
 msgid "Contact"
 msgstr ""
 
@@ -536,6 +734,7 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_ctrl
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__controller_id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__controller_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__controller_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__controller_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__controller_id
@@ -550,6 +749,16 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__ctrl_addr
 msgid "Controller ID"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_hr_rfid_ctrl_io_table_wiz
+msgid "Controller IO Table Wizard"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_hr_rfid_ctrl_io_table_row
+msgid "Controller IO Table row"
 msgstr ""
 
 #. module: hr_rfid
@@ -596,42 +805,86 @@ msgid "Controllers that this WebStack manages"
 msgstr ""
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:980
+#, python-format
+msgid "Created a command to close the door for %d seconds."
+msgstr ""
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:991
+#, python-format
+msgid "Created a command to close the door."
+msgstr ""
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:978
+#, python-format
+msgid "Created a command to open the door for %d seconds."
+msgstr ""
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:989
+#, python-format
+msgid "Created a command to open the door."
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_acc_grs__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_def_acc_gr__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_employee_acc_grs__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_door_rel__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_employee_rel__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_wizard__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door_open_close_wiz__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_wiz_dialog_box__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_acc_grs__create_uid
 msgid "Created by"
 msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_acc_grs__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_def_acc_gr__create_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_employee_acc_grs__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__create_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_door_rel__create_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_employee_rel__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_wizard__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__create_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__create_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__create_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door_open_close_wiz__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__create_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__create_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_wiz_dialog_box__create_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__create_date
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_acc_grs__create_date
 msgid "Created on"
 msgstr ""
 
@@ -681,6 +934,11 @@ msgstr ""
 #. module: hr_rfid
 #: selection:hr.rfid.command,cmd:0
 msgid "Delete Time Schedule"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
+msgid "Delete all of the cards on the controller and then re-add them."
 msgstr ""
 
 #. module: hr_rfid
@@ -749,21 +1007,36 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_acc_grs__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_def_acc_gr__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_employee_acc_grs__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_door_rel__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_employee_rel__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_wizard__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door_open_close_wiz__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_wiz_dialog_box__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_acc_grs__display_name
 msgid "Display Name"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_discovery_wiz
+msgid "Done"
 msgstr ""
 
 #. module: hr_rfid
@@ -775,8 +1048,24 @@ msgid "Door"
 msgstr ""
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:113
+#, python-format
+msgid "Door %s can only use the first 3 time schedules"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__access_group_ids
 msgid "Door Access Groups"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Door Forced Open"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Door Overtime"
 msgstr ""
 
 #. module: hr_rfid
@@ -785,8 +1074,20 @@ msgid "Door affected by this event"
 msgstr ""
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:893
+#, python-format
+msgid "Door successfully opened/closed"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__door_id
 msgid "Door the reader opens"
+msgstr ""
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:894
+#, python-format
+msgid "Door will remain opened/closed for %d seconds."
 msgstr ""
 
 #. module: hr_rfid
@@ -811,16 +1112,6 @@ msgid "Doors group has access to"
 msgstr ""
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_add_doors_wiz
-msgid "Doors group will have access to"
-msgstr ""
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_del_doors_wiz
-msgid "Doors group will no longer have access to"
-msgstr ""
-
-#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__door_ids
 msgid "Doors that belong to this controller"
 msgstr ""
@@ -831,8 +1122,51 @@ msgid "Doors that will open to this card type"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door_open_close_wiz__doors
+msgid "Doors to open/close"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Duress"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Duress Error"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Emergency Input"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_employee
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_employee_acc_grs__employee_id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_employee_rel__employee_id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__employee_id
 msgid "Employee"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__employee_id
+msgid "Employee affected by this event"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
+msgid "Employees"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
+msgid "Employees assigned to this access group"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.workcode,user_action:0
+msgid "End last action (return from break, leave work, etc)"
 msgstr ""
 
 #. module: hr_rfid
@@ -869,6 +1203,11 @@ msgid "Event"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__event_number
+msgid "Event Number"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__user_event_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__user_event_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__user_event_ids
@@ -880,14 +1219,18 @@ msgid "Events"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_res_partner__hr_rfid_event_ids
+#: model:ir.model.fields,help:hr_rfid.field_res_users__hr_rfid_event_ids
+msgid "Events concerning this contact"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__user_event_ids
 msgid "Events concerning this door"
 msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_employee__hr_rfid_event_ids
-#: model:ir.model.fields,help:hr_rfid.field_res_partner__hr_rfid_event_ids
-#: model:ir.model.fields,help:hr_rfid.field_res_users__hr_rfid_event_ids
 msgid "Events concerning this employee"
 msgstr ""
 
@@ -922,6 +1265,12 @@ msgstr ""
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_search
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
+msgid "Events from this month"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
 msgid "Events from this week"
 msgstr ""
 
@@ -948,6 +1297,43 @@ msgid "Execution Time"
 msgstr ""
 
 #. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Exit Button 1"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Exit Button 2"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Exit Button 3"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Exit Button 4"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_employee_acc_grs__expiration
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_acc_grs__expiration
+msgid "Expiration"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__expiration
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_employee_rel__expiration
+msgid "Expiration Date"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__external_db
+msgid "External DB"
+msgstr ""
+
+#. module: hr_rfid
 #: selection:hr.rfid.ctrl,hw_version:0
 msgid "FireControl"
 msgstr ""
@@ -961,6 +1347,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_follower_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_follower_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_follower_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_follower_ids
 msgid "Followers"
 msgstr ""
 
@@ -973,6 +1360,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_channel_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_channel_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_channel_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_channel_ids
 msgid "Followers (Channels)"
 msgstr ""
 
@@ -985,7 +1373,18 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_partner_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_partner_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_partner_ids
 msgid "Followers (Partners)"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__found_webstacks
+msgid "Found modules"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.workcode,user_action:0
+msgid "Going to a break"
 msgstr ""
 
 #. module: hr_rfid
@@ -996,6 +1395,20 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_department
 msgid "HR Department"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.actions.server,name:hr_rfid.hr_rfid_contact_acc_gr_expiration_ir_actions_server
+#: model:ir.cron,cron_name:hr_rfid.hr_rfid_contact_acc_gr_expiration
+#: model:ir.cron,name:hr_rfid.hr_rfid_contact_acc_gr_expiration
+msgid "HR RFID: Check contact access group expirations"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.actions.server,name:hr_rfid.hr_rfid_employee_acc_gr_expiration_ir_actions_server
+#: model:ir.cron,cron_name:hr_rfid.hr_rfid_employee_acc_gr_expiration
+#: model:ir.cron,name:hr_rfid.hr_rfid_employee_acc_gr_expiration
+msgid "HR RFID: Check employee access group expirations"
 msgstr ""
 
 #. module: hr_rfid
@@ -1010,11 +1423,6 @@ msgstr ""
 #: model:ir.cron,cron_name:hr_rfid.hr_rfid_delete_old_events
 #: model:ir.cron,name:hr_rfid.hr_rfid_delete_old_events
 msgid "HR RFID: Delete old events"
-msgstr ""
-
-#. module: hr_rfid
-#: model:res.groups,name:hr_rfid.hr_rfid_group_officer_department
-msgid "HR RFID: Only show own department's information"
 msgstr ""
 
 #. module: hr_rfid
@@ -1040,6 +1448,11 @@ msgid "HR RFID: View pin code data in users"
 msgstr ""
 
 #. module: hr_rfid
+#: model:res.groups,name:hr_rfid.hr_rfid_view_door_open_close
+msgid "HR RFID: View the door open/close buttons"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__hw_version
 msgid "Hardware Type"
 msgstr ""
@@ -1060,6 +1473,11 @@ msgid "How many alarm inputs there are"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__retries
+msgid "How many times the command failed to run and has been retried"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__http_link
 msgid "Http Link"
 msgstr ""
@@ -1072,21 +1490,31 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_acc_grs__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_def_acc_gr__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_employee_acc_grs__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_door_rel__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_employee_rel__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_wizard__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__ctrl_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door_open_close_wiz__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_wiz_dialog_box__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__id
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_acc_grs__id
 msgid "ID"
 msgstr ""
 
@@ -1096,8 +1524,18 @@ msgid "ID the controller differentiates itself from the others with on the same 
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__io_row_ids
+msgid "IO Table"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__io_table_lines
 msgid "IO Table Lines"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_io_table_wiz
+msgid "IO table:"
 msgstr ""
 
 #. module: hr_rfid
@@ -1109,6 +1547,7 @@ msgstr ""
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__message_unread
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__message_unread
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__message_unread
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__message_unread
 msgid "If checked new messages require your attention."
 msgstr ""
 
@@ -1121,6 +1560,7 @@ msgstr ""
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__message_needaction
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__message_needaction
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__message_needaction
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__message_needaction
 msgid "If checked, new messages require your attention."
 msgstr ""
 
@@ -1133,12 +1573,18 @@ msgstr ""
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__message_has_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__message_has_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__message_has_error
 msgid "If checked, some messages have a delivery error."
 msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__error
 msgid "If status is \"Command Unsuccessful\" this field is updated to the reason for why it was unsuccessful"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__external_db
+msgid "If the controller uses the \"ExternalDB\" feature."
 msgstr ""
 
 #. module: hr_rfid
@@ -1172,6 +1618,16 @@ msgid "Inheritors"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__io_table
+msgid "Input and output table for the controller."
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__io_table
+msgid "Input/Output Table"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__inputs
 msgid "Inputs"
 msgstr ""
@@ -1190,6 +1646,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_is_follower
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_is_follower
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_is_follower
 msgid "Is Follower"
 msgstr ""
 
@@ -1231,20 +1688,30 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_acc_grs____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_def_acc_gr____last_update
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_employee_acc_grs____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group____last_update
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_door_rel____last_update
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_employee_rel____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_wizard____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl____last_update
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row____last_update
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door____last_update
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door_open_close_wiz____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack____last_update
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery____last_update
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_wiz_dialog_box____last_update
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode____last_update
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_acc_grs____last_update
 msgid "Last Modified on"
 msgstr ""
 
@@ -1256,40 +1723,60 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_acc_grs__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_def_acc_gr__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_employee_acc_grs__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_door_rel__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_employee_rel__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_wizard__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door_open_close_wiz__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_wiz_dialog_box__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_acc_grs__write_uid
 msgid "Last Updated by"
 msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_acc_grs__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_def_acc_gr__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_employee_acc_grs__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_door_rel__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_employee_rel__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_wizard__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door_open_close_wiz__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_wiz_dialog_box__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_acc_grs__write_date
 msgid "Last Updated on"
 msgstr ""
 
@@ -1307,12 +1794,18 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_main_attachment_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_main_attachment_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_main_attachment_id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_main_attachment_id
 msgid "Main Attachment"
 msgstr ""
 
 #. module: hr_rfid
 #: model:res.groups,name:hr_rfid.hr_rfid_group_manager
 msgid "Manager"
+msgstr ""
+
+#. module: hr_rfid
+#: model:res.groups,name:hr_rfid.hr_rfid_group_manager_department
+msgid "Manager Own Department"
 msgstr ""
 
 #. module: hr_rfid
@@ -1359,6 +1852,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_has_error
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_has_error
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_has_error
 msgid "Message Delivery error"
 msgstr ""
 
@@ -1371,7 +1865,13 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_ids
 msgid "Messages"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__mode
+msgid "Mode of the reader"
 msgstr ""
 
 #. module: hr_rfid
@@ -1383,7 +1883,6 @@ msgid "Module"
 msgstr ""
 
 #. module: hr_rfid
-#: model:ir.actions.server,name:hr_rfid.hr_rfid_webstack_discovery_action
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_modules_discovery
 msgid "Module Discovery"
 msgstr ""
@@ -1421,14 +1920,31 @@ msgid "Modules"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.actions.act_window,name:hr_rfid.hr_rfid_webstack_discovery_action
+msgid "Modules Discovery"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_discovery__found_webstacks
+msgid "Modules that were just found during the discovery process"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_discovery__setup_and_set_to_active
+msgid "Modules to automatically setup for the odoo and activate"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__name
 msgid "Name"
 msgstr ""
 
@@ -1478,6 +1994,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_needaction_counter
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_needaction_counter
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_needaction_counter
 msgid "Number of Actions"
 msgstr ""
 
@@ -1490,6 +2007,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_has_error_counter
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_has_error_counter
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_has_error_counter
 msgid "Number of error"
 msgstr ""
 
@@ -1502,6 +2020,7 @@ msgstr ""
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__message_needaction_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__message_needaction_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__message_needaction_counter
 msgid "Number of messages which requires an action"
 msgstr ""
 
@@ -1514,6 +2033,7 @@ msgstr ""
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__message_has_error_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__message_has_error_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__message_has_error_counter
 msgid "Number of messages with delivery error"
 msgstr ""
 
@@ -1541,12 +2061,33 @@ msgstr ""
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__message_unread_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__message_unread_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__message_unread_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__message_unread_counter
 msgid "Number of unread messages"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Off Delay"
 msgstr ""
 
 #. module: hr_rfid
 #: model:res.groups,name:hr_rfid.hr_rfid_group_officer
 msgid "Officer"
+msgstr ""
+
+#. module: hr_rfid
+#: model:res.groups,name:hr_rfid.hr_rfid_group_officer_department
+msgid "Officer Own Department"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_dialog_box_form
+msgid "Ok"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "On Delay"
 msgstr ""
 
 #. module: hr_rfid
@@ -1566,13 +2107,102 @@ msgid "Open Output"
 msgstr ""
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_tree
+msgid "Open door"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_open_close_wiz_form
+msgid "Open doors"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_hr_rfid_door_open_close_wiz
+msgid "Open or close door"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_form
+msgid "Open/Close Door"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.actions.act_window,name:hr_rfid.hr_rfid_door_open_close_wiz_act_window
+msgid "Open/Close doors"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.actions.act_window,name:hr_rfid.hr_rfid_door_open_close_wiz_action
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_open_close_wiz_form
+msgid "Open/close door"
+msgstr ""
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:973
+#, python-format
+msgid "Opened the door for %d seconds."
+msgstr ""
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:984
+#, python-format
+msgid "Opened the door."
+msgstr ""
+
+#. module: hr_rfid
 #: selection:hr.rfid.reader,reader_type:0
 msgid "Out"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__out1
+msgid "Out1"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__out2
+msgid "Out2"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__out3
+msgid "Out3"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__out4
+msgid "Out4"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__out5
+msgid "Out5"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__out6
+msgid "Out6"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__out7
+msgid "Out7"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__out8
+msgid "Out8"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__outputs
 msgid "Outputs"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__outs
+msgid "Outs"
 msgstr ""
 
 #. module: hr_rfid
@@ -1749,8 +2379,93 @@ msgid "Reader"
 msgstr ""
 
 #. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Reader #1 APB Error"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Reader #1 Card Error"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Reader #1 Card OK"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Reader #1 TS Error"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Reader #2 APB Error"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Reader #2 Card Error"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Reader #2 Card OK"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Reader #2 TS Error"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Reader #3 APB Error"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Reader #3 Card Error"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Reader #3 Card OK"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Reader #3 TS Error"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Reader #4 APB Error"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Reader #4 Card Error"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Reader #4 Card OK"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.ctrl.io.table.row,event_number:0
+msgid "Reader #4 TS Error"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__reader_id
 msgid "Reader affected by this event"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__mode
+msgid "Reader mode"
 msgstr ""
 
 #. module: hr_rfid
@@ -1784,6 +2499,21 @@ msgid "Readers that open this door"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_hr_rfid_access_group_contact_rel
+msgid "Relation between access groups and contacts"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_hr_rfid_access_group_door_rel
+msgid "Relation between access groups and doors"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_hr_rfid_access_group_employee_rel
+msgid "Relation between access groups and employees"
+msgstr ""
+
+#. module: hr_rfid
 #: selection:hr.rfid.ctrl,hw_version:0
 msgid "RelayControl"
 msgstr ""
@@ -1799,9 +2529,20 @@ msgid "RelayControl150"
 msgstr ""
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
+msgid "Reload all cards"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_department_del_acc_grs_wiz_action
+#: model:ir.actions.act_window,name:hr_rfid.hr_employee_acc_grs_rem_action
+#: model:ir.actions.act_window,name:hr_rfid.res_partner_acc_grs_rem_action
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_department_del_acc_grs_wiz
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_employee_acc_grs_rem_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_contact_form_inherit_hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_department_form_inherit_hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_employee_form_inherit_hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_partner_acc_grs_rem_form
 msgid "Remove Access Groups"
 msgstr ""
 
@@ -1823,13 +2564,24 @@ msgid "Request"
 msgstr ""
 
 #. module: hr_rfid
+#: selection:hr.rfid.event.user,event_action:0
+msgid "Request Instructions"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__request
 msgid "Request json sent to the module"
 msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__response
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__command_id
 msgid "Response"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__command_id
+msgid "Response command"
 msgstr ""
 
 #. module: hr_rfid
@@ -1858,6 +2610,16 @@ msgid "SDK"
 msgstr ""
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_io_table_wiz
+msgid "Save"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.command,cmd:0
+msgid "Sending Balance To Vending Machine"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__serial_number
 msgid "Serial"
 msgstr ""
@@ -1878,12 +2640,19 @@ msgid "Serial number of the controller"
 msgstr ""
 
 #. module: hr_rfid
+#: sql_constraint:hr.rfid.ctrl:0
+msgid "Serial numbers must be unique!"
+msgstr ""
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_tree
 msgid "Set module to active"
 msgstr ""
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_tree
 msgid "Set module to inactive"
 msgstr ""
 
@@ -1905,6 +2674,11 @@ msgid "Settings"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__setup_and_set_to_active
+msgid "Setup and activate"
+msgstr ""
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "Setup module for this odoo"
 msgstr ""
@@ -1917,6 +2691,11 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__version
 msgid "Software version of the module"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__state
+msgid "State"
 msgstr ""
 
 #. module: hr_rfid
@@ -1961,8 +2740,18 @@ msgid "Test module connection"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_wiz_dialog_box__text
+msgid "Text"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__access_group_ids
 msgid "The access groups this door is a part of"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__workcode
+msgid "The actual workcode "
 msgstr ""
 
 #. module: hr_rfid
@@ -1978,6 +2767,11 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__sw_version
 msgid "The version of the software on the controller"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door_open_close_wiz__time
+msgid "Time"
 msgstr ""
 
 #. module: hr_rfid
@@ -2079,6 +2873,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_unread
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_unread
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_unread
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_unread
 msgid "Unread Messages"
 msgstr ""
 
@@ -2091,12 +2886,8 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_unread_counter
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_unread_counter
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_unread_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_unread_counter
 msgid "Unread Messages Counter"
-msgstr ""
-
-#. module: hr_rfid
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__employee_id
-msgid "User"
 msgstr ""
 
 #. module: hr_rfid
@@ -2111,8 +2902,8 @@ msgid "User access level for the RFID module"
 msgstr ""
 
 #. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__employee_id
-msgid "User affected by this event"
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__user_action
+msgid "User action"
 msgstr ""
 
 #. module: hr_rfid
@@ -2127,13 +2918,7 @@ msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__employee_ids
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
 msgid "Users"
-msgstr ""
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
-msgid "Users assigned to this access group"
 msgstr ""
 
 #. module: hr_rfid
@@ -2153,32 +2938,49 @@ msgid "Version"
 msgstr ""
 
 #. module: hr_rfid
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__website_message_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__website_message_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__website_message_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__website_message_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__website_message_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__website_message_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__website_message_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__website_message_ids
-msgid "Website Messages"
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_io_table_wiz
+msgid "View/Modify IO table"
 msgstr ""
 
 #. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__website_message_ids
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__website_message_ids
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card_type__website_message_ids
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__website_message_ids
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__website_message_ids
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__website_message_ids
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__website_message_ids
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__website_message_ids
-msgid "Website communication history"
+#: model:ir.actions.act_window,name:hr_rfid.hr_rfid_controller_io_table_wiz_action
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
+msgid "View/modify IO table"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_discovery_wiz
+msgid "Webstack Discovery"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_hr_rfid_webstack_discovery
+msgid "Webstack discovery"
 msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__event_action
 msgid "What happened to trigger the event"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_io_table_row__event_number
+msgid "What the outs are set to when this event occurs"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__user_action
+msgid "What the user does when he submits this workcode"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_res_partner_acc_grs__expiration
+msgid "When the access groups will be removed from the contact."
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_employee_acc_grs__expiration
+msgid "When the access groups will be removed from the employee."
 msgstr ""
 
 #. module: hr_rfid
@@ -2198,8 +3000,8 @@ msgid "Whether we can create a direct connection to the module or not"
 msgstr ""
 
 #. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_res_partner__hr_rfid_access_group_id
-#: model:ir.model.fields,help:hr_rfid.field_res_users__hr_rfid_access_group_id
+#: model:ir.model.fields,help:hr_rfid.field_res_partner__hr_rfid_access_group_ids
+#: model:ir.model.fields,help:hr_rfid.field_res_users__hr_rfid_access_group_ids
 msgid "Which access group the contact is a part of"
 msgstr ""
 
@@ -2209,8 +3011,8 @@ msgid "Which access group the department uses to gain permissions to Rfid doors"
 msgstr ""
 
 #. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_employee__hr_rfid_access_group_id
-msgid "Which access group the user is a part of"
+#: model:ir.model.fields,help:hr_rfid.field_hr_employee__hr_rfid_access_group_ids
+msgid "Which access groups the user is a part of"
 msgstr ""
 
 #. module: hr_rfid
@@ -2226,6 +3028,51 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_active
 msgid "Will accept events from module if true"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_tree
+msgid "Will only close for 3 seconds"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_tree
+msgid "Will only open for 3 seconds"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_hr_rfid_workcode
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__workcode_id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__workcode
+msgid "Workcode"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__workcode
+msgid "Workcode (Raw)"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__workcode_id
+msgid "Workcode that arrived from the event"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__workcode
+msgid "Workcode that arrived from the event. If you are seeing this version, it means that you haven't created a workcode label for this one in the workcodes page."
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.actions.act_window,name:hr_rfid.hr_rfid_workcode_action
+#: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_workcodes
+msgid "Workcodes"
+msgstr ""
+
+#. module: hr_rfid
+#: sql_constraint:hr.rfid.workcode:0
+msgid "Workcodes must be unique!"
 msgstr ""
 
 #. module: hr_rfid
@@ -2289,8 +3136,8 @@ msgid "Wrong Value/Parameter"
 msgstr ""
 
 #. module: hr_rfid
-#: model:ir.model,name:hr_rfid.model_hr_rfid_access_group_door_rel
-msgid "hr.rfid.access.group.door.rel"
+#: model:ir.model,name:hr_rfid.model_hr_rfid_wiz_dialog_box
+msgid "hr.rfid.wiz.dialog.box"
 msgstr ""
 
 #. module: hr_rfid
@@ -2361,5 +3208,15 @@ msgstr ""
 #. module: hr_rfid
 #: selection:hr.rfid.ctrl,hw_version:0
 msgid "iTemp"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.webstack.discovery,state:0
+msgid "post_discovery"
+msgstr ""
+
+#. module: hr_rfid
+#: selection:hr.rfid.webstack.discovery,state:0
+msgid "pre_discovery"
 msgstr ""
 
