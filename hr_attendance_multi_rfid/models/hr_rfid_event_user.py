@@ -63,5 +63,11 @@ class HrRfidUserEvent(models.Model):
                     check_check_in(ev)
                 elif wc.user_action == 'break':
                     check_check_out(ev)
+            elif ev.reader_id.reader_type == '0' and ev.employee_id.attendance_state == 'checked_out':
+                ev.in_or_out = '0'
+                ev.employee_id.attendance_action_change_with_date(ev.event_time)
+            elif ev.reader_id.reader_type == '1' and ev.employee_id.attendance_state == 'checked_in':
+                ev.in_or_out = '1'
+                ev.employee_id.attendance_action_change_with_date(ev.event_time)
 
         return ev
