@@ -1,4 +1,4 @@
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 from datetime import datetime, timedelta
 import base64
 
@@ -59,7 +59,9 @@ class HrAttendance(models.Model):
 # ------------------------------------------------------------------------------------------------#
 class HrAttendanceExportWizard(models.TransientModel):
     _name = "hr.attendance.export.wizard"
-    _description = "Exports attendances in two different formats - ACC2OMZ or Enersys"
+    _description = _(
+        "Exports attendances in two different formats - ACC2OMZ or Enersys"
+    )
 
     from_date = fields.Datetime(
         "From Date", default=lambda self: self._set_default_from()
@@ -77,7 +79,7 @@ class HrAttendanceExportWizard(models.TransientModel):
         "No content", help="Displays a message if there is no content."
     )
     period = fields.Selection(
-        [("previous_month", "Previous month"), ("custom_date", "Custom date")],
+        [("previous_month", _("Previous month")), ("custom_date", _("Custom date"))],
         default="previous_month",
         required=True,
     )
@@ -166,9 +168,7 @@ class HrAttendanceExportWizard(models.TransientModel):
                         ]
                     )
                     filecontent.append(check_out)
-            filecontent = base64.encodebytes(
-                "\n".join(filecontent).encode(encoding)
-            )
+            filecontent = base64.encodebytes("\n".join(filecontent).encode(encoding))
             return filename, filecontent
 
         def export_enersys(attendances, separator, encoding):
@@ -212,9 +212,7 @@ class HrAttendanceExportWizard(models.TransientModel):
                     )
                     filecontent.append(check_out)
 
-            filecontent = base64.encodebytes(
-                "\n".join(filecontent).encode(encoding)
-            )
+            filecontent = base64.encodebytes("\n".join(filecontent).encode(encoding))
             return filename, filecontent
 
         this = self[0]
@@ -246,14 +244,14 @@ class HrAttendanceExportWizard(models.TransientModel):
             filename, filecontent = export_enersys(attendances, separator, encoding)
 
         if not filecontent:
-            this.write(
-                {
-                    "no_content": "There are not any attendances for the given period {} - {}".format(
-                        datetime.strftime(from_date, "%d.%m.%y"),
-                        datetime.strftime(to_date, "%d.%m.%y"),
-                    )
-                }
+            no_content = _(
+                "There are not any attendances for the given period {} - {}"
+            ).format(
+                datetime.strftime(from_date, "%d.%m.%y"),
+                datetime.strftime(to_date, "%d.%m.%y"),
             )
+
+            this.write({"no_content": no_content})
 
         this.write({"state": "get", "data": filecontent, "name": filename})
         return {
