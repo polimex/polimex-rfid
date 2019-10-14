@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-06 21:03+0000\n"
-"PO-Revision-Date: 2019-06-06 21:03+0000\n"
+"POT-Creation-Date: 2019-10-14 09:42+0000\n"
+"PO-Revision-Date: 2019-10-14 09:42+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -27,15 +27,35 @@ msgid "Attendances Analysis"
 msgstr ""
 
 #. module: hr_attendance_multi_rfid
-#: code:addons/hr_attendance_multi_rfid/models/hr_employee.py:21
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_export_report_view
+msgid "Cancel"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: code:addons/hr_attendance_multi_rfid/models/hr_employee.py:22
 #, python-format
 msgid "Cannot perform check in or check out on multiple employees."
 msgstr ""
 
 #. module: hr_attendance_multi_rfid
-#: code:addons/hr_attendance_multi_rfid/models/hr_employee.py:36
+#: code:addons/hr_attendance_multi_rfid/models/hr_employee.py:41
 #, python-format
 msgid "Cannot perform check out on %(empl_name)s, could not find corresponding check in. Your attendances have probably been modified manually by human resources."
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_export_report_view
+msgid "Close"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_export_wizard__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_export_wizard__create_date
+msgid "Created on"
 msgstr ""
 
 #. module: hr_attendance_multi_rfid
@@ -49,8 +69,25 @@ msgid "Current Year"
 msgstr ""
 
 #. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_export_report_view
+msgid "Custom Date"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: code:addons/hr_attendance_multi_rfid/models/hr_attendance.py:80
+#: selection:hr.attendance.export.wizard,period:0
+#, python-format
+msgid "Custom date"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_theoretical_time_report__date
 msgid "Date"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_export_report_view
+msgid "Date Settings"
 msgstr ""
 
 #. module: hr_attendance_multi_rfid
@@ -59,8 +96,19 @@ msgid "Difference"
 msgstr ""
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_export_wizard__display_name
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_theoretical_time_report__display_name
 msgid "Display Name"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_export_wizard__no_content
+msgid "Displays a message if there is no content."
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_export_report_view
+msgid "Document Settings"
 msgstr ""
 
 #. module: hr_attendance_multi_rfid
@@ -74,9 +122,47 @@ msgid "Door will track attendance if ticked. Door must have an in and an out rea
 msgstr ""
 
 #. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_export_report_view
+msgid "Download:"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model,name:hr_attendance_multi_rfid.model_hr_employee
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_theoretical_time_report__employee_id
 msgid "Employee"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_export_report_view
+msgid "Export"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.actions.act_window,name:hr_attendance_multi_rfid.hr_attendance_export_report_action
+#: model:ir.ui.menu,name:hr_attendance_multi_rfid.menu_hr_attendance_export_report
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_export_report_view
+msgid "Export Attendances"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_export_wizard__export_format
+msgid "Export Format"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: code:addons/hr_attendance_multi_rfid/models/hr_attendance.py:62
+#, python-format
+msgid "Exports attendances in two different formats - ACC2OMZ or Enersys"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_export_wizard__data
+msgid "File"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_export_wizard__name
+msgid "FileName"
 msgstr ""
 
 #. module: hr_attendance_multi_rfid
@@ -85,6 +171,29 @@ msgid "Fill this field for setting a manual start date for computing the theoret
 msgstr ""
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_export_wizard__from_date
+msgid "From Date"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.actions.server,name:hr_attendance_multi_rfid.hr_attendance_multi_rfid_forgotten_attendance_ir_actions_server
+#: model:ir.cron,cron_name:hr_attendance_multi_rfid.hr_attendance_multi_rfid_forgotten_attendance
+#: model:ir.cron,name:hr_attendance_multi_rfid.hr_attendance_multi_rfid_forgotten_attendance
+msgid "HR Attendance Multi RFID: Check forgotten check-outs"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__hr_rfid_user_event_check_in_id
+msgid "Hr Rfid User Event Check In"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__hr_rfid_user_event_check_out_id
+msgid "Hr Rfid User Event Check Out"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_export_wizard__id
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_theoretical_time_report__id
 msgid "ID"
 msgstr ""
@@ -105,8 +214,19 @@ msgid "Include in theoretical hours"
 msgstr ""
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_export_wizard____last_update
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_theoretical_time_report____last_update
 msgid "Last Modified on"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_export_wizard__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_export_wizard__write_date
+msgid "Last Updated on"
 msgstr ""
 
 #. module: hr_attendance_multi_rfid
@@ -130,13 +250,40 @@ msgid "No Info"
 msgstr ""
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_export_wizard__no_content
+msgid "No content"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: selection:hr.attendance.export.wizard,export_format:0
+msgid "Omeks2000 ACC2OMZ"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: selection:hr.attendance.export.wizard,export_format:0
+msgid "Omeks2000 Enersys"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
 #: selection:hr.rfid.event.user,in_or_out:0
 msgid "Out"
 msgstr ""
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_export_wizard__period
+msgid "Period"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_theoretical_view_filter
 msgid "Previous Month"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: code:addons/hr_attendance_multi_rfid/models/hr_attendance.py:80
+#: selection:hr.attendance.export.wizard,period:0
+#, python-format
+msgid "Previous month"
 msgstr ""
 
 #. module: hr_attendance_multi_rfid
@@ -152,6 +299,11 @@ msgstr ""
 #. module: hr_attendance_multi_rfid
 #: model:ir.model,name:hr_attendance_multi_rfid.model_hr_attendance_theoretical_time_report
 msgid "Report of theoretical time vs attendance time"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_export_wizard__state
+msgid "State"
 msgstr ""
 
 #. module: hr_attendance_multi_rfid
@@ -180,6 +332,17 @@ msgid "Theoric"
 msgstr ""
 
 #. module: hr_attendance_multi_rfid
+#: code:addons/hr_attendance_multi_rfid/models/hr_attendance.py:251
+#, python-format
+msgid "There are not any attendances for the given period {} - {}"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_export_wizard__to_date
+msgid "To Date"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_theoretical_view_filter
 msgid "Today"
 msgstr ""
@@ -199,3 +362,12 @@ msgstr ""
 msgid "Worked"
 msgstr ""
 
+#. module: hr_attendance_multi_rfid
+#: selection:hr.attendance.export.wizard,state:0
+msgid "choose"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
+#: selection:hr.attendance.export.wizard,state:0
+msgid "get"
+msgstr ""
