@@ -110,71 +110,20 @@ class ResPartner(models.Model):
             except ValueError:
                 raise exceptions.ValidationError('Invalid pin code, digits must be from 0 to 9')
 
-    @api.model_create_multi
-    @api.returns('self', lambda value: value.id)
-    def create(self, vals_list):
-        records = self.env['res.partner']
-        for vals in vals_list:
-            command_env = self.env['hr.rfid.command']
-            contact = super(ResPartner, self).create([vals])
-            records += contact
-            for acc_gr_rel in contact.hr_rfid_access_group_ids:
-                acc_gr = acc_gr_rel.access_group_id
-                for door_rel in acc_gr.all_door_ids:
-                    door = door_rel.door_id
-                    ts = door_rel.time_schedule_id
-                    pin = contact.hr_rfid_pin_code
-                    for card in contact.hr_rfid_card_ids:
-                        command_env.add_card(door.id, ts.id, pin, card.id)
-        return records
-
     @api.multi
     def write(self, vals):
-        cmd_env = self.env['hr.rfid.command']
-        card_env = self.env['hr.rfid.card']
+        for user in self:
+            old_pin_code = user.hr_rfid_pin_code[:]
+            super(ResPartner, user).write(vals)
 
-        for contact in self:
-            old_card_ids = None
+            if old_pin_code != user.hr_rfid_pin_code:
+                user.hr_rfid_card_ids.mapped('door_rel_ids').pin_code_changed()
 
-            if 'hr_rfid_card_ids' in vals:
-                old_card_ids = set()
-                for card in contact.hr_rfid_card_ids:
-                    old_card_ids.add(card.id)
-
-            super(ResPartner, contact).write(vals)
-
-            if old_card_ids is not None:
-                new_card_ids = set()
-                for card in contact.hr_rfid_card_ids:
-                    new_card_ids.add(card.id)
-
-                added_cards = new_card_ids - old_card_ids
-                removed_cards = old_card_ids - new_card_ids
-
-                for acc_gr_rel in contact.hr_rfid_access_group_ids:
-                    acc_gr = acc_gr_rel.access_group_id
-                    for door_rel in acc_gr.all_door_ids:
-                        door = door_rel.door_id
-                        ts = door_rel.time_schedule_id
-                        pin = contact.hr_rfid_pin_code
-                        for card_id in removed_cards:
-                            card = card_env.browse(card_id)
-                            cmd_env.remove_card(door.id, ts.id, pin, card_id=card.id)
-                        for card_id in added_cards:
-                            card = card_env.browse(card_id)
-                            cmd_env.add_card(door.id, ts.id, pin, card.id)
-
-            if 'hr_rfid_pin_code' in vals:
-                for acc_gr_rel in contact.hr_rfid_access_group_ids:
-                    acc_gr = acc_gr_rel.access_group_id
-                    for door_rel in acc_gr.all_door_ids:
-                        door = door_rel.door_id
-                        ts = door_rel.time_schedule_id
-                        pin = contact.hr_rfid_pin_code
-                        for card in contact.hr_rfid_card_ids:
-                            cmd_env.add_card(door.id, ts.id, pin, card.id)
-
-        return True
+    @api.multi
+    def unlink(self):
+        for emp in self:
+            emp.hr_rfid_card_ids.unlink()
+        return super(ResPartner, self).unlink()
 
 
 class ResPartnerAccGrWizard(models.TransientModel):
@@ -240,6 +189,3 @@ class ResPartnerAccGrWizard(models.TransientModel):
             ('contact_id', '=', self.contact_id.id),
             ('access_group_id', 'in', self.acc_gr_ids.ids),
         ]).unlink()
-
-
-
