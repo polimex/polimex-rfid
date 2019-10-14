@@ -1,0 +1,38 @@
+<odoo>
+	<data>
+		<record id="hr_rfid_controller_1" model="hr.rfid.ctrl">
+			<field name="name">Controller 9089</field>
+			<field name="serial">9089</field>
+			<field name="ctrl_id">828</field>
+			<field name="hw_version">1</field>
+			<field name="sw_version">740</field>
+			<field name="mode">1</field>
+			<field name="webstack_id" ref="hr_rfid_module_2" />
+			<field name="max_cards_count">10</field>
+			<field name="max_events_count">100</field>
+		</record>
+
+		<record id="hr_rfid_controller_2" model="hr.rfid.ctrl">
+			<field name="name">Controller 9318</field>
+			<field name="serial">9318</field>
+			<field name="ctrl_id">228</field>
+			<field name="hw_version">31</field>
+			<field name="sw_version">740</field>
+			<field name="mode">2</field>
+			<field name="webstack_id" ref="hr_rfid_module_1" />
+			<field name="max_cards_count">100</field>
+			<field name="max_events_count">100</field>
+		</record>
+
+		<record id="hr_rfid_controller_3" model="hr.rfid.ctrl">
+			<field name="name">Controller 8825</field>
+			<field name="serial">8825</field>
+			<field name="ctrl_id">143</field>
+			<field name="hw_version">31</field>
+			<field name="sw_version">740</field>
+			<field name="mode">3</field>
+			<field name="webstack_id" ref="hr_rfid_module_1" />
+			<field name="external_db">true</field>
+		</record>
+	</data>
+</odoo>

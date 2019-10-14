@@ -47,6 +47,55 @@
         <field name="view_mode">pivot,graph</field>
     </record>
 
+    <record id="hr_attendance_export_report_view" model="ir.ui.view">
+        <field name="name">Export Attendances</field>
+        <field name="model">hr.attendance.export.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Export Attendances">
+                <field invisible="1" name="state" />
+                <field name="name" invisible="1"/>
+                <field name="no_content" invisible="1"/>
+                <group  states="choose">
+                    <group string="Date Settings">
+                        <field name="period"/>
+                    </group>
+                    <br/>
+                    <group string="Custom Date" attrs="{'invisible': ['!', ('period', '=', 'custom_date')]}">
+                        <field name="from_date" />
+                        <field name="to_date" />
+                    </group>
+                </group>
+
+                <group  states="choose" string="Document Settings">
+                    <field name="export_format" />
+                </group>
+
+                <div states="get">
+                    Download: <field name="data" readonly="1" filename="name"/>
+                    <field name="no_content" readonly="1" />
+                </div>
+
+                <footer states="choose">
+                    <button string="Export" name="export_hr_attendances" type="object" class="oe_link oe_right" />
+                    <button string="Cancel" class="oe_link" special="cancel" />
+                </footer>
+                <footer states="get">
+                    <button special="cancel" string="Close" type="object" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="hr_attendance_export_report_action" model="ir.actions.act_window">
+        <field name="name">Export Attendances</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.attendance.export.wizard</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
     <menuitem id="menu_hr_attendance_report"
               name="Attendances Analysis"
               parent="hr_attendance.menu_hr_attendance_report"
@@ -62,5 +111,12 @@
               groups="hr_attendance.group_hr_attendance"
               sequence="20"
     />
+
+    <menuitem id="menu_hr_attendance_export_report"
+        name="Export Attendances"
+        action="hr_attendance_export_report_action"
+        parent="hr_attendance.menu_hr_attendance_report"
+        sequence="30"
+        />
 
 </odoo>

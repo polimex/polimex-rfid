@@ -1,0 +1,24 @@
+<odoo>
+	<data>
+		<record id="hr_rfid_door_1" model="hr.rfid.door">
+			<field name="name">Door 1</field>
+			<field name="number">1</field>
+			<field name="card_type" ref="hr_rfid_card_type_def" />
+			<field name="controller_id" ref="hr_rfid_controller_1" />
+		</record>
+
+		<record id="hr_rfid_door_2" model="hr.rfid.door">
+			<field name="name">Door 2</field>
+			<field name="number">2</field>
+			<field name="card_type" ref="hr_rfid_card_type_2" />
+			<field name="controller_id" ref="hr_rfid_controller_2" />
+		</record>
+
+		<record id="hr_rfid_door_3" model="hr.rfid.door">
+			<field name="name">Door 3</field>
+			<field name="number">3</field>
+			<field name="card_type" ref="hr_rfid_card_type_3" />
+			<field name="controller_id" ref="hr_rfid_controller_3" />
+		</record>
+	</data>
+</odoo>

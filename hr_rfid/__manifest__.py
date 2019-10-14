@@ -26,7 +26,18 @@
         'wizards/hr_rfid_wizard_views.xml',
     ],
 
-    'demo': [ ],
+    'demo': [
+        'demo/hr_rfid_card_demo.xml',
+        'demo/hr_rfid_module_demo.xml',
+        'demo/hr_rfid_controllers_demo.xml',
+        'demo/hr_rfid_doors_demo.xml',
+        'demo/hr_rfid_readers_demo.xml',
+        'demo/hr_rfid_access_groups_demo.xml',
+        'demo/hr_rfid_access_groups_doors_demo.xml',
+        'demo/hr_rfid_user_events_demo.xml',
+        'demo/hr_rfid_system_events_demo.xml',
+        'demo/hr_rfid_workcodes_demo.xml',
+    ],
     
     "images": [
         'static/images/main_screenshot.png',

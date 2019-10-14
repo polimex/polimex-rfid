@@ -1,0 +1,19 @@
+<odoo>
+	<data>
+		<record id="hr_rfid_acc_group_door_1" model="hr.rfid.access.group.door.rel">
+			<field name="access_group_id" ref="hr_rfid_access_group_1" />
+			<field name="door_id" ref="hr_rfid_door_1" />
+			<field name="time_schedule_id" ref="hr_rfid_time_schedule_1" />
+		</record>
+		<record id="hr_rfid_acc_group_door_2" model="hr.rfid.access.group.door.rel">
+			<field name="access_group_id" ref="hr_rfid_access_group_2" />
+			<field name="door_id" ref="hr_rfid_door_2" />
+			<field name="time_schedule_id" ref="hr_rfid_time_schedule_13" />
+		</record>
+		<record id="hr_rfid_acc_group_door_3" model="hr.rfid.access.group.door.rel">
+			<field name="access_group_id" ref="hr_rfid_access_group_3" />
+			<field name="door_id" ref="hr_rfid_door_3" />
+			<field name="time_schedule_id" ref="hr_rfid_time_schedule_10" />
+		</record>
+	</data>
+</odoo>
