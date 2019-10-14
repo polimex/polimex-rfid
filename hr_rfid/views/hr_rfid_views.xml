@@ -21,7 +21,7 @@
       <field name="view_mode">tree,form,search</field>
     </record>
 
-    <record id="hr_rfid_card_door_relation" model="ir.actions.act_window">
+    <record id="hr_rfid_card_door_rel_action" model="ir.actions.act_window">
       <field name="name">Card/Door Relations</field>
       <field name="res_model">hr.rfid.card.door.rel</field>
       <field name="view_type">form</field>
@@ -155,7 +155,7 @@
     <menuitem id="hr_rfid_menu_card_door_rels"
               name="Card/Door Relations"
               parent="hr_rfid_main_menu"
-              action="hr_rfid_card_action"
+              action="hr_rfid_card_door_rel_action"
               groups="base.group_no_one"
               sequence="10" />
 
