@@ -690,19 +690,8 @@ class HrRfidController(models.Model):
         })
 
         for door in self.door_ids:
-            for acc_gr_rel in door.access_group_ids:
-                acc_gr = acc_gr_rel.access_group_id
-                ts = acc_gr_rel.time_schedule_id
-                for user_rel in acc_gr.all_employee_ids:
-                    user = user_rel.employee_id
-                    pin = user.hr_rfid_pin_code
-                    for card in user.hr_rfid_card_ids:
-                        cmd_env.add_card(door.id, ts.id, pin, card.id)
-                for user_rel in acc_gr.all_contact_ids:
-                    user = user_rel.contact_id
-                    pin = user.hr_rfid_pin_code
-                    for card in user.hr_rfid_card_ids:
-                        cmd_env.add_card(door.id, ts.id, pin, card.id)
+            door.card_rel_ids.unlink()
+            self.env['hr.rfid.card.door.rel'].create_door_rels(door)
 
     @api.multi
     def change_io_table(self, new_io_table):
@@ -728,7 +717,6 @@ class HrRfidController(models.Model):
 
     @api.multi
     def write(self, vals):
-        # TODO Check if mode is being changed, change io table if so
         return super(HrRfidController, self).write(vals)
 
 
@@ -825,6 +813,13 @@ class HrRfidDoor(models.Model):
         help='Readers that open this door',
     )
 
+    card_rel_ids = fields.One2many(
+        'hr.rfid.card.door.rel',
+        'door_id',
+        string='Cards',
+        help='Cards that have access to this door',
+    )
+
     @api.one
     @api.returns('hr.rfid.card')
     def get_potential_cards(self, access_groups=None):
@@ -840,43 +835,12 @@ class HrRfidDoor(models.Model):
     @api.multi
     def write(self, vals):
         for door in self:
-            old_card_type = None
-            if 'card_type' in vals:
-                old_card_type = door.card_type.id
-
-            old_acc_gr_ids = {}
-            old_ts_ids = set()
-            acc_gr_door_rel_env = self.env['hr.rfid.access.group.door.rel']
-
-            if 'door_ids' in vals:
-                door_id_changes = vals['door_ids']
-
-                for change in door_id_changes:
-                    if change[0] == 1:
-                        if 'access_group_id' in change[2]:
-                            old_acc_gr_ids[change[1]] = change[2]['access_group_id']
-                        if 'time_schedule_id' in change[2]:
-                            old_ts_ids.add(change[2]['time_schedule_id'])
+            old_card_type = door.card_type
 
             super(HrRfidDoor, door).write(vals)
 
-            if old_card_type is not None:
-                commands_env = self.env['hr.rfid.command']
-
-                for acc_gr_rel in door.access_group_ids:
-                    for user in acc_gr_rel.access_group_id.all_employee_ids:
-                        for card in user.hr_rfid_card_ids:
-                            if card.card_type.id == old_card_type:
-                                commands_env.remove_card(door.id, acc_gr_rel. time_schedule_id.id,
-                                                         user.hr_rfid_pin_code, card_id=card.id)
-                            commands_env.add_card(door.id, acc_gr_rel. time_schedule_id.id,
-                                                  user.hr_rfid_pin_code, card_id=card.id)
-
-            for rel_id, prev_acc_gr_id in old_acc_gr_ids.items():
-                acc_gr_door_rel_env.access_group_changed(rel_id, prev_acc_gr_id)
-
-            for rel_id in old_ts_ids:
-                acc_gr_door_rel_env.time_schedule_changed(rel_id)
+            if old_card_type != door.card_type:
+                door.card_rel_ids.card_type_changed()
 
         return True
 
@@ -1397,7 +1361,9 @@ class HrRfidSystemEventWizard(models.TransientModel):
             raise exceptions.ValidationError('System event does not have a card number in it')
 
         if len(self.contact_id) == len(self.employee_id):
-            raise exceptions.ValidationError('Card cannot have both or neither a contact owner and an employee owner.')
+            raise exceptions.ValidationError(
+                'Card cannot have both or neither a contact owner and an employee owner.'
+            )
 
         card_env = self.env['hr.rfid.card']
         new_card = {

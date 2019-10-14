@@ -193,7 +193,7 @@ class HrRfidCard(models.Model):
                 raise exceptions.ValidationError(invalid_user_and_contact_msg)
 
             if old_number != card.number:
-                card.door_rel_ids.card_number_changed()
+                card.door_rel_ids.card_number_changed(old_number)
 
             if old_owner != card.get_owner():
                 rel_env = self.env['hr.rfid.card.door.rel']
@@ -327,10 +327,10 @@ class HrRfidCardDoorRel(models.Model):
         for door in potential_doors:
             if self._check_compat_n_rdy(card_id, door):
                 self.create_rel(card_id, door)
-                
+
     @api.model
-    def create_door_rels(self, door_id: models.Model):
-        potential_cards = door_id.get_potential_cards()
+    def create_door_rels(self, door_id: models.Model, access_group: models.Model = None):
+        potential_cards = door_id.get_potential_cards(access_group)
         for card in potential_cards:
             if self._check_compat_n_rdy(card, door_id):
                 self.create_rel(card, door_id)
@@ -414,8 +414,12 @@ class HrRfidCardDoorRel(models.Model):
         self._create_add_card_command()
 
     @api.multi
-    def card_number_changed(self):
-        self._create_remove_card_command()
+    def card_number_changed(self, number):
+        self._create_remove_card_command(number)
+        self._create_add_card_command()
+
+    @api.multi
+    def reload_add_card_command(self):
         self._create_add_card_command()
 
     @api.model
@@ -433,14 +437,16 @@ class HrRfidCardDoorRel(models.Model):
             cmd_env.add_card(door_id, ts_id, pin_code, card_id)
 
     @api.multi
-    def _create_remove_card_command(self):
+    def _create_remove_card_command(self, number=None):
         cmd_env = self.env['hr.rfid.command']
         for rel in self:
             door_id = rel.door_id.id
             ts_id = rel.door_id.get_ts_id().id
             pin_code = rel.card_id.pin_code
             card_id = rel.card_id.id
-            cmd_env.remove_card(door_id, ts_id, pin_code, card_id.number[:])
+            if number is None:
+                number = card_id.number[:]
+            cmd_env.remove_card(door_id, ts_id, pin_code, number)
 
     @api.constrains('door_id')
     @api.multi

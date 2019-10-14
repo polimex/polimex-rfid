@@ -382,7 +382,7 @@ class HrRfidAccessGroupDoorRel(models.Model):
         for val in vals:
             rel = super(HrRfidAccessGroupDoorRel, self).create([val])
             records += rel
-            card_door_rel_env.create_door_rels(self.door_id)
+            card_door_rel_env.create_door_rels(self.door_id, rel.access_group_id)
 
         return records
 

@@ -21,6 +21,13 @@
       <field name="view_mode">tree,form,search</field>
     </record>
 
+    <record id="hr_rfid_card_door_relation" model="ir.actions.act_window">
+      <field name="name">Card/Door Relations</field>
+      <field name="res_model">hr.rfid.card.door.rel</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search</field>
+    </record>
+
     <record id="hr_rfid_access_group_action" model="ir.actions.act_window">
       <field name="name">Access Groups</field>
       <field name="res_model">hr.rfid.access.group</field>
@@ -143,6 +150,13 @@
               parent="hr_rfid_main_menu"
               action="hr_rfid_card_action"
               groups="hr_rfid_group_officer_department"
+              sequence="10" />
+
+    <menuitem id="hr_rfid_menu_card_door_rels"
+              name="Card/Door Relations"
+              parent="hr_rfid_main_menu"
+              action="hr_rfid_card_action"
+              groups="base.group_no_one"
               sequence="10" />
 
     <!--#######################################################
@@ -540,6 +554,43 @@
           <field name="card_ids">
             <field name="number" />
           </field>
+        </search>
+      </field>
+    </record>
+
+    <record id="hr_rfid_card_door_rel_view_form" model="ir.ui.view">
+      <field name="name">hr.rfid.card.door.rel.form</field>
+      <field name="model">hr.rfid.card.door.rel</field>
+      <field name="arch" type="xml">
+        <form string="Card/Door Relations">
+          <sheet>
+            <group>
+              <field name="card_id" />
+              <field name="door_id" />
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_card_door_rel_view_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.card.door.rel.tree</field>
+      <field name="model">hr.rfid.card.door.rel</field>
+      <field name="arch" type="xml">
+        <tree string="Card/Door Relations">
+          <field name="card_id" />
+          <field name="door_id" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="hr_rfid_card_door_rel_view_search" model="ir.ui.view">
+      <field name="name">hr.rfid.card.door.rel.search</field>
+      <field name="model">hr.rfid.card.door.rel</field>
+      <field name="arch" type="xml">
+        <search string="Card/Door Relations">
+          <field name="card_id" />
+          <field name="door_id" />
         </search>
       </field>
     </record>
@@ -944,7 +995,7 @@
 
           <notebook>
             <page string="Access Groups">
-              <field name="access_group_ids" context="{'door_id': id}">
+              <field name="access_group_ids" context="{'door_id': id}" readonly="1">
                 <tree>
                   <field name="access_group_id" />
                   <field name="time_schedule_id" />
