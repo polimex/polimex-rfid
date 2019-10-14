@@ -312,7 +312,7 @@
             </page>
 
             <page string="Departments">
-              <field name="department_ids">
+              <field name="department_ids" readonly="1">
                 <tree string="Departments assigned to this access group">
                   <field name="name" />
                   <field name="note" />

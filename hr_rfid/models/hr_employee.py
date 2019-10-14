@@ -58,6 +58,7 @@ class HrEmployee(models.Model):
             ]).unlink()
 
     @api.one
+    @api.returns('hr.rfid.door')
     def get_doors(self, excluding_acc_grs=None, including_acc_grs=None):
         if excluding_acc_grs is None:
             excluding_acc_grs = self.env['hr.rfid.access.group']

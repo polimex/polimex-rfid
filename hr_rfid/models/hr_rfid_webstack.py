@@ -825,6 +825,18 @@ class HrRfidDoor(models.Model):
         help='Readers that open this door',
     )
 
+    @api.one
+    @api.returns('hr.rfid.card')
+    def get_potential_cards(self, access_groups=None):
+        """
+        Returns a list of cards the door potentially has access to
+        """
+        if access_groups is None:
+            access_groups = self.access_group_ids.mapped('access_group_id')
+        employees = access_groups.mapped('all_employee_ids').mapped('employee_id')
+        contacts = access_groups.mapped('all_contact_ids').mapped('contact_id')
+        return employees.mapped('hr_rfid_card_ids') + contacts.mapped('hr_rfid_card_ids')
+
     @api.multi
     def write(self, vals):
         for door in self:

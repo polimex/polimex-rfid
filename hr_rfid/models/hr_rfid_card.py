@@ -106,13 +106,16 @@ class HrRfidCard(models.Model):
             return OwnerType.Employee
         return OwnerType.Contact
 
-    def get_potential_access_doors(self):
+    @api.one
+    @api.returns('hr.rfid.door')
+    def get_potential_access_doors(self, access_groups=None):
         """
-        Returns a list of doors the card has potential access to
+        Returns a list of doors the card potentially has access to
         """
-        owner = self.get_owner()
-        acc_gr_ids = owner.hr_rfid_access_group_ids.mapped('access_group_id')
-        door_ids = acc_gr_ids.mapped('all_door_ids').mapped('door_id')
+        if access_groups is None:
+            owner = self.get_owner()
+            access_groups = owner.hr_rfid_access_group_ids.mapped('access_group_id')
+        door_ids = access_groups.mapped('all_door_ids').mapped('door_id')
         return door_ids
 
     def door_compatible(self, door_id):
@@ -193,8 +196,15 @@ class HrRfidCard(models.Model):
                 card.door_rel_ids.card_number_changed()
 
             if old_owner != card.get_owner():
-                # TODO Implement
-                pass
+                rel_env = self.env['hr.rfid.card.door.rel']
+                old_owner_doors = old_owner.get_doors()
+                new_owner_doors = card.get_owner().get_doors()
+                removed_doors = old_owner_doors - new_owner_doors
+                added_doors = new_owner_doors - old_owner_doors
+                for door in removed_doors:
+                    rel_env.remove_rel(card, door)
+                for door in added_doors:
+                    rel_env.check_relevance_fast(card, door)
 
             if old_active != card.card_active:
                 card.door_rel_ids.unlink()
@@ -312,36 +322,54 @@ class HrRfidCardDoorRel(models.Model):
     )
 
     @api.model
-    def create_card_rels(self, card_id: models.Model):
-        potential_doors = card_id.get_potential_access_doors()
+    def create_card_rels(self, card_id: HrRfidCard, access_group: models.Model = None):
+        potential_doors = card_id.get_potential_access_doors(access_group)
         for door in potential_doors:
-            if card_id.door_compatible(door) and card_id.card_ready():
+            if self._check_compat_n_rdy(card_id, door):
                 self.create_rel(card_id, door)
+                
+    @api.model
+    def create_door_rels(self, door_id: models.Model):
+        potential_cards = door_id.get_potential_cards()
+        for card in potential_cards:
+            if self._check_compat_n_rdy(card, door_id):
+                self.create_rel(card, door_id)
 
     @api.model
-    def check_relevance(self, card_id: models.Model, door_id: models.Model):
+    def check_relevance_slow(self, card_id: HrRfidCard, door_id: models.Model):
         """
         Check if card has access to door. If it does, create relation or do nothing if it exists,
-        and if not remove relation or do nothing if it does not exist
+        and if not remove relation or do nothing if it does not exist.
         :param card_id: Recordset containing a single card
         :param door_id: Recordset containing a single door
         """
         potential_doors = card_id.get_potential_access_doors()
 
-        if (door_id not in potential_doors) \
-           or (not card_id.door_compatible(door_id)) \
-           or (not card_id.card_ready()):
+        if (door_id not in potential_doors) or not self._check_compat_n_rdy(card_id, door_id):
             self.remove_rel(card_id, door_id)
             return
         self.create_rel(card_id, door_id)
 
     @api.model
-    def create_rel(self, card_id: models.Model, door_id: models.Model):
+    def check_relevance_fast(self, card_id: HrRfidCard, door_id: models.Model):
+        """
+        Check if card has access to door. If it does, create relation or do nothing if it exists,
+        and if not remove relation or do nothing if it does not exist.
+        :param card_id: Recordset containing a single card
+        :param door_id: Recordset containing a single door
+        """
+        if self._check_compat_n_rdy(card_id, door_id):
+            self.remove_rel(card_id, door_id)
+            return
+        self.create_rel(card_id, door_id)
+
+    @api.model
+    def create_rel(self, card_id: HrRfidCard, door_id: models.Model):
         ret = self.search([
             ('card_id', '=', card_id.id),
             ('door_id', '=', door_id.id),
         ])
-        if len(ret) == 0 and card_id.door_compatible(door_id) and card_id.card_ready:
+        if len(ret) == 0 and self._check_compat_n_rdy(card_id, door_id):
             self.create([{
                 'card_id': card_id.id,
                 'door_id': door_id.id,
@@ -359,7 +387,7 @@ class HrRfidCardDoorRel(models.Model):
     @api.multi
     def check_rel_relevance(self):
         for rel in self:
-            self.check_relevance(rel.card_id, rel.door_id)
+            self.check_relevance_slow(rel.card_id, rel.door_id)
 
     @api.multi
     def cloud_card_changed(self):
@@ -389,6 +417,10 @@ class HrRfidCardDoorRel(models.Model):
     def card_number_changed(self):
         self._create_remove_card_command()
         self._create_add_card_command()
+
+    @api.model
+    def _check_compat_n_rdy(self, card_id, door_id):
+        return card_id.door_compatible(door_id) and card_id.card_ready()
 
     @api.multi
     def _create_add_card_command(self):
