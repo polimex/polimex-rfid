@@ -820,6 +820,14 @@ class HrRfidDoor(models.Model):
         help='Cards that have access to this door',
     )
 
+    def get_ts_id(self):
+        self.ensure_one()
+        rel_env = self.env['hr.rfid.access.group.door.rel']
+        rel = rel_env.search([
+            ('door_id', '=', self.id),
+        ], limit=1)
+        return rel.time_schedule_id if len(rel) > 0 else False
+
     @api.one
     @api.returns('hr.rfid.card')
     def get_potential_cards(self, access_groups=None):

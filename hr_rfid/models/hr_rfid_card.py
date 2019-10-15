@@ -432,6 +432,8 @@ class HrRfidCardDoorRel(models.Model):
         for rel in self:
             door_id = rel.door_id.id
             ts_id = rel.door_id.get_ts_id().id
+            if ts_id is False:
+                raise exceptions.ValidationError('???? Submit a github issue if you see this 75362901')
             pin_code = rel.card_id.pin_code
             card_id = rel.card_id.id
             cmd_env.add_card(door_id, ts_id, pin_code, card_id)
