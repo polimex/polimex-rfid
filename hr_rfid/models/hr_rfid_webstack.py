@@ -1633,23 +1633,13 @@ class HrRfidCommands(models.Model):
             old_cmd.write(write_dict)
 
     @api.model
-    def add_card(self, door_id, ts_id, pin_code, card_id, ignore_active=False):
+    def add_card(self, door_id, ts_id, pin_code, card_id):
         door = self.env['hr.rfid.door'].browse(door_id)
 
         time_schedule = self.env['hr.rfid.time.schedule'].browse(ts_id)
 
         card = self.env['hr.rfid.card'].browse(card_id)
         card_number = card.number
-        card_type = card.card_type
-
-        if ignore_active is False and card.card_active is False:
-            return
-
-        if card_type != door.card_type:
-            return
-
-        if door.controller_id.external_db is True and card.cloud_card is True:
-            return
 
         for reader in door.reader_ids:
             ts_code = [0, 0, 0, 0]
@@ -1658,16 +1648,13 @@ class HrRfidCommands(models.Model):
             self.add_remove_card(card_number, door.controller_id.id, pin_code, ts_code,
                                  1 << (reader.number-1), 1 << (reader.number-1))
 
-    # TODO Remove "ts_id"
     @api.model
-    def remove_card(self, door_id, ts_id, pin_code, card_number=None, card_id=None, ignore_active=False):
+    def remove_card(self, door_id, pin_code, card_number=None, card_id=None):
         door = self.env['hr.rfid.door'].browse(door_id)
 
         if card_id is not None:
             card = self.env['hr.rfid.card'].browse(card_id)
             card_number = card.number
-            if ignore_active is False and card.card_active is False:
-                return
 
         for reader in door.reader_ids:
             self.add_remove_card(card_number, door.controller_id.id, pin_code, '00000000',

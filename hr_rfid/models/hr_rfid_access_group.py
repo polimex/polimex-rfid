@@ -221,7 +221,6 @@ class HrRfidAccessGroup(models.Model):
                 iterate_acc_grs(_gr2, _checked_groups)
 
         highest_groups = get_highest_acc_grs(self)
-        print('highest_groups=' + str(highest_groups))
         for acc_gr in highest_groups:
             iterate_acc_grs(acc_gr, [])
         employees = self.all_employee_ids.mapped('employee_id')
@@ -382,13 +381,23 @@ class HrRfidAccessGroupDoorRel(models.Model):
         for val in vals:
             rel = super(HrRfidAccessGroupDoorRel, self).create([val])
             records += rel
-            card_door_rel_env.create_door_rels(self.door_id, rel.access_group_id)
+            card_door_rel_env.create_door_rels(rel.door_id, rel.access_group_id)
 
         return records
 
     @api.multi
     def write(self, vals):
         raise exceptions.ValidationError('Not permitted to write here (hr.rfid.access.group.door.rel)')
+
+    @api.multi
+    def unlink(self):
+        card_door_rel_env = self.env['hr.rfid.card.door.rel']
+        for rel in self:
+            door = rel.door_id
+            cards = door.get_potential_cards(access_groups=rel.access_group_id)
+            super(HrRfidAccessGroupDoorRel, rel).unlink()
+            for card, ts in cards:
+                card_door_rel_env.check_relevance_slow(card, door)
 
 
 ###

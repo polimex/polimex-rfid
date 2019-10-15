@@ -316,14 +316,14 @@ class HrRfidCardDoorRel(models.Model):
         'hr.rfid.door',
         string='Door',
         required=True,
-        ondelete='set null',
+        ondelete='cascade',
     )
 
     time_schedule_id = fields.Many2one(
         'hr.rfid.time.schedule',
         string='Time Schedule',
         required=True,
-        ondelete='set null',
+        ondelete='cascade',
     )
 
     @api.model
@@ -464,17 +464,15 @@ class HrRfidCardDoorRel(models.Model):
             cmd_env.add_card(door_id, ts_id, pin_code, card_id)
 
     @api.multi
-    def _create_remove_card_command(self, number=None, door_id: int = None):
+    def _create_remove_card_command(self, number: str = None, door_id: int = None):
         cmd_env = self.env['hr.rfid.command']
         for rel in self:
-            card_id = rel.card_id.id
             if door_id is None:
                 door_id = rel.door_id.id
             if number is None:
-                number = card_id.number[:]
-            ts_id = rel.time_schedule_id.id
+                number = rel.card_id.number[:]
             pin_code = rel.card_id.pin_code
-            cmd_env.remove_card(door_id, ts_id, pin_code, number)
+            cmd_env.remove_card(door_id, pin_code, card_number=number)
 
     @api.constrains('door_id')
     @api.multi
