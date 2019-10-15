@@ -820,25 +820,27 @@ class HrRfidDoor(models.Model):
         help='Cards that have access to this door',
     )
 
-    def get_ts_id(self):
-        self.ensure_one()
-        rel_env = self.env['hr.rfid.access.group.door.rel']
-        rel = rel_env.search([
-            ('door_id', '=', self.id),
-        ], limit=1)
-        return rel.time_schedule_id if len(rel) > 0 else False
-
-    @api.one
-    @api.returns('hr.rfid.card')
     def get_potential_cards(self, access_groups=None):
         """
-        Returns a list of cards the door potentially has access to
+        Returns a list of tuples (card, time_schedule) for which the card potentially has access to this door
         """
         if access_groups is None:
-            access_groups = self.access_group_ids.mapped('access_group_id')
-        employees = access_groups.mapped('all_employee_ids').mapped('employee_id')
-        contacts = access_groups.mapped('all_contact_ids').mapped('contact_id')
-        return employees.mapped('hr_rfid_card_ids') + contacts.mapped('hr_rfid_card_ids')
+            acc_gr_rels = self.access_group_ids
+        else:
+            acc_gr_rels = self.env['hr.rfid.access.group.door.rel'].search([
+                ('id', 'in', self.access_group_ids.ids),
+                ('access_group_id', 'in', access_groups.ids),
+            ])
+        ret = []
+        for rel in acc_gr_rels:
+            ts_id = rel.time_schedule_id
+            acc_gr = rel.access_group_id
+            employees = acc_gr.mapped('all_employee_ids').mapped('employee_id')
+            contacts = acc_gr.mapped('all_contact_ids').mapped('contact_id')
+            cards = employees.mapped('hr_rfid_card_ids') + contacts.mapped('hr_rfid_card_ids')
+            for card in cards:
+                ret.append((card, ts_id))
+        return ret
 
     @api.multi
     def write(self, vals):
