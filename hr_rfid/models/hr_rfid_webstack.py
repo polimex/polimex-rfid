@@ -1635,9 +1635,7 @@ class HrRfidCommands(models.Model):
     @api.model
     def add_card(self, door_id, ts_id, pin_code, card_id):
         door = self.env['hr.rfid.door'].browse(door_id)
-
         time_schedule = self.env['hr.rfid.time.schedule'].browse(ts_id)
-
         card = self.env['hr.rfid.card'].browse(card_id)
         card_number = card.number
 

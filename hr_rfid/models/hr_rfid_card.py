@@ -164,55 +164,6 @@ class HrRfidCard(models.Model):
     _sql_constraints = [ ('rfid_card_number_unique', 'unique(number)',
                           'Card numbers must be unique!') ]
 
-    @api.multi
-    def unlink(self):
-        for card in self:
-            card.door_rel_ids.unlink()
-        return super(HrRfidCard, self).unlink()
-
-    @api.multi
-    def write(self, vals):
-        invalid_user_and_contact_msg = 'Card user and contact cannot both be set' \
-                                       ' in the same time, and cannot both be empty.'
-
-        for card in self:
-            old_number = str(card.number)[:]
-            old_owner = card.get_owner()
-            old_active = card.card_active
-            old_card_type_id = card.card_type.id
-            old_cloud = card.cloud_card
-
-            super(HrRfidCard, card).write(vals)
-
-            if len(card.employee_id) > 0 and len(card.contact_id) > 0:
-                raise exceptions.ValidationError(invalid_user_and_contact_msg)
-
-            if len(card.employee_id) == 0 and len(card.contact_id) == 0:
-                raise exceptions.ValidationError(invalid_user_and_contact_msg)
-
-            if old_number != card.number:
-                card.door_rel_ids.card_number_changed(old_number)
-
-            if old_owner != card.get_owner():
-                rel_env = self.env['hr.rfid.card.door.rel']
-                old_owner_doors = old_owner.get_doors()
-                new_owner_doors = card.get_owner().get_doors()
-                removed_doors = old_owner_doors - new_owner_doors
-                added_doors = new_owner_doors - old_owner_doors
-                for door in removed_doors:
-                    rel_env.remove_rel(card, door)
-                for door in added_doors:
-                    rel_env.check_relevance_fast(card, door)
-
-            if old_active != card.card_active:
-                card.door_rel_ids.unlink()
-
-            if old_card_type_id != card.card_type.id:
-                card.door_rel_ids.card_type_changed()
-
-            if old_cloud != card.cloud_card:
-                card.door_rel_ids.cloud_card_changed()
-
     @api.model_create_multi
     @api.returns('self', lambda value: value.id)
     def create(self, vals):
@@ -234,6 +185,58 @@ class HrRfidCard(models.Model):
             card_door_rel_env.create_card_rels(card)
 
         return records
+
+    @api.multi
+    def write(self, vals):
+        rel_env = self.env['hr.rfid.card.door.rel']
+        invalid_user_and_contact_msg = 'Card user and contact cannot both be set' \
+                                       ' in the same time, and cannot both be empty.'
+
+        for card in self:
+            old_number = str(card.number)[:]
+            old_owner = card.get_owner()
+            old_active = card.card_active
+            old_card_type_id = card.card_type
+            old_cloud = card.cloud_card
+
+            super(HrRfidCard, card).write(vals)
+
+            if len(card.employee_id) > 0 and len(card.contact_id) > 0:
+                raise exceptions.ValidationError(invalid_user_and_contact_msg)
+
+            if len(card.employee_id) == 0 and len(card.contact_id) == 0:
+                raise exceptions.ValidationError(invalid_user_and_contact_msg)
+
+            if old_number != card.number:
+                card.door_rel_ids.card_number_changed(old_number)
+
+            if old_owner != card.get_owner():
+                old_owner_doors = old_owner.get_doors()
+                new_owner_doors = card.get_owner().get_doors()
+                removed_doors = old_owner_doors - new_owner_doors
+                added_doors = new_owner_doors - old_owner_doors
+                for door in removed_doors:
+                    rel_env.remove_rel(card, door)
+                for door in added_doors:
+                    rel_env.check_relevance_fast(card, door)
+
+            if old_active != card.card_active:
+                if card.card_active is False:
+                    card.door_rel_ids.unlink()
+                else:
+                    rel_env.create_card_rels(card)
+
+            if old_card_type_id != card.card_type:
+                rel_env.create_card_rels(card)
+
+            if old_cloud != card.cloud_card:
+                rel_env.create_card_rels(card)
+
+    @api.multi
+    def unlink(self):
+        for card in self:
+            card.door_rel_ids.unlink()
+        return super(HrRfidCard, self).unlink()
 
     @api.model
     def _update_cards(self):
@@ -330,15 +333,13 @@ class HrRfidCardDoorRel(models.Model):
     def create_card_rels(self, card_id: HrRfidCard, access_group: models.Model = None):
         potential_doors = card_id.get_potential_access_doors(access_group)
         for door, ts in potential_doors:
-            if self._check_compat_n_rdy(card_id, door):
-                self.create_rel(card_id, door, ts)
+            self.check_relevance_fast(card_id, door, ts)
 
     @api.model
     def create_door_rels(self, door_id: models.Model, access_group: models.Model = None):
         potential_cards = door_id.get_potential_cards(access_group)
         for card, ts in potential_cards:
-            if self._check_compat_n_rdy(card, door_id):
-                self.create_rel(card, door_id, ts)
+            self.check_relevance_fast(card, door_id, ts)
 
     @api.model
     def check_relevance_slow(self, card_id: HrRfidCard, door_id: models.Model, ts_id: models.Model = None):
@@ -359,10 +360,10 @@ class HrRfidCardDoorRel(models.Model):
                 ts_id = ts
                 found_door = True
                 break
-        if not found_door or not self._check_compat_n_rdy(card_id, door_id):
+        if found_door and self._check_compat_n_rdy(card_id, door_id):
+            self.create_rel(card_id, door_id, ts_id)
+        else:
             self.remove_rel(card_id, door_id)
-            return
-        self.create_rel(card_id, door_id, ts_id)
 
     @api.model
     def check_relevance_fast(self, card_id: HrRfidCard, door_id: models.Model, ts_id: models.Model = None):
@@ -374,9 +375,9 @@ class HrRfidCardDoorRel(models.Model):
         :param ts_id: Optional parameter. If supplied, the relation will be created quicker.
         """
         if self._check_compat_n_rdy(card_id, door_id):
+            self.create_rel(card_id, door_id, ts_id)
+        else:
             self.remove_rel(card_id, door_id)
-            return
-        self.create_rel(card_id, door_id, ts_id)
 
     @api.model
     def create_rel(self, card_id: HrRfidCard, door_id: models.Model, ts_id: models.Model = None):
@@ -417,24 +418,9 @@ class HrRfidCardDoorRel(models.Model):
             self.check_relevance_slow(rel.card_id, rel.door_id)
 
     @api.multi
-    def cloud_card_changed(self):
-        to_unlink = self.env['hr.rfid.card.door.rel']
-        for rel in self:
-            if rel.card_id.cloud_card is True and rel.door_id.controller_id.external_db is True:
-                to_unlink += rel
-        to_unlink.unlink()
-
-    @api.multi
-    def card_type_changed(self):
-        to_unlink = self.env['hr.rfid.card.door.rel']
-        for rel in self:
-            if rel.card_id.card_type != rel.door_id.card_type:
-                to_unlink += rel
-        to_unlink.unlink()
-
-    @api.multi
     def time_schedule_changed(self, new_ts):
         self.time_schedule_id = new_ts
+        self._create_add_card_command()
 
     @api.multi
     def pin_code_changed(self):

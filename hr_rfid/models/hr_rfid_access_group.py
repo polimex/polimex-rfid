@@ -102,7 +102,10 @@ class HrRfidAccessGroup(models.Model):
     )
 
     @api.one
-    def add_doors(self, door_ids, time_schedule):
+    def add_doors(self, door_ids, time_schedule=None):
+        if time_schedule is None:
+            time_schedule = self.env.ref('hr_rfid.hr_rfid_time_schedule_0')
+
         rel_env = self.env['hr.rfid.access.group.door.rel']
         for door in door_ids:
             res = rel_env.search([ ('access_group_id', '=', self.id),
@@ -501,20 +504,20 @@ class HrRfidAccessGroupContactRel(models.Model):
         records = super(HrRfidAccessGroupContactRel, self).create(vals_list)
 
         for rel in records:
-            cards = rel.employee_id.hr_rfid_card_ids
+            cards = rel.contact_id.hr_rfid_card_ids
             for card in cards:
                 card_door_rel_env.create_card_rels(card, rel.access_group_id)
 
     @api.multi
     def write(self, vals):
-        raise exceptions.ValidationError('Not permitted to write here (hr.rfid.access.group.employee.rel)')
+        raise exceptions.ValidationError('Not permitted to write here (hr.rfid.access.group.contact.rel)')
 
     @api.multi
     def unlink(self):
         card_door_rel_env = self.env['hr.rfid.card.door.rel']
 
         for rel in self:
-            cards = rel.employee_id.hr_rfid_card_ids
+            cards = rel.contact_id.hr_rfid_card_ids
             doors = rel.access_group_id.all_door_ids.mapped('door_id')
             super(HrRfidAccessGroupContactRel, rel).unlink()
             for card in cards:

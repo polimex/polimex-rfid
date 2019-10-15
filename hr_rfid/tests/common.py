@@ -4,6 +4,8 @@ from odoo import models
 from ..models.hr_rfid_webstack import HrRfidWebstack, HrRfidController
 from random import randint
 
+_controllers_created = 0
+
 
 def create_webstacks(env: Environment, webstacks: int = 0, controllers: list = None):
     """
@@ -81,11 +83,13 @@ def create_webstacks(env: Environment, webstacks: int = 0, controllers: list = N
         _mode = _mode & 0x0F
         _id = _gen_id()
 
+        global _controllers_created
+        _controllers_created += 1
         _ctrl = _ctrl_env.create({
             'name': 'Controller ' + str(_id),
             'ctrl_id': _id,
             'hw_version': '17',
-            'serial_number': '0',
+            'serial_number': _controllers_created,
             'sw_version': '999',
             'external_db': _external_db,
             'mode': _mode,
@@ -98,9 +102,9 @@ def create_webstacks(env: Environment, webstacks: int = 0, controllers: list = N
             _create_reader('R2', 2, '1', _ctrl.id, _door)
         else:  # (_mode == 2 and readers_count == 2) or _mode == 4
             _door = _create_door(_gen_door_name(1, _ctrl.id), 1, _ctrl.id)
-            _create_reader('R1', 1, '0', _ctrl.id, _door)
+            _create_reader('R1', 1, '0', _ctrl.id, _door.id)
             _door = _create_door(_gen_door_name(2, _ctrl.id), 2, _ctrl.id)
-            _create_reader('R2', 2, '0', _ctrl.id, _door)
+            _create_reader('R2', 2, '0', _ctrl.id, _door.id)
 
         if _mode == 3:
             _door = _create_door(_gen_door_name(2, _ctrl.id), 2, _ctrl.id)
@@ -211,7 +215,7 @@ def create_contacts(env: Environment, names: list = None):
     return records
 
 
-def create_card(env: Environment, number: str, owner: models.BaseModel, card_type=None, activate_on=None,
+def create_card(env: Environment, number: str, owner: models.Model, card_type=None, activate_on=None,
                 deactivate_on=None, card_active=None, cloud_card=None):
     card_dict = {
         'number': number,
@@ -239,3 +243,12 @@ def create_card(env: Environment, number: str, owner: models.BaseModel, card_typ
     return env['hr.rfid.card'].create(card_dict)
 
 
+def card_door_rels_search(env: Environment, card: models.Model, door: models.Model, ts: models.Model = None):
+    rel_env = env['hr.rfid.card.door.rel']
+    search_params = [
+        ('card_id', '=', card.id),
+        ('door_id', '=', door.id),
+    ]
+    if ts is not None:
+        search_params.append( ('time_schedule_id', '=', ts.id) )
+    return rel_env.search(search_params)

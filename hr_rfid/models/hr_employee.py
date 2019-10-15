@@ -37,6 +37,7 @@ class HrEmployee(models.Model):
 
     @api.multi
     def add_acc_gr(self, access_group, expiration=None):
+        access_group.ensure_one()
         rel_env = self.env['hr.rfid.access.group.employee.rel']
         for emp in self:
             emp.check_for_ts_inconsistencies_when_adding(access_group)
