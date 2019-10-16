@@ -3,7 +3,6 @@ from odoo import http, fields, exceptions, _
 from odoo.http import request
 from functools import reduce
 from decimal import Decimal
-
 from odoo.addons.hr_rfid.controllers.main import WebRfidController
 
 import operator
@@ -55,12 +54,15 @@ class HrRfidVending(WebRfidController):
                 ev['item_sold'] = item_number
             return ev_env.create(ev)
 
+        # TODO Use self._report_sys_ev instead of this
         def create_sys_ev(controller, event, message):
             sys_ev_env.create({
                 'webstack_id': self._webstack.id,
                 'controller_id': controller.id,
                 'timestamp': event['date'] + ' ' + event['time'],
+                'event_action': str(self._post['event']['event_n']),
                 'error_description': message,
+                'input_js': json.dumps(self._post),
             })
 
         def get_employee_balance(employee, controller):

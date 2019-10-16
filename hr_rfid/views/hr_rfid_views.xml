@@ -1253,7 +1253,9 @@
             <field name="webstack_id" readonly="1" />
             <field name="controller_id" readonly="1" />
             <field name="timestamp" readonly="1" />
+            <field name="event_action" readonly="1" />
             <field name="error_description" readonly="1" />
+            <field name="input_js" readonly="1" groups="base.group_no_one" />
           </group>
         </form>
       </field>
@@ -1267,6 +1269,7 @@
           <field name="webstack_id" />
           <field name="controller_id" />
           <field name="timestamp" />
+          <field name="event_action" />
           <field name="error_description" />
         </tree>
       </field>
@@ -1280,6 +1283,7 @@
           <field name="webstack_id" />
           <field name="controller_id" />
           <field name="timestamp" />
+          <field name="event_action" />
           <field name="error_description" />
 
           <filter name="last_week" string="Events from last week"
@@ -1305,7 +1309,7 @@
       <field name="name">hr.rfid.sys.ev.calendar</field>
       <field name="model">hr.rfid.event.system</field>
       <field name="arch" type="xml">
-        <calendar date_start="timestamp" date_stop="timestamp" color="webstack_id">
+        <calendar date_start="timestamp" date_stop="timestamp" color="event_action">
           <field name="webstack_id" />
           <field name="controller_id" />
         </calendar>

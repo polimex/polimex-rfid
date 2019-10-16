@@ -1288,9 +1288,57 @@ class HrRfidSystemEvent(models.Model):
         index=True,
     )
 
-    error_description = fields.Text(
+    action_selection = [
+        ('1', 'DuressOK'),
+        ('2', 'DuressError'),
+        ('3', 'R1 Card OK'),
+        ('4', 'R1 Card Error'),
+        ('5', 'R1 T/S Error'),
+        ('6', 'R1 APB Error'),
+        ('7', 'R2 Card OK'),
+        ('8', 'R2 Card Error'),
+        ('9', 'R2 T/S Error'),
+        ('10', 'R2 APB Error'),
+        ('11', 'R3 Card OK'),
+        ('12', 'R3 Card Error'),
+        ('13', 'R3 T/S Error'),
+        ('14', 'R3 APB Error'),
+        ('15', 'R4 Card Ok'),
+        ('16', 'R4 Card Error'),
+        ('17', 'R4 T/S Error'),
+        ('18', 'R4 APB Error'),
+        ('19', 'EmergencyOpenDoor'),
+        ('20', 'ON/OFF Siren'),
+        ('21', 'OpenDoor1 from In1'),
+        ('22', 'OpenDoor2 from In2'),
+        ('23', 'OpenDoor3 from In3'),
+        ('24', 'OpenDoor4 from In4'),
+        ('25', 'Dx Overtime'),
+        ('26', 'ForcedOpenDx'),
+        ('27', 'DELAY ZONE ON (if out) Z4,Z3,Z2,Z1'),
+        ('28', 'DELAY ZONE OFF (if in) Z4,Z3,Z2,Z1'),
+        ('29', ''),
+        ('30', 'Power On event'),
+        ('31', 'Open/Close Door From PC'),
+        ('45', '1-W ERROR (wiring problems)'),
+        ('47', 'Vending Purchase Complete'),
+        ('48', 'Vending Error1'),
+        ('49', 'Vending Error2'),
+        ('64', 'Vending Request User Balance'),
+    ]
+
+    event_action = fields.Selection(
+        selection=action_selection,
+        string='Event Type',
+    )
+
+    error_description = fields.Char(
         string='Description',
         help='Description on why the error happened',
+    )
+
+    input_js = fields.Char(
+        string='Input JSON',
     )
 
     @api.model

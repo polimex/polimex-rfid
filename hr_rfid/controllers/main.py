@@ -408,8 +408,10 @@ class WebRfidController(http.Controller):
 
         sys_ev = {
             'webstack_id': self._webstack.id,
-            'error_description': description + '\n' + json.dumps(self._post),
-            'timestamp': fields.datetime.now(),
+            'timestamp': self._post['event']['date'] + ' ' + self._post['event']['time'],
+            'error_description': description,
+            'event_action': str(self._post['event']['event_n']),
+            'input_js': json.dumps(self._post),
         }
         if controller is not None:
             sys_ev['controller_id'] = controller.id
@@ -541,5 +543,6 @@ class WebRfidController(http.Controller):
                 'webstack_id': self._webstack.id,
                 'timestamp': fields.Datetime.now(),
                 'error_description': traceback.format_exc(),
+                'input_json': json.dumps(self._post),
             })
             return { 'status': 500 }
