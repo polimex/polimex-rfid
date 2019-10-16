@@ -26,8 +26,12 @@
         'wizards/hr_rfid_wizard_views.xml',
     ],
 
+    'qweb': [
+        'static/src/xml/*.xml',
+    ],
+
     'demo': [ ],
-    
+
     "images": [
         'static/images/main_screenshot.png',
     ],

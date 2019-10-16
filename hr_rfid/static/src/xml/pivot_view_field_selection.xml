@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-extend="PivotView.FieldSelection">
+        <t t-jquery=".dropdown-item:first" t-operation="before">
+            <t t-if="field[1].type === 'datetime'">
+                <a role="menuitem" href="#" class="dropdown-item" t-att-data-interval="'hour'" t-att-data-field="field[0]">Hour</a>     
+            </t>    
+        </t>
+    </t>
+</templates>
