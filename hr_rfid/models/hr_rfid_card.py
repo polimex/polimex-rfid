@@ -345,38 +345,3 @@ class HrRfidCardType(models.Model):
                                                  'Please change the doors/cards types first.')
 
         return super(HrRfidCardType, self).unlink()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

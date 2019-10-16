@@ -64,6 +64,8 @@ class HrRfidVending(WebRfidController):
             if employee.hr_rfid_vending_in_attendance is True:
                 if employee.attendance_state == 'checked_out':
                     return '0000', 0
+            if balance <= 0:
+                return '00', 0
             balance = Decimal(str(balance))
             balance *= 100
             balance /= controller.scale_factor
