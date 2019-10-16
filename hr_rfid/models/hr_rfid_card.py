@@ -101,11 +101,6 @@ class HrRfidCard(models.Model):
             return self.employee_id
         return self.contact_id
 
-    def get_owner_type(self):
-        if len(self.employee_id) == 1:
-            return OwnerType.Employee
-        return OwnerType.Contact
-
     def get_potential_access_doors(self, access_groups=None):
         """
         Returns a list of tuples (door, time_schedule) the card potentially has access to
@@ -113,6 +108,11 @@ class HrRfidCard(models.Model):
         if access_groups is None:
             owner = self.get_owner()
             access_groups = owner.hr_rfid_access_group_ids.mapped('access_group_id')
+        else:
+            owner = self.get_owner()
+            valid_access_groups = owner.hr_rfid_access_group_ids.mapped('access_group_id')
+            if access_groups not in valid_access_groups:
+                return [ ]
         door_rel_ids = access_groups.mapped('all_door_ids')
         return [ (rel.door_id, rel.time_schedule_id) for rel in door_rel_ids ]
 
