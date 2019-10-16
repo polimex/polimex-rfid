@@ -691,7 +691,7 @@ class HrRfidController(models.Model):
 
         for door in self.door_ids:
             door.card_rel_ids.unlink()
-            self.env['hr.rfid.card.door.rel'].create_door_rels(door)
+            self.env['hr.rfid.card.door.rel'].update_door_rels(door)
 
     @api.multi
     def change_io_table(self, new_io_table):
@@ -844,13 +844,14 @@ class HrRfidDoor(models.Model):
 
     @api.multi
     def write(self, vals):
+        rel_env = self.env['hr.rfid.card.door.rel']
         for door in self:
             old_card_type = door.card_type
 
             super(HrRfidDoor, door).write(vals)
 
             if old_card_type != door.card_type:
-                door.card_rel_ids.card_type_changed()
+                rel_env.update_door_rels(door)
 
         return True
 

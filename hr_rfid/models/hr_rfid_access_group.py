@@ -384,7 +384,7 @@ class HrRfidAccessGroupDoorRel(models.Model):
         for val in vals:
             rel = super(HrRfidAccessGroupDoorRel, self).create([val])
             records += rel
-            card_door_rel_env.create_door_rels(rel.door_id, rel.access_group_id)
+            card_door_rel_env.update_door_rels(rel.door_id, rel.access_group_id)
 
         return records
 
@@ -447,7 +447,7 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
         for rel in records:
             cards = rel.employee_id.hr_rfid_card_ids
             for card in cards:
-                card_door_rel_env.create_card_rels(card, rel.access_group_id)
+                card_door_rel_env.update_card_rels(card, rel.access_group_id)
 
     @api.multi
     def write(self, vals):
@@ -506,7 +506,7 @@ class HrRfidAccessGroupContactRel(models.Model):
         for rel in records:
             cards = rel.contact_id.hr_rfid_card_ids
             for card in cards:
-                card_door_rel_env.create_card_rels(card, rel.access_group_id)
+                card_door_rel_env.update_card_rels(card, rel.access_group_id)
 
     @api.multi
     def write(self, vals):

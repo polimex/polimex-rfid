@@ -118,7 +118,7 @@ class HrRfidCard(models.Model):
 
     def door_compatible(self, door_id):
         return self.card_type == door_id.card_type \
-               and (self.cloud_card is False or door_id.controller_id.external_db is False)
+               and not (self.cloud_card is True and door_id.controller_id.external_db is True)
 
     def card_ready(self):
         return self.card_active
@@ -182,7 +182,7 @@ class HrRfidCard(models.Model):
             if len(card.employee_id) == 0 and len(card.contact_id) == 0:
                 raise exceptions.ValidationError(invalid_user_and_contact_msg)
 
-            card_door_rel_env.create_card_rels(card)
+            card_door_rel_env.update_card_rels(card)
 
         return records
 
@@ -224,13 +224,13 @@ class HrRfidCard(models.Model):
                 if card.card_active is False:
                     card.door_rel_ids.unlink()
                 else:
-                    rel_env.create_card_rels(card)
+                    rel_env.update_card_rels(card)
 
             if old_card_type_id != card.card_type:
-                rel_env.create_card_rels(card)
+                rel_env.update_card_rels(card)
 
             if old_cloud != card.cloud_card:
-                rel_env.create_card_rels(card)
+                rel_env.update_card_rels(card)
 
     @api.multi
     def unlink(self):
@@ -330,13 +330,25 @@ class HrRfidCardDoorRel(models.Model):
     )
 
     @api.model
-    def create_card_rels(self, card_id: HrRfidCard, access_group: models.Model = None):
+    def update_card_rels(self, card_id: HrRfidCard, access_group: models.Model = None):
+        """
+         Checks all card-door relations and updates them
+         :param card_id: Card for which the relations to be checked
+         :param access_group: Which access groups to go through when searching for the doors. If None will
+         go through all access groups the owner of the card is in
+         """
         potential_doors = card_id.get_potential_access_doors(access_group)
         for door, ts in potential_doors:
             self.check_relevance_fast(card_id, door, ts)
 
     @api.model
-    def create_door_rels(self, door_id: models.Model, access_group: models.Model = None):
+    def update_door_rels(self, door_id: models.Model, access_group: models.Model = None):
+        """
+        Checks all card-door relations and updates them
+        :param door_id: Door for which the relations to be checked
+        :param access_group: Which access groups to go through when searching for the cards. If None will
+        go through all the access groups the door is in
+        """
         potential_cards = door_id.get_potential_cards(access_group)
         for card, ts in potential_cards:
             self.check_relevance_fast(card, door_id, ts)
