@@ -13,13 +13,21 @@ import json
 
 
 class HrRfidVending(WebRfidController):
+    def __init__(self, *args, **kwargs):
+        self._post = None
+        self._webstacks_env = None
+        self._webstack = None
+        super(HrRfidVending, self).__init__(*args, **kwargs)
+
     @http.route(['/hr/rfid/event'], type='json', auth='none', method=['POST'], csrf=False)
     def post_event(self, **post):
-        webstacks_env = request.env['hr.rfid.webstack'].sudo()
+        self._post = post
+        self._webstacks_env = request.env['hr.rfid.webstack'].sudo()
         cmd_env = request.env['hr.rfid.command'].sudo()
         ev_env = request.env['hr.rfid.vending.event'].sudo()
         sys_ev_env = request.env['hr.rfid.event.system'].sudo()
-        webstack = webstacks_env.search([ ('serial', '=', str(post['convertor'])) ])
+
+        self._webstack = self._webstacks_env.search([ ('serial', '=', str(post['convertor'])) ])
         status_code = 200
 
         item_missing_err_str = _('Item number %d missing from vending machine configuration')
@@ -51,7 +59,7 @@ class HrRfidVending(WebRfidController):
 
         def create_sys_ev(controller, event, message):
             sys_ev_env.create({
-                'webstack_id': webstack.id,
+                'webstack_id': self._webstack.id,
                 'controller_id': controller.id,
                 'timestamp': event['date'] + ' ' + event['time'],
                 'error_description': message,
@@ -114,7 +122,7 @@ class HrRfidVending(WebRfidController):
             return difference
 
         def parse_event():
-            controller = webstack.controllers.filtered(lambda r: r.ctrl_id == post['event']['id'])
+            controller = self._webstack.controllers.filtered(lambda r: r.ctrl_id == post['event']['id'])
             event = post['event']
             if len(controller) == 0:
                 return ret_super()
@@ -155,7 +163,7 @@ class HrRfidVending(WebRfidController):
 
                 ev = create_ev(controller, event, card, '64', sent_balance=balance)
                 cmd = cmd_env.create({
-                    'webstack_id': webstack.id,
+                    'webstack_id': self._webstack.id,
                     'controller_id': controller.id,
                     'cmd': 'DB2',
                     'cmd_data': '4000' + card_number + balance_str,
