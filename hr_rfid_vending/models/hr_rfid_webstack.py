@@ -323,8 +323,6 @@ class VendingEvents(models.Model):
         string='Input JSON',
     )
 
-    sent_balance = fields.Integer(default=-1)
-
     @api.model
     def _delete_old_events(self):
         event_lifetime = self.env['ir.config_parameter'].get_param('hr_rfid.event_lifetime')
@@ -339,4 +337,3 @@ class VendingEvents(models.Model):
         res.unlink()
 
         return self.env['hr.rfid.event.system'].delete_old_events()
-
