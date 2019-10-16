@@ -105,6 +105,8 @@ class HrRfidVending(WebRfidController):
             # Take the event that was last created
             last_balance = reduce(lambda a, b: a if a.id > b.id else b, last_ev)
             last_balance = last_balance.sent_balance
+            if last_balance < -1:
+                return 0
             received_balance = int(event['dt'][10:12], 16)*0x10 + int(event['dt'][12:14], 16)
             difference = last_balance - received_balance
             difference *= controller.scale_factor
