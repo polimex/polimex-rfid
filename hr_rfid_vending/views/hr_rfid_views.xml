@@ -5,7 +5,7 @@
     <menuitem id="hr_rfid_vending_menu"
               name="Vending"
               parent="hr_rfid.hr_rfid_events_menu"
-              groups="hr_rfid.hr_rfid_group_officer_department"
+              groups="hr_rfid_vending.hr_rfid_vending_group_customer"
               sequence="100" />
 
     <record id="hr_rfid_ctrl_vending_prices_wiz" model="ir.ui.view">
@@ -87,7 +87,7 @@
               name="Vending Events"
               parent="hr_rfid_vending_menu"
               action="hr_rfid_vending_event_action"
-              groups="hr_rfid.hr_rfid_group_officer_department"
+              groups="hr_rfid_vending.hr_rfid_vending_group_customer"
               sequence="0" />
 
     <record id="hr_rfid_vending_event_form" model="ir.ui.view">
@@ -214,7 +214,7 @@
               name="Vending Auto Refill Events"
               parent="hr_rfid_vending_menu"
               action="hr_rfid_vending_auto_refill_action"
-              groups="hr_rfid.hr_rfid_group_manager_department"
+              groups="hr_rfid_vending.hr_rfid_vending_group_operator"
               sequence="10" />
 
     <record id="hr_rfid_vending_auto_refill_form" model="ir.ui.view">
@@ -259,7 +259,7 @@
               name="Vending Balance History"
               parent="hr_rfid_vending_menu"
               action="hr_rfid_vending_balance_history_action"
-              groups="hr_rfid.hr_rfid_group_officer_department"
+              groups="hr_rfid_vending.hr_rfid_vending_group_operator"
               sequence="20" />
 
     <record id="hr_rfid_vending_balance_history_form" model="ir.ui.view">
