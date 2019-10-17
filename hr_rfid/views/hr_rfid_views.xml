@@ -1342,10 +1342,15 @@
             <field name="error" readonly="1" />
             <field name="cr_timestamp" readonly="1" />
             <field name="ex_timestamp" readonly="1" />
+            <field name="retries" readonly="1" />
             <field name="request" readonly="1" groups="base.group_no_one" />
             <field name="response" readonly="1" groups="base.group_no_one" />
             <field name="cmd_data" readonly="1" groups="base.group_no_one"/>
-            <field name="retries" readonly="1" />
+            <field name="card_number" readonly="1" groups="base.group_no_one"/>
+            <field name="pin_code" readonly="1" groups="base.group_no_one"/>
+            <field name="ts_code" readonly="1" groups="base.group_no_one"/>
+            <field name="rights_data" readonly="1" groups="base.group_no_one"/>
+            <field name="rights_mask" readonly="1" groups="base.group_no_one"/>
           </group>
         </form>
       </field>
