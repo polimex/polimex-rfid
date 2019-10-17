@@ -49,7 +49,7 @@ class VendingBalanceWiz(models.TransientModel):
     def set_value(self):
         self.ensure_one()
         res = self.employee_id.hr_rfid_vending_set_balance(self.value)
-        if res is False:
+        if not res:
             raise exceptions.ValidationError(
                 "Could not set the balance. Please check if it's going under the limit."
             )
@@ -114,8 +114,8 @@ class HrEmployee(models.Model):
         string='Balance History',
     )
 
-    @api.returns('hr.rfid.vending.balance.history')
     @api.one
+    @api.returns('hr.rfid.vending.balance.history')
     def hr_rfid_vending_add_to_balance(self, value: float, ev: int = 0):
         """
         Add to the balance of an employee
@@ -134,8 +134,8 @@ class HrEmployee(models.Model):
             bh_dict['vending_event_id'] = ev
         return bh_env.create(bh_dict)
 
-    @api.returns('hr.rfid.vending.balance.history')
     @api.one
+    @api.returns('hr.rfid.vending.balance.history')
     def hr_rfid_vending_set_balance(self, value: float, max_add: float = 0, min_add: float = 0, ev: int = 0):
         """
         Set an employee's balance to a specific number, with the option of max_add
@@ -154,8 +154,8 @@ class HrEmployee(models.Model):
 
         return self.hr_rfid_vending_add_to_balance(val, ev)
 
-    @api.returns('hr.rfid.vending.balance.history')
     @api.one
+    @api.returns('hr.rfid.vending.balance.history')
     def hr_rfid_vending_purchase(self, cost: float, ev: int = 0):
         """
         Purchase a product. Subtracts the parameter "cost" from the employee's balance
@@ -256,7 +256,7 @@ class VendingAutoRefillEvents(models.Model):
         compute='_compute_date',
     )
 
-    auto_refill_total = fields.Integer(
+    auto_refill_total = fields.Float(
         string='Total Cash Refilled',
         required=True,
         readonly=True,
@@ -288,7 +288,6 @@ class VendingAutoRefillEvents(models.Model):
 
             if refill_type == 'fixed':
                 bh = emp.hr_rfid_vending_set_balance(refill_amount)
-                bh = bh[0][0]  # TODO Why does the method return a list of a list of what i want??
                 total_refill += bh.balance_change
                 balance_histories += bh
                 continue
