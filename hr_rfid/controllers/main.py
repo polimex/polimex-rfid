@@ -543,6 +543,6 @@ class WebRfidController(http.Controller):
                 'webstack_id': self._webstack.id,
                 'timestamp': fields.Datetime.now(),
                 'error_description': traceback.format_exc(),
-                'input_json': json.dumps(self._post),
+                'input_js': json.dumps(self._post),
             })
             return { 'status': 500 }

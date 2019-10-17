@@ -240,6 +240,7 @@ class HrRfidVending(WebRfidController):
                 'webstack_id': self._webstack.id,
                 'timestamp': fields.Datetime.now(),
                 'error_description': traceback.format_exc(),
+                'input_js': json.dumps(post),
             })
             return { 'status': 500 }
 
