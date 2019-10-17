@@ -137,10 +137,10 @@ class WebRfidController(http.Controller):
                     }
                 }
                 cmd.request = json.dumps(cmd_js)
-                self._report_sys_ev('Could not find a card with that number.', controller)
+                self._report_sys_ev('Could not find the card', controller)
                 return cmd_js
 
-            self._report_sys_ev('Could not find a card with that number.', controller)
+            self._report_sys_ev('Could not find the card', controller)
             return self._check_for_unsent_cmd(200)
 
         # External db event, controller requests for permission to open or close door

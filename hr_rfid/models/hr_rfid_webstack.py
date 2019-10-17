@@ -1426,7 +1426,7 @@ class HrRfidSystemEventWizard(models.TransientModel):
     def add_card(self):
         self.ensure_one()
 
-        js = json.loads(self.sys_ev_id.error_description.split('\n')[-1])
+        js = json.loads(self.sys_ev_id.input_js)
         try:
             card_number = js['event']['card']
         except KeyError as _:

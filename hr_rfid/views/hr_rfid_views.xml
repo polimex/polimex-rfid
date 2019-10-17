@@ -1247,7 +1247,8 @@
                     id="hr_rfid_sys_ev_add_card_btn"
                     type="action"
                     string="Add Card"
-                    class="oe_highlight" />
+                    class="oe_highlight"
+                    attrs="{'invisible':[('error_description','!=','Could not find the card')]}" />
           </header>
           <group>
             <field name="webstack_id" readonly="1" />
