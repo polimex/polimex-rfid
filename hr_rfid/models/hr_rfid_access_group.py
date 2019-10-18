@@ -324,9 +324,10 @@ class HrRfidAccessGroup(models.Model):
 
     @api.multi
     def unlink(self):
-        self.door_ids.unlink()  # Unlinks the relations
-        self.employee_ids.unlink()  # Unlinks the relations
-        self.contact_ids.unlink()  # Unlinks the relations
+        for acc_gr in self:
+            acc_gr.door_ids.unlink()  # Unlinks the relations
+            acc_gr.employee_ids.unlink()  # Unlinks the relations
+            acc_gr.contact_ids.unlink()  # Unlinks the relations
         return super(HrRfidAccessGroup, self).unlink()
 
 

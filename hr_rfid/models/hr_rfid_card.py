@@ -362,6 +362,8 @@ class HrRfidCardDoorRel(models.Model):
         :param door_id: Recordset containing a single door
         :param ts_id: Optional parameter. If supplied, the relation will be created quicker.
         """
+        card_id.ensure_one()
+        door_id.ensure_one()
         potential_doors = card_id.get_potential_access_doors()
         found_door = False
 
@@ -380,12 +382,14 @@ class HrRfidCardDoorRel(models.Model):
     @api.model
     def check_relevance_fast(self, card_id: HrRfidCard, door_id: models.Model, ts_id: models.Model = None):
         """
-        Check if card has access to door. If it does, create relation or do nothing if it exists,
+        Check if card is compatible with the door. If it is, create relation or do nothing if it exists,
         and if not remove relation or do nothing if it does not exist.
         :param card_id: Recordset containing a single card
         :param door_id: Recordset containing a single door
         :param ts_id: Optional parameter. If supplied, the relation will be created quicker.
         """
+        card_id.ensure_one()
+        door_id.ensure_one()
         if self._check_compat_n_rdy(card_id, door_id):
             self.create_rel(card_id, door_id, ts_id)
         else:
@@ -432,16 +436,17 @@ class HrRfidCardDoorRel(models.Model):
     @api.multi
     def time_schedule_changed(self, new_ts):
         self.time_schedule_id = new_ts
-        self._create_add_card_command()
 
     @api.multi
     def pin_code_changed(self):
         self._create_add_card_command()
 
     @api.multi
-    def card_number_changed(self, number):
-        self._create_remove_card_command(number)
-        self._create_add_card_command()
+    def card_number_changed(self, old_number):
+        for rel in self:
+            if old_number != rel.card_id.number:
+                rel._create_remove_card_command(old_number)
+                rel._create_add_card_command()
 
     @api.multi
     def reload_add_card_command(self):

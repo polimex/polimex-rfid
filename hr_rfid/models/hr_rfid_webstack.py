@@ -667,7 +667,7 @@ class HrRfidController(models.Model):
         sw_versions = io_tables[hw_type][mode]
         io_table = ''
         for sw_v, io_t in sw_versions:
-            if sw_version > sw_v:
+            if int(sw_version) > sw_v:
                 io_table = io_t
         return io_table
 
@@ -714,10 +714,6 @@ class HrRfidController(models.Model):
                 'cmd': 'D9',
                 'cmd_data': cmd_data,
             })
-
-    @api.multi
-    def write(self, vals):
-        return super(HrRfidController, self).write(vals)
 
 
 class HrRfidDoorOpenCloseWiz(models.TransientModel):
@@ -843,19 +839,6 @@ class HrRfidDoor(models.Model):
         return ret
 
     @api.multi
-    def write(self, vals):
-        rel_env = self.env['hr.rfid.card.door.rel']
-        for door in self:
-            old_card_type = door.card_type
-
-            super(HrRfidDoor, door).write(vals)
-
-            if old_card_type != door.card_type:
-                rel_env.update_door_rels(door)
-
-        return True
-
-    @api.multi
     def open_door(self):
         self.ensure_one()
         return self.open_close_door(1, 3)
@@ -976,6 +959,20 @@ class HrRfidDoor(models.Model):
                     self.message_post(body=_('Created a command to open the door.') % time)
                 else:
                     self.message_post(body=_('Created a command to close the door.') % time)
+
+    @api.multi
+    def write(self, vals):
+        rel_env = self.env['hr.rfid.card.door.rel']
+        for door in self:
+            old_card_type = door.card_type
+
+            super(HrRfidDoor, door).write(vals)
+
+            if old_card_type != door.card_type:
+                rel_env.update_door_rels(door)
+
+        return True
+
 
 
 class HrRfidTimeSchedule(models.Model):
@@ -1558,10 +1555,10 @@ class HrRfidCommands(models.Model):
         default=0,
     )
 
-    pin_code = fields.Char()
-    ts_code = fields.Char(limit=8)
-    rights_data = fields.Integer()
-    rights_mask = fields.Integer()
+    pin_code = fields.Char(string='Pin Code (debug info)')
+    ts_code = fields.Char(string='TS Code (debug info)', limit=8)
+    rights_data = fields.Integer(string='Rights Data (debug info)')
+    rights_mask = fields.Integer(string='Rights Mask (debug info)')
 
     @api.multi
     def _compute_cmd_name(self):
