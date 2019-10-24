@@ -80,7 +80,7 @@
       <field name="res_model">hr.rfid.vending.event</field>
       <field name="view_type">form</field>
       <field name="view_mode">tree,form,search,pivot,graph</field>
-      <field name="context">{"graph_default_sale_events":1}</field>
+      <field name="context">{"graph_default_sale_events":1,"search_default_this_day":1}</field>
     </record>
 
     <menuitem id="hr_rfid_vending_menu_events"
