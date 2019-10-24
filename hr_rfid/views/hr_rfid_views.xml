@@ -1128,12 +1128,12 @@
       <field name="name">hr.rfid.user.ev.tree</field>
       <field name="model">hr.rfid.event.user</field>
       <field name="arch" type="xml">
-        <tree create="false" delete="false">
-          <field name="employee_id" />
-          <field name="door_id" />
-          <field name="event_action" />
+        <tree create="0" delete="0">
           <field name="event_time" />
-          <field name="card_id" />
+          <field name="employee_id" />
+          <field name="event_action" />
+          <field name="reader_id" />
+          <field name="door_id" />
         </tree>
       </field>
     </record>
