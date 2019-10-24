@@ -41,10 +41,12 @@ class WebRfidController(http.Controller):
         command = commands_env.search([
             ('webstack_id', '=', self._webstack.id),
             ('status', '=', 'Wait'),
-        ], limit=1)
+        ])
 
         if len(command) == 0:
             return { 'status': status_code }
+
+        command = command[-1]
 
         if event is not None:
             event.command_id = command
