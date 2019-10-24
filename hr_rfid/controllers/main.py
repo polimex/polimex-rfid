@@ -107,6 +107,8 @@ class WebRfidController(http.Controller):
         reader_num = self._post['event']['reader']
         if reader_num == 0:
             reader_num = ((self._post['event']['event_n'] - 3) % 4) + 1
+        else:
+            reader_num = reader_num & 0x07
         for it in controller.reader_ids:
             if it.number == reader_num:
                 reader = it
