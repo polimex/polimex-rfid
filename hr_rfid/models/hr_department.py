@@ -111,7 +111,7 @@ class HrDepartmentDefAccGrWizard(models.TransientModel):
         'hr.department',
         string='Department',
         required=True,
-        default=_default_dep
+        default=_default_dep,
     )
 
     def_acc_gr = fields.Many2one(
@@ -133,3 +133,64 @@ class HrDepartmentDefAccGrWizard(models.TransientModel):
         for emp in self.dep_id.member_ids:
             if len(emp.hr_rfid_access_group_ids) == 0:
                 emp.add_acc_gr(self.def_acc_gr)
+
+
+class HrDepartmentMassAccGrsWiz(models.TransientModel):
+    _name = 'hr.department.mass.wiz'
+    _description = 'Add/remove multiple access groups from users in a department'
+
+    def _default_dep(self):
+        return self.env['hr.department'].browse(self._context.get('active_ids'))
+
+    dep_id = fields.Many2one(
+        'hr.department',
+        string='Department',
+        required=True,
+        default=_default_dep,
+    )
+
+    acc_gr_ids = fields.Many2many(
+        'hr.rfid.access.group',
+        string='Access Groups',
+    )
+
+    expiration = fields.Datetime(
+        string='Expiration',
+    )
+
+    exclude_employees = fields.Boolean(
+        'Exclude Employees',
+        help='Exclude some employees from the operation',
+        default=False,
+    )
+
+    exclude_ids = fields.Many2many(
+        'hr.employee',
+        string='Employees to Exclude',
+    )
+
+    @api.multi
+    def add_acc_grs(self):
+        self.ensure_one()
+
+        employees = self.dep_id.member_ids
+
+        if self.exclude_employees is True:
+            employees = employees - self.exclude_ids
+
+        if self.expiration is False:
+            employees.add_acc_gr(self.acc_gr_ids)
+        else:
+            employees.add_acc_gr(self.acc_gr_ids, self.expiration)
+
+    @api.multi
+    def remove_acc_grs(self):
+        self.ensure_one()
+
+        employees = self.dep_id.member_ids
+
+        if self.exclude_employees is True:
+            employees = employees - self.exclude_ids
+
+        employees.remove_acc_gr(self.acc_gr_ids)
+

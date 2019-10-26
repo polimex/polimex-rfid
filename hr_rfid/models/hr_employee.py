@@ -36,26 +36,28 @@ class HrEmployee(models.Model):
     )
 
     @api.multi
-    def add_acc_gr(self, access_group, expiration=None):
+    def add_acc_gr(self, access_groups, expiration=None):
         rel_env = self.env['hr.rfid.access.group.employee.rel']
         for emp in self:
-            emp.check_for_ts_inconsistencies_when_adding(access_group)
-            creation_dict = {
-                'employee_id': emp.id,
-                'access_group_id': access_group.id,
-            }
-            if expiration is not None and expiration is not False:
-                creation_dict['expiration'] = str(expiration)
-            rel_env.create(creation_dict)
+            for acc_gr in access_groups:
+                emp.check_for_ts_inconsistencies_when_adding(acc_gr)
+                creation_dict = {
+                    'employee_id': emp.id,
+                    'access_group_id': acc_gr.id,
+                }
+                if expiration is not None and expiration is not False:
+                    creation_dict['expiration'] = str(expiration)
+                rel_env.create(creation_dict)
 
     @api.multi
-    def remove_acc_gr(self, access_group):
+    def remove_acc_gr(self, access_groups):
         rel_env = self.env['hr.rfid.access.group.employee.rel']
         for emp in self:
-            rel_env.search([
-                ('employee_id', '=', emp.id),
-                ('access_group_id', '=', access_group.id)
-            ]).unlink()
+            for acc_gr in access_groups:
+                rel_env.search([
+                    ('employee_id', '=', emp.id),
+                    ('access_group_id', '=', acc_gr.id)
+                ]).unlink()
 
     @api.one
     def get_doors(self, excluding_acc_grs=None, including_acc_grs=None):
