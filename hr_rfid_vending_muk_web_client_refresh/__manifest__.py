@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 # noinspection PyStatementEffect
 {
-    'name': 'hr_rfid_vending_muk_web_client_refresh',
+    'name': 'RFID Vending Control Auto Refresh',
     'version': '0.1',
-    'category': 'Uncategorized',
+    'category': 'Extra Tools',
     'summary': '',
     'author': 'Polimex',
     'license': 'AGPL-3',
