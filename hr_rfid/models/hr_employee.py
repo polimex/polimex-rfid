@@ -158,16 +158,11 @@ class HrEmployee(models.Model):
                     new_card_ids.add(card.id)
 
                 added_cards = new_card_ids - old_card_ids
-                removed_cards = old_card_ids - new_card_ids
 
                 for acc_gr_rel in user.hr_rfid_access_group_ids:
                     acc_gr = acc_gr_rel.access_group_id
                     for door_rel in acc_gr.all_door_ids:
                         door = door_rel.door_id
-                        for card_id in removed_cards:
-                            card = card_env.browse(card_id)
-                            cmd_env.remove_card(door.id, door_rel.time_schedule_id.id,
-                                                user.hr_rfid_pin_code, card_id=card.id)
                         for card_id in added_cards:
                             card = card_env.browse(card_id)
                             cmd_env.add_card(door.id, door_rel.time_schedule_id.id,
@@ -244,11 +239,7 @@ class HrEmployeeAccGrWizard(models.TransientModel):
         self.ensure_one()
         rel_env = self.env['hr.rfid.access.group.employee.rel']
 
-        acc_gr_ids = rel_env.search([
+        rel_env.search([
             ('employee_id', '=', self.employee_id.id),
             ('access_group_id', 'in', self.acc_gr_ids.ids),
         ]).unlink()
-
-
-
-

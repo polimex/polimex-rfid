@@ -149,7 +149,6 @@ class ResPartner(models.Model):
                     new_card_ids.add(card.id)
 
                 added_cards = new_card_ids - old_card_ids
-                removed_cards = old_card_ids - new_card_ids
 
                 for acc_gr_rel in contact.hr_rfid_access_group_ids:
                     acc_gr = acc_gr_rel.access_group_id
@@ -157,9 +156,6 @@ class ResPartner(models.Model):
                         door = door_rel.door_id
                         ts = door_rel.time_schedule_id
                         pin = contact.hr_rfid_pin_code
-                        for card_id in removed_cards:
-                            card = card_env.browse(card_id)
-                            cmd_env.remove_card(door.id, ts.id, pin, card_id=card.id)
                         for card_id in added_cards:
                             card = card_env.browse(card_id)
                             cmd_env.add_card(door.id, ts.id, pin, card.id)
@@ -240,6 +236,3 @@ class ResPartnerAccGrWizard(models.TransientModel):
             ('contact_id', '=', self.contact_id.id),
             ('access_group_id', 'in', self.acc_gr_ids.ids),
         ]).unlink()
-
-
-

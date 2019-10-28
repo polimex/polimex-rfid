@@ -89,7 +89,7 @@
             </group>
             <notebook>
               <page string="Cards">
-                <field name="hr_rfid_card_ids" context="{'employee_id': id}">
+                <field name="hr_rfid_card_ids" context="{'employee_id': id}" edit="0">
                   <tree string="Cards belonging to user">
                     <field name="number" />
                     <field name="card_type" />
