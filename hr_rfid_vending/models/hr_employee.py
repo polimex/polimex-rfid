@@ -248,7 +248,7 @@ class VendingAutoRefillEvents(models.Model):
 
     name = fields.Char(
         string='Name',
-        compute='_compute_name',
+        default=lambda self: self.env['ir.sequence'].next_by_code('hr.rfid.vending.auto.refill.event.seq'),
     )
 
     date_created = fields.Datetime(
@@ -305,11 +305,6 @@ class VendingAutoRefillEvents(models.Model):
         if len(balance_histories) > 0:
             re = self.create([{'auto_refill_total': total_refill}])
             balance_histories.write({'auto_refill_id': re.id})
-
-    @api.multi
-    def _compute_name(self):
-        for re in self:
-            re.name = 'Auto Refill on ' + str(re.create_date)
 
     @api.multi
     def _compute_date(self):
