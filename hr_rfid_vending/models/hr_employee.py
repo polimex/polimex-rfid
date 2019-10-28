@@ -287,9 +287,10 @@ class VendingAutoRefillEvents(models.Model):
                 continue
 
             if refill_type == 'fixed':
-                bh = emp.hr_rfid_vending_set_balance(refill_amount)
-                total_refill += bh.balance_change
-                balance_histories += bh
+                if emp.hr_rfid_vending_balance != refill_amount:
+                    bh = emp.hr_rfid_vending_set_balance(refill_amount)
+                    total_refill += bh.balance_change
+                    balance_histories += bh
                 continue
 
             if refill_max <= emp.hr_rfid_vending_balance:
@@ -297,11 +298,13 @@ class VendingAutoRefillEvents(models.Model):
 
             difference = refill_max - emp.hr_rfid_vending_balance
             refill_amount = refill_amount if refill_amount < difference else difference
-            balance_histories += emp.hr_rfid_vending_add_to_balance(refill_amount)
-            total_refill += refill_amount
+            if refill_amount != 0:
+                balance_histories += emp.hr_rfid_vending_add_to_balance(refill_amount)
+                total_refill += refill_amount
 
-        re = self.create([{'auto_refill_total': total_refill}])
-        balance_histories.write({'auto_refill_id': re.id})
+        if len(balance_histories) > 0:
+            re = self.create([{'auto_refill_total': total_refill}])
+            balance_histories.write({'auto_refill_id': re.id})
 
     @api.multi
     def _compute_name(self):
