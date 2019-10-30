@@ -88,6 +88,9 @@ class HrRfidCard(models.Model):
         required=True,
     )
 
+    _sql_constraints = [ ('rfid_card_number_unique', 'unique(number)',
+                          'Card numbers must be unique!') ]
+
     def get_owner(self):
         if len(self.employee_id) == 1:
             return self.employee_id
@@ -129,9 +132,6 @@ class HrRfidCard(models.Model):
     def _compute_card_name(self):
         for record in self:
             record.name = record.number
-
-    _sql_constraints = [ ('rfid_card_number_unique', 'unique(number)',
-                          'Card numbers must be unique!') ]
 
     @api.multi
     def unlink(self):

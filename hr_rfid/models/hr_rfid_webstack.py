@@ -729,7 +729,24 @@ class HrRfidController(models.Model):
     @api.multi
     def write(self, vals):
         # TODO Check if mode is being changed, change io table if so
-        return super(HrRfidController, self).write(vals)
+        cmd_env = self.env['hr.rfid.command'].sudo()
+        for ctrl in self:
+            old_ext_db = ctrl.external_db
+            super(HrRfidController, ctrl).write(vals)
+            new_ext_db = ctrl.external_db
+
+            if old_ext_db != new_ext_db:
+                cmd_dict = {
+                    'webstack_id': ctrl.webstack_id.id,
+                    'controller_id': ctrl.id,
+                    'cmd': 'D5',
+                }
+                if new_ext_db is True:
+                    new_mode = 0x20 + ctrl.mode
+                    cmd_dict['cmd_data'] = '%02X' % new_mode
+                else:
+                    cmd_dict['cmd_data'] = '%02X' % ctrl.mode
+                cmd_env.create(cmd_dict)
 
 
 class HrRfidDoorOpenCloseWiz(models.TransientModel):
@@ -1004,6 +1021,7 @@ class HrRfidTimeSchedule(models.Model):
     )
 
     number = fields.Integer(
+        string='TS Number',
         required=True,
         readonly=True,
     )
@@ -1759,47 +1777,52 @@ class HrRfidCommands(models.Model):
 
     @api.model
     def _sync_clocks(self):
-        ctrl_env = self.env['hr.rfid.ctrl']
+        ws_env = self.env['hr.rfid.webstack']
         commands_env = self.env['hr.rfid.command']
 
-        controllers = ctrl_env.search([('webstack_id.ws_active', '=', True)])
+        controllers = ws_env.search([('ws_active', '=', True)]).mapped('controllers')
 
         for ctrl in controllers:
-            commands_env.create({
+            commands_env.create([{
                 'webstack_id': ctrl.webstack_id.id,
                 'controller_id': ctrl.id,
                 'cmd': 'D7',
-            })
+            }])
 
     @api.model_create_multi
     def create(self, vals_list: list):
-        def find_last_wait(cmd):
-            return self.search([
-                ('webstack_id', '=', vals['webstack_id']),
-                ('controller_id', '=', vals['controller_id']),
-                ('cmd', '=', cmd),
+        def find_last_wait(_cmd, _vals):
+            ret = self.search([
+                ('webstack_id', '=', _vals['webstack_id']),
+                ('controller_id', '=', _vals['controller_id']),
+                ('cmd', '=', _cmd),
                 ('status', '=', 'Wait'),
-            ], limit=1)
+            ])
+            if len(ret) > 0:
+                return ret[-1]
+            return ret
 
         records = self.env['hr.rfid.command']
         for vals in vals_list:
             cmd = vals['cmd']
+            res = find_last_wait(cmd, vals)
+
+            if len(res) == 0:
+                records += super(HrRfidCommands, self).create([vals])
+                continue
+
+            cmd_data = vals['cmd_data']
 
             if cmd == 'DB':
-                res = find_last_wait(cmd)
-                cmd_data = vals['cmd_data']
-                if len(res) > 0 and res.cmd_data[0] == cmd_data[0] and res.cmd_data[1] == cmd_data[1]:
+                if res.cmd_data[0] == cmd_data[0] and res.cmd_data[1] == cmd_data[1]:
                     res.cmd_data = cmd_data
-                else:
-                    records += super(HrRfidCommands, self).create([vals])
-            elif cmd == 'D9':
-                res = find_last_wait(cmd)
-                if len(res) > 0:
-                    cmd_data = vals['cmd_data']
-                    res.cmd_data = cmd_data
-                else:
-                    records += super(HrRfidCommands, self).create([vals])
-            else:
-                records += super(HrRfidCommands, self).create([vals])
+                    continue
+            elif cmd == 'D9' or cmd == 'D5':
+                res.cmd_data = cmd_data
+                continue
+            elif cmd == 'D7':
+                continue
+
+            records += super(HrRfidCommands, self).create([vals])
 
         return records

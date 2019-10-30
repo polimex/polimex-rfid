@@ -67,23 +67,27 @@ class HrEmployee(models.Model):
     hr_rfid_vending_negative_balance = fields.Boolean(
         string='Negative Balance',
         help='Whether the user is allowed to have a negative balance or not',
+        track_visibility='onchange',
     )
 
     # Only displayed if negative_balance is true
     hr_rfid_vending_limit = fields.Float(
         string='Limit',
         help='User cannot go in more debt than this value',
+        track_visibility='onchange',
     )
 
     hr_rfid_vending_in_attendance = fields.Boolean(
         string='Only while attending',
         help='Only allow the user to perform vending transactions while attending',
+        track_visibility='onchange',
     )
 
     hr_rfid_vending_auto_refill = fields.Boolean(
         string='Auto Refill',
         help='Automatically refill balance monthly',
         default=False,
+        track_visibility='onchange',
     )
 
     hr_rfid_vending_refill_amount = fields.Float(
@@ -91,14 +95,16 @@ class HrEmployee(models.Model):
         help="How much money to be added to the person's balance",
         default=0,
         required=True,
+        track_visibility='onchange',
     )
 
     hr_rfid_vending_refill_type = fields.Selection(
-        [ ('fixed', 'Fixed type'), ('up_to', 'Up To type') ],
+        [ ('fixed', 'Fixed'), ('up_to', 'Up To') ],
         string='Refill Type',
         help="Fixed type just adds the refill amount to the user's balance every month. Up To type adds to the user's balance every month with a maximum the auto refill will never go over.",
         default='fixed',
         required=True,
+        track_visibility='onchange',
     )
 
     hr_rfid_vending_refill_max = fields.Float(

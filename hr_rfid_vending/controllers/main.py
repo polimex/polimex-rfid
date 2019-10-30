@@ -221,8 +221,7 @@ class HrRfidVending(WebRfidController):
                 return self._check_for_unsent_cmd(status_code, ev)
             # TODO Move into function "deal_with_err_evs"
             elif event['event_n'] in [48, 49]:
-                js = json.dumps(self._post)
-                create_sys_ev(controller, event, 'Vending machine sent us an error: ' + str(js))
+                create_sys_ev(controller, event, 'Vending machine sent us an error')
                 return self._check_for_unsent_cmd(status_code)
 
             return ret_super()

@@ -53,7 +53,7 @@
       <field name="name">Time Schedules</field>
       <field name="res_model">hr.rfid.time.schedule</field>
       <field name="view_type">form</field>
-      <field name="view_mode">tree,form,search</field>
+      <field name="view_mode">kanban,tree,form,search</field>
     </record>
 
     <record id="hr_rfid_reader_action" model="ir.actions.act_window">
@@ -135,15 +135,21 @@
               sequence="20" />
 
     <!--#######################################################
-    #####                    CARDS                        #####
+    #####                 MASTER DATA                     #####
     ########################################################-->
+
+    <menuitem id="hr_rfid_master_data"
+              name="Master Data"
+              parent="hr_rfid_main_menu"
+              groups="hr_rfid_group_officer_department"
+              sequence="10" />
 
     <menuitem id="hr_rfid_menu_cards"
               name="Cards"
-              parent="hr_rfid_main_menu"
+              parent="hr_rfid_master_data"
               action="hr_rfid_card_action"
               groups="hr_rfid_group_officer_department"
-              sequence="10" />
+              sequence="0" />
 
     <!--#######################################################
     #####                   SETTINGS                      #####
@@ -437,7 +443,7 @@
     </record>
 
     <!--#######################################################
-    #####                 CARD VIEWS                      #####
+    #####               MASTER DATA VIEWS                 #####
     ########################################################-->
 
     <record id="hr_rfid_card_view_form" model="ir.ui.view">
@@ -543,6 +549,57 @@
         </search>
       </field>
     </record>
+
+    <record id="hr_rfid_employee_view_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.employee.tree</field>
+      <field name="model">hr.employee</field>
+      <field name="arch" type="xml">
+        <tree string="Employee">
+          <field name="name" />
+          <field name="department_id" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="hr_rfid_employee_action" model="ir.actions.act_window">
+      <field name="name">Employees</field>
+      <field name="res_model">hr.employee</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search</field>
+      <field name="view_id" ref="hr_rfid_employee_view_tree" />
+    </record>
+
+    <menuitem id="hr_rfid_menu_employees"
+              name="Employees"
+              parent="hr_rfid_master_data"
+              action="hr_rfid_employee_action"
+              groups="hr_rfid_group_officer_department"
+              sequence="0" />
+
+    <record id="hr_rfid_contact_view_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.contact.tree</field>
+      <field name="model">res.partner</field>
+      <field name="arch" type="xml">
+        <tree string="Contact">
+          <field name="name" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="hr_rfid_contact_action" model="ir.actions.act_window">
+      <field name="name">Contacts</field>
+      <field name="res_model">res.partner</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search</field>
+      <field name="view_id" ref="hr_rfid_contact_view_tree" />
+    </record>
+
+    <menuitem id="hr_rfid_menu_contacts"
+              name="Contacts"
+              parent="hr_rfid_master_data"
+              action="hr_rfid_contact_action"
+              groups="hr_rfid_group_officer_department"
+              sequence="0" />
 
     <!--#######################################################
     #####                 WEBSTACK VIEWS                  #####
@@ -791,8 +848,9 @@
             <field name="hw_version" readonly="1" />
             <field name="sw_version" readonly="1" />
             <field name="readers" readonly="1" />
-            <field name="external_db" readonly="1" />
+            <field name="external_db" />
             <field name="max_cards_count" readonly="1" />
+            <field name="max_events_count" readonly="1" />
             <field name="webstack_id" readonly="1" />
           </group>
 
@@ -1021,15 +1079,38 @@
       <field name="name">hr.rfid.time.schedule.form</field>
       <field name="model">hr.rfid.time.schedule</field>
       <field name="arch" type="xml">
-        <form create="false" delete="false">
+        <form create="0" delete="0">
           <group>
             <field name="name" />
+            <field name="number" />
           </group>
           <div class="oe_chatter">
             <field name="message_follower_ids" widget="mail_followers" />
             <field name="message_ids" widget="mail_thread" />
           </div>
         </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_time_schedule_view_kanban" model="ir.ui.view">
+      <field name="name">hr.rfid.time.schedule.kanban</field>
+      <field name="model">hr.rfid.time.schedule</field>
+      <field name="arch" type="xml">
+        <kanban create="0" delete="0">
+          <field name="id" />
+          <field name="name" />
+          <field name="number" />
+          <templates>
+            <t t-name="kanban-box">
+              <div class="oe_product_vignette oe_kanban_global_click">
+                <ul style="list-style:none;margin:0;padding0;">
+                  <li><field name="name"/></li>
+                  <li>TS Number: <field name="number" /></li>
+                </ul>
+              </div>
+            </t>
+          </templates>
+        </kanban>
       </field>
     </record>
 
@@ -1302,6 +1383,15 @@
                   domain="[('timestamp', '&gt;=', context_today().strftime('%%Y-%%m-1'))]" />
           <filter name="this_year" string="Events from this year"
                   domain="[('timestamp', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('timestamp', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]" />
+          <separator />
+
+          <newline />
+          <group expand="0" string="Group By">
+            <filter string="Module" name="module" domain="[]" context="{'group_by':'webstack_id'}" />
+            <filter string="Controller" name="controller" domain="[]" context="{'group_by':'controller_id'}" />
+            <filter string="Time" name="event_time" domain="[]" context="{'group_by':'timestamp'}" />
+            <filter string="Event Type" name="event_type" domain="[]" context="{'group_by':'event_action'}" />
+          </group>
         </search>
       </field>
     </record>
@@ -1401,6 +1491,19 @@
                   domain="[('cr_timestamp', '&gt;=', context_today().strftime('%%Y-%%m-1'))]" />
           <filter name="this_year" string="Commands from this year"
                   domain="[('cr_timestamp', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('cr_timestamp', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]" />
+          <separator />
+
+          <newline />
+          <group expand="0" string="Group By">
+            <filter string="Module" name="module" domain="[]" context="{'group_by':'webstack_id'}" />
+            <filter string="Controller" name="controller" domain="[]" context="{'group_by':'controller_id'}" />
+            <filter string="Command" name="command" domain="[]" context="{'group_by':'cmd'}" />
+            <filter string="Status" name="status" domain="[]" context="{'group_by':'status'}" />
+            <filter string="Error" name="error" domain="[]" context="{'group_by':'error'}" />
+            <filter string="Creation Time" name="create_time" domain="[]" context="{'group_by':'cr_timestamp'}" />
+            <filter string="Execution Time" name="exec_time" domain="[]" context="{'group_by':'ex_timestamp'}" />
+            <filter string="Command retries" name="retries" domain="[]" context="{'group_by':'retries'}" />
+          </group>
         </search>
       </field>
     </record>

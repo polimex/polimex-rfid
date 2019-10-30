@@ -2,67 +2,6 @@
 
 <odoo>
   <data>
-    <record id="res_partner_acc_grs_add_form" model="ir.ui.view">
-      <field name="name">res.partner.acc.grs.add.form</field>
-      <field name="model">res.partner.acc.grs</field>
-      <field name="arch" type="xml">
-        <form string="Add Access Groups">
-          <group>
-            <field name="contact_id" attrs="{'invisible': True}" />
-            <field name="allowed_acc_grs" attrs="{'invisible': True}" />
-            <field name="acc_gr_ids"
-                   domain="[('id', 'in', allowed_acc_grs)]"
-                   widget="many2many_tags" />
-            <field name="expiration" />
-          </group>
-          <footer>
-            <button name="add_acc_grs" type="object"
-                    string="Add Access Groups" class="oe_highlight" />
-            <button special="cancel" string="Cancel" />
-          </footer>
-        </form>
-      </field>
-    </record>
-
-    <record id="res_partner_acc_grs_rem_form" model="ir.ui.view">
-      <field name="name">res.partner.acc.grs.rem.form</field>
-      <field name="model">res.partner.acc.grs</field>
-      <field name="arch" type="xml">
-        <form string="Remove Access Groups">
-          <group>
-            <field name="contact_id" attrs="{'invisible': True}" />
-            <field name="allowed_acc_grs" attrs="{'invisible': True}" />
-            <field name="acc_gr_ids"
-                   domain="[('id', 'in', allowed_acc_grs)]"
-                   widget="many2many_tags" />
-          </group>
-          <footer>
-            <button name="rem_acc_grs" type="object"
-                    string="Remove Access Groups" class="oe_highlight" />
-            <button special="cancel" string="Cancel" />
-          </footer>
-        </form>
-      </field>
-    </record>
-
-    <record id="res_partner_acc_grs_add_action" model="ir.actions.act_window">
-      <field name="name">Add Access Groups</field>
-      <field name="res_model">res.partner.acc.grs</field>
-      <field name="view_type">form</field>
-      <field name="view_mode">form</field>
-      <field name="view_id" ref="res_partner_acc_grs_add_form" />
-      <field name="target">new</field>
-    </record>
-
-    <record id="res_partner_acc_grs_rem_action" model="ir.actions.act_window">
-      <field name="name">Remove Access Groups</field>
-      <field name="res_model">res.partner.acc.grs</field>
-      <field name="view_type">form</field>
-      <field name="view_mode">form</field>
-      <field name="view_id" ref="res_partner_acc_grs_rem_form" />
-      <field name="target">new</field>
-    </record>
-
     <record id="hr_view_contact_form_inherit_hr_rfid" model="ir.ui.view">
       <field name="name">res.partner.rfid.info</field>
       <field name="model">res.partner</field>
@@ -70,20 +9,6 @@
       <field name="arch" type="xml">
         <notebook position="inside">
           <page string="RFID Info" groups="hr_rfid.hr_rfid_view_rfid_data">
-            <button name="%(res_partner_acc_grs_add_action)d"
-                    id="res_partner_add_acc_grs_btn"
-                    type="action"
-                    string="Add Access Groups"
-                    class="oe_highlight"
-                    context="{'adding_acc_grs':True}"
-                    groups="hr_rfid.hr_rfid_group_officer_department" />
-            <button name="%(res_partner_acc_grs_rem_action)d"
-                    id="res_partner_rem_acc_grs_btn"
-                    type="action"
-                    string="Remove Access Groups"
-                    class="oe_highlight"
-                    context="{'adding_acc_grs':False}"
-                    groups="hr_rfid.hr_rfid_group_officer_department" />
             <group string="Settings">
               <field name="hr_rfid_pin_code" groups="hr_rfid.hr_rfid_view_rfid_pin_code_data" />
             </group>
@@ -98,8 +23,8 @@
               </page>
 
               <page string="Access Groups">
-                <field name="hr_rfid_access_group_ids">
-                  <tree>
+                <field name="hr_rfid_access_group_ids" widget="one2many_list">
+                  <tree editable="bottom">
                     <field name="access_group_id" />
                     <field name="expiration" />
                   </tree>

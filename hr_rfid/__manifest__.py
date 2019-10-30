@@ -2,7 +2,7 @@
 # noinspection PyStatementEffect
 {
     'name': 'RFID Access Control',
-    'version': '1.1',
+    'version': '1.2',
     'category': 'Human Resources',
     'summary': 'Manage employee access control',
     'author': 'Polimex',

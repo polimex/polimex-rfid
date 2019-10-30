@@ -8,6 +8,22 @@
               groups="hr_rfid_vending.hr_rfid_vending_group_customer"
               sequence="100" />
 
+    <record id="hr_rfid_employee_view_tree_inherit_hr_rfid_vending" model="ir.ui.view">
+      <field name="name">hr.rfid.vending.employee.tree</field>
+      <field name="model">hr.employee</field>
+      <field name="inherit_id" ref="hr_rfid.hr_rfid_employee_view_tree" />
+      <field name="arch" type="xml">
+        <field name="department_id" position="after">
+          <field name="hr_rfid_vending_balance" groups="hr_rfid_vending.hr_rfid_vending_group_customer" />
+          <field name="hr_rfid_vending_negative_balance" groups="hr_rfid_vending.hr_rfid_vending_group_customer" />
+          <field name="hr_rfid_vending_limit" groups="hr_rfid_vending.hr_rfid_vending_group_customer" />
+          <field name="hr_rfid_vending_in_attendance" groups="hr_rfid_vending.hr_rfid_vending_group_customer" />
+          <field name="hr_rfid_vending_auto_refill" groups="hr_rfid_vending.hr_rfid_vending_group_customer" />
+          <field name="hr_rfid_vending_refill_max" groups="hr_rfid_vending.hr_rfid_vending_group_customer" />
+        </field>
+      </field>
+    </record>
+
     <record id="hr_rfid_ctrl_vending_prices_wiz" model="ir.ui.view">
       <field name="name">hr.rfid.ctrl.vending.settings.wiz</field>
       <field name="model">hr.rfid.ctrl.vending.settings</field>
@@ -80,7 +96,7 @@
       <field name="res_model">hr.rfid.vending.event</field>
       <field name="view_type">form</field>
       <field name="view_mode">tree,form,search,pivot,graph</field>
-      <field name="context">{"graph_default_sale_events":1,"search_default_this_day":1}</field>
+      <field name="context">{"graph_default_sale_events":1,"search_default_this_day":1,"search_default_sale_events":1}</field>
     </record>
 
     <menuitem id="hr_rfid_vending_menu_events"
@@ -117,11 +133,11 @@
       <field name="model">hr.rfid.vending.event</field>
       <field name="arch" type="xml">
         <tree create="0" delete="0">
-          <field name="controller_id" />
-          <field name="event_action" />
-          <field name="event_time" />
-          <field name="employee_id" />
-          <field name="item_sold_id" />
+          <field name="event_time"/>
+          <field name="employee_id"/>
+          <field name="event_action"/>
+          <field name="item_sold_id"/>
+          <field name="controller_id"/>
         </tree>
       </field>
     </record>
@@ -144,9 +160,9 @@
 
           <filter name="sale_events" string="Transaction events" domain="[('event_action','=','47')]" />
           <filter name="sale_employee_events" string="Employee Transaction Events"
-                  domain="[('event_action','=','47'),('employee_id','=',False)]" />
-          <filter name="sale_non_employee_events" string="Non-Employee Transaction Events"
                   domain="[('event_action','=','47'),('employee_id','!=',False)]" />
+          <filter name="sale_non_employee_events" string="Non-Employee Transaction Events"
+                  domain="[('event_action','=','47'),('employee_id','=',False)]" />
           <separator />
           <filter name="last_week" string="Events from last week"
                   domain="[('event_time', '>=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]" />
@@ -207,7 +223,7 @@
       <field name="name">Vending Auto Refill Events</field>
       <field name="res_model">hr.rfid.vending.auto.refill</field>
       <field name="view_type">form</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">tree,form,search</field>
     </record>
 
     <menuitem id="hr_rfid_vending_menu_auto_refill"
@@ -248,6 +264,36 @@
       </field>
     </record>
 
+    <record id="hr_rfid_vending_auto_refill_search" model="ir.ui.view">
+      <field name="name">hr.rfid.vending.auto.refill.search</field>
+      <field name="model">hr.rfid.vending.auto.refill</field>
+      <field name="arch" type="xml">
+        <search>
+          <filter name="last_week" string="Commands from last week"
+                  domain="[('date_created', '>=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="last_month" string="Commands from last month"
+                  domain="[('date_created', '>=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="last_year" string="Commands from last year"
+                  domain="[('date_created', '>=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]" />
+          <separator />
+          <filter name="this_day" string="Commands from today"
+                  domain="[('date_created', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('date_created', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="this_week" string="Commands from this week"
+                  domain="[('date_created', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('date_created', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]" />
+          <filter name="this_month" string="Commands from this month"
+                  domain="[('date_created', '&gt;=', context_today().strftime('%%Y-%%m-1'))]" />
+          <filter name="this_year" string="Commands from this year"
+                  domain="[('date_created', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('date_created', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]" />
+          <separator />
+
+          <newline />
+          <group expand="0" string="Group By">
+            <filter string="Date" name="date" domain="[]" context="{'group_by':'date_created'}" />
+          </group>
+        </search>
+      </field>
+    </record>
+
     <record id="hr_rfid_vending_balance_history_action" model="ir.actions.act_window">
       <field name="name">Vending Balance History</field>
       <field name="res_model">hr.rfid.vending.balance.history</field>
@@ -285,11 +331,12 @@
       <field name="model">hr.rfid.vending.balance.history</field>
       <field name="arch" type="xml">
         <tree create="0" delete="0">
-          <field name="name" />
-          <field name="balance_change" />
-          <field name="balance_result" />
-          <field name="employee_id" />
-          <field name="auto_refill_id" />
+          <field name="create_date"/>
+          <field name="employee_id"/>
+          <field name="balance_change"/>
+          <field name="balance_result"/>
+          <field name="name"/>
+          <field name="auto_refill_id"/>
         </tree>
       </field>
     </record>

@@ -221,7 +221,6 @@ class HrRfidAccessGroup(models.Model):
                 iterate_acc_grs(_gr2, _checked_groups)
 
         highest_groups = get_highest_acc_grs(self)
-        print('highest_groups=' + str(highest_groups))
         for acc_gr in highest_groups:
             iterate_acc_grs(acc_gr, [])
         employees = self.all_employee_ids.mapped('employee_id')
@@ -534,6 +533,19 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
             ('expiration', '<=', fields.Datetime.now())
         ]).unlink()
 
+    @api.multi
+    @api.constrains('employee_id', 'access_group_id')
+    def _check_for_duplicates(self):
+        for rel in self:
+            duplicates = self.search([
+                ('access_group_id', '=', rel.access_group_id.id),
+                ('employee_id', '=', rel.employee_id.id),
+            ])
+            if len(duplicates) > 1:
+                raise exceptions.ValidationError(
+                    _("Employees (%s) can't have the same access group twice (%s)!")
+                    % (rel.employee_id.name, rel.access_group_id.name))
+
     @api.model
     @api.model_create_multi
     def create(self, vals_list):
@@ -550,6 +562,8 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
                 if door not in user_doors:
                     for card in user.hr_rfid_card_ids:
                         cmd_env.add_card(door.id, ts.id, user.hr_rfid_pin_code, card_id=card.id)
+
+        return records
 
     @api.multi
     def write(self, vals):
@@ -656,6 +670,19 @@ class HrRfidAccessGroupContactRel(models.Model):
         self.search([
             ('expiration', '<=', fields.Datetime.now())
         ]).unlink()
+
+    @api.multi
+    @api.constrains('employee_id', 'access_group_id')
+    def _check_for_duplicates(self):
+        for rel in self:
+            duplicates = self.search([
+                ('access_group_id', '=', rel.access_group_id.id),
+                ('contact_id', '=', rel.contact_id.id),
+            ])
+            if len(duplicates) > 1:
+                raise exceptions.ValidationError(
+                    _("Employees (%s) can't have the same access group twice (%s)!")
+                    % (rel.contact_id.name, rel.access_group_id.name))
 
     @api.model
     @api.model_create_multi
