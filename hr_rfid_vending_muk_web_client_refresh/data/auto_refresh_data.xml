@@ -2,42 +2,42 @@
   <data noupdate="1">
    <record id="hr_rfid_vending_event_refresh_on_create" model="base.automation">
      <field name="name">HR RFID Vending: Refresh Vending Events on Creation</field>
-     <field name="model_id" ref="hr_rfid_vending.hr_rfid_vending_event" />
+     <field name="model_id" ref="hr_rfid_vending.model_hr_rfid_vending_event" />
      <field name="state">refresh</field>
      <field name="trigger">on_create</field>
    </record>
 
     <record id="hr_rfid_vending_event_refresh_on_delete" model="base.automation">
       <field name="name">HR RFID Vending: Refresh Vending Events on Deletion</field>
-      <field name="model_id" ref="hr_rfid_vending.hr_rfid_vending_event" />
+      <field name="model_id" ref="hr_rfid_vending.model_hr_rfid_vending_event" />
       <field name="state">refresh</field>
       <field name="trigger">on_unlink</field>
     </record>
 
     <record id="hr_rfid_vending_balance_history_refresh_on_create" model="base.automation">
       <field name="name">HR RFID Vending: Refresh Balance Histories on Creation</field>
-      <field name="model_id" ref="hr_rfid_vending.hr_rfid_vending_balance_history" />
+      <field name="model_id" ref="hr_rfid_vending.model_hr_rfid_vending_balance_history" />
       <field name="state">refresh</field>
       <field name="trigger">on_create</field>
     </record>
 
     <record id="hr_rfid_vending_balance_history_refresh_on_deletion" model="base.automation">
       <field name="name">HR RFID Vending: Refresh Balance Histories on Deletion</field>
-      <field name="model_id" ref="hr_rfid_vending.hr_rfid_vending_balance_history" />
+      <field name="model_id" ref="hr_rfid_vending.model_hr_rfid_vending_balance_history" />
       <field name="state">refresh</field>
       <field name="trigger">on_unlink</field>
     </record>
 
     <record id="hr_rfid_vending_auto_refill_refresh_on_create" model="base.automation">
       <field name="name">HR RFID Vending: Refresh Auto Refill Events on Creation</field>
-      <field name="model_id" ref="hr_rfid_vending.hr_rfid_vending_auto_refill" />
+      <field name="model_id" ref="hr_rfid_vending.model_hr_rfid_vending_auto_refill" />
       <field name="state">refresh</field>
       <field name="trigger">on_create</field>
     </record>
 
     <record id="hr_rfid_vending_auto_refill_refresh_on_deletion" model="base.automation">
       <field name="name">HR RFID Vending: Refresh Auto Refill Events on Deletion</field>
-      <field name="model_id" ref="hr_rfid_vending.hr_rfid_vending_auto_refill" />
+      <field name="model_id" ref="hr_rfid_vending.model_hr_rfid_vending_auto_refill" />
       <field name="state">refresh</field>
       <field name="trigger">on_unlink</field>
     </record>
