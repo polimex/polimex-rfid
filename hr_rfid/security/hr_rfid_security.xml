@@ -86,7 +86,7 @@
       <field name="active" eval="True" />
       <field name="name">HR RFID: Show cards</field>
       <field name="model_id" ref="hr_rfid.model_hr_rfid_card" />
-      <field name="domain_force">[('1','=',1)]</field>
+      <field name="domain_force">[(1,'=',1)]</field>
       <field name="groups" eval="[(6, 0, [ref('hr_rfid_group_officer'), ref('hr_rfid_group_manager')])]" />
       <field name="perm_create" eval="1"/>
       <field name="perm_write" eval="1"/>
@@ -98,7 +98,7 @@
       <field name="active" eval="True" />
       <field name="name">HR RFID: Show user events</field>
       <field name="model_id" ref="hr_rfid.model_hr_rfid_event_user" />
-      <field name="domain_force">[('1','=',1)]</field>
+      <field name="domain_force">[(1,'=',1)]</field>
       <field name="groups" eval="[(6, 0, [ref('hr_rfid_group_officer'), ref('hr_rfid_group_manager')])]" />
       <field name="perm_create" eval="1"/>
       <field name="perm_write" eval="1"/>
