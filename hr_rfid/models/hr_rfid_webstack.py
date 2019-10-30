@@ -6,8 +6,12 @@ import socket
 import httplib
 import json
 import base64
+import pytz
 
-_logger = logging.getLogger(__name__)
+# put POSIX 'Etc/*' entries at the end to avoid confusing users - see bug 1086728
+_tzs = [(tz, tz) for tz in sorted(pytz.all_timezones, key=lambda tz: tz if not tz.startswith('Etc/') else '_')]
+def _tz_get(self):
+    return _tzs
 
 
 class HrRfidWebstackDiscovery(models.TransientModel):
@@ -110,6 +114,18 @@ class HrRfidWebstack(models.Model):
         required=True,
         index=True,
         track_visibility='onchange',
+    )
+
+    tz = fields.Selection(
+        _tz_get,
+        string='Timezone',
+        default=lambda self: self._context.get('tz'),
+        help='If not set, will assume GMT',
+    )
+
+    tz_offset = fields.Char(
+        string='Timezone offset',
+        compute='_compute_tz_offset',
     )
 
     serial = fields.Char(
@@ -328,6 +344,11 @@ class HrRfidWebstack(models.Model):
         except KeyError, __:
             raise exceptions.ValidationError('Information returned by the webstack invalid')
 
+    @api.depends('tz')
+    def _compute_tz_offset(self):
+        for user in self:
+            user.tz_offset = datetime.now(pytz.timezone(user.tz or 'GMT')).strftime('%z')
+
     @api.multi
     def _compute_http_link(self):
         for record in self:
@@ -344,6 +365,26 @@ class HrRfidWebstack(models.Model):
     @api.model
     def _confirm_webstack(self, ws):
         ws.available = 'c'
+
+    @api.multi
+    def write(self, vals):
+        if 'tz' not in vals:
+            return super(HrRfidWebstack, self).write(vals)
+
+        commands_env = self.env['hr.rfid.command']
+
+        for ws in self:
+            old_tz = ws.tz
+            super(HrRfidWebstack, ws).write(vals)
+            new_tz = ws.tz
+
+            if old_tz != new_tz:
+                for ctrl in ws.controllers:
+                    commands_env.create({
+                        'webstack_id': ctrl.webstack_id.id,
+                        'controller_id': ctrl.id,
+                        'cmd': 'D7',
+                    })
 
 
 class HrRfidController(models.Model):

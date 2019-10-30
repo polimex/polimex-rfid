@@ -85,6 +85,7 @@ class WebRfidController(http.Controller):
 
                 if command.cmd == 'D7':
                     dt = datetime.datetime.now()
+                    dt += _get_tz_offset()
 
                     json_cmd['cmd']['d'] = '{:02}{:02}{:02}{:02}{:02}{:02}{:02}'.format(
                         dt.second, dt.minute, dt.hour, dt.weekday() + 1, dt.day, dt.month, dt.year % 100
@@ -190,7 +191,7 @@ class WebRfidController(http.Controller):
                     'door_id': reader.door_id.id,
                     'reader_id': reader.id,
                     'card_id': card.id,
-                    'event_time': post['event']['date'] + ' ' + post['event']['time'],
+                    'event_time': _get_ws_time_str(),
                     'event_action': str(event_action),
                 }
 
@@ -423,7 +424,7 @@ class WebRfidController(http.Controller):
                 sys_ev = {
                     'webstack_id': webstack.id,
                     'error_description': description + '\n' + json.dumps(post),
-                    'timestamp': fields.datetime.now(),
+                    'timestamp': _get_ws_time_str(),
                 }
                 if controller is not None:
                     sys_ev['controller_id'] = controller.id
@@ -447,7 +448,7 @@ class WebRfidController(http.Controller):
                     'door_id': reader.door_id.id,
                     'reader_id': reader.id,
                     'card_id': card.id,
-                    'event_time': post['event']['date'] + ' ' + post['event']['time'],
+                    'event_time': _get_ws_time_str(),
                     'event_action': '64',
                 }
                 get_card_owner(event, card)
@@ -464,6 +465,20 @@ class WebRfidController(http.Controller):
                 event['command_id'] = cmd.id
                 ev_env.create(event)
                 return cmd_js
+
+            def _get_ws_time_str():
+                return _get_ws_time().strftime('%m.%d.%y %H:%M:%S')
+
+            def _get_ws_time():
+                time = post['event']['date'] + ' ' + post['event']['time']
+                time = datetime.datetime.strptime(time, '%m.%d.%y %H:%M:%S')
+                time -= _get_tz_offset()
+                return time
+
+            def _get_tz_offset():
+                tz_h = int(webstack.tz_offset[:3], 10)
+                tz_m = int(webstack.tz_offset[3:], 10)
+                return datetime.timedelta(hours=tz_h, minutes=tz_m)
 
             if len(webstack) == 0:
                 new_webstack = {

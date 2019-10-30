@@ -27,7 +27,7 @@
     ],
 
     'demo': [ ],
-    
+
     "images": [
         'static/images/main_screenshot.png',
     ],
