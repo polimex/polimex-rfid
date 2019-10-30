@@ -39,7 +39,7 @@ class HrRfidVending(WebRfidController):
                       item_number=None):
             ev = {
                 'event_action': ev_num,
-                'event_time': event['date'] + ' ' + event['time'],
+                'event_time': self._get_ws_time_str(),
                 'controller_id': controller.id,
                 'input_js': json.dumps(post),
             }
@@ -59,7 +59,7 @@ class HrRfidVending(WebRfidController):
             sys_ev_env.create({
                 'webstack_id': self._webstack.id,
                 'controller_id': controller.id,
-                'timestamp': event['date'] + ' ' + event['time'],
+                'timestamp': self._get_ws_time_str(),
                 'event_action': str(self._post['event']['event_n']),
                 'error_description': message,
                 'input_js': json.dumps(self._post),
@@ -129,10 +129,7 @@ class HrRfidVending(WebRfidController):
                         and emp.attendance_state != 'checked_in':
                     return ret_super()
 
-                date = datetime.datetime.strptime(
-                    event['date'] + ' ' + event['time'],
-                    '%m.%d.%y %H:%M:%S'
-                )
+                date = self._get_ws_time()
                 if date + datetime.timedelta(minutes=5) <= datetime.datetime.now():
                     ev = create_ev(controller, event, card, '64')
                     return self._check_for_unsent_cmd(status_code, ev)

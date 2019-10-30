@@ -163,7 +163,7 @@ class WebRfidController(http.Controller):
             'door_id': reader.door_id.id,
             'reader_id': reader.id,
             'card_id': card.id,
-            'event_time': self._post['event']['date'] + ' ' + self._post['event']['time'],
+            'event_time': self._get_ws_time_str(),
             'event_action': str(event_action),
         }
 
@@ -412,9 +412,9 @@ class WebRfidController(http.Controller):
 
         sys_ev = {
             'webstack_id': self._webstack.id,
-            'timestamp': self._post['event']['date'] + ' ' + self._post['event']['time'],
+            'timestamp': self._get_ws_time_str(),
             'error_description': description,
-            'event_action': str(self._post['event']['event_n']),
+            'event_action': self._get_ws_time_str(),
             'input_js': json.dumps(self._post),
         }
         if controller is not None:
@@ -439,7 +439,7 @@ class WebRfidController(http.Controller):
             'door_id': reader.door_id.id,
             'reader_id': reader.id,
             'card_id': card.id,
-            'event_time': self._post['event']['date'] + ' ' + self._post['event']['time'],
+            'event_time': self._get_ws_time_str(),
             'event_action': '64',
         }
         self._get_card_owner(event, card)
@@ -456,6 +456,21 @@ class WebRfidController(http.Controller):
         event['command_id'] = cmd.id
         ev_env.create(event)
         return cmd_js
+
+    def _get_ws_time_str(self):
+        return self._get_ws_time().strftime('%m.%d.%y %H:%M:%S')
+
+    def _get_ws_time(self):
+        time = self._post['event']['date'] + ' ' + self._post['event']['time']
+        time = datetime.datetime.strptime(time, '%m.%d.%y %H:%M:%S')
+        time -= self._get_tz_offset(self._webstack)
+        return time
+
+    @staticmethod
+    def _get_tz_offset(webstack):
+        tz_h = int(webstack.tz_offset[:3], 10)
+        tz_m = int(webstack.tz_offset[3:], 10)
+        return datetime.timedelta(hours=tz_h, minutes=tz_m)
 
     @staticmethod
     def _get_card_owner(event_dict: dict, card):
@@ -488,6 +503,7 @@ class WebRfidController(http.Controller):
 
         if command.cmd == 'D7':
             dt = datetime.datetime.now()
+            dt += WebRfidController._get_tz_offset(command.webstack_id)
 
             json_cmd['cmd']['d'] = '{:02}{:02}{:02}{:02}{:02}{:02}{:02}'.format(
                 dt.second, dt.minute, dt.hour, dt.weekday() + 1, dt.day, dt.month, dt.year % 100
@@ -508,6 +524,7 @@ class WebRfidController(http.Controller):
             'updated_at': fields.Datetime.now(),
         }
         try:
+            print('post=' + str(post))
             if len(self._webstack) == 0:
                 new_webstack = {
                     'name': 'Module ' + str(post['convertor']),
@@ -540,6 +557,7 @@ class WebRfidController(http.Controller):
                 result = self._parse_response()
 
             self._webstack.write(self._ws_db_update_dict)
+            print('ret=' + str(result))
             return result
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
                     exceptions.MissingError, exceptions.ValidationError, exceptions.DeferredException) as __:
