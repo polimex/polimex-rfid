@@ -1388,6 +1388,15 @@ class HrRfidSystemEventWizard(models.TransientModel):
     def _default_sys_ev(self):
         return self.env['hr.rfid.event.system'].browse(self._context.get('active_ids'))
 
+    def _default_card_number(self):
+        sys_ev = self._default_sys_ev()
+        js = json.loads(sys_ev.input_js)
+        try:
+            card_number = js['event']['card']
+            return card_number
+        except KeyError as _:
+            raise exceptions.ValidationError('System event does not have a card number in it')
+
     sys_ev_id = fields.Many2one(
         'hr.rfid.event.system',
         string='System event',
@@ -1404,6 +1413,11 @@ class HrRfidSystemEventWizard(models.TransientModel):
     contact_id = fields.Many2one(
         'res.partner',
         stirng='Card owner (contact)',
+    )
+
+    card_number = fields.Char(
+        string='Card Number',
+        default =_default_card_number,
     )
 
     card_type = fields.Many2one(
@@ -1444,18 +1458,12 @@ class HrRfidSystemEventWizard(models.TransientModel):
     def add_card(self):
         self.ensure_one()
 
-        js = json.loads(self.sys_ev_id.input_js)
-        try:
-            card_number = js['event']['card']
-        except KeyError as _:
-            raise exceptions.ValidationError('System event does not have a card number in it')
-
         if len(self.contact_id) == len(self.employee_id):
             raise exceptions.ValidationError('Card cannot have both or neither a contact owner and an employee owner.')
 
         card_env = self.env['hr.rfid.card']
         new_card = {
-            'number': card_number,
+            'number': self.card_number,
             'card_type': self.card_type.id,
             'activate_on': self.activate_on,
             'deactivate_on': self.deactivate_on,

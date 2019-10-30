@@ -1292,6 +1292,7 @@
       <field name="arch" type="xml">
         <form string="Add card" create="0" delete="0" edit="0">
           <group>
+            <field name="card_number" />
             <field name="employee_id" />
             <field name="contact_id" />
             <field name="card_type" />
