@@ -1423,6 +1423,23 @@ class HrRfidSystemEvent(models.Model):
             record.name = str(record.webstack_id.name) + '-' + str(record.controller_id.name) +\
                           ' at ' + str(record.timestamp)
 
+    def _check_save_comms(self, vals):
+        save_comms = self.env['ir.config_parameter'].get_param('hr_rfid.save_webstack_communications')
+        if save_comms != 'True':
+            if 'input_js' in vals:
+                vals.pop('input_js')
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            self._check_save_comms(vals)
+        return super(HrRfidSystemEvent, self).create(vals_list)
+
+    @api.multi
+    def write(self, vals):
+        self._check_save_comms(vals)
+        return super(HrRfidSystemEvent, self).write(vals)
+
 
 class HrRfidSystemEventWizard(models.TransientModel):
     _name = 'hr.rfid.event.sys.wiz'
@@ -1840,6 +1857,14 @@ class HrRfidCommands(models.Model):
                 'cmd': 'D7',
             }])
 
+    def _check_save_comms(self, vals):
+        save_comms = self.env['ir.config_parameter'].get_param('hr_rfid.save_webstack_communications')
+        if save_comms != 'True':
+            if 'request' in vals:
+                vals.pop('request')
+            if 'response' in vals:
+                vals.pop('response')
+
     @api.model_create_multi
     def create(self, vals_list: list):
         def find_last_wait(_cmd, _vals):
@@ -1855,6 +1880,8 @@ class HrRfidCommands(models.Model):
 
         records = self.env['hr.rfid.command']
         for vals in vals_list:
+            self._check_save_comms(vals)
+
             cmd = vals['cmd']
             res = find_last_wait(cmd, vals)
 
@@ -1877,3 +1904,8 @@ class HrRfidCommands(models.Model):
             records += super(HrRfidCommands, self).create([vals])
 
         return records
+
+    @api.multi
+    def write(self, vals):
+        self._check_save_comms(vals)
+        return super(HrRfidCommands, self).write(vals)
