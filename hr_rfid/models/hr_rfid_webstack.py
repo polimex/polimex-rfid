@@ -974,7 +974,6 @@ class HrRfidDoor(models.Model):
         return True
 
 
-
 class HrRfidTimeSchedule(models.Model):
     _name = 'hr.rfid.time.schedule'
     _inherit = ['mail.thread']
@@ -1079,21 +1078,22 @@ class HrRfidReader(models.Model):
 
     @api.multi
     def write(self, vals):
-        super(HrRfidReader, self).write(vals)
+        if 'mode' not in vals or ('no_d6_cmd' in vals and vals['no_d6_cmd'] is True):
+            super(HrRfidReader, self).write(vals)
+            return
 
-        controllers = []
+        for reader in self:
+            old_mode = reader.mode
+            super(HrRfidReader, reader).write(vals)
+            new_mode = reader.mode
 
-        if 'mode' in vals and ('no_d6_cmd' not in vals or vals['no_d6_cmd'] is False):
-            for reader in self:
-                if reader.controller_id not in controllers:
-                    controllers.append(reader.controller_id)
-
-            for ctrl in controllers:
+            if old_mode != new_mode:
+                ctrl = reader.controller_id
                 cmd_env = self.env['hr.rfid.command'].sudo()
 
                 data = ''
-                for reader in ctrl.reader_ids:
-                    data = data + str(reader.mode) + '0100'
+                for r in ctrl.reader_ids:
+                    data = data + str(r.mode) + '0100'
 
                 cmd_env.create({
                     'webstack_id': ctrl.webstack_id.id,
