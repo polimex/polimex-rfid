@@ -36,7 +36,7 @@ class WebRfidController(http.Controller):
         ], limit=1)
 
         if len(processing_comm) > 0:
-            self._retry_command(status_code, processing_comm, event)
+            return self._retry_command(status_code, processing_comm, event)
 
         command = commands_env.search([
             ('webstack_id', '=', self._webstack.id),
@@ -414,7 +414,7 @@ class WebRfidController(http.Controller):
             'webstack_id': self._webstack.id,
             'timestamp': self._get_ws_time_str(),
             'error_description': description,
-            'event_action': self._get_ws_time_str(),
+            'event_action': str(self._post['event']['event_n']),
             'input_js': json.dumps(self._post),
         }
         if controller is not None:
