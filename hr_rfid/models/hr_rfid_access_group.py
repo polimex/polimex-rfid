@@ -61,8 +61,7 @@ class HrRfidAccessGroup(models.Model):
         help='Departments assigned to this access group',
     )
 
-    # TODO Rename to inherited_ids
-    inherited_access_groups = fields.Many2many(
+    inherited_ids = fields.Many2many(
         comodel_name='hr.rfid.access.group',
         relation='access_group_inheritance',
         column1='inheritor',
@@ -70,8 +69,7 @@ class HrRfidAccessGroup(models.Model):
         string='Inherited access groups',
     )
 
-    # TODO Rename to inheritor_ids
-    inheritor_access_groups = fields.Many2many(
+    inheritor_ids = fields.Many2many(
         comodel_name='hr.rfid.access.group',
         relation='access_group_inheritance',
         column1='inherited',
@@ -111,7 +109,8 @@ class HrRfidAccessGroup(models.Model):
             res = rel_env.search([ ('access_group_id', '=', self.id),
                                    ('door_id', '=', door.id) ])
             if len(res) == 1:
-                res.time_schedule_id = time_schedule
+                if res.time_schedule_id != time_schedule:
+                    res.time_schedule_id = time_schedule
             else:
                 # if controller is of type iCON130 or iCON180
                 if door.controller_id.hw_version in ['17', '10'] and time_schedule.number > 3:
@@ -144,21 +143,21 @@ class HrRfidAccessGroup(models.Model):
                                                      'it is already linked to.')
                 door_id_list.append(rel.door_id.id)
 
-    @api.depends('door_ids', 'inherited_access_groups')
+    @api.depends('door_ids', 'inherited_ids')
     def _compute_all_doors(self):
         for acc_gr in self:
             door_ids = set()
             HrRfidAccessGroup._check_all_doors_rec(door_ids, [], acc_gr)
             acc_gr.all_door_ids = self.env['hr.rfid.access.group.door.rel'].browse(list(door_ids))
 
-    @api.depends('employee_ids', 'inheritor_access_groups')
+    @api.depends('employee_ids', 'inheritor_ids')
     def _compute_all_employees(self):
         for acc_gr in self:
             employee_ids = set()
             HrRfidAccessGroup._check_all_employees_rec(employee_ids, [], acc_gr)
             acc_gr.all_employee_ids = self.env['hr.rfid.access.group.employee.rel'].browse(list(employee_ids))
 
-    @api.depends('contact_ids', 'inheritor_access_groups')
+    @api.depends('contact_ids', 'inheritor_ids')
     def _compute_all_contacts(self):
         for acc_gr in self:
             contact_ids = set()
@@ -172,7 +171,7 @@ class HrRfidAccessGroup(models.Model):
         checked_ids.append(acc_gr.id)
         for door in acc_gr.door_ids:
             door_ids.add(door.id)
-        for rec_gr in acc_gr.inherited_access_groups:
+        for rec_gr in acc_gr.inherited_ids:
             HrRfidAccessGroup._check_all_doors_rec(door_ids, checked_ids, rec_gr)
 
     @staticmethod
@@ -182,7 +181,7 @@ class HrRfidAccessGroup(models.Model):
         checked_ids.append(acc_gr.id)
         for employee in acc_gr.employee_ids:
             emp_ids.add(employee.id)
-        for rec_gr in acc_gr.inheritor_access_groups:
+        for rec_gr in acc_gr.inheritor_ids:
             HrRfidAccessGroup._check_all_employees_rec(emp_ids, checked_ids, rec_gr)
 
     @staticmethod
@@ -192,18 +191,18 @@ class HrRfidAccessGroup(models.Model):
         checked_ids.append(acc_gr.id)
         for contact in acc_gr.contact_ids:
             contact_ids.add(contact.id)
-        for rec_gr in acc_gr.inheritor_access_groups:
+        for rec_gr in acc_gr.inheritor_ids:
             HrRfidAccessGroup._check_all_contacts_rec(contact_ids, checked_ids, rec_gr)
 
     @api.one
     def check_for_ts_inconsistencies(self):
         def get_highest_acc_grs(_gr):
-            if len(_gr.inheritor_access_groups) == 0:
+            if len(_gr.inheritor_ids) == 0:
                 return _gr
 
             _hg = self.env['hr.rfid.access.group']
-            for _acc_gr in _gr.inheritor_access_groups:
-                if len(_acc_gr.inheritor_access_groups) == 0:
+            for _acc_gr in _gr.inheritor_ids:
+                if len(_acc_gr.inheritor_ids) == 0:
                     _hg += _acc_gr
                 else:
                     _hg += get_highest_acc_grs(_acc_gr)
@@ -216,7 +215,7 @@ class HrRfidAccessGroup(models.Model):
             _door_rel_env.check_for_ts_inconsistencies(_doors1, _doors2)
 
         def iterate_acc_grs(_gr, _checked_groups):
-            for _gr2 in _gr.inherited_access_groups:
+            for _gr2 in _gr.inherited_ids:
                 if _gr2 in _checked_groups:
                     continue
                 _checked_groups.append(_gr2)
@@ -232,12 +231,12 @@ class HrRfidAccessGroup(models.Model):
         contacts.mapped(lambda r: r.check_for_ts_inconsistencies())
 
     @api.multi
-    @api.constrains('inherited_access_groups')
-    def _check_inherited_access_groups(self):
+    @api.constrains('inherited_ids')
+    def _check_inherited_ids(self):
         env = self.env['hr.rfid.access.group']
         for acc_gr in self:
             group_order = []
-            ret = HrRfidAccessGroup._check_inherited_access_groups_rec(acc_gr, [], group_order)
+            ret = HrRfidAccessGroup._check_inherited_ids_rec(acc_gr, [], group_order)
             if ret is True:
                 err2 = ''
                 for acc_gr_id in group_order:
@@ -250,7 +249,7 @@ class HrRfidAccessGroup(models.Model):
             acc_gr.check_for_ts_inconsistencies()
 
     @staticmethod
-    def _check_inherited_access_groups_rec(acc_gr, visited_groups: list, group_order: list, orig_id=None):
+    def _check_inherited_ids_rec(acc_gr, visited_groups: list, group_order: list, orig_id=None):
         group_order.append(acc_gr.id)
         if acc_gr.id == orig_id:
             return True
@@ -262,8 +261,8 @@ class HrRfidAccessGroup(models.Model):
 
         visited_groups.append(acc_gr.id)
 
-        for inh_gr in acc_gr.inherited_access_groups:
-            res = HrRfidAccessGroup._check_inherited_access_groups_rec(inh_gr, visited_groups,
+        for inh_gr in acc_gr.inherited_ids:
+            res = HrRfidAccessGroup._check_inherited_ids_rec(inh_gr, visited_groups,
                                                                        group_order, orig_id)
             if res is True:
                 return True
@@ -317,7 +316,7 @@ class HrRfidAccessGroup(models.Model):
                 HrRfidAccessGroup._create_add_door_commands(inh, added_doors)
                 HrRfidAccessGroup._create_remove_door_commands(inh, removed_doors)
 
-                for upper_inh in inh.inheritor_access_groups:
+                for upper_inh in inh.inheritor_ids:
                     acc_gr_to_complete.put(upper_inh.id)
 
         return True
