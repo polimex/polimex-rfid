@@ -61,7 +61,7 @@ class ResPartner(models.Model):
         rel_env = self.env['hr.rfid.access.group.contact.rel']
         rel_env.search([
             ('contact_id', 'in', self.ids),
-            ('access_group_id', '=', access_groups.ids)
+            ('access_group_id', 'in', access_groups.ids)
         ]).unlink()
 
     @api.one
