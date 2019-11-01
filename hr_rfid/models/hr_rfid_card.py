@@ -364,6 +364,10 @@ class HrRfidCardDoorRel(models.Model):
         """
         card_id.ensure_one()
         door_id.ensure_one()
+
+        if not card_id.card_ready():
+            return
+
         potential_doors = card_id.get_potential_access_doors()
         found_door = False
 
