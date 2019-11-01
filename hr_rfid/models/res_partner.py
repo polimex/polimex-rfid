@@ -36,27 +36,33 @@ class ResPartner(models.Model):
     )
 
     @api.multi
-    def add_acc_gr(self, access_group, expiration=None):
-        access_group.ensure_one()
+    def add_acc_gr(self, access_groups, expiration=None):
         rel_env = self.env['hr.rfid.access.group.contact.rel']
-        for contact in self:
-            contact.check_for_ts_inconsistencies_when_adding(access_group)
-            creation_dict = {
-                'contact_id': contact.id,
-                'access_group_id': access_group.id,
-            }
-            if expiration is not None and expiration is not False:
-                creation_dict['expiration'] = str(expiration)
-            rel_env.create(creation_dict)
+        for cont in self:
+            for acc_gr in access_groups:
+                rel = rel_env.search([
+                    ('contact_id', '=', cont.id),
+                    ('access_group_id', '=', acc_gr.id),
+                ])
+                if rel:
+                    rel.expiration = expiration
+                    continue
+                cont.check_for_ts_inconsistencies_when_adding(acc_gr)
+                creation_dict = {
+                    'contact_id': cont.id,
+                    'access_group_id': acc_gr.id,
+                }
+                if expiration is not None and expiration is not False:
+                    creation_dict['expiration'] = str(expiration)
+                rel_env.create(creation_dict)
 
     @api.multi
-    def remove_acc_gr(self, access_group):
+    def remove_acc_gr(self, access_groups):
         rel_env = self.env['hr.rfid.access.group.contact.rel']
-        for contact in self:
-            rel_env.search([
-                ('contact_id', '=', contact.id),
-                ('access_group_id', '=', access_group.id)
-            ]).unlink()
+        rel_env.search([
+            ('contact_id', 'in', self.ids),
+            ('access_group_id', '=', access_groups.ids)
+        ]).unlink()
 
     @api.one
     @api.returns('hr.rfid.door')
@@ -126,68 +132,3 @@ class ResPartner(models.Model):
         for emp in self:
             emp.hr_rfid_card_ids.unlink()
         return super(ResPartner, self).unlink()
-
-
-class ResPartnerAccGrWizard(models.TransientModel):
-    _name = 'res.partner.acc.grs'
-    _description = 'Add or remove access groups to or from the contact'
-
-    def _default_user(self):
-        return self.env['res.partner'].browse(self._context.get('active_ids'))
-
-    def _default_allowed_acc_grs(self):
-        contact = self._default_user()
-        cur_acc_grs = contact.hr_rfid_access_group_ids.mapped('access_group_id')
-        if self._context.get('adding_acc_grs', False):
-            return self.env['hr.rfid.access.group'].search([]) - cur_acc_grs
-        return cur_acc_grs
-
-    contact_id = fields.Many2one(
-        'res.partner',
-        string='Contact',
-        required=True,
-        default=_default_user,
-    )
-
-    allowed_acc_grs = fields.Many2many(
-        'hr.rfid.access.group',
-        'res_partner_acc_grs_allowed_grs_rel',
-        default=_default_allowed_acc_grs,
-    )
-
-    acc_gr_ids = fields.Many2many(
-        'hr.rfid.access.group',
-        'res_partner_acc_grs_acc_gr_ids_rel',
-        string='Access groups to add/remove',
-        required=True,
-    )
-
-    expiration = fields.Datetime(
-        string='Expiration',
-        help='When the access groups will be removed from the contact.',
-    )
-
-    @api.multi
-    def add_acc_grs(self):
-        self.ensure_one()
-        rel_env = self.env['hr.rfid.access.group.contact.rel']
-
-        acc_gr_ids = rel_env.search([
-            ('contact_id', '=', self.contact_id.id),
-            ('access_group_id', 'in', self.acc_gr_ids.ids),
-        ]).mapped('access_group_id')
-
-        acc_gr_ids = self.acc_gr_ids - acc_gr_ids
-
-        for acc_gr_id in acc_gr_ids:
-            self.contact_id.add_acc_gr(acc_gr_id, self.expiration)
-
-    @api.multi
-    def rem_acc_grs(self):
-        self.ensure_one()
-        rel_env = self.env['hr.rfid.access.group.contact.rel']
-
-        rel_env.search([
-            ('contact_id', '=', self.contact_id.id),
-            ('access_group_id', 'in', self.acc_gr_ids.ids),
-        ]).unlink()

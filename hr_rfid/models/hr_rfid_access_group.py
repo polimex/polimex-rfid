@@ -577,7 +577,7 @@ class HrRfidAccessGroupContactRel(models.Model):
         card_door_rel_env = self.env['hr.rfid.card.door.rel']
         for rel in self:
             old_acc_gr = rel.access_group_id
-            super(HrRfidAccessGroupEmployeeRel, rel).write(vals)
+            super(HrRfidAccessGroupContactRel, rel).write(vals)
             new_acc_gr = rel.access_group_id
 
             if new_acc_gr != old_acc_gr:

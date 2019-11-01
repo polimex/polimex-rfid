@@ -59,12 +59,10 @@ class HrEmployee(models.Model):
     @api.multi
     def remove_acc_gr(self, access_groups):
         rel_env = self.env['hr.rfid.access.group.employee.rel']
-        for emp in self:
-            for acc_gr in access_groups:
-                rel_env.search([
-                    ('employee_id', '=', emp.id),
-                    ('access_group_id', '=', acc_gr.id)
-                ]).unlink()
+        rel_env.search([
+            ('employee_id', 'in', self.ids),
+            ('access_group_id', 'in', access_groups.ids)
+        ]).unlink()
 
     @api.one
     @api.returns('hr.rfid.door')
