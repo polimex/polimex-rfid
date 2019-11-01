@@ -525,7 +525,6 @@ class WebRfidController(http.Controller):
             'updated_at': fields.Datetime.now(),
         }
         try:
-            print('post=' + str(post))
             if len(self._webstack) == 0:
                 new_webstack = {
                     'name': 'Module ' + str(post['convertor']),
@@ -558,7 +557,6 @@ class WebRfidController(http.Controller):
                 result = self._parse_response()
 
             self._webstack.write(self._ws_db_update_dict)
-            print('ret=' + str(result))
             return result
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
                     exceptions.MissingError, exceptions.ValidationError, exceptions.DeferredException) as __:
