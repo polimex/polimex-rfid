@@ -1,24 +1,43 @@
 <odoo>
   <data>
 
-    <record id="hr_rfid_vending_events_officer_rule" model="ir.rule">
+    <record id="hr_rfid_vending_management" model="ir.module.category">
+      <field name="name">Vending Access</field>
+      <field name="description">User right for the Vending module</field>
+      <field name="sequence">4</field>
+    </record>
+
+    <record id="hr_rfid_vending_group_customer" model="res.groups">
+      <field name="name">Customer</field>
+      <field name="category_id" ref="hr_rfid_vending_management" />
+    </record>
+
+    <record id="hr_rfid_vending_group_operator" model="res.groups">
+      <field name="name">Operator</field>
+      <field name="implied_ids"
+             eval="[(4, ref('hr_rfid_vending.hr_rfid_vending_group_customer'))]" />
+      <field name="category_id" ref="hr_rfid_vending_management" />
+    </record>
+
+    <record id="hr_rfid_vending_events_customer_rule" model="ir.rule">
       <field name="active" eval="True" />
-      <field name="name">HR RFID Vending: Hide non-employee events from officers</field>
+      <field name="name">HR RFID Vending: Hide non-employee events from customers</field>
       <field name="model_id" ref="hr_rfid_vending.model_hr_rfid_vending_event" />
       <field name="domain_force">[('employee_id','!=',False)]</field>
-      <field name="groups" eval="[(6, 0, [ref('hr_rfid.hr_rfid_group_officer'), ref('hr_rfid.hr_rfid_group_officer_department')])]" />
+      <field name="groups"
+             eval="[(6, 0, [ref('hr_rfid_vending.hr_rfid_vending_group_customer')])]" />
       <field name="perm_create" eval="0" />
       <field name="perm_write" eval="0" />
       <field name="perm_unlink" eval="1" />
       <field name="perm_read" eval="1" />
     </record>
 
-    <record id="hr_rfid_vending_events_manager_rule" model="ir.rule">
+    <record id="hr_rfid_vending_events_operator_rule" model="ir.rule">
       <field name="active" eval="True" />
-      <field name="name">HR RFID Vending: Show non-employee events to managers</field>
+      <field name="name">HR RFID Vending: Show non-employee events to operators</field>
       <field name="model_id" ref="hr_rfid_vending.model_hr_rfid_vending_event" />
       <field name="domain_force">[(1,'=',1)]</field>
-      <field name="groups" eval="[(6, 0, [ref('hr_rfid.hr_rfid_group_manager'), ref('hr_rfid.hr_rfid_group_manager_department')])]" />
+      <field name="groups" eval="[(6, 0, [ref('hr_rfid_vending.hr_rfid_vending_group_operator')])]" />
       <field name="perm_create" eval="0" />
       <field name="perm_write" eval="0" />
       <field name="perm_unlink" eval="1" />

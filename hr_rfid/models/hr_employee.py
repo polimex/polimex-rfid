@@ -36,34 +36,35 @@ class HrEmployee(models.Model):
     )
 
     @api.multi
-    def add_acc_gr(self, access_group, expiration=None):
-        access_group.ensure_one()
+    def add_acc_gr(self, access_groups, expiration=None):
         rel_env = self.env['hr.rfid.access.group.employee.rel']
         for emp in self:
-            rel = rel_env.search([
-                ('employee_id', '=', emp.id),
-                ('access_group_id', '=', access_group.id),
-            ])
-            if rel:
-                rel.expiration = expiration
-                continue
-            emp.check_for_ts_inconsistencies_when_adding(access_group)
-            creation_dict = {
-                'employee_id': emp.id,
-                'access_group_id': access_group.id,
-            }
-            if expiration is not None and expiration is not False:
-                creation_dict['expiration'] = str(expiration)
-            rel_env.create(creation_dict)
+            for acc_gr in access_groups:
+                rel = rel_env.search([
+                    ('employee_id', '=', emp.id),
+                    ('access_group_id', '=', acc_gr.id),
+                ])
+                if rel:
+                    rel.expiration = expiration
+                    continue
+                emp.check_for_ts_inconsistencies_when_adding(acc_gr)
+                creation_dict = {
+                    'employee_id': emp.id,
+                    'access_group_id': acc_gr.id,
+                }
+                if expiration is not None and expiration is not False:
+                    creation_dict['expiration'] = str(expiration)
+                rel_env.create(creation_dict)
 
     @api.multi
-    def remove_acc_gr(self, access_group):
+    def remove_acc_gr(self, access_groups):
         rel_env = self.env['hr.rfid.access.group.employee.rel']
         for emp in self:
-            rel_env.search([
-                ('employee_id', '=', emp.id),
-                ('access_group_id', '=', access_group.id)
-            ]).unlink()
+            for acc_gr in access_groups:
+                rel_env.search([
+                    ('employee_id', '=', emp.id),
+                    ('access_group_id', '=', acc_gr.id)
+                ]).unlink()
 
     @api.one
     @api.returns('hr.rfid.door')
@@ -152,68 +153,3 @@ class HrEmployee(models.Model):
         for emp in self:
             emp.hr_rfid_card_ids.unlink()
         return super(HrEmployee, self).unlink()
-
-
-class HrEmployeeAccGrWizard(models.TransientModel):
-    _name = 'hr.employee.acc.grs'
-    _description = 'Add or remove access groups to or from the employee'
-
-    def _default_user(self):
-        return self.env['hr.employee'].browse(self._context.get('active_ids'))
-
-    def _default_allowed_acc_grs(self):
-        employee = self._default_user()
-        cur_acc_grs = employee.hr_rfid_access_group_ids.mapped('access_group_id')
-        if self._context.get('adding_acc_grs', False):
-            return employee.department_id.hr_rfid_allowed_access_groups - cur_acc_grs
-        return cur_acc_grs
-
-    employee_id = fields.Many2one(
-        'hr.employee',
-        string='Employee',
-        required=True,
-        default=_default_user,
-    )
-
-    allowed_acc_grs = fields.Many2many(
-        'hr.rfid.access.group',
-        'hr_employee_acc_grs_allowed_grs_rel',
-        default=_default_allowed_acc_grs,
-    )
-
-    acc_gr_ids = fields.Many2many(
-        'hr.rfid.access.group',
-        'hr_employee_acc_grs_acc_gr_ids_rel',
-        string='Access groups to add/remove',
-        required=True,
-    )
-
-    expiration = fields.Datetime(
-        string='Expiration',
-        help='When the access groups will be removed from the employee.',
-    )
-
-    @api.multi
-    def add_acc_grs(self):
-        self.ensure_one()
-        rel_env = self.env['hr.rfid.access.group.employee.rel']
-
-        acc_gr_ids = rel_env.search([
-            ('employee_id', '=', self.employee_id.id),
-            ('access_group_id', 'in', self.acc_gr_ids.ids),
-        ]).mapped('access_group_id')
-
-        acc_gr_ids = self.acc_gr_ids - acc_gr_ids
-
-        for acc_gr_id in acc_gr_ids:
-            self.employee_id.add_acc_gr(acc_gr_id, self.expiration)
-
-    @api.multi
-    def rem_acc_grs(self):
-        self.ensure_one()
-        rel_env = self.env['hr.rfid.access.group.employee.rel']
-
-        rel_env.search([
-            ('employee_id', '=', self.employee_id.id),
-            ('access_group_id', 'in', self.acc_gr_ids.ids),
-        ]).unlink()

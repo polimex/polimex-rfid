@@ -323,8 +323,6 @@ class VendingEvents(models.Model):
         string='Input JSON',
     )
 
-    sent_balance = fields.Integer(default=-1)
-
     @api.model
     def _delete_old_events(self):
         event_lifetime = self.env['ir.config_parameter'].get_param('hr_rfid.event_lifetime')
@@ -339,4 +337,21 @@ class VendingEvents(models.Model):
         res.unlink()
 
         return self.env['hr.rfid.event.system'].delete_old_events()
+
+    def _check_save_comms(self, vals):
+        save_comms = self.env['ir.config_parameter'].get_param('hr_rfid.save_webstack_communications')
+        if save_comms != 'True':
+            if 'input_js' in vals:
+                vals.pop('input_js')
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            self._check_save_comms(vals)
+        return super(VendingEvents, self).create(vals_list)
+
+    @api.multi
+    def write(self, vals):
+        self._check_save_comms(vals)
+        return super(VendingEvents, self).write(vals)
 

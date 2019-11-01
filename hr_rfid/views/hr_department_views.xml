@@ -9,7 +9,10 @@
         <form string="Add Access Groups">
           <group>
             <field name="dep_id" attrs="{'invisible': True}" />
-            <field name="acc_grs" domain="[('department_ids', 'not in', [dep_id])]" widget="many2many_tags" />
+            <field name="acc_grs"
+                   domain="[('department_ids', 'not in', [dep_id])]"
+                   widget="many2many_tags"
+                   options="{'no_create_edit': True}" />
           </group>
           <footer>
             <button name="add_acc_grs" type="object"
@@ -27,7 +30,10 @@
         <form string="Remove Access Groups">
           <group>
             <field name="dep_id" attrs="{'invisible': True}" />
-            <field name="acc_grs" domain="[('department_ids', 'in', [dep_id])]" widget="many2many_tags" />
+            <field name="acc_grs"
+                   domain="[('department_ids', 'in', [dep_id])]"
+                   widget="many2many_tags"
+                   options="{'no_create_edit': True}" />
           </group>
           <footer>
             <button name="del_acc_grs" type="object"
@@ -53,6 +59,36 @@
             <button name="change_and_apply_def_acc_gr" type="object"
                     string="Change and Apply" class="oe_highlight"
                     help="Adds access group to employees in the department without any access groups" />
+            <button special="cancel" string="Cancel" />
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_department_mass_acc_grs_wiz" model="ir.ui.view">
+      <field name="name">hr.department.mass.acc.grs.wiz.form</field>
+      <field name="model">hr.department.mass.wiz</field>
+      <field name="arch" type="xml">
+        <form string="Add/Remove Access Groups from Employees">
+          <group>
+            <field name="dep_id" attrs="{'invisible': True}" />
+            <field name="acc_gr_ids"
+                   domain="[('department_ids', 'in', [dep_id])]"
+                   widget="many2many_tags"
+                   options="{'no_create_edit': True}" />
+            <field name="expiration" />
+            <field name="exclude_employees" />
+            <field name="exclude_ids"
+                   attrs="{'invisible': [('exclude_employees','=',False)]}"
+                   domain="[('department_id','=',dep_id)]"
+                   widget="many2many_tags"
+                   options="{'no_create_edit': True}" />
+          </group>
+          <footer>
+            <button name="add_acc_grs" type="object"
+                    string="Add To Employees" class="oe_highlight" />
+            <button name="remove_acc_grs" type="object"
+                    string="Remove From Employees" class="oe_highlight" />
             <button special="cancel" string="Cancel" />
           </footer>
         </form>
@@ -86,6 +122,15 @@
       <field name="target">new</field>
     </record>
 
+    <record id="hr_department_mass_acc_grs_wiz_action" model="ir.actions.act_window">
+      <field name="name">Mass Add/Remove Access Groups From Department Employees</field>
+      <field name="res_model">hr.department.mass.wiz</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_department_mass_acc_grs_wiz" />
+      <field name="target">new</field>
+    </record>
+
     <record id="hr_view_department_form_inherit_hr_rfid" model="ir.ui.view">
       <field name="name">hr.department.hr.rfid.access.group</field>
       <field name="model">hr.department</field>
@@ -114,6 +159,13 @@
                     id="hr_department_def_acc_gr_rem_btn"
                     type="object"
                     string="Remove Default Access Group" />
+            <button name="%(hr_department_mass_acc_grs_wiz_action)d"
+                    id="hr_department_mass_acc_grs_btn"
+                    type="action"
+                    string="Mass Add/Remove"
+                    help="Mass add/remove access groups from employees in this department"
+                    class="oe_highlight"
+                    groups="hr_rfid.hr_rfid_group_officer_department" />
           </xpath>
 
           <field name="company_id" position="after">

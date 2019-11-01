@@ -6,6 +6,12 @@ import socket
 import http.client
 import json
 import base64
+import pytz
+
+# put POSIX 'Etc/*' entries at the end to avoid confusing users - see bug 1086728
+_tzs = [(tz, tz) for tz in sorted(pytz.all_timezones, key=lambda tz: tz if not tz.startswith('Etc/') else '_')]
+def _tz_get(self):
+    return _tzs
 
 
 class HrRfidWebstackDiscovery(models.TransientModel):
@@ -107,6 +113,18 @@ class HrRfidWebstack(models.Model):
         required=True,
         index=True,
         track_visibility='onchange',
+    )
+
+    tz = fields.Selection(
+        _tz_get,
+        string='Timezone',
+        default=lambda self: self._context.get('tz'),
+        help='If not set, will assume GMT',
+    )
+
+    tz_offset = fields.Char(
+        string='Timezone offset',
+        compute='_compute_tz_offset',
     )
 
     serial = fields.Char(
@@ -327,6 +345,11 @@ class HrRfidWebstack(models.Model):
         except KeyError as __:
             raise exceptions.ValidationError('Information returned by the webstack invalid')
 
+    @api.depends('tz')
+    def _compute_tz_offset(self):
+        for user in self:
+            user.tz_offset = datetime.now(pytz.timezone(user.tz or 'GMT')).strftime('%z')
+
     @api.multi
     def _compute_http_link(self):
         for record in self:
@@ -343,6 +366,26 @@ class HrRfidWebstack(models.Model):
     @api.model
     def _confirm_webstack(self, ws):
         ws.available = 'c'
+
+    @api.multi
+    def write(self, vals):
+        if 'tz' not in vals:
+            return super(HrRfidWebstack, self).write(vals)
+
+        commands_env = self.env['hr.rfid.command']
+
+        for ws in self:
+            old_tz = ws.tz
+            super(HrRfidWebstack, ws).write(vals)
+            new_tz = ws.tz
+
+            if old_tz != new_tz:
+                for ctrl in ws.controllers:
+                    commands_env.create([{
+                        'webstack_id': ctrl.webstack_id.id,
+                        'controller_id': ctrl.id,
+                        'cmd': 'D7',
+                    }])
 
 
 class HrRfidCtrlIoTableRow(models.TransientModel):
@@ -715,6 +758,28 @@ class HrRfidController(models.Model):
                 'cmd_data': cmd_data,
             })
 
+    @api.multi
+    def write(self, vals):
+        # TODO Check if mode is being changed, change io table if so
+        cmd_env = self.env['hr.rfid.command'].sudo()
+        for ctrl in self:
+            old_ext_db = ctrl.external_db
+            super(HrRfidController, ctrl).write(vals)
+            new_ext_db = ctrl.external_db
+
+            if old_ext_db != new_ext_db:
+                cmd_dict = {
+                    'webstack_id': ctrl.webstack_id.id,
+                    'controller_id': ctrl.id,
+                    'cmd': 'D5',
+                }
+                if new_ext_db is True:
+                    new_mode = 0x20 + ctrl.mode
+                    cmd_dict['cmd_data'] = '%02X' % new_mode
+                else:
+                    cmd_dict['cmd_data'] = '%02X' % ctrl.mode
+                cmd_env.create(cmd_dict)
+
 
 class HrRfidDoorOpenCloseWiz(models.TransientModel):
     _name = 'hr.rfid.door.open.close.wiz'
@@ -987,6 +1052,7 @@ class HrRfidTimeSchedule(models.Model):
     )
 
     number = fields.Integer(
+        string='TS Number',
         required=True,
         readonly=True,
     )
@@ -1272,9 +1338,57 @@ class HrRfidSystemEvent(models.Model):
         index=True,
     )
 
-    error_description = fields.Text(
+    action_selection = [
+        ('1', 'DuressOK'),
+        ('2', 'DuressError'),
+        ('3', 'R1 Card OK'),
+        ('4', 'R1 Card Error'),
+        ('5', 'R1 T/S Error'),
+        ('6', 'R1 APB Error'),
+        ('7', 'R2 Card OK'),
+        ('8', 'R2 Card Error'),
+        ('9', 'R2 T/S Error'),
+        ('10', 'R2 APB Error'),
+        ('11', 'R3 Card OK'),
+        ('12', 'R3 Card Error'),
+        ('13', 'R3 T/S Error'),
+        ('14', 'R3 APB Error'),
+        ('15', 'R4 Card Ok'),
+        ('16', 'R4 Card Error'),
+        ('17', 'R4 T/S Error'),
+        ('18', 'R4 APB Error'),
+        ('19', 'EmergencyOpenDoor'),
+        ('20', 'ON/OFF Siren'),
+        ('21', 'OpenDoor1 from In1'),
+        ('22', 'OpenDoor2 from In2'),
+        ('23', 'OpenDoor3 from In3'),
+        ('24', 'OpenDoor4 from In4'),
+        ('25', 'Dx Overtime'),
+        ('26', 'ForcedOpenDx'),
+        ('27', 'DELAY ZONE ON (if out) Z4,Z3,Z2,Z1'),
+        ('28', 'DELAY ZONE OFF (if in) Z4,Z3,Z2,Z1'),
+        ('29', ''),
+        ('30', 'Power On event'),
+        ('31', 'Open/Close Door From PC'),
+        ('45', '1-W ERROR (wiring problems)'),
+        ('47', 'Vending Purchase Complete'),
+        ('48', 'Vending Error1'),
+        ('49', 'Vending Error2'),
+        ('64', 'Vending Request User Balance'),
+    ]
+
+    event_action = fields.Selection(
+        selection=action_selection,
+        string='Event Type',
+    )
+
+    error_description = fields.Char(
         string='Description',
         help='Description on why the error happened',
+    )
+
+    input_js = fields.Char(
+        string='Input JSON',
     )
 
     @api.model
@@ -1298,6 +1412,23 @@ class HrRfidSystemEvent(models.Model):
             record.name = str(record.webstack_id.name) + '-' + str(record.controller_id.name) +\
                           ' at ' + str(record.timestamp)
 
+    def _check_save_comms(self, vals):
+        save_comms = self.env['ir.config_parameter'].get_param('hr_rfid.save_webstack_communications')
+        if save_comms != 'True':
+            if 'input_js' in vals:
+                vals.pop('input_js')
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            self._check_save_comms(vals)
+        return super(HrRfidSystemEvent, self).create(vals_list)
+
+    @api.multi
+    def write(self, vals):
+        self._check_save_comms(vals)
+        return super(HrRfidSystemEvent, self).write(vals)
+
 
 class HrRfidSystemEventWizard(models.TransientModel):
     _name = 'hr.rfid.event.sys.wiz'
@@ -1305,6 +1436,15 @@ class HrRfidSystemEventWizard(models.TransientModel):
 
     def _default_sys_ev(self):
         return self.env['hr.rfid.event.system'].browse(self._context.get('active_ids'))
+
+    def _default_card_number(self):
+        sys_ev = self._default_sys_ev()
+        js = json.loads(sys_ev.input_js)
+        try:
+            card_number = js['event']['card']
+            return card_number
+        except KeyError as _:
+            raise exceptions.ValidationError('System event does not have a card number in it')
 
     sys_ev_id = fields.Many2one(
         'hr.rfid.event.system',
@@ -1322,6 +1462,11 @@ class HrRfidSystemEventWizard(models.TransientModel):
     contact_id = fields.Many2one(
         'res.partner',
         stirng='Card owner (contact)',
+    )
+
+    card_number = fields.Char(
+        string='Card Number',
+        default =_default_card_number,
     )
 
     card_type = fields.Many2one(
@@ -1362,12 +1507,6 @@ class HrRfidSystemEventWizard(models.TransientModel):
     def add_card(self):
         self.ensure_one()
 
-        js = json.loads(self.sys_ev_id.error_description.split('\n')[-1])
-        try:
-            card_number = js['event']['card']
-        except KeyError as _:
-            raise exceptions.ValidationError('System event does not have a card number in it')
-
         if len(self.contact_id) == len(self.employee_id):
             raise exceptions.ValidationError(
                 'Card cannot have both or neither a contact owner and an employee owner.'
@@ -1375,7 +1514,7 @@ class HrRfidSystemEventWizard(models.TransientModel):
 
         card_env = self.env['hr.rfid.card']
         new_card = {
-            'number': card_number,
+            'number': self.card_number,
             'card_type': self.card_type.id,
             'activate_on': self.activate_on,
             'deactivate_on': self.deactivate_on,
@@ -1682,47 +1821,67 @@ class HrRfidCommands(models.Model):
 
     @api.model
     def _sync_clocks(self):
-        ctrl_env = self.env['hr.rfid.ctrl']
+        ws_env = self.env['hr.rfid.webstack']
         commands_env = self.env['hr.rfid.command']
 
-        controllers = ctrl_env.search([('webstack_id.ws_active', '=', True)])
+        controllers = ws_env.search([('ws_active', '=', True)]).mapped('controllers')
 
         for ctrl in controllers:
-            commands_env.create({
+            commands_env.create([{
                 'webstack_id': ctrl.webstack_id.id,
                 'controller_id': ctrl.id,
                 'cmd': 'D7',
-            })
+            }])
+
+    def _check_save_comms(self, vals):
+        save_comms = self.env['ir.config_parameter'].get_param('hr_rfid.save_webstack_communications')
+        if save_comms != 'True':
+            if 'request' in vals:
+                vals.pop('request')
+            if 'response' in vals:
+                vals.pop('response')
 
     @api.model_create_multi
     def create(self, vals_list: list):
-        def find_last_wait(cmd):
-            return self.search([
-                ('webstack_id', '=', vals['webstack_id']),
-                ('controller_id', '=', vals['controller_id']),
-                ('cmd', '=', cmd),
+        def find_last_wait(_cmd, _vals):
+            ret = self.search([
+                ('webstack_id', '=', _vals['webstack_id']),
+                ('controller_id', '=', _vals['controller_id']),
+                ('cmd', '=', _cmd),
                 ('status', '=', 'Wait'),
-            ], limit=1)
+            ])
+            if len(ret) > 0:
+                return ret[-1]
+            return ret
 
         records = self.env['hr.rfid.command']
         for vals in vals_list:
+            self._check_save_comms(vals)
+
             cmd = vals['cmd']
+            res = find_last_wait(cmd, vals)
+
+            if len(res) == 0:
+                records += super(HrRfidCommands, self).create([vals])
+                continue
+
+            cmd_data = vals.get('cmd_data', False)
 
             if cmd == 'DB':
-                res = find_last_wait(cmd)
-                cmd_data = vals['cmd_data']
-                if len(res) > 0 and res.cmd_data[0] == cmd_data[0] and res.cmd_data[1] == cmd_data[1]:
+                if res.cmd_data[0] == cmd_data[0] and res.cmd_data[1] == cmd_data[1]:
                     res.cmd_data = cmd_data
-                else:
-                    records += super(HrRfidCommands, self).create([vals])
-            elif cmd == 'D9':
-                res = find_last_wait(cmd)
-                if len(res) > 0:
-                    cmd_data = vals['cmd_data']
-                    res.cmd_data = cmd_data
-                else:
-                    records += super(HrRfidCommands, self).create([vals])
-            else:
-                records += super(HrRfidCommands, self).create([vals])
+                    continue
+            elif cmd == 'D9' or cmd == 'D5':
+                res.cmd_data = cmd_data
+                continue
+            elif cmd == 'D7':
+                continue
+
+            records += super(HrRfidCommands, self).create([vals])
 
         return records
+
+    @api.multi
+    def write(self, vals):
+        self._check_save_comms(vals)
+        return super(HrRfidCommands, self).write(vals)

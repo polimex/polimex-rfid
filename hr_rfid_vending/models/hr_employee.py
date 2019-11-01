@@ -49,7 +49,7 @@ class VendingBalanceWiz(models.TransientModel):
     def set_value(self):
         self.ensure_one()
         res = self.employee_id.hr_rfid_vending_set_balance(self.value)
-        if res is False:
+        if not res:
             raise exceptions.ValidationError(
                 "Could not set the balance. Please check if it's going under the limit."
             )
@@ -67,23 +67,27 @@ class HrEmployee(models.Model):
     hr_rfid_vending_negative_balance = fields.Boolean(
         string='Negative Balance',
         help='Whether the user is allowed to have a negative balance or not',
+        track_visibility='onchange',
     )
 
     # Only displayed if negative_balance is true
     hr_rfid_vending_limit = fields.Float(
         string='Limit',
         help='User cannot go in more debt than this value',
+        track_visibility='onchange',
     )
 
     hr_rfid_vending_in_attendance = fields.Boolean(
         string='Only while attending',
         help='Only allow the user to perform vending transactions while attending',
+        track_visibility='onchange',
     )
 
     hr_rfid_vending_auto_refill = fields.Boolean(
         string='Auto Refill',
         help='Automatically refill balance monthly',
         default=False,
+        track_visibility='onchange',
     )
 
     hr_rfid_vending_refill_amount = fields.Float(
@@ -91,14 +95,16 @@ class HrEmployee(models.Model):
         help="How much money to be added to the person's balance",
         default=0,
         required=True,
+        track_visibility='onchange',
     )
 
     hr_rfid_vending_refill_type = fields.Selection(
-        [ ('fixed', 'Fixed type'), ('up_to', 'Up To type') ],
+        [ ('fixed', 'Fixed'), ('up_to', 'Up To') ],
         string='Refill Type',
         help="Fixed type just adds the refill amount to the user's balance every month. Up To type adds to the user's balance every month with a maximum the auto refill will never go over.",
         default='fixed',
         required=True,
+        track_visibility='onchange',
     )
 
     hr_rfid_vending_refill_max = fields.Float(
@@ -114,8 +120,8 @@ class HrEmployee(models.Model):
         string='Balance History',
     )
 
-    @api.returns('hr.rfid.vending.balance.history')
     @api.one
+    @api.returns('hr.rfid.vending.balance.history')
     def hr_rfid_vending_add_to_balance(self, value: float, ev: int = 0):
         """
         Add to the balance of an employee
@@ -134,8 +140,8 @@ class HrEmployee(models.Model):
             bh_dict['vending_event_id'] = ev
         return bh_env.create(bh_dict)
 
-    @api.returns('hr.rfid.vending.balance.history')
     @api.one
+    @api.returns('hr.rfid.vending.balance.history')
     def hr_rfid_vending_set_balance(self, value: float, max_add: float = 0, min_add: float = 0, ev: int = 0):
         """
         Set an employee's balance to a specific number, with the option of max_add
@@ -154,8 +160,8 @@ class HrEmployee(models.Model):
 
         return self.hr_rfid_vending_add_to_balance(val, ev)
 
-    @api.returns('hr.rfid.vending.balance.history')
     @api.one
+    @api.returns('hr.rfid.vending.balance.history')
     def hr_rfid_vending_purchase(self, cost: float, ev: int = 0):
         """
         Purchase a product. Subtracts the parameter "cost" from the employee's balance
@@ -248,7 +254,7 @@ class VendingAutoRefillEvents(models.Model):
 
     name = fields.Char(
         string='Name',
-        compute='_compute_name',
+        default=lambda self: self.env['ir.sequence'].next_by_code('hr.rfid.vending.auto.refill.event.seq'),
     )
 
     date_created = fields.Datetime(
@@ -256,7 +262,7 @@ class VendingAutoRefillEvents(models.Model):
         compute='_compute_date',
     )
 
-    auto_refill_total = fields.Integer(
+    auto_refill_total = fields.Float(
         string='Total Cash Refilled',
         required=True,
         readonly=True,
@@ -287,10 +293,10 @@ class VendingAutoRefillEvents(models.Model):
                 continue
 
             if refill_type == 'fixed':
-                bh = emp.hr_rfid_vending_set_balance(refill_amount)
-                bh = bh[0][0]  # TODO Why does the method return a list of a list of what i want??
-                total_refill += bh.balance_change
-                balance_histories += bh
+                if emp.hr_rfid_vending_balance != refill_amount:
+                    bh = emp.hr_rfid_vending_set_balance(refill_amount)
+                    total_refill += bh.balance_change
+                    balance_histories += bh
                 continue
 
             if refill_max <= emp.hr_rfid_vending_balance:
@@ -298,16 +304,13 @@ class VendingAutoRefillEvents(models.Model):
 
             difference = refill_max - emp.hr_rfid_vending_balance
             refill_amount = refill_amount if refill_amount < difference else difference
-            balance_histories += emp.hr_rfid_vending_add_to_balance(refill_amount)
-            total_refill += refill_amount
+            if refill_amount != 0:
+                balance_histories += emp.hr_rfid_vending_add_to_balance(refill_amount)
+                total_refill += refill_amount
 
-        re = self.create([{'auto_refill_total': total_refill}])
-        balance_histories.write({'auto_refill_id': re.id})
-
-    @api.multi
-    def _compute_name(self):
-        for re in self:
-            re.name = 'Auto Refill on ' + str(re.create_date)
+        if len(balance_histories) > 0:
+            re = self.create([{'auto_refill_total': total_refill}])
+            balance_histories.write({'auto_refill_id': re.id})
 
     @api.multi
     def _compute_date(self):

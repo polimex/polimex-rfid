@@ -2,7 +2,7 @@
 # noinspection PyStatementEffect
 {
     'name': 'RFID Access Control',
-    'version': '0.12',
+    'version': '1.5',
     'category': 'Human Resources',
     'summary': 'Manage employee access control',
     'author': 'Polimex',
@@ -26,8 +26,12 @@
         'wizards/hr_rfid_wizard_views.xml',
     ],
 
+    'qweb': [
+        'static/src/xml/*.xml',
+    ],
+
     'demo': [ ],
-    
+
     "images": [
         'static/images/main_screenshot.png',
     ],

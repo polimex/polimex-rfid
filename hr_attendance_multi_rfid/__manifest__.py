@@ -2,7 +2,7 @@
 # noinspection PyStatementEffect
 {
     'name': 'RFID Attendance',
-    'version': '0.3',
+    'version': '1.0',
     'category': 'Human Resources',
     'summary': 'Manage employee attendance',
     'author': 'Polimex',

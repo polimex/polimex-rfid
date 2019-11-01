@@ -452,6 +452,19 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
             ('expiration', '<=', fields.Datetime.now())
         ]).unlink()
 
+    @api.multi
+    @api.constrains('employee_id', 'access_group_id')
+    def _check_for_duplicates(self):
+        for rel in self:
+            duplicates = self.search([
+                ('access_group_id', '=', rel.access_group_id.id),
+                ('employee_id', '=', rel.employee_id.id),
+            ])
+            if len(duplicates) > 1:
+                raise exceptions.ValidationError(
+                    _("Employees (%s) can't have the same access group twice (%s)!")
+                    % (rel.employee_id.name, rel.access_group_id.name))
+
     @api.model
     @api.model_create_multi
     def create(self, vals_list):
@@ -464,9 +477,30 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
             for card in cards:
                 card_door_rel_env.update_card_rels(card, rel.access_group_id)
 
+        return records
+
     @api.multi
     def write(self, vals):
-        raise exceptions.ValidationError('Not permitted to write here (hr.rfid.access.group.employee.rel)')
+        if 'employee_id' in vals:
+            raise exceptions.ValidationError('Cannot change the employee of the relation!')
+        card_door_rel_env = self.env['hr.rfid.card.door.rel']
+        for rel in self:
+            old_acc_gr = rel.access_group_id
+            super(HrRfidAccessGroupEmployeeRel, rel).write(vals)
+            new_acc_gr = rel.access_group_id
+
+            if new_acc_gr != old_acc_gr:
+                # Potentially remove old rels
+                cards = rel.employee_id.hr_rfid_card_ids
+                doors = old_acc_gr.all_door_ids.mapped('door_id')
+                for card in cards:
+                    for door in doors:
+                        card_door_rel_env.check_relevance_slow(card, door)
+
+                # Potentially create new rels
+                cards = rel.employee_id.hr_rfid_card_ids
+                for card in cards:
+                    card_door_rel_env.update_card_rels(card, new_acc_gr)
 
     @api.multi
     def unlink(self):
@@ -511,6 +545,19 @@ class HrRfidAccessGroupContactRel(models.Model):
             ('expiration', '<=', fields.Datetime.now())
         ]).unlink()
 
+    @api.multi
+    @api.constrains('contact_id', 'access_group_id')
+    def _check_for_duplicates(self):
+        for rel in self:
+            duplicates = self.search([
+                ('access_group_id', '=', rel.access_group_id.id),
+                ('contact_id', '=', rel.contact_id.id),
+            ])
+            if len(duplicates) > 1:
+                raise exceptions.ValidationError(
+                    _("Employees (%s) can't have the same access group twice (%s)!")
+                    % (rel.contact_id.name, rel.access_group_id.name))
+
     @api.model
     @api.model_create_multi
     def create(self, vals_list):
@@ -525,7 +572,26 @@ class HrRfidAccessGroupContactRel(models.Model):
 
     @api.multi
     def write(self, vals):
-        raise exceptions.ValidationError('Not permitted to write here (hr.rfid.access.group.contact.rel)')
+        if 'contact_id' in vals:
+            raise exceptions.ValidationError('Cannot change the employee of the relation!')
+        card_door_rel_env = self.env['hr.rfid.card.door.rel']
+        for rel in self:
+            old_acc_gr = rel.access_group_id
+            super(HrRfidAccessGroupEmployeeRel, rel).write(vals)
+            new_acc_gr = rel.access_group_id
+
+            if new_acc_gr != old_acc_gr:
+                # Potentially remove old rels
+                cards = rel.contact_id.hr_rfid_card_ids
+                doors = old_acc_gr.all_door_ids.mapped('door_id')
+                for card in cards:
+                    for door in doors:
+                        card_door_rel_env.check_relevance_slow(card, door)
+
+                # Potentially create new rels
+                cards = rel.contact_id.hr_rfid_card_ids
+                for card in cards:
+                    card_door_rel_env.update_card_rels(card, new_acc_gr)
 
     @api.multi
     def unlink(self):
