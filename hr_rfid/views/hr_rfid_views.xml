@@ -21,6 +21,13 @@
       <field name="view_mode">tree,form,search</field>
     </record>
 
+    <record id="hr_rfid_card_door_rel_action" model="ir.actions.act_window">
+      <field name="name">Card/Door Relations</field>
+      <field name="res_model">hr.rfid.card.door.rel</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search</field>
+    </record>
+
     <record id="hr_rfid_access_group_action" model="ir.actions.act_window">
       <field name="name">Access Groups</field>
       <field name="res_model">hr.rfid.access.group</field>
@@ -150,6 +157,13 @@
               action="hr_rfid_card_action"
               groups="hr_rfid_group_officer_department"
               sequence="0" />
+
+    <menuitem id="hr_rfid_menu_card_door_rels"
+              name="Card/Door Relations"
+              parent="hr_rfid_main_menu"
+              action="hr_rfid_card_door_rel_action"
+              groups="base.group_no_one"
+              sequence="10" />
 
     <!--#######################################################
     #####                   SETTINGS                      #####
@@ -318,7 +332,7 @@
             </page>
 
             <page string="Departments">
-              <field name="department_ids">
+              <field name="department_ids" readonly="1">
                 <tree string="Departments assigned to this access group">
                   <field name="name" />
                   <field name="note" />
@@ -375,7 +389,7 @@
           </notebook>
           <notebook>
             <page string="Inherited Access Groups">
-              <field name="inherited_access_groups">
+              <field name="inherited_ids">
                 <tree>
                   <field name="name" />
                 </tree>
@@ -392,7 +406,7 @@
             </page>
 
             <page string="Inheritor Access Groups">
-              <field name="inheritor_access_groups" readonly="1">
+              <field name="inheritor_ids" readonly="1">
                 <tree>
                   <field name="name" />
                 </tree>
@@ -546,6 +560,44 @@
           <field name="card_ids">
             <field name="number" />
           </field>
+        </search>
+      </field>
+    </record>
+
+    <record id="hr_rfid_card_door_rel_view_form" model="ir.ui.view">
+      <field name="name">hr.rfid.card.door.rel.form</field>
+      <field name="model">hr.rfid.card.door.rel</field>
+      <field name="arch" type="xml">
+        <form string="Card/Door Relations">
+          <sheet>
+            <group>
+              <field name="card_id" />
+              <field name="door_id" />
+              <field name="time_schedule_id" />
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_card_door_rel_view_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.card.door.rel.tree</field>
+      <field name="model">hr.rfid.card.door.rel</field>
+      <field name="arch" type="xml">
+        <tree string="Card/Door Relations">
+          <field name="card_id" />
+          <field name="door_id" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="hr_rfid_card_door_rel_view_search" model="ir.ui.view">
+      <field name="name">hr.rfid.card.door.rel.search</field>
+      <field name="model">hr.rfid.card.door.rel</field>
+      <field name="arch" type="xml">
+        <search string="Card/Door Relations">
+          <field name="card_id" />
+          <field name="door_id" />
         </search>
       </field>
     </record>
@@ -1004,7 +1056,7 @@
 
           <notebook>
             <page string="Access Groups">
-              <field name="access_group_ids" context="{'door_id': id}">
+              <field name="access_group_ids" context="{'door_id': id}" readonly="1">
                 <tree>
                   <field name="access_group_id" />
                   <field name="time_schedule_id" />
@@ -1439,7 +1491,7 @@
             <field name="request" readonly="1" groups="base.group_no_one" />
             <field name="response" readonly="1" groups="base.group_no_one" />
             <field name="cmd_data" readonly="1" groups="base.group_no_one"/>
-            <field name="card_number" readonly="1" groups="base.group_no_one"/>
+            <field name="card_number" readonly="1" groups="base.group_no_one" />
             <field name="pin_code" readonly="1" groups="base.group_no_one"/>
             <field name="ts_code" readonly="1" groups="base.group_no_one"/>
             <field name="rights_data" readonly="1" groups="base.group_no_one"/>

@@ -710,7 +710,7 @@ class HrRfidController(models.Model):
         sw_versions = io_tables[hw_type][mode]
         io_table = ''
         for sw_v, io_t in sw_versions:
-            if sw_version > sw_v:
+            if int(sw_version) > sw_v:
                 io_table = io_t
         return io_table
 
@@ -733,19 +733,8 @@ class HrRfidController(models.Model):
         })
 
         for door in self.door_ids:
-            for acc_gr_rel in door.access_group_ids:
-                acc_gr = acc_gr_rel.access_group_id
-                ts = acc_gr_rel.time_schedule_id
-                for user_rel in acc_gr.all_employee_ids:
-                    user = user_rel.employee_id
-                    pin = user.hr_rfid_pin_code
-                    for card in user.hr_rfid_card_ids:
-                        cmd_env.add_card(door.id, ts.id, pin, card.id)
-                for user_rel in acc_gr.all_contact_ids:
-                    user = user_rel.contact_id
-                    pin = user.hr_rfid_pin_code
-                    for card in user.hr_rfid_card_ids:
-                        cmd_env.add_card(door.id, ts.id, pin, card.id)
+            door.card_rel_ids.unlink()
+            self.env['hr.rfid.card.door.rel'].update_door_rels(door)
 
     @api.multi
     def change_io_table(self, new_io_table):
@@ -885,48 +874,34 @@ class HrRfidDoor(models.Model):
         help='Readers that open this door',
     )
 
-    @api.multi
-    def write(self, vals):
-        for door in self:
-            old_card_type = None
-            if 'card_type' in vals:
-                old_card_type = door.card_type.id
+    card_rel_ids = fields.One2many(
+        'hr.rfid.card.door.rel',
+        'door_id',
+        string='Cards',
+        help='Cards that have access to this door',
+    )
 
-            old_acc_gr_ids = {}
-            old_ts_ids = set()
-            acc_gr_door_rel_env = self.env['hr.rfid.access.group.door.rel']
-
-            if 'door_ids' in vals:
-                door_id_changes = vals['door_ids']
-
-                for change in door_id_changes:
-                    if change[0] == 1:
-                        if 'access_group_id' in change[2]:
-                            old_acc_gr_ids[change[1]] = change[2]['access_group_id']
-                        if 'time_schedule_id' in change[2]:
-                            old_ts_ids.add(change[2]['time_schedule_id'])
-
-            super(HrRfidDoor, door).write(vals)
-
-            if old_card_type is not None:
-                commands_env = self.env['hr.rfid.command']
-
-                for acc_gr_rel in door.access_group_ids:
-                    for user in acc_gr_rel.access_group_id.all_employee_ids:
-                        for card in user.hr_rfid_card_ids:
-                            if card.card_type.id == old_card_type:
-                                commands_env.remove_card(door.id, acc_gr_rel. time_schedule_id.id,
-                                                         user.hr_rfid_pin_code, card_id=card.id)
-                            commands_env.add_card(door.id, acc_gr_rel. time_schedule_id.id,
-                                                  user.hr_rfid_pin_code, card_id=card.id)
-
-            for rel_id, prev_acc_gr_id in old_acc_gr_ids.items():
-                acc_gr_door_rel_env.access_group_changed(rel_id, prev_acc_gr_id)
-
-            for rel_id in old_ts_ids:
-                acc_gr_door_rel_env.time_schedule_changed(rel_id)
-
-        return True
+    def get_potential_cards(self, access_groups=None):
+        """
+        Returns a list of tuples (card, time_schedule) for which the card potentially has access to this door
+        """
+        if access_groups is None:
+            acc_gr_rels = self.access_group_ids
+        else:
+            acc_gr_rels = self.env['hr.rfid.access.group.door.rel'].search([
+                ('id', 'in', self.access_group_ids.ids),
+                ('access_group_id', 'in', access_groups.ids),
+            ])
+        ret = []
+        for rel in acc_gr_rels:
+            ts_id = rel.time_schedule_id
+            acc_gr = rel.access_group_id
+            employees = acc_gr.mapped('all_employee_ids').mapped('employee_id')
+            contacts = acc_gr.mapped('all_contact_ids').mapped('contact_id')
+            cards = employees.mapped('hr_rfid_card_ids') + contacts.mapped('hr_rfid_card_ids')
+            for card in cards:
+                ret.append((card, ts_id))
+        return ret
 
     @api.multi
     def open_door(self):
@@ -1050,6 +1025,19 @@ class HrRfidDoor(models.Model):
                 else:
                     self.message_post(body=_('Created a command to close the door.') % time)
 
+    @api.multi
+    def write(self, vals):
+        rel_env = self.env['hr.rfid.card.door.rel']
+        for door in self:
+            old_card_type = door.card_type
+
+            super(HrRfidDoor, door).write(vals)
+
+            if old_card_type != door.card_type:
+                rel_env.update_door_rels(door)
+
+        return True
+
 
 class HrRfidTimeSchedule(models.Model):
     _name = 'hr.rfid.time.schedule'
@@ -1156,21 +1144,22 @@ class HrRfidReader(models.Model):
 
     @api.multi
     def write(self, vals):
-        super(HrRfidReader, self).write(vals)
+        if 'mode' not in vals or ('no_d6_cmd' in vals and vals['no_d6_cmd'] is True):
+            super(HrRfidReader, self).write(vals)
+            return
 
-        controllers = []
+        for reader in self:
+            old_mode = reader.mode
+            super(HrRfidReader, reader).write(vals)
+            new_mode = reader.mode
 
-        if 'mode' in vals and ('no_d6_cmd' not in vals or vals['no_d6_cmd'] is False):
-            for reader in self:
-                if reader.controller_id not in controllers:
-                    controllers.append(reader.controller_id)
-
-            for ctrl in controllers:
+            if old_mode != new_mode:
+                ctrl = reader.controller_id
                 cmd_env = self.env['hr.rfid.command'].sudo()
 
                 data = ''
-                for reader in ctrl.reader_ids:
-                    data = data + str(reader.mode) + '0100'
+                for r in ctrl.reader_ids:
+                    data = data + str(r.mode) + '0100'
 
                 cmd_env.create({
                     'webstack_id': ctrl.webstack_id.id,
@@ -1519,7 +1508,9 @@ class HrRfidSystemEventWizard(models.TransientModel):
         self.ensure_one()
 
         if len(self.contact_id) == len(self.employee_id):
-            raise exceptions.ValidationError('Card cannot have both or neither a contact owner and an employee owner.')
+            raise exceptions.ValidationError(
+                'Card cannot have both or neither a contact owner and an employee owner.'
+            )
 
         card_env = self.env['hr.rfid.card']
         new_card = {
@@ -1703,10 +1694,10 @@ class HrRfidCommands(models.Model):
         default=0,
     )
 
-    pin_code = fields.Char()
-    ts_code = fields.Char(limit=8)
-    rights_data = fields.Integer()
-    rights_mask = fields.Integer()
+    pin_code = fields.Char(string='Pin Code (debug info)')
+    ts_code = fields.Char(string='TS Code (debug info)', limit=8)
+    rights_data = fields.Integer(string='Rights Data (debug info)')
+    rights_mask = fields.Integer(string='Rights Mask (debug info)')
 
     @api.multi
     def _compute_cmd_name(self):
@@ -1779,23 +1770,11 @@ class HrRfidCommands(models.Model):
             old_cmd.write(write_dict)
 
     @api.model
-    def add_card(self, door_id, ts_id, pin_code, card_id, ignore_active=False):
+    def add_card(self, door_id, ts_id, pin_code, card_id):
         door = self.env['hr.rfid.door'].browse(door_id)
-
         time_schedule = self.env['hr.rfid.time.schedule'].browse(ts_id)
-
         card = self.env['hr.rfid.card'].browse(card_id)
         card_number = card.number
-        card_type = card.card_type
-
-        if ignore_active is False and card.card_active is False:
-            return
-
-        if card_type != door.card_type:
-            return
-
-        if door.controller_id.external_db is True and card.cloud_card is True:
-            return
 
         for reader in door.reader_ids:
             ts_code = [0, 0, 0, 0]
@@ -1804,16 +1783,13 @@ class HrRfidCommands(models.Model):
             self.add_remove_card(card_number, door.controller_id.id, pin_code, ts_code,
                                  1 << (reader.number-1), 1 << (reader.number-1))
 
-    # TODO Remove "ts_id"
     @api.model
-    def remove_card(self, door_id, ts_id, pin_code, card_number=None, card_id=None, ignore_active=False):
+    def remove_card(self, door_id, pin_code, card_number=None, card_id=None):
         door = self.env['hr.rfid.door'].browse(door_id)
 
         if card_id is not None:
             card = self.env['hr.rfid.card'].browse(card_id)
             card_number = card.number
-            if ignore_active is False and card.card_active is False:
-                return
 
         for reader in door.reader_ids:
             self.add_remove_card(card_number, door.controller_id.id, pin_code, '00000000',

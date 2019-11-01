@@ -40,7 +40,6 @@ class HrRfidCard(models.Model):
     employee_id = fields.Many2one(
         'hr.employee',
         string='Card Owner (Employee)',
-        ondelete='cascade',
         default=_get_cur_employee_id,
         track_visibility='onchange',
     )
@@ -88,18 +87,47 @@ class HrRfidCard(models.Model):
         required=True,
     )
 
-    _sql_constraints = [ ('rfid_card_number_unique', 'unique(number)',
-                          'Card numbers must be unique!') ]
+    door_rel_ids = fields.One2many(
+        'hr.rfid.card.door.rel',
+        'card_id',
+        string='Doors',
+        help='Doors this card has access to',
+    )
+
+    pin_code = fields.Char(compute='_compute_pin_code')
 
     def get_owner(self):
         if len(self.employee_id) == 1:
             return self.employee_id
         return self.contact_id
 
-    def get_owner_type(self):
-        if len(self.employee_id) == 1:
-            return OwnerType.Employee
-        return OwnerType.Contact
+    def get_potential_access_doors(self, access_groups=None):
+        """
+        Returns a list of tuples (door, time_schedule) the card potentially has access to
+        """
+        if access_groups is None:
+            owner = self.get_owner()
+            access_groups = owner.hr_rfid_access_group_ids.mapped('access_group_id')
+        else:
+            owner = self.get_owner()
+            valid_access_groups = owner.hr_rfid_access_group_ids.mapped('access_group_id')
+            if access_groups not in valid_access_groups:
+                return [ ]
+        door_rel_ids = access_groups.mapped('all_door_ids')
+        return [ (rel.door_id, rel.time_schedule_id) for rel in door_rel_ids ]
+
+    def door_compatible(self, door_id):
+        return self.card_type == door_id.card_type \
+               and not (self.cloud_card is True and door_id.controller_id.external_db is True)
+
+    def card_ready(self):
+        return self.card_active
+
+    @api.depends('employee_id', 'contact_id')
+    @api.multi
+    def _compute_pin_code(self):
+        for card in self:
+            card.pin_code = card.get_owner().hr_rfid_pin_code
 
     @api.one
     def toggle_card_active(self):
@@ -133,152 +161,82 @@ class HrRfidCard(models.Model):
         for record in self:
             record.name = record.number
 
-    @api.multi
-    def unlink(self):
-        cmd_env = self.env['hr.rfid.command']
+    _sql_constraints = [ ('rfid_card_number_unique', 'unique(number)',
+                          'Card numbers must be unique!') ]
 
-        for card in self:
-            owner = card.get_owner()
-            if card.card_active is True:
-                for acc_gr_rel in owner.hr_rfid_access_group_ids:
-                    acc_gr = acc_gr_rel.access_group_id
-                    for door_rel in acc_gr.all_door_ids:
-                        door = door_rel.door_id
-                        ts = door_rel.time_schedule_id
-                        pin = owner.hr_rfid_pin_code
-                        cmd_env.remove_card(door.id, ts.id, pin, card_id=card.id)
-        return super(HrRfidCard, self).unlink()
+    @api.model_create_multi
+    @api.returns('self', lambda value: value.id)
+    def create(self, vals):
+        card_door_rel_env = self.env['hr.rfid.card.door.rel']
+        invalid_user_and_contact_msg = 'Card user and contact cannot both be set' \
+                                       ' in the same time, and cannot both be empty.'
+
+        records = self.env['hr.rfid.card']
+        for val in vals:
+            card = super(HrRfidCard, self).create([val])
+            records = records + card
+
+            if len(card.employee_id) > 0 and len(card.contact_id) > 0:
+                raise exceptions.ValidationError(invalid_user_and_contact_msg)
+
+            if len(card.employee_id) == 0 and len(card.contact_id) == 0:
+                raise exceptions.ValidationError(invalid_user_and_contact_msg)
+
+            card_door_rel_env.update_card_rels(card)
+
+        return records
 
     @api.multi
     def write(self, vals):
-        cmd_env       = self.env['hr.rfid.command']
-        new_number    = vals.get('number',      None)
-        new_card_type = vals.get('card_type',   None)
-        new_active    = vals.get('card_active', None)
-
+        rel_env = self.env['hr.rfid.card.door.rel']
         invalid_user_and_contact_msg = 'Card user and contact cannot both be set' \
                                        ' in the same time, and cannot both be empty.'
 
         for card in self:
             old_number = str(card.number)[:]
             old_owner = card.get_owner()
-            old_owner_type = card.get_owner_type()
             old_active = card.card_active
-            old_card_type_id = card.card_type.id
+            old_card_type_id = card.card_type
             old_cloud = card.cloud_card
 
             super(HrRfidCard, card).write(vals)
-            if (len(card.employee_id) == len(card.contact_id)
-                    or (len(card.employee_id) > 0 and len(card.contact_id) > 0)):
+
+            if len(card.employee_id) > 0 and len(card.contact_id) > 0:
                 raise exceptions.ValidationError(invalid_user_and_contact_msg)
 
-            if new_active == old_active and new_active is False:
-                continue
+            if len(card.employee_id) == 0 and len(card.contact_id) == 0:
+                raise exceptions.ValidationError(invalid_user_and_contact_msg)
 
-            new_owner = card.get_owner()
-            new_owner_type = card.get_owner_type()
-            new_cloud = card.cloud_card
+            if old_number != card.number:
+                card.door_rel_ids.card_number_changed(old_number)
 
-            if new_owner_type != old_owner_type or new_owner != old_owner:
-                for acc_gr_rel in old_owner.hr_rfid_access_group_ids:
-                    acc_gr = acc_gr_rel.access_group_id
-                    for door_rel in acc_gr.all_door_ids:
-                        door = door_rel.door_id
-                        ts = door_rel.time_schedule_id
-                        pin = old_owner.hr_rfid_pin_code
-                        if door.card_type.id == old_card_type_id:
-                            cmd_env.remove_card(door.id, ts.id, pin, card_number=old_number)
-                for acc_gr_rel in new_owner.hr_rfid_access_group_ids:
-                    acc_gr = acc_gr_rel.access_group_id
-                    for door_rel in acc_gr.all_door_ids:
-                        door = door_rel.door_id
-                        ts = door_rel.time_schedule_id
-                        pin = old_owner.hr_rfid_pin_code
-                        if door.card_type.id == card.card_type.id:
-                            cmd_env.add_card(door.id, ts.id, pin, card.number)
-                continue
+            if old_owner != card.get_owner():
+                old_owner_doors = old_owner.get_doors()
+                new_owner_doors = card.get_owner().get_doors()
+                removed_doors = old_owner_doors - new_owner_doors
+                added_doors = new_owner_doors - old_owner_doors
+                for door in removed_doors:
+                    rel_env.remove_rel(card, door)
+                for door in added_doors:
+                    rel_env.check_relevance_fast(card, door)
 
-            if new_number is not None and new_number != old_number:
-                for acc_gr_rel in new_owner.hr_rfid_access_group_ids:
-                    acc_gr = acc_gr_rel.access_group_id
-                    for door_rel in acc_gr.all_door_ids:
-                        door = door_rel.door_id
-                        ts = door_rel.time_schedule_id
-                        pin = new_owner.hr_rfid_pin_code
-                        if door.card_type.id == old_card_type_id:
-                            cmd_env.remove_card(door.id, ts.id, pin, card_number=old_number)
-                        if door.card_type.id == card.card_type.id:
-                            cmd_env.add_card(door.id, ts.id, pin, card.id)
-                continue
+            if old_active != card.card_active:
+                if card.card_active is False:
+                    card.door_rel_ids.unlink()
+                else:
+                    rel_env.update_card_rels(card)
 
-            if new_card_type is not None and new_card_type != old_card_type_id:
-                for acc_gr_rel in new_owner.hr_rfid_access_group_ids:
-                    acc_gr = acc_gr_rel.access_group_id
-                    for door_rel in acc_gr.all_door_ids:
-                        door = door_rel.door_id
-                        ts = door_rel.time_schedule_id
-                        pin = new_owner.hr_rfid_pin_code
-                        if door.card_type.id == old_card_type_id:
-                            cmd_env.remove_card(door.id, ts.id, pin, card_number=old_number)
-                        if door.card_type.id == card.card_type.id:
-                            cmd_env.add_card(door.id, ts.id, pin, card_id=card.id)
-                continue
+            if old_card_type_id != card.card_type:
+                rel_env.update_card_rels(card)
 
-            if old_cloud != new_cloud:
-                for acc_gr_rel in new_owner.hr_rfid_access_group_ids:
-                    acc_gr = acc_gr_rel.access_group_id
-                    for door_rel in acc_gr.all_door_ids:
-                        door = door_rel.door_id
-                        if door.controller_id.external_db is False:
-                            continue
-                        ts = door_rel.time_schedule_id
-                        pin = new_owner.hr_rfid_pin_code
-                        if new_cloud is True:
-                            cmd_env.remove_card(door.id, ts.id, pin, card_id=card.id)
-                        else:
-                            cmd_env.add_card(door.id, ts.id, pin, card_id=card.id)
+            if old_cloud != card.cloud_card:
+                rel_env.update_card_rels(card)
 
-            if new_active is not None and new_active != old_active:
-                for acc_gr_rel in new_owner.hr_rfid_access_group_ids:
-                    acc_gr = acc_gr_rel.access_group_id
-                    for door_rel in acc_gr.all_door_ids:
-                        door = door_rel.door_id
-                        ts = door_rel.time_schedule_id
-                        pin = new_owner.hr_rfid_pin_code
-                        if new_active is True:
-                            cmd_env.add_card(door.id, ts.id, pin, card_id=card.id)
-                        if new_active is False:
-                            cmd_env.remove_card(door.id, ts.id, pin, card_id=card.id, ignore_active=True)
-
-    @api.model_create_multi
-    @api.returns('self', lambda value: value.id)
-    def create(self, vals):
-        for val in vals:
-            new_user      = val.get('employee_id',    None)
-            new_contact   = val.get('contact_id', None)
-
-            if new_user is not None and new_contact is not None:
-                if new_user == new_contact or (new_user > 0 and new_contact > 0):
-                    raise exceptions.ValidationError('Card user and contact cannot both be set '
-                                                     'in the same time, and cannot both be empty.')
-
-        records = self.env['hr.rfid.card']
-        for val in vals:
-            card = super(HrRfidCard, self).create([val])
-            cmd_env = self.env['hr.rfid.command']
-            records = records + card
-            card_owner = card.get_owner()
-
-            if card.card_active is True:
-                for acc_gr_rel in card_owner.hr_rfid_access_group_ids:
-                    acc_gr = acc_gr_rel.access_group_id
-                    for door_rel in acc_gr.all_door_ids:
-                        door = door_rel.door_id
-                        ts = door_rel.time_schedule_id
-                        pin = card_owner.hr_rfid_pin_code
-                        cmd_env.add_card(door.id, ts.id, pin, card_id=card.id)
-
-        return records
+    @api.multi
+    def unlink(self):
+        for card in self:
+            card.door_rel_ids.unlink()
+        return super(HrRfidCard, self).unlink()
 
     @api.model
     def _update_cards(self):
@@ -345,3 +303,226 @@ class HrRfidCardType(models.Model):
                                                  'Please change the doors/cards types first.')
 
         return super(HrRfidCardType, self).unlink()
+
+
+class HrRfidCardDoorRel(models.Model):
+    _name = 'hr.rfid.card.door.rel'
+    _description = 'Card and door relation model'
+
+    card_id = fields.Many2one(
+        'hr.rfid.card',
+        string='Card',
+        required=True,
+    )
+
+    door_id = fields.Many2one(
+        'hr.rfid.door',
+        string='Door',
+        required=True,
+        ondelete='cascade',
+    )
+
+    time_schedule_id = fields.Many2one(
+        'hr.rfid.time.schedule',
+        string='Time Schedule',
+        required=True,
+        ondelete='cascade',
+    )
+
+    @api.model
+    def update_card_rels(self, card_id: HrRfidCard, access_group: models.Model = None):
+        """
+         Checks all card-door relations and updates them
+         :param card_id: Card for which the relations to be checked
+         :param access_group: Which access groups to go through when searching for the doors. If None will
+         go through all access groups the owner of the card is in
+         """
+        potential_doors = card_id.get_potential_access_doors(access_group)
+        for door, ts in potential_doors:
+            self.check_relevance_fast(card_id, door, ts)
+
+    @api.model
+    def update_door_rels(self, door_id: models.Model, access_group: models.Model = None):
+        """
+        Checks all card-door relations and updates them
+        :param door_id: Door for which the relations to be checked
+        :param access_group: Which access groups to go through when searching for the cards. If None will
+        go through all the access groups the door is in
+        """
+        potential_cards = door_id.get_potential_cards(access_group)
+        for card, ts in potential_cards:
+            self.check_relevance_fast(card, door_id, ts)
+
+    @api.model
+    def check_relevance_slow(self, card_id: HrRfidCard, door_id: models.Model, ts_id: models.Model = None):
+        """
+        Check if card has access to door. If it does, create relation or do nothing if it exists,
+        and if not remove relation or do nothing if it does not exist.
+        :param card_id: Recordset containing a single card
+        :param door_id: Recordset containing a single door
+        :param ts_id: Optional parameter. If supplied, the relation will be created quicker.
+        """
+        card_id.ensure_one()
+        door_id.ensure_one()
+
+        if not card_id.card_ready():
+            return
+
+        potential_doors = card_id.get_potential_access_doors()
+        found_door = False
+
+        for door, ts in potential_doors:
+            if door_id == door:
+                if ts_id is not None and ts_id != ts:
+                    raise exceptions.ValidationError('This should never happen. Please contact the developers. 95328359')
+                ts_id = ts
+                found_door = True
+                break
+        if found_door and self._check_compat_n_rdy(card_id, door_id):
+            self.create_rel(card_id, door_id, ts_id)
+        else:
+            self.remove_rel(card_id, door_id)
+
+    @api.model
+    def check_relevance_fast(self, card_id: HrRfidCard, door_id: models.Model, ts_id: models.Model = None):
+        """
+        Check if card is compatible with the door. If it is, create relation or do nothing if it exists,
+        and if not remove relation or do nothing if it does not exist.
+        :param card_id: Recordset containing a single card
+        :param door_id: Recordset containing a single door
+        :param ts_id: Optional parameter. If supplied, the relation will be created quicker.
+        """
+        card_id.ensure_one()
+        door_id.ensure_one()
+        if self._check_compat_n_rdy(card_id, door_id):
+            self.create_rel(card_id, door_id, ts_id)
+        else:
+            self.remove_rel(card_id, door_id)
+
+    @api.model
+    def create_rel(self, card_id: HrRfidCard, door_id: models.Model, ts_id: models.Model = None):
+        ret = self.search([
+            ('card_id', '=', card_id.id),
+            ('door_id', '=', door_id.id),
+        ])
+        if len(ret) == 0 and self._check_compat_n_rdy(card_id, door_id):
+            if ts_id is None:
+                acc_grs = card_id.get_owner().mapped('hr_rfid_access_group_ids').mapped('access_group_id')
+                door_rels = acc_grs.mapped('all_door_ids')
+                door_rel = None
+                for rel in door_rels:
+                    if rel.door_id == door_id:
+                        door_rel = rel
+                        break
+                if door_rel is None:
+                    raise exceptions.ValidationError('No way this card has access to this door??? 17512849')
+                ts_id = door_rel.time_schedule_id
+
+            self.create([{
+                'card_id': card_id.id,
+                'door_id': door_id.id,
+                'time_schedule_id': ts_id.id,
+            }])
+
+    @api.model
+    def remove_rel(self, card_id: models.Model, door_id: models.Model):
+        ret = self.search([
+            ('card_id', '=', card_id.id),
+            ('door_id', '=', door_id.id),
+        ])
+        if len(ret) > 0:
+            ret.unlink()
+
+    @api.multi
+    def check_rel_relevance(self):
+        for rel in self:
+            self.check_relevance_slow(rel.card_id, rel.door_id)
+
+    @api.multi
+    def time_schedule_changed(self, new_ts):
+        self.time_schedule_id = new_ts
+
+    @api.multi
+    def pin_code_changed(self):
+        self._create_add_card_command()
+
+    @api.multi
+    def card_number_changed(self, old_number):
+        for rel in self:
+            if old_number != rel.card_id.number:
+                rel._create_remove_card_command(old_number)
+                rel._create_add_card_command()
+
+    @api.multi
+    def reload_add_card_command(self):
+        self._create_add_card_command()
+
+    @api.model
+    def _check_compat_n_rdy(self, card_id, door_id):
+        return card_id.door_compatible(door_id) and card_id.card_ready()
+
+    @api.multi
+    def _create_add_card_command(self):
+        cmd_env = self.env['hr.rfid.command']
+        for rel in self:
+            door_id = rel.door_id.id
+            ts_id = rel.time_schedule_id.id
+            pin_code = rel.card_id.pin_code
+            card_id = rel.card_id.id
+            cmd_env.add_card(door_id, ts_id, pin_code, card_id)
+
+    @api.multi
+    def _create_remove_card_command(self, number: str = None, door_id: int = None):
+        cmd_env = self.env['hr.rfid.command']
+        for rel in self:
+            if door_id is None:
+                door_id = rel.door_id.id
+            if number is None:
+                number = rel.card_id.number[:]
+            pin_code = rel.card_id.pin_code
+            cmd_env.remove_card(door_id, pin_code, card_number=number)
+
+    @api.constrains('door_id')
+    @api.multi
+    def _door_constrains(self):
+        for rel in self:
+            if len(rel.door_id.access_group_ids) == 0:
+                raise exceptions.ValidationError('Door must be part of an access group!')
+
+    @api.model_create_multi
+    @api.returns('self', lambda value: value.id)
+    def create(self, vals_list):
+        records = self.env['hr.rfid.card.door.rel']
+
+        for vals in vals_list:
+            rel = super(HrRfidCardDoorRel, self).create([vals])
+            records += rel
+            rel._create_add_card_command()
+
+        return records
+
+    @api.multi
+    def write(self, vals):
+        for rel in self:
+            old_door = rel.door_id
+            old_card = rel.card_id
+            old_ts_id = rel.time_schedule_id
+
+            super(HrRfidCardDoorRel, rel).write(vals)
+
+            new_door = rel.door_id
+            new_card = rel.card_id
+            new_ts_id = rel.time_schedule_id
+
+            if old_door != new_door or old_card != new_card:
+                rel._create_remove_card_command(number=old_card.number, door_id=old_door.id)
+                rel._create_add_card_command()
+            elif old_ts_id != new_ts_id:
+                rel._create_add_card_command()
+
+    @api.multi
+    def unlink(self):
+        for rel in self:
+            rel._create_remove_card_command()
+
+        return super(HrRfidCardDoorRel, self).unlink()

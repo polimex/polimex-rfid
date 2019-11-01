@@ -229,6 +229,7 @@ class HrRfidVending(WebRfidController):
             else:
                 ret = ret_super()
 
+            print('ret=' + str(ret))
             return ret
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
                 exceptions.MissingError, exceptions.ValidationError, exceptions.DeferredException) as __:
