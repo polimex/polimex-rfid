@@ -40,6 +40,13 @@ class HrEmployee(models.Model):
         access_group.ensure_one()
         rel_env = self.env['hr.rfid.access.group.employee.rel']
         for emp in self:
+            rel = rel_env.search([
+                ('employee_id', '=', emp.id),
+                ('access_group_id', '=', access_group.id),
+            ])
+            if rel:
+                rel.expiration = expiration
+                continue
             emp.check_for_ts_inconsistencies_when_adding(access_group)
             creation_dict = {
                 'employee_id': emp.id,
@@ -122,9 +129,22 @@ class HrEmployee(models.Model):
     def write(self, vals):
         for user in self:
             old_pin_code = user.hr_rfid_pin_code[:]
+            old_dep = user.department_id
+
             super(HrEmployee, user).write(vals)
 
-            if old_pin_code != user.hr_rfid_pin_code:
+            new_pin_code = user.hr_rfid_pin_code
+            new_dep = user.department_id
+
+            if old_dep != new_dep:
+                new_dep_acc_grs = new_dep.hr_rfid_allowed_access_groups
+                for acc_gr_rel in user.hr_rfid_access_group_ids:
+                    if acc_gr_rel.access_group_id not in new_dep_acc_grs:
+                        acc_gr_rel.unlink()
+                if new_dep.hr_rfid_default_access_group:
+                    user.add_acc_gr(new_dep.hr_rfid_default_access_group)
+
+            if old_pin_code != new_pin_code:
                 user.hr_rfid_card_ids.mapped('door_rel_ids').pin_code_changed()
 
     @api.multi
