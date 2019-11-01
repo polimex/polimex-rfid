@@ -672,7 +672,7 @@ class HrRfidAccessGroupContactRel(models.Model):
         ]).unlink()
 
     @api.multi
-    @api.constrains('employee_id', 'access_group_id')
+    @api.constrains('contact_id', 'access_group_id')
     def _check_for_duplicates(self):
         for rel in self:
             duplicates = self.search([
@@ -700,6 +700,8 @@ class HrRfidAccessGroupContactRel(models.Model):
                 if door not in user_doors:
                     for card in user.hr_rfid_card_ids:
                         cmd_env.add_card(door.id, ts.id, user.hr_rfid_pin_code, card_id=card.id)
+
+        return records
 
     @api.multi
     def write(self, vals):
