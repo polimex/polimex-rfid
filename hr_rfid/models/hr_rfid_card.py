@@ -404,14 +404,15 @@ class HrRfidCardDoorRel(models.Model):
         if len(ret) == 0 and self._check_compat_n_rdy(card_id, door_id):
             if ts_id is None:
                 acc_grs = card_id.get_owner().mapped('hr_rfid_access_group_ids').mapped('access_group_id')
-                acc_gr_door_rel_env = self.env['hr.rfid.access.group.door.rel']
-                ret = acc_gr_door_rel_env.search([
-                    ('access_group_id', 'in', acc_grs.ids),
-                    ('door_id', '=', door_id.id),
-                ])
-                if len(ret) == 0:
+                door_rels = acc_grs.mapped('all_door_ids')
+                door_rel = None
+                for rel in door_rels:
+                    if rel.door_id == door_id:
+                        door_rel = rel
+                        break
+                if door_rel is None:
                     raise exceptions.ValidationError('No way this card has access to this door??? 17512849')
-                ts_id = ret.time_schedule_id
+                ts_id = door_rel.time_schedule_id
 
             self.create([{
                 'card_id': card_id.id,

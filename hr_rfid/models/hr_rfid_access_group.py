@@ -133,6 +133,21 @@ class HrRfidAccessGroup(models.Model):
             ]).unlink()
 
     @api.multi
+    @api.returns('hr.rfid.door')
+    def get_all_doors(self):
+        return self.mapped('all_door_ids').mapped('door_id')
+
+    @api.multi
+    @api.returns('hr.employee')
+    def get_all_employees(self):
+        return self.mapped('all_employee_ids').mapped('employee_id')
+
+    @api.multi
+    @api.returns('res.partner')
+    def get_all_contacts(self):
+        return self.mapped('all_contact_ids').mapped('contact_id')
+
+    @api.multi
     @api.constrains('door_ids')
     def _door_ids_constrains(self):
         for acc_gr in self:
