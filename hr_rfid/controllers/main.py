@@ -144,6 +144,16 @@ class WebRfidController(http.Controller):
                 cmd.request = json.dumps(cmd_js)
                 self._report_sys_ev('Could not find the card', controller)
                 return cmd_js
+            elif event_action in [ 21, 22, 23, 24 ]:
+                event_dict = {
+                    'ctrl_addr': controller.ctrl_id,
+                    'door_id': reader.door_id.id,
+                    'reader_id': reader.id,
+                    'event_time': self._get_ws_time_str(),
+                    'event_action': '5',  # Exit button
+                }
+                event = ev_env.create(event_dict)
+                return self._check_for_unsent_cmd(200, event)
 
             self._report_sys_ev('Could not find the card', controller)
             return self._check_for_unsent_cmd(200)

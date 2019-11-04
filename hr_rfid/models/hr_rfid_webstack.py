@@ -1232,7 +1232,6 @@ class HrRfidUserEvent(models.Model):
         'hr.rfid.card',
         string='Card',
         help='Card affected by this event',
-        required=True,
         ondelete='cascade',
     )
 
@@ -1256,6 +1255,7 @@ class HrRfidUserEvent(models.Model):
         ('2', 'Denied'),
         ('3', 'Denied T/S'),
         ('4', 'Denied APB'),
+        ('5', 'Exit Button'),
         ('64', 'Request Instructions'),
     ]
 
@@ -1288,17 +1288,20 @@ class HrRfidUserEvent(models.Model):
     @api.multi
     def _compute_user_ev_name(self):
         for record in self:
-            if len(record.employee_id) > 0:
-                record.name = record.employee_id.name
+            if record.employee_id:
+                name = record.employee_id.name
+            elif record.contact_id:
+                name = record.contact_id.name
             else:
-                record.name = record.contact_id.name
-            record.name += ' - '
+                name = record.door_id.name
+            name += ' - '
             if record.event_action != '64':
-                record.name += self.action_selection[int(record.event_action)-1][1]
+                name += self.action_selection[int(record.event_action)-1][1]
             else:
-                record.name += 'Request Instructions'
-            if len(record.door_id) != 0:
-                record.name += ' @ ' + record.door_id.name
+                name += 'Request Instructions'
+            if record.door_id:
+                name += ' @ ' + record.door_id.name
+            record.name = name
 
     @api.multi
     def _compute_user_ev_action_str(self):
