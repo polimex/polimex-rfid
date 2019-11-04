@@ -148,8 +148,12 @@ class HrRfidCard(models.Model):
     @api.constrains('number')
     def _check_number(self):
         for card in self:
-            if len(card.number) != 10:
+            if len(card.number) > 10:
                 raise exceptions.ValidationError('Card number must be exactly 10 digits')
+
+            if len(card.number) < 10:
+                zeroes = 10 - len(card.number)
+                card.number = (zeroes * '0') + card.number
 
             try:
                 for char in card.number:
