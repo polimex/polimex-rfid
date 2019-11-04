@@ -469,7 +469,7 @@
             <group>
               <field name="number" />
               <field name="employee_id" attrs="{'invisible':[('contact_id','!=',False)]}" />
-              <field name="contact_id" attrs="{'invisible':[('employee_id','!=',False)]}"  />
+              <field name="contact_id" attrs="{'invisible':[('employee_id','!=',False)]}" />
               <field name="card_type" />
               <field name="card_active" />
               <field name="activate_on" />
@@ -644,6 +644,7 @@
       <field name="view_type">form</field>
       <field name="view_mode">tree,form,search</field>
       <field name="view_id" ref="hr_rfid_contact_view_tree" />
+      <field name="context">{"search_default_type_person":1}</field>
     </record>
 
     <menuitem id="hr_rfid_menu_contacts"
@@ -1610,7 +1611,6 @@
         </tree>
       </field>
     </record>
-
 
   </data>
 </odoo>

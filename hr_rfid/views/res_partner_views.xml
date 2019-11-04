@@ -8,7 +8,9 @@
       <field name="inherit_id" ref="base.view_partner_form" />
       <field name="arch" type="xml">
         <notebook position="inside">
-          <page string="RFID Info" groups="hr_rfid.hr_rfid_view_rfid_data">
+          <page string="RFID Info"
+                groups="hr_rfid.hr_rfid_view_rfid_data"
+                attrs="{'invisible':[('is_company','=',True)]}">
             <group string="Settings">
               <field name="hr_rfid_pin_code" groups="hr_rfid.hr_rfid_view_rfid_pin_code_data" />
             </group>

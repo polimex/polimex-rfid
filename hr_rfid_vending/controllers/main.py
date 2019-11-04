@@ -239,4 +239,3 @@ class HrRfidVending(WebRfidController):
                 'input_js': json.dumps(post),
             })
             return { 'status': 500 }
-

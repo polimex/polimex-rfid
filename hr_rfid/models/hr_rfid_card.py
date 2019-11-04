@@ -50,6 +50,7 @@ class HrRfidCard(models.Model):
         ondelete='cascade',
         default=0,
         track_visibility='onchange',
+        domain=[('is_company', '=', False)],
     )
 
     user_event_ids = fields.One2many(
