@@ -168,7 +168,12 @@ class WebRfidController(http.Controller):
             return self._respond_to_ev_64(len(ret) > 0 and card.card_active is True,
                                           controller, reader, card)
 
-        event_action = ((event_action - 3) % 4) + 1
+        # Turnstile controller. If the 7th bit is not up, then there was no actual entry
+        if controller.hw_version == '9' and (self._post['event']['reader'] & 64) == 0:
+            event_action = 6
+        else:
+            event_action = ((event_action - 3) % 4) + 1
+
         event_dict = {
             'ctrl_addr': controller.ctrl_id,
             'door_id': reader.door_id.id,

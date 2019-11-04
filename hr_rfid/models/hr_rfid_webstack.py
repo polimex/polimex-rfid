@@ -1256,6 +1256,7 @@ class HrRfidUserEvent(models.Model):
         ('3', 'Denied T/S'),
         ('4', 'Denied APB'),
         ('5', 'Exit Button'),
+        ('6', 'Granted (no entry)'),
         ('64', 'Request Instructions'),
     ]
 
