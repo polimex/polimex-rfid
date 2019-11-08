@@ -132,3 +132,28 @@ class ResPartner(models.Model):
         for emp in self:
             emp.hr_rfid_card_ids.unlink()
         return super(ResPartner, self).unlink()
+
+
+class ResPartnerDoors(models.TransientModel):
+    _name = 'hr.rfid.contact.doors.wiz'
+    _description = "Display doors contact has access to"
+
+    def _default_contact(self):
+        return self.env['res.partner'].browse(self._context.get('active_ids'))
+
+    def _default_doors(self):
+        return self._default_contact().get_doors()
+
+    contact_id = fields.Many2one(
+        'hr.contact',
+        string='Employee',
+        required=True,
+        default=_default_contact,
+    )
+
+    door_ids = fields.Many2many(
+        'hr.rfid.door',
+        string='Doors',
+        required=True,
+        default=_default_doors,
+    )

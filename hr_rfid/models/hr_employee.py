@@ -151,3 +151,28 @@ class HrEmployee(models.Model):
         for emp in self:
             emp.hr_rfid_card_ids.unlink()
         return super(HrEmployee, self).unlink()
+
+
+class HrEmployeeDoors(models.TransientModel):
+    _name = 'hr.rfid.employee.doors.wiz'
+    _description = "Display doors employee has access to"
+
+    def _default_employee(self):
+        return self.env['hr.employee'].browse(self._context.get('active_ids'))
+
+    def _default_doors(self):
+        return self._default_employee().get_doors()
+
+    employee_id = fields.Many2one(
+        'hr.employee',
+        string='Employee',
+        required=True,
+        default=_default_employee,
+    )
+
+    door_ids = fields.Many2many(
+        'hr.rfid.door',
+        string='Doors',
+        required=True,
+        default=_default_doors,
+    )

@@ -2,6 +2,30 @@
 
 <odoo>
   <data>
+    <record id="hr_rfid_contact_doors_wiz_form" model="ir.ui.view">
+      <field name="name">hr.rfid.contact.doors.wiz.form</field>
+      <field name="model">hr.rfid.contact.doors.wiz</field>
+      <field name="arch" type="xml">
+        <form string="Doors">
+          <group>
+            <field name="door_ids" create="0" edit="0" delete="0"/>
+          </group>
+          <footer>
+            <button special="cancel" string="Ok" class="oe_highlight" />
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_contact_doors_wiz_action" model="ir.actions.act_window">
+      <field name="name">Doors</field>
+      <field name="res_model">hr.rfid.contact.doors.wiz</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_rfid_contact_doors_wiz_form" />
+      <field name="target">new</field>
+    </record>
+
     <record id="hr_view_contact_form_inherit_hr_rfid" model="ir.ui.view">
       <field name="name">res.partner.rfid.info</field>
       <field name="model">res.partner</field>
@@ -11,6 +35,12 @@
           <page string="RFID Info"
                 groups="hr_rfid.hr_rfid_view_rfid_data"
                 attrs="{'invisible':[('is_company','=',True)]}">
+            <button name="%(hr_rfid_contact_doors_wiz_action)d"
+                    id="hr_rfid_contact_show_doors_btn"
+                    type="action"
+                    string="Doors"
+                    help="Doors this contact has access to"
+                    class="oe_highlight" />
             <group string="Settings">
               <field name="hr_rfid_pin_code" groups="hr_rfid.hr_rfid_view_rfid_pin_code_data" />
             </group>
