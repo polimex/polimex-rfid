@@ -95,6 +95,12 @@ class HrRfidCard(models.Model):
         help='Doors this card has access to',
     )
 
+    door_ids = fields.Many2many(
+        'hr.rfid.door',
+        string='Doors',
+        compute='_compute_door_ids',
+    )
+
     pin_code = fields.Char(compute='_compute_pin_code')
 
     def get_owner(self):
@@ -165,6 +171,12 @@ class HrRfidCard(models.Model):
     def _compute_card_name(self):
         for record in self:
             record.name = record.number
+
+    @api.depends('door_rel_ids')
+    @api.multi
+    def _compute_door_ids(self):
+        for card in self:
+            card.door_ids = card.door_rel_ids.mapped('door_id')
 
     _sql_constraints = [ ('rfid_card_number_unique', 'unique(number)',
                           'Card numbers must be unique!') ]

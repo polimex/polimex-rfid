@@ -475,6 +475,7 @@
               <field name="activate_on" />
               <field name="deactivate_on" />
               <field name="cloud_card" />
+              <field name="door_ids" attrs="{'invisible':[('id','&lt;=',0)]}" />
             </group>
           </sheet>
           <div class="oe_chatter">
