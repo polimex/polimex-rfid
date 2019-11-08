@@ -145,7 +145,7 @@ class ResPartnerDoors(models.TransientModel):
         return self._default_contact().get_doors()
 
     contact_id = fields.Many2one(
-        'hr.contact',
+        'res.partner',
         string='Employee',
         required=True,
         default=_default_contact,
