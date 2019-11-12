@@ -12,6 +12,12 @@ class HrRfidDoor(models.Model):
         default=False,
     )
 
+    logout_on_exit = fields.Boolean(
+        string='Log out on Exit',
+        help='When an employee exits through this door, log him out from everywhere.',
+        default=False,
+    )
+
     @api.onchange('attendance')
     def _attendance_on_change(self):
         if self.attendance is True:
@@ -45,6 +51,3 @@ class HrRfidDoor(models.Model):
                     raise exceptions.ValidationError('This door cannot track attendance because it does not'
                                                      ' have both an In and Out reader, or a reader with the'
                                                      ' mode "Card and workcode".')
-
-
-

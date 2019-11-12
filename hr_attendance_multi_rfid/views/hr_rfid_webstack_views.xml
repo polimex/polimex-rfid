@@ -9,8 +9,8 @@
       <field name="inherit_id" ref="hr_rfid.hr_rfid_door_view_form" />
       <field name="arch" type="xml">
         <xpath expr="//group//field[@name='card_type']" position="after">
-          <field name="attendance"
-               groups="hr_rfid.hr_rfid_group_officer_department" />
+          <field name="attendance" groups="hr_rfid.hr_rfid_group_officer_department" />
+          <field name="logout_on_exit" groups="hr_rfid.hr_rfid_group_officer_department" />
         </xpath>
       </field>
     </record>

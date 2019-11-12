@@ -1,4 +1,4 @@
-from odoo import models, exceptions, _, api, fields
+from odoo import models, exceptions, _, api, fields, http
 
 
 class HrEmployee(models.Model):
@@ -12,14 +12,25 @@ class HrEmployee(models.Model):
     )
 
     @api.multi
+    def del_employee_sessions(self):
+        for emp in self:
+            if not emp.user_id:
+                continue
+            user = emp.user_id
+            session_storage = http.Root().session_store
+            sids = session_storage.list()
+            for sid in sids:
+                session = session_storage.get(sid)
+                if session['uid'] == user.id:
+                    session_storage.delete(session)
+
+    @api.multi
     def attendance_action_change_with_date(self, action_date):
         """ Check In/Check Out action
             Check In: create a new attendance record
             Check Out: modify check_out field of appropriate attendance record
         """
-        if len(self) > 1:
-            raise exceptions.UserError(_('Cannot perform check in or check '
-                                         'out on multiple employees.'))
+        self.ensure_one()
 
         if self.attendance_state != 'checked_in':
             vals = {
@@ -27,14 +38,14 @@ class HrEmployee(models.Model):
                 'check_in': action_date,
             }
             return self.env['hr.attendance'].create(vals)
+
+        attendance = self.env['hr.attendance'].search([ ('employee_id', '=', self.id),
+                                                        ('check_out', '=', False) ], limit=1)
+        if attendance:
+            attendance.check_out = action_date
         else:
-            attendance = self.env['hr.attendance'].search([ ('employee_id', '=', self.id),
-                                                            ('check_out', '=', False) ], limit=1)
-            if attendance:
-                attendance.check_out = action_date
-            else:
-                raise exceptions.UserError(_('Cannot perform check out on %(empl_name)s, '
-                                             'could not find corresponding check in. Your '
-                                             'attendances have probably been modified manually'
-                                             ' by human resources.') % {'empl_name': self.name, })
-            return attendance
+            raise exceptions.UserError(_('Cannot perform check out on %(empl_name)s, '
+                                         'could not find corresponding check in. Your '
+                                         'attendances have probably been modified manually'
+                                         ' by human resources.') % {'empl_name': self.name, })
+        return attendance
