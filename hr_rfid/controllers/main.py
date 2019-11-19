@@ -394,8 +394,16 @@ class WebRfidController(http.Controller):
                 'webstack_id': self._webstack.id,
                 'controller_id': controller.id,
                 'cmd': 'F9',
-                'cmd_data': '00'
+                'cmd_data': '00',
             })
+
+            if ctrl_mode == 1 or ctrl_mode == 3:
+                cmd_env.create({
+                    'webstack_id': self._webstack.id,
+                    'controller_id': controller.id,
+                    'cmd': 'FC',
+                    'cmd_data': '',
+                })
 
         if response['c'] == 'F6':
             data = response['d']
@@ -414,6 +422,12 @@ class WebRfidController(http.Controller):
             controller.write({
                 'io_table': response['d']
             })
+
+        if response['c'] == 'FC':
+            apb_mode = response['d']
+            for door in controller.door_ids:
+                door.apb_mode = (door.number == '1' and (apb_mode & 1)) \
+                                or (door.number == '2' and (apb_mode & 2))
 
         command.write({
             'status': 'Success',

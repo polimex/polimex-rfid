@@ -1,4 +1,4 @@
-from odoo import models, exceptions, _, api, fields, http
+from odoo import models, exceptions, _, api, fields
 
 
 class HrEmployee(models.Model):
@@ -10,19 +10,6 @@ class HrEmployee(models.Model):
              "not filled, employee creation date or the calendar start date "
              "will be used (the greatest of both).",
     )
-
-    @api.multi
-    def del_employee_sessions(self):
-        for emp in self:
-            if not emp.user_id:
-                continue
-            user = emp.user_id
-            session_storage = http.Root().session_store
-            sids = session_storage.list()
-            for sid in sids:
-                session = session_storage.get(sid)
-                if session['uid'] == user.id:
-                    session_storage.delete(session)
 
     @api.multi
     def attendance_action_change_with_date(self, action_date):

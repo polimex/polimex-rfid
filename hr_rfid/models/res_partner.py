@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, exceptions
+from odoo import api, fields, models, exceptions, http
 
 
 class ResPartner(models.Model):
@@ -157,3 +157,17 @@ class ResPartnerDoors(models.TransientModel):
         required=True,
         default=_default_doors,
     )
+
+    @api.multi
+    def log_person_out(self, sids=None):
+        for cont in self:
+            if not cont.user_id:
+                continue
+            user = cont.user_id
+            session_storage = http.root.session_store
+            if sids is None:
+                sids = session_storage.list()
+            for sid in sids:
+                session = session_storage.get(sid)
+                if session['uid'] == user.id:
+                    session_storage.delete(session)

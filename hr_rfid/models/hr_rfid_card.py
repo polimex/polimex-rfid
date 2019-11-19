@@ -103,7 +103,9 @@ class HrRfidCard(models.Model):
 
     pin_code = fields.Char(compute='_compute_pin_code')
 
+    @api.multi
     def get_owner(self):
+        self.ensure_one()
         if len(self.employee_id) == 1:
             return self.employee_id
         return self.contact_id

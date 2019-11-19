@@ -115,6 +115,13 @@
       <field name="view_mode">tree,form</field>
     </record>
 
+    <record id="hr_rfid_zone_action" model="ir.actions.act_window">
+      <field name="name">Zones</field>
+      <field name="res_model">hr.rfid.zone</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
     <!--#######################################################
     #####                   MENU ITEMS                    #####
     ########################################################-->
@@ -216,6 +223,13 @@
               action="hr_rfid_access_group_action"
               groups="hr_rfid_group_manager_department"
               sequence="10" />
+
+    <menuitem id="hr_rfid_menu_zones"
+              name="Zones"
+              parent="hr_rfid_settings_menu"
+              action="hr_rfid_zone_action"
+              groups="hr_rfid_group_manager_department"
+              sequence="0" />
 
     <menuitem id="hr_rfid_menu_modules_main_menu"
               name="Modules"
@@ -1160,6 +1174,7 @@
           <group>
             <field name="name" />
             <field name="card_type" />
+            <field name="apb_mode" />
             <field name="number" readonly="1" />
             <field name="controller_id" readonly="1" />
           </group>
@@ -1195,6 +1210,10 @@
                 </tree>
               </field>
             </page>
+
+            <page string="Zones">
+              <field name="zone_ids" readonly="1" />
+            </page>
           </notebook>
 
           <div class="oe_chatter">
@@ -1213,6 +1232,7 @@
           <field name="name" />
           <field name="controller_id" />
           <field name="card_type" />
+          <field name="apb_mode" />
           <button name="open_door"
                   type="object"
                   string="Open door"
@@ -1296,9 +1316,9 @@
           <group>
             <field name="name" />
             <field name="mode" />
+            <field name="reader_type" />
             <field name="number" readonly="1" />
             <field name="controller_id" readonly="1" />
-            <field name="reader_type" readonly="1" />
             <field name="door_id" readonly="1" />
           </group>
           <field name="user_event_ids" readonly="1">
@@ -1685,6 +1705,75 @@
           <field name="status" />
           <field name="error" />
         </calendar>
+      </field>
+    </record>
+
+    <record id="hr_rfid_zone_doors_wiz" model="ir.ui.view">
+      <field name="name">hr.rfid.zone.wiz.form</field>
+      <field name="model">hr.rfid.zone.doors.wiz</field>
+      <field name="arch" type="xml">
+        <form string="Add/Remove Doors">
+          <group>
+            <field name="zone_id" readonly="1" />
+            <field name="door_ids" widget="many2many_tags" />
+          </group>
+          <footer>
+            <button name="add_doors" type="object"
+                    string="Add Doors" class="oe_highlight" />
+            <button name="remove_doors" type="object"
+                    string="Remove Doors" class="oe_highlight" />
+            <button special="cancel" string="Cancel" />
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_zone_doors_wiz_action" model="ir.actions.act_window">
+      <field name="name">Add/Remove Doors</field>
+      <field name="res_model">hr.rfid.zone.doors.wiz</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_rfid_zone_doors_wiz" />
+      <field name="target">new</field>
+    </record>
+
+    <record id="hr_rfid_zone_view_form" model="ir.ui.view">
+      <field name="name">hr.rfid.zone.form</field>
+      <field name="model">hr.rfid.zone</field>
+      <field name="arch" type="xml">
+        <form>
+          <header>
+            <button name="%(hr_rfid_zone_doors_wiz_action)d"
+                    id="hr_rfid_zone_doors_btn"
+                    type="action"
+                    string="Add/Remove Doors"
+                    class="oe_highlight" />
+          </header>
+          <group>
+            <field name="name" />
+            <field name="anti_pass_back" />
+            <field name="log_out_on_exit" />
+            <field name="door_ids" create="0" write="0" delete="0" />
+            <field name="employee_ids" create="0" write="0" delete="0" />
+            <field name="contact_ids" create="0" write="0" delete="0" />
+          </group>
+          <div class="oe_chatter">
+            <field name="message_follower_ids" widget="mail_followers" />
+            <field name="message_ids" widget="mail_thread" />
+          </div>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_zone_view_tree" model="ir.ui.view">
+      <field name="name">hr.rfid.zone.tree</field>
+      <field name="model">hr.rfid.zone</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name" />
+          <field name="anti_pass_back" />
+          <field name="log_out_on_exit" />
+        </tree>
       </field>
     </record>
 

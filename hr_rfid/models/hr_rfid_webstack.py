@@ -844,6 +844,12 @@ class HrRfidDoor(models.Model):
         track_visibility='onchange',
     )
 
+    apb_mode = fields.Boolean(
+        string='APB Mode',
+        default=False,
+        track_visibility='onchange',
+    )
+
     controller_id = fields.Many2one(
         'hr.rfid.ctrl',
         string='Controller',
@@ -879,6 +885,15 @@ class HrRfidDoor(models.Model):
         'door_id',
         string='Cards',
         help='Cards that have access to this door',
+    )
+
+    zone_ids = fields.Many2many(
+        'hr.rfid.zone',
+        'hr_rfid_zone_door_rel',
+        'door_id',
+        'zone_id',
+        string='Zones',
+        help='Zones containing this door',
     )
 
     def get_potential_cards(self, access_groups=None):
@@ -1026,15 +1041,37 @@ class HrRfidDoor(models.Model):
                     self.message_post(body=_('Created a command to close the door.') % time)
 
     @api.multi
+    @api.constrains('apb_mode')
+    def _check_apb_mode(self):
+        for door in self:
+            if door.apb_mode is True and len(door.reader_ids) < 2:
+                raise exceptions.ValidationError('Cannot activate APB Mode for a door if it has less than 2 readers')
+
+    @api.multi
     def write(self, vals):
+        cmd_env = self.env['hr.rfid.command']
         rel_env = self.env['hr.rfid.card.door.rel']
         for door in self:
             old_card_type = door.card_type
+            old_apb_mode = door.apb_mode
 
             super(HrRfidDoor, door).write(vals)
 
             if old_card_type != door.card_type:
                 rel_env.update_door_rels(door)
+
+            if old_apb_mode != door.apb_mode:
+                cmd_data = 0
+                for door2 in door.controller_id.door_ids:
+                    if door2.apb_mode and len(door2.reader_ids) > 1:
+                        cmd_data += door2.number
+                cmd_dict = {
+                    'webstack_id': door.controller_id.webstack_id.id,
+                    'controller_id': door.controller_id.id,
+                    'cmd': 'DE',
+                    'cmd_data': '%02d' % cmd_data,
+                }
+                cmd_env.create(cmd_dict)
 
         return True
 
@@ -1104,6 +1141,8 @@ class HrRfidReader(models.Model):
         selection=reader_types,
         string='Reader type',
         help='Type of the reader',
+        required=True,
+        default='0',
     )
 
     mode = fields.Selection(
@@ -1308,6 +1347,66 @@ class HrRfidUserEvent(models.Model):
     def _compute_user_ev_action_str(self):
         for record in self:
             record.action_string = 'Access ' + self.action_selection[int(record.event_action)-1][1]
+
+    @api.model_create_multi
+    @api.returns('self', lambda value: value.id)
+    def create(self, vals_list):
+        records = super(HrRfidUserEvent, self).create(vals_list)
+
+        for rec in records:
+            # '1' == Granted
+            if rec.event_action != '1':
+                continue
+
+            if not rec.employee_id and not rec.contact_id:
+                continue
+
+            zones = rec.door_id.zone_ids
+
+            if len(rec.door_id.reader_ids) > 1:
+                # Reader type is In
+                if rec.reader_id.reader_type == '0':
+                    zones.person_entered(rec.employee_id or rec.contact_id, rec)
+                # Reader type is Out
+                else:
+                    zones.person_left(rec.employee_id or rec.contact_id, rec)
+                continue
+
+            if rec.reader_id.mode != '03':
+                zones.person_went_through(rec)
+            else:
+                wc = rec.workcode_id
+                if len(wc) == 0:
+                    continue
+
+                if wc.user_action == 'start':
+                    rec.door_id.zone_ids.person_entered(rec.employee_id, rec)
+                elif wc.user_action == 'break':
+                    rec.door_id.zone_ids.person_left(rec.employee_id, rec)
+                elif wc.user_action == 'stop':
+                    stack = []
+                    last_events = self.search([
+                        ('event_time',  '>=', datetime.now() - timedelta(hours=12)),
+                        ('employee_id',  '=', rec.employee_id.id),
+                        ('id',          '!=', rec.id),
+                        ('workcode_id', '!=', None),
+                    ]).sorted(key=lambda r: r.event_time)
+
+                    for event in last_events:
+                        action = event.workcode_id.user_action
+                        if action == 'stop':
+                            if len(stack) > 0:
+                                stack.pop()
+                        else:
+                            stack.append(action)
+
+                    if len(stack) > 0:
+                        if stack[-1] == 'start':
+                            rec.door_id.zone_ids.person_left(rec.employee_id, rec)
+                        else:
+                            rec.door_id.zone_ids.person_entered(rec.employee_id, rec)
+
+        return records
 
 
 class HrRfidSystemEvent(models.Model):
@@ -1727,7 +1826,7 @@ class HrRfidCommands(models.Model):
         }])
 
     @api.model
-    def add_remove_card(self, card_number, ctrl_id, pin_code, ts_code, rights_mask, rights_data):
+    def add_remove_card(self, card_number, ctrl_id, pin_code, ts_code, rights_data, rights_mask):
         ctrl = self.env['hr.rfid.ctrl'].browse(ctrl_id)
         commands_env = self.env['hr.rfid.command']
 
@@ -1797,7 +1896,16 @@ class HrRfidCommands(models.Model):
 
         for reader in door.reader_ids:
             self.add_remove_card(card_number, door.controller_id.id, pin_code, '00000000',
-                                 1 << (reader.number-1), 0)
+                                 0, 1 << (reader.number-1))
+
+    @api.model
+    def change_apb_flag(self, door, card, can_exit=True):
+        if door.number == 1:
+            rights = 0x40  # Bit 7
+        else:
+            rights = 0x20  # Bit 6
+        self.add_remove_card(card.number, door.controller_id.id, card.get_owner().hr_rfid_pin_code,
+                             '00000000', rights if can_exit else 0, rights)
 
     @api.model
     def _update_commands(self):
@@ -1863,6 +1971,11 @@ class HrRfidCommands(models.Model):
             self._check_save_comms(vals)
 
             cmd = vals['cmd']
+
+            if cmd not in [ 'DB', 'D9', 'D5', 'DE', 'D7', 'F0', 'FC' ]:
+                records += super(HrRfidCommands, self).create([vals])
+                continue
+
             res = find_last_wait(cmd, vals)
 
             if len(res) == 0:
@@ -1875,10 +1988,10 @@ class HrRfidCommands(models.Model):
                 if res.cmd_data[0] == cmd_data[0] and res.cmd_data[1] == cmd_data[1]:
                     res.cmd_data = cmd_data
                     continue
-            elif cmd == 'D9' or cmd == 'D5':
+            elif cmd in [ 'D9', 'D5', 'DE' ]:
                 res.cmd_data = cmd_data
                 continue
-            elif cmd == 'D7':
+            elif cmd in [ 'D7', 'F0', 'FC' ]:
                 continue
 
             records += super(HrRfidCommands, self).create([vals])
