@@ -1,8 +1,11 @@
-from odoo import models
+# Copyright 2017-2019 Tecnativa - Pedro M. Baeza
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+
+from odoo import fields, models
 
 
-class HrLeave(models.Model):
-    _inherit = 'hr.leave'
+class HrHolidays(models.Model):
+    _inherit = 'hr.holidays'
 
     def _create_resource_leave(self):
         """On leave creation, trigger the recomputation of the involved
@@ -26,15 +29,17 @@ class HrLeave(models.Model):
         """
         to_recompute = self.env['hr.attendance']
         for record in self.filtered(lambda x: x.date_from and x.date_to):
-            from_datetime = record.date_from.replace(
-                hour=0, minute=0, second=0, microsecond=0,
-            )
-            to_datetime = record.date_to.replace(
-                hour=23, minute=59, second=59, microsecond=99999,
-            )
+            from_datetime = fields.Datetime.to_string(
+                fields.Datetime.from_string(record.date_from).replace(
+                    hour=0, minute=0, second=0, microsecond=0,
+                ))
+            to_datetime = fields.Datetime.to_string(
+                fields.Datetime.from_string(record.date_to).replace(
+                    hour=23, minute=59, second=59, microsecond=99999,
+                ))
             to_recompute |= self.env['hr.attendance'].search([
                 ('employee_id', '=', record.employee_id.id),
-                ('check_in', '>=', str(from_datetime)),
-                ('check_in', '<=', str(to_datetime)),
+                ('check_in', '>=', from_datetime),
+                ('check_in', '<=', to_datetime),
             ])
         to_recompute._compute_theoretical_hours()

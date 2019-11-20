@@ -22,9 +22,12 @@
         'security/ir.model.access.csv',
         'views/hr_attendance_views.xml',
         'views/hr_employee_views.xml',
+        "views/hr_leave_type_views.xml",
         'views/hr_rfid_webstack_views.xml',
         'data/hr_attendance_multi_rfid_cron_jobs.xml',
         'data/hr_attendance_multi_rfid_system_parameters.xml',
+        "wizards/recompute_theoretical_attendance_views.xml",
+        "wizards/wizard_theoretical_time.xml",
     ],
 
     'demo': [ ],

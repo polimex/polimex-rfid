@@ -1,7 +1,10 @@
+# Copyright 2017-2019 Tecnativa - Pedro M. Baeza
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+
+from odoo import api, fields, models, tools
 from datetime import datetime, time
 from psycopg2.extensions import AsIs
-from odoo import tools, models, api, fields
-import pytz
+from dateutil import tz
 
 
 class HrAttendanceTheoreticalTimeReport(models.Model):
@@ -176,25 +179,25 @@ CREATE or REPLACE VIEW %s as (
         """Get theoretical working hours for the day where the check-in is
         done for that employee.
         """
+        date_date = fields.Datetime.from_string(date)
         if not employee.resource_id.calendar_id:
             return 0
-        tz = employee.resource_id.calendar_id.tz
+        utz = self.env.user.tz
         return employee.with_context(
             exclude_public_holidays=True,
             employee_id=employee.id,
-        ).get_work_days_data(
-            datetime.combine(date, time(0, 0, 0, 0, tzinfo=pytz.timezone(tz))),
-            datetime.combine(
-                date, time(23, 59, 59, 99999, tzinfo=pytz.timezone(tz))
-            ),
-            # Pass this domain for excluding leaves whose type is included in
-            # theoretical hours
-            domain=[
+            leave_holiday_domain=[
                 '|',
                 ('holiday_id', '=', False),
                 ('holiday_id.holiday_status_id.include_in_theoretical',
                  '=', False),
-            ],
+            ]
+        ).get_work_days_data(
+            datetime.combine(date_date, time(
+                0, 0, 0, 0, tzinfo=tz.gettz(utz))),
+            datetime.combine(
+                date_date, time(23, 59, 59, 99999, tzinfo=tz.gettz(utz))
+            ),
         )['hours']
 
     @api.model
