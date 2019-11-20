@@ -183,27 +183,24 @@ class HrRfidCard(models.Model):
     _sql_constraints = [ ('rfid_card_number_unique', 'unique(number)',
                           'Card numbers must be unique!') ]
 
-    @api.model_create_multi
+    @api.model
     @api.returns('self', lambda value: value.id)
     def create(self, vals):
         card_door_rel_env = self.env['hr.rfid.card.door.rel']
         invalid_user_and_contact_msg = 'Card user and contact cannot both be set' \
                                        ' in the same time, and cannot both be empty.'
 
-        records = self.env['hr.rfid.card']
-        for val in vals:
-            card = super(HrRfidCard, self).create([val])
-            records = records + card
+        card = super(HrRfidCard, self).create(vals)
 
-            if len(card.employee_id) > 0 and len(card.contact_id) > 0:
-                raise exceptions.ValidationError(invalid_user_and_contact_msg)
+        if len(card.employee_id) > 0 and len(card.contact_id) > 0:
+            raise exceptions.ValidationError(invalid_user_and_contact_msg)
 
-            if len(card.employee_id) == 0 and len(card.contact_id) == 0:
-                raise exceptions.ValidationError(invalid_user_and_contact_msg)
+        if len(card.employee_id) == 0 and len(card.contact_id) == 0:
+            raise exceptions.ValidationError(invalid_user_and_contact_msg)
 
-            card_door_rel_env.update_card_rels(card)
+        card_door_rel_env.update_card_rels(card)
 
-        return records
+        return card
 
     @api.multi
     def write(self, vals):
@@ -437,11 +434,11 @@ class HrRfidCardDoorRel(models.Model):
                     raise exceptions.ValidationError('No way this card has access to this door??? 17512849')
                 ts_id = door_rel.time_schedule_id
 
-            self.create([{
+            self.create({
                 'card_id': card_id.id,
                 'door_id': door_id.id,
                 'time_schedule_id': ts_id.id,
-            }])
+            })
 
     @api.model
     def remove_rel(self, card_id: models.Model, door_id: models.Model):
@@ -508,17 +505,12 @@ class HrRfidCardDoorRel(models.Model):
             if len(rel.door_id.access_group_ids) == 0:
                 raise exceptions.ValidationError('Door must be part of an access group!')
 
-    @api.model_create_multi
+    @api.model
     @api.returns('self', lambda value: value.id)
-    def create(self, vals_list):
-        records = self.env['hr.rfid.card.door.rel']
-
-        for vals in vals_list:
-            rel = super(HrRfidCardDoorRel, self).create([vals])
-            records += rel
-            rel._create_add_card_command()
-
-        return records
+    def create(self, vals):
+        rel = super(HrRfidCardDoorRel, self).create(vals)
+        rel._create_add_card_command()
+        return rel
 
     @api.multi
     def write(self, vals):

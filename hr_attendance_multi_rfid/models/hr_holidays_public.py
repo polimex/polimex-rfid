@@ -24,13 +24,13 @@ class HrHolidaysPublicLine(models.Model):
         ])
         records._compute_theoretical_hours()
 
-    @api.model_create_multi
-    def create(self, vals_list):
+    @api.model
+    @api.returns('self', lambda value: value.id)
+    def create(self, vals):
         """Trigger recomputation for the date of the new lines."""
-        records = super(HrHolidaysPublicLine, self).create(vals_list)
-        for record in records:
-            self._check_theoretical_hours(record.date)
-        return records
+        record = super(HrHolidaysPublicLine, self).create(vals)
+        self._check_theoretical_hours(record.date)
+        return record
 
     def write(self, vals):
         """If the date of a line is changed, we first recompute hours of the

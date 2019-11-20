@@ -34,7 +34,7 @@ class HrLeave(models.Model):
             )
             to_recompute |= self.env['hr.attendance'].search([
                 ('employee_id', '=', record.employee_id.id),
-                ('check_in', '>=', from_datetime),
-                ('check_in', '<=', to_datetime),
+                ('check_in', '>=', str(from_datetime)),
+                ('check_in', '<=', str(to_datetime)),
             ])
         to_recompute._compute_theoretical_hours()

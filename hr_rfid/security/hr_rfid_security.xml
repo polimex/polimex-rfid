@@ -12,7 +12,7 @@
     <record id="hr_rfid_view_module_discovery" model="res.groups">
       <field name="name">HR RFID: View Module Discovery</field>
       <field name="category_id" ref="base.module_category_hidden" />
-      <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+      <field name="users" eval="[(4, ref('base.user_root'))]"/>
     </record>
 
     <record id="hr_rfid_view_rfid_data" model="res.groups">
@@ -29,7 +29,7 @@
     <record id="hr_rfid_view_door_open_close" model="res.groups">
       <field name="name">HR RFID: View the door open/close buttons</field>
       <field name="category_id" ref="base.module_category_hidden" />
-      <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+      <field name="users" eval="[(4, ref('base.user_root'))]"/>
     </record>
 
     <record id="hr_rfid_group_officer_department" model="res.groups">
@@ -54,7 +54,7 @@
     <record id="hr_rfid_group_manager" model="res.groups">
       <field name="name">Manager</field>
       <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_group_manager_department'))]" />
-      <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+      <field name="users" eval="[(4, ref('base.user_root'))]"/>
       <field name="category_id" ref="hr_rfid_management" />
     </record>
 

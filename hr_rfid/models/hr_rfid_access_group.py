@@ -116,11 +116,11 @@ class HrRfidAccessGroup(models.Model):
                 if door.controller_id.hw_version in ['17', '10'] and time_schedule.number > 3:
                     raise exceptions.ValidationError(_('Door %s can only use the first 3 time schedules') %
                                                      door.name)
-                rel_env.create([{
+                rel_env.create({
                     'access_group_id': self.id,
                     'door_id': door.id,
                     'time_schedule_id': time_schedule.id,
-                }])
+                })
         self.check_for_ts_inconsistencies()
 
     @api.one
@@ -391,17 +391,14 @@ class HrRfidAccessGroupDoorRel(models.Model):
                                door_rel2.access_group_id.name))
                     rels2 -= door_rel2
 
-    @api.model_create_multi
+    @api.model
     @api.returns('self', lambda value: value.id)
     def create(self, vals):
-        records = self.env['hr.rfid.access.group.door.rel']
         card_door_rel_env = self.env['hr.rfid.card.door.rel']
-        for val in vals:
-            rel = super(HrRfidAccessGroupDoorRel, self).create([val])
-            records += rel
-            card_door_rel_env.update_door_rels(rel.door_id, rel.access_group_id)
+        rel = super(HrRfidAccessGroupDoorRel, self).create(vals)
+        card_door_rel_env.update_door_rels(rel.door_id, rel.access_group_id)
 
-        return records
+        return rel
 
     @api.multi
     def write(self, vals):
@@ -449,7 +446,7 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
     @api.model
     def _check_expirations(self):
         self.search([
-            ('expiration', '<=', fields.Datetime.now())
+            ('expiration', '<=', str(fields.Datetime.now()))
         ]).unlink()
 
     @api.multi
@@ -466,18 +463,17 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
                     % (rel.employee_id.name, rel.access_group_id.name))
 
     @api.model
-    @api.model_create_multi
-    def create(self, vals_list):
+    @api.returns('self', lambda value: value.id)
+    def create(self, vals):
         card_door_rel_env = self.env['hr.rfid.card.door.rel']
 
-        records = super(HrRfidAccessGroupEmployeeRel, self).create(vals_list)
+        rel = super(HrRfidAccessGroupEmployeeRel, self).create(vals)
         
-        for rel in records:
-            cards = rel.employee_id.hr_rfid_card_ids
-            for card in cards:
-                card_door_rel_env.update_card_rels(card, rel.access_group_id)
+        cards = rel.employee_id.hr_rfid_card_ids
+        for card in cards:
+            card_door_rel_env.update_card_rels(card, rel.access_group_id)
 
-        return records
+        return rel
 
     @api.multi
     def write(self, vals):
@@ -542,7 +538,7 @@ class HrRfidAccessGroupContactRel(models.Model):
     @api.model
     def _check_expirations(self):
         self.search([
-            ('expiration', '<=', fields.Datetime.now())
+            ('expiration', '<=', str(fields.Datetime.now()))
         ]).unlink()
 
     @api.multi
@@ -559,18 +555,17 @@ class HrRfidAccessGroupContactRel(models.Model):
                     % (rel.contact_id.name, rel.access_group_id.name))
 
     @api.model
-    @api.model_create_multi
-    def create(self, vals_list):
+    @api.returns('self', lambda value: value.id)
+    def create(self, vals):
         card_door_rel_env = self.env['hr.rfid.card.door.rel']
 
-        records = super(HrRfidAccessGroupContactRel, self).create(vals_list)
+        rel = super(HrRfidAccessGroupContactRel, self).create(vals)
 
-        for rel in records:
-            cards = rel.contact_id.hr_rfid_card_ids
-            for card in cards:
-                card_door_rel_env.update_card_rels(card, rel.access_group_id)
+        cards = rel.contact_id.hr_rfid_card_ids
+        for card in cards:
+            card_door_rel_env.update_card_rels(card, rel.access_group_id)
 
-        return records
+        return rel
 
     @api.multi
     def write(self, vals):

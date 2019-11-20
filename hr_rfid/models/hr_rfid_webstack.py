@@ -381,11 +381,11 @@ class HrRfidWebstack(models.Model):
 
             if old_tz != new_tz:
                 for ctrl in ws.controllers:
-                    commands_env.create([{
+                    commands_env.create({
                         'webstack_id': ctrl.webstack_id.id,
                         'controller_id': ctrl.id,
                         'cmd': 'D7',
-                    }])
+                    })
 
 
 class HrRfidCtrlIoTableRow(models.TransientModel):
@@ -947,12 +947,12 @@ class HrRfidDoor(models.Model):
     def create_door_out_cmd(self, out: int, time: int):
         self.ensure_one()
         cmd_env = self.env['hr.rfid.command']
-        cmd_env.create([{
+        cmd_env.create({
             'webstack_id': self.controller_id.webstack_id.id,
             'controller_id': self.controller_id.id,
             'cmd': 'DB',
             'cmd_data': '%02d%02d%02d' % (self.number, out, time),
-        }])
+        })
         self.log_door_change(out, time, cmd=True)
 
     @api.multi
@@ -1319,7 +1319,7 @@ class HrRfidUserEvent(models.Model):
         lifetime = timedelta(days=int(event_lifetime))
         today = datetime.today()
         res = self.search([
-            ('event_time', '<', today-lifetime)
+            ('event_time', '<', str(today-lifetime))
         ])
         res.unlink()
 
@@ -1348,65 +1348,64 @@ class HrRfidUserEvent(models.Model):
         for record in self:
             record.action_string = 'Access ' + self.action_selection[int(record.event_action)-1][1]
 
-    @api.model_create_multi
+    @api.model
     @api.returns('self', lambda value: value.id)
-    def create(self, vals_list):
-        records = super(HrRfidUserEvent, self).create(vals_list)
+    def create(self, vals):
+        rec = super(HrRfidUserEvent, self).create(vals)
 
-        for rec in records:
-            # '1' == Granted
-            if rec.event_action != '1':
-                continue
+        # '1' == Granted
+        if rec.event_action != '1':
+            return rec
 
-            if not rec.employee_id and not rec.contact_id:
-                continue
+        if not rec.employee_id and not rec.contact_id:
+            return rec
 
-            zones = rec.door_id.zone_ids
+        zones = rec.door_id.zone_ids
 
-            if len(rec.door_id.reader_ids) > 1:
-                # Reader type is In
-                if rec.reader_id.reader_type == '0':
-                    zones.person_entered(rec.employee_id or rec.contact_id, rec)
-                # Reader type is Out
-                else:
-                    zones.person_left(rec.employee_id or rec.contact_id, rec)
-                continue
-
-            if rec.reader_id.mode != '03':
-                zones.person_went_through(rec)
+        if len(rec.door_id.reader_ids) > 1:
+            # Reader type is In
+            if rec.reader_id.reader_type == '0':
+                zones.person_entered(rec.employee_id or rec.contact_id, rec)
+            # Reader type is Out
             else:
-                wc = rec.workcode_id
-                if len(wc) == 0:
-                    continue
+                zones.person_left(rec.employee_id or rec.contact_id, rec)
+            return rec
 
-                if wc.user_action == 'start':
-                    rec.door_id.zone_ids.person_entered(rec.employee_id, rec)
-                elif wc.user_action == 'break':
-                    rec.door_id.zone_ids.person_left(rec.employee_id, rec)
-                elif wc.user_action == 'stop':
-                    stack = []
-                    last_events = self.search([
-                        ('event_time',  '>=', datetime.now() - timedelta(hours=12)),
-                        ('employee_id',  '=', rec.employee_id.id),
-                        ('id',          '!=', rec.id),
-                        ('workcode_id', '!=', None),
-                    ]).sorted(key=lambda r: r.event_time)
+        if rec.reader_id.mode != '03':
+            zones.person_went_through(rec)
+        else:
+            wc = rec.workcode_id
+            if len(wc) == 0:
+                return rec
 
-                    for event in last_events:
-                        action = event.workcode_id.user_action
-                        if action == 'stop':
-                            if len(stack) > 0:
-                                stack.pop()
-                        else:
-                            stack.append(action)
+            if wc.user_action == 'start':
+                rec.door_id.zone_ids.person_entered(rec.employee_id, rec)
+            elif wc.user_action == 'break':
+                rec.door_id.zone_ids.person_left(rec.employee_id, rec)
+            elif wc.user_action == 'stop':
+                stack = []
+                last_events = self.search([
+                    ('event_time',  '>=', str(datetime.now() - timedelta(hours=12))),
+                    ('employee_id',  '=', rec.employee_id.id),
+                    ('id',          '!=', rec.id),
+                    ('workcode_id', '!=', None),
+                ]).sorted(key=lambda r: r.event_time)
 
-                    if len(stack) > 0:
-                        if stack[-1] == 'start':
-                            rec.door_id.zone_ids.person_left(rec.employee_id, rec)
-                        else:
-                            rec.door_id.zone_ids.person_entered(rec.employee_id, rec)
+                for event in last_events:
+                    action = event.workcode_id.user_action
+                    if action == 'stop':
+                        if len(stack) > 0:
+                            stack.pop()
+                    else:
+                        stack.append(action)
 
-        return records
+                if len(stack) > 0:
+                    if stack[-1] == 'start':
+                        rec.door_id.zone_ids.person_left(rec.employee_id, rec)
+                    else:
+                        rec.door_id.zone_ids.person_entered(rec.employee_id, rec)
+
+        return rec
 
 
 class HrRfidSystemEvent(models.Model):
@@ -1503,7 +1502,7 @@ class HrRfidSystemEvent(models.Model):
         lifetime = timedelta(days=int(event_lifetime))
         today = datetime.today()
         res = self.search([
-            ('timestamp', '<', today-lifetime)
+            ('timestamp', '<', str(today-lifetime))
         ])
         res.unlink()
 
@@ -1521,11 +1520,11 @@ class HrRfidSystemEvent(models.Model):
             if 'input_js' in vals:
                 vals.pop('input_js')
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        for vals in vals_list:
-            self._check_save_comms(vals)
-        return super(HrRfidSystemEvent, self).create(vals_list)
+    @api.model
+    @api.returns('self', lambda value: value.id)
+    def create(self, vals):
+        self._check_save_comms(vals)
+        return super(HrRfidSystemEvent, self).create(vals)
 
     @api.multi
     def write(self, vals):
@@ -1814,7 +1813,7 @@ class HrRfidCommands(models.Model):
 
     @api.model
     def create_d1_cmd(self, ws_id, ctrl_id, card_num, pin_code, ts_code, rights_data, rights_mask):
-        self.create([{
+        self.create({
             'webstack_id': ws_id,
             'controller_id': ctrl_id,
             'cmd': 'D1',
@@ -1823,7 +1822,7 @@ class HrRfidCommands(models.Model):
             'ts_code': ts_code,
             'rights_data': rights_data,
             'rights_mask': rights_mask,
-        }])
+        })
 
     @api.model
     def add_remove_card(self, card_number, ctrl_id, pin_code, ts_code, rights_data, rights_mask):
@@ -1939,11 +1938,11 @@ class HrRfidCommands(models.Model):
         controllers = ws_env.search([('ws_active', '=', True)]).mapped('controllers')
 
         for ctrl in controllers:
-            commands_env.create([{
+            commands_env.create({
                 'webstack_id': ctrl.webstack_id.id,
                 'controller_id': ctrl.id,
                 'cmd': 'D7',
-            }])
+            })
 
     def _check_save_comms(self, vals):
         save_comms = self.env['ir.config_parameter'].get_param('hr_rfid.save_webstack_communications')
@@ -1953,8 +1952,9 @@ class HrRfidCommands(models.Model):
             if 'response' in vals:
                 vals.pop('response')
 
-    @api.model_create_multi
-    def create(self, vals_list: list):
+    @api.model
+    @api.returns('self', lambda value: value.id)
+    def create(self, vals):
         def find_last_wait(_cmd, _vals):
             ret = self.search([
                 ('webstack_id', '=', _vals['webstack_id']),
@@ -1966,37 +1966,31 @@ class HrRfidCommands(models.Model):
                 return ret[-1]
             return ret
 
-        records = self.env['hr.rfid.command']
-        for vals in vals_list:
-            self._check_save_comms(vals)
+        self._check_save_comms(vals)
 
-            cmd = vals['cmd']
+        cmd = vals['cmd']
 
-            if cmd not in [ 'DB', 'D9', 'D5', 'DE', 'D7', 'F0', 'FC' ]:
-                records += super(HrRfidCommands, self).create([vals])
-                continue
+        if cmd not in [ 'DB', 'D9', 'D5', 'DE', 'D7', 'F0', 'FC' ]:
+            return super(HrRfidCommands, self).create(vals)
 
-            res = find_last_wait(cmd, vals)
+        res = find_last_wait(cmd, vals)
 
-            if len(res) == 0:
-                records += super(HrRfidCommands, self).create([vals])
-                continue
+        if len(res) == 0:
+            return super(HrRfidCommands, self).create(vals)
 
-            cmd_data = vals.get('cmd_data', False)
+        cmd_data = vals.get('cmd_data', False)
 
-            if cmd == 'DB':
-                if res.cmd_data[0] == cmd_data[0] and res.cmd_data[1] == cmd_data[1]:
-                    res.cmd_data = cmd_data
-                    continue
-            elif cmd in [ 'D9', 'D5', 'DE' ]:
+        if cmd == 'DB':
+            if res.cmd_data[0] == cmd_data[0] and res.cmd_data[1] == cmd_data[1]:
                 res.cmd_data = cmd_data
-                continue
-            elif cmd in [ 'D7', 'F0', 'FC' ]:
-                continue
+                return res
+        elif cmd in [ 'D9', 'D5', 'DE' ]:
+            res.cmd_data = cmd_data
+            return res
+        elif cmd in [ 'D7', 'F0', 'FC' ]:
+            return res
 
-            records += super(HrRfidCommands, self).create([vals])
-
-        return records
+        return super(HrRfidCommands, self).create(vals)
 
     @api.multi
     def write(self, vals):

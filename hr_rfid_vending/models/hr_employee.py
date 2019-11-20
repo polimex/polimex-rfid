@@ -309,7 +309,7 @@ class VendingAutoRefillEvents(models.Model):
                 total_refill += refill_amount
 
         if len(balance_histories) > 0:
-            re = self.create([{'auto_refill_total': total_refill}])
+            re = self.create({'auto_refill_total': total_refill})
             balance_histories.write({'auto_refill_id': re.id})
 
     @api.multi

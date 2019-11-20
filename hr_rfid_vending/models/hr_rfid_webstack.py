@@ -62,7 +62,7 @@ class HrRfidControllerVending(models.Model):
                     'row_num': str(int(i / row_len) + 1),
                     'controller_id': ctrl.id,
                 }
-                vend_rows_env.create([creation_dict])
+                vend_rows_env.create(creation_dict)
 
     @api.multi
     def write(self, vals):
@@ -332,7 +332,7 @@ class VendingEvents(models.Model):
         lifetime = timedelta(days=int(event_lifetime))
         today = datetime.today()
         res = self.search([
-            ('event_time', '<', today-lifetime)
+            ('event_time', '<', str(today-lifetime))
         ])
         res.unlink()
 
@@ -344,11 +344,11 @@ class VendingEvents(models.Model):
             if 'input_js' in vals:
                 vals.pop('input_js')
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        for vals in vals_list:
-            self._check_save_comms(vals)
-        return super(VendingEvents, self).create(vals_list)
+    @api.model
+    @api.returns('self', lambda value: value.id)
+    def create(self, vals):
+        self._check_save_comms(vals)
+        return super(VendingEvents, self).create(vals)
 
     @api.multi
     def write(self, vals):

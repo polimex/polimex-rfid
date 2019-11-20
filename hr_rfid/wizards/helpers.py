@@ -22,9 +22,9 @@ def return_wiz_form_view(res_model: str, res_id: int, title: str = ''):
 
 
 def create_dialog_box(env, text: str):
-    return env['hr.rfid.wiz.dialog.box'].create([{
+    return env['hr.rfid.wiz.dialog.box'].create({
         'text': text,
-    }])
+    })
 
 
 def return_dialog_box(d_box: DialogBox, title: str = ''):
