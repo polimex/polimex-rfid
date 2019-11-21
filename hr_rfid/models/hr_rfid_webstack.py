@@ -1517,7 +1517,13 @@ class HrRfidSystemEvent(models.Model):
     def _check_save_comms(self, vals):
         save_comms = self.env['ir.config_parameter'].get_param('hr_rfid.save_webstack_communications')
         if save_comms != 'True':
-            if 'input_js' in vals:
+            if 'input_js' not in vals:
+                return
+
+            if 'error_description' in vals and vals['error_description'] == 'Could not find the card':
+                js = json.loads(vals['input_js'])
+                vals['input_js'] = js['event']['card']
+            else:
                 vals.pop('input_js')
 
     @api.model
@@ -1541,6 +1547,13 @@ class HrRfidSystemEventWizard(models.TransientModel):
 
     def _default_card_number(self):
         sys_ev = self._default_sys_ev()
+
+        if type(sys_ev.input_js) != type(''):
+            raise exceptions.ValidationError('System event does not have a card number in it')
+
+        if len(sys_ev.input_js) == 10:
+            return sys_ev.input_js
+
         js = json.loads(sys_ev.input_js)
         try:
             card_number = js['event']['card']
