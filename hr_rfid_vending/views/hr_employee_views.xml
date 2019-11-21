@@ -79,6 +79,7 @@
             <group string="Settings">
               <field name="hr_rfid_vending_balance" readonly="1" />
               <field name="hr_rfid_vending_negative_balance" />
+              <field name="hr_rfid_vending_daily_limit" />
               <field name="hr_rfid_vending_limit"
                      attrs="{'invisible':[('hr_rfid_vending_negative_balance','=',False)]}" />
               <field name="hr_rfid_vending_in_attendance" />
