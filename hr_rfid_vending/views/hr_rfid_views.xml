@@ -2,6 +2,13 @@
 <odoo>
   <data>
 
+    <menuitem id="hr_rfid_vending_products_menu"
+              name="Products"
+              parent="hr_rfid.hr_rfid_master_data"
+              action="stock.product_template_action_product"
+              groups="hr_rfid_vending.hr_rfid_vending_group_customer"
+              sequence="100" />
+
     <menuitem id="hr_rfid_vending_menu"
               name="Vending"
               parent="hr_rfid.hr_rfid_events_menu"
@@ -17,6 +24,7 @@
           <field name="hr_rfid_vending_balance" groups="hr_rfid_vending.hr_rfid_vending_group_customer" />
           <field name="hr_rfid_vending_negative_balance" groups="hr_rfid_vending.hr_rfid_vending_group_customer" />
           <field name="hr_rfid_vending_limit" groups="hr_rfid_vending.hr_rfid_vending_group_customer" />
+          <field name="hr_rfid_vending_daily_limit" groups="hr_rfid_vending.hr_rfid_vending_group_customer" />
           <field name="hr_rfid_vending_in_attendance" groups="hr_rfid_vending.hr_rfid_vending_group_customer" />
           <field name="hr_rfid_vending_auto_refill" groups="hr_rfid_vending.hr_rfid_vending_group_customer" />
           <field name="hr_rfid_vending_refill_max" groups="hr_rfid_vending.hr_rfid_vending_group_customer" />

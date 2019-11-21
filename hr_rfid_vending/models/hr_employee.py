@@ -83,6 +83,17 @@ class HrEmployee(models.Model):
         track_visibility='onchange',
     )
 
+    hr_rfid_vending_daily_limit = fields.Float(
+        string='Daily Limit',
+        help='Maximum amount of funds allowed for the employee to spend each day. No limit if set to 0.',
+        default=0,
+    )
+
+    hr_rfid_vending_spent_today = fields.Float(
+        string='Spend Today',
+        default=0,
+    )
+
     hr_rfid_vending_auto_refill = fields.Boolean(
         string='Auto Refill',
         help='Automatically refill balance monthly',
@@ -170,6 +181,14 @@ class HrEmployee(models.Model):
         :return: Balance history on success
         """
         return self.hr_rfid_vending_add_to_balance(-cost, ev)
+
+    @api.model
+    def _reset_daily_limits(self):
+        self.search([
+            ('hr_rfid_vending_spent_today', '!=', 0),
+        ]).write({
+            'hr_rfid_vending_spent_today': 0,
+        })
 
 
 class BalanceHistory(models.Model):

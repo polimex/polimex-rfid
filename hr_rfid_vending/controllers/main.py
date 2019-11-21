@@ -67,20 +67,26 @@ class HrRfidVending(WebRfidController):
 
         def get_employee_balance(employee, controller):
             balance = employee.hr_rfid_vending_balance
+            balance = Decimal(str(balance))
             if employee.hr_rfid_vending_negative_balance is True:
-                balance += abs(employee.hr_rfid_vending_limit)
+                balance += Decimal(str(abs(employee.hr_rfid_vending_limit)))
             if employee.hr_rfid_vending_in_attendance is True:
                 if employee.attendance_state == 'checked_out':
                     return '0000', 0
             if balance <= 0:
                 return '0000', 0
-            balance = Decimal(str(balance))
+            if employee.hr_rfid_vending_daily_limit != 0:
+                limit = abs(employee.hr_rfid_vending_daily_limit)
+                limit = Decimal(str(limit))
+                limit -= Decimal(str(employee.hr_rfid_vending_spent_today))
+                if limit < balance:
+                    balance = limit
             balance *= 100
             balance /= controller.scale_factor
             balance = int(balance)
             if balance > 0xFF:
                 balance = 0xFF
-            b1 = int((balance & 0xF0) / 0x10)
+            b1 = (balance & 0xF0) // 0x10
             b2 = balance & 0x0F
             return '%02X%02X' % (b1, b2), balance
 
