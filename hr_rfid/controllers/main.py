@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-
 from odoo import http, fields, exceptions
 from odoo.http import request
+
 import datetime
 import json
 import traceback
+import psycopg2
 
 
 class WebRfidController(http.Controller):
@@ -588,7 +589,8 @@ class WebRfidController(http.Controller):
             self._webstack.write(self._ws_db_update_dict)
             return result
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
-                    exceptions.MissingError, exceptions.ValidationError, exceptions.DeferredException) as __:
+                exceptions.MissingError, exceptions.ValidationError, exceptions.DeferredException,
+                psycopg2.DataError) as __:
             request.env['hr.rfid.event.system'].sudo().create({
                 'webstack_id': self._webstack.id,
                 'timestamp': fields.Datetime.now(),
