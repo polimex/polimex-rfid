@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, exceptions, _
 from datetime import timedelta, datetime
+from decimal import Decimal
 
 
 class HrRfidControllerVending(models.Model):
@@ -20,6 +21,11 @@ class HrRfidControllerVending(models.Model):
     cash_contained = fields.Float(
         string='Cash Contained',
         help='The amount of cash the vending machine currently contains',
+    )
+
+    pricelist_id = fields.Many2one(
+        'product.pricelist',
+        string='Pricelist',
     )
 
     @api.multi
@@ -195,15 +201,26 @@ class HrRfidVendingSettingsWiz(models.TransientModel):
             items = [ row.item4, row.item3, row.item2, row.item1 ]
             for item in items:
                 if len(item) == 0:
-                    new_io_table += '0000'
+                    new_io_table += '0F0F'
                     continue
-                converted_price = int(((item.list_price * 100) / self.scale_factor))
-                if converted_price < 0 or converted_price > 255:
+
+                price = None
+
+                if self.controller_id.pricelist_id:
+                    price = self.controller_id.pricelist_id.get_product_price(item, 1, None)
+
+                if price is None:
+                    price = Decimal(str(item.list_price))
+
+                price *= 100
+                price /= self.scale_factor
+                price = int(price)
+                if price < 0 or price > 255:
                     raise exceptions.ValidationError(
                         _('item %s: %f is not a valid price. Must be between %f and %f')
                         % (item.name, item.list_price, 0*(self.scale_factor/100), 255*(self.scale_factor/100))
                     )
-                new_io_table += '%02X%02X' % (int((converted_price & 0xF0) / 0x10), converted_price & 0x0F)
+                new_io_table += '%02X%02X' % (int((price & 0xF0) / 0x10), price & 0x0F)
 
         spt1 = int((self.show_price_timeout & 0xF0) / 0x10)
         spt2 = self.show_price_timeout & 0x0F
