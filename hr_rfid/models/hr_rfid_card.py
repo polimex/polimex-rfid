@@ -47,8 +47,6 @@ class HrRfidCard(models.Model):
     contact_id = fields.Many2one(
         'res.partner',
         string='Card Owner (Partner)',
-        ondelete='cascade',
-        default=0,
         track_visibility='onchange',
         domain=[('is_company', '=', False)],
     )

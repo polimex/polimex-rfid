@@ -519,14 +519,12 @@ class HrRfidAccessGroupContactRel(models.Model):
         'hr.rfid.access.group',
         string='Access Group',
         required=True,
-        ondelete='cascade',
     )
 
     contact_id = fields.Many2one(
         'res.partner',
         string='Contact',
         required=True,
-        ondelete='cascade',
     )
 
     expiration = fields.Datetime(

@@ -129,8 +129,9 @@ class ResPartner(models.Model):
 
     @api.multi
     def unlink(self):
-        for emp in self:
-            emp.hr_rfid_card_ids.unlink()
+        for cont in self:
+            cont.hr_rfid_card_ids.unlink()
+            cont.hr_rfid_access_group_ids.unlink()
         return super(ResPartner, self).unlink()
 
 
