@@ -13,6 +13,7 @@ hr_rfid_officer_workcode,hr.rfid.officer.workcode,model_hr_rfid_workcode,hr_rfid
 hr_rfid_officer_event_user,hr.rfid.officer.event.user,model_hr_rfid_event_user,hr_rfid.hr_rfid_group_officer,1,1,0,0
 hr_rfid_officer_event_system,hr.rfid.officer.event.system,model_hr_rfid_event_system,hr_rfid.hr_rfid_group_officer,1,1,0,0
 hr_rfid_officer_command,hr.rfid.officer.command,model_hr_rfid_command,hr_rfid.hr_rfid_group_officer,1,1,0,0
+hr_rfid_officer_card_door_rel,hr.rfid.officer.card.door.rel,model_hr_rfid_card_door_rel,hr_rfid.hr_rfid_group_officer,1,1,1,1
 hr_rfid_manager_card,hr.rfid.manager.card,model_hr_rfid_card,hr_rfid.hr_rfid_group_manager,1,1,1,1
 hr_rfid_manager_zone,hr.rfid.manager.zone,model_hr_rfid_zone,hr_rfid.hr_rfid_group_manager,1,1,1,1
 hr_rfid_manager_access_group,hr.rfid.manager.access.group,model_hr_rfid_access_group,hr_rfid.hr_rfid_group_manager,1,1,1,1
@@ -29,6 +30,7 @@ hr_rfid_manager_event_system,hr.rfid.manager.event.system,model_hr_rfid_event_sy
 hr_rfid_manager_command,hr.rfid.manager.command,model_hr_rfid_command,hr_rfid.hr_rfid_group_manager,1,1,1,1
 hr_rfid_manager_access_group_door_rel,hr.rfid.manager.access.group.door.rel,model_hr_rfid_access_group_door_rel,hr_rfid.hr_rfid_group_manager,1,1,1,1
 hr_rfid_manager_time_schedule,hr.rfid.manager.time.schedule,model_hr_rfid_time_schedule,hr_rfid.hr_rfid_group_manager,1,1,1,1
+hr_rfid_manager_card_door_rel,hr.rfid.manager.card.door.rel,model_hr_rfid_card_door_rel,hr_rfid.hr_rfid_group_manager,1,1,1,1
 hr_rfid_view_rfid_data_card,hr.rfid.view.rfid.data.card,model_hr_rfid_card,hr_rfid.hr_rfid_view_rfid_data,1,0,0,0
 hr_rfid_view_rfid_data_access_group,hr.rfid.view.rfid.data.access.group,model_hr_rfid_access_group,hr_rfid.hr_rfid_view_rfid_data,1,0,0,0
 hr_rfid_view_rfid_data_event_user,hr.rfid.view.rfid.data.event.user,model_hr_rfid_event_user,hr_rfid.hr_rfid_view_rfid_data,1,0,0,0
@@ -36,3 +38,4 @@ hr_rfid_system_user_view_card,hr.rfid.system.user.view.card,model_hr_rfid_card,b
 hr_rfid_system_user_view_event,hr.rfid.system.user.view.event,model_hr_rfid_event_user,base.group_user,1,0,0,0
 hr_rfid_system_user_view_access_group_e_rel,hr.rfid.system.user.view.access.group.c.rel,model_hr_rfid_access_group_employee_rel,base.group_user,1,1,1,1
 hr_rfid_system_user_view_access_group_c_rel,hr.rfid.system.user.view.access.group.e.rel,model_hr_rfid_access_group_contact_rel,base.group_user,1,1,1,1
+hr_rfid_system_user_card_door_rel,hr.rfid.system.user.card.door.rel,model_hr_rfid_card_door_rel,base.group_user,1,0,0,0
