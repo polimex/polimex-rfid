@@ -488,7 +488,7 @@
       <field name="name">hr.rfid.access.group.door.rel.form</field>
       <field name="model">hr.rfid.access.group.door.rel</field>
       <field name="arch" type="xml">
-        <form>
+        <form create="0" edit="0" delete="0">
           <group>
             <field name="access_group_id" />
             <field name="door_id" />
@@ -502,7 +502,7 @@
       <field name="name">hr.rfid.acc.gr.employee.rel.form</field>
       <field name="model">hr.rfid.access.group.employee.rel</field>
       <field name="arch" type="xml">
-        <form string="Access Group/Employee Relations">
+        <form string="Access Group/Employee Relations" create="0" edit="0" delete="0">
           <sheet>
             <group>
               <field name="access_group_id" />
@@ -518,7 +518,7 @@
       <field name="name">hr.rfid.acc.gr.employee.rel.tree</field>
       <field name="model">hr.rfid.access.group.employee.rel</field>
       <field name="arch" type="xml">
-        <tree string="Access Group/Employee Relations">
+        <tree string="Access Group/Employee Relations" create="0" edit="0" delete="0">
           <field name="access_group_id" />
           <field name="employee_id" />
           <field name="expiration" />
@@ -526,23 +526,11 @@
       </field>
     </record>
 
-    <record id="hr_rfid_acc_gr_employee_rel_view_tree" model="ir.ui.view">
-      <field name="name">hr.rfid.acc.gr.employee.rel.search</field>
-      <field name="model">hr.rfid.access.group.employee.rel</field>
-      <field name="arch" type="xml">
-        <search string="Access Group/Employee Relations">
-          <field name="access_group_id" />
-          <field name="employee_id" />
-          <field name="expiration" />
-        </search>
-      </field>
-    </record>
-
     <record id="hr_rfid_acc_gr_contact_rel_view_form" model="ir.ui.view">
       <field name="name">hr.rfid.acc.gr.contact.rel.form</field>
       <field name="model">hr.rfid.access.group.contact.rel</field>
       <field name="arch" type="xml">
-        <form string="Access Group/Employee Relations">
+        <form string="Access Group/Employee Relations" create="0" edit="0" delete="0">
           <sheet>
             <group>
               <field name="access_group_id" />
@@ -558,23 +546,11 @@
       <field name="name">hr.rfid.acc.gr.contact.rel.tree</field>
       <field name="model">hr.rfid.access.group.contact.rel</field>
       <field name="arch" type="xml">
-        <tree string="Access Group/Employee Relations">
+        <tree string="Access Group/Employee Relations" create="0" edit="0" delete="0">
           <field name="access_group_id" />
           <field name="contact_id" />
           <field name="expiration" />
         </tree>
-      </field>
-    </record>
-
-    <record id="hr_rfid_acc_gr_contact_rel_view_tree" model="ir.ui.view">
-      <field name="name">hr.rfid.acc.gr.contact.rel.search</field>
-      <field name="model">hr.rfid.access.group.contact.rel</field>
-      <field name="arch" type="xml">
-        <search string="Access Group/Employee Relations">
-          <field name="access_group_id" />
-          <field name="contact_id" />
-          <field name="expiration" />
-        </search>
       </field>
     </record>
 
@@ -691,7 +667,7 @@
       <field name="name">hr.rfid.card.door.rel.form</field>
       <field name="model">hr.rfid.card.door.rel</field>
       <field name="arch" type="xml">
-        <form string="Card/Door Relations">
+        <form string="Card/Door Relations" create="0" edit="0" delete="0">
           <sheet>
             <group>
               <field name="card_id" />
@@ -707,7 +683,7 @@
       <field name="name">hr.rfid.card.door.rel.tree</field>
       <field name="model">hr.rfid.card.door.rel</field>
       <field name="arch" type="xml">
-        <tree string="Card/Door Relations">
+        <tree string="Card/Door Relations" create="0" edit="0" delete="0">
           <field name="card_id" />
           <field name="door_id" />
         </tree>
