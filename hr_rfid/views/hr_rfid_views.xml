@@ -89,7 +89,7 @@
       <field name="res_model">hr.rfid.event.user</field>
       <field name="view_type">form</field>
       <field name="view_mode">tree,form,search,calendar,pivot</field>
-      <field name="context">{"search_default_this_day":1}</field>
+      <field name="context">{'search_default_this_day':1}</field>
     </record>
 
     <record id="hr_rfid_event_system_action" model="ir.actions.act_window">
@@ -128,7 +128,7 @@
 
     <menuitem id="hr_rfid_main_menu"
               name="RFID System"
-              groups="hr_rfid_group_officer_department"
+              groups="hr_rfid_group_officer"
               web_icon="hr_rfid,static/description/icon.png" />
 
     <!--#######################################################
@@ -138,28 +138,28 @@
     <menuitem id="hr_rfid_events_menu"
               name="Events"
               parent="hr_rfid_main_menu"
-              groups="hr_rfid_group_officer_department"
+              groups="hr_rfid_group_officer"
               sequence="0" />
 
     <menuitem id="hr_rfid_menu_user_events"
               name="User Events"
               parent="hr_rfid_events_menu"
               action="hr_rfid_event_user_action"
-              groups="hr_rfid_group_officer_department"
+              groups="hr_rfid_group_officer"
               sequence="0" />
 
     <menuitem id="hr_rfid_menu_system_events"
               name="System Events"
               parent="hr_rfid_events_menu"
               action="hr_rfid_event_system_action"
-              groups="hr_rfid_group_officer_department"
+              groups="hr_rfid_group_officer"
               sequence="10" />
 
     <menuitem id="hr_rfid_menu_commands"
               name="Commands"
               parent="hr_rfid_events_menu"
               action="hr_rfid_command_action"
-              groups="hr_rfid_group_manager_department"
+              groups="hr_rfid_group_manager"
               sequence="20" />
 
     <!--#######################################################
@@ -169,14 +169,14 @@
     <menuitem id="hr_rfid_master_data"
               name="Master Data"
               parent="hr_rfid_main_menu"
-              groups="hr_rfid_group_officer_department"
+              groups="hr_rfid_group_officer"
               sequence="10" />
 
     <menuitem id="hr_rfid_menu_cards"
               name="Cards"
               parent="hr_rfid_master_data"
               action="hr_rfid_card_action"
-              groups="hr_rfid_group_officer_department"
+              groups="hr_rfid_group_officer"
               sequence="0" />
 
     <menuitem id="hr_rfid_menu_card_door_rels"
@@ -207,69 +207,69 @@
     <menuitem id="hr_rfid_settings_menu"
               name="Settings"
               parent="hr_rfid_main_menu"
-              groups="hr_rfid_group_officer_department"
+              groups="hr_rfid_group_officer"
               sequence="30" />
 
     <menuitem id="hr_rfid_menu_card_types"
               name="Card Types"
               parent="hr_rfid_settings_menu"
               action="hr_rfid_card_type_action"
-              groups="hr_rfid_group_manager_department"
+              groups="hr_rfid_group_manager"
               sequence="0" />
 
     <menuitem id="hr_rfid_menu_access_groups"
               name="Access Groups"
               parent="hr_rfid_settings_menu"
               action="hr_rfid_access_group_action"
-              groups="hr_rfid_group_manager_department"
+              groups="hr_rfid_group_manager"
               sequence="10" />
 
     <menuitem id="hr_rfid_menu_zones"
               name="Zones"
               parent="hr_rfid_settings_menu"
               action="hr_rfid_zone_action"
-              groups="hr_rfid_group_manager_department"
+              groups="hr_rfid_group_manager"
               sequence="0" />
 
     <menuitem id="hr_rfid_menu_modules_main_menu"
               name="Modules"
               parent="hr_rfid_settings_menu"
-              groups="hr_rfid_group_manager_department"
+              groups="hr_rfid_group_manager"
               sequence="20" />
 
     <menuitem id="hr_rfid_menu_controllers"
               name="Controllers"
               parent="hr_rfid_settings_menu"
               action="hr_rfid_ctrl_action"
-              groups="hr_rfid_group_manager_department"
+              groups="hr_rfid_group_manager"
               sequence="30" />
 
     <menuitem id="hr_rfid_menu_doors"
               name="Doors"
               parent="hr_rfid_settings_menu"
               action="hr_rfid_door_action"
-              groups="hr_rfid_group_manager_department"
+              groups="hr_rfid_group_manager"
               sequence="40" />
 
     <menuitem id="hr_rfid_menu_time_schedules"
               name="Time Schedules"
               parent="hr_rfid_settings_menu"
               action="hr_rfid_time_schedule_action"
-              groups="hr_rfid_group_manager_department"
+              groups="hr_rfid_group_manager"
               sequence="50" />
 
     <menuitem id="hr_rfid_menu_workcodes"
               name="Workcodes"
               parent="hr_rfid_settings_menu"
               action="hr_rfid_workcode_action"
-              groups="hr_rfid_group_manager_department"
+              groups="hr_rfid_group_manager"
               sequence="60" />
 
     <menuitem id="hr_rfid_menu_readers"
               name="Readers"
               parent="hr_rfid_settings_menu"
               action="hr_rfid_reader_action"
-              groups="hr_rfid_group_manager_department"
+              groups="hr_rfid_group_manager"
               sequence="70" />
 
     <!--#######################################################
@@ -280,7 +280,7 @@
               name="Modules"
               parent="hr_rfid_menu_modules_main_menu"
               action="hr_rfid_webstack_action"
-              groups="hr_rfid_group_manager_department"
+              groups="hr_rfid_group_manager"
               sequence="0" />
 
     <!--#######################################################
@@ -748,7 +748,7 @@
               name="Employees"
               parent="hr_rfid_master_data"
               action="hr_rfid_employee_action"
-              groups="hr_rfid_group_officer_department"
+              groups="hr_rfid_group_officer"
               sequence="0" />
 
     <record id="hr_rfid_contact_view_tree" model="ir.ui.view">
@@ -774,7 +774,7 @@
               name="Contacts"
               parent="hr_rfid_master_data"
               action="hr_rfid_contact_action"
-              groups="hr_rfid_group_officer_department"
+              groups="hr_rfid_group_officer"
               sequence="0" />
 
     <!--#######################################################

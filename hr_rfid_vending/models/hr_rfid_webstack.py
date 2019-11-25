@@ -372,3 +372,21 @@ class VendingEvents(models.Model):
         self._check_save_comms(vals)
         return super(VendingEvents, self).write(vals)
 
+    @api.model
+    @api.returns('self',
+                 upgrade=lambda self, value, args, offset=0, limit=None, order=None, count=False:
+                 value if count else self.browse(value),
+                 downgrade=lambda self, value, args, offset=0, limit=None, order=None, count=False:
+                 value if count else value.ids)
+    def search(self, *args, **kwargs):
+        ret = super(VendingEvents, self).search(*args, **kwargs)
+
+        if type(ret) == type(self):
+            user = self.env.user
+            has_customer = user.has_group('hr_rfid_vending.group_customer')
+            has_operator = user.has_group('hr_rfid_vending.group_operator')
+
+            if has_customer and not has_operator:
+                ret = ret.filtered(lambda a: a.employee_id)
+
+        return ret
