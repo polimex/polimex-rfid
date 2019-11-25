@@ -6,13 +6,13 @@
               name="Products"
               parent="hr_rfid.hr_rfid_master_data"
               action="stock.product_template_action_product"
-              groups="hr_rfid_vending.hr_rfid_vending_group_customer"
+              groups="hr_rfid_vending.group_customer"
               sequence="100" />
 
     <menuitem id="hr_rfid_vending_menu"
               name="Vending"
               parent="hr_rfid.hr_rfid_events_menu"
-              groups="hr_rfid_vending.hr_rfid_vending_group_customer"
+              groups="hr_rfid_vending.group_customer"
               sequence="100" />
 
     <record id="hr_rfid_employee_view_tree_inherit_hr_rfid_vending" model="ir.ui.view">
@@ -21,13 +21,13 @@
       <field name="inherit_id" ref="hr_rfid.hr_rfid_employee_view_tree" />
       <field name="arch" type="xml">
         <field name="department_id" position="after">
-          <field name="hr_rfid_vending_balance" groups="hr_rfid_vending.hr_rfid_vending_group_customer" />
-          <field name="hr_rfid_vending_negative_balance" groups="hr_rfid_vending.hr_rfid_vending_group_customer" />
-          <field name="hr_rfid_vending_limit" groups="hr_rfid_vending.hr_rfid_vending_group_customer" />
-          <field name="hr_rfid_vending_daily_limit" groups="hr_rfid_vending.hr_rfid_vending_group_customer" />
-          <field name="hr_rfid_vending_in_attendance" groups="hr_rfid_vending.hr_rfid_vending_group_customer" />
-          <field name="hr_rfid_vending_auto_refill" groups="hr_rfid_vending.hr_rfid_vending_group_customer" />
-          <field name="hr_rfid_vending_refill_max" groups="hr_rfid_vending.hr_rfid_vending_group_customer" />
+          <field name="hr_rfid_vending_balance" groups="hr_rfid_vending.group_customer" />
+          <field name="hr_rfid_vending_negative_balance" groups="hr_rfid_vending.group_customer" />
+          <field name="hr_rfid_vending_limit" groups="hr_rfid_vending.group_customer" />
+          <field name="hr_rfid_vending_daily_limit" groups="hr_rfid_vending.group_customer" />
+          <field name="hr_rfid_vending_in_attendance" groups="hr_rfid_vending.group_customer" />
+          <field name="hr_rfid_vending_auto_refill" groups="hr_rfid_vending.group_customer" />
+          <field name="hr_rfid_vending_refill_max" groups="hr_rfid_vending.group_customer" />
         </field>
       </field>
     </record>
@@ -111,7 +111,7 @@
               name="Vending Events"
               parent="hr_rfid_vending_menu"
               action="hr_rfid_vending_event_action"
-              groups="hr_rfid_vending.hr_rfid_vending_group_customer"
+              groups="hr_rfid_vending.group_customer"
               sequence="0" />
 
     <record id="hr_rfid_vending_event_form" model="ir.ui.view">
@@ -238,7 +238,7 @@
               name="Vending Auto Refill Events"
               parent="hr_rfid_vending_menu"
               action="hr_rfid_vending_auto_refill_action"
-              groups="hr_rfid_vending.hr_rfid_vending_group_operator"
+              groups="hr_rfid_vending.group_operator,hr_rfid_vending.group_operator"
               sequence="10" />
 
     <record id="hr_rfid_vending_auto_refill_form" model="ir.ui.view">
@@ -313,7 +313,7 @@
               name="Vending Balance History"
               parent="hr_rfid_vending_menu"
               action="hr_rfid_vending_balance_history_action"
-              groups="hr_rfid_vending.hr_rfid_vending_group_operator"
+              groups="hr_rfid_vending.group_operator,hr_rfid_vending.group_operator"
               sequence="20" />
 
     <record id="hr_rfid_vending_balance_history_form" model="ir.ui.view">

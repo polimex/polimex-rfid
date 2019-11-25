@@ -143,18 +143,18 @@
                     type="action"
                     string="Add Access Groups"
                     class="oe_highlight"
-                    groups="hr_rfid.hr_rfid_group_officer_department" />
+                    groups="hr_rfid.hr_rfid_group_officer" />
             <button name="%(hr_department_del_acc_grs_wiz_action)d"
                     id="hr_department_del_acc_grs_btn"
                     type="action"
                     string="Remove Access Groups"
-                    groups="hr_rfid.hr_rfid_group_officer_department" />
+                    groups="hr_rfid.hr_rfid_group_officer" />
             <button name="%(hr_department_def_acc_gr_wiz_action)d"
                     id="hr_department_def_acc_gr_btn"
                     type="action"
                     string="Change Default Access Group"
                     class="oe_highlight"
-                    groups="hr_rfid.hr_rfid_group_officer_department" />
+                    groups="hr_rfid.hr_rfid_group_officer" />
             <button name="remove_def_acc_gr"
                     id="hr_department_def_acc_gr_rem_btn"
                     type="object"
@@ -165,12 +165,12 @@
                     string="Mass Add/Remove"
                     help="Mass add/remove access groups from employees in this department"
                     class="oe_highlight"
-                    groups="hr_rfid.hr_rfid_group_officer_department" />
+                    groups="hr_rfid.hr_rfid_group_officer" />
           </xpath>
 
           <field name="company_id" position="after">
             <field name="hr_rfid_default_access_group"
-                   groups="hr_rfid.hr_rfid_group_officer_department"
+                   groups="hr_rfid.hr_rfid_group_officer"
                    domain="[('department_ids', 'in', [id])]"
                    readonly="1" />
           </field>
@@ -179,7 +179,7 @@
             <group string="Available access groups for employees in this department">
             </group>
             <field name="hr_rfid_allowed_access_groups"
-                   groups="hr_rfid.hr_rfid_group_officer_department"
+                   groups="hr_rfid.hr_rfid_group_officer"
                    readonly="1">
               <tree>
                 <field name="name" />
