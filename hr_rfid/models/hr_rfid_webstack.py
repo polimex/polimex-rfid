@@ -1985,7 +1985,7 @@ class HrRfidCommands(models.Model):
 
             cmd = vals['cmd']
 
-            if cmd not in [ 'DB', 'D9', 'D5', 'DE', 'D7', 'F0', 'FC' ]:
+            if cmd not in [ 'DB', 'D9', 'D5', 'DE', 'D7', 'F0', 'FC', 'D6' ]:
                 records += super(HrRfidCommands, self).create([vals])
                 continue
 
@@ -2001,7 +2001,7 @@ class HrRfidCommands(models.Model):
                 if res.cmd_data[0] == cmd_data[0] and res.cmd_data[1] == cmd_data[1]:
                     res.cmd_data = cmd_data
                     continue
-            elif cmd in [ 'D9', 'D5', 'DE' ]:
+            elif cmd in [ 'D9', 'D5', 'DE', 'D6' ]:
                 res.cmd_data = cmd_data
                 continue
             elif cmd in [ 'D7', 'F0', 'FC' ]:
