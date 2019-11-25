@@ -1,11 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-hr_rfid_system_user_vending_balance_history_own_dep,hr.rfid.system.user.vending.balance.history,model_hr_rfid_vending_balance_history,base.group_user,1,0,0,0
-hr_rfid_system_user_vending_event_own_dep,hr.rfid.system.user.vending.event,model_hr_rfid_vending_event,base.group_user,1,0,0,0
-hr_rfid_system_user_vending_balance_history,hr.rfid.system.user.vending.balance.history,model_hr_rfid_vending_balance_history,hr_rfid_vending.group_customer_own_dep,1,0,0,1
-hr_rfid_system_user_vending_event,hr.rfid.system.user.vending.event,model_hr_rfid_vending_event,hr_rfid_vending.group_customer_own_dep,1,0,0,1
-hr_rfid_vending_balance_history,hr.rfid.vending.customer.vending.balance.history,model_hr_rfid_vending_balance_history,hr_rfid_vending.group_customer_own_dep,1,1,1,1
-hr_rfid_vending_event,hr.rfid.vending.customer.vending.event,model_hr_rfid_vending_event,hr_rfid_vending.group_customer_own_dep,1,1,1,1
-hr_rfid_vending_row_own_dep,hr.rfid.operator.vending.row,model_hr_rfid_ctrl_vending_row,hr_rfid_vending.group_operator_own_dep,1,1,1,1
-hr_rfid_vending_auto_refill_own_dep,hr.rfid.operator.vending.auto.refill,model_hr_rfid_vending_auto_refill,hr_rfid_vending.group_operator_own_dep,1,1,1,1
+hr_rfid_system_user_vending_balance_history,hr.rfid.system.user.vending.balance.history,model_hr_rfid_vending_balance_history,base.group_user,1,0,0,0
+hr_rfid_system_user_vending_event,hr.rfid.system.user.vending.event,model_hr_rfid_vending_event,base.group_user,1,0,0,0
+hr_rfid_vending_balance_history,hr.rfid.vending.customer.vending.balance.history,model_hr_rfid_vending_balance_history,hr_rfid_vending.group_customer,1,1,1,1
+hr_rfid_vending_event,hr.rfid.vending.event,model_hr_rfid_vending_event,hr_rfid_vending.group_customer,1,1,1,1
 hr_rfid_vending_row,hr.rfid.operator.vending.row,model_hr_rfid_ctrl_vending_row,hr_rfid_vending.group_operator,1,1,1,1
 hr_rfid_vending_auto_refill,hr.rfid.operator.vending.auto.refill,model_hr_rfid_vending_auto_refill,hr_rfid_vending.group_operator,1,1,1,1

@@ -32,33 +32,24 @@
       <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
     </record>
 
-    <record id="hr_rfid_view_own_department" model="res.groups">
-      <field name="name">HR RFID: Only show employees from own department</field>
+    <record id="hr_view_own_department" model="res.groups">
+      <field name="name">Only show employees from own department</field>
       <field name="category_id" ref="base.module_category_hidden" />
     </record>
 
-    <record id="hr_rfid_group_officer_department" model="res.groups">
-      <field name="name">Officer Own Department</field>
-      <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_view_rfid_data'))]" />
-      <field name="category_id" ref="hr_rfid_management" />
+    <record id="hr_rfid_view_own_department" model="res.groups">
+      <field name="name">HR RFID: Only show data from own department</field>
+      <field name="category_id" ref="base.module_category_hidden" />
     </record>
 
     <record id="hr_rfid_group_officer" model="res.groups">
       <field name="name">Officer</field>
-      <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_group_officer_department'))]" />
-      <field name="category_id" ref="hr_rfid_management" />
-    </record>
-
-    <record id="hr_rfid_group_manager_department" model="res.groups">
-      <field name="name">Manager Own Department</field>
-      <field name="implied_ids"
-             eval="[(4, ref('hr_rfid.hr_rfid_group_officer')), (4, ref('hr_rfid.hr_rfid_view_rfid_data')), (4, ref('hr_rfid.hr_rfid_view_rfid_pin_code_data'))]" />
       <field name="category_id" ref="hr_rfid_management" />
     </record>
 
     <record id="hr_rfid_group_manager" model="res.groups">
       <field name="name">Manager</field>
-      <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_group_manager_department'))]" />
+      <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_group_officer'))]" />
       <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
       <field name="category_id" ref="hr_rfid_management" />
     </record>
@@ -68,7 +59,7 @@
       <field name="name">HR RFID: Only show own department's cards</field>
       <field name="model_id" ref="hr_rfid.model_hr_rfid_card" />
       <field name="domain_force">[('employee_id.department_id.id','=',user.employee_ids.department_id.id)]</field>
-      <field name="groups" eval="[(6, 0, [ref('hr_rfid_group_officer_department'),ref('hr_rfid_group_manager_department')])]" />
+      <field name="groups" eval="[(6, 0, [ref('hr_rfid_view_own_department')])]" />
       <field name="perm_create" eval="1"/>
       <field name="perm_write" eval="1"/>
       <field name="perm_unlink" eval="1"/>
@@ -80,7 +71,7 @@
       <field name="name">HR RFID: Only show own department's employees</field>
       <field name="model_id" ref="hr.model_hr_employee" />
       <field name="domain_force">[('department_id.id','=',user.employee_ids.department_id.id)]</field>
-      <field name="groups" eval="[(6, 0, [ref('hr_rfid_view_own_department')])]" />
+      <field name="groups" eval="[(6, 0, [ref('hr_view_own_department')])]" />
       <field name="perm_create" eval="1"/>
       <field name="perm_write" eval="1"/>
       <field name="perm_unlink" eval="1"/>
@@ -92,43 +83,19 @@
       <field name="name">HR RFID: Only show own department</field>
       <field name="model_id" ref="hr.model_hr_department" />
       <field name="domain_force">[('id','=',user.employee_ids.department_id.id)]</field>
-      <field name="groups" eval="[(6, 0, [ref('hr_rfid_view_own_department')])]" />
+      <field name="groups" eval="[(6, 0, [ref('hr_view_own_department')])]" />
       <field name="perm_create" eval="1"/>
       <field name="perm_write" eval="1"/>
       <field name="perm_unlink" eval="1"/>
       <field name="perm_read" eval="1"/>
     </record>
 
-    <record id="hr_rfid_group_officer_department_events_rule" model="ir.rule">
+    <record id="hr_rfid_group_view_own_department_events_rule" model="ir.rule">
       <field name="active" eval="True" />
       <field name="name">HR RFID: Only show department's user events</field>
       <field name="model_id" ref="hr_rfid.model_hr_rfid_event_user" />
       <field name="domain_force">[('employee_id.department_id.id','=',user.employee_ids.department_id.id)]</field>
-      <field name="groups" eval="[(6, 0, [ref('hr_rfid_group_officer_department'),ref('hr_rfid_group_manager_department')])]" />
-      <field name="perm_create" eval="1"/>
-      <field name="perm_write" eval="1"/>
-      <field name="perm_unlink" eval="1"/>
-      <field name="perm_read" eval="1"/>
-    </record>
-
-    <record id="hr_rfid_show_cards_rule" model="ir.rule">
-      <field name="active" eval="True" />
-      <field name="name">HR RFID: Show cards</field>
-      <field name="model_id" ref="hr_rfid.model_hr_rfid_card" />
-      <field name="domain_force">[(1,'=',1)]</field>
-      <field name="groups" eval="[(6, 0, [ref('hr_rfid_group_officer'), ref('hr_rfid_group_manager')])]" />
-      <field name="perm_create" eval="1"/>
-      <field name="perm_write" eval="1"/>
-      <field name="perm_unlink" eval="1"/>
-      <field name="perm_read" eval="1"/>
-    </record>
-
-    <record id="hr_rfid_group_show_events_rule" model="ir.rule">
-      <field name="active" eval="True" />
-      <field name="name">HR RFID: Show user events</field>
-      <field name="model_id" ref="hr_rfid.model_hr_rfid_event_user" />
-      <field name="domain_force">[(1,'=',1)]</field>
-      <field name="groups" eval="[(6, 0, [ref('hr_rfid_group_officer'), ref('hr_rfid_group_manager')])]" />
+      <field name="groups" eval="[(6, 0, [ref('hr_rfid_view_own_department')])]" />
       <field name="perm_create" eval="1"/>
       <field name="perm_write" eval="1"/>
       <field name="perm_unlink" eval="1"/>
