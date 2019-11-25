@@ -150,6 +150,7 @@ class HrEmployee(models.Model):
     def unlink(self):
         for emp in self:
             emp.hr_rfid_card_ids.unlink()
+            emp.hr_rfid_access_group_ids.unlink()
         return super(HrEmployee, self).unlink()
 
 
