@@ -877,9 +877,11 @@ class HrRfidDoor(models.Model):
         help='Events concerning this door',
     )
 
-    reader_ids = fields.One2many(
+    reader_ids = fields.Many2many(
         'hr.rfid.reader',
+        'hr_rfid_reader_door_rel',
         'door_id',
+        'reader_id',
         string='Readers',
         help='Readers that open this door',
     )
@@ -1171,11 +1173,21 @@ class HrRfidReader(models.Model):
         help='Events concerning this reader',
     )
 
+    door_ids = fields.Many2many(
+        'hr.rfid.door',
+        'hr_rfid_reader_door_rel',
+        'reader_id',
+        'door_id',
+        string='Doors',
+        help='Doors the reader opens',
+        ondelete='cascade',
+    )
+
     door_id = fields.Many2one(
         'hr.rfid.door',
         string='Door',
-        help='Door the reader opens',
-        ondelete='cascade',
+        compute='_compute_reader_door',
+        inverse='_inverse_reader_door',
     )
 
     @api.multi
@@ -1184,6 +1196,18 @@ class HrRfidReader(models.Model):
             record.name = record.door_id.name + ' ' + \
                           self.reader_types[int(record.reader_type)][1] + \
                           ' Reader'
+
+    @api.multi
+    @api.depends('hr.rfid.doors')
+    def _compute_reader_door(self):
+        for reader in self:
+            if reader.controller_id.hw_version not in [ '30', '31', '32' ] and len(reader.door_ids) == 1:
+                reader.door_id = reader.door_ids
+
+    @api.multi
+    def _inverse_reader_door(self):
+        for reader in self:
+            reader.door_ids = reader.door_id
 
     @api.multi
     def write(self, vals):

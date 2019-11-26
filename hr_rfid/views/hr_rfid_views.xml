@@ -1306,8 +1306,8 @@
             <field name="reader_type" />
             <field name="number" readonly="1" />
             <field name="controller_id" readonly="1" />
-            <field name="door_id" readonly="1" />
           </group>
+          <field name="door_ids" readonly="1" />
           <field name="user_event_ids" readonly="1">
             <tree>
               <field name="event_time" />
@@ -1332,7 +1332,6 @@
           <field name="name" />
           <field name="mode" />
           <field name="controller_id" />
-          <field name="door_id" />
           <field name="reader_type" />
         </tree>
       </field>
@@ -1346,7 +1345,6 @@
           <field name="name" />
           <field name="mode" />
           <field name="controller_id" />
-          <field name="door_id" />
           <field name="reader_type" />
         </search>
       </field>
