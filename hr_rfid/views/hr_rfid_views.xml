@@ -908,14 +908,14 @@
       <field name="name">hr.rfid.webstack.tree</field>
       <field name="model">hr.rfid.webstack</field>
       <field name="arch" type="xml">
-        <tree string="RFID Modules">
-          <field name="name" />
-          <field name="serial" />
-          <field name="ws_active" />
-          <field name="hw_version" />
-          <field name="version" />
-          <field name="updated_at" />
-          <field name="last_ip" />
+        <tree string="RFID Modules" decoration-danger="ws_active==False" decoration-success="ws_active==True">
+          <field name="name"/>
+          <field name="serial"/>
+          <field name="hw_version"/>
+          <field name="version"/>
+          <field name="updated_at"/>
+          <field name="last_ip"/>
+          <field name="ws_active" invisible="1"/>
           <button name="action_set_active" type="object"
                   attrs="{'invisible': [('ws_active','=', True)]}"
                   string="Set module to active" />
