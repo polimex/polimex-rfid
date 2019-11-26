@@ -815,12 +815,6 @@
       <field name="arch" type="xml">
         <form string="RFID Modules">
           <header>
-            <button name="action_set_active" type="object"
-                    attrs="{'invisible': [('ws_active','=',True)]}"
-                    string="Set module to active" />
-            <button name="action_set_inactive" type="object"
-                    attrs="{'invisible': [('ws_active','=',False)]}"
-                    string="Set module to inactive" />
             <button name="action_set_webstack_settings" type="object"
                     string="Setup module for this odoo"
                     attrs="{'invisible': [('behind_nat','=',True)]}"
@@ -832,62 +826,79 @@
             <field name="available" widget="statusbar" />
           </header>
 
-          <group>
-            <field name="name" />
-            <field name="serial" readonly="1" />
-            <field name="ws_active" />
-            <field name="key" />
-            <field name="tz" />
-            <field name="tz_offset" groups="base.group_no_one" />
-            <field name="hw_version" readonly="1" />
-            <field name="version" readonly="1" />
-            <field name="behind_nat" />
-            <field name="last_ip" />
-            <field name="updated_at" readonly="1" />
-            <field name="http_link" readonly="1" widget="url" />
-            <field name="module_username" />
-            <field name="module_password" password="True" />
-          </group>
+          <sheet modifiers="{}">
+            <div class="oe_button_box" name="button_box" modifiers="{}">
+			        <button name="toggle_ws_active" type="object" class="oe_stat_button" icon="fa-plug" modifiers="{}" options="{}">
+				        <field name="ws_active" widget="boolean_button" modifiers="{}"/>
+			       </button>
+	        	</div>
+            <div class="oe_title" modifiers="{}">
+              <h1>
+                <field name="name"/>
+              </h1>
+            </div>
+            <group>
+              <group string="System information">
+                <field name="serial" readonly="1"/>
+                <field name="hw_version" readonly="1"/>
+                <field name="version" readonly="1"/>
+              </group>
+              <group string="Security">
+                <field name="key"/>
+                <field name="module_username"/>
+                <field name="module_password" password="True"/>
+              </group>
+              <group string="Setup">
+                <field name="tz"/>
+                <field name="tz_offset" invisible="1" groups="base.group_no_one"/>
+                <field name="behind_nat"/>
+              </group>
+              <group string="Status">
+                <field name="last_ip"/>
+                <field name="updated_at" readonly="1"/>
+                <field name="http_link" readonly="1" widget="url"/>
+              </group>
+            </group>
 
-          <notebook>
-            <page string="Controllers">
-              <field name="controllers" readonly="1">
-                <tree string="Controllers">
-                  <field name="name" />
-                  <field name="ctrl_id" />
-                  <field name="hw_version" />
-                  <field name="sw_version" />
-                </tree>
-              </field>
-            </page>
+            <notebook>
+              <page string="Controllers">
+                <field name="controllers" readonly="1">
+                  <tree string="Controllers">
+                    <field name="name"/>
+                    <field name="ctrl_id"/>
+                    <field name="hw_version"/>
+                    <field name="sw_version"/>
+                  </tree>
+                </field>
+              </page>
 
-            <page string="Error Events">
-              <field name="system_event_ids" readonly="1">
-                <tree string="Error Events">
-                  <field name="controller_id">
-                    <field name="name" string="Controller Name" />
-                  </field>
-                  <field name="timestamp" />
-                  <field name="error_description" />
-                </tree>
-              </field>
-            </page>
+              <page string="Error Events">
+                <field name="system_event_ids" readonly="1">
+                  <tree string="Error Events">
+                    <field name="controller_id">
+                      <field name="name" string="Controller Name"/>
+                    </field>
+                    <field name="timestamp"/>
+                    <field name="error_description"/>
+                  </tree>
+                </field>
+              </page>
 
-            <page string="Commands">
-              <field name="command_ids" readonly="1">
-                <tree string="Commands">
-                  <field name="controller_id" />
-                  <field name="cmd" />
-                  <field name="status" />
-                  <field name="error" />
-                </tree>
-              </field>
-            </page>
-          </notebook>
-
+              <page string="Commands">
+                <field name="command_ids" readonly="1">
+                  <tree string="Commands">
+                    <field name="controller_id"/>
+                    <field name="cmd"/>
+                    <field name="status"/>
+                    <field name="error"/>
+                  </tree>
+                </field>
+              </page>
+            </notebook>
+          </sheet>
           <div class="oe_chatter">
-            <field name="message_follower_ids" widget="mail_followers" />
-            <field name="message_ids" widget="mail_thread" />
+            <field name="message_follower_ids" widget="mail_followers"/>
+            <field name="message_ids" widget="mail_thread"/>
           </div>
         </form>
       </field>

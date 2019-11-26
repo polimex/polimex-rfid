@@ -75,29 +75,32 @@
                     string="Set balance to"
                     context="{'setting_balance':True}"
                     groups="hr_rfid_vending.group_customer" />
-
-            <group string="Settings">
-              <field name="hr_rfid_vending_balance" readonly="1" />
-              <field name="hr_rfid_vending_negative_balance" />
-              <field name="hr_rfid_vending_daily_limit" />
-              <field name="hr_rfid_vending_limit"
-                     attrs="{'invisible':[('hr_rfid_vending_negative_balance','=',False)]}" />
-              <field name="hr_rfid_vending_in_attendance" />
-              <field name="hr_rfid_vending_auto_refill" />
-              <field name="hr_rfid_vending_refill_amount"
-                     attrs="{'invisible':[('hr_rfid_vending_auto_refill','=',False)]}" />
-              <field name="hr_rfid_vending_refill_type"
-                     attrs="{'invisible':[('hr_rfid_vending_auto_refill','=',False)]}" />
-              <field name="hr_rfid_vending_refill_max"
-                     attrs="{'invisible':['|',('hr_rfid_vending_auto_refill','=',False),('hr_rfid_vending_refill_type','=','fixed')]}" />
-              <field name="hr_rfid_vending_balance_history" readonly="1">
-                <tree default_order="id desc" create="0" delete="0">
-                  <field name="name" />
-                  <field name="balance_change" />
-                  <field name="balance_result" />
-                  <field name="create_date" string="Operation Date" />
-                </tree>
-              </field>
+            <group>
+             <group string="Balance">
+               <field name="hr_rfid_vending_balance" readonly="1"/>
+               <field name="hr_rfid_vending_negative_balance"/>
+               <field name="hr_rfid_vending_limit" attrs="{'invisible':[('hr_rfid_vending_negative_balance','=',False)]}"/>
+             </group>
+             <group string="Balance Limits">
+               <field name="hr_rfid_vending_daily_limit"/>
+               <field name="hr_rfid_vending_in_attendance"/>
+             </group>
+             <group string="Balance Autorefill options">
+               <field name="hr_rfid_vending_auto_refill"/>
+               <field name="hr_rfid_vending_refill_amount" attrs="{'invisible':[('hr_rfid_vending_auto_refill','=',False)]}"/>
+               <field name="hr_rfid_vending_refill_type" attrs="{'invisible':[('hr_rfid_vending_auto_refill','=',False)]}"/>
+               <field name="hr_rfid_vending_refill_max" attrs="{'invisible':['|',('hr_rfid_vending_auto_refill','=',False),('hr_rfid_vending_refill_type','=','fixed')]}"/>
+             </group>
+             <group string="Balance History" colspan="4">
+               <field name="hr_rfid_vending_balance_history" readonly="1" >
+                 <tree default_order="id desc" create="0" delete="0">
+                   <field name="name"/>
+                   <field name="balance_change"/>
+                   <field name="balance_result"/>
+                   <field name="create_date" string="Operation Date"/>
+                 </tree>
+               </field>
+             </group>
             </group>
           </page>
         </notebook>
