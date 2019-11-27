@@ -229,6 +229,10 @@ class HrRfidWebstack(models.Model):
                           'Serial number for webstacks must be unique!') ]
 
     @api.one
+    def toggle_ws_active(self):
+        self.ws_active = not self.ws_active
+
+    @api.one
     def action_set_active(self):
         self.ws_active = True
 
