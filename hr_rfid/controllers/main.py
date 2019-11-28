@@ -32,7 +32,7 @@ class WebRfidController(http.Controller):
             'response': json.dumps(self._post),
         })
 
-        WebRfidController.report_sys_ev(description, command.controller_id)
+        self._report_sys_ev(description, command.controller_id)
         return self.check_for_unsent_cmd(status_code)
 
     def _check_for_unsent_cmd(self, status_code, event=None):
