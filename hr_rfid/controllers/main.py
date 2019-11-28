@@ -6,6 +6,9 @@ import datetime
 import json
 import traceback
 import psycopg2
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class WebRfidController(http.Controller):
@@ -546,6 +549,7 @@ class WebRfidController(http.Controller):
 
     @http.route(['/hr/rfid/event'], type='json', auth='none', method=['POST'], csrf=False)
     def post_event(self, **post):
+        _logger.debug('Received=' + str(post))
         self._post = post
         self._vending_hw_version = '16'
         self._webstacks_env = request.env['hr.rfid.webstack'].sudo()
@@ -587,6 +591,7 @@ class WebRfidController(http.Controller):
                 result = self._parse_response()
 
             self._webstack.write(self._ws_db_update_dict)
+            _logger.debug('Sending back result=' + str(result))
             return result
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
                 exceptions.MissingError, exceptions.ValidationError, exceptions.DeferredException,
@@ -597,4 +602,5 @@ class WebRfidController(http.Controller):
                 'error_description': traceback.format_exc(),
                 'input_js': json.dumps(self._post),
             })
+            _logger.debug('Caught an exception, returning status=500 and creating a system event')
             return { 'status': 500 }
