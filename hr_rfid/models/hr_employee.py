@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, exceptions, http
+from odoo import api, fields, models, exceptions, http, _
 
 
 class HrEmployee(models.Model):
@@ -108,6 +108,18 @@ class HrEmployee(models.Model):
                 if acc_gr not in user.department_id.hr_rfid_allowed_access_groups:
                     raise exceptions.ValidationError('Access group must be one of the access '
                                                      'groups assigned to the department!')
+
+            doors = user.hr_rfid_access_group_ids.mapped('all_door_ids').mapped('door_id')
+            relay_doors = dict()
+            for door in doors:
+                ctrl = door.controller_id
+                if ctrl.is_relay_ctrl():
+                    if ctrl in relay_doors and ctrl.mode == 3:
+                        raise exceptions.ValidationError(
+                            _('Doors "%s" and "%s" both belong to a controller that cannot give access to multiple doors in the same time.')
+                            % (relay_doors[ctrl].name, door.name)
+                        )
+                    relay_doors[ctrl] = door
 
     @api.multi
     @api.constrains('hr_rfid_pin_code')

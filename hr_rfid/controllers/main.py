@@ -6,6 +6,9 @@ import datetime
 import json
 import traceback
 import psycopg2
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class WebRfidController(http.Controller):
@@ -25,8 +28,8 @@ class WebRfidController(http.Controller):
             'response': json.dumps(self._post),
         })
 
-        WebRfidController.report_sys_ev(description, command.controller_id)
-        return self.check_for_unsent_cmd(status_code)
+        self._report_sys_ev(description, command.controller_id)
+        return self._check_for_unsent_cmd(status_code)
 
     def _check_for_unsent_cmd(self, status_code, event=None):
         commands_env = request.env['hr.rfid.command'].sudo()
@@ -337,9 +340,9 @@ class WebRfidController(http.Controller):
                 'name': name,
                 'number': number,
                 'controller_id': ctrl_id,
-            }).id
+            })
 
-        def create_reader(name, number, reader_type, ctrl_id, door_id):
+        def create_reader(name, number, reader_type, ctrl_id, door_id=None):
             create_dict = {
                 'name': name,
                 'number': number,
@@ -350,48 +353,73 @@ class WebRfidController(http.Controller):
             if door_id is not None:
                 create_dict['door_id'] = door_id
 
-            reader_env.create(create_dict)
+            return reader_env.create(create_dict)
+
+        def add_door_to_reader(_reader, _door):
+            _reader.door_ids += _door
 
         def gen_d_name(door_num, controller_id):
             return 'Door ' + str(door_num) + ' of ctrl ' + str(controller_id)
 
-        if hw_ver in [ '30', '31', '32' ]:
+        if controller.hw_version_is_for_relay_ctrl(hw_ver):
             if ctrl_mode == 1:
-                pass
+                reader = create_reader('R1', 1, '0', controller.id)
+                for i in range(32):
+                    door = create_door(gen_d_name(i+1, controller.id), i+1, controller.id)
+                    add_door_to_reader(reader, door)
             elif ctrl_mode == 2:
-                pass
+                reader = create_reader('R1', 1, '0', controller.id)
+                for i in range(16):
+                    door = create_door(gen_d_name(i+1, controller.id), i+1, controller.id)
+                    add_door_to_reader(reader, door)
+                reader = create_reader('R2', 2, '0', controller.id)
+                for i in range(16):
+                    door = create_door(gen_d_name(i+1, controller.id), i+1, controller.id)
+                    add_door_to_reader(reader, door)
             elif ctrl_mode == 3:
-                pass
+                reader = create_reader('R1', 1, '0', controller.id)
+                for i in range(512):
+                    door = create_door(gen_d_name(i+1, controller.id), i+1, controller.id)
+                    add_door_to_reader(reader, door)
             else:
                 raise exceptions.ValidationError(_('Got controller mode=%d for hw_ver=%s???')
                                                  % (ctrl_mode, hw_ver))
         else:
             if ctrl_mode == 1 or ctrl_mode == 3:
                 last_door = create_door(gen_d_name(1, controller.id), 1, controller.id)
+                last_door = last_door.id
                 create_reader('R1', 1, '0', controller.id, last_door)
                 create_reader('R2', 2, '1', controller.id, last_door)
             elif ctrl_mode == 2 and readers_count == 4:
                 last_door = create_door(gen_d_name(1, controller.id), 1, controller.id)
+                last_door = last_door.id
                 create_reader('R1', 1, '0', controller.id, last_door)
                 create_reader('R2', 2, '1', controller.id, last_door)
                 last_door = create_door(gen_d_name(2, controller.id), 2, controller.id)
+                last_door = last_door.id
                 create_reader('R3', 3, '0', controller.id, last_door)
                 create_reader('R4', 4, '1', controller.id, last_door)
             else:  # (ctrl_mode == 2 and readers_count == 2) or ctrl_mode == 4
                 last_door = create_door(gen_d_name(1, controller.id), 1, controller.id)
+                last_door = last_door.id
                 create_reader('R1', 1, '0', controller.id, last_door)
                 last_door = create_door(gen_d_name(2, controller.id), 2, controller.id)
+                last_door = last_door.id
                 create_reader('R2', 2, '0', controller.id, last_door)
 
             if ctrl_mode == 3:
                 last_door = create_door(gen_d_name(2, controller.id), 2, controller.id)
+                last_door = last_door.id
                 create_reader('R3', 3, '0', controller.id, last_door)
                 last_door = create_door(gen_d_name(3, controller.id), 3, controller.id)
+                last_door = last_door.id
                 create_reader('R4', 4, '0', controller.id, last_door)
             elif ctrl_mode == 4:
                 last_door = create_door(gen_d_name(3, controller.id), 3, controller.id)
+                last_door = last_door.id
                 create_reader('R3', 3, '0', controller.id, last_door)
                 last_door = create_door(gen_d_name(4, controller.id), 4, controller.id)
+                last_door = last_door.id
                 create_reader('R4', 4, '0', controller.id, last_door)
 
         controller.write({
@@ -445,7 +473,7 @@ class WebRfidController(http.Controller):
             'cmd_data': '00',
         })
 
-        if ctrl_mode == 1 or ctrl_mode == 3:
+        if not controller.is_relay_ctrl() and (ctrl_mode == 1 or ctrl_mode == 3):
             cmd_env.create({
                 'webstack_id': self._webstack.id,
                 'controller_id': controller.id,
@@ -458,11 +486,16 @@ class WebRfidController(http.Controller):
 
         sys_ev = {
             'webstack_id': self._webstack.id,
-            'timestamp': self._get_ws_time_str(),
             'error_description': description,
-            'event_action': str(self._post['event']['event_n']),
             'input_js': json.dumps(self._post),
         }
+
+        if 'event' in self._post:
+            sys_ev['timestamp'] = self._get_ws_time_str()
+            sys_ev['event_action'] = str(self._post['event']['event_n'])
+        else:
+            sys_ev['timestamp'] = datetime.datetime.now()
+
         if controller is not None:
             sys_ev['controller_id'] = controller.id
 
@@ -508,7 +541,10 @@ class WebRfidController(http.Controller):
 
     def _get_ws_time(self):
         time = self._post['event']['date'] + ' ' + self._post['event']['time']
-        time = datetime.datetime.strptime(time, '%m.%d.%y %H:%M:%S')
+        if self._webstack.serial.startswith('3'):
+            time = datetime.datetime.strptime(time, '%d.%m.%y %H:%M:%S')
+        else:
+            time = datetime.datetime.strptime(time, '%m.%d.%y %H:%M:%S')
         time -= self._get_tz_offset(self._webstack)
         return time
 
@@ -539,13 +575,30 @@ class WebRfidController(http.Controller):
         }
 
         if command.cmd == 'D1':
-            card_num = ''.join(list('0' + ch for ch in command.card_number))
-            pin_code = ''.join(list('0' + ch for ch in command.pin_code))
-            ts_code = str(command.ts_code)
-            rights_data = '{:02X}'.format(command.rights_data)
-            rights_mask = '{:02X}'.format(command.rights_mask)
-
-            json_cmd['cmd']['d'] = card_num + pin_code + ts_code + rights_data + rights_mask
+            if not command.controller_id.is_relay_ctrl():
+                card_num = ''.join(list('0' + ch for ch in command.card_number))
+                pin_code = ''.join(list('0' + ch for ch in command.pin_code))
+                ts_code = str(command.ts_code)
+                rights_data = '{:02X}'.format(command.rights_data)
+                rights_mask = '{:02X}'.format(command.rights_mask)
+                json_cmd['cmd']['d'] = card_num + pin_code + ts_code + rights_data + rights_mask
+            else:
+                card_num = ''.join(list('0' + ch for ch in command.card_number))
+                rights_data = '%03d%03d%03d%03d' % (
+                    (command.rights_data >> (3*8)) & 0xFF,
+                    (command.rights_data >> (2*8)) & 0xFF,
+                    (command.rights_data >> (1*8)) & 0xFF,
+                    (command.rights_data >> (0*8)) & 0xFF,
+                )
+                rights_mask = '%03d%03d%03d%03d' % (
+                    (command.rights_mask >> (3*8)) & 0xFF,
+                    (command.rights_mask >> (2*8)) & 0xFF,
+                    (command.rights_mask >> (1*8)) & 0xFF,
+                    (command.rights_mask >> (0*8)) & 0xFF,
+                )
+                rights_data = ''.join(list('0' + ch for ch in rights_data))
+                rights_mask = ''.join(list('0' + ch for ch in rights_mask))
+                json_cmd['cmd']['d'] = card_num + rights_data + rights_mask
 
         if command.cmd == 'D7':
             dt = datetime.datetime.now()
@@ -561,6 +614,7 @@ class WebRfidController(http.Controller):
 
     @http.route(['/hr/rfid/event'], type='json', auth='none', method=['POST'], csrf=False)
     def post_event(self, **post):
+        _logger.debug('Received=' + str(post))
         self._post = post
         self._vending_hw_version = '16'
         self._webstacks_env = request.env['hr.rfid.webstack'].sudo()
@@ -602,6 +656,7 @@ class WebRfidController(http.Controller):
                 result = self._parse_response()
 
             self._webstack.write(self._ws_db_update_dict)
+            _logger.debug('Sending back result=' + str(result))
             return result
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
                 exceptions.MissingError, exceptions.ValidationError, exceptions.DeferredException,
@@ -612,4 +667,5 @@ class WebRfidController(http.Controller):
                 'error_description': traceback.format_exc(),
                 'input_js': json.dumps(self._post),
             })
+            _logger.debug('Caught an exception, returning status=500 and creating a system event')
             return { 'status': 500 }

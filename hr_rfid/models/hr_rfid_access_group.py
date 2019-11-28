@@ -151,11 +151,22 @@ class HrRfidAccessGroup(models.Model):
     @api.constrains('door_ids')
     def _door_ids_constrains(self):
         for acc_gr in self:
+            relay_doors = dict()
             door_id_list = []
             for rel in acc_gr.door_ids:
                 if rel.door_id.id in door_id_list:
                     raise exceptions.ValidationError('Cannot link access group to a door '
                                                      'it is already linked to.')
+
+                ctrl = rel.door_id.controller_id
+                if ctrl.is_relay_ctrl():
+                    if ctrl in relay_doors and ctrl.mode == 3:
+                        raise exceptions.ValidationError(
+                            _('Doors "%s" and "%s" both belong to a controller that cannot give access to multiple doors in the same time.')
+                            % (relay_doors[ctrl].name, rel.door_id.name)
+                        )
+                    relay_doors[ctrl] = rel.door_id
+
                 door_id_list.append(rel.door_id.id)
 
     @api.depends('door_ids', 'inherited_ids')

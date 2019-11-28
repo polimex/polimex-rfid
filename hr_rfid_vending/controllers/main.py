@@ -10,6 +10,9 @@ import datetime
 import traceback
 import json
 import psycopg2
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class HrRfidVending(WebRfidController):
@@ -232,7 +235,9 @@ class HrRfidVending(WebRfidController):
 
         try:
             if 'event' in post:
+                _logger.debug('Vending: Received=' + str(post))
                 ret = parse_event()
+                _logger.debug('Sending back result=' + str(ret))
             else:
                 ret = ret_super()
 
@@ -246,4 +251,5 @@ class HrRfidVending(WebRfidController):
                 'error_description': traceback.format_exc(),
                 'input_js': json.dumps(post),
             })
+            _logger.debug('Vending: Caught an exception, returning status=500 and creating a system event')
             return { 'status': 500 }
