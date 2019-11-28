@@ -997,71 +997,77 @@
       <field name="model">hr.rfid.ctrl</field>
       <field name="arch" type="xml">
         <form string="RFID Controller" create="false">
-          <header>
-            <button name="button_reload_cards" type="object" string="Reload all cards"
-                    help="Delete all of the cards on the controller and then re-add them." />
-            <button name="%(hr_rfid_controller_io_table_wiz_action)d"
-                    id="hr_rfid_view_modify_io_table_btn"
-                    type="action"
-                    string="View/modify IO table"
-                    groups="hr_rfid.hr_rfid_group_manager" />
-          </header>
-          <group>
-            <field name="name" />
-            <field name="ctrl_id" readonly="1" />
-            <field name="serial_number" readonly="1" />
-            <field name="hw_version" readonly="1" />
-            <field name="sw_version" readonly="1" />
-            <field name="readers" readonly="1" />
-            <field name="external_db" />
-            <field name="max_cards_count" readonly="1" />
-            <field name="max_events_count" readonly="1" />
-            <field name="webstack_id" readonly="1" />
-          </group>
+          <sheet modifiers="{}">
+            <div class="oe_button_box" name="button_box" modifiers="{}">
+              <button string="Reload cards" name="button_reload_cards" type="object" class="oe_stat_button" icon="fa-refresh" modifiers="{}" options="{}"/>
+              <button string="IO Table" name="%(hr_rfid_controller_io_table_wiz_action)d" id="hr_rfid_view_modify_io_table_btn" type="action" groups="hr_rfid.hr_rfid_group_manager" class="oe_stat_button" icon="fa-table" modifiers="{}" options="{}"/>
+            </div>
+            <div class="oe_title" modifiers="{}">
+              <h1 modifiers="{}">
+                <field name="name" modifiers="{'required':true}"/>
+              </h1>
+            </div>
+            <group>
+              <group string="System information">
+                <field name="ctrl_id" readonly="1"/>
+                <field name="serial_number" readonly="1"/>
+                <field name="hw_version" readonly="1"/>
+                <field name="sw_version" readonly="1"/>
+                <field name="readers" readonly="1"/>
+              </group>
+              <group string="Internal memory">
+                <field name="max_cards_count" readonly="1"/>
+                <field name="max_events_count" readonly="1"/>
+              </group>
+              <group string="Setup">
+                <field name="external_db"/>
+                <field name="webstack_id" readonly="1"/>
+              </group>
+            </group>
+            <notebook>
+              <page string="Doors">
+                <field name="door_ids" readonly="1">
+                  <tree string="Doors">
+                    <field name="name"/>
+                    <field name="number"/>
+                  </tree>
+                </field>
+              </page>
 
-          <notebook>
-            <page string="Doors">
-              <field name="door_ids" readonly="1">
-                <tree string="Doors">
-                  <field name="name" />
-                  <field name="number" />
-                </tree>
-              </field>
-            </page>
+              <page string="Readers">
+                <field name="reader_ids" readonly="1">
+                  <tree string="Readers">
+                    <field name="number"/>
+                    <field name="reader_type"/>
+                  </tree>
+                </field>
+              </page>
 
-            <page string="Readers">
-              <field name="reader_ids" readonly="1">
-                <tree string="Readers">
-                  <field name="number" />
-                  <field name="reader_type" />
-                </tree>
-              </field>
-            </page>
+              <page string="Error Events">
+                <field name="system_event_ids" readonly="1">
+                  <tree string="Error Events">
+                    <field name="controller_id"/>
+                    <field name="timestamp"/>
+                    <field name="error_description"/>
+                  </tree>
+                </field>
+              </page>
 
-            <page string="Error Events">
-              <field name="system_event_ids" readonly="1">
-                <tree string="Error Events">
-                  <field name="controller_id" />
-                  <field name="timestamp" />
-                  <field name="error_description" />
-                </tree>
-              </field>
-            </page>
-
-            <page string="Commands">
-              <field name="command_ids" readonly="1">
-                <tree string="Commands">
-                  <field name="webstack_id" />
-                  <field name="cmd" />
-                  <field name="status" />
-                  <field name="error" />
-                </tree>
-              </field>
-            </page>
-          </notebook>
+              <page string="Commands">
+                <field name="command_ids" readonly="1">
+                  <tree string="Commands">
+                    <field name="webstack_id"/>
+                    <field name="cmd"/>
+                    <field name="status"/>
+                    <field name="error"/>
+                  </tree>
+                </field>
+              </page>
+            </notebook>
+          </sheet>
           <div class="oe_chatter">
-            <field name="message_follower_ids" widget="mail_followers" />
-            <field name="message_ids" widget="mail_thread" />
+            <field name="message_follower_ids" widget="mail_followers"/>
+            <field name="message_ids" widget="mail_thread"/>
           </div>
         </form>
       </field>
