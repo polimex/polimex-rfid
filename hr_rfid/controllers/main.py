@@ -613,7 +613,7 @@ class WebRfidController(http.Controller):
             return { 'status': 500 }
         except BadTimeException:
             t = self._post['event']['date'] + ' ' + self._post['event']['time']
-            ev_num = self._post['event']['event_n']
+            ev_num = str(self._post['event']['event_n'])
             controller = self._webstack.controllers.filtered(lambda r: r.ctrl_id == self._post['event']['id'])
             sys_ev_dict = {
                 'webstack_id': self._webstack.id,
