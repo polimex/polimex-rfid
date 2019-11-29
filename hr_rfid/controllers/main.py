@@ -514,8 +514,16 @@ class WebRfidController(http.Controller):
             'cmd': 'DB',
             'status': 'Process',
             'ex_timestamp': fields.Datetime.now(),
-            'cmd_data': '40%02X00' % (open_door + 4*(reader.number - 1)),
         }
+        if not controller.is_relay_ctrl():
+            cmd['cmd_data'] = '40%02X00' % (open_door + 4*(reader.number - 1))
+        else:
+            data = 0
+            user_doors = card.get_owner().get_doors()
+            for door in reader.door_ids:
+                if door in user_doors:
+                    data |= 1 << (door.number - 1)
+            cmd['cmd_data'] = '4000' + request.env['hr.rfid.door'].create_rights_int_to_str(data)
         event = {
             'ctrl_addr': controller.ctrl_id,
             'door_id': reader.door_id.id,

@@ -103,7 +103,8 @@ class ResPartner(models.Model):
         for user in self:
             user.check_for_ts_inconsistencies()
 
-            doors = user.hr_rfid_access_group_ids.mapped('all_door_ids').mapped('door_id')
+            doors = user.hr_rfid_access_group_ids.mapped('access_group_id').\
+                mapped('all_door_ids').mapped('door_id')
             relay_doors = dict()
             for door in doors:
                 ctrl = door.controller_id
@@ -146,6 +147,20 @@ class ResPartner(models.Model):
             cont.hr_rfid_access_group_ids.unlink()
         return super(ResPartner, self).unlink()
 
+    @api.multi
+    def log_person_out(self, sids=None):
+        for cont in self:
+            if not cont.user_id:
+                continue
+            user = cont.user_id
+            session_storage = http.root.session_store
+            if sids is None:
+                sids = session_storage.list()
+            for sid in sids:
+                session = session_storage.get(sid)
+                if session['uid'] == user.id:
+                    session_storage.delete(session)
+
 
 class ResPartnerDoors(models.TransientModel):
     _name = 'hr.rfid.contact.doors.wiz'
@@ -170,17 +185,3 @@ class ResPartnerDoors(models.TransientModel):
         required=True,
         default=_default_doors,
     )
-
-    @api.multi
-    def log_person_out(self, sids=None):
-        for cont in self:
-            if not cont.user_id:
-                continue
-            user = cont.user_id
-            session_storage = http.root.session_store
-            if sids is None:
-                sids = session_storage.list()
-            for sid in sids:
-                session = session_storage.get(sid)
-                if session['uid'] == user.id:
-                    session_storage.delete(session)

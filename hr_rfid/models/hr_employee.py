@@ -109,7 +109,8 @@ class HrEmployee(models.Model):
                     raise exceptions.ValidationError('Access group must be one of the access '
                                                      'groups assigned to the department!')
 
-            doors = user.hr_rfid_access_group_ids.mapped('all_door_ids').mapped('door_id')
+            doors = user.hr_rfid_access_group_ids.mapped('access_group_id')\
+                .mapped('all_door_ids').mapped('door_id')
             relay_doors = dict()
             for door in doors:
                 ctrl = door.controller_id
@@ -165,6 +166,20 @@ class HrEmployee(models.Model):
             emp.hr_rfid_access_group_ids.unlink()
         return super(HrEmployee, self).unlink()
 
+    @api.multi
+    def log_person_out(self, sids=None):
+        for emp in self:
+            if not emp.user_id:
+                continue
+            user = emp.user_id
+            session_storage = http.root.session_store
+            if sids is None:
+                sids = session_storage.list()
+            for sid in sids:
+                session = session_storage.get(sid)
+                if session['uid'] == user.id:
+                    session_storage.delete(session)
+
 
 class HrEmployeeDoors(models.TransientModel):
     _name = 'hr.rfid.employee.doors.wiz'
@@ -189,17 +204,3 @@ class HrEmployeeDoors(models.TransientModel):
         required=True,
         default=_default_doors,
     )
-
-    @api.multi
-    def log_person_out(self, sids=None):
-        for emp in self:
-            if not emp.user_id:
-                continue
-            user = emp.user_id
-            session_storage = http.root.session_store
-            if sids is None:
-                sids = session_storage.list()
-            for sid in sids:
-                session = session_storage.get(sid)
-                if session['uid'] == user.id:
-                    session_storage.delete(session)

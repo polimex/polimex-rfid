@@ -1112,12 +1112,11 @@
                 <field name="card_type" />
               </tree>
             </field>
-            <field name="time" attrs="{'invisible':[('controller_id.hw_version','in', ['30','31','32'])]}" />
+            <field name="time" />
           </group>
           <footer>
             <button name="open_doors" type="object" string="Open doors" class="oe_highlight" />
-            <button name="close_doors" type="object" string="Close doors" class="oe_highlight"
-                    attrs="{'invisible':[('controller_id.hw_version','in', ['30','31','32'])]}" />
+            <button name="close_doors" type="object" string="Close doors" class="oe_highlight" />
             <button special="cancel" string="Cancel" />
           </footer>
         </form>
@@ -1156,8 +1155,7 @@
                     type="object"
                     string="Close door"
                     help="Will only close for 3 seconds"
-                    groups="hr_rfid.hr_rfid_view_door_open_close"
-                    attrs="{'invisible':[('controller_id.hw_version','in', ['30','31','32'])]}" />
+                    groups="hr_rfid.hr_rfid_view_door_open_close" />
             <button name="%(hr_rfid_door_open_close_wiz_action)d"
                     id="hr_rfid_door_open_close_btn"
                     type="action"
@@ -1237,8 +1235,7 @@
                   type="object"
                   string="Close door"
                   help="Will only close for 3 seconds"
-                  groups="hr_rfid.hr_rfid_view_door_open_close"
-                  attrs="{'invisible':[('controller_id.hw_version','in', ['30','31','32'])]}" />
+                  groups="hr_rfid.hr_rfid_view_door_open_close" />
         </tree>
       </field>
     </record>
