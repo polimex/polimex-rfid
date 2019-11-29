@@ -3,7 +3,7 @@ from odoo import http, fields, exceptions, _
 from odoo.http import request
 from functools import reduce
 from decimal import Decimal
-from odoo.addons.hr_rfid.controllers.main import WebRfidController
+from odoo.addons.hr_rfid.controllers.main import WebRfidController, BadTimeException
 
 import operator
 import datetime
@@ -253,3 +253,18 @@ class HrRfidVending(WebRfidController):
             })
             _logger.debug('Vending: Caught an exception, returning status=500 and creating a system event')
             return { 'status': 500 }
+        except BadTimeException:
+            t = self._post['event']['date'] + ' ' + self._post['event']['time']
+            ev_num = str(self._post['event']['event_n'])
+            controller = self._webstack.controllers.filtered(lambda r: r.ctrl_id == self._post['event']['id'])
+            sys_ev_dict = {
+                'webstack_id': self._webstack.id,
+                'controller_id': controller.id,
+                'timestamp': fields.Datetime.now(),
+                'event_action': ev_num,
+                'error_description': 'Controller sent us an invalid date or time: ' + t,
+                'input_js': json.dumps(self._post),
+            }
+            request.env['hr.rfid.event.system'].sudo().create(sys_ev_dict)
+            _logger.debug('Caught a time error, returning status=200 and creating a system event')
+            return { 'status': 200 }

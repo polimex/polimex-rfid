@@ -11,6 +11,10 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
+class BadTimeException(Exception):
+    pass
+
+
 class WebRfidController(http.Controller):
     def __init__(self, *args, **kwargs):
         self._post = None
@@ -539,12 +543,12 @@ class WebRfidController(http.Controller):
         return self._get_ws_time().strftime('%m.%d.%y %H:%M:%S')
 
     def _get_ws_time(self):
-        time = self._post['event']['date'] + ' ' + self._post['event']['time']
-        if self._webstack.serial.startswith('3'):
-            time = datetime.datetime.strptime(time, '%d.%m.%y %H:%M:%S')
-        else:
-            time = datetime.datetime.strptime(time, '%m.%d.%y %H:%M:%S')
-        time -= self._get_tz_offset(self._webstack)
+        t = self._post['event']['date'] + ' ' + self._post['event']['time']
+        try:
+            time = datetime.datetime.strptime(t, '%m.%d.%y %H:%M:%S')
+            time -= self._get_tz_offset(self._webstack)
+        except ValueError:
+            raise BadTimeException
         return time
 
     @staticmethod
@@ -668,3 +672,18 @@ class WebRfidController(http.Controller):
             })
             _logger.debug('Caught an exception, returning status=500 and creating a system event')
             return { 'status': 500 }
+        except BadTimeException:
+            t = self._post['event']['date'] + ' ' + self._post['event']['time']
+            ev_num = str(self._post['event']['event_n'])
+            controller = self._webstack.controllers.filtered(lambda r: r.ctrl_id == self._post['event']['id'])
+            sys_ev_dict = {
+                'webstack_id': self._webstack.id,
+                'controller_id': controller.id,
+                'timestamp': fields.Datetime.now(),
+                'event_action': ev_num,
+                'error_description': 'Controller sent us an invalid date or time: ' + t,
+                'input_js': json.dumps(self._post),
+            }
+            request.env['hr.rfid.event.system'].sudo().create(sys_ev_dict)
+            _logger.debug('Caught a time error, returning status=200 and creating a system event')
+            return { 'status': 200 }
