@@ -962,13 +962,55 @@ class HrRfidDoor(models.Model):
     def create_door_out_cmd(self, out: int, time: int):
         self.ensure_one()
         cmd_env = self.env['hr.rfid.command']
-        cmd_env.create([{
-            'webstack_id': self.controller_id.webstack_id.id,
-            'controller_id': self.controller_id.id,
+        ctrl = self.controller_id
+        cmd_dict = {
+            'webstack_id': ctrl.webstack_id.id,
+            'controller_id': ctrl.id,
             'cmd': 'DB',
-            'cmd_data': '%02d%02d%02d' % (self.number, out, time),
-        }])
+        }
+        if not ctrl.is_relay_ctrl():
+            cmd_dict['cmd_data'] = '%02d%02d%02d' % (self.number, out, time),
+        else:
+            cmd_dict['cmd_data'] = '3100' + self.create_rights_data()
+
+        cmd_env.create([cmd_dict])
         self.log_door_change(out, time, cmd=True)
+
+    @api.multi
+    def create_rights_data(self):
+        self.ensure_one()
+        ctrl = self.controller_id
+        if not ctrl.is_relay_ctrl():
+            data = 1 << (self.reader_ids.number - 1)
+        else:
+            if ctrl.mode == 1:
+                data = 1 << (self.number - 1)
+            elif ctrl.mode == 2:
+                data = 1 << (self.number - 1)
+                if self.reader_ids.number == 2:
+                    data *= 0x10000
+            elif ctrl.mode == 3:
+                data = self.number
+            else:
+                raise exceptions.ValidationError(_('Controller %s has mode=%d, which is not supported!')
+                                                 % (ctrl.name, ctrl.mode))
+
+        return self.create_rights_int_to_str(data)
+
+    @api.model
+    def create_rights_int_to_str(self, data):
+        ctrl = self.controller_id
+        if not ctrl.is_relay_ctrl():
+            cmd_data = '{:02X}'.format(data)
+        else:
+            cmd_data = '%03d%03d%03d%03d' % (
+                (data >> (3*8)) & 0xFF,
+                (data >> (2*8)) & 0xFF,
+                (data >> (1*8)) & 0xFF,
+                (data >> (0*8)) & 0xFF,
+            )
+            cmd_data = ''.join(list('0' + ch for ch in cmd_data))
+        return cmd_data
 
     @api.multi
     def change_door_out(self, out: int, time: int):
@@ -993,13 +1035,15 @@ class HrRfidDoor(models.Model):
         auth = base64.b64encode((username + ':' + password).encode())
         auth = auth.decode()
         headers = { 'content-type': 'application/json', 'Authorization': 'Basic ' + str(auth) }
-        cmd = json.dumps({
+        cmd = {
             'cmd': {
                 'id': self.controller_id.ctrl_id,
                 'c': 'DB',
                 'd': '%02d%02d%02d' % (self.number, out, time),
             }
-        })
+        }
+
+        cmd = json.dumps(cmd)
 
         host = str(ws.last_ip)
         try:
@@ -1877,6 +1921,7 @@ class HrRfidCommands(models.Model):
 
     @api.model
     def _create_d1_cmd_relay(self, ws_id, ctrl_id, card_num, rights_data, rights_mask):
+        print('_create_d1_cmd_relay')
         self.create([{
             'webstack_id': ws_id,
             'controller_id': ctrl_id,
@@ -1931,6 +1976,7 @@ class HrRfidCommands(models.Model):
 
     @api.model
     def _add_remove_card_relay(self, card_number, ctrl_id, rights_data, rights_mask):
+        print('_add_remove_card_relay')
         ctrl = self.env['hr.rfid.ctrl'].browse(ctrl_id)
         commands_env = self.env['hr.rfid.command']
 
@@ -1962,6 +2008,7 @@ class HrRfidCommands(models.Model):
 
     @api.model
     def add_card(self, door_id, ts_id, pin_code, card_id):
+        print('add_card')
         door = self.env['hr.rfid.door'].browse(door_id)
         time_schedule = self.env['hr.rfid.time.schedule'].browse(ts_id)
         card = self.env['hr.rfid.card'].browse(card_id)
@@ -1979,6 +2026,7 @@ class HrRfidCommands(models.Model):
 
     @api.model
     def _add_card_to_relay(self, door_id, card_id):
+        print('_add_card_to_relay')
         door = self.env['hr.rfid.door'].browse(door_id)
         card = self.env['hr.rfid.card'].browse(card_id)
         ctrl = door.controller_id
@@ -2002,6 +2050,7 @@ class HrRfidCommands(models.Model):
 
     @api.model
     def remove_card(self, door_id, pin_code, card_number=None, card_id=None):
+        print('remove_card')
         door = self.env['hr.rfid.door'].browse(door_id)
 
         if card_id is not None:
@@ -2017,6 +2066,7 @@ class HrRfidCommands(models.Model):
 
     @api.model
     def _remove_card_from_relay(self, door_id, card_number):
+        print('_remove_card_from_relay')
         door = self.env['hr.rfid.door'].browse(door_id)
         ctrl = door.controller_id
 

@@ -168,7 +168,6 @@ class WebRfidController(http.Controller):
                 ('access_group_id', 'in', card.get_owner().hr_rfid_access_group_ids.ids),
                 ('door_id', '=', reader.door_id.id)
             ])
-            # if len(ret) > 0: open door, else close
             return self._respond_to_ev_64(len(ret) > 0 and card.card_active is True,
                                           controller, reader, card)
 
