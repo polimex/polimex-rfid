@@ -347,23 +347,24 @@
       <field name="model">hr.rfid.access.group</field>
       <field name="arch" type="xml">
         <form string="Access Groups">
-          <header>
-            <button name="%(hr_rfid_access_group_add_doors_wiz_action)d"
-                    id="hr_rfid_access_group_add_doors_btn"
-                    type="action"
-                    string="Add Doors"
-                    class="oe_highlight" />
-            <button name="%(hr_rfid_access_group_del_doors_wiz_action)d"
-                    id="hr_rfid_access_group_del_doors_btn"
-                    type="action"
-                    string="Remove Doors" />
-          </header>
+          <sheet modifiers="{}">
+            <div class="oe_button_box" name="button_box" attrs="{'invisible': [('id', '=', False)]}">
+              <button name="%(hr_rfid_access_group_add_doors_wiz_action)d" id="hr_rfid_access_group_add_doors_btn" type="action"
+                      class="oe_stat_button" icon="fa-plus-square" modifiers="{}" options="{}"
+                      string="Add Doors">
+              </button>
+              <button name="%(hr_rfid_access_group_del_doors_wiz_action)d" id="hr_rfid_access_group_del_doors_btn" type="action"
+                      class="oe_stat_button" icon="fa-minus-square" modifiers="{}" options="{}"
+                      string="Remove Doors">
+              </button>
+            </div>
+            <div class="oe_title" modifiers="{}">
+              <h1>
+                <field name="name"/>
+              </h1>
+            </div>
 
-          <group>
-            <field name="name" />
-          </group>
-
-          <notebook>
+          <notebook colspan="4" attrs="{'invisible': [('id', '=', False)]}">
             <page string="Doors">
               <field name="door_ids" readonly="1">
                 <tree string="Doors group has access to">
@@ -429,7 +430,7 @@
             </page>
 
           </notebook>
-          <notebook>
+          <notebook colspan="4" attrs="{'invisible': [('id', '=', False)]}">
             <page string="Inherited Access Groups">
               <field name="inherited_ids">
                 <tree>
@@ -455,7 +456,7 @@
               </field>
             </page>
           </notebook>
-
+          </sheet>
           <div class="oe_chatter">
             <field name="message_follower_ids" widget="mail_followers" />
             <field name="message_ids" widget="mail_thread" />
@@ -564,16 +565,35 @@
       <field name="arch" type="xml">
         <form string="RFID Card">
           <sheet>
+            <div class="oe_button_box" name="button_box">
+              <button name="toggle_card_active" type="object" class="oe_stat_button" icon="fa-plug" >
+                  <field name="card_active" widget="boolean_button" />
+              </button>
+		    </div>
+            <div class="oe_title">
+              <h1>
+                <field name="number"/>
+              </h1>
+            </div>
             <group>
-              <field name="number" />
-              <field name="employee_id" attrs="{'invisible':[('contact_id','!=',False)]}" />
-              <field name="contact_id" attrs="{'invisible':[('employee_id','!=',False)]}" />
-              <field name="card_type" />
-              <field name="card_active" />
-              <field name="activate_on" />
-              <field name="deactivate_on" />
-              <field name="cloud_card" />
-              <field name="door_ids" attrs="{'invisible':[('id','&lt;=',0)]}" />
+              <group string="Owner">
+                <field name="employee_id" attrs="{'invisible':[('contact_id','!=',False)]}"/>
+                <field name="contact_id" attrs="{'invisible':[('employee_id','!=',False)]}"/>
+              </group>
+              <group string="Setup">
+                <field name="card_active"/>
+                <field name="card_type"/>
+                <field name="cloud_card"/>
+              </group>
+              <group string="Start date">
+                <field name="activate_on"/>
+              </group>
+              <group string="End date">
+                <field name="deactivate_on"/>
+              </group>
+              <group colspan="4">
+                <field name="door_ids" attrs="{'invisible':[('id','&lt;=',0)]}"/>
+              </group>
             </group>
           </sheet>
           <div class="oe_chatter">
@@ -621,21 +641,34 @@
       <field name="model">hr.rfid.card.type</field>
       <field name="arch" type="xml">
         <form>
-          <group>
-            <field name="name" />
-          </group>
-
-          <field name="card_ids" readonly="1">
-            <tree>
-              <field name="number" />
-              <field name="employee_id" />
-              <field name="contact_id" />
-            </tree>
-          </field>
-          <div class="oe_chatter">
-            <field name="message_follower_ids" widget="mail_followers" />
-            <field name="message_ids" widget="mail_thread" />
-          </div>
+          <sheet string="Card type">
+            <div class="oe_button_box" name="button_box" modifiers="{}">
+			        <button name="list_cards_from_this_type" string="Card list" type="object" class="oe_stat_button" icon="fa-list-alt" modifiers="{}" options="{}">
+<!--				        <field name="ws_active" widget="boolean_button" modifiers="{}"/>-->
+			       </button>
+	        	</div>
+            <div class="oe_title" modifiers="{}">
+              <h1>
+                <field name="name"/>
+              </h1>
+            </div>
+            <group>
+              <field name="name"/>
+            </group>
+            <group>
+              <field string="Cards of this type" name="card_ids" readonly="1">
+                <tree>
+                  <field name="number"/>
+                  <field name="employee_id"/>
+                  <field name="contact_id"/>
+                </tree>
+              </field>
+            </group>
+            <div class="oe_chatter">
+              <field name="message_follower_ids" widget="mail_followers"/>
+              <field name="message_ids" widget="mail_thread"/>
+            </div>
+          </sheet>
         </form>
       </field>
     </record>
@@ -1257,10 +1290,12 @@
       <field name="model">hr.rfid.time.schedule</field>
       <field name="arch" type="xml">
         <form create="0" delete="0">
-          <group>
-            <field name="name" />
-            <field name="number" />
-          </group>
+          <sheet>
+            <group>
+              <field name="name" />
+              <field name="number" />
+            </group>
+          </sheet>
           <div class="oe_chatter">
             <field name="message_follower_ids" widget="mail_followers" />
             <field name="message_ids" widget="mail_thread" />
@@ -1306,22 +1341,32 @@
       <field name="model">hr.rfid.reader</field>
       <field name="arch" type="xml">
         <form create="false" delete="false">
-          <group>
-            <field name="name" />
-            <field name="mode" />
-            <field name="reader_type" />
-            <field name="number" readonly="1" />
-            <field name="controller_id" readonly="1" />
-            <field name="door_id" readonly="1" />
-          </group>
-          <field name="user_event_ids" readonly="1">
-            <tree>
-              <field name="event_time" />
-              <field name="employee_id" />
-              <field name="card_id" />
-              <field name="door_id" />
-            </tree>
-          </field>
+          <sheet>
+            <div class="oe_title" modifiers="{}">
+              <h1>
+                <field name="name"/>
+              </h1>
+            </div>
+            <group string="Setup information">
+              <field name="mode" />
+              <field name="reader_type"/>
+            </group>
+            <group string="Information" >
+              <field name="number" readonly="1"/>
+              <field name="controller_id" readonly="1"/>
+              <field name="door_id" readonly="1"/>
+            </group>
+            <group colspan="4">
+              <field name="user_event_ids" readonly="1">
+                <tree>
+                  <field name="event_time"/>
+                  <field name="employee_id"/>
+                  <field name="card_id"/>
+                  <field name="door_id"/>
+                </tree>
+              </field>
+            </group>
+          </sheet>
           <div class="oe_chatter">
             <field name="message_follower_ids" widget="mail_followers" />
             <field name="message_ids" widget="mail_thread" />
@@ -1502,22 +1547,31 @@
       <field name="model">hr.rfid.event.system</field>
       <field name="arch" type="xml">
         <form create="0" delete="0" edit="0">
-          <header>
-            <button name="%(hr_rfid_sys_ev_wiz_action)d"
-                    id="hr_rfid_sys_ev_add_card_btn"
-                    type="action"
-                    string="Add Card"
-                    class="oe_highlight"
-                    attrs="{'invisible':[('error_description','!=','Could not find the card')]}" />
-          </header>
-          <group>
-            <field name="webstack_id" readonly="1" />
-            <field name="controller_id" readonly="1" />
-            <field name="timestamp" readonly="1" />
-            <field name="event_action" readonly="1" />
-            <field name="error_description" readonly="1" />
-            <field name="input_js" readonly="1" groups="base.group_no_one" />
-          </group>
+          <sheet>
+             <div class="oe_button_box" name="button_box" modifiers="{}">
+              <button string="Add Card" name="%(hr_rfid_sys_ev_wiz_action)d" id="hr_rfid_sys_ev_add_card_btn" type="action" class="oe_stat_button" icon="fa-plus-square"
+              attrs="{'invisible':[('error_description','!=','Could not find the card')]}"/>
+            </div>
+            <div class="oe_title" modifiers="{}">
+              <h1 modifiers="{}">
+                <field name="event_action" readonly="1"/>
+              </h1>
+              <field name="name" readonly="1"/>
+            </div>
+            <group>
+              <group string="Where">
+                <field name="controller_id" readonly="1"/>
+                <field name="webstack_id" readonly="1"/>
+                <field name="timestamp" readonly="1"/>
+              </group>
+              <group string="More information" colspan="4">
+                <field name="error_description" readonly="1"/>
+              </group>
+              <group string="Debug Information" groups="base.group_no_one" colspan="4">
+                <field name="input_js" readonly="1"/>
+              </group>
+            </group>
+          </sheet>
         </form>
       </field>
     </record>
@@ -1603,24 +1657,42 @@
       <field name="model">hr.rfid.command</field>
       <field name="arch" type="xml">
         <form create="0" delete="0" edit="0">
-          <group>
-            <field name="webstack_id" readonly="1" />
-            <field name="controller_id" readonly="1" />
-            <field name="cmd" readonly="1" />
-            <field name="status" readonly="1" />
-            <field name="error" readonly="1" />
-            <field name="cr_timestamp" readonly="1" />
-            <field name="ex_timestamp" readonly="1" />
-            <field name="retries" readonly="1" />
-            <field name="request" readonly="1" groups="base.group_no_one" />
-            <field name="response" readonly="1" groups="base.group_no_one" />
-            <field name="cmd_data" readonly="1" groups="base.group_no_one"/>
-            <field name="card_number" readonly="1" groups="base.group_no_one" />
-            <field name="pin_code" readonly="1" groups="base.group_no_one"/>
-            <field name="ts_code" readonly="1" groups="base.group_no_one"/>
-            <field name="rights_data" readonly="1" groups="base.group_no_one"/>
-            <field name="rights_mask" readonly="1" groups="base.group_no_one"/>
-          </group>
+          <sheet>
+          <header>
+            <field name="status" widget="statusbar" statusbar_visible="Wait,Process,Success,Failure"/>
+          </header>
+            <div class="oe_title" modifiers="{}">
+              <h1 modifiers="{}">
+                <field name="cmd" readonly="1"/>
+              </h1>
+            </div>
+            <group>
+              <group string="Information">
+                <field name="name" readonly="1"/>
+                <field name="status" readonly="1"/>
+                <field name="error" readonly="1" attrs="{'invisible':[('ex_timestamp','=',False)]}"/>
+              </group>
+              <group string="Where">
+                <field name="controller_id" readonly="1"/>
+                <field name="webstack_id" readonly="1"/>
+              </group>
+              <group string="More information">
+                <field name="cr_timestamp" readonly="1"/>
+                <field name="ex_timestamp" readonly="1"/>
+                <field name="retries" readonly="1"/>
+              </group>
+              <group string="Debug Information" groups="base.group_no_one" colspan="4">
+                <field name="request" readonly="1"/>
+                <field name="response" readonly="1"/>
+                <field name="cmd_data" readonly="1"/>
+                <field name="card_number" readonly="1"/>
+                <field name="pin_code" readonly="1"/>
+                <field name="ts_code" readonly="1"/>
+                <field name="rights_data" readonly="1"/>
+                <field name="rights_mask" readonly="1"/>
+              </group>
+            </group>
+          </sheet>
         </form>
       </field>
     </record>
@@ -1629,6 +1701,7 @@
       <field name="name">hr.rfid.command.tree</field>
       <field name="model">hr.rfid.command</field>
       <field name="arch" type="xml">
+<!--        <tree create="false" delete="false" decoration-danger="status == 'Failure'" decoration-information="status == 'Process'">-->
         <tree create="false" delete="false">
           <field name="webstack_id" />
           <field name="controller_id" />
@@ -1735,24 +1808,39 @@
       <field name="model">hr.rfid.zone</field>
       <field name="arch" type="xml">
         <form>
-          <header>
-            <button name="%(hr_rfid_zone_doors_wiz_action)d"
-                    id="hr_rfid_zone_doors_btn"
-                    type="action"
-                    string="Add/Remove Doors"
-                    class="oe_highlight" />
-          </header>
-          <group>
-            <field name="name" />
-            <field name="anti_pass_back" />
-            <field name="log_out_on_exit" />
-            <field name="door_ids" create="0" write="0" delete="0" />
-            <field name="employee_ids" create="0" write="0" delete="0" />
-            <field name="contact_ids" create="0" write="0" delete="0" />
-          </group>
+          <sheet modifiers="{}">
+            <div class="oe_button_box" name="button_box" attrs="{'invisible': [('id', '=', False)]}">
+              <button name="%(hr_rfid_zone_doors_wiz_action)d" id="hr_rfid_zone_doors_btn" type="action"
+                      class="oe_stat_button" icon="fa-table" modifiers="{}" options="{}"
+                      string="Add/Remove Doors">
+              </button>
+            </div>
+            <div class="oe_title" modifiers="{}">
+              <h1>
+                <field name="name"/>
+              </h1>
+            </div>
+            <group>
+              <group string="Zone type">
+                <field name="anti_pass_back"/>
+                <field name="log_out_on_exit"/>
+              </group>
+              <notebook colspan="4" attrs="{'invisible': [('id', '=', False)]}">
+                <page string="Doors in zone">
+                  <field name="door_ids" create="0" write="0" delete="0"/>
+                </page>
+                <page string="Employees in zone">
+                  <field name="employee_ids" create="0" write="0" delete="0"/>
+                </page>
+                <page string="Contacts in zone">
+                  <field name="contact_ids" create="0" write="0" delete="0"/>
+                </page>
+              </notebook>
+            </group>
+          </sheet>
           <div class="oe_chatter">
-            <field name="message_follower_ids" widget="mail_followers" />
-            <field name="message_ids" widget="mail_thread" />
+            <field name="message_follower_ids" widget="mail_followers"/>
+            <field name="message_ids" widget="mail_thread"/>
           </div>
         </form>
       </field>
@@ -1779,11 +1867,17 @@
       <field name="model">hr.rfid.workcode</field>
       <field name="arch" type="xml">
         <form>
-          <group>
-            <field name="name" />
-            <field name="workcode" attrs="{'readonly':[('id','>',0)]}" />
-            <field name="user_action" />
-          </group>
+          <sheet>
+            <div class="oe_title" modifiers="{}">
+              <h1>
+                <field name="name"/>
+              </h1>
+            </div>
+            <group>
+              <field name="workcode" attrs="{'readonly':[('id','>',0)]}"/>
+              <field name="user_action"/>
+            </group>
+          </sheet>
           <div class="oe_chatter">
             <field name="message_follower_ids" widget="mail_followers" />
             <field name="message_ids" widget="mail_thread" />
