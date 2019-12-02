@@ -184,10 +184,11 @@ class WebRfidController(http.Controller):
             event_action = ((event_action - 3) % 4) + 1
 
         # Relay controller
-        if controller.is_relay_ctrl() and event_action == '1':
-            if controller.mode == 3:
-                dt = self._post['event']['dt']
+        if controller.is_relay_ctrl() and event_action == 1 and controller.mode == 3:
+            dt = self._post['event']['dt']
+            if len(dt) == 24:
                 chunks = [ dt[0:6], dt[6:12], dt[12:18], dt[18:24] ]
+                print('Chunks=' + str(chunks))
                 door_number = 0
                 for i in range(len(chunks)):
                     chunk = chunks[i]
