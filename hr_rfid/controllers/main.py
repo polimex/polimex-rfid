@@ -127,6 +127,8 @@ class WebRfidController(http.Controller):
             self._report_sys_ev('Could not find a reader with that id', controller)
             return self._check_for_unsent_cmd(200)
 
+        door = reader.door_id
+
         ev_env = request.env['hr.rfid.event.user'].sudo()
 
         if len(card) == 0:
@@ -175,6 +177,25 @@ class WebRfidController(http.Controller):
             return self._respond_to_ev_64(len(ret) > 0 and card.card_active is True,
                                           controller, reader, card)
 
+        # Relay controller
+        if controller.is_relay_ctrl():
+            if controller.mode == 3:
+                dt = self._post['event']['dt']
+                chunks = [ dt[0:6], dt[6:12], dt[12:18], dt[18:24] ]
+                door_number = 0
+                for i in range(len(chunks)):
+                    chunk = chunks[i]
+                    n1 = int(chunk[:2])
+                    n2 = int(chunk[2:4])
+                    n3 = int(chunk[4:])
+                    door_number |= n1*100 + n2*10 + n3
+                    if i != len(chunks)-1:
+                        door_number <<= 8
+                for _door in reader.door_ids:
+                    if _door.number == door_number:
+                        door = _door
+                        break
+
         # Turnstile controller. If the 7th bit is not up, then there was no actual entry
         if controller.hw_version == '9' and (self._post['event']['reader'] & 64) == 0:
             event_action = 6
@@ -183,7 +204,7 @@ class WebRfidController(http.Controller):
 
         event_dict = {
             'ctrl_addr': controller.ctrl_id,
-            'door_id': reader.door_id.id,
+            'door_id': door.id,
             'reader_id': reader.id,
             'card_id': card.id,
             'event_time': self._get_ws_time_str(),
@@ -278,13 +299,25 @@ class WebRfidController(http.Controller):
         return self._check_for_unsent_cmd(200)
 
     def _parse_f0_response(self, command, controller):
+        ctrl_env = request.env['hr.rfid.ctrl'].sudo()
         response = self._post['response']
         data = response['d']
         ctrl_mode = int(data[42:44], 16)
-        external_db = ctrl_mode & 0x20 > 0
+        external_db = (ctrl_mode & 0x20) > 0
         ctrl_mode = ctrl_mode & 0x0F
 
-        if ctrl_mode < 1 or ctrl_mode > 4:
+        def bytes_to_num(start, digits):
+            digits = digits-1
+            res = 0
+            for j in range(digits+1):
+                multiplier = 10 ** (digits-j)
+                res = res + int(data[start:start+2], 16) * multiplier
+                start = start + 2
+            return res
+
+        hw_ver = str(bytes_to_num(0, 2))
+
+        if ctrl_env.hw_version_is_for_relay_ctrl(hw_ver) and (ctrl_mode < 1 or ctrl_mode > 4):
             return self._log_cmd_error('F0 command failure, controller sent '
                                        'us a wrong mode', command, '31', 200)
 
@@ -298,18 +331,7 @@ class WebRfidController(http.Controller):
 
         reader_env = request.env['hr.rfid.reader'].sudo()
         door_env = request.env['hr.rfid.door'].sudo()
-        ctrl_env = request.env['hr.rfid.ctrl'].sudo()
 
-        def bytes_to_num(start, digits):
-            digits = digits-1
-            res = 0
-            for j in range(digits+1):
-                multiplier = 10 ** (digits-j)
-                res = res + int(data[start:start+2], 16) * multiplier
-                start = start + 2
-            return res
-
-        hw_ver = str(bytes_to_num(0, 2))
         sw_ver = str(bytes_to_num(12, 3))
         inputs = bytes_to_num(18, 3)
         outputs = bytes_to_num(24, 3)
@@ -365,25 +387,31 @@ class WebRfidController(http.Controller):
             return 'Door ' + str(door_num) + ' of ctrl ' + str(controller_id)
 
         if controller.hw_version_is_for_relay_ctrl(hw_ver):
-            if ctrl_mode == 1:
+            if ctrl_mode == 1 or ctrl_mode == 3:
                 reader = create_reader('R1', 1, '0', controller.id)
-                for i in range(32):
+                for i in range(outputs):
                     door = create_door(gen_d_name(i+1, controller.id), i+1, controller.id)
                     add_door_to_reader(reader, door)
+                for i in range(1, readers_count):
+                    create_reader('R' + str(i+1), i+1, '0', controller.id)
             elif ctrl_mode == 2:
+                if outputs > 16 and readers_count < 2:
+                    return self._log_cmd_error('F0 sent us too many outputs and not enough readers',
+                                               command, '31', 200)
                 reader = create_reader('R1', 1, '0', controller.id)
-                for i in range(16):
+                for i in range(outputs):
                     door = create_door(gen_d_name(i+1, controller.id), i+1, controller.id)
                     add_door_to_reader(reader, door)
-                reader = create_reader('R2', 2, '0', controller.id)
-                for i in range(16):
-                    door = create_door(gen_d_name(i+1, controller.id), i+1, controller.id)
-                    add_door_to_reader(reader, door)
-            elif ctrl_mode == 3:
-                reader = create_reader('R1', 1, '0', controller.id)
-                for i in range(512):
-                    door = create_door(gen_d_name(i+1, controller.id), i+1, controller.id)
-                    add_door_to_reader(reader, door)
+                if outputs > 16:
+                    reader = create_reader('R2', 2, '0', controller.id)
+                    for i in range(outputs-16):
+                        door = create_door(gen_d_name(i+1, controller.id), i+1, controller.id)
+                        add_door_to_reader(reader, door)
+                    for i in range(2, readers_count):
+                        create_reader('R' + str(i+1), i+1, '0', controller.id)
+                else:
+                    for i in range(1, readers_count):
+                        create_reader('R' + str(i+1), i+1, '0', controller.id)
             else:
                 raise exceptions.ValidationError(_('Got controller mode=%d for hw_ver=%s???')
                                                  % (ctrl_mode, hw_ver))
@@ -626,6 +654,7 @@ class WebRfidController(http.Controller):
     @http.route(['/hr/rfid/event'], type='json', auth='none', method=['POST'], csrf=False)
     def post_event(self, **post):
         _logger.debug('Received=' + str(post))
+        print('post=' + str(post))
         self._post = post
         self._vending_hw_version = '16'
         self._webstacks_env = request.env['hr.rfid.webstack'].sudo()
@@ -668,6 +697,7 @@ class WebRfidController(http.Controller):
 
             self._webstack.write(self._ws_db_update_dict)
             _logger.debug('Sending back result=' + str(result))
+            print('ret=' + str(result))
             return result
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
                 exceptions.MissingError, exceptions.ValidationError, exceptions.DeferredException,

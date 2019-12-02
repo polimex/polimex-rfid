@@ -1534,6 +1534,7 @@ class HrRfidSystemEvent(models.Model):
     )
 
     action_selection = [
+        ('0', 'Unknown Event?'),
         ('1', 'DuressOK'),
         ('2', 'DuressError'),
         ('3', 'R1 Card OK'),
