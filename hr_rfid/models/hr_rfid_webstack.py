@@ -605,6 +605,17 @@ class HrRfidController(models.Model):
         default=False,
     )
 
+    relay_time_factor = fields.Selection(
+        [('0', '1 second'), ('1', '0.1 seconds')],
+        string='Relay Time Factor',
+        default='0',
+    )
+
+    dual_person_mode = fields.Boolean(
+        string='Dual Person Mode',
+        default=False,
+    )
+
     max_cards_count = fields.Integer(
         string='Maximum Cards',
         help='Maximum amount of cards the controller can hold in memory',
@@ -968,14 +979,15 @@ class HrRfidDoor(models.Model):
             if out == 0:
                 return create_and_ret_d_box(self.env, _('Cannot close a relay door.'),
                                             _('Relay doors cannot be closed.'))
-            cmd_dict['cmd_data'] = '3100' + self.create_rights_data()
+            cmd_dict['cmd_data'] = ('1F%02X' % self.reader_ids[0].number) + self.create_rights_data()
 
         cmd_env.create([cmd_dict])
         self.log_door_change(out, time, cmd=True)
-        return create_and_ret_d_box(self.env, _('Command creation successful'),
-                                    _('Because the webstack is behind NAT, we have to wait for the '
-                                      'webstack to call us, so we created a command. The door will '
-                                      'open/close as soon as possible.') % time)
+        return create_and_ret_d_box(
+            self.env,
+            _('Command creation successful'),
+            _('Because the webstack is behind NAT, we have to wait for the webstack to call us, so we created a command. The door will open/close as soon as possible.')
+        )
 
     @api.multi
     def create_rights_data(self):
@@ -1047,7 +1059,7 @@ class HrRfidDoor(models.Model):
             if out == 0:
                 return create_and_ret_d_box(self.env, _('Cannot close a relay door.'),
                                             _('Relay doors cannot be closed.'))
-            cmd['cmd']['d'] = '3100' + self.create_rights_data()
+            cmd['cmd']['d'] = ('1F%02X' % self.reader_ids[0].number) + self.create_rights_data()
         else:
             cmd['cmd']['d'] = '%02d%02d%02d' % (self.number, out, time),
 
@@ -2049,7 +2061,7 @@ class HrRfidCommands(models.Model):
             rmask = rdata
         elif ctrl.mode == 3:
             rdata = door.number
-            rmask = 0xFFFFFFFF
+            rmask = 0
         else:
             raise exceptions.ValidationError(_('Controller %s has mode=%d, which is not supported!')
                                              % (ctrl.name, ctrl.mode))

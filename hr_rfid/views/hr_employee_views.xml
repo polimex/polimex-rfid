@@ -31,7 +31,7 @@
       <field name="model">hr.employee</field>
       <field name="inherit_id" ref="hr.view_employee_form" />
       <field name="arch" type="xml">
-        <xpath expr="//div[@class='oe_button_box']" position="inside">
+        <xpath expr="//div[@name='button_box']" position="inside">
           <button name="%(hr_rfid_employee_doors_wiz_action)d" id="hr_rfid_employee_show_doors_btn"
                   type="action" class="oe_stat_button" icon="fa-plus-square" string="Doors"
                   help="Doors this employee has access to">

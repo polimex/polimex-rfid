@@ -61,7 +61,7 @@
       <field name="model">hr.employee</field>
       <field name="inherit_id" ref="hr.view_employee_form"/>
       <field name="arch" type="xml">
-        <xpath expr="//div[@class='oe_button_box']" position="inside">
+        <xpath expr="//div[@name='button_box']" position="inside">
           <button name="%(hr_employee_vending_balance_change_action)d" id="hr_employee_vending_balance_btn"
                   type="action" class="oe_stat_button" icon="fa-money" string="Add/Subtract from balance"
                   context="{'setting_balance':False}" groups="hr_rfid_vending.group_customer"

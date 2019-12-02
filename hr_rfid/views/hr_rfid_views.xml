@@ -1053,7 +1053,10 @@
                 <field name="max_events_count" readonly="1"/>
               </group>
               <group string="Setup">
-                <field name="external_db"/>
+                <field name="mode" />
+                <field name="external_db" />
+                <field name="relay_time_factor" readonly="1" />
+                <field name="dual_person_mode" readonly="1" />
                 <field name="webstack_id" readonly="1"/>
               </group>
             </group>

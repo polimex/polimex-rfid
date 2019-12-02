@@ -99,7 +99,7 @@ class HrEmployee(models.Model):
 
     @api.multi
     @api.constrains('hr_rfid_access_group_ids')
-    def _check_access_group(self):
+    def check_access_group(self):
         for user in self:
             user.check_for_ts_inconsistencies()
 

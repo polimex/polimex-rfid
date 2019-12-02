@@ -177,8 +177,14 @@ class WebRfidController(http.Controller):
             return self._respond_to_ev_64(len(ret) > 0 and card.card_active is True,
                                           controller, reader, card)
 
+        # Turnstile controller. If the 7th bit is not up, then there was no actual entry
+        if controller.hw_version == '9' and (self._post['event']['reader'] & 64) == 0:
+            event_action = 6
+        else:
+            event_action = ((event_action - 3) % 4) + 1
+
         # Relay controller
-        if controller.is_relay_ctrl():
+        if controller.is_relay_ctrl() and event_action == '1':
             if controller.mode == 3:
                 dt = self._post['event']['dt']
                 chunks = [ dt[0:6], dt[6:12], dt[12:18], dt[18:24] ]
@@ -195,12 +201,6 @@ class WebRfidController(http.Controller):
                     if _door.number == door_number:
                         door = _door
                         break
-
-        # Turnstile controller. If the 7th bit is not up, then there was no actual entry
-        if controller.hw_version == '9' and (self._post['event']['reader'] & 64) == 0:
-            event_action = 6
-        else:
-            event_action = ((event_action - 3) % 4) + 1
 
         event_dict = {
             'ctrl_addr': controller.ctrl_id,
@@ -304,7 +304,9 @@ class WebRfidController(http.Controller):
         data = response['d']
         ctrl_mode = int(data[42:44], 16)
         external_db = (ctrl_mode & 0x20) > 0
-        ctrl_mode = ctrl_mode & 0x0F
+        relay_time_factor = '1' if ctrl_mode & 0x40 else '0'
+        dual_person_mode = (ctrl_mode & 0x08) > 0
+        ctrl_mode = ctrl_mode & 0x07
 
         def bytes_to_num(start, digits):
             digits = digits-1
@@ -317,7 +319,7 @@ class WebRfidController(http.Controller):
 
         hw_ver = str(bytes_to_num(0, 2))
 
-        if ctrl_env.hw_version_is_for_relay_ctrl(hw_ver) and (ctrl_mode < 1 or ctrl_mode > 4):
+        if (ctrl_mode < 1 or ctrl_mode > 4):
             return self._log_cmd_error('F0 command failure, controller sent '
                                        'us a wrong mode', command, '31', 200)
 
@@ -325,7 +327,8 @@ class WebRfidController(http.Controller):
 
         mode_reader_relation = { 1: [2], 2: [2, 4], 3: [4], 4: [4] }
 
-        if readers_count not in mode_reader_relation[ctrl_mode]:
+        if not ctrl_env.hw_version_is_for_relay_ctrl(hw_ver) and \
+                readers_count not in mode_reader_relation[ctrl_mode]:
             return self._log_cmd_error('F0 sent us a wrong reader-controller '
                                        'mode combination', command, '31', 200)
 
@@ -466,6 +469,8 @@ class WebRfidController(http.Controller):
             'alarm_lines': alarm_lines,
             'mode': ctrl_mode,
             'external_db': external_db,
+            'relay_time_factor': relay_time_factor,
+            'dual_person_mode': dual_person_mode,
             'max_cards_count': max_cards_count,
             'max_events_count': max_events_count,
         })
@@ -629,12 +634,15 @@ class WebRfidController(http.Controller):
                     (command.rights_data >> (1*8)) & 0xFF,
                     (command.rights_data >> (0*8)) & 0xFF,
                 )
-                rights_mask = '%03d%03d%03d%03d' % (
-                    (command.rights_mask >> (3*8)) & 0xFF,
-                    (command.rights_mask >> (2*8)) & 0xFF,
-                    (command.rights_mask >> (1*8)) & 0xFF,
-                    (command.rights_mask >> (0*8)) & 0xFF,
-                )
+                if command.controller_id.mode == 3:
+                    rights_mask = '255255255255'
+                else:
+                    rights_mask = '%03d%03d%03d%03d' % (
+                        (command.rights_mask >> (3*8)) & 0xFF,
+                        (command.rights_mask >> (2*8)) & 0xFF,
+                        (command.rights_mask >> (1*8)) & 0xFF,
+                        (command.rights_mask >> (0*8)) & 0xFF,
+                    )
                 rights_data = ''.join(list('0' + ch for ch in rights_data))
                 rights_mask = ''.join(list('0' + ch for ch in rights_mask))
                 json_cmd['cmd']['d'] = card_num + rights_data + rights_mask
@@ -654,7 +662,6 @@ class WebRfidController(http.Controller):
     @http.route(['/hr/rfid/event'], type='json', auth='none', method=['POST'], csrf=False)
     def post_event(self, **post):
         _logger.debug('Received=' + str(post))
-        print('post=' + str(post))
         self._post = post
         self._vending_hw_version = '16'
         self._webstacks_env = request.env['hr.rfid.webstack'].sudo()
@@ -697,7 +704,6 @@ class WebRfidController(http.Controller):
 
             self._webstack.write(self._ws_db_update_dict)
             _logger.debug('Sending back result=' + str(result))
-            print('ret=' + str(result))
             return result
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
                 exceptions.MissingError, exceptions.ValidationError, exceptions.DeferredException,
