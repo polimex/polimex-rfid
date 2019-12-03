@@ -11,6 +11,7 @@ import traceback
 import json
 import psycopg2
 import logging
+import time
 
 _logger = logging.getLogger(__name__)
 
@@ -235,9 +236,11 @@ class HrRfidVending(WebRfidController):
 
         try:
             if 'event' in post:
+                t0 = time.time()
                 _logger.debug('Vending: Received=' + str(post))
                 ret = parse_event()
-                _logger.debug('Sending back result=' + str(ret))
+                t1 = time.time()
+                _logger.debug('Took %2.03f time to form response=%s' % ((t1-t0), str(ret)))
             else:
                 ret = ret_super()
 
