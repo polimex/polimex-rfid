@@ -23,6 +23,8 @@ class WebRfidController(http.Controller):
         self._webstacks_env = None
         self._webstack = None
         self._ws_db_update_dict = None
+        self._time_format = '%m.%d.%y %H:%M:%S'
+        self._time_format2 = '%d.%m.%y %H:%M:%S'
         super(WebRfidController, self).__init__(*args, **kwargs)
 
     def _log_cmd_error(self, description, command, error, status_code):
@@ -502,11 +504,15 @@ class WebRfidController(http.Controller):
     def _get_ws_time(self):
         t = self._post['event']['date'] + ' ' + self._post['event']['time']
         try:
-            time = datetime.datetime.strptime(t, '%m.%d.%y %H:%M:%S')
-            time -= self._get_tz_offset(self._webstack)
+            ws_time = datetime.datetime.strptime(t, self._time_format)
+            ws_time -= self._get_tz_offset(self._webstack)
         except ValueError:
-            raise BadTimeException
-        return time
+            try:
+                ws_time = datetime.datetime.strptime(t, '%d.%m.%y %H:%M:%S')
+                ws_time -= self._get_tz_offset(self._webstack)
+            except ValueError:
+                raise BadTimeException
+        return ws_time
 
     @staticmethod
     def _get_tz_offset(webstack):
@@ -560,7 +566,15 @@ class WebRfidController(http.Controller):
         print('post=' + str(post))
         t0 = time.time()
         _logger.debug('Received=' + str(post))
-        self._post = post
+        if len(post) == 0:
+            # Controllers with no odoo functionality use the dd/mm/yyyy format
+            self._time_format = '%d.%m.%y %H:%M:%S'
+            self._time_format2 = '%m.%d.%y %H:%M:%S'
+            self._post = request.jsonrequest
+        else:
+            self._time_format = '%m.%d.%y %H:%M:%S'
+            self._time_format2 = '%d.%m.%y %H:%M:%S'
+            self._post = post
         self._vending_hw_version = '16'
         self._webstacks_env = request.env['hr.rfid.webstack'].sudo()
         self._webstack = self._webstacks_env.search([ ('serial', '=', str(post['convertor'])) ])
