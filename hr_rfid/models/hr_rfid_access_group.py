@@ -149,13 +149,25 @@ class HrRfidAccessGroup(models.Model):
 
     @api.multi
     @api.constrains('door_ids')
-    def _door_ids_constrains(self):
+    def door_ids_constrains(self):
         for acc_gr in self:
             door_id_list = []
             for rel in acc_gr.door_ids:
                 if rel.door_id.id in door_id_list:
                     raise exceptions.ValidationError('Cannot link access group to a door '
                                                      'it is already linked to.')
+
+            relay_doors = dict()
+            for rel in acc_gr.all_door_ids:
+                ctrl = rel.door_id.controller_id
+                if ctrl.is_relay_ctrl():
+                    if ctrl in relay_doors and ctrl.mode == 3:
+                        raise exceptions.ValidationError(
+                            _('Doors "%s" and "%s" both belong to a controller that cannot give access to multiple doors in the same time.')
+                            % (relay_doors[ctrl].name, rel.door_id.name)
+                        )
+                    relay_doors[ctrl] = rel.door_id
+
                 door_id_list.append(rel.door_id.id)
 
     @api.depends('door_ids', 'inherited_ids')
@@ -394,11 +406,13 @@ class HrRfidAccessGroupDoorRel(models.Model):
     @api.model_create_multi
     @api.returns('self', lambda value: value.id)
     def create(self, vals):
-        records = self.env['hr.rfid.access.group.door.rel']
         card_door_rel_env = self.env['hr.rfid.card.door.rel']
-        for val in vals:
-            rel = super(HrRfidAccessGroupDoorRel, self).create([val])
-            records += rel
+
+        records = super(HrRfidAccessGroupDoorRel, self).create(vals)
+
+        records.mapped('access_group_id').door_ids_constrains()
+
+        for rel in records:
             card_door_rel_env.update_door_rels(rel.door_id, rel.access_group_id)
 
         return records
@@ -471,6 +485,7 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
         card_door_rel_env = self.env['hr.rfid.card.door.rel']
 
         records = super(HrRfidAccessGroupEmployeeRel, self).create(vals_list)
+        records.mapped('employee_id').check_access_group()
         
         for rel in records:
             cards = rel.employee_id.hr_rfid_card_ids
@@ -488,6 +503,8 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
             old_acc_gr = rel.access_group_id
             super(HrRfidAccessGroupEmployeeRel, rel).write(vals)
             new_acc_gr = rel.access_group_id
+
+            rel.check_access_group()
 
             if new_acc_gr != old_acc_gr:
                 # Potentially remove old rels
@@ -562,6 +579,7 @@ class HrRfidAccessGroupContactRel(models.Model):
         card_door_rel_env = self.env['hr.rfid.card.door.rel']
 
         records = super(HrRfidAccessGroupContactRel, self).create(vals_list)
+        records.mapped('contact_id').check_access_group()
 
         for rel in records:
             cards = rel.contact_id.hr_rfid_card_ids
@@ -579,6 +597,8 @@ class HrRfidAccessGroupContactRel(models.Model):
             old_acc_gr = rel.access_group_id
             super(HrRfidAccessGroupContactRel, rel).write(vals)
             new_acc_gr = rel.access_group_id
+
+            rel.check_access_group()
 
             if new_acc_gr != old_acc_gr:
                 # Potentially remove old rels

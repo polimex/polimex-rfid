@@ -605,6 +605,17 @@ class HrRfidController(models.Model):
         default=False,
     )
 
+    relay_time_factor = fields.Selection(
+        [('0', '1 second'), ('1', '0.1 seconds')],
+        string='Relay Time Factor',
+        default='0',
+    )
+
+    dual_person_mode = fields.Boolean(
+        string='Dual Person Mode',
+        default=False,
+    )
+
     max_cards_count = fields.Integer(
         string='Maximum Cards',
         help='Maximum amount of cards the controller can hold in memory',
@@ -763,6 +774,15 @@ class HrRfidController(models.Model):
             })
 
     @api.multi
+    def is_relay_ctrl(self):
+        self.ensure_one()
+        return self.hw_version_is_for_relay_ctrl(self.hw_version)
+
+    @api.model
+    def hw_version_is_for_relay_ctrl(self, hw_version):
+        return hw_version in [ '30', '31', '32' ]
+
+    @api.multi
     def write(self, vals):
         # TODO Check if mode is being changed, change io table if so
         cmd_env = self.env['hr.rfid.command'].sudo()
@@ -877,9 +897,11 @@ class HrRfidDoor(models.Model):
         help='Events concerning this door',
     )
 
-    reader_ids = fields.One2many(
+    reader_ids = fields.Many2many(
         'hr.rfid.reader',
+        'hr_rfid_reader_door_rel',
         'door_id',
+        'reader_id',
         string='Readers',
         help='Readers that open this door',
     )
@@ -937,27 +959,71 @@ class HrRfidDoor(models.Model):
         self.ensure_one()
 
         if self.controller_id.webstack_id.behind_nat is True:
-            self.create_door_out_cmd(out, time)
-            return create_and_ret_d_box(self.env, _('Command creation successful'),
-                                        _('Because the webstack is behind NAT, we have to wait for the '
-                                          'webstack to call us, so we created a command. The door will '
-                                          'open/close for %d seconds as soon as possible.') % time)
+            return self.create_door_out_cmd(out, time)
         else:
-            self.change_door_out(out, time)
-            return create_and_ret_d_box(self.env, _('Door successfully opened/closed'),
-                                        _('Door will remain opened/closed for %d seconds.') % time)
+            return self.change_door_out(out, time)
 
     @api.multi
     def create_door_out_cmd(self, out: int, time: int):
         self.ensure_one()
         cmd_env = self.env['hr.rfid.command']
-        cmd_env.create([{
-            'webstack_id': self.controller_id.webstack_id.id,
-            'controller_id': self.controller_id.id,
+        ctrl = self.controller_id
+        cmd_dict = {
+            'webstack_id': ctrl.webstack_id.id,
+            'controller_id': ctrl.id,
             'cmd': 'DB',
-            'cmd_data': '%02d%02d%02d' % (self.number, out, time),
-        }])
+        }
+        if not ctrl.is_relay_ctrl():
+            cmd_dict['cmd_data'] = '%02d%02d%02d' % (self.number, out, time),
+        else:
+            if out == 0:
+                return create_and_ret_d_box(self.env, _('Cannot close a relay door.'),
+                                            _('Relay doors cannot be closed.'))
+            cmd_dict['cmd_data'] = ('1F%02X' % self.reader_ids[0].number) + self.create_rights_data()
+
+        cmd_env.create([cmd_dict])
         self.log_door_change(out, time, cmd=True)
+        return create_and_ret_d_box(
+            self.env,
+            _('Command creation successful'),
+            _('Because the webstack is behind NAT, we have to wait for the webstack to call us, so we created a command. The door will open/close as soon as possible.')
+        )
+
+    @api.multi
+    def create_rights_data(self):
+        self.ensure_one()
+        ctrl = self.controller_id
+        if not ctrl.is_relay_ctrl():
+            data = 1 << (self.reader_ids.number - 1)
+        else:
+            if ctrl.mode == 1:
+                data = 1 << (self.number - 1)
+            elif ctrl.mode == 2:
+                data = 1 << (self.number - 1)
+                if self.reader_ids.number == 2:
+                    data *= 0x10000
+            elif ctrl.mode == 3:
+                data = self.number
+            else:
+                raise exceptions.ValidationError(_('Controller %s has mode=%d, which is not supported!')
+                                                 % (ctrl.name, ctrl.mode))
+
+        return self.create_rights_int_to_str(data)
+
+    @api.model
+    def create_rights_int_to_str(self, data):
+        ctrl = self.controller_id
+        if not ctrl.is_relay_ctrl():
+            cmd_data = '{:02X}'.format(data)
+        else:
+            cmd_data = '%03d%03d%03d%03d' % (
+                (data >> (3*8)) & 0xFF,
+                (data >> (2*8)) & 0xFF,
+                (data >> (1*8)) & 0xFF,
+                (data >> (0*8)) & 0xFF,
+            )
+            cmd_data = ''.join(list('0' + ch for ch in cmd_data))
+        return cmd_data
 
     @api.multi
     def change_door_out(self, out: int, time: int):
@@ -982,13 +1048,22 @@ class HrRfidDoor(models.Model):
         auth = base64.b64encode((username + ':' + password).encode())
         auth = auth.decode()
         headers = { 'content-type': 'application/json', 'Authorization': 'Basic ' + str(auth) }
-        cmd = json.dumps({
+        cmd = {
             'cmd': {
                 'id': self.controller_id.ctrl_id,
                 'c': 'DB',
-                'd': '%02d%02d%02d' % (self.number, out, time),
             }
-        })
+        }
+
+        if self.controller_id.is_relay_ctrl():
+            if out == 0:
+                return create_and_ret_d_box(self.env, _('Cannot close a relay door.'),
+                                            _('Relay doors cannot be closed.'))
+            cmd['cmd']['d'] = ('1F%02X' % self.reader_ids[0].number) + self.create_rights_data()
+        else:
+            cmd['cmd']['d'] = '%02d%02d%02d' % (self.number, out, time),
+
+        cmd = json.dumps(cmd)
 
         host = str(ws.last_ip)
         try:
@@ -1012,6 +1087,9 @@ class HrRfidDoor(models.Model):
         except (socket.error, socket.gaierror, socket.herror) as e:
             raise exceptions.ValidationError('Error while trying to connect to the module.'
                                              ' Information:\n' + str(e))
+
+        return create_and_ret_d_box(self.env, _('Door successfully opened/closed'),
+                                    _('Door will remain opened/closed for %d seconds.') % time)
 
     @api.multi
     def log_door_change(self, action: int, time: int, cmd: bool = False):
@@ -1171,11 +1249,21 @@ class HrRfidReader(models.Model):
         help='Events concerning this reader',
     )
 
+    door_ids = fields.Many2many(
+        'hr.rfid.door',
+        'hr_rfid_reader_door_rel',
+        'reader_id',
+        'door_id',
+        string='Doors',
+        help='Doors the reader opens',
+        ondelete='cascade',
+    )
+
     door_id = fields.Many2one(
         'hr.rfid.door',
         string='Door',
-        help='Door the reader opens',
-        ondelete='cascade',
+        compute='_compute_reader_door',
+        inverse='_inverse_reader_door',
     )
 
     @api.multi
@@ -1184,6 +1272,18 @@ class HrRfidReader(models.Model):
             record.name = record.door_id.name + ' ' + \
                           self.reader_types[int(record.reader_type)][1] + \
                           ' Reader'
+
+    @api.multi
+    @api.depends('door_ids')
+    def _compute_reader_door(self):
+        for reader in self:
+            if not reader.controller_id.is_relay_ctrl() and len(reader.door_ids) == 1:
+                reader.door_id = reader.door_ids
+
+    @api.multi
+    def _inverse_reader_door(self):
+        for reader in self:
+            reader.door_ids = reader.door_id
 
     @api.multi
     def write(self, vals):
@@ -1446,6 +1546,7 @@ class HrRfidSystemEvent(models.Model):
     )
 
     action_selection = [
+        ('0', 'Unknown Event?'),
         ('1', 'DuressOK'),
         ('2', 'DuressError'),
         ('3', 'R1 Card OK'),
@@ -1843,6 +1944,17 @@ class HrRfidCommands(models.Model):
         }])
 
     @api.model
+    def _create_d1_cmd_relay(self, ws_id, ctrl_id, card_num, rights_data, rights_mask):
+        self.create([{
+            'webstack_id': ws_id,
+            'controller_id': ctrl_id,
+            'cmd': 'D1',
+            'card_number': card_num,
+            'rights_data': rights_data,
+            'rights_mask': rights_mask,
+        }])
+
+    @api.model
     def add_remove_card(self, card_number, ctrl_id, pin_code, ts_code, rights_data, rights_mask):
         ctrl = self.env['hr.rfid.ctrl'].browse(ctrl_id)
         commands_env = self.env['hr.rfid.command']
@@ -1854,9 +1966,9 @@ class HrRfidCommands(models.Model):
             ('controller_id', '=', ctrl.id),
         ])
 
-        if len(old_cmd) == 0:
-            commands_env.create_d1_cmd(ctrl.webstack_id.id, ctrl.id,
-                                       card_number, pin_code, ts_code, rights_data, rights_mask)
+        if not old_cmd:
+            self.create_d1_cmd(ctrl.webstack_id.id, ctrl_id, card_number,
+                               pin_code, ts_code, rights_data, rights_mask)
         else:
             new_ts_code = ''
             if str(ts_code) != '':
@@ -1873,16 +1985,12 @@ class HrRfidCommands(models.Model):
                 'ts_code': new_ts_code,
             }
 
-            new_rights_data = 0
-            new_rights_mask = 0
-            for i in range(8):
-                bit = 1 << i
-                if rights_mask & bit == 0 and old_cmd.rights_mask & bit > 0:
-                    new_rights_mask |= old_cmd.rights_mask & bit
-                    new_rights_data |= old_cmd.rights_data & bit
-                else:
-                    new_rights_mask |= rights_data & bit
-                    new_rights_data |= rights_mask & bit
+            new_rights_data = (rights_data | old_cmd.rights_data)
+            new_rights_data ^= (rights_mask & old_cmd.rights_data)
+            new_rights_data ^= (rights_data & old_cmd.rights_mask)
+            new_rights_mask = rights_mask | old_cmd.rights_mask
+            new_rights_mask ^= (rights_mask & old_cmd.rights_data)
+            new_rights_mask ^= (rights_data & old_cmd.rights_mask)
 
             write_dict['rights_mask'] = new_rights_mask
             write_dict['rights_data'] = new_rights_data
@@ -1890,11 +1998,45 @@ class HrRfidCommands(models.Model):
             old_cmd.write(write_dict)
 
     @api.model
+    def _add_remove_card_relay(self, card_number, ctrl_id, rights_data, rights_mask):
+        ctrl = self.env['hr.rfid.ctrl'].browse(ctrl_id)
+        commands_env = self.env['hr.rfid.command']
+
+        old_cmd = commands_env.search([
+            ('cmd', '=', 'D1'),
+            ('status', '=', 'Wait'),
+            ('card_number', '=', card_number),
+            ('controller_id', '=', ctrl.id),
+        ])
+
+        if not old_cmd:
+            self._create_d1_cmd_relay(ctrl.webstack_id.id, ctrl_id, card_number, rights_data, rights_mask)
+        else:
+            if ctrl.mode == 3:
+                new_rights_data = rights_data
+                new_rights_mask = rights_mask
+            else:
+                new_rights_data = (rights_data | old_cmd.rights_data)
+                new_rights_data ^= (rights_mask & old_cmd.rights_data)
+                new_rights_data ^= (rights_data & old_cmd.rights_mask)
+                new_rights_mask = rights_mask | old_cmd.rights_mask
+                new_rights_mask ^= (rights_mask & old_cmd.rights_data)
+                new_rights_mask ^= (rights_data & old_cmd.rights_mask)
+
+            old_cmd.write({
+                'rights_mask': new_rights_mask,
+                'rights_data': new_rights_data,
+            })
+
+    @api.model
     def add_card(self, door_id, ts_id, pin_code, card_id):
         door = self.env['hr.rfid.door'].browse(door_id)
         time_schedule = self.env['hr.rfid.time.schedule'].browse(ts_id)
         card = self.env['hr.rfid.card'].browse(card_id)
         card_number = card.number
+
+        if door.controller_id.is_relay_ctrl():
+            return self._add_card_to_relay(door_id, card_id)
 
         for reader in door.reader_ids:
             ts_code = [0, 0, 0, 0]
@@ -1904,6 +2046,29 @@ class HrRfidCommands(models.Model):
                                  1 << (reader.number-1), 1 << (reader.number-1))
 
     @api.model
+    def _add_card_to_relay(self, door_id, card_id):
+        door = self.env['hr.rfid.door'].browse(door_id)
+        card = self.env['hr.rfid.card'].browse(card_id)
+        ctrl = door.controller_id
+
+        if ctrl.mode == 1:
+            rdata = 1 << (door.number - 1)
+            rmask = rdata
+        elif ctrl.mode == 2:
+            rdata = 1 << (door.number - 1)
+            if door.reader_ids.number == 2:
+                rdata *= 0x10000
+            rmask = rdata
+        elif ctrl.mode == 3:
+            rdata = door.number
+            rmask = 0
+        else:
+            raise exceptions.ValidationError(_('Controller %s has mode=%d, which is not supported!')
+                                             % (ctrl.name, ctrl.mode))
+
+        self._add_remove_card_relay(card.number, ctrl.id, rdata, rmask)
+
+    @api.model
     def remove_card(self, door_id, pin_code, card_number=None, card_id=None):
         door = self.env['hr.rfid.door'].browse(door_id)
 
@@ -1911,9 +2076,31 @@ class HrRfidCommands(models.Model):
             card = self.env['hr.rfid.card'].browse(card_id)
             card_number = card.number
 
+        if door.controller_id.is_relay_ctrl():
+            return self._remove_card_from_relay(door_id, card_number)
+
         for reader in door.reader_ids:
             self.add_remove_card(card_number, door.controller_id.id, pin_code, '00000000',
                                  0, 1 << (reader.number-1))
+
+    @api.model
+    def _remove_card_from_relay(self, door_id, card_number):
+        door = self.env['hr.rfid.door'].browse(door_id)
+        ctrl = door.controller_id
+
+        if ctrl.mode == 1:
+            rmask = 1 << (door.number - 1)
+        elif ctrl.mode == 2:
+            rmask = 1 << (door.number - 1)
+            if door.reader_ids.number == 2:
+                rmask *= 0x10000
+        elif ctrl.mode == 3:
+            rmask = 0xFFFFFFFF
+        else:
+            raise exceptions.ValidationError(_('Controller %s has mode=%d, which is not supported!')
+                                             % (ctrl.name, ctrl.mode))
+
+        self._add_remove_card_relay(card_number, ctrl.id, 0, rmask)
 
     @api.model
     def change_apb_flag(self, door, card, can_exit=True):

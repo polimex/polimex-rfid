@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import http, fields, exceptions
+from odoo import http, fields, exceptions, _
 from odoo.http import request
 
 import datetime
@@ -36,7 +36,7 @@ class WebRfidController(http.Controller):
         })
 
         self._report_sys_ev(description, command.controller_id)
-        return self.check_for_unsent_cmd(status_code)
+        return self._check_for_unsent_cmd(status_code)
 
     def _check_for_unsent_cmd(self, status_code, event=None):
         commands_env = request.env['hr.rfid.command'].sudo()
@@ -130,6 +130,8 @@ class WebRfidController(http.Controller):
             self._report_sys_ev('Could not find a reader with that id', controller)
             return self._check_for_unsent_cmd(200)
 
+        door = reader.door_id
+
         ev_env = request.env['hr.rfid.event.user'].sudo()
 
         if len(card) == 0:
@@ -175,7 +177,6 @@ class WebRfidController(http.Controller):
                 ('access_group_id', 'in', card.get_owner().hr_rfid_access_group_ids.ids),
                 ('door_id', '=', reader.door_id.id)
             ])
-            # if len(ret) > 0: open door, else close
             return self._respond_to_ev_64(len(ret) > 0 and card.card_active is True,
                                           controller, reader, card)
 
@@ -185,9 +186,29 @@ class WebRfidController(http.Controller):
         else:
             event_action = ((event_action - 3) % 4) + 1
 
+        # Relay controller
+        if controller.is_relay_ctrl() and event_action == 1 and controller.mode == 3:
+            dt = self._post['event']['dt']
+            if len(dt) == 24:
+                chunks = [ dt[0:6], dt[6:12], dt[12:18], dt[18:24] ]
+                print('Chunks=' + str(chunks))
+                door_number = 0
+                for i in range(len(chunks)):
+                    chunk = chunks[i]
+                    n1 = int(chunk[:2])
+                    n2 = int(chunk[2:4])
+                    n3 = int(chunk[4:])
+                    door_number |= n1*100 + n2*10 + n3
+                    if i != len(chunks)-1:
+                        door_number <<= 8
+                for _door in reader.door_ids:
+                    if _door.number == door_number:
+                        door = _door
+                        break
+
         event_dict = {
             'ctrl_addr': controller.ctrl_id,
-            'door_id': reader.door_id.id,
+            'door_id': door.id,
             'reader_id': reader.id,
             'card_id': card.id,
             'event_time': self._get_ws_time_str(),
@@ -247,174 +268,7 @@ class WebRfidController(http.Controller):
             return self._check_for_unsent_cmd(200)
 
         if response['c'] == 'F0':
-            data = response['d']
-            ctrl_mode = int(data[42:44], 16)
-            external_db = ctrl_mode & 0x20 > 0
-            ctrl_mode = ctrl_mode & 0x0F
-
-            if ctrl_mode < 1 or ctrl_mode > 4:
-                return self._log_cmd_error('F0 command failure, controller sent '
-                                           'us a wrong mode', command, '31', 200)
-
-            readers_count = int(data[30:32], 16)
-
-            mode_reader_relation = { 1: [2], 2: [2, 4], 3: [4], 4: [4] }
-
-            if readers_count not in mode_reader_relation[ctrl_mode]:
-                return self._log_cmd_error('F0 sent us a wrong reader-controller '
-                                           'mode combination', command, '31', 200)
-
-            reader_env = request.env['hr.rfid.reader'].sudo()
-            door_env = request.env['hr.rfid.door'].sudo()
-            ctrl_env = request.env['hr.rfid.ctrl'].sudo()
-
-            def bytes_to_num(start, digits):
-                digits = digits-1
-                res = 0
-                for j in range(digits+1):
-                    multiplier = 10 ** (digits-j)
-                    res = res + int(data[start:start+2], 16) * multiplier
-                    start = start + 2
-                return res
-
-            hw_ver = str(bytes_to_num(0, 2))
-            sw_ver = str(bytes_to_num(12, 3))
-            inputs = bytes_to_num(18, 3)
-            outputs = bytes_to_num(24, 3)
-            time_schedules = bytes_to_num(32, 2)
-            io_table_lines = bytes_to_num(36, 2)
-            alarm_lines = bytes_to_num(40, 1)
-            max_cards_count = bytes_to_num(44, 5)
-            max_events_count = bytes_to_num(54, 5)
-
-            serial_num = str(bytes_to_num(4, 4))
-
-            old_ctrl = ctrl_env.search([
-                ('serial_number', '=', serial_num)
-            ], limit=1)
-
-            if len(old_ctrl) > 0:
-                old_ctrl.webstack_id = controller.webstack_id
-                controller.unlink()
-
-            if len(controller.reader_ids):
-                controller.reader_ids.unlink()
-
-            if len(controller.door_ids):
-                controller.door_ids.unlink()
-
-            def create_door(name, number, ctrl_id):
-                # If the controller is a vending controller
-                if hw_ver == self._vending_hw_version:
-                    return None
-                return door_env.create({
-                    'name': name,
-                    'number': number,
-                    'controller_id': ctrl_id,
-                }).id
-
-            def create_reader(name, number, reader_type, ctrl_id, door_id):
-                create_dict = {
-                    'name': name,
-                    'number': number,
-                    'reader_type': reader_type,
-                    'controller_id': ctrl_id,
-                }
-
-                if door_id is not None:
-                    create_dict['door_id'] = door_id
-
-                reader_env.create(create_dict)
-
-            def gen_d_name(door_num, controller_id):
-                return 'Door ' + str(door_num) + ' of ctrl ' + str(controller_id)
-
-            if ctrl_mode == 1 or ctrl_mode == 3:
-                last_door = create_door(gen_d_name(1, controller.id), 1, controller.id)
-                create_reader('R1', 1, '0', controller.id, last_door)
-                create_reader('R2', 2, '1', controller.id, last_door)
-            elif ctrl_mode == 2 and readers_count == 4:
-                last_door = create_door(gen_d_name(1, controller.id), 1, controller.id)
-                create_reader('R1', 1, '0', controller.id, last_door)
-                create_reader('R2', 2, '1', controller.id, last_door)
-                last_door = create_door(gen_d_name(2, controller.id), 2, controller.id)
-                create_reader('R3', 3, '0', controller.id, last_door)
-                create_reader('R4', 4, '1', controller.id, last_door)
-            else:  # (ctrl_mode == 2 and readers_count == 2) or ctrl_mode == 4
-                last_door = create_door(gen_d_name(1, controller.id), 1, controller.id)
-                create_reader('R1', 1, '0', controller.id, last_door)
-                last_door = create_door(gen_d_name(2, controller.id), 2, controller.id)
-                create_reader('R2', 2, '0', controller.id, last_door)
-
-            if ctrl_mode == 3:
-                last_door = create_door(gen_d_name(2, controller.id), 2, controller.id)
-                create_reader('R3', 3, '0', controller.id, last_door)
-                last_door = create_door(gen_d_name(3, controller.id), 3, controller.id)
-                create_reader('R4', 4, '0', controller.id, last_door)
-            elif ctrl_mode == 4:
-                last_door = create_door(gen_d_name(3, controller.id), 3, controller.id)
-                create_reader('R3', 3, '0', controller.id, last_door)
-                last_door = create_door(gen_d_name(4, controller.id), 4, controller.id)
-                create_reader('R4', 4, '0', controller.id, last_door)
-
-            controller.write({
-                'name': 'Controller ' + serial_num + ' ' + str(controller.ctrl_id),
-                'hw_version': hw_ver,
-                'serial_number': serial_num,
-                'sw_version': sw_ver,
-                'inputs': inputs,
-                'outputs': outputs,
-                'readers': readers_count,
-                'time_schedules': time_schedules,
-                'io_table_lines': io_table_lines,
-                'alarm_lines': alarm_lines,
-                'mode': ctrl_mode,
-                'external_db': external_db,
-                'max_cards_count': max_cards_count,
-                'max_events_count': max_events_count,
-            })
-
-            cmd_env = request.env['hr.rfid.command'].sudo()
-            cmd_env.create({
-                'webstack_id': self._webstack.id,
-                'controller_id': controller.id,
-                'cmd': 'D7',
-            })
-
-            cmd_env.create({
-                'webstack_id': self._webstack.id,
-                'controller_id': controller.id,
-                'cmd': 'DC',
-                'cmd_data': '0303',
-            })
-
-            cmd_env.create({
-                'webstack_id': self._webstack.id,
-                'controller_id': controller.id,
-                'cmd': 'DC',
-                'cmd_data': '0404',
-            })
-
-            cmd_env.create({
-                'webstack_id': self._webstack.id,
-                'controller_id': controller.id,
-                'cmd': 'F6',
-            })
-
-            cmd_env.create({
-                'webstack_id': self._webstack.id,
-                'controller_id': controller.id,
-                'cmd': 'F9',
-                'cmd_data': '00',
-            })
-
-            if ctrl_mode == 1 or ctrl_mode == 3:
-                cmd_env.create({
-                    'webstack_id': self._webstack.id,
-                    'controller_id': controller.id,
-                    'cmd': 'FC',
-                    'cmd_data': '',
-                })
+            self._parse_f0_response(command, controller)
 
         if response['c'] == 'F6':
             data = response['d']
@@ -448,16 +302,240 @@ class WebRfidController(http.Controller):
 
         return self._check_for_unsent_cmd(200)
 
+    def _parse_f0_response(self, command, controller):
+        ctrl_env = request.env['hr.rfid.ctrl'].sudo()
+        response = self._post['response']
+        data = response['d']
+        ctrl_mode = int(data[42:44], 16)
+        external_db = (ctrl_mode & 0x20) > 0
+        relay_time_factor = '1' if ctrl_mode & 0x40 else '0'
+        dual_person_mode = (ctrl_mode & 0x08) > 0
+        ctrl_mode = ctrl_mode & 0x07
+
+        def bytes_to_num(start, digits):
+            digits = digits-1
+            res = 0
+            for j in range(digits+1):
+                multiplier = 10 ** (digits-j)
+                res = res + int(data[start:start+2], 16) * multiplier
+                start = start + 2
+            return res
+
+        hw_ver = str(bytes_to_num(0, 2))
+
+        if (ctrl_mode < 1 or ctrl_mode > 4):
+            return self._log_cmd_error('F0 command failure, controller sent '
+                                       'us a wrong mode', command, '31', 200)
+
+        readers_count = int(data[30:32], 16)
+
+        mode_reader_relation = { 1: [2], 2: [2, 4], 3: [4], 4: [4] }
+
+        if not ctrl_env.hw_version_is_for_relay_ctrl(hw_ver) and \
+                readers_count not in mode_reader_relation[ctrl_mode]:
+            return self._log_cmd_error('F0 sent us a wrong reader-controller '
+                                       'mode combination', command, '31', 200)
+
+        reader_env = request.env['hr.rfid.reader'].sudo()
+        door_env = request.env['hr.rfid.door'].sudo()
+
+        sw_ver = str(bytes_to_num(12, 3))
+        inputs = bytes_to_num(18, 3)
+        outputs = bytes_to_num(24, 3)
+        time_schedules = bytes_to_num(32, 2)
+        io_table_lines = bytes_to_num(36, 2)
+        alarm_lines = bytes_to_num(40, 1)
+        max_cards_count = bytes_to_num(44, 5)
+        max_events_count = bytes_to_num(54, 5)
+
+        serial_num = str(bytes_to_num(4, 4))
+
+        old_ctrl = ctrl_env.search([
+            ('serial_number', '=', serial_num)
+        ], limit=1)
+
+        if len(old_ctrl) > 0:
+            old_ctrl.webstack_id = controller.webstack_id
+            controller.unlink()
+
+        if len(controller.reader_ids):
+            controller.reader_ids.unlink()
+
+        if len(controller.door_ids):
+            controller.door_ids.unlink()
+
+        def create_door(name, number, ctrl_id):
+            # If the controller is a vending controller
+            if hw_ver == self._vending_hw_version:
+                return None
+            return door_env.create({
+                'name': name,
+                'number': number,
+                'controller_id': ctrl_id,
+            })
+
+        def create_reader(name, number, reader_type, ctrl_id, door_id=None):
+            create_dict = {
+                'name': name,
+                'number': number,
+                'reader_type': reader_type,
+                'controller_id': ctrl_id,
+            }
+
+            if door_id is not None:
+                create_dict['door_id'] = door_id
+
+            return reader_env.create(create_dict)
+
+        def add_door_to_reader(_reader, _door):
+            _reader.door_ids += _door
+
+        def gen_d_name(door_num, controller_id):
+            return 'Door ' + str(door_num) + ' of ctrl ' + str(controller_id)
+
+        if controller.hw_version_is_for_relay_ctrl(hw_ver):
+            if ctrl_mode == 1 or ctrl_mode == 3:
+                reader = create_reader('R1', 1, '0', controller.id)
+                for i in range(outputs):
+                    door = create_door(gen_d_name(i+1, controller.id), i+1, controller.id)
+                    add_door_to_reader(reader, door)
+                for i in range(1, readers_count):
+                    create_reader('R' + str(i+1), i+1, '0', controller.id)
+            elif ctrl_mode == 2:
+                if outputs > 16 and readers_count < 2:
+                    return self._log_cmd_error('F0 sent us too many outputs and not enough readers',
+                                               command, '31', 200)
+                reader = create_reader('R1', 1, '0', controller.id)
+                for i in range(outputs):
+                    door = create_door(gen_d_name(i+1, controller.id), i+1, controller.id)
+                    add_door_to_reader(reader, door)
+                if outputs > 16:
+                    reader = create_reader('R2', 2, '0', controller.id)
+                    for i in range(outputs-16):
+                        door = create_door(gen_d_name(i+1, controller.id), i+1, controller.id)
+                        add_door_to_reader(reader, door)
+                    for i in range(2, readers_count):
+                        create_reader('R' + str(i+1), i+1, '0', controller.id)
+                else:
+                    for i in range(1, readers_count):
+                        create_reader('R' + str(i+1), i+1, '0', controller.id)
+            else:
+                raise exceptions.ValidationError(_('Got controller mode=%d for hw_ver=%s???')
+                                                 % (ctrl_mode, hw_ver))
+        else:
+            if ctrl_mode == 1 or ctrl_mode == 3:
+                last_door = create_door(gen_d_name(1, controller.id), 1, controller.id)
+                last_door = last_door.id
+                create_reader('R1', 1, '0', controller.id, last_door)
+                create_reader('R2', 2, '1', controller.id, last_door)
+            elif ctrl_mode == 2 and readers_count == 4:
+                last_door = create_door(gen_d_name(1, controller.id), 1, controller.id)
+                last_door = last_door.id
+                create_reader('R1', 1, '0', controller.id, last_door)
+                create_reader('R2', 2, '1', controller.id, last_door)
+                last_door = create_door(gen_d_name(2, controller.id), 2, controller.id)
+                last_door = last_door.id
+                create_reader('R3', 3, '0', controller.id, last_door)
+                create_reader('R4', 4, '1', controller.id, last_door)
+            else:  # (ctrl_mode == 2 and readers_count == 2) or ctrl_mode == 4
+                last_door = create_door(gen_d_name(1, controller.id), 1, controller.id)
+                last_door = last_door.id
+                create_reader('R1', 1, '0', controller.id, last_door)
+                last_door = create_door(gen_d_name(2, controller.id), 2, controller.id)
+                last_door = last_door.id
+                create_reader('R2', 2, '0', controller.id, last_door)
+
+            if ctrl_mode == 3:
+                last_door = create_door(gen_d_name(2, controller.id), 2, controller.id)
+                last_door = last_door.id
+                create_reader('R3', 3, '0', controller.id, last_door)
+                last_door = create_door(gen_d_name(3, controller.id), 3, controller.id)
+                last_door = last_door.id
+                create_reader('R4', 4, '0', controller.id, last_door)
+            elif ctrl_mode == 4:
+                last_door = create_door(gen_d_name(3, controller.id), 3, controller.id)
+                last_door = last_door.id
+                create_reader('R3', 3, '0', controller.id, last_door)
+                last_door = create_door(gen_d_name(4, controller.id), 4, controller.id)
+                last_door = last_door.id
+                create_reader('R4', 4, '0', controller.id, last_door)
+
+        controller.write({
+            'name': 'Controller ' + serial_num + ' ' + str(controller.ctrl_id),
+            'hw_version': hw_ver,
+            'serial_number': serial_num,
+            'sw_version': sw_ver,
+            'inputs': inputs,
+            'outputs': outputs,
+            'readers': readers_count,
+            'time_schedules': time_schedules,
+            'io_table_lines': io_table_lines,
+            'alarm_lines': alarm_lines,
+            'mode': ctrl_mode,
+            'external_db': external_db,
+            'relay_time_factor': relay_time_factor,
+            'dual_person_mode': dual_person_mode,
+            'max_cards_count': max_cards_count,
+            'max_events_count': max_events_count,
+        })
+
+        cmd_env = request.env['hr.rfid.command'].sudo()
+        cmd_env.create({
+            'webstack_id': self._webstack.id,
+            'controller_id': controller.id,
+            'cmd': 'D7',
+        })
+
+        cmd_env.create({
+            'webstack_id': self._webstack.id,
+            'controller_id': controller.id,
+            'cmd': 'DC',
+            'cmd_data': '0303',
+        })
+
+        cmd_env.create({
+            'webstack_id': self._webstack.id,
+            'controller_id': controller.id,
+            'cmd': 'DC',
+            'cmd_data': '0404',
+        })
+
+        cmd_env.create({
+            'webstack_id': self._webstack.id,
+            'controller_id': controller.id,
+            'cmd': 'F6',
+        })
+
+        cmd_env.create({
+            'webstack_id': self._webstack.id,
+            'controller_id': controller.id,
+            'cmd': 'F9',
+            'cmd_data': '00',
+        })
+
+        if not controller.is_relay_ctrl() and (ctrl_mode == 1 or ctrl_mode == 3):
+            cmd_env.create({
+                'webstack_id': self._webstack.id,
+                'controller_id': controller.id,
+                'cmd': 'FC',
+                'cmd_data': '',
+            })
+
     def _report_sys_ev(self, description, controller=None):
         sys_ev_env = request.env['hr.rfid.event.system'].sudo()
 
         sys_ev = {
             'webstack_id': self._webstack.id,
-            'timestamp': self._get_ws_time_str(),
             'error_description': description,
-            'event_action': str(self._post['event']['event_n']),
             'input_js': json.dumps(self._post),
         }
+
+        if 'event' in self._post:
+            sys_ev['timestamp'] = self._get_ws_time_str()
+            sys_ev['event_action'] = str(self._post['event']['event_n'])
+        else:
+            sys_ev['timestamp'] = datetime.datetime.now()
+
         if controller is not None:
             sys_ev['controller_id'] = controller.id
 
@@ -473,8 +551,16 @@ class WebRfidController(http.Controller):
             'cmd': 'DB',
             'status': 'Process',
             'ex_timestamp': fields.Datetime.now(),
-            'cmd_data': '40%02X00' % (open_door + 4*(reader.number - 1)),
         }
+        if not controller.is_relay_ctrl():
+            cmd['cmd_data'] = '40%02X00' % (open_door + 4*(reader.number - 1))
+        else:
+            data = 0
+            user_doors = card.get_owner().get_doors()
+            for door in reader.door_ids:
+                if door in user_doors:
+                    data |= 1 << (door.number - 1)
+            cmd['cmd_data'] = '4000' + request.env['hr.rfid.door'].create_rights_int_to_str(data)
         event = {
             'ctrl_addr': controller.ctrl_id,
             'door_id': reader.door_id.id,
@@ -541,13 +627,33 @@ class WebRfidController(http.Controller):
         }
 
         if command.cmd == 'D1':
-            card_num = ''.join(list('0' + ch for ch in command.card_number))
-            pin_code = ''.join(list('0' + ch for ch in command.pin_code))
-            ts_code = str(command.ts_code)
-            rights_data = '{:02X}'.format(command.rights_data)
-            rights_mask = '{:02X}'.format(command.rights_mask)
-
-            json_cmd['cmd']['d'] = card_num + pin_code + ts_code + rights_data + rights_mask
+            if not command.controller_id.is_relay_ctrl():
+                card_num = ''.join(list('0' + ch for ch in command.card_number))
+                pin_code = ''.join(list('0' + ch for ch in command.pin_code))
+                ts_code = str(command.ts_code)
+                rights_data = '{:02X}'.format(command.rights_data)
+                rights_mask = '{:02X}'.format(command.rights_mask)
+                json_cmd['cmd']['d'] = card_num + pin_code + ts_code + rights_data + rights_mask
+            else:
+                card_num = ''.join(list('0' + ch for ch in command.card_number))
+                rights_data = '%03d%03d%03d%03d' % (
+                    (command.rights_data >> (3*8)) & 0xFF,
+                    (command.rights_data >> (2*8)) & 0xFF,
+                    (command.rights_data >> (1*8)) & 0xFF,
+                    (command.rights_data >> (0*8)) & 0xFF,
+                )
+                if command.controller_id.mode == 3:
+                    rights_mask = '255255255255'
+                else:
+                    rights_mask = '%03d%03d%03d%03d' % (
+                        (command.rights_mask >> (3*8)) & 0xFF,
+                        (command.rights_mask >> (2*8)) & 0xFF,
+                        (command.rights_mask >> (1*8)) & 0xFF,
+                        (command.rights_mask >> (0*8)) & 0xFF,
+                    )
+                rights_data = ''.join(list('0' + ch for ch in rights_data))
+                rights_mask = ''.join(list('0' + ch for ch in rights_mask))
+                json_cmd['cmd']['d'] = card_num + rights_data + rights_mask
 
         if command.cmd == 'D7':
             dt = datetime.datetime.now()

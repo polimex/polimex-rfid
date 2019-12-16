@@ -1053,7 +1053,10 @@
                 <field name="max_events_count" readonly="1"/>
               </group>
               <group string="Setup">
-                <field name="external_db"/>
+                <field name="mode" />
+                <field name="external_db" />
+                <field name="relay_time_factor" readonly="1" />
+                <field name="dual_person_mode" readonly="1" />
                 <field name="webstack_id" readonly="1"/>
               </group>
             </group>
@@ -1351,10 +1354,20 @@
               <field name="mode" />
               <field name="reader_type"/>
             </group>
-            <group string="Information" >
-              <field name="number" readonly="1"/>
-              <field name="controller_id" readonly="1"/>
-              <field name="door_id" readonly="1"/>
+            <group string="Information">
+              <field name="number" readonly="1" />
+              <field name="controller_id" readonly="1" />
+              <field name="door_id" readonly="1" attrs="{'invisible':[('door_id','=',False)]}" />
+            </group>
+            <group colspan="4" attrs="{'invisible':[('door_id','!=',False)]}">
+              <field name="door_ids" readonly="1">
+                <tree>
+                  <field name="name" />
+                  <field name="controller_id" />
+                  <field name="card_type" />
+                  <field name="apb_mode" />
+                </tree>
+              </field>
             </group>
             <group colspan="4">
               <field name="user_event_ids" readonly="1">
@@ -1383,7 +1396,6 @@
           <field name="name" />
           <field name="mode" />
           <field name="controller_id" />
-          <field name="door_id" />
           <field name="reader_type" />
         </tree>
       </field>
@@ -1397,7 +1409,6 @@
           <field name="name" />
           <field name="mode" />
           <field name="controller_id" />
-          <field name="door_id" />
           <field name="reader_type" />
         </search>
       </field>
