@@ -658,13 +658,18 @@ class WebRfidController(http.Controller):
 
     def _parse_barcode_device(self):
         post = self._post
-        for ev in post['events']:
-            request.env['hr.rfid.raw.data'].create([{
-                'do_not_save': True,
-                'data_type': 'barcode',
-                'webstack_serial': post['serial'],
-                'security': post['security'],
-                'data': json.dumps(ev),
-            }])
+        ret = request.env['hr.rfid.raw.data'].create([{
+            'do_not_save': True,
+            'identification': post['serial'],
+            'security': post['security'],
+            'data': json.dumps(post),
+        }])
 
+        ret_data = ret.return_data
+        ret_type = ret.return_data_type
 
+        if ret.do_not_save is True:
+            ret.unlink()
+
+        if ret_type == 'rpc':
+            return json.loads(ret_data)
