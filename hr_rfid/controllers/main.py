@@ -575,6 +575,10 @@ class WebRfidController(http.Controller):
             self._time_format = '%m.%d.%y %H:%M:%S'
             self._time_format2 = '%d.%m.%y %H:%M:%S'
             self._post = post
+
+        if 'convertor' not in post:
+            return self._parse_raw_data()
+
         self._vending_hw_version = '16'
         self._webstacks_env = request.env['hr.rfid.webstack'].sudo()
         self._webstack = self._webstacks_env.search([ ('serial', '=', str(post['convertor'])) ])
@@ -645,3 +649,22 @@ class WebRfidController(http.Controller):
             request.env['hr.rfid.event.system'].sudo().create(sys_ev_dict)
             _logger.debug('Caught a time error, returning status=200 and creating a system event')
             return { 'status': 200 }
+
+    def _parse_raw_data(self):
+        if 'serial' in self._post and 'security' in self._post and 'events' in self._post:
+            return self._parse_barcode_device()
+
+        return { 'status': 200 }
+
+    def _parse_barcode_device(self):
+        post = self._post
+        for ev in post['events']:
+            request.env['hr.rfid.raw.data'].create([{
+                'do_not_save': True,
+                'data_type': 'barcode',
+                'webstack_serial': post['serial'],
+                'security': post['security'],
+                'data': json.dumps(ev),
+            }])
+
+
