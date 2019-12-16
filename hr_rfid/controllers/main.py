@@ -7,6 +7,7 @@ import json
 import traceback
 import psycopg2
 import logging
+import time
 
 _logger = logging.getLogger(__name__)
 
@@ -22,6 +23,8 @@ class WebRfidController(http.Controller):
         self._webstacks_env = None
         self._webstack = None
         self._ws_db_update_dict = None
+        self._time_format = '%m.%d.%y %H:%M:%S'
+        self._time_format2 = '%d.%m.%y %H:%M:%S'
         super(WebRfidController, self).__init__(*args, **kwargs)
 
     def _log_cmd_error(self, description, command, error, status_code):
@@ -587,11 +590,15 @@ class WebRfidController(http.Controller):
     def _get_ws_time(self):
         t = self._post['event']['date'] + ' ' + self._post['event']['time']
         try:
-            time = datetime.datetime.strptime(t, '%m.%d.%y %H:%M:%S')
-            time -= self._get_tz_offset(self._webstack)
+            ws_time = datetime.datetime.strptime(t, self._time_format)
+            ws_time -= self._get_tz_offset(self._webstack)
         except ValueError:
-            raise BadTimeException
-        return time
+            try:
+                ws_time = datetime.datetime.strptime(t, '%d.%m.%y %H:%M:%S')
+                ws_time -= self._get_tz_offset(self._webstack)
+            except ValueError:
+                raise BadTimeException
+        return ws_time
 
     @staticmethod
     def _get_tz_offset(webstack):
@@ -662,8 +669,22 @@ class WebRfidController(http.Controller):
 
     @http.route(['/hr/rfid/event'], type='json', auth='none', method=['POST'], csrf=False)
     def post_event(self, **post):
+        print('post=' + str(post))
+        t0 = time.time()
         _logger.debug('Received=' + str(post))
-        self._post = post
+        if len(post) == 0:
+            # Controllers with no odoo functionality use the dd/mm/yyyy format
+            self._time_format = '%d.%m.%y %H:%M:%S'
+            self._time_format2 = '%m.%d.%y %H:%M:%S'
+            self._post = request.jsonrequest
+        else:
+            self._time_format = '%m.%d.%y %H:%M:%S'
+            self._time_format2 = '%d.%m.%y %H:%M:%S'
+            self._post = post
+
+        if 'convertor' not in post:
+            return self._parse_raw_data()
+
         self._vending_hw_version = '16'
         self._webstacks_env = request.env['hr.rfid.webstack'].sudo()
         self._webstack = self._webstacks_env.search([ ('serial', '=', str(post['convertor'])) ])
@@ -704,7 +725,9 @@ class WebRfidController(http.Controller):
                 result = self._parse_response()
 
             self._webstack.write(self._ws_db_update_dict)
-            _logger.debug('Sending back result=' + str(result))
+            t1 = time.time()
+            _logger.debug('Took %2.03f time to form response=%s' % ((t1-t0), str(result)))
+            print('ret=' + str(result))
             return result
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
                 exceptions.MissingError, exceptions.ValidationError, exceptions.DeferredException,
@@ -732,3 +755,27 @@ class WebRfidController(http.Controller):
             request.env['hr.rfid.event.system'].sudo().create(sys_ev_dict)
             _logger.debug('Caught a time error, returning status=200 and creating a system event')
             return { 'status': 200 }
+
+    def _parse_raw_data(self):
+        if 'serial' in self._post and 'security' in self._post and 'events' in self._post:
+            return self._parse_barcode_device()
+
+        return { 'status': 200 }
+
+    def _parse_barcode_device(self):
+        post = self._post
+        ret = request.env['hr.rfid.raw.data'].create([{
+            'do_not_save': True,
+            'identification': post['serial'],
+            'security': post['security'],
+            'data': json.dumps(post),
+        }])
+
+        ret_data = ret.return_data
+        ret_type = ret.return_data_type
+
+        if ret.do_not_save is True:
+            ret.unlink()
+
+        if ret_type == 'rpc':
+            return json.loads(ret_data)

@@ -155,6 +155,10 @@ class HrRfidCard(models.Model):
     @api.constrains('number')
     def _check_number(self):
         for card in self:
+            dupes = self.search([ ('number', '=', card.number), ('card_type', '=', card.card_type.id) ])
+            if len(dupes) > 1:
+                raise exceptions.ValidationError('Card number must be unique for every card type!')
+
             if len(card.number) > 10:
                 raise exceptions.ValidationError('Card number must be exactly 10 digits')
 
@@ -178,9 +182,6 @@ class HrRfidCard(models.Model):
     def _compute_door_ids(self):
         for card in self:
             card.door_ids = card.door_rel_ids.mapped('door_id')
-
-    _sql_constraints = [ ('rfid_card_number_unique', 'unique(number)',
-                          'Card numbers must be unique!') ]
 
     @api.model_create_multi
     @api.returns('self', lambda value: value.id)
@@ -336,6 +337,7 @@ class HrRfidCardType(models.Model):
             # 'context': "{'card_type':%s}" % self.id,
             # 'target': 'new',
         }
+
 
 class HrRfidCardDoorRel(models.Model):
     _name = 'hr.rfid.card.door.rel'
