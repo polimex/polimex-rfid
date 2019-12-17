@@ -772,10 +772,8 @@ class WebRfidController(http.Controller):
         }])
 
         ret_data = ret.return_data
-        ret_type = ret.return_data_type
 
         if ret.do_not_save is True:
             ret.unlink()
 
-        if ret_type == 'rpc':
-            return json.loads(ret_data)
+        return json.loads(ret_data)

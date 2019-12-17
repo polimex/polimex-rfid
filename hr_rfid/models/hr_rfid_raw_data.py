@@ -1,4 +1,6 @@
-from odoo import models, api, fields
+from odoo import models, fields
+
+import json
 
 
 class RawData(models.Model):
@@ -33,14 +35,8 @@ class RawData(models.Model):
         default=False,
     )
 
-    return_data_type = fields.Selection(
-        [ ('rpc', 'JSON RPC'), ('regular', 'Regular JSON') ],
-        string='Return json type',
-        default='rpc',
-    )
-
     return_data = fields.Char(
         string='Return Data',
         help='What to return to the json request',
-        default="{'status':200}"
+        default=json.dumps({'status': 200}),
     )

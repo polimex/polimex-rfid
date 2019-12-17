@@ -1545,6 +1545,16 @@ class HrRfidSystemEvent(models.Model):
         index=True,
     )
 
+    occurrences = fields.Integer(
+        string='Occurrences',
+        help='Number of times the event has happened',
+        default=1,
+    )
+
+    last_occurrence = fields.Datetime(
+        string='Last occurrence',
+    )
+
     action_selection = [
         ('0', 'Unknown Event?'),
         ('1', 'DuressOK'),
@@ -1632,11 +1642,53 @@ class HrRfidSystemEvent(models.Model):
             else:
                 vals.pop('input_js')
 
+    def _check_duplicate_sys_ev(self, vals):
+        dupe = self.env['hr.rfid.event.system'].search([
+            ('webstack_id', '=', vals['webstack_id']),
+        ], limit=1)
+
+        if not dupe:
+            return False
+
+        if 'controller_id' in vals and not dupe.controller_id:
+            return False
+
+        if 'controller_id' not in vals and dupe.controller_id:
+            return False
+
+        if dupe.controller_id and dupe.controller_id.id != vals['controller_id']:
+            return False
+
+        if 'event_action' not in vals:
+            return False
+
+        if vals['event_action'] != dupe.event_action:
+            return False
+
+        if 'error_description' != dupe.error_description:
+            return False
+
+        dupe.last_occurrence = vals['timestamp']
+        dupe.occurrences = dupe.occurrences + 1
+
+        return True
+
     @api.model_create_multi
     def create(self, vals_list):
+        records = self.env['hr.rfid.event.system']
+
         for vals in vals_list:
             self._check_save_comms(vals)
-        return super(HrRfidSystemEvent, self).create(vals_list)
+
+            if self._check_duplicate_sys_ev(vals):
+                continue
+
+            if 'last_occurrence' not in vals:
+                vals['last_occurrence'] = vals['timestamp']
+
+            records += super(HrRfidSystemEvent, self).create([vals])
+
+        return records
 
     @api.multi
     def write(self, vals):
