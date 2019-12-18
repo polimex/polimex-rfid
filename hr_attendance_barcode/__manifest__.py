@@ -10,7 +10,7 @@
 
     'website': "http://www.yourcompany.com",
 
-    'depends': [ 'base', 'hr_rfid' ],
+    'depends': [ 'base', 'hr_rfid', 'hr_attendance' ],
 
     'data': [
         'views/views.xml',

@@ -27,7 +27,7 @@ class Event(models.Model):
     )
 
     barcode_id = fields.Many2one(
-        'hr.barcode',
+        'hr.rfid.card',
         string='Barcode',
     )
 
@@ -35,11 +35,25 @@ class Event(models.Model):
         string='Barcode',
     )
 
+    @api.multi
+    def _check_employee_attendance(self):
+        for ev in self:
+            barcode = ev.barcode_id.number if ev.barcode_id else ev.raw_barcode
+            emps = self.env['hr.employee'].search([ ('barcode', '=', barcode) ])
+            emps.attendance_action_change_with_date(ev.timestamp)
+
     @api.constrains('barcode_id', 'raw_barcode')
     def _check_bc(self):
         for bc in self:
             if not bc.barcode_id and (bc.raw_barcode == '' or not bc.raw_barcode):
                 raise exceptions.ValidationError('Barcode must be set.')
+
+    @api.model_create_multi
+    @api.returns('self', lambda value: value.id)
+    def create(self, vals_list):
+        records = super(Event, self).create(vals_list)
+        records._check_employee_attendance()
+        return records
 
 
 class RawDataInherit(models.Model):
@@ -48,11 +62,12 @@ class RawDataInherit(models.Model):
     @api.model_create_multi
     @api.returns('self', lambda value: value.id)
     def create(self, vals_list):
-
         vals_in_js = [ 'serial', 'security', 'events' ]
         vals_in_evs = [ 'hardware', 'type', 'timestamp', 'data', 'where' ]
 
-        barcode_event_type = 2
+        barcode_event_hw = 2
+
+        # TODO Differentiate between cards and barcodes. Hint: It's the "type" value in the event object
 
         def vals_in_object(_vals, _obj):
             return reduce(lambda a, b: a and (b in _obj), _vals, True)
@@ -69,7 +84,7 @@ class RawDataInherit(models.Model):
                 continue
 
             for ev in js['events']:
-                if not vals_in_object(vals_in_evs, ev) or ev['hardware'] != barcode_event_type:
+                if not vals_in_object(vals_in_evs, ev) or ev['hardware'] != barcode_event_hw:
                     continue
 
                 ws = self.env['hr.rfid.webstack'].search([ ('serial', '=', str(js['identification'])) ])

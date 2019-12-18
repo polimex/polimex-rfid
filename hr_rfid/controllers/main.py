@@ -732,13 +732,14 @@ class WebRfidController(http.Controller):
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
                 exceptions.MissingError, exceptions.ValidationError, exceptions.DeferredException,
                 psycopg2.DataError, ValueError) as __:
-            request.env['hr.rfid.event.system'].sudo().create({
+            request.env['hr.rfid.event.system'].sudo().create([{
                 'webstack_id': self._webstack.id,
                 'timestamp': fields.Datetime.now(),
                 'error_description': traceback.format_exc(),
                 'input_js': json.dumps(self._post),
-            })
+            }])
             _logger.debug('Caught an exception, returning status=500 and creating a system event')
+            print('Caught an exception, returning status=500 and creating a system event')
             return { 'status': 500 }
         except BadTimeException:
             t = self._post['event']['date'] + ' ' + self._post['event']['time']
@@ -754,6 +755,7 @@ class WebRfidController(http.Controller):
             }
             request.env['hr.rfid.event.system'].sudo().create(sys_ev_dict)
             _logger.debug('Caught a time error, returning status=200 and creating a system event')
+            print('Caught a time error, returning status=200 and creating a system event')
             return { 'status': 200 }
 
     def _parse_raw_data(self):

@@ -1650,22 +1650,13 @@ class HrRfidSystemEvent(models.Model):
         if not dupe:
             return False
 
-        if 'controller_id' in vals and not dupe.controller_id:
+        if vals.get('controller_id', False) != dupe.controller_id.id:
             return False
 
-        if 'controller_id' not in vals and dupe.controller_id:
+        if vals.get('event_action', False) != dupe.event_action:
             return False
 
-        if dupe.controller_id and dupe.controller_id.id != vals['controller_id']:
-            return False
-
-        if 'event_action' not in vals:
-            return False
-
-        if vals['event_action'] != dupe.event_action:
-            return False
-
-        if 'error_description' != dupe.error_description:
+        if vals.get('error_description', False) != dupe.error_description:
             return False
 
         dupe.last_occurrence = vals['timestamp']

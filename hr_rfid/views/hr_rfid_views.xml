@@ -1574,8 +1574,8 @@
                 <field name="controller_id" readonly="1"/>
                 <field name="webstack_id" readonly="1"/>
                 <field name="timestamp" readonly="1"/>
-                <field name="occurrences" readonly="1" attrs="{'invisible':[('occurrences','<=','1')]}" />
-                <field name="last_occurrence" readonly="1" attrs="{'invisible':[('occurrences','<=','1')]}" />
+                <field name="occurrences" readonly="1" attrs="{'invisible':[('occurrences','&lt;=','1')]}" />
+                <field name="last_occurrence" readonly="1" attrs="{'invisible':[('occurrences','&lt;=','1')]}" />
               </group>
               <group string="More information" colspan="4">
                 <field name="error_description" readonly="1"/>
