@@ -73,6 +73,7 @@ class HrRfidWebstackDiscovery(models.TransientModel):
                     'version':    data[3],
                     'hw_version': data[2],
                     'serial':     data[4],
+                    'behind_nat': False,
                     'available': 'u',
                 }
                 env = ws_env.sudo()
