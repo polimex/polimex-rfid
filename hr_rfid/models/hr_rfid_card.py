@@ -17,6 +17,9 @@ class HrRfidCard(models.Model):
     def _get_cur_employee_id(self):
         return self.env.context.get('employee_id', None)
 
+    def _get_cur_contact_id(self):
+        return self.env.context.get('contact_id', None)
+
     name = fields.Char(
         compute='_compute_card_name',
     )
@@ -47,6 +50,7 @@ class HrRfidCard(models.Model):
     contact_id = fields.Many2one(
         'res.partner',
         string='Card Owner (Partner)',
+        default=_get_cur_contact_id,
         track_visibility='onchange',
         domain=[('is_company', '=', False)],
     )
