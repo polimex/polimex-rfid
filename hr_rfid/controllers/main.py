@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import http, fields, exceptions, _
 from odoo.http import request
+from enum  import Enum
 
 import datetime
 import json
@@ -14,6 +15,20 @@ _logger = logging.getLogger(__name__)
 
 class BadTimeException(Exception):
     pass
+
+
+class F0Parse(Enum):
+    hw_ver = 0
+    serial_num = 1
+    sw_ver = 2
+    inputs = 3
+    outputs = 4
+    time_schedules = 5
+    io_table_lines = 6
+    alarm_lines = 7
+    mode = 8
+    max_card_count = 9
+    max_events_count = 10
 
 
 class WebRfidController(http.Controller):
@@ -92,11 +107,7 @@ class WebRfidController(http.Controller):
                 'webstack_id': self._webstack.id,
             })
 
-            command = cmd_env.create({
-                'webstack_id': self._webstack.id,
-                'controller_id': controller.id,
-                'cmd': 'F0',
-            })
+            command = cmd_env.read_controller_information_cmd(controller)
 
             return self._send_command(command, 400)
 
@@ -109,11 +120,7 @@ class WebRfidController(http.Controller):
         if event_action == 30:
             cmd_env = request.env['hr.rfid.command'].sudo()
             self._report_sys_ev('Controller restarted', controller)
-            cmd_env.create({
-                'webstack_id': self._webstack.id,
-                'controller_id': controller.id,
-                'cmd': 'D7',
-            })
+            cmd_env.synchronize_clock_cmd(controller)
             return self._check_for_unsent_cmd(200)
 
         reader_num = self._post['event']['reader']
@@ -268,7 +275,10 @@ class WebRfidController(http.Controller):
             return self._check_for_unsent_cmd(200)
 
         if response['c'] == 'F0':
-            self._parse_f0_response(command, controller)
+            if controller.serial_number is not False:
+                self._existing_ctrl_f0_parse(command, controller)
+            else:
+                self._parse_f0_response(command, controller)
 
         if response['c'] == 'F6':
             data = response['d']
@@ -302,6 +312,36 @@ class WebRfidController(http.Controller):
 
         return self._check_for_unsent_cmd(200)
 
+    def _parse_f0_cmd(self, data):
+        def bytes_to_num(start, digits):
+            digits = digits-1
+            res = 0
+            for j in range(digits+1):
+                multiplier = 10 ** (digits-j)
+                res = res + int(data[start:start+2], 16) * multiplier
+                start = start + 2
+            return res
+
+        return {
+            F0Parse.hw_ver: str(bytes_to_num(0, 2)),
+            F0Parse.serial_num: str(bytes_to_num(4, 4)),
+            F0Parse.sw_ver: str(bytes_to_num(12, 3)),
+            F0Parse.inputs: bytes_to_num(18, 3),
+            F0Parse.outputs: bytes_to_num(24, 3),
+            F0Parse.time_schedules: bytes_to_num(32, 2),
+            F0Parse.io_table_lines: bytes_to_num(36, 2),
+            F0Parse.alarm_lines: bytes_to_num(40, 1),
+            F0Parse.mode: int(data[42:44], 16),
+            F0Parse.max_cards_count: bytes_to_num(44, 5),
+            F0Parse.max_events_count: bytes_to_num(54, 5),
+        }
+
+    def _existing_ctrl_f0_parse(self, command, controller):
+        response = self._post['response']
+        data = response['d']
+
+        _logger.error('Re-reading the f0 command not supported yet!')
+
     def _parse_f0_response(self, command, controller):
         ctrl_env = request.env['hr.rfid.ctrl'].sudo()
         response = self._post['response']
@@ -312,16 +352,9 @@ class WebRfidController(http.Controller):
         dual_person_mode = (ctrl_mode & 0x08) > 0
         ctrl_mode = ctrl_mode & 0x07
 
-        def bytes_to_num(start, digits):
-            digits = digits-1
-            res = 0
-            for j in range(digits+1):
-                multiplier = 10 ** (digits-j)
-                res = res + int(data[start:start+2], 16) * multiplier
-                start = start + 2
-            return res
+        f0_parse = self._parse_f0_cmd(data)
 
-        hw_ver = str(bytes_to_num(0, 2))
+        hw_ver = f0_parse[F0Parse.hw_ver]
 
         if (ctrl_mode < 1 or ctrl_mode > 4):
             return self._log_cmd_error('F0 command failure, controller sent '
@@ -339,16 +372,15 @@ class WebRfidController(http.Controller):
         reader_env = request.env['hr.rfid.reader'].sudo()
         door_env = request.env['hr.rfid.door'].sudo()
 
-        sw_ver = str(bytes_to_num(12, 3))
-        inputs = bytes_to_num(18, 3)
-        outputs = bytes_to_num(24, 3)
-        time_schedules = bytes_to_num(32, 2)
-        io_table_lines = bytes_to_num(36, 2)
-        alarm_lines = bytes_to_num(40, 1)
-        max_cards_count = bytes_to_num(44, 5)
-        max_events_count = bytes_to_num(54, 5)
-
-        serial_num = str(bytes_to_num(4, 4))
+        sw_ver = f0_parse[F0Parse.sw_ver]
+        inputs = f0_parse[F0Parse.inputs]
+        outputs = f0_parse[F0Parse.outputs]
+        time_schedules = f0_parse[F0Parse.time_schedules]
+        io_table_lines = f0_parse[F0Parse.io_table_lines]
+        alarm_lines = f0_parse[F0Parse.alarm_lines]
+        max_cards_count = f0_parse[F0Parse.max_cards_count]
+        max_events_count = f0_parse[F0Parse.max_events_count]
+        serial_num = f0_parse[F0Parse.serial_num]
 
         old_ctrl = ctrl_env.search([
             ('serial_number', '=', serial_num)
@@ -480,46 +512,14 @@ class WebRfidController(http.Controller):
         })
 
         cmd_env = request.env['hr.rfid.command'].sudo()
-        cmd_env.create({
-            'webstack_id': self._webstack.id,
-            'controller_id': controller.id,
-            'cmd': 'D7',
-        })
-
-        cmd_env.create({
-            'webstack_id': self._webstack.id,
-            'controller_id': controller.id,
-            'cmd': 'DC',
-            'cmd_data': '0303',
-        })
-
-        cmd_env.create({
-            'webstack_id': self._webstack.id,
-            'controller_id': controller.id,
-            'cmd': 'DC',
-            'cmd_data': '0404',
-        })
-
-        cmd_env.create({
-            'webstack_id': self._webstack.id,
-            'controller_id': controller.id,
-            'cmd': 'F6',
-        })
-
-        cmd_env.create({
-            'webstack_id': self._webstack.id,
-            'controller_id': controller.id,
-            'cmd': 'F9',
-            'cmd_data': '00',
-        })
+        cmd_env.synchronize_clock_cmd(controller)
+        cmd_env.delete_all_cards_cmd(controller)
+        cmd_env.delete_all_events_cmd(controller)
+        cmd_env.read_readers_mode_cmd(controller)
+        cmd_env.read_io_table(controller)
 
         if not controller.is_relay_ctrl() and (ctrl_mode == 1 or ctrl_mode == 3):
-            cmd_env.create({
-                'webstack_id': self._webstack.id,
-                'controller_id': controller.id,
-                'cmd': 'FC',
-                'cmd_data': '',
-            })
+            cmd_env.read_anti_pass_back_mode_cmd(controller)
 
     def _report_sys_ev(self, description, controller=None):
         sys_ev_env = request.env['hr.rfid.event.system'].sudo()

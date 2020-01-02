@@ -1963,6 +1963,64 @@ class HrRfidCommands(models.Model):
     rights_data = fields.Integer(string='Rights Data (debug info)')
     rights_mask = fields.Integer(string='Rights Mask (debug info)')
 
+    @api.model
+    def read_controller_information_cmd(self, controller):
+        return self.create([{
+            'webstack_id': controller.webstack_id.id,
+            'controller_id': controller.id,
+            'cmd': 'F0',
+        }])
+
+    @api.model
+    def synchronize_clock_cmd(self, controller):
+        return self.create([{
+            'webstack_id': controller.webstack_id.id,
+            'controller_id': controller.id,
+            'cmd': 'D7',
+        }])
+
+    @api.model
+    def delete_all_cards_cmd(self, controller):
+        return self.create([{
+            'webstack_id': controller.webstack_id.id,
+            'controller_id': controller.id,
+            'cmd': 'DC',
+            'cmd_data': '0303',
+        }])
+
+    @api.model
+    def delete_all_events_cmd(self, controller):
+        return self.create([{
+            'webstack_id': controller.webstack_id.id,
+            'controller_id': controller.id,
+            'cmd': 'DC',
+            'cmd_data': '0404',
+        }])
+
+    @api.model
+    def read_readers_mode_cmd(self, controller):
+        return self.create([{
+            'webstack_id': controller.webstack_id.id,
+            'controller_id': controller.id,
+            'cmd': 'F6',
+        }])
+
+    @api.model
+    def read_io_table_cmd(self, controller):
+        return self.create([{
+            'webstack_id': controller.webstack_id.id,
+            'controller_id': controller.id,
+            'cmd': 'F9',
+        }])
+
+    @api.model
+    def read_anti_pass_back_mode_cmd(self, controller):
+        return self.create([{
+            'webstack_id': controller.webstack_id.id,
+            'controller_id': controller.id,
+            'cmd': 'FC',
+        }])
+
     @api.multi
     def _compute_cmd_name(self):
         def find_desc(cmd):

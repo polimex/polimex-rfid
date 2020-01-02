@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, exceptions
 from functools import reduce
+from datetime import datetime, timedelta
 
 import json
 
@@ -54,6 +55,19 @@ class Event(models.Model):
         records = super(Event, self).create(vals_list)
         records._check_employee_attendance()
         return records
+
+    @api.model
+    def _delete_old_events(self):
+        event_lifetime = self.env['ir.config_parameter'].get_param('hr_rfid.event_lifetime')
+        if event_lifetime is None:
+            return False
+
+        lifetime = timedelta(days=int(event_lifetime))
+        today = datetime.today()
+        res = self.search([
+            ('event_time', '<', today-lifetime)
+        ])
+        res.unlink()
 
 
 class RawDataInherit(models.Model):
