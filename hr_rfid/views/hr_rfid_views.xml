@@ -794,7 +794,7 @@
       <field name="name">hr.rfid.webstack.discovery.wiz.form</field>
       <field name="model">hr.rfid.webstack.discovery</field>
       <field name="arch" type="xml">
-        <form string="Webstack Discovery">
+        <form string="Module Discovery">
           <field name="state" invisible="1" />
 
           <footer states="pre_discovery">
@@ -840,6 +840,35 @@
               parent="hr_rfid_menu_modules_main_menu"
               action="hr_rfid_webstack_discovery_action"
               groups="hr_rfid_view_module_discovery"
+              sequence="10" />
+
+    <record id="hr_rfid_webstack_manual_create_wiz" model="ir.ui.view">
+      <field name="name">hr.rfid.webstack.manual.create.wiz.form</field>
+      <field name="model">hr.rfid.webstack.manual.create</field>
+      <field name="arch" type="xml">
+        <form string="Module Manual Create">
+          <group>
+            <field name="webstack_name" />
+            <field name="webstack_address" />
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_webstack_manual_create_action" model="ir.actions.act_window">
+      <field name="name">Modules Discovery</field>
+      <field name="res_model">hr.rfid.webstack.manual.create</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_rfid_webstack_manual_create_wiz" />
+      <field name="target">new</field>
+    </record>
+
+    <menuitem id="hr_rfid_menu_modules_manual_create"
+              name="Module Manual Create"
+              parent="hr_rfid_menu_modules_main_menu"
+              action="hr_rfid_webstack_manual_create_action"
+              groups="hr_rfid_group_manager"
               sequence="10" />
 
     <record id="hr_rfid_webstack_view_form" model="ir.ui.view">
@@ -941,7 +970,8 @@
       <field name="name">hr.rfid.webstack.tree</field>
       <field name="model">hr.rfid.webstack</field>
       <field name="arch" type="xml">
-        <tree string="RFID Modules" decoration-danger="ws_active==False" decoration-success="ws_active==True">
+        <tree create="0" delete="0" string="RFID Modules"
+              decoration-danger="ws_active==False" decoration-success="ws_active==True">
           <field name="name"/>
           <field name="serial"/>
           <field name="hw_version"/>
