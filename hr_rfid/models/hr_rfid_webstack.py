@@ -103,6 +103,27 @@ class HrRfidWebstackDiscovery(models.TransientModel):
         }
 
 
+class HrRfidWebstackManualCreate(models.TransientModel):
+    _name = 'hr.rfid.webstack.manual.create'
+    _description = 'Webstack Manual Creation'
+
+    webstack_name = fields.Char(
+        string='Module Name',
+        required=True,
+    )
+
+    webstack_address = fields.Char(
+        string='Webstack Address',
+        required=True,
+    )
+
+    def create_webstack(self):
+        self.env['hr.rfid.webstack'].create({
+            'name': self.webstack_name,
+            'last_ip': self.webstack_address,
+        }).action_check_if_ws_available()
+
+
 class HrRfidWebstack(models.Model):
     _name = 'hr.rfid.webstack'
     _inherit = ['mail.thread']
