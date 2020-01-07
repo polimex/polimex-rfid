@@ -85,16 +85,14 @@
           <attribute name="attrs">{'invisible':[('hw_version','=','16')]}</attribute>
         </xpath>
         <xpath expr="//button[@id='hr_rfid_view_modify_io_table_btn']" position="after">
-          <button name="%(hr_rfid_ctrl_vending_prices_wiz_action)d"
-                  id="hr_rfid_vending_settings_btn"
-                  type="action"
-                  string="Change Vending Settings"
-                  attrs="{'invisible':[('hw_version','!=','16')]}" />
+          <button string="Prices" name="%(hr_rfid_ctrl_vending_prices_wiz_action)d" id="hr_rfid_vending_settings_btn" type="action"  class="oe_stat_button" icon="fa-table" attrs="{'invisible':[('hw_version','!=','16')]}"/>
         </xpath>
         <group position="inside">
-          <field name="show_price_timeout" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}" />
-          <field name="scale_factor" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}" />
-          <field name="cash_contained" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}" />
+          <group string="Vending info">
+            <field name="show_price_timeout" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}"/>
+            <field name="scale_factor" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}"/>
+            <field name="cash_contained" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}"/>
+          </group>
         </group>
       </field>
     </record>
@@ -119,19 +117,31 @@
       <field name="model">hr.rfid.vending.event</field>
       <field name="arch" type="xml">
         <form create="0" delete="0" edit="0">
-          <group>
-            <field name="controller_id" />
-            <field name="event_action" />
-            <field name="event_time" />
-            <field name="create_date" readonly="1" string="Receive Date"
-                   help="Time odoo received the event" />
-            <field name="transaction_price" attrs="{'invisible':[('transaction_price','&lt;',0)]}" />
-            <field name="employee_id" attrs="{'invisible':[('employee_id','=',False)]}" />
-            <field name="card_id" attrs="{'invisible':[('card_id','=',False)]}" />
-            <field name="item_sold" attrs="{'invisible':[('item_sold_id','!=',False)]}" />
-            <field name="item_sold_id" attrs="{'invisible':[('item_sold_id','=',False)]}" />
-            <field name="input_js" groups="base.group_no_one" />
-          </group>
+          <sheet>
+            <group>
+              <group string="Where">
+                <field name="event_action"/>
+                <field name="controller_id"/>
+              </group>
+              <group string="When">
+                <field name="event_time"/>
+                <field name="create_date" readonly="1" string="Receive Date"
+                       help="Time Odoo received the event"/>
+              </group>
+              <group string="Who">
+                <field name="employee_id" attrs="{'invisible':[('employee_id','=',False)]}"/>
+                <field name="card_id" attrs="{'invisible':[('card_id','=',False)]}"/>
+              </group>
+              <group string="What">
+                <field name="item_sold" attrs="{'invisible':[('item_sold_id','!=',False)]}"/>
+                <field name="item_sold_id" attrs="{'invisible':[('item_sold_id','=',False)]}"/>
+                <field name="transaction_price" attrs="{'invisible':[('transaction_price','&lt;',0)]}"/>
+              </group>
+              <group string="Debug Information" colspan="4" groups="base.group_no_one">
+                <field name="input_js"/>
+              </group>
+            </group>
+          </sheet>
         </form>
       </field>
     </record>

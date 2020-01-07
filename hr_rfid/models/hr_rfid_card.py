@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, exceptions
+from odoo import api, fields, models, exceptions, _
 from datetime import timedelta, datetime
 from enum import Enum
 
@@ -136,8 +136,9 @@ class HrRfidCard(models.Model):
         for card in self:
             card.pin_code = card.get_owner().hr_rfid_pin_code
 
-    @api.one
+    @api.multi
     def toggle_card_active(self):
+        self.ensure_one()
         self.card_active = not self.card_active
 
     @api.multi
@@ -185,8 +186,8 @@ class HrRfidCard(models.Model):
     @api.returns('self', lambda value: value.id)
     def create(self, vals):
         card_door_rel_env = self.env['hr.rfid.card.door.rel']
-        invalid_user_and_contact_msg = 'Card user and contact cannot both be set' \
-                                       ' in the same time, and cannot both be empty.'
+        invalid_user_and_contact_msg = _('Card user and contact cannot both be set' \
+                                       ' in the same time, and cannot both be empty.')
 
         card = super(HrRfidCard, self).create(vals)
 
@@ -318,6 +319,20 @@ class HrRfidCardType(models.Model):
 
         return super(HrRfidCardType, self).unlink()
 
+    @api.multi
+    def list_cards_from_this_type(self):
+        self.ensure_one()
+        return {
+            'name': _('%s list' % self.name),
+            'domain': [('card_type', '=', self.id)],
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'res_model': 'hr.rfid.card',
+            'views': [[False, "tree"], [False, "form"]],
+            'type': 'ir.actions.act_window',
+            # 'context': "{'card_type':%s}" % self.id,
+            # 'target': 'new',
+        }
 
 class HrRfidCardDoorRel(models.Model):
     _name = 'hr.rfid.card.door.rel'

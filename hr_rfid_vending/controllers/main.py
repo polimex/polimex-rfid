@@ -3,13 +3,17 @@ from odoo import http, fields, exceptions, _
 from odoo.http import request
 from functools import reduce
 from decimal import Decimal
-from odoo.addons.hr_rfid.controllers.main import WebRfidController
+from odoo.addons.hr_rfid.controllers.main import WebRfidController, BadTimeException
 
 import operator
 import datetime
 import traceback
 import json
 import psycopg2
+import logging
+import time
+
+_logger = logging.getLogger(__name__)
 
 
 class HrRfidVending(WebRfidController):
@@ -232,7 +236,11 @@ class HrRfidVending(WebRfidController):
 
         try:
             if 'event' in post:
+                t0 = time.time()
+                _logger.debug('Vending: Received=' + str(post))
                 ret = parse_event()
+                t1 = time.time()
+                _logger.debug('Took %2.03f time to form response=%s' % ((t1-t0), str(ret)))
             else:
                 ret = ret_super()
 
@@ -246,4 +254,20 @@ class HrRfidVending(WebRfidController):
                 'error_description': traceback.format_exc(),
                 'input_js': json.dumps(post),
             })
+            _logger.debug('Vending: Caught an exception, returning status=500 and creating a system event')
             return { 'status': 500 }
+        except BadTimeException:
+            t = self._post['event']['date'] + ' ' + self._post['event']['time']
+            ev_num = str(self._post['event']['event_n'])
+            controller = self._webstack.controllers.filtered(lambda r: r.ctrl_id == self._post['event']['id'])
+            sys_ev_dict = {
+                'webstack_id': self._webstack.id,
+                'controller_id': controller.id,
+                'timestamp': fields.Datetime.now(),
+                'event_action': ev_num,
+                'error_description': 'Controller sent us an invalid date or time: ' + t,
+                'input_js': json.dumps(self._post),
+            }
+            request.env['hr.rfid.event.system'].sudo().create(sys_ev_dict)
+            _logger.debug('Caught a time error, returning status=200 and creating a system event')
+            return { 'status': 200 }
