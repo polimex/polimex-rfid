@@ -303,6 +303,39 @@ class WebRfidController(http.Controller):
                 door.apb_mode = (door.number == '1' and (apb_mode & 1)) \
                                 or (door.number == '2' and (apb_mode & 2))
 
+        if response['c'] == 'B3':
+            data = response['d']
+
+            def bytes_to_num(start, digits):
+                digits = digits-1
+                res = 0
+                for j in range(digits+1):
+                    multiplier = 10 ** (digits-j)
+                    res = res + int(data[start:start+2], 16) * multiplier
+                    start = start + 2
+                return res
+
+            entrance = [ bytes_to_num(0, 1), bytes_to_num(1, 1) ]
+            exit = [ bytes_to_num(2, 1), bytes_to_num(3, 1) ]
+            usys = [ bytes_to_num(4, 1), bytes_to_num(5, 1) ]
+            uin = [ bytes_to_num(6, 1), bytes_to_num(7, 1) ]
+            temperature = [ bytes_to_num(8, 1), bytes_to_num(9, 1) ]
+            humidity = [ bytes_to_num(10, 1), bytes_to_num(11, 1) ]
+            Z1 = bytes_to_num(12, 1)
+            Z2 = bytes_to_num(13, 1)
+            Z3 = bytes_to_num(14, 1)
+            Z4 = bytes_to_num(15, 1)
+
+            TOS = bytes_to_num(16, 1)   * 10000 \
+                  + bytes_to_num(17, 1) * 1000 \
+                  + bytes_to_num(18, 1) * 100 \
+                  + bytes_to_num(19, 1) * 10 \
+                  + bytes_to_num(20, 1)
+
+            DT = [ bytes_to_num(21, 1), bytes_to_num(22, 1), bytes_to_num(23, 1) ]
+
+            # TODO What do we do with this info?
+
         command.write({
             'status': 'Success',
             'ex_timestamp': fields.datetime.now(),

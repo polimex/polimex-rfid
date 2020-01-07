@@ -693,6 +693,11 @@ class HrRfidController(models.Model):
         help='Commands that have been sent to this controller',
     )
 
+    read_b3_cmd = fields.Boolean(
+        string='Read Controller Status',
+        default=False,
+    )
+
     @api.model
     def get_default_io_table(self, hw_type, sw_version, mode):
         io_tables = {
@@ -2271,6 +2276,21 @@ class HrRfidCommands(models.Model):
                 'controller_id': ctrl.id,
                 'cmd': 'D7',
             }])
+
+    @api.model
+    def _read_statuses(self):
+        ctrl_env = self.env['hr.rfid.ctrl']
+        commands_env = self.env['hr.rfid.command']
+
+        controllers = ctrl_env.search([('read_b3_cmd', '=', True)])
+
+        for ctrl in controllers:
+            commands_env.create({
+                'webstack_id': ctrl.webstack_id.id,
+                'controller_id': ctrl.id,
+                'cmd': 'B3',
+            })
+
 
     def _check_save_comms(self, vals):
         save_comms = self.env['ir.config_parameter'].get_param('hr_rfid.save_webstack_communications')
