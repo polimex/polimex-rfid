@@ -659,12 +659,12 @@ class WebRfidController(http.Controller):
     def _parse_barcode_device(self):
         post = self._post
         for ev in post['events']:
-            request.env['hr.rfid.raw.data'].create([{
+            request.env['hr.rfid.raw.data'].create({
                 'do_not_save': True,
                 'data_type': 'barcode',
                 'webstack_serial': post['serial'],
                 'security': post['security'],
                 'data': json.dumps(ev),
-            }])
+            })
 
 

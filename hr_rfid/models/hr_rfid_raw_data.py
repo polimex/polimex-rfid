@@ -45,6 +45,6 @@ class RawData(models.Model):
             if 'do_not_save' in vals and vals['do_not_save'] is True:
                 continue
 
-            records += super(RawData, self).create([vals])
+            records += super(RawData, self).create(vals)
         return records
 
