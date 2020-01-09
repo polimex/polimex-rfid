@@ -2311,7 +2311,6 @@ class HrRfidCommands(models.Model):
                 'cmd': 'B3',
             })
 
-
     def _check_save_comms(self, vals):
         save_comms = self.env['ir.config_parameter'].get_param('hr_rfid.save_webstack_communications')
         if save_comms != 'True':
@@ -2339,7 +2338,7 @@ class HrRfidCommands(models.Model):
 
             cmd = vals['cmd']
 
-            if cmd not in [ 'DB', 'D9', 'D5', 'DE', 'D7', 'F0', 'FC', 'D6' ]:
+            if cmd not in [ 'DB', 'D9', 'D5', 'DE', 'D7', 'F0', 'FC', 'D6', 'B3' ]:
                 records += super(HrRfidCommands, self).create([vals])
                 continue
 
@@ -2358,7 +2357,7 @@ class HrRfidCommands(models.Model):
             elif cmd in [ 'D9', 'D5', 'DE', 'D6' ]:
                 res.cmd_data = cmd_data
                 continue
-            elif cmd in [ 'D7', 'F0', 'FC' ]:
+            elif cmd in [ 'D7', 'F0', 'FC', 'B3' ]:
                 continue
 
             records += super(HrRfidCommands, self).create([vals])
