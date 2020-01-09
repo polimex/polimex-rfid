@@ -698,6 +698,26 @@ class HrRfidController(models.Model):
         default=False,
     )
 
+    temperature = fields.Float(
+        string='Temperature',
+        default=0,
+    )
+
+    humidity = fields.Float(
+        string='Humidity',
+        default=0,
+    )
+
+    system_voltage = fields.Float(
+        string='System Voltage',
+        default=0,
+    )
+
+    input_voltage = fields.Float(
+        string='Input Voltage',
+        default=0,
+    )
+
     @api.model
     def get_default_io_table(self, hw_type, sw_version, mode):
         io_tables = {

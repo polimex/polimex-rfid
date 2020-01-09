@@ -1077,6 +1077,10 @@
                 <field name="hw_version" readonly="1"/>
                 <field name="sw_version" readonly="1"/>
                 <field name="readers" readonly="1"/>
+                <field name="temperature" readonly="1" />
+                <field name="humidity" readonly="1" />
+                <field name="system_voltage" readonly="1" />
+                <field name="input_voltage" readonly="1" />
               </group>
               <group string="Internal memory">
                 <field name="max_cards_count" readonly="1"/>
@@ -1085,6 +1089,7 @@
               <group string="Setup">
                 <field name="mode" />
                 <field name="external_db" />
+                <field name="read_b3_cmd" />
                 <field name="relay_time_factor" readonly="1" />
                 <field name="dual_person_mode" readonly="1" />
                 <field name="webstack_id" readonly="1"/>

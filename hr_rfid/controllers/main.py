@@ -319,8 +319,8 @@ class WebRfidController(http.Controller):
             exit = [ bytes_to_num(2, 1), bytes_to_num(3, 1) ]
             usys = [ bytes_to_num(4, 1), bytes_to_num(5, 1) ]
             uin = [ bytes_to_num(6, 1), bytes_to_num(7, 1) ]
-            temperature = [ bytes_to_num(8, 1), bytes_to_num(9, 1) ]
-            humidity = [ bytes_to_num(10, 1), bytes_to_num(11, 1) ]
+            temperature = bytes_to_num(8, 2)
+            humidity = bytes_to_num(10, 2)
             Z1 = bytes_to_num(12, 1)
             Z2 = bytes_to_num(13, 1)
             Z3 = bytes_to_num(14, 1)
@@ -334,7 +334,29 @@ class WebRfidController(http.Controller):
 
             DT = [ bytes_to_num(21, 1), bytes_to_num(22, 1), bytes_to_num(23, 1) ]
 
-            # TODO What do we do with this info?
+            if temperature >= 999:
+                temperature -= 1000
+                temperature *= -1
+            temperature /= 10
+
+            humidity /= 10
+
+            sys_voltage =  ((usys[0] & 0xF0) >> 4) * 1000
+            sys_voltage +=  (usys[0] & 0x0F)       * 100
+            sys_voltage += ((usys[1] & 0xF0) >> 4) * 10
+            sys_voltage +=  (usys[1] & 0x0F)
+            sys_voltage = (sys_voltage * 8) / 5
+
+            input_voltage =  ((uin[0] & 0xF0) >> 4) * 1000
+            input_voltage +=  (uin[0] & 0x0F)       * 100
+            input_voltage += ((uin[1] & 0xF0) >> 4) * 10
+            input_voltage +=  (uin[1] & 0x0F)
+            input_voltage = (input_voltage * 8) / 5
+
+            controller.temperature = temperature
+            controller.humidity = humidity
+            controller.system_voltage = sys_voltage
+            controller.input_voltage = input_voltage
 
         command.write({
             'status': 'Success',
