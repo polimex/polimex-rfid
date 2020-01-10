@@ -85,7 +85,13 @@
           <attribute name="attrs">{'invisible':[('hw_version','=','16')]}</attribute>
         </xpath>
         <xpath expr="//button[@id='hr_rfid_view_modify_io_table_btn']" position="after">
-          <button string="Prices" name="%(hr_rfid_ctrl_vending_prices_wiz_action)d" id="hr_rfid_vending_settings_btn" type="action"  class="oe_stat_button" icon="fa-table" attrs="{'invisible':[('hw_version','!=','16')]}"/>
+          <button string="Prices"
+                  name="%(hr_rfid_ctrl_vending_prices_wiz_action)d"
+                  id="hr_rfid_vending_settings_btn"
+                  type="action"
+                  class="oe_stat_button"
+                  icon="fa-table"
+                  attrs="{'invisible':[('hw_version','!=','16')]}" />
         </xpath>
         <group position="inside">
           <group string="Vending info" attrs="{'invisible':[('hw_version','!=','16')]}">

@@ -35,12 +35,14 @@
           <page string="RFID Info"
                 groups="hr_rfid.hr_rfid_view_rfid_data"
                 attrs="{'invisible':[('is_company','=',True)]}">
-            <button name="%(hr_rfid_contact_doors_wiz_action)d"
-                    id="hr_rfid_contact_show_doors_btn"
-                    type="action"
-                    string="Doors"
-                    help="Doors this contact has access to"
-                    class="oe_highlight" />
+            <div class="oe_button_box" name="button_box">
+              <button name="%(hr_rfid_contact_doors_wiz_action)d"
+                      id="hr_rfid_contact_show_doors_btn"
+                      type="action"
+                      string="Doors"
+                      help="Doors this contact has access to"
+                      class="oe_highlight" />
+            </div>
             <group string="Settings">
               <field name="hr_rfid_pin_code" groups="hr_rfid.hr_rfid_view_rfid_pin_code_data" />
             </group>

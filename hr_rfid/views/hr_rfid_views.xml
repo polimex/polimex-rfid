@@ -349,14 +349,21 @@
         <form string="Access Groups">
           <sheet modifiers="{}">
             <div class="oe_button_box" name="button_box" attrs="{'invisible': [('id', '=', False)]}">
-              <button name="%(hr_rfid_access_group_add_doors_wiz_action)d" id="hr_rfid_access_group_add_doors_btn" type="action"
-                      class="oe_stat_button" icon="fa-plus-square" modifiers="{}" options="{}"
-                      string="Add Doors">
-              </button>
-              <button name="%(hr_rfid_access_group_del_doors_wiz_action)d" id="hr_rfid_access_group_del_doors_btn" type="action"
-                      class="oe_stat_button" icon="fa-minus-square" modifiers="{}" options="{}"
-                      string="Remove Doors">
-              </button>
+              <button name="%(hr_rfid_access_group_add_doors_wiz_action)d"
+                      id="hr_rfid_access_group_add_doors_btn"
+                      type="action"
+                      class="oe_stat_button"
+                      icon="fa-plus-square"
+                      modifiers="{}"
+                      options="{}"
+                      string="Add Doors" />
+              <button name="%(hr_rfid_access_group_del_doors_wiz_action)d"
+                      id="hr_rfid_access_group_del_doors_btn" type="action"
+                      class="oe_stat_button"
+                      icon="fa-minus-square"
+                      modifiers="{}"
+                      options="{}"
+                      string="Remove Doors" />
             </div>
             <div class="oe_title" modifiers="{}">
               <h1>
@@ -1216,24 +1223,27 @@
       <field name="model">hr.rfid.door</field>
       <field name="arch" type="xml">
         <form create="false" delete="false">
-          <header>
+          <div class="oe_button_box" name="button_box">
             <button name="open_door"
                     type="object"
                     string="Open door"
                     help="Will only open for 3 seconds"
+                    icon="fa-check"
                     groups="hr_rfid.hr_rfid_view_door_open_close" />
             <button name="close_door"
                     type="object"
                     string="Close door"
                     help="Will only close for 3 seconds"
+                    icon="fa-times"
                     groups="hr_rfid.hr_rfid_view_door_open_close" />
             <button name="%(hr_rfid_door_open_close_wiz_action)d"
                     id="hr_rfid_door_open_close_btn"
                     type="action"
                     string="Open/Close Door"
                     class="oe_highlight"
+                    icon="fa-adjust"
                     groups="hr_rfid.hr_rfid_view_door_open_close" />
-          </header>
+          </div>
 
           <group>
             <field name="name" />
