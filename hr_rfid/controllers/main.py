@@ -274,10 +274,7 @@ class WebRfidController(http.Controller):
             return self._check_for_unsent_cmd(200)
 
         if response['c'] == 'F0':
-            if controller.serial_number is not False:
-                self._existing_ctrl_f0_parse(command, controller)
-            else:
-                self._parse_f0_response(command, controller)
+            self._parse_f0_response(command, controller)
 
         if response['c'] == 'F6':
             data = response['d']
@@ -390,12 +387,6 @@ class WebRfidController(http.Controller):
             F0Parse.max_events_count: bytes_to_num(54, 5),
         }
 
-    def _existing_ctrl_f0_parse(self, command, controller):
-        response = self._post['response']
-        data = response['d']
-
-        _logger.error('Re-reading the f0 command not supported yet!')
-
     def _parse_f0_response(self, command, controller):
         ctrl_env = request.env['hr.rfid.ctrl'].sudo()
         response = self._post['response']
@@ -444,32 +435,49 @@ class WebRfidController(http.Controller):
             old_ctrl.webstack_id = controller.webstack_id
             controller.unlink()
 
-        if len(controller.reader_ids):
-            controller.reader_ids.unlink()
+        old_reader_count = len(controller.reader_ids)
+        old_door_count = len(controller.door_ids)
+        new_reader_count = 0
+        new_door_count = 0
 
-        if len(controller.door_ids):
-            controller.door_ids.unlink()
-
-        def create_door(name, number, ctrl_id):
+        def create_door(name, number):
             # If the controller is a vending controller
-            if hw_ver == self._vending_hw_version:
-                return None
-            return door_env.create({
+            global new_door_count
+
+            door_dict = {
                 'name': name,
                 'number': number,
-                'controller_id': ctrl_id,
-            })
+                'controller_id': controller.id,
+            }
 
-        def create_reader(name, number, reader_type, ctrl_id, door_id=None):
+            if new_door_count < old_door_count:
+                new_door_count += 1
+                _door = controller.door_ids[new_door_count-1]
+                _door.write(door_dict)
+                return _door
+
+            if hw_ver == self._vending_hw_version:
+                return None
+            return door_env.create(door_dict)
+
+        def create_reader(name, number, reader_type, door_id=None):
             create_dict = {
                 'name': name,
                 'number': number,
                 'reader_type': reader_type,
-                'controller_id': ctrl_id,
+                'controller_id': controller.id,
             }
+
+            global new_reader_count
 
             if door_id is not None:
                 create_dict['door_id'] = door_id
+
+            if new_reader_count < old_reader_count:
+                new_reader_count += 1
+                _reader = controller.reader_ids[new_reader_count-1]
+                _reader.write(create_dict)
+                return _reader
 
             return reader_env.create(create_dict)
 
@@ -481,70 +489,75 @@ class WebRfidController(http.Controller):
 
         if controller.hw_version_is_for_relay_ctrl(hw_ver):
             if ctrl_mode == 1 or ctrl_mode == 3:
-                reader = create_reader('R1', 1, '0', controller.id)
+                reader = create_reader('R1', 1, '0')
                 for i in range(outputs):
-                    door = create_door(gen_d_name(i+1, controller.id), i+1, controller.id)
+                    door = create_door(gen_d_name(i+1, controller.id), i+1)
                     add_door_to_reader(reader, door)
                 for i in range(1, readers_count):
-                    create_reader('R' + str(i+1), i+1, '0', controller.id)
+                    create_reader('R' + str(i+1), i+1, '0')
             elif ctrl_mode == 2:
                 if outputs > 16 and readers_count < 2:
                     return self._log_cmd_error('F0 sent us too many outputs and not enough readers',
                                                command, '31', 200)
-                reader = create_reader('R1', 1, '0', controller.id)
+                reader = create_reader('R1', 1, '0')
                 for i in range(outputs):
-                    door = create_door(gen_d_name(i+1, controller.id), i+1, controller.id)
+                    door = create_door(gen_d_name(i+1, controller.id), i+1)
                     add_door_to_reader(reader, door)
                 if outputs > 16:
-                    reader = create_reader('R2', 2, '0', controller.id)
+                    reader = create_reader('R2', 2, '0')
                     for i in range(outputs-16):
-                        door = create_door(gen_d_name(i+1, controller.id), i+1, controller.id)
+                        door = create_door(gen_d_name(i+1, controller.id), i+1)
                         add_door_to_reader(reader, door)
                     for i in range(2, readers_count):
-                        create_reader('R' + str(i+1), i+1, '0', controller.id)
+                        create_reader('R' + str(i+1), i+1, '0')
                 else:
                     for i in range(1, readers_count):
-                        create_reader('R' + str(i+1), i+1, '0', controller.id)
+                        create_reader('R' + str(i+1), i+1, '0')
             else:
                 raise exceptions.ValidationError(_('Got controller mode=%d for hw_ver=%s???')
                                                  % (ctrl_mode, hw_ver))
         else:
             if ctrl_mode == 1 or ctrl_mode == 3:
-                last_door = create_door(gen_d_name(1, controller.id), 1, controller.id)
+                last_door = create_door(gen_d_name(1, controller.id), 1)
                 last_door = last_door.id
-                create_reader('R1', 1, '0', controller.id, last_door)
-                create_reader('R2', 2, '1', controller.id, last_door)
+                create_reader('R1', 1, '0', last_door)
+                create_reader('R2', 2, '1', last_door)
             elif ctrl_mode == 2 and readers_count == 4:
-                last_door = create_door(gen_d_name(1, controller.id), 1, controller.id)
+                last_door = create_door(gen_d_name(1, controller.id), 1)
                 last_door = last_door.id
-                create_reader('R1', 1, '0', controller.id, last_door)
-                create_reader('R2', 2, '1', controller.id, last_door)
-                last_door = create_door(gen_d_name(2, controller.id), 2, controller.id)
+                create_reader('R1', 1, '0', last_door)
+                create_reader('R2', 2, '1', last_door)
+                last_door = create_door(gen_d_name(2, controller.id), 2)
                 last_door = last_door.id
-                create_reader('R3', 3, '0', controller.id, last_door)
-                create_reader('R4', 4, '1', controller.id, last_door)
+                create_reader('R3', 3, '0', last_door)
+                create_reader('R4', 4, '1', last_door)
             else:  # (ctrl_mode == 2 and readers_count == 2) or ctrl_mode == 4
-                last_door = create_door(gen_d_name(1, controller.id), 1, controller.id)
+                last_door = create_door(gen_d_name(1, controller.id), 1)
                 last_door = last_door.id
-                create_reader('R1', 1, '0', controller.id, last_door)
-                last_door = create_door(gen_d_name(2, controller.id), 2, controller.id)
+                create_reader('R1', 1, '0', last_door)
+                last_door = create_door(gen_d_name(2, controller.id), 2)
                 last_door = last_door.id
-                create_reader('R2', 2, '0', controller.id, last_door)
+                create_reader('R2', 2, '0', last_door)
 
             if ctrl_mode == 3:
-                last_door = create_door(gen_d_name(2, controller.id), 2, controller.id)
+                last_door = create_door(gen_d_name(2, controller.id), 2)
                 last_door = last_door.id
-                create_reader('R3', 3, '0', controller.id, last_door)
-                last_door = create_door(gen_d_name(3, controller.id), 3, controller.id)
+                create_reader('R3', 3, '0', last_door)
+                last_door = create_door(gen_d_name(3, controller.id), 3)
                 last_door = last_door.id
-                create_reader('R4', 4, '0', controller.id, last_door)
+                create_reader('R4', 4, '0', last_door)
             elif ctrl_mode == 4:
-                last_door = create_door(gen_d_name(3, controller.id), 3, controller.id)
+                last_door = create_door(gen_d_name(3, controller.id), 3)
                 last_door = last_door.id
-                create_reader('R3', 3, '0', controller.id, last_door)
-                last_door = create_door(gen_d_name(4, controller.id), 4, controller.id)
+                create_reader('R3', 3, '0', last_door)
+                last_door = create_door(gen_d_name(4, controller.id), 4)
                 last_door = last_door.id
-                create_reader('R4', 4, '0', controller.id, last_door)
+                create_reader('R4', 4, '0', last_door)
+
+        if old_reader_count > new_reader_count:
+            controller.reader_ids[old_reader_count : new_reader_count].unlink()
+        if old_door_count > new_door_count:
+            controller.reader_ids[old_door_count : new_door_count].unlink()
 
         controller.write({
             'name': 'Controller ' + serial_num + ' ' + str(controller.ctrl_id),

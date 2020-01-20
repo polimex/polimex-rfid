@@ -97,10 +97,64 @@ class HrRfidWebstackDiscovery(models.TransientModel):
             ws.action_set_webstack_settings()
             ws.action_set_active()
 
+        self.get_controllers()
+
         return {
             'type': 'ir.actions.client',
             'tag': 'reload',
         }
+
+    @api.multi
+    def get_controllers(self):
+        self.ensure_one()
+
+        ctrl_env = self.env['hr.rfid.ctrl']
+
+        for ws in self.setup_and_set_to_active:
+            host = str(ws.last_ip)
+            try:
+                conn = http.client.HTTPConnection(host, 80, timeout=2)
+                conn.request('GET', '/config.json')
+                response = conn.getresponse()
+                code = response.getcode()
+                body = response.read()
+                conn.close()
+                if code != 200:
+                    raise exceptions.ValidationError('Webstack sent us http code {}'
+                                                     ' when 200 was expected.'.format(code))
+                js = json.loads(body.decode())
+                controllers = js['devFound']
+
+                if type(controllers) != type(int(0)):
+                    raise exceptions.ValidationError('Webstack gave us bad data when requesting /config.json')
+
+                for dev in range(controllers):
+                    conn = http.client.HTTPConnection(host, 80, timeout=2)
+                    conn.request('GET', '/sdk/details.json?dev=' + str(dev))
+                    response = conn.getresponse()
+                    code = response.getcode()
+                    body = response.read()
+                    conn.close()
+
+                    if code != 200:
+                        raise exceptions.ValidationError('Webstack sent us http code {} when 200 was expected'
+                                                         ' while requesting /sdk/details.json?dev={}'
+                                                         .format(code, dev))
+
+                    ctrl_js = json.loads(body.decode())
+                    controller = ctrl_env.create({
+                        'name': 'Controller',
+                        'ctrl_id': ctrl_js['dev']['devID'],
+                        'webstack_id': ws.id,
+                    })
+                    self.env['hr.rfid.command'].read_controller_information_cmd(controller)
+            except socket.timeout:
+                raise exceptions.ValidationError('Could not connect to the webstack at ' + host)
+            except(socket.error, socket.gaierror, socket.herror) as e:
+                raise exceptions.ValidationError('Unexpected error:\n' + str(e))
+            except KeyError as __:
+                raise exceptions.ValidationError('Information returned by the webstack at '
+                                                 + host + ' invalid')
 
 
 class HrRfidWebstackManualCreate(models.TransientModel):
@@ -346,8 +400,8 @@ class HrRfidWebstack(models.Model):
     def action_check_if_ws_available(self):
         host = str(self.last_ip)
         try:
-            conn = http.client.HTTPConnection(str(host), 80, timeout=2)
-            conn.request("GET", "/config.json")
+            conn = http.client.HTTPConnection(host, 80, timeout=2)
+            conn.request('GET', '/config.json')
             response = conn.getresponse()
             code = response.getcode()
             body = response.read()
@@ -828,6 +882,12 @@ class HrRfidController(models.Model):
     @api.model
     def hw_version_is_for_relay_ctrl(self, hw_version):
         return hw_version in [ '30', '31', '32' ]
+
+    @api.multi
+    def re_read_ctrl_info(self):
+        cmd_env = self.env['hr.rfid.command']
+        for ctrl in self:
+            cmd_env.read_controller_information_cmd(ctrl)
 
     @api.multi
     def write(self, vals):
