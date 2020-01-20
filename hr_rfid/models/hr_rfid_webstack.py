@@ -130,7 +130,7 @@ class HrRfidWebstackDiscovery(models.TransientModel):
 
                 for dev in range(controllers):
                     conn = http.client.HTTPConnection(host, 80, timeout=2)
-                    conn.request('GET', '/sdk/details.json?dev=' + str(dev))
+                    conn.request('GET', '/sdk/status.json?dev=' + str(dev))
                     response = conn.getresponse()
                     code = response.getcode()
                     body = response.read()
