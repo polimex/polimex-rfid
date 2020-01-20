@@ -349,14 +349,21 @@
         <form string="Access Groups">
           <sheet modifiers="{}">
             <div class="oe_button_box" name="button_box" attrs="{'invisible': [('id', '=', False)]}">
-              <button name="%(hr_rfid_access_group_add_doors_wiz_action)d" id="hr_rfid_access_group_add_doors_btn" type="action"
-                      class="oe_stat_button" icon="fa-plus-square" modifiers="{}" options="{}"
-                      string="Add Doors">
-              </button>
-              <button name="%(hr_rfid_access_group_del_doors_wiz_action)d" id="hr_rfid_access_group_del_doors_btn" type="action"
-                      class="oe_stat_button" icon="fa-minus-square" modifiers="{}" options="{}"
-                      string="Remove Doors">
-              </button>
+              <button name="%(hr_rfid_access_group_add_doors_wiz_action)d"
+                      id="hr_rfid_access_group_add_doors_btn"
+                      type="action"
+                      class="oe_stat_button"
+                      icon="fa-plus-square"
+                      modifiers="{}"
+                      options="{}"
+                      string="Add Doors" />
+              <button name="%(hr_rfid_access_group_del_doors_wiz_action)d"
+                      id="hr_rfid_access_group_del_doors_btn" type="action"
+                      class="oe_stat_button"
+                      icon="fa-minus-square"
+                      modifiers="{}"
+                      options="{}"
+                      string="Remove Doors" />
             </div>
             <div class="oe_title" modifiers="{}">
               <h1>
@@ -794,7 +801,7 @@
       <field name="name">hr.rfid.webstack.discovery.wiz.form</field>
       <field name="model">hr.rfid.webstack.discovery</field>
       <field name="arch" type="xml">
-        <form string="Webstack Discovery">
+        <form string="Module Discovery">
           <field name="state" invisible="1" />
 
           <footer states="pre_discovery">
@@ -840,6 +847,35 @@
               parent="hr_rfid_menu_modules_main_menu"
               action="hr_rfid_webstack_discovery_action"
               groups="hr_rfid_view_module_discovery"
+              sequence="10" />
+
+    <record id="hr_rfid_webstack_manual_create_wiz" model="ir.ui.view">
+      <field name="name">hr.rfid.webstack.manual.create.wiz.form</field>
+      <field name="model">hr.rfid.webstack.manual.create</field>
+      <field name="arch" type="xml">
+        <form string="Module Manual Create">
+          <group>
+            <field name="webstack_name" />
+            <field name="webstack_address" />
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record id="hr_rfid_webstack_manual_create_action" model="ir.actions.act_window">
+      <field name="name">Modules Discovery</field>
+      <field name="res_model">hr.rfid.webstack.manual.create</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="hr_rfid_webstack_manual_create_wiz" />
+      <field name="target">new</field>
+    </record>
+
+    <menuitem id="hr_rfid_menu_modules_manual_create"
+              name="Module Manual Create"
+              parent="hr_rfid_menu_modules_main_menu"
+              action="hr_rfid_webstack_manual_create_action"
+              groups="hr_rfid_group_manager"
               sequence="10" />
 
     <record id="hr_rfid_webstack_view_form" model="ir.ui.view">
@@ -941,7 +977,8 @@
       <field name="name">hr.rfid.webstack.tree</field>
       <field name="model">hr.rfid.webstack</field>
       <field name="arch" type="xml">
-        <tree string="RFID Modules" decoration-danger="ws_active==False" decoration-success="ws_active==True">
+        <tree create="0" delete="0" string="RFID Modules"
+              decoration-danger="ws_active==False" decoration-success="ws_active==True">
           <field name="name"/>
           <field name="serial"/>
           <field name="hw_version"/>
@@ -1032,8 +1069,14 @@
         <form string="RFID Controller" create="false">
           <sheet modifiers="{}">
             <div class="oe_button_box" name="button_box" modifiers="{}">
-              <button string="Reload cards" name="button_reload_cards" type="object" class="oe_stat_button" icon="fa-refresh" modifiers="{}" options="{}"/>
-              <button string="IO Table" name="%(hr_rfid_controller_io_table_wiz_action)d" id="hr_rfid_view_modify_io_table_btn" type="action" groups="hr_rfid.hr_rfid_group_manager" class="oe_stat_button" icon="fa-table" modifiers="{}" options="{}"/>
+              <button string="Reload cards" name="button_reload_cards" type="object"
+                      class="oe_stat_button" icon="fa-refresh" modifiers="{}" options="{}"/>
+              <button string="IO Table" name="%(hr_rfid_controller_io_table_wiz_action)d"
+                      id="hr_rfid_view_modify_io_table_btn" type="action"
+                      groups="hr_rfid.hr_rfid_group_manager" class="oe_stat_button"
+                      icon="fa-table" modifiers="{}" options="{}"/>
+              <button string="Reload Controller Information" name="re_read_ctrl_info" type="object"
+                      class="oe_stat_button" icon="fa-refresh" modifiers="{}" options="{}"/>
             </div>
             <div class="oe_title" modifiers="{}">
               <h1 modifiers="{}">
@@ -1047,13 +1090,21 @@
                 <field name="hw_version" readonly="1"/>
                 <field name="sw_version" readonly="1"/>
                 <field name="readers" readonly="1"/>
+                <field name="temperature" readonly="1" />
+                <field name="humidity" readonly="1" />
+                <field name="system_voltage" readonly="1" />
+                <field name="input_voltage" readonly="1" />
               </group>
               <group string="Internal memory">
                 <field name="max_cards_count" readonly="1"/>
                 <field name="max_events_count" readonly="1"/>
               </group>
               <group string="Setup">
-                <field name="external_db"/>
+                <field name="mode" />
+                <field name="external_db" />
+                <field name="read_b3_cmd" />
+                <field name="relay_time_factor" readonly="1" />
+                <field name="dual_person_mode" readonly="1" />
                 <field name="webstack_id" readonly="1"/>
               </group>
             </group>
@@ -1178,24 +1229,27 @@
       <field name="model">hr.rfid.door</field>
       <field name="arch" type="xml">
         <form create="false" delete="false">
-          <header>
+          <div class="oe_button_box" name="button_box">
             <button name="open_door"
                     type="object"
                     string="Open door"
                     help="Will only open for 3 seconds"
+                    icon="fa-check"
                     groups="hr_rfid.hr_rfid_view_door_open_close" />
             <button name="close_door"
                     type="object"
                     string="Close door"
                     help="Will only close for 3 seconds"
+                    icon="fa-times"
                     groups="hr_rfid.hr_rfid_view_door_open_close" />
             <button name="%(hr_rfid_door_open_close_wiz_action)d"
                     id="hr_rfid_door_open_close_btn"
                     type="action"
                     string="Open/Close Door"
                     class="oe_highlight"
+                    icon="fa-adjust"
                     groups="hr_rfid.hr_rfid_view_door_open_close" />
-          </header>
+          </div>
 
           <group>
             <field name="name" />
@@ -1351,10 +1405,20 @@
               <field name="mode" />
               <field name="reader_type"/>
             </group>
-            <group string="Information" >
-              <field name="number" readonly="1"/>
-              <field name="controller_id" readonly="1"/>
-              <field name="door_id" readonly="1"/>
+            <group string="Information">
+              <field name="number" readonly="1" />
+              <field name="controller_id" readonly="1" />
+              <field name="door_id" readonly="1" attrs="{'invisible':[('door_id','=',False)]}" />
+            </group>
+            <group colspan="4" attrs="{'invisible':[('door_id','!=',False)]}">
+              <field name="door_ids" readonly="1">
+                <tree>
+                  <field name="name" />
+                  <field name="controller_id" />
+                  <field name="card_type" />
+                  <field name="apb_mode" />
+                </tree>
+              </field>
             </group>
             <group colspan="4">
               <field name="user_event_ids" readonly="1">
@@ -1383,7 +1447,6 @@
           <field name="name" />
           <field name="mode" />
           <field name="controller_id" />
-          <field name="door_id" />
           <field name="reader_type" />
         </tree>
       </field>
@@ -1397,7 +1460,6 @@
           <field name="name" />
           <field name="mode" />
           <field name="controller_id" />
-          <field name="door_id" />
           <field name="reader_type" />
         </search>
       </field>
@@ -1563,6 +1625,8 @@
                 <field name="controller_id" readonly="1"/>
                 <field name="webstack_id" readonly="1"/>
                 <field name="timestamp" readonly="1"/>
+                <field name="occurrences" readonly="1" attrs="{'invisible':[('occurrences','&lt;=','1')]}" />
+                <field name="last_occurrence" readonly="1" attrs="{'invisible':[('occurrences','&lt;=','1')]}" />
               </group>
               <group string="More information" colspan="4">
                 <field name="error_description" readonly="1"/>
@@ -1583,7 +1647,9 @@
         <tree create="false" delete="false">
           <field name="webstack_id" />
           <field name="controller_id" />
+          <field name="occurrences" />
           <field name="timestamp" />
+          <field name="last_occurrence" />
           <field name="event_action" />
           <field name="error_description" />
         </tree>

@@ -31,7 +31,8 @@ class HrRfidControllerVending(models.Model):
     @api.multi
     def _compute_show_price_timeout(self):
         for ctrl in self:
-            if ctrl.io_table == '' or False:
+            if not ctrl.io_table or ctrl.io_table == '' or ctrl.hw_version != '16':
+                ctrl.show_price_timeout = 0
                 continue
 
             # (8*2) = each row is 8 numbers, each number is 2 symbols
@@ -44,7 +45,8 @@ class HrRfidControllerVending(models.Model):
     @api.multi
     def _compute_scale_factor(self):
         for ctrl in self:
-            if ctrl.io_table == '' or False:
+            if not ctrl.io_table or ctrl.io_table == '' or ctrl.hw_version != '16':
+                ctrl.scale_factor = 0
                 continue
 
             # (8*2) = each row is 8 numbers, each number is 2 symbols

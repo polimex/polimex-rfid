@@ -1,27 +1,19 @@
-from odoo import models, api, fields
+from odoo import models, fields
 
-
-data_types_selection = [
-    ('barcode', 'Barcode'),
-    ('card', 'Card'),
-]
+import json
 
 
 class RawData(models.Model):
     _name = 'hr.rfid.raw.data'
     _description = 'Raw Data'
 
-    data_type = fields.Selection(
-        data_types_selection,
-        string='Data Type',
-    )
-
     data = fields.Char(
         string='Data',
     )
 
     timestamp = fields.Datetime(
-        string='Time the event/data was created',
+        string='Event/Data timestamp',
+        help='Time the event/data was created',
     )
 
     receive_ts = fields.Datetime(
@@ -29,7 +21,7 @@ class RawData(models.Model):
         default=fields.Datetime.now()
     )
 
-    webstack_serial = fields.Char(
+    identification = fields.Char(
         string='Webstack serial',
     )
 
@@ -37,14 +29,14 @@ class RawData(models.Model):
         string='Security',
     )
 
-    @api.model_create_multi
-    @api.returns('self', lambda value: value.id)
-    def create(self, vals_list):
-        records = self.env['hr.rfid.raw.data']
-        for vals in vals_list:
-            if 'do_not_save' in vals and vals['do_not_save'] is True:
-                continue
+    do_not_save = fields.Boolean(
+        string='Save data?',
+        help="Whether to save the data or not after it's been dealt with",
+        default=False,
+    )
 
-            records += super(RawData, self).create([vals])
-        return records
-
+    return_data = fields.Char(
+        string='Return Data',
+        help='What to return to the json request',
+        default=json.dumps({'status': 200}),
+    )

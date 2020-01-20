@@ -85,13 +85,19 @@
           <attribute name="attrs">{'invisible':[('hw_version','=','16')]}</attribute>
         </xpath>
         <xpath expr="//button[@id='hr_rfid_view_modify_io_table_btn']" position="after">
-          <button string="Prices" name="%(hr_rfid_ctrl_vending_prices_wiz_action)d" id="hr_rfid_vending_settings_btn" type="action"  class="oe_stat_button" icon="fa-table" attrs="{'invisible':[('hw_version','!=','16')]}"/>
+          <button string="Prices"
+                  name="%(hr_rfid_ctrl_vending_prices_wiz_action)d"
+                  id="hr_rfid_vending_settings_btn"
+                  type="action"
+                  class="oe_stat_button"
+                  icon="fa-table"
+                  attrs="{'invisible':[('hw_version','!=','16')]}" />
         </xpath>
         <group position="inside">
-          <group string="Vending info">
-            <field name="show_price_timeout" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}"/>
-            <field name="scale_factor" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}"/>
-            <field name="cash_contained" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}"/>
+          <group string="Vending info" attrs="{'invisible':[('hw_version','!=','16')]}">
+            <field name="show_price_timeout" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}" />
+            <field name="scale_factor" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}" />
+            <field name="cash_contained" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}" />
           </group>
         </group>
       </field>
@@ -248,7 +254,7 @@
               name="Vending Auto Refill Events"
               parent="hr_rfid_vending_menu"
               action="hr_rfid_vending_auto_refill_action"
-              groups="hr_rfid_vending.group_operator,hr_rfid_vending.group_operator"
+              groups="hr_rfid_vending.group_customer"
               sequence="10" />
 
     <record id="hr_rfid_vending_auto_refill_form" model="ir.ui.view">
@@ -323,7 +329,7 @@
               name="Vending Balance History"
               parent="hr_rfid_vending_menu"
               action="hr_rfid_vending_balance_history_action"
-              groups="hr_rfid_vending.group_operator,hr_rfid_vending.group_operator"
+              groups="hr_rfid_vending.group_customer"
               sequence="20" />
 
     <record id="hr_rfid_vending_balance_history_form" model="ir.ui.view">

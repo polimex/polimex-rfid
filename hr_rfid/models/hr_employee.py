@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, exceptions, http
+from odoo import api, fields, models, exceptions, http, _
 
 
 class HrEmployee(models.Model):
@@ -99,7 +99,7 @@ class HrEmployee(models.Model):
 
     @api.multi
     @api.constrains('hr_rfid_access_group_ids')
-    def _check_access_group(self):
+    def check_access_group(self):
         for user in self:
             user.check_for_ts_inconsistencies()
 
@@ -108,6 +108,19 @@ class HrEmployee(models.Model):
                 if acc_gr not in user.department_id.hr_rfid_allowed_access_groups:
                     raise exceptions.ValidationError('Access group must be one of the access '
                                                      'groups assigned to the department!')
+
+            doors = user.hr_rfid_access_group_ids.mapped('access_group_id')\
+                .mapped('all_door_ids').mapped('door_id')
+            relay_doors = dict()
+            for door in doors:
+                ctrl = door.controller_id
+                if ctrl.is_relay_ctrl():
+                    if ctrl in relay_doors and ctrl.mode == 3:
+                        raise exceptions.ValidationError(
+                            _('Doors "%s" and "%s" both belong to a controller that cannot give access to multiple doors in the same time.')
+                            % (relay_doors[ctrl].name, door.name)
+                        )
+                    relay_doors[ctrl] = door
 
     @api.multi
     @api.constrains('hr_rfid_pin_code')
@@ -153,6 +166,20 @@ class HrEmployee(models.Model):
             emp.hr_rfid_access_group_ids.unlink()
         return super(HrEmployee, self).unlink()
 
+    @api.multi
+    def log_person_out(self, sids=None):
+        for emp in self:
+            if not emp.user_id:
+                continue
+            user = emp.user_id
+            session_storage = http.root.session_store
+            if sids is None:
+                sids = session_storage.list()
+            for sid in sids:
+                session = session_storage.get(sid)
+                if session['uid'] == user.id:
+                    session_storage.delete(session)
+
 
 class HrEmployeeDoors(models.TransientModel):
     _name = 'hr.rfid.employee.doors.wiz'
@@ -177,17 +204,3 @@ class HrEmployeeDoors(models.TransientModel):
         required=True,
         default=_default_doors,
     )
-
-    @api.multi
-    def log_person_out(self, sids=None):
-        for emp in self:
-            if not emp.user_id:
-                continue
-            user = emp.user_id
-            session_storage = http.root.session_store
-            if sids is None:
-                sids = session_storage.list()
-            for sid in sids:
-                session = session_storage.get(sid)
-                if session['uid'] == user.id:
-                    session_storage.delete(session)
