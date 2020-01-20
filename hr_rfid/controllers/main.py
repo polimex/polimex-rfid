@@ -433,7 +433,6 @@ class WebRfidController(http.Controller):
 
         if len(old_ctrl) > 0:
             old_ctrl.webstack_id = controller.webstack_id
-            controller.unlink()
 
         old_reader_count = len(controller.reader_ids)
         old_door_count = len(controller.door_ids)
