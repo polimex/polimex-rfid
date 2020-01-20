@@ -27,7 +27,7 @@ class F0Parse(Enum):
     io_table_lines = 6
     alarm_lines = 7
     mode = 8
-    max_card_count = 9
+    max_cards_count = 9
     max_events_count = 10
 
 
@@ -431,8 +431,12 @@ class WebRfidController(http.Controller):
             ('serial_number', '=', serial_num)
         ], limit=1)
 
+        ctrl_already_existed = False
         if len(old_ctrl) > 0:
-            old_ctrl.webstack_id = controller.webstack_id
+            if old_ctrl.webstack_id == controller.webstack_id:
+                ctrl_already_existed = True
+            else:
+                old_ctrl.webstack_id = controller.webstack_id
 
         old_reader_count = len(controller.reader_ids)
         old_door_count = len(controller.door_ids)
@@ -441,7 +445,8 @@ class WebRfidController(http.Controller):
 
         def create_door(name, number):
             # If the controller is a vending controller
-            global new_door_count
+            nonlocal old_door_count
+            nonlocal new_door_count
 
             door_dict = {
                 'name': name,
@@ -467,7 +472,8 @@ class WebRfidController(http.Controller):
                 'controller_id': controller.id,
             }
 
-            global new_reader_count
+            nonlocal old_reader_count
+            nonlocal new_reader_count
 
             if door_id is not None:
                 create_dict['door_id'] = door_id
@@ -554,9 +560,9 @@ class WebRfidController(http.Controller):
                 create_reader('R4', 4, '0', last_door)
 
         if old_reader_count > new_reader_count:
-            controller.reader_ids[old_reader_count : new_reader_count].unlink()
+            controller.reader_ids[new_reader_count : old_reader_count].unlink()
         if old_door_count > new_door_count:
-            controller.door_ids[old_door_count : new_door_count].unlink()
+            controller.door_ids[new_door_count : old_door_count].unlink()
 
         controller.write({
             'name': 'Controller ' + serial_num + ' ' + str(controller.ctrl_id),
@@ -578,11 +584,12 @@ class WebRfidController(http.Controller):
         })
 
         cmd_env = request.env['hr.rfid.command'].sudo()
-        cmd_env.synchronize_clock_cmd(controller)
-        cmd_env.delete_all_cards_cmd(controller)
-        cmd_env.delete_all_events_cmd(controller)
+        if not ctrl_already_existed:
+            cmd_env.synchronize_clock_cmd(controller)
+            cmd_env.delete_all_cards_cmd(controller)
+            cmd_env.delete_all_events_cmd(controller)
         cmd_env.read_readers_mode_cmd(controller)
-        cmd_env.read_io_table(controller)
+        cmd_env.read_io_table_cmd(controller)
 
         if not controller.is_relay_ctrl() and (ctrl_mode == 1 or ctrl_mode == 3):
             cmd_env.read_anti_pass_back_mode_cmd(controller)
