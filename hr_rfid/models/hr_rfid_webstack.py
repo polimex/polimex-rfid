@@ -123,7 +123,7 @@ class HrRfidWebstackDiscovery(models.TransientModel):
                     raise exceptions.ValidationError('Webstack sent us http code {}'
                                                      ' when 200 was expected.'.format(code))
                 js = json.loads(body.decode())
-                controllers = js['devFound']
+                controllers = js['sdk']['devFound']
 
                 if type(controllers) != type(int(0)):
                     raise exceptions.ValidationError('Webstack gave us bad data when requesting /config.json')
