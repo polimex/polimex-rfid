@@ -556,7 +556,7 @@ class WebRfidController(http.Controller):
         if old_reader_count > new_reader_count:
             controller.reader_ids[old_reader_count : new_reader_count].unlink()
         if old_door_count > new_door_count:
-            controller.reader_ids[old_door_count : new_door_count].unlink()
+            controller.door_ids[old_door_count : new_door_count].unlink()
 
         controller.write({
             'name': 'Controller ' + serial_num + ' ' + str(controller.ctrl_id),
