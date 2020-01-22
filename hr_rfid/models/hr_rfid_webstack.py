@@ -1702,7 +1702,7 @@ class HrRfidSystemEvent(models.Model):
         ('64', 'Vending Request User Balance'),
     ]
 
-    event_nums = map(lambda a: a[0], action_selection)
+    event_nums = list(map(lambda a: a[0], action_selection))
 
     event_action = fields.Selection(
         selection=action_selection,
