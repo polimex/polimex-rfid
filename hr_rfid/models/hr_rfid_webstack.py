@@ -1187,7 +1187,7 @@ class HrRfidDoor(models.Model):
 
             body_js = json.loads(body.decode())
             if body_js['response']['e'] != 0:
-                raise exceptions.ValidationError('Error. Controller returned body:\n' + body)
+                raise exceptions.ValidationError('Error. Controller returned body:\n' + str(body))
         except socket.timeout:
             raise exceptions.ValidationError('Could not connect to the module. '
                                              "Check if it is turned on or if it's on a different ip.")
@@ -1702,6 +1702,8 @@ class HrRfidSystemEvent(models.Model):
         ('64', 'Vending Request User Balance'),
     ]
 
+    event_nums = map(lambda a: a[0], action_selection)
+
     event_action = fields.Selection(
         selection=action_selection,
         string='Event Type',
@@ -1777,6 +1779,9 @@ class HrRfidSystemEvent(models.Model):
 
         for vals in vals_list:
             self._check_save_comms(vals)
+
+            if vals['event_action'] not in self.event_nums:
+                vals['event_action'] = '0'
 
             if self._check_duplicate_sys_ev(vals):
                 continue
