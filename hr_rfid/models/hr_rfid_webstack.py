@@ -1768,8 +1768,10 @@ class HrRfidSystemEvent(models.Model):
         if vals.get('error_description', False) != dupe.error_description:
             return False
 
-        dupe.last_occurrence = vals['timestamp']
-        dupe.occurrences = dupe.occurrences + 1
+        dupe.write({
+            'last_occurrence': vals['timestamp'],
+            'occurrences': dupe.occurrences + 1,
+        })
 
         return True
 
@@ -1778,10 +1780,10 @@ class HrRfidSystemEvent(models.Model):
         records = self.env['hr.rfid.event.system']
 
         for vals in vals_list:
-            self._check_save_comms(vals)
-
             if 'event_action' in vals and vals['event_action'] not in self.event_nums:
                 vals['event_action'] = '0'
+
+            self._check_save_comms(vals)
 
             if self._check_duplicate_sys_ev(vals):
                 continue
