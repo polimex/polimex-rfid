@@ -1780,7 +1780,7 @@ class HrRfidSystemEvent(models.Model):
         for vals in vals_list:
             self._check_save_comms(vals)
 
-            if vals['event_action'] not in self.event_nums:
+            if 'event_action' in vals and vals['event_action'] not in self.event_nums:
                 vals['event_action'] = '0'
 
             if self._check_duplicate_sys_ev(vals):
