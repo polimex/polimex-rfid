@@ -311,8 +311,6 @@ class HrRfidCardType(models.Model):
         help='Doors that will open to this card type',
     )
 
-    _sql_constraints = [ ('rfid_card_type_unique', 'unique(name)', 'Card types must be unique!') ]
-
     @api.multi
     def unlink(self):
         default_card_type_id = self.env.ref('hr_rfid.hr_rfid_card_type_def').id
