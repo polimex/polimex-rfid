@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <odoo>
-  <data>
+   <data>
 
     <!--#######################################################
     #####                   ACTIONS                       #####
@@ -1479,7 +1479,8 @@
             <field name="create_date" readonly="1" string="Receive Date"
                    help="Time odoo received the event" />
             <field name="ctrl_addr" readonly="1" />
-            <field name="employee_id" readonly="1" />
+            <field name="employee_id" readonly="1" attrs="{'invisible':[('employee_id','=',False)]}" />
+            <field name="contact_id" readonly="1" attrs="{'invisible':[('contact_id','=',False)]}" />
             <field name="door_id" readonly="1" />
             <field name="reader_id" readonly="1" />
             <field name="card_id" readonly="1" />
