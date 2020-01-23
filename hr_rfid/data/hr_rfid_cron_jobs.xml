@@ -51,7 +51,7 @@
       <field name="numbercall">-1</field>
     </record>
 
-    <record id="hr_rfid_sync_ctrl_clock_cron" model="ir.cron">
+    <record id="hr_rfid_read_ctrl_status_cron" model="ir.cron">
       <field name="name">HR RFID: Read controller statuses</field>
       <field name="active" eval="True" />
       <field name="user_id" ref="base.user_root" />
