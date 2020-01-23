@@ -137,6 +137,16 @@ class HrEmployee(models.Model):
             except ValueError:
                 raise exceptions.ValidationError('Invalid pin code, digits must be from 0 to 9')
 
+    @api.model_create_multi
+    @api.returns('self', lambda value: value.id)
+    def create(self, vals_list):
+        records = super(HrEmployee, self).create(vals_list)
+
+        for rec in records:
+            rec.add_acc_gr(rec.department_id.hr_rfid_default_access_group)
+
+        return records
+
     @api.multi
     def write(self, vals):
         for user in self:

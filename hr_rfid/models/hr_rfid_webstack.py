@@ -1768,6 +1768,9 @@ class HrRfidSystemEvent(models.Model):
         if vals.get('error_description', False) != dupe.error_description:
             return False
 
+        if vals.get('input_js', False) != dupe.input_js:
+            return False
+
         dupe.write({
             'last_occurrence': vals['timestamp'],
             'occurrences': dupe.occurrences + 1,
