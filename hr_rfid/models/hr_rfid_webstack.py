@@ -772,6 +772,10 @@ class HrRfidController(models.Model):
         default=0,
     )
 
+    last_f0_read = fields.Datetime(
+        string='Last System Information Update',
+    )
+
     @api.model
     def get_default_io_table(self, hw_type, sw_version, mode):
         io_tables = {

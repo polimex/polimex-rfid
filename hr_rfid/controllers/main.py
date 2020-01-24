@@ -574,6 +574,7 @@ class WebRfidController(http.Controller):
             'dual_person_mode': dual_person_mode,
             'max_cards_count': max_cards_count,
             'max_events_count': max_events_count,
+            'last_f0_read': fields.datetime.now(),
         })
 
         cmd_env = request.env['hr.rfid.command'].sudo()
