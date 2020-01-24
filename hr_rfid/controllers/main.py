@@ -303,33 +303,24 @@ class WebRfidController(http.Controller):
         if response['c'] == 'B3':
             data = response['d']
 
-            def bytes_to_num(start, digits):
-                digits = digits-1
-                res = 0
-                for j in range(digits+1):
-                    multiplier = 10 ** (digits-j)
-                    res = res + int(data[start:start+2], 16) * multiplier
-                    start = start + 2
-                return res
-
-            entrance = [ bytes_to_num(0, 1), bytes_to_num(2, 1) ]
-            exit = [ bytes_to_num(4, 1), bytes_to_num(6, 1) ]
-            usys = [ bytes_to_num(8, 1), bytes_to_num(10, 1) ]
-            uin = [ bytes_to_num(12, 1), bytes_to_num(14, 1) ]
+            entrance = [ int(data[0:2], 16), int(data[2:4], 16) ]
+            exit = [ int(data[4:6], 16), int(data[6:8], 16) ]
+            usys = [ int(data[8:10], 16), int(data[10:12], 16) ]
+            uin = [ int(data[12:14], 16), int(data[14:16], 16) ]
             temperature = int(data[16:20], 10)
             humidity = int(data[20:24], 10)
-            Z1 = bytes_to_num(24, 1)
-            Z2 = bytes_to_num(26, 1)
-            Z3 = bytes_to_num(28, 1)
-            Z4 = bytes_to_num(30, 1)
+            Z1 = int(data[24:26], 16)
+            Z2 = int(data[26:28], 16)
+            Z3 = int(data[28:30], 16)
+            Z4 = int(data[30:32], 16)
 
-            TOS = bytes_to_num(32, 1)   * 10000 \
-                  + bytes_to_num(34, 1) * 1000 \
-                  + bytes_to_num(36, 1) * 100 \
-                  + bytes_to_num(38, 1) * 10 \
-                  + bytes_to_num(40, 1)
+            TOS = int(data[32:34], 16)   * 10000 \
+                  + int(data[34:36], 16) * 1000 \
+                  + int(data[36:38], 16) * 100 \
+                  + int(data[38:40], 16) * 10 \
+                  + int(data[40:42], 16)
 
-            DT = [ bytes_to_num(42, 1), bytes_to_num(44, 1), bytes_to_num(46, 1) ]
+            DT = [ int(data[42:44], 16), int(data[44:46], 16), int(data[46:48], 16) ]
 
             if temperature >= 1000:
                 temperature -= 1000
@@ -342,19 +333,19 @@ class WebRfidController(http.Controller):
             sys_voltage +=  (usys[0] & 0x0F)       * 100
             sys_voltage += ((usys[1] & 0xF0) >> 4) * 10
             sys_voltage +=  (usys[1] & 0x0F)
-            sys_voltage = (sys_voltage * 8) / 5
+            sys_voltage = (sys_voltage * 8) / 500
 
             input_voltage =  ((uin[0] & 0xF0) >> 4) * 1000
             input_voltage +=  (uin[0] & 0x0F)       * 100
             input_voltage += ((uin[1] & 0xF0) >> 4) * 10
             input_voltage +=  (uin[1] & 0x0F)
-            input_voltage = (input_voltage * 8) / 5
+            input_voltage = (input_voltage * 8) / 500
 
             controller.write({
                 'temperature': temperature,
                 'humidity': humidity,
-                'system_voltage': sys_voltage / 100,
-                'input_voltage': input_voltage / 100,
+                'system_voltage': sys_voltage,
+                'input_voltage': input_voltage,
             })
 
         command.write({
