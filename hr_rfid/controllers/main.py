@@ -316,8 +316,8 @@ class WebRfidController(http.Controller):
             exit = [ bytes_to_num(4, 1), bytes_to_num(6, 1) ]
             usys = [ bytes_to_num(8, 1), bytes_to_num(10, 1) ]
             uin = [ bytes_to_num(12, 1), bytes_to_num(14, 1) ]
-            temperature = bytes_to_num(16, 1) * 100 + bytes_to_num(18, 1)
-            humidity = bytes_to_num(20, 1) * 100 + bytes_to_num(22, 1)
+            temperature = int(data[16:20], 10)
+            humidity = int(data[20:24], 10)
             Z1 = bytes_to_num(24, 1)
             Z2 = bytes_to_num(26, 1)
             Z3 = bytes_to_num(28, 1)
