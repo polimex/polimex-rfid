@@ -1695,11 +1695,15 @@ class HrRfidSystemEvent(models.Model):
         ('29', ''),
         ('30', 'Power On event'),
         ('31', 'Open/Close Door From PC'),
+        ('33', 'Siren On/Off from PC'),
+        ('34', 'eZoneAlarm'),
+        ('35', 'Zone Arm/Disarm'),
         ('45', '1-W ERROR (wiring problems)'),
         ('47', 'Vending Purchase Complete'),
         ('48', 'Vending Error1'),
         ('49', 'Vending Error2'),
         ('64', 'Vending Request User Balance'),
+        ('67', 'Arm Denied'),
     ]
 
     event_nums = list(map(lambda a: a[0], action_selection))

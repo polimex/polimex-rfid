@@ -312,26 +312,26 @@ class WebRfidController(http.Controller):
                     start = start + 2
                 return res
 
-            entrance = [ bytes_to_num(0, 1), bytes_to_num(1, 1) ]
-            exit = [ bytes_to_num(2, 1), bytes_to_num(3, 1) ]
-            usys = [ bytes_to_num(4, 1), bytes_to_num(5, 1) ]
-            uin = [ bytes_to_num(6, 1), bytes_to_num(7, 1) ]
-            temperature = bytes_to_num(8, 2)
-            humidity = bytes_to_num(10, 2)
-            Z1 = bytes_to_num(12, 1)
-            Z2 = bytes_to_num(13, 1)
-            Z3 = bytes_to_num(14, 1)
-            Z4 = bytes_to_num(15, 1)
+            entrance = [ bytes_to_num(0, 1), bytes_to_num(2, 1) ]
+            exit = [ bytes_to_num(4, 1), bytes_to_num(6, 1) ]
+            usys = [ bytes_to_num(8, 1), bytes_to_num(10, 1) ]
+            uin = [ bytes_to_num(12, 1), bytes_to_num(14, 1) ]
+            temperature = bytes_to_num(16, 1) * 100 + bytes_to_num(18, 1)
+            humidity = bytes_to_num(20, 1) * 100 + bytes_to_num(22, 1)
+            Z1 = bytes_to_num(24, 1)
+            Z2 = bytes_to_num(26, 1)
+            Z3 = bytes_to_num(28, 1)
+            Z4 = bytes_to_num(30, 1)
 
-            TOS = bytes_to_num(16, 1)   * 10000 \
-                  + bytes_to_num(17, 1) * 1000 \
-                  + bytes_to_num(18, 1) * 100 \
-                  + bytes_to_num(19, 1) * 10 \
-                  + bytes_to_num(20, 1)
+            TOS = bytes_to_num(32, 1)   * 10000 \
+                  + bytes_to_num(34, 1) * 1000 \
+                  + bytes_to_num(36, 1) * 100 \
+                  + bytes_to_num(38, 1) * 10 \
+                  + bytes_to_num(40, 1)
 
-            DT = [ bytes_to_num(21, 1), bytes_to_num(22, 1), bytes_to_num(23, 1) ]
+            DT = [ bytes_to_num(42, 1), bytes_to_num(44, 1), bytes_to_num(46, 1) ]
 
-            if temperature >= 999:
+            if temperature >= 1000:
                 temperature -= 1000
                 temperature *= -1
             temperature /= 10
@@ -350,10 +350,12 @@ class WebRfidController(http.Controller):
             input_voltage +=  (uin[1] & 0x0F)
             input_voltage = (input_voltage * 8) / 5
 
-            controller.temperature = temperature
-            controller.humidity = humidity
-            controller.system_voltage = sys_voltage
-            controller.input_voltage = input_voltage
+            controller.write({
+                'temperature': temperature,
+                'humidity': humidity,
+                'system_voltage': sys_voltage / 100,
+                'input_voltage': input_voltage / 100,
+            })
 
         command.write({
             'status': 'Success',
