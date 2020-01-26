@@ -1172,7 +1172,7 @@ class HrRfidDoor(models.Model):
                                             _('Relay doors cannot be closed.'))
             cmd['cmd']['d'] = ('1F%02X' % self.reader_ids[0].number) + self.create_rights_data()
         else:
-            cmd['cmd']['d'] = '%02d%02d%02d' % (self.number, out, time),
+            cmd['cmd']['d'] = '%02d%02d%02d' % (self.number, out, time)
 
         cmd = json.dumps(cmd)
 
@@ -1399,6 +1399,7 @@ class HrRfidReader(models.Model):
     @api.multi
     def write(self, vals):
         if 'mode' not in vals or ('no_d6_cmd' in vals and vals['no_d6_cmd'] is True):
+            vals.pop('no_d6_cmd')
             super(HrRfidReader, self).write(vals)
             return
 
