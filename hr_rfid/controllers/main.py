@@ -450,6 +450,7 @@ class WebRfidController(http.Controller):
             if new_door_count < old_door_count:
                 new_door_count += 1
                 _door = controller.door_ids[new_door_count-1]
+                door_dict.pop('name')
                 _door.write(door_dict)
                 return _door
 
@@ -474,6 +475,7 @@ class WebRfidController(http.Controller):
             if new_reader_count < old_reader_count:
                 new_reader_count += 1
                 _reader = controller.reader_ids[new_reader_count-1]
+                create_dict.pop('name')
                 _reader.write(create_dict)
                 return _reader
 
@@ -557,8 +559,10 @@ class WebRfidController(http.Controller):
         if old_door_count > new_door_count:
             controller.door_ids[new_door_count : old_door_count].unlink()
 
+        if controller.serial_number is False:
+            controller.name = 'Controller ' + serial_num + ' ' + str(controller.ctrl_id)
+
         controller.write({
-            'name': 'Controller ' + serial_num + ' ' + str(controller.ctrl_id),
             'hw_version': hw_ver,
             'serial_number': serial_num,
             'sw_version': sw_ver,

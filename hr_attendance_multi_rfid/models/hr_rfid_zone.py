@@ -32,15 +32,15 @@ class HrRfidZone(models.Model):
             if zone.attendance is False or person in zone.employee_ids:
                 continue
 
-            if person.attendance_state == 'checked_out':
-                event.in_or_out = 'in'
-                person.attendance_action_change_with_date(event.event_time)
-            elif zone.overwrite_check_in:
+            if person in zone.employee_ids and zone.overwrite_check_in:
                 check = self.env['hr.attendance'].search([('employee_id', '=', person.id)], limit=1)
                 if check.check_out:
                     continue
                 event.in_or_out = 'in'
                 check.check_in = event.event_time
+            elif person not in zone.employee_ids and person.attendance_state == 'checked_out':
+                event.in_or_out = 'in'
+                person.attendance_action_change_with_date(event.event_time)
         return super(HrRfidZone, self).person_entered(person, event)
 
     @api.multi
@@ -49,14 +49,15 @@ class HrRfidZone(models.Model):
             return super(HrRfidZone, self).person_left(person, event)
 
         for zone in self:
-            if not zone.attendance or person not in zone.employee_ids:
+            if not zone.attendance:
                 continue
 
-            if person.attendance_state == 'checked_in':
-                event.in_or_out = 'out'
-                person.attendance_action_change_with_date(event.event_time)
-            elif zone.overwrite_check_out:
+            if person not in zone.employee_ids and zone.overwrite_check_out:
                 check = self.env['hr.attendance'].search([('employee_id', '=', person.id)], limit=1)
                 event.in_or_out = 'out'
                 check.check_out = event.event_time
+            elif person in zone.employee_ids and person.attendance_state == 'checked_in':
+                event.in_or_out = 'out'
+                person.attendance_action_change_with_date(event.event_time)
+
         return super(HrRfidZone, self).person_left(person, event)
