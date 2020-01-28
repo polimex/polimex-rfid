@@ -504,7 +504,7 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
             super(HrRfidAccessGroupEmployeeRel, rel).write(vals)
             new_acc_gr = rel.access_group_id
 
-            rel.check_access_group()
+            rel.employee_id.check_access_group()
 
             if new_acc_gr != old_acc_gr:
                 # Potentially remove old rels
@@ -598,7 +598,7 @@ class HrRfidAccessGroupContactRel(models.Model):
             super(HrRfidAccessGroupContactRel, rel).write(vals)
             new_acc_gr = rel.access_group_id
 
-            rel.check_access_group()
+            rel.contact_id.check_access_group()
 
             if new_acc_gr != old_acc_gr:
                 # Potentially remove old rels
