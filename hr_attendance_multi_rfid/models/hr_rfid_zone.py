@@ -29,7 +29,7 @@ class HrRfidZone(models.Model):
             return super(HrRfidZone, self).person_entered(person, event)
 
         for zone in self:
-            if zone.attendance is False or person in zone.employee_ids:
+            if zone.attendance is False:
                 continue
 
             if person in zone.employee_ids and zone.overwrite_check_in:
