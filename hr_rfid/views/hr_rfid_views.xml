@@ -1880,8 +1880,13 @@
             <div class="oe_button_box" name="button_box" attrs="{'invisible': [('id', '=', False)]}">
               <button name="%(hr_rfid_zone_doors_wiz_action)d" id="hr_rfid_zone_doors_btn" type="action"
                       class="oe_stat_button" icon="fa-table" modifiers="{}" options="{}"
-                      string="Add/Remove Doors">
-              </button>
+                      string="Add/Remove Doors" />
+              <button name="clear_employees" id="hr_rfid_zone_clear_employees_btn" type="action"
+                      class="oe_stat_button" icon="fa-minus-square" modifiers="{}" options="{}"
+                      string="Clear Employees" />
+              <button name="clear_contacts" id="hr_rfid_zone_clear_contacts_btn" type="action"
+                      class="oe_stat_button" icon="fa-minus-square" modifiers="{}" options="{}"
+                      string="Clear Contacts" />
             </div>
             <div class="oe_title" modifiers="{}">
               <h1>

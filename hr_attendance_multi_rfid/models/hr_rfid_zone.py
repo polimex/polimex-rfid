@@ -54,10 +54,16 @@ class HrRfidZone(models.Model):
 
             if person not in zone.employee_ids and zone.overwrite_check_out:
                 check = self.env['hr.attendance'].search([('employee_id', '=', person.id)], limit=1)
-                event.in_or_out = 'out'
-                check.check_out = event.event_time
+                if event:
+                    event.in_or_out = 'out'
+                    check.check_out = event.event_time
+                else:
+                    check.check_out = fields.datetime.now()
             elif person in zone.employee_ids and person.attendance_state == 'checked_in':
-                event.in_or_out = 'out'
-                person.attendance_action_change_with_date(event.event_time)
+                if event:
+                    event.in_or_out = 'out'
+                    person.attendance_action_change_with_date(event.event_time)
+                else:
+                    person.attendance_action_change_with_date(fields.datetime.now())
 
         return super(HrRfidZone, self).person_left(person, event)

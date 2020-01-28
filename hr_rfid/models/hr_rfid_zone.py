@@ -100,6 +100,18 @@ class HrRfidZone(models.Model):
                 zone.contact_ids = zone.contact_ids - person
 
     @api.multi
+    def clear_employees(self):
+        for zone in self:
+            for emp in zone.employee_ids:
+                zone.person_left(emp, self.env['hr.rfid.event.user'])
+
+    @api.multi
+    def clear_contacts(self):
+        for zone in self:
+            for cont in zone.contact_ids:
+                zone.person_left(cont, self.env['hr.rfid.event.user'])
+
+    @api.multi
     def _create_person_entered_cmd(self, person, event):
         self._change_apb_cmd(person, event, True)
 
