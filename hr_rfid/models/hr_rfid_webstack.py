@@ -1399,11 +1399,14 @@ class HrRfidReader(models.Model):
     @api.multi
     def write(self, vals):
         if 'mode' not in vals or ('no_d6_cmd' in vals and vals['no_d6_cmd'] is True):
-            vals.pop('no_d6_cmd')
+            if 'no_d6_cmd' in vals:
+                vals.pop('no_d6_cmd')
             super(HrRfidReader, self).write(vals)
             return
 
         for reader in self:
+            if 'no_d6_cmd' in vals:
+                vals.pop('no_d6_cmd')
             old_mode = reader.mode
             super(HrRfidReader, reader).write(vals)
             new_mode = reader.mode
