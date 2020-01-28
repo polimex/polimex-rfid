@@ -368,16 +368,17 @@ class HrRfidWebstack(models.Model):
         config_params = 'sdk=1&stsd=1&sdts=1&stsu=' + odoo_url + '&prt=' \
                         + str(odoo_port) + '&hb=1&thb=60&br=1&odoo=1'
         try:
-            conn = http.client.HTTPConnection(str(host), 80, timeout=2)
-            conn.request("POST", "/protect/uart/conf", js_uart_conf, req_headers)
-            response = conn.getresponse()
-            conn.close()
-            code = response.getcode()
-            body = response.read()
-            if code != 200:
-                raise exceptions.ValidationError('While trying to setup /protect/uart/conf the module '
-                                                 'returned code ' + str(code) + ' with body:\n' +
-                                                 body.decode())
+            if self.hw_version != '50.1':
+                conn = http.client.HTTPConnection(str(host), 80, timeout=2)
+                conn.request("POST", "/protect/uart/conf", js_uart_conf, req_headers)
+                response = conn.getresponse()
+                conn.close()
+                code = response.getcode()
+                body = response.read()
+                if code != 200:
+                    raise exceptions.ValidationError('While trying to setup /protect/uart/conf the module '
+                                                     'returned code ' + str(code) + ' with body:\n' +
+                                                     body.decode())
 
             conn = http.client.HTTPConnection(str(host), 80, timeout=2)
             conn.request("POST", "/protect/config.htm", config_params, req_headers)

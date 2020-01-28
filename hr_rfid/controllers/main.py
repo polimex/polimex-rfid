@@ -602,7 +602,10 @@ class WebRfidController(http.Controller):
         }
 
         if 'event' in self._post:
-            sys_ev['timestamp'] = self._get_ws_time_str()
+            try:
+                sys_ev['timestamp'] = self._get_ws_time_str()
+            except BadTimeException:
+                sys_ev['timestamp'] = fields.datetime.now()
             sys_ev['event_action'] = str(self._post['event']['event_n'])
         else:
             sys_ev['timestamp'] = datetime.datetime.now()
