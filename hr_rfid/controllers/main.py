@@ -94,7 +94,7 @@ class WebRfidController(http.Controller):
         return self._check_for_unsent_cmd(200)
 
     def _parse_event(self):
-        controller = self.env['hr.rfid.ctrl'].search([
+        controller = request.env['hr.rfid.ctrl'].search([
             ('ctrl_id', '=', self._post['event']['id']),
             ('webstack_id', '=', self._webstack.id),
         ])
