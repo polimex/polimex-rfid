@@ -67,12 +67,14 @@ class HrRfidCard(models.Model):
         help='Date and time the card will be activated on',
         track_visibility='onchange',
         default=lambda self: datetime.now(),
+        index=True,
     )
 
     deactivate_on = fields.Datetime(
         string='Deactivate on',
         help='Date and time the card will be deactivated on',
         track_visibility='onchange',
+        index=True,
     )
 
     card_active = fields.Boolean(

@@ -11,6 +11,14 @@ class HrAttendance(models.Model):
         compute_sudo=True,
     )
 
+    check_in = fields.Datetime(
+        index=True,
+    )
+
+    check_out = fields.Datetime(
+        index=True,
+    )
+
     @api.depends('check_in', 'employee_id')
     def _compute_theoretical_hours(self):
         obj = self.env['hr.attendance.theoretical.time.report']

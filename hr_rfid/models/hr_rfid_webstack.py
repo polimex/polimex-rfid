@@ -751,6 +751,7 @@ class HrRfidController(models.Model):
     read_b3_cmd = fields.Boolean(
         string='Read Controller Status',
         default=False,
+        index=True,
     )
 
     temperature = fields.Float(

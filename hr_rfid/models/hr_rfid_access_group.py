@@ -458,6 +458,7 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
         string='Expiration Date',
         help='Access group will remove itself from the employee '
              'on the expiration date. Will never expire if blank.',
+        index=True,
     )
 
     @api.model
@@ -552,6 +553,7 @@ class HrRfidAccessGroupContactRel(models.Model):
         string='Expiration Date',
         help='Access group will remove itself from the contact '
              'on the expiration date. Will never expire if blank.',
+        index=True,
     )
 
     @api.model
