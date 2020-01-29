@@ -744,7 +744,6 @@ class WebRfidController(http.Controller):
     def post_event(self, **post):
         print('post=' + str(post))
         t0 = time.time()
-        _logger.debug('Received=' + str(post))
         if len(post) == 0:
             # Controllers with no odoo functionality use the dd/mm/yyyy format
             self._time_format = '%d.%m.%y %H:%M:%S'
@@ -752,13 +751,14 @@ class WebRfidController(http.Controller):
         else:
             self._time_format = '%m.%d.%y %H:%M:%S'
             self._post = post
+        _logger.debug('Received=' + str(self._post))
 
         if 'convertor' not in post:
             return self._parse_raw_data()
 
         self._vending_hw_version = '16'
         self._webstacks_env = request.env['hr.rfid.webstack'].sudo()
-        self._webstack = self._webstacks_env.search([ ('serial', '=', str(post['convertor'])) ])
+        self._webstack = self._webstacks_env.search([ ('serial', '=', str(self._post['convertor'])) ])
         self._ws_db_update_dict = {
             'last_ip': request.httprequest.environ['REMOTE_ADDR'],
             'updated_at': fields.Datetime.now(),
@@ -766,16 +766,16 @@ class WebRfidController(http.Controller):
         try:
             if len(self._webstack) == 0:
                 new_webstack = {
-                    'name': 'Module ' + str(post['convertor']),
-                    'serial': str(post['convertor']),
-                    'key': post['key'],
+                    'name': 'Module ' + str(self._post['convertor']),
+                    'serial': str(self._post['convertor']),
+                    'key': self._post['key'],
                     'last_ip': request.httprequest.environ['REMOTE_ADDR'],
                     'updated_at': fields.Datetime.now()
                 }
                 self._webstacks_env.create(new_webstack)
                 return { 'status': 400 }
 
-            if self._webstack.key != post['key']:
+            if self._webstack.key != self._post['key']:
                 self._report_sys_ev('Webstack key and key in json did not match')
                 return { 'status': 400 }
 
@@ -788,11 +788,11 @@ class WebRfidController(http.Controller):
                 'status': 400
             }
 
-            if 'heartbeat' in post:
+            if 'heartbeat' in self._post:
                 result = self._parse_heartbeat()
-            elif 'event' in post:
+            elif 'event' in self._post:
                 result = self._parse_event()
-            elif 'response' in post:
+            elif 'response' in self._post:
                 result = self._parse_response()
 
             self._webstack.write(self._ws_db_update_dict)
