@@ -855,8 +855,7 @@ class HrRfidController(models.Model):
         })
 
         for door in self.door_ids:
-            door.card_rel_ids.unlink()
-            self.env['hr.rfid.card.door.rel'].update_door_rels(door)
+            self.env['hr.rfid.card.door.rel'].reload_door_rels(door)
 
     @api.multi
     def change_io_table(self, new_io_table):
@@ -1974,6 +1973,7 @@ class HrRfidCommands(models.Model):
     ]
 
     errors = [
+        ('-1', 'Unknown Error'),
         ('0', 'No Error'),
         ('1', 'I2C Error'),
         ('2', 'I2C Error'),
@@ -1997,6 +1997,8 @@ class HrRfidCommands(models.Model):
         ('30', 'No response from the Module'),
         ('31', 'Incorrect Data Response'),
     ]
+
+    error_codes = list(map(lambda a: a[0], errors))
 
     name = fields.Char(
         compute='_compute_cmd_name',
@@ -2293,7 +2295,7 @@ class HrRfidCommands(models.Model):
             rmask = rdata
         elif ctrl.mode == 3:
             rdata = door.number
-            rmask = 0
+            rmask = -1
         else:
             raise exceptions.ValidationError(_('Controller %s has mode=%d, which is not supported!')
                                              % (ctrl.name, ctrl.mode))
@@ -2327,7 +2329,7 @@ class HrRfidCommands(models.Model):
             if door.reader_ids.number == 2:
                 rmask *= 0x10000
         elif ctrl.mode == 3:
-            rmask = 0xFFFFFFFF
+            rmask = -1
         else:
             raise exceptions.ValidationError(_('Controller %s has mode=%d, which is not supported!')
                                              % (ctrl.name, ctrl.mode))
@@ -2451,4 +2453,8 @@ class HrRfidCommands(models.Model):
     @api.multi
     def write(self, vals):
         self._check_save_comms(vals)
+
+        if 'error' in vals and vals['error'] not in self.error_codes:
+            vals['error'] = '-1'
+
         return super(HrRfidCommands, self).write(vals)

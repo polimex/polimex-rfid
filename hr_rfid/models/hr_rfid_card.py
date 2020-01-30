@@ -392,6 +392,11 @@ class HrRfidCardDoorRel(models.Model):
             self.check_relevance_fast(card, door_id, ts)
 
     @api.model
+    def reload_door_rels(self, door_id: models.Model):
+        door_id.card_rel_ids.unlink(create_cmd=False)
+        self.update_door_rels(door_id)
+
+    @api.model
     def check_relevance_slow(self, card_id: HrRfidCard, door_id: models.Model, ts_id: models.Model = None):
         """
         Check if card has access to door. If it does, create relation or do nothing if it exists,
@@ -559,8 +564,9 @@ class HrRfidCardDoorRel(models.Model):
                 rel._create_add_card_command()
 
     @api.multi
-    def unlink(self):
-        for rel in self:
-            rel._create_remove_card_command()
+    def unlink(self, create_cmd=True):
+        if create_cmd:
+            for rel in self:
+                rel._create_remove_card_command()
 
         return super(HrRfidCardDoorRel, self).unlink()

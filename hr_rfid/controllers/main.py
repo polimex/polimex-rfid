@@ -164,7 +164,10 @@ class WebRfidController(http.Controller):
                     }
                 }
                 cmd.request = json.dumps(cmd_js)
-                self._report_sys_ev('Could not find the card', controller)
+                if self._post['event']['card'] == '0000000000':
+                    self._report_sys_ev('', controller)
+                else:
+                    self._report_sys_ev(_('Could not find the card'), controller)
                 return cmd_js
             elif event_action in [ 21, 22, 23, 24 ]:
                 event_dict = {
@@ -177,7 +180,10 @@ class WebRfidController(http.Controller):
                 event = ev_env.create(event_dict)
                 return self._check_for_unsent_cmd(200, event)
 
-            self._report_sys_ev('Could not find the card', controller)
+            if self._post['event']['card'] == '0000000000':
+                self._report_sys_ev('', controller)
+            else:
+                self._report_sys_ev(_('Could not find the card'), controller)
             return self._check_for_unsent_cmd(200)
 
         # External db event, controller requests for permission to open or close door
