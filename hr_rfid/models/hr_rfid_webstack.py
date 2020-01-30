@@ -2201,8 +2201,9 @@ class HrRfidCommands(models.Model):
         ])
 
         if not old_cmd:
-            self.create_d1_cmd(ctrl.webstack_id.id, ctrl_id, card_number,
-                               pin_code, ts_code, rights_data, rights_mask)
+            if rights_mask != 0:
+                self.create_d1_cmd(ctrl.webstack_id.id, ctrl_id, card_number,
+                                   pin_code, ts_code, rights_data, rights_mask)
         else:
             new_ts_code = ''
             if str(ts_code) != '':
@@ -2229,7 +2230,10 @@ class HrRfidCommands(models.Model):
             write_dict['rights_mask'] = new_rights_mask
             write_dict['rights_data'] = new_rights_data
 
-            old_cmd.write(write_dict)
+            if new_rights_mask == 0:
+                old_cmd.unlink()
+            else:
+                old_cmd.write(write_dict)
 
     @api.model
     def _add_remove_card_relay(self, card_number, ctrl_id, rights_data, rights_mask):
