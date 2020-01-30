@@ -62,7 +62,7 @@ class WebRfidController(http.Controller):
 
         if len(processing_comm) > 0:
             processing_comm = processing_comm[-1]
-            self._retry_command(status_code, processing_comm, event)
+            return self._retry_command(status_code, processing_comm, event)
 
         command = commands_env.search([
             ('webstack_id', '=', self._webstack.id),
