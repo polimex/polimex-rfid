@@ -80,6 +80,7 @@ class HrRfidVending(WebRfidController):
                     return '0000', 0
             if balance <= 0:
                 return '0000', 0
+            balance += Decimal(str(employee.hr_rfid_vending_recharge_balance))
             if employee.hr_rfid_vending_daily_limit != 0:
                 limit = abs(employee.hr_rfid_vending_daily_limit)
                 limit = Decimal(str(limit))

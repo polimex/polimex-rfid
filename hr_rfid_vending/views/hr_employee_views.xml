@@ -76,6 +76,7 @@
             <group>
              <group string="Balance">
                <field name="hr_rfid_vending_balance" readonly="1"/>
+               <field name="hr_rfid_vending_recharge_balance" readonly="1"/>
                <field name="hr_rfid_vending_negative_balance"/>
                <field name="hr_rfid_vending_limit" attrs="{'invisible':[('hr_rfid_vending_negative_balance','=',False)]}"/>
              </group>

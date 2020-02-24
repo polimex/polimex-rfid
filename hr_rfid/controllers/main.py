@@ -410,7 +410,7 @@ class WebRfidController(http.Controller):
 
         readers_count = int(data[30:32], 16)
 
-        mode_reader_relation = { 1: [2], 2: [2, 4], 3: [4], 4: [4] }
+        mode_reader_relation = { 1: [1, 2], 2: [2, 4], 3: [4], 4: [4] }
 
         if not ctrl_env.hw_version_is_for_relay_ctrl(hw_ver) and \
                 readers_count not in mode_reader_relation[ctrl_mode]:
@@ -531,7 +531,8 @@ class WebRfidController(http.Controller):
                 last_door = create_door(gen_d_name(1, controller.id), 1)
                 last_door = last_door.id
                 create_reader('R1', 1, '0', last_door)
-                create_reader('R2', 2, '1', last_door)
+                if readers_count > 1:
+                    create_reader('R2', 2, '1', last_door)
             elif ctrl_mode == 2 and readers_count == 4:
                 last_door = create_door(gen_d_name(1, controller.id), 1)
                 last_door = last_door.id

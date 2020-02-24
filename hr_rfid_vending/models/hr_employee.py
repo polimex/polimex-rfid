@@ -64,6 +64,12 @@ class HrEmployee(models.Model):
         default=0,
     )
 
+    hr_rfid_vending_recharge_balance = fields.Float(
+        string='Recharge Balance',
+        help='Amount of self charged money the employee can spend on the vending machine',
+        default=0,
+    )
+
     hr_rfid_vending_negative_balance = fields.Boolean(
         string='Negative Balance',
         help='Whether the user is allowed to have a negative balance or not',
@@ -141,7 +147,18 @@ class HrEmployee(models.Model):
         :return: Balance history if successful
         """
         bh_env = self.env['hr.rfid.vending.balance.history']
-        self.hr_rfid_vending_balance = self.hr_rfid_vending_balance + value
+
+        new_vend_balance = self.hr_rfid_vending_balance + value
+        new_recharge_balance = self.hr_rfid_vending_recharge_balance
+        if new_vend_balance < 0 and abs(new_vend_balance) > abs(self.hr_rfid_vending_limit):
+            new_recharge_balance -= abs(new_vend_balance) - abs(self.hr_rfid_vending_limit)
+            new_vend_balance = -abs(self.hr_rfid_vending_limit)
+
+        self.write({
+            'hr_rfid_vending_balance': new_vend_balance,
+            'hr_rfid_vending_recharge_balance': new_recharge_balance,
+        })
+
         bh_dict = {
             'balance_change': value,
             'employee_id': self.id,
