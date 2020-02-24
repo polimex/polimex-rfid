@@ -2144,6 +2144,7 @@ class HrRfidCommands(models.Model):
             'webstack_id': controller.webstack_id.id,
             'controller_id': controller.id,
             'cmd': 'F9',
+            'cmd_data': '00',
         }])
 
     @api.model
