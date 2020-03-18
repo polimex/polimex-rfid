@@ -543,11 +543,18 @@ class WebRfidController(http.Controller):
                 create_reader('R3', 3, '0', last_door)
                 create_reader('R4', 4, '1', last_door)
             else:  # (ctrl_mode == 2 and readers_count == 2) or ctrl_mode == 4
+                print('harware version', hw_ver)
                 last_door = create_door(gen_d_name(1, controller.id), 1)
-                last_door = last_door.id
+                if last_door: 
+                    last_door = last_door.id 
+                else:
+                    last_door = None
                 create_reader('R1', 1, '0', last_door)
                 last_door = create_door(gen_d_name(2, controller.id), 2)
-                last_door = last_door.id
+                if last_door: 
+            	    last_door = last_door.id 
+                else:
+                    last_door = None
                 create_reader('R2', 2, '0', last_door)
 
             if ctrl_mode == 3:
