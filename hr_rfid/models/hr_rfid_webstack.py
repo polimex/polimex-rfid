@@ -1753,7 +1753,7 @@ class HrRfidSystemEvent(models.Model):
                           ' at ' + str(record.timestamp)
 
     def _check_save_comms(self, vals):
-        save_comms = self.env['ir.config_parameter'].get_param('hr_rfid.save_webstack_communications')
+        save_comms = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.save_webstack_communications')
         if save_comms != 'True':
             if 'input_js' not in vals:
                 return
@@ -2403,7 +2403,7 @@ class HrRfidCommands(models.Model):
             })
 
     def _check_save_comms(self, vals):
-        save_comms = self.env['ir.config_parameter'].get_param('hr_rfid.save_webstack_communications')
+        save_comms = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.save_webstack_communications')
         if save_comms != 'True':
             if 'request' in vals:
                 vals.pop('request')
