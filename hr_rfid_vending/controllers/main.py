@@ -130,7 +130,7 @@ class HrRfidVending(WebRfidController):
 
             # TODO Move into function "deal_with_ev_64"
             if event['event_n'] == 64:
-                card = card_env.search([ ('number', '=', event['card']) ])
+                card = card_env.search(['|',('active', '=', True), ('active', '=', False), ('number', '=', event['card']) ])
 
                 if len(card) == 0 or len(card.employee_id) == 0:
                     return ret_super()
@@ -164,7 +164,7 @@ class HrRfidVending(WebRfidController):
                 return self._send_command(cmd, status_code)
             # TODO Move into function "deal_with_ev_47"
             elif event['event_n'] == 47:
-                card = card_env.search([ ('number', '=', event['card']) ])
+                card = card_env.search(['|',('active', '=', True), ('active', '=', False), ('number', '=', event['card']) ])
 
                 if len(card) == 0:
                     if event['card'] != '0000000000':

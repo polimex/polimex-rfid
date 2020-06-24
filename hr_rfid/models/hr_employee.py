@@ -26,6 +26,7 @@ class HrEmployee(models.Model):
         'employee_id',
         string='RFID Card',
         help='Cards owned by the employee',
+        context = {'active_test': False},
     )
 
     hr_rfid_event_ids = fields.One2many(
@@ -35,8 +36,7 @@ class HrEmployee(models.Model):
         help='Events concerning this employee',
     )
 
-    @api.multi
-    def add_acc_gr(self, access_groups, expiration=None):
+    def add_acc_gr(self, access_groups, expiration=None):     
         rel_env = self.env['hr.rfid.access.group.employee.rel']
         for emp in self:
             for acc_gr in access_groups:
@@ -56,7 +56,6 @@ class HrEmployee(models.Model):
                     creation_dict['expiration'] = str(expiration)
                 rel_env.create(creation_dict)
 
-    @api.multi
     def remove_acc_gr(self, access_groups):
         rel_env = self.env['hr.rfid.access.group.employee.rel']
         rel_env.search([
@@ -64,7 +63,6 @@ class HrEmployee(models.Model):
             ('access_group_id', 'in', access_groups.ids)
         ]).unlink()
 
-    @api.one
     @api.returns('hr.rfid.door')
     def get_doors(self, excluding_acc_grs=None, including_acc_grs=None):
         if excluding_acc_grs is None:
@@ -77,7 +75,6 @@ class HrEmployee(models.Model):
         acc_grs = acc_grs + including_acc_grs
         return acc_grs.mapped('all_door_ids').mapped('door_id')
 
-    @api.one
     def check_for_ts_inconsistencies_when_adding(self, new_acc_grs):
         acc_gr_door_rel_env = self.env['hr.rfid.access.group.door.rel']
         acc_grs = self.hr_rfid_access_group_ids.mapped('access_group_id')
@@ -87,7 +84,6 @@ class HrEmployee(models.Model):
                 door_rels2 = acc_gr2.all_door_ids
                 acc_gr_door_rel_env.check_for_ts_inconsistencies(door_rels1, door_rels2)
 
-    @api.one
     def check_for_ts_inconsistencies(self):
         acc_gr_door_rel_env = self.env['hr.rfid.access.group.door.rel']
         acc_grs = self.hr_rfid_access_group_ids.mapped('access_group_id')
@@ -97,7 +93,6 @@ class HrEmployee(models.Model):
                 door_rels2 = acc_grs[j].all_door_ids
                 acc_gr_door_rel_env.check_for_ts_inconsistencies(door_rels1, door_rels2)
 
-    @api.multi
     @api.constrains('hr_rfid_access_group_ids')
     def check_access_group(self):
         for user in self:
@@ -122,7 +117,6 @@ class HrEmployee(models.Model):
                         )
                     relay_doors[ctrl] = door
 
-    @api.multi
     @api.constrains('hr_rfid_pin_code')
     def _check_pin_code(self):
         for user in self:
@@ -147,7 +141,6 @@ class HrEmployee(models.Model):
 
         return records
 
-    @api.multi
     def write(self, vals):
         for user in self:
             old_pin_code = user.hr_rfid_pin_code[:]
@@ -169,14 +162,12 @@ class HrEmployee(models.Model):
             if old_pin_code != new_pin_code:
                 user.hr_rfid_card_ids.mapped('door_rel_ids').pin_code_changed()
 
-    @api.multi
     def unlink(self):
         for emp in self:
             emp.hr_rfid_card_ids.unlink()
             emp.hr_rfid_access_group_ids.unlink()
         return super(HrEmployee, self).unlink()
 
-    @api.multi
     def log_person_out(self, sids=None):
         for emp in self:
             if not emp.user_id:

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.inherit.hr_rfid</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="25"/>
+            <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('settings')]" position="inside">
+                    <div class="app_settings_block" data-string="RFID System" string="RFID System"
+                         data-key="hr_rfid" groups="hr_rfid.hr_rfid_group_officer">
+                        <h2>RFID System Settings</h2>
+                        <div class="row mt16 o_settings_container" name="hr_rfid_setting_container">
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane"/>
+                                <div class="o_setting_right_pane">
+                                    <span class="o_form_label">Event lifetime</span>
+                                    <div class="text-muted content-group mt16">
+                                        <span>Days </span>
+                                        <field name="event_lifetime" class="text-center oe_inline" />
+                                        <span>.</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane"/>
+                                <div class="o_setting_right_pane">
+                                    <label for="save_webstack_communications"/>
+                                    <div class="content-group">
+                                        <div class="mt16">
+                                            <field name="save_webstack_communications" class="o_light_label" widget="radio"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_hr_rfid_configuration" model="ir.actions.act_window">
+            <field name="name">Settings</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.config.settings</field>
+            <field name="view_id" ref="res_config_settings_view_form"/>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="context">{'module' : 'hr_rfid'}</field>
+        </record>
+
+        <menuitem id="hr_rfid_settings"
+                  name="Configuration"
+                  parent="hr_rfid_main_menu"
+                  action="action_hr_rfid_configuration"
+                  sequence="100"
+        />
+
+    </data>
+</odoo>

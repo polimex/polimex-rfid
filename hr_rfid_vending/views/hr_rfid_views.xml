@@ -69,7 +69,7 @@
     <record id="hr_rfid_ctrl_vending_prices_wiz_action" model="ir.actions.act_window">
       <field name="name">Change Vending Settings</field>
       <field name="res_model">hr.rfid.ctrl.vending.settings</field>
-      <field name="view_type">form</field>
+<!--      <field name="view_type">form</field>-->
       <field name="view_mode">form</field>
       <field name="view_id" ref="hr_rfid_ctrl_vending_prices_wiz" />
       <field name="target">new</field>
@@ -106,7 +106,7 @@
     <record id="hr_rfid_vending_event_action" model="ir.actions.act_window">
       <field name="name">Vending Events</field>
       <field name="res_model">hr.rfid.vending.event</field>
-      <field name="view_type">form</field>
+<!--      <field name="view_type">form</field>-->
       <field name="view_mode">tree,form,search,pivot,graph</field>
       <field name="context">{"graph_default_sale_events":1,"search_default_this_day":1,"search_default_sale_events":1}</field>
     </record>
@@ -246,7 +246,7 @@
     <record id="hr_rfid_vending_auto_refill_action" model="ir.actions.act_window">
       <field name="name">Vending Auto Refill Events</field>
       <field name="res_model">hr.rfid.vending.auto.refill</field>
-      <field name="view_type">form</field>
+<!--      <field name="view_type">form</field>-->
       <field name="view_mode">tree,form,search</field>
     </record>
 
@@ -321,7 +321,7 @@
     <record id="hr_rfid_vending_balance_history_action" model="ir.actions.act_window">
       <field name="name">Vending Balance History</field>
       <field name="res_model">hr.rfid.vending.balance.history</field>
-      <field name="view_type">form</field>
+<!--      <field name="view_type">form</field>-->
       <field name="view_mode">tree,form,graph</field>
     </record>
 

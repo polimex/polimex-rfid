@@ -27,7 +27,6 @@ class VendingBalanceWiz(models.TransientModel):
         default=_default_value,
     )
 
-    @api.multi
     def add_value(self):
         self.ensure_one()
         res = self.employee_id.hr_rfid_vending_add_to_balance(self.value)
@@ -36,7 +35,6 @@ class VendingBalanceWiz(models.TransientModel):
                 "Could not add to the balance. Please check if it's going under the limit."
             )
 
-    @api.multi
     def subtract_value(self):
         self.ensure_one()
         res = self.employee_id.hr_rfid_vending_add_to_balance(-self.value)
@@ -45,7 +43,6 @@ class VendingBalanceWiz(models.TransientModel):
                 "Could not subtract from the balance. Please check if it's going under the limit."
             )
 
-    @api.multi
     def set_value(self):
         self.ensure_one()
         res = self.employee_id.hr_rfid_vending_set_balance(self.value)
@@ -137,7 +134,6 @@ class HrEmployee(models.Model):
         string='Balance History',
     )
 
-    @api.one
     @api.returns('hr.rfid.vending.balance.history')
     def hr_rfid_vending_add_to_balance(self, value: float, ev: int = 0):
         """
@@ -168,7 +164,6 @@ class HrEmployee(models.Model):
             bh_dict['vending_event_id'] = ev
         return bh_env.create(bh_dict)
 
-    @api.one
     @api.returns('hr.rfid.vending.balance.history')
     def hr_rfid_vending_set_balance(self, value: float, max_add: float = 0, min_add: float = 0, ev: int = 0):
         """
@@ -188,7 +183,6 @@ class HrEmployee(models.Model):
 
         return self.hr_rfid_vending_add_to_balance(val, ev)
 
-    @api.one
     @api.returns('hr.rfid.vending.balance.history')
     def hr_rfid_vending_purchase(self, cost: float, ev: int = 0):
         """
@@ -269,7 +263,6 @@ class BalanceHistory(models.Model):
         ondelete='set null',
     )
 
-    @api.multi
     def _compute_name(self):
         for it in self:
             if len(it.vending_event_id) > 0 and len(it.vending_event_id.item_sold_id) > 0:
@@ -277,7 +270,6 @@ class BalanceHistory(models.Model):
             else:
                 it.name = it.person_responsible.name
 
-    @api.multi
     def _compute_item_sold(self):
         for it in self:
             it.item_id = it.vending_event_id.item_sold_id
@@ -348,7 +340,6 @@ class VendingAutoRefillEvents(models.Model):
             re = self.create([{'auto_refill_total': total_refill}])
             balance_histories.write({'auto_refill_id': re.id})
 
-    @api.multi
     def _compute_date(self):
         for re in self:
             re.date_created = re.create_date

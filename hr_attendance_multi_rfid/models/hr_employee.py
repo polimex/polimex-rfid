@@ -4,14 +4,6 @@ from odoo import models, exceptions, _, api, fields
 class HrEmployee(models.Model):
     _inherit = "hr.employee"
 
-    theoretical_hours_start_date = fields.Date(
-        help="Fill this field for setting a manual start date for computing "
-             "the theoretical hours independently from the attendances. If "
-             "not filled, employee creation date or the calendar start date "
-             "will be used (the greatest of both).",
-    )
-
-    @api.multi
     def attendance_action_change_with_date(self, action_date):
         """ Check In/Check Out action
             Check In: create a new attendance record

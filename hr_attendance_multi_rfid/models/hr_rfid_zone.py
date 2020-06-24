@@ -23,7 +23,7 @@ class HrRfidZone(models.Model):
         default=False,
     )
 
-    @api.multi
+
     def person_entered(self, person, event):
         if not isinstance(person, type(self.env['hr.employee'])):
             return super(HrRfidZone, self).person_entered(person, event)
@@ -43,7 +43,6 @@ class HrRfidZone(models.Model):
                 person.attendance_action_change_with_date(event.event_time)
         return super(HrRfidZone, self).person_entered(person, event)
 
-    @api.multi
     def person_left(self, person, event):
         if not isinstance(person, type(self.env['hr.employee'])):
             return super(HrRfidZone, self).person_left(person, event)

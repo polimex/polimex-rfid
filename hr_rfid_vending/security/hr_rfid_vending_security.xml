@@ -11,7 +11,7 @@
 
     <record id="view_own_department_data" model="res.groups">
       <field name="name">HR RFID Vending: Only view data for own department</field>
-      <field name="category_id" ref="base.module_category_hidden" />
+      <field name="category_id" ref="hr_rfid.module_rfid_settings" />
     </record>
 
     <record id="group_customer" model="res.groups">

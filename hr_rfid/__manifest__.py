@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # noinspection PyStatementEffect
+
 {
     'name': 'RFID Access Control',
     'version': '1.14',
@@ -24,6 +25,7 @@
         'views/hr_rfid_views.xml',
         'views/res_partner_views.xml',
         'wizards/hr_rfid_wizard_views.xml',
+        'views/res_config_setting_view.xml',
     ],
 
     'qweb': [
@@ -40,3 +42,11 @@
     'installable': True,
     'auto_install': False,
 }
+
+
+
+
+
+
+
+

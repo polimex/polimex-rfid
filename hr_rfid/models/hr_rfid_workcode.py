@@ -36,7 +36,6 @@ class HrRfidWorkcode(models.Model):
         required=True,
     )
 
-    @api.multi
     @api.constrains('workcode')
     def _check_workcode_code(self):
         for workcode in self:

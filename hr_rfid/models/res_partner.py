@@ -35,7 +35,6 @@ class ResPartner(models.Model):
         help='Events concerning this contact',
     )
 
-    @api.multi
     def add_acc_gr(self, access_groups, expiration=None):
         rel_env = self.env['hr.rfid.access.group.contact.rel']
         for cont in self:
@@ -56,7 +55,6 @@ class ResPartner(models.Model):
                     creation_dict['expiration'] = str(expiration)
                 rel_env.create(creation_dict)
 
-    @api.multi
     def remove_acc_gr(self, access_groups):
         rel_env = self.env['hr.rfid.access.group.contact.rel']
         rel_env.search([
@@ -64,7 +62,6 @@ class ResPartner(models.Model):
             ('access_group_id', 'in', access_groups.ids)
         ]).unlink()
 
-    @api.one
     @api.returns('hr.rfid.door')
     def get_doors(self, excluding_acc_grs=None, including_acc_grs=None):
         if excluding_acc_grs is None:
@@ -77,7 +74,6 @@ class ResPartner(models.Model):
         acc_grs = acc_grs + including_acc_grs
         return acc_grs.mapped('all_door_ids').mapped('door_id')
 
-    @api.one
     def check_for_ts_inconsistencies_when_adding(self, new_acc_grs):
         acc_gr_door_rel_env = self.env['hr.rfid.access.group.door.rel']
         acc_grs = self.hr_rfid_access_group_ids.mapped('access_group_id')
@@ -87,7 +83,6 @@ class ResPartner(models.Model):
                 door_rels2 = acc_gr2.all_door_ids
                 acc_gr_door_rel_env.check_for_ts_inconsistencies(door_rels1, door_rels2)
 
-    @api.one
     def check_for_ts_inconsistencies(self):
         acc_gr_door_rel_env = self.env['hr.rfid.access.group.door.rel']
         acc_grs = self.hr_rfid_access_group_ids.mapped('access_group_id')
@@ -97,7 +92,6 @@ class ResPartner(models.Model):
                 door_rels2 = acc_grs[i].all_door_ids
                 acc_gr_door_rel_env.check_for_ts_inconsistencies(door_rels1, door_rels2)
 
-    @api.multi
     @api.constrains('hr_rfid_access_group_ids')
     def check_access_group(self):
         for user in self:
@@ -116,7 +110,6 @@ class ResPartner(models.Model):
                         )
                     relay_doors[ctrl] = door
 
-    @api.multi
     @api.constrains('hr_rfid_pin_code')
     def _check_pin_code(self):
         for contact in self:
@@ -131,7 +124,6 @@ class ResPartner(models.Model):
             except ValueError:
                 raise exceptions.ValidationError('Invalid pin code, digits must be from 0 to 9')
 
-    @api.multi
     def write(self, vals):
         for user in self:
             old_pin_code = user.hr_rfid_pin_code[:]
@@ -140,14 +132,12 @@ class ResPartner(models.Model):
             if old_pin_code != user.hr_rfid_pin_code:
                 user.hr_rfid_card_ids.mapped('door_rel_ids').pin_code_changed()
 
-    @api.multi
     def unlink(self):
         for cont in self:
             cont.hr_rfid_card_ids.unlink()
             cont.hr_rfid_access_group_ids.unlink()
         return super(ResPartner, self).unlink()
 
-    @api.multi
     def log_person_out(self, sids=None):
         for cont in self:
             if not cont.user_id:
@@ -160,6 +150,11 @@ class ResPartner(models.Model):
                 session = session_storage.get(sid)
                 if session['uid'] == user.id:
                     session_storage.delete(session)
+
+    # @api.onchange
+    # def res_partner_doors(self):
+    #     for r in self:
+
 
 
 class ResPartnerDoors(models.TransientModel):

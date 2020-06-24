@@ -3,6 +3,12 @@
 <odoo>
   <data>
 
+    <record model="ir.module.category" id="module_rfid_settings">
+        <field name="name">RFID Settings</field>
+        <field name="visible" eval="0" />
+        <field name="description">RFID settings</field>
+    </record>
+
     <record id="hr_rfid_management" model="ir.module.category">
       <field name="name">RFID Access</field>
       <field name="description">User rights for the RFID module</field>
@@ -11,35 +17,35 @@
 
     <record id="hr_rfid_view_module_discovery" model="res.groups">
       <field name="name">HR RFID: View Module Discovery</field>
-      <field name="category_id" ref="base.module_category_hidden" />
+      <field name="category_id" ref="module_rfid_settings" />
       <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
     </record>
 
     <record id="hr_rfid_view_rfid_data" model="res.groups">
       <field name="name">HR RFID: View data in users</field>
-      <field name="category_id" ref="base.module_category_hidden" />
+      <field name="category_id" ref="module_rfid_settings" />
     </record>
 
     <record id="hr_rfid_view_rfid_pin_code_data" model="res.groups">
       <field name="name">HR RFID: View pin code data in users</field>
       <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_view_rfid_data'))]" />
-      <field name="category_id" ref="base.module_category_hidden" />
+      <field name="category_id" ref="module_rfid_settings" />
     </record>
 
     <record id="hr_rfid_view_door_open_close" model="res.groups">
       <field name="name">HR RFID: View the door open/close buttons</field>
-      <field name="category_id" ref="base.module_category_hidden" />
+      <field name="category_id" ref="module_rfid_settings" />
       <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
     </record>
 
     <record id="hr_view_own_department" model="res.groups">
       <field name="name">Only show employees from own department</field>
-      <field name="category_id" ref="base.module_category_hidden" />
+      <field name="category_id" ref="module_rfid_settings" />
     </record>
 
     <record id="hr_rfid_view_own_department" model="res.groups">
       <field name="name">HR RFID: Only show data from own department</field>
-      <field name="category_id" ref="base.module_category_hidden" />
+      <field name="category_id" ref="module_rfid_settings" />
     </record>
 
     <record id="hr_rfid_group_officer" model="res.groups">

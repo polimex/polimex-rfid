@@ -14,7 +14,7 @@ def return_wiz_form_view(res_model: str, res_id: int, title: str = ''):
         'type': 'ir.actions.act_window',
         'res_model': res_model,
         'view_mode': 'form',
-        'view_type': 'form',
+        # 'view_type': 'form',
         'res_id': res_id,
         'views': [(False, 'form')],
         'target': 'new',

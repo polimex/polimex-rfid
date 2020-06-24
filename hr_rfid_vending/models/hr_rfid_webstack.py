@@ -28,7 +28,6 @@ class HrRfidControllerVending(models.Model):
         string='Pricelist',
     )
 
-    @api.multi
     def _compute_show_price_timeout(self):
         for ctrl in self:
             if not ctrl.io_table or ctrl.io_table == '' or ctrl.hw_version != '16':
@@ -42,7 +41,6 @@ class HrRfidControllerVending(models.Model):
             spt = ctrl.io_table[index+1] + ctrl.io_table[index+3]
             ctrl.show_price_timeout = int(spt, 16)
 
-    @api.multi
     def _compute_scale_factor(self):
         for ctrl in self:
             if not ctrl.io_table or ctrl.io_table == '' or ctrl.hw_version != '16':
@@ -56,7 +54,6 @@ class HrRfidControllerVending(models.Model):
             sf = ctrl.io_table[index+1] + ctrl.io_table[index+3]
             ctrl.scale_factor = int(sf, 16)
 
-    @api.multi
     def create_vending_rows(self):
         vend_rows_env = self.env['hr.rfid.ctrl.vending.row'].sudo()
 
@@ -72,7 +69,6 @@ class HrRfidControllerVending(models.Model):
                 }
                 vend_rows_env.create([creation_dict])
 
-    @api.multi
     def write(self, vals):
         for ctrl in self:
             # If it's not a vending machine
@@ -105,22 +101,18 @@ class HrRfidVendingRow(models.Model):
     item3  = fields.Many2one('product.template', string='Item#3')
     item4  = fields.Many2one('product.template', string='Item#4')
 
-    @api.multi
     def _compute_number_1(self):
         for row in self:
             row.item_number1 = 'Item #' + str((row.row_num - 1)*4 + 1) + ':'
 
-    @api.multi
     def _compute_number_2(self):
         for row in self:
             row.item_number2 = 'Item #' + str((row.row_num - 1)*4 + 2) + ':'
 
-    @api.multi
     def _compute_number_3(self):
         for row in self:
             row.item_number3 = 'Item #' + str((row.row_num - 1)*4 + 3) + ':'
 
-    @api.multi
     def _compute_number_4(self):
         for row in self:
             row.item_number4 = 'Item #' + str((row.row_num - 1)*4 + 4) + ':'
@@ -176,7 +168,6 @@ class HrRfidVendingSettingsWiz(models.TransientModel):
         required=True,
     )
 
-    @api.multi
     def save_settings(self):
         self.ensure_one()
 
@@ -237,7 +228,6 @@ class HrRfidVendingSettingsWiz(models.TransientModel):
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
-    @api.multi
     def write(self, vals):
         if 'list_price' not in vals:
             return super(ProductTemplate, self).write(vals)
@@ -344,7 +334,7 @@ class VendingEvents(models.Model):
 
     @api.model
     def _delete_old_events(self):
-        event_lifetime = self.env['ir.config_parameter'].get_param('hr_rfid.event_lifetime')
+        event_lifetime = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.event_lifetime')
         if event_lifetime is None:
             return False
 
@@ -358,7 +348,7 @@ class VendingEvents(models.Model):
         return self.env['hr.rfid.event.system'].delete_old_events()
 
     def _check_save_comms(self, vals):
-        save_comms = self.env['ir.config_parameter'].get_param('hr_rfid.save_webstack_communications')
+        save_comms = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.save_webstack_communications')
         if save_comms != 'True':
             if 'input_js' in vals:
                 vals.pop('input_js')
@@ -369,7 +359,6 @@ class VendingEvents(models.Model):
             self._check_save_comms(vals)
         return super(VendingEvents, self).create(vals_list)
 
-    @api.multi
     def write(self, vals):
         self._check_save_comms(vals)
         return super(VendingEvents, self).write(vals)

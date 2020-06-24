@@ -99,7 +99,6 @@ class HrRfidAccessGroup(models.Model):
         compute='_compute_all_contacts',
     )
 
-    @api.one
     def add_doors(self, door_ids, time_schedule=None):
         if time_schedule is None:
             time_schedule = self.env.ref('hr_rfid.hr_rfid_time_schedule_0')
@@ -123,7 +122,6 @@ class HrRfidAccessGroup(models.Model):
                 }])
         self.check_for_ts_inconsistencies()
 
-    @api.one
     def del_doors(self, door_ids):
         rel_env = self.env['hr.rfid.access.group.door.rel']
         for door in door_ids:
@@ -132,22 +130,18 @@ class HrRfidAccessGroup(models.Model):
                 ('door_id', '=', door.id)
             ]).unlink()
 
-    @api.multi
     @api.returns('hr.rfid.door')
     def get_all_doors(self):
         return self.mapped('all_door_ids').mapped('door_id')
 
-    @api.multi
     @api.returns('hr.employee')
     def get_all_employees(self):
         return self.mapped('all_employee_ids').mapped('employee_id')
 
-    @api.multi
     @api.returns('res.partner')
     def get_all_contacts(self):
         return self.mapped('all_contact_ids').mapped('contact_id')
 
-    @api.multi
     @api.constrains('door_ids')
     def door_ids_constrains(self):
         for acc_gr in self:
@@ -221,7 +215,6 @@ class HrRfidAccessGroup(models.Model):
         for rec_gr in acc_gr.inheritor_ids:
             HrRfidAccessGroup._check_all_contacts_rec(contact_ids, checked_ids, rec_gr)
 
-    @api.one
     def check_for_ts_inconsistencies(self):
         def get_highest_acc_grs(_gr):
             if len(_gr.inheritor_ids) == 0:
@@ -257,7 +250,6 @@ class HrRfidAccessGroup(models.Model):
         employees.mapped(lambda r: r.check_for_ts_inconsistencies())
         contacts.mapped(lambda r: r.check_for_ts_inconsistencies())
 
-    @api.multi
     @api.constrains('inherited_ids')
     def _check_inherited_ids(self):
         env = self.env['hr.rfid.access.group']
@@ -297,7 +289,6 @@ class HrRfidAccessGroup(models.Model):
         group_order.pop()
         return False
 
-    @api.one
     def _create_add_door_commands(self, doors):
         card_rel_env = self.env['hr.rfid.card.door.rel']
         employees = self.all_employee_ids.mapped('employee_id')
@@ -307,7 +298,6 @@ class HrRfidAccessGroup(models.Model):
             for card in cards:
                 card_rel_env.check_relevance_fast(card, door)
 
-    @api.one
     def _create_remove_door_commands(self, doors):
         card_rel_env = self.env['hr.rfid.card.door.rel']
         employees = self.all_employee_ids.mapped('employee_id')
@@ -317,7 +307,6 @@ class HrRfidAccessGroup(models.Model):
             for card in cards:
                 card_rel_env.check_relevance_slow(card, door)
 
-    @api.multi
     def write(self, vals):
         for acc_gr in self:
             old_doors = self.all_door_ids.mapped('door_id')
@@ -348,7 +337,6 @@ class HrRfidAccessGroup(models.Model):
 
         return True
 
-    @api.multi
     def unlink(self):
         for acc_gr in self:
             acc_gr.door_ids.unlink()  # Unlinks the relations
@@ -417,11 +405,9 @@ class HrRfidAccessGroupDoorRel(models.Model):
 
         return records
 
-    @api.multi
     def write(self, vals):
         raise exceptions.ValidationError('Not permitted to write here (hr.rfid.access.group.door.rel)')
 
-    @api.multi
     def unlink(self):
         card_door_rel_env = self.env['hr.rfid.card.door.rel']
         for rel in self:
@@ -467,7 +453,6 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
             ('expiration', '<=', fields.Datetime.now())
         ]).unlink()
 
-    @api.multi
     @api.constrains('employee_id', 'access_group_id')
     def _check_for_duplicates(self):
         for rel in self:
@@ -495,7 +480,6 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
 
         return records
 
-    @api.multi
     def write(self, vals):
         if 'employee_id' in vals:
             raise exceptions.ValidationError('Cannot change the employee of the relation!')
@@ -520,7 +504,6 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
                 for card in cards:
                     card_door_rel_env.update_card_rels(card, new_acc_gr)
 
-    @api.multi
     def unlink(self):
         card_door_rel_env = self.env['hr.rfid.card.door.rel']
 
@@ -562,7 +545,6 @@ class HrRfidAccessGroupContactRel(models.Model):
             ('expiration', '<=', fields.Datetime.now())
         ]).unlink()
 
-    @api.multi
     @api.constrains('contact_id', 'access_group_id')
     def _check_for_duplicates(self):
         for rel in self:
@@ -590,7 +572,6 @@ class HrRfidAccessGroupContactRel(models.Model):
 
         return records
 
-    @api.multi
     def write(self, vals):
         if 'contact_id' in vals:
             raise exceptions.ValidationError('Cannot change the employee of the relation!')
@@ -615,7 +596,6 @@ class HrRfidAccessGroupContactRel(models.Model):
                 for card in cards:
                     card_door_rel_env.update_card_rels(card, new_acc_gr)
 
-    @api.multi
     def unlink(self):
         card_door_rel_env = self.env['hr.rfid.card.door.rel']
 
@@ -676,12 +656,10 @@ class HrRfidAccessGroupWizard(models.TransientModel):
         default=lambda self: self.env.ref('hr_rfid.hr_rfid_time_schedule_0').id,
     )
 
-    @api.multi
     def add_doors(self):
         self.ensure_one()
         self.acc_gr_id.add_doors(self.door_ids, self.time_schedule_id)
 
-    @api.multi
     def del_doors(self):
         self.ensure_one()
         self.acc_gr_id.del_doors(self.door_ids)

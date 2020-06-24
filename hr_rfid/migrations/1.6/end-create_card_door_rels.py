@@ -17,7 +17,7 @@ def migrate(cr, version):
                    JOIN hr_rfid_door AS door ON (door.id = door_rel.door_id)
                    JOIN hr_rfid_ctrl AS ctrl ON (ctrl.id = door.controller_id)
                    WHERE card.card_type = door.card_type
-                         AND card.card_active IS true
+                         AND card.active IS true
                          AND (card.cloud_card IS false OR ctrl.external_db IS false)
         LOOP
             INSERT INTO hr_rfid_card_door_rel(card_id, door_id, time_schedule_id)

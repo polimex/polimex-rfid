@@ -100,14 +100,16 @@ class WebRfidController(http.Controller):
         ])
 
         if len(controller) == 0:
-            ctrl_env = request.env['hr.rfid.ctrl'].sudo()
-            cmd_env = request.env['hr.rfid.command'].sudo()
+            ctrl_env = request.env['hr.rfid.ctrl'].with_user(1)
+            cmd_env = request.env['hr.rfid.command'].with_user(1)
 
+            # try:
             controller = ctrl_env.create({
                 'name': 'Controller',
                 'ctrl_id': self._post['event']['id'],
                 'webstack_id': self._webstack.id,
             })
+            # except
 
             command = cmd_env.read_controller_information_cmd(controller)
 
@@ -115,7 +117,8 @@ class WebRfidController(http.Controller):
 
         card_env = request.env['hr.rfid.card'].sudo()
         workcodes_env = request.env['hr.rfid.workcode'].sudo()
-        card = card_env.search([ ('number', '=', self._post['event']['card']) ])
+        card = card_env.search(['|',('active', '=', True), ('active', '=', False),
+                                ('number', '=', self._post['event']['card']) ])
         reader = None
         event_action = self._post['event']['event_n']
 
@@ -192,7 +195,7 @@ class WebRfidController(http.Controller):
                 ('access_group_id', 'in', card.get_owner().hr_rfid_access_group_ids.ids),
                 ('door_id', '=', reader.door_id.id)
             ])
-            return self._respond_to_ev_64(len(ret) > 0 and card.card_active is True,
+            return self._respond_to_ev_64(len(ret) > 0 and card.active is True,
                                           controller, reader, card)
 
         event_action = ((event_action - 3) % 4) + 1
@@ -246,7 +249,7 @@ class WebRfidController(http.Controller):
         return self._check_for_unsent_cmd(200, event)
 
     def _parse_response(self):
-        command_env = request.env['hr.rfid.command'].sudo()
+        command_env = request.env['hr.rfid.command'].with_user(1)
         response = self._post['response']
         controller = None
 
@@ -391,7 +394,7 @@ class WebRfidController(http.Controller):
         }
 
     def _parse_f0_response(self, command, controller):
-        ctrl_env = request.env['hr.rfid.ctrl'].sudo()
+        ctrl_env = request.env['hr.rfid.ctrl'].with_user(1)
         response = self._post['response']
         data = response['d']
         ctrl_mode = int(data[42:44], 16)
@@ -417,8 +420,8 @@ class WebRfidController(http.Controller):
             return self._log_cmd_error('F0 sent us a wrong reader-controller '
                                        'mode combination', command, '31', 200)
 
-        reader_env = request.env['hr.rfid.reader'].sudo()
-        door_env = request.env['hr.rfid.door'].sudo()
+        reader_env = request.env['hr.rfid.reader'].with_user(1)
+        door_env = request.env['hr.rfid.door'].with_user(1)
 
         sw_ver = f0_parse[F0Parse.sw_ver]
         inputs = f0_parse[F0Parse.inputs]
@@ -677,7 +680,7 @@ class WebRfidController(http.Controller):
         return cmd_js
 
     def _get_ws_time_str(self):
-        return self._get_ws_time().strftime('%m.%d.%y %H:%M:%S')
+        return self._get_ws_time().strftime('%Y-%m-%d %H:%M:%S')
 
     def _get_ws_time(self):
         t = self._post['event']['date'] + ' ' + self._post['event']['time']
@@ -772,8 +775,9 @@ class WebRfidController(http.Controller):
             return self._parse_raw_data()
 
         self._vending_hw_version = '16'
-        self._webstacks_env = request.env['hr.rfid.webstack'].sudo()
-        self._webstack = self._webstacks_env.search([ ('serial', '=', str(self._post['convertor'])) ])
+        self._webstacks_env = request.env['hr.rfid.webstack'].with_user(1)
+        self._webstack = self._webstacks_env.search(['|',('active', '=', True), ('active', '=', False),
+                                                     ('serial', '=', str(self._post['convertor'])) ])
         self._ws_db_update_dict = {
             'last_ip': request.httprequest.environ['REMOTE_ADDR'],
             'updated_at': fields.Datetime.now(),
@@ -785,7 +789,8 @@ class WebRfidController(http.Controller):
                     'serial': str(self._post['convertor']),
                     'key': self._post['key'],
                     'last_ip': request.httprequest.environ['REMOTE_ADDR'],
-                    'updated_at': fields.Datetime.now()
+                    'updated_at': fields.Datetime.now(),
+                    'available': 'a'
                 }
                 self._webstacks_env.create(new_webstack)
                 return { 'status': 400 }
@@ -794,7 +799,7 @@ class WebRfidController(http.Controller):
                 self._report_sys_ev('Webstack key and key in json did not match')
                 return { 'status': 400 }
 
-            if not self._webstack.ws_active:
+            if not self._webstack.active:
                 self._webstack.write(self._ws_db_update_dict)
                 self._report_sys_ev('Webstack is not active')
                 return { 'status': 400 }

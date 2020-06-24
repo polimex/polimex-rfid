@@ -77,7 +77,7 @@ class HrRfidCard(models.Model):
         index=True,
     )
 
-    card_active = fields.Boolean(
+    active = fields.Boolean(
         string='Active',
         help='Whether the card is active or not',
         track_visibility='onchange',
@@ -107,7 +107,6 @@ class HrRfidCard(models.Model):
 
     pin_code = fields.Char(compute='_compute_pin_code')
 
-    @api.multi
     def get_owner(self):
         self.ensure_one()
         if len(self.employee_id) == 1:
@@ -134,20 +133,17 @@ class HrRfidCard(models.Model):
                and not (self.cloud_card is True and door_id.controller_id.external_db is True)
 
     def card_ready(self):
-        return self.card_active
+        return self.active
 
     @api.depends('employee_id', 'contact_id')
-    @api.multi
     def _compute_pin_code(self):
         for card in self:
             card.pin_code = card.get_owner().hr_rfid_pin_code
 
-    @api.multi
     def toggle_card_active(self):
         self.ensure_one()
-        self.card_active = not self.card_active
+        self.active = not self.active
 
-    @api.multi
     @api.constrains('employee_id', 'contact_id')
     def _check_user(self):
         for card in self:
@@ -157,20 +153,31 @@ class HrRfidCard(models.Model):
                     raise exceptions.ValidationError('Card user and contact cannot both be set '
                                                      'in the same time, and cannot both be empty.')
 
-    @api.multi
+    @api.onchange('number')
+    def _check_len_number(self):
+        for card in self:
+            if card.number:
+                if len(card.number) < 10:
+                    zeroes = 10 - len(card.number)
+                    card.number = (zeroes * '0') + card.number
+                elif len(card.number) > 10:
+                    raise exceptions.UserError(_('Card number must be exactly 10 digits'))
+
+
+
     @api.constrains('number')
     def _check_number(self):
         for card in self:
             dupes = self.search([ ('number', '=', card.number), ('card_type', '=', card.card_type.id) ])
             if len(dupes) > 1:
-                raise exceptions.ValidationError('Card number must be unique for every card type!')
+                raise exceptions.ValidationError(_('Card number must be unique for every card type!'))
 
             if len(card.number) > 10:
-                raise exceptions.ValidationError('Card number must be exactly 10 digits')
+                raise exceptions.ValidationError(_('Card number must be exactly 10 digits'))
 
-            if len(card.number) < 10:
-                zeroes = 10 - len(card.number)
-                card.number = (zeroes * '0') + card.number
+            # if len(card.number) < 10:
+            #     zeroes = 10 - len(card.number)
+            #     card.number = (zeroes * '0') + card.number
 
             try:
                 for char in card.number:
@@ -178,13 +185,11 @@ class HrRfidCard(models.Model):
             except ValueError:
                 raise exceptions.ValidationError('Card number digits must be from 0 to 9')
 
-    @api.multi
     def _compute_card_name(self):
         for record in self:
             record.name = record.number
 
     @api.depends('door_rel_ids')
-    @api.multi
     def _compute_door_ids(self):
         for card in self:
             card.door_ids = card.door_rel_ids.mapped('door_id')
@@ -211,7 +216,6 @@ class HrRfidCard(models.Model):
 
         return records
 
-    @api.multi
     def write(self, vals):
         rel_env = self.env['hr.rfid.card.door.rel']
         invalid_user_and_contact_msg = 'Card user and contact cannot both be set' \
@@ -220,7 +224,7 @@ class HrRfidCard(models.Model):
         for card in self:
             old_number = str(card.number)[:]
             old_owner = card.get_owner()
-            old_active = card.card_active
+            old_active = card.active
             old_card_type_id = card.card_type
             old_cloud = card.cloud_card
 
@@ -245,8 +249,8 @@ class HrRfidCard(models.Model):
                 for door in added_doors:
                     rel_env.check_relevance_fast(card, door)
 
-            if old_active != card.card_active:
-                if card.card_active is False:
+            if old_active != card.active:
+                if card.active is False:
                     card.door_rel_ids.unlink()
                 else:
                     rel_env.update_card_rels(card)
@@ -257,7 +261,6 @@ class HrRfidCard(models.Model):
             if old_cloud != card.cloud_card:
                 rel_env.update_card_rels(card)
 
-    @api.multi
     def unlink(self):
         for card in self:
             card.door_rel_ids.unlink()
@@ -269,9 +272,11 @@ class HrRfidCard(models.Model):
         now = fields.datetime.now()
         str_before = str(now - timedelta(seconds=31))
         str_after  = str(now + timedelta(seconds=31))
-        cards_to_activate = cenv.search([ ('activate_on', '<', str_after),
+        cards_to_activate = cenv.search(['|',('active', '=', True), ('active', '=', False),
+                                         ('activate_on', '<', str_after),
                                           ('activate_on', '>', str_before) ])
-        cards_to_deactivate = cenv.search([ ('deactivate_on', '<', str_after),
+        cards_to_deactivate = cenv.search(['|',('active', '=', True), ('active', '=', False),
+                                           ('deactivate_on', '<', str_after),
                                             ('deactivate_on', '>', str_before) ])
 
         neutral_cards = cards_to_activate & cards_to_deactivate
@@ -283,8 +288,8 @@ class HrRfidCard(models.Model):
             cards_to_activate = cards_to_activate + to_activate
             cards_to_deactivate = cards_to_deactivate + (neutral_cards - to_activate)
 
-        cards_to_activate.write({'card_active': True})
-        cards_to_deactivate.write({'card_active': False})
+        cards_to_activate.write({'active': True})
+        cards_to_deactivate.write({'active': False})
 
 
 class HrRfidCardType(models.Model):
@@ -304,6 +309,7 @@ class HrRfidCardType(models.Model):
         'card_type',
         string='Cards',
         help='Cards of this card type',
+        context={'active_test': False},
     )
 
     door_ids = fields.One2many(
@@ -313,7 +319,6 @@ class HrRfidCardType(models.Model):
         help='Doors that will open to this card type',
     )
 
-    @api.multi
     def unlink(self):
         default_card_type_id = self.env.ref('hr_rfid.hr_rfid_card_type_def').id
 
@@ -327,18 +332,17 @@ class HrRfidCardType(models.Model):
 
         return super(HrRfidCardType, self).unlink()
 
-    @api.multi
     def list_cards_from_this_type(self):
         self.ensure_one()
         return {
             'name': _('%s list' % self.name),
             'domain': [('card_type', '=', self.id)],
-            'view_type': 'form',
+            # 'view_type': 'form',
             'view_mode': 'tree',
             'res_model': 'hr.rfid.card',
             'views': [[False, "tree"], [False, "form"]],
             'type': 'ir.actions.act_window',
-            # 'context': "{'card_type':%s}" % self.id,
+            'context': {'active_test': False},
             # 'target': 'new',
         }
 
@@ -476,27 +480,22 @@ class HrRfidCardDoorRel(models.Model):
         if len(ret) > 0:
             ret.unlink()
 
-    @api.multi
     def check_rel_relevance(self):
         for rel in self:
             self.check_relevance_slow(rel.card_id, rel.door_id)
 
-    @api.multi
     def time_schedule_changed(self, new_ts):
         self.time_schedule_id = new_ts
 
-    @api.multi
     def pin_code_changed(self):
         self._create_add_card_command()
 
-    @api.multi
     def card_number_changed(self, old_number):
         for rel in self:
             if old_number != rel.card_id.number:
                 rel._create_remove_card_command(old_number)
                 rel._create_add_card_command()
 
-    @api.multi
     def reload_add_card_command(self):
         self._create_add_card_command()
 
@@ -504,7 +503,6 @@ class HrRfidCardDoorRel(models.Model):
     def _check_compat_n_rdy(self, card_id, door_id):
         return card_id.door_compatible(door_id) and card_id.card_ready()
 
-    @api.multi
     def _create_add_card_command(self):
         cmd_env = self.env['hr.rfid.command']
         for rel in self:
@@ -514,7 +512,6 @@ class HrRfidCardDoorRel(models.Model):
             card_id = rel.card_id.id
             cmd_env.add_card(door_id, ts_id, pin_code, card_id)
 
-    @api.multi
     def _create_remove_card_command(self, number: str = None, door_id: int = None):
         cmd_env = self.env['hr.rfid.command']
         for rel in self:
@@ -526,7 +523,6 @@ class HrRfidCardDoorRel(models.Model):
             cmd_env.remove_card(door_id, pin_code, card_number=number)
 
     @api.constrains('door_id')
-    @api.multi
     def _door_constrains(self):
         for rel in self:
             if len(rel.door_id.access_group_ids) == 0:
@@ -544,7 +540,6 @@ class HrRfidCardDoorRel(models.Model):
 
         return records
 
-    @api.multi
     def write(self, vals):
         for rel in self:
             old_door = rel.door_id
@@ -563,7 +558,6 @@ class HrRfidCardDoorRel(models.Model):
             elif old_ts_id != new_ts_id:
                 rel._create_add_card_command()
 
-    @api.multi
     def unlink(self, create_cmd=True):
         if create_cmd:
             for rel in self:
