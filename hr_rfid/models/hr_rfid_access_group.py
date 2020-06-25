@@ -45,7 +45,7 @@ class HrRfidAccessGroup(models.Model):
         'hr.rfid.access.group.door.rel',
         'access_group_id',
         string='Doors',
-        help='Doors departments from this access group can open',
+        help='Doors included in this access group',
     )
 
     default_department_ids = fields.One2many(
