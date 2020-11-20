@@ -192,7 +192,7 @@ class WebRfidController(http.Controller):
                 ('access_group_id', 'in', card.get_owner().hr_rfid_access_group_ids.ids),
                 ('door_id', '=', reader.door_id.id)
             ])
-            return self._respond_to_ev_64(len(ret) > 0 and card.card_active is True,
+            return self._respond_to_ev_64(len(ret) > 0 and card.active is True,
                                           controller, reader, card)
 
         event_action = ((event_action - 3) % 4) + 1
@@ -677,7 +677,8 @@ class WebRfidController(http.Controller):
         return cmd_js
 
     def _get_ws_time_str(self):
-        return self._get_ws_time().strftime('%m.%d.%y %H:%M:%S')
+        return self._get_ws_time().strftime('%y-%m-%d %H:%M:%S')
+    #TODO is OK?
 
     def _get_ws_time(self):
         t = self._post['event']['date'] + ' ' + self._post['event']['time']
@@ -772,11 +773,10 @@ class WebRfidController(http.Controller):
             return self._parse_raw_data()
 
         self._vending_hw_version = '16'
-        self._webstacks_env = request.env['hr.rfid.webstack'].sudo()
+        self._webstacks_env = request.env['hr.rfid.webstack'].with_context(active_test=False).sudo()
         self._webstack = self._webstacks_env.search([ ('serial', '=', str(self._post['convertor'])) ])
         self._ws_db_update_dict = {
             'last_ip': request.httprequest.environ['REMOTE_ADDR'],
-            'updated_at': fields.Datetime.now(),
         }
         try:
             if len(self._webstack) == 0:
@@ -785,7 +785,7 @@ class WebRfidController(http.Controller):
                     'serial': str(self._post['convertor']),
                     'key': self._post['key'],
                     'last_ip': request.httprequest.environ['REMOTE_ADDR'],
-                    'updated_at': fields.Datetime.now()
+                    'available': 'a'
                 }
                 self._webstacks_env.create(new_webstack)
                 return { 'status': 400 }
@@ -794,7 +794,7 @@ class WebRfidController(http.Controller):
                 self._report_sys_ev('Webstack key and key in json did not match')
                 return { 'status': 400 }
 
-            if not self._webstack.ws_active:
+            if not self._webstack.active:
                 self._webstack.write(self._ws_db_update_dict)
                 self._report_sys_ev('Webstack is not active')
                 return { 'status': 400 }

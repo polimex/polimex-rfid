@@ -344,7 +344,7 @@ class VendingEvents(models.Model):
 
     @api.model
     def _delete_old_events(self):
-        event_lifetime = self.env['ir.config_parameter'].get_param('hr_rfid.event_lifetime')
+        event_lifetime = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.event_lifetime')
         if event_lifetime is None:
             return False
 
@@ -358,7 +358,7 @@ class VendingEvents(models.Model):
         return self.env['hr.rfid.event.system'].delete_old_events()
 
     def _check_save_comms(self, vals):
-        save_comms = self.env['ir.config_parameter'].get_param('hr_rfid.save_webstack_communications')
+        save_comms = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.save_webstack_communications')
         if save_comms != 'True':
             if 'input_js' in vals:
                 vals.pop('input_js')

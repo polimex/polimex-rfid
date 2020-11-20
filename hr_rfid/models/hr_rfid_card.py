@@ -77,7 +77,7 @@ class HrRfidCard(models.Model):
         index=True,
     )
 
-    card_active = fields.Boolean(
+    active = fields.Boolean(
         string='Active',
         help='Whether the card is active or not',
         track_visibility='onchange',
@@ -134,18 +134,13 @@ class HrRfidCard(models.Model):
                and not (self.cloud_card is True and door_id.controller_id.external_db is True)
 
     def card_ready(self):
-        return self.card_active
+        return self.active
 
     @api.depends('employee_id', 'contact_id')
     @api.multi
     def _compute_pin_code(self):
         for card in self:
             card.pin_code = card.get_owner().hr_rfid_pin_code
-
-    @api.multi
-    def toggle_card_active(self):
-        self.ensure_one()
-        self.card_active = not self.card_active
 
     @api.multi
     @api.constrains('employee_id', 'contact_id')
@@ -156,6 +151,16 @@ class HrRfidCard(models.Model):
                    (len(card.employee_id) > 0 and len(card.contact_id) > 0):
                     raise exceptions.ValidationError('Card user and contact cannot both be set '
                                                      'in the same time, and cannot both be empty.')
+    @api.multi
+    @api.onchange('number')
+    def _check_len_number(self):
+        for card in self:
+            if card.number:
+                if len(card.number) < 10:
+                    zeroes = 10 - len(card.number)
+                    card.number = (zeroes * '0') + card.number
+                elif len(card.number) > 10:
+                    raise exceptions.UserError(_('Card number must be exactly 10 digits'))
 
     @api.multi
     @api.constrains('number')
@@ -168,9 +173,9 @@ class HrRfidCard(models.Model):
             if len(card.number) > 10:
                 raise exceptions.ValidationError('Card number must be exactly 10 digits')
 
-            if len(card.number) < 10:
-                zeroes = 10 - len(card.number)
-                card.number = (zeroes * '0') + card.number
+            # if len(card.number) < 10:
+            #     zeroes = 10 - len(card.number)
+            #     card.number = (zeroes * '0') + card.number
 
             try:
                 for char in card.number:
@@ -220,7 +225,7 @@ class HrRfidCard(models.Model):
         for card in self:
             old_number = str(card.number)[:]
             old_owner = card.get_owner()
-            old_active = card.card_active
+            old_active = card.active
             old_card_type_id = card.card_type
             old_cloud = card.cloud_card
 
@@ -245,8 +250,8 @@ class HrRfidCard(models.Model):
                 for door in added_doors:
                     rel_env.check_relevance_fast(card, door)
 
-            if old_active != card.card_active:
-                if card.card_active is False:
+            if old_active != card.active:
+                if card.active is False:
                     card.door_rel_ids.unlink()
                 else:
                     rel_env.update_card_rels(card)
@@ -283,8 +288,9 @@ class HrRfidCard(models.Model):
             cards_to_activate = cards_to_activate + to_activate
             cards_to_deactivate = cards_to_deactivate + (neutral_cards - to_activate)
 
-        cards_to_activate.write({'card_active': True})
-        cards_to_deactivate.write({'card_active': False})
+        # TODO use toggle_active insted
+        cards_to_activate.write({'active': True})
+        cards_to_deactivate.write({'active': False})
 
 
 class HrRfidCardType(models.Model):

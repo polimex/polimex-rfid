@@ -45,6 +45,7 @@ class HrDepartment(models.Model):
         ret = super(HrDepartment, self).write(vals)
 
         if 'hr_rfid_allowed_access_groups' in vals:
+
             to_unlink = self.env['hr.rfid.access.group.employee.rel']
             for dep in self:
                 acc_gr_rels = dep.mapped('member_ids').mapped('hr_rfid_access_group_ids')
@@ -52,6 +53,14 @@ class HrDepartment(models.Model):
                     if rel.access_group_id not in dep.hr_rfid_allowed_access_groups:
                         to_unlink += rel
             to_unlink.unlink()
+
+            if self.hr_rfid_default_access_group not in self.hr_rfid_allowed_access_groups:
+                self.hr_rfid_default_access_group = None
+            if len(self.hr_rfid_default_access_group) == 0 and len(self.hr_rfid_allowed_access_groups) > 0:
+                self.hr_rfid_default_access_group = self.hr_rfid_allowed_access_groups[0]
+                for emp in self.member_ids:
+                    if len(emp.hr_rfid_access_group_ids) == 0:
+                        emp.add_acc_gr(self.hr_rfid_default_access_group)
 
         return ret
 
@@ -75,6 +84,9 @@ class HrDepartmentAccGrWizard(models.TransientModel):
     def _default_dep(self):
         return self.env['hr.department'].browse(self._context.get('active_ids'))
 
+    def _get_current_access_group(self):
+        return self._default_dep().hr_rfid_allowed_access_groups
+
     dep_id = fields.Many2one(
         'hr.department',
         string='Department',
@@ -85,13 +97,20 @@ class HrDepartmentAccGrWizard(models.TransientModel):
     acc_grs = fields.Many2many(
         'hr.rfid.access.group',
         string='Access groups to add/remove',
-        required=True,
+        default=_get_current_access_group,
     )
 
     @api.multi
     def add_acc_grs(self):
         self.ensure_one()
-        self.dep_id.hr_rfid_allowed_access_groups |= self.acc_grs
+        self.dep_id.hr_rfid_allowed_access_groups = self.acc_grs
+        if self.dep_id.hr_rfid_default_access_group not in self.acc_grs:
+            self.dep_id.hr_rfid_default_access_group = None
+        if (len(self.acc_grs) > 0) and len(self.dep_id.hr_rfid_default_access_group) == 0:
+            self.dep_id.hr_rfid_default_access_group = self.acc_grs[0]
+            for emp in self.dep_id.member_ids:
+                if len(emp.hr_rfid_access_group_ids) == 0:
+                    emp.add_acc_gr(self.dep_id.hr_rfid_default_access_group)
 
     @api.multi
     def del_acc_grs(self):
@@ -126,14 +145,17 @@ class HrDepartmentDefAccGrWizard(models.TransientModel):
         self.ensure_one()
         self.dep_id.hr_rfid_default_access_group = self.def_acc_gr
 
+        for emp in self.dep_id.member_ids:
+            if len(emp.hr_rfid_access_group_ids) == 0:
+                emp.add_acc_gr(self.def_acc_gr)
+
     @api.multi
     def change_and_apply_def_acc_gr(self):
         self.ensure_one()
         self.dep_id.hr_rfid_default_access_group = self.def_acc_gr
 
         for emp in self.dep_id.member_ids:
-            if len(emp.hr_rfid_access_group_ids) == 0:
-                emp.add_acc_gr(self.def_acc_gr)
+            emp.add_acc_gr(self.def_acc_gr)
 
 
 class HrDepartmentMassAccGrsWiz(models.TransientModel):

@@ -6,7 +6,7 @@
       <field name="name">hr.department.add.acc.grs.wiz.form</field>
       <field name="model">hr.department.acc.grs</field>
       <field name="arch" type="xml">
-        <form string="Add Access Groups">
+        <form string="Manage Access Groups">
           <group>
             <field name="dep_id" attrs="{'invisible': True}" />
             <field name="acc_grs"
@@ -16,7 +16,7 @@
           </group>
           <footer>
             <button name="add_acc_grs" type="object"
-                    string="Add Access Groups" class="oe_highlight" />
+                    string="Save Access Groups" class="oe_highlight" />
             <button special="cancel" string="Cancel" />
           </footer>
         </form>
@@ -55,10 +55,11 @@
           </group>
           <footer>
             <button name="change_default_access_group" type="object"
-                    string="Change Default Access Group" class="oe_highlight" />
-            <button name="change_and_apply_def_acc_gr" type="object"
                     string="Change and Apply" class="oe_highlight"
-                    help="Adds access group to employees in the department without any access groups" />
+                    help="Adds access group to employees in the department without any access groups"/>
+            <button name="change_and_apply_def_acc_gr" type="object"
+                    string="Change and Apply for Everyone" class="oe_highlight"
+                    help="Adds access group to all employees in the department" />
             <button special="cancel" string="Cancel" />
           </footer>
         </form>
@@ -96,7 +97,7 @@
     </record>
 
     <record id="hr_department_add_acc_grs_wiz_action" model="ir.actions.act_window">
-      <field name="name">Add Access Groups</field>
+      <field name="name">Manage Access Groups</field>
       <field name="res_model">hr.department.acc.grs</field>
       <field name="view_type">form</field>
       <field name="view_mode">form</field>
@@ -141,16 +142,16 @@
             <button name="%(hr_department_add_acc_grs_wiz_action)d"
                     id="hr_department_add_acc_grs_btn"
                     type="action"
-                    string="Add Access Groups"
+                    string="Manage Access Groups"
                     class="oe_highlight"
                     icon="fa-plus-square"
                     groups="hr_rfid.hr_rfid_group_officer" />
-            <button name="%(hr_department_del_acc_grs_wiz_action)d"
-                    id="hr_department_del_acc_grs_btn"
-                    type="action"
-                    string="Remove Access Groups"
-                    icon="fa-minus-square"
-                    groups="hr_rfid.hr_rfid_group_officer" />
+<!--            <button name="%(hr_department_del_acc_grs_wiz_action)d"-->
+<!--                    id="hr_department_del_acc_grs_btn"-->
+<!--                    type="action"-->
+<!--                    string="Remove Access Groups"-->
+<!--                    icon="fa-minus-square"-->
+<!--                    groups="hr_rfid.hr_rfid_group_officer" />-->
             <button name="%(hr_department_def_acc_gr_wiz_action)d"
                     id="hr_department_def_acc_gr_btn"
                     type="action"
@@ -158,11 +159,11 @@
                     class="oe_highlight"
                     icon="fa-bars"
                     groups="hr_rfid.hr_rfid_group_officer" />
-            <button name="remove_def_acc_gr"
-                    id="hr_department_def_acc_gr_rem_btn"
-                    type="object"
-                    icon="fa-minus-square"
-                    string="Remove Default AG" />
+<!--            <button name="remove_def_acc_gr"-->
+<!--                    id="hr_department_def_acc_gr_rem_btn"-->
+<!--                    type="object"-->
+<!--                    icon="fa-minus-square"-->
+<!--                    string="Remove Default AG" />-->
             <button name="%(hr_department_mass_acc_grs_wiz_action)d"
                     id="hr_department_mass_acc_grs_btn"
                     type="action"
@@ -185,7 +186,7 @@
             </group>
             <field name="hr_rfid_allowed_access_groups"
                    groups="hr_rfid.hr_rfid_group_officer"
-                   readonly="1">
+                   readonly="0">
               <tree>
                 <field name="name" />
               </tree>

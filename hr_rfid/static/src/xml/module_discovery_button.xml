@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <template xml:space="preserve">
+    <t t-extend="ListView.buttons">
+      <t t-jquery="button.o_list_button_discard" t-operation="after">
+<!--        <t t-debug="pdb"/>-->
+<!--        <t t-if="widget.model.localData.length == 1">-->
+          <button t-if="(widget.modelName == 'hr.rfid.webstack')"
+                  class="btn btn-primary oe_action_button_discovery"
+                  type="button" accesskey="d">
+            Discovery
+          </button>
+<!--        </t>-->
+        <button t-if="(widget.modelName == 'hr.rfid.webstack')"
+                class="btn btn-primary oe_action_button_manual"
+                type="button" accesskey="d">
+          Manual Add
+        </button>
+      </t>
+    </t>
+  </template>

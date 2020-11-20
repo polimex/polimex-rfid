@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+    <!--#######################################################
+    #####                   ACTIONS                       #####
+    ########################################################-->
+
+    <record id="hr_rfid_card_action" model="ir.actions.act_window">
+      <field name="name">Cards</field>
+      <field name="res_model">hr.rfid.card</field>
+      <field name="context">{'active_test': False}</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search</field>
+      <field name="help" type="html">
+        <p class="oe_view_nocontent_create">
+            You have no any cards in your system!
+        </p>
+        <p class="alert alert-success" role="alert">
+            Use the <strong>Create</strong> button to create your first card! Enjoy!
+        </p>
+      </field>
+    </record>
+
+    <record id="hr_rfid_card_type_action" model="ir.actions.act_window">
+      <field name="name">Card Types</field>
+      <field name="res_model">hr.rfid.card.type</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search</field>
+    </record>
+
+    <record id="hr_rfid_card_door_rel_action" model="ir.actions.act_window">
+      <field name="name">Card/Door Relations</field>
+      <field name="res_model">hr.rfid.card.door.rel</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search</field>
+    </record>
+
+    <record id="hr_rfid_acc_gr_employee_rel_action" model="ir.actions.act_window">
+      <field name="name">Access Group/Employee Relations</field>
+      <field name="res_model">hr.rfid.access.group.employee.rel</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search</field>
+    </record>
+
+    <record id="hr_rfid_acc_gr_contact_rel_action" model="ir.actions.act_window">
+      <field name="name">Access Group/Contact Relations</field>
+      <field name="res_model">hr.rfid.access.group.contact.rel</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search</field>
+    </record>
+
+    <record id="hr_rfid_access_group_action" model="ir.actions.act_window">
+      <field name="name">Access Groups</field>
+      <field name="res_model">hr.rfid.access.group</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search</field>
+      <field name="help" type="html">
+        <p class="oe_view_nocontent_create">
+            You have no any access groups in your system!
+        </p>
+        <p class="alert alert-success" role="alert">
+            Use the <strong>Create</strong> button to create your first access group!
+        </p>
+      </field>
+    </record>
+
+    <record id="hr_rfid_webstack_action" model="ir.actions.act_window">
+      <field name="name">Modules</field>
+      <field name="res_model">hr.rfid.webstack</field>
+      <field name="context">{'active_test': False}</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search,calendar,kanban</field>
+      <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                You have no any modules added!
+            </p>
+            <p class="alert alert-success" role="alert">
+                To add module you have three options:
+            </p>
+            <p class="alert alert-light text-justify">
+                Use button <strong>Discovery</strong> to find all available modules in your network.
+                Please note: The modules have to be connected to Layer 2
+            </p>
+            <p class="alert alert-light text-justify">
+                Use button <strong>Manual Add</strong> to add a module. You have to know the IP address of the module.
+            </p>
+            <p class="alert alert-light text-justify">
+                Manual Setup a module to communicate with this system. For more information contact your partner!
+            </p>
+      </field>
+    </record>
+
+    <record id="hr_rfid_ctrl_action" model="ir.actions.act_window">
+      <field name="name">Controllers</field>
+      <field name="res_model">hr.rfid.ctrl</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search</field>
+      <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                You have no any controller in your system!
+            </p>
+            <p class="alert alert-success" role="alert">
+                You can not add controllers from here.
+                Add your communication modules and then, the controller will appear automatically here.
+            </p>
+      </field>
+    </record>
+
+    <record id="hr_rfid_door_action" model="ir.actions.act_window">
+      <field name="name">Doors</field>
+      <field name="res_model">hr.rfid.door</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search</field>
+      <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                You have no any Door in your system!
+            </p>
+            <p class="alert alert-success" role="alert">
+                You can not add doors from here.<br/>
+                Add your communication modules and then, the controller and doors will appear automatically.
+            </p>
+      </field>
+    </record>
+
+    <record id="hr_rfid_time_schedule_action" model="ir.actions.act_window">
+      <field name="name">Time Schedules</field>
+      <field name="res_model">hr.rfid.time.schedule</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">kanban,tree,form,search</field>
+    </record>
+
+    <record id="hr_rfid_reader_action" model="ir.actions.act_window">
+      <field name="name">Readers</field>
+      <field name="res_model">hr.rfid.reader</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search</field>
+    </record>
+
+    <record id="hr_rfid_event_user_action" model="ir.actions.act_window">
+      <field name="name">User Events</field>
+      <field name="res_model">hr.rfid.event.user</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search,calendar,pivot</field>
+      <field name="context">{'search_default_this_day':1}</field>
+    </record>
+
+    <record id="hr_rfid_event_system_action" model="ir.actions.act_window">
+      <field name="name">System Events</field>
+      <field name="res_model">hr.rfid.event.system</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search,calendar,pivot</field>
+      <field name="context">{"search_default_this_day":1}</field>
+    </record>
+
+    <record id="hr_rfid_command_action" model="ir.actions.act_window">
+      <field name="name">Commands to Modules</field>
+      <field name="res_model">hr.rfid.command</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form,search,calendar</field>
+      <field name="context">{"search_default_this_day":1}</field>
+    </record>
+
+    <record id="hr_rfid_workcode_action" model="ir.actions.act_window">
+      <field name="name">Workcodes</field>
+      <field name="res_model">hr.rfid.workcode</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="hr_rfid_zone_action" model="ir.actions.act_window">
+      <field name="name">Zones</field>
+      <field name="res_model">hr.rfid.zone</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+      <field name="help" type="html">
+        <p class="oe_view_nocontent_create">
+            You have no any Zones in your system!
+        </p>
+        <p class="alert alert-success" role="alert">
+            Use the <strong>Create</strong> button to create your first Zone!
+        </p>
+        <p class="alert alert-light text-justify">
+            The zones are the tool for define different logic bases on doors.<br/>
+            <strong>Anti-Pass Back</strong> is a security measure that aims to prevent consecutive entries for one access card,
+            or prevent multiple people from using the same access card.
+            It is a security protocol that prevents cardholder credentials from being used for improper access.<br/>
+            <strong>Logout on Exit</strong> protect Odoo user session. If the user leave company, all
+            Odoo sessions for this user are delete automatically. <br/>
+            <strong>Attendance</strong> define the door list for attendance functionality. <br/>
+        </p>
+      </field>
+    </record>
+
+    <!--#######################################################
+    #####                   MENU ITEMS                    #####
+    ########################################################-->
+
+    <menuitem id="hr_rfid_main_menu"
+              name="RFID System"
+              groups="hr_rfid_group_officer"
+              web_icon="hr_rfid,static/description/icon.png" />
+
+    <!--#######################################################
+    #####                    EVENTS                       #####
+    ########################################################-->
+
+    <menuitem id="hr_rfid_events_menu"
+              name="Events"
+              parent="hr_rfid_main_menu"
+              groups="hr_rfid_group_officer"
+              sequence="0" />
+
+    <menuitem id="hr_rfid_menu_user_events"
+              name="User Events"
+              parent="hr_rfid_events_menu"
+              action="hr_rfid_event_user_action"
+              groups="hr_rfid_group_officer"
+              sequence="0" />
+
+    <menuitem id="hr_rfid_menu_system_events"
+              name="System Events"
+              parent="hr_rfid_events_menu"
+              action="hr_rfid_event_system_action"
+              groups="hr_rfid_group_officer"
+              sequence="10" />
+
+    <menuitem id="hr_rfid_menu_commands"
+              name="Commands"
+              parent="hr_rfid_events_menu"
+              action="hr_rfid_command_action"
+              groups="hr_rfid_group_manager"
+              sequence="20" />
+
+    <!--#######################################################
+    #####                 MASTER DATA                     #####
+    ########################################################-->
+
+    <menuitem id="hr_rfid_master_data"
+              name="Master Data"
+              parent="hr_rfid_main_menu"
+              groups="hr_rfid_group_officer"
+              sequence="10" />
+
+    <menuitem id="hr_rfid_menu_cards"
+              name="Cards"
+              parent="hr_rfid_master_data"
+              action="hr_rfid_card_action"
+              groups="hr_rfid_group_officer"
+              sequence="0" />
+
+    <menuitem id="hr_rfid_menu_card_door_rels"
+              name="Card/Door Relations"
+              parent="hr_rfid_master_data"
+              action="hr_rfid_card_door_rel_action"
+              groups="base.group_no_one"
+              sequence="1000" />
+
+    <menuitem id="hr_rfid_menu_acc_gr_employee_rels"
+              name="Access Group/Employee Relations"
+              parent="hr_rfid_master_data"
+              action="hr_rfid_acc_gr_employee_rel_action"
+              groups="base.group_no_one"
+              sequence="1010" />
+
+    <menuitem id="hr_rfid_menu_acc_gr_contact_rels"
+              name="Access Group/Contact Relations"
+              parent="hr_rfid_master_data"
+              action="hr_rfid_acc_gr_contact_rel_action"
+              groups="base.group_no_one"
+              sequence="1020" />
+
+    <!--#######################################################
+    #####                   SETTINGS                      #####
+    ########################################################-->
+
+    <menuitem id="hr_rfid_settings_menu"
+              name="Settings"
+              parent="hr_rfid_main_menu"
+              groups="hr_rfid_group_officer"
+              sequence="30" />
+
+    <menuitem id="hr_rfid_menu_card_types"
+              name="Card Types"
+              parent="hr_rfid_settings_menu"
+              action="hr_rfid_card_type_action"
+              groups="base.group_no_one"
+              sequence="0" />
+
+    <menuitem id="hr_rfid_menu_access_groups"
+              name="Access Groups"
+              parent="hr_rfid_settings_menu"
+              action="hr_rfid_access_group_action"
+              groups="hr_rfid_group_manager"
+              sequence="10" />
+
+    <menuitem id="hr_rfid_menu_zones"
+              name="Zones"
+              parent="hr_rfid_settings_menu"
+              action="hr_rfid_zone_action"
+              groups="hr_rfid_group_manager"
+              sequence="0" />
+
+    <menuitem id="hr_rfid_menu_modules_main_menu"
+              name="Modules"
+              parent="hr_rfid_settings_menu"
+              groups="hr_rfid_group_manager"
+              sequence="20" />
+
+    <menuitem id="hr_rfid_menu_controllers"
+              name="Controllers"
+              parent="hr_rfid_settings_menu"
+              action="hr_rfid_ctrl_action"
+              groups="hr_rfid_group_manager"
+              sequence="30" />
+
+    <menuitem id="hr_rfid_menu_doors"
+              name="Doors"
+              parent="hr_rfid_settings_menu"
+              action="hr_rfid_door_action"
+              groups="hr_rfid_group_manager"
+              sequence="40" />
+
+    <menuitem id="hr_rfid_menu_time_schedules"
+              name="Time Schedules"
+              parent="hr_rfid_settings_menu"
+              action="hr_rfid_time_schedule_action"
+              groups="hr_rfid_group_manager"
+              sequence="50" />
+
+    <menuitem id="hr_rfid_menu_workcodes"
+              name="Workcodes"
+              parent="hr_rfid_settings_menu"
+              action="hr_rfid_workcode_action"
+              groups="hr_rfid_group_manager"
+              sequence="60" />
+
+    <menuitem id="hr_rfid_menu_readers"
+              name="Readers"
+              parent="hr_rfid_settings_menu"
+              action="hr_rfid_reader_action"
+              groups="hr_rfid_group_manager"
+              sequence="70" />
+
+    <!--#######################################################
+    #####                   MODULES                       #####
+    ########################################################-->
+
+    <menuitem id="hr_rfid_menu_modules"
+              name="Modules"
+              parent="hr_rfid_menu_modules_main_menu"
+              action="hr_rfid_webstack_action"
+              groups="hr_rfid_group_manager"
+              sequence="0" />
+
+    
+    </data>
+</odoo>

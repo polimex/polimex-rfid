@@ -58,7 +58,7 @@ class Event(models.Model):
 
     @api.model
     def _delete_old_events(self):
-        event_lifetime = self.env['ir.config_parameter'].get_param('hr_rfid.event_lifetime')
+        event_lifetime = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.event_lifetime')
         if event_lifetime is None:
             return False
 
