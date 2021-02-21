@@ -23,8 +23,8 @@ class HrRfidAccessGroup(models.Model):
         string='Name',
         help='A label to help differentiate between access groups',
         default=access_group_generate_name,
-        limit=32,
-        track_visibility='onchange',
+        size=32,
+        tracking=True,
     )
 
     employee_ids = fields.One2many(

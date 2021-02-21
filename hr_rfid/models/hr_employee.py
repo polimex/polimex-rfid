@@ -8,9 +8,9 @@ class HrEmployee(models.Model):
     hr_rfid_pin_code = fields.Char(
         string='User pin code',
         help="Pin code for this user, four zeroes means that the user has no pin code.",
-        limit=4,
+        size=4,
         default='0000',
-        track_visibility='onchange',
+        tracking=True,
     )
 
     hr_rfid_access_group_ids = fields.One2many(
@@ -18,7 +18,7 @@ class HrEmployee(models.Model):
         'employee_id',
         string='Access Groups',
         help='Which access groups the user is a part of',
-        track_visibility='onchange',
+        tracking=True,
     )
 
     hr_rfid_card_ids = fields.One2many(

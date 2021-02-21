@@ -13,7 +13,7 @@ class HrDepartment(models.Model):
         string='Default Access Group',
         help='Every user added to this department gets this access group by default',
         ondelete='set null',
-        track_visibility='onchange',
+        tracking=True,
     )
 
     hr_rfid_allowed_access_groups = fields.Many2many(

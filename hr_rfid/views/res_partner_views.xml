@@ -1,89 +1,109 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <odoo>
-  <data>
-    <record id="hr_rfid_contact_doors_wiz_form" model="ir.ui.view">
-      <field name="name">hr.rfid.contact.doors.wiz.form</field>
-      <field name="model">hr.rfid.contact.doors.wiz</field>
-      <field name="arch" type="xml">
-        <form string="Doors">
-          <group>
-            <field name="door_ids" create="0" edit="0" delete="0"/>
-          </group>
-          <footer>
-            <button special="cancel" string="Ok" class="oe_highlight" />
-          </footer>
-        </form>
-      </field>
-    </record>
+    <data>
 
-    <record id="hr_rfid_contact_doors_wiz_action" model="ir.actions.act_window">
-      <field name="name">Doors</field>
-      <field name="res_model">hr.rfid.contact.doors.wiz</field>
-<!--      <field name="view_type">form</field>-->
-      <field name="view_mode">form</field>
-      <field name="view_id" ref="hr_rfid_contact_doors_wiz_form" />
-      <field name="target">new</field>
-    </record>
+        <record id="hr_rfid_contact_view_tree" model="ir.ui.view">
+            <field name="name">hr.rfid.contact.tree</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <tree string="Contact">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
 
-    <record id="hr_view_contact_form_inherit_hr_rfid" model="ir.ui.view">
-      <field name="name">res.partner.rfid.info</field>
-      <field name="model">res.partner</field>
-      <field name="inherit_id" ref="base.view_partner_form" />
-      <field name="arch" type="xml">
-        <notebook position="inside">
-          <page string="RFID Info"
-                groups="hr_rfid.hr_rfid_view_rfid_data"
-                attrs="{'invisible':[('is_company','=',True)]}">
-            <group string="Settings">
-              <field name="hr_rfid_pin_code" groups="hr_rfid.hr_rfid_view_rfid_pin_code_data" />
-            </group>
-            <notebook>
-              <page string="Cards">
-                <field name="hr_rfid_card_ids" context="{'contact_id': id}" edit="0">
-                  <tree string="Cards belonging to user">
-                    <field name="number" />
-                    <field name="card_type" />
-                  </tree>
-                </field>
-              </page>
+        <record id="hr_rfid_contact_action" model="ir.actions.act_window">
+            <field name="name">Contacts</field>
+            <field name="res_model">res.partner</field>
+            <!--      <field name="view_type">form</field>-->
+            <field name="view_mode">tree,form,search</field>
+            <field name="view_id" ref="hr_rfid_contact_view_tree"/>
+            <field name="context">{"search_default_type_person": 1}</field>
+        </record>
 
-              <page string="Access Groups">
-                <field name="hr_rfid_access_group_ids" widget="one2many_list">
-                  <tree editable="bottom">
-                    <field name="access_group_id" />
-                    <field name="expiration" />
-                  </tree>
-                </field>
-              </page>
+        <record id="hr_rfid_contact_doors_wiz_form" model="ir.ui.view">
+            <field name="name">hr.rfid.contact.doors.wiz.form</field>
+            <field name="model">hr.rfid.contact.doors.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Doors">
+                    <group>
+                        <field name="door_ids" create="0" edit="0" delete="0"/>
+                    </group>
+                    <footer>
+                        <button special="cancel" string="Ok" class="oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
 
-              <page string="Events">
-                <field name="hr_rfid_event_ids" readonly="1">
-                  <tree>
-                    <field name="event_action" />
-                    <field name="door_id" />
-                    <field name="card_id" />
-                    <field name="event_time" />
-                  </tree>
-                </field>
-              </page>
-            </notebook>
-          </page>
-        </notebook>
-      </field>
-    </record>
+        <record id="hr_rfid_contact_doors_wiz_action" model="ir.actions.act_window">
+            <field name="name">Doors</field>
+            <field name="res_model">hr.rfid.contact.doors.wiz</field>
+            <!--      <field name="view_type">form</field>-->
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_rfid_contact_doors_wiz_form"/>
+            <field name="target">new</field>
+        </record>
 
-    <record id="res_partner_view_accessible_doors_action" model="ir.actions.act_window">
-        <field name="name">View accessible doors</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">hr.rfid.contact.doors.wiz</field>
-        <field name="view_mode">form</field>
-        <field name="view_id" ref="hr_rfid.hr_rfid_contact_doors_wiz_form"/>
-        <field name="binding_model_id" ref="base.model_res_partner"/>
-        <field name="binding_view_types">form</field>
-        <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_view_rfid_data'))]"/>
-        <field name="target">new</field>
-    </record>
+        <record id="hr_view_contact_form_inherit_hr_rfid" model="ir.ui.view">
+            <field name="name">res.partner.rfid.info</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                    <page string="RFID Info"
+                          groups="hr_rfid.hr_rfid_view_rfid_data"
+                          attrs="{'invisible':[('is_company','=',True)]}">
+                        <group string="Settings">
+                            <field name="hr_rfid_pin_code" groups="hr_rfid.hr_rfid_view_rfid_pin_code_data"/>
+                        </group>
+                        <notebook>
+                            <page string="Cards">
+                                <field name="hr_rfid_card_ids" context="{'contact_id': id}" edit="0">
+                                    <tree string="Cards belonging to user">
+                                        <field name="number"/>
+                                        <field name="card_type"/>
+                                    </tree>
+                                </field>
+                            </page>
 
-  </data>
+                            <page string="Access Groups">
+                                <field name="hr_rfid_access_group_ids" widget="one2many_list">
+                                    <tree editable="bottom">
+                                        <field name="access_group_id"/>
+                                        <field name="expiration"/>
+                                    </tree>
+                                </field>
+                            </page>
+
+                            <page string="Events">
+                                <field name="hr_rfid_event_ids" readonly="1">
+                                    <tree>
+                                        <field name="event_action"/>
+                                        <field name="door_id"/>
+                                        <field name="card_id"/>
+                                        <field name="event_time"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+
+        <record id="res_partner_view_accessible_doors_action" model="ir.actions.act_window">
+            <field name="name">View accessible doors</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.rfid.contact.doors.wiz</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_rfid.hr_rfid_contact_doors_wiz_form"/>
+            <field name="binding_model_id" ref="base.model_res_partner"/>
+            <field name="binding_view_types">form</field>
+            <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_view_rfid_data'))]"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
 </odoo>

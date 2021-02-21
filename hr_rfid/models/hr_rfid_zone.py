@@ -9,7 +9,7 @@ class HrRfidZone(models.Model):
 
     name = fields.Char(
         string='Zone Name',
-        track_visibility='onchange',
+        tracking=True,
         required=True,
     )
 
@@ -30,7 +30,7 @@ class HrRfidZone(models.Model):
         'door_id',
         string='Doors',
         help='Doors in this zone',
-        track_visibility='onchange',
+        tracking=True,
     )
 
     employee_ids = fields.Many2many(

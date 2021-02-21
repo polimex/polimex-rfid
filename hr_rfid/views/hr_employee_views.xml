@@ -1,95 +1,115 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <odoo>
-  <data>
-    <record id="hr_rfid_employee_doors_wiz_form" model="ir.ui.view">
-      <field name="name">hr.rfid.employee.doors.wiz.form</field>
-      <field name="model">hr.rfid.employee.doors.wiz</field>
-      <field name="arch" type="xml">
-        <form string="Doors">
-          <group>
-            <field name="door_ids" create="0" edit="0" delete="0"/>
-          </group>
-          <footer>
-            <button special="cancel" string="Ok" class="oe_highlight" />
-          </footer>
-        </form>
-      </field>
-    </record>
+    <data>
 
-    <record id="hr_rfid_employee_doors_wiz_action" model="ir.actions.act_window">
-      <field name="name">Doors</field>
-      <field name="res_model">hr.rfid.employee.doors.wiz</field>
-      <field name="view_mode">form</field>
-      <field name="view_id" ref="hr_rfid_employee_doors_wiz_form" />
-      <field name="target">new</field>
-    </record>
+        <record id="hr_rfid_employee_view_tree" model="ir.ui.view">
+            <field name="name">hr.rfid.employee.tree</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <tree string="Employee">
+                    <field name="name"/>
+                    <field name="department_id"/>
+                </tree>
+            </field>
+        </record>
 
-    <record id="hr_view_employee_form_inherit_hr_rfid" model="ir.ui.view">
-      <field name="name">hr.employee.rfid.info</field>
-      <field name="model">hr.employee</field>
-      <field name="inherit_id" ref="hr.view_employee_form" />
-      <field name="arch" type="xml">
-        <xpath expr="//div[@name='button_box']" position="inside">
-          <button name="%(hr_rfid_employee_doors_wiz_action)d" id="hr_rfid_employee_show_doors_btn"
-                  type="action" class="oe_stat_button" icon="fa-info" string="Doors"
-                  help="Doors this employee has access to">
-			</button>
-        </xpath>
-        <notebook position="inside">
-          <page string="RFID Info" groups="hr_rfid.hr_rfid_view_rfid_data">
-            <group>
-              <field name="hr_rfid_pin_code" groups="hr_rfid.hr_rfid_view_rfid_pin_code_data" />
-            </group>
-            <notebook>
-              <page string="Cards">
-                <field name="hr_rfid_card_ids"
-                       context="{'employee_id': id}"
-                       edit="0">
-                  <tree string="Cards belonging to user">
-                    <field name="number" />
-                    <field name="card_type" />
-                  </tree>
-                </field>
-              </page>
+        <record id="hr_rfid_employee_action" model="ir.actions.act_window">
+            <field name="name">Employees</field>
+            <field name="res_model">hr.employee</field>
+            <!--      <field name="view_type">form</field>-->
+            <field name="view_mode">tree,form,search</field>
+            <field name="view_id" ref="hr_rfid_employee_view_tree"/>
+        </record>
 
-              <page string="Access Groups">
-                <field name="hr_rfid_access_group_ids" widget="one2many_list">
-                  <tree editable="bottom">
-                    <field name="access_group_id"
-                           domain="[('department_ids','in',[parent.department_id])]"/>
-                    <field name="expiration" />
-                  </tree>
-                </field>
-              </page>
+        <record id="hr_rfid_employee_doors_wiz_form" model="ir.ui.view">
+            <field name="name">hr.rfid.employee.doors.wiz.form</field>
+            <field name="model">hr.rfid.employee.doors.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Doors">
+                    <group>
+                        <field name="door_ids" create="0" edit="0" delete="0"/>
+                    </group>
+                    <footer>
+                        <button special="cancel" string="Ok" class="oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
 
-              <page string="Events">
-                <field name="hr_rfid_event_ids" readonly="1">
-                  <tree>
-                    <field name="event_time" />
-                    <field name="door_id" />
-                    <field name="event_action" />
-                    <field name="card_id" />
-                  </tree>
-                </field>
-              </page>
-            </notebook>
-          </page>
-        </notebook>
-      </field>
-    </record>
+        <record id="hr_rfid_employee_doors_wiz_action" model="ir.actions.act_window">
+            <field name="name">Doors</field>
+            <field name="res_model">hr.rfid.employee.doors.wiz</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_rfid_employee_doors_wiz_form"/>
+            <field name="target">new</field>
+        </record>
 
-    <record id="employees_view_accessible_doors_action" model="ir.actions.act_window">
-        <field name="name">View accessible doors</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">hr.rfid.employee.doors.wiz</field>
-        <field name="view_mode">form</field>
-        <field name="view_id" ref="hr_rfid.hr_rfid_employee_doors_wiz_form"/>
-        <field name="binding_model_id" ref="hr.model_hr_employee"/>
-        <field name="binding_view_types">form</field>
-        <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_view_rfid_data'))]"/>
-        <field name="target">new</field>
-    </record>
+        <record id="hr_view_employee_form_inherit_hr_rfid" model="ir.ui.view">
+            <field name="name">hr.employee.rfid.info</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button name="%(hr_rfid_employee_doors_wiz_action)d" id="hr_rfid_employee_show_doors_btn"
+                            type="action" class="oe_stat_button" icon="fa-info" string="Doors"
+                            help="Doors this employee has access to">
+                    </button>
+                </xpath>
+                <notebook position="inside">
+                    <page string="RFID Info" groups="hr_rfid.hr_rfid_view_rfid_data">
+                        <group>
+                            <field name="hr_rfid_pin_code" groups="hr_rfid.hr_rfid_view_rfid_pin_code_data"/>
+                        </group>
+                        <notebook>
+                            <page string="Cards">
+                                <field name="hr_rfid_card_ids"
+                                       context="{'employee_id': id}"
+                                       edit="0">
+                                    <tree string="Cards belonging to user">
+                                        <field name="number"/>
+                                        <field name="card_type"/>
+                                    </tree>
+                                </field>
+                            </page>
 
-  </data>
+                            <page string="Access Groups">
+                                <field name="hr_rfid_access_group_ids" widget="one2many_list">
+                                    <tree editable="bottom">
+                                        <field name="access_group_id"
+                                               domain="[('department_ids','in',[parent.department_id])]"/>
+                                        <field name="expiration"/>
+                                    </tree>
+                                </field>
+                            </page>
+
+                            <page string="Events">
+                                <field name="hr_rfid_event_ids" readonly="1">
+                                    <tree>
+                                        <field name="event_time"/>
+                                        <field name="door_id"/>
+                                        <field name="event_action"/>
+                                        <field name="card_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+
+        <record id="employees_view_accessible_doors_action" model="ir.actions.act_window">
+            <field name="name">View accessible doors</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.rfid.employee.doors.wiz</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_rfid.hr_rfid_employee_doors_wiz_form"/>
+            <field name="binding_model_id" ref="hr.model_hr_employee"/>
+            <field name="binding_view_types">form</field>
+            <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_view_rfid_data'))]"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
 </odoo>

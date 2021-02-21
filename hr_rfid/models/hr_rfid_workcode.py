@@ -12,14 +12,14 @@ class HrRfidWorkcode(models.Model):
     name = fields.Char(
         string='Name',
         help='A label to remind what the workcode represents.',
-        track_visibility='onchange',
+        tracking=True,
         required=True,
     )
 
     workcode = fields.Char(
         string='Workcode',
         help="The actual workcode ",
-        limit=4,
+        size=4,
         required=True,
     )
 
@@ -32,7 +32,7 @@ class HrRfidWorkcode(models.Model):
         string='User action',
         help='What the user does when he submits this workcode',
         default='stop',
-        track_visibility='onchange',
+        tracking=True,
         required=True,
     )
 
