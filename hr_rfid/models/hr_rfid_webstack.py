@@ -14,6 +14,306 @@ def _tz_get(self):
     return _tzs
 
 
+class HrRfidWebstack(models.Model):
+    _name = 'hr.rfid.webstack'
+    _inherit = ['mail.thread']
+    _description = 'Module'
+
+    name = fields.Char(
+        string='Name',
+        help='A label to easily differentiate modules',
+        required=True,
+        index=True,
+        tracking=True,
+    )
+
+    tz = fields.Selection(
+        _tz_get,
+        string='Timezone',
+        default=lambda self: self._context.get('tz'),
+        help='If not set, will assume GMT',
+    )
+
+    tz_offset = fields.Char(
+        string='Timezone offset',
+        compute='_compute_tz_offset',
+    )
+
+    serial = fields.Char(
+        string='Serial number',
+        help='Unique number to differentiate all modules',
+        size=6,
+        index=True,
+        readonly=True,
+    )
+
+    key = fields.Char(
+        string='Key',
+        size=4,
+        index=True,
+        default='0000',
+        tracking=True,
+    )
+
+    active = fields.Boolean(
+        string='Active',
+        help='Will accept events from module if true',
+        default=False,
+        tracking=True,
+    )
+
+    version = fields.Char(
+        string='Version',
+        help='Software version of the module',
+        size=6,
+    )
+
+    hw_version = fields.Char(
+        string='Hardware Version',
+        help='Hardware version of the module',
+        size=6,
+    )
+
+    behind_nat = fields.Boolean(
+        string='Behind NAT',
+        help='Whether we can create a direct connection to the module or not',
+        required=True,
+        default=True,
+    )
+
+    last_ip = fields.Char(
+        string='Last IP',
+        help='Last IP the module connected from',
+        size=26,
+    )
+
+    updated_at = fields.Datetime(
+        string='Last Update',
+        help='The last date we received an event from the module',
+    )
+
+    controllers = fields.One2many(
+        'hr.rfid.ctrl',
+        'webstack_id',
+        string='Controllers',
+        help='Controllers that this WebStack manages'
+    )
+
+    system_event_ids = fields.One2many(
+        'hr.rfid.event.system',
+        'webstack_id',
+        string='Errors',
+        help='Errors that we have received from the module'
+    )
+
+    command_ids = fields.One2many(
+        'hr.rfid.command',
+        'webstack_id',
+        string='Commands',
+        help='Commands that have been or are in queue to send to this module.',
+    )
+
+    http_link = fields.Char(
+        compute='_compute_http_link'
+    )
+
+    module_username = fields.Selection(
+        selection=[ ('admin', 'Admin'), ('sdk', 'SDK') ],
+        string='Module Username',
+        help='Username for the admin account for the module',
+        default='admin',
+    )
+
+    module_password = fields.Char(
+        string='Module Password',
+        help='Password for the admin account for the module',
+        default='',
+    )
+
+    available = fields.Selection(
+        selection=[
+            ('u', 'Unavailable'),
+            ('a', 'Available')
+        ],
+        string='Available?',
+        help='Whether the module was available the last time Odoo tried to connect to it.',
+        default='u',
+    )
+
+    last_update = fields.Boolean(compute='_compute_last_update')
+
+    _sql_constraints = [ ('rfid_webstack_serial_unique', 'unique(serial)',
+                          'Serial number for webstacks must be unique!') ]
+
+    @api.depends('updated_at')
+    def _compute_last_update(self):
+        for r in self:
+            if not r.updated_at:
+                r.last_update = False
+                continue
+            ten_min_delay = fields.Datetime.subtract(fields.Datetime.now(), minutes=10)
+            r.last_update = True if r.updated_at < ten_min_delay else False
+            print(r.last_update)
+
+    def toggle_ws_active(self):
+        for rec in self:
+            rec.active = not rec.active
+
+    def action_set_active(self):
+        self.active = True
+
+    def action_set_inactive(self):
+        self.active = False
+
+    def action_set_webstack_settings(self):
+        odoo_url = str(self.env['ir.config_parameter'].sudo().get_param('web.base.url'))
+        splits = odoo_url.split(':')
+        odoo_url = splits[1][2:]
+        if len(splits) == 3:
+            odoo_port = int(splits[2], 10)
+        else:
+            odoo_port = 80
+        odoo_url += '/hr/rfid/event'
+
+        if self.module_username is False:
+            username = ''
+        else:
+            username = str(self.module_username)
+
+        if self.module_password is False:
+            password = ''
+        else:
+            password = str(self.module_password)
+
+        auth = base64.b64encode((username + ':' + password).encode())
+        auth = auth.decode()
+        req_headers = { "content-type": "application/json", "Authorization": "Basic " + str(auth) }
+        host = str(self.last_ip)
+        js_uart_conf = json.dumps([
+            {
+                "br": 9600,
+                "db": 3,
+                "fc": 0,
+                "ft": 122,
+                "port": 0,
+                "pr": 0,
+                "rt": False,
+                "sb": 1,
+                "usage": 0
+            }, {
+                "br": 9600,
+                "db": 3,
+                "fc": 0,
+                "ft": 122,
+                "port": 2,
+                "pr": 0,
+                "rt": False,
+                "sb": 1,
+                "usage": 1
+            }
+        ])
+
+        config_params = 'sdk=1&stsd=1&sdts=1&stsu=' + odoo_url + '&prt=' \
+                        + str(odoo_port) + '&hb=1&thb=60&br=1&odoo=1'
+        try:
+            if self.hw_version != '50.1':
+                conn = http.client.HTTPConnection(str(host), 80, timeout=2)
+                conn.request("POST", "/protect/uart/conf", js_uart_conf, req_headers)
+                response = conn.getresponse()
+                conn.close()
+                code = response.getcode()
+                body = response.read()
+                if code != 200:
+                    raise exceptions.ValidationError('While trying to setup /protect/uart/conf the module '
+                                                     'returned code ' + str(code) + ' with body:\n' +
+                                                     body.decode())
+
+            conn = http.client.HTTPConnection(str(host), 80, timeout=2)
+            conn.request("POST", "/protect/config.htm", config_params, req_headers)
+            response = conn.getresponse()
+            conn.close()
+            code = response.getcode()
+            body = response.read()
+            if code != 200:
+                raise exceptions.ValidationError('While trying to setup /protect/config.htm the module '
+                                                 'returned code ' + str(code) + ' with body:\n' +
+                                                 body.decode())
+        except socket.timeout:
+            raise exceptions.ValidationError('Could not connect to the module. '
+                                             "Check if it is turned on or if it's on a different ip.")
+        except (socket.error, socket.gaierror, socket.herror) as e:
+            raise exceptions.ValidationError('Error while trying to connect to the module.'
+                                             ' Information:\n' + str(e))
+
+    def action_check_if_ws_available(self):
+        host = str(self.last_ip)
+        try:
+            conn = http.client.HTTPConnection(host, 80, timeout=2)
+            conn.request('GET', '/config.json')
+            response = conn.getresponse()
+            code = response.getcode()
+            body = response.read()
+            conn.close()
+            if code != 200:
+                raise exceptions.ValidationError('Webstack sent us http code {}'
+                                                 ' when 200 was expected.'.format(code))
+
+            js = json.loads(body.decode())
+            module = {
+                'version': js['sdk']['sdkVersion'],
+                'hw_version': js['sdk']['sdkHardware'],
+                'serial': js['convertor'],
+                'available': 'a',
+            }
+            self.write(module)
+        except socket.timeout:
+            raise exceptions.ValidationError('Could not connect to the webstack')
+        except(socket.error, socket.gaierror, socket.herror) as e:
+            raise exceptions.ValidationError('Unexpected error:\n' + str(e))
+        except KeyError as __:
+            raise exceptions.ValidationError('Information returned by the webstack invalid')
+
+    @api.depends('tz')
+    def _compute_tz_offset(self):
+        for user in self:
+            user.tz_offset = datetime.now(pytz.timezone(user.tz or 'GMT')).strftime('%z')
+
+    def _compute_http_link(self):
+        for record in self:
+            if record.last_ip != '' and record.last_ip is not False:
+                link = 'http://' + record.last_ip + '/'
+                record.http_link = link
+            else:
+                record.http_link = ''
+
+    @api.model
+    def _deconfirm_webstack(self, ws):
+        ws.available = 'u'
+
+    @api.model
+    def _confirm_webstack(self, ws):
+        ws.available = 'c'
+
+    def write(self, vals):
+        if 'tz' not in vals:
+            return super(HrRfidWebstack, self).write(vals)
+
+        commands_env = self.env['hr.rfid.command']
+
+        for ws in self:
+            old_tz = ws.tz
+            super(HrRfidWebstack, ws).write(vals)
+            new_tz = ws.tz
+
+            if old_tz != new_tz:
+                for ctrl in ws.controllers:
+                    commands_env.create([{
+                        'webstack_id': ctrl.webstack_id.id,
+                        'controller_id': ctrl.id,
+                        'cmd': 'D7',
+                    }])
+
+
 class HrRfidWebstackDiscovery(models.TransientModel):
     _name = 'hr.rfid.webstack.discovery'
     _description = 'Webstack discovery'
@@ -186,300 +486,3 @@ class HrRfidWebstackManualCreate(models.TransientModel):
         }).action_check_if_ws_available()
 
 
-class HrRfidWebstack(models.Model):
-    _name = 'hr.rfid.webstack'
-    _inherit = ['mail.thread']
-    _description = 'Module'
-
-    name = fields.Char(
-        string='Name',
-        help='A label to easily differentiate modules',
-        required=True,
-        index=True,
-        tracking=True,
-    )
-
-    tz = fields.Selection(
-        _tz_get,
-        string='Timezone',
-        default=lambda self: self._context.get('tz'),
-        help='If not set, will assume GMT',
-    )
-
-    tz_offset = fields.Char(
-        string='Timezone offset',
-        compute='_compute_tz_offset',
-    )
-
-    serial = fields.Char(
-        string='Serial number',
-        help='Unique number to differentiate all modules',
-        size=6,
-        index=True,
-        readonly=True,
-    )
-
-    key = fields.Char(
-        string='Key',
-        size=4,
-        index=True,
-        default='0000',
-        tracking=True,
-    )
-
-    active = fields.Boolean(
-        string='Active',
-        help='Will accept events from module if true',
-        default=False,
-        tracking=True,
-    )
-
-    version = fields.Char(
-        string='Version',
-        help='Software version of the module',
-        size=6,
-    )
-
-    hw_version = fields.Char(
-        string='Hardware Version',
-        help='Hardware version of the module',
-        size=6,
-    )
-
-    behind_nat = fields.Boolean(
-        string='Behind NAT',
-        help='Whether we can create a direct connection to the module or not',
-        required=True,
-        default=True,
-    )
-
-    last_ip = fields.Char(
-        string='Last IP',
-        help='Last IP the module connected from',
-        size=26,
-    )
-
-    updated_at = fields.Datetime(
-        string='Last Update',
-        help='The last date we received an event from the module',
-    )
-
-    controllers = fields.One2many(
-        'hr.rfid.ctrl',
-        'webstack_id',
-        string='Controllers',
-        help='Controllers that this WebStack manages'
-    )
-
-    system_event_ids = fields.One2many(
-        'hr.rfid.event.system',
-        'webstack_id',
-        string='Errors',
-        help='Errors that we have received from the module'
-    )
-
-    command_ids = fields.One2many(
-        'hr.rfid.command',
-        'webstack_id',
-        string='Commands',
-        help='Commands that have been or are in queue to send to this module.',
-    )
-
-    http_link = fields.Char(
-        compute='_compute_http_link'
-    )
-
-    module_username = fields.Selection(
-        selection=[ ('admin', 'Admin'), ('sdk', 'SDK') ],
-        string='Module Username',
-        help='Username for the admin account for the module',
-        default='admin',
-    )
-
-    module_password = fields.Char(
-        string='Module Password',
-        help='Password for the admin account for the module',
-        default='',
-    )
-
-    available = fields.Selection(
-        selection=[ ('u', 'Unavailable'), ('a', 'Available') ],
-        string='Available?',
-        help='Whether the module was available the last time Odoo tried to connect to it.',
-        default='u',
-    )
-
-    last_update = fields.Boolean(compute='_last_update_calculate')
-
-    _sql_constraints = [ ('rfid_webstack_serial_unique', 'unique(serial)',
-                          'Serial number for webstacks must be unique!') ]
-
-    @api.depends('updated_at')
-    def _last_update_calculate(self):
-        for r in self:
-            if not r.updated_at:
-                r.last_update = False
-                continue
-            ten_min_dalay = datetime.now() - timedelta(minutes=10)
-            r.last_update = True if r.updated_at < ten_min_dalay else False
-            print(r.last_update)
-
-
-
-    def toggle_ws_active(self):
-        for rec in self:
-            rec.active = not rec.active
-
-    def action_set_active(self):
-        self.active = True
-
-    def action_set_inactive(self):
-        self.active = False
-
-    def action_set_webstack_settings(self):
-        odoo_url = str(self.env['ir.config_parameter'].sudo().get_param('web.base.url'))
-        splits = odoo_url.split(':')
-        odoo_url = splits[1][2:]
-        if len(splits) == 3:
-            odoo_port = int(splits[2], 10)
-        else:
-            odoo_port = 80
-        odoo_url += '/hr/rfid/event'
-
-        if self.module_username is False:
-            username = ''
-        else:
-            username = str(self.module_username)
-
-        if self.module_password is False:
-            password = ''
-        else:
-            password = str(self.module_password)
-
-        auth = base64.b64encode((username + ':' + password).encode())
-        auth = auth.decode()
-        req_headers = { "content-type": "application/json", "Authorization": "Basic " + str(auth) }
-        host = str(self.last_ip)
-        js_uart_conf = json.dumps([
-            {
-                "br": 9600,
-                "db": 3,
-                "fc": 0,
-                "ft": 122,
-                "port": 0,
-                "pr": 0,
-                "rt": False,
-                "sb": 1,
-                "usage": 0
-            }, {
-                "br": 9600,
-                "db": 3,
-                "fc": 0,
-                "ft": 122,
-                "port": 2,
-                "pr": 0,
-                "rt": False,
-                "sb": 1,
-                "usage": 1
-            }
-        ])
-
-        config_params = 'sdk=1&stsd=1&sdts=1&stsu=' + odoo_url + '&prt=' \
-                        + str(odoo_port) + '&hb=1&thb=60&br=1&odoo=1'
-        try:
-            if self.hw_version != '50.1':
-                conn = http.client.HTTPConnection(str(host), 80, timeout=2)
-                conn.request("POST", "/protect/uart/conf", js_uart_conf, req_headers)
-                response = conn.getresponse()
-                conn.close()
-                code = response.getcode()
-                body = response.read()
-                if code != 200:
-                    raise exceptions.ValidationError('While trying to setup /protect/uart/conf the module '
-                                                     'returned code ' + str(code) + ' with body:\n' +
-                                                     body.decode())
-
-            conn = http.client.HTTPConnection(str(host), 80, timeout=2)
-            conn.request("POST", "/protect/config.htm", config_params, req_headers)
-            response = conn.getresponse()
-            conn.close()
-            code = response.getcode()
-            body = response.read()
-            if code != 200:
-                raise exceptions.ValidationError('While trying to setup /protect/config.htm the module '
-                                                 'returned code ' + str(code) + ' with body:\n' +
-                                                 body.decode())
-        except socket.timeout:
-            raise exceptions.ValidationError('Could not connect to the module. '
-                                             "Check if it is turned on or if it's on a different ip.")
-        except (socket.error, socket.gaierror, socket.herror) as e:
-            raise exceptions.ValidationError('Error while trying to connect to the module.'
-                                             ' Information:\n' + str(e))
-
-    def action_check_if_ws_available(self):
-        host = str(self.last_ip)
-        try:
-            conn = http.client.HTTPConnection(host, 80, timeout=2)
-            conn.request('GET', '/config.json')
-            response = conn.getresponse()
-            code = response.getcode()
-            body = response.read()
-            conn.close()
-            if code != 200:
-                raise exceptions.ValidationError('Webstack sent us http code {}'
-                                                 ' when 200 was expected.'.format(code))
-
-            js = json.loads(body.decode())
-            module = {
-                'version': js['sdk']['sdkVersion'],
-                'hw_version': js['sdk']['sdkHardware'],
-                'serial': js['convertor'],
-                'available': 'a',
-            }
-            self.write(module)
-        except socket.timeout:
-            raise exceptions.ValidationError('Could not connect to the webstack')
-        except(socket.error, socket.gaierror, socket.herror) as e:
-            raise exceptions.ValidationError('Unexpected error:\n' + str(e))
-        except KeyError as __:
-            raise exceptions.ValidationError('Information returned by the webstack invalid')
-
-    @api.depends('tz')
-    def _compute_tz_offset(self):
-        for user in self:
-            user.tz_offset = datetime.now(pytz.timezone(user.tz or 'GMT')).strftime('%z')
-
-    def _compute_http_link(self):
-        for record in self:
-            if record.last_ip != '' and record.last_ip is not False:
-                link = 'http://' + record.last_ip + '/'
-                record.http_link = link
-            else:
-                record.http_link = ''
-
-    @api.model
-    def _deconfirm_webstack(self, ws):
-        ws.available = 'u'
-
-    @api.model
-    def _confirm_webstack(self, ws):
-        ws.available = 'c'
-
-    def write(self, vals):
-        if 'tz' not in vals:
-            return super(HrRfidWebstack, self).write(vals)
-
-        commands_env = self.env['hr.rfid.command']
-
-        for ws in self:
-            old_tz = ws.tz
-            super(HrRfidWebstack, ws).write(vals)
-            new_tz = ws.tz
-
-            if old_tz != new_tz:
-                for ctrl in ws.controllers:
-                    commands_env.create([{
-                        'webstack_id': ctrl.webstack_id.id,
-                        'controller_id': ctrl.id,
-                        'cmd': 'D7',
-                    }])

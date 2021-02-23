@@ -70,7 +70,7 @@ class HrEmployee(models.Model):
     hr_rfid_vending_negative_balance = fields.Boolean(
         string='Negative Balance',
         help='Whether the user is allowed to have a negative balance or not',
-        track_visibility='onchange',
+        tracking=True,
     )
 
     # Only displayed if negative_balance is true

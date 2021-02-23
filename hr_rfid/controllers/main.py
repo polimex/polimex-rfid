@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import http, fields, exceptions, _
+from odoo import http, fields, exceptions, _, SUPERUSER_ID
 from odoo.http import request
 from enum  import Enum
 
@@ -775,7 +775,7 @@ class WebRfidController(http.Controller):
             return self._parse_raw_data()
 
         self._vending_hw_version = '16'
-        self._webstacks_env = request.env['hr.rfid.webstack'].with_user(1)
+        self._webstacks_env = request.env['hr.rfid.webstack'].with_user(SUPERUSER_ID)
         self._webstack = self._webstacks_env.search(['|',('active', '=', True), ('active', '=', False),
                                                      ('serial', '=', str(self._post['convertor'])) ])
         self._ws_db_update_dict = {

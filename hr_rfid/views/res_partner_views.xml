@@ -3,28 +3,27 @@
 <odoo>
     <data>
 
-        <record id="hr_rfid_contact_view_tree" model="ir.ui.view">
-            <field name="name">hr.rfid.contact.tree</field>
+        <record id="hr_rfid_partner_view_tree" model="ir.ui.view">
+            <field name="name">hr.rfid.partner.tree</field>
             <field name="model">res.partner</field>
             <field name="arch" type="xml">
-                <tree string="Contact">
+                <tree string="Partners">
                     <field name="name"/>
                 </tree>
             </field>
         </record>
 
-        <record id="hr_rfid_contact_action" model="ir.actions.act_window">
-            <field name="name">Contacts</field>
+        <record id="hr_rfid_partner_action" model="ir.actions.act_window">
+            <field name="name">Partners</field>
             <field name="res_model">res.partner</field>
-            <!--      <field name="view_type">form</field>-->
             <field name="view_mode">tree,form,search</field>
-            <field name="view_id" ref="hr_rfid_contact_view_tree"/>
+            <field name="view_id" ref="hr_rfid_partner_view_tree"/>
             <field name="context">{"search_default_type_person": 1}</field>
         </record>
 
-        <record id="hr_rfid_contact_doors_wiz_form" model="ir.ui.view">
-            <field name="name">hr.rfid.contact.doors.wiz.form</field>
-            <field name="model">hr.rfid.contact.doors.wiz</field>
+        <record id="hr_rfid_partner_doors_wiz_form" model="ir.ui.view">
+            <field name="name">hr.rfid.partner.doors.wiz.form</field>
+            <field name="model">hr.rfid.partner.doors.wiz</field>
             <field name="arch" type="xml">
                 <form string="Doors">
                     <group>
@@ -37,16 +36,16 @@
             </field>
         </record>
 
-        <record id="hr_rfid_contact_doors_wiz_action" model="ir.actions.act_window">
+        <record id="hr_rfid_partner_doors_wiz_action" model="ir.actions.act_window">
             <field name="name">Doors</field>
-            <field name="res_model">hr.rfid.contact.doors.wiz</field>
+            <field name="res_model">hr.rfid.partner.doors.wiz</field>
             <!--      <field name="view_type">form</field>-->
             <field name="view_mode">form</field>
-            <field name="view_id" ref="hr_rfid_contact_doors_wiz_form"/>
+            <field name="view_id" ref="hr_rfid_partner_doors_wiz_form"/>
             <field name="target">new</field>
         </record>
 
-        <record id="hr_view_contact_form_inherit_hr_rfid" model="ir.ui.view">
+        <record id="hr_view_partner_form_inherit_hr_rfid" model="ir.ui.view">
             <field name="name">res.partner.rfid.info</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
@@ -96,9 +95,9 @@
         <record id="res_partner_view_accessible_doors_action" model="ir.actions.act_window">
             <field name="name">View accessible doors</field>
             <field name="type">ir.actions.act_window</field>
-            <field name="res_model">hr.rfid.contact.doors.wiz</field>
+            <field name="res_model">hr.rfid.partner.doors.wiz</field>
             <field name="view_mode">form</field>
-            <field name="view_id" ref="hr_rfid.hr_rfid_contact_doors_wiz_form"/>
+            <field name="view_id" ref="hr_rfid.hr_rfid_partner_doors_wiz_form"/>
             <field name="binding_model_id" ref="base.model_res_partner"/>
             <field name="binding_view_types">form</field>
             <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_view_rfid_data'))]"/>
