@@ -1,55 +1,66 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <odoo>
-  <data>
+    <data>
 
-    <record id="hr_rfid_view_user_ev_form_inherit_hr_attendance_multi_rfid" model="ir.ui.view">
-      <field name="name">hr.rfid.ev.usr.hr.attendance.multi.rfid.ev.usr.in.or.out.form</field>
-      <field name="model">hr.rfid.event.user</field>
-      <field name="inherit_id" ref="hr_rfid.hr_rfid_user_ev_view_form" />
-      <field name="arch" type="xml">
-        <xpath expr="//group//field[@name='name']" position="after">
-          <field name="in_or_out" />
-        </xpath>
-      </field>
-    </record>
+        <record id="hr_rfid_view_user_ev_form_inherit_hr_attendance_multi_rfid" model="ir.ui.view">
+            <field name="name">hr.rfid.ev.usr.hr.attendance.multi.rfid.ev.usr.in.or.out.form</field>
+            <field name="model">hr.rfid.event.user</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_user_ev_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group//field[@name='name']" position="after">
+                    <field name="in_or_out"/>
+                </xpath>
+            </field>
+        </record>
 
-    <record id="hr_rfid_view_user_ev_tree_inherit_hr_attendance_multi_rfid" model="ir.ui.view">
-      <field name="name">hr.rfid.ev.usr.hr.attendance.multi.rfid.ev.usr.in.or.out.tree</field>
-      <field name="model">hr.rfid.event.user</field>
-      <field name="inherit_id" ref="hr_rfid.hr_rfid_user_ev_view_tree" />
-      <field name="arch" type="xml">
-        <xpath expr="//field[@name='door_id']" position="after">
-          <field name="in_or_out" />
-        </xpath>
-      </field>
-    </record>
+        <record id="hr_rfid_view_user_ev_tree_inherit_hr_attendance_multi_rfid" model="ir.ui.view">
+            <field name="name">hr.rfid.ev.usr.hr.attendance.multi.rfid.ev.usr.in.or.out.tree</field>
+            <field name="model">hr.rfid.event.user</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_user_ev_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='door_id']" position="after">
+                    <field name="in_or_out"/>
+                </xpath>
+            </field>
+        </record>
 
-    <record id="hr_rfid_view_zone_form_inherit_hr_attendance_multi_rfid" model="ir.ui.view">
-      <field name="name">hr.rfid.zone.hr.attendance.multi.rfid.view.form</field>
-      <field name="model">hr.rfid.zone</field>
-      <field name="inherit_id" ref="hr_rfid.hr_rfid_zone_view_form" />
-      <field name="arch" type="xml">
-        <xpath expr="//group//field[@name='log_out_on_exit']" position="after">
-          <field name="attendance" />
-          <field name="overwrite_check_in"  attrs="{'invisible':[('attendance','=',False)]}" />
-          <field name="overwrite_check_out" attrs="{'invisible':[('attendance','=',False)]}" />
-        </xpath>
-      </field>
-    </record>
+        <record id="hr_rfid_view_zone_form_inherit_hr_attendance_multi_rfid" model="ir.ui.view">
+            <field name="name">hr.rfid.zone.hr.attendance.multi.rfid.view.form</field>
+            <field name="model">hr.rfid.zone</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_zone_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group//field[@name='log_out_on_exit']" position="after">
+                    <field name="attendance"/>
+                    <field name="overwrite_check_in" attrs="{'invisible':[('attendance','=',False)]}"/>
+                    <field name="overwrite_check_out" attrs="{'invisible':[('attendance','=',False)]}"/>
+                </xpath>
+            </field>
+        </record>
 
-    <record id="hr_rfid_view_zone_tree_inherit_hr_attendance_multi_rfid" model="ir.ui.view">
-      <field name="name">hr.rfid.zone.hr.attendance.multi.rfid.view.tree</field>
-      <field name="model">hr.rfid.zone</field>
-      <field name="inherit_id" ref="hr_rfid.hr_rfid_zone_view_tree" />
-      <field name="arch" type="xml">
-        <xpath expr="//field[@name='log_out_on_exit']" position="after">
-          <field name="attendance" />
-          <field name="overwrite_check_in"  attrs="{'invisible':[('attendance','=',False)]}" />
-          <field name="overwrite_check_out" attrs="{'invisible':[('attendance','=',False)]}" />
-        </xpath>
-      </field>
-    </record>
+        <record id="hr_rfid_view_zone_tree_inherit_hr_attendance_multi_rfid" model="ir.ui.view">
+            <field name="name">hr.rfid.zone.hr.attendance.multi.rfid.view.tree</field>
+            <field name="model">hr.rfid.zone</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_zone_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='log_out_on_exit']" position="after">
+                    <field name="attendance"/>
+                    <field name="overwrite_check_in" attrs="{'invisible':[('attendance','=',False)]}"/>
+                    <field name="overwrite_check_out" attrs="{'invisible':[('attendance','=',False)]}"/>
+                </xpath>
+            </field>
+        </record>
 
-  </data>
+        <record id="hr_rfid_user_ev_view_search_inherit_hr_attendance_multi_rfid" model="ir.ui.view">
+            <field name="name">hr.rfid.user.ev.search_inherit_hr_attendance_multi_rfid</field>
+            <field name="model">hr.rfid.event.user</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_user_ev_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="/search/searchpanel" position="inside">
+                    <field name="in_or_out" string="Attendance" icon="fa-info-circle" color="#875A7B"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
 </odoo>

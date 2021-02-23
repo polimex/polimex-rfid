@@ -23,6 +23,18 @@
             </field>
         </record>
 
+        <record id="hr_rfid_department_add_access_group_action" model="ir.actions.act_window">
+            <field name="name">Manage Access Groups</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.department.acc.grs</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_rfid.hr_department_add_acc_grs_wiz"/>
+            <field name="binding_model_id" ref="hr.model_hr_department"/>
+            <field name="binding_view_types">form</field>
+            <field name="target">new</field>
+            <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_group_officer'))]"/>
+        </record>
+
         <record id="hr_department_def_acc_gr_wiz" model="ir.ui.view">
             <field name="name">hr.department.def.acc.gr.wiz.form</field>
             <field name="model">hr.department.def.acc.gr</field>
@@ -114,18 +126,6 @@
                 </xpath>
 
             </field>
-        </record>
-
-        <record id="hr_rfid_department_add_access_group_action" model="ir.actions.act_window">
-            <field name="name">Manage Access Groups</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">hr.department.acc.grs</field>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="hr_rfid.hr_department_add_acc_grs_wiz"/>
-            <field name="binding_model_id" ref="hr.model_hr_department"/>
-            <field name="binding_view_types">form</field>
-            <field name="target">new</field>
-            <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_group_officer'))]"/>
         </record>
 
         <record id="hr_rfid_department_change_default_access_group_action" model="ir.actions.act_window">
