@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_rfid_command_action" model="ir.actions.act_window">
+            <field name="name">Commands to Modules</field>
+            <field name="res_model">hr.rfid.command</field>
+            <!--      <field name="view_type">form</field>-->
+            <field name="view_mode">tree,form,search,calendar</field>
+            <field name="context">{"search_default_this_day": 1}</field>
+        </record>
+
+        <record id="hr_rfid_command_view_form" model="ir.ui.view">
+            <field name="name">hr.rfid.command.form</field>
+            <field name="model">hr.rfid.command</field>
+            <field name="arch" type="xml">
+                <form create="0" delete="0" edit="0">
+                    <sheet>
+                        <header>
+                            <field name="status" widget="statusbar" statusbar_visible="Wait,Process,Success,Failure"/>
+                        </header>
+                        <div class="oe_title" modifiers="{}">
+                            <h1 modifiers="{}">
+                                <field name="cmd" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Information">
+                                <field name="name" readonly="1"/>
+                                <field name="status" readonly="1"/>
+                                <field name="error" readonly="1" attrs="{'invisible':[('ex_timestamp','=',False)]}"/>
+                            </group>
+                            <group string="Where">
+                                <field name="controller_id" readonly="1"/>
+                                <field name="webstack_id" readonly="1"/>
+                            </group>
+                            <group string="More information">
+                                <field name="cr_timestamp" readonly="1"/>
+                                <field name="ex_timestamp" readonly="1"/>
+                                <field name="retries" readonly="1"/>
+                            </group>
+                            <group string="Debug Information" groups="base.group_no_one" colspan="4">
+                                <field name="request" readonly="1"/>
+                                <field name="response" readonly="1"/>
+                                <field name="cmd_data" readonly="1"/>
+                                <field name="card_number" readonly="1"/>
+                                <field name="pin_code" readonly="1"/>
+                                <field name="ts_code" readonly="1"/>
+                                <field name="rights_data" readonly="1"/>
+                                <field name="rights_mask" readonly="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_rfid_command_view_tree" model="ir.ui.view">
+            <field name="name">hr.rfid.command.tree</field>
+            <field name="model">hr.rfid.command</field>
+            <field name="arch" type="xml">
+                <!--        <tree create="false" delete="false" decoration-danger="status == 'Failure'" decoration-information="status == 'Process'">-->
+                <tree create="false" delete="false">
+                    <field name="webstack_id"/>
+                    <field name="controller_id"/>
+                    <field name="cmd"/>
+                    <field name="status"/>
+                    <field name="error"/>
+                    <field name="cr_timestamp"/>
+                    <field name="ex_timestamp"/>
+                    <field name="retries"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_rfid_command_view_search" model="ir.ui.view">
+            <field name="name">hr.rfid.command.search</field>
+            <field name="model">hr.rfid.command</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="webstack_id"/>
+                    <field name="controller_id"/>
+                    <field name="cmd"/>
+                    <field name="status"/>
+                    <field name="error"/>
+                    <field name="cr_timestamp"/>
+                    <field name="ex_timestamp"/>
+
+                    <filter name="last_week" string="Commands from last week"
+                            domain="[('cr_timestamp', '>=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
+                    <filter name="last_month" string="Commands from last month"
+                            domain="[('cr_timestamp', '>=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]"/>
+                    <filter name="last_year" string="Commands from last year"
+                            domain="[('cr_timestamp', '>=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]"/>
+                    <separator/>
+                    <filter name="this_day" string="Commands from today"
+                            domain="[('cr_timestamp', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('cr_timestamp', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]"/>
+                    <filter name="this_week" string="Commands from this week"
+                            domain="[('cr_timestamp', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('cr_timestamp', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]"/>
+                    <filter name="this_month" string="Commands from this month"
+                            domain="[('cr_timestamp', '&gt;=', context_today().strftime('%%Y-%%m-1'))]"/>
+                    <filter name="this_year" string="Commands from this year"
+                            domain="[('cr_timestamp', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('cr_timestamp', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]"/>
+                    <separator/>
+
+                    <newline/>
+                    <group expand="0" string="Group By">
+                        <filter string="Module" name="module" domain="[]" context="{'group_by':'webstack_id'}"/>
+                        <filter string="Controller" name="controller" domain="[]"
+                                context="{'group_by':'controller_id'}"/>
+                        <filter string="Command" name="command" domain="[]" context="{'group_by':'cmd'}"/>
+                        <filter string="Status" name="status" domain="[]" context="{'group_by':'status'}"/>
+                        <filter string="Error" name="error" domain="[]" context="{'group_by':'error'}"/>
+                        <filter string="Creation Time" name="create_time" domain="[]"
+                                context="{'group_by':'cr_timestamp'}"/>
+                        <filter string="Execution Time" name="exec_time" domain="[]"
+                                context="{'group_by':'ex_timestamp'}"/>
+                        <filter string="Command retries" name="retries" domain="[]" context="{'group_by':'retries'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="hr_rfid_command_view_calendar" model="ir.ui.view">
+            <field name="name">hr.rfid.command.calendar</field>
+            <field name="model">hr.rfid.command</field>
+            <field name="arch" type="xml">
+                <calendar date_start="cr_timestamp" date_stop="ex_timestamp" color="webstack_id">
+                    <field name="webstack_id"/>
+                    <field name="controller_id"/>
+                    <field name="cmd"/>
+                    <field name="status"/>
+                    <field name="error"/>
+                </calendar>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_rfid_door_open_close_wiz_form" model="ir.ui.view">
+            <field name="name">hr.rfid.door.open.close.wiz.form</field>
+            <field name="model">hr.rfid.door.open.close.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Open/close door">
+                    <group>
+                        <field name="doors">
+                            <tree>
+                                <field name="name"/>
+                                <field name="controller_id"/>
+                                <field name="card_type"/>
+                            </tree>
+                        </field>
+                        <field name="time"/>
+                    </group>
+                    <footer>
+                        <button name="open_doors" type="object" string="Open doors" class="oe_highlight"/>
+                        <button name="close_doors" type="object" string="Close doors" class="oe_highlight"/>
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_rfid_door_open_close_wiz_action" model="ir.actions.act_window">
+            <field name="name">Open/close door</field>
+            <field name="res_model">hr.rfid.door.open.close.wiz</field>
+            <!--      <field name="view_type">form</field>-->
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_rfid_door_open_close_wiz_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="hr_rfid_door_action" model="ir.actions.act_window">
+            <field name="name">Doors</field>
+            <field name="res_model">hr.rfid.door</field>
+            <!--      <field name="view_type">form</field>-->
+            <field name="view_mode">tree,form,search</field>
+        </record>
+
+        <record id="hr_rfid_door_view_form" model="ir.ui.view">
+            <field name="name">hr.rfid.door.form</field>
+            <field name="model">hr.rfid.door</field>
+            <field name="arch" type="xml">
+                <form create="false" delete="false">
+                    <div class="oe_button_box" name="button_box">
+                        <button name="open_door"
+                                type="object"
+                                string="Open door"
+                                help="Will only open for 3 seconds"
+                                icon="fa-check"
+                                groups="hr_rfid.hr_rfid_view_door_open_close"/>
+                        <button name="close_door"
+                                type="object"
+                                string="Close door"
+                                help="Will only close for 3 seconds"
+                                icon="fa-times"
+                                groups="hr_rfid.hr_rfid_view_door_open_close"/>
+                        <button name="%(hr_rfid_door_open_close_wiz_action)d"
+                                id="hr_rfid_door_open_close_btn"
+                                type="action"
+                                string="Open/Close Door"
+                                class="oe_highlight"
+                                icon="fa-adjust"
+                                groups="hr_rfid.hr_rfid_view_door_open_close"/>
+                    </div>
+
+                    <group>
+                        <field name="name"/>
+                        <field name="card_type"/>
+                        <field name="apb_mode"/>
+                        <field name="number" readonly="1"/>
+                        <field name="controller_id" readonly="1"/>
+                    </group>
+
+                    <notebook>
+                        <page string="Access Groups">
+                            <field name="access_group_ids" context="{'door_id': id}" readonly="1">
+                                <tree>
+                                    <field name="access_group_id"/>
+                                    <field name="time_schedule_id"/>
+                                </tree>
+                            </field>
+                        </page>
+
+                        <page string="Readers">
+                            <field name="reader_ids" readonly="1">
+                                <tree>
+                                    <field name="number"/>
+                                    <field name="reader_type"/>
+                                    <field name="controller_id"/>
+                                </tree>
+                            </field>
+                        </page>
+
+                        <page string="Events">
+                            <field name="user_event_ids" readonly="1">
+                                <tree>
+                                    <field name="event_time"/>
+                                    <field name="ctrl_addr"/>
+                                    <field name="employee_id"/>
+                                    <field name="reader_id"/>
+                                    <field name="card_id"/>
+                                </tree>
+                            </field>
+                        </page>
+
+                        <page string="Zones">
+                            <field name="zone_ids" readonly="1"/>
+                        </page>
+                    </notebook>
+
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--    TODO delete buttons and move the actions-->
+        <record model="ir.actions.server" id="action_open_door">
+            <field name="name">Open door</field>
+            <field name="model_id" ref="hr_rfid.model_hr_rfid_door"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">record.open_door()</field>
+            <field name="binding_model_id" ref="hr_rfid.model_hr_rfid_door"/>
+            <field name="binding_view_types">form</field>
+            <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_view_door_open_close'))]"/>
+        </record>
+
+        <record model="ir.actions.server" id="action_close_door">
+            <field name="name">Close door</field>
+            <field name="model_id" ref="hr_rfid.model_hr_rfid_door"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">record.close_door()</field>
+            <field name="binding_model_id" ref="hr_rfid.model_hr_rfid_door"/>
+            <field name="binding_view_types">form</field>
+            <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_view_door_open_close'))]"/>
+        </record>
+
+        <record id="hr_rfid_door_view_tree" model="ir.ui.view">
+            <field name="name">hr.rfid.door.tree</field>
+            <field name="model">hr.rfid.door</field>
+            <field name="arch" type="xml">
+                <tree create="false" delete="false">
+                    <field name="name"/>
+                    <field name="controller_id"/>
+                    <field name="card_type"/>
+                    <field name="apb_mode"/>
+                    <button name="open_door"
+                            type="object"
+                            string="Open door"
+                            help="Will only open for 3 seconds"
+                            groups="hr_rfid.hr_rfid_view_door_open_close"/>
+                    <button name="close_door"
+                            type="object"
+                            string="Close door"
+                            help="Will only close for 3 seconds"
+                            groups="hr_rfid.hr_rfid_view_door_open_close"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_rfid_door_view_search" model="ir.ui.view">
+            <field name="name">hr.rfid.door.search</field>
+            <field name="model">hr.rfid.door</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="controller_id"/>
+                    <field name="card_type"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="hr_rfid_door_open_close_wiz_act_window" model="ir.actions.act_window">
+            <field name="name">Open/close door</field>
+            <field name="binding_model_id" ref="hr_rfid.model_hr_rfid_door"/>
+            <field name="res_model">hr.rfid.door.open.close.wiz</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

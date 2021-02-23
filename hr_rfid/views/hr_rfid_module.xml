@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_rfid_webstack_discovery_wiz" model="ir.ui.view">
+            <field name="name">hr.rfid.webstack.discovery.wiz.form</field>
+            <field name="model">hr.rfid.webstack.discovery</field>
+            <field name="arch" type="xml">
+                <form string="Module Discovery">
+                    <field name="state" invisible="1"/>
+
+                    <footer states="pre_discovery">
+                        <button name="discover" type="object" string="Begin discovery" class="oe_highlight"/>
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+
+                    <group states="post_discovery">
+                        <field name="found_webstacks">
+                            <tree>
+                                <field name="name"/>
+                                <field name="serial"/>
+                                <field name="active"/>
+                                <field name="hw_version"/>
+                                <field name="version"/>
+                                <field name="last_ip"/>
+                            </tree>
+                        </field>
+                        <field name="setup_and_set_to_active"
+                               domain="[('id','in',found_webstacks)]"
+                               widget="many2many_tags"/>
+                    </group>
+
+                    <footer states="post_discovery">
+                        <button name="setup_modules" type="object" string="Done" class="oe_highlight"/>
+                    </footer>
+
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_rfid_webstack_discovery_action" model="ir.actions.act_window">
+            <field name="name">Modules Discovery</field>
+            <field name="res_model">hr.rfid.webstack.discovery</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_rfid_webstack_discovery_wiz"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="hr_rfid_webstack_manual_create_wiz" model="ir.ui.view">
+            <field name="name">hr.rfid.webstack.manual.create.wiz.form</field>
+            <field name="model">hr.rfid.webstack.manual.create</field>
+            <field name="arch" type="xml">
+                <form string="Module Manual Create">
+                    <group>
+                        <field name="webstack_name"/>
+                        <field name="webstack_address"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_rfid_webstack_manual_create_action" model="ir.actions.act_window">
+            <field name="name">Modules Discovery</field>
+            <field name="res_model">hr.rfid.webstack.manual.create</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_rfid_webstack_manual_create_wiz"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="hr_rfid_webstack_view_form" model="ir.ui.view">
+            <field name="name">hr.rfid.webstack.form</field>
+            <field name="model">hr.rfid.webstack</field>
+            <field name="arch" type="xml">
+                <form string="RFID Modules">
+                    <field name="active" invisible="1" string="Active"/>
+                    <header>
+                        <button name="action_set_webstack_settings" type="object"
+                                string="Setup module for this odoo"
+                                attrs="{'invisible': [('behind_nat','=',True)]}"
+                                help="Set the webstack up to work with this odoo. Module username and password must be set to the admin username and password on the module. Last ip must be set to the correct ip of the module"/>
+                        <button name="action_check_if_ws_available" type="object"
+                                attrs="{'invisible': [('behind_nat','=',True)]}"
+                                string="Test module connection"
+                                help="Connect to the module and request for information."/>
+                        <field name="available" widget="statusbar"/>
+                    </header>
+                    <sheet modifiers="{}">
+                        <widget name="web_ribbon" title="Disabled" bg_color="bg-danger"
+                                attrs="{'invisible': [('active', '=', True)]}"/>
+                        <div class="oe_title" modifiers="{}">
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="System information">
+                                <field name="serial" readonly="1"/>
+                                <field name="hw_version" readonly="1"/>
+                                <field name="version" readonly="1"/>
+                            </group>
+                            <group string="Security">
+                                <field name="key"/>
+                                <field name="module_username"/>
+                                <field name="module_password" password="True"/>
+                            </group>
+                            <group string="Setup">
+                                <field name="tz"/>
+                                <field name="tz_offset" invisible="1" groups="base.group_no_one"/>
+                                <field name="behind_nat"/>
+                            </group>
+                            <group string="Status">
+                                <field name="last_ip"/>
+                                <field name="updated_at" readonly="1"/>
+                                <field name="http_link" readonly="1" widget="url"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Controllers">
+                                <field name="controllers" readonly="1">
+                                    <tree string="Controllers">
+                                        <field name="name"/>
+                                        <field name="ctrl_id"/>
+                                        <field name="hw_version"/>
+                                        <field name="sw_version"/>
+                                    </tree>
+                                </field>
+                            </page>
+
+                            <page string="Error Events">
+                                <field name="system_event_ids" readonly="1">
+                                    <tree string="Error Events">
+                                        <field name="controller_id">
+                                            <field name="name" string="Controller Name"/>
+                                        </field>
+                                        <field name="timestamp"/>
+                                        <field name="error_description"/>
+                                    </tree>
+                                </field>
+                            </page>
+
+                            <page string="Commands">
+                                <field name="command_ids" readonly="1">
+                                    <tree string="Commands">
+                                        <field name="controller_id"/>
+                                        <field name="cmd"/>
+                                        <field name="status"/>
+                                        <field name="error"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_rfid_webstack_view_tree" model="ir.ui.view">
+            <field name="name">hr.rfid.webstack.tree</field>
+            <field name="model">hr.rfid.webstack</field>
+            <field name="arch" type="xml">
+                <tree create="0" delete="0" string="RFID Modules"
+                      decoration-danger="active==False" decoration-success="active==True">
+                    <field name="name"/>
+                    <field name="serial"/>
+                    <field name="hw_version"/>
+                    <field name="version"/>
+                    <field name="updated_at"/>
+                    <field name="last_ip"/>
+                    <field name="active" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_rfid_webstack_view_search" model="ir.ui.view">
+            <field name="name">hr.rfid.webstack.search</field>
+            <field name="model">hr.rfid.webstack</field>
+            <field name="arch" type="xml">
+                <search string="RFID Modules">
+                    <field name="name"/>
+                    <field name="serial"/>
+                    <field name="active"/>
+                    <field name="version"/>
+                    <field name="updated_at"/>
+                    <filter string="Show all" name="showall"
+                            domain="['|',('active', '=', False),('active', '=', True)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="hr_rfid_webstack_view_kanban" model="ir.ui.view">
+            <field name="name">hr.rfid.webstack.kanban</field>
+            <field name="model">hr.rfid.webstack</field>
+            <field name="arch" type="xml">
+                <kanban default_order='active desc'>
+                    <field name="id"/>
+                    <field name="active"/>
+                    <field name="last_update"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click">
+                                <div class="oe_kanban_details">
+                                    <div class="o_kanban_record_top">
+                                        <div class="o_kanban_record_headings">
+                                            <strong class="o_kanban_record_title">
+                                                <div class="float-right"
+                                                     attrs="{'invisible': ['|', ('active', '=', False), ('last_update', '=', True)]}">
+                                                    <span class="fa fa-circle text-success" role="img"
+                                                          aria-label="Enabled" title="Enabled"
+                                                          name="webstack_enabled"></span>
+                                                </div>
+                                                <div class="float-right" attrs="{'invisible': [('active', '=', True)]}">
+                                                    <span class="fa fa-circle text-danger" role="img"
+                                                          aria-label="Disabled" title="Disabled"
+                                                          name="webstack_disabled"></span>
+                                                </div>
+                                                <div class="float-right"
+                                                     attrs="{'invisible': [('last_update', '=', False)]}">
+                                                    <span class="fa fa-circle text-warning" role="img"
+                                                          aria-label="Disabled" title="Disabled"
+                                                          name="webstack_disabled"></span>
+                                                </div>
+                                                <h2><field name="name" placeholder="Module's Name"/></h2>
+                                            </strong>
+                                            <span class="o_kanban_record_subtitle">Version: <field
+                                                    name="version"/></span>
+                                            <span class="o_kanban_record_subtitle">Hardware Version: <field
+                                                    name="hw_version"/></span>
+                                        </div>
+                                    </div>
+                                    <ul>
+                                        <li class="o_text_overflow">Last Update: <field name="updated_at"/></li>
+                                        <li class="o_force_ltr">Last IP: <field name="last_ip"/></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="hr_rfid_webstack_view_calendar" model="ir.ui.view">
+            <field name="name">hr.rfid.webstack.calendar</field>
+            <field name="model">hr.rfid.webstack</field>
+            <field name="arch" type="xml">
+                <calendar date_start="updated_at" date_stop="updated_at" color="serial">
+                    <field name="name"/>
+                    <field name="serial"/>
+                </calendar>
+            </field>
+        </record>
+
+        <record id="hr_rfid_webstack_action" model="ir.actions.act_window">
+            <field name="name">Modules</field>
+            <field name="res_model">hr.rfid.webstack</field>
+            <field name="context">{"search_default_showall": 1}</field>
+            <field name="view_mode">tree,form,search,calendar,kanban</field>
+        </record>
+
+    </data>
+</odoo>

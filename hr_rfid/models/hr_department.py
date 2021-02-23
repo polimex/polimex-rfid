@@ -18,8 +18,8 @@ class HrDepartment(models.Model):
 
     hr_rfid_allowed_access_groups = fields.Many2many(
         'hr.rfid.access.group',
-        string='Rfid Access Group',
-        help='Which access group the department uses to gain permissions to Rfid doors',
+        string='Available Access Groups',
+        help='Available access groups for employees in this department',
         ondelete='cascade',
     )
 

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+         <record id="hr_rfid_card_action" model="ir.actions.act_window">
+            <field name="name">Cards</field>
+            <field name="res_model">hr.rfid.card</field>
+            <field name="view_mode">tree,form,search</field>
+            <field name="context">{"search_default_showall": 1}</field>
+        </record>
+
+        <record id="hr_rfid_card_type_action" model="ir.actions.act_window">
+            <field name="name">Card Types</field>
+            <field name="res_model">hr.rfid.card.type</field>
+            <field name="view_mode">tree,form,search</field>
+        </record>
+
+        <record id="hr_rfid_card_view_form" model="ir.ui.view">
+            <field name="name">hr.rfid.card.form</field>
+            <field name="model">hr.rfid.card</field>
+            <field name="arch" type="xml">
+                <form string="RFID Card">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_card_active" type="object" class="oe_stat_button" icon="fa-plug">
+                                <field name="active" widget="boolean_button"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="number"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Owner">
+                                <field name="employee_id" attrs="{'invisible':[('contact_id','!=',False)]}"/>
+                                <field name="contact_id" attrs="{'invisible':[('employee_id','!=',False)]}"/>
+                            </group>
+                            <group string="Setup">
+                                <field name="active"/>
+                                <field name="card_type"/>
+                                <field name="cloud_card"/>
+                            </group>
+                            <group string="Start date">
+                                <field name="activate_on"/>
+                            </group>
+                            <group string="End date">
+                                <field name="deactivate_on"/>
+                            </group>
+                            <group colspan="4">
+                                <field name="door_ids" attrs="{'invisible':[('id','&lt;=',0)]}"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_rfid_card_view_tree" model="ir.ui.view">
+            <field name="name">hr.rfid.card.tree</field>
+            <field name="model">hr.rfid.card</field>
+            <field name="arch" type="xml">
+                <tree string="RFID Card">
+                    <field name="number"/>
+                    <field name="employee_id"/>
+                    <field name="contact_id"/>
+                    <field name="card_type"/>
+                    <field name="activate_on"/>
+                    <field name="deactivate_on"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_rfid_card_view_search" model="ir.ui.view">
+            <field name="name">hr.rfid.card.search</field>
+            <field name="model">hr.rfid.card</field>
+            <field name="arch" type="xml">
+                <search string="RFID Card">
+                    <field name="number"/>
+                    <field name="card_type"/>
+                    <field name="employee_id">
+                        <field name="name"/>
+                    </field>
+                    <field name="contact_id">
+                        <field name="name"/>
+                    </field>
+                    <filter string="Show all" name="showall" context="{'active_test': False}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="hr_rfid_card_type_view_form" model="ir.ui.view">
+            <field name="name">hr.rfid.card.type.form</field>
+            <field name="model">hr.rfid.card.type</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet string="Card type">
+                        <div class="oe_button_box" name="button_box" modifiers="{}">
+                            <button name="list_cards_from_this_type" string="Card list" type="object"
+                                    class="oe_stat_button" icon="fa-list-alt" modifiers="{}" options="{}">
+                                <!--				        <field name="ws_active" widget="boolean_button" modifiers="{}"/>-->
+                            </button>
+                        </div>
+                        <div class="oe_title" modifiers="{}">
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <field string="Cards of this type" name="card_ids" readonly="1">
+                                <tree>
+                                    <field name="number"/>
+                                    <field name="employee_id"/>
+                                    <field name="contact_id"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <div class="oe_chatter">
+                            <field name="message_follower_ids" widget="mail_followers"/>
+                            <field name="message_ids" widget="mail_thread"/>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--    TODO move view to actions-->
+
+        <record model="ir.actions.server" id="list_card_from_this_type_action">
+            <field name="name">Card list</field>
+            <field name="model_id" ref="hr_rfid.model_hr_rfid_card_type"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">action = record.list_cards_from_this_type()</field>
+            <field name="binding_model_id" ref="hr_rfid.model_hr_rfid_card_type"/>
+            <field name="binding_view_types">form</field>
+        </record>
+
+
+        <record id="hr_rfid_card_type_view_tree" model="ir.ui.view">
+            <field name="name">hr.rfid.card.type.tree</field>
+            <field name="model">hr.rfid.card.type</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_rfid_card_type_view_search" model="ir.ui.view">
+            <field name="name">hr.rfid.card.type.search</field>
+            <field name="model">hr.rfid.card.type</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="card_ids">
+                        <!--            <field name="number" />-->
+                    </field>
+                </search>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_rfid_event_user_action" model="ir.actions.act_window">
+            <field name="name">User Events</field>
+            <field name="res_model">hr.rfid.event.user</field>
+            <!--      <field name="view_type">form</field>-->
+            <field name="view_mode">tree,form,search,calendar,pivot</field>
+            <field name="context">{'search_default_this_day': 1}</field>
+        </record>
+
+        <record id="hr_rfid_user_ev_view_form" model="ir.ui.view">
+            <field name="name">hr.rfid.user.ev.form</field>
+            <field name="model">hr.rfid.event.user</field>
+            <field name="arch" type="xml">
+                <form create="0" delete="0" edit="0">
+                    <group>
+                        <field name="name"/>
+                        <field name="workcode" attrs="{'invisible': [('workcode','=', '-')]}"/>
+                        <field name="workcode_id" attrs="{'invisible': [('workcode_id','=', False)]}"/>
+                        <field name="event_action" readonly="1"/>
+                        <field name="event_time" readonly="1"/>
+                        <field name="create_date" readonly="1" string="Receive Date"
+                               help="Time odoo received the event"/>
+                        <field name="ctrl_addr" readonly="1"/>
+                        <field name="employee_id" readonly="1" attrs="{'invisible':[('employee_id','=',False)]}"/>
+                        <field name="contact_id" readonly="1" attrs="{'invisible':[('contact_id','=',False)]}"/>
+                        <field name="door_id" readonly="1"/>
+                        <field name="reader_id" readonly="1"/>
+                        <field name="card_id" readonly="1"/>
+                        <field name="command_id" readonly="1"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_rfid_user_ev_view_tree" model="ir.ui.view">
+            <field name="name">hr.rfid.user.ev.tree</field>
+            <field name="model">hr.rfid.event.user</field>
+            <field name="arch" type="xml">
+                <tree create="0" delete="0">
+                    <field name="event_time"/>
+                    <field name="employee_id"/>
+                    <field name="contact_id"/>
+                    <field name="event_action"/>
+                    <field name="reader_id"/>
+                    <field name="door_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_rfid_user_ev_view_search" model="ir.ui.view">
+            <field name="name">hr.rfid.user.ev.search</field>
+            <field name="model">hr.rfid.event.user</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="door_id"/>
+                    <field name="event_action"/>
+                    <field name="event_time"/>
+                    <field name="employee_id"/>
+                    <field name="card_id"/>
+
+                    <filter name="granted" string="Status: Granted"
+                            domain="[('event_action', '=', '1')]"/>
+                    <filter name="granted" string="Status: Denied"
+                            domain="[('event_action', '!=', '1')]"/>
+                    <separator/>
+                    <filter name="last_week" string="Events from last week"
+                            domain="[('event_time', '>=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
+                    <filter name="last_month" string="Events from last month"
+                            domain="[('event_time', '>=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]"/>
+                    <filter name="last_year" string="Events from last year"
+                            domain="[('event_time', '>=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]"/>
+                    <separator/>
+                    <filter name="this_day" string="Events from today"
+                            domain="[('event_time', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('event_time', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]"/>
+                    <filter name="this_week" string="Events from this week"
+                            domain="[('event_time', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('event_time', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]"/>
+                    <filter name="this_month" string="Events from this month"
+                            domain="[('event_time', '&gt;=', context_today().strftime('%%Y-%%m-1'))]"/>
+                    <filter name="this_year" string="Events from this year"
+                            domain="[('event_time', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('event_time', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]"/>
+                    <separator/>
+                    <searchpanel>
+                        <field name="event_action" string="Status" icon="fa-info-circle" color="#875A7B"/>
+                        <!--                        <field name="service_id" string="Service" icon="fa-users"/>-->
+                    </searchpanel>
+
+                </search>
+            </field>
+        </record>
+
+        <record id="hr_rfid_user_ev_view_calendar" model="ir.ui.view">
+            <field name="name">hr.rfid.user.ev.calendar</field>
+            <field name="model">hr.rfid.event.user</field>
+            <field name="arch" type="xml">
+                <calendar date_start="event_time" date_stop="event_time" color="action_string">
+                    <field name="employee_id"/>
+                    <field name="door_id"/>
+                    <field name="action_string"/>
+                </calendar>
+            </field>
+        </record>
+
+        <record id="hr_rfid_user_ev_view_pivot" model="ir.ui.view">
+            <field name="name">hr.rfid.user.ev.pivot</field>
+            <field name="model">hr.rfid.event.user</field>
+            <field name="arch" type="xml">
+                <pivot string="Event" disable_linking="True">
+                    <field name="event_time" type="row"/>
+                    <field name="event_action" type="col"/>
+                </pivot>
+            </field>
+        </record>
+
+    </data>
+</odoo>

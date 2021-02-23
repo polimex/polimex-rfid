@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <data>
+        <record id="hr_rfid_time_schedule_action" model="ir.actions.act_window">
+            <field name="name">Time Schedules</field>
+            <field name="res_model">hr.rfid.time.schedule</field>
+            <field name="view_mode">kanban,tree,form,search</field>
+        </record>
+
+        <record id="hr_rfid_time_schedule_view_form" model="ir.ui.view">
+            <field name="name">hr.rfid.time.schedule.form</field>
+            <field name="model">hr.rfid.time.schedule</field>
+            <field name="arch" type="xml">
+                <form create="0" delete="0">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="number"/>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_rfid_time_schedule_view_kanban" model="ir.ui.view">
+            <field name="name">hr.rfid.time.schedule.kanban</field>
+            <field name="model">hr.rfid.time.schedule</field>
+            <field name="arch" type="xml">
+                <kanban create="0" delete="0">
+                    <field name="id"/>
+                    <field name="name"/>
+                    <field name="number"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_product_vignette oe_kanban_global_click">
+                                <ul style="list-style:none;margin:0;padding0;">
+                                    <li><field name="name"/></li>
+                                    <li>TS Number: <field name="number"/></li>
+                                </ul>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="hr_rfid_time_schedule_view_tree" model="ir.ui.view">
+            <field name="name">hr.rfid.time.schedule.tree</field>
+            <field name="model">hr.rfid.time.schedule</field>
+            <field name="arch" type="xml">
+                <tree create="false" delete="false">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+    </data>
+</odoo>

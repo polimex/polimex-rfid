@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_rfid_event_system_action" model="ir.actions.act_window">
+            <field name="name">System Events</field>
+            <field name="res_model">hr.rfid.event.system</field>
+            <!--      <field name="view_type">form</field>-->
+            <field name="view_mode">tree,form,search,calendar,pivot</field>
+            <field name="context">{"search_default_this_day": 1}</field>
+        </record>
+
+        <record id="hr_rfid_sys_ev_wiz_form" model="ir.ui.view">
+            <field name="name">hr.rfid.sys.ev.add.card.wiz.form</field>
+            <field name="model">hr.rfid.event.sys.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Add card" create="0" delete="0" edit="0">
+                    <group>
+                        <field name="card_number"/>
+                        <field name="employee_id"/>
+                        <field name="contact_id"/>
+                        <field name="card_type"/>
+                        <field name="cloud_card"/>
+                        <field name="active"/>
+                        <field name="activate_on"/>
+                        <field name="deactivate_on"/>
+                    </group>
+                    <footer>
+                        <button name="add_card" type="object"
+                                string="Add this unknown card to" class="oe_highlight"/>
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_rfid_add_card_action" model="ir.actions.act_window">
+            <field name="name">Add Card</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.rfid.event.sys.wiz</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_rfid.hr_rfid_sys_ev_wiz_form"/>
+            <field name="binding_model_id" ref="hr_rfid.model_hr_rfid_event_system"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="hr_rfid_sys_ev_wiz_action" model="ir.actions.act_window">
+            <field name="name">Add Card</field>
+            <field name="res_model">hr.rfid.event.sys.wiz</field>
+            <!--      <field name="view_type">form</field>-->
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_rfid_sys_ev_wiz_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="hr_rfid_sys_ev_view_form" model="ir.ui.view">
+            <field name="name">hr.rfid.sys.ev.form</field>
+            <field name="model">hr.rfid.event.system</field>
+            <field name="arch" type="xml">
+                <form create="0" delete="0" edit="0">
+                    <sheet>
+                        <field name="is_card_event" invisible="1"/>
+                        <div class="oe_button_box" name="button_box" modifiers="{}">
+                            <button string="Add Card" name="%(hr_rfid_sys_ev_wiz_action)d"
+                                    id="hr_rfid_sys_ev_add_card_btn" type="action" class="oe_stat_button"
+                                    icon="fa-plus-square"
+                                    attrs="{'invisible':[('is_card_event','=',False)]}"/>
+                        </div>
+                        <div class="oe_title" modifiers="{}">
+                            <h1 modifiers="{}">
+                                <field name="event_action" readonly="1"/>
+                            </h1>
+                            <field name="name" readonly="1"/>
+                        </div>
+                        <group>
+                            <group string="Where">
+                                <field name="controller_id" readonly="1"/>
+                                <field name="webstack_id" readonly="1"/>
+                                <field name="timestamp" readonly="1"/>
+                                <field name="occurrences" readonly="1"
+                                       attrs="{'invisible':[('occurrences','&lt;=','1')]}"/>
+                                <field name="last_occurrence" readonly="1"
+                                       attrs="{'invisible':[('occurrences','&lt;=','1')]}"/>
+                            </group>
+                            <group string="More information" colspan="4">
+                                <field name="error_description" readonly="1"/>
+                            </group>
+                            <group string="Debug Information" groups="base.group_no_one" colspan="4">
+                                <field name="input_js" readonly="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_rfid_sys_ev_view_tree" model="ir.ui.view">
+            <field name="name">hr.rfid.sys.ev.tree</field>
+            <field name="model">hr.rfid.event.system</field>
+            <field name="arch" type="xml">
+                <tree create="false" delete="false">
+                    <field name="webstack_id"/>
+                    <field name="controller_id"/>
+                    <field name="occurrences"/>
+                    <field name="timestamp"/>
+                    <field name="last_occurrence"/>
+                    <field name="event_action"/>
+                    <field name="error_description"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_rfid_sys_ev_view_search" model="ir.ui.view">
+            <field name="name">hr.rfid.sys.ev.search</field>
+            <field name="model">hr.rfid.event.system</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="webstack_id"/>
+                    <field name="controller_id"/>
+                    <field name="timestamp"/>
+                    <field name="event_action"/>
+                    <field name="error_description"/>
+
+                    <filter name="last_week" string="Events from last week"
+                            domain="[('timestamp', '>=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
+                    <filter name="last_month" string="Events from last month"
+                            domain="[('timestamp', '>=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]"/>
+                    <filter name="last_year" string="Events from last year"
+                            domain="[('timestamp', '>=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]"/>
+                    <separator/>
+                    <filter name="this_day" string="Events from today"
+                            domain="[('timestamp', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('timestamp', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]"/>
+                    <filter name="this_week" string="Events from this week"
+                            domain="[('timestamp', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('timestamp', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]"/>
+                    <filter name="this_month" string="Events from this month"
+                            domain="[('timestamp', '&gt;=', context_today().strftime('%%Y-%%m-1'))]"/>
+                    <filter name="this_year" string="Events from this year"
+                            domain="[('timestamp', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('timestamp', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]"/>
+                    <separator/>
+
+                    <newline/>
+                    <group expand="0" string="Group By">
+                        <filter string="Module" name="module" domain="[]" context="{'group_by':'webstack_id'}"/>
+                        <filter string="Controller" name="controller" domain="[]"
+                                context="{'group_by':'controller_id'}"/>
+                        <filter string="Time" name="event_time" domain="[]" context="{'group_by':'timestamp'}"/>
+                        <filter string="Event Type" name="event_type" domain="[]"
+                                context="{'group_by':'event_action'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="hr_rfid_sys_ev_view_calendar" model="ir.ui.view">
+            <field name="name">hr.rfid.sys.ev.calendar</field>
+            <field name="model">hr.rfid.event.system</field>
+            <field name="arch" type="xml">
+                <calendar date_start="timestamp" date_stop="timestamp" color="event_action">
+                    <field name="webstack_id"/>
+                    <field name="controller_id"/>
+                </calendar>
+            </field>
+        </record>
+
+        <record id="hr_rfid_system_ev_view_pivot" model="ir.ui.view">
+            <field name="name">hr.rfid.system.ev.pivot</field>
+            <field name="model">hr.rfid.event.system</field>
+            <field name="arch" type="xml">
+                <pivot string="Event" disable_linking="True">
+                    <field name="timestamp" type="row"/>
+                    <field name="webstack_id" type="col"/>
+                    <field name="controller_id" type="col"/>
+                </pivot>
+            </field>
+        </record>
+
+    </data>
+</odoo>
