@@ -110,7 +110,8 @@ class HrEmployee(models.Model):
             for door in doors:
                 ctrl = door.controller_id
                 if ctrl.is_relay_ctrl():
-                    if ctrl in relay_doors and ctrl.mode == 3:
+                    if (ctrl in relay_doors) and (ctrl.mode == 3):
+                    # if (ctrl in relay_doors) and (ctrl.mode == 3) and (door.card_type not in [ct for c in  ]):
                         raise exceptions.ValidationError(
                             _('Doors "%s" and "%s" both belong to a controller that cannot give access to multiple doors in the same time.')
                             % (relay_doors[ctrl].name, door.name)

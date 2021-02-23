@@ -15,6 +15,18 @@
       <field name="sequence">3</field>
     </record>
 
+    <record id="hr_rfid_group_officer" model="res.groups">
+      <field name="name">Officer</field>
+      <field name="category_id" ref="hr_rfid_management" />
+    </record>
+
+    <record id="hr_rfid_group_manager" model="res.groups">
+      <field name="name">Manager</field>
+      <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_group_officer'))]" />
+      <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+      <field name="category_id" ref="hr_rfid_management" />
+    </record>
+
     <record id="hr_rfid_view_module_discovery" model="res.groups">
       <field name="name">View Module Discovery</field>
       <field name="category_id" ref="module_rfid_settings" />
@@ -24,6 +36,12 @@
     <record id="hr_rfid_view_rfid_data" model="res.groups">
       <field name="name">View data in users</field>
       <field name="category_id" ref="module_rfid_settings" />
+      <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_group_manager'))]" />
+      <field name="users" eval="[
+            (4, ref('base.user_root')),
+            (4, ref('base.user_admin'))
+            ]"
+      />
     </record>
 
     <record id="hr_rfid_view_rfid_pin_code_data" model="res.groups">
@@ -46,18 +64,6 @@
     <record id="hr_rfid_view_own_department" model="res.groups">
       <field name="name">Only show data from own department</field>
       <field name="category_id" ref="module_rfid_settings" />
-    </record>
-
-    <record id="hr_rfid_group_officer" model="res.groups">
-      <field name="name">Officer</field>
-      <field name="category_id" ref="hr_rfid_management" />
-    </record>
-
-    <record id="hr_rfid_group_manager" model="res.groups">
-      <field name="name">Manager</field>
-      <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_group_officer'))]" />
-      <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
-      <field name="category_id" ref="hr_rfid_management" />
     </record>
 
     <record id="hr_rfid_group_officer_department_cards_rule" model="ir.rule">
