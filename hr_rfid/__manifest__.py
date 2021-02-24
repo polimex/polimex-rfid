@@ -11,7 +11,7 @@
 
     'website': 'https://www.polimex.co/',
 
-    'depends': ['base', 'hr', 'contacts'],
+    'depends': ['base', 'hr', 'contacts', 'web_notify_extend'],
 
     'data': [
         'security/hr_rfid_security.xml',

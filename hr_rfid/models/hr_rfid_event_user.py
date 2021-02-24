@@ -181,8 +181,8 @@ class HrRfidUserEvent(models.Model):
                         ('employee_id',  '=', rec.employee_id.id),
                         ('id',          '!=', rec.id),
                         ('workcode_id', '!=', None),
-                    ]).sorted(key=lambda r: r.event_time)
-
+                    ], order='event_time')
+                    # TODO Check the search above to limit result!!!
                     for event in last_events:
                         action = event.workcode_id.user_action
                         if action == 'stop':
@@ -196,7 +196,7 @@ class HrRfidUserEvent(models.Model):
                             rec.door_id.zone_ids.person_left(rec.employee_id, rec)
                         else:
                             rec.door_id.zone_ids.person_entered(rec.employee_id, rec)
-
+        self.refresh_views()
         return records
 
     

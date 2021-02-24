@@ -54,7 +54,7 @@ class WebRfidController(http.Controller):
 
     def _check_for_unsent_cmd(self, status_code, event=None):
         commands_env = request.env['hr.rfid.command'].sudo()
-
+        self._webstack.refresh_views()
         processing_comm = commands_env.search([
             ('webstack_id', '=', self._webstack.id),
             ('status', '=', 'Process'),
@@ -181,6 +181,7 @@ class WebRfidController(http.Controller):
                     'event_action': '5',  # Exit button
                 }
                 event = ev_env.create(event_dict)
+                ev_env.refresh_views()
                 return self._check_for_unsent_cmd(200, event)
 
             if self._post['event']['card'] == '0000000000':
@@ -635,6 +636,7 @@ class WebRfidController(http.Controller):
             sys_ev['controller_id'] = controller.id
 
         sys_ev_env.create(sys_ev)
+        sys_ev_env.refresh_views()
 
     def _respond_to_ev_64(self, open_door, controller, reader, card):
         cmd_env = request.env['hr.rfid.command'].sudo()
@@ -821,8 +823,9 @@ class WebRfidController(http.Controller):
             print('ret=' + str(result))
             return result
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
-                exceptions.MissingError, exceptions.ValidationError, exceptions.DeferredException,
+                exceptions.MissingError, exceptions.ValidationError,
                 psycopg2.DataError, ValueError) as __:
+            # commented DeferredException ^
             request.env['hr.rfid.event.system'].sudo().create([{
                 'webstack_id': self._webstack.id,
                 'timestamp': fields.Datetime.now(),

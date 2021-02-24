@@ -247,8 +247,9 @@ class HrRfidVending(WebRfidController):
 
             return ret
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
-                exceptions.MissingError, exceptions.ValidationError, exceptions.DeferredException,
+                exceptions.MissingError, exceptions.ValidationError,
                 psycopg2.DataError, ValueError) as __:
+            #commented DeferredException ^
             request.env['hr.rfid.event.system'].sudo().create({
                 'webstack_id': self._webstack.id,
                 'timestamp': fields.Datetime.now(),
