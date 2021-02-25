@@ -92,6 +92,12 @@ class HrRfidDoor(models.Model):
         help='Zones containing this door',
     )
 
+    webstack_id = fields.Many2one(
+        'hr.rfid.webstack',
+        string='Module',
+        related='controller_id.webstack_id',
+    )
+
     def get_potential_cards(self, access_groups=None):
         """
         Returns a list of tuples (card, time_schedule) for which the card potentially has access to this door

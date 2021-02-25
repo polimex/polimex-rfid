@@ -7,7 +7,7 @@ class HrRfidCommands(models.Model):
     # Commands we have queued up to send to the controllers
     _name = 'hr.rfid.command'
     _description = 'Command to controller'
-    _order = 'id desc'
+    _order = 'cr_timestamp desc'
 
     commands = [
         ('F0', 'Read System Information'),

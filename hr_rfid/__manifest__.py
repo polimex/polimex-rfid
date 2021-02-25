@@ -39,6 +39,7 @@
         'views/hr_department_views.xml',
         'views/hr_employee_views.xml',
         'views/hr_rfid_menus.xml',
+        'security/hr_rfid_multi_company.xml'
     ],
 
     'qweb': [

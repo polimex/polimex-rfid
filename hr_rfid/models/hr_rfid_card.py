@@ -31,6 +31,9 @@ class HrRfidCard(models.Model):
         index=True,
         tracking=True,
     )
+    company_id = fields.Many2one('res.company',
+                                 string='Company',
+                                 default=lambda self: self.env.company)
 
     card_type = fields.Many2one(
         'hr.rfid.card.type',
@@ -105,7 +108,13 @@ class HrRfidCard(models.Model):
         compute='_compute_door_ids',
     )
 
+    door_count = fields.Char('Door Count', compute='_compute_door_ids')
+
     pin_code = fields.Char(compute='_compute_pin_code')
+
+    _sql_constraints = [
+        ('card_uniq', 'unique (number, company_id)', _("Card number already exists!")),
+    ]
 
     def get_owner(self):
         self.ensure_one()
@@ -140,9 +149,9 @@ class HrRfidCard(models.Model):
         for card in self:
             card.pin_code = card.get_owner().hr_rfid_pin_code
 
-    def toggle_card_active(self):
-        self.ensure_one()
-        self.active = not self.active
+    # def toggle_card_active(self):
+    #     self.ensure_one()
+    #     self.active = not self.active
 
     @api.constrains('employee_id', 'contact_id')
     def _check_user(self):
@@ -162,8 +171,6 @@ class HrRfidCard(models.Model):
                     card.number = (zeroes * '0') + card.number
                 elif len(card.number) > 10:
                     raise exceptions.UserError(_('Card number must be exactly 10 digits'))
-
-
 
     @api.constrains('number')
     def _check_number(self):
@@ -193,6 +200,7 @@ class HrRfidCard(models.Model):
     def _compute_door_ids(self):
         for card in self:
             card.door_ids = card.door_rel_ids.mapped('door_id')
+            card.door_count = len(card.door_ids)
 
     @api.model_create_multi
     @api.returns('self', lambda value: value.id)
@@ -290,6 +298,16 @@ class HrRfidCard(models.Model):
 
         cards_to_activate.write({'active': True})
         cards_to_deactivate.write({'active': False})
+
+    def return_action_doors(self):
+        self.ensure_one()
+        domain = [('id', 'in', [d.id for d in self.door_ids])]
+        res = self.env['ir.actions.act_window']._for_xml_id('hr_rfid.hr_rfid_door_action')
+        res.update(
+            context=dict(self.env.context, group_by=False),
+            domain=domain
+        )
+        return res
 
 
 class HrRfidCardType(models.Model):

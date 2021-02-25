@@ -7,7 +7,7 @@ from odoo import fields, models, api, exceptions
 class HrRfidSystemEvent(models.Model):
     _name = 'hr.rfid.event.system'
     _description = 'RFID System Event'
-    _order = 'id desc'
+    _order = 'timestamp desc'
 
     name = fields.Char(
         compute='_compute_sys_ev_name'

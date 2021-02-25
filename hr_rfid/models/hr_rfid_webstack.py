@@ -142,8 +142,41 @@ class HrRfidWebstack(models.Model):
 
     last_update = fields.Boolean(compute='_compute_last_update')
 
+    commands_count = fields.Char(string='Commands count', compute='_compute_counts')
+    system_event_count = fields.Char(string='System Events count', compute='_compute_counts')
+    controllers_count = fields.Char(string='Controllers count', compute='_compute_counts')
+
     _sql_constraints = [ ('rfid_webstack_serial_unique', 'unique(serial)',
                           'Serial number for webstacks must be unique!') ]
+
+    def _compute_counts(self):
+        for a in self:
+            a.commands_count = len(a.command_ids)
+            a.system_event_count = len(a.system_event_ids)
+            a.controllers_count = len(a.controllers)
+
+    def return_action_to_open(self):
+        """ This opens the xml view specified in xml_id for the current app """
+        self.ensure_one()
+        xml_id = self.env.context.get('xml_id')
+        dom = self.env.context.get('dom')
+        key = self.env.context.get('key')
+        op = self.env.context.get('op')
+        if dom:
+            domain = dom
+        elif key and op:
+            domain = [(key, op, self.id)]
+        else:
+            domain = [('webstack_id', '=', self.id)]
+        model = 'hr_rfid'
+        if xml_id:
+            res = self.env['ir.actions.act_window']._for_xml_id(model+'.'+xml_id)
+            res.update(
+                context=dict(self.env.context, default_webstack_id=self.id, group_by=False),
+                domain=domain
+            )
+            return res
+        return False
 
     @api.depends('updated_at')
     def _compute_last_update(self):

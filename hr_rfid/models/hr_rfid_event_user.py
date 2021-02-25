@@ -6,7 +6,7 @@ from odoo import fields, models, api
 class HrRfidUserEvent(models.Model):
     _name = 'hr.rfid.event.user'
     _description = "RFID User Event"
-    _order = 'id desc'
+    _order = 'event_time desc'
 
     name = fields.Char(
         compute='_compute_user_ev_name'

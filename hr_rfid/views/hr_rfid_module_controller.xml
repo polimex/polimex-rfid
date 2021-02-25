@@ -47,16 +47,47 @@
             <field name="model">hr.rfid.ctrl</field>
             <field name="arch" type="xml">
                 <form string="RFID Controller" create="false">
-                    <sheet modifiers="{}">
+<!--                    <header>-->
+<!--                        <field name="hw_version"  nolabel="1" colspan="2" widget="statusbar" statusbar_visible=" "/>-->
+<!--                    </header>-->
+                    <field name="reader_ids" invisible="1"/>
+                    <field name="door_ids" invisible="1"/>
+                    <field name="system_event_ids" invisible="1"/>
+                    <field name="command_ids" invisible="1"/>
+                    <sheet >
                         <div class="oe_button_box" name="button_box" modifiers="{}">
-                            <button string="Reload cards" name="button_reload_cards" type="object"
-                                    class="oe_stat_button" icon="fa-refresh" modifiers="{}" options="{}"/>
+<!--                            <button string="Reload cards" name="button_reload_cards" type="object"-->
+<!--                                    class="oe_stat_button" icon="fa-refresh"/>-->
                             <button string="IO Table" name="%(hr_rfid_controller_io_table_wiz_action)d"
                                     id="hr_rfid_view_modify_io_table_btn" type="action"
                                     groups="hr_rfid.hr_rfid_group_manager" class="oe_stat_button"
-                                    icon="fa-table" modifiers="{}" options="{}"/>
-                            <button string="Reload Controller Information" name="re_read_ctrl_info" type="object"
-                                    class="oe_stat_button" icon="fa-refresh" modifiers="{}" options="{}"/>
+                                    icon="fa-table"/>
+<!--                            <button string="Reload Controller Information" name="re_read_ctrl_info" type="object"-->
+<!--                                    class="oe_stat_button" icon="fa-refresh"/>-->
+                            <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
+                                    context="{'xml_id':'hr_rfid_reader_action'}"
+                                    help="List readers"
+                                    attrs="{'invisible':[('reader_ids', '=', False)]}">
+                                <field name="readers_count" widget="statinfo" string="Readers"/>
+                            </button>
+                            <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
+                                    context="{'xml_id':'hr_rfid_door_action'}"
+                                    help="List Doors"
+                                    attrs="{'invisible':[('door_ids', '=', False)]}">
+                                <field name="doors_count" widget="statinfo" string="Doors"/>
+                            </button>
+                            <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
+                                    context="{'xml_id':'hr_rfid_command_action'}"
+                                    help="List Commands"
+                                    attrs="{'invisible':[('command_ids', '=', False)]}">
+                                <field name="commands_count" widget="statinfo" string="Commands"/>
+                            </button>
+                            <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
+                                    context="{'xml_id':'hr_rfid_event_system_action'}"
+                                    help="List System Events"
+                                    attrs="{'invisible':[('system_event_ids', '=', False)]}">
+                                <field name="system_event_count" widget="statinfo" string="System Events"/>
+                            </button>
                         </div>
                         <div class="oe_title" modifiers="{}">
                             <h1 modifiers="{}">
@@ -69,16 +100,14 @@
                                 <field name="serial_number" readonly="1"/>
                                 <field name="hw_version" readonly="1"/>
                                 <field name="sw_version" readonly="1"/>
+                                <field name="max_cards_count" readonly="1"/>
+                                <field name="max_events_count" readonly="1"/>
                                 <field name="readers" readonly="1"/>
                                 <field name="temperature" readonly="1"/>
                                 <field name="humidity" readonly="1"/>
                                 <field name="system_voltage" readonly="1"/>
                                 <field name="input_voltage" readonly="1"/>
                                 <field name="last_f0_read" readonly="1"/>
-                            </group>
-                            <group string="Internal memory">
-                                <field name="max_cards_count" readonly="1"/>
-                                <field name="max_events_count" readonly="1"/>
                             </group>
                             <group string="Setup">
                                 <field name="mode"/>
@@ -89,46 +118,6 @@
                                 <field name="webstack_id" readonly="1"/>
                             </group>
                         </group>
-                        <notebook>
-                            <page string="Doors">
-                                <field name="door_ids" readonly="1">
-                                    <tree string="Doors">
-                                        <field name="name"/>
-                                        <field name="number"/>
-                                    </tree>
-                                </field>
-                            </page>
-
-                            <page string="Readers">
-                                <field name="reader_ids" readonly="1">
-                                    <tree string="Readers">
-                                        <field name="number"/>
-                                        <field name="reader_type"/>
-                                    </tree>
-                                </field>
-                            </page>
-
-                            <page string="Error Events">
-                                <field name="system_event_ids" readonly="1">
-                                    <tree string="Error Events">
-                                        <field name="controller_id"/>
-                                        <field name="timestamp"/>
-                                        <field name="error_description"/>
-                                    </tree>
-                                </field>
-                            </page>
-
-                            <page string="Commands">
-                                <field name="command_ids" readonly="1">
-                                    <tree string="Commands">
-                                        <field name="webstack_id"/>
-                                        <field name="cmd"/>
-                                        <field name="status"/>
-                                        <field name="error"/>
-                                    </tree>
-                                </field>
-                            </page>
-                        </notebook>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers"/>
@@ -176,9 +165,12 @@
             <field name="arch" type="xml">
                 <tree string="RFID Controllers" create="false">
                     <field name="name"/>
+                    <field name="webstack_id"/>
                     <field name="serial_number"/>
-                    <field name="hw_version"/>
-                    <field name="sw_version"/>
+                    <field name="reader_ids"/>
+                    <field name="door_ids"/>
+                    <field name="temperature"/>
+                    <field name="humidity"/>
                 </tree>
             </field>
         </record>

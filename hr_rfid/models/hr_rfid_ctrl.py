@@ -192,6 +192,44 @@ class HrRfidController(models.Model):
         string='Last System Information Update',
     )
 
+    commands_count = fields.Char(string='Commands count', compute='_compute_counts')
+    system_event_count = fields.Char(string='System Events count', compute='_compute_counts')
+    readers_count = fields.Char(string='Readers count', compute='_compute_counts')
+    doors_count = fields.Char(string='Doors count', compute='_compute_counts')
+    # user_events_count = fields.Char(string='User events count', compute='_compute_counts')
+
+    def _compute_counts(self):
+        event_model = self.env['hr.rfid.event.user']
+        for a in self:
+            a.commands_count = len(a.command_ids)
+            a.system_event_count = len(a.system_event_ids)
+            a.readers_count = len(a.reader_ids)
+            a.doors_count = len(a.door_ids)
+            # a.user_events_count = event_model.search_count([('door_id', 'in', [d.id for d in a.door_ids])])
+
+    def return_action_to_open(self):
+        """ This opens the xml view specified in xml_id for the current app """
+        self.ensure_one()
+        xml_id = self.env.context.get('xml_id')
+        dom = self.env.context.get('dom')
+        key = self.env.context.get('key')
+        op = self.env.context.get('op')
+        if dom:
+            domain = dom
+        elif key and op:
+            domain = [(key, op, self.id)]
+        else:
+            domain = [('controller_id', '=', self.id)]
+        model = 'hr_rfid'
+        if xml_id:
+            res = self.env['ir.actions.act_window']._for_xml_id(model+'.'+xml_id)
+            res.update(
+                context=dict(self.env.context, default_controller_id=self.id, group_by=False),
+                domain=domain
+            )
+            return res
+        return False
+
     @api.model
     def get_default_io_table(self, hw_type, sw_version, mode):
         io_tables = {
