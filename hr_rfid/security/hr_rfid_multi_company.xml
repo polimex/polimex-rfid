@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="ir_rule_hr_rfid_card_multi_company" model="ir.rule">
+            <field name="name">HR RFID Card: Multi Company</field>
+            <field name="model_id" ref="model_hr_rfid_card"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+
+    </data>
+</odoo>
