@@ -116,6 +116,12 @@
                                 context="{'group_by':'ex_timestamp'}"/>
                         <filter string="Command retries" name="retries" domain="[]" context="{'group_by':'retries'}"/>
                     </group>
+                    <searchpanel>
+                        <field name="cmd" string="Command Type" icon="fa-info-circle" color="#875A7B"/>
+                        <field name="status" string="Command Status" icon="fa-info-circle" color="#875A7B"/>
+                        <field name="error" string="Command Errors" icon="fa-info-circle" color="#875A7B"/>
+                    </searchpanel>
+
                 </search>
             </field>
         </record>

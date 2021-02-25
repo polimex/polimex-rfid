@@ -2,7 +2,7 @@
 <odoo>
     <data>
 
-         <record id="hr_rfid_card_action" model="ir.actions.act_window">
+        <record id="hr_rfid_card_action" model="ir.actions.act_window">
             <field name="name">Cards</field>
             <field name="res_model">hr.rfid.card</field>
             <field name="view_mode">tree,form,search</field>
@@ -21,14 +21,27 @@
             <field name="arch" type="xml">
                 <form string="RFID Card">
                     <sheet>
-                        <div class="oe_button_box" name="button_box">
-                            <button name="toggle_card_active" type="object" class="oe_stat_button" icon="fa-plug">
-                                <field name="active" widget="boolean_button"/>
+                        <field name="door_ids" invisible="1"/>
+                        <div class="oe_button_box" name="button_box" modifiers="{}">
+                            <button name="return_action_doors" type="object" class="oe_stat_button" icon="fa-info"
+                                    context="{'xml_id':'hr_rfid_ctrl_action'}"
+                                    help="List Controller"
+                                    attrs="{'invisible':[('door_ids', '=', False)]}">
+                                <field name="door_count" widget="statinfo"  string="Doors"/>
                             </button>
                         </div>
+
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                                attrs="{'invisible': [('active', '=', True)]}"/>
+                        <!--                        <div class="oe_button_box" name="button_box">-->
+                        <!--                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-plug">-->
+                        <!--                                <field name="active" widget="boolean_button"/>-->
+                        <!--                            </button>-->
+                        <!--                        </div>-->
                         <div class="oe_title">
+                            <label for="number" class="oe_edit_only"/>
                             <h1>
-                                <field name="number"/>
+                                <field name="number" placeholder="Up to 10 digits card number"/>
                             </h1>
                         </div>
                         <group>
@@ -37,7 +50,7 @@
                                 <field name="contact_id" attrs="{'invisible':[('employee_id','!=',False)]}"/>
                             </group>
                             <group string="Setup">
-                                <field name="active"/>
+                                <field name="active" invisible="1"/>
                                 <field name="card_type"/>
                                 <field name="cloud_card"/>
                             </group>
@@ -46,9 +59,6 @@
                             </group>
                             <group string="End date">
                                 <field name="deactivate_on"/>
-                            </group>
-                            <group colspan="4">
-                                <field name="door_ids" attrs="{'invisible':[('id','&lt;=',0)]}"/>
                             </group>
                         </group>
                     </sheet>
@@ -88,7 +98,31 @@
                     <field name="contact_id">
                         <field name="name"/>
                     </field>
-                    <filter string="Show all" name="showall" context="{'active_test': False}"/>
+                    <filter string="Show all" name="filter_showall" context="{'active_test': False}"/>
+                    <filter name="filter_archived" string="Archived" domain="[('active', '=', False)]"/>
+                    <separator/>
+                    <filter name="filter_cloud" string="Cloud Cards" domain="[('cloud_card', '=', True)]"/>
+                    <filter name="filter_non_cloud" string="Non Cloud Cards" domain="[('cloud_card', '=', False)]"/>
+                    <separator/>
+                    <filter name="filter_expired" string="Expired"
+                            domain="[('deactivate_on', '&lt;=', context_today().strftime('%Y-%m-%d'))]"/>
+                    <filter name="filter_not_activated_yet_by_date" string="Activate in Future"
+                            domain="[('activate_on', '&gt;', context_today().strftime('%Y-%m-%d'))]"/>
+
+                    <group expand="0" string="Group By">
+                        <filter string="by Card Type" name="group_by_card_type" context="{'group_by':'card_type'}"/>
+                        <filter string="by Contact" name="group_by_contact_id" context="{'group_by':'contact_id'}"/>
+                        <filter string="by Employee" name="group_by_employee_id" context="{'group_by':'employee_id'}"/>
+                        <filter string="by Activation Date" name="group_by_employee_id"
+                                context="{'group_by':'activate_on'}"/>
+                        <filter string="by Deactivation Date" name="group_by_activate_on"
+                                context="{'group_by':'deactivate_on'}"/>
+                    </group>
+                    <searchpanel>
+                        <field name="card_type" string="Card Type" icon="fa-info-circle" color="#875A7B"/>
+                        <field name="contact_id" string="Card Type" icon="fa-info-circle" color="#875A7B"/>
+                    </searchpanel>
+
                 </search>
             </field>
         </record>

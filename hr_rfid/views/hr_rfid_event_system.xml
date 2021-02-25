@@ -142,10 +142,14 @@
                         <filter string="Module" name="module" domain="[]" context="{'group_by':'webstack_id'}"/>
                         <filter string="Controller" name="controller" domain="[]"
                                 context="{'group_by':'controller_id'}"/>
-                        <filter string="Time" name="event_time" domain="[]" context="{'group_by':'timestamp'}"/>
+                        <filter string="Time" name="timestamp" domain="[]" context="{'group_by':'timestamp'}"/>
                         <filter string="Event Type" name="event_type" domain="[]"
                                 context="{'group_by':'event_action'}"/>
                     </group>
+                    <searchpanel>
+                        <field name="event_action" string="Event Type" icon="fa-info-circle" color="#875A7B"/>
+                        <!--                        <field name="service_id" string="Service" icon="fa-users"/>-->
+                    </searchpanel>
                 </search>
             </field>
         </record>

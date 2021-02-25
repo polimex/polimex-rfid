@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-23 20:32+0000\n"
-"PO-Revision-Date: 2021-02-23 22:39+0200\n"
+"POT-Creation-Date: 2021-02-25 23:11+0000\n"
+"PO-Revision-Date: 2021-02-26 01:17+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -223,6 +223,11 @@ msgid "Action String"
 msgstr ""
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_search
+msgid "Activate in Future"
+msgstr "Активиране в бъдеще"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__activate_on
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz__activate_on
 msgid "Activate on"
@@ -433,6 +438,12 @@ msgid "Anti-Pass Back"
 msgstr ""
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_search
+msgid "Archived"
+msgstr "Архивиран"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__67
 msgid "Arm Denied"
 msgstr "Отхвърлена ръка"
@@ -581,6 +592,7 @@ msgstr "Собственик на карта ( Патньор )"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_card_type
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_search
 msgid "Card Type"
 msgstr "Тип на карта"
 
@@ -615,6 +627,13 @@ msgstr "Модел за връзка с карти и врати"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_type_view_form
 msgid "Card list"
 msgstr "Списък с карти"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_card.py:0
+#: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_card_card_uniq
+#, python-format
+msgid "Card number already exists!"
+msgstr "Номерът на картата вече съществува!"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_card.py:0
@@ -795,6 +814,11 @@ msgid "Cloud Card"
 msgstr "Облачна карта"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_search
+msgid "Cloud Cards"
+msgstr "Облачни карта"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_workcode__user_action__start
 msgid "Coming to work"
 msgstr "Идва на работа"
@@ -804,6 +828,11 @@ msgstr "Идва на работа"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
 msgid "Command"
 msgstr "Команда"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
+msgid "Command Errors"
+msgstr "Грешки при команди"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__status__success
@@ -819,6 +848,16 @@ msgstr "Изпълнението на команда е неуспешно"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__status__process
 msgid "Command Processing"
 msgstr "Обработка на команда"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
+msgid "Command Status"
+msgstr "Състояние на командата"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
+msgid "Command Type"
+msgstr "Тип на командата"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__status__wait
@@ -860,6 +899,12 @@ msgstr "Команда към модула"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "Commands"
 msgstr "Команди"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__commands_count
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__commands_count
+msgid "Commands count"
+msgstr "Брой команди"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
@@ -910,6 +955,11 @@ msgstr "Команди, изпратени до този контролер"
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_command_action
 msgid "Commands to Modules"
 msgstr "Команди към модули"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__company_id
+msgid "Company"
+msgstr "Фирма"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_res_config_settings
@@ -1027,11 +1077,6 @@ msgid "Controller Mode"
 msgstr "Режим на контролера"
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
-msgid "Controller Name"
-msgstr "Име на контролера"
-
-#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_system__controller_id
 msgid "Controller affected by this event"
 msgstr "Контролер за който се отнася това събитие"
@@ -1058,6 +1103,11 @@ msgstr "Контролера за който е предназначена ко�
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "Controllers"
 msgstr "Контролери"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__controllers_count
+msgid "Controllers count"
+msgstr "Брой Контролери"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__controllers
@@ -1394,6 +1444,11 @@ msgid "Door Access Groups"
 msgstr "Групи за достъп на врата"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__door_count
+msgid "Door Count"
+msgstr "Брой врати"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__26
 msgid "Door Forced Open"
 msgstr "Принудително отворена врата"
@@ -1436,6 +1491,7 @@ msgstr "Вратата ще остане отворена/затворена з�
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__door_ids
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_doors
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_employee_doors_wiz_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_partner_doors_wiz_form
@@ -1454,6 +1510,11 @@ msgid ""
 msgstr ""
 "Вратите \"%s\" и \"%s\" принадлежат на контролер, който не може да даде достъп до "
 "много врати едновременно."
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__doors_count
+msgid "Doors count"
+msgstr "Брой врати"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
@@ -1617,12 +1678,6 @@ msgid "Error"
 msgstr "Грешка"
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
-msgid "Error Events"
-msgstr "Събития за грешки"
-
-#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__system_event_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__system_event_ids
 msgid "Errors"
@@ -1659,6 +1714,11 @@ msgstr "Тип събитие"
 #: model:ir.model.fields,field_description:hr_rfid.field_res_config_settings__event_lifetime
 msgid "Event life time"
 msgstr "Живот на събитието"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
+msgid "Event time"
+msgstr "Време на събитието"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__user_event_ids
@@ -1789,6 +1849,11 @@ msgid "Expiration Date"
 msgstr "Дата на изтичане"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_search
+msgid "Expired"
+msgstr "Изтекла"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__external_db
 msgid "External DB"
 msgstr "Външна DB"
@@ -1880,6 +1945,7 @@ msgid "Granted (no entry)"
 msgstr "Разрешен (без запис)"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_search
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_search
 msgid "Group By"
@@ -2167,11 +2233,6 @@ msgid "Internal Error, Try Again (WebSDK)"
 msgstr "Вътрешна грешка, опитайте отново (WebSDK)"
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
-msgid "Internal memory"
-msgstr "Вътрешна памет"
-
-#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__is_card_event
 msgid "Is Card Event"
 msgstr "Е събитиес карта"
@@ -2365,6 +2426,34 @@ msgid "Last occurrence"
 msgstr "Последно събитие"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
+msgid "List Commands"
+msgstr "Списък на командите"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
+msgid "List Controller"
+msgstr "Списък с Контролери"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
+msgid "List Doors"
+msgstr "Списък Врати"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
+msgid "List System Events"
+msgstr "Списък на системни събития"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
+msgid "List readers"
+msgstr "Списък на Четците"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__log_out_on_exit
 msgid "Logout on Exit"
 msgstr "Logout при излизане"
@@ -2490,6 +2579,7 @@ msgstr "Режим на четеца"
 #: model:ir.model,name:hr_rfid.model_hr_rfid_webstack
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__webstack_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__webstack_id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__webstack_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__webstack_id
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_search
@@ -2534,6 +2624,7 @@ msgstr "Модул, за който е предназначена команда
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__webstack_id
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__webstack_id
 msgid "Module the controller serves"
 msgstr "Модул управляващ контролера"
 
@@ -2608,6 +2699,11 @@ msgstr "Няма отговор от контролера (WebSDK)"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__30
 msgid "No response from the Module"
 msgstr "Няма отговор от модула"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_search
+msgid "Non Cloud Cards"
+msgstr "Не Облачни карта"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__11
@@ -3304,6 +3400,11 @@ msgid "Readers"
 msgstr "Четци"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__readers_count
+msgid "Readers count"
+msgstr "Брой четци"
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__reader_ids
 msgid "Readers that belong to this controller"
 msgstr "Четци принадлежащи на този контролер"
@@ -3368,13 +3469,11 @@ msgstr ""
 
 #. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.action_reload_controller_information
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
 msgid "Reload Controller Information"
 msgstr "Презареди информацията за контролера"
 
 #. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.action_reload_cards
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
 msgid "Reload cards"
 msgstr "Презареждане на карти"
 
@@ -3590,8 +3689,16 @@ msgstr "Резултат: Разрешен"
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_event_system_action
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_system_events
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "System Events"
 msgstr "Системни събития"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__system_event_count
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__system_event_count
+msgid "System Events count"
+msgstr "Брой системни събития"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__dc
@@ -3824,6 +3931,11 @@ msgstr "Непрочетени съобщения"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__message_unread_counter
 msgid "Unread Messages Counter"
 msgstr "Брояч на непрочетени съобщения"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_form
+msgid "Up to 10 digits card number"
+msgstr "До 10 цифри номер на картата"
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_event_user_action
@@ -4160,6 +4272,31 @@ msgstr "Зони"
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__zone_ids
 msgid "Zones containing this door"
 msgstr "Зони, съдържащи тази врата"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_search
+msgid "by Activation Date"
+msgstr "по дата на активиране"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_search
+msgid "by Card Type"
+msgstr "по тип карта"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_search
+msgid "by Contact"
+msgstr "по контакт"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_search
+msgid "by Deactivation Date"
+msgstr "по Дата на деактивиране"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_search
+msgid "by Employee"
+msgstr "от Служител"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__34
