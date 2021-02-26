@@ -17,6 +17,7 @@
     'depends': [ 'base', 'hr', 'hr_rfid', 'hr_attendance',],
 
     'data': [
+        'views/hr_attendance.xml',
         'views/hr_rfid_webstack_views.xml',
         'views/hr_rfid_attendace_settings.xml',
         'data/hr_attendance_multi_rfid_cron_jobs.xml',

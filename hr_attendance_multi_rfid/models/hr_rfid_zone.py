@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models, api, fields, exceptions
+from odoo import models, api, fields, _, exceptions
 
 
 class HrRfidZone(models.Model):
@@ -22,7 +22,6 @@ class HrRfidZone(models.Model):
         help='If a the user has already checked out and also leaves this zone then overwrite the time of the check out',
         default=False,
     )
-
 
     def person_entered(self, person, event):
         if not isinstance(person, type(self.env['hr.employee'])):
@@ -66,3 +65,17 @@ class HrRfidZone(models.Model):
                     person.attendance_action_change_with_date(fields.datetime.now())
 
         return super(HrRfidZone, self).person_left(person, event)
+
+    def attendance_for_current_zone(self):
+        self.ensure_one()
+        return {
+            'name': _("Check In's {}").format(self.name),
+            'view_mode': 'tree,form',
+            'res_model': 'hr.attendance',
+            'domain': [('id', 'in', [i.id for i in self.employee_ids])],
+            'type': 'ir.actions.act_window',
+            # 'help': _('''<p class="o_view_nocontent">
+            #         Buy Odoo Enterprise now to get more providers.
+            #     </p>'''),
+        }
+
