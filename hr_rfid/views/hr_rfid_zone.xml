@@ -52,17 +52,33 @@
             <field name="model">hr.rfid.zone</field>
             <field name="arch" type="xml">
                 <form>
-                    <sheet modifiers="{}">
+                    <sheet>
+                        <field name="contact_ids" invisible="1"/>
+                        <field name="employee_ids" invisible="1"/>
                         <div class="oe_button_box" name="button_box" attrs="{'invisible': [('id', '=', False)]}">
                             <button name="%(hr_rfid_zone_doors_wiz_action)d" id="hr_rfid_zone_doors_btn" type="action"
                                     class="oe_stat_button" icon="fa-table" modifiers="{}" options="{}"
                                     string="Add/Remove Doors"/>
-                            <button name="clear_employees" id="hr_rfid_zone_clear_employees_btn" type="object"
-                                    class="oe_stat_button" icon="fa-minus-square" modifiers="{}" options="{}"
-                                    string="Clear Employees"/>
-                            <button name="clear_contacts" id="hr_rfid_zone_clear_contacts_btn" type="object"
-                                    class="oe_stat_button" icon="fa-minus-square" modifiers="{}" options="{}"
-                                    string="Clear Contacts"/>
+                            <!--                            <button name="clear_employees" id="hr_rfid_zone_clear_employees_btn" type="object"-->
+                            <!--                                    class="oe_stat_button" icon="fa-minus-square" modifiers="{}" options="{}"-->
+                            <!--                                    attrs="{'invisible':[('contact_ids', '=', False)]}"-->
+                            <!--                                    string="Clear Employees"/>-->
+                            <!--                            <button name="clear_contacts" id="hr_rfid_zone_clear_contacts_btn" type="object"-->
+                            <!--                                    class="oe_stat_button" icon="fa-minus-square" modifiers="{}" options="{}"-->
+                            <!--                                    attrs="{'invisible':[('employee_ids', '=', False)]}"-->
+                            <!--                                    string="Clear Contacts"/>-->
+                            <button name="contact_in_current_zone"
+                                    type="object"
+                                    class="oe_stat_button" icon="fa-list"
+                                    attrs="{'invisible':[('contact_count', '=', 0)]}">
+                                <field name="contact_count" widget="statinfo" string="Contacts"/>
+                            </button>
+                            <button name="employee_in_current_zone"
+                                    type="object"
+                                    class="oe_stat_button" icon="fa-list"
+                                    attrs="{'invisible':[('employee_count', '=', 0)]}">
+                                <field name="employee_count" widget="statinfo" string="Employees"/>
+                            </button>
                         </div>
                         <div class="oe_title" modifiers="{}">
                             <h1>
@@ -74,17 +90,9 @@
                                 <field name="anti_pass_back"/>
                                 <field name="log_out_on_exit"/>
                             </group>
-                            <notebook colspan="4" attrs="{'invisible': [('id', '=', False)]}">
-                                <page string="Doors in zone">
-                                    <field name="door_ids" create="0" write="0" delete="0"/>
-                                </page>
-                                <page string="Employees in zone">
-                                    <field name="employee_ids" create="0" write="0" delete="0"/>
-                                </page>
-                                <page string="Contacts in zone">
-                                    <field name="contact_ids" create="0" write="0" delete="0"/>
-                                </page>
-                            </notebook>
+                            <group string="Included doors">
+                                <field name="door_ids" readonly="1" widget="many2many_tags"/>
+                            </group>
                         </group>
                     </sheet>
                     <div class="oe_chatter">

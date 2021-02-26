@@ -45,6 +45,17 @@ class HrRfidZone(models.Model):
         help='Contacts currently in this zone',
     )
 
+    employee_count = fields.Char(compute='_compute_counts')
+    contact_count = fields.Char(compute='_compute_counts')
+
+    @api.depends('employee_ids','contact_ids')
+    def _compute_counts(self):
+        for z in self:
+            z.employee_count = len(z.employee_ids)
+            z.contact_count = len(z.contact_ids)
+
+
+
     def person_went_through(self, event):
         person = event.employee_id or event.contact_id
 
@@ -128,6 +139,31 @@ class HrRfidZone(models.Model):
         session_storage = http.root.session_store
         sids = session_storage.list()
         person.log_person_out(sids)
+
+    def employee_in_current_zone(self):
+        self.ensure_one()
+        return {
+            'name': _('Employees in {}').format(self.name),
+            'view_mode': 'kanban,form',
+            'res_model': 'hr.employee',
+            'domain': [('id', 'in', [i.id for i in self.employee_ids])],
+            'type': 'ir.actions.act_window',
+            # 'help': _('''<p class="o_view_nocontent">
+            #         Buy Odoo Enterprise now to get more providers.
+            #     </p>'''),
+        }
+    def contact_in_current_zone(self):
+            self.ensure_one()
+            return {
+                'name': _('Contacts in {}').format(self.name),
+                'view_mode': 'kanban,form',
+                'res_model': 'res.partner',
+                'domain': [('id', 'in', [i.id for i in self.contact_ids])],
+                'type': 'ir.actions.act_window',
+                # 'help': _('''<p class="o_view_nocontent">
+                #         Buy Odoo Enterprise now to get more providers.
+                #     </p>'''),
+            }
 
 
 class HrRfidZoneDoorsWizard(models.TransientModel):
