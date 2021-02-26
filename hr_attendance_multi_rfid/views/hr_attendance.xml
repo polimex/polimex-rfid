@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="hr_attendance_calendar_view" model="ir.ui.view">
+        <field name="name">hr.attendance.calendar</field>
+        <field name="model">hr.attendance</field>
+        <field name="arch" type="xml">
+            <calendar string="Attendance" date_start="check_in" date_stop="check_out"
+                      color="employee_id" mode="month" quick_add="0">
+                <field name="employee_id"/>
+                <field name="check_in" readonly="1"/>
+                <field name="check_out" readonly="1"/>
+                <field name="worked_hours"/>
+            </calendar>
+        </field>
+    </record>
+
+    </data>
+</odoo>
