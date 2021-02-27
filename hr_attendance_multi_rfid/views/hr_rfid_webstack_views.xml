@@ -8,8 +8,18 @@
             <field name="model">hr.rfid.event.user</field>
             <field name="inherit_id" ref="hr_rfid.hr_rfid_user_ev_view_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//group//field[@name='name']" position="after">
-                    <field name="in_or_out"/>
+                <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                    <button name="button_show_employee_att_events"
+                            string="Emlpoyee's Attendance"
+                            class="oe_stat_button" icon="fa-table"
+                            attrs="{'invisible':[('employee_id', '=', False)]}"
+                            type="object"/>
+
+                </xpath>
+                <xpath expr="//group" position="inside">
+                    <group string="Attendance data" id="attendance_group">
+                        <field name="in_or_out"/>
+                    </group>
                 </xpath>
             </field>
         </record>
@@ -19,6 +29,11 @@
             <field name="model">hr.rfid.event.user</field>
             <field name="inherit_id" ref="hr_rfid.hr_rfid_user_ev_view_tree"/>
             <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="decoration-success">event_action == '1' and in_or_out == 'no_info'</attribute>
+                    <attribute name="decoration-primary">in_or_out == 'in'</attribute>
+                    <attribute name="decoration-info">in_or_out == 'out'</attribute>
+                </xpath>
                 <xpath expr="//field[@name='door_id']" position="after">
                     <field name="in_or_out"/>
                 </xpath>

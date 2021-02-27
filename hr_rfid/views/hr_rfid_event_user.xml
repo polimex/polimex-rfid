@@ -6,7 +6,7 @@
             <field name="res_model">hr.rfid.event.user</field>
             <!--      <field name="view_type">form</field>-->
             <field name="view_mode">tree,form,search,calendar,pivot</field>
-            <field name="context">{'search_default_this_day': 1}</field>
+            <field name="context">{'search_default_filter_this_day': 1}</field>
         </record>
 
         <record id="hr_rfid_user_ev_view_form" model="ir.ui.view">
@@ -14,22 +14,71 @@
             <field name="model">hr.rfid.event.user</field>
             <field name="arch" type="xml">
                 <form create="0" delete="0" edit="0">
-                    <group>
-                        <field name="name"/>
-                        <field name="workcode" attrs="{'invisible': [('workcode','=', '-')]}"/>
-                        <field name="workcode_id" attrs="{'invisible': [('workcode_id','=', False)]}"/>
-                        <field name="event_action" readonly="1"/>
-                        <field name="event_time" readonly="1"/>
-                        <field name="create_date" readonly="1" string="Receive Date"
-                               help="Time odoo received the event"/>
-                        <field name="ctrl_addr" readonly="1"/>
-                        <field name="employee_id" readonly="1" attrs="{'invisible':[('employee_id','=',False)]}"/>
-                        <field name="contact_id" readonly="1" attrs="{'invisible':[('contact_id','=',False)]}"/>
-                        <field name="door_id" readonly="1"/>
-                        <field name="reader_id" readonly="1"/>
-                        <field name="card_id" readonly="1"/>
-                        <field name="command_id" readonly="1"/>
-                    </group>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="button_show_contact_events"
+                                    string="Contact's Events"
+                                    class="oe_stat_button" icon="fa-table"
+                                    attrs="{'invisible':[('contact_id', '=', False)]}"
+                                    type="object"/>
+                            <button name="button_show_employee_events"
+                                    string="Emlpoyee's Events"
+                                    class="oe_stat_button" icon="fa-table"
+                                    attrs="{'invisible':[('employee_id', '=', False)]}"
+                                    type="object"/>
+                            <button name="button_show_card_events"
+                                    string="Card's Events"
+                                    class="oe_stat_button" icon="fa-table"
+                                    attrs="{'invisible':[('card_id', '=', False)]}"
+                                    type="object"/>
+                            <button name="button_show_door_events"
+                                    string="Door's Events"
+                                    class="oe_stat_button" icon="fa-table"
+                                    attrs="{'invisible':[('door_id', '=', False)]}"
+                                    type="object"/>
+                            <button name="button_show_reader_events"
+                                    string="Reader's Events"
+                                    class="oe_stat_button" icon="fa-table"
+                                    attrs="{'invisible':[('reader_id', '=', False)]}"
+                                    type="object"/>
+                        </div>
+                            <field name="event_action" readonly="1"
+                                   class="oe_right" widget="badge"
+                                   decoration-success="event_action == '1'"
+                                   decoration-warning="event_action in ['2','3','4']"
+                                   decoration-info="event_action in ['64']"
+
+                            />
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" placeholder="......"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Who">
+                                <field name="employee_id" readonly="1"
+                                       attrs="{'invisible':[('employee_id','=',False)]}"/>
+                                <field name="contact_id" readonly="1" attrs="{'invisible':[('contact_id','=',False)]}"/>
+                                <field name="card_id" readonly="1"/>
+                            </group>
+                            <group string="Where">
+                                <field name="door_id" readonly="1"/>
+                                <field name="reader_id" readonly="1"/>
+                                <field name="ctrl_addr" readonly="1" groups="base.group_no_one"/>
+                                <field name="command_id" readonly="1" groups="base.group_no_one"/>
+                            </group>
+                            <group string="When">
+                                <field name="event_time" readonly="1"/>
+                                <field name="create_date" readonly="1" string="Receive Date"
+                                       help="Time odoo received the event"/>
+                            </group>
+                            <group>
+                                <field name="workcode" attrs="{'invisible': [('workcode','=', '-')]}"/>
+                                <field name="workcode_id" attrs="{'invisible': [('workcode_id','=', False)]}"/>
+                            </group>
+                        </group>
+                    </sheet>
                 </form>
             </field>
         </record>
@@ -38,10 +87,12 @@
             <field name="name">hr.rfid.user.ev.tree</field>
             <field name="model">hr.rfid.event.user</field>
             <field name="arch" type="xml">
-                <tree create="0" delete="0">
+                <tree create="0" delete="0" decoration-success="event_action == '1'"
+                      decoration-danger="event_action in ['2','3','4']"
+                      decoration-warning="event_action == '64'" >
                     <field name="event_time"/>
-                    <field name="employee_id"/>
-                    <field name="contact_id"/>
+                    <field name="employee_id" widget="many2one_avatar_employee" />
+                    <field name="contact_id" widget="many2one_avatar" optional="show"/>
                     <field name="event_action"/>
                     <field name="reader_id"/>
                     <field name="door_id"/>
@@ -55,34 +106,44 @@
             <field name="arch" type="xml">
                 <search>
                     <field name="name"/>
+                    <field name="card_id"/>
+                    <field name="contact_id"/>
+                    <field name="employee_id"/>
                     <field name="door_id"/>
                     <field name="event_action"/>
-                    <field name="event_time"/>
-                    <field name="employee_id"/>
-                    <field name="card_id"/>
 
-                    <filter name="granted" string="Status: Granted"
+                    <filter name="filter_employees" string="Employees only"
+                            domain="[('employee_id', '!=', False)]"/>
+                    <filter name="filter_contacts" string="Contacts only"
+                            domain="[('contact_id', '!=', False)]"/>
+                    <separator/>
+                    <filter name="filter_granted" string="Status: Granted"
                             domain="[('event_action', '=', '1')]"/>
-                    <filter name="granted" string="Status: Denied"
+                    <filter name="filter_granted" string="Status: Denied"
                             domain="[('event_action', '!=', '1')]"/>
                     <separator/>
-                    <filter string="Event time" name="event_time_filter" date="event_time" default_period="last_month"/>
-                    <filter name="this_day" string="Events from today"
+                    <filter string="Event time" name="filter_event_time" date="event_time" default_period="last_month"/>
+                    <filter name="filter_this_day" string="Events from today"
                             domain="[('event_time', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('event_time', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]"/>
-                    <filter name="this_week" string="Events from this week"
+                    <filter name="filter_this_week" string="Events from this week"
                             domain="[('event_time', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('event_time', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]"/>
-                    <filter name="this_month" string="Events from this month"
+                    <filter name="filter_this_month" string="Events from this month"
                             domain="[('event_time', '&gt;=', context_today().strftime('%%Y-%%m-1'))]"/>
-                    <filter name="this_year" string="Events from this year"
+                    <filter name="filter_this_year" string="Events from this year"
                             domain="[('event_time', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('event_time', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]"/>
                     <separator/>
-                    <filter name="last_week" string="Events from last week"
+                    <filter name="filter_last_week" string="Events from last week"
                             domain="[('event_time', '>=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
-                    <filter name="last_month" string="Events from last month"
+                    <filter name="filter_last_month" string="Events from last month"
                             domain="[('event_time', '>=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]"/>
-                    <filter name="last_year" string="Events from last year"
+                    <filter name="filter_last_year" string="Events from last year"
                             domain="[('event_time', '>=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]"/>
                     <separator/>
+                    <filter name="groupby_door" string="by Door" context="{'group_by':'door_id'}"/>
+                    <filter name="groupby_reader" string="by Reader" context="{'group_by':'reader_id'}"/>
+                    <filter name="groupby_time" string="by Event Time" context="{'group_by':'event_time'}"/>
+                    <filter name="groupby_employee" string="by Employee" context="{'group_by':'employee_id'}"/>
+                    <filter name="groupby_contact" string="by Contact" context="{'group_by':'contact_id'}"/>
                     <searchpanel>
                         <field name="event_action" string="Status" icon="fa-info-circle" color="#875A7B"/>
                         <!--                        <field name="service_id" string="Service" icon="fa-users"/>-->

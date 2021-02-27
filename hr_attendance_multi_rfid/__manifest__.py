@@ -12,9 +12,9 @@
        Description
        """,
 
-    'website': 'securitybulgaria.com',
+    'website': 'polimex.co',
 
-    'depends': [ 'base', 'hr', 'hr_rfid', 'hr_attendance',],
+    'depends': ['hr_rfid', 'hr_attendance',],
 
     'data': [
         'views/hr_attendance.xml',

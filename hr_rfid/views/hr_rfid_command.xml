@@ -15,9 +15,13 @@
             <field name="arch" type="xml">
                 <form create="0" delete="0" edit="0">
                     <sheet>
-                        <header>
-                            <field name="status" widget="statusbar" statusbar_visible="Wait,Process,Success,Failure"/>
-                        </header>
+                        <field name="status" readonly="1"
+                               class="oe_right" widget="badge"
+                               decoration-success="status == 'Success'"
+                               decoration-warning="status == 'Wait'"
+                               decoration-info="status == 'Process'"
+                               decoration-danger="status == 'Failure'"
+                        />
                         <div class="oe_title" modifiers="{}">
                             <h1 modifiers="{}">
                                 <field name="cmd" readonly="1"/>
@@ -33,7 +37,7 @@
                                 <field name="controller_id" readonly="1"/>
                                 <field name="webstack_id" readonly="1"/>
                             </group>
-                            <group string="More information">
+                            <group string="When">
                                 <field name="cr_timestamp" readonly="1"/>
                                 <field name="ex_timestamp" readonly="1"/>
                                 <field name="retries" readonly="1"/>
@@ -58,16 +62,21 @@
             <field name="name">hr.rfid.command.tree</field>
             <field name="model">hr.rfid.command</field>
             <field name="arch" type="xml">
-                <!--        <tree create="false" delete="false" decoration-danger="status == 'Failure'" decoration-information="status == 'Process'">-->
                 <tree create="false" delete="false">
                     <field name="webstack_id"/>
                     <field name="controller_id"/>
                     <field name="cmd"/>
-                    <field name="status"/>
-                    <field name="error"/>
+                    <field name="status"
+                           decoration-success="status == 'Success'"
+                           decoration-warning="status == 'Wait'"
+                           decoration-info="status == 'Process'"
+                           decoration-danger="status == 'Failure'"
+                           optional="show"/>
+
+<!--                    <field name="error"/>-->
                     <field name="cr_timestamp"/>
                     <field name="ex_timestamp"/>
-                    <field name="retries"/>
+<!--                    <field name="retries"/>-->
                 </tree>
             </field>
         </record>

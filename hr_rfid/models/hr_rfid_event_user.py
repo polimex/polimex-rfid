@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from odoo import fields, models, api
+from odoo import fields, models, api, _
 
 
 class HrRfidUserEvent(models.Model):
@@ -85,13 +85,13 @@ class HrRfidUserEvent(models.Model):
     )
 
     action_selection = [
-        ('1', 'Granted'),
-        ('2', 'Denied'),
-        ('3', 'Denied T/S'),
-        ('4', 'Denied APB'),
-        ('5', 'Exit Button'),
-        ('6', 'Granted (no entry)'),
-        ('64', 'Request Instructions'),
+        ('1', _('Granted')),
+        ('2', _('Denied')),
+        ('3', _('Denied T/S')),
+        ('4', _('Denied APB')),
+        ('5', _('Exit Button')),
+        ('6', _('Granted (no entry)')),
+        ('64', _('Request Instructions')),
     ]
 
     event_action = fields.Selection(
@@ -130,14 +130,14 @@ class HrRfidUserEvent(models.Model):
             if record.event_action != '64':
                 name += self.action_selection[int(record.event_action)-1][1]
             else:
-                name += 'Request Instructions'
+                name += _('Request Instructions')
             if record.door_id:
                 name += ' @ ' + record.door_id.name
             record.name = name
 
     def _compute_user_ev_action_str(self):
         for record in self:
-            record.action_string = 'Access ' + self.action_selection[int(record.event_action)-1][1]
+            record.action_string = _('Access {}').format(self.action_selection[int(record.event_action)-1][1])
 
     @api.model_create_multi
     @api.returns('self', lambda value: value.id)
@@ -199,6 +199,70 @@ class HrRfidUserEvent(models.Model):
         self.refresh_views()
         return records
 
+    def button_show_employee_events(self):
+        self.ensure_one()
+        return {
+            'name': _('Events for {}').format(self.employee_id.name),
+            'view_mode': 'tree,form',
+            'res_model': self._name,
+            'domain': [('employee_id', '=', self.employee_id.id)],
+            'type': 'ir.actions.act_window',
+            # 'help': _('''<p class="o_view_nocontent">
+            #         No events for this employee.
+            #     </p>'''),
+        }
+
+    def button_show_contact_events(self):
+        self.ensure_one()
+        return {
+            'name': _('Events for {}').format(self.contact_id.name),
+            'view_mode': 'tree,form',
+            'res_model': self._name,
+            'domain': [('contact_id', '=', self.contact_id.id)],
+            'type': 'ir.actions.act_window',
+            # 'help': _('''<p class="o_view_nocontent">
+            #         No events for this employee.
+            #     </p>'''),
+        }
+
+    def button_show_card_events(self):
+        self.ensure_one()
+        return {
+            'name': _('Events for {}').format(self.card_id.name),
+            'view_mode': 'tree,form',
+            'res_model': self._name,
+            'domain': [('card_id', '=', self.card_id.id)],
+            'type': 'ir.actions.act_window',
+            # 'help': _('''<p class="o_view_nocontent">
+            #         No events for this employee.
+            #     </p>'''),
+        }
     
+    def button_show_door_events(self):
+        self.ensure_one()
+        return {
+            'name': _('Events on {}').format(self.door_id.name),
+            'view_mode': 'tree,form',
+            'res_model': self._name,
+            'domain': [('door_id', '=', self.door_id.id)],
+            'type': 'ir.actions.act_window',
+            # 'help': _('''<p class="o_view_nocontent">
+            #         No events for this employee.
+            #     </p>'''),
+        }
+
+    def button_show_reader_events(self):
+        self.ensure_one()
+        return {
+            'name': _('Events on {}').format(self.reader_id.name),
+            'view_mode': 'tree,form',
+            'res_model': self._name,
+            'domain': [('reader_id', '=', self.reader_id.id)],
+            'type': 'ir.actions.act_window',
+            # 'help': _('''<p class="o_view_nocontent">
+            #         No events for this employee.
+            #     </p>'''),
+        }
+
 
 
