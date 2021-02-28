@@ -15,7 +15,9 @@ class HrRfidWorkcode(models.Model):
         tracking=True,
         required=True,
     )
-
+    company_id = fields.Many2one('res.company',
+                                 string='Company',
+                                 default=lambda self: self.env.company)
     workcode = fields.Char(
         string='Workcode',
         help="The actual workcode ",

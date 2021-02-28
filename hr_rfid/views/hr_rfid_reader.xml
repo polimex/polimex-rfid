@@ -15,39 +15,37 @@
             <field name="arch" type="xml">
                 <form create="false" delete="false">
                     <sheet>
-                        <div class="oe_title" modifiers="{}">
+                        <field name="door_ids" invisible="1"/>
+                        <field name="user_event_ids" invisible="1"/>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="button_door_list"
+                                    type="object" attrs="{'invisible':[('door_ids', '=', False)]}"
+                                    class="oe_stat_button" icon="fa-list-alt">
+                                <field name="door_count" widget="statinfo" string="Doors"/>
+                            </button>
+                            <button name="button_event_list"
+                                    type="object" attrs="{'invisible':[('user_event_ids', '=', False)]}"
+                                    class="oe_stat_button" icon="fa-list-alt">
+                                <field name="user_event_count" widget="statinfo" string="User Events"/>
+                            </button>
+
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
                             <h1>
-                                <field name="name"/>
+                                <field name="name" placeholder="Enter friendly name of the reader"/>
                             </h1>
                         </div>
-                        <group string="Setup information">
-                            <field name="mode"/>
-                            <field name="reader_type"/>
-                        </group>
-                        <group string="Information">
-                            <field name="number" readonly="1"/>
-                            <field name="controller_id" readonly="1"/>
-                            <field name="door_id" readonly="1" attrs="{'invisible':[('door_id','=',False)]}"/>
-                        </group>
-                        <group colspan="4" attrs="{'invisible':[('door_id','!=',False)]}">
-                            <field name="door_ids" readonly="1">
-                                <tree>
-                                    <field name="name"/>
-                                    <field name="controller_id"/>
-                                    <field name="card_type"/>
-                                    <field name="apb_mode"/>
-                                </tree>
-                            </field>
-                        </group>
-                        <group colspan="4">
-                            <field name="user_event_ids" readonly="1">
-                                <tree>
-                                    <field name="event_time"/>
-                                    <field name="employee_id"/>
-                                    <field name="card_id"/>
-                                    <field name="door_id"/>
-                                </tree>
-                            </field>
+                        <group>
+                            <group string="Setup information">
+                                <field name="mode"/>
+                                <field name="reader_type"/>
+                            </group>
+                            <group string="Information">
+                                <field name="number" readonly="1"/>
+                                <field name="controller_id" readonly="1"/>
+                                <field name="door_id" readonly="1" attrs="{'invisible':[('door_id','=',False)]}"/>
+                            </group>
                         </group>
                     </sheet>
                     <div class="oe_chatter">
@@ -65,8 +63,9 @@
                 <tree create="false" delete="false">
                     <field name="name"/>
                     <field name="mode"/>
-                    <field name="controller_id"/>
                     <field name="reader_type"/>
+                    <field name="door_ids" widget="many2many_tags"/>
+                    <field name="controller_id"/>
                 </tree>
             </field>
         </record>

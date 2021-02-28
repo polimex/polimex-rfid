@@ -103,6 +103,9 @@
                                 <field name="name"/>
                             </h1>
                         </div>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
 
                         <notebook colspan="4" attrs="{'invisible': [('id', '=', False)]}">
                             <page string="Doors">
@@ -236,6 +239,8 @@
             <field name="arch" type="xml">
                 <tree string="Access Groups">
                     <field name="name"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+
                 </tree>
             </field>
         </record>
