@@ -10,6 +10,8 @@ import pytz
 
 # put POSIX 'Etc/*' entries at the end to avoid confusing users - see bug 1086728
 _tzs = [(tz, tz) for tz in sorted(pytz.all_timezones, key=lambda tz: tz if not tz.startswith('Etc/') else '_')]
+
+
 def _tz_get(self):
     return _tzs
 
@@ -26,7 +28,9 @@ class HrRfidWebstack(models.Model):
         index=True,
         tracking=True,
     )
-
+    company_id = fields.Many2one('res.company',
+                                 string='Company',
+                                 default=lambda self: self.env.company)
     tz = fields.Selection(
         _tz_get,
         string='Timezone',
@@ -118,7 +122,7 @@ class HrRfidWebstack(models.Model):
     )
 
     module_username = fields.Selection(
-        selection=[ ('admin', 'Admin'), ('sdk', 'SDK') ],
+        selection=[('admin', 'Admin'), ('sdk', 'SDK')],
         string='Module Username',
         help='Username for the admin account for the module',
         default='admin',
@@ -146,8 +150,8 @@ class HrRfidWebstack(models.Model):
     system_event_count = fields.Char(string='System Events count', compute='_compute_counts')
     controllers_count = fields.Char(string='Controllers count', compute='_compute_counts')
 
-    _sql_constraints = [ ('rfid_webstack_serial_unique', 'unique(serial)',
-                          'Serial number for webstacks must be unique!') ]
+    _sql_constraints = [('rfid_webstack_serial_unique', 'unique(serial)',
+                         'Serial number for webstacks must be unique!')]
 
     def _compute_counts(self):
         for a in self:
@@ -170,7 +174,7 @@ class HrRfidWebstack(models.Model):
             domain = [('webstack_id', '=', self.id)]
         model = 'hr_rfid'
         if xml_id:
-            res = self.env['ir.actions.act_window']._for_xml_id(model+'.'+xml_id)
+            res = self.env['ir.actions.act_window']._for_xml_id(model + '.' + xml_id)
             res.update(
                 context=dict(self.env.context, default_webstack_id=self.id, group_by=False),
                 domain=domain
@@ -220,7 +224,7 @@ class HrRfidWebstack(models.Model):
 
         auth = base64.b64encode((username + ':' + password).encode())
         auth = auth.decode()
-        req_headers = { "content-type": "application/json", "Authorization": "Basic " + str(auth) }
+        req_headers = {"content-type": "application/json", "Authorization": "Basic " + str(auth)}
         host = str(self.last_ip)
         js_uart_conf = json.dumps([
             {
@@ -371,7 +375,7 @@ class HrRfidWebstackDiscovery(models.TransientModel):
     )
 
     state = fields.Selection(
-        [ ('pre_discovery', 'pre_discovery'), ('post_discovery', 'post_discovery') ],
+        [('pre_discovery', 'pre_discovery'), ('post_discovery', 'post_discovery')],
         default='pre_discovery'
     )
 
@@ -388,9 +392,9 @@ class HrRfidWebstackDiscovery(models.TransientModel):
             udp_sock.close()
             return
 
-        added_sn=list()
+        added_sn = list()
         ws_env = self.env['hr.rfid.webstack']
-        for rec in ws_env.search([('|'),('active','=',True), ('active', '=', False)]):
+        for rec in ws_env.search([('|'), ('active', '=', True), ('active', '=', False)]):
             added_sn.append(rec.serial)
         while True:
             udp_sock.settimeout(0.5)
@@ -406,11 +410,11 @@ class HrRfidWebstackDiscovery(models.TransientModel):
                 # if len(ws_env.search([('serial', '=', data[4])])) > 0:
                 #     continue
                 module = {
-                    'last_ip':    addr[0],
-                    'name':       data[0],
-                    'version':    data[3],
+                    'last_ip': addr[0],
+                    'name': data[0],
+                    'version': data[3],
                     'hw_version': data[2],
-                    'serial':     data[4],
+                    'serial': data[4],
                     'behind_nat': False,
                     'available': 'u',
                 }
@@ -428,9 +432,8 @@ class HrRfidWebstackDiscovery(models.TransientModel):
             except socket.timeout:
                 break
 
-
         udp_sock.close()
-        self.write({ 'state': 'post_discovery' })
+        self.write({'state': 'post_discovery'})
         return return_wiz_form_view(self._name, self.id)
 
     def setup_modules(self):
@@ -517,5 +520,3 @@ class HrRfidWebstackManualCreate(models.TransientModel):
             'name': self.webstack_name,
             'last_ip': self.webstack_address,
         }).action_check_if_ws_available()
-
-

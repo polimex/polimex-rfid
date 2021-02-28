@@ -321,7 +321,6 @@ class HrRfidCardType(models.Model):
         required=True,
         tracking=True,
     )
-
     card_ids = fields.One2many(
         'hr.rfid.card',
         'card_type',

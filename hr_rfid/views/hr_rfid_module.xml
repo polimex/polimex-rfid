@@ -83,11 +83,11 @@
                                 help="Connect to the module and request for information."/>
                         <field name="available" widget="statusbar"/>
                     </header>
-                    <sheet >
+                    <sheet>
                         <field name="command_ids" invisible="1"/>
                         <field name="controllers" invisible="1"/>
                         <field name="system_event_ids" invisible="1"/>
-                        <div class="oe_button_box" name="button_box" modifiers="{}">
+                        <div class="oe_button_box" name="button_box">
                             <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
                                     context="{'xml_id':'hr_rfid_ctrl_action'}"
                                     help="List Controller"
@@ -110,8 +110,9 @@
                         <widget name="web_ribbon" title="Disabled" bg_color="bg-danger"
                                 attrs="{'invisible': [('active', '=', True)]}"/>
                         <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
                             <h1>
-                                <field name="name"/>
+                                <field name="name" placeholder="Enter friendly name of the Module"/>
                             </h1>
                         </div>
                         <group>
@@ -129,11 +130,13 @@
                                 <field name="tz" required="1"/>
                                 <field name="tz_offset" invisible="1" groups="base.group_no_one"/>
                                 <field name="behind_nat"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
                             </group>
                             <group string="Status">
                                 <field name="last_ip"/>
                                 <field name="updated_at" readonly="1"/>
-                                <field name="http_link" readonly="1" widget="url" attrs="{'invisible':[('behind_nat','=',True)]}"/>
+                                <field name="http_link" readonly="1" widget="url"
+                                       attrs="{'invisible':[('behind_nat','=',True)]}"/>
                             </group>
                         </group>
                     </sheet>
@@ -158,6 +161,7 @@
                     <field name="updated_at"/>
                     <field name="last_ip"/>
                     <field name="active" invisible="1"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
                 </tree>
             </field>
         </record>

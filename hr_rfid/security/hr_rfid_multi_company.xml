@@ -8,6 +8,100 @@
             <field name="global" eval="True"/>
             <field name="domain_force">[('company_id', 'in', company_ids)]</field>
             <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="ir_rule_hr_rfid_access_group_multi_company" model="ir.rule">
+            <field name="name">HR RFID Access Group: Multi Company</field>
+            <field name="model_id" ref="model_hr_rfid_access_group"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="ir_rule_hr_rfid_zone_multi_company" model="ir.rule">
+            <field name="name">HR RFID Zone: Multi Company</field>
+            <field name="model_id" ref="model_hr_rfid_zone"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="ir_rule_hr_rfid_workcode_multi_company" model="ir.rule">
+            <field name="name">HR RFID Work code: Multi Company</field>
+            <field name="model_id" ref="model_hr_rfid_workcode"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="ir_rule_hr_rfid_webstack_multi_company" model="ir.rule">
+            <field name="name">HR RFID Webstack: Multi Company</field>
+            <field name="model_id" ref="model_hr_rfid_webstack"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="ir_rule_hr_rfid_controllers_multi_company" model="ir.rule">
+            <field name="name">HR RFID Controllers: Multi Company</field>
+            <field name="model_id" ref="model_hr_rfid_ctrl"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="ir_rule_hr_rfid_door_multi_company" model="ir.rule">
+            <field name="name">HR RFID Doors: Multi Company</field>
+            <field name="model_id" ref="model_hr_rfid_door"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="ir_rule_hr_rfid_reader_multi_company" model="ir.rule">
+            <field name="name">HR RFID Readers: Multi Company</field>
+            <field name="model_id" ref="model_hr_rfid_reader"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('controller_id.webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="ir_rule_hr_rfid_event_user_multi_company" model="ir.rule">
+            <field name="name">HR RFID User Events: Multi Company</field>
+            <field name="model_id" ref="model_hr_rfid_event_user"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[
+                '|',
+                '|', ('employee_id.company_id', 'in', company_ids),
+                ('employee_id.company_id', '=', False),
+                '|', ('contact_id.company_id', 'in', company_ids),
+                ('contact_id.company_id', '=', False)
+            ]</field>
+            <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
             <field name="perm_unlink" eval="False"/>

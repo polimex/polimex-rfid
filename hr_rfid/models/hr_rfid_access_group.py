@@ -26,6 +26,9 @@ class HrRfidAccessGroup(models.Model):
         size=32,
         tracking=True,
     )
+    company_id = fields.Many2one('res.company',
+                                 string='Company',
+                                 default=lambda self: self.env.company)
 
     employee_ids = fields.One2many(
         'hr.rfid.access.group.employee.rel',

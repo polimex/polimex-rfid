@@ -98,6 +98,21 @@ class HrRfidDoor(models.Model):
         related='controller_id.webstack_id',
     )
 
+    access_group_count = fields.Char(compute='_compute_counts')
+    user_event_count = fields.Char(compute='_compute_counts')
+    reader_count = fields.Char(compute='_compute_counts')
+    card_count = fields.Char(compute='_compute_counts')
+    zone_count = fields.Char(compute='_compute_counts')
+
+    def _compute_counts(self):
+        for r in self:
+            r.access_group_count = len(r.access_group_ids)
+            r.user_event_count = len(r.user_event_ids)
+            r.reader_count = len(r.reader_ids)
+            r.card_count = len(r.card_rel_ids)
+            r.zone_count = len(r.zone_ids)
+
+
     def get_potential_cards(self, access_groups=None):
         """
         Returns a list of tuples (card, time_schedule) for which the card potentially has access to this door
@@ -325,6 +340,35 @@ class HrRfidDoor(models.Model):
                 cmd_env.create(cmd_dict)
 
         return True
+
+    def button_act_window(self):
+        self.ensure_one()
+        res_model = self.env.context.get('res_model') or self._name
+        if res_model == 'hr.rfid.access.group':
+            name = _('Access groups with {}').format(self.name)
+            domain = [('door_ids', 'in', self.id)]
+        elif res_model == 'hr.rfid.event.user':
+            name = _('User Events on {}').format(self.name)
+            domain = [('door_id', 'in', [self.id])]
+        elif res_model == 'hr.rfid.reader':
+            name = _('Readers for {}').format(self.name)
+            domain = [('door_ids', 'in', self.id)]
+        elif res_model == 'hr.rfid.card':
+            name = _('Cards for {}').format(self.name)
+            domain = [('id', 'in', [rel.card_id.id for rel in self.card_rel_ids])]
+        elif res_model == 'hr.rfid.zone':
+            name = _('{} in zones').format(self.name)
+            domain = [('id', 'in', [rel.zone_id.id for rel in self.zone_ids])]
+        return {
+            'name': name,
+            'view_mode': 'tree,form',
+            'res_model': res_model,
+            'domain': domain,
+            'type': 'ir.actions.act_window',
+            # 'help': _('''<p class="o_view_nocontent">
+            #         No events for this employee.
+            #     </p>'''),
+        }
 
 
 class HrRfidDoorOpenCloseWiz(models.TransientModel):

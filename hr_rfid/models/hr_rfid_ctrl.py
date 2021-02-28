@@ -497,15 +497,15 @@ class HrRfidReader(models.Model):
     _description = 'Reader'
 
     reader_types = [
-        ('0', 'In'),
-        ('1', 'Out'),
+        ('0', _('In')),
+        ('1', _('Out')),
     ]
 
     reader_modes = [
-        ('01', 'Card Only'),
-        ('02', 'Card and Pin'),
-        ('03', 'Card and Workcode'),
-        ('04', 'Card or Pin'),
+        ('01', _('Card Only')),
+        ('02', _('Card and Pin')),
+        ('03', _('Card and Workcode')),
+        ('04', _('Card or Pin')),
     ]
 
     name = fields.Char(
@@ -569,6 +569,14 @@ class HrRfidReader(models.Model):
         inverse='_inverse_reader_door',
     )
 
+    door_count = fields.Char(compute='_compute_counts')
+    user_event_count = fields.Char(compute='_compute_counts')
+
+    def _compute_counts(self):
+        for r in self:
+            r.door_count = len(r.door_ids)
+            r.user_event_count = len(r.user_event_ids)
+
     def _compute_reader_name(self):
         for record in self:
             record.name = record.door_id.name + ' ' + \
@@ -614,6 +622,31 @@ class HrRfidReader(models.Model):
                     'cmd_data': data,
                 })
 
+    def button_door_list(self):
+        self.ensure_one()
+        return {
+            'name': _('Doors using {}').format(self.name),
+            'view_mode': 'tree,form',
+            'res_model': 'hr.rfid.door',
+            'domain': [('id', 'in', [d.id for d in self.door_ids])],
+            'type': 'ir.actions.act_window',
+            # 'help': _('''<p class="o_view_nocontent">
+            #         No events for this employee.
+            #     </p>'''),
+        }
+
+    def button_event_list(self):
+        self.ensure_one()
+        return {
+            'name': _('Events from {}').format(self.name),
+            'view_mode': 'tree,form',
+            'res_model': 'hr.rfid.event.user',
+            'domain': [('reader_id', '=', self.id)],
+            'type': 'ir.actions.act_window',
+            # 'help': _('''<p class="o_view_nocontent">
+            #         No events for this employee.
+            #     </p>'''),
+        }
 
 class HrRfidTimeSchedule(models.Model):
     _name = 'hr.rfid.time.schedule'
@@ -641,5 +674,5 @@ class HrRfidTimeSchedule(models.Model):
     )
 
     def unlink(self):
-        raise exceptions.ValidationError('Cannot delete time schedules!')
+        raise exceptions.ValidationError(_('Cannot delete time schedules!'))
 

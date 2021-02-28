@@ -12,6 +12,9 @@ class HrRfidZone(models.Model):
         tracking=True,
         required=True,
     )
+    company_id = fields.Many2one('res.company',
+                                 string='Company',
+                                 default=lambda self: self.env.company)
 
     anti_pass_back = fields.Boolean(
         string='Anti-Pass Back',

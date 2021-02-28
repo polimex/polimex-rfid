@@ -93,6 +93,7 @@
                             <group string="Included doors">
                                 <field name="door_ids" readonly="1" widget="many2many_tags"/>
                             </group>
+                            <field name="company_id" groups="base.group_multi_company"/>
                         </group>
                     </sheet>
                     <div class="oe_chatter">
@@ -125,6 +126,7 @@
                     <field name="door_ids"/>
                     <field name="employee_ids"/>
                     <field name="contact_ids"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
                 </tree>
             </field>
         </record>

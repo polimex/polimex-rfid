@@ -27,7 +27,7 @@
                                     context="{'xml_id':'hr_rfid_ctrl_action'}"
                                     help="List Controller"
                                     attrs="{'invisible':[('door_ids', '=', False)]}">
-                                <field name="door_count" widget="statinfo"  string="Doors"/>
+                                <field name="door_count" widget="statinfo" string="Doors"/>
                             </button>
                         </div>
 
@@ -48,6 +48,7 @@
                             <group string="Owner">
                                 <field name="employee_id" attrs="{'invisible':[('contact_id','!=',False)]}"/>
                                 <field name="contact_id" attrs="{'invisible':[('employee_id','!=',False)]}"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
                             </group>
                             <group string="Setup">
                                 <field name="active" invisible="1"/>
@@ -81,6 +82,8 @@
                     <field name="card_type"/>
                     <field name="activate_on"/>
                     <field name="deactivate_on"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+
                 </tree>
             </field>
         </record>
@@ -133,11 +136,9 @@
             <field name="arch" type="xml">
                 <form>
                     <sheet string="Card type">
-                        <div class="oe_button_box" name="button_box" modifiers="{}">
+                        <div class="oe_button_box" name="button_box">
                             <button name="list_cards_from_this_type" string="Card list" type="object"
-                                    class="oe_stat_button" icon="fa-list-alt" modifiers="{}" options="{}">
-                                <!--				        <field name="ws_active" widget="boolean_button" modifiers="{}"/>-->
-                            </button>
+                                    class="oe_stat_button" icon="fa-list-alt"/>
                         </div>
                         <div class="oe_title" modifiers="{}">
                             <h1>
@@ -147,7 +148,7 @@
                         <group>
                             <field name="name"/>
                         </group>
-                        <group>
+                        <group invisible="1">
                             <field string="Cards of this type" name="card_ids" readonly="1">
                                 <tree>
                                     <field name="number"/>
@@ -156,11 +157,11 @@
                                 </tree>
                             </field>
                         </group>
-                        <div class="oe_chatter">
-                            <field name="message_follower_ids" widget="mail_followers"/>
-                            <field name="message_ids" widget="mail_thread"/>
-                        </div>
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>
