@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import http, fields, exceptions, _, SUPERUSER_ID
 from odoo.http import request
-from enum  import Enum
+from enum import Enum
 
 import datetime
 import json
@@ -70,7 +70,7 @@ class WebRfidController(http.Controller):
         ])
 
         if len(command) == 0:
-            return { 'status': status_code }
+            return {'status': status_code}
 
         command = command[-1]
 
@@ -100,8 +100,8 @@ class WebRfidController(http.Controller):
         ])
 
         if len(controller) == 0:
-            ctrl_env = request.env['hr.rfid.ctrl'].with_user(1)
-            cmd_env = request.env['hr.rfid.command'].with_user(1)
+            ctrl_env = request.env['hr.rfid.ctrl'].with_user(SUPERUSER_ID)
+            cmd_env = request.env['hr.rfid.command'].with_user(SUPERUSER_ID)
 
             # try:
             controller = ctrl_env.create({
@@ -117,8 +117,8 @@ class WebRfidController(http.Controller):
 
         card_env = request.env['hr.rfid.card'].sudo()
         workcodes_env = request.env['hr.rfid.workcode'].sudo()
-        card = card_env.search(['|',('active', '=', True), ('active', '=', False),
-                                ('number', '=', self._post['event']['card']) ])
+        card = card_env.search(['|', ('active', '=', True), ('active', '=', False),
+                                ('number', '=', self._post['event']['card'])])
         reader = None
         event_action = self._post['event']['event_n']
 
@@ -155,7 +155,7 @@ class WebRfidController(http.Controller):
                     'cmd': 'DB',
                     'status': 'Process',
                     'ex_timestamp': fields.Datetime.now(),
-                    'cmd_data': '40%02X00' % (4 + 4*(reader.number - 1)),
+                    'cmd_data': '40%02X00' % (4 + 4 * (reader.number - 1)),
                 }
                 cmd = cmd_env.create(cmd)
                 cmd_js = {
@@ -172,7 +172,7 @@ class WebRfidController(http.Controller):
                 else:
                     self._report_sys_ev(_('Could not find the card'), controller)
                 return cmd_js
-            elif event_action in [ 21, 22, 23, 24 ]:
+            elif event_action in [21, 22, 23, 24]:
                 event_dict = {
                     'ctrl_addr': controller.ctrl_id,
                     'door_id': reader.door_id.id,
@@ -210,7 +210,7 @@ class WebRfidController(http.Controller):
         if controller.is_relay_ctrl() and event_action == 1 and controller.mode == 3:
             dt = self._post['event']['dt']
             if len(dt) == 24:
-                chunks = [ dt[0:6], dt[6:12], dt[12:18], dt[18:24] ]
+                chunks = [dt[0:6], dt[6:12], dt[12:18], dt[18:24]]
                 print('Chunks=' + str(chunks))
                 door_number = 0
                 for i in range(len(chunks)):
@@ -218,8 +218,8 @@ class WebRfidController(http.Controller):
                     n1 = int(chunk[:2])
                     n2 = int(chunk[2:4])
                     n3 = int(chunk[4:])
-                    door_number |= n1*100 + n2*10 + n3
-                    if i != len(chunks)-1:
+                    door_number |= n1 * 100 + n2 * 10 + n3
+                    if i != len(chunks) - 1:
                         door_number <<= 8
                 for _door in reader.door_ids:
                     if _door.number == door_number:
@@ -250,7 +250,7 @@ class WebRfidController(http.Controller):
         return self._check_for_unsent_cmd(200, event)
 
     def _parse_response(self):
-        command_env = request.env['hr.rfid.command'].with_user(1)
+        command_env = request.env['hr.rfid.command'].with_user(SUPERUSER_ID)
         response = self._post['response']
         controller = None
 
@@ -263,16 +263,16 @@ class WebRfidController(http.Controller):
             self._report_sys_ev('Module sent us a response from a controller that does not exist')
             return self._check_for_unsent_cmd(200)
 
-        command = command_env.search([ ('webstack_id', '=', self._webstack.id),
-                                       ('controller_id', '=', controller.id),
-                                       ('status', '=', 'Process'),
-                                       ('cmd', '=', response['c']), ], limit=1)
+        command = command_env.search([('webstack_id', '=', self._webstack.id),
+                                      ('controller_id', '=', controller.id),
+                                      ('status', '=', 'Process'),
+                                      ('cmd', '=', response['c']), ], limit=1)
 
         if len(command) == 0 and response['c'] == 'DB':
-            command = command_env.search([ ('webstack_id', '=', self._webstack.id),
-                                           ('controller_id', '=', controller.id),
-                                           ('status', '=', 'Process'),
-                                           ('cmd', '=', 'DB2'), ], limit=1)
+            command = command_env.search([('webstack_id', '=', self._webstack.id),
+                                          ('controller_id', '=', controller.id),
+                                          ('status', '=', 'Process'),
+                                          ('cmd', '=', 'DB2'), ], limit=1)
 
         if len(command) == 0:
             self._report_sys_ev('Controller sent us a response to a command we never sent')
@@ -294,10 +294,10 @@ class WebRfidController(http.Controller):
             data = response['d']
             readers = [None, None, None, None]
             for it in controller.reader_ids:
-                readers[it.number-1] = it
+                readers[it.number - 1] = it
             for i in range(4):
                 if readers[i] is not None:
-                    mode = str(data[i*6:i*6+2])
+                    mode = str(data[i * 6:i * 6 + 2])
                     readers[i].write({
                         'mode': mode,
                         'no_d6_cmd': True,
@@ -317,10 +317,10 @@ class WebRfidController(http.Controller):
         if response['c'] == 'B3':
             data = response['d']
 
-            entrance = [ int(data[0:2], 16), int(data[2:4], 16) ]
-            exit = [ int(data[4:6], 16), int(data[6:8], 16) ]
-            usys = [ int(data[8:10], 16), int(data[10:12], 16) ]
-            uin = [ int(data[12:14], 16), int(data[14:16], 16) ]
+            entrance = [int(data[0:2], 16), int(data[2:4], 16)]
+            exit = [int(data[4:6], 16), int(data[6:8], 16)]
+            usys = [int(data[8:10], 16), int(data[10:12], 16)]
+            uin = [int(data[12:14], 16), int(data[14:16], 16)]
             temperature = int(data[16:20], 10)
             humidity = int(data[20:24], 10)
             Z1 = int(data[24:26], 16)
@@ -328,13 +328,13 @@ class WebRfidController(http.Controller):
             Z3 = int(data[28:30], 16)
             Z4 = int(data[30:32], 16)
 
-            TOS = int(data[32:34], 16)   * 10000 \
+            TOS = int(data[32:34], 16) * 10000 \
                   + int(data[34:36], 16) * 1000 \
                   + int(data[36:38], 16) * 100 \
                   + int(data[38:40], 16) * 10 \
                   + int(data[40:42], 16)
 
-            DT = [ int(data[42:44], 16), int(data[44:46], 16), int(data[46:48], 16) ]
+            DT = [int(data[42:44], 16), int(data[44:46], 16), int(data[46:48], 16)]
 
             if temperature >= 1000:
                 temperature -= 1000
@@ -343,16 +343,16 @@ class WebRfidController(http.Controller):
 
             humidity /= 10
 
-            sys_voltage =  ((usys[0] & 0xF0) >> 4) * 1000
-            sys_voltage +=  (usys[0] & 0x0F)       * 100
+            sys_voltage = ((usys[0] & 0xF0) >> 4) * 1000
+            sys_voltage += (usys[0] & 0x0F) * 100
             sys_voltage += ((usys[1] & 0xF0) >> 4) * 10
-            sys_voltage +=  (usys[1] & 0x0F)
+            sys_voltage += (usys[1] & 0x0F)
             sys_voltage = (sys_voltage * 8) / 500
 
-            input_voltage =  ((uin[0] & 0xF0) >> 4) * 1000
-            input_voltage +=  (uin[0] & 0x0F)       * 100
+            input_voltage = ((uin[0] & 0xF0) >> 4) * 1000
+            input_voltage += (uin[0] & 0x0F) * 100
             input_voltage += ((uin[1] & 0xF0) >> 4) * 10
-            input_voltage +=  (uin[1] & 0x0F)
+            input_voltage += (uin[1] & 0x0F)
             input_voltage = (input_voltage * 8) / 500
 
             controller.write({
@@ -372,11 +372,11 @@ class WebRfidController(http.Controller):
 
     def _parse_f0_cmd(self, data):
         def bytes_to_num(start, digits):
-            digits = digits-1
+            digits = digits - 1
             res = 0
-            for j in range(digits+1):
-                multiplier = 10 ** (digits-j)
-                res = res + int(data[start:start+2], 16) * multiplier
+            for j in range(digits + 1):
+                multiplier = 10 ** (digits - j)
+                res = res + int(data[start:start + 2], 16) * multiplier
                 start = start + 2
             return res
 
@@ -395,7 +395,7 @@ class WebRfidController(http.Controller):
         }
 
     def _parse_f0_response(self, command, controller):
-        ctrl_env = request.env['hr.rfid.ctrl'].with_user(1)
+        ctrl_env = request.env['hr.rfid.ctrl'].with_user(SUPERUSER_ID)
         response = self._post['response']
         data = response['d']
         ctrl_mode = int(data[42:44], 16)
@@ -414,15 +414,15 @@ class WebRfidController(http.Controller):
 
         readers_count = int(data[30:32], 16)
 
-        mode_reader_relation = { 1: [1, 2], 2: [2, 4], 3: [4], 4: [4] }
+        mode_reader_relation = {1: [1, 2], 2: [2, 4], 3: [4], 4: [4]}
 
         if not ctrl_env.hw_version_is_for_relay_ctrl(hw_ver) and \
                 readers_count not in mode_reader_relation[ctrl_mode]:
             return self._log_cmd_error('F0 sent us a wrong reader-controller '
                                        'mode combination', command, '31', 200)
 
-        reader_env = request.env['hr.rfid.reader'].with_user(1)
-        door_env = request.env['hr.rfid.door'].with_user(1)
+        reader_env = request.env['hr.rfid.reader'].with_user(SUPERUSER_ID)
+        door_env = request.env['hr.rfid.door'].with_user(SUPERUSER_ID)
 
         sw_ver = f0_parse[F0Parse.sw_ver]
         inputs = f0_parse[F0Parse.inputs]
@@ -463,7 +463,7 @@ class WebRfidController(http.Controller):
 
             if new_door_count < old_door_count:
                 new_door_count += 1
-                _door = controller.door_ids[new_door_count-1]
+                _door = controller.door_ids[new_door_count - 1]
                 door_dict.pop('name')
                 _door.write(door_dict)
                 return _door
@@ -488,7 +488,7 @@ class WebRfidController(http.Controller):
 
             if new_reader_count < old_reader_count:
                 new_reader_count += 1
-                _reader = controller.reader_ids[new_reader_count-1]
+                _reader = controller.reader_ids[new_reader_count - 1]
                 create_dict.pop('name')
                 _reader.write(create_dict)
                 return _reader
@@ -505,28 +505,28 @@ class WebRfidController(http.Controller):
             if ctrl_mode == 1 or ctrl_mode == 3:
                 reader = create_reader('R1', 1, '0')
                 for i in range(outputs):
-                    door = create_door(gen_d_name(i+1, controller.id), i+1)
+                    door = create_door(gen_d_name(i + 1, controller.id), i + 1)
                     add_door_to_reader(reader, door)
                 for i in range(1, readers_count):
-                    create_reader('R' + str(i+1), i+1, '0')
+                    create_reader('R' + str(i + 1), i + 1, '0')
             elif ctrl_mode == 2:
                 if outputs > 16 and readers_count < 2:
                     return self._log_cmd_error('F0 sent us too many outputs and not enough readers',
                                                command, '31', 200)
                 reader = create_reader('R1', 1, '0')
                 for i in range(outputs):
-                    door = create_door(gen_d_name(i+1, controller.id), i+1)
+                    door = create_door(gen_d_name(i + 1, controller.id), i + 1)
                     add_door_to_reader(reader, door)
                 if outputs > 16:
                     reader = create_reader('R2', 2, '0')
-                    for i in range(outputs-16):
-                        door = create_door(gen_d_name(i+1, controller.id), i+1)
+                    for i in range(outputs - 16):
+                        door = create_door(gen_d_name(i + 1, controller.id), i + 1)
                         add_door_to_reader(reader, door)
                     for i in range(2, readers_count):
-                        create_reader('R' + str(i+1), i+1, '0')
+                        create_reader('R' + str(i + 1), i + 1, '0')
                 else:
                     for i in range(1, readers_count):
-                        create_reader('R' + str(i+1), i+1, '0')
+                        create_reader('R' + str(i + 1), i + 1, '0')
             else:
                 raise exceptions.ValidationError(_('Got controller mode=%d for hw_ver=%s???')
                                                  % (ctrl_mode, hw_ver))
@@ -549,14 +549,14 @@ class WebRfidController(http.Controller):
             else:  # (ctrl_mode == 2 and readers_count == 2) or ctrl_mode == 4
                 print('harware version', hw_ver)
                 last_door = create_door(gen_d_name(1, controller.id), 1)
-                if last_door: 
-                    last_door = last_door.id 
+                if last_door:
+                    last_door = last_door.id
                 else:
                     last_door = None
                 create_reader('R1', 1, '0', last_door)
                 last_door = create_door(gen_d_name(2, controller.id), 2)
-                if last_door: 
-            	    last_door = last_door.id 
+                if last_door:
+                    last_door = last_door.id
                 else:
                     last_door = None
                 create_reader('R2', 2, '0', last_door)
@@ -577,9 +577,9 @@ class WebRfidController(http.Controller):
                 create_reader('R4', 4, '0', last_door)
 
         if old_reader_count > new_reader_count:
-            controller.reader_ids[new_reader_count : old_reader_count].unlink()
+            controller.reader_ids[new_reader_count: old_reader_count].unlink()
         if old_door_count > new_door_count:
-            controller.door_ids[new_door_count : old_door_count].unlink()
+            controller.door_ids[new_door_count: old_door_count].unlink()
 
         if controller.serial_number is False:
             controller.name = 'Controller ' + serial_num + ' ' + str(controller.ctrl_id)
@@ -650,7 +650,7 @@ class WebRfidController(http.Controller):
             'ex_timestamp': fields.Datetime.now(),
         }
         if not controller.is_relay_ctrl():
-            cmd['cmd_data'] = '40%02X00' % (open_door + 4*(reader.number - 1))
+            cmd['cmd_data'] = '40%02X00' % (open_door + 4 * (reader.number - 1))
         else:
             data = 0
             user_doors = card.get_owner().get_doors()
@@ -730,19 +730,19 @@ class WebRfidController(http.Controller):
             else:
                 card_num = ''.join(list('0' + ch for ch in command.card_number))
                 rights_data = '%03d%03d%03d%03d' % (
-                    (command.rights_data >> (3*8)) & 0xFF,
-                    (command.rights_data >> (2*8)) & 0xFF,
-                    (command.rights_data >> (1*8)) & 0xFF,
-                    (command.rights_data >> (0*8)) & 0xFF,
+                    (command.rights_data >> (3 * 8)) & 0xFF,
+                    (command.rights_data >> (2 * 8)) & 0xFF,
+                    (command.rights_data >> (1 * 8)) & 0xFF,
+                    (command.rights_data >> (0 * 8)) & 0xFF,
                 )
                 if command.controller_id.mode == 3:
                     rights_mask = '255255255255'
                 else:
                     rights_mask = '%03d%03d%03d%03d' % (
-                        (command.rights_mask >> (3*8)) & 0xFF,
-                        (command.rights_mask >> (2*8)) & 0xFF,
-                        (command.rights_mask >> (1*8)) & 0xFF,
-                        (command.rights_mask >> (0*8)) & 0xFF,
+                        (command.rights_mask >> (3 * 8)) & 0xFF,
+                        (command.rights_mask >> (2 * 8)) & 0xFF,
+                        (command.rights_mask >> (1 * 8)) & 0xFF,
+                        (command.rights_mask >> (0 * 8)) & 0xFF,
                     )
                 rights_data = ''.join(list('0' + ch for ch in rights_data))
                 rights_mask = ''.join(list('0' + ch for ch in rights_mask))
@@ -778,8 +778,8 @@ class WebRfidController(http.Controller):
 
         self._vending_hw_version = '16'
         self._webstacks_env = request.env['hr.rfid.webstack'].with_user(SUPERUSER_ID)
-        self._webstack = self._webstacks_env.search(['|',('active', '=', True), ('active', '=', False),
-                                                     ('serial', '=', str(self._post['convertor'])) ])
+        self._webstack = self._webstacks_env.search(['|', ('active', '=', True), ('active', '=', False),
+                                                     ('serial', '=', str(self._post['convertor']))])
         self._ws_db_update_dict = {
             'last_ip': request.httprequest.environ['REMOTE_ADDR'],
             'updated_at': fields.Datetime.now(),
@@ -795,31 +795,34 @@ class WebRfidController(http.Controller):
                     'available': 'a'
                 }
                 self._webstacks_env.create(new_webstack)
-                return { 'status': 400 }
+                return {'status': 400}
 
             if self._webstack.key != self._post['key']:
                 self._report_sys_ev('Webstack key and key in json did not match')
-                return { 'status': 400 }
+                return {'status': 400}
 
             if not self._webstack.active:
                 self._webstack.write(self._ws_db_update_dict)
                 self._report_sys_ev('Webstack is not active')
-                return { 'status': 400 }
+                return {'status': 400}
 
             result = {
                 'status': 400
             }
 
             if 'heartbeat' in self._post:
+                _logger.info('Heartbeat for {}'.format(self._webstack.name))
                 result = self._parse_heartbeat()
             elif 'event' in self._post:
+                _logger.info('Event for {}'.format(self._webstack.name))
                 result = self._parse_event()
             elif 'response' in self._post:
+                _logger.info('Command response from {}'.format(self._webstack.name))
                 result = self._parse_response()
 
             self._webstack.write(self._ws_db_update_dict)
             t1 = time.time()
-            _logger.debug('Took %2.03f time to form response=%s' % ((t1-t0), str(result)))
+            _logger.debug('Took %2.03f time to form response=%s' % ((t1 - t0), str(result)))
             print('ret=' + str(result))
             return result
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
@@ -834,7 +837,7 @@ class WebRfidController(http.Controller):
             }])
             _logger.debug('Caught an exception, returning status=500 and creating a system event')
             print('Caught an exception, returning status=500 and creating a system event')
-            return { 'status': 500 }
+            return {'status': 500}
         except BadTimeException:
             t = self._post['event']['date'] + ' ' + self._post['event']['time']
             ev_num = str(self._post['event']['event_n'])
@@ -850,13 +853,13 @@ class WebRfidController(http.Controller):
             request.env['hr.rfid.event.system'].sudo().create(sys_ev_dict)
             _logger.debug('Caught a time error, returning status=200 and creating a system event')
             print('Caught a time error, returning status=200 and creating a system event')
-            return { 'status': 200 }
+            return {'status': 200}
 
     def _parse_raw_data(self):
         if 'serial' in self._post and 'security' in self._post and 'events' in self._post:
             return self._parse_barcode_device()
 
-        return { 'status': 200 }
+        return {'status': 200}
 
     def _parse_barcode_device(self):
         post = self._post
