@@ -3,18 +3,48 @@
     <data>
 
         <record id="hr_attendance_calendar_view" model="ir.ui.view">
-        <field name="name">hr.attendance.calendar</field>
-        <field name="model">hr.attendance</field>
-        <field name="arch" type="xml">
-            <calendar string="Attendance" date_start="check_in" date_stop="check_out"
-                      color="employee_id" mode="month" quick_add="0">
-                <field name="employee_id"/>
-                <field name="check_in" readonly="1"/>
-                <field name="check_out" readonly="1"/>
-                <field name="worked_hours"/>
-            </calendar>
-        </field>
-    </record>
+            <field name="name">hr.attendance.calendar</field>
+            <field name="model">hr.attendance</field>
+            <field name="arch" type="xml">
+                <calendar string="Attendance" date_start="check_in" date_stop="check_out"
+                          color="employee_id" mode="month" quick_add="0">
+                    <field name="employee_id"/>
+                    <field name="check_in" readonly="1"/>
+                    <field name="check_out" readonly="1"/>
+                    <field name="worked_hours"/>
+                </calendar>
+            </field>
+        </record>
+
+        <record id="view_attendance_tree_inherit" model="ir.ui.view">
+            <field name="name">hr.attendance.tree.rfid.attendance</field>
+            <field name="model">hr.attendance</field>
+            <field name="inherit_id" ref="hr_attendance.view_attendance_tree"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='worked_hours']" position="after">
+<!--                    <field name="late" widget="float_time"/>-->
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="hr_attendance_view_filter_inherit" model="ir.ui.view">
+            <field name="name">hr_attendance_view_filter</field>
+            <field name="model">hr.attendance</field>
+            <field name="inherit_id" ref="hr_attendance.hr_attendance_view_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group" position="before">
+                    <filter name="filter_this_day" string="Attendance for today"
+                            domain="[('check_in', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('check_in', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]"/>
+                </xpath>
+<!--                <xpath expr="//group" position="after">-->
+<!--                    <searchpanel>-->
+<!--                        <field name="department_id" icon="fa-info-circle" color="#875A7B"/>-->
+<!--                    </searchpanel>-->
+<!--                </xpath>-->
+            </field>
+        </record>
 
     </data>
 </odoo>

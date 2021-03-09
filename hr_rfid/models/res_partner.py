@@ -35,6 +35,13 @@ class ResPartner(models.Model):
         help='Events concerning this contact',
     )
 
+    is_employee = fields.Boolean(compute='_compute_is_employee')
+
+    def _compute_is_employee(self):
+        empl_partners = self.env['resource.resource'].search([('user_id', '!=', False)]).mapped('user_id.partner_id.id')
+        for p in self:
+            p.is_employee = p.id in empl_partners
+
     def add_acc_gr(self, access_groups, expiration=None):
         rel_env = self.env['hr.rfid.access.group.contact.rel']
         for cont in self:

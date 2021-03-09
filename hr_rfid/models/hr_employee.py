@@ -36,6 +36,25 @@ class HrEmployee(models.Model):
         help='Events concerning this employee',
     )
 
+    employee_event_count = fields.Char(compute='_compute_employee_event_count')
+
+    def _compute_employee_event_count(self):
+        for e in self:
+            e.employee_event_count = self.env['hr.rfid.event.user'].search_count([('employee_id', '=', e.id)])
+
+    def button_employee_events(self):
+        self.ensure_one()
+        return {
+            'name': _('Events for {}').format(self.name),
+            'view_mode': 'tree,form',
+            'res_model': 'hr.rfid.event.user',
+            'domain': [('employee_id', '=', self.id)],
+            'type': 'ir.actions.act_window',
+            'help': _('''<p class="o_view_nocontent">
+                    No events for this employee.
+                </p>'''),
+        }
+
     def add_acc_gr(self, access_groups, expiration=None):     
         rel_env = self.env['hr.rfid.access.group.employee.rel']
         for emp in self:

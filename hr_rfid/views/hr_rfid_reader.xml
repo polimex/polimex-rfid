@@ -65,7 +65,7 @@
                     <field name="mode"/>
                     <field name="reader_type"/>
                     <field name="door_ids" widget="many2many_tags"/>
-                    <field name="controller_id"/>
+                    <field name="controller_id" invisible="1"/>
                 </tree>
             </field>
         </record>
@@ -80,6 +80,9 @@
                     <field name="controller_id"/>
                     <field name="reader_type"/>
                 </search>
+                <searchpanel>
+                    <field name="controller_id" icon="fa-info-circle" color="#875A7B"/>
+                </searchpanel>
             </field>
         </record>
 
