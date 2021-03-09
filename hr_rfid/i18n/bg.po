@@ -6,9 +6,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-28 09:01+0000\n"
-"PO-Revision-Date: 2021-02-28 11:04+0200\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2021-03-09 10:15+0000\n"
+"PO-Revision-Date: 2021-03-09 12:20+0200\n"
+"Last-Translator: Lyubomir Georgiev <support@polimex.co>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -48,6 +48,18 @@ msgstr "1-W ГРЕШКА (проблеми с кабелите)"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__13
 msgid "1-Wire Error"
 msgstr "1-Wire грешка"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_employee.py:0
+#, python-format
+msgid ""
+"<p class=\"o_view_nocontent\">\n"
+"                    No events for this employee.\n"
+"                </p>"
+msgstr ""
+"<p class=\"o_view_nocontent\">\n"
+"                    Няма събития за този служител.\n"
+"                </p>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
@@ -1379,6 +1391,7 @@ msgstr "Групи на отделите"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__department_ids
+#: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_department
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
 msgid "Departments"
 msgstr "Отдели"
@@ -1664,7 +1677,7 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__25
 msgid "Dx Overtime"
-msgstr ""
+msgstr "Задържане на врата"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__19
@@ -1674,7 +1687,7 @@ msgstr "Авариен вход"
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__19
 msgid "EmergencyOpenDoor"
-msgstr ""
+msgstr "Аварийно отваряне"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_form
@@ -1687,7 +1700,6 @@ msgstr "Събития на Служителя"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_employee_doors_wiz__employee_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__employee_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_partner_doors_wiz__partner_id
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_employee_view_tree
 msgid "Employee"
 msgstr "Служител"
 
@@ -1697,12 +1709,16 @@ msgid "Employee Count"
 msgstr "Брой служители"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_employee__employee_event_count
+msgid "Employee Event Count"
+msgstr "Брояч събития на служител"
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__employee_id
 msgid "Employee affected by this event"
 msgstr "Служител свързан с това събитие"
 
 #. module: hr_rfid
-#: model:ir.actions.act_window,name:hr_rfid.hr_rfid_employee_action
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__employee_ids
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_employees
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
@@ -1859,6 +1875,7 @@ msgid "Events concerning this user"
 msgstr "Събития свързани с този потребител"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_employee.py:0
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #, python-format
 msgid "Events for {}"
@@ -2031,7 +2048,7 @@ msgstr "Последователи (Канали)"
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__26
 msgid "ForcedOpenDx"
-msgstr ""
+msgstr "Нерегламентирано отваряне"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__found_webstacks
@@ -2364,6 +2381,12 @@ msgstr "Вътрешна грешка, опитайте отново (WebSDK)"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__is_card_event
 msgid "Is Card Event"
 msgstr "Е събитиес карта"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner__is_employee
+#: model:ir.model.fields,field_description:hr_rfid.field_res_users__is_employee
+msgid "Is Employee"
+msgstr "Е Служител"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__message_is_follower
@@ -3123,9 +3146,7 @@ msgid "Owner"
 msgstr "Собственик"
 
 #. module: hr_rfid
-#: model:ir.actions.act_window,name:hr_rfid.hr_rfid_partner_action
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_partners
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_partner_view_tree
 msgid "Partners"
 msgstr "Контрагенти"
 
@@ -4133,12 +4154,12 @@ msgstr "Вендинг"
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__48
 msgid "Vending Error1"
-msgstr ""
+msgstr "Грешка в продажба 1"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__49
 msgid "Vending Error2"
-msgstr ""
+msgstr "Грешка в продажба 2"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__47
@@ -4561,7 +4582,7 @@ msgstr "в групи за достъп"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_form
 msgid "in Zones"
-msgstr ""
+msgstr "в Зони"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_webstack_discovery__state__post_discovery
