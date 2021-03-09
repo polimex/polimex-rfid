@@ -40,10 +40,10 @@ class HrAttendance(models.Model):
 
     def write(self, vals):
         result = super(HrAttendance, self).write(vals)
-        for att in self:
-            if vals.get('check_out', False):
-                self.env['hr.rfid.zone'].search([
-                    ('employee_ids', 'in', att.employee_id.id),
-                    ('attendance', '=', True)
-                ]).person_left(att.employee_id)
+        # for att in self:
+        #     if vals.get('check_out', False):
+        #         self.env['hr.rfid.zone'].search([
+        #             ('employee_ids', 'in', att.employee_id.id),
+        #             ('attendance', '=', True)
+        #         ]).person_left(att.employee_id)
         return result
