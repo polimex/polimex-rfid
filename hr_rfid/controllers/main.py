@@ -133,12 +133,16 @@ class WebRfidController(http.Controller):
             reader_num = ((self._post['event']['event_n'] - 3) % 4) + 1
         else:
             reader_num = reader_num & 0x07
-        for it in controller.reader_ids:
-            if it.number == reader_num:
-                reader = it
-                break
 
-        if reader is None:
+        #Find Reader
+        reader = controller.reader_ids.filtered(lambda r: r.number == reader_num)
+        #Lubo
+        # for it in controller.reader_ids:
+        #     if it.number == reader_num:
+        #         reader = it
+        #         break
+
+        if not reader:
             self._report_sys_ev('Could not find a reader with that id', controller)
             return self._check_for_unsent_cmd(200)
 
@@ -193,7 +197,7 @@ class WebRfidController(http.Controller):
         # External db event, controller requests for permission to open or close door
         if event_action == 64 and controller.hw_version != self._vending_hw_version:
             ret = request.env['hr.rfid.access.group.door.rel'].sudo().search([
-                ('access_group_id', 'in', card.get_owner().hr_rfid_access_group_ids.ids),
+                ('access_group_id', 'in', card.get_owner().hr_rfid_access_group_ids.mapped('access_group_id.id')),
                 ('door_id', '=', reader.door_id.id)
             ])
             return self._respond_to_ev_64(len(ret) > 0 and card.active is True,
@@ -666,7 +670,7 @@ class WebRfidController(http.Controller):
             'event_time': self._get_ws_time_str(),
             'event_action': '64',
         }
-        self._get_card_owner(event, card)
+        self._get_card_owner(event, card)  #WTF kakwo prawi towa tuk?!?
         cmd = cmd_env.create(cmd)
         cmd_js = {
             'status': 200,
@@ -686,25 +690,22 @@ class WebRfidController(http.Controller):
 
     def _get_ws_time(self):
         t = self._post['event']['date'] + ' ' + self._post['event']['time']
+        t = t.replace('-', '.') #fix for WiFi module format
         try:
             ws_time = datetime.datetime.strptime(t, self._time_format)
-            ws_time -= self._get_tz_offset(self._webstack)
+            ws_time -= self._webstack._get_tz_offset()
         except ValueError:
             raise BadTimeException
         return ws_time
 
     @staticmethod
-    def _get_tz_offset(webstack):
-        tz_h = int(webstack.tz_offset[:3], 10)
-        tz_m = int(webstack.tz_offset[3:], 10)
-        return datetime.timedelta(hours=tz_h, minutes=tz_m)
-
-    @staticmethod
     def _get_card_owner(event_dict: dict, card):
-        if len(card.employee_id) == 0:
+        if card.contact_id:
             event_dict['contact_id'] = card.contact_id.id
-        else:
+        elif card.employee_id:
             event_dict['employee_id'] = card.employee_id.id
+        else:
+            _logger.warning('The requested card ({}) have no owner'.format(card.number))
 
     @staticmethod
     def _send_command(command, status_code):
@@ -750,7 +751,7 @@ class WebRfidController(http.Controller):
 
         if command.cmd == 'D7':
             dt = datetime.datetime.now()
-            dt += WebRfidController._get_tz_offset(command.webstack_id)
+            dt += command.webstack_id._get_tz_offset()
 
             json_cmd['cmd']['d'] = '{:02}{:02}{:02}{:02}{:02}{:02}{:02}'.format(
                 dt.second, dt.minute, dt.hour, dt.weekday() + 1, dt.day, dt.month, dt.year % 100
@@ -823,7 +824,6 @@ class WebRfidController(http.Controller):
             self._webstack.write(self._ws_db_update_dict)
             t1 = time.time()
             _logger.debug('Took %2.03f time to form response=%s' % ((t1 - t0), str(result)))
-            print('ret=' + str(result))
             return result
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
                 exceptions.MissingError, exceptions.ValidationError,

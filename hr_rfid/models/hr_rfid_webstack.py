@@ -202,6 +202,12 @@ class HrRfidWebstack(models.Model):
     def action_set_inactive(self):
         self.active = False
 
+    def _get_tz_offset(self):
+        self.ensure_one()
+        tz_h = int(self.tz_offset[:3], 10)
+        tz_m = int(self.tz_offset[3:], 10)
+        return timedelta(hours=tz_h, minutes=tz_m)
+
     def action_set_webstack_settings(self):
         odoo_url = str(self.env['ir.config_parameter'].sudo().get_param('web.base.url'))
         splits = odoo_url.split(':')
