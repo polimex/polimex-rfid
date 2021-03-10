@@ -225,14 +225,11 @@ class WebRfidController(http.Controller):
                     door_number |= n1 * 100 + n2 * 10 + n3
                     if i != len(chunks) - 1:
                         door_number <<= 8
-                for _door in reader.door_ids:
-                    if _door.number == door_number:
-                        door = _door
-                        break
+                door = reader.door_ids.filtered(lambda d: d.number == door_number)
 
         event_dict = {
             'ctrl_addr': controller.ctrl_id,
-            'door_id': door.id,
+            'door_id': door.id if door else False,
             'reader_id': reader.id,
             'card_id': card.id,
             'event_time': self._get_ws_time_str(),
