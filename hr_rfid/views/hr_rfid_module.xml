@@ -180,6 +180,9 @@
                     <filter string="Show all" name="showall"
                             domain="['|',('active', '=', False),('active', '=', True)]"/>
                 </search>
+                <searchpanel>
+                    <field name="available" icon="fa-info-circle" color="#875A7B"/>
+                </searchpanel>
             </field>
         </record>
 

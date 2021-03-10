@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-10 18:58+0000\n"
-"PO-Revision-Date: 2021-03-10 21:02+0200\n"
+"POT-Creation-Date: 2021-03-10 19:48+0000\n"
+"PO-Revision-Date: 2021-03-10 21:50+0200\n"
 "Last-Translator: Lyubomir Georgiev <support@polimex.co>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -146,6 +146,18 @@ msgstr "Контрол на достъпа"
 #: model:ir.model.fields,field_description:hr_rfid.field_res_users__hr_rfid_access_group_ids
 msgid "Access Group"
 msgstr "Група за достъп"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+#, python-format
+msgid "Access Group "
+msgstr "Група за достъп"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+#, python-format
+msgid "Access Group 1"
+msgstr "Достъп за група 1"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__access_group_count

@@ -239,8 +239,9 @@
             <field name="arch" type="xml">
                 <tree string="Access Groups">
                     <field name="name"/>
+                    <field name="default_department_ids" widget="many2many_tags"/>
+                    <field name="department_ids" widget="many2many_tags"/>
                     <field name="company_id" groups="base.group_multi_company"/>
-
                 </tree>
             </field>
         </record>
@@ -251,6 +252,10 @@
             <field name="arch" type="xml">
                 <search string="Access Groups">
                     <field name="name"/>
+                    <field name="door_ids"/>
+                    <field name="department_ids"/>
+                    <field name="employee_ids"/>
+                    <field name="contact_ids"/>
                 </search>
             </field>
         </record>

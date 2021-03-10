@@ -15,9 +15,9 @@ class HrRfidAccessGroup(models.Model):
         env = self.env['hr.rfid.access.group'].search([])
 
         if len(env) == 0:
-            return 'Access Group 1'
+            return _('Access Group 1')
         else:
-            return 'Access Group ' + str(env[-1].id + 1)
+            return _('Access Group ') + str(env[-1].id + 1)
 
     name = fields.Char(
         string='Name',
@@ -108,8 +108,8 @@ class HrRfidAccessGroup(models.Model):
 
         rel_env = self.env['hr.rfid.access.group.door.rel']
         for door in door_ids:
-            res = rel_env.search([ ('access_group_id', '=', self.id),
-                                   ('door_id', '=', door.id) ])
+            res = rel_env.search([('access_group_id', '=', self.id),
+                                  ('door_id', '=', door.id)])
             if len(res) == 1:
                 if res.time_schedule_id != time_schedule:
                     res.time_schedule_id = time_schedule
@@ -160,7 +160,8 @@ class HrRfidAccessGroup(models.Model):
                 if ctrl.is_relay_ctrl():
                     if ctrl in relay_doors and ctrl.mode == 3:
                         raise exceptions.ValidationError(
-                            _('Doors "%s" and "%s" both belong to a controller that cannot give access to multiple doors in the same time.')
+                            _(
+                                'Doors "%s" and "%s" both belong to a controller that cannot give access to multiple doors in the same time.')
                             % (relay_doors[ctrl].name, rel.door_id.name)
                         )
                     relay_doors[ctrl] = rel.door_id
@@ -230,7 +231,7 @@ class HrRfidAccessGroup(models.Model):
                 else:
                     _hg += get_highest_acc_grs(_acc_gr)
             return _hg
-        
+
         def check_tses(_gr1, _gr2):
             _doors1 = _gr1.door_ids
             _doors2 = _gr2.door_ids
@@ -285,7 +286,7 @@ class HrRfidAccessGroup(models.Model):
 
         for inh_gr in acc_gr.inherited_ids:
             res = HrRfidAccessGroup._check_inherited_ids_rec(inh_gr, visited_groups,
-                                                                       group_order, orig_id)
+                                                             group_order, orig_id)
             if res is True:
                 return True
 
@@ -322,7 +323,7 @@ class HrRfidAccessGroup(models.Model):
             removed_doors = old_doors - new_doors
 
             env = self.env['hr.rfid.access.group']
-            completed_groups = [ ]
+            completed_groups = []
             acc_gr_to_complete = queue.Queue()
             acc_gr_to_complete.put(acc_gr.id)
 
@@ -475,7 +476,7 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
 
         records = super(HrRfidAccessGroupEmployeeRel, self).create(vals_list)
         records.mapped('employee_id').check_access_group()
-        
+
         for rel in records:
             cards = rel.employee_id.hr_rfid_card_ids
             for card in cards:
