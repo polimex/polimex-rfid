@@ -153,7 +153,7 @@
             <field name="model">hr.rfid.webstack</field>
             <field name="arch" type="xml">
                 <tree create="0" delete="0" string="RFID Modules"
-                      decoration-danger="active==False" decoration-success="active==True">
+                      decoration-danger="active==False" decoration-success="active==True" decoration-warning="last_update">
                     <field name="name"/>
                     <field name="serial"/>
                     <field name="hw_version"/>
@@ -161,6 +161,7 @@
                     <field name="updated_at"/>
                     <field name="last_ip"/>
                     <field name="active" invisible="1"/>
+                    <field name="last_update" invisible="1"/>
                     <field name="company_id" groups="base.group_multi_company"/>
                 </tree>
             </field>

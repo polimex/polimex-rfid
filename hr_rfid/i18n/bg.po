@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-09 10:15+0000\n"
-"PO-Revision-Date: 2021-03-09 12:20+0200\n"
+"POT-Creation-Date: 2021-03-10 18:58+0000\n"
+"PO-Revision-Date: 2021-03-10 21:02+0200\n"
 "Last-Translator: Lyubomir Georgiev <support@polimex.co>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -477,7 +477,9 @@ msgid "Arm Denied"
 msgstr "Отхвърлена ръка"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__20
+#, python-format
 msgid "Arm On Siren"
 msgstr ""
 
@@ -616,6 +618,7 @@ msgstr "Номер на Картата"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_reader__mode__01
 #, python-format
 msgid "Card Only"
 msgstr "Само карта"
@@ -649,12 +652,14 @@ msgstr "Карта, засегната от това събитие"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_reader__mode__02
 #, python-format
 msgid "Card and Pin"
 msgstr "Карта и пин"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_reader__mode__03
 #, python-format
 msgid "Card and Workcode"
 msgstr "Карта и работен код"
@@ -672,6 +677,7 @@ msgstr "Списък с карти"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_card.py:0
+#: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_card_card_uniq
 #, python-format
 msgid "Card number already exists!"
 msgstr "Номерът на картата вече съществува!"
@@ -690,6 +696,7 @@ msgstr "Номерът на картата трябва да е уникален
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_reader__mode__04
 #, python-format
 msgid "Card or Pin"
 msgstr "Карта или пин"
@@ -1354,18 +1361,21 @@ msgstr "Изтриване на график"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__2
 #, python-format
 msgid "Denied"
 msgstr "Отказан"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__4
 #, python-format
 msgid "Denied APB"
 msgstr "Отказ APB"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__3
 #, python-format
 msgid "Denied T/S"
 msgstr "Отказ T/S"
@@ -1525,12 +1535,16 @@ msgid "Door Count"
 msgstr "Брой врати"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__26
+#, python-format
 msgid "Door Forced Open"
 msgstr "Принудително отворена врата"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__25
+#, python-format
 msgid "Door Overtime"
 msgstr "Вратата е задържана"
 
@@ -1655,12 +1669,16 @@ msgid "Dual Person Mode"
 msgstr "Режим Dual Person"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__1
+#, python-format
 msgid "Duress"
 msgstr "Принуда"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__2
+#, python-format
 msgid "Duress Error"
 msgstr "Грешен код принуда"
 
@@ -1680,7 +1698,9 @@ msgid "Dx Overtime"
 msgstr "Задържане на врата"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__19
+#, python-format
 msgid "Emergency Input"
 msgstr "Авариен вход"
 
@@ -1950,27 +1970,36 @@ msgstr "Време за изпълнение"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__5
 #, python-format
 msgid "Exit Button"
 msgstr "Бутон за излизане"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__21
+#, python-format
 msgid "Exit Button 1"
 msgstr "Бутон за излизане 1"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__22
+#, python-format
 msgid "Exit Button 2"
 msgstr "Бутон за излизане 2"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__23
+#, python-format
 msgid "Exit Button 3"
 msgstr "Бутон за излизане 3"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__24
+#, python-format
 msgid "Exit Button 4"
 msgstr "Бутон за излизане 4"
 
@@ -2073,12 +2102,14 @@ msgstr "Получих режим на контролера %d за хардуе
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__1
 #, python-format
 msgid "Granted"
 msgstr "Разрешен"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__6
 #, python-format
 msgid "Granted (no entry)"
 msgstr "Разрешен (без запис)"
@@ -2307,6 +2338,7 @@ msgstr "Ако контролерът използва функцията \"Exte
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_reader__reader_type__0
 #, python-format
 msgid "In"
 msgstr "Вход"
@@ -2973,7 +3005,9 @@ msgid "Off"
 msgstr "Изключен"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__28
+#, python-format
 msgid "Off Delay"
 msgstr "Забавяне изключване"
 
@@ -2995,7 +3029,9 @@ msgid "On"
 msgstr "Включен"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__27
+#, python-format
 msgid "On Delay"
 msgstr "Забавяне при включване"
 
@@ -3086,6 +3122,7 @@ msgstr "Отвори вратата."
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_reader__reader_type__1
 #, python-format
 msgid "Out"
 msgstr "Изход"
@@ -3432,82 +3469,114 @@ msgid "Reader"
 msgstr "Четец"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__6
+#, python-format
 msgid "Reader #1 APB Error"
 msgstr ""
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__4
+#, python-format
 msgid "Reader #1 Card Error"
 msgstr ""
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__3
+#, python-format
 msgid "Reader #1 Card OK"
 msgstr ""
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__5
+#, python-format
 msgid "Reader #1 TS Error"
 msgstr ""
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__10
+#, python-format
 msgid "Reader #2 APB Error"
 msgstr ""
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__8
+#, python-format
 msgid "Reader #2 Card Error"
 msgstr ""
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__7
+#, python-format
 msgid "Reader #2 Card OK"
 msgstr ""
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__9
+#, python-format
 msgid "Reader #2 TS Error"
 msgstr ""
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__14
+#, python-format
 msgid "Reader #3 APB Error"
 msgstr ""
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__12
+#, python-format
 msgid "Reader #3 Card Error"
 msgstr ""
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__11
+#, python-format
 msgid "Reader #3 Card OK"
 msgstr ""
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__13
+#, python-format
 msgid "Reader #3 TS Error"
 msgstr ""
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__18
+#, python-format
 msgid "Reader #4 APB Error"
 msgstr ""
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__16
+#, python-format
 msgid "Reader #4 Card Error"
 msgstr ""
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__15
+#, python-format
 msgid "Reader #4 Card OK"
 msgstr ""
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__17
+#, python-format
 msgid "Reader #4 TS Error"
 msgstr ""
 
@@ -3656,6 +3725,7 @@ msgstr "Заявка"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__64
 #, python-format
 msgid "Request Instructions"
 msgstr "Заявете инструкции"

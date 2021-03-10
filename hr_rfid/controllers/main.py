@@ -130,23 +130,23 @@ class WebRfidController(http.Controller):
 
         reader_num = self._post['event']['reader']
         if reader_num == 0:
-            reader_num = ((self._post['event']['event_n'] - 3) % 4) + 1
+            if int(self._post['event']['event_n']) in range(3,18):
+                reader_num = ((self._post['event']['event_n'] - 3) // 4) + 1
         else:
             reader_num = reader_num & 0x07
 
         #Find Reader
         reader = controller.reader_ids.filtered(lambda r: r.number == reader_num)
-        #Lubo
-        # for it in controller.reader_ids:
-        #     if it.number == reader_num:
-        #         reader = it
-        #         break
 
         if not reader:
             self._report_sys_ev('Could not find a reader with that id', controller)
             return self._check_for_unsent_cmd(200)
-
-        door = reader.door_id
+        if reader.door_id:
+            door = reader.door_id
+        else:
+            door = set(card.door_ids) & set(reader.door_ids)
+            if len(door) > 1:
+                door = False
 
         ev_env = request.env['hr.rfid.event.user'].sudo()
 
