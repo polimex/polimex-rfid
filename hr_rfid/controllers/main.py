@@ -213,6 +213,7 @@ class WebRfidController(http.Controller):
         # Relay controller
         if controller.is_relay_ctrl() and event_action == 1 and controller.mode == 3:
             dt = self._post['event']['dt']
+            print('dt=' + self._post['event']['dt'])
             if len(dt) == 24:
                 chunks = [dt[0:6], dt[6:12], dt[12:18], dt[18:24]]
                 print('Chunks=' + str(chunks))
