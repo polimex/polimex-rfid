@@ -10,20 +10,24 @@ _logger = logging.getLogger(__name__)
 
 
 class MyController(http.Controller):
-    @http.route('/hr_rfid/banner_modules', auth='user', type='json')
-    def banner_modules(self):
+    # model('crm.lead', "[('type','=', 'lead')]"):model
+    @http.route(["/hr_rfid/banner/<string:model>/<string:view_type>"], auth='user', type='json')
+    def banner_modules(self, model, view_type: str):
         """ Returns the `banner` for the sale onboarding panel.
                     It can be empty if the user has closed it or if he doesn't have
                     the permission to see it. """
-
-        company = request.env.company
-        if not request.env.is_admin() or \
-                company.sale_quotation_onboarding_state == 'closed':
+        return {}
+        if view_type == 'form':
             return {}
-
+        body = {
+            'html': """
+            
+                        <div class="o_form_statusbar">
+                            <h1>hello, world for {} {}</h1>
+                        </div> """.format(view_type, model)
+        }
         return {
-            'html': request.env.ref('sale.sale_quotation_onboarding_panel')._render({
-                'company': company,
-                'state': company.get_and_update_sale_quotation_onboarding_state()
+            'html': request.env.ref('hr_rfid.webstack_onboarding_panel')._render({
+                'body': body,
             })
         }

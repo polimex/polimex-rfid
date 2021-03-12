@@ -2,6 +2,9 @@
 from odoo import api, fields, models, exceptions, _
 from datetime import timedelta, datetime
 from enum import Enum
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class OwnerType(Enum):
@@ -116,11 +119,19 @@ class HrRfidCard(models.Model):
         ('card_uniq', 'unique (number, company_id)', _("Card number already exists!")),
     ]
 
-    def get_owner(self):
+    def get_owner(self, event_dict: dict = None):
         self.ensure_one()
-        if len(self.employee_id) == 1:
-            return self.employee_id
-        return self.contact_id
+        if not event_dict:
+            if len(self.employee_id) == 1:
+                return self.employee_id
+            return self.contact_id
+        else:
+            if self.contact_id:
+                event_dict['contact_id'] = self.contact_id.id
+            elif self.employee_id:
+                event_dict['employee_id'] = self.employee_id.id
+            else:
+                _logger.warning('The requested card ({}) have no owner'.format(self.number))
 
     def get_potential_access_doors(self, access_groups=None):
         """

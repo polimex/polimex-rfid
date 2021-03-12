@@ -49,28 +49,54 @@
             <field name="name">hr.rfid.webstack.manual.create.wiz.form</field>
             <field name="model">hr.rfid.webstack.manual.create</field>
             <field name="arch" type="xml">
-                <form string="Module Manual Create">
+                <form string="Add Module">
+                    <div>
+                        <p>
+                            To setup a module follow this steps:
+                        </p>
+                        <ol>
+                            <li>Go to module LOCAL IP address. On Module home you will find Serial Number</li>
+                            <li>Use this serial number in the field below and add Module to the system</li>
+                            <li>Go to module LOCAL IP address, Log in!</li>
+                            <li>In "Device Manager" menu use "Scan" to detect all available controllers</li>
+                            <li>In "Setup/Services" menu Enable "SDK sends events", "RPC JSON format (Odoo)"</li>
+                            <li>In "Setup/Services" menu fill "HTTP Server Push URL" with {Odoo IP or
+                                Domain}/hr/rfid/event e.g. my.server.com/hr/rfid/event</li>
+                            <li>In "Setup/Services" menu fill "HTTP Port" if not standard one</li>
+                            <li>In "Setup/Services" menu Press "Save settings"</li>
+                            <li>Generate event on all controllers in this module</li>
+                        </ol>
+                    </div>
                     <group>
                         <field name="webstack_name"/>
-                        <field name="webstack_address"/>
+                        <field name="webstack_serial"/>
                     </group>
+                    <footer>
+                        <button name="create_webstack" type="object"
+                                string="Add module" class="oe_highlight"/>
+                        or
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
                 </form>
             </field>
         </record>
 
         <record id="hr_rfid_webstack_manual_create_action" model="ir.actions.act_window">
-            <field name="name">Modules Discovery</field>
+            <field name="name">Add Module</field>
             <field name="res_model">hr.rfid.webstack.manual.create</field>
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_rfid_webstack_manual_create_wiz"/>
             <field name="target">new</field>
+            <field name="binding_model_id" ref="model_hr_rfid_webstack"/>
+            <field name="binding_view_types">tree</field>
         </record>
 
         <record id="hr_rfid_webstack_view_form" model="ir.ui.view">
             <field name="name">hr.rfid.webstack.form</field>
             <field name="model">hr.rfid.webstack</field>
             <field name="arch" type="xml">
-                <form string="RFID Modules">
+                <form string="RFID Modules" banner_route="/hr_rfid/banner/hr.rfid.webstack/form"
+                >
                     <field name="active" invisible="1" string="Active"/>
                     <header>
                         <button name="action_set_webstack_settings" type="object"
@@ -153,7 +179,11 @@
             <field name="model">hr.rfid.webstack</field>
             <field name="arch" type="xml">
                 <tree create="0" delete="0" string="RFID Modules"
-                      decoration-danger="active==False" decoration-success="active==True" decoration-warning="last_update">
+                      decoration-danger="active==False"
+                      decoration-success="active==True and last_update"
+                      decoration-warning="active==True and not last_update"
+                      banner_route="/hr_rfid/banner/hr.rfid.webstack/tree"
+                >
                     <field name="name"/>
                     <field name="serial"/>
                     <field name="hw_version"/>
@@ -167,7 +197,7 @@
             </field>
         </record>
 
-        <record id="hr_rfid_webstack_view_search" model="ir.ui.view">
+        <record id="webstack_view_search" model="ir.ui.view">
             <field name="name">hr.rfid.webstack.search</field>
             <field name="model">hr.rfid.webstack</field>
             <field name="arch" type="xml">
@@ -179,10 +209,10 @@
                     <field name="updated_at"/>
                     <filter string="Show all" name="showall"
                             domain="['|',('active', '=', False),('active', '=', True)]"/>
+                    <searchpanel>
+                        <field name="available" icon="fa-info-circle" color="#875A7B"/>
+                    </searchpanel>
                 </search>
-                <searchpanel>
-                    <field name="available" icon="fa-info-circle" color="#875A7B"/>
-                </searchpanel>
             </field>
         </record>
 
@@ -202,21 +232,23 @@
                                         <div class="o_kanban_record_headings">
                                             <strong class="o_kanban_record_title">
                                                 <div class="float-right"
-                                                     attrs="{'invisible': ['|', ('active', '=', False), ('last_update', '=', True)]}">
+                                                     attrs="{'invisible': ['|',('active', '=', False), ('last_update', '=', False)]}">
                                                     <span class="fa fa-circle text-success" role="img"
-                                                          aria-label="Enabled" title="Enabled"
-                                                          name="webstack_enabled"></span>
-                                                </div>
-                                                <div class="float-right" attrs="{'invisible': [('active', '=', True)]}">
-                                                    <span class="fa fa-circle text-danger" role="img"
-                                                          aria-label="Disabled" title="Disabled"
-                                                          name="webstack_disabled"></span>
+                                                          aria-label="Up and running" title="Up and running"
+                                                          name="webstack_enabled_and_running"/>
                                                 </div>
                                                 <div class="float-right"
-                                                     attrs="{'invisible': [('last_update', '=', False)]}">
-                                                    <span class="fa fa-circle text-warning" role="img"
+                                                     attrs="{'invisible': [('active', '=', True)]}">
+                                                    <span class="fa fa-circle text-danger" role="img"
                                                           aria-label="Disabled" title="Disabled"
-                                                          name="webstack_disabled"></span>
+                                                          name="webstack_disabled"/>
+                                                </div>
+                                                <div class="float-right"
+                                                     attrs="{'invisible': ['|',('active', '=', False), ('last_update', '=', True)]}">
+                                                    <span class="fa fa-circle text-warning" role="img"
+                                                          aria-label="Enabled but not running"
+                                                          title="Enabled but not running"
+                                                          name="webstack_enabled"/>
                                                 </div>
                                                 <h2><field name="name" placeholder="Module's Name"/></h2>
                                             </strong>
@@ -254,6 +286,13 @@
             <field name="res_model">hr.rfid.webstack</field>
             <field name="context">{"search_default_showall": 1}</field>
             <field name="view_mode">tree,form,search,calendar,kanban</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    The system is protected against not registered modules!<br/>
+                    You have to add manually the module serial number from the menu above.<br/>
+                    Please find detailed instruction in the menu "Hardware Manager / Add Module"
+                </p>
+            </field>
         </record>
 
     </data>

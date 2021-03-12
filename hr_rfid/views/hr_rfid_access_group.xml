@@ -106,7 +106,36 @@
                         <group>
                             <field name="company_id" groups="base.group_multi_company"/>
                         </group>
-
+                        <div attrs="{'invisible': [('id', '!=', False)]}">
+                            <p>
+                                The system do not permit giving a access to door directly. You need to create an
+                                Access Group and add doors to it. Next you have two options to give access to
+                                users in the system as follow:
+                            </p>
+                            <ul>
+                                <li>
+                                    Giving access right to Contacts:
+                                    <ul>
+                                        <li>Go to Contact/Partner menu and open the INDIVIDUAL contact</li>
+                                        <li>Find the "RFID information" tab and add a group with expiration time</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    Giving access right to Employee:
+                                    <ol>
+                                        <li>Go to Department setup in Employee menu</li>
+                                        <li>Edit Department and set "Default Access Group" - this group will
+                                            be added to all existing or future added Employees in department</li>
+                                        <li>Optionally add Available Access groups - this groups can be added manually
+                                            to Employees in this Department. If no Available groups in Employee setup
+                                            menu you will see <strong>only</strong> Default Access Group!!! </li>
+                                        <li>Go to Employee Form for manage additional access groups in tab RFID Information</li>
+                                        <li>Go to Employee Form and add card to Employee in tab RFID Information</li>
+                                        <li>The card is ready for use. All is Done</li>
+                                    </ol>
+                                </li>
+                            </ul>
+                        </div>
                         <notebook colspan="4" attrs="{'invisible': [('id', '=', False)]}">
                             <page string="Doors">
                                 <field name="door_ids" readonly="1">

@@ -246,7 +246,7 @@ class WebRfidController(http.Controller):
             else:
                 event_dict['workcode_id'] = wc.id
 
-        self._get_card_owner(event_dict, card)
+        card.get_owner(event_dict)
         event = ev_env.create(event_dict)
 
         return self._check_for_unsent_cmd(200, event)
@@ -668,7 +668,7 @@ class WebRfidController(http.Controller):
             'event_time': self._get_ws_time_str(),
             'event_action': '64',
         }
-        self._get_card_owner(event, card)  #WTF kakwo prawi towa tuk?!?
+        card.get_owner(event)
         cmd = cmd_env.create(cmd)
         cmd_js = {
             'status': 200,
@@ -695,15 +695,6 @@ class WebRfidController(http.Controller):
         except ValueError:
             raise BadTimeException
         return ws_time
-
-    @staticmethod
-    def _get_card_owner(event_dict: dict, card):
-        if card.contact_id:
-            event_dict['contact_id'] = card.contact_id.id
-        elif card.employee_id:
-            event_dict['employee_id'] = card.employee_id.id
-        else:
-            _logger.warning('The requested card ({}) have no owner'.format(card.number))
 
     @staticmethod
     def _send_command(command, status_code):
@@ -785,18 +776,25 @@ class WebRfidController(http.Controller):
         }
         try:
             if len(self._webstack) == 0:
-                new_webstack = {
-                    'name': 'Module ' + str(self._post['convertor']),
-                    'serial': str(self._post['convertor']),
-                    'key': self._post['key'],
-                    'last_ip': request.httprequest.environ['REMOTE_ADDR'],
-                    'updated_at': fields.Datetime.now(),
-                    'available': 'a'
-                }
-                self._webstacks_env.create(new_webstack)
+                # new_webstack = {
+                #     'name': 'Module ' + str(self._post['convertor']),
+                #     'serial': str(self._post['convertor']),
+                #     'key': self._post['key'],
+                #     'last_ip': request.httprequest.environ['REMOTE_ADDR'],
+                #     'updated_at': fields.Datetime.now(),
+                #     'available': 'a'
+                # }
+                # self._webstacks_env.create(new_webstack)
                 return {'status': 400}
 
-            if self._webstack.key != self._post['key']:
+            if not self._webstack.key:
+                self._webstack.key = self._post['key']
+                self._webstack.available = 'a'
+                self._webstack.message_post(
+                    body=_("The Module contacted us and activated.")
+                )
+
+            elif self._webstack.key != self._post['key']:
                 self._report_sys_ev('Webstack key and key in json did not match')
                 return {'status': 400}
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, exceptions, _
+from odoo import api, fields, models, exceptions, _, SUPERUSER_ID
 from datetime import datetime, timedelta
 from ..wizards.helpers import create_and_ret_d_box, return_wiz_form_view
 import socket
@@ -122,7 +122,7 @@ class HrRfidWebstack(models.Model):
     )
 
     module_username = fields.Selection(
-        selection=[('admin', 'Admin'), ('sdk', 'SDK')],
+        selection=[('admin', 'admin'), ('sdk', 'SDK')],
         string='Module Username',
         help='Username for the admin account for the module',
         default='admin',
@@ -189,8 +189,7 @@ class HrRfidWebstack(models.Model):
                 r.last_update = False
                 continue
             ten_min_delay = fields.Datetime.subtract(fields.Datetime.now(), minutes=10)
-            r.last_update = True if r.updated_at < ten_min_delay else False
-            print(r.last_update)
+            r.last_update = r.updated_at > ten_min_delay
 
     def toggle_ws_active(self):
         for rec in self:
@@ -518,11 +517,29 @@ class HrRfidWebstackManualCreate(models.TransientModel):
 
     webstack_address = fields.Char(
         string='Webstack Address',
+        # required=True,
+    )
+
+    webstack_serial = fields.Char(
+        string='Serial Number',
         required=True,
     )
 
     def create_webstack(self):
-        self.env['hr.rfid.webstack'].create({
-            'name': self.webstack_name,
-            'last_ip': self.webstack_address,
-        }).action_check_if_ws_available()
+        if self.webstack_serial:
+            if not self.env['hr.rfid.webstack'].with_user(SUPERUSER_ID).search([('serial', '=', self.webstack_serial)]):
+                self.env['hr.rfid.webstack'].create({
+                    'name': self.webstack_name,
+                    'serial': self.webstack_serial,
+                    'key': False,
+                    'active': True,
+                })
+            else:
+                exceptions.ValidationError(_('This serial number already exist in the system!'))
+        elif self.webstack_address:
+            self.env['hr.rfid.webstack'].create({
+                'name': self.webstack_name,
+                'last_ip': self.webstack_address,
+            }).action_check_if_ws_available()
+        else:
+            exceptions.ValidationError(_('Please provide module serial number!'))

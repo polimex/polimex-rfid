@@ -16,7 +16,7 @@ class HrRfidController(models.Model):
                 ('20', 'AlarmControl'), ('21', 'AlarmControl'), ('22', 'AlarmControl'),
                 ('23', 'AlarmControl'), ('26', 'AlarmControl'), ('27', 'AlarmControl'),
                 ('28', 'AlarmControl'), ('29', 'AlarmControl'), ('24', 'iTemp'), ('25', 'iGas'),
-                ('30', 'RelayControl110'), ('31', 'RelayControl150'), ('32', 'RelayControl'),
+                ('30', 'RelayControl110'), ('31', 'RelayControl115'), ('32', 'RelayControl'),
                 ('33', 'RelayControl'), ('34', 'RelayControl'), ('35', 'RelayControl'),
                 ('36', 'RelayControl'), ('37', 'RelayControl'), ('38', 'RelayControl'),
                 ('39', 'RelayControl'), ('40', 'MFReader'), ('41', 'MFReader'), ('42', 'MFReader'),
@@ -341,11 +341,8 @@ class HrRfidController(models.Model):
 
     def is_relay_ctrl(self):
         self.ensure_one()
-        return self.hw_version_is_for_relay_ctrl(self.hw_version)
-
-    @api.model
-    def hw_version_is_for_relay_ctrl(self, hw_version):
-        return hw_version in ['30', '31', '32']
+        # return self.hw_version_is_for_relay_ctrl(self.hw_version)
+        return self.hw_version in ['30', '31', '32']
 
     def re_read_ctrl_info(self):
         cmd_env = self.env['hr.rfid.command']
