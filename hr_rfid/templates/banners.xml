@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ONBOARDING PANEL-->
+        <template id="webstack_onboarding_panel" name="hr_rfid.webstack.onboarding.panel">
+            <div class="o_onboarding">
+                <div class="o_onboarding_wrap">
+                    <a href="#" data-toggle="modal" data-target=".o_onboarding_modal" class="float-right o_onboarding_btn_close">
+                        <i class="fa fa-times" title="Close the onboarding panel"/>
+                    </a>
+                                    <t t-set="classes" t-value="'o_onboarding_violet'"/>
+                <t t-esc="html"/>
+
+                </div>
+            </div>
+        </template>
+
+    </data>
+</odoo>
