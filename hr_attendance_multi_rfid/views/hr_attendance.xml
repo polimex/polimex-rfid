@@ -24,6 +24,7 @@
 
                 <xpath expr="//field[@name='worked_hours']" position="after">
 <!--                    <field name="late" widget="float_time"/>-->
+                    <field name="in_zone_id"/>
                 </xpath>
 
             </field>
@@ -38,11 +39,11 @@
                     <filter name="filter_this_day" string="Attendance for today"
                             domain="[('check_in', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('check_in', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]"/>
                 </xpath>
-<!--                <xpath expr="//group" position="after">-->
-<!--                    <searchpanel>-->
-<!--                        <field name="department_id" icon="fa-info-circle" color="#875A7B"/>-->
-<!--                    </searchpanel>-->
-<!--                </xpath>-->
+                <xpath expr="//group" position="after">
+                    <searchpanel>
+                        <field name="in_zone_id" icon="fa-info-circle" color="#875A7B"/>
+                    </searchpanel>
+                </xpath>
             </field>
         </record>
 
