@@ -14,6 +14,21 @@ class HrAttendance(models.Model):
     )
 
     late = fields.Float(string='Late time', compute='_compute_times')
+    in_zone_id = fields.Many2one(
+        'hr.rfid.zone',
+        compute='_compute_checkin_zone',
+        store=True
+    )
+
+    @api.depends('check_in','check_out')
+    def _compute_checkin_zone(self):
+        for att in self:
+            if att.check_out:
+                att.in_zone_id = False
+            else:
+                att_zones_ids = [self.employee_id.in_zone_ids.filtered(lambda z: z.attendance)]
+                att.in_zone_id = att_zones_ids[0] or False
+
 
     def _compute_times(self):
         for a in self:
@@ -36,7 +51,7 @@ class HrAttendance(models.Model):
         if att_zones_ids:
             # TODO multiple zone not proccessed!!!
             max_hours = att_zones_ids[0].max_time_in_zone
-            return att_zones_ids[0].max_time_in_zone, att_zones_ids[0].auto_close_time_in_zone
+            return att_zones_ids[0].max_time_in_zone, att_zones_ids[0].auto_close_time_for_zone
         else:
             return False, False
 

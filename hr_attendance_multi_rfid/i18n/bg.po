@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-09 10:21+0000\n"
-"PO-Revision-Date: 2021-03-09 12:22+0200\n"
+"POT-Creation-Date: 2021-03-15 13:26+0000\n"
+"PO-Revision-Date: 2021-03-15 15:30+0200\n"
 "Last-Translator: Lyubomir Georgiev <support@polimex.co>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,16 +16,6 @@ msgstr ""
 "Plural-Forms: \n"
 "Language: bg\n"
 "X-Generator: Poedit 2.4.2\n"
-
-#. module: hr_attendance_multi_rfid
-#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.res_config_settings_view_form_ProjectName
-msgid "<span class=\"o_form_label\">Max attendance</span>"
-msgstr "<span class=\"o_form_label\">Максимално присъствие</span>"
-
-#. module: hr_attendance_multi_rfid
-#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.res_config_settings_view_form_ProjectName
-msgid "<span>Minutes: </span>"
-msgstr "<span>Минути: </span>"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model,name:hr_attendance_multi_rfid.model_hr_attendance
@@ -52,6 +42,23 @@ msgstr "Присъствие за днес"
 #, python-format
 msgid "Attendance for {}"
 msgstr "Присъствие на {}"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_rfid_view_zone_form_inherit_hr_attendance_multi_rfid
+msgid "Attendance options"
+msgstr "Опции за присъствие"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_zone__auto_close_time_for_zone
+msgid "Attendance time in zone if autoclosed. Used for auto-close attendance"
+msgstr ""
+"Време за присъствие в зоната, ако е с автоматично затваряне. Използва се за "
+"автоматично затваряне на присъствието"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__auto_close_time_for_zone
+msgid "Auto Close Time For Zone"
+msgstr "Автоматично време за затваряне в зона"
 
 #. module: hr_attendance_multi_rfid
 #: code:addons/hr_attendance_multi_rfid/models/hr_employee.py:0
@@ -84,16 +91,15 @@ msgid "Check Out"
 msgstr "Отписване"
 
 #. module: hr_attendance_multi_rfid
-#: model:ir.model,name:hr_attendance_multi_rfid.model_res_config_settings
-msgid "Config Settings"
-msgstr "Настройки конфигурация"
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__delete_attendance_if_late_more_than
+msgid "Delete Attendance If Late More Than"
+msgstr "Изтрий присъствието, ако е закъснял с повече от"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__display_name
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_employee__display_name
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_event_user__display_name
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__display_name
-#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_res_config_settings__display_name
 msgid "Display Name"
 msgstr "Име за показване"
 
@@ -115,19 +121,10 @@ msgid "HR Attendance Multi RFID: Check forgotten check-outs"
 msgstr ""
 
 #. module: hr_attendance_multi_rfid
-#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_res_config_settings__max_attendance
-msgid ""
-"How many minutes to get people out automatically. (Checks every 30 minutes)"
-msgstr ""
-"След колко минути да се Отпишат хората автоматично. (Проверява се на всеки "
-"30 минути)"
-
-#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__id
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_employee__id
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_event_user__id
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__id
-#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_res_config_settings__id
 msgid "ID"
 msgstr "Номер (ID)"
 
@@ -150,11 +147,15 @@ msgstr ""
 "времето на Отписване"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__in_zone_id
+msgid "In Zone"
+msgstr "В зона"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance____last_update
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_employee____last_update
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_event_user____last_update
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone____last_update
-#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_res_config_settings____last_update
 msgid "Last Modified on"
 msgstr "Последно променено на"
 
@@ -164,9 +165,18 @@ msgid "Late time"
 msgstr "Закъснение"
 
 #. module: hr_attendance_multi_rfid
-#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_res_config_settings__max_attendance
-msgid "Max attendance"
-msgstr "Максимално присъствие"
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__max_time_in_zone
+msgid "Max Time In Zone"
+msgstr "Макс. време в зона"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_zone__max_time_in_zone
+msgid ""
+"Maximum attendance time in zone. Used for auto-close attendance. Zero means "
+"not use."
+msgstr ""
+"Максимално време на присъствие в зоната. Използва се за автоматично "
+"затваряне на присъствието. Нула означава да не се използва."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__in_or_out__no_info
@@ -187,6 +197,15 @@ msgstr "Презаписване на Отписване"
 #: model:ir.model,name:hr_attendance_multi_rfid.model_hr_rfid_event_user
 msgid "RFID User Event"
 msgstr "RFID потребителско събитие"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_zone__delete_attendance_if_late_more_than
+msgid ""
+"Remove attendance for employee if late is more than this time. Set zeo to "
+"disable function."
+msgstr ""
+"Премахва присъствието на служител, ако закъснението му е повече от . "
+"Настройте Нула за да забраните функцията."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_event_user__in_or_out
