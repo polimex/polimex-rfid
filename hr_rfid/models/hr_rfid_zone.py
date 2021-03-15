@@ -91,7 +91,7 @@ class HrRfidZone(models.Model):
             else:
                 zone.contact_ids = zone.contact_ids + person
 
-    def person_left(self, person, event):
+    def person_left(self, person, event=None):
         is_employee = isinstance(person, type(self.env['hr.employee']))
 
         for zone in self:
@@ -99,7 +99,7 @@ class HrRfidZone(models.Model):
                     or (not is_employee and person not in zone.contact_ids):
                 continue
 
-            if zone.anti_pass_back or len(zone.door_ids.filtered("apb_mode")) > 0:
+            if event and zone.anti_pass_back or len(zone.door_ids.filtered("apb_mode")) > 0:
                 HrRfidZone._create_person_left_cmd(zone, person, event)
 
             if zone.log_out_on_exit:

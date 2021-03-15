@@ -21,29 +21,41 @@ class HrAttendance(models.Model):
             #     a.check_in,
             #     a.check_in+timedelta(seconds=1)
             # )
-            a.late = 5/60
-
-    @api.model
-    def _check_for_forgotten_attendances(self):
-        max_att = int(self.env['ir.config_parameter'].sudo().get_param('hr_attendance_multi_rfid.max_attendance'))
-
-        td = timedelta(minutes=max_att)
-
-        atts = self.search([
-            ('check_out', '=', None)
-        ])
-
-        for att in atts:
-            check_out = att.check_in + td
-            if check_out <= datetime.now():
-                att.check_out = check_out
+            a.late = 5 / 60
 
     def write(self, vals):
-        result = super(HrAttendance, self).write(vals)
-        # for att in self:
-        #     if vals.get('check_out', False):
-        #         self.env['hr.rfid.zone'].search([
-        #             ('employee_ids', 'in', att.employee_id.id),
-        #             ('attendance', '=', True)
-        #         ]).person_left(att.employee_id)
-        return result
+        for att in self:
+            in_zone_ids = att.employee_id.in_zone_ids.filtered(lambda z: z.attendance)
+            if vals.get('check_out', False) and not att.check_out and in_zone_ids:
+               in_zone_ids.person_left(att.employee_id)
+        return super(HrAttendance, self).write(vals)
+
+    def _get_zone_settings(self):
+        self.ensure_one()
+        att_zones_ids = self.employee_id.in_zone_ids.filtered(lambda z: z.attendance and z.max_time_in_zone)
+        if att_zones_ids:
+            # TODO multiple zone not proccessed!!!
+            max_hours = att_zones_ids[0].max_time_in_zone
+            return att_zones_ids[0].max_time_in_zone, att_zones_ids[0].auto_close_time_in_zone
+        else:
+            return False, False
+
+    # inherited from hr_attendance_autoclose
+    def needs_autoclose(self):
+        self.ensure_one()
+        max_time, autoclose = self._get_zone_settings()
+        # TODO multiple zone not proccessed!!!
+        max_hours = max_time or self.employee_id.company_id.attendance_maximum_hours_per_day
+        close = not self.employee_id.no_autoclose
+        return close and max_hours and self.open_worked_hours > max_hours
+
+    # inherited from hr_attendance_autoclose
+    def autoclose_attendance(self, reason):
+        self.ensure_one()
+        max_time, autoclose = self._get_zone_settings()
+        max_hours = autoclose or self.employee_id.company_id.attendance_maximum_hours_per_day
+        leave_time = self.check_in + timedelta(hours=max_hours)
+        vals = {"check_out": leave_time}
+        if reason:
+            vals["attendance_reason_ids"] = [(4, reason.id)]
+        self.write(vals)

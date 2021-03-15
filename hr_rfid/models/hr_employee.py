@@ -36,6 +36,11 @@ class HrEmployee(models.Model):
         help='Events concerning this employee',
     )
 
+    in_zone_ids = fields.Many2many(
+        'hr.rfid.zone',
+        compute='_compute_zones_for_employee'
+    )
+
     employee_event_count = fields.Char(compute='_compute_employee_event_count')
 
     def _compute_employee_event_count(self):
@@ -54,6 +59,10 @@ class HrEmployee(models.Model):
                     No events for this employee.
                 </p>'''),
         }
+
+    def _compute_zones_for_employee(self):
+        for e in self:
+            e.in_zone_ids = self.env['hr.rfid.zone'].search([]).filtered(lambda z: e in z.employee_ids)
 
     def add_acc_gr(self, access_groups, expiration=None):     
         rel_env = self.env['hr.rfid.access.group.employee.rel']

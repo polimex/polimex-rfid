@@ -23,6 +23,22 @@ class HrRfidZone(models.Model):
         default=False,
     )
 
+    max_time_in_zone = fields.Float(
+        help='Maximum attendance time in zone. Used for auto-close attendance. Zero means not use.',
+        default=12,
+        digits=(2, 2)
+    )
+    auto_close_time_for_zone = fields.Float(
+        help='Attendance time in zone if autoclosed. Used for auto-close attendance',
+        default=7,
+        digits=(2, 2)
+    )
+    delete_attendance_if_late_more_than = fields.Float(
+        help='Remove attendance for employee if late is more than this time. Set zeo to disable function.',
+        default=0,
+        digits=(2, 2)
+    )
+
     def person_entered(self, person, event):
         if not isinstance(person, type(self.env['hr.employee'])):
             return super(HrRfidZone, self).person_entered(person, event)
@@ -42,14 +58,11 @@ class HrRfidZone(models.Model):
                 person.attendance_action_change_with_date(event.event_time)
         return super(HrRfidZone, self).person_entered(person, event)
 
-    def person_left(self, person, event):
+    def person_left(self, person, event=None):
         if not isinstance(person, type(self.env['hr.employee'])):
             return super(HrRfidZone, self).person_left(person, event)
 
-        for zone in self:
-            if not zone.attendance:
-                continue
-
+        for zone in self.filtered(lambda z: z.attendance and event):
             if person not in zone.employee_ids and zone.overwrite_check_out:
                 check = self.env['hr.attendance'].search([('employee_id', '=', person.id)], limit=1)
                 if event:
@@ -78,4 +91,3 @@ class HrRfidZone(models.Model):
             #         Buy Odoo Enterprise now to get more providers.
             #     </p>'''),
         }
-

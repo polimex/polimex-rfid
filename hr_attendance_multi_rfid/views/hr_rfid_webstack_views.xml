@@ -45,10 +45,22 @@
             <field name="model">hr.rfid.zone</field>
             <field name="inherit_id" ref="hr_rfid.hr_rfid_zone_view_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//group//field[@name='log_out_on_exit']" position="after">
-                    <field name="attendance"/>
-                    <field name="overwrite_check_in" attrs="{'invisible':[('attendance','=',False)]}"/>
-                    <field name="overwrite_check_out" attrs="{'invisible':[('attendance','=',False)]}"/>
+                <!--                <xpath expr="//group//field[@name='log_out_on_exit']" position="after">-->
+                <xpath expr="//group" position="inside">
+                    <group string="Attendance">
+                        <field name="attendance"/>
+                        <field name="overwrite_check_in" attrs="{'invisible':[('attendance','=',False)]}"/>
+                        <field name="overwrite_check_out" attrs="{'invisible':[('attendance','=',False)]}"/>
+                    </group>
+                    <group string="Attendance options">
+                        <field name="max_time_in_zone"  widget="float_time"/>
+                        <field name="auto_close_time_for_zone" widget="float_time"
+                               attrs="{'invisible':[('max_time_in_zone','=',0)]}"/>
+                        <field name="delete_attendance_if_late_more_than"
+                               widget="float_time"
+                               invisible="1"
+                        />
+                    </group>
                 </xpath>
                 <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
                     <button name="attendance_for_current_zone"

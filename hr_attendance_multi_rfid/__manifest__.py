@@ -14,14 +14,11 @@
 
     'website': 'polimex.co',
 
-    'depends': ['hr_rfid', 'hr_attendance',],
+    'depends': ['hr_rfid', 'hr_attendance', 'hr_attendance_autoclose'],
 
     'data': [
         'views/hr_attendance.xml',
         'views/hr_rfid_webstack_views.xml',
-        'views/hr_rfid_attendace_settings.xml',
-        'data/hr_attendance_multi_rfid_cron_jobs.xml',
-        'data/hr_attendance_multi_rfid_system_parameters.xml',
     ],
 
     'demo': [ ],

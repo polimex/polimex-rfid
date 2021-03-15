@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <record model="ir.actions.server" id="action_clear_contacts">
+        <record id="action_clear_contacts" model="ir.actions.server">
             <field name="name">Clear Contacts</field>
             <field name="model_id" ref="hr_rfid.model_hr_rfid_zone"/>
             <field name="type">ir.actions.server</field>
@@ -59,14 +59,6 @@
                             <button name="%(hr_rfid_zone_doors_wiz_action)d" id="hr_rfid_zone_doors_btn" type="action"
                                     class="oe_stat_button" icon="fa-table"
                                     string="Add/Remove Doors"/>
-                            <!--                            <button name="clear_employees" id="hr_rfid_zone_clear_employees_btn" type="object"-->
-                            <!--                                    class="oe_stat_button" icon="fa-minus-square" modifiers="{}" options="{}"-->
-                            <!--                                    attrs="{'invisible':[('contact_ids', '=', False)]}"-->
-                            <!--                                    string="Clear Employees"/>-->
-                            <!--                            <button name="clear_contacts" id="hr_rfid_zone_clear_contacts_btn" type="object"-->
-                            <!--                                    class="oe_stat_button" icon="fa-minus-square" modifiers="{}" options="{}"-->
-                            <!--                                    attrs="{'invisible':[('employee_ids', '=', False)]}"-->
-                            <!--                                    string="Clear Contacts"/>-->
                             <button name="contact_in_current_zone"
                                     type="object"
                                     class="oe_stat_button" icon="fa-list"
