@@ -12,13 +12,12 @@ class HrAttendance(models.Model):
     check_out = fields.Datetime(
         index=True,
     )
-
-    late = fields.Float(string='Late time', compute='_compute_times')
     in_zone_id = fields.Many2one(
         'hr.rfid.zone',
         compute='_compute_checkin_zone',
         store=True
     )
+
 
     @api.depends('check_in','check_out')
     def _compute_checkin_zone(self):
@@ -28,15 +27,6 @@ class HrAttendance(models.Model):
             else:
                 att_zones_ids = [self.employee_id.in_zone_ids.filtered(lambda z: z.attendance)]
                 att.in_zone_id = att_zones_ids[0] or False
-
-
-    def _compute_times(self):
-        for a in self:
-            # interval = a.employee_id.resource_calendar_id._attendance_intervals_batch(
-            #     a.check_in,
-            #     a.check_in+timedelta(seconds=1)
-            # )
-            a.late = 5 / 60
 
     def write(self, vals):
         for att in self:

@@ -23,7 +23,6 @@
             <field name="arch" type="xml">
 
                 <xpath expr="//field[@name='worked_hours']" position="after">
-<!--                    <field name="late" widget="float_time"/>-->
                     <field name="in_zone_id"/>
                 </xpath>
 
