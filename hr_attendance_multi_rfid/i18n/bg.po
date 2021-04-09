@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-15 13:26+0000\n"
-"PO-Revision-Date: 2021-03-15 15:30+0200\n"
+"POT-Creation-Date: 2021-04-09 11:58+0000\n"
+"PO-Revision-Date: 2021-04-09 14:59+0300\n"
 "Last-Translator: Lyubomir Georgiev <support@polimex.co>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -115,8 +115,6 @@ msgstr "Служител"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.actions.server,name:hr_attendance_multi_rfid.hr_attendance_multi_rfid_forgotten_attendance_ir_actions_server
-#: model:ir.cron,cron_name:hr_attendance_multi_rfid.hr_attendance_multi_rfid_forgotten_attendance
-#: model:ir.cron,name:hr_attendance_multi_rfid.hr_attendance_multi_rfid_forgotten_attendance
 msgid "HR Attendance Multi RFID: Check forgotten check-outs"
 msgstr ""
 
@@ -158,11 +156,6 @@ msgstr "В зона"
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone____last_update
 msgid "Last Modified on"
 msgstr "Последно променено на"
-
-#. module: hr_attendance_multi_rfid
-#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__late
-msgid "Late time"
-msgstr "Закъснение"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__max_time_in_zone
@@ -211,6 +204,11 @@ msgstr ""
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_event_user__in_or_out
 msgid "Whether the user came in or out"
 msgstr "Дали потребителят е влязъл или излязъл"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_view_filter_inherit
+msgid "With Check Out"
+msgstr "С отписване"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model,name:hr_attendance_multi_rfid.model_hr_rfid_zone

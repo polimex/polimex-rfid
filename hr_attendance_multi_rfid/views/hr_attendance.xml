@@ -35,7 +35,8 @@
             <field name="inherit_id" ref="hr_attendance.hr_attendance_view_filter"/>
             <field name="arch" type="xml">
                 <xpath expr="//group" position="before">
-                    <filter name="filter_this_day" string="Attendance for today"
+                    <filter string="With Check Out" name="withcheckout" domain="[('check_out', '!=', False)]" />
+                    <filter name="today" string="Attendance for today"
                             domain="[('check_in', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('check_in', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]"/>
                 </xpath>
                 <xpath expr="//group" position="after">
