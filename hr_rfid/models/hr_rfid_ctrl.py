@@ -1,4 +1,5 @@
 from odoo import fields, models, api, exceptions, _
+from odoo.addons.hr_rfid.controllers.polimex import HW_TYPES
 
 
 class HrRfidController(models.Model):
@@ -7,21 +8,6 @@ class HrRfidController(models.Model):
     _description = 'Controller'
     _sql_constraints = [('rfid_controller_unique', 'unique(serial_number)',
                          'Serial numbers must be unique!')]
-
-    hw_types = [('1', 'iCON200'), ('2', 'iCON150'), ('3', 'iCON150'), ('4', 'iCON140'),
-                ('5', 'iCON120'), ('6', 'iCON110'), ('7', 'iCON160'), ('8', 'iCON170'),
-                ('9', 'Turnstile'), ('10', 'iCON180'), ('11', 'iCON115'), ('12', 'iCON50'),
-                ('13', 'FireControl'), ('14', 'FireControl'), ('18', 'FireControl'),
-                ('19', 'FireControl'), ('15', 'TempRH'), ('16', 'Vending'), ('17', 'iCON130'),
-                ('20', 'AlarmControl'), ('21', 'AlarmControl'), ('22', 'AlarmControl'),
-                ('23', 'AlarmControl'), ('26', 'AlarmControl'), ('27', 'AlarmControl'),
-                ('28', 'AlarmControl'), ('29', 'AlarmControl'), ('24', 'iTemp'), ('25', 'iGas'),
-                ('30', 'RelayControl110'), ('31', 'RelayControl115'), ('32', 'RelayControl'),
-                ('33', 'RelayControl'), ('34', 'RelayControl'), ('35', 'RelayControl'),
-                ('36', 'RelayControl'), ('37', 'RelayControl'), ('38', 'RelayControl'),
-                ('39', 'RelayControl'), ('40', 'MFReader'), ('41', 'MFReader'), ('42', 'MFReader'),
-                ('43', 'MFReader'), ('44', 'MFReader'), ('45', 'MFReader'), ('46', 'MFReader'),
-                ('47', 'MFReader'), ('48', 'MFReader'), ('49', 'MFReader'), ('50', 'iMotor')]
 
     name = fields.Char(
         string='Name',
@@ -38,7 +24,7 @@ class HrRfidController(models.Model):
     )
 
     hw_version = fields.Selection(
-        selection=hw_types,
+        selection=HW_TYPES,
         string='Hardware Type',
         help='Type of the controller',
     )
@@ -339,10 +325,24 @@ class HrRfidController(models.Model):
                 'cmd_data': cmd_data,
             })
 
-    def is_relay_ctrl(self):
-        self.ensure_one()
-        # return self.hw_version_is_for_relay_ctrl(self.hw_version)
-        return self.hw_version in ['30', '31', '32']
+    def is_relay_ctrl(self, hw_version=None):
+        if hw_version:
+            return hw_version in ['30', '31', '32']
+        elif self:
+            self.ensure_one()
+            return self.hw_version in ['30', '31', '32']
+
+    def get_ctrl_model_name(self, hw_id):
+        tmp = -1
+        if hw_id:
+            tmp = hw_id
+        elif self:
+            self.ensure_one()
+            tmp = self.hw_version
+        for m in HW_TYPES:
+            if m[0] == tmp:
+                return m[1]
+        return _('Unknown')
 
     def re_read_ctrl_info(self):
         cmd_env = self.env['hr.rfid.command']

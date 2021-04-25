@@ -254,14 +254,8 @@ class WebRfidController(http.Controller):
     def _parse_response(self):
         command_env = request.env['hr.rfid.command'].with_user(SUPERUSER_ID)
         response = self._post['response']
-        controller = None
-
-        for ctrl in self._webstack.controllers:
-            if ctrl.ctrl_id == response['id']:
-                controller = ctrl
-                break
-
-        if controller is None:
+        controller = self._webstack.controllers.filtered(lambda c: c.ctrl_id == response.get('id', -1))
+        if not controller:
             self._report_sys_ev('Module sent us a response from a controller that does not exist')
             return self._check_for_unsent_cmd(200)
 
@@ -418,7 +412,7 @@ class WebRfidController(http.Controller):
 
         mode_reader_relation = {1: [1, 2], 2: [2, 4], 3: [4], 4: [4]}
 
-        if not ctrl_env.hw_version_is_for_relay_ctrl(hw_ver) and \
+        if not ctrl_env.is_relay_ctrl(hw_ver) and \
                 readers_count not in mode_reader_relation[ctrl_mode]:
             return self._log_cmd_error('F0 sent us a wrong reader-controller '
                                        'mode combination', command, '31', 200)
@@ -501,9 +495,9 @@ class WebRfidController(http.Controller):
             _reader.door_ids += _door
 
         def gen_d_name(door_num, controller_id):
-            return 'Door ' + str(door_num) + ' of ctrl ' + str(controller_id)
+            return _('Door ') + str(door_num) + _(' of ctrl ') + str(controller_id)
 
-        if controller.hw_version_is_for_relay_ctrl(hw_ver):
+        if controller.is_relay_ctrl():
             if ctrl_mode == 1 or ctrl_mode == 3:
                 reader = create_reader('R1', 1, '0')
                 for i in range(outputs):
@@ -584,7 +578,11 @@ class WebRfidController(http.Controller):
             controller.door_ids[new_door_count: old_door_count].unlink()
 
         if controller.serial_number is False:
-            controller.name = 'Controller ' + serial_num + ' ' + str(controller.ctrl_id)
+            controller.name = _('{hw_type} SN:{serial} ID:{id}').format(
+                hw_type=controller.get_ctrl_model_name(hw_ver),
+                serial=serial_num,
+                id=controller.ctrl_id
+            )
 
         controller.write({
             'hw_version': hw_ver,
