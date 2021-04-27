@@ -82,6 +82,8 @@ class HrRfidSystemEvent(models.Model):
         ('33', 'Siren On/Off from PC'),
         ('34', 'eZoneAlarm'),
         ('35', 'Zone Arm/Disarm'),
+        ('36', 'Inserted Card'),
+        ('37', 'Ejected Card'),
         ('45', '1-W ERROR (wiring problems)'),
         ('47', 'Vending Purchase Complete'),
         ('48', 'Vending Error1'),
