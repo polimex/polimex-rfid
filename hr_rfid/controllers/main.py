@@ -152,6 +152,10 @@ class WebRfidController(http.Controller):
         if (self._post['event'].get('card', '0000000000') != '0000000000') and not card:
             self._report_sys_ev(_('Could not find the card'), controller)
             return self._check_for_unsent_cmd(200)
+        elif (self._post['event'].get('card', False) == '0000000000'):
+            self._report_sys_ev(_('Hardware Event'), controller)
+            return self._check_for_unsent_cmd(200)
+
 
         if card:
             if event_action == 64 and controller.hw_version != self._vending_hw_version:
