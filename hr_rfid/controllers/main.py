@@ -54,7 +54,6 @@ class WebRfidController(http.Controller):
 
     def _check_for_unsent_cmd(self, status_code, event=None):
         commands_env = request.env['hr.rfid.command'].sudo()
-        self._webstack.refresh_views()
         processing_comm = commands_env.search([
             ('webstack_id', '=', self._webstack.id),
             ('status', '=', 'Process'),
@@ -117,8 +116,7 @@ class WebRfidController(http.Controller):
 
         card_env = request.env['hr.rfid.card'].sudo()
         workcodes_env = request.env['hr.rfid.workcode'].sudo()
-        card = card_env.search(['|', ('active', '=', True), ('active', '=', False),
-                                ('number', '=', self._post['event']['card'])])
+        card = card_env.with_context(active_test=False).search([('number', '=', self._post['event']['card'])])
         reader = None
         event_action = self._post['event']['event_n']
 
@@ -130,12 +128,12 @@ class WebRfidController(http.Controller):
 
         reader_num = self._post['event']['reader']
         if reader_num == 0:
-            if int(self._post['event']['event_n']) in range(3,18):
+            if int(self._post['event']['event_n']) in range(3, 18):
                 reader_num = ((self._post['event']['event_n'] - 3) // 4) + 1
         else:
             reader_num = reader_num & 0x07
 
-        #Find Reader
+        # Find Reader
         reader = controller.reader_ids.filtered(lambda r: r.number == reader_num)
 
         if not reader:
@@ -146,11 +144,16 @@ class WebRfidController(http.Controller):
         else:
             door = set(card.door_ids) & set(reader.door_ids)
             if len(door) > 1:
-                door = False
+                card_door_ids = card.door_ids if card else []
+                door = set(door) & set(card_door_ids)
 
         ev_env = request.env['hr.rfid.event.user'].sudo()
 
-        if len(card) == 0:
+        if (self._post['event'].get('card', '0000000000') != '0000000000') and not card:
+            self._report_sys_ev(_('Could not find the card'), controller)
+            return self._check_for_unsent_cmd(200)
+
+        if card:
             if event_action == 64 and controller.hw_version != self._vending_hw_version:
                 cmd_env = request.env['hr.rfid.command'].sudo()
                 cmd = {
@@ -176,24 +179,63 @@ class WebRfidController(http.Controller):
                 else:
                     self._report_sys_ev(_('Could not find the card'), controller)
                 return cmd_js
-            elif event_action in [21, 22, 23, 24]:
+            elif event_action in [21, 22, 23, 24]:  # Exit button
                 event_dict = {
                     'ctrl_addr': controller.ctrl_id,
                     'door_id': reader.door_id.id,
                     'reader_id': reader.id,
                     'event_time': self._get_ws_time_str(),
-                    'event_action': '5',  # Exit button
+                    'event_action': '5',
                 }
                 event = ev_env.create(event_dict)
-                ev_env.refresh_views()
                 return self._check_for_unsent_cmd(200, event)
+            elif event_action in [34, 35]:  # SOT events
+                # 34: "Zone Alarm",
+                # 35: "Zone Arm/Disarm",
+                if event_action == 34:
+                    # TODO Add details for alarm and possible actions
+                    self._report_sys_ev(_('Zone Alarm'), controller)
+                else:
+                    event_dict = {
+                        'ctrl_addr': controller.ctrl_id,
+                        'door_id': reader.door_id.id,
+                        'reader_id': reader.id,
+                        'event_time': self._get_ws_time_str(),
+                        # 'event_action': '5',
+                        'event_action': str(10 + (event_action - 34)),
+                    }
+                    event = ev_env.create(event_dict)
+                return self._check_for_unsent_cmd(200)
+            elif event_action in [36, 37]:  # Hotel reader events
+                pin = self._post['event']['dt']
+                event_dict = {
+                    'ctrl_addr': controller.ctrl_id,
+                    'door_id': reader.door_id.id,
+                    'reader_id': reader.id,
+                    'event_time': self._get_ws_time_str(),
+                    # 'event_action': '5',
+                    'event_action': str(8 - int(pin)) if event_action == 36 else '9',
+                }
+                card.get_owner(event_dict)
+                event = ev_env.create(event_dict)
+                # event = ev_env.create(event_dict)
+                return self._check_for_unsent_cmd(200)
 
             if self._post['event']['card'] == '0000000000':
                 self._report_sys_ev('', controller)
-            else:
+            elif not card:
                 self._report_sys_ev(_('Could not find the card'), controller)
             return self._check_for_unsent_cmd(200)
 
+        if event_action in [34, 35]:  # SOT events
+            # 34: "Zone Alarm",
+            # 35: "Zone Arm/Disarm",
+            if event_action == 34:
+                # TODO Add details for alarm and possible actions
+                self._report_sys_ev(_('Zone Alarm'), controller)
+            else:
+                self._report_sys_ev(_('Zone Arm/Disarm'), controller)
+            return self._check_for_unsent_cmd(200)
         # External db event, controller requests for permission to open or close door
         if event_action == 64 and controller.hw_version != self._vending_hw_version:
             ret = request.env['hr.rfid.access.group.door.rel'].sudo().search([
@@ -686,7 +728,7 @@ class WebRfidController(http.Controller):
 
     def _get_ws_time(self):
         t = self._post['event']['date'] + ' ' + self._post['event']['time']
-        t = t.replace('-', '.') #fix for WiFi module format
+        t = t.replace('-', '.')  # fix for WiFi module format
         try:
             ws_time = datetime.datetime.strptime(t, self._time_format)
             ws_time -= self._webstack._get_tz_offset()

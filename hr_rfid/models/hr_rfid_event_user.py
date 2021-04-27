@@ -91,6 +91,11 @@ class HrRfidUserEvent(models.Model):
         ('4', _('Denied APB')),
         ('5', _('Exit Button')),
         ('6', _('Granted (no entry)')),
+        ('7', _('Granted Insert')),
+        ('8', _('Denied Insert')),
+        ('9', _('Ejected')),
+        ('10', _('Zone Alarm')),
+        ('11', _('Zone Arm/Disarm')),
         ('64', _('Request Instructions')),
     ]
 
