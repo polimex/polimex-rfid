@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--Group for encoder user -->
+    <record id="group_card_user" model="res.groups">
+        <field name="name">Card Management / User</field>
+        <field eval="[(4, ref('base.group_user'))]" name="implied_ids"/>
+    </record>
+
+    <!--Group for encoder manager -->
+    <record id="group_card_manager" model="res.groups">
+        <field name="name">Card Management / Manager</field>
+        <field eval="[(4, ref('rfid_pms_base.group_card_user'))]" name="implied_ids"/>
+        <field name="users"
+               eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_rfid_pms_base_room_user,rfid_pms_base.room,model_rfid_pms_base_room,group_card_user,1,0,0,0
+access_rfid_pms_base_room_manager,rfid_pms_base.room,model_rfid_pms_base_room,group_card_manager,1,1,1,1
+access_rfid_pms_base_message_wiz,access_rfid_pms_base_message_wiz,model_rfid_pms_base_message_wiz,base.group_user,1,1,1,1
+access_rfid_pms_base_card_encode_wiz,access_rfid_pms_base_card_encode_wiz,model_rfid_pms_base_card_encode_wiz,base.group_user,1,1,1,1

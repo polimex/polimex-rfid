@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="cards_program_wiz_action" model="ir.actions.act_window">
+            <field name="name">Hotel card encoder</field>
+            <field name="res_model">rfid_pms_base.card_encode_wiz</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="cards_encode_wiz_view_form" model="ir.ui.view">
+            <field name="name">cards_encode_wiz_view_form</field>
+            <field name="model">rfid_pms_base.card_encode_wiz</field>
+            <field name="arch" type="xml">
+                <form string="cards_encode_wiz_form">
+                    <header>
+                        <field name="mode" widget="statusbar" statusbar_visible=" "/>
+                    </header>
+                    <sheet>
+                        <group string="Data for card encoding">
+                            <field name="_barcode_scanned" widget="barcode_handler"/>
+                            <field name="room_id"
+                                   options="{'no_create_edit': True}"
+                                   attrs="{'invisible': [('room_id','=', False)], 'required':[('mode','in', ['new','current'])]}"/>
+                            <field name="checkin_date" string='Valid from'
+                                   attrs="{'invisible': [('mode','!=', 'stuff')]}"
+                            />
+                            <field name="checkin_date"
+                                   attrs="{'invisible': [('mode','not in',['current','new'])]}"
+                            />
+                            <field name="checkout_date" string='Valid to'
+                                   attrs="{'invisible': [('mode','!=', 'stuff')]}"/>
+                            <field name="checkout_date"
+                                   attrs="{'invisible': [('mode','not in', ['current','new'])]}"/>
+                            <field name="card_number"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="read_card"
+                                string="Read Card"
+                                type="object"
+                                attrs="{'invisible': [('mode','!=', 'read')]}"
+                                class="oe_highlight" icon="fa-info"/>
+                        <button name="write_card" string="Encode Card"
+                                help="Encode card "
+                                type="object"
+                                attrs="{'invisible': [('mode','=', 'read')]}"
+                                class="oe_highlight" icon="fa-bolt"/>
+                        <button string="Done" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

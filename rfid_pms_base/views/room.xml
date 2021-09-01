@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="rfid_pms_base_room_form" model="ir.ui.view">
+            <field name="name">rfid_pms_base_room_view_form</field>
+            <field name="model">rfid_pms_base.room</field>
+            <field name="arch" type="xml">
+                <form string="rfid_pms_base_room_form">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" placeholder="Friendly Room name "/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="number"/>
+                            <field name="door_id"/>
+                            <field name="access_group_id"/>
+                        </group>
+                        <group>
+                            <field name="all_contact_ids">
+                                <tree create="0" delete="0" edit="0">
+                                    <field name="contact_id"/>
+                                    <field name="expiration"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group>
+                            <field name="all_employee_ids">
+                                <tree create="0" delete="0" edit="0">
+                                    <field name="employee_id"/>
+                                    <field name="expiration"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="rfid_pms_base_room_list" model="ir.ui.view">
+            <field name="name">Schneider Room list</field>
+            <field name="model">rfid_pms_base.room</field>
+            <field name="arch" type="xml">
+                <tree import="False">
+                    <field name="name"/>
+                    <field name="number"/>
+                    <field name="hb_card_present"/>
+                    <field name="hb_dnd"/>
+                    <field name="hb_clean"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="rfid_pms_base_room_kanban" model="ir.ui.view">
+            <field name="name">rfid_pms_base_room_view_kanban</field>
+            <field name="model">rfid_pms_base.room</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="name"/>
+                    <field name="number"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_area o_kanban_attachment oe_kanban_global_click">
+                                <div class="oe_inline text-center row">
+                                    <field name="last_occupancy" invisible="1"/>
+                                    <field name="hb_dnd" invisible="1"/>
+                                    <field name="hb_clean" invisible="1"/>
+                                    <field name="hb_card_present" invisible="1"/>
+                                    <div class="col-3 text-left">
+                                        <img alt="Guests present" src="/rfid_pms_base/static/icons/guests.png"
+                                             style="padding: 0px; margin: 1px; height: 24px;"
+                                             attrs="{'invisible': [('hb_card_present', '=', False)]}"
+                                             title="Guests present"/>
+                                        <img alt="Guests present" src="/rfid_pms_base/static/icons/guests_off.png"
+                                             style="padding: 0px; margin: 1px; height: 24px;"
+                                             attrs="{'invisible': [('hb_card_present', '!=', False)]}"
+                                             title="No Guests present"/>
+                                        <!--                                        <div role="img"-->
+                                        <!--                                             class="fa fa-fw fa-circle o_button_icon oe_hr_attendance_status_green"-->
+                                        <!--                                             attrs="{'invisible': [('hb_card_present', '!=', '1')]}"-->
+                                        <!--                                             aria-label="Available" title="Available"/>-->
+
+                                        <!--                                    <span attrs="{'invisible': [('last_temperature', '=', False)]}">-->
+                                        <!--                                        ( <field name="last_temperature" class="col-6 text-center"/>-->
+                                        <!--                                        &#8451; )-->
+                                        <!--                                    </span>-->
+                                    </div>
+
+                                    <div class="col-6 text-center">
+                                        <i class="fa fa-home" role="img" aria-label="Enterprise" title="Enterprise"></i>
+                                        <strong><field name="name"/> (<span><field name="number"/></span>)</strong>
+                                    </div>
+
+                                    <div class="col-3 text-right">
+
+                                        <a name="toggle_hotel" type="object"
+                                           t-attf-data-context="{'btn':'dnd'}">
+                                            <img alt="DND" src="/rfid_pms_base/static/icons/dnd.png"
+                                                 style="padding: 0px; margin: 1px; height: 24px;"
+                                                 attrs="{'invisible': [('hb_dnd', '=', False)]}"
+                                                 title="Do not disturb"/>
+                                            <img alt="DND" src="/rfid_pms_base/static/icons/dnd_off.png"
+                                                 style="padding: 0px; margin: 1px; height: 24px;"
+                                                 attrs="{'invisible': [('hb_dnd', '!=', False)]}"
+                                                 title="DND Off"/>
+                                        </a>
+
+                                        <a name="toggle_hotel" type="object"
+                                           t-attf-data-context="{'btn':'clean'}">
+                                            <img alt="Clean" src="/rfid_pms_base/static/icons/clean.png"
+                                                 style="padding: 0px; margin: 1px; height: 24px;"
+                                                 attrs="{'invisible': [('hb_clean', '=', False)]}"
+                                                 title="Please Clean"/>
+                                            <img alt="Clean" src="/rfid_pms_base/static/icons/clean_off.png"
+                                                 style="padding: 0px; margin: 1px; height: 24px;"
+                                                 attrs="{'invisible': [('hb_clean', '!=', False)]}"
+                                                 title="Clean Off"/>
+                                        </a>
+                                    </div>
+                                </div>
+                                <hr class="mt4 mb4"/>
+                                <!--                                <div class="row">-->
+                                <!--                                    <div t-if="record.number.value" class="col-6 text-center">-->
+                                <!--                                        <strong>Number:</strong>-->
+                                <!--                                    </div>-->
+                                <!--                                    <div t-if="record.number.value" class="col-6 text-center">-->
+                                <!--                                        <field name="number"/>-->
+                                <!--                                    </div>-->
+                                <!--                                </div>-->
+                                <div class="row">
+                                    <div class="col-6 text-center">
+                                        <a name="%(cards_program_wiz_action)d" type="action" class="button"
+                                           t-attf-data-context="{'new':True}">
+                                            New Reservation Card
+                                        </a>
+                                    </div>
+                                    <div class="col-6 text-center">
+                                        <a name="%(cards_program_wiz_action)d" type="action"
+                                           t-attf-data-context="{'current':True}">
+                                            Additional cards
+                                        </a>
+                                    </div>
+                                </div>
+<!--                                <hr class="mt4 mb4"/>-->
+<!--                                <div class="row">-->
+<!--                                    <div t-if="record.number.value" class="col-6 text-center">-->
+<!--                                        <strong>Last visited</strong>-->
+<!--                                    </div>-->
+<!--                                    <div t-if="record.number.value" class="col-6 text-center">-->
+<!--                                        <strong>Card 55667788</strong>-->
+<!--                                    </div>-->
+<!--                                    &lt;!&ndash;                                    <div t-if="record.number.value" class="col-6 text-center">&ndash;&gt;-->
+<!--                                    &lt;!&ndash;                                        <field name="number"/>&ndash;&gt;-->
+<!--                                    &lt;!&ndash;                                    </div>&ndash;&gt;-->
+<!--                                </div>-->
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="rfid_pms_base_room_search" model="ir.ui.view">
+            <field name="name">rfid_pms_base_room_search</field>
+            <field name="model">rfid_pms_base.room</field>
+            <field name="arch" type="xml">
+                <search string="Rooms">
+                    <field name="hb_dnd" filter_domain="[('hb_dnd','=',True)]"
+                           string="Do not disturb"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_window_room">
+            <field name="name">Hotel Rooms</field>
+            <field name="res_model">rfid_pms_base.room</field>
+            <field name="view_mode">kanban,tree,form</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,56 @@
+<odoo>
+    <data>
+
+
+        <record id="message_wiz_view_form" model="ir.ui.view">
+            <field name="name">message_wiz_view_form</field>
+            <field name="model">rfid_pms_base.message_wiz</field>
+            <field name="arch" type="xml">
+                <form string="cards_encode_wiz_form">
+                    <sheet>
+                        <field name="message" readonly="True"></field>
+                    </sheet>
+                    <footer>
+                        <button string="Done" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="view_employee_form_inherit_sch" model="ir.ui.view">
+            <field name="name">hr.view_employee_form_inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button name="%(cards_program_wiz_action)d" id="cards_program_wiz_action_btn"
+                            type="action" class="oe_stat_button" icon="fa-plus-square" string="Encode Card"
+                            groups="rfid_pms_base.group_card_manager"
+                            attrs="{'invisible': [('id','=', False)]}"
+                            help="Encode stuff card" context="{'stuff': True}">
+                    </button>
+                </xpath>
+
+            </field>
+        </record>
+
+        <!-- actions opening views on models -->
+        <record model="ir.actions.act_window" id="rfid_pms_base.action_window_hr">
+            <field name="name">Hotel Employees</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="rfid_pms_base.action_window_partner">
+            <field name="name">Hotel Guests</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- server action to the one above -->
+
+
+    </data>
+</odoo>

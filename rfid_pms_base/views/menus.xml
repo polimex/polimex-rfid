@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Top menu item -->
+        <menuitem
+                name="Hotel Card Management"
+                id="rfid_pms_base.menu_root"
+                groups="rfid_pms_base.group_card_user"
+                web_icon="rfid_pms_base,static/description/icon.png"
+        />
+        <!-- menu categories -->
+        <menuitem name="Rooms" id="rfid_pms_base.room_list_menu" parent="rfid_pms_base.menu_root"
+                  sequence="1"
+                  action="rfid_pms_base.action_window_room"/>
+        <menuitem name="Guests Card" id="rfid_pms_base.menu_read_card" parent="rfid_pms_base.menu_root"
+                  sequence="2"
+                  action="rfid_pms_base.action_window_partner"
+        />
+        <menuitem name="Settings" id="rfid_pms_base.menu_settings" parent="rfid_pms_base.menu_root"
+                  groups="rfid_pms_base.group_card_manager"
+                  sequence="3"
+        />
+        <!-- actions -->
+        <menuitem name="Employees" id="rfid_pms_base.employee_list_menu" parent="rfid_pms_base.menu_settings"
+                  groups="rfid_pms_base.group_card_manager"
+                  action="rfid_pms_base.action_window_hr"/>
+        <menuitem name="Guest reservations" id="rfid_pms_base.partner_list_menu" parent="rfid_pms_base.menu_settings"
+                  groups="rfid_pms_base.group_card_user"
+                  action="rfid_pms_base.action_window_partner"/>
+
+    </data>
+</odoo>
