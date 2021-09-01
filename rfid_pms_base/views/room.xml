@@ -69,7 +69,7 @@
                                     <field name="hb_dnd" invisible="1"/>
                                     <field name="hb_clean" invisible="1"/>
                                     <field name="hb_card_present" invisible="1"/>
-                                    <div class="col-3 text-left">
+                                    <div class="col-4 text-left">
                                         <img alt="Guests present" src="/rfid_pms_base/static/icons/guests.png"
                                              style="padding: 0px; margin: 1px; height: 24px;"
                                              attrs="{'invisible': [('hb_card_present', '=', False)]}"
@@ -89,12 +89,12 @@
                                         <!--                                    </span>-->
                                     </div>
 
-                                    <div class="col-6 text-center">
+                                    <div class="col-4 text-center">
                                         <i class="fa fa-home" role="img" aria-label="Enterprise" title="Enterprise"></i>
                                         <strong><field name="name"/> (<span><field name="number"/></span>)</strong>
                                     </div>
 
-                                    <div class="col-3 text-right">
+                                    <div class="col-4 text-right">
 
                                         <a name="toggle_hotel" type="object"
                                            t-attf-data-context="{'btn':'dnd'}">
@@ -131,31 +131,41 @@
                                 <!--                                    </div>-->
                                 <!--                                </div>-->
                                 <div class="row">
-                                    <div class="col-6 text-center">
-                                        <a name="%(cards_program_wiz_action)d" type="action" class="button"
-                                           t-attf-data-context="{'new':True}">
-                                            New Reservation Card
-                                        </a>
+                                    <div class="col-6 text-left">
+                                        <button type="action"
+                                                name="%(cards_program_wiz_action)d"
+                                                t-attf-data-context="{'new':True}"
+                                                icon="fa-add-remove"
+                                                class="btn btn-primary " >
+                                            <span>New Reservation Card</span>
+                                        </button>
                                     </div>
-                                    <div class="col-6 text-center">
-                                        <a name="%(cards_program_wiz_action)d" type="action"
-                                           t-attf-data-context="{'current':True}">
-                                            Additional cards
-                                        </a>
+                                    <div class="col-6 text-right" t-if="record.reservation.value">
+                                        <button type="action"
+                                                name="%(cards_program_wiz_action)d"
+                                                t-attf-data-context="{'current':True}"
+                                                icon="fa-address-card"
+                                                class="btn btn-secondary" >
+                                            <span>Additional Card</span>
+                                        </button>
                                     </div>
                                 </div>
 <!--                                <hr class="mt4 mb4"/>-->
-<!--                                <div class="row">-->
-<!--                                    <div t-if="record.number.value" class="col-6 text-center">-->
-<!--                                        <strong>Last visited</strong>-->
-<!--                                    </div>-->
-<!--                                    <div t-if="record.number.value" class="col-6 text-center">-->
-<!--                                        <strong>Card 55667788</strong>-->
-<!--                                    </div>-->
-<!--                                    &lt;!&ndash;                                    <div t-if="record.number.value" class="col-6 text-center">&ndash;&gt;-->
-<!--                                    &lt;!&ndash;                                        <field name="number"/>&ndash;&gt;-->
-<!--                                    &lt;!&ndash;                                    </div>&ndash;&gt;-->
-<!--                                </div>-->
+                                <div class="row">
+                                    <div class="col-6 text-left">
+                                        <button type="object"
+                                                name="user_events_act"
+                                                class="btn " >
+                                            <span>Events</span>
+                                        </button>
+                                    </div>
+                                    <div t-if="record.reservation.value" class="col-6 text-right">
+                                        <strong><field name="reservation" class="btn"/> </strong>
+                                    </div>
+                                    <!--                                    <div t-if="record.number.value" class="col-6 text-center">-->
+                                    <!--                                        <field name="number"/>-->
+                                    <!--                                    </div>-->
+                                </div>
                             </div>
                         </t>
                     </templates>

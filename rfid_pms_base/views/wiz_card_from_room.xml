@@ -19,7 +19,7 @@
                     </header>
                     <sheet>
                         <group string="Data for card encoding">
-                            <field name="_barcode_scanned" widget="barcode_handler"/>
+                            <field name="card_number"/>
                             <field name="room_id"
                                    options="{'no_create_edit': True}"
                                    attrs="{'invisible': [('room_id','=', False)], 'required':[('mode','in', ['new','current'])]}"/>
@@ -33,7 +33,6 @@
                                    attrs="{'invisible': [('mode','!=', 'stuff')]}"/>
                             <field name="checkout_date"
                                    attrs="{'invisible': [('mode','not in', ['current','new'])]}"/>
-                            <field name="card_number"/>
                         </group>
                     </sheet>
                     <footer>

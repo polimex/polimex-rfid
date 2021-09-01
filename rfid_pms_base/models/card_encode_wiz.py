@@ -9,15 +9,14 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-class SchEncoderCardEncodeMsgWiz(models.TransientModel):
+class RfidPmsBaseCardEncodeMsgWiz(models.TransientModel):
     _name = 'rfid_pms_base.message_wiz'
 
     message = fields.Html()
 
 
-class SchEncoderCardEncodeWiz(models.TransientModel):
+class RfidPmsBaseCardEncodeWiz(models.TransientModel):
     _name = 'rfid_pms_base.card_encode_wiz'
-    _inherit = 'barcodes.barcode_events_mixin'
 
     def _compute_mode(self):
         if self.env.context.get('current', False):
@@ -57,10 +56,7 @@ class SchEncoderCardEncodeWiz(models.TransientModel):
         ('stuff', 'Stuff encoding'),
     ], default=_compute_mode)
 
-    card_number = fields.Char(string='The card number', size=10, reqired=True)
-
-    def on_barcode_scanned(self, barcode):
-        self.card_number = ('0000000000' + barcode)[-10:]
+    card_number = fields.Char(string='The card number', size=10, required=True)
 
     def read_card(self):
         if not self.encoder_id:
@@ -139,129 +135,44 @@ class SchEncoderCardEncodeWiz(models.TransientModel):
             'validity_to': int(self.checkout_date.timestamp()),
             'validity_from': int(self.checkin_date.timestamp()),
         }
+        card_number = ('0000000000' + self.card_number)[-10:]
 
         _logger.debug('Data for encode:\n{data}'.format(data=data))
 
-        if self.reservation:
-            # res_partner_id = self.env['res.partner'].create(
-            #     {
-            #         "name": self.reservation,
-            #     }
-            # )
-            existing_card = self.env['hr.rfid.card'].with_context(active_test=False).search([('number', '=', self.card_number)])
-            if existing_card:
-                if (not existing_card.active) or existing_card.contact_id:
-                    existing_card.unlink()
-                else:
-                    raise UserError(_('Card already in use for {}').format(existing_card.employee_id.name))
+        existing_card = self.env['hr.rfid.card'].with_context(active_test=False).search([('number', '=', card_number)])
+        if existing_card:
+            if (not existing_card.active) or existing_card.contact_id:
+                existing_card.unlink()
+            else:
+                raise UserError(_('Card already in use for {}').format(existing_card.employee_id.name))
 
-            res_guest_id = self.env['res.partner'].create(
-                {
-                    "name": _('Guest 1 for ') + self.reservation,
-                    "parent_id": self.env['res.partner'].create({"name": self.reservation}).id,
-                    'hr_rfid_card_ids': [(0, 0, {
-                        'number': self.card_number,
-                        # 'contact_id': res_guest_id.id,
-                        'activate_on': self.checkin_date,
-                        'deactivate_on': self.checkout_date,
-                    })],
-                    'hr_rfid_access_group_ids': [(0,0, {
-                        'access_group_id': self.room_id.access_group_id.id,
-                        # 'contact_id':
-                        'expiration': self.checkout_date,
-                    })]
+        count = len(self.room_id.all_contact_ids)
+        if not self.reservation:
+            if count > 0:
+                parent = self.room_id.all_contact_ids[0].contact_id.parent_id
+            else:
+                parent = self.env['res.partner'].create({"name": self._get_reservation_seq()})
+        else:
+            parent = self.env['res.partner'].create({"name": self.reservation})
+            if self.room_id.all_contact_ids:
+                self.room_id.all_contact_ids.contact_id.hr_rfid_card_ids.unlink()
+                self.room_id.all_contact_ids.contact_id.hr_rfid_access_group_ids.unlink()
 
-                }
-            )
-            return
-
-            existing_card = self.env['hr.rfid.card'].search([('number', '=', self.card_number)])
-            if existing_card:
-                raise UserError(_('Card already in use'))
-
-            res_card_id = self.env['hr.rfid.card'].create(
-                {
-                    'number': self.card_number,
-                    'contact_id': res_guest_id.id,
+        res_guest_id = self.env['res.partner'].create(
+            {
+                "name": _(f'Guest {count+1} for ') + parent.name,
+                "parent_id": parent.id,
+                'hr_rfid_card_ids': [(0, 0, {
+                    'number': card_number,
+                    # 'contact_id': res_guest_id.id,
                     'activate_on': self.checkin_date,
                     'deactivate_on': self.checkout_date,
-                }
-            )
-            res_guest_id.write(
-                {
-                    'hr_rfid_card_ids': (4, res_card_id.id, 0),
-                    'hr_rfid_access_group_ids': (4, self.room_id.access_group_id.id, 0)
-                }
-            )
-        #
-        #     self.room_id.last_reservation
-        #
-        # response = requests.post(self.encoder_id.ip + '/cards', json=data)
-        # rdata = response.json()
-        # if not 'status' in rdata:
-        #     raise UserError('Unknown response from Encoder.')
-        # if rdata['status'] == 'error':
-        #     raise UserError('Put card on encoder and try again!')
-        # elif rdata['status'] == 'success':
-        #     self.card_id = self.env['sch_encoder.card'].search([('uid', '=', rdata.get('uid'))])
-        #     if not self.card_id:
-        #         self.card_id = self.env['sch_encoder.card'].sudo().create([{
-        #             'uid': rdata.get('uid'),
-        #             'employee_id': self.employee_id.id
-        #         }])
-        #     if self.room_id:
-        #         self.card_id.sudo().write({
-        #             'room_id': self.room_id.id or False,
-        #             'valid_to': self.checkout_date,
-        #             'valid_from': self.checkin_date,
-        #             'transaction': self.room_id.transaction,
-        #             'employee_id': False,
-        #         })
-        #         self.encoder_id.sudo().write({
-        #             'log': [(0, 0, {
-        #                 'operation': 'write',
-        #                 'room_id': self.room_id.id,
-        #                 'card_id': self.card_id.id,
-        #                 'by_user': self.env.user.id
-        #             })],
-        #         })
-        #         self.encoder_id.sudo().message_post(
-        #             body='{user} encode Card: {card} for room {room} from {valid_from} to {valid_to}'.format(
-        #                 user=self.env.user.name,
-        #                 card=self.card_id.uid,
-        #                 room=self.room_id.number,
-        #                 valid_to=self.checkout_date,
-        #                 valid_from=self.checkin_date
-        #             ),
-        #             subject='New Guest card encoded'
-        #         )
-        #         return {
-        #             "type": "ir.actions.do_nothing",
-        #         }
-        #     else:
-        #         self.card_id.sudo().write({
-        #             'employee_id': self.employee_id.id,
-        #             'room_id': False,
-        #             'valid_to': self.checkout_date,
-        #             'valid_from': self.checkin_date,
-        #             'group_id': self.group_id.id,
-        #         })
-        #         self.encoder_id.sudo().write({
-        #             'log': [(0, 0, {
-        #                 'operation': 'write',
-        #                 'employee_id': self.employee_id.id,
-        #                 'card_id': self.card_id.id,
-        #                 'by_user': self.env.user.id
-        #             })],
-        #         })
-        #         self.encoder_id.sudo().message_post(
-        #             body='{user} encode Card: {card} for group {group} from {valid_from} to {valid_to}'.format(
-        #                 user=self.env.user.name,
-        #                 card=self.card_id.uid,
-        #                 group=self.group_id.name,
-        #                 valid_to=self.checkout_date,
-        #                 valid_from=self.checkin_date
-        #             ),
-        #             subject='New Employee card encoded'
-        #         )
-        #
+                })],
+                'hr_rfid_access_group_ids': [(0,0, {
+                    'access_group_id': self.room_id.access_group_id.id,
+                    # 'contact_id':
+                    'expiration': self.checkout_date,
+                })]
+
+            }
+        )

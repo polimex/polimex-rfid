@@ -32,6 +32,10 @@ class SchEncoderRoom(models.Model):
         help='All contacts that use this access group, including the ones from the inheritors',
         related='access_group_id.all_contact_ids',
     )
+    reservation = fields.Many2one('res.partner',
+                                  string='Reservation',
+                                  compute='_compute_reservation'
+                                  )
 
     hb_dnd = fields.Boolean(
         string='DND button pressed',
@@ -51,6 +55,15 @@ class SchEncoderRoom(models.Model):
     last_temperature = fields.Float(string='Temperature', compute='_compute_temperature')
     last_humidity = fields.Float(string='Humidity', compute='_compute_temperature')
     last_occupancy = fields.Char(string='Occupancy', compute='_compute_temperature')
+
+    @api.depends('all_contact_ids')
+    def _compute_reservation(self):
+        for r in self:
+            r.reservation = r.all_contact_ids[0].contact_id.parent_id if r.all_contact_ids else None
+
+    def user_events_act(self):
+        self.ensure_one()
+        return self.with_context(res_model='hr.rfid.event.user').door_id.button_act_window()
 
     def toggle_hotel(self):
         self.ensure_one()
