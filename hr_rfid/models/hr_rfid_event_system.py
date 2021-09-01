@@ -84,6 +84,7 @@ class HrRfidSystemEvent(models.Model):
         ('35', 'Zone Arm/Disarm'),
         ('36', 'Inserted Card'),
         ('37', 'Ejected Card'),
+        ('38', 'Hotel Button Pressed'),
         ('45', '1-W ERROR (wiring problems)'),
         ('47', 'Vending Purchase Complete'),
         ('48', 'Vending Error1'),
@@ -104,6 +105,7 @@ class HrRfidSystemEvent(models.Model):
         help='Description on why the error happened',
     )
 
+
     input_js = fields.Char(
         string='Input JSON',
     )
@@ -115,8 +117,8 @@ class HrRfidSystemEvent(models.Model):
         for e in self:
             e.is_card_event = e.event_action in ['4','8','12','16']
 
-    @api.model
-    def garbage_collector(self, *args, **kwargs):
+    @api.autovacuum
+    def _gc_events_life(self):
         event_lifetime = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.event_lifetime')
         if event_lifetime is None:
             return False

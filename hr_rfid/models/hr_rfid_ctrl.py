@@ -103,6 +103,23 @@ class HrRfidController(models.Model):
         help='Maximum amount of events the controller can hold in memory',
     )
 
+    hotel_readers = fields.Integer(
+        string='Hotel readers',
+        help= 'Hotel readers connected to controller',
+        default = 0
+    )
+    hotel_readers_card_presence = fields.Integer(
+        string='Hotel readers card presence',
+        help= 'Card inserted in Hotel readers connected to controller',
+        default = 0
+    )
+    hotel_readers_buttons_pressed = fields.Integer(
+        string='Hotel readers buttons pressed',
+        help= 'Pressed button on Hotel readers connected to controller',
+        default = 0
+    )
+
+
     # Warning, don't change this field manually unless you know how to create a
     # command to change the io table for the controller or are looking to avoid exactly that.
     # You can use the change_io_table method to automatically create a command

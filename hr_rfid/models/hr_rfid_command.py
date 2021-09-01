@@ -44,6 +44,7 @@ class HrRfidCommands(models.Model):
         ('DF', 'Write Outputs T/S Table'),
         ('D3', 'Delete Time Schedule'),
         ('B3', 'Read Controller Status'),
+        ('B4', 'Read/Write Hotel buttons sense'),
     ]
 
     statuses = [
@@ -177,6 +178,15 @@ class HrRfidCommands(models.Model):
     rights_data = fields.Integer(string='Rights Data (debug info)')
     rights_mask = fields.Integer(string='Rights Mask (debug info)')
 
+    def _compute_cmd_name(self):
+        def find_desc(cmd):
+            for it in HrRfidCommands.commands:
+                if it[0] == cmd:
+                    return it[1]
+
+        for record in self:
+            record.name = str(record.cmd) + ' ' + find_desc(record.cmd)
+
     @api.model
     def read_controller_information_cmd(self, controller):
         return self.create([{
@@ -235,15 +245,6 @@ class HrRfidCommands(models.Model):
             'controller_id': controller.id,
             'cmd': 'FC',
         }])
-
-    def _compute_cmd_name(self):
-        def find_desc(cmd):
-            for it in HrRfidCommands.commands:
-                if it[0] == cmd:
-                    return it[1]
-
-        for record in self:
-            record.name = str(record.cmd) + ' ' + find_desc(record.cmd)
 
     @api.model
     def create_d1_cmd(self, ws_id, ctrl_id, card_num, pin_code, ts_code, rights_data, rights_mask):

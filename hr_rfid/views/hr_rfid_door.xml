@@ -101,6 +101,13 @@
                                 <field name="number" readonly="1"/>
                             </group>
                         </group>
+                        <group>
+                            <group>
+                                <field name="hb_card_present" readonly="1"/>
+                                <field name="hb_clean" readonly="1"/>
+                                <field name="hb_dnd" readonly="1"/>
+                            </group>
+                        </group>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers"/>

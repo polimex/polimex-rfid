@@ -14,5 +14,4 @@ from . import hr_rfid_workcode
 from . import hr_rfid_zone
 from . import res_partner
 from . import hr_rfid_settings
-from . import ir_autovacuum
 

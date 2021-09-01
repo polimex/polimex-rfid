@@ -49,7 +49,6 @@
             <field name="name">res.partner.rfid.info</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
-            <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
                 <notebook position="inside">
                     <page string="RFID Info"
@@ -104,6 +103,17 @@
             <field name="binding_view_types">form</field>
             <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_view_rfid_data'))]"/>
             <field name="target">new</field>
+        </record>
+
+         <record id="view_res_partner_filter_inherit" model="ir.ui.view">
+            <field name="name">res.partner.select.inherit</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="before">
+                   <field name="hr_rfid_card_ids" filter_domain="[('hr_rfid_card_ids.number', 'ilike', self)]"/>
+                </xpath>
+            </field>
         </record>
 
     </data>

@@ -96,6 +96,7 @@ class HrRfidUserEvent(models.Model):
         ('9', _('Ejected')),
         ('10', _('Zone Alarm')),
         ('11', _('Zone Arm/Disarm')),
+        ('12', _('Hotel Button Pressed')),
         ('64', _('Request Instructions')),
     ]
 
@@ -110,8 +111,13 @@ class HrRfidUserEvent(models.Model):
         compute='_compute_user_ev_action_str',
     )
 
-    @api.model
-    def garbage_collector(self, *args, **kwargs):
+    more_json = fields.Char(
+        string='More info about event in JSON',
+    )
+
+
+    @api.autovacuum
+    def _gc_user_events_life(self):
         event_lifetime = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.event_lifetime')
         if event_lifetime is None:
             return False
@@ -201,7 +207,7 @@ class HrRfidUserEvent(models.Model):
                             rec.door_id.zone_ids.person_left(rec.employee_id, rec)
                         else:
                             rec.door_id.zone_ids.person_entered(rec.employee_id, rec)
-        self.refresh_views()
+        # self.refresh_views()
         return records
 
     def button_show_employee_events(self):

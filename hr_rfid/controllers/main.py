@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import http, fields, exceptions, _, SUPERUSER_ID
-from odoo.http import request
+from odoo.http import request, Response
 from enum import Enum
 
 import datetime
@@ -156,7 +156,6 @@ class WebRfidController(http.Controller):
             self._report_sys_ev(_('Hardware Event'), controller)
             return self._check_for_unsent_cmd(200)
 
-
         if card:
             if event_action == 64 and controller.hw_version != self._vending_hw_version:
                 cmd_env = request.env['hr.rfid.command'].sudo()
@@ -210,19 +209,24 @@ class WebRfidController(http.Controller):
                     }
                     event = ev_env.create(event_dict)
                 return self._check_for_unsent_cmd(200)
-            elif event_action in [36, 37]:  # Hotel reader events
+            elif event_action in [36, 37, 38]:  # Hotel reader events
                 pin = self._post['event']['dt']
                 event_dict = {
                     'ctrl_addr': controller.ctrl_id,
                     'door_id': reader.door_id.id,
                     'reader_id': reader.id,
                     'event_time': self._get_ws_time_str(),
-                    # 'event_action': '5',
-                    'event_action': str(8 - int(pin)) if event_action == 36 else '9',
+                    'event_action': str(8 - int(pin)) if event_action == 36 else '12' if event_action == 38 else '9',
                 }
+                if event_action in [38]:  # button
+                    event_dict['more_json'] = json.dumps({"state": int(pin) == 1})
+                # if event_action in [37]:  # eject
+                #     event_dict['more_json'] = json.dumps({"eject": reader.id})
+                # if event_action in [36] and event_dict['event_action'] == 7:  # Insert
+                #     event_dict['more_json'] = json.dumps({"insert": reader.id})
                 card.get_owner(event_dict)
                 event = ev_env.create(event_dict)
-                # event = ev_env.create(event_dict)
+                door.proccess_event(event)
                 return self._check_for_unsent_cmd(200)
 
             if self._post['event']['card'] == '0000000000':
@@ -240,6 +244,7 @@ class WebRfidController(http.Controller):
             else:
                 self._report_sys_ev(_('Zone Arm/Disarm'), controller)
             return self._check_for_unsent_cmd(200)
+
         # External db event, controller requests for permission to open or close door
         if event_action == 64 and controller.hw_version != self._vending_hw_version:
             ret = request.env['hr.rfid.access.group.door.rel'].sudo().search([
@@ -251,9 +256,7 @@ class WebRfidController(http.Controller):
 
         event_action = ((event_action - 3) % 4) + 1
         # Turnstile controller. If the 7th bit is not up, then there was no actual entry
-        if controller.hw_version == '9' \
-                and (self._post['event']['reader'] & 64) == 0 \
-                and event_action == '1':
+        if controller.hw_version == '9' and (self._post['event']['reader'] & 64) == 0 and event_action == '1':
             event_action = '6'
 
         # Relay controller
@@ -376,7 +379,7 @@ class WebRfidController(http.Controller):
                   + int(data[38:40], 16) * 10 \
                   + int(data[40:42], 16)
 
-            DT = [int(data[42:44], 16), int(data[44:46], 16), int(data[46:48], 16)]
+            hotel = [int(data[42:44], 16), int(data[44:46], 16), int(data[46:48], 16)]
 
             if temperature >= 1000:
                 temperature -= 1000
@@ -402,6 +405,9 @@ class WebRfidController(http.Controller):
                 'humidity': humidity,
                 'system_voltage': sys_voltage,
                 'input_voltage': input_voltage,
+                'hotel_readers': hotel[0],
+                'hotel_readers_card_presence': hotel[1],
+                'hotel_readers_buttons_pressed': hotel[2],
             })
 
         command.write({
@@ -682,7 +688,7 @@ class WebRfidController(http.Controller):
             sys_ev['controller_id'] = controller.id
 
         sys_ev_env.create(sys_ev)
-        sys_ev_env.refresh_views()
+        # sys_ev_env.refresh_views()
 
     def _respond_to_ev_64(self, open_door, controller, reader, card):
         cmd_env = request.env['hr.rfid.command'].sudo()
@@ -740,17 +746,19 @@ class WebRfidController(http.Controller):
             raise BadTimeException
         return ws_time
 
-    @staticmethod
-    def _send_command(command, status_code):
+    def _send_command(self, command, status_code):
         command.status = 'Process'
+
+        cmd = {'cmd': {
+            'id': command.controller_id.ctrl_id,
+            'c': command.cmd[:2],
+            'd': command.cmd_data,
+        }
+        }
 
         json_cmd = {
             'status': status_code,
-            'cmd': {
-                'id': command.controller_id.ctrl_id,
-                'c': command.cmd[:2],
-                'd': command.cmd_data,
-            }
+            'cmd': cmd['cmd']
         }
 
         if command.cmd == 'D1':
@@ -791,23 +799,21 @@ class WebRfidController(http.Controller):
             )
 
         command.request = json.dumps(json_cmd)
-
         return json_cmd
 
     @http.route(['/hr/rfid/event'], type='json', auth='none', method=['POST'], csrf=False)
     def post_event(self, **post):
-        print('post=' + str(post))
         t0 = time.time()
-        if len(post) == 0:
+        if not post:
             # Controllers with no odoo functionality use the dd/mm/yyyy format
             self._time_format = '%d.%m.%y %H:%M:%S'
             self._post = request.jsonrequest
         else:
             self._time_format = '%m.%d.%y %H:%M:%S'
             self._post = post
-        _logger.debug('Received=' + str(self._post))
+        _logger.info('Received=' + str(self._post))
 
-        if 'convertor' not in post:
+        if 'convertor' not in self._post:
             return self._parse_raw_data()
 
         self._vending_hw_version = '16'

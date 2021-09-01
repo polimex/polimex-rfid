@@ -1,11 +1,15 @@
 import base64
 import socket
 
+import requests
+
 from odoo import fields, models, api, _, exceptions
 import http.client
 import json
 
 from odoo.addons.hr_rfid.models.hr_rfid_card import HrRfidCard
+from odoo.addons.hr_rfid.models.hr_rfid_event_system import HrRfidSystemEvent
+from odoo.addons.hr_rfid.models.hr_rfid_event_user import HrRfidUserEvent
 from ..wizards.helpers import create_and_ret_d_box, return_wiz_form_view
 
 
@@ -98,11 +102,69 @@ class HrRfidDoor(models.Model):
         related='controller_id.webstack_id',
     )
 
+    hb_dnd = fields.Boolean(
+        string='DND button pressed',
+        compute='_compute_hotel_buttons',
+        inverse='_set_hb_dnd'
+    )
+    hb_clean = fields.Boolean(
+        string='Clean button pressed',
+        compute='_compute_hotel_buttons',
+        inverse='_set_hb_clean'
+    )
+    hb_card_present = fields.Boolean(
+        string='Present card in reader',
+        compute='_compute_hotel_buttons'
+    )
+
     access_group_count = fields.Char(compute='_compute_counts')
     user_event_count = fields.Char(compute='_compute_counts')
     reader_count = fields.Char(compute='_compute_counts')
     card_count = fields.Char(compute='_compute_counts')
     zone_count = fields.Char(compute='_compute_counts')
+
+    @api.depends('controller_id.hotel_readers_buttons_pressed', 'controller_id.hotel_readers_card_presence')
+    def _compute_hotel_buttons(self):
+        for d in self:
+            d.hb_dnd = (d.controller_id.hotel_readers_buttons_pressed & 0b001) == 1
+            d.hb_clean = (d.controller_id.hotel_readers_buttons_pressed & 0b010) == 2
+            readers_bits = [int(pow(2, i.number - 1)) for i in d.reader_ids]
+            d.hb_card_present = any(
+                [(d.controller_id.hotel_readers_card_presence & bits) == bits for bits in readers_bits])
+
+    def _set_hb_dnd(self):
+        for d in self:
+            d.open_close_door(int(d.hb_dnd), 99, 20)
+            if d.hb_dnd:
+                d.controller_id.hotel_readers_buttons_pressed = d.controller_id.hotel_readers_buttons_pressed | 1
+            else:
+                d.controller_id.hotel_readers_buttons_pressed = d.controller_id.hotel_readers_buttons_pressed - 1
+
+    def _set_hb_clean(self):
+        for d in self:
+            d.open_close_door(int(d.hb_clean), 99, 21)
+            if d.hb_clean:
+                d.controller_id.hotel_readers_buttons_pressed = d.controller_id.hotel_readers_buttons_pressed | 2
+            else:
+                d.controller_id.hotel_readers_buttons_pressed = d.controller_id.hotel_readers_buttons_pressed - 2
+
+    def proccess_event(self, event):
+        self.ensure_one()
+        if isinstance(event, HrRfidUserEvent):
+            if event.more_json:
+                j = json.loads(event.more_json)
+                if 'state' in j.keys():
+                    if j["state"]:
+                        self.controller_id.hotel_readers_buttons_pressed = self.controller_id.hotel_readers_buttons_pressed | event.reader_id.number
+                    else:
+                        self.controller_id.hotel_readers_buttons_pressed = self.controller_id.hotel_readers_buttons_pressed ^ event.reader_id.number
+            elif event.event_action == '7':
+                self.controller_id.hotel_readers_card_presence = self.controller_id.hotel_readers_card_presence | event.reader_id.number
+            elif event.event_action == '9':
+                self.controller_id.hotel_readers_card_presence = self.controller_id.hotel_readers_card_presence ^ event.reader_id.number
+
+        elif isinstance(event, HrRfidSystemEvent):
+            pass
 
     def _compute_counts(self):
         for r in self:
@@ -111,7 +173,6 @@ class HrRfidDoor(models.Model):
             r.reader_count = len(r.reader_ids)
             r.card_count = len(r.card_rel_ids)
             r.zone_count = len(r.zone_ids)
-
 
     def get_potential_cards(self, access_groups=None):
         """
@@ -143,13 +204,13 @@ class HrRfidDoor(models.Model):
         self.ensure_one()
         return self.open_close_door(0, 3)
 
-    def open_close_door(self, out: int, time: int):
+    def open_close_door(self, out: int, time: int, custom_out):
         self.ensure_one()
 
         if self.controller_id.webstack_id.behind_nat is True:
             return self.create_door_out_cmd(out, time)
         else:
-            return self.change_door_out(out, time)
+            return self.change_door_out(out, time, custom_out)
 
     def create_door_out_cmd(self, out: int, time: int):
         self.ensure_one()
@@ -197,7 +258,6 @@ class HrRfidDoor(models.Model):
 
         return self.create_rights_int_to_str(data)
 
-    @api.model
     def create_rights_int_to_str(self, data):
         ctrl = self.controller_id
         if not ctrl.is_relay_ctrl():
@@ -212,7 +272,7 @@ class HrRfidDoor(models.Model):
             cmd_data = ''.join(list('0' + ch for ch in cmd_data))
         return cmd_data
 
-    def change_door_out(self, out: int, time: int):
+    def change_door_out(self, out: int, time: int, custom_out: bool):
         """
         :param out: 0 to open door, 1 to close door
         :param time: Range: [0, 99]
@@ -247,27 +307,28 @@ class HrRfidDoor(models.Model):
                                             _('Relay doors cannot be closed.'))
             cmd['cmd']['d'] = ('1F%02X' % self.reader_ids[0].number) + self.create_rights_data()
         else:
-            cmd['cmd']['d'] = '%02d%02d%02d' % (self.number, out, time)
+            cmd['cmd']['d'] = '%02x%02d%02d' % (custom_out or self.number, out, time)
 
-        cmd = json.dumps(cmd)
+        # cmd = json.dumps(cmd)
 
         host = str(ws.last_ip)
-        # TODO User regular request insted sockets
         try:
-            conn = http.client.HTTPConnection(str(host), 80, timeout=2)
-            conn.request('POST', '/sdk/cmd.json', cmd, headers)
-            response = conn.getresponse()
-            code = response.getcode()
-            body = response.read()
-            conn.close()
+            # conn = http.client.HTTPConnection(str(host), 80, timeout=2)
+            # conn.request('POST', '/sdk/cmd.json', cmd, headers)
+            response = requests.post('http://' + ws.last_ip + '/sdk/cmd.json', auth=(username, password), json=cmd,
+                                     timeout=2)
+            # response = conn.getresponse()
+            code = response.status_code
+            body_js = response.json()
+            # conn.close()
             if code != 200:
                 raise exceptions.ValidationError('While trying to send the command to the module, '
                                                  'it returned code ' + str(code) + ' with body:\n'
-                                                 + body.decode())
+                                                 + response.content.decode())
 
-            body_js = json.loads(body.decode())
+            # body_js = json.loads(body.decode())
             if body_js['response']['e'] != 0:
-                raise exceptions.ValidationError('Error. Controller returned body:\n' + str(body))
+                raise exceptions.ValidationError('Error. Controller returned body:\n' + str(response.content.decode()))
         except socket.timeout:
             raise exceptions.ValidationError('Could not connect to the module. '
                                              "Check if it is turned on or if it's on a different ip.")
@@ -477,7 +538,8 @@ class HrRfidCardDoorRel(models.Model):
         for door, ts in potential_doors:
             if door_id == door:
                 if ts_id is not None and ts_id != ts:
-                    raise exceptions.ValidationError('This should never happen. Please contact the developers. 95328359')
+                    raise exceptions.ValidationError(
+                        'This should never happen. Please contact the developers. 95328359')
                 ts_id = ts
                 found_door = True
                 break
