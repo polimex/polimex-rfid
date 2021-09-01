@@ -233,7 +233,7 @@ class WebRfidController(http.Controller):
                 self._report_sys_ev('', controller)
             elif not card:
                 self._report_sys_ev(_('Could not find the card'), controller)
-            return self._check_for_unsent_cmd(200)
+            # return self._check_for_unsent_cmd(200)
 
         if event_action in [34, 35]:  # SOT events
             # 34: "Zone Alarm",
