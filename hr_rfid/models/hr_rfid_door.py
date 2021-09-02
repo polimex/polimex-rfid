@@ -204,7 +204,7 @@ class HrRfidDoor(models.Model):
         self.ensure_one()
         return self.open_close_door(0, 3)
 
-    def open_close_door(self, out: int, time: int, custom_out):
+    def open_close_door(self, out: int, time: int, custom_out = None):
         self.ensure_one()
 
         if self.controller_id.webstack_id.behind_nat is True:
