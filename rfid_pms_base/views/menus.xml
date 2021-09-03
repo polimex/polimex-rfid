@@ -17,9 +17,16 @@
                   sequence="2"
                   action="rfid_pms_base.action_window_partner"
         />
+        <menuitem id="hr_rfid_menu_user_events"
+                  name="User Events"
+                  parent="rfid_pms_base.menu_root"
+                  action="hr_rfid.hr_rfid_event_user_action"
+                  sequence="3"/>
+<!--                          groups="hr_rfid_group_officer"-->
+
         <menuitem name="Settings" id="rfid_pms_base.menu_settings" parent="rfid_pms_base.menu_root"
                   groups="rfid_pms_base.group_card_manager"
-                  sequence="3"
+                  sequence="10"
         />
         <!-- actions -->
         <menuitem name="Employees" id="rfid_pms_base.employee_list_menu" parent="rfid_pms_base.menu_settings"

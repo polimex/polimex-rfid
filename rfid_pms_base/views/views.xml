@@ -17,24 +17,24 @@
             </field>
         </record>
 
-        <!-- Inherit Form View to Modify it -->
-        <record id="view_employee_form_inherit_sch" model="ir.ui.view">
-            <field name="name">hr.view_employee_form_inherit</field>
-            <field name="model">hr.employee</field>
-            <field name="inherit_id" ref="hr.view_employee_form"/>
-            <field name="arch" type="xml">
+<!--        &lt;!&ndash; Inherit Form View to Modify it &ndash;&gt;-->
+<!--        <record id="view_employee_form_inherit_sch" model="ir.ui.view">-->
+<!--            <field name="name">hr.view_employee_form_inherit</field>-->
+<!--            <field name="model">hr.employee</field>-->
+<!--            <field name="inherit_id" ref="hr.view_employee_form"/>-->
+<!--            <field name="arch" type="xml">-->
 
-                <xpath expr="//div[@name='button_box']" position="inside">
-                    <button name="%(cards_program_wiz_action)d" id="cards_program_wiz_action_btn"
-                            type="action" class="oe_stat_button" icon="fa-plus-square" string="Encode Card"
-                            groups="rfid_pms_base.group_card_manager"
-                            attrs="{'invisible': [('id','=', False)]}"
-                            help="Encode stuff card" context="{'stuff': True}">
-                    </button>
-                </xpath>
+<!--                <xpath expr="//div[@name='button_box']" position="inside">-->
+<!--                    <button name="%(cards_program_wiz_action)d" id="cards_program_wiz_action_btn"-->
+<!--                            type="action" class="oe_stat_button" icon="fa-plus-square" string="Encode Card"-->
+<!--                            groups="rfid_pms_base.group_card_manager"-->
+<!--                            attrs="{'invisible': [('id','=', False)]}"-->
+<!--                            help="Encode stuff card" context="{'stuff': True}">-->
+<!--                    </button>-->
+<!--                </xpath>-->
 
-            </field>
-        </record>
+<!--            </field>-->
+<!--        </record>-->
 
         <!-- actions opening views on models -->
         <record model="ir.actions.act_window" id="rfid_pms_base.action_window_hr">

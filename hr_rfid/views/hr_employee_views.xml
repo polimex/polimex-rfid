@@ -72,9 +72,9 @@
                         <notebook>
                             <page string="Cards">
                                 <field name="hr_rfid_card_ids"
-                                       context="{'employee_id': id}"
+                                       context="{'default_employee_id': id}"
                                        edit="0">
-                                    <tree string="Cards belonging to user">
+                                    <tree string="Cards belonging to user" context="{'default_employee_id': id}">
                                         <field name="number"/>
                                         <field name="card_type"/>
                                     </tree>

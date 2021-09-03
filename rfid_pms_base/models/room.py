@@ -5,6 +5,7 @@ from odoo.exceptions import ValidationError
 class SchEncoderRoom(models.Model):
     _name = 'rfid_pms_base.room'
     _description = 'Rooms'
+    _order = 'number'
 
     name = fields.Char(required=True)
     number = fields.Integer(string='Internal number', required=True)

@@ -4,7 +4,7 @@
     <!--Group for encoder user -->
     <record id="group_card_user" model="res.groups">
         <field name="name">Card Management / User</field>
-        <field eval="[(4, ref('base.group_user'))]" name="implied_ids"/>
+        <field eval="[(4, ref('base.group_user')),(4, ref('hr_rfid.hr_rfid_group_officer')),(4, ref('hr.group_hr_user'))]" name="implied_ids"/>
     </record>
 
     <!--Group for encoder manager -->

@@ -46,7 +46,9 @@ class RfidPmsBaseCardEncodeWiz(models.TransientModel):
     employee_id = fields.Many2one(comodel_name='hr.employee', default=_get_employee_id)
     reservation = fields.Char(default=_get_reservation_seq)
     checkin_date = fields.Datetime(
-        string="Check In", default=lambda s: datetime.combine(date.today(), time(hour=11)))
+        string="Check In", default=lambda s: fields.Datetime.now())
+    # checkin_date = fields.Datetime(
+    #     string="Check In", default=lambda s: datetime.combine(date.today(), time(hour=11)))
     checkout_date = fields.Datetime(
         string="Check Out", default=lambda s: datetime.combine(date.today() + timedelta(days=1), time(hour=9)))
     mode = fields.Selection(selection=[

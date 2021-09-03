@@ -49,14 +49,14 @@ class HrRfidCard(models.Model):
     employee_id = fields.Many2one(
         'hr.employee',
         string='Card Owner (Employee)',
-        default=_get_cur_employee_id,
+        # default=_get_cur_employee_id,
         tracking=True,
     )
 
     contact_id = fields.Many2one(
         'res.partner',
         string='Card Owner (Partner)',
-        default=_get_cur_contact_id,
+        # default=_get_cur_contact_id,
         tracking=True,
         domain=[('is_company', '=', False)],
     )
@@ -119,6 +119,16 @@ class HrRfidCard(models.Model):
         ('card_uniq', 'unique (number, company_id)', _("Card number already exists!")),
     ]
 
+    @api.model
+    def default_get(self, fields):
+        res = super(HrRfidCard, self).default_get(fields)
+        if not 'employee_id' in res.keys() and self.env.context.get('employee_id', None):
+            res['employee_id'] = self.env.context.get('employee_id', None)
+        if not 'contact_id' in res.keys() and self.env.context.get('contact_id', None):
+            res['contact_id'] = self.env.context.get('contact_id', None)
+        return res
+
+
     def get_owner(self, event_dict: dict = None):
         self.ensure_one()
         if not event_dict:
@@ -159,10 +169,6 @@ class HrRfidCard(models.Model):
     def _compute_pin_code(self):
         for card in self:
             card.pin_code = card.get_owner().hr_rfid_pin_code
-
-    # def toggle_card_active(self):
-    #     self.ensure_one()
-    #     self.active = not self.active
 
     @api.constrains('employee_id', 'contact_id')
     def _check_user(self):

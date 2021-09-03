@@ -63,13 +63,14 @@
                     <field name="number"/>
                     <templates>
                         <t t-name="kanban-box">
-                            <div class="oe_kanban_global_area o_kanban_attachment oe_kanban_global_click">
-                                <div class="oe_inline text-center row">
+<!--                            <div class="oe_kanban_global_area o_kanban_attachment oe_kanban_global_click">-->
+                            <div class="oe_kanban_global_click">
+                                <div class="oe_inline text-center row o_kanban_record_title">
                                     <field name="last_occupancy" invisible="1"/>
                                     <field name="hb_dnd" invisible="1"/>
                                     <field name="hb_clean" invisible="1"/>
                                     <field name="hb_card_present" invisible="1"/>
-                                    <div class="col-4 text-left">
+                                    <div class="col-3 text-left">
                                         <img alt="Guests present" src="/rfid_pms_base/static/icons/guests.png"
                                              style="padding: 0px; margin: 1px; height: 24px;"
                                              attrs="{'invisible': [('hb_card_present', '=', False)]}"
@@ -89,12 +90,27 @@
                                         <!--                                    </span>-->
                                     </div>
 
-                                    <div class="col-4 text-center">
+                                    <div class=" text-center">
                                         <i class="fa fa-home" role="img" aria-label="Enterprise" title="Enterprise"></i>
                                         <strong><field name="name"/> (<span><field name="number"/></span>)</strong>
                                     </div>
 
-                                    <div class="col-4 text-right">
+                                </div>
+                                <hr class="mt4 mb4"/>
+
+                                <div class="row ">
+                                    <div class="col-4 text-left">
+                                        <button type="action"
+                                                name="%(cards_program_wiz_action)d"
+                                                t-attf-data-context="{'new':True}"
+                                                icon="fa-add-remove"
+                                                class="btn btn-primary "
+                                                title="Add new Reservation and issue a Guest card"
+                                        >
+                                            <span>New</span>
+                                        </button>
+                                    </div>
+                                    <div class="col-4 text-center">
 
                                         <a name="toggle_hotel" type="object"
                                            t-attf-data-context="{'btn':'dnd'}">
@@ -120,33 +136,16 @@
                                                  title="Clean Off"/>
                                         </a>
                                     </div>
-                                </div>
-                                <hr class="mt4 mb4"/>
-                                <!--                                <div class="row">-->
-                                <!--                                    <div t-if="record.number.value" class="col-6 text-center">-->
-                                <!--                                        <strong>Number:</strong>-->
-                                <!--                                    </div>-->
-                                <!--                                    <div t-if="record.number.value" class="col-6 text-center">-->
-                                <!--                                        <field name="number"/>-->
-                                <!--                                    </div>-->
-                                <!--                                </div>-->
-                                <div class="row">
-                                    <div class="col-6 text-left">
-                                        <button type="action"
-                                                name="%(cards_program_wiz_action)d"
-                                                t-attf-data-context="{'new':True}"
-                                                icon="fa-add-remove"
-                                                class="btn btn-primary " >
-                                            <span>New Reservation Card</span>
-                                        </button>
-                                    </div>
-                                    <div class="col-6 text-right" t-if="record.reservation.value">
+
+                                    <div class="col-4 text-right" t-if="record.reservation.value">
                                         <button type="action"
                                                 name="%(cards_program_wiz_action)d"
                                                 t-attf-data-context="{'current':True}"
                                                 icon="fa-address-card"
-                                                class="btn btn-secondary" >
-                                            <span>Additional Card</span>
+                                                class="btn btn-secondary"
+                                                title="Add more cards to current reservation"
+                                        >
+                                            <span>Add</span>
                                         </button>
                                     </div>
                                 </div>
@@ -155,12 +154,12 @@
                                     <div class="col-6 text-left">
                                         <button type="object"
                                                 name="user_events_act"
-                                                class="btn " >
+                                                class="btn btn-secondary" >
                                             <span>Events</span>
                                         </button>
                                     </div>
                                     <div t-if="record.reservation.value" class="col-6 text-right">
-                                        <strong><field name="reservation" class="btn"/> </strong>
+                                        <strong><field name="reservation" /> </strong>
                                     </div>
                                     <!--                                    <div t-if="record.number.value" class="col-6 text-center">-->
                                     <!--                                        <field name="number"/>-->
