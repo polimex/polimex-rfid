@@ -187,6 +187,10 @@ class HrRfidCommands(models.Model):
         for record in self:
             record.name = str(record.cmd) + ' ' + find_desc(record.cmd)
 
+    @api.autovacuum
+    def _gc_clean_old_commands(self):
+        self.env['hr.rfid.command'].search([('create_date','<',fields.Datetime.now() - timedelta(days=7))]).unlink()
+
     @api.model
     def read_controller_information_cmd(self, controller):
         return self.with_user(SUPERUSER_ID).create([{
