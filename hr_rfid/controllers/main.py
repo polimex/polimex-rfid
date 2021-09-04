@@ -66,7 +66,7 @@ class WebRfidController(http.Controller):
         command = commands_env.search([
             ('webstack_id', '=', self._webstack.id),
             ('status', '=', 'Wait'),
-        ])
+        ], order='id desc')
 
         if len(command) == 0:
             return {'status': status_code}
