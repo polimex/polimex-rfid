@@ -36,7 +36,7 @@
     <record id="hr_rfid_view_rfid_data" model="res.groups">
       <field name="name">View data in users</field>
       <field name="category_id" ref="module_rfid_settings" />
-      <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_group_manager'))]" />
+<!--      <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_group_manager'))]" />-->
       <field name="users" eval="[
             (4, ref('base.user_root')),
             (4, ref('base.user_admin'))

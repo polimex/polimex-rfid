@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from odoo import fields, models, api, exceptions, _
+from odoo import fields, models, api, exceptions, _, SUPERUSER_ID
 
 
 class HrRfidCommands(models.Model):
@@ -189,7 +189,7 @@ class HrRfidCommands(models.Model):
 
     @api.model
     def read_controller_information_cmd(self, controller):
-        return self.create([{
+        return self.with_user(SUPERUSER_ID).create([{
             'webstack_id': controller.webstack_id.id,
             'controller_id': controller.id,
             'cmd': 'F0',
@@ -273,7 +273,7 @@ class HrRfidCommands(models.Model):
     @api.model
     def add_remove_card(self, card_number, ctrl_id, pin_code, ts_code, rights_data, rights_mask):
         ctrl = self.env['hr.rfid.ctrl'].browse(ctrl_id)
-        commands_env = self.env['hr.rfid.command']
+        commands_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
 
         old_cmd = commands_env.search([
             ('cmd', '=', 'D1'),

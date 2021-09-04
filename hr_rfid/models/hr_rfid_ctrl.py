@@ -1,4 +1,4 @@
-from odoo import fields, models, api, exceptions, _
+from odoo import fields, models, api, exceptions, _, SUPERUSER_ID
 from odoo.addons.hr_rfid.controllers.polimex import HW_TYPES
 
 
@@ -302,7 +302,7 @@ class HrRfidController(models.Model):
         return io_table
 
     def button_reload_cards(self):
-        cmd_env = self.env['hr.rfid.command'].with_user(1)
+        cmd_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
 
         cmd_env.create({
             'webstack_id': self.webstack_id.id,
@@ -322,7 +322,7 @@ class HrRfidController(models.Model):
             self.env['hr.rfid.card.door.rel'].reload_door_rels(door)
 
     def change_io_table(self, new_io_table):
-        cmd_env = self.env['hr.rfid.command'].sudo()
+        cmd_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
         cmd_data = '00' + new_io_table
 
         for ctrl in self:
@@ -368,7 +368,7 @@ class HrRfidController(models.Model):
 
     def write(self, vals):
         # TODO Check if mode is being changed, change io table if so
-        cmd_env = self.env['hr.rfid.command'].sudo()
+        cmd_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
         for ctrl in self:
             old_ext_db = ctrl.external_db
             super(HrRfidController, ctrl).write(vals)
@@ -623,7 +623,7 @@ class HrRfidReader(models.Model):
 
             if old_mode != new_mode:
                 ctrl = reader.controller_id
-                cmd_env = self.env['hr.rfid.command'].sudo()
+                cmd_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
 
                 data = ''
                 for r in ctrl.reader_ids:

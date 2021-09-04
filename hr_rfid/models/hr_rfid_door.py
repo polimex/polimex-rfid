@@ -3,7 +3,7 @@ import socket
 
 import requests
 
-from odoo import fields, models, api, _, exceptions
+from odoo import fields, models, api, _, exceptions, SUPERUSER_ID
 import http.client
 import json
 
@@ -654,12 +654,12 @@ class HrRfidCardDoorRel(models.Model):
         for vals in vals_list:
             rel = super(HrRfidCardDoorRel, self).create([vals])
             records += rel
-            rel._create_add_card_command()
+            rel.with_user(SUPERUSER_ID)._create_add_card_command()
 
         return records
 
     def write(self, vals):
-        for rel in self:
+        for rel in self.with_user(SUPERUSER_ID):
             old_door = rel.door_id
             old_card = rel.card_id
             old_ts_id = rel.time_schedule_id
@@ -679,6 +679,6 @@ class HrRfidCardDoorRel(models.Model):
     def unlink(self, create_cmd=True):
         if create_cmd:
             for rel in self:
-                rel._create_remove_card_command()
+                rel.with_user(SUPERUSER_ID)._create_remove_card_command()
 
         return super(HrRfidCardDoorRel, self).unlink()

@@ -1,4 +1,4 @@
-from odoo import api, exceptions
+from odoo import api, exceptions, SUPERUSER_ID
 from odoo.tests import common
 from .common import create_webstacks, create_acc_grs_cnt, create_employees, create_contacts, create_card, \
     create_departments, card_door_rels_search, get_ws_doors
@@ -528,7 +528,7 @@ class CardDoorRelTests(common.SavepointCase):
         card = self._cards[0]
         door = self._doors[0]
 
-        cmd_env = self.env['hr.rfid.command'].sudo()
+        cmd_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
         cmd_env.search([]).unlink()
 
         rel = self.find_card_door_rel(card, door)
@@ -552,7 +552,7 @@ class CardDoorRelTests(common.SavepointCase):
         door = self._doors[0]
         new_number = '1000000001'
 
-        cmd_env = self.env['hr.rfid.command'].sudo()
+        cmd_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
         cmd_env.search([]).unlink()
 
         rel = self.find_card_door_rel(card, door)
@@ -593,7 +593,7 @@ class CardDoorRelTests(common.SavepointCase):
         card = self._cards[0]
         door = self._doors[0]
 
-        cmd_env = self.env['hr.rfid.command'].sudo()
+        cmd_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
         cmd_env.search([]).unlink()
 
         rel = self.find_card_door_rel(card, door)
@@ -619,7 +619,7 @@ class CardDoorRelTests(common.SavepointCase):
         rel_env = self._env
         self.get_all_rels().unlink()
 
-        cmd_env = self.env['hr.rfid.command'].sudo()
+        cmd_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
         cmd_env.search([]).unlink()
 
         rel = rel_env.create([{
@@ -650,7 +650,7 @@ class CardDoorRelTests(common.SavepointCase):
         door1 = self._doors[0]
         door2 = self._doors[1]
 
-        cmd_env = self.env['hr.rfid.command'].sudo()
+        cmd_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
         cmd_env.search([]).unlink()
 
         rel = self.find_card_door_rel(card, door1)
@@ -675,7 +675,7 @@ class CardDoorRelTests(common.SavepointCase):
         card2 = self._cards[1]
         door = self._doors[0]
 
-        cmd_env = self.env['hr.rfid.command'].sudo()
+        cmd_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
         cmd_env.search([]).unlink()
 
         rel = self.find_card_door_rel(card1, door)
@@ -714,7 +714,7 @@ class CardDoorRelTests(common.SavepointCase):
         door = self._doors[0]
         new_ts = self._other_ts
 
-        cmd_env = self.env['hr.rfid.command'].sudo()
+        cmd_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
         cmd_env.search([]).unlink()
 
         rel = self.find_card_door_rel(card, door)
@@ -741,7 +741,7 @@ class CardDoorRelTests(common.SavepointCase):
         rel = self.find_card_door_rel(card, door)
         self.assertTrue(rel.exists())
 
-        cmd_env = self.env['hr.rfid.command'].sudo()
+        cmd_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
         cmd_env.search([]).unlink()
 
         rel.unlink()
