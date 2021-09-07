@@ -189,7 +189,7 @@ class HrRfidCommands(models.Model):
 
     @api.autovacuum
     def _gc_clean_old_commands(self):
-        self.env['hr.rfid.command'].search([('create_date','<',fields.Datetime.now() - timedelta(days=7))]).unlink()
+        self.env['hr.rfid.command'].search([('create_date','<',fields.Datetime.now() - timedelta(days=14))]).unlink()
 
     @api.model
     def read_controller_information_cmd(self, controller):

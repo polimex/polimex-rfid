@@ -42,18 +42,30 @@ class RfidPmsBaseCardEncodeWiz(models.TransientModel):
         if self.env.context.get('new', False):
             return self.env['ir.sequence'].next_by_code('base.pms.reservation')
 
+    def _default_checkin(self):
+        mode = self._compute_mode()
+        if mode == 'new':
+            return fields.Datetime.now()
+        elif mode == 'current':
+            return self.room_id.all_contact_ids[0].contact_id.hr_rfid_card_ids[0].activate_on
+
+    def _default_checkout(self):
+        mode = self._compute_mode()
+        if mode == 'new':
+            return datetime.combine(fields.Date.today() + timedelta(days=1), time(hour=9))
+        elif mode == 'current':
+            return self.room_id.all_contact_ids[0].contact_id.hr_rfid_card_ids[0].deactivate_on
+
     room_id = fields.Many2one(comodel_name='rfid_pms_base.room', default=_get_room_id)
     employee_id = fields.Many2one(comodel_name='hr.employee', default=_get_employee_id)
     reservation = fields.Char(default=_get_reservation_seq)
     checkin_date = fields.Datetime(
         string="Check In",
-        compute='_compute_checkin_out_dates',
-        readonly=False
+        default=_default_checkin,
     )
     checkout_date = fields.Datetime(
         string="Check Out",
-        compute='_compute_checkin_out_dates',
-        readonly=False
+        default=_default_checkout,
     )
     mode = fields.Selection(selection=[
         ('read', 'Read only'),
@@ -63,16 +75,6 @@ class RfidPmsBaseCardEncodeWiz(models.TransientModel):
     ], default=_compute_mode)
 
     card_number = fields.Char(string='The card number', size=10, required=True)
-
-    @api.depends('room_id')
-    def _compute_checkin_out_dates(self):
-        for s in self:
-            if s.mode == 'new':
-                s.checkin_date = fields.Datetime.now()
-                s.checkout_date =  datetime.combine(fields.Date.today() + timedelta(days=1), time(hour=9))
-            elif s.mode == 'current':
-                s.checkin_date = s.room_id.all_contact_ids[0].contact_id.hr_rfid_card_ids[0].activate_on
-                s.checkout_date = s.room_id.all_contact_ids[0].contact_id.hr_rfid_card_ids[0].deactivate_on
 
     def read_card(self):
         if not self.encoder_id:
