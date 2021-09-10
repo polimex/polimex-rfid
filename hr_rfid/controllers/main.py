@@ -679,7 +679,7 @@ class WebRfidController(http.Controller):
             try:
                 sys_ev['timestamp'] = self._get_ws_time_str()
             except BadTimeException:
-                sys_ev['timestamp'] = str(fields.datetime.now())
+                sys_ev['timestamp'] = str(fields.Datetime.now())
             sys_ev['event_action'] = str(self._post['event']['event_n'])
         else:
             sys_ev['timestamp'] = datetime.datetime.now()
@@ -922,3 +922,4 @@ class WebRfidController(http.Controller):
             ret.unlink()
 
         return json.loads(ret_data)
+

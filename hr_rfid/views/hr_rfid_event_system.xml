@@ -97,7 +97,7 @@
             <field name="name">hr.rfid.sys.ev.tree</field>
             <field name="model">hr.rfid.event.system</field>
             <field name="arch" type="xml">
-                <tree create="false" delete="false">
+                <tree create="false" >
                     <field name="webstack_id"/>
                     <field name="controller_id"/>
                     <field name="occurrences"/>
