@@ -803,6 +803,7 @@ class WebRfidController(http.Controller):
 
     @http.route(['/hr/rfid/event'], type='json', auth='none', method=['POST'], csrf=False)
     def post_event(self, **post):
+        # request.session.should_save = False
         t0 = time.time()
         if not post:
             # Controllers with no odoo functionality use the dd/mm/yyyy format

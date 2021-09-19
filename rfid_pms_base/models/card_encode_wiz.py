@@ -47,14 +47,20 @@ class RfidPmsBaseCardEncodeWiz(models.TransientModel):
         if mode == 'new':
             return fields.Datetime.now()
         elif mode == 'current':
-            return self._get_room_id().all_contact_ids[0].contact_id.hr_rfid_card_ids[0].activate_on
+            if self._get_room_id().all_contact_ids[0].contact_id.hr_rfid_card_ids:
+                return self._get_room_id().all_contact_ids[0].contact_id.hr_rfid_card_ids[0].activate_on
+            else:
+                return fields.Datetime.now()
 
     def _default_checkout(self):
         mode = self._compute_mode()
         if mode == 'new':
             return datetime.combine(fields.Date.today() + timedelta(days=1), time(hour=9))
         elif mode == 'current':
-            return self._get_room_id().all_contact_ids[0].contact_id.hr_rfid_card_ids[0].deactivate_on
+            if self._get_room_id().all_contact_ids[0].contact_id.hr_rfid_card_ids:
+                return self._get_room_id().all_contact_ids[0].contact_id.hr_rfid_card_ids[0].deactivate_on
+            else:
+                return datetime.combine(fields.Date.today() + timedelta(days=1), time(hour=9))
 
     room_id = fields.Many2one(comodel_name='rfid_pms_base.room', default=_get_room_id)
     employee_id = fields.Many2one(comodel_name='hr.employee', default=_get_employee_id)
@@ -172,6 +178,7 @@ class RfidPmsBaseCardEncodeWiz(models.TransientModel):
                 parent = self.env['res.partner'].create({"name": self._get_reservation_seq()})
         else:
             parent = self.env['res.partner'].create({"name": self.reservation})
+            count = 0
             if self.room_id.all_contact_ids:
                 self.room_id.all_contact_ids.contact_id.hr_rfid_card_ids.unlink()
                 self.room_id.all_contact_ids.contact_id.hr_rfid_access_group_ids.unlink()
