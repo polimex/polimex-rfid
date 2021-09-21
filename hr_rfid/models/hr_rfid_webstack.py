@@ -288,32 +288,33 @@ class HrRfidWebstack(models.Model):
                                              ' Information:\n' + str(e))
 
     def action_check_if_ws_available(self):
-        host = str(self.last_ip)
-        try:
-            conn = http.client.HTTPConnection(host, 80, timeout=2)
-            conn.request('GET', '/config.json')
-            response = conn.getresponse()
-            code = response.getcode()
-            body = response.read()
-            conn.close()
-            if code != 200:
-                raise exceptions.ValidationError('Webstack sent us http code {}'
-                                                 ' when 200 was expected.'.format(code))
+        for ws in self:
+            host = str(ws.last_ip)
+            try:
+                conn = http.client.HTTPConnection(host, 80, timeout=2)
+                conn.request('GET', '/config.json')
+                response = conn.getresponse()
+                code = response.getcode()
+                body = response.read()
+                conn.close()
+                if code != 200:
+                    raise exceptions.ValidationError('Webstack sent us http code {}'
+                                                     ' when 200 was expected.'.format(code))
 
-            js = json.loads(body.decode())
-            module = {
-                'version': js['sdk']['sdkVersion'],
-                'hw_version': js['sdk']['sdkHardware'],
-                'serial': js['convertor'],
-                'available': 'a',
-            }
-            self.write(module)
-        except socket.timeout:
-            raise exceptions.ValidationError('Could not connect to the webstack')
-        except(socket.error, socket.gaierror, socket.herror) as e:
-            raise exceptions.ValidationError('Unexpected error:\n' + str(e))
-        except KeyError as __:
-            raise exceptions.ValidationError('Information returned by the webstack invalid')
+                js = json.loads(body.decode())
+                module = {
+                    'version': js['sdk']['sdkVersion'],
+                    'hw_version': js['sdk']['sdkHardware'],
+                    'serial': js['convertor'],
+                    'available': 'a',
+                }
+                ws.write(module)
+            except socket.timeout:
+                raise exceptions.ValidationError('Could not connect to the webstack')
+            except(socket.error, socket.gaierror, socket.herror) as e:
+                raise exceptions.ValidationError('Unexpected error:\n' + str(e))
+            except KeyError as __:
+                raise exceptions.ValidationError('Information returned by the webstack invalid')
 
     @api.depends('tz')
     def _compute_tz_offset(self):
@@ -366,7 +367,7 @@ class HrRfidWebstackDiscovery(models.TransientModel):
         column1='wiz',
         column2='ws',
         string='Found modules',
-        readonly=True,
+        # readonly=True,
         help='Modules that were just found during the discovery process',
     )
 
@@ -399,6 +400,7 @@ class HrRfidWebstackDiscovery(models.TransientModel):
 
         added_sn = list()
         ws_env = self.env['hr.rfid.webstack']
+        found_webstacks = []
         for rec in ws_env.search([('|'), ('active', '=', True), ('active', '=', False)]):
             added_sn.append(rec.serial)
         while True:
@@ -409,7 +411,7 @@ class HrRfidWebstackDiscovery(models.TransientModel):
                 data = list(map(str.strip, data))
                 if (len(data) == 0) or (len(data) > 100) or (data[4] in added_sn):
                     continue
-                print(data[4])
+                # print(data[4])
                 # if data[4] in added_sn:
                 #     continue
                 # if len(ws_env.search([('serial', '=', data[4])])) > 0:
@@ -428,7 +430,8 @@ class HrRfidWebstackDiscovery(models.TransientModel):
                 module = env.create(module)
                 added_sn.append(data[4])
                 self.found_webstacks += module
-                module.action_check_if_ws_available()
+                # found_webstacks += [module.id]
+                # module.action_check_if_ws_available()
 
                 # try:
                 #     module.action_check_if_ws_available()
@@ -438,6 +441,9 @@ class HrRfidWebstackDiscovery(models.TransientModel):
                 break
 
         udp_sock.close()
+        # self.write({"found_webstacks": [(4, module.id)]})
+        # self.write({"found_webstacks": [(6, 0, found_webstacks)]})
+        self.found_webstacks.action_check_if_ws_available()
         self.write({'state': 'post_discovery'})
         return return_wiz_form_view(self._name, self.id)
 
