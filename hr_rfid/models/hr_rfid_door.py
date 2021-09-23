@@ -222,7 +222,7 @@ class HrRfidDoor(models.Model):
             'cmd': 'DB',
         }
         if not ctrl.is_relay_ctrl():
-            cmd_dict['cmd_data'] = '%02d%02d%02d' % (self.number, out, time),
+            cmd_dict['cmd_data'] = '%02d%02d%02d' % (self.number, out, time)
         else:
             if out == 0:
                 return create_and_ret_d_box(self.env, _('Cannot close a relay door.'),
