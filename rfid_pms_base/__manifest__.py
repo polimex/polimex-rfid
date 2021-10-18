@@ -27,6 +27,7 @@
         'security/pms_base_security.xml',
         'security/ir.model.access.csv',
         'views/wiz_card_from_room.xml',
+        'views/wiz_room_move.xml',
         'views/room.xml',
         'views/views.xml',
         'views/menus.xml',

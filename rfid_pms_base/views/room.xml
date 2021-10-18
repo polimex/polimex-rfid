@@ -162,9 +162,17 @@
                                         <strong><field name="reservation" /> </strong>
                                     </div>
                                 </div>
-                                <div class="row" attrs="{'invisible': [('hb_card_present', '=', False)]}">
-                                    <div class="col-12 text-center">
+                                <div class="row" >
+                                    <div class="col-9 text-left" attrs="{'invisible': [('hb_card_present', '=', False)]}">
                                         <field name="last_insert_name" title="Current inserted card"/>
+                                    </div>
+                                    <div class="col-3 text-right" t-if="record.reservation.value">
+                                        <button type="action"
+                                                name="%(rfid_pms_base.room_move_wiz_action)d"
+                                                class="btn btn-secondary"
+                                                icon="fa-arrow-right">
+                                            <span>Move</span>
+                                        </button>
                                     </div>
                                 </div>
                             </div>

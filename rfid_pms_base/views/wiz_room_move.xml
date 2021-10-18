@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="room_move_wiz_action" model="ir.actions.act_window">
+            <field name="name">Move customers</field>
+            <field name="res_model">rfid_pms_base.room_move_wiz</field>
+            <field name="view_mode">form</field>
+<!--            <field name="binding_model_id" ref="rfid_pms_base.room"/>-->
+<!--            <field name="binding_view_types">form</field>-->
+            <field name="target">new</field>
+        </record>
+
+        <record id="room_move_wiz_view_form" model="ir.ui.view">
+            <field name="name">room_move_wiz_view_form</field>
+            <field name="model">rfid_pms_base.room_move_wiz</field>
+            <field name="arch" type="xml">
+                <form string="room_move_wiz_form">
+                    <sheet>
+                        <group string="Moving customers from one room to another">
+                            <field name="room_from_id" readonly="1" options="{'no_create_edit': True, 'no_open': True}"/>
+                            <field name="room_to_id" options="{'no_create_edit': True}"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="move_customers" string="Move"
+                                help="Move customers to another room"
+                                type="object"
+                                class="oe_highlight" icon="fa-bolt"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>
