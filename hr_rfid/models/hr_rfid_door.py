@@ -34,7 +34,7 @@ class HrRfidDoor(models.Model):
     )
 
     card_type = fields.Many2one(
-        'hr.rfid.card.type',
+        comodel_name='hr.rfid.card.type',
         string='Card type',
         help='Only cards of this type this door will open to',
         default=lambda self: self.env.ref('hr_rfid.hr_rfid_card_type_def').id,
@@ -49,7 +49,7 @@ class HrRfidDoor(models.Model):
     )
 
     controller_id = fields.Many2one(
-        'hr.rfid.ctrl',
+        comodel_name='hr.rfid.ctrl',
         string='Controller',
         help='Controller that manages the door',
         required=True,
@@ -58,24 +58,24 @@ class HrRfidDoor(models.Model):
     )
 
     access_group_ids = fields.One2many(
-        'hr.rfid.access.group.door.rel',
-        'door_id',
+        comodel_name='hr.rfid.access.group.door.rel',
+        inverse_name='door_id',
         string='Door Access Groups',
         help='The access groups this door is a part of',
     )
 
     user_event_ids = fields.One2many(
-        'hr.rfid.event.user',
-        'door_id',
+        comodel_name='hr.rfid.event.user',
+        inverse_name='door_id',
         string='Events',
         help='Events concerning this door',
     )
 
     reader_ids = fields.Many2many(
-        'hr.rfid.reader',
-        'hr_rfid_reader_door_rel',
-        'door_id',
-        'reader_id',
+        comodel_name='hr.rfid.reader',
+        relation='hr_rfid_reader_door_rel',
+        column1='door_id',
+        column2='reader_id',
         string='Readers',
         help='Readers that open this door',
     )
@@ -407,7 +407,7 @@ class HrRfidDoor(models.Model):
         res_model = self.env.context.get('res_model') or self._name
         if res_model == 'hr.rfid.access.group':
             name = _('Access groups with {}').format(self.name)
-            domain = [('door_ids', 'in', self.id)]
+            domain = [('door_ids.door_id', '=', self.id)]
         elif res_model == 'hr.rfid.event.user':
             name = _('User Events on {}').format(self.name)
             domain = [('door_id', 'in', [self.id])]
