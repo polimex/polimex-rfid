@@ -17,9 +17,9 @@ class SchEncoderRoom(models.Model):
                               required=True
                               )
     access_group_id = fields.Many2one('hr.rfid.access.group',
-                              string='Guest Group',
-                              required=True
-                              )
+                                      string='Guest Group',
+                                      required=True
+                                      )
     all_employee_ids = fields.Many2many(
         'hr.rfid.access.group.employee.rel',
         string='All employees',
@@ -56,6 +56,18 @@ class SchEncoderRoom(models.Model):
     last_temperature = fields.Float(string='Temperature', compute='_compute_temperature')
     last_humidity = fields.Float(string='Humidity', compute='_compute_temperature')
     last_occupancy = fields.Char(string='Occupancy', compute='_compute_temperature')
+    last_insert_name = fields.Char(string='Guest Group', compute='_compute_last_insert_name')
+
+    def _compute_last_insert_name(self):
+        for r in self:
+            last_event_id = self.env['hr.rfid.event.user'].search([
+                ('door_id', '=', r.door_id),
+                ('event_action', '=', '7')
+            ], limit=1)
+            r.last_insert_name = last_event_id.employee_id and last_event_id.employee_id.name or \
+                                 last_event_id.contact_id and last_event_id.contact_id.name
+            if not r.last_insert_name:
+                r.last_insert_name = 'Unknown'
 
     @api.depends('all_contact_ids')
     def _compute_reservation(self):
@@ -76,7 +88,6 @@ class SchEncoderRoom(models.Model):
         elif button == 'guests':
             pass
 
-
     # @api.depends('bms_log_ids')
     def _compute_temperature(self):
         for r in self:
@@ -84,7 +95,6 @@ class SchEncoderRoom(models.Model):
             r.last_occupancy = 1
             r.last_temperature = 21.5
             continue
-
 
             last_log = r.bms_log_ids.search([
                 ('room_id', '=', r.id),
@@ -110,7 +120,3 @@ class SchEncoderRoom(models.Model):
     _sql_constraints = [
         ('unique_room_number', 'unique(number)', _("Duplicate room number.")),
     ]
-
-    
-
-

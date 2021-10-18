@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <!--Inherited Card view for search only-->
+        <record id="pms_base_card_action" model="ir.actions.act_window">
+            <field name="name">Cards</field>
+            <field name="res_model">hr.rfid.card</field>
+            <field name="view_mode">tree,search</field>
+            <field name="context">{"search_default_showall": 1}</field>
+        </record>
+
+
 
         <!-- Top menu item -->
         <menuitem
@@ -17,11 +26,16 @@
                   sequence="2"
                   action="rfid_pms_base.action_window_partner"
         />
+        <menuitem name="Cards" id="rfid_pms_base.menu_cards" parent="rfid_pms_base.menu_root"
+                  sequence="3"
+                  groups="rfid_pms_base.group_card_manager"
+                  action="rfid_pms_base.pms_base_card_action"
+        />
         <menuitem id="hr_rfid_menu_user_events"
                   name="User Events"
                   parent="rfid_pms_base.menu_root"
                   action="hr_rfid.hr_rfid_event_user_action"
-                  sequence="3"/>
+                  sequence="4"/>
 <!--                          groups="hr_rfid_group_officer"-->
 
         <menuitem name="Settings" id="rfid_pms_base.menu_settings" parent="rfid_pms_base.menu_root"

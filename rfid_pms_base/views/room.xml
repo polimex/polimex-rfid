@@ -74,7 +74,7 @@
                                         <img alt="Guests present" src="/rfid_pms_base/static/icons/guests.png"
                                              style="padding: 0px; margin: 1px; height: 24px;"
                                              attrs="{'invisible': [('hb_card_present', '=', False)]}"
-                                             title="Guests present"/>
+                                             t-att-title="last_insert_name"/>
                                         <img alt="Guests present" src="/rfid_pms_base/static/icons/guests_off.png"
                                              style="padding: 0px; margin: 1px; height: 24px;"
                                              attrs="{'invisible': [('hb_card_present', '!=', False)]}"
@@ -177,8 +177,7 @@
             <field name="model">rfid_pms_base.room</field>
             <field name="arch" type="xml">
                 <search string="Rooms">
-                    <field name="hb_dnd" filter_domain="[('hb_dnd','=',True)]"
-                           string="Do not disturb"/>
+                    <field name="name" string="Room Name" filter_domain="['|', ('name', 'ilike', self), ('number', 'ilike', self)]"/>
                 </search>
             </field>
         </record>
