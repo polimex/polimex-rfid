@@ -56,18 +56,19 @@ class SchEncoderRoom(models.Model):
     last_temperature = fields.Float(string='Temperature', compute='_compute_temperature')
     last_humidity = fields.Float(string='Humidity', compute='_compute_temperature')
     last_occupancy = fields.Char(string='Occupancy', compute='_compute_temperature')
-    last_insert_name = fields.Char(string='Guest Group', compute='_compute_last_insert_name')
+    last_insert_name = fields.Char(string='Last Insert Card', compute='_compute_last_insert_name')
 
+    @api.depends('hb_card_present')
     def _compute_last_insert_name(self):
         for r in self:
             last_event_id = self.env['hr.rfid.event.user'].search([
-                ('door_id', '=', r.door_id),
+                ('door_id', '=', r.door_id.id),
                 ('event_action', '=', '7')
             ], limit=1)
             r.last_insert_name = last_event_id.employee_id and last_event_id.employee_id.name or \
-                                 last_event_id.contact_id and last_event_id.contact_id.name
-            if not r.last_insert_name:
-                r.last_insert_name = 'Unknown'
+                                 last_event_id.contact_id and last_event_id.contact_id.name or 'Unknown'
+            # if not r.last_insert_name:
+            #     r.last_insert_name = 'Unknown'
 
     @api.depends('all_contact_ids')
     def _compute_reservation(self):

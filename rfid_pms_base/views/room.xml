@@ -74,7 +74,7 @@
                                         <img alt="Guests present" src="/rfid_pms_base/static/icons/guests.png"
                                              style="padding: 0px; margin: 1px; height: 24px;"
                                              attrs="{'invisible': [('hb_card_present', '=', False)]}"
-                                             t-att-title="last_insert_name"/>
+                                             title="Guests present"/>
                                         <img alt="Guests present" src="/rfid_pms_base/static/icons/guests_off.png"
                                              style="padding: 0px; margin: 1px; height: 24px;"
                                              attrs="{'invisible': [('hb_card_present', '!=', False)]}"
@@ -161,9 +161,11 @@
                                     <div t-if="record.reservation.value" class="col-6 text-right">
                                         <strong><field name="reservation" /> </strong>
                                     </div>
-                                    <!--                                    <div t-if="record.number.value" class="col-6 text-center">-->
-                                    <!--                                        <field name="number"/>-->
-                                    <!--                                    </div>-->
+                                </div>
+                                <div class="row" attrs="{'invisible': [('hb_card_present', '=', False)]}">
+                                    <div class="col-12 text-center">
+                                        <field name="last_insert_name" title="Current inserted card"/>
+                                    </div>
                                 </div>
                             </div>
                         </t>
