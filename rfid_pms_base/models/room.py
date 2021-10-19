@@ -8,6 +8,7 @@ class SchEncoderRoom(models.Model):
     _order = 'number'
 
     name = fields.Char(required=True)
+    group = fields.Char(default='Ungrouped')
     number = fields.Integer(string='Internal number', required=True)
     company_id = fields.Many2one('res.company',
                                  string='Company',

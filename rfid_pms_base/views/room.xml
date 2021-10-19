@@ -15,9 +15,14 @@
                             </h1>
                         </div>
                         <group>
-                            <field name="number"/>
-                            <field name="door_id"/>
-                            <field name="access_group_id"/>
+                            <group>
+                                <field name="number"/>
+                                <field name="door_id"/>
+                            </group>
+                            <group>
+                                <field name="access_group_id"/>
+                                <field name="group"/>
+                            </group>
                         </group>
                         <group>
                             <field name="all_contact_ids">
@@ -58,12 +63,15 @@
             <field name="name">rfid_pms_base_room_view_kanban</field>
             <field name="model">rfid_pms_base.room</field>
             <field name="arch" type="xml">
-                <kanban>
+                <kanban default_group_by="group"
+                        records_draggable="false"
+                        group_create="true"
+                        quick_create="false">
                     <field name="name"/>
                     <field name="number"/>
                     <templates>
                         <t t-name="kanban-box">
-<!--                            <div class="oe_kanban_global_area o_kanban_attachment oe_kanban_global_click">-->
+                            <!--                            <div class="oe_kanban_global_area o_kanban_attachment oe_kanban_global_click">-->
                             <div class="oe_kanban_global_click">
                                 <div class="oe_inline text-center row o_kanban_record_title">
                                     <field name="last_occupancy" invisible="1"/>
@@ -92,7 +100,14 @@
 
                                     <div class=" text-center">
                                         <i class="fa fa-home" role="img" aria-label="Enterprise" title="Enterprise"></i>
-                                        <strong><field name="name"/> (<span><field name="number"/></span>)</strong>
+                                        <strong>
+                                            <field name="name"/>
+                                            (
+                                            <span>
+                                                <field name="number"/>
+                                            </span>
+                                            )
+                                        </strong>
                                     </div>
 
                                 </div>
@@ -149,21 +164,23 @@
                                         </button>
                                     </div>
                                 </div>
-<!--                                <hr class="mt4 mb4"/>-->
+                                <!--                                <hr class="mt4 mb4"/>-->
                                 <div class="row">
                                     <div class="col-6 text-left">
                                         <button type="object"
                                                 name="user_events_act"
-                                                class="btn btn-secondary" >
+                                                class="btn btn-secondary">
                                             <span>Events</span>
                                         </button>
                                     </div>
                                     <div t-if="record.reservation.value" class="col-6 text-right">
-                                        <strong><field name="reservation" /> </strong>
+                                        <strong>
+                                            <field name="reservation"/>
+                                        </strong>
                                     </div>
                                 </div>
-                                <div class="row" >
-                                    <div class="col-9 text-left" >
+                                <div class="row">
+                                    <div class="col-9 text-left">
                                         <field name="last_insert_name"
                                                attrs="{'invisible': [('hb_card_present', '=', False)]}"
                                                title="Current inserted card"/>
@@ -189,7 +206,8 @@
             <field name="model">rfid_pms_base.room</field>
             <field name="arch" type="xml">
                 <search string="Rooms">
-                    <field name="name" string="Room Name" filter_domain="['|', ('name', 'ilike', self), ('number', 'ilike', self)]"/>
+                    <field name="name" string="Room Name"
+                           filter_domain="['|', ('name', 'ilike', self), ('number', 'ilike', self)]"/>
                 </search>
             </field>
         </record>
