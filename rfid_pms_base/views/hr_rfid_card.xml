@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="hr_rfid_card_view_tree_base_pms_inherit" model="ir.ui.view">
+            <field name="name">hr_rfid_card_view_tree_base_pms_inherit</field>
+            <field name="model">hr.rfid.card</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_card_view_tree"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='card_type']" position="replace">
+                    <field name="door_ids" widget="many2many_tags"/>
+                </xpath>
+
+            </field>
+        </record>
+
+         <!--Inherited Card view for search only-->
+        <record id="pms_base_card_action" model="ir.actions.act_window">
+            <field name="name">Cards</field>
+            <field name="res_model">hr.rfid.card</field>
+            <field name="view_mode">tree,search</field>
+            <field name="context">{"search_default_showall": 1}</field>
+        </record>
+
+
+    </data>
+</odoo>

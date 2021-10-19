@@ -28,6 +28,7 @@
         'security/ir.model.access.csv',
         'views/wiz_card_from_room.xml',
         'views/wiz_room_move.xml',
+        'views/hr_rfid_card.xml',
         'views/room.xml',
         'views/views.xml',
         'views/menus.xml',

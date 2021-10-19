@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!--Inherited Card view for search only-->
-        <record id="pms_base_card_action" model="ir.actions.act_window">
-            <field name="name">Cards</field>
-            <field name="res_model">hr.rfid.card</field>
-            <field name="view_mode">tree,search</field>
-            <field name="context">{"search_default_showall": 1}</field>
-        </record>
-
 
 
         <!-- Top menu item -->
