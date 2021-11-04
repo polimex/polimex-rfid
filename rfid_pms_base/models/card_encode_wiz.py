@@ -11,12 +11,14 @@ _logger = logging.getLogger(__name__)
 
 class RfidPmsBaseCardEncodeMsgWiz(models.TransientModel):
     _name = 'rfid_pms_base.message_wiz'
+    _description = 'Message Wizard'
 
     message = fields.Html()
 
 
 class RfidPmsBaseCardEncodeWiz(models.TransientModel):
     _name = 'rfid_pms_base.card_encode_wiz'
+    _description = 'Base PMS Card encoding Wizard'
 
     def _compute_mode(self):
         if self.env.context.get('current', False):

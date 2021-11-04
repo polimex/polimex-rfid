@@ -662,6 +662,7 @@ class WebRfidController(http.Controller):
             cmd_env.delete_all_events_cmd(controller)
         cmd_env.read_readers_mode_cmd(controller)
         cmd_env.read_io_table_cmd(controller)
+        cmd_env.read_io_table_cmd(controller)
 
         if not controller.is_relay_ctrl() and (ctrl_mode == 1 or ctrl_mode == 3):
             cmd_env.read_anti_pass_back_mode_cmd(controller)
@@ -801,7 +802,7 @@ class WebRfidController(http.Controller):
         command.request = json.dumps(json_cmd)
         return json_cmd
 
-    @http.route(['/hr/rfid/event'], type='json', auth='none', method=['POST'], cors='*', csrf=False, save_session=False)
+    @http.route(['/hr/rfid/event'], type='json', auth='none', methods=['POST'], cors='*', csrf=False, save_session=False)
     def post_event(self, **post):
         # request.session.should_save = False
         t0 = time.time()

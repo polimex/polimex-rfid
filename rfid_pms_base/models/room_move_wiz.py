@@ -16,7 +16,7 @@ class RoomMoveWiz(models.TransientModel):
         return res
 
     room_from_id = fields.Many2one(comodel_name='rfid_pms_base.room', default=_get_room_id)
-    room_to_id = fields.Many2one(comodel_name='rfid_pms_base.room', domain=_get_free_room_id, requred=True)
+    room_to_id = fields.Many2one(comodel_name='rfid_pms_base.room', domain=_get_free_room_id, required=True)
 
     def move_customers(self):
         self.room_from_id.all_contact_ids.access_group_id = self.room_to_id.access_group_id

@@ -431,6 +431,81 @@ class HrRfidDoor(models.Model):
             #     </p>'''),
         }
 
+    # Door commands
+    def add_card(self, ts_id, pin_code, card_id):
+        for door in self:
+            time_schedule = self.env['hr.rfid.time.schedule'].browse(ts_id)
+            card = self.env['hr.rfid.card'].browse(card_id)
+            card_number = card.number
+
+            if door.controller_id.is_relay_ctrl():
+                return door.controller_id._add_card_to_relay(door.id, card_id)
+
+            for reader in door.reader_ids:
+                ts_code = [0, 0, 0, 0]
+                ts_code[reader.number - 1] = time_schedule.number
+                ts_code = '%02X%02X%02X%02X' % (ts_code[0], ts_code[1], ts_code[2], ts_code[3])
+                door.controller_id.add_remove_card(card_number, pin_code, ts_code,
+                                     1 << (reader.number - 1), 1 << (reader.number - 1))
+
+    def _add_card_to_relay(self, card_id):
+        for door in self:
+            card = self.env['hr.rfid.card'].browse(card_id)
+            ctrl = door.controller_id
+
+            if ctrl.mode == 1:
+                rdata = 1 << (door.number - 1)
+                rmask = rdata
+            elif ctrl.mode == 2:
+                rdata = 1 << (door.number - 1)
+                if door.reader_ids.number == 2:
+                    rdata *= 0x10000
+                rmask = rdata
+            elif ctrl.mode == 3:
+                rdata = door.number
+                rmask = -1
+            else:
+                raise exceptions.ValidationError(_('Controller %s has mode=%d, which is not supported!')
+                                                 % (ctrl.name, ctrl.mode))
+            ctrl._add_remove_card_relay(card.number, rdata, rmask)
+
+    def remove_card(self, pin_code, card_number=None, card_id=None):
+        for door in self:
+            if card_id is not None:
+                card = self.env['hr.rfid.card'].browse(card_id)
+                card_number = card.number
+
+            if door.controller_id.is_relay_ctrl():
+                return door._remove_card_from_relay(card_number)
+
+            for reader in door.reader_ids:
+                door.controller_id.add_remove_card(card_number, pin_code, '00000000',
+                                     0, 1 << (reader.number - 1))
+
+    def _remove_card_from_relay(self, card_number):
+        for door in self:
+            if door.controller_id.mode == 1:
+                rmask = 1 << (door.number - 1)
+            elif door.controller_id.mode == 2:
+                rmask = 1 << (door.number - 1)
+                if door.reader_ids.number == 2:
+                    rmask *= 0x10000
+            elif door.controller_id.mode == 3:
+                rmask = -1
+            else:
+                raise exceptions.ValidationError(_('Controller %s has mode=%d, which is not supported!')
+                                                 % (door.controller_id.name, door.controller_id.mode))
+
+            door.controller_id._add_remove_card_relay(card_number, 0, rmask)
+
+    def change_apb_flag(self, card, can_exit=True):
+        for door in self:
+            if door.number == 1:
+                rights = 0x40  # Bit 7
+            else:
+                rights = 0x20  # Bit 6
+            door.controller_id.add_remove_card(card.number, card.get_owner().hr_rfid_pin_code,
+                                 '00000000', rights if can_exit else 0, rights)
 
 class HrRfidDoorOpenCloseWiz(models.TransientModel):
     _name = 'hr.rfid.door.open.close.wiz'

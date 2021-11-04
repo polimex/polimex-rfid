@@ -10,74 +10,74 @@ class HrRfidCommands(models.Model):
     _order = 'cr_timestamp desc'
 
     commands = [
-        ('F0', 'Read System Information'),
-        ('F1', 'Read/Search Card And Info'),
-        ('F2', 'Read Group of Cards'),
-        ('F3', 'Read Time Schedules'),
-        ('F4', 'Read Holiday List'),
-        ('F5', 'Read Controller Mode'),
-        ('F6', 'Read Readers Mode'),
-        ('F7', 'Read System Clock'),
-        ('F8', 'Read Duress Mode'),
-        ('F9', 'Read Input/Output Table'),
-        ('FB', 'Read Inputs Flags'),
-        ('FC', 'Read Anti-Passback Mode'),
-        ('FD', 'Read Fire & Security Status'),
-        ('FE', 'Read FireTime, Sound_Time'),
-        ('FF', 'Read Output T/S Table'),
-        ('D0', 'Write Controller ID'),
-        ('D1', 'Add/Delete Card'),
-        ('D2', 'Delete Card'),
-        ('D3', 'Write Time Schedules'),
-        ('D4', 'Write Holiday List'),
-        ('D5', 'Write Controller Mode'),
-        ('D6', 'Write Readers Mode'),
-        ('D7', 'Write Controller System Clock'),
-        ('D8', 'Write Duress Mode'),
-        ('D9', 'Write Input/Output Table'),
-        ('DA', 'Delete Last Event'),
-        ('DB', 'Open Output'),
-        ('DB2', 'Sending Balance To Vending Machine'),
-        ('DC', 'System Initialization'),
-        ('DD', 'Write Input Flags'),
-        ('DE', 'Write Anti-Passback Mode'),
-        ('DF', 'Write Outputs T/S Table'),
-        ('D3', 'Delete Time Schedule'),
-        ('B3', 'Read Controller Status'),
-        ('B4', 'Read/Write Hotel buttons sense'),
+        ('F0', _('Read System Information')),
+        ('F1', _('Read/Search Card And Info')),
+        ('F2', _('Read Group of Cards')),
+        ('F3', _('Read Time Schedules')),
+        ('F4', _('Read Holiday List')),
+        ('F5', _('Read Controller Mode')),
+        ('F6', _('Read Readers Mode')),
+        ('F7', _('Read System Clock')),
+        ('F8', _('Read Duress Mode')),
+        ('F9', _('Read Input/Output Table')),
+        ('FB', _('Read Inputs Flags')),
+        ('FC', _('Read Anti-Passback Mode')),
+        ('FD', _('Read Fire & Security Status')),
+        ('FE', _('Read FireTime, Sound_Time')),
+        ('FF', _('Read Output T/S Table')),
+        ('D0', _('Write Controller ID')),
+        ('D1', _('Add/Delete Card')),
+        ('D2', _('Delete Card')),
+        ('D3', _('Write Time Schedules')),
+        ('D4', _('Write Holiday List')),
+        ('D5', _('Write Controller Mode')),
+        ('D6', _('Write Readers Mode')),
+        ('D7', _('Write Controller System Clock')),
+        ('D8', _('Write Duress Mode')),
+        ('D9', _('Write Input/Output Table')),
+        ('DA', _('Delete Last Event')),
+        ('DB', _('Open Output')),
+        ('DB2', _('Sending Balance To Vending Machine')),
+        ('DC', _('System Initialization')),
+        ('DD', _('Write Input Flags')),
+        ('DE', _('Write Anti-Passback Mode')),
+        ('DF', _('Write Outputs T/S Table')),
+        ('D3', _('Delete Time Schedule')),
+        ('B3', _('Read Controller Status')),
+        ('B4', _('Read/Write Hotel buttons sense')),
     ]
 
     statuses = [
-        ('Wait', 'Command Waiting for Webstack Communication'),
-        ('Process', 'Command Processing'),
-        ('Success', 'Command Execution Successful'),
-        ('Failure', 'Command Execution Unsuccessful'),
+        ('Wait', _('Command Waiting for Webstack Communication')),
+        ('Process', _('Command Processing')),
+        ('Success', _('Command Execution Successful')),
+        ('Failure', _('Command Execution Unsuccessful')),
     ]
 
     errors = [
-        ('-1', 'Unknown Error'),
-        ('0', 'No Error'),
-        ('1', 'I2C Error'),
-        ('2', 'I2C Error'),
-        ('3', 'RS485 Error'),
-        ('4', 'Wrong Value/Parameter'),
-        ('5', 'CRC Error'),
-        ('6', 'Memory Error'),
-        ('7', 'Cards Overflow'),
-        ('8', 'Not Use'),
-        ('9', 'Card Not Found'),
-        ('10', 'No Cards'),
-        ('11', 'Not Use'),
-        ('12', 'Controller Busy, Local Menu Active or Master Card Mode in Use'),
-        ('13', '1-Wire Error'),
-        ('14', 'Unknown Command'),
-        ('20', 'No Response from controller (WebSDK)'),
-        ('21', 'Bad JSON Structure (WebSDK)'),
-        ('22', 'Bad CRC from Controller (WebSDK)'),
-        ('23', 'Bridge is Currently in Use (WebSDK)'),
-        ('24', 'Internal Error, Try Again (WebSDK)'),
-        ('30', 'No response from the Module'),
-        ('31', 'Incorrect Data Response'),
+        ('-1', _('Unknown Error')),
+        ('0', _('No Error')),
+        ('1', _('I2C Error')),
+        ('2', _('I2C Error')),
+        ('3', _('RS485 Error')),
+        ('4', _('Wrong Value/Parameter')),
+        ('5', _('CRC Error')),
+        ('6', _('Memory Error')),
+        ('7', _('Cards Overflow')),
+        ('8', _('Not Use')),
+        ('9', _('Card Not Found')),
+        ('10', _('No Cards')),
+        ('11', _('Not Use')),
+        ('12', _('Controller Busy, Local Menu Active or Master Card Mode in Use')),
+        ('13', _('1-Wire Error')),
+        ('14', _('Unknown Command')),
+        ('20', _('No Response from controller (WebSDK)')),
+        ('21', _('Bad JSON Structure (WebSDK)')),
+        ('22', _('Bad CRC from Controller (WebSDK)')),
+        ('23', _('Bridge is Currently in Use (WebSDK)')),
+        ('24', _('Internal Error, Try Again (WebSDK)')),
+        ('30', _('No response from the Module')),
+        ('31', _('Incorrect Data Response')),
     ]
 
     error_codes = list(map(lambda a: a[0], errors))
@@ -462,16 +462,16 @@ class HrRfidCommands(models.Model):
     @api.model
     def _sync_clocks(self):
         ws_env = self.env['hr.rfid.webstack']
-        commands_env = self.env['hr.rfid.command']
+        # commands_env = self.env['hr.rfid.command']
 
-        controllers = ws_env.search([('active', '=', True)]).mapped('controllers')
+        controllers = ws_env.search([('active', '=', True)]).mapped('controllers').synchronize_clock_cmd()
 
-        for ctrl in controllers:
-            commands_env.create([{
-                'webstack_id': ctrl.webstack_id.id,
-                'controller_id': ctrl.id,
-                'cmd': 'D7',
-            }])
+        # for ctrl in controllers:
+        #     commands_env.create([{
+        #         'webstack_id': ctrl.webstack_id.id,
+        #         'controller_id': ctrl.id,
+        #         'cmd': 'D7',
+        #     }])
 
     @api.model
     def _read_statuses(self):
