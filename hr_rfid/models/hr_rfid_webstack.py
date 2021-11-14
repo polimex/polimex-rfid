@@ -356,6 +356,16 @@ class HrRfidWebstack(models.Model):
                         'cmd': 'D7',
                     }])
 
+    # Commands to all controllers in webstack
+    def _sync_clocks(self):
+        for ws in self:
+            ws.controllers.synchronize_clock_cmd()
+
+    @api.model
+    def sync_all_clocks(self):
+        for ws in self.env['hr.rfid.webstack'].search([('active', '=', True)]):
+            ws.controllers.synchronize_clock_cmd()
+
 
 class HrRfidWebstackDiscovery(models.TransientModel):
     _name = 'hr.rfid.webstack.discovery'

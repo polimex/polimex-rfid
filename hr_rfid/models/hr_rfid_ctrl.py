@@ -105,20 +105,19 @@ class HrRfidController(models.Model):
 
     hotel_readers = fields.Integer(
         string='Hotel readers',
-        help= 'Hotel readers connected to controller',
-        default = 0
+        help='Hotel readers connected to controller',
+        default=0
     )
     hotel_readers_card_presence = fields.Integer(
         string='Hotel readers card presence',
-        help= 'Card inserted in Hotel readers connected to controller',
-        default = 0
+        help='Card inserted in Hotel readers connected to controller',
+        default=0
     )
     hotel_readers_buttons_pressed = fields.Integer(
         string='Hotel readers buttons pressed',
-        help= 'Pressed button on Hotel readers connected to controller',
-        default = 0
+        help='Pressed button on Hotel readers connected to controller',
+        default=0
     )
-
 
     # Warning, don't change this field manually unless you know how to create a
     # command to change the io table for the controller or are looking to avoid exactly that.
@@ -199,6 +198,7 @@ class HrRfidController(models.Model):
     system_event_count = fields.Char(string='System Events count', compute='_compute_counts')
     readers_count = fields.Char(string='Readers count', compute='_compute_counts')
     doors_count = fields.Char(string='Doors count', compute='_compute_counts')
+
     # user_events_count = fields.Char(string='User events count', compute='_compute_counts')
 
     def _compute_counts(self):
@@ -225,7 +225,7 @@ class HrRfidController(models.Model):
             domain = [('controller_id', '=', self.id)]
         model = 'hr_rfid'
         if xml_id:
-            res = self.env['ir.actions.act_window']._for_xml_id(model+'.'+xml_id)
+            res = self.env['ir.actions.act_window']._for_xml_id(model + '.' + xml_id)
             res.update(
                 context=dict(self.env.context, default_controller_id=self.id, group_by=False),
                 domain=domain
@@ -386,6 +386,198 @@ class HrRfidController(models.Model):
                 else:
                     cmd_dict['cmd_data'] = '%02X' % ctrl.mode
                 cmd_env.create(cmd_dict)
+
+    # Commands to controllers
+
+    def read_controller_information_cmd(self):
+        commands = []
+        for controller in self:
+            commands.append(self.env['hr.rfid.command'].with_user(SUPERUSER_ID).create([{
+                'webstack_id': controller.webstack_id.id,
+                'controller_id': controller.id,
+                'cmd': 'F0',
+            }])
+            )
+        return commands
+
+    def synchronize_clock_cmd(self):
+        commands = []
+        for controller in self:
+            commands.append(
+                self.env['hr.rfid.command'].with_user(SUPERUSER_ID).create([{
+                    'webstack_id': controller.webstack_id.id,
+                    'controller_id': controller.id,
+                    'cmd': 'D7',
+                }])
+            )
+        return commands
+
+    def delete_all_cards_cmd(self):
+        commands = []
+        for controller in self:
+            commands.append(self.env['hr.rfid.command'].with_user(SUPERUSER_ID).create([{
+                'webstack_id': controller.webstack_id.id,
+                'controller_id': controller.id,
+                'cmd': 'DC',
+                'cmd_data': '0303',
+            }])
+            )
+        return commands
+
+    def delete_all_events_cmd(self):
+        commands = []
+        for controller in self:
+            commands.append(self.env['hr.rfid.command'].with_user(SUPERUSER_ID).create([{
+                'webstack_id': controller.webstack_id.id,
+                'controller_id': controller.id,
+                'cmd': 'DC',
+                'cmd_data': '0404',
+            }])
+            )
+        return commands
+
+    def read_io_table_cmd(self):
+        commands = []
+        for controller in self:
+            commands.append(self.env['hr.rfid.command'].with_user(SUPERUSER_ID).create([{
+                'webstack_id': controller.webstack_id.id,
+                'controller_id': controller.id,
+                'cmd': 'F9',
+                'cmd_data': '00',
+            }])
+            )
+        return commands
+
+    def read_readers_mode_cmd(self):
+        commands = []
+        for controller in self:
+            commands.append(self.env['hr.rfid.command'].with_user(SUPERUSER_ID).create([{
+                'webstack_id': controller.webstack_id.id,
+                'controller_id': controller.id,
+                'cmd': 'F6',
+            }])
+            )
+        return commands
+
+    def read_anti_pass_back_mode_cmd(self):
+        commands = []
+        for controller in self:
+            commands.append(self.env['hr.rfid.command'].with_user(SUPERUSER_ID).create([{
+                'webstack_id': controller.webstack_id.id,
+                'controller_id': controller.id,
+                'cmd': 'FC',
+            }])
+            )
+        return commands
+
+    def create_d1_cmd(self, card_num, pin_code, ts_code, rights_data, rights_mask):
+        commands = []
+        for controller in self:
+            commands.append(
+                self.env['hr.rfid.command'].with_user(SUPERUSER_ID).create([{
+                    'webstack_id': controller.webstack_id.id,
+                    'controller_id': controller.id,
+                    'cmd': 'D1',
+                    'card_number': card_num,
+                    'pin_code': pin_code,
+                    'ts_code': ts_code,
+                    'rights_data': rights_data,
+                    'rights_mask': rights_mask,
+                }])
+            )
+        return commands
+
+    def _create_d1_cmd_relay(self, card_num, rights_data, rights_mask):
+        commands = []
+        for controller in self:
+            commands.append(
+                self.env['hr.rfid.command'].with_user(SUPERUSER_ID).create([{
+                    'webstack_id': controller.webstack_id.id,
+                    'controller_id': controller.id,
+                    'cmd': 'D1',
+                    'card_number': card_num,
+                    'rights_data': rights_data,
+                    'rights_mask': rights_mask,
+                }])
+            )
+        return commands
+
+    def add_remove_card(self, card_number, pin_code, ts_code, rights_data, rights_mask):
+        commands = []
+        commands_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
+        for controller in self:
+            old_cmd = commands_env.search([
+                ('cmd', '=', 'D1'),
+                ('status', '=', 'Wait'),
+                ('card_number', '=', card_number),
+                ('controller_id', '=', controller.id),
+            ], limit=1)
+
+            if not old_cmd:
+                if rights_mask != 0:
+                    commands += controller.create_d1_cmd(card_number, pin_code, ts_code, rights_data, rights_mask)
+            else:
+                new_ts_code = ''
+                if str(ts_code) != '':
+                    for i in range(4):
+                        num_old = int(old_cmd.ts_code[i * 2:i * 2 + 2], 16)
+                        num_new = int(ts_code[i * 2:i * 2 + 2], 16)
+                        if num_new == 0:
+                            num_new = num_old
+                        new_ts_code += '%02X' % num_new
+                else:
+                    new_ts_code = old_cmd.ts_code
+                write_dict = {
+                    'pin_code': pin_code,
+                    'ts_code': new_ts_code,
+                }
+
+                new_rights_data = (rights_data | old_cmd.rights_data)
+                new_rights_data ^= (rights_mask & old_cmd.rights_data)
+                new_rights_data ^= (rights_data & old_cmd.rights_mask)
+                new_rights_mask = rights_mask | old_cmd.rights_mask
+                new_rights_mask ^= (rights_mask & old_cmd.rights_data)
+                new_rights_mask ^= (rights_data & old_cmd.rights_mask)
+
+                write_dict['rights_mask'] = new_rights_mask
+                write_dict['rights_data'] = new_rights_data
+
+                if new_rights_mask == 0:
+                    old_cmd.unlink()
+                else:
+                    old_cmd.write(write_dict)
+        return commands
+
+    def _add_remove_card_relay(self, card_number, rights_data, rights_mask):
+        commands = []
+        commands_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
+        for controller in self:
+            old_cmd = commands_env.search([
+                ('cmd', '=', 'D1'),
+                ('status', '=', 'Wait'),
+                ('card_number', '=', card_number),
+                ('controller_id', '=', controller.id),
+            ])
+
+            if not old_cmd:
+                commands += self._create_d1_cmd_relay(card_number, rights_data, rights_mask)
+            else:
+                if controller.mode == 3:
+                    new_rights_data = rights_data
+                    new_rights_mask = rights_mask
+                else:
+                    new_rights_data = (rights_data | old_cmd.rights_data)
+                    new_rights_data ^= (rights_mask & old_cmd.rights_data)
+                    new_rights_data ^= (rights_data & old_cmd.rights_mask)
+                    new_rights_mask = rights_mask | old_cmd.rights_mask
+                    new_rights_mask ^= (rights_mask & old_cmd.rights_data)
+                    new_rights_mask ^= (rights_data & old_cmd.rights_mask)
+                # TODO Check if result is usless and delete command as previos function
+                old_cmd.write({
+                    'rights_mask': new_rights_mask,
+                    'rights_data': new_rights_data,
+                })
+        return commands
 
 
 class HrRfidCtrlIoTableRow(models.TransientModel):
@@ -662,6 +854,7 @@ class HrRfidReader(models.Model):
             #     </p>'''),
         }
 
+
 class HrRfidTimeSchedule(models.Model):
     _name = 'hr.rfid.time.schedule'
     _inherit = ['mail.thread']
@@ -689,4 +882,3 @@ class HrRfidTimeSchedule(models.Model):
 
     def unlink(self):
         raise exceptions.ValidationError(_('Cannot delete time schedules!'))
-
