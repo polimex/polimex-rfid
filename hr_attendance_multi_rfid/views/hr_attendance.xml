@@ -39,9 +39,13 @@
                     <filter name="today" string="Attendance for today"
                             domain="[('check_in', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('check_in', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]"/>
                 </xpath>
+                <xpath expr="//group" position="inside">
+                    <filter string="Departments" name="department" context="{'group_by': 'department_id'}"/>
+                </xpath>
                 <xpath expr="//group" position="after">
                     <searchpanel>
                         <field name="in_zone_id" icon="fa-info-circle" color="#875A7B"/>
+                        <field name="department_id" icon="fa-info-circle" color="#875A7B"/>
                     </searchpanel>
                 </xpath>
             </field>

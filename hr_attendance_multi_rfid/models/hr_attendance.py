@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 class HrAttendance(models.Model):
     _inherit = 'hr.attendance'
 
+    department_id = fields.Many2one(store=True)
+
     check_in = fields.Datetime(
         index=True,
     )
@@ -17,7 +19,6 @@ class HrAttendance(models.Model):
         compute='_compute_checkin_zone',
         store=True
     )
-
 
     @api.depends('check_in','check_out')
     def _compute_checkin_zone(self):
