@@ -12,7 +12,7 @@
         <record id="hr_rfid_card_type_action" model="ir.actions.act_window">
             <field name="name">Card Types</field>
             <field name="res_model">hr.rfid.card.type</field>
-            <field name="view_mode">tree,form,search</field>
+            <field name="view_mode">tree,form</field>
         </record>
 
         <record id="hr_rfid_card_view_form" model="ir.ui.view">
@@ -43,6 +43,8 @@
                             <h1>
                                 <field name="number" placeholder="Up to 10 digits card number"/>
                             </h1>
+                            <label for="card_reference"/>
+                            <field name="card_reference" placeholder="Badge №37"/>
                         </div>
                         <group>
                             <group string="Owner">
@@ -76,7 +78,7 @@
             <field name="model">hr.rfid.card</field>
             <field name="arch" type="xml">
                 <tree string="RFID Card">
-                    <field name="number"/>
+                    <field name="name"/>
                     <field name="employee_id" widget="many2one_avatar_employee" />
                     <field name="contact_id" widget="many2one_avatar" optional="show"/>
                     <field name="card_type"/>
@@ -94,13 +96,10 @@
             <field name="arch" type="xml">
                 <search string="RFID Card">
                     <field name="number"/>
+                    <field name="card_reference"/>
                     <field name="card_type"/>
-                    <field name="employee_id">
-                        <field name="name"/>
-                    </field>
-                    <field name="contact_id">
-                        <field name="name"/>
-                    </field>
+                    <field name="employee_id" operator="child_of"/>
+                    <field name="contact_id" operator="child_of"/>
                     <filter string="Show all" name="filter_showall" context="{'active_test': False}"/>
                     <filter name="filter_archived" string="Archived" domain="[('active', '=', False)]"/>
                     <separator/>

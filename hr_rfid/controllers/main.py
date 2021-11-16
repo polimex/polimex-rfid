@@ -262,7 +262,7 @@ class WebRfidController(http.Controller):
         # Relay controller
         if controller.is_relay_ctrl() and event_action == 1 and controller.mode == 3:
             dt = self._post['event']['dt']
-            print('dt=' + self._post['event']['dt'])
+            # print('dt=' + self._post['event']['dt'])
             if len(dt) == 24:
                 chunks = [dt[0:6], dt[6:12], dt[12:18], dt[18:24]]
                 print('Chunks=' + str(chunks))
@@ -662,7 +662,8 @@ class WebRfidController(http.Controller):
             cmd_env.delete_all_events_cmd(controller)
         cmd_env.read_readers_mode_cmd(controller)
         cmd_env.read_io_table_cmd(controller)
-        cmd_env.read_io_table_cmd(controller)
+        # TODO read B3 too
+        # cmd_env.read_io_table_cmd(controller)
 
         if not controller.is_relay_ctrl() and (ctrl_mode == 1 or ctrl_mode == 3):
             cmd_env.read_anti_pass_back_mode_cmd(controller)

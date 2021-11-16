@@ -34,6 +34,14 @@ class HrRfidCard(models.Model):
         index=True,
         tracking=True,
     )
+
+    card_reference = fields.Char(
+        string='Card reference',
+        help='Card reference provide human recognizable label or any other text. It can be used for Badge Printed ID, or other identification',
+        index=True,
+
+    )
+
     company_id = fields.Many2one('res.company',
                                  string='Company',
                                  default=lambda self: self.env.company)
@@ -128,6 +136,23 @@ class HrRfidCard(models.Model):
             res['contact_id'] = self.env.context.get('contact_id', None)
         return res
 
+    # @api.model
+    # def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
+    #     """
+    #         We override the _search because it is the method that checks the access rights
+    #         This is correct to override the _search. That way we enforce the fact that calling
+    #         search on an hr.employee returns a hr.employee recordset, even if you don't have access
+    #         to this model, as the result of _search (the ids of the public employees) is to be
+    #         browsed on the hr.employee model. This can be trusted as the ids of the public
+    #         employees exactly match the ids of the related hr.employee.
+    #     """
+    #     if self.check_access_rights('read', raise_exception=False):
+    #         return super(HrEmployeePrivate, self)._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)
+    #     ids = self.env['hr.employee.public']._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)
+    #     if not count and isinstance(ids, Query):
+    #         # the result is expected from this table, so we should link tables
+    #         ids = super(HrEmployeePrivate, self.sudo())._search([('id', 'in', ids)])
+    #     return ids
 
     def get_owner(self, event_dict: dict = None):
         self.ensure_one()
@@ -211,7 +236,7 @@ class HrRfidCard(models.Model):
 
     def _compute_card_name(self):
         for record in self:
-            record.name = record.number
+            record.name = record.card_reference or record.number
 
     @api.depends('door_rel_ids')
     def _compute_door_ids(self):

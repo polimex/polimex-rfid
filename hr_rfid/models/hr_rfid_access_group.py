@@ -158,13 +158,18 @@ class HrRfidAccessGroup(models.Model):
             for rel in acc_gr.all_door_ids:
                 ctrl = rel.door_id.controller_id
                 if ctrl.is_relay_ctrl():
-                    if ctrl in relay_doors and ctrl.mode == 3:
+                    if ctrl in relay_doors and relay_doors.get(ctrl, False) and rel.door_id.card_type in relay_doors[ctrl].mapped(
+                            'card_type') and ctrl.mode == 3:
                         raise exceptions.ValidationError(
                             _(
-                                'Doors "%s" and "%s" both belong to a controller that cannot give access to multiple doors in the same time.')
-                            % (relay_doors[ctrl].name, rel.door_id.name)
+                                'Doors "%s" and "%s" both belong to a controller that cannot give access to multiple doors with same card type in a group.')
+                            % (','.join(relay_doors[ctrl].mapped('name')), rel.door_id.name)
                         )
-                    relay_doors[ctrl] = rel.door_id
+                    if not relay_doors.get(ctrl, False):
+                        relay_doors[ctrl] = self.env['hr.rfid.door'].browse([rel.door_id.id])
+                    else:
+                        relay_doors[ctrl] = self.env['hr.rfid.door'].browse(
+                            relay_doors[ctrl].mapped('id') + [rel.door_id.id])
 
                 door_id_list.append(rel.door_id.id)
 

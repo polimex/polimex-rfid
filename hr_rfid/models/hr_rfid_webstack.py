@@ -144,7 +144,7 @@ class HrRfidWebstack(models.Model):
         default='u',
     )
 
-    last_update = fields.Boolean(compute='_compute_last_update')
+    last_update = fields.Boolean(string='Contacted in last 10 min', compute='_compute_last_update')
 
     commands_count = fields.Char(string='Commands count', compute='_compute_counts')
     system_event_count = fields.Char(string='System Events count', compute='_compute_counts')
