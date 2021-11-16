@@ -262,10 +262,10 @@ class WebRfidController(http.Controller):
         # Relay controller
         if controller.is_relay_ctrl() and event_action == 1 and controller.mode == 3:
             dt = self._post['event']['dt']
-            print('dt=' + self._post['event']['dt'])
+            # print('dt=' + self._post['event']['dt'])
             if len(dt) == 24:
                 chunks = [dt[0:6], dt[6:12], dt[12:18], dt[18:24]]
-                print('Chunks=' + str(chunks))
+                # print('Chunks=' + str(chunks))
                 door_number = 0
                 for i in range(len(chunks)):
                     chunk = chunks[i]
@@ -595,7 +595,7 @@ class WebRfidController(http.Controller):
                 create_reader('R3', 3, '0', last_door)
                 create_reader('R4', 4, '1', last_door)
             else:  # (ctrl_mode == 2 and readers_count == 2) or ctrl_mode == 4
-                print('harware version', hw_ver)
+                # print('harware version', hw_ver)
                 last_door = create_door(gen_d_name(1, controller.id), 1)
                 if last_door:
                     last_door = last_door.id
@@ -883,7 +883,7 @@ class WebRfidController(http.Controller):
                 'input_js': json.dumps(self._post),
             }])
             _logger.debug('Caught an exception, returning status=500 and creating a system event')
-            print('Caught an exception, returning status=500 and creating a system event')
+            # print('Caught an exception, returning status=500 and creating a system event')
             return {'status': 500}
         except BadTimeException:
             t = self._post['event']['date'] + ' ' + self._post['event']['time']
@@ -899,7 +899,7 @@ class WebRfidController(http.Controller):
             }
             request.env['hr.rfid.event.system'].sudo().create(sys_ev_dict)
             _logger.debug('Caught a time error, returning status=200 and creating a system event')
-            print('Caught a time error, returning status=200 and creating a system event')
+            # print('Caught a time error, returning status=200 and creating a system event')
             return {'status': 200}
 
     def _parse_raw_data(self):
