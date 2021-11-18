@@ -161,8 +161,7 @@ class HrRfidAccessGroup(models.Model):
                     if ctrl in relay_doors and relay_doors.get(ctrl, False) and rel.door_id.card_type in relay_doors[ctrl].mapped(
                             'card_type') and ctrl.mode == 3:
                         raise exceptions.ValidationError(
-                            _(
-                                'Doors "%s" and "%s" both belong to a controller that cannot give access to multiple doors with same card type in a group.')
+                            _('Doors "%s" and "%s" both belong to a controller that cannot give access to multiple doors with same card type in a group.')
                             % (','.join(relay_doors[ctrl].mapped('name')), rel.door_id.name)
                         )
                     if not relay_doors.get(ctrl, False):
