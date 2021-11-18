@@ -22,28 +22,6 @@
 <!--            <field name="view_id" ref="hr_rfid_employee_view_tree"/>-->
 <!--        </record>-->
 
-        <record id="hr_rfid_employee_doors_wiz_form" model="ir.ui.view">
-            <field name="name">hr.rfid.employee.doors.wiz.form</field>
-            <field name="model">hr.rfid.employee.doors.wiz</field>
-            <field name="arch" type="xml">
-                <form string="Doors">
-                    <group>
-                        <field name="door_ids" create="0" edit="0" delete="0"/>
-                    </group>
-                    <footer>
-                        <button special="cancel" string="Ok" class="oe_highlight"/>
-                    </footer>
-                </form>
-            </field>
-        </record>
-
-        <record id="hr_rfid_employee_doors_wiz_action" model="ir.actions.act_window">
-            <field name="name">Doors</field>
-            <field name="res_model">hr.rfid.employee.doors.wiz</field>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="hr_rfid_employee_doors_wiz_form"/>
-            <field name="target">new</field>
-        </record>
 
         <record id="hr_view_employee_form_inherit_hr_rfid" model="ir.ui.view">
             <field name="name">hr.employee.rfid.info</field>
@@ -51,14 +29,15 @@
             <field name="inherit_id" ref="hr.view_employee_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//div[@name='button_box']" position="inside">
-                    <button name="%(hr_rfid_employee_doors_wiz_action)d" id="hr_rfid_employee_show_doors_btn"
-                            type="action" class="oe_stat_button" icon="fa-info" string="Doors"
-                            help="Doors this employee has access to">
-                    </button>
                      <button name="button_employee_events"
-                            type="object" attrs="{'invisible':[('employee_event_count', '=', 0)]}"
+                            type="object" attrs="{'invisible':[('employee_event_count', '=', '0')]}"
                             class="oe_stat_button" icon="fa-list-alt">
                         <field name="employee_event_count" widget="statinfo" string="Events"/>
+                    </button>
+                     <button name="button_doors_list" title="Accessible doors"
+                             type="object" class="oe_stat_button" icon="fa-list-alt"
+                             groups="hr_rfid.hr_rfid_view_rfid_data"  attrs="{'invisible':[('employee_doors_count', '=', '0')]}">
+                        <field name="employee_doors_count" widget="statinfo" string="Doors"/>
                     </button>
                 </xpath>
                 <notebook position="inside">
@@ -107,17 +86,6 @@
             </field>
         </record>
 
-        <record id="employees_view_accessible_doors_action" model="ir.actions.act_window">
-            <field name="name">View accessible doors</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">hr.rfid.employee.doors.wiz</field>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="hr_rfid.hr_rfid_employee_doors_wiz_form"/>
-            <field name="binding_model_id" ref="hr.model_hr_employee"/>
-            <field name="binding_view_types">form</field>
-            <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_view_rfid_data'))]"/>
-            <field name="target">new</field>
-        </record>
 
         <record model="ir.actions.server" id="action_clear_employees">
             <field name="name">Clear Employees</field>

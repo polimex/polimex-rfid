@@ -178,8 +178,8 @@
                     <field name="name"/>
                     <field name="webstack_id" invisible="1"/>
                     <field name="serial_number"/>
-                    <field name="reader_ids"/>
-                    <field name="door_ids"/>
+                    <field name="reader_ids" widget="many2many_tags"/>
+                    <field name="door_ids" widget="many2many_tags"/>
                     <field name="temperature"/>
                     <field name="humidity"/>
                 </tree>

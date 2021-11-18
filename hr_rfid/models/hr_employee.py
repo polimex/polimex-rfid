@@ -42,10 +42,12 @@ class HrEmployee(models.Model):
     )
 
     employee_event_count = fields.Char(compute='_compute_employee_event_count')
+    employee_doors_count = fields.Char(compute='_compute_employee_event_count')
 
     def _compute_employee_event_count(self):
         for e in self:
             e.employee_event_count = self.env['hr.rfid.event.user'].search_count([('employee_id', '=', e.id)])
+            e.employee_doors_count = len(e.get_doors())
 
     def button_employee_events(self):
         self.ensure_one()
@@ -57,6 +59,19 @@ class HrEmployee(models.Model):
             'type': 'ir.actions.act_window',
             'help': _('''<p class="o_view_nocontent">
                     No events for this employee.
+                </p>'''),
+        }
+
+    def button_doors_list(self):
+        self.ensure_one()
+        return {
+            'name': _('Doors accessible from {}').format(self.name),
+            'view_mode': 'tree,form',
+            'res_model': 'hr.rfid.door',
+            'domain': [('id', 'in', self.get_doors().mapped('id'))],
+            'type': 'ir.actions.act_window',
+            'help': _('''<p class="o_view_nocontent">
+                    No accessible doors for this employee.
                 </p>'''),
         }
 
@@ -138,13 +153,17 @@ class HrEmployee(models.Model):
             for door in doors:
                 ctrl = door.controller_id
                 if ctrl.is_relay_ctrl():
-                    if (ctrl in relay_doors) and (ctrl.mode == 3):
-                    # if (ctrl in relay_doors) and (ctrl.mode == 3) and (door.card_type not in [ct for c in  ]):
+                    if ctrl in relay_doors and relay_doors.get(ctrl, False) and door.card_type in relay_doors[ctrl].mapped(
+                            'card_type') and ctrl.mode == 3:
                         raise exceptions.ValidationError(
-                            _('Doors "%s" and "%s" both belong to a controller that cannot give access to multiple doors in the same time.')
-                            % (relay_doors[ctrl].name, door.name)
+                            _('Doors "%s" and "%s" both belong to a controller that cannot give access to multiple doors with same card type in a group.')
+                            % (','.join(relay_doors[ctrl].mapped('name')), door.name)
                         )
-                    relay_doors[ctrl] = door
+                    if not relay_doors.get(ctrl, False):
+                        relay_doors[ctrl] = self.env['hr.rfid.door'].browse([door.id])
+                    else:
+                        relay_doors[ctrl] = self.env['hr.rfid.door'].browse(
+                            relay_doors[ctrl].mapped('id') + [door.id])
 
     @api.constrains('hr_rfid_pin_code')
     def _check_pin_code(self):
@@ -209,28 +228,3 @@ class HrEmployee(models.Model):
                 session = session_storage.get(sid)
                 if session['uid'] == user.id:
                     session_storage.delete(session)
-
-
-class HrEmployeeDoors(models.TransientModel):
-    _name = 'hr.rfid.employee.doors.wiz'
-    _description = "Display doors employee has access to"
-
-    def _default_employee(self):
-        return self.env['hr.employee'].browse(self._context.get('active_ids'))
-
-    def _default_doors(self):
-        return self._default_employee().get_doors()
-
-    employee_id = fields.Many2one(
-        'hr.employee',
-        string='Employee',
-        required=True,
-        default=_default_employee,
-    )
-
-    door_ids = fields.Many2many(
-        'hr.rfid.door',
-        string='Doors',
-        required=True,
-        default=_default_doors,
-    )

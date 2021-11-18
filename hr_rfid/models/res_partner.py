@@ -37,10 +37,45 @@ class ResPartner(models.Model):
 
     is_employee = fields.Boolean(compute='_compute_is_employee')
 
+    partner_event_count = fields.Char(compute='_compute_partner_event_count')
+    partner_doors_count = fields.Char(compute='_compute_partner_event_count')
+
+    def _compute_partner_event_count(self):
+        for e in self:
+            e.partner_event_count = self.env['hr.rfid.event.user'].search_count([('contact_id', '=', e.id)])
+            e.partner_doors_count = len(e.get_doors())
+
+
     def _compute_is_employee(self):
         empl_partners = self.env['resource.resource'].search([('user_id', '!=', False)]).mapped('user_id.partner_id.id')
         for p in self:
             p.is_employee = p.id in empl_partners
+
+    def button_partner_events(self):
+        self.ensure_one()
+        return {
+            'name': _('Events for {}').format(self.name),
+            'view_mode': 'tree,form',
+            'res_model': 'hr.rfid.event.user',
+            'domain': [('contact_id', '=', self.id)],
+            'type': 'ir.actions.act_window',
+            'help': _('''<p class="o_view_nocontent">
+                    No events for this partner.
+                </p>'''),
+        }
+
+    def button_doors_list(self):
+        self.ensure_one()
+        return {
+            'name': _('Doors accessible from {}').format(self.name),
+            'view_mode': 'tree,form',
+            'res_model': 'hr.rfid.door',
+            'domain': [('id', 'in', self.get_doors().mapped('id'))],
+            'type': 'ir.actions.act_window',
+            'help': _('''<p class="o_view_nocontent">
+                    No accessible doors for this partner.
+                </p>'''),
+        }
 
     def add_acc_gr(self, access_groups, expiration=None):
         rel_env = self.env['hr.rfid.access.group.contact.rel']
@@ -110,12 +145,17 @@ class ResPartner(models.Model):
             for door in doors:
                 ctrl = door.controller_id
                 if ctrl.is_relay_ctrl():
-                    if ctrl in relay_doors and ctrl.mode == 3:
+                    if ctrl in relay_doors and relay_doors.get(ctrl, False) and door.card_type in relay_doors[ctrl].mapped(
+                            'card_type') and ctrl.mode == 3:
                         raise exceptions.ValidationError(
-                            _('Doors "%s" and "%s" both belong to a controller that cannot give access to multiple doors in the same time.')
-                            % (relay_doors[ctrl].name, door.name)
+                            _('Doors "%s" and "%s" both belong to a controller that cannot give access to multiple doors with same card type in a group.')
+                            % (','.join(relay_doors[ctrl].mapped('name')), door.name)
                         )
-                    relay_doors[ctrl] = door
+                    if not relay_doors.get(ctrl, False):
+                        relay_doors[ctrl] = self.env['hr.rfid.door'].browse([door.id])
+                    else:
+                        relay_doors[ctrl] = self.env['hr.rfid.door'].browse(
+                            relay_doors[ctrl].mapped('id') + [door.id])
 
     @api.constrains('hr_rfid_pin_code')
     def _check_pin_code(self):
@@ -161,29 +201,3 @@ class ResPartner(models.Model):
     # @api.onchange
     # def res_partner_doors(self):
     #     for r in self:
-
-
-
-class ResPartnerDoors(models.TransientModel):
-    _name = 'hr.rfid.partner.doors.wiz'
-    _description = "Display doors partner has access to"
-
-    def _default_partner(self):
-        return self.env['res.partner'].browse(self._context.get('active_ids'))
-
-    def _default_doors(self):
-        return self._default_partner().get_doors()
-
-    partner_id = fields.Many2one(
-        'res.partner',
-        string='Employee',
-        required=True,
-        default=_default_partner,
-    )
-
-    door_ids = fields.Many2many(
-        'hr.rfid.door',
-        string='Doors',
-        required=True,
-        default=_default_doors,
-    )
