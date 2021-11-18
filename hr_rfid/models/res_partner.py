@@ -201,29 +201,3 @@ class ResPartner(models.Model):
     # @api.onchange
     # def res_partner_doors(self):
     #     for r in self:
-
-
-
-class ResPartnerDoors(models.TransientModel):
-    _name = 'hr.rfid.partner.doors.wiz'
-    _description = "Display doors partner has access to"
-
-    def _default_partner(self):
-        return self.env['res.partner'].browse(self._context.get('active_ids'))
-
-    def _default_doors(self):
-        return self._default_partner().get_doors()
-
-    partner_id = fields.Many2one(
-        'res.partner',
-        string='Employee',
-        required=True,
-        default=_default_partner,
-    )
-
-    door_ids = fields.Many2many(
-        'hr.rfid.door',
-        string='Doors',
-        required=True,
-        default=_default_doors,
-    )
