@@ -30,14 +30,14 @@
             <field name="arch" type="xml">
                 <xpath expr="//div[@name='button_box']" position="inside">
                      <button name="button_employee_events"
-                            type="object" attrs="{'invisible':[('employee_event_count', '=', 0)]}"
+                            type="object" attrs="{'invisible':[('employee_event_count', '=', '0')]}"
                             class="oe_stat_button" icon="fa-list-alt">
                         <field name="employee_event_count" widget="statinfo" string="Events"/>
                     </button>
-                     <button name="button_doors_list"
+                     <button name="button_doors_list" title="Accessible doors"
                              type="object" class="oe_stat_button" icon="fa-list-alt"
-                             groups="hr_rfid.hr_rfid_view_rfid_data">
-                        <field name="employee_doors_count" widget="statinfo" string="Accessible doors"/>
+                             groups="hr_rfid.hr_rfid_view_rfid_data"  attrs="{'invisible':[('employee_doors_count', '=', '0')]}">
+                        <field name="employee_doors_count" widget="statinfo" string="Doors"/>
                     </button>
                 </xpath>
                 <notebook position="inside">
