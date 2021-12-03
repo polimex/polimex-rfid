@@ -3,7 +3,7 @@
 
 {
     'name': 'RFID Access Control',
-    'version': '1.18',
+    'version': '1.19',
     'category': 'Human Resources',
     'summary': 'Manage employee access control',
     'author': 'Polimex Holding Ltd',

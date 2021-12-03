@@ -99,18 +99,18 @@ class WebRfidController(http.Controller):
         ])
 
         if len(controller) == 0:
-            ctrl_env = request.env['hr.rfid.ctrl'].with_user(SUPERUSER_ID)
-            cmd_env = request.env['hr.rfid.command'].with_user(SUPERUSER_ID)
+            # ctrl_env = request.env['hr.rfid.ctrl'].with_user(SUPERUSER_ID)
+            # cmd_env = request.env['hr.rfid.command'].with_user(SUPERUSER_ID)
 
             # try:
-            controller = ctrl_env.create({
+            controller = controller.create({
                 'name': 'Controller',
                 'ctrl_id': self._post['event']['id'],
                 'webstack_id': self._webstack.id,
             })
             # except
 
-            command = cmd_env.read_controller_information_cmd(controller)
+            command = controller.read_controller_information_cmd()
 
             return self._send_command(command, 400)
 
@@ -442,6 +442,7 @@ class WebRfidController(http.Controller):
             F0Parse.max_events_count: bytes_to_num(54, 5),
         }
 
+    # TODO Move to controller model
     def _parse_f0_response(self, command, controller):
         ctrl_env = request.env['hr.rfid.ctrl'].with_user(SUPERUSER_ID)
         response = self._post['response']
@@ -456,7 +457,7 @@ class WebRfidController(http.Controller):
 
         hw_ver = f0_parse[F0Parse.hw_ver]
 
-        if (ctrl_mode < 1 or ctrl_mode > 4):
+        if ctrl_mode < 1 or ctrl_mode > 4:
             return self._log_cmd_error('F0 command failure, controller sent '
                                        'us a wrong mode', command, '31', 200)
 
@@ -487,7 +488,7 @@ class WebRfidController(http.Controller):
         ], limit=1)
 
         ctrl_already_existed = False
-        if len(old_ctrl) > 0:
+        if old_ctrl:
             if old_ctrl.webstack_id == controller.webstack_id:
                 ctrl_already_existed = True
             else:
@@ -549,11 +550,11 @@ class WebRfidController(http.Controller):
         def gen_d_name(door_num, controller_id):
             return _('Door ') + str(door_num) + _(' of ctrl ') + str(controller_id)
 
-        if controller.is_relay_ctrl():
+        if controller.is_relay_ctrl(hw_ver):
             if ctrl_mode == 1 or ctrl_mode == 3:
                 reader = create_reader('R1', 1, '0')
                 for i in range(outputs):
-                    door = create_door(gen_d_name(i + 1, controller.id), i + 1)
+                    door = create_door(gen_d_name(i + 1, controller.ctrl_id), i + 1)
                     add_door_to_reader(reader, door)
                 for i in range(1, readers_count):
                     create_reader('R' + str(i + 1), i + 1, '0')
@@ -563,7 +564,7 @@ class WebRfidController(http.Controller):
                                                command, '31', 200)
                 reader = create_reader('R1', 1, '0')
                 for i in range(outputs):
-                    door = create_door(gen_d_name(i + 1, controller.id), i + 1)
+                    door = create_door(gen_d_name(i + 1, controller.ctrl_id), i + 1)
                     add_door_to_reader(reader, door)
                 if outputs > 16:
                     reader = create_reader('R2', 2, '0')
@@ -580,29 +581,29 @@ class WebRfidController(http.Controller):
                                                  % (ctrl_mode, hw_ver))
         else:
             if ctrl_mode == 1 or ctrl_mode == 3:
-                last_door = create_door(gen_d_name(1, controller.id), 1)
+                last_door = create_door(gen_d_name(1, controller.ctrl_id), 1)
                 last_door = last_door.id
                 create_reader('R1', 1, '0', last_door)
                 if readers_count > 1:
                     create_reader('R2', 2, '1', last_door)
             elif ctrl_mode == 2 and readers_count == 4:
-                last_door = create_door(gen_d_name(1, controller.id), 1)
+                last_door = create_door(gen_d_name(1, controller.ctrl_id), 1)
                 last_door = last_door.id
                 create_reader('R1', 1, '0', last_door)
                 create_reader('R2', 2, '1', last_door)
-                last_door = create_door(gen_d_name(2, controller.id), 2)
+                last_door = create_door(gen_d_name(2, controller.ctrl_id), 2)
                 last_door = last_door.id
                 create_reader('R3', 3, '0', last_door)
                 create_reader('R4', 4, '1', last_door)
             else:  # (ctrl_mode == 2 and readers_count == 2) or ctrl_mode == 4
                 # print('harware version', hw_ver)
-                last_door = create_door(gen_d_name(1, controller.id), 1)
+                last_door = create_door(gen_d_name(1, controller.ctrl_id), 1)
                 if last_door:
                     last_door = last_door.id
                 else:
                     last_door = None
                 create_reader('R1', 1, '0', last_door)
-                last_door = create_door(gen_d_name(2, controller.id), 2)
+                last_door = create_door(gen_d_name(2, controller.ctrl_id), 2)
                 if last_door:
                     last_door = last_door.id
                 else:
@@ -610,17 +611,17 @@ class WebRfidController(http.Controller):
                 create_reader('R2', 2, '0', last_door)
 
             if ctrl_mode == 3:
-                last_door = create_door(gen_d_name(2, controller.id), 2)
+                last_door = create_door(gen_d_name(2, controller.ctrl_id), 2)
                 last_door = last_door.id
                 create_reader('R3', 3, '0', last_door)
-                last_door = create_door(gen_d_name(3, controller.id), 3)
+                last_door = create_door(gen_d_name(3, controller.ctrl_id), 3)
                 last_door = last_door.id
                 create_reader('R4', 4, '0', last_door)
             elif ctrl_mode == 4:
-                last_door = create_door(gen_d_name(3, controller.id), 3)
+                last_door = create_door(gen_d_name(3, controller.ctrl_id), 3)
                 last_door = last_door.id
                 create_reader('R3', 3, '0', last_door)
-                last_door = create_door(gen_d_name(4, controller.id), 4)
+                last_door = create_door(gen_d_name(4, controller.ctrl_id), 4)
                 last_door = last_door.id
                 create_reader('R4', 4, '0', last_door)
 
@@ -657,12 +658,13 @@ class WebRfidController(http.Controller):
 
         cmd_env = request.env['hr.rfid.command'].sudo()
         if not ctrl_already_existed:
-            cmd_env.synchronize_clock_cmd(controller)
-            cmd_env.delete_all_cards_cmd(controller)
-            cmd_env.delete_all_events_cmd(controller)
-        cmd_env.read_readers_mode_cmd(controller)
-        cmd_env.read_io_table_cmd(controller)
-        # TODO read B3 too
+            controller.synchronize_clock_cmd()
+            controller.delete_all_cards_cmd()
+            controller.delete_all_events_cmd()
+            controller.read_readers_mode_cmd()
+            controller.read_io_table_cmd()
+            controller.read_status()
+        # cmd_env.read_readers_mode_cmd(controller)
         # cmd_env.read_io_table_cmd(controller)
 
         if not controller.is_relay_ctrl() and (ctrl_mode == 1 or ctrl_mode == 3):
@@ -749,6 +751,9 @@ class WebRfidController(http.Controller):
         return ws_time
 
     def _send_command(self, command, status_code):
+        if isinstance(command, list) and len(command) > 0:
+            command = command[0]
+
         command.status = 'Process'
 
         cmd = {'cmd': {

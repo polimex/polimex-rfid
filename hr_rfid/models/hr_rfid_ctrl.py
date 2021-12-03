@@ -400,6 +400,17 @@ class HrRfidController(models.Model):
             )
         return commands
 
+    def read_status(self):
+        commands = []
+        for controller in self:
+            commands.append(self.env['hr.rfid.command'].with_user(SUPERUSER_ID).create([{
+                'webstack_id': controller.webstack_id.id,
+                'controller_id': controller.id,
+                'cmd': 'B3',
+            }])
+            )
+        return commands
+
     def synchronize_clock_cmd(self):
         commands = []
         for controller in self:
@@ -708,6 +719,7 @@ class HrRfidReader(models.Model):
     ]
 
     reader_modes = [
+        ('00', _('Unknown')),
         ('01', _('Card Only')),
         ('02', _('Card and Pin')),
         ('03', _('Card and Workcode')),
@@ -733,7 +745,7 @@ class HrRfidReader(models.Model):
         string='Reader type',
         help='Type of the reader',
         required=True,
-        default='0',
+        default='00',
     )
 
     mode = fields.Selection(
