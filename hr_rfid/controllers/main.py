@@ -741,7 +741,7 @@ class WebRfidController(http.Controller):
         return self._get_ws_time().strftime('%Y-%m-%d %H:%M:%S')
 
     def _get_ws_time(self):
-        t = self._post['event']['date'] + ' ' + self._post['event']['time']
+        t = f"{self._post['event']['date']} {self._post['event']['time']}"
         t = t.replace('-', '.')  # fix for WiFi module format
         try:
             ws_time = datetime.datetime.strptime(t, self._time_format)

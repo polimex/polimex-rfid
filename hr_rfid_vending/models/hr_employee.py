@@ -1,55 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, exceptions
-
-
-class VendingBalanceWiz(models.TransientModel):
-    _name = 'hr.employee.vending.balance.wiz'
-    _description = 'Employee balance setter'
-
-    def _default_employee(self):
-        return self.env['hr.employee'].browse(self._context.get('active_ids'))
-
-    def _default_value(self):
-        emp = self._default_employee()
-        if self._context.get('setting_balance', False) is True:
-            return emp.hr_rfid_vending_balance
-        return 0.0
-
-    employee_id = fields.Many2one(
-        'hr.employee',
-        required=True,
-        default=_default_employee,
-    )
-
-    value = fields.Float(
-        string='Value',
-        required=True,
-        default=_default_value,
-    )
-
-    def add_value(self):
-        self.ensure_one()
-        res = self.employee_id.hr_rfid_vending_add_to_balance(self.value)
-        if res is False:
-            raise exceptions.ValidationError(
-                "Could not add to the balance. Please check if it's going under the limit."
-            )
-
-    def subtract_value(self):
-        self.ensure_one()
-        res = self.employee_id.hr_rfid_vending_add_to_balance(-self.value)
-        if res is False:
-            raise exceptions.ValidationError(
-                "Could not subtract from the balance. Please check if it's going under the limit."
-            )
-
-    def set_value(self):
-        self.ensure_one()
-        res = self.employee_id.hr_rfid_vending_set_balance(self.value)
-        if not res:
-            raise exceptions.ValidationError(
-                "Could not set the balance. Please check if it's going under the limit."
-            )
+from decimal import Decimal
 
 
 class HrEmployee(models.Model):
@@ -77,13 +28,13 @@ class HrEmployee(models.Model):
     hr_rfid_vending_limit = fields.Float(
         string='Limit',
         help='User cannot go in more debt than this value',
-        track_visibility='onchange',
+        tracking=True,
     )
 
     hr_rfid_vending_in_attendance = fields.Boolean(
         string='Only while attending',
         help='Only allow the user to perform vending transactions while attending',
-        track_visibility='onchange',
+        tracking=True,
     )
 
     hr_rfid_vending_daily_limit = fields.Float(
@@ -101,7 +52,7 @@ class HrEmployee(models.Model):
         string='Auto Refill',
         help='Automatically refill balance monthly',
         default=False,
-        track_visibility='onchange',
+        tracking=True,
     )
 
     hr_rfid_vending_refill_amount = fields.Float(
@@ -109,16 +60,16 @@ class HrEmployee(models.Model):
         help="How much money to be added to the person's balance",
         default=0,
         required=True,
-        track_visibility='onchange',
+        tracking=True,
     )
 
     hr_rfid_vending_refill_type = fields.Selection(
-        [ ('fixed', 'Fixed'), ('up_to', 'Up To') ],
+        selection=[('fixed', 'Fixed'), ('up_to', 'Up To')],
         string='Refill Type',
         help="Fixed type just adds the refill amount to the user's balance every month. Up To type adds to the user's balance every month with a maximum the auto refill will never go over.",
         default='fixed',
         required=True,
-        track_visibility='onchange',
+        tracking=True,
     )
 
     hr_rfid_vending_refill_max = fields.Float(
@@ -133,6 +84,32 @@ class HrEmployee(models.Model):
         'employee_id',
         string='Balance History',
     )
+
+    def get_employee_balance(self, controller):
+        self.ensure_one()
+        balance = Decimal(str(self.hr_rfid_vending_balance))
+        if self.hr_rfid_vending_negative_balance is True:
+            balance += Decimal(str(abs(self.hr_rfid_vending_limit)))
+        if self.hr_rfid_vending_in_attendance is True:
+            if self.attendance_state == 'checked_out':
+                return '0000', 0
+        if balance <= 0:
+            return '0000', 0
+        balance += Decimal(str(self.hr_rfid_vending_recharge_balance))
+        if self.hr_rfid_vending_daily_limit != 0:
+            limit = abs(self.hr_rfid_vending_daily_limit)
+            limit = Decimal(str(limit))
+            limit -= Decimal(str(self.hr_rfid_vending_spent_today))
+            if limit < balance:
+                balance = limit
+        balance *= 100
+        balance /= controller.scale_factor
+        balance = int(balance)
+        if balance > 0xFF:
+            balance = 0xFF
+        b1 = (balance & 0xF0) // 0x10
+        b2 = balance & 0x0F
+        return '%02X%02X' % (b1, b2), balance
 
     @api.returns('hr.rfid.vending.balance.history')
     def hr_rfid_vending_add_to_balance(self, value: float, ev: int = 0):
@@ -202,144 +179,51 @@ class HrEmployee(models.Model):
         })
 
 
-class BalanceHistory(models.Model):
-    _name = 'hr.rfid.vending.balance.history'
-    _description = 'Balance history for employees'
-    _order = 'id desc'
+class VendingBalanceWiz(models.TransientModel):
+    _name = 'hr.employee.vending.balance.wiz'
+    _description = 'Employee balance setter'
 
-    name = fields.Char(
-        string='Person Responsible/Item',
-        compute='_compute_name',
-    )
+    def _default_employee(self):
+        return self.env['hr.employee'].browse(self._context.get('active_ids'))
 
-    person_responsible = fields.Many2one(
-        'res.users',
-        string='Person responsible for the change',
-        default=lambda self: self.env.uid,
-        readonly=True,
-    )
-
-    balance_change = fields.Float(
-        string='Balance change',
-        help="How much was deposited/withdrawn from the employee's balance",
-        required=True,
-        readonly=True,
-    )
-
-    balance_result = fields.Float(
-        string='Balance result',
-        help='How much the balance was after the change',
-        required=True,
-        readonly=True,
-    )
+    def _default_value(self):
+        emp = self._default_employee()
+        if self._context.get('setting_balance', False) is True:
+            return emp.hr_rfid_vending_balance
+        return 0.0
 
     employee_id = fields.Many2one(
         'hr.employee',
-        string='Employee',
         required=True,
-        ondelete='cascade',
-        readonly=True,
+        default=_default_employee,
     )
 
-    vending_event_id = fields.Many2one(
-        'hr.rfid.vending.event',
-        string='Event',
-        ondelete='set null',
-        readonly=True,
-    )
-
-    auto_refill_id = fields.Many2one(
-        'hr.rfid.vending.auto.refill',
-        string='Auto Refill Event',
-        ondelete='set null',
-        readonly=True,
-    )
-
-    item_id = fields.Many2one(
-        'product.template',
-        string='Item Sold',
-        compute='_compute_item_sold',
-        store=True,
-        ondelete='set null',
-    )
-
-    def _compute_name(self):
-        for it in self:
-            if len(it.vending_event_id) > 0 and len(it.vending_event_id.item_sold_id) > 0:
-                it.name = it.vending_event_id.item_sold_id.name
-            else:
-                it.name = it.person_responsible.name
-
-    def _compute_item_sold(self):
-        for it in self:
-            it.item_id = it.vending_event_id.item_sold_id
-
-
-class VendingAutoRefillEvents(models.Model):
-    _name = 'hr.rfid.vending.auto.refill'
-    _description = 'Auto Refill Events'
-    _order = 'id desc'
-
-    name = fields.Char(
-        string='Name',
-        default=lambda self: self.env['ir.sequence'].next_by_code('hr.rfid.vending.auto.refill.event.seq'),
-    )
-
-    date_created = fields.Datetime(
-        string='Auto Refill Time',
-        compute='_compute_date',
-    )
-
-    auto_refill_total = fields.Float(
-        string='Total Cash Refilled',
+    value = fields.Float(
+        string='Value',
         required=True,
-        readonly=True,
+        default=_default_value,
     )
 
-    balance_history_ids = fields.One2many(
-        'hr.rfid.vending.balance.history',
-        'auto_refill_id',
-        string='Balance History Changes',
-    )
+    def add_value(self):
+        self.ensure_one()
+        res = self.employee_id.hr_rfid_vending_add_to_balance(self.value)
+        if res is False:
+            raise exceptions.ValidationError(
+                "Could not add to the balance. Please check if it's going under the limit."
+            )
 
-    @api.model
-    def _auto_refill(self):
-        employees = self.env['hr.employee'].search([])
-        balance_histories = self.env['hr.rfid.vending.balance.history']
-        total_refill = 0.0
+    def subtract_value(self):
+        self.ensure_one()
+        res = self.employee_id.hr_rfid_vending_add_to_balance(-self.value)
+        if res is False:
+            raise exceptions.ValidationError(
+                "Could not subtract from the balance. Please check if it's going under the limit."
+            )
 
-        for emp in employees:
-            auto_refill = emp.hr_rfid_vending_auto_refill
-            refill_amount = emp.hr_rfid_vending_refill_amount
-            refill_type = emp.hr_rfid_vending_refill_type
-            refill_max = emp.hr_rfid_vending_refill_max
-
-            if auto_refill is False:
-                continue
-
-            if refill_amount == 0:
-                continue
-
-            if refill_type == 'fixed':
-                if emp.hr_rfid_vending_balance != refill_amount:
-                    bh = emp.hr_rfid_vending_set_balance(refill_amount)
-                    total_refill += bh.balance_change
-                    balance_histories += bh
-                continue
-
-            if refill_max <= emp.hr_rfid_vending_balance:
-                continue
-
-            difference = refill_max - emp.hr_rfid_vending_balance
-            refill_amount = refill_amount if refill_amount < difference else difference
-            if refill_amount != 0:
-                balance_histories += emp.hr_rfid_vending_add_to_balance(refill_amount)
-                total_refill += refill_amount
-
-        if len(balance_histories) > 0:
-            re = self.create([{'auto_refill_total': total_refill}])
-            balance_histories.write({'auto_refill_id': re.id})
-
-    def _compute_date(self):
-        for re in self:
-            re.date_created = re.create_date
+    def set_value(self):
+        self.ensure_one()
+        res = self.employee_id.hr_rfid_vending_set_balance(self.value)
+        if not res:
+            raise exceptions.ValidationError(
+                "Could not set the balance. Please check if it's going under the limit."
+            )

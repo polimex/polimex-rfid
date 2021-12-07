@@ -329,14 +329,6 @@ class HrRfidWebstack(models.Model):
             else:
                 record.http_link = ''
 
-    @api.model
-    def _deconfirm_webstack(self, ws):
-        ws.available = 'u'
-
-    @api.model
-    def _confirm_webstack(self, ws):
-        ws.available = 'c'
-
     def write(self, vals):
         if 'tz' not in vals:
             return super(HrRfidWebstack, self).write(vals)
@@ -360,6 +352,16 @@ class HrRfidWebstack(models.Model):
     def _sync_clocks(self):
         for ws in self:
             ws.controllers.synchronize_clock_cmd()
+
+    # Log system event for this webstack/s
+    def sys_log(self, error_description, input_json):
+        for ws in self:
+            self.env['hr.rfid.event.system'].sudo().create({
+                'webstack_id': ws.id,
+                'timestamp': fields.Datetime.now(),
+                'error_description': error_description,
+                'input_js': input_json,
+            })
 
     @api.model
     def sync_all_clocks(self):

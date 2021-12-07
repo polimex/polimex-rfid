@@ -387,6 +387,17 @@ class HrRfidController(models.Model):
                     cmd_dict['cmd_data'] = '%02X' % ctrl.mode
                 cmd_env.create(cmd_dict)
 
+    def sys_event(self, error_description, event_action, input_json):
+        for ctrl in self:
+            self.env['hr.rfid.event.system'].sudo().create({
+                'webstack_id': ctrl.webstack_id.id,
+                'controller_id': ctrl.id,
+                'timestamp': fields.Datetime.now(),
+                'event_action': event_action,
+                'error_description': error_description,
+                'input_js': input_json,
+            })
+
     # Commands to controllers
 
     def read_controller_information_cmd(self):

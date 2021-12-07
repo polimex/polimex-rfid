@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="hr_rfid_ctrl_vending_prices_wiz" model="ir.ui.view">
+            <field name="name">hr.rfid.ctrl.vending.settings.wiz</field>
+            <field name="model">hr.rfid.ctrl.vending.settings</field>
+            <field name="arch" type="xml">
+                <form string="Vending Settings">
+                    <div>
+                        <h3>Vending settings:</h3>
+                        <group>
+                            <field name="show_price_timeout"/>
+                            <field name="scale_factor"/>
+                        </group>
+                        <h3>Vending prices table:</h3>
+                        <br/>
+                        <field name="vending_row_ids" widget="one2many_list">
+                            <tree create="0" delete="0" editable="bottom">
+                                <field name="item_number1"/>
+                                <field name="item1"/>
+                                <field name="item_number2"/>
+                                <field name="item2"/>
+                                <field name="item_number3"/>
+                                <field name="item3"/>
+                                <field name="item_number4"/>
+                                <field name="item4"/>
+                            </tree>
+                        </field>
+                    </div>
+                    <footer>
+                        <button name="save_settings" type="object" string="Save" class="oe_highlight"/>
+                        <button special="cancel" string="Close" class="oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_rfid_ctrl_vending_prices_wiz_action" model="ir.actions.act_window">
+            <field name="name">Change Vending Settings</field>
+            <field name="res_model">hr.rfid.ctrl.vending.settings</field>
+            <!--      <field name="view_type">form</field>-->
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_rfid_ctrl_vending_prices_wiz"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="hr_rfid_ctrl_view_form_inherit_hr_rfid_vending" model="ir.ui.view">
+            <field name="name">hr.rfid.ctrl.vending.info</field>
+            <field name="model">hr.rfid.ctrl</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_controller_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@id='hr_rfid_view_modify_io_table_btn']" position="attributes">
+                    <!-- If controller is a vending controller, turn this button invisible -->
+                    <attribute name="attrs">{'invisible':[('hw_version','=','16')]}</attribute>
+                </xpath>
+                <xpath expr="//button[@id='hr_rfid_view_modify_io_table_btn']" position="after">
+                    <button string="Prices"
+                            name="%(hr_rfid_ctrl_vending_prices_wiz_action)d"
+                            id="hr_rfid_vending_settings_btn"
+                            type="action"
+                            class="oe_stat_button"
+                            icon="fa-table"
+                            attrs="{'invisible':[('hw_version','!=','16')]}"/>
+                </xpath>
+                <group position="inside">
+                    <group string="Vending info" attrs="{'invisible':[('hw_version','!=','16')]}">
+                        <field name="show_price_timeout" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}"/>
+                        <field name="scale_factor" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}"/>
+                        <field name="cash_contained" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}"/>
+                    </group>
+                </group>
+            </field>
+        </record>
+
+    </data>
+</odoo>
