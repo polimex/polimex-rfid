@@ -6,7 +6,7 @@
             <field name="name">Cards</field>
             <field name="res_model">hr.rfid.card</field>
             <field name="view_mode">tree,form,search</field>
-            <field name="context">{"search_default_showall": 1}</field>
+            <field name="context">{"search_default_filter_showall": 1}</field>
         </record>
 
         <record id="hr_rfid_card_type_action" model="ir.actions.act_window">
@@ -77,10 +77,12 @@
             <field name="name">hr.rfid.card.tree</field>
             <field name="model">hr.rfid.card</field>
             <field name="arch" type="xml">
-                <tree string="RFID Card">
+                <tree string="RFID Card" decoration-success="active"
+                      decoration-danger="not active">
+                    <field name="active" invisible="1"/>
                     <field name="name"/>
                     <field name="employee_id" widget="many2one_avatar_employee" />
-                    <field name="contact_id" widget="many2one_avatar" optional="show"/>
+                    <field name="contact_id" widget="many2one_avatar"/>
                     <field name="card_type"/>
                     <field name="activate_on"/>
                     <field name="deactivate_on"/>
