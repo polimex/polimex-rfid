@@ -507,6 +507,7 @@ class HrRfidDoor(models.Model):
             door.controller_id.add_remove_card(card.number, card.get_owner().hr_rfid_pin_code,
                                  '00000000', rights if can_exit else 0, rights)
 
+
 class HrRfidDoorOpenCloseWiz(models.TransientModel):
     _name = 'hr.rfid.door.open.close.wiz'
     _description = 'Open or close door'
