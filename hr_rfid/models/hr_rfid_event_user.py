@@ -139,7 +139,9 @@ class HrRfidUserEvent(models.Model):
                 name = record.door_id.name
             name += ' - '
             if record.event_action != '64':
-                name += self.action_selection[int(record.event_action)-1][1]
+                key_val_dict = dict(self._fields['event_action'].selection)
+                name += key_val_dict[record.event_action]
+                # name += self.action_selection[int(record.event_action)-1][1]
             else:
                 name += _('Request Instructions')
             if record.door_id:

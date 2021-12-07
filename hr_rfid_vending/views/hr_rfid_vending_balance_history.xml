@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="hr_rfid_vending_balance_history_action" model="ir.actions.act_window">
+            <field name="name">Vending Balance History</field>
+            <field name="res_model">hr.rfid.vending.balance.history</field>
+            <!--      <field name="view_type">form</field>-->
+            <field name="view_mode">tree,form,graph</field>
+        </record>
+
+        <menuitem id="hr_rfid_vending_menu_balance_history"
+                  name="Vending Balance History"
+                  parent="hr_rfid_vending_menu"
+                  action="hr_rfid_vending_balance_history_action"
+                  groups="hr_rfid_vending.group_customer"
+                  sequence="20"/>
+
+        <record id="hr_rfid_vending_balance_history_form" model="ir.ui.view">
+            <field name="name">hr.rfid.vending.balance.history.form</field>
+            <field name="model">hr.rfid.vending.balance.history</field>
+            <field name="arch" type="xml">
+                <form create="0" delete="0" edit="0">
+                    <group>
+                        <field name="name"/>
+                        <field name="person_responsible"/>
+                        <field name="balance_change"/>
+                        <field name="balance_result"/>
+                        <field name="employee_id"/>
+                        <field name="vending_event_id"/>
+                        <field name="auto_refill_id"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_rfid_vending_balance_history_tree" model="ir.ui.view">
+            <field name="name">hr.rfid.vending.balance.history.tree</field>
+            <field name="model">hr.rfid.vending.balance.history</field>
+            <field name="arch" type="xml">
+                <tree create="0" delete="0">
+                    <field name="create_date"/>
+                    <field name="employee_id"/>
+                    <field name="balance_change"/>
+                    <field name="balance_result"/>
+                    <field name="name"/>
+                    <field name="auto_refill_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_rfid_vending_balance_history_search" model="ir.ui.view">
+            <field name="name">hr.rfid.vending.balance.history.search</field>
+            <field name="model">hr.rfid.vending.balance.history</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="person_responsible"/>
+                    <field name="employee_id"/>
+                    <field name="vending_event_id"/>
+<!--                        <field name="item_sold_id"/>-->
+<!--                    </field>-->
+
+                    <filter name="auto_refill" string="Auto Refills" domain="[('auto_refill_id','!=',False)]"/>
+                    <separator/>
+                    <filter name="last_week" string="Events from last week"
+                            domain="[('create_date', '>=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
+                    <filter name="last_month" string="Events from last month"
+                            domain="[('create_date', '>=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]"/>
+                    <filter name="last_year" string="Events from last year"
+                            domain="[('create_date', '>=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]"/>
+                    <separator/>
+                    <filter name="this_day" string="Events from today"
+                            domain="[('create_date', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('create_date', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]"/>
+                    <filter name="this_week" string="Events from this week"
+                            domain="[('create_date', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('create_date', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]"/>
+                    <filter name="this_month" string="Events from this month"
+                            domain="[('create_date', '&gt;=', context_today().strftime('%%Y-%%m-1'))]"/>
+                    <filter name="this_year" string="Events from this year"
+                            domain="[('create_date', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('create_date', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]"/>
+                    <separator/>
+
+                    <newline/>
+                    <group expand="0" string="Group By">
+                        <filter string="Month" name="create_date" domain="[]" context="{'group_by':'create_date'}"/>
+                        <filter string="Person Responsible" name="person_responsible"
+                                domain="[]" context="{'group_by':'person_responsible'}"/>
+                        <filter string="Employee" name="employee_id" domain="[]" context="{'group_by':'employee_id'}"/>
+                        <filter string="Item Sold" name="item_sold" domain="[]" context="{'group_by':'item_id'}"/>
+                    </group>
+
+                </search>
+            </field>
+        </record>
+
+        <record id="hr_rfid_vending_balance_history_graph" model="ir.ui.view">
+            <field name="name">hr.rfid.vending.balance.history.graph</field>
+            <field name="model">hr.rfid.vending.balance.history</field>
+            <field name="arch" type="xml">
+                <graph string="Balance Changes Per Employee">
+                    <field name="employee_id" type="row"/>
+                    <field name="balance_change" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+    </data>
+</odoo>

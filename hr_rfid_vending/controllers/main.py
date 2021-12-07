@@ -2,7 +2,6 @@
 from odoo import http, fields, exceptions, _
 from odoo.http import request
 from functools import reduce
-from decimal import Decimal
 from odoo.addons.hr_rfid.controllers.main import WebRfidController, BadTimeException
 
 import operator
@@ -23,7 +22,7 @@ class HrRfidVending(WebRfidController):
         self._webstack = None
         super(HrRfidVending, self).__init__(*args, **kwargs)
 
-    @http.route(['/hr/rfid/event'], type='json', auth='none', method=['POST'], csrf=False)
+    @http.route(['/hr/rfid/event'], type='json', auth='none', methods=['POST'], cors='*', csrf=False, save_session=False)
     def post_event(self, **post):
         self._post = post
         self._webstacks_env = request.env['hr.rfid.webstack'].sudo()
@@ -46,6 +45,8 @@ class HrRfidVending(WebRfidController):
                 'event_action': ev_num,
                 'event_time': self._get_ws_time_str(),
                 'controller_id': controller.id,
+                'ctrl_addr': controller.ctrl_id,
+                'reader_id': controller.reader_ids.filtered(lambda r: r.number == event['reader']).id,
                 'input_js': json.dumps(post),
             }
             if len(card) > 0:
@@ -70,31 +71,6 @@ class HrRfidVending(WebRfidController):
                 'input_js': json.dumps(self._post),
             })
 
-        def get_employee_balance(employee, controller):
-            balance = employee.hr_rfid_vending_balance
-            balance = Decimal(str(balance))
-            if employee.hr_rfid_vending_negative_balance is True:
-                balance += Decimal(str(abs(employee.hr_rfid_vending_limit)))
-            if employee.hr_rfid_vending_in_attendance is True:
-                if employee.attendance_state == 'checked_out':
-                    return '0000', 0
-            if balance <= 0:
-                return '0000', 0
-            balance += Decimal(str(employee.hr_rfid_vending_recharge_balance))
-            if employee.hr_rfid_vending_daily_limit != 0:
-                limit = abs(employee.hr_rfid_vending_daily_limit)
-                limit = Decimal(str(limit))
-                limit -= Decimal(str(employee.hr_rfid_vending_spent_today))
-                if limit < balance:
-                    balance = limit
-            balance *= 100
-            balance /= controller.scale_factor
-            balance = int(balance)
-            if balance > 0xFF:
-                balance = 0xFF
-            b1 = (balance & 0xF0) // 0x10
-            b2 = balance & 0x0F
-            return '%02X%02X' % (b1, b2), balance
 
         def get_item_price(controller, item, event, err_msg):
             """
@@ -150,7 +126,7 @@ class HrRfidVending(WebRfidController):
                     ev = create_ev(controller, event, card, '64')
                     return self._check_for_unsent_cmd(status_code, ev)
 
-                balance_str, balance = get_employee_balance(card.employee_id, controller)
+                balance_str, balance = card.employee_id.get_employee_balance(controller)
                 card_number = reduce(operator.add, list('0' + str(a) for a in card.number), '')
 
                 ev = create_ev(controller, event, card, '64')
@@ -250,26 +226,16 @@ class HrRfidVending(WebRfidController):
                 exceptions.MissingError, exceptions.ValidationError,
                 psycopg2.DataError, ValueError) as __:
             #commented DeferredException ^
-            request.env['hr.rfid.event.system'].sudo().create({
-                'webstack_id': self._webstack.id,
-                'timestamp': fields.Datetime.now(),
-                'error_description': traceback.format_exc(),
-                'input_js': json.dumps(post),
-            })
+            self._webstack.sys_log(error_description=traceback.format_exc(),
+                                   input_json=json.dumps(post))
             _logger.debug('Vending: Caught an exception, returning status=500 and creating a system event')
             return { 'status': 500 }
         except BadTimeException:
             t = self._post['event']['date'] + ' ' + self._post['event']['time']
             ev_num = str(self._post['event']['event_n'])
             controller = self._webstack.controllers.filtered(lambda r: r.ctrl_id == self._post['event']['id'])
-            sys_ev_dict = {
-                'webstack_id': self._webstack.id,
-                'controller_id': controller.id,
-                'timestamp': fields.Datetime.now(),
-                'event_action': ev_num,
-                'error_description': 'Controller sent us an invalid date or time: ' + t,
-                'input_js': json.dumps(self._post),
-            }
-            request.env['hr.rfid.event.system'].sudo().create(sys_ev_dict)
+            controller.sys_log(error_description=f'Controller sent us an invalid date or time: {t}',
+                               ev_num=ev_num,
+                               input_json=json.dumps(self._post))
             _logger.debug('Caught a time error, returning status=200 and creating a system event')
             return { 'status': 200 }

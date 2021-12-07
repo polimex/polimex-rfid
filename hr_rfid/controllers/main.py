@@ -457,7 +457,7 @@ class WebRfidController(http.Controller):
 
         hw_ver = f0_parse[F0Parse.hw_ver]
 
-        if ctrl_mode < 1 or ctrl_mode > 4:
+        if (ctrl_mode < 1 or ctrl_mode > 4):
             return self._log_cmd_error('F0 command failure, controller sent '
                                        'us a wrong mode', command, '31', 200)
 
@@ -741,7 +741,7 @@ class WebRfidController(http.Controller):
         return self._get_ws_time().strftime('%Y-%m-%d %H:%M:%S')
 
     def _get_ws_time(self):
-        t = self._post['event']['date'] + ' ' + self._post['event']['time']
+        t = f"{self._post['event']['date']} {self._post['event']['time']}"
         t = t.replace('-', '.')  # fix for WiFi module format
         try:
             ws_time = datetime.datetime.strptime(t, self._time_format)
@@ -807,6 +807,18 @@ class WebRfidController(http.Controller):
 
         command.request = json.dumps(json_cmd)
         return json_cmd
+
+    @http.route(['/hr/rfid/barcode'], type='json', auth='none', methods=['POST'], cors='*', csrf=False, save_session=False)
+    def post_barcode(self, **post):
+        # request.session.should_save = False
+        return
+        t0 = time.time()
+        _logger.info(request.jsonrequest)
+        return [{
+                "id": 1,
+                "method": "POST",
+                "body": {"cmd": {"reader": 1, "type": 0}}
+               }]
 
     @http.route(['/hr/rfid/event'], type='json', auth='none', methods=['POST'], cors='*', csrf=False, save_session=False)
     def post_event(self, **post):

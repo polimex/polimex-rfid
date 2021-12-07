@@ -179,9 +179,9 @@ class HrRfidCard(models.Model):
             owner = self.get_owner()
             valid_access_groups = owner.hr_rfid_access_group_ids.mapped('access_group_id')
             if access_groups not in valid_access_groups:
-                return [ ]
+                return []
         door_rel_ids = access_groups.mapped('all_door_ids')
-        return [ (rel.door_id, rel.time_schedule_id) for rel in door_rel_ids ]
+        return [(rel.door_id, rel.time_schedule_id) for rel in door_rel_ids]
 
     def door_compatible(self, door_id):
         return self.card_type == door_id.card_type \
@@ -189,6 +189,12 @@ class HrRfidCard(models.Model):
 
     def card_ready(self):
         return self.active
+
+    @api.onchange('activate_on', 'number')
+    def _check_activate_on(self):
+        for c in self:
+            c.active = c.activate_on and c.activate_on <= fields.Datetime.now()
+            # c.active = c.activate_on and (c.activate_on + timedelta(seconds=30)) <= fields.Datetime.now()
 
     @api.depends('employee_id', 'contact_id')
     def _compute_pin_code(self):
@@ -200,7 +206,7 @@ class HrRfidCard(models.Model):
         for card in self:
             if card.employee_id is not None and card.contact_id is not None:
                 if card.employee_id == card.contact_id or \
-                   (len(card.employee_id) > 0 and len(card.contact_id) > 0):
+                        (len(card.employee_id) > 0 and len(card.contact_id) > 0):
                     raise exceptions.ValidationError('Card user and contact cannot both be set '
                                                      'in the same time, and cannot both be empty.')
 
@@ -217,7 +223,7 @@ class HrRfidCard(models.Model):
     @api.constrains('number')
     def _check_number(self):
         for card in self:
-            dupes = self.search([ ('number', '=', card.number), ('card_type', '=', card.card_type.id) ])
+            dupes = self.search([('number', '=', card.number), ('card_type', '=', card.card_type.id)])
             if len(dupes) > 1:
                 raise exceptions.ValidationError(_('Card number must be unique for every card type!'))
 
@@ -249,7 +255,7 @@ class HrRfidCard(models.Model):
     def create(self, vals):
         card_door_rel_env = self.env['hr.rfid.card.door.rel']
         invalid_user_and_contact_msg = _('Card user and contact cannot both be set' \
-                                       ' in the same time, and cannot both be empty.')
+                                         ' in the same time, and cannot both be empty.')
 
         records = self.env['hr.rfid.card']
         for val in vals:
@@ -318,16 +324,15 @@ class HrRfidCard(models.Model):
 
     @api.model
     def _update_cards(self):
-        cenv = self.env['hr.rfid.card']
         now = fields.datetime.now()
         str_before = str(now - timedelta(seconds=31))
-        str_after  = str(now + timedelta(seconds=31))
-        cards_to_activate = cenv.search(['|',('active', '=', True), ('active', '=', False),
+        str_after = str(now + timedelta(seconds=31))
+        cards_to_activate = self.env['hr.rfid.card'].search(['|', ('active', '=', True), ('active', '=', False),
                                          ('activate_on', '<', str_after),
-                                          ('activate_on', '>', str_before) ])
-        cards_to_deactivate = cenv.search(['|',('active', '=', True), ('active', '=', False),
+                                         ('activate_on', '>', str_before)])
+        cards_to_deactivate = self.env['hr.rfid.card'].search(['|', ('active', '=', True), ('active', '=', False),
                                            ('deactivate_on', '<', str_after),
-                                            ('deactivate_on', '>', str_before) ])
+                                           ('deactivate_on', '>', str_before)])
 
         neutral_cards = cards_to_activate & cards_to_deactivate
         cards_to_activate = cards_to_activate - neutral_cards
