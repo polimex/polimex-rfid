@@ -92,7 +92,7 @@
                       decoration-warning="event_action == '64'" >
                     <field name="event_time"/>
                     <field name="employee_id" widget="many2one_avatar_employee" />
-                    <field name="contact_id" widget="many2one_avatar" optional="show"/>
+                    <field name="contact_id" widget="many2one_avatar" />
                     <field name="event_action"/>
                     <field name="reader_id"/>
                     <field name="door_id"/>
