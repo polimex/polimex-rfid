@@ -283,7 +283,7 @@ class WebRfidController(http.Controller):
 
         event_dict = {
             'ctrl_addr': controller.ctrl_id,
-            'door_id': door.id if door else False,
+            'door_id': door and door.id or False,
             'reader_id': reader.id,
             'card_id': card.id,
             'event_time': self._get_ws_time_str(),
