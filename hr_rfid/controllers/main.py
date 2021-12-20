@@ -142,14 +142,14 @@ class WebRfidController(http.Controller):
         if reader.door_id:
             door = reader.door_id
         else:
-            door = set(card.door_ids) & set(reader.door_ids)
-            if len(door) > 1:
-                card_door_ids = card.door_ids if card else []
-                door = set(door) & set(card_door_ids)
-                if len(door) > 0:
-                    door = door[0]
-            if len(door) == 0 and reader:
-                door = reader.door_ids[0]
+            door = reader.door_ids and reader.door_ids[0] or None
+            # door = set(card.door_ids) & set(reader.door_ids)
+            # if len(door) > 1:
+            #     card_door_ids = card.door_ids if card else []
+            #     door = set(door) & set(card_door_ids)
+            #     if len(door) > 0:
+            #         door = door[0]
+
 
         ev_env = request.env['hr.rfid.event.user'].sudo()
 
