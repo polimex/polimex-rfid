@@ -146,6 +146,8 @@ class WebRfidController(http.Controller):
             if len(door) > 1:
                 card_door_ids = card.door_ids if card else []
                 door = set(door) & set(card_door_ids)
+                if len(door) > 0:
+                    door = door[0]
             if len(door) == 0:
                 door = reader_num
 
