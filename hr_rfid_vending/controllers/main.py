@@ -22,7 +22,8 @@ class HrRfidVending(WebRfidController):
         self._webstack = None
         super(HrRfidVending, self).__init__(*args, **kwargs)
 
-    @http.route(['/hr/rfid/event'], type='json', auth='none', methods=['POST'], cors='*', csrf=False, save_session=False)
+    @http.route(['/hr/rfid/event'], type='json', auth='none', methods=['POST'], cors='*', csrf=False,
+                save_session=False)
     def post_event(self, **post):
         self._post = post
         self._webstacks_env = request.env['hr.rfid.webstack'].sudo()
@@ -30,7 +31,7 @@ class HrRfidVending(WebRfidController):
         ev_env = request.env['hr.rfid.vending.event'].sudo()
         sys_ev_env = request.env['hr.rfid.event.system'].sudo()
 
-        self._webstack = self._webstacks_env.search([ ('serial', '=', str(post['convertor'])) ])
+        self._webstack = self._webstacks_env.search([('serial', '=', str(post['convertor']))])
         status_code = 200
 
         item_missing_err_str = _('Item number %d missing from vending machine configuration')
@@ -71,7 +72,6 @@ class HrRfidVending(WebRfidController):
                 'input_js': json.dumps(self._post),
             })
 
-
         def get_item_price(controller, item, event, err_msg):
             """
             Gets an item's balance. If item does not exist, returns 0 and creates a system event with '
@@ -89,7 +89,7 @@ class HrRfidVending(WebRfidController):
             return item.list_price
 
         def calc_balance(controller, event):
-            received_balance = int(event['dt'][6:8], 16)*0x10 + int(event['dt'][8:10], 16)
+            received_balance = int(event['dt'][6:8], 16) * 0x10 + int(event['dt'][8:10], 16)
             return (received_balance * controller.scale_factor) / 100
 
         def parse_event():
@@ -106,7 +106,8 @@ class HrRfidVending(WebRfidController):
 
             # TODO Move into function "deal_with_ev_64"
             if event['event_n'] == 64:
-                card = card_env.search(['|',('active', '=', True), ('active', '=', False), ('number', '=', event['card']) ])
+                card = card_env.search(
+                    ['|', ('active', '=', True), ('active', '=', False), ('number', '=', event['card'])])
 
                 if len(card) == 0 or len(card.employee_id) == 0:
                     return ret_super()
@@ -140,7 +141,8 @@ class HrRfidVending(WebRfidController):
                 return self._send_command(cmd, status_code)
             # TODO Move into function "deal_with_ev_47"
             elif event['event_n'] == 47:
-                card = card_env.search(['|',('active', '=', True), ('active', '=', False), ('number', '=', event['card']) ])
+                card = card_env.search(
+                    ['|', ('active', '=', True), ('active', '=', False), ('number', '=', event['card'])])
 
                 if len(card) == 0:
                     if event['card'] != '0000000000':
@@ -217,7 +219,7 @@ class HrRfidVending(WebRfidController):
                 _logger.debug('Vending: Received=' + str(post))
                 ret = parse_event()
                 t1 = time.time()
-                _logger.debug('Took %2.03f time to form response=%s' % ((t1-t0), str(ret)))
+                _logger.debug('Took %2.03f time to form response=%s' % ((t1 - t0), str(ret)))
             else:
                 ret = ret_super()
 
@@ -225,11 +227,11 @@ class HrRfidVending(WebRfidController):
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
                 exceptions.MissingError, exceptions.ValidationError,
                 psycopg2.DataError, ValueError) as __:
-            #commented DeferredException ^
+            # commented DeferredException ^
             self._webstack.sys_log(error_description=traceback.format_exc(),
                                    input_json=json.dumps(post))
             _logger.debug('Vending: Caught an exception, returning status=500 and creating a system event')
-            return { 'status': 500 }
+            return {'status': 500}
         except BadTimeException:
             t = self._post['event']['date'] + ' ' + self._post['event']['time']
             ev_num = str(self._post['event']['event_n'])
@@ -238,4 +240,4 @@ class HrRfidVending(WebRfidController):
                                ev_num=ev_num,
                                input_json=json.dumps(self._post))
             _logger.debug('Caught a time error, returning status=200 and creating a system event')
-            return { 'status': 200 }
+            return {'status': 200}

@@ -2,15 +2,9 @@
 <odoo>
     <data>
 
-        <menuitem id="hr_rfid_vending_management"
-                  name="Vending Management"
-                  parent="hr_rfid.hr_rfid_root_menu"
-                  groups="hr_rfid.hr_rfid_group_officer"
-                  sequence="15"/>
-
         <menuitem id="hr_rfid_vending_products_menu"
                   name="Products"
-                  parent="hr_rfid_vending_management"
+                  parent="hr_rfid.hr_rfid_settings_menu"
                   action="stock.product_template_action_product"
                   groups="hr_rfid_vending.group_customer"
                   sequence="100"/>
