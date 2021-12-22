@@ -9,6 +9,6 @@ class RfidSettings(models.TransientModel):
                                     help='Enter event lifetime. Older events will be deleted')
     module_hr_rfid_vending = fields.Boolean(string="Vending Control")
     module_rfid_pms_base = fields.Boolean(string="PMS Base functionality")
-    module_hr_rfid_andromeda_import = fields.Boolean(string="Andromeda Import")
+    # module_hr_rfid_andromeda_import = fields.Boolean(string="Andromeda Import")
 
 
