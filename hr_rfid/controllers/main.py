@@ -139,13 +139,19 @@ class WebRfidController(http.Controller):
         if not reader:
             self._report_sys_ev('Could not find a reader with that id', controller)
             return self._check_for_unsent_cmd(200)
+
         if reader.door_id:
             door = reader.door_id
         else:
             door = set(card.door_ids) & set(reader.door_ids)
             if len(door) > 1:
-                card_door_ids = card.door_ids if card else []
+                card_door_ids = card and card.door_ids or []
                 door = set(door) & set(card_door_ids)
+                if len(door) == 1:
+                    door = reader.door_ids and reader.door_ids[0] or None
+                else:
+                    door = None
+
 
         ev_env = request.env['hr.rfid.event.user'].sudo()
 
@@ -260,26 +266,27 @@ class WebRfidController(http.Controller):
             event_action = '6'
 
         # Relay controller
-        if controller.is_relay_ctrl() and event_action == 1 and controller.mode == 3:
-            dt = self._post['event']['dt']
-            # print('dt=' + self._post['event']['dt'])
-            if len(dt) == 24:
-                chunks = [dt[0:6], dt[6:12], dt[12:18], dt[18:24]]
-                # print('Chunks=' + str(chunks))
-                door_number = 0
-                for i in range(len(chunks)):
-                    chunk = chunks[i]
-                    n1 = int(chunk[:2])
-                    n2 = int(chunk[2:4])
-                    n3 = int(chunk[4:])
-                    door_number |= n1 * 100 + n2 * 10 + n3
-                    if i != len(chunks) - 1:
-                        door_number <<= 8
-                door = reader.door_ids.filtered(lambda d: d.number == door_number)
+        if controller.is_relay_ctrl() and event_action == 1:
+            if controller.mode == 3:
+                dt = self._post['event']['dt']
+                if len(dt) == 24:
+                    chunks = [dt[0:6], dt[6:12], dt[12:18], dt[18:24]]
+                    # print('Chunks=' + str(chunks))
+                    door_number = 0
+                    for i in range(len(chunks)):
+                        chunk = chunks[i]
+                        n1 = int(chunk[:2])
+                        n2 = int(chunk[2:4])
+                        n3 = int(chunk[4:])
+                        door_number |= n1 * 100 + n2 * 10 + n3
+                        if i != len(chunks) - 1:
+                            door_number <<= 8
+                    door = reader.door_ids.filtered(lambda d: d.number == door_number)
+
 
         event_dict = {
             'ctrl_addr': controller.ctrl_id,
-            'door_id': door.id if door else False,
+            'door_id': door and door.id or False,
             'reader_id': reader.id,
             'card_id': card.id,
             'event_time': self._get_ws_time_str(),

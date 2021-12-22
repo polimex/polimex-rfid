@@ -99,7 +99,7 @@ class VendingEvents(models.Model):
 
     def _check_save_comms(self, vals):
         save_comms = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.save_webstack_communications')
-        if save_comms != 'True':
+        if not save_comms:
             if 'input_js' in vals:
                 vals.pop('input_js')
 
