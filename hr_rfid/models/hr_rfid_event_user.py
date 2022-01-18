@@ -2,6 +2,9 @@ from datetime import timedelta
 
 from odoo import fields, models, api, _
 
+import logging
+_logger = logging.getLogger(__name__)
+
 
 class HrRfidUserEvent(models.Model):
     _name = 'hr.rfid.event.user'
@@ -62,6 +65,13 @@ class HrRfidUserEvent(models.Model):
         ondelete='cascade',
     )
 
+    alarm_line_id = fields.Many2one(
+        'hr.rfid.ctrl.alarm',
+        string='Alarm line',
+        help='Alarm line affected by this event',
+        ondelete='cascade',
+    )
+
     card_id = fields.Many2one(
         'hr.rfid.card',
         string='Card',
@@ -85,18 +95,19 @@ class HrRfidUserEvent(models.Model):
     )
 
     action_selection = [
-        ('1', _('Granted')),
-        ('2', _('Denied')),
-        ('3', _('Denied T/S')),
-        ('4', _('Denied APB')),
-        ('5', _('Exit Button')),
-        ('6', _('Granted (no entry)')),
-        ('7', _('Granted Insert')),
-        ('8', _('Denied Insert')),
-        ('9', _('Ejected')),
-        ('10', _('Zone Alarm')),
-        ('11', _('Zone Arm/Disarm')),
+        ('1', _('Card Granted')),
+        ('2', _('Card Denied')),
+        ('3', _('Card Denied T/S')),
+        ('4', _('Card Denied APB')),
+        ('5', _('Zone Arm Denied')),
+        ('6', _('Card Granted (no entry)')),
+        ('7', _('Card Granted Insert')),
+        ('8', _('Card Denied Insert')),
+        ('9', _('Card Ejected')),
+        ('10', _('Zone Arm')),
+        ('11', _('Zone Disarm')),
         ('12', _('Hotel Button Pressed')),
+        ('15', _('Zone Disarm Denied')),
         ('64', _('Request Instructions')),
     ]
 
@@ -158,6 +169,12 @@ class HrRfidUserEvent(models.Model):
         records = super(HrRfidUserEvent, self).create(vals_list)
 
         for rec in records:
+            if not rec.employee_id and not rec.contact_id and rec.card_id:
+                rec.employee_id = rec.card_id.employee_id
+                rec.contact_id = rec.card_id.contact_id
+
+            if not rec.employee_id and not rec.contact_id:
+                _logger.error('User event without employee, contact and card. FATAL for event')
             # '1' == Granted
             if rec.event_action != '1':
                 continue
@@ -167,7 +184,7 @@ class HrRfidUserEvent(models.Model):
 
             zones = rec.door_id.zone_ids
 
-            if len(rec.door_id.reader_ids) > 1:
+            if zones:
                 # Reader type is In
                 if rec.reader_id.reader_type == '0':
                     zones.person_entered(rec.employee_id or rec.contact_id, rec)

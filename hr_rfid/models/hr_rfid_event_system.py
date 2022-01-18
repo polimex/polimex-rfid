@@ -1,7 +1,8 @@
 import json
 from datetime import timedelta
 
-from odoo import fields, models, api, exceptions
+from odoo import fields, models, api, exceptions, _
+
 
 
 class HrRfidSystemEvent(models.Model):
@@ -17,7 +18,6 @@ class HrRfidSystemEvent(models.Model):
         'hr.rfid.webstack',
         string='Module',
         help='Module affected by this event',
-        default=None,
         ondelete='cascade',
     )
 
@@ -25,8 +25,26 @@ class HrRfidSystemEvent(models.Model):
         'hr.rfid.ctrl',
         string='Controller',
         help='Controller affected by this event',
-        default=None,
         ondelete='cascade',
+    )
+
+    door_id = fields.Many2one(
+        'hr.rfid.door',
+        string='Door',
+        help='Door affected by this event',
+        ondelete='cascade',
+    )
+
+    alarm_line_id = fields.Many2one(
+        'hr.rfid.ctrl.alarm',
+        string='Alarm line',
+        help='Alarm line affected by this event',
+        ondelete='cascade',
+    )
+
+    siren = fields.Boolean(
+        help='Alarm detected and Siren is ON',
+        default=False
     )
 
     timestamp = fields.Datetime(
@@ -47,50 +65,54 @@ class HrRfidSystemEvent(models.Model):
     )
 
     action_selection = [
-        ('0', 'Unknown Event?'),
-        ('1', 'DuressOK'),
-        ('2', 'DuressError'),
-        ('3', 'R1 Card OK'),
-        ('4', 'R1 Card Error'),
-        ('5', 'R1 T/S Error'),
-        ('6', 'R1 APB Error'),
-        ('7', 'R2 Card OK'),
-        ('8', 'R2 Card Error'),
-        ('9', 'R2 T/S Error'),
-        ('10', 'R2 APB Error'),
-        ('11', 'R3 Card OK'),
-        ('12', 'R3 Card Error'),
-        ('13', 'R3 T/S Error'),
-        ('14', 'R3 APB Error'),
-        ('15', 'R4 Card Ok'),
-        ('16', 'R4 Card Error'),
-        ('17', 'R4 T/S Error'),
-        ('18', 'R4 APB Error'),
-        ('19', 'EmergencyOpenDoor'),
-        ('20', 'ON/OFF Siren'),
-        ('21', 'OpenDoor1 from In1'),
-        ('22', 'OpenDoor2 from In2'),
-        ('23', 'OpenDoor3 from In3'),
-        ('24', 'OpenDoor4 from In4'),
-        ('25', 'Dx Overtime'),
-        ('26', 'ForcedOpenDx'),
-        ('27', 'DELAY ZONE ON (if out) Z4,Z3,Z2,Z1'),
-        ('28', 'DELAY ZONE OFF (if in) Z4,Z3,Z2,Z1'),
-        ('29', ''),
-        ('30', 'Power On event'),
-        ('31', 'Open/Close Door From PC'),
-        ('33', 'Siren On/Off from PC'),
-        ('34', 'eZoneAlarm'),
-        ('35', 'Zone Arm/Disarm'),
-        ('36', 'Inserted Card'),
-        ('37', 'Ejected Card'),
-        ('38', 'Hotel Button Pressed'),
-        ('45', '1-W ERROR (wiring problems)'),
-        ('47', 'Vending Purchase Complete'),
-        ('48', 'Vending Error1'),
-        ('49', 'Vending Error2'),
-        ('64', 'Vending Request User Balance'),
-        ('67', 'Arm Denied'),
+        ('0', _('Unknown Event?')),
+        ('1', _('DuressOK')),
+        ('2', _('DuressError')),
+        ('3', _('R1 Card OK')),         # User Event
+        ('4', _('R1 Card Error')),      # User Event
+        ('5', _('R1 T/S Error')),       # User Event
+        ('6', _('R1 APB Error')),       # User Event
+        ('7', _('R2 Card OK')),         # User Event
+        ('8', _('R2 Card Error')),      # User Event
+        ('9', _('R2 T/S Error')),       # User Event
+        ('10', _('R2 APB Error')),      # User Event
+        ('11', _('R3 Card OK')),        # User Event
+        ('12', _('R3 Card Error')),     # User Event
+        ('13', _('R3 T/S Error')),      # User Event
+        ('14', _('R3 APB Error')),      # User Event
+        ('15', _('R4 Card Ok')),        # User Event
+        ('16', _('R4 Card Error')),     # User Event
+        ('17', _('R4 T/S Error')),      # User Event
+        ('18', _('R4 APB Error')),      # User Event
+        ('19', _('Fire/Emergency')),
+        ('20', _('Siren ON/OFF')),
+        ('21', _('Exit button')),
+        ('22', _('OpenDoor2 from In2')),   # deprecated
+        ('23', _('OpenDoor3 from In3')),   # deprecated
+        ('24', _('OpenDoor4 from In4')),   # deprecated
+        ('25', _('Door Overtime')),
+        ('26', _('Forced Door Open')),
+        ('27', _('DELAY ZONE ON (if out) Z4,Z3,Z2,Z1')),
+        ('28', _('DELAY ZONE OFF (if in) Z4,Z3,Z2,Z1')),
+        ('29', _('reserved')),
+        ('30', _('Power On event')),
+        ('31', _('Open/Close Door From PC')),
+        ('32', _('reserved')),
+        ('33', _('Zone Arm/Disarm Denied')), # User Event
+        ('34', _('Zone Status')),
+        ('35', _('Zone Arm/Disarm')),       # User Event
+        ('36', _('Inserted Card')),         # User Event
+        ('37', _('Ejected Card')),          # User Event
+        ('38', _('Hotel Button Pressed')),  # User Event
+        ('45', _('1-W ERROR (wiring problems)')),
+        ('47', _('Vending Purchase Complete')),
+        ('48', _('Vending Error1')),
+        ('49', _('Vending Error2')),
+        ('52', _('Temperature High')),
+        ('53', _('Temperature Normal')),
+        ('54', _('Temperature Low')),
+        ('64', _('Cloud Card Request')),    # User Event
+        ('99', _('System Event')),
     ]
 
     event_nums = list(map(lambda a: a[0], action_selection))
@@ -98,6 +120,7 @@ class HrRfidSystemEvent(models.Model):
     event_action = fields.Selection(
         selection=action_selection,
         string='Event Type',
+        default='99'
     )
 
     error_description = fields.Char(
@@ -138,7 +161,7 @@ class HrRfidSystemEvent(models.Model):
                           ' at ' + str(record.timestamp)
 
     def _check_save_comms(self, vals):
-        save_comms = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.save_webstack_communications')
+        save_comms = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.save_webstack_communications') in ['true', 'True']
         if not save_comms:
             if 'input_js' not in vals:
                 return
@@ -158,6 +181,12 @@ class HrRfidSystemEvent(models.Model):
             return False
 
         if vals.get('controller_id', False) != dupe.controller_id.id:
+            return False
+
+        if vals.get('door_id', False) != dupe.controller_id.id:
+            return False
+
+        if vals.get('alarm_line_id', False) != dupe.controller_id.id:
             return False
 
         if vals.get('event_action', False) != dupe.event_action:

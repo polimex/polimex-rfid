@@ -163,7 +163,7 @@ class HrRfidCard(models.Model):
 
     def get_potential_access_doors(self, access_groups=None):
         """
-        Returns a list of tuples (door, time_schedule) the card potentially has access to
+        Returns a list of tuples (door, time_schedule, alarm_rights) the card potentially has access to
         """
         if access_groups is None:
             owner = self.get_owner()
@@ -174,7 +174,7 @@ class HrRfidCard(models.Model):
             if access_groups not in valid_access_groups:
                 return []
         door_rel_ids = access_groups.mapped('all_door_ids')
-        return [(rel.door_id, rel.time_schedule_id) for rel in door_rel_ids]
+        return [(rel.door_id, rel.time_schedule_id, rel.alarm_rights) for rel in door_rel_ids]
 
     def door_compatible(self, door_id):
         return self.card_type == door_id.card_type \

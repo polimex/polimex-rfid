@@ -29,6 +29,7 @@
                         <field name="acc_gr_doors" attrs="{'invisible': True}"/>
                         <field name="door_ids" domain="[('id', 'not in', acc_gr_doors)]" widget="many2many_tags"/>
                         <field name="time_schedule_id"/>
+                        <field name="alarm_rights"/>
                     </group>
                     <footer>
                         <button name="add_doors" type="object"
@@ -142,6 +143,7 @@
                                     <tree string="Doors group has access to">
                                         <field name="door_id"/>
                                         <field name="time_schedule_id"/>
+                                        <field name="alarm_rights"/>
                                     </tree>
                                 </field>
                             </page>
@@ -298,6 +300,7 @@
                         <field name="access_group_id"/>
                         <field name="door_id"/>
                         <field name="time_schedule_id"/>
+                        <field name="alarm_rights"/>
                     </group>
                 </form>
             </field>

@@ -81,11 +81,11 @@
                       decoration-danger="not active">
                     <field name="active" invisible="1"/>
                     <field name="name"/>
-                    <field name="employee_id" widget="many2one_avatar_employee" />
-                    <field name="contact_id" widget="many2one_avatar"/>
-                    <field name="card_type"/>
-                    <field name="activate_on"/>
-                    <field name="deactivate_on"/>
+                    <field name="employee_id" widget="many2one_avatar_employee" optional="show"/>
+                    <field name="contact_id" widget="many2one_avatar" optional="show"/>
+                    <field name="card_type" optional="show"/>
+                    <field name="activate_on" optional="show"/>
+                    <field name="deactivate_on" optional="show"/>
                     <field name="company_id" groups="base.group_multi_company"/>
 
                 </tree>
@@ -111,7 +111,7 @@
                     <filter name="filter_expired" string="Expired"
                             domain="[('deactivate_on', '&lt;=', context_today().strftime('%Y-%m-%d'))]"/>
                     <filter name="filter_not_activated_yet_by_date" string="Activate in Future"
-                            domain="[('activate_on', '&gt;', context_today().strftime('%Y-%m-%d'))]"/>
+                            domain="[('activate_on', '&gt;=', context_today().strftime('%Y-%m-%d'))]"/>
 
                     <group expand="0" string="Group By">
                         <filter string="by Card Type" name="group_by_card_type" context="{'group_by':'card_type'}"/>

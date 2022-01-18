@@ -31,6 +31,39 @@
                                 </div>
                             </div>
                             <div class="col-12 col-lg-6 o_setting_box"
+                                 id="s_save_new_webstacks"
+                                 title="Auto add Modules">
+                                <div class="o_setting_left_pane">
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <label for="save_new_webstacks"/>
+                                    <div class="content-group">
+                                        <field name="save_new_webstacks"/>
+                                    </div>
+                                    <div class="text-muted">
+                                        Permit automatic adding modules from communication. This feature do not support Multi Company. New Modules are added to first company!
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6 o_setting_box"
+                                 id="s_save_webstack_communications"
+                                 groups="base.group_no_one"
+                                 title="Debug Communication">
+                                <div class="o_setting_left_pane">
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <label for="save_webstack_communications"/>
+                                    <div class="content-group">
+                                        <field name="save_webstack_communications"/>
+                                    </div>
+                                    <div class="text-muted">
+                                        Log all JSON data from communication to events. Visible only in debug mode
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6 o_setting_box"
                                  id="module_hr_rfid_vending"
                                  title="Managing Polimex SmartVend controllers">
                                 <div class="o_setting_left_pane">

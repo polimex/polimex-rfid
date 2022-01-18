@@ -8,6 +8,7 @@ class HrRfidController(models.Model):
     _description = 'Controller'
     _sql_constraints = [('rfid_controller_unique', 'unique(serial_number)',
                          'Serial numbers must be unique!')]
+    _order = 'webstack_id, ctrl_id'
 
     name = fields.Char(
         string='Name',
@@ -43,12 +44,19 @@ class HrRfidController(models.Model):
 
     inputs = fields.Integer(
         string='Inputs',
-        help='Mask describing the inputs of the controller',
+        help='Hardware Inputs of the controller',
     )
 
     outputs = fields.Integer(
         string='Outputs',
-        help='Mask detailing the outputs of the controller',
+        help='Hardware Outputs of the controller',
+    )
+    input_states = fields.Integer(
+        help='State of the inputs of the controller',
+    )
+
+    output_states = fields.Integer(
+        help='States the outputs of the controller',
     )
 
     readers = fields.Integer(
@@ -69,6 +77,18 @@ class HrRfidController(models.Model):
     alarm_lines = fields.Integer(
         string='Alarm Lines',
         help='How many alarm inputs there are',
+        default=0
+    )
+
+    alarm_line_states = fields.Char(
+        string='Alarm Line States',
+        help='Status of the Alarm lines',
+    )
+
+    siren_state = fields.Boolean(
+        help='Alarm Siren state',
+        compute='_compute_siren_state',
+        inverse='_set_siren_state'
     )
 
     mode = fields.Integer(
@@ -137,17 +157,24 @@ class HrRfidController(models.Model):
     )
 
     door_ids = fields.One2many(
-        'hr.rfid.door',
-        'controller_id',
+        comodel_name='hr.rfid.door',
+        inverse_name='controller_id',
         string='Controlled Doors',
         help='Doors that belong to this controller'
     )
 
     reader_ids = fields.One2many(
-        'hr.rfid.reader',
-        'controller_id',
+        comodel_name='hr.rfid.reader',
+        inverse_name='controller_id',
         string='Controlled Readers',
         help='Readers that belong to this controller',
+    )
+
+    alarm_line_ids = fields.One2many(
+        comodel_name='hr.rfid.ctrl.alarm',
+        inverse_name='controller_id',
+        string='Controlled Alarm Lines',
+        help='Alarm lines that belong to this controller',
     )
 
     system_event_ids = fields.One2many(
@@ -198,6 +225,7 @@ class HrRfidController(models.Model):
     system_event_count = fields.Char(string='System Events count', compute='_compute_counts')
     readers_count = fields.Char(string='Readers count', compute='_compute_counts')
     doors_count = fields.Char(string='Doors count', compute='_compute_counts')
+    alarm_line_count = fields.Char(string='Alarm line count', compute='_compute_counts')
 
     # user_events_count = fields.Char(string='User events count', compute='_compute_counts')
 
@@ -208,7 +236,18 @@ class HrRfidController(models.Model):
             a.system_event_count = len(a.system_event_ids)
             a.readers_count = len(a.reader_ids)
             a.doors_count = len(a.door_ids)
+            a.alarm_line_count = len(a.alarm_line_ids)
             # a.user_events_count = event_model.search_count([('door_id', 'in', [d.id for d in a.door_ids])])
+
+    def _compute_siren_state(self):
+        for c in self:
+            siren_out = (c.alarm_lines == 1) and 4 or 10
+            c.siren_state = c._get_output_state(siren_out)
+
+    def _set_siren_state(self):
+        for c in self:
+            siren_out = (c.alarm_lines == 1) and 4 or 10
+            c.change_output_state(siren_out, int(c.siren_state), 99)
 
     def return_action_to_open(self):
         """ This opens the xml view specified in xml_id for the current app """
@@ -301,6 +340,12 @@ class HrRfidController(models.Model):
                 io_table = io_t
         return io_table
 
+    @api.model
+    def update_ctrl_alarm_lines(self):
+        ctrl_ids = self.env['hr.rfid.ctrl'].sudo().search([('alarm_lines', '>', 0), ('alarm_line_ids', '=', False)])
+        ctrl_ids._setup_alarm_lines()
+        return True
+
     def button_reload_cards(self):
         cmd_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
 
@@ -320,27 +365,104 @@ class HrRfidController(models.Model):
 
         for door in self.door_ids:
             self.env['hr.rfid.card.door.rel'].reload_door_rels(door)
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _("Controller cards reload"),
+                'message': _("This will take time. For more information check controller's commands"),
+                'type': 'success',
+                'sticky': False,
+            }}
 
-    def change_io_table(self, new_io_table):
+    def _get_alarm_line_state(self, zone_number):
+        self.ensure_one()
+        # zone_states = [
+        #     'unknown',
+        #     'disabled'
+        #     'short',
+        #     'normal',
+        #     's1',
+        #     's2',
+        #     's12',
+        #     'open',
+        #     'arm',
+        #     'disarm',
+        #     'no_alarm',
+        # ]
+        if not self.alarm_line_states or self.alarm_line_states == '0':
+            return 'no_alarm', 'unknown'
+        try:
+            state = int(self.alarm_line_states[(zone_number - 1) * 2:(zone_number - 1) * 2 + 2], 16)
+        except Exception as e:
+            print(self.name, zone_number, e)
+        res_state = 'disabled'
+        if state & 1 == 1: res_state = 'short'
+        if state & 2 == 2: res_state = 'normal'
+        if state & 4 == 4: res_state = 's1'
+        if state & 8 == 8: res_state = 's2'
+        if state & 16 == 16: res_state = 's12'
+        if state & 32 == 32: res_state = 'open'
+
+        if state & 64 == 64:
+            return 'arm', res_state
+        else:
+            return 'disarm', res_state
+
+    def _get_io_line(self, line_number: int):
+        self.ensure_one()
+        if not self.is_relay_ctrl() and self.io_table:
+            if not (0 < line_number < self.io_table_lines + 1):
+                raise "Invalid IO Line number"
+            line = self.io_table[16 * (line_number - 1):16 * (line_number - 1) + 16]
+            return [int(line[i * 2:i * 2 + 2]) for i in reversed(range(0, 8))]
+        else:
+            return []
+
+    def _set_io_line(self, line_number: int, line: [int]):
+        self.ensure_one()
+        if not (0 < line_number < self.io_table_lines + 1):
+            raise "Invalid IO Line number"
+        self.change_io_table(''.join([f"{line[i]:02d}" for i in reversed(range(0, 8))]), line_number)
+
+    def change_io_table(self, new_io_table, line=0):
         cmd_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
-        cmd_data = '00' + new_io_table
+        cmd_data = f"{line:02d}" + new_io_table
 
         for ctrl in self:
             if ctrl.io_table == new_io_table:
                 continue
 
-            if len(ctrl.io_table) != len(new_io_table):
+            if (len(ctrl.io_table) != len(new_io_table) and line == 0) or (line != 0 and len(new_io_table) != 16):
                 raise exceptions.ValidationError(
-                    'Io table lengths are different, this should never happen????'
+                    'IO table lengths are different, this should never happen????'
                 )
+            if line == 0:
+                ctrl.io_table = new_io_table
+                cmd_env.create({
+                    'webstack_id': ctrl.webstack_id.id,
+                    'controller_id': ctrl.id,
+                    'cmd': 'D9',
+                    'cmd_data': cmd_data,
+                })
+            else:
+                io_table = self.io_table[:16 * (line - 1)]
+                io_table += new_io_table
+                io_table += self.io_table[16 * (line - 1) + 16:]
+                ctrl.io_table = io_table
+                cmd_env.create({
+                    'webstack_id': ctrl.webstack_id.id,
+                    'controller_id': ctrl.id,
+                    'cmd': 'D9',
+                    'cmd_data': cmd_data,
+                })
 
-            ctrl.io_table = new_io_table
-            cmd_env.create({
-                'webstack_id': ctrl.webstack_id.id,
-                'controller_id': ctrl.id,
-                'cmd': 'D9',
-                'cmd_data': cmd_data,
-            })
+    def is_alarm_ctrl(self, hw_version=None):
+        if hw_version:
+            return hw_version in ['10', '11']
+        elif self:
+            self.ensure_one()
+            return self.alarm_lines > 0
 
     def is_relay_ctrl(self, hw_version=None):
         if hw_version:
@@ -348,6 +470,20 @@ class HrRfidController(models.Model):
         elif self:
             self.ensure_one()
             return self.hw_version in ['30', '31', '32']
+
+    def is_vending_ctrl(self, hw_version=None):
+        if hw_version:
+            return hw_version in ['16']
+        elif self:
+            self.ensure_one()
+            return self.hw_version in ['16']
+
+    def is_turnstile_ctrl(self, hw_version=None):
+        if hw_version:
+            return hw_version in ['9']
+        elif self:
+            self.ensure_one()
+            return self.hw_version in ['9']
 
     def get_ctrl_model_name(self, hw_id):
         tmp = -1
@@ -365,6 +501,15 @@ class HrRfidController(models.Model):
         cmd_env = self.env['hr.rfid.command']
         for ctrl in self:
             cmd_env.read_controller_information_cmd(ctrl)
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _("Refresh Controller information"),
+                'message': _("This will take time. For more information check controller's commands"),
+                'type': 'success',
+                'sticky': False,
+            }}
 
     def write(self, vals):
         # TODO Check if mode is being changed, change io table if so
@@ -398,99 +543,201 @@ class HrRfidController(models.Model):
                 'input_js': input_json,
             })
 
+    #  Helper functionality
+
+    def _setup_alarm_lines(self):
+        for ctrl in self.filtered(lambda c: (len(c.alarm_line_ids) == 0) and (c.alarm_lines > 0)):
+            line_ids = self.env['hr.rfid.ctrl.alarm'].sudo().create([
+                {
+                    'line_number': i + 1,
+                    'name': _('Alarm Line {}').format(i + 1),
+                    'controller_id': ctrl.id,
+                    'control_output': ctrl.alarm_lines == 1 and (4 + i + 1) or (10 + i + 1),
+                } for i in range(ctrl.alarm_lines)]
+            )
+            ctrl.sudo().write({'alarm_line_ids': [(4, line, 0) for line in line_ids.mapped('id')]})
+            if ctrl.alarm_lines == 1:
+                ctrl.door_ids[0].write({'alarm_line_ids': [(4, line_ids[0].id, 0)]})
+            else:
+                if ctrl.mode == 2:
+                    ctrl.door_ids[0].write({'alarm_line_ids': [(4, line_ids[0].id, 0), (4, line_ids[1].id, 0)]})
+                    ctrl.door_ids[1].write({'alarm_line_ids': [(4, line_ids[2].id, 0), (4, line_ids[3].id, 0)]})
+                if ctrl.mode == 3:
+                    ctrl.door_ids[0].write({'alarm_line_ids': [(4, line_ids[0].id, 0), (4, line_ids[1].id, 0)]})
+                    ctrl.door_ids[1].write({'alarm_line_ids': [(4, line_ids[2].id, 0)]})
+                    ctrl.door_ids[2].write({'alarm_line_ids': [(4, line_ids[3].id, 0)]})
+                if ctrl.mode == 4:
+                    ctrl.door_ids[0].write({'alarm_line_ids': [(4, line_ids[0].id, 0)]})
+                    ctrl.door_ids[1].write({'alarm_line_ids': [(4, line_ids[1].id, 0)]})
+                    ctrl.door_ids[2].write({'alarm_line_ids': [(4, line_ids[2].id, 0)]})
+                    ctrl.door_ids[3].write({'alarm_line_ids': [(4, line_ids[3].id, 0)]})
+
+    def _get_input_state(self, input_number):
+        self.ensure_one()
+        return self.input_states & (2 ** (input_number - 1)) == (2 ** (input_number - 1))
+
+    def _get_output_state(self, output_number):
+        self.ensure_one()
+        return self.output_states & (2 ** (output_number - 1)) == (2 ** (output_number - 1))
+
+    def _update_output_state(self, output_number, state):
+        '''
+        Output Number from 1
+        State 0 or 1, True or False
+        '''
+        if state:  # !=0
+            if self.output_states & (2 ** (output_number - 1)) != (2 ** (output_number - 1)):
+                self.output_states += (2 ** (output_number - 1))
+        elif self.output_states & (2 ** (output_number - 1)) == (2 ** (output_number - 1)):
+            self.output_states -= (2 ** (output_number - 1))
+
+    def convert_int_to_cmd_data_for_output_control(self, data):
+        self.ensure_one()
+        if not self.is_relay_ctrl():
+            cmd_data = '{:02X}'.format(data)
+        else:
+            cmd_data = '%03d%03d%03d%03d' % (
+                (data >> (3 * 8)) & 0xFF,
+                (data >> (2 * 8)) & 0xFF,
+                (data >> (1 * 8)) & 0xFF,
+                (data >> (0 * 8)) & 0xFF,
+            )
+            cmd_data = ''.join(['0' + ch for ch in cmd_data])
+        return cmd_data
+
+    def create_output_data_for_relay_control(self, out_number: int):
+        self.ensure_one()
+        if self.is_relay_ctrl():
+            if self.mode in [1, 2]:
+                data = 1 << (out_number - 1)
+                # if self.reader_ids.number == 2 and self.mode == 2:
+                #     data *= 0x10000
+            elif self.mode == 3:
+                data = out_number
+            else:
+                raise exceptions.ValidationError(_('Controller %s has mode=%d, which is not supported!')
+                                                 % (self.name, self.mode))
+        else:
+            data = out_number
+
+        return self.convert_int_to_cmd_data_for_output_control(data)
+
+    def update_th(self, sensor_number: int, data_dict: dict):
+        '''
+        sensor_number:int any number!. system sensor(integrated) number 0
+        data_dict: expect {'t':float, 'h':float}
+        '''
+        for c in self:
+            th_id = self.env['hr.rfid.ctrl.th'].search([
+                ('controller_id', '=', c.id),
+                ('sensor_number', '=', sensor_number),
+            ])
+            if not th_id:
+                th_id = self.env['hr.rfid.ctrl.th'].create([{
+                    'controller_id': c.id,
+                    'sensor_number': sensor_number
+                }])
+            new_dict = {}
+            if 't' in data_dict:
+                new_dict.update({'temperature': data_dict['t']})
+                if sensor_number == 0:
+                    c.temperature = data_dict['t']
+            if 'h' in data_dict:
+                new_dict.update({'humidity': data_dict['h']})
+                if sensor_number == 0:
+                    c.humidity = data_dict['h']
+            if new_dict:
+                th_id.write(new_dict)
+
+    def decode_door_number_for_relay(self, data):
+        self.ensure_one()
+        pcs_str =  [data[i * 6:i * 6 + 6] for i in range(4)]    #['000000', '000000', '000000', '000101']
+        pcs_int = []
+        for pcs in pcs_str:
+            pcs_int.append(int(''.join(str(int(pcs[i*2 : i*2+2])) for i in range(3))))
+        return int(''.join([str(p) for p in pcs_int]))
+
     # Commands to controllers
+    def _base_command(self, cmd: str, cmd_data: str = None, cmd_dict: dict = None):
+        commands = self.env['hr.rfid.command']
+        for c in self:
+            new_cmd = cmd_dict or {'webstack_id': c.webstack_id.id,
+                                   'controller_id': c.id,
+                                   'cmd': cmd,
+                                   }
+            if cmd and not cmd_dict and cmd_data:
+                new_cmd.update({'cmd_data': cmd_data})
+            commands += self.env['hr.rfid.command'].find_last_wait(new_cmd) or self.env['hr.rfid.command'].with_user(
+                SUPERUSER_ID).create([new_cmd])
+
+        return commands
+
+    def change_output_state(self, out_number: int, out_state: int, time: int):
+        """
+        :param out: 0 to open door, 1 to close door
+        :param time: Range: [0, 99]
+        """
+        self.ensure_one()
+        cmd = {
+            'cmd': {
+                'id': self.ctrl_id,
+                'c': 'DB',
+            }
+        }
+        if self.is_relay_ctrl():
+            # 1 byte - 64(0x40), Event Number(1 byte), 12 byte card data
+            # 1 byte - 31(0x1F), Reader number(1 byte), 12 byte output number (card data)
+            # mode 1 and 3- any reader, mode 2- 1..16(R1), 17..32(R2)
+            if self.mode == 2:
+                reader = (out_number < 17) and 1 or 2
+            else:
+                reader = 1
+            cmd_data = ('1F%02X' % reader) + self.create_output_data_for_relay_control(out_number)
+        else:
+            cmd_data = '%02x%02d%02d' % (out_number, out_state, time)
+
+        if self.webstack_id.behind_nat:
+            cmd_id = self.env['hr.rfid.command'].sudo().create([{
+                'webstack_id': self.webstack_id.id,
+                'controller_id': self.id,
+                'cmd': 'DB',
+                'cmd_data': cmd_data
+            }])
+        else:
+            cmd['cmd']['d'] = cmd_data
+            body_js = self.webstack_id.direct_execute(cmd=cmd)
+            if body_js['response']['e'] != 0:
+                raise exceptions.ValidationError('Error. Controller returned body:\n' + str(body_js))
 
     def read_controller_information_cmd(self):
-        commands = []
-        for controller in self:
-            commands.append(self.env['hr.rfid.command'].with_user(SUPERUSER_ID).create([{
-                'webstack_id': controller.webstack_id.id,
-                'controller_id': controller.id,
-                'cmd': 'F0',
-            }])
-            )
-        return commands
+        return self._base_command('F0')
 
     def read_status(self):
-        commands = []
-        for controller in self:
-            commands.append(self.env['hr.rfid.command'].with_user(SUPERUSER_ID).create([{
-                'webstack_id': controller.webstack_id.id,
-                'controller_id': controller.id,
-                'cmd': 'B3',
-            }])
-            )
-        return commands
+        return self._base_command('B3')
 
     def synchronize_clock_cmd(self):
-        commands = []
-        for controller in self:
-            commands.append(
-                self.env['hr.rfid.command'].with_user(SUPERUSER_ID).create([{
-                    'webstack_id': controller.webstack_id.id,
-                    'controller_id': controller.id,
-                    'cmd': 'D7',
-                }])
-            )
-        return commands
+        return self._base_command('D7')
 
     def delete_all_cards_cmd(self):
-        commands = []
-        for controller in self:
-            commands.append(self.env['hr.rfid.command'].with_user(SUPERUSER_ID).create([{
-                'webstack_id': controller.webstack_id.id,
-                'controller_id': controller.id,
-                'cmd': 'DC',
-                'cmd_data': '0303',
-            }])
-            )
-        return commands
+        return self._base_command('DC', '0303')
 
     def delete_all_events_cmd(self):
-        commands = []
-        for controller in self:
-            commands.append(self.env['hr.rfid.command'].with_user(SUPERUSER_ID).create([{
-                'webstack_id': controller.webstack_id.id,
-                'controller_id': controller.id,
-                'cmd': 'DC',
-                'cmd_data': '0404',
-            }])
-            )
-        return commands
+        return self._base_command('DC', '0404')
 
     def read_io_table_cmd(self):
-        commands = []
-        for controller in self:
-            commands.append(self.env['hr.rfid.command'].with_user(SUPERUSER_ID).create([{
-                'webstack_id': controller.webstack_id.id,
-                'controller_id': controller.id,
-                'cmd': 'F9',
-                'cmd_data': '00',
-            }])
-            )
-        return commands
+        return self._base_command('F9', '00')
 
     def read_readers_mode_cmd(self):
-        commands = []
-        for controller in self:
-            commands.append(self.env['hr.rfid.command'].with_user(SUPERUSER_ID).create([{
-                'webstack_id': controller.webstack_id.id,
-                'controller_id': controller.id,
-                'cmd': 'F6',
-            }])
-            )
-        return commands
+        return self._base_command('F6')
 
     def read_anti_pass_back_mode_cmd(self):
-        commands = []
-        for controller in self:
-            commands.append(self.env['hr.rfid.command'].with_user(SUPERUSER_ID).create([{
-                'webstack_id': controller.webstack_id.id,
-                'controller_id': controller.id,
-                'cmd': 'FC',
-            }])
-            )
-        return commands
+        return self._base_command('FC')
+
+    def read_input_masks_cmd(self):
+        return self._base_command('FB')
+
+    def read_outputs_ts_cmd(self):
+        return self._base_command('FF')
 
     def create_d1_cmd(self, card_num, pin_code, ts_code, rights_data, rights_mask):
         commands = []
@@ -507,7 +754,10 @@ class HrRfidController(models.Model):
                     'rights_mask': rights_mask,
                 }])
             )
-        return commands
+        if len(commands) == 1:
+            return commands[0]
+        else:
+            return commands
 
     def _create_d1_cmd_relay(self, card_num, rights_data, rights_mask):
         commands = []
@@ -522,7 +772,10 @@ class HrRfidController(models.Model):
                     'rights_mask': rights_mask,
                 }])
             )
-        return commands
+        if len(commands) == 1:
+            return commands[0]
+        else:
+            return commands
 
     def add_remove_card(self, card_number, pin_code, ts_code, rights_data, rights_mask):
         commands = []
@@ -568,7 +821,10 @@ class HrRfidController(models.Model):
                     old_cmd.unlink()
                 else:
                     old_cmd.write(write_dict)
-        return commands
+        if len(commands) == 1:
+            return commands[0]
+        else:
+            return commands
 
     def _add_remove_card_relay(self, card_number, rights_data, rights_mask):
         commands = []
@@ -599,7 +855,34 @@ class HrRfidController(models.Model):
                     'rights_mask': new_rights_mask,
                     'rights_data': new_rights_data,
                 })
-        return commands
+        if len(commands) == 1:
+            return commands[0]
+        else:
+            return commands
+
+    # Command parsers
+
+    def cp_input_masks(self, response):
+        pass
+
+    def cp_outputs_ts(self, response):
+        pass
+
+    # Communication helpers
+    def report_sys_ev(self, description, post_data=None, sys_ev_dict: dict = None):
+        '''
+        Create System event
+        Dict = {
+            'webstack_id': id,
+            'controller_id': id,
+            'timestamp': timestamp,
+            'event_action': str event number,
+            'error_description': str,
+            'input_js': str Input JSON
+        }
+        '''
+        self.ensure_one()
+        return self.webstack_id.report_sys_ev(description, post_data, self, sys_ev_dict)
 
 
 class HrRfidCtrlIoTableRow(models.TransientModel):

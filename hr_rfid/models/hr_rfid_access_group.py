@@ -102,7 +102,7 @@ class HrRfidAccessGroup(models.Model):
         compute='_compute_all_contacts',
     )
 
-    def add_doors(self, door_ids, time_schedule=None):
+    def add_doors(self, door_ids, time_schedule=None, alarm_rights=False):
         if time_schedule is None:
             time_schedule = self.env.ref('hr_rfid.hr_rfid_time_schedule_0')
 
@@ -113,6 +113,8 @@ class HrRfidAccessGroup(models.Model):
             if len(res) == 1:
                 if res.time_schedule_id != time_schedule:
                     res.time_schedule_id = time_schedule
+                if res.alarm_rights != alarm_rights:
+                    res.alarm_rights = alarm_rights
             else:
                 # if controller is of type iCON130 or iCON180
                 if door.controller_id.hw_version in ['17', '10'] and time_schedule.number > 3:
@@ -122,6 +124,7 @@ class HrRfidAccessGroup(models.Model):
                     'access_group_id': self.id,
                     'door_id': door.id,
                     'time_schedule_id': time_schedule.id,
+                    'alarm_rights': alarm_rights,
                 }])
         self.check_for_ts_inconsistencies()
 
@@ -386,6 +389,11 @@ class HrRfidAccessGroupDoorRel(models.Model):
         required=True,
         ondelete='cascade',
     )
+    alarm_rights = fields.Boolean(
+        help='Give alarm rights for this door. The user can Arm/Disarm door.',
+        default=False,
+        required=True
+    )
 
     @api.model
     def check_for_ts_inconsistencies(self, rels1, rels2):
@@ -422,8 +430,8 @@ class HrRfidAccessGroupDoorRel(models.Model):
             door = rel.door_id
             cards = door.get_potential_cards(access_groups=rel.access_group_id)
             super(HrRfidAccessGroupDoorRel, rel).unlink()
-            for card, ts in cards:
-                card_door_rel_env.check_relevance_slow(card, door)
+            for card, ts, alarm_right in cards:
+                card_door_rel_env.check_relevance_slow(card, door, alarm_right)
 
 
 ###
@@ -664,9 +672,16 @@ class HrRfidAccessGroupWizard(models.TransientModel):
         default=lambda self: self.env.ref('hr_rfid.hr_rfid_time_schedule_0').id,
     )
 
+    alarm_rights = fields.Boolean(
+        help='Give alarm rights for this door. The user can Arm/Disarm door.',
+        default=False,
+        required=True
+    )
+
+
     def add_doors(self):
         self.ensure_one()
-        self.acc_gr_id.add_doors(self.door_ids, self.time_schedule_id)
+        self.acc_gr_id.add_doors(self.door_ids, self.time_schedule_id, self.alarm_rights)
 
     def del_doors(self):
         self.ensure_one()

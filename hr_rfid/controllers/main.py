@@ -1,707 +1,383 @@
 # -*- coding: utf-8 -*-
+from ..models.hr_rfid_webstack import BadTimeException
 from odoo import http, fields, exceptions, _, SUPERUSER_ID
-from odoo.http import request, Response
-from enum import Enum
+from odoo.http import request
 
-import datetime
 import json
 import traceback
 import psycopg2
-import logging
 import time
+
+import logging
 
 _logger = logging.getLogger(__name__)
 
 
-class BadTimeException(Exception):
-    pass
-
-
-class F0Parse(Enum):
-    hw_ver = 0
-    serial_num = 1
-    sw_ver = 2
-    inputs = 3
-    outputs = 4
-    time_schedules = 5
-    io_table_lines = 6
-    alarm_lines = 7
-    mode = 8
-    max_cards_count = 9
-    max_events_count = 10
-
-
 class WebRfidController(http.Controller):
-    def __init__(self, *args, **kwargs):
-        self._post = None
-        self._vending_hw_version = None
-        self._webstacks_env = None
-        self._webstack = None
-        self._ws_db_update_dict = None
-        self._time_format = '%m.%d.%y %H:%M:%S'
-        super(WebRfidController, self).__init__(*args, **kwargs)
 
-    def _log_cmd_error(self, description, command, error, status_code):
-        command.write({
-            'status': 'Failure',
-            'error': error,
-            'ex_timestamp': fields.datetime.now(),
-            'response': json.dumps(self._post),
-        })
+    def _ws_db_update_dict(self):
+        return {
+            'last_ip': request.httprequest.environ['REMOTE_ADDR'],
+            'updated_at': fields.Datetime.now(),
+        }
 
-        self._report_sys_ev(description, command.controller_id)
-        return self._check_for_unsent_cmd(status_code)
-
-    def _check_for_unsent_cmd(self, status_code, event=None):
-        commands_env = request.env['hr.rfid.command'].sudo()
-        processing_comm = commands_env.search([
-            ('webstack_id', '=', self._webstack.id),
-            ('status', '=', 'Process'),
-        ])
-
-        if len(processing_comm) > 0:
-            processing_comm = processing_comm[-1]
-            return self._retry_command(status_code, processing_comm, event)
-
-        command = commands_env.search([
-            ('webstack_id', '=', self._webstack.id),
-            ('status', '=', 'Wait'),
-        ], order='id desc')
-
-        if len(command) == 0:
-            return {'status': status_code}
-
-        command = command[-1]
-
-        if event is not None:
-            event.command_id = command
-        return self._send_command(command, status_code)
-
-    def _retry_command(self, status_code, cmd, event):
-        if cmd.retries == 5:
-            cmd.status = 'Failure'
-            return self._check_for_unsent_cmd(status_code, event)
-
-        cmd.retries = cmd.retries + 1
-
-        if event is not None:
-            event.command_id = cmd
-        return self._send_command(cmd, status_code)
-
-    def _parse_heartbeat(self):
-        self._ws_db_update_dict['version'] = str(self._post['FW'])
-        return self._check_for_unsent_cmd(200)
-
-    def _parse_event(self):
-        controller = request.env['hr.rfid.ctrl'].sudo().search([
-            ('ctrl_id', '=', self._post['event']['id']),
-            ('webstack_id', '=', self._webstack.id),
-        ])
-
-        if len(controller) == 0:
-            # ctrl_env = request.env['hr.rfid.ctrl'].with_user(SUPERUSER_ID)
-            # cmd_env = request.env['hr.rfid.command'].with_user(SUPERUSER_ID)
-
-            # try:
-            controller = controller.create({
-                'name': 'Controller',
-                'ctrl_id': self._post['event']['id'],
-                'webstack_id': self._webstack.id,
-            })
-            # except
-
-            command = controller.read_controller_information_cmd()
-
-            return self._send_command(command, 400)
-
+    def _parse_event(self, post_data: dict, webstack):
+        # Helpers
+        ctrl_env = request.env['hr.rfid.ctrl'].sudo()
         card_env = request.env['hr.rfid.card'].sudo()
         workcodes_env = request.env['hr.rfid.workcode'].sudo()
-        card = card_env.with_context(active_test=False).search([('number', '=', self._post['event']['card'])])
-        reader = None
-        event_action = self._post['event']['event_n']
-
-        if event_action == 30:
-            cmd_env = request.env['hr.rfid.command'].sudo()
-            self._report_sys_ev('Controller restarted', controller)
-            cmd_env.synchronize_clock_cmd(controller)
-            return self._check_for_unsent_cmd(200)
-
-        reader_num = self._post['event']['reader']
-        if reader_num == 0:
-            if int(self._post['event']['event_n']) in range(3, 18):
-                reader_num = ((self._post['event']['event_n'] - 3) // 4) + 1
-        else:
-            reader_num = reader_num & 0x07
-
-        # Find Reader
-        reader = controller.reader_ids.filtered(lambda r: r.number == reader_num)
-
-        if not reader:
-            self._report_sys_ev('Could not find a reader with that id', controller)
-            return self._check_for_unsent_cmd(200)
-
-        if reader.door_id:
-            door = reader.door_id
-        else:
-            door = set(card.door_ids) & set(reader.door_ids)
-            if len(door) > 1:
-                card_door_ids = card and card.door_ids or []
-                door = set(door) & set(card_door_ids)
-                if len(door) == 1:
-                    door = reader.door_ids and reader.door_ids[0] or None
-                else:
-                    door = None
-
-
         ev_env = request.env['hr.rfid.event.user'].sudo()
 
-        if (self._post['event'].get('card', '0000000000') != '0000000000') and not card:
-            self._report_sys_ev(_('Could not find the card'), controller)
-            return self._check_for_unsent_cmd(200)
-        elif (self._post['event'].get('card', False) == '0000000000'):
-            self._report_sys_ev(_('Hardware Event'), controller)
-            return self._check_for_unsent_cmd(200)
-
-        if card:
-            if event_action == 64 and controller.hw_version != self._vending_hw_version:
-                cmd_env = request.env['hr.rfid.command'].sudo()
-                cmd = {
-                    'webstack_id': controller.webstack_id.id,
-                    'controller_id': controller.id,
-                    'cmd': 'DB',
-                    'status': 'Process',
-                    'ex_timestamp': fields.Datetime.now(),
-                    'cmd_data': '40%02X00' % (4 + 4 * (reader.number - 1)),
-                }
-                cmd = cmd_env.create(cmd)
-                cmd_js = {
-                    'status': 200,
-                    'cmd': {
-                        'id': cmd.controller_id.ctrl_id,
-                        'c': cmd.cmd[:2],
-                        'd': cmd.cmd_data,
-                    }
-                }
-                cmd.request = json.dumps(cmd_js)
-                if self._post['event']['card'] == '0000000000':
-                    self._report_sys_ev('', controller)
-                else:
-                    self._report_sys_ev(_('Could not find the card'), controller)
-                return cmd_js
-            elif event_action in [21, 22, 23, 24]:  # Exit button
-                event_dict = {
-                    'ctrl_addr': controller.ctrl_id,
-                    'door_id': reader.door_id.id,
-                    'reader_id': reader.id,
-                    'event_time': self._get_ws_time_str(),
-                    'event_action': '5',
-                }
-                event = ev_env.create(event_dict)
-                return self._check_for_unsent_cmd(200, event)
-            elif event_action in [34, 35]:  # SOT events
-                # 34: "Zone Alarm",
-                # 35: "Zone Arm/Disarm",
-                if event_action == 34:
-                    # TODO Add details for alarm and possible actions
-                    self._report_sys_ev(_('Zone Alarm'), controller)
-                else:
-                    event_dict = {
-                        'ctrl_addr': controller.ctrl_id,
-                        'door_id': reader.door_id.id,
-                        'reader_id': reader.id,
-                        'event_time': self._get_ws_time_str(),
-                        # 'event_action': '5',
-                        'event_action': str(10 + (event_action - 34)),
-                    }
-                    event = ev_env.create(event_dict)
-                return self._check_for_unsent_cmd(200)
-            elif event_action in [36, 37, 38]:  # Hotel reader events
-                pin = self._post['event']['dt']
-                event_dict = {
-                    'ctrl_addr': controller.ctrl_id,
-                    'door_id': reader.door_id.id,
-                    'reader_id': reader.id,
-                    'event_time': self._get_ws_time_str(),
-                    'event_action': str(8 - int(pin)) if event_action == 36 else '12' if event_action == 38 else '9',
-                }
-                if event_action in [38]:  # button
-                    event_dict['more_json'] = json.dumps({"state": int(pin) == 1})
-                # if event_action in [37]:  # eject
-                #     event_dict['more_json'] = json.dumps({"eject": reader.id})
-                # if event_action in [36] and event_dict['event_action'] == 7:  # Insert
-                #     event_dict['more_json'] = json.dumps({"insert": reader.id})
-                card.get_owner(event_dict)
-                event = ev_env.create(event_dict)
-                door.proccess_event(event)
-                return self._check_for_unsent_cmd(200)
-
-            if self._post['event']['card'] == '0000000000':
-                self._report_sys_ev('', controller)
-            elif not card:
-                self._report_sys_ev(_('Could not find the card'), controller)
-            # return self._check_for_unsent_cmd(200)
-
-        if event_action in [34, 35]:  # SOT events
-            # 34: "Zone Alarm",
-            # 35: "Zone Arm/Disarm",
-            if event_action == 34:
-                # TODO Add details for alarm and possible actions
-                self._report_sys_ev(_('Zone Alarm'), controller)
-            else:
-                self._report_sys_ev(_('Zone Arm/Disarm'), controller)
-            return self._check_for_unsent_cmd(200)
-
-        # External db event, controller requests for permission to open or close door
-        if event_action == 64 and controller.hw_version != self._vending_hw_version:
-            ret = request.env['hr.rfid.access.group.door.rel'].sudo().search([
-                ('access_group_id', 'in', card.get_owner().hr_rfid_access_group_ids.mapped('access_group_id.id')),
-                ('door_id', '=', reader.door_id.id)
-            ])
-            return self._respond_to_ev_64(len(ret) > 0 and card.active is True,
-                                          controller, reader, card)
-
-        event_action = ((event_action - 3) % 4) + 1
-        # Turnstile controller. If the 7th bit is not up, then there was no actual entry
-        if controller.hw_version == '9' and (self._post['event']['reader'] & 64) == 0 and event_action == '1':
-            event_action = '6'
-
-        # Relay controller
-        if controller.is_relay_ctrl() and event_action == 1:
-            if controller.mode == 3:
-                dt = self._post['event']['dt']
-                if len(dt) == 24:
-                    chunks = [dt[0:6], dt[6:12], dt[12:18], dt[18:24]]
-                    # print('Chunks=' + str(chunks))
-                    door_number = 0
-                    for i in range(len(chunks)):
-                        chunk = chunks[i]
-                        n1 = int(chunk[:2])
-                        n2 = int(chunk[2:4])
-                        n3 = int(chunk[4:])
-                        door_number |= n1 * 100 + n2 * 10 + n3
-                        if i != len(chunks) - 1:
-                            door_number <<= 8
-                    door = reader.door_ids.filtered(lambda d: d.number == door_number)
-
-
-        event_dict = {
-            'ctrl_addr': controller.ctrl_id,
-            'door_id': door and door.id or False,
-            'reader_id': reader.id,
-            'card_id': card.id,
-            'event_time': self._get_ws_time_str(),
-            'event_action': str(event_action),
-        }
-
-        if reader.mode == '03' and controller.hw_version != self._vending_hw_version:  # Card and workcode
-            wc = workcodes_env.search([
-                ('workcode', '=', self._post['event']['dt'])
-            ])
-            if len(wc) == 0:
-                event_dict['workcode'] = self._post['event']['dt']
-            else:
-                event_dict['workcode_id'] = wc.id
-
-        card.get_owner(event_dict)
-        event = ev_env.create(event_dict)
-
-        return self._check_for_unsent_cmd(200, event)
-
-    def _parse_response(self):
-        command_env = request.env['hr.rfid.command'].with_user(SUPERUSER_ID)
-        response = self._post['response']
-        controller = self._webstack.controllers.filtered(lambda c: c.ctrl_id == response.get('id', -1))
-        if not controller:
-            self._report_sys_ev('Module sent us a response from a controller that does not exist')
-            return self._check_for_unsent_cmd(200)
-
-        command = command_env.search([('webstack_id', '=', self._webstack.id),
-                                      ('controller_id', '=', controller.id),
-                                      ('status', '=', 'Process'),
-                                      ('cmd', '=', response['c']), ], limit=1)
-
-        if len(command) == 0 and response['c'] == 'DB':
-            command = command_env.search([('webstack_id', '=', self._webstack.id),
-                                          ('controller_id', '=', controller.id),
-                                          ('status', '=', 'Process'),
-                                          ('cmd', '=', 'DB2'), ], limit=1)
-
-        if len(command) == 0:
-            self._report_sys_ev('Controller sent us a response to a command we never sent')
-            return self._check_for_unsent_cmd(200)
-
-        if response['e'] != 0:
-            command.write({
-                'status': 'Failure',
-                'error': str(response['e']),
-                'ex_timestamp': fields.datetime.now(),
-                'response': json.dumps(self._post),
+        # Find Controller
+        controller_id = ctrl_env.search([
+            ('ctrl_id', '=', post_data['event']['id']),
+            ('webstack_id', '=', webstack.id),
+        ])
+        # Create new controller if needed
+        if len(controller_id) == 0 and post_data['event']['id']:
+            controller_id = controller_id.create({
+                'name': 'Controller',
+                'ctrl_id': post_data['event']['id'],
+                'webstack_id': webstack.id,
             })
-            return self._check_for_unsent_cmd(200)
+            command = controller_id.read_controller_information_cmd()
+            # EXIT New controller and we need setup information first
+            return command.send_command(400)
 
-        if response['c'] == 'F0':
-            self._parse_f0_response(command, controller)
-
-        if response['c'] == 'F6':
-            data = response['d']
-            readers = [None, None, None, None]
-            for it in controller.reader_ids:
-                readers[it.number - 1] = it
-            for i in range(4):
-                if readers[i] is not None:
-                    mode = str(data[i * 6:i * 6 + 2])
-                    readers[i].write({
-                        'mode': mode,
-                        'no_d6_cmd': True,
-                    })
-
-        if response['c'] == 'F9':
-            controller.write({
-                'io_table': response['d']
-            })
-
-        if response['c'] == 'FC':
-            apb_mode = response['d']
-            for door in controller.door_ids:
-                door.apb_mode = (door.number == '1' and (apb_mode & 1)) \
-                                or (door.number == '2' and (apb_mode & 2))
-
-        if response['c'] == 'B3':
-            data = response['d']
-
-            entrance = [int(data[0:2], 16), int(data[2:4], 16)]
-            exit = [int(data[4:6], 16), int(data[6:8], 16)]
-            usys = [int(data[8:10], 16), int(data[10:12], 16)]
-            uin = [int(data[12:14], 16), int(data[14:16], 16)]
-            temperature = int(data[16:20], 10)
-            humidity = int(data[20:24], 10)
-            Z1 = int(data[24:26], 16)
-            Z2 = int(data[26:28], 16)
-            Z3 = int(data[28:30], 16)
-            Z4 = int(data[30:32], 16)
-
-            TOS = int(data[32:34], 16) * 10000 \
-                  + int(data[34:36], 16) * 1000 \
-                  + int(data[36:38], 16) * 100 \
-                  + int(data[38:40], 16) * 10 \
-                  + int(data[40:42], 16)
-
-            hotel = [int(data[42:44], 16), int(data[44:46], 16), int(data[46:48], 16)]
-
-            if temperature >= 1000:
-                temperature -= 1000
-                temperature *= -1
-            temperature /= 10
-
-            humidity /= 10
-
-            sys_voltage = ((usys[0] & 0xF0) >> 4) * 1000
-            sys_voltage += (usys[0] & 0x0F) * 100
-            sys_voltage += ((usys[1] & 0xF0) >> 4) * 10
-            sys_voltage += (usys[1] & 0x0F)
-            sys_voltage = (sys_voltage * 8) / 500
-
-            input_voltage = ((uin[0] & 0xF0) >> 4) * 1000
-            input_voltage += (uin[0] & 0x0F) * 100
-            input_voltage += ((uin[1] & 0xF0) >> 4) * 10
-            input_voltage += (uin[1] & 0x0F)
-            input_voltage = (input_voltage * 8) / 500
-
-            controller.write({
-                'temperature': temperature,
-                'humidity': humidity,
-                'system_voltage': sys_voltage,
-                'input_voltage': input_voltage,
-                'hotel_readers': hotel[0],
-                'hotel_readers_card_presence': hotel[1],
-                'hotel_readers_buttons_pressed': hotel[2],
-            })
-
-        command.write({
-            'status': 'Success',
-            'ex_timestamp': fields.datetime.now(),
-            'response': json.dumps(self._post),
-        })
-
-        return self._check_for_unsent_cmd(200)
-
-    def _parse_f0_cmd(self, data):
-        def bytes_to_num(start, digits):
-            digits = digits - 1
-            res = 0
-            for j in range(digits + 1):
-                multiplier = 10 ** (digits - j)
-                res = res + int(data[start:start + 2], 16) * multiplier
-                start = start + 2
-            return res
-
-        return {
-            F0Parse.hw_ver: str(bytes_to_num(0, 2)),
-            F0Parse.serial_num: str(bytes_to_num(4, 4)),
-            F0Parse.sw_ver: str(bytes_to_num(12, 3)),
-            F0Parse.inputs: bytes_to_num(18, 3),
-            F0Parse.outputs: bytes_to_num(24, 3),
-            F0Parse.time_schedules: bytes_to_num(32, 2),
-            F0Parse.io_table_lines: bytes_to_num(36, 2),
-            F0Parse.alarm_lines: bytes_to_num(40, 1),
-            F0Parse.mode: int(data[42:44], 16),
-            F0Parse.max_cards_count: bytes_to_num(44, 5),
-            F0Parse.max_events_count: bytes_to_num(54, 5),
-        }
-
-    # TODO Move to controller model
-    def _parse_f0_response(self, command, controller):
-        ctrl_env = request.env['hr.rfid.ctrl'].with_user(SUPERUSER_ID)
-        response = self._post['response']
-        data = response['d']
-        ctrl_mode = int(data[42:44], 16)
-        external_db = (ctrl_mode & 0x20) > 0
-        relay_time_factor = '1' if ctrl_mode & 0x40 else '0'
-        dual_person_mode = (ctrl_mode & 0x08) > 0
-        ctrl_mode = ctrl_mode & 0x07
-
-        f0_parse = self._parse_f0_cmd(data)
-
-        hw_ver = f0_parse[F0Parse.hw_ver]
-
-        if (ctrl_mode < 1 or ctrl_mode > 4):
-            return self._log_cmd_error('F0 command failure, controller sent '
-                                       'us a wrong mode', command, '31', 200)
-
-        readers_count = int(data[30:32], 16)
-
-        mode_reader_relation = {1: [1, 2], 2: [2, 4], 3: [4], 4: [4]}
-
-        if not ctrl_env.is_relay_ctrl(hw_ver) and \
-                readers_count not in mode_reader_relation[ctrl_mode]:
-            return self._log_cmd_error('F0 sent us a wrong reader-controller '
-                                       'mode combination', command, '31', 200)
-
-        reader_env = request.env['hr.rfid.reader'].with_user(SUPERUSER_ID)
-        door_env = request.env['hr.rfid.door'].with_user(SUPERUSER_ID)
-
-        sw_ver = f0_parse[F0Parse.sw_ver]
-        inputs = f0_parse[F0Parse.inputs]
-        outputs = f0_parse[F0Parse.outputs]
-        time_schedules = f0_parse[F0Parse.time_schedules]
-        io_table_lines = f0_parse[F0Parse.io_table_lines]
-        alarm_lines = f0_parse[F0Parse.alarm_lines]
-        max_cards_count = f0_parse[F0Parse.max_cards_count]
-        max_events_count = f0_parse[F0Parse.max_events_count]
-        serial_num = f0_parse[F0Parse.serial_num]
-
-        old_ctrl = ctrl_env.search([
-            ('serial_number', '=', serial_num)
-        ], limit=1)
-
-        ctrl_already_existed = False
-        if old_ctrl:
-            if old_ctrl.webstack_id == controller.webstack_id:
-                ctrl_already_existed = True
-            else:
-                old_ctrl.webstack_id = controller.webstack_id
-
-        old_reader_count = len(controller.reader_ids)
-        old_door_count = len(controller.door_ids)
-        new_reader_count = 0
-        new_door_count = 0
-
-        def create_door(name, number):
-            # If the controller is a vending controller
-            nonlocal old_door_count
-            nonlocal new_door_count
-
-            door_dict = {
-                'name': name,
-                'number': number,
-                'controller_id': controller.id,
-            }
-
-            if new_door_count < old_door_count:
-                new_door_count += 1
-                _door = controller.door_ids[new_door_count - 1]
-                door_dict.pop('name')
-                _door.write(door_dict)
-                return _door
-
-            if hw_ver == self._vending_hw_version:
-                return None
-            return door_env.create(door_dict)
-
-        def create_reader(name, number, reader_type, door_id=None):
-            create_dict = {
-                'name': name,
-                'number': number,
-                'reader_type': reader_type,
-                'controller_id': controller.id,
-            }
-
-            nonlocal old_reader_count
-            nonlocal new_reader_count
-
-            if door_id is not None:
-                create_dict['door_id'] = door_id
-
-            if new_reader_count < old_reader_count:
-                new_reader_count += 1
-                _reader = controller.reader_ids[new_reader_count - 1]
-                create_dict.pop('name')
-                _reader.write(create_dict)
-                return _reader
-
-            return reader_env.create(create_dict)
-
-        def add_door_to_reader(_reader, _door):
-            _reader.door_ids += _door
-
-        def gen_d_name(door_num, controller_id):
-            return _('Door ') + str(door_num) + _(' of ctrl ') + str(controller_id)
-
-        if controller.is_relay_ctrl(hw_ver):
-            if ctrl_mode == 1 or ctrl_mode == 3:
-                reader = create_reader('R1', 1, '0')
-                for i in range(outputs):
-                    door = create_door(gen_d_name(i + 1, controller.ctrl_id), i + 1)
-                    add_door_to_reader(reader, door)
-                for i in range(1, readers_count):
-                    create_reader('R' + str(i + 1), i + 1, '0')
-            elif ctrl_mode == 2:
-                if outputs > 16 and readers_count < 2:
-                    return self._log_cmd_error('F0 sent us too many outputs and not enough readers',
-                                               command, '31', 200)
-                reader = create_reader('R1', 1, '0')
-                for i in range(outputs):
-                    door = create_door(gen_d_name(i + 1, controller.ctrl_id), i + 1)
-                    add_door_to_reader(reader, door)
-                if outputs > 16:
-                    reader = create_reader('R2', 2, '0')
-                    for i in range(outputs - 16):
-                        door = create_door(gen_d_name(i + 1, controller.id), i + 1)
-                        add_door_to_reader(reader, door)
-                    for i in range(2, readers_count):
-                        create_reader('R' + str(i + 1), i + 1, '0')
-                else:
-                    for i in range(1, readers_count):
-                        create_reader('R' + str(i + 1), i + 1, '0')
-            else:
-                raise exceptions.ValidationError(_('Got controller mode=%d for hw_ver=%s???')
-                                                 % (ctrl_mode, hw_ver))
+        # Find the Card
+        card_num = post_data['event']['card']
+        is_card_event = card_num != '0000000000'
+        if is_card_event:
+            card_id = card_env.with_context(active_test=False).search([('number', '=', post_data['event']['card'])])
         else:
-            if ctrl_mode == 1 or ctrl_mode == 3:
-                last_door = create_door(gen_d_name(1, controller.ctrl_id), 1)
-                last_door = last_door.id
-                create_reader('R1', 1, '0', last_door)
-                if readers_count > 1:
-                    create_reader('R2', 2, '1', last_door)
-            elif ctrl_mode == 2 and readers_count == 4:
-                last_door = create_door(gen_d_name(1, controller.ctrl_id), 1)
-                last_door = last_door.id
-                create_reader('R1', 1, '0', last_door)
-                create_reader('R2', 2, '1', last_door)
-                last_door = create_door(gen_d_name(2, controller.ctrl_id), 2)
-                last_door = last_door.id
-                create_reader('R3', 3, '0', last_door)
-                create_reader('R4', 4, '1', last_door)
-            else:  # (ctrl_mode == 2 and readers_count == 2) or ctrl_mode == 4
-                # print('harware version', hw_ver)
-                last_door = create_door(gen_d_name(1, controller.ctrl_id), 1)
-                if last_door:
-                    last_door = last_door.id
-                else:
-                    last_door = None
-                create_reader('R1', 1, '0', last_door)
-                last_door = create_door(gen_d_name(2, controller.ctrl_id), 2)
-                if last_door:
-                    last_door = last_door.id
-                else:
-                    last_door = None
-                create_reader('R2', 2, '0', last_door)
+            card_id = None
 
-            if ctrl_mode == 3:
-                last_door = create_door(gen_d_name(2, controller.ctrl_id), 2)
-                last_door = last_door.id
-                create_reader('R3', 3, '0', last_door)
-                last_door = create_door(gen_d_name(3, controller.ctrl_id), 3)
-                last_door = last_door.id
-                create_reader('R4', 4, '0', last_door)
-            elif ctrl_mode == 4:
-                last_door = create_door(gen_d_name(3, controller.ctrl_id), 3)
-                last_door = last_door.id
-                create_reader('R3', 3, '0', last_door)
-                last_door = create_door(gen_d_name(4, controller.ctrl_id), 4)
-                last_door = last_door.id
-                create_reader('R4', 4, '0', last_door)
+        # Get Event ID
+        event_action = post_data['event']['event_n']
 
-        if old_reader_count > new_reader_count:
-            controller.reader_ids[new_reader_count: old_reader_count].unlink()
-        if old_door_count > new_door_count:
-            controller.door_ids[new_door_count: old_door_count].unlink()
+        # Find Reader
+        reader_num = post_data['event']['reader']
+        reader_b6 = False
+        if reader_num == 0:
+            if int(post_data['event']['event_n']) in range(3, 18):
+                reader_num = ((post_data['event']['event_n'] - 3) // 4) + 1
+        else:
+            reader_b6 = reader_num & 64 == 64
+            reader_num = reader_num & 0x07
+        reader_id = controller_id.reader_ids.filtered(lambda r: r.number == reader_num)
 
-        if controller.serial_number is False:
-            controller.name = _('{hw_type} SN:{serial} ID:{id}').format(
-                hw_type=controller.get_ctrl_model_name(hw_ver),
-                serial=serial_num,
-                id=controller.ctrl_id
+        if not reader_id and is_card_event:
+            controller_id.report_sys_ev('Could not find a reader with that id', post_data=post_data)
+            return webstack.check_for_unsent_cmd(200)
+
+        # Find PIN code or additional data for event
+        dt = post_data['event']['dt'] or None
+
+        # Find Door ID
+        door = None
+        if reader_id and reader_id.door_id:  # regular door
+            door = reader_id.door_id
+        elif controller_id.is_relay_ctrl():  # relay door
+            try:
+                door_number = controller_id.decode_door_number_for_relay(dt)
+                door = controller_id.door_ids.filtered(lambda d: d.number == door_number)
+            except:
+                door_number = None
+            if not door and card_id:  # relay door
+                door = set(card_id.door_ids) & set(reader_id.door_ids)
+                if len(door) > 1:
+                    card_door_ids = card_id and card_id.door_ids or []
+                    door = set(door) & set(card_door_ids)
+                    if len(door) == 1:
+                        door = reader_id.door_ids and reader_id.door_ids[0] or None
+                    else:
+                        door = None
+
+                    # TODO Debug and test relay controller with this event
+                    # Received={"convertor": 446111, "event": {"bos": 3, "card": "0023023153", "cmd": "FA", "date": "01.08.22", "day": 6, "dt": "00000000000000000000010100000205060000000002", "err": 0, "event_n": 3, "id": 40, "reader": 0, "time": "14:59:35", "tos": 23}, "key": "44FC"}
+                    if isinstance(door, set) and len(door) > 0:
+                        door = door.pop()
+                    else:
+                        door = None
+                    # -----------------MUST rework!!!!!!!!!!!!!
+
+        # ==============EVENTS Parser======================================================
+        # Durres OK, Durres Error
+        if event_action in [1, 2]:
+            raise Exception('Not Implemented')
+        # Card Events
+        elif event_action in range(3, 18):
+            ue_event_action = ((event_action - 3) % 4) + 1
+            # Turnstile controller. If the 7th bit is not up, then there was no actual entry
+            if controller_id.is_turnstile_ctrl() and (
+                    post_data['event']['reader'] & 64) == 0 and ue_event_action == '1':
+                ue_event_action = '6'
+            if is_card_event and card_id:  # Card event with valid card
+                event_dict = {
+                    'ctrl_addr': controller_id.ctrl_id,
+                    'door_id': door and door.id or False,
+                    'reader_id': reader_id.id,
+                    'card_id': card_id and card_id.id or None,
+                    'event_time': webstack.get_ws_time_str(post_data=post_data['event']),
+                    'event_action': str(ue_event_action),
+                    'more_json': json.dumps(post_data),
+                }
+
+                if reader_id.mode == '03' and not controller_id.is_vending_ctrl():  # Card and workcode
+                    wc = workcodes_env.search([
+                        ('workcode', '=', dt)
+                    ])
+                    if len(wc) == 0:
+                        event_dict['workcode'] = dt
+                    else:
+                        event_dict['workcode_id'] = wc.id
+
+                card_id.get_owner(event_dict)
+                event = ev_env.create(event_dict)
+            elif is_card_event and not card_id:  # Card event with unknown card
+                sys_event_dict = {
+                    'door_id': door and door.id or False,
+                    'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
+                    'event_action': str(event_action),
+                    'input_js': card_num,
+                }
+
+                event = controller_id.report_sys_ev(
+                    description=_('Could not find the card'),
+                    post_data=post_data,
+                    sys_ev_dict=sys_event_dict
+                )
+            else:
+                raise Exception('Not Implemented! Non card event in card events.')
+            return webstack.check_for_unsent_cmd(200)
+        # Emergency open
+        elif event_action in [19]:
+            sys_event_dict = {
+                'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
+                'event_action': str(event_action),
+                'error_description': 'All Door Opened!'
+                # 'input_js': card_num,
+            }
+            event = controller_id.report_sys_ev(
+                description=_(''),
+                post_data=post_data,
+                sys_ev_dict=sys_event_dict
+            )
+            return webstack.check_for_unsent_cmd(200)
+        # Exit button Open Door(1234) from IN(1234
+        elif event_action in [21, 22, 23, 24]:
+            sys_event_dict = {
+                # TODO Reader number in relay controller hold the door 1 or 2!!!!!
+                'door_id': door and door.id or False,
+                'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
+                'event_action': '21',
+                # 'input_js': card_num,
+            }
+            event = controller_id.report_sys_ev(
+                description=_(''),
+                post_data=post_data,
+                sys_ev_dict=sys_event_dict
+            )
+            return webstack.check_for_unsent_cmd(200)
+        # Door N Overtime
+        elif event_action in [25]:
+            sys_event_dict = {
+                'door_id': door and door.id or False,
+                'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
+                'event_action': str(event_action),
+            }
+            event = controller_id.report_sys_ev(
+                description=_(''),
+                post_data=post_data,
+                sys_ev_dict=sys_event_dict
             )
 
-        controller.write({
-            'hw_version': hw_ver,
-            'serial_number': serial_num,
-            'sw_version': sw_ver,
-            'inputs': inputs,
-            'outputs': outputs,
-            'readers': readers_count,
-            'time_schedules': time_schedules,
-            'io_table_lines': io_table_lines,
-            'alarm_lines': alarm_lines,
-            'mode': ctrl_mode,
-            'external_db': external_db,
-            'relay_time_factor': relay_time_factor,
-            'dual_person_mode': dual_person_mode,
-            'max_cards_count': max_cards_count,
-            'max_events_count': max_events_count,
-            'last_f0_read': fields.datetime.now(),
-        })
+            return controller_id.read_status().send_command(200)
+        # Forced Open Door N
+        elif event_action in [26]:
+            sys_event_dict = {
+                'door_id': door and door.id or False,
+                'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
+                'event_action': str(event_action),
+            }
+            event = controller_id.report_sys_ev(
+                description=_(''),
+                post_data=post_data,
+                sys_ev_dict=sys_event_dict
+            )
+            return webstack.check_for_unsent_cmd(200)
+        # DELAY ZONE ON (if out) Z4,Z3,Z2,Z1
+        elif event_action in [27]:
+            raise Exception('Not Implemented (DELAY ZONE ON (if out) Z4,Z3,Z2,Z1)')
+        # DELAY ZONE OFF (if out) Z4,Z3,Z2,Z1
+        elif event_action in [28]:
+            raise Exception('Not Implemented (DELAY ZONE OFF (if out) Z4,Z3,Z2,Z1)')
+        # Reserved
+        elif event_action in [29]:
+            raise Exception('Not Implemented (Reserved 29)')
+        # Power On controller
+        elif event_action in [30]:
+            controller_id.report_sys_ev('Controller restarted or Power Fail', post_data=post_data)
+            return controller_id.synchronize_clock_cmd().send_command(200)
+        # Open/Close Door From PC
+        elif event_action in [31]:
+            # iCON115 Siren Output = 4
+            # iCON115 Z1 Output = 5 Arm/Disarm
+            # iCON180 Siren Output = 10
+            # iCON180 Z1 Out 11 ..14 Arm/Disarm
+            # iCON115Relay 00 00 00  00 00 00  00 00 00  00 00 01
+            sys_event_dict = {
+                'door_id': door and door.id or False,
+                'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
+                'event_action': str(event_action),
+            }
+            event = controller_id.report_sys_ev(
+                description=_(''),
+                post_data=post_data,
+                sys_ev_dict=sys_event_dict
+            )
 
-        cmd_env = request.env['hr.rfid.command'].sudo()
-        if not ctrl_already_existed:
-            controller.synchronize_clock_cmd()
-            controller.delete_all_cards_cmd()
-            controller.delete_all_events_cmd()
-            controller.read_readers_mode_cmd()
-            controller.read_io_table_cmd()
-            controller.read_status()
-        # cmd_env.read_readers_mode_cmd(controller)
-        # cmd_env.read_io_table_cmd(controller)
+            return controller_id.read_status().send_command(200)
+        # Reserved
+        elif event_action in [32]:
+            raise Exception('Not Implemented(Reserved 32)')
+        # Zone Arm/Disarm Denied
+        elif event_action in [33]:
+            if is_card_event and card_id:
+                line_id = controller_id.alarm_line_ids.filtered(lambda l: l.line_number == reader_num)
+                event_dict = {
+                    'ctrl_addr': controller_id.ctrl_id,
+                    'door_id': door and door.id or False,
+                    'reader_id': reader_id.id,
+                    'alarm_line_id': line_id.id,
+                    'card_id': card_id and card_id.id or None,
+                    'event_time': webstack.get_ws_time_str(post_data=post_data['event']),
+                    'event_action': line_id.armed == 'arm' and '15' or '5',
+                    'more_json': json.dumps(post_data),
+                }
 
-        if not controller.is_relay_ctrl() and (ctrl_mode == 1 or ctrl_mode == 3):
-            cmd_env.read_anti_pass_back_mode_cmd(controller)
+                if reader_id.mode == '03' and not controller_id.is_vending_ctrl():  # Card and workcode
+                    wc = workcodes_env.search([
+                        ('workcode', '=', dt)
+                    ])
+                    if len(wc) == 0:
+                        event_dict['workcode'] = dt
+                    else:
+                        event_dict['workcode_id'] = wc.id
 
-    def _report_sys_ev(self, description, controller=None):
-        sys_ev_env = request.env['hr.rfid.event.system'].sudo()
+                # card_id.get_owner(event_dict)
+                event = ev_env.create(event_dict)
+                return webstack.check_for_unsent_cmd(200)
+            else:
+                raise Exception('Wrong event. Non card event for Arm/Disarm denied!')
+        # Siren On/Off, Zone Alarm, Zone Arm/Disarm
+        elif event_action in [20, 34, 35]:
+            # reader_num = line_number
+            # PIN last 2 digits = line_statu
+            line_id = controller_id.alarm_line_ids.filtered(lambda l: l.line_number == reader_num)
+            line_status = dt and dt[2:] or None
+            siren = bool(event_action == 20 and line_id)
+            if line_id:
+                new_states = []
+                for i in range(4):
+                    if i + 1 == line_id.line_number:
+                        new_states.append(line_status)
+                    else:
+                        new_states.append(controller_id.alarm_line_states[i * 2:i * 2 + 2])
+                controller_id.alarm_line_states = ''.join(new_states)
 
-        sys_ev = {
-            'webstack_id': self._webstack.id,
-            'error_description': description,
-            'input_js': json.dumps(self._post),
-        }
+            event_dict = {
+                'door_id': line_id and line_id.door_id and line_id.door_id.id or None,
+                'alarm_line_id': line_id and line_id.id or None,
+            }
+            if is_card_event:  # User event only for event 35
+                event_dict.update({
+                    'ctrl_addr': controller_id.ctrl_id,
+                    'card_id': card_id and card_id.id or None,
+                    'reader_id': reader_id and reader_id.id or None,
+                    'event_time': webstack.get_ws_time_str(post_data['event']),
+                    'event_action': line_id.armed == 'arm' and '10' or '11'
+                })
+                card_id.get_owner(event_dict)
+                event = ev_env.create(event_dict)
+            else:  # System Event for event 20 and 34
+                event_dict.update({
+                    'controller_id': controller_id.id,
+                    'timestamp': webstack.get_ws_time_str(post_data['event']),
+                    'event_action': str(event_action),
+                    'siren': siren,
+                    'error_description': line_id and f"{line_id.name} - {line_id.state} / {line_id.armed}" or ''
+                })
+                event = controller_id.report_sys_ev(_('Hardware Event'), post_data=post_data, sys_ev_dict=event_dict)
 
-        if 'event' in self._post:
-            try:
-                sys_ev['timestamp'] = self._get_ws_time_str()
-            except BadTimeException:
-                sys_ev['timestamp'] = str(fields.Datetime.now())
-            sys_ev['event_action'] = str(self._post['event']['event_n'])
+            # return controller_id.read_status().send_command(200)
+            return webstack.check_for_unsent_cmd(200)
+        # Hotel reader events
+        elif event_action in [36, 37, 38]:
+            pin = post_data['event']['dt']
+            event_dict = {
+                'ctrl_addr': controller_id.ctrl_id,
+                'door_id': reader_id.door_id.id,
+                'reader_id': reader_id.id,
+                'event_time': webstack.get_ws_time_str(post_data['event']),
+                'event_action': str(8 - int(pin)) if event_action == 36 else '12' if event_action == 38 else '9',
+            }
+            if event_action in [38]:  # button
+                event_dict['more_json'] = json.dumps({"state": int(pin) == 1})
+            # if event_action in [37]:  # eject
+            #     event_dict['more_json'] = json.dumps({"eject": reader.id})
+            # if event_action in [36] and event_dict['event_action'] == 7:  # Insert
+            #     event_dict['more_json'] = json.dumps({"insert": reader.id})
+            card_id.get_owner(event_dict)
+            event = ev_env.create(event_dict)
+            door.proccess_event(event)
+            return webstack.check_for_unsent_cmd(200)
+        # Cloud request 64
+        elif event_action in [64]:
+            if not card_id:
+                controller_id.report_sys_ev(_('Could not find the card'), post_data=post_data)
+                return webstack.check_for_unsent_cmd(200)
+            if controller_id.is_vending_ctrl():
+                return self.vending_request_for_balance()
+            else:
+                # External db event, controller requests for permission to open or close door
+                ret = request.env['hr.rfid.access.group.door.rel'].sudo().search([
+                    (
+                    'access_group_id', 'in', card_id.get_owner().hr_rfid_access_group_ids.mapped('access_group_id.id')),
+                    ('door_id', '=', reader_id.door_id.id)
+                ])
+                return self._respond_to_ev_64(len(ret) > 0 and card_id.active is True,
+                                              controller_id, reader_id, card_id, post_data)
+                # cmd_env = request.env['hr.rfid.command'].sudo()
+                # cmd = {
+                #     'webstack_id': controller.webstack_id.id,
+                #     'controller_id': controller.id,
+                #     'cmd': 'DB',
+                #     'status': 'Process',
+                #     'ex_timestamp': fields.Datetime.now(),
+                #     'cmd_data': '40%02X00' % (4 + 4 * (reader.number - 1)),
+                # }
+                # cmd = cmd_env.create(cmd)
+                # cmd_js = {
+                #     'status': 200,
+                #     'cmd': {
+                #         'id': cmd.controller_id.ctrl_id,
+                #         'c': cmd.cmd[:2],
+                #         'd': cmd.cmd_data,
+                #     }
+                # }
+                # cmd.request = json.dumps(cmd_js)
+                # if post_data['event']['card'] == '0000000000':
+                #     controller_id._report_sys_ev('', post_data=post_data)
+                # else:
+                #     controller_id._report_sys_ev(_('Could not find the card'), post_data=post_data)
+                # return cmd_js
+        # Don't know what is this. Just report it
         else:
-            sys_ev['timestamp'] = datetime.datetime.now()
+            controller_id.report_sys_ev(_('Unknown event. Please contact with your support!'), post_data=post_data)
+            return webstack.check_for_unsent_cmd(200)
 
-        if controller is not None:
-            sys_ev['controller_id'] = controller.id
-
-        sys_ev_env.create(sys_ev)
-        # sys_ev_env.refresh_views()
-
-    def _respond_to_ev_64(self, open_door, controller, reader, card):
+    def _respond_to_ev_64(self, open_door, controller, reader, card, post_data):
         cmd_env = request.env['hr.rfid.command'].sudo()
         ev_env = request.env['hr.rfid.event.user'].sudo()
         open_door = 3 if open_door is True else 4
@@ -720,181 +396,114 @@ class WebRfidController(http.Controller):
             for door in reader.door_ids:
                 if door in user_doors:
                     data |= 1 << (door.number - 1)
-            cmd['cmd_data'] = '4000' + request.env['hr.rfid.door'].create_rights_int_to_str(data)
+            cmd['cmd_data'] = '4000' + controller.convert_int_to_cmd_data_for_output_control(data)
         event = {
             'ctrl_addr': controller.ctrl_id,
             'door_id': reader.door_id.id,
             'reader_id': reader.id,
             'card_id': card.id,
-            'event_time': self._get_ws_time_str(),
+            'event_time': controller.webstack_id.get_ws_time_str(post_data=post_data['event']),
             'event_action': '64',
         }
         card.get_owner(event)
         cmd = cmd_env.create(cmd)
-        cmd_js = {
-            'status': 200,
-            'cmd': {
-                'id': cmd.controller_id.ctrl_id,
-                'c': cmd.cmd[:2],
-                'd': cmd.cmd_data,
-            }
-        }
-        cmd.request = json.dumps(cmd_js)
+        # cmd_js = {
+        #     'status': 200,
+        #     'cmd': {
+        #         'id': cmd.controller_id.ctrl_id,
+        #         'c': cmd.cmd[:2],
+        #         'd': cmd.cmd_data,
+        #     }
+        # }
+        # cmd.request = json.dumps(cmd_js)
         event['command_id'] = cmd.id
         ev_env.create(event)
-        return cmd_js
+        return cmd.semd_command(200)
+        # return cmd_js
 
-    def _get_ws_time_str(self):
-        return self._get_ws_time().strftime('%Y-%m-%d %H:%M:%S')
-
-    def _get_ws_time(self):
-        t = f"{self._post['event']['date']} {self._post['event']['time']}"
-        t = t.replace('-', '.')  # fix for WiFi module format
-        try:
-            ws_time = datetime.datetime.strptime(t, self._time_format)
-            ws_time -= self._webstack._get_tz_offset()
-        except ValueError:
-            raise BadTimeException
-        return ws_time
-
-    def _send_command(self, command, status_code):
-        if isinstance(command, list) and len(command) > 0:
-            command = command[0]
-
-        command.status = 'Process'
-
-        cmd = {'cmd': {
-            'id': command.controller_id.ctrl_id,
-            'c': command.cmd[:2],
-            'd': command.cmd_data,
-        }
-        }
-
-        json_cmd = {
-            'status': status_code,
-            'cmd': cmd['cmd']
-        }
-
-        if command.cmd == 'D1':
-            if not command.controller_id.is_relay_ctrl():
-                card_num = ''.join(list('0' + ch for ch in command.card_number))
-                pin_code = ''.join(list('0' + ch for ch in command.pin_code))
-                ts_code = str(command.ts_code)
-                rights_data = '{:02X}'.format(command.rights_data)
-                rights_mask = '{:02X}'.format(command.rights_mask)
-                json_cmd['cmd']['d'] = card_num + pin_code + ts_code + rights_data + rights_mask
-            else:
-                card_num = ''.join(list('0' + ch for ch in command.card_number))
-                rights_data = '%03d%03d%03d%03d' % (
-                    (command.rights_data >> (3 * 8)) & 0xFF,
-                    (command.rights_data >> (2 * 8)) & 0xFF,
-                    (command.rights_data >> (1 * 8)) & 0xFF,
-                    (command.rights_data >> (0 * 8)) & 0xFF,
-                )
-                if command.controller_id.mode == 3:
-                    rights_mask = '255255255255'
-                else:
-                    rights_mask = '%03d%03d%03d%03d' % (
-                        (command.rights_mask >> (3 * 8)) & 0xFF,
-                        (command.rights_mask >> (2 * 8)) & 0xFF,
-                        (command.rights_mask >> (1 * 8)) & 0xFF,
-                        (command.rights_mask >> (0 * 8)) & 0xFF,
-                    )
-                rights_data = ''.join(list('0' + ch for ch in rights_data))
-                rights_mask = ''.join(list('0' + ch for ch in rights_mask))
-                json_cmd['cmd']['d'] = card_num + rights_data + rights_mask
-
-        if command.cmd == 'D7':
-            dt = datetime.datetime.now()
-            dt += command.webstack_id._get_tz_offset()
-
-            json_cmd['cmd']['d'] = '{:02}{:02}{:02}{:02}{:02}{:02}{:02}'.format(
-                dt.second, dt.minute, dt.hour, dt.weekday() + 1, dt.day, dt.month, dt.year % 100
-            )
-
-        command.request = json.dumps(json_cmd)
-        return json_cmd
-
-    @http.route(['/hr/rfid/barcode'], type='json', auth='none', methods=['POST'], cors='*', csrf=False, save_session=False)
+    @http.route(['/hr/rfid/barcode'], type='json', auth='none', methods=['POST'], cors='*', csrf=False,
+                save_session=False)
     def post_barcode(self, **post):
         # request.session.should_save = False
         return
         t0 = time.time()
         _logger.info(request.jsonrequest)
         return [{
-                "id": 1,
-                "method": "POST",
-                "body": {"cmd": {"reader": 1, "type": 0}}
-               }]
+            "id": 1,
+            "method": "POST",
+            "body": {"cmd": {"reader": 1, "type": 0}}
+        }]
 
-    @http.route(['/hr/rfid/event'], type='json', auth='none', methods=['POST'], cors='*', csrf=False, save_session=False)
+    @http.route(['/hr/rfid/event'], type='json', auth='none', methods=['POST'], cors='*', csrf=False,
+                save_session=False)
     def post_event(self, **post):
-        # request.session.should_save = False
+        """
+        Process events from equipment
+
+        """
         t0 = time.time()
         if not post:
             # Controllers with no odoo functionality use the dd/mm/yyyy format
-            self._time_format = '%d.%m.%y %H:%M:%S'
-            self._post = request.jsonrequest
+            post_data = request.jsonrequest
         else:
-            self._time_format = '%m.%d.%y %H:%M:%S'
-            self._post = post
-        _logger.info('Received=' + str(self._post))
+            post_data = post
+        _logger.info('Received=' + str(post_data))
 
-        if 'convertor' not in self._post:
-            return self._parse_raw_data()
+        if 'convertor' not in post_data:
+            return self._parse_raw_data(post_data)
 
-        self._vending_hw_version = '16'
-        self._webstacks_env = request.env['hr.rfid.webstack'].with_user(SUPERUSER_ID)
-        self._webstack = self._webstacks_env.search(['|', ('active', '=', True), ('active', '=', False),
-                                                     ('serial', '=', str(self._post['convertor']))])
-        self._ws_db_update_dict = {
-            'last_ip': request.httprequest.environ['REMOTE_ADDR'],
-            'updated_at': fields.Datetime.now(),
-        }
+        webstack_id = request.env['hr.rfid.webstack'].with_user(SUPERUSER_ID).search([
+            '|', ('active', '=', True), ('active', '=', False),
+            ('serial', '=', str(post_data['convertor']))
+        ])
         try:
-            if len(self._webstack) == 0:
-                # new_webstack = {
-                #     'name': 'Module ' + str(self._post['convertor']),
-                #     'serial': str(self._post['convertor']),
-                #     'key': self._post['key'],
-                #     'last_ip': request.httprequest.environ['REMOTE_ADDR'],
-                #     'updated_at': fields.Datetime.now(),
-                #     'available': 'a'
-                # }
-                # self._webstacks_env.create(new_webstack)
-                return {'status': 400}
+            if not webstack_id:
+                if request.env['ir.config_parameter'].sudo().get_param('hr_rfid.save_new_webstacks') in ['true', 'True',
+                                                                                                         '1']:
+                    new_webstack_dict = {
+                        'name': f"Module {post_data['convertor']}",
+                        'serial': str(post_data['convertor']),
+                        'key': post_data['key'],
+                        'last_ip': request.httprequest.environ['REMOTE_ADDR'],
+                        'updated_at': fields.Datetime.now(),
+                        'available': 'a',
+                        'company_id': request.env['res.company'].search([])[0].id,
+                    }
+                    webstack_id = request.env['hr.rfid.webstack'].sudo().create(new_webstack_dict)
+                else:
+                    return {'status': 400}
 
-            if not self._webstack.key:
-                self._webstack.key = self._post['key']
-                self._webstack.available = 'a'
-                self._webstack.message_post(
+            if not webstack_id.key:
+                webstack_id.key = post_data['key']
+                webstack_id.available = 'a'
+                webstack_id.message_post(
                     body=_("The Module contacted us and activated.")
                 )
 
-            elif self._webstack.key != self._post['key']:
-                self._report_sys_ev('Webstack key and key in json did not match')
+            elif webstack_id.key != post_data['key']:
+                webstack_id.report_sys_ev('Webstack key and key in json did not match', post_data=post_data)
                 return {'status': 400}
 
-            if not self._webstack.active:
-                self._webstack.write(self._ws_db_update_dict)
-                self._report_sys_ev('Webstack is not active')
+            if not webstack_id.active:
+                webstack_id.write(self._ws_db_update_dict())
+                webstack_id.report_sys_ev('Webstack is not active', post_data=post_data)
                 return {'status': 400}
 
             result = {
                 'status': 400
             }
 
-            if 'heartbeat' in self._post:
-                _logger.info('Heartbeat for {}'.format(self._webstack.name))
-                result = self._parse_heartbeat()
-            elif 'event' in self._post:
-                _logger.info('Event for {}'.format(self._webstack.name))
-                result = self._parse_event()
-            elif 'response' in self._post:
-                _logger.info('Command response from {}'.format(self._webstack.name))
-                result = self._parse_response()
+            if 'heartbeat' in post_data:
+                _logger.info('Heartbeat from {}'.format(webstack_id.name))
+                result = webstack_id.parse_heartbeat(post_data=post_data)
+            elif 'event' in post_data:
+                _logger.info('Event from {}'.format(webstack_id.name))
+                result = self._parse_event(post_data=post_data, webstack=webstack_id)
+            elif 'response' in post_data:
+                _logger.info('Command response from {}'.format(webstack_id.name))
+                result = webstack_id.parse_response(post_data=post_data)
 
-            self._webstack.write(self._ws_db_update_dict)
+            webstack_id.write(self._ws_db_update_dict())
             t1 = time.time()
             _logger.debug('Took %2.03f time to form response=%s' % ((t1 - t0), str(result)))
             return result
@@ -903,44 +512,43 @@ class WebRfidController(http.Controller):
                 psycopg2.DataError, ValueError) as __:
             # commented DeferredException ^
             request.env['hr.rfid.event.system'].sudo().create([{
-                'webstack_id': self._webstack.id,
+                'webstack_id': webstack_id and webstack_id.id,
                 'timestamp': fields.Datetime.now(),
                 'error_description': traceback.format_exc(),
-                'input_js': json.dumps(self._post),
+                'input_js': json.dumps(post_data),
             }])
             _logger.debug('Caught an exception, returning status=500 and creating a system event')
             # print('Caught an exception, returning status=500 and creating a system event')
             return {'status': 500}
         except BadTimeException:
-            t = self._post['event']['date'] + ' ' + self._post['event']['time']
-            ev_num = str(self._post['event']['event_n'])
-            controller = self._webstack.controllers.filtered(lambda r: r.ctrl_id == self._post['event']['id'])
+            t = post_data['event']['date'] + ' ' + post_data['event']['time']
+            ev_num = str(post_data['event']['event_n'])
+            controller_id = webstack_id.controllers.filtered(lambda r: r.ctrl_id == post_data['event']['id'])
             sys_ev_dict = {
-                'webstack_id': self._webstack.id,
-                'controller_id': controller.id,
+                'webstack_id': webstack_id.id,
+                'controller_id': controller_id.id,
                 'timestamp': fields.Datetime.now(),
                 'event_action': ev_num,
                 'error_description': 'Controller sent us an invalid date or time: ' + t,
-                'input_js': json.dumps(self._post),
+                'input_js': json.dumps(post_data),
             }
             request.env['hr.rfid.event.system'].sudo().create(sys_ev_dict)
             _logger.debug('Caught a time error, returning status=200 and creating a system event')
             # print('Caught a time error, returning status=200 and creating a system event')
             return {'status': 200}
 
-    def _parse_raw_data(self):
-        if 'serial' in self._post and 'security' in self._post and 'events' in self._post:
-            return self._parse_barcode_device()
+    def _parse_raw_data(self, post_data: dict):
+        if 'serial' in post_data and 'security' in post_data and 'events' in post_data:
+            return self._parse_barcode_device(post_data)
 
         return {'status': 200}
 
-    def _parse_barcode_device(self):
-        post = self._post
+    def _parse_barcode_device(self, post_data: dict):
         ret = request.env['hr.rfid.raw.data'].create([{
             'do_not_save': True,
-            'identification': post['serial'],
-            'security': post['security'],
-            'data': json.dumps(post),
+            'identification': post_data['serial'],
+            'security': post_data['security'],
+            'data': json.dumps(post_data),
         }])
 
         ret_data = ret.return_data
@@ -950,3 +558,5 @@ class WebRfidController(http.Controller):
 
         return json.loads(ret_data)
 
+    def vending_request_for_balance(self):
+        raise NotImplementedError('Not implemented')
