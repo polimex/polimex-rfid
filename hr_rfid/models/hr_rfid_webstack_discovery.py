@@ -113,7 +113,7 @@ class HrRfidWebstackManualCreate(models.TransientModel):
 
     webstack_serial = fields.Char(
         string='Serial Number',
-        # required=True,
+        required=True,
     )
     behind_nat = fields.Boolean(
         default=True
@@ -144,7 +144,7 @@ class HrRfidWebstackManualCreate(models.TransientModel):
                     ws_id.action_set_webstack_settings()
             else:
                 exceptions.ValidationError(_('This serial number already exist in the system!'))
-        elif self.local_ip_address:
+        elif self.local_ip_address:  # not used at this moment
             ws_id = self.env['hr.rfid.webstack'].create({
                 'name': self.webstack_name,
                 'active': True,

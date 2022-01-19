@@ -469,7 +469,7 @@ class WebRfidController(http.Controller):
                         'available': 'a',
                         'company_id': request.env['res.company'].search([])[0].id,
                     }
-                    webstack_id = request.env['hr.rfid.webstack'].sudo().create(new_webstack_dict)
+                    webstack_id = request.env['hr.rfid.webstack'].sudo().with_context(tz=request.env['res.users'].sudo().browse(2).tz).create(new_webstack_dict)
                 else:
                     return {'status': 400}
 

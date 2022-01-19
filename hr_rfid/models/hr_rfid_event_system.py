@@ -173,6 +173,8 @@ class HrRfidSystemEvent(models.Model):
                 vals.pop('input_js')
 
     def _check_duplicate_sys_ev(self, vals):
+        if not vals['webstack_id']:
+            return False
         dupe = self.env['hr.rfid.event.system'].search([
             ('webstack_id', '=', vals['webstack_id']),
         ], limit=1)

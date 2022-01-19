@@ -251,7 +251,7 @@
                                         <span class="oe_kanban_partner_links">
                                             <span t-if="record.user_event_count.value>0"
                                                   class="badge badge-pill" title="User Events">
-                                                <a name="open_door" type="object"
+                                                <a name="button_act_window" type="object"
                                                     context="{'res_model':'hr.rfid.event.user'}"
                                                     attrs="{'invisible':[('user_event_ids', '=', False)]}">
                                                     <i class="fa fa-fw fa-list" role="img"

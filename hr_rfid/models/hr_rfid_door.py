@@ -331,12 +331,12 @@ class HrRfidDoor(models.Model):
                 title=_('Open door command success'),
                 message=_('Because the webstack is behind NAT, we have to wait for the webstack to call us, '
                           'so we created a command. The door will open/close as soon as possible.'),
-                links=[{
+                links=cmd_id and [{
                      'label': cmd_id.name,
                      'model': 'hr.rfid.command',
                      'res_id': cmd_id.id,
                      'action': 'hr_rfid.hr_rfid_command_action'
-                }],
+                }] or None,
                 type='warning',
                 sticky= True
             )

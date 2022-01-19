@@ -90,6 +90,39 @@
             <field name="perm_unlink" eval="True"/>
         </record>
 
+        <record id="ir_rule_hr_rfid_alarm_line_multi_company" model="ir.rule">
+            <field name="name">HR RFID Alarm Lines: Multi Company</field>
+            <field name="model_id" ref="model_hr_rfid_ctrl_alarm"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('controller_id.webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="ir_rule_hr_rfid_th_multi_company" model="ir.rule">
+            <field name="name">HR RFID Temperature and Humidity: Multi Company</field>
+            <field name="model_id" ref="model_hr_rfid_ctrl_th"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('controller_id.webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="ir_rule_hr_rfid_th_log_multi_company" model="ir.rule">
+            <field name="name">HR RFID Temperature and Humidity Log: Multi Company</field>
+            <field name="model_id" ref="model_hr_rfid_ctrl_th_log"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('th_id.controller_id.webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
         <record id="ir_rule_hr_rfid_event_user_multi_company" model="ir.rule">
             <field name="name">HR RFID User Events: Multi Company</field>
             <field name="model_id" ref="model_hr_rfid_event_user"/>
@@ -105,6 +138,28 @@
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
             <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="ir_rule_hr_rfid_event_system_multi_company" model="ir.rule">
+            <field name="name">HR RFID System Events: Multi Company</field>
+            <field name="model_id" ref="model_hr_rfid_event_system"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('controller_id.webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="ir_rule_hr_rfid_command_multi_company" model="ir.rule">
+            <field name="name">HR RFID Commands: Multi Company</field>
+            <field name="model_id" ref="model_hr_rfid_command"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
         </record>
 
 
