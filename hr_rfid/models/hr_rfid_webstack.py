@@ -318,7 +318,7 @@ class HrRfidWebstack(models.Model):
 
     @api.one
     def action_set_webstack_settings(self):
-        odoo_url = str(self.env['ir.config_parameter'].get_param('web.base.url'))
+        odoo_url = str(self.env['ir.config_parameter'].sudo().get_param('web.base.url'))
         splits = odoo_url.split(':')
         odoo_url = splits[1][2:]
         if len(splits) == 3:
@@ -1532,7 +1532,7 @@ class HrRfidUserEvent(models.Model):
 
     @api.model
     def _delete_old_events(self):
-        event_lifetime = self.env['ir.config_parameter'].get_param('hr_rfid.event_lifetime')
+        event_lifetime = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.event_lifetime')
         if event_lifetime is None:
             return False
 
@@ -1733,7 +1733,7 @@ class HrRfidSystemEvent(models.Model):
 
     @api.model
     def delete_old_events(self):
-        event_lifetime = self.env['ir.config_parameter'].get_param('hr_rfid.event_lifetime')
+        event_lifetime = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.event_lifetime')
         if event_lifetime is None:
             return False
 
