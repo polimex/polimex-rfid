@@ -29,6 +29,8 @@ class HrRfidZone(models.Model):
             return super(HrRfidZone, self).person_entered(person, event)
 
         for zone in self.filtered(lambda z: z.attendance):
+            if event.event_time < person.last_attendance_id.check_in:
+                continue
             any_open_check_in = self.env['hr.attendance'].search([('employee_id', '=', person.id), ('check_out', '=', False)])
             if person in zone.employee_ids and zone.overwrite_check_in and any_open_check_in:
                 event.in_or_out = 'in'
@@ -43,8 +45,8 @@ class HrRfidZone(models.Model):
         if not isinstance(person, type(self.env['hr.employee'])):
             return super(HrRfidZone, self).person_left(person, event)
 
-        for zone in self:
-            if not zone.attendance:
+        for zone in self.filtered(lambda z: z.attendance):
+            if event.event_time < person.last_attendance_id.check_in:
                 continue
             any_open_check_in = self.env['hr.attendance'].search([('employee_id', '=', person.id), ('check_out', '=', False)])
             if person not in zone.employee_ids and zone.overwrite_check_out:
