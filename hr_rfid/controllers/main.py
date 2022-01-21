@@ -755,7 +755,7 @@ class WebRfidController(http.Controller):
 
         return json_cmd
 
-    @http.route(['/hr/rfid/event'], type='json', auth='none', method=['POST'], csrf=False)
+    @http.route(['/hr/rfid/event'], type='json', auth='none', methods=['POST'], cors='*', csrf=False, save_session=False)
     def post_event(self, **post):
         print('post=' + str(post))
         t0 = time.time()
