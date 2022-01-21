@@ -48,10 +48,21 @@ class HrAttendance(models.Model):
 
         atts = self.search([
             ('check_out', '=', None)
-        ])
+        ], order='check_in')
+
+        existing_recs = []
+        for_delete = []
+        for att in atts:
+            rec = str(att.check_in) + str(att.employee_id.id)
+            # rec = (att.check_in, att.employee_id.id)
+            if rec in existing_recs:
+                for_delete.append(att.id)
+            else:
+                existing_recs.append(rec)
+        if for_delete:
+            self.env['hr.attendance'].browse(for_delete).unlink()
 
         for att in atts:
             check_out = att.check_in + td
             if check_out <= datetime.now():
                 att.check_out = check_out
-

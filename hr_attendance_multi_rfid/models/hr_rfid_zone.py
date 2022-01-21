@@ -28,17 +28,12 @@ class HrRfidZone(models.Model):
         if not isinstance(person, type(self.env['hr.employee'])):
             return super(HrRfidZone, self).person_entered(person, event)
 
-        for zone in self:
-            if zone.attendance is False:
-                continue
-
-            if person in zone.employee_ids and zone.overwrite_check_in:
-                check = self.env['hr.attendance'].search([('employee_id', '=', person.id)], limit=1)
-                if check.check_out:
-                    continue
+        for zone in self.filtered(lambda z: z.attendance):
+            any_open_check_in = self.env['hr.attendance'].search([('employee_id', '=', person.id), ('check_out', '=', False)])
+            if person in zone.employee_ids and zone.overwrite_check_in and any_open_check_in:
                 event.in_or_out = 'in'
-                check.check_in = event.event_time
-            elif person not in zone.employee_ids and person.attendance_state == 'checked_out':
+                any_open_check_in.check_in = event.event_time
+            elif person not in zone.employee_ids and not any_open_check_in:
                 event.in_or_out = 'in'
                 person.attendance_action_change_with_date(event.event_time)
         return super(HrRfidZone, self).person_entered(person, event)
@@ -51,7 +46,7 @@ class HrRfidZone(models.Model):
         for zone in self:
             if not zone.attendance:
                 continue
-
+            any_open_check_in = self.env['hr.attendance'].search([('employee_id', '=', person.id), ('check_out', '=', False)])
             if person not in zone.employee_ids and zone.overwrite_check_out:
                 check = self.env['hr.attendance'].search([('employee_id', '=', person.id)], limit=1)
                 if event:
