@@ -34,7 +34,7 @@ class HrRfidZone(models.Model):
             any_open_check_in = self.env['hr.attendance'].search([('employee_id', '=', person.id), ('check_out', '=', False)])
             if person in zone.employee_ids and zone.overwrite_check_in and any_open_check_in:
                 event.in_or_out = 'in'
-                any_open_check_in.check_in = event.event_time
+                any_open_check_in.write({'check_in':  event.event_time})
             elif person not in zone.employee_ids and not any_open_check_in:
                 event.in_or_out = 'in'
                 person.attendance_action_change_with_date(event.event_time)
@@ -53,14 +53,14 @@ class HrRfidZone(models.Model):
                 check = self.env['hr.attendance'].search([('employee_id', '=', person.id)], limit=1)
                 if event:
                     event.in_or_out = 'out'
-                    check.check_out = event.event_time
+                    check.write({'check_out': event.event_time})
                 else:
-                    check.check_out = fields.datetime.now()
-            elif person in zone.employee_ids and person.attendance_state == 'checked_in':
+                    check.write({'check_out': fields.Datetime.now()})
+            elif person in zone.employee_ids and any_open_check_in:
                 if event:
                     event.in_or_out = 'out'
                     person.attendance_action_change_with_date(event.event_time)
                 else:
-                    person.attendance_action_change_with_date(fields.datetime.now())
+                    person.attendance_action_change_with_date(fields.Datetime.now())
 
         return super(HrRfidZone, self).person_left(person, event)
