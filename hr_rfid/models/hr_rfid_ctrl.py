@@ -550,7 +550,7 @@ class HrRfidController(models.Model):
             line_ids = self.env['hr.rfid.ctrl.alarm'].sudo().create([
                 {
                     'line_number': i + 1,
-                    'name': _('Alarm Line {}').format(i + 1),
+                    'name': _('Alarm Line {} on {}').format(i + 1, ctrl.name),
                     'controller_id': ctrl.id,
                     'control_output': ctrl.alarm_lines == 1 and (4 + i + 1) or (10 + i + 1),
                 } for i in range(ctrl.alarm_lines)]
@@ -634,6 +634,7 @@ class HrRfidController(models.Model):
             ])
             if not th_id:
                 th_id = self.env['hr.rfid.ctrl.th'].create([{
+                    'name': _('T&H Sensor {} on {}').format(sensor_number, c.name),
                     'controller_id': c.id,
                     'sensor_number': sensor_number
                 }])

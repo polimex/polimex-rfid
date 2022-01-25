@@ -121,18 +121,12 @@
                   action="hr_rfid_access_group_action"
                   groups="hr_rfid_group_manager"
                   sequence="10"/>
-        <menuitem id="hr_rfid_menu_alarm_lines"
-                  name="Alarm lines"
-                  parent="hr_rfid_root_menu_access_control"
-                  action="hr_rfid_ctrl_alarm_action"
-                  groups="hr_rfid_group_manager"
-                  sequence="20"/>
         <menuitem id="hr_rfid_menu_zones"
                   name="Zones"
                   parent="hr_rfid_root_menu_access_control"
                   action="hr_rfid_zone_action"
                   groups="hr_rfid_group_manager"
-                  sequence="30"/>
+                  sequence="20"/>
 
 
         <!--#######################################################
@@ -175,12 +169,18 @@
                   action="hr_rfid_reader_action"
                   groups="hr_rfid_group_manager"
                   sequence="25"/>
+        <menuitem id="hr_rfid_menu_alarm_lines"
+                  name="Alarm lines"
+                  parent="hr_rfid_root_menu_hardware_manager"
+                  action="hr_rfid_ctrl_alarm_action"
+                  groups="hr_rfid_group_manager"
+                  sequence="30"/>
         <menuitem id="hr_rfid_menu_th"
                   name="Temperature and Humidity"
                   parent="hr_rfid_root_menu_hardware_manager"
                   action="hr_rfid_ctrl_th_action"
                   groups="hr_rfid_group_officer"
-                  sequence="30"/>
+                  sequence="35"/>
 
         <!--#######################################################
         #####                   Configuration                 #####
