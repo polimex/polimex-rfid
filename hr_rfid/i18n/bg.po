@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-19 10:15+0000\n"
-"PO-Revision-Date: 2022-01-19 13:25+0200\n"
+"POT-Creation-Date: 2022-01-26 11:02+0000\n"
+"PO-Revision-Date: 2022-01-26 13:14+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,13 +16,12 @@ msgstr ""
 "Plural-Forms: \n"
 "Language: bg\n"
 "X-Generator: Poedit 3.0\n"
-"X-Poedit-Bookmarks: -1,144,-1,-1,-1,-1,-1,-1,-1,-1\n"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #, python-format
 msgid " of ctrl "
-msgstr ""
+msgstr " на контролер "
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
@@ -416,7 +415,7 @@ msgstr "Дейности"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_exception_decoration
 msgid "Activity Exception Decoration"
-msgstr ""
+msgstr "Декорация на съобщенията за грешки в дейностите"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_state
@@ -426,7 +425,7 @@ msgstr "Състояние на дейността"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_type_icon
 msgid "Activity Type Icon"
-msgstr ""
+msgstr "Икона за тип дейност"
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_add_card_action
@@ -460,6 +459,16 @@ msgstr "Добавяне към служителите"
 #: model:ir.model,name:hr_rfid.model_hr_department_add_def_acc_grs
 msgid "Add access group and change to default"
 msgstr "Добавяне на група и задаване по подразбиране"
+
+#. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_webstack_discovery__what_to_do__full
+msgid "Add as Active and read all information"
+msgstr "Добавяне като Активен и четене на цялата информация"
+
+#. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_webstack_discovery__what_to_do__add
+msgid "Add as Inactive only"
+msgstr "Добавяне като неактивен само"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_wiz_form
@@ -543,7 +552,7 @@ msgstr "Аларма"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__alarm_right
 msgid "Alarm Data (debug info)"
-msgstr "Alarm Data (debug info)"
+msgstr "Данни за аларма (Информация за разработчици)"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__alarm_line_ids
@@ -558,8 +567,8 @@ msgstr "Състояния на Алармени линии"
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #, python-format
-msgid "Alarm Line {}"
-msgstr "Алармена линия {}"
+msgid "Alarm Line {} on {}"
+msgstr "Алармена линия {} на {}"
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_ctrl_alarm_action
@@ -873,6 +882,7 @@ msgid "Behind NAT"
 msgstr "Зад NAT"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__behind_nat
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_manual_create__behind_nat
 msgid "Behind Nat"
 msgstr "Зад NAT"
@@ -899,6 +909,7 @@ msgstr "CRC Грешка"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_del_doors_wiz
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_open_close_wiz_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_wiz_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_discovery_wiz
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_manual_create_wiz
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_zone_doors_wiz
 msgid "Cancel"
@@ -1700,6 +1711,7 @@ msgstr "Създадена команда за отваряне на врата�
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_manual_create__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__create_uid
@@ -1736,6 +1748,7 @@ msgstr "Създаден от"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__create_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_manual_create__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__create_date
@@ -1828,7 +1841,7 @@ msgstr "Информация за отстраняване на грешки"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_res_config_settings__save_webstack_communications
 msgid "Debug JSON communication"
-msgstr ""
+msgstr "Информация за отстраняване на грешки"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department__hr_rfid_default_access_group
@@ -1841,7 +1854,7 @@ msgid ""
 "Define how long the Events in the system will live in DAYS! After this period of days, the system will delete old events."
 msgstr ""
 "Дефинира колко продължително Събитията в системата ще се съхраняват (в дни)! След този период системата ще ги изтрие "
-"автоматично"
+"автоматично."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
@@ -1964,6 +1977,11 @@ msgid "Disarmed"
 msgstr "Деактивирана охрана"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__discovery_id
+msgid "Discovery"
+msgstr "Откриване"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_balloon_mixin__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_acc_grs__display_name
@@ -1995,6 +2013,7 @@ msgstr "Деактивирана охрана"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_manual_create__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__display_name
@@ -2003,11 +2022,6 @@ msgstr "Деактивирана охрана"
 #: model:ir.model.fields,field_description:hr_rfid.field_res_partner__display_name
 msgid "Display Name"
 msgstr "Име за показване"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_discovery_wiz
-msgid "Done"
-msgstr "Готово"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_door
@@ -2025,7 +2039,7 @@ msgstr "Врата"
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #, python-format
 msgid "Door "
-msgstr "Врата"
+msgstr "Врата "
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
@@ -2690,7 +2704,7 @@ msgstr "Генерирайте събития на всички контроле
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_door_rel__alarm_rights
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_wizard__alarm_rights
 msgid "Give alarm rights for this door. The user can Arm/Disarm door."
-msgstr "Дава алармени права за тази врата. Потребителя може да Взема и Сваля охраната на вратата"
+msgstr "Дава алармени права за тази врата. Потребителя може да Взема и Сваля охраната на вратата."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
@@ -2890,6 +2904,11 @@ msgid "Humidity"
 msgstr "Влажност"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__hw_version
+msgid "Hw Version"
+msgstr "Версия на хардуера"
+
+#. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__1
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__2
@@ -2930,6 +2949,7 @@ msgstr "Грешка в I2C"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_manual_create__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__id
@@ -3016,7 +3036,7 @@ msgstr "Ако е избрано някой съобщения имат греш
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__lock_state
 msgid "If in the controller check box for read state is True, the status is present."
-msgstr "Ако в контролер четенето на статус е включено, статусът ще е наличен"
+msgstr "Ако в контролер четенето на статус е включено, статусът ще е наличен."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__tz
@@ -3242,6 +3262,11 @@ msgid "Last IP:"
 msgstr "Последно IP:"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__last_ip
+msgid "Last Ip"
+msgstr "Последно IP"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_balloon_mixin____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_acc_grs____last_update
@@ -3273,6 +3298,7 @@ msgstr "Последно IP:"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery____last_update
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_manual_create____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone____last_update
@@ -3326,6 +3352,7 @@ msgstr "Последна актуализация:"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_manual_create__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__write_uid
@@ -3362,6 +3389,7 @@ msgstr "Последно актуализиран от"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_manual_create__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__write_date
@@ -3456,12 +3484,12 @@ msgstr "Регистър"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
 msgid "Log all JSON data from communication to events. Visible only in debug mode"
-msgstr ""
+msgstr "Регистрирай цялата JSON комуникаця от/към контролерите. Видима само в режим Разработчици"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_res_config_settings__save_webstack_communications
 msgid "Log all hardware communication. Debug purpose only and work in debug mode"
-msgstr ""
+msgstr "Регистрира цялата комуникация с хардуера. Информация за програмисти само"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__log_out_on_exit
@@ -3665,7 +3693,7 @@ msgstr "Потребителско име на модула"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
 msgid "Module Web Management"
-msgstr ""
+msgstr "Web управление на модула"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_system__webstack_id
@@ -3704,14 +3732,9 @@ msgid "Modules that were just found during the discovery process"
 msgstr "Модули, които бяха открити по време на процеса"
 
 #. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_discovery__setup_and_set_to_active
-msgid "Modules to automatically setup for the odoo and activate"
-msgstr "Модули за автоматично настройване на odoo и активиране"
-
-#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__more_json
 msgid "More info about event in JSON"
-msgstr ""
+msgstr "Повече информация в JSON на събитието"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_form
@@ -3735,6 +3758,7 @@ msgstr "Краен срок за моя дейност"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__name
 msgid "Name"
 msgstr "Име"
@@ -3747,17 +3771,17 @@ msgstr "Нова група за достъп по подразбиране"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_date_deadline
 msgid "Next Activity Deadline"
-msgstr ""
+msgstr "Краен Срок на Следващо Действие"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_summary
 msgid "Next Activity Summary"
-msgstr ""
+msgstr "Обобщение на следваща дейност"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_type_id
 msgid "Next Activity Type"
-msgstr ""
+msgstr "Следващ вид Действие"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__armed__no_alarm
@@ -4145,7 +4169,7 @@ msgstr "Парола за администраторския акаунт на �
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_res_config_settings__save_new_webstacks
 msgid "Permit automatic adding modules from communication. This feature do not support Multi Company."
-msgstr "Позволява автоматично добавяне на модули от комуникацията. Тази функция НЕ поддържа многофирмена инсталация"
+msgstr "Позволява автоматично добавяне на модули от комуникацията. Тази функция НЕ поддържа многофирмена инсталация."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
@@ -4184,6 +4208,13 @@ msgid "Please provide module serial number!"
 msgstr "Моля посочете серийният номер на модула!"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_discovery_wiz
+msgid "Please remove unwanted modules from list. Choose the operation for rest of them. Press Add to add them in the system!"
+msgstr ""
+"Моля премахнете нежеланите модули от списъка. Изберете желаната операция за останалите. Натиснете Продължи за да ги добавите "
+"в системата!"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
 msgid "Polimex SmartVend Controllers provide full management of Vending sales with any Executive compatible Vending Machines"
 msgstr "Контролерите Polimex SmartVend позволяват пълно управление на продажби с вендинг машини работещи с Executive протокол"
@@ -4204,6 +4235,11 @@ msgstr "Налична карта в четеца"
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__hotel_readers_buttons_pressed
 msgid "Pressed button on Hotel readers connected to controller"
 msgstr "Натиснати бутони на хотелските четци свързани с контролера"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_discovery_wiz
+msgid "Process"
+msgstr "Продължи"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
@@ -4916,6 +4952,7 @@ msgstr "Удобно за Вас наименование на сензора"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__serial_number
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__serial
 msgid "Serial"
 msgstr "Сериен номер"
 
@@ -4981,11 +5018,6 @@ msgstr "Настройки"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "Setup"
 msgstr "Настройка"
-
-#. module: hr_rfid
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__setup_and_set_to_active
-msgid "Setup and activate"
-msgstr "Настройка и активиране"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_reader_view_form
@@ -5174,6 +5206,12 @@ msgid "System information"
 msgstr "Системна информация"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
+#, python-format
+msgid "T&H Sensor {} on {}"
+msgstr "Сензор за Т&В {} на {}"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__ts_code
 msgid "TS Code (debug info)"
 msgstr "TS код (информация за отстраняване на грешки)"
@@ -5191,7 +5229,7 @@ msgstr "TS номер:"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_form
 msgid "Temp Log"
-msgstr "Температурен регистър"
+msgstr "Регистър"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__15
@@ -5475,7 +5513,7 @@ msgstr "Тип на контролера"
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__activity_exception_decoration
 msgid "Type of the exception activity on record."
-msgstr ""
+msgstr "Тип на активността на записа."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__reader_type
@@ -5495,7 +5533,6 @@ msgstr "Уникален номер за разграничаване на вс�
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__state__unknown
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_reader__mode__00
 #, python-format
 msgid "Unknown"
 msgstr "Неизвестно"
@@ -5669,6 +5706,7 @@ msgstr "Успешна продажба"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__sw_version
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__version
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__version
 msgid "Version"
 msgstr "Версия"
 
@@ -5695,7 +5733,7 @@ msgstr "Преглед на данните за ПИН кода в потреб�
 #. module: hr_rfid
 #: model:res.groups,name:hr_rfid.hr_rfid_view_door_arm_disarm
 msgid "View the door arm/disarm buttons"
-msgstr ""
+msgstr "Достъп до бутоните за Вкл/Изкл на охраната"
 
 #. module: hr_rfid
 #: model:res.groups,name:hr_rfid.hr_rfid_view_door_open_close
@@ -5726,6 +5764,16 @@ msgstr "Ръчно създаване на Webstack"
 #: model:ir.model,name:hr_rfid.model_hr_rfid_webstack_discovery
 msgid "Webstack discovery"
 msgstr "Откриване на Webstack"
+
+#. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_hr_rfid_webstack_discovery_row
+msgid "Webstack discovery rows"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__what_to_do
+msgid "What To Do"
+msgstr "Какво да направя"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__event_action
@@ -6186,6 +6234,11 @@ msgstr ""
 #, python-format
 msgid "{} in zones"
 msgstr "{} в зони"
+
+#. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_reader__mode__00
+msgid "Неизвестен"
+msgstr ""
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban

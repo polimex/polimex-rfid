@@ -6,24 +6,27 @@
             <field name="model">hr.rfid.webstack.discovery</field>
             <field name="arch" type="xml">
                 <form string="Module Discovery">
+                     <separator string="Please remove unwanted modules from list. Choose the operation for rest of them. Press Add to add them in the system!" colspan="4"/>
                     <group >
-                        <field name="found_webstacks">
-                            <tree create="0">
-                                <field name="name"/>
-                                <field name="serial"/>
-                                <field name="active"/>
-                                <field name="hw_version"/>
-                                <field name="version"/>
-                                <field name="last_ip"/>
-                            </tree>
-                        </field>
-                        <field name="setup_and_set_to_active"
-                               domain="[('id','in',found_webstacks)]"
-                               widget="many2many_tags"/>
+                        <group colspan="4">
+                            <field name="found_webstacks">
+                                <tree create="0" edit="0" delete="1">
+                                    <field name="name"/>
+                                    <field name="serial"/>
+                                    <field name="hw_version"/>
+                                    <field name="version"/>
+                                    <field name="last_ip"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group>
+                            <field name="what_to_do"/>
+                        </group>
                     </group>
 
                     <footer>
-                        <button name="setup_modules" type="object" string="Done" class="oe_highlight"/>
+                        <button name="setup_modules" type="object" string="Process" class="oe_highlight"/>
+                        <button special="cancel" string="Cancel" class="btn-secondary"/>
                     </footer>
 
                 </form>

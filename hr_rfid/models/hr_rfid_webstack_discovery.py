@@ -5,6 +5,20 @@ import http.client
 import json
 
 
+class HrRfidWebstackDiscoveryRow(models.TransientModel):
+    _name = 'hr.rfid.webstack.discovery.row'
+    _description = 'Webstack discovery rows'
+
+    name = fields.Char()
+    last_ip = fields.Char()
+    version = fields.Char()
+    hw_version = fields.Char()
+    serial = fields.Char()
+    behind_nat = fields.Boolean()
+    discovery_id = fields.Many2one(
+        comodel_name='hr.rfid.webstack.discovery'
+    )
+
 class HrRfidWebstackDiscovery(models.TransientModel):
     _name = 'hr.rfid.webstack.discovery'
     _description = 'Webstack discovery'
@@ -22,7 +36,8 @@ class HrRfidWebstackDiscovery(models.TransientModel):
             return
 
         added_sn = list()
-        ws_env = self.env['hr.rfid.webstack']
+        ws_env = self.env['hr.rfid.webstack'].sudo()
+        ws_env_d = self.env['hr.rfid.webstack.discovery.row'].sudo()
         found_webstacks = []
         for rec in ws_env.search([('|'), ('active', '=', True), ('active', '=', False)]):
             added_sn.append(rec.serial)
@@ -46,9 +61,10 @@ class HrRfidWebstackDiscovery(models.TransientModel):
                     'hw_version': data[2],
                     'serial': data[4],
                     'behind_nat': False,
-                    'available': 'u',
+                    'discovery_id': self.id,
+                    # 'available': 'u',
                 }
-                env = ws_env.sudo()
+                env = ws_env_d.sudo()
 
                 module = env.create(module)
                 added_sn.append(data[4])
@@ -67,37 +83,43 @@ class HrRfidWebstackDiscovery(models.TransientModel):
         # self.write({"found_webstacks": [(6, 0, found_webstacks)]})
         # self.found_webstacks.action_check_if_ws_available()
         # return return_wiz_form_view(self._name, self.id)
-        return [(6, 0, found_webstacks)]
+        return found_webstacks
 
-    found_webstacks = fields.Many2many(
-        comodel_name='hr.rfid.webstack',
-        relation='hr_rfid_webstack_discovery_all',
-        column1='wiz',
-        column2='ws',
+    found_webstacks = fields.One2many(
+        comodel_name='hr.rfid.webstack.discovery.row',
+        inverse_name='discovery_id',
         string='Found modules',
         default=_discover_ws,
-        context={'active_test': False},
         help='Modules that were just found during the discovery process',
     )
 
-    setup_and_set_to_active = fields.Many2many(
-        comodel_name='hr.rfid.webstack',
-        relation='hr_rfid_webstack_discovery_set',
-        column1='wiz',
-        column2='ws',
-        string='Setup and activate',
-        help='Modules to automatically setup for the odoo and activate',
+    what_to_do = fields.Selection(
+        selection=[
+            ('add', 'Add as Inactive only'),
+            ('full', 'Add as Active and read all information')
+        ],
+        default='add'
     )
 
 
 
 
     def setup_modules(self):
-        self.ensure_one()
-        for ws in self.setup_and_set_to_active:
-            ws.action_set_webstack_settings()
-            ws.action_set_active()
-            ws.get_controllers()
+        for ws in self.found_webstacks:
+            ws_dict = {
+                'name': ws.name,
+                'version': ws.version,
+                'hw_version': ws.hw_version,
+                'serial': ws.serial,
+                'behind_nat': False,
+                'available': 'a',
+                'active': True,
+                'last_ip': ws.last_ip,
+            }
+            ws_id = self.env['hr.rfid.webstack'].sudo().create([ws_dict])
+            ws_id.action_check_if_ws_available()
+            ws_id.action_set_webstack_settings()
+            ws_id.get_controllers()
 
         return self.env.ref('hr_rfid.hr_rfid_webstack_action').read()[0]
 

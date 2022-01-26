@@ -242,38 +242,22 @@ class HrRfidWebstack(models.Model):
 
     def action_set_webstack_settings(self):
         self.ensure_one()
-        bad_hosts = ['localhost', '127.0.0.1','polimexodoo.local']
+        bad_hosts = ['localhost', '127.0.0.1','.local']
         odoo_url = str(self.env['ir.config_parameter'].sudo().get_param('web.base.url'))
+        odoo_port = len(odoo_url.split(':'))==3 and int(odoo_url.split(':')[2], 10) or 80
+        odoo_protocol = odoo_url.split('//')[0]
         if any([odoo_url.find(bh) < 0 for bh in bad_hosts]):
             local_ip = get_local_ip()
-            good_hosts = [odoo_url.replace(bh,local_ip) for bh in bad_hosts]
-            new_odoo_url = None
-            for gh in good_hosts:
-                if gh != odoo_url:
-                    new_odoo_url = gh
-                    break
+            new_odoo_url =  f"{local_ip}"
             if odoo_url == new_odoo_url:
                 raise exceptions.ValidationError(_('Your current setup not permit this operation. You need to do it manually. Please call your support team for more information!'))
             else:
                 odoo_url = new_odoo_url
                 _logger.info(f"After investigation, the system url is: {odoo_url}")
-        splits = odoo_url.split(':')
-        odoo_url = splits[1][2:]
-        if len(splits) == 3:
-            odoo_port = int(splits[2], 10)
-        else:
-            odoo_port = 80
         odoo_url += '/hr/rfid/event'
 
-        if self.module_username is False:
-            username = ''
-        else:
-            username = str(self.module_username)
-
-        if self.module_password is False:
-            password = ''
-        else:
-            password = str(self.module_password)
+        username = str(self.module_username) if self.module_username else ''
+        password = str(self.module_password) if self.module_password else ''
 
         auth = base64.b64encode((username + ':' + password).encode())
         auth = auth.decode()
