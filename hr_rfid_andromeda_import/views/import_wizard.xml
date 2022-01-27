@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="andromeda_import_wizard_form" model="ir.ui.view">
+            <field name="name">andromeda_import_form_wizard</field>
+            <field name="model">hr.rfid.andromeda.import.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Welcome to Andromeda Import">
+                    <header>
+                        <h1>
+                            <p>Welcome to Andromeda Import Wizard</p>
+                        </h1>
+                    </header>
+                    <sheet>
+<!--                        <group>-->
+<!--                            <field name="import_users" invisible="1"/>-->
+<!--                            <field name="import_access_groups" invisible="1"/>-->
+<!--                            <field name="import_user_rights" invisible="1"/>-->
+
+<!--                            <group string="Company Import"-->
+<!--                                   attrs="{'invisible': [('import_users', '=', 0)]}">-->
+<!--                                <field name="company_list" readonly="1"/>-->
+<!--                            </group>-->
+<!--                            <group string="Depatment Import"-->
+<!--                                   attrs="{'invisible': [('import_users', '=', 0)]}">-->
+<!--                                <field name="company_list" readonly="1"/>-->
+<!--                            </group>-->
+<!--                            <group string="Access Group Import"-->
+<!--                                   attrs="{'invisible': [('import_access_groups', '=', 0)]}">-->
+<!--                                <field name="company_list" readonly="1"/>-->
+<!--                            </group>-->
+<!--                            <group string="User Import"-->
+<!--                                   attrs="{'invisible': [('import_users', '=', 0)]}">-->
+<!--                                <field name="users_count" readonly="1"/>-->
+<!--                                <field name="company_users_as_contacts" readonly="0"/>-->
+<!--                                <field name="non_company_users_as_contacts" readonly="0"/>-->
+<!--                            </group>-->
+<!--                            <group string="User Rights Import"-->
+<!--                                   attrs="{'invisible': [('import_user_rights', '=', 0)]}">-->
+<!--                            </group>-->
+<!--                        </group>-->
+                        <group>
+                            <group>
+                                <field name="import_as"/>
+                            </group>
+                            <group>
+                                <button name="do_import" type="object"
+                                        string="Import Selected"
+                                        context="{'selected': 1}"
+                                />
+                            </group>
+                            <group>
+                                <field name="select_all" widget="boolean_toggle"/>
+                            </group>
+                        </group>
+                        <field name="users_ids">
+                            <tree editable="bottom" create="0">
+                                <field name="do_import" readonly="0"/>
+                                <field name="import_as" readonly="0"/>
+                                <field name="u_code" readonly="1"/>
+                                <field name="u_name" readonly="1"/>
+                                <field name="u_fname" readonly="0"/>
+                                <field name="u_sname" readonly="0"/>
+                                <field name="u_lname" readonly="0"/>
+                                <field name="d_name" readonly="1"/>
+                                <field name="c_name" readonly="1"/>
+<!--                                <button name="import_row"-->
+<!--                                    string="Import"-->
+<!--                                    type="object"-->
+<!--                                    attrs="{'invisible': [('is_imported', '=', True)]}"-->
+<!--                                    class="oe_highlight" icon="fa-magic"-->
+<!--                                />-->
+                            </tree>
+                        </field>
+                    </sheet>
+                    <footer>
+                        <button name="do_import" type="object"
+                                string="Start Import" class="oe_highlight"
+                                confirm="Are you sure to start import of ALL RECORDS?"/>
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="andromeda_import_wizard_action" model="ir.actions.act_window">
+            <field name="name">Andromeda Data Import</field>
+            <field name="res_model">hr.rfid.andromeda.import.wiz</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="andromeda_import_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</odoo>
