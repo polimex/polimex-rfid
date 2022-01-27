@@ -30,10 +30,13 @@ class AndromedaWelcomeWiz(models.TransientModel):
     ag_dict = fields.Char()
 
     connection_checked = fields.Boolean(default=False)
+    default_import_as = fields.Selection(
+        [('contact', 'Contacts'), ('employee', 'Employees')],
+        default='employee',
+    )
 
     import_access_groups = fields.Boolean(default=True)
     import_users = fields.Boolean(default=True)
-    import_user_rights = fields.Boolean(default=False, help='Users and Access Groups relations')
 
     def do_check_connection(self):
         try:
@@ -73,7 +76,7 @@ class AndromedaWelcomeWiz(models.TransientModel):
                                    'connection_checked',
                                    'import_access_groups',
                                    'import_users',
-                                   'import_user_rights',
+                                   'default_import_as',
                                    ])[0]
             curr_vals.pop('id')
             do_import_action = self.env.ref('hr_rfid_andromeda_import.andromeda_import_wizard_action').read()[0]

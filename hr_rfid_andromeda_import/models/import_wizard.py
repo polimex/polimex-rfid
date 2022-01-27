@@ -65,17 +65,25 @@ class AndromedaImportWiz(models.TransientModel):
     _description = 'Import'
 
     company_list = fields.Selection(selection=lambda self: self.get_context_list('company_dict'))
-    import_companies_as_partners = fields.Boolean(default=False)
-    company_users_as_contacts = fields.Boolean(
-        default=True,
-        help='True: Import users with defined company as Contacts,\n \
-              False: Import users with defined company as Department with Employees'
+    default_department = fields.Many2one(
+        comodel_name='hr.department',
+        default=lambda self: self.env['hr.department'].search([])[0].id,
+        help='Use this department if Employee have no Company and Department',
     )
-    non_company_users_as_contacts = fields.Boolean(
-        default=True,
-        help='True: Import users without defined company as separate Contacts,\n \
-              False: Import users without defined company as Employees without Department \n \
-                     * Employees without department don\'t have access groups!  '
+    force_default_department = fields.Boolean(
+        default=False,
+        help='Force use only this department for selected import',
+    )
+
+    default_company = fields.Many2one(
+        comodel_name='res.partner',
+        default=lambda self: self.env['res.partner'].search([('is_company', '=', True)])[0].id,
+        domain=[('is_company', '=', True)],
+        help='Use this company if Contact have no Company and Department',
+    )
+    force_default_company = fields.Boolean(
+        default=False,
+        help='Force use only this company for selected import',
     )
 
     users_ids = fields.One2many(
@@ -92,17 +100,23 @@ class AndromedaImportWiz(models.TransientModel):
 
     @api.onchange('import_as')
     def _import_as_on_change(self):
+        # self.users_ids.import_as = self.import_as
         self.users_ids.write({'import_as': self.import_as})
 
     @api.onchange('select_all')
-    def _import_as_on_change(self):
-        self.users_ids.write({'do_import':self.select_all})
+    def _select_all_on_change(self):
+        # self.users_ids.do_import = self.select_all
+        self.users_ids.write({'do_import': self.select_all})
+
+    def go_back(self):
+        return self.env.ref('hr_rfid_andromeda_import.andromeda_welcome_wizard_action').read()[0]
 
 
     @api.model
     def default_get(self, fields_list):
         res = super(AndromedaImportWiz, self).default_get(fields_list)
         defs = self.env.context.get('defs', {})
+        default_import_as = defs['default_import_as']
         defs = {k: v for k, v in defs.items() if k in fields_list}
 
         res = defs or res
@@ -114,7 +128,9 @@ class AndromedaImportWiz(models.TransientModel):
             ])
             existing_user_ids = [int(l[15:]) for l in existing_user.mapped('name')]
             users = list(filter(lambda u: (u[0] not in existing_user_ids), users))
-            user_ids = self.env['hr.rfid.andromeda.import.users'].create([self.get_user_data_as_dict(user, self.id) for user in users])
+            user_ids = self.env['hr.rfid.andromeda.import.users'].create(
+                [self.get_user_data_as_dict(user, self.id, default_import_as) for user in users]
+            )
             # users_lines =user_ids.mapped('id')
             users_lines =[(6, 0, user_ids.mapped('id'))]
             # users_lines = [(5,0,0)] + [(0,0,self.get_user_data_as_dict(user, self.id)) for user in users]
@@ -133,7 +149,7 @@ class AndromedaImportWiz(models.TransientModel):
         return []
 
     @api.model
-    def get_user_data_as_dict(self, u_data, import_id):
+    def get_user_data_as_dict(self, u_data, import_id, import_as):
         return {
             'u_id':u_data[0],
             'u_code':u_data[1],
@@ -146,21 +162,22 @@ class AndromedaImportWiz(models.TransientModel):
             'c_id':u_data[8],
             'c_name':u_data[9],
             'import_id':import_id,
+            'import_as':import_as,
         }
 
     @api.returns('res.partner')
-    def create_res_partner_company(self, c_id, c_name):
-        company_id = self.env.ref(f'__export__.andromeda_c_id_{c_id}', raise_if_not_found=False)
+    def create_res_partner_company(self, user_id):
+        company_id = self.env.ref(f'__export__.andromeda_c_id_{user_id.c_id}', raise_if_not_found=False)
         if not company_id:
             company_id = self.env['res.partner'].with_context({'mail_create_nolog': True}).create([{
-                'name': c_name,
+                'name': user_id.c_name,
                 'is_company': True,
             }])
             self.sudo().env['ir.model.data'].create({
                 'model': 'res.partner',
                 'res_id': company_id.id,
                 'module': '__export__',
-                'name': f'andromeda_c_id_{c_id}',
+                'name': f'andromeda_c_id_{user_id.c_id}',
             })
             company_id.message_post(
                 body=_('Imported from Andromeda Access Control System')
@@ -169,9 +186,13 @@ class AndromedaImportWiz(models.TransientModel):
 
     @api.returns('res.partner')
     def create_res_partner(self, user_id):
-        parent_id = None
-        if user_id.c_id:
-            parent_id = self.create_res_partner_company(user_id.c_id, user_id.c_name)
+        if self.force_default_company:
+            parent_id = self.default_company
+        elif user_id.c_id or user_id.d_id:
+            parent_id = self.create_res_partner_company(user_id)
+        else:
+            parent_id = self.default_company
+
         partner_id = self.env.ref(f'__export__.andromeda_u_id_{user_id.u_id}', raise_if_not_found=False)
         if not partner_id:
             partner_id = self.env['res.partner'].with_context({'mail_create_nolog': True}).create([{
@@ -303,13 +324,13 @@ class AndromedaImportWiz(models.TransientModel):
                     })]
                 })
 
-
     def do_import_user_as_employee(self, user_id):
-        c_id = None if user_id.import_as == 'contact' else user_id.c_id
-        d_id = None if user_id.import_as == 'contact' else user_id.d_id
-        department_id = None
-        if c_id:
-            department_id = self.create_department(d_id, f'{user_id.c_name}/{user_id.d_name}')
+        if self.force_default_department:
+            department_id = self.default_department
+        elif (user_id.c_id or user_id.d_id):
+            department_id = self.create_department(user_id.d_id, f'{user_id.c_name}/{user_id.d_name}')
+        else:
+            department_id = self.default_department
         employee_name = user_id.get_full_name()
         employee_id = self.create_employee(user_id, department_id)
         self.create_tags(user_id=user_id, employee_id=employee_id)

@@ -12,48 +12,30 @@
                         </h1>
                     </header>
                     <sheet>
-<!--                        <group>-->
-<!--                            <field name="import_users" invisible="1"/>-->
-<!--                            <field name="import_access_groups" invisible="1"/>-->
-<!--                            <field name="import_user_rights" invisible="1"/>-->
-
-<!--                            <group string="Company Import"-->
-<!--                                   attrs="{'invisible': [('import_users', '=', 0)]}">-->
-<!--                                <field name="company_list" readonly="1"/>-->
-<!--                            </group>-->
-<!--                            <group string="Depatment Import"-->
-<!--                                   attrs="{'invisible': [('import_users', '=', 0)]}">-->
-<!--                                <field name="company_list" readonly="1"/>-->
-<!--                            </group>-->
-<!--                            <group string="Access Group Import"-->
-<!--                                   attrs="{'invisible': [('import_access_groups', '=', 0)]}">-->
-<!--                                <field name="company_list" readonly="1"/>-->
-<!--                            </group>-->
-<!--                            <group string="User Import"-->
-<!--                                   attrs="{'invisible': [('import_users', '=', 0)]}">-->
-<!--                                <field name="users_count" readonly="1"/>-->
-<!--                                <field name="company_users_as_contacts" readonly="0"/>-->
-<!--                                <field name="non_company_users_as_contacts" readonly="0"/>-->
-<!--                            </group>-->
-<!--                            <group string="User Rights Import"-->
-<!--                                   attrs="{'invisible': [('import_user_rights', '=', 0)]}">-->
-<!--                            </group>-->
-<!--                        </group>-->
                         <group>
+                            <group string="For Employees only">
+                                <field name="default_department"/>
+                                <field name="force_default_department" widget="boolean_toggle"/>
+                            </group>
+                            <group string="For Contacts only">
+                                <field name="default_company"/>
+                                <field name="force_default_company" widget="boolean_toggle"/>
+                            </group>
+                            <separator string="Operations" colspan="4"/>
                             <group>
-                                <field name="import_as"/>
+                                <field name="import_as" />
+                                <field name="select_all" widget="boolean_toggle"/>
                             </group>
                             <group>
                                 <button name="do_import" type="object"
                                         string="Import Selected"
+                                        class="oe_highlight"
                                         context="{'selected': 1}"
                                 />
                             </group>
-                            <group>
-                                <field name="select_all" widget="boolean_toggle"/>
-                            </group>
                         </group>
-                        <field name="users_ids">
+                        <field name="users_ids" default_order="do_import"
+                               limit="20" create="0">
                             <tree editable="bottom" create="0">
                                 <field name="do_import" readonly="0"/>
                                 <field name="import_as" readonly="0"/>
@@ -74,9 +56,10 @@
                         </field>
                     </sheet>
                     <footer>
+                        <button name="go_back" type="object" string="&lt; Go Back"/>
                         <button name="do_import" type="object"
-                                string="Start Import" class="oe_highlight"
-                                confirm="Are you sure to start import of ALL RECORDS?"/>
+                                string="Start Full Import" class="oe_highlight"
+                                confirm="Are you sure to start import of ALL EXISTING RECORDS?"/>
                         <button special="cancel" string="Cancel"/>
                     </footer>
                 </form>
