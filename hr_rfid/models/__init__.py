@@ -8,6 +8,7 @@ from . import hr_rfid_webstack
 from . import hr_rfid_webstack_discovery
 from . import hr_rfid_card
 from . import hr_rfid_ctrl
+from . import hr_rfid_ctrl_reader
 from . import hr_rfid_ctrl_alarm
 from . import hr_rfid_ctrl_th
 from . import hr_rfid_ctrl_th_log

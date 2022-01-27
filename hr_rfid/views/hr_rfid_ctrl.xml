@@ -130,7 +130,10 @@
                                 <field name="hotel_readers_buttons_pressed" readonly="1"/>
                             </group>
                             <group string="Setup">
-                                <field name="mode"/>
+                                <field name="mode" readonly="1" invisible="1"/>
+                                <field name="mode_selection" attrs="{'invisible': [('hw_version', 'not in', ['6','9','11','12'])]}"/>
+                                <field name="mode_selection_4" attrs="{'invisible': [('hw_version', 'not in', ['10','17'])]}"/>
+                                <field name="mode_selection_31" attrs="{'invisible': [('hw_version', 'not in', ['31'])]}"/>
                                 <field name="external_db"/>
                                 <field name="read_b3_cmd"/>
                                 <field name="relay_time_factor" readonly="1"/>

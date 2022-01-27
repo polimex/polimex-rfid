@@ -96,6 +96,26 @@ class HrRfidController(models.Model):
         help='The mode of the controller',
     )
 
+    mode_selection = fields.Selection(
+        string='Controller mode',
+        selection=[('1', 'One door'), ('2', 'Two doors')],
+        compute='_compute_controller_mode',
+    )
+
+    mode_selection_4 = fields.Selection(
+        string='Controller mode',
+        selection=[('2', 'Two doors'), ('3', 'Three doors'), ('4', 'Four doors')],
+        compute='_compute_controller_mode',
+    )
+
+    mode_selection_31 = fields.Selection(
+        string='Controller mode',
+        selection=[('1', '1 x 32 Relays'), ('2', '2 x 16 Relays'), ('3', '1 x 512 Relays')],
+        readonly=False,
+        compute='_compute_controller_mode_31',
+        inverse='_inverse_controller_mode_31',
+    )
+
     external_db = fields.Boolean(
         string='External DB',
         help='If the controller uses the "ExternalDB" feature.',
@@ -228,6 +248,26 @@ class HrRfidController(models.Model):
     alarm_line_count = fields.Char(string='Alarm line count', compute='_compute_counts')
 
     # user_events_count = fields.Char(string='User events count', compute='_compute_counts')
+
+    def _compute_controller_mode(self):
+        for c in self:
+            if c.mode <= 2:
+                c.mode_selection = str(c.mode)
+                c.mode_selection_4 = str(c.mode)
+            else:
+                c.mode_selection = '1'
+                c.mode_selection_4 = str(c.mode)
+
+    def _compute_controller_mode_31(self):
+        for c in self:
+            if c.is_relay_ctrl():
+                c.mode_selection_31 = str(c.mode)
+            else:
+                c.mode_selection_31 = '1'
+
+    def _inverse_controller_mode_31(self):
+        for ctrl in self:
+            ctrl.write_controller_mode(int(ctrl.mode_selection_31))
 
     def _compute_counts(self):
         event_model = self.env['hr.rfid.event.user']
@@ -512,25 +552,13 @@ class HrRfidController(models.Model):
             }}
 
     def write(self, vals):
-        # TODO Check if mode is being changed, change io table if so
-        cmd_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
         for ctrl in self:
             old_ext_db = ctrl.external_db
             super(HrRfidController, ctrl).write(vals)
             new_ext_db = ctrl.external_db
 
             if old_ext_db != new_ext_db:
-                cmd_dict = {
-                    'webstack_id': ctrl.webstack_id.id,
-                    'controller_id': ctrl.id,
-                    'cmd': 'D5',
-                }
-                if new_ext_db is True:
-                    new_mode = 0x20 + ctrl.mode
-                    cmd_dict['cmd_data'] = '%02X' % new_mode
-                else:
-                    cmd_dict['cmd_data'] = '%02X' % ctrl.mode
-                cmd_env.create(cmd_dict)
+                ctrl.write_controller_mode(new_ext_db=new_ext_db)
 
     def sys_event(self, error_description, event_action, input_json):
         for ctrl in self:
@@ -652,10 +680,10 @@ class HrRfidController(models.Model):
 
     def decode_door_number_for_relay(self, data):
         self.ensure_one()
-        pcs_str =  [data[i * 6:i * 6 + 6] for i in range(4)]    #['000000', '000000', '000000', '000101']
+        pcs_str = [data[i * 6:i * 6 + 6] for i in range(4)]  # ['000000', '000000', '000000', '000101']
         pcs_int = []
         for pcs in pcs_str:
-            pcs_int.append(int(''.join(str(int(pcs[i*2 : i*2+2])) for i in range(3))))
+            pcs_int.append(int(''.join(str(int(pcs[i * 2: i * 2 + 2])) for i in range(3))))
         return int(''.join([str(p) for p in pcs_int]))
 
     # Commands to controllers
@@ -861,6 +889,19 @@ class HrRfidController(models.Model):
         else:
             return commands
 
+    def write_controller_mode(self, new_mode: int = None, new_ext_db: bool = None):
+        if new_mode is not None:
+            # TODO Check if mode is being changed, change io table if so
+            pass
+        if new_mode is None:
+            new_mode = self.mode
+        if new_ext_db is None:
+            new_ext_db = self.external_db
+        if new_ext_db is True:
+            new_mode = 0x20 + new_mode
+        cmd_data = '%02X' % new_mode
+        return self._base_command('D5', cmd_data)
+
     # Command parsers
 
     def cp_input_masks(self, response):
@@ -1001,165 +1042,6 @@ class HrRfidCtrlIoTableWiz(models.TransientModel):
                 new_io_table += '%02X' % out
 
         self.controller_id.change_io_table(new_io_table)
-
-
-class HrRfidReader(models.Model):
-    _name = 'hr.rfid.reader'
-    _inherit = ['mail.thread']
-    _description = 'Reader'
-
-    reader_types = [
-        ('0', _('In')),
-        ('1', _('Out')),
-    ]
-
-    reader_modes = [
-        ('00', _('Unknown')),
-        ('01', _('Card Only')),
-        ('02', _('Card and Pin')),
-        ('03', _('Card and Workcode')),
-        ('04', _('Card or Pin')),
-    ]
-
-    name = fields.Char(
-        string='Reader name',
-        help='Label to differentiate readers',
-        default='Reader',
-        tracking=True,
-    )
-
-    number = fields.Integer(
-        string='Number',
-        help='Number of the reader on the controller',
-        index=True,
-    )
-
-    # TODO Rename to just 'type'
-    reader_type = fields.Selection(
-        selection=reader_types,
-        string='Reader type',
-        help='Type of the reader',
-        required=True,
-        default='00',
-    )
-
-    mode = fields.Selection(
-        selection=reader_modes,
-        string='Reader mode',
-        help='Mode of the reader',
-        default='01',
-    )
-
-    controller_id = fields.Many2one(
-        'hr.rfid.ctrl',
-        string='Controller',
-        help='Controller that manages the reader',
-        required=True,
-        ondelete='cascade',
-    )
-
-    user_event_ids = fields.One2many(
-        'hr.rfid.event.user',
-        'reader_id',
-        string='Events',
-        help='Events concerning this reader',
-    )
-
-    door_ids = fields.Many2many(
-        'hr.rfid.door',
-        'hr_rfid_reader_door_rel',
-        'reader_id',
-        'door_id',
-        string='Doors',
-        help='Doors the reader opens',
-        ondelete='cascade',
-    )
-
-    door_id = fields.Many2one(
-        'hr.rfid.door',
-        string='Door',
-        compute='_compute_reader_door',
-        inverse='_inverse_reader_door',
-    )
-
-    door_count = fields.Char(compute='_compute_counts')
-    user_event_count = fields.Char(compute='_compute_counts')
-
-    def _compute_counts(self):
-        for r in self:
-            r.door_count = len(r.door_ids)
-            r.user_event_count = len(r.user_event_ids)
-
-    def _compute_reader_name(self):
-        for record in self:
-            record.name = record.door_id.name + ' ' + \
-                          self.reader_types[int(record.reader_type)][1] + \
-                          ' Reader'
-
-    @api.depends('door_ids')
-    def _compute_reader_door(self):
-        for reader in self:
-            if not reader.controller_id.is_relay_ctrl() and len(reader.door_ids) == 1:
-                reader.door_id = reader.door_ids
-
-    def _inverse_reader_door(self):
-        for reader in self:
-            reader.door_ids = reader.door_id
-
-    def write(self, vals):
-        if 'mode' not in vals or ('no_d6_cmd' in vals and vals['no_d6_cmd'] is True):
-            if 'no_d6_cmd' in vals:
-                vals.pop('no_d6_cmd')
-            super(HrRfidReader, self).write(vals)
-            return
-
-        for reader in self:
-            if 'no_d6_cmd' in vals:
-                vals.pop('no_d6_cmd')
-            old_mode = reader.mode
-            super(HrRfidReader, reader).write(vals)
-            new_mode = reader.mode
-
-            if old_mode != new_mode:
-                ctrl = reader.controller_id
-                cmd_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
-
-                data = ''
-                for r in ctrl.reader_ids:
-                    data = data + str(r.mode) + '0100'
-
-                cmd_env.create({
-                    'webstack_id': ctrl.webstack_id.id,
-                    'controller_id': ctrl.id,
-                    'cmd': 'D6',
-                    'cmd_data': data,
-                })
-
-    def button_door_list(self):
-        self.ensure_one()
-        return {
-            'name': _('Doors using {}').format(self.name),
-            'view_mode': 'tree,form',
-            'res_model': 'hr.rfid.door',
-            'domain': [('id', 'in', [d.id for d in self.door_ids])],
-            'type': 'ir.actions.act_window',
-            # 'help': _('''<p class="o_view_nocontent">
-            #         No events for this employee.
-            #     </p>'''),
-        }
-
-    def button_event_list(self):
-        self.ensure_one()
-        return {
-            'name': _('Events from {}').format(self.name),
-            'view_mode': 'tree,form',
-            'res_model': 'hr.rfid.event.user',
-            'domain': [('reader_id', '=', self.id)],
-            'type': 'ir.actions.act_window',
-            # 'help': _('''<p class="o_view_nocontent">
-            #         No events for this employee.
-            #     </p>'''),
-        }
 
 
 class HrRfidTimeSchedule(models.Model):

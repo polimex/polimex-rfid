@@ -159,7 +159,7 @@ class WebRfidController(http.Controller):
                 # 'input_js': card_num,
             }
             event = controller_id.report_sys_ev(
-                description=_(''),
+                # description=_(''),
                 post_data=post_data,
                 sys_ev_dict=sys_event_dict
             )
@@ -174,7 +174,7 @@ class WebRfidController(http.Controller):
                 # 'input_js': card_num,
             }
             event = controller_id.report_sys_ev(
-                description=_(''),
+                # description=_(''),
                 post_data=post_data,
                 sys_ev_dict=sys_event_dict
             )
@@ -187,7 +187,7 @@ class WebRfidController(http.Controller):
                 'event_action': str(event_action),
             }
             event = controller_id.report_sys_ev(
-                description=_(''),
+                # description=_(''),
                 post_data=post_data,
                 sys_ev_dict=sys_event_dict
             )
@@ -201,7 +201,7 @@ class WebRfidController(http.Controller):
                 'event_action': str(event_action),
             }
             event = controller_id.report_sys_ev(
-                description=_(''),
+                # description=_(''),
                 post_data=post_data,
                 sys_ev_dict=sys_event_dict
             )
@@ -232,7 +232,7 @@ class WebRfidController(http.Controller):
                 'event_action': str(event_action),
             }
             event = controller_id.report_sys_ev(
-                description=_(''),
+                # description=_(''),
                 post_data=post_data,
                 sys_ev_dict=sys_event_dict
             )
