@@ -271,7 +271,7 @@ class HrRfidController(models.Model):
         for ctrl in self:
             ctrl.write_controller_mode(int(ctrl.mode_selection_31))
 
-    @api.depends('commands_ids', 'system_event_ids', 'reader_ids', 'door_ids', 'alarm_line_ids')
+    @api.depends('system_event_ids', 'reader_ids', 'door_ids', 'alarm_line_ids')
     def _compute_counts(self):
         event_model = self.env['hr.rfid.event.user']
         for a in self:
