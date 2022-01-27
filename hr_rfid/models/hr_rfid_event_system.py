@@ -155,6 +155,7 @@ class HrRfidSystemEvent(models.Model):
 
         return True
 
+    @api.depends('webstack_id.name', 'controller_id.name', 'timestamp')
     def _compute_sys_ev_name(self):
         for record in self:
             record.name = str(record.webstack_id.name) + '-' + str(record.controller_id.name) +\

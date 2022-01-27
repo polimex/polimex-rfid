@@ -201,12 +201,12 @@ class HrRfidCommands(models.Model):
     rights_mask = fields.Integer(string='Rights Mask (debug info)')
     alarm_right = fields.Boolean(string='Alarm Data (debug info)', default=False)
 
+    @api.depends('cmd')
     def _compute_cmd_name(self):
         def find_desc(cmd):
             for it in HrRfidCommands.commands:
                 if it[0] == cmd:
                     return it[1]
-
         for record in self:
             record.name = str(record.cmd) + ' ' + find_desc(record.cmd)
 

@@ -233,6 +233,7 @@ class HrRfidCard(models.Model):
             except ValueError:
                 raise exceptions.ValidationError('Card number digits must be from 0 to 9')
 
+    @api.depends('card_reference', 'number')
     def _compute_card_name(self):
         for record in self:
             record.name = record.card_reference or record.number

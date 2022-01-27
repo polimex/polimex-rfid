@@ -249,6 +249,7 @@ class HrRfidController(models.Model):
 
     # user_events_count = fields.Char(string='User events count', compute='_compute_counts')
 
+    @api.depends('mode')
     def _compute_controller_mode(self):
         for c in self:
             if c.mode <= 2:
@@ -258,6 +259,7 @@ class HrRfidController(models.Model):
                 c.mode_selection = '1'
                 c.mode_selection_4 = str(c.mode)
 
+    @api.depends('mode')
     def _compute_controller_mode_31(self):
         for c in self:
             if c.is_relay_ctrl():
@@ -269,6 +271,7 @@ class HrRfidController(models.Model):
         for ctrl in self:
             ctrl.write_controller_mode(int(ctrl.mode_selection_31))
 
+    @api.depends('commands_ids', 'system_event_ids', 'reader_ids', 'door_ids', 'alarm_line_ids')
     def _compute_counts(self):
         event_model = self.env['hr.rfid.event.user']
         for a in self:
@@ -279,6 +282,7 @@ class HrRfidController(models.Model):
             a.alarm_line_count = len(a.alarm_line_ids)
             # a.user_events_count = event_model.search_count([('door_id', 'in', [d.id for d in a.door_ids])])
 
+    @api.depends('alarm_lines')
     def _compute_siren_state(self):
         for c in self:
             siren_out = (c.alarm_lines == 1) and 4 or 10

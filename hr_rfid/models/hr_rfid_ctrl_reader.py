@@ -83,11 +83,13 @@ class HrRfidReader(models.Model):
     door_count = fields.Char(compute='_compute_counts')
     user_event_count = fields.Char(compute='_compute_counts')
 
+    @api.depends('door_ids', 'user_event_ids')
     def _compute_counts(self):
         for r in self:
             r.door_count = len(r.door_ids)
             r.user_event_count = len(r.user_event_ids)
 
+    @api.depends('door_id.name')
     def _compute_reader_name(self):
         for record in self:
             record.name = record.door_id.name + ' ' + \

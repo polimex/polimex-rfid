@@ -173,6 +173,7 @@ class HrRfidDoor(models.Model):
             if door.apb_mode is True and len(door.reader_ids) < 2:
                 raise exceptions.ValidationError('Cannot activate APB Mode for a door if it has less than 2 readers')
 
+    @api.depends('access_group_ids', 'user_event_ids', 'reader_ids', 'card_rel_ids', 'zone_ids', 'alarm_line_ids')
     def _compute_counts(self):
         for r in self:
             r.access_group_count = len(r.access_group_ids)

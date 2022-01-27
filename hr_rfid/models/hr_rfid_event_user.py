@@ -140,6 +140,7 @@ class HrRfidUserEvent(models.Model):
         ])
         res.unlink()
 
+    @api.depends('employee_id.name', 'contact_id.name', 'door_id.name', 'event_action')
     def _compute_user_ev_name(self):
         for record in self:
             if record.employee_id:
@@ -159,6 +160,7 @@ class HrRfidUserEvent(models.Model):
                 name += ' @ ' + record.door_id.name
             record.name = name
 
+    @api.depends('event_action')
     def _compute_user_ev_action_str(self):
         for record in self:
             record.action_string = _('Access {}').format(self.action_selection[int(record.event_action)-1][1])

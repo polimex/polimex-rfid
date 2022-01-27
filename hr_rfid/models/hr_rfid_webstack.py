@@ -186,6 +186,7 @@ class HrRfidWebstack(models.Model):
             else:
                 ws.time_format = '%d.%m.%y %H:%M:%S'
 
+    @api.depends('command_ids', 'system_event_ids', 'controllers')
     def _compute_counts(self):
         for a in self:
             a.commands_count = len(a.command_ids)
@@ -438,6 +439,7 @@ class HrRfidWebstack(models.Model):
         for user in self:
             user.tz_offset = datetime.now(pytz.timezone(user.tz or 'GMT')).strftime('%z')
 
+    @api.depends('last_ip')
     def _compute_http_link(self):
         for record in self:
             if record.last_ip != '' and record.last_ip is not False:
