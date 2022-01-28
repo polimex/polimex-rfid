@@ -99,12 +99,14 @@ class HrRfidController(models.Model):
     mode_selection = fields.Selection(
         string='Controller mode',
         selection=[('1', 'One door'), ('2', 'Two doors')],
+        required=True,
         compute='_compute_controller_mode',
     )
 
     mode_selection_4 = fields.Selection(
         string='Controller mode',
         selection=[('2', 'Two doors'), ('3', 'Three doors'), ('4', 'Four doors')],
+        required=True,
         compute='_compute_controller_mode',
     )
 
@@ -112,6 +114,7 @@ class HrRfidController(models.Model):
         string='Controller mode',
         selection=[('1', '1 x 32 Relays'), ('2', '2 x 16 Relays'), ('3', '1 x 512 Relays')],
         readonly=False,
+        required=True,
         compute='_compute_controller_mode_31',
         inverse='_inverse_controller_mode_31',
     )
