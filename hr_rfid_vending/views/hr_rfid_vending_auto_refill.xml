@@ -54,14 +54,14 @@
                 <search>
                     <field name="name"/>
                     <filter name="last_week" string="Commands from last week"
-                            domain="[('create_date', '>=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
+                            domain="[('create_date', '&gt;=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
                     <filter name="last_month" string="Commands from last month"
-                            domain="[('create_date', '>=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]"/>
+                            domain="[('create_date', '&gt;=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]"/>
                     <filter name="last_year" string="Commands from last year"
-                            domain="[('create_date', '>=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]"/>
+                            domain="[('create_date', '&gt;=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]"/>
                     <separator/>
                     <filter name="this_day" string="Commands from today"
-                            domain="[('create_date', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('create_date', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]"/>
+                            domain="[('create_date', '&gt;=',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('create_date', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]"/>
                     <filter name="this_week" string="Commands from this week"
                             domain="[('create_date', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('create_date', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]"/>
                     <filter name="this_month" string="Commands from this month"

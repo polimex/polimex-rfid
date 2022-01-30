@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="andromeda_import_wizard_form" model="ir.ui.view">
+            <field name="name">andromeda_import_form_wizard</field>
+            <field name="model">hr.rfid.andromeda.import.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Welcome to Andromeda Import">
+                    <header>
+                        <h1>
+                            <p>Welcome to Andromeda Import Wizard</p>
+                        </h1>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group string="For Employees only">
+                                <field name="default_department"/>
+                                <field name="force_default_department" widget="boolean_toggle"/>
+                            </group>
+                            <group string="For Contacts only">
+                                <field name="default_company"/>
+                                <field name="force_default_company" widget="boolean_toggle"/>
+                            </group>
+                            <separator string="Operations" colspan="4"/>
+                            <group>
+                                <field name="import_as" />
+                                <field name="select_all" widget="boolean_toggle"/>
+                            </group>
+                            <group>
+                                <button name="do_import" type="object"
+                                        string="Import Selected"
+                                        class="oe_highlight"
+                                        context="{'selected': 1}"
+                                />
+                            </group>
+                        </group>
+                        <field name="users_ids" default_order="do_import"
+                               limit="20" create="0">
+                            <tree editable="bottom" create="0">
+                                <field name="do_import" readonly="0"/>
+                                <field name="import_as" readonly="0"/>
+                                <field name="u_code" readonly="1"/>
+                                <field name="u_name" readonly="1"/>
+                                <field name="u_fname" readonly="0"/>
+                                <field name="u_sname" readonly="0"/>
+                                <field name="u_lname" readonly="0"/>
+                                <field name="d_name" readonly="1"/>
+                                <field name="c_name" readonly="1"/>
+<!--                                <button name="import_row"-->
+<!--                                    string="Import"-->
+<!--                                    type="object"-->
+<!--                                    attrs="{'invisible': [('is_imported', '=', True)]}"-->
+<!--                                    class="oe_highlight" icon="fa-magic"-->
+<!--                                />-->
+                            </tree>
+                        </field>
+                    </sheet>
+                    <footer>
+                        <button name="go_back" type="object" string="&lt; Go Back"/>
+                        <button name="do_import" type="object"
+                                string="Start Full Import" class="oe_highlight"
+                                confirm="Are you sure to start import of ALL EXISTING RECORDS?"/>
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="andromeda_import_wizard_action" model="ir.actions.act_window">
+            <field name="name">Andromeda Data Import</field>
+            <field name="res_model">hr.rfid.andromeda.import.wiz</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="andromeda_import_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</odoo>

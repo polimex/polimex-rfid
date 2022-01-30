@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_rfid_webstack_discovery_wiz" model="ir.ui.view">
+            <field name="name">hr.rfid.webstack.discovery.wiz.form</field>
+            <field name="model">hr.rfid.webstack.discovery</field>
+            <field name="arch" type="xml">
+                <form string="Module Discovery">
+                     <separator string="Please remove unwanted modules from list. Choose the operation for rest of them. Press Add to add them in the system!" colspan="4"/>
+                    <group >
+                        <group colspan="4">
+                            <field name="found_webstacks">
+                                <tree create="0" edit="0" delete="1">
+                                    <field name="name"/>
+                                    <field name="serial"/>
+                                    <field name="hw_version"/>
+                                    <field name="version"/>
+                                    <field name="last_ip"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group>
+                            <field name="what_to_do"/>
+                        </group>
+                    </group>
+
+                    <footer>
+                        <button name="setup_modules" type="object" string="Process" class="oe_highlight"/>
+                        <button special="cancel" string="Cancel" class="btn-secondary"/>
+                    </footer>
+
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_rfid_webstack_discovery_action" model="ir.actions.act_window">
+            <field name="name">Modules Discovery</field>
+            <field name="res_model">hr.rfid.webstack.discovery</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_rfid_webstack_discovery_wiz"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="hr_rfid_webstack_manual_create_wiz" model="ir.ui.view">
+            <field name="name">hr.rfid.webstack.manual.create.wiz.form</field>
+            <field name="model">hr.rfid.webstack.manual.create</field>
+            <field name="arch" type="xml">
+                <form string="Add Module">
+                    <div>
+                        <p>
+                            To setup a module follow this steps:
+                        </p>
+                        <ol>
+                            <li>Go to module LOCAL IP address. On Module home you will find Serial Number</li>
+                            <li>Use this serial number in the field below and add Module to the system</li>
+                            <li>Go to module LOCAL IP address, Log in!</li>
+                            <li>In "Device Manager" menu use "Scan" to detect all available controllers</li>
+                            <li>In "Setup/Services" menu Enable "SDK sends events", "RPC JSON format (Odoo)"</li>
+                            <li>In "Setup/Services" menu fill "HTTP Server Push URL" with {Odoo IP or
+                                Domain}/hr/rfid/event e.g. my.server.com/hr/rfid/event</li>
+                            <li>In "Setup/Services" menu fill "HTTP Port" if not standard one</li>
+                            <li>In "Setup/Services" menu Press "Save settings"</li>
+                            <li>Generate event on all controllers in this module</li>
+                        </ol>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="webstack_name"/>
+                            <field name="webstack_serial"/>
+                        </group>
+                        <group>
+                            <field name="behind_nat" widget="boolean_toggle"/>
+                            <field name="local_ip_address"
+                                   attrs="{'invisible': [('behind_nat','=', True)]}" />
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="create_webstack" type="object"
+                                string="Add module" class="oe_highlight"/>
+                        or
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_rfid_webstack_manual_create_action" model="ir.actions.act_window">
+            <field name="name">Add Module</field>
+            <field name="res_model">hr.rfid.webstack.manual.create</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_rfid_webstack_manual_create_wiz"/>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="model_hr_rfid_webstack"/>
+            <field name="binding_view_types">tree</field>
+        </record>
+
+    </data>
+</odoo>

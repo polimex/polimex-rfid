@@ -65,6 +65,7 @@
                             <group string="Where">
                                 <field name="door_id" readonly="1"/>
                                 <field name="reader_id" readonly="1"/>
+                                <field name="alarm_line_id" readonly="1"/>
                                 <field name="ctrl_addr" readonly="1" groups="base.group_no_one"/>
                                 <field name="command_id" readonly="1" groups="base.group_no_one"/>
                             </group>
@@ -78,6 +79,9 @@
                                 <field name="workcode_id" attrs="{'invisible': [('workcode_id','=', False)]}"/>
                             </group>
                         </group>
+                        <group string="Debug Information" groups="base.group_no_one" colspan="4">
+                            <field name="more_json" readonly="1"/>
+                        </group>
                     </sheet>
                 </form>
             </field>
@@ -87,15 +91,16 @@
             <field name="name">hr.rfid.user.ev.tree</field>
             <field name="model">hr.rfid.event.user</field>
             <field name="arch" type="xml">
-                <tree create="0" delete="0" decoration-success="event_action == '1'"
-                      decoration-danger="event_action in ['2','3','4']"
+                <tree create="0" delete="0" decoration-success="event_action in ['1','10','11']"
+                      decoration-danger="event_action in ['2','3','4','5','15']"
                       decoration-warning="event_action == '64'" >
                     <field name="event_time"/>
-                    <field name="employee_id" widget="many2one_avatar_employee" />
-                    <field name="contact_id" widget="many2one_avatar" />
+                    <field name="employee_id" widget="many2one_avatar_employee" optional="show"/>
+                    <field name="contact_id" widget="many2one_avatar" optional="show"/>
                     <field name="event_action"/>
                     <field name="reader_id"/>
                     <field name="door_id"/>
+                    <field name="alarm_line_id" optional="show"/>
                 </tree>
             </field>
         </record>
@@ -124,20 +129,20 @@
                     <separator/>
                     <filter string="Event time" name="filter_event_time" date="event_time" default_period="last_month"/>
                     <filter name="filter_this_day" string="Events from today"
-                            domain="[('event_time', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('event_time', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]"/>
+                            domain="[('event_time', '&gt;=',  (context_today()).strftime('%%Y-%%m-%%d 00:00:00'))]"/>
                     <filter name="filter_this_week" string="Events from this week"
                             domain="[('event_time', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('event_time', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]"/>
                     <filter name="filter_this_month" string="Events from this month"
                             domain="[('event_time', '&gt;=', context_today().strftime('%%Y-%%m-1'))]"/>
                     <filter name="filter_this_year" string="Events from this year"
-                            domain="[('event_time', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('event_time', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]"/>
+                            domain="[('event_time', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d 00:00:00'))]"/>
                     <separator/>
                     <filter name="filter_last_week" string="Events from last week"
-                            domain="[('event_time', '>=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
+                            domain="[('event_time', '&gt;=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
                     <filter name="filter_last_month" string="Events from last month"
-                            domain="[('event_time', '>=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]"/>
+                            domain="[('event_time', '&gt;=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]"/>
                     <filter name="filter_last_year" string="Events from last year"
-                            domain="[('event_time', '>=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]"/>
+                            domain="[('event_time', '&gt;=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]"/>
                     <separator/>
                     <filter name="groupby_door" string="by Door" context="{'group_by':'door_id'}"/>
                     <filter name="groupby_reader" string="by Reader" context="{'group_by':'reader_id'}"/>

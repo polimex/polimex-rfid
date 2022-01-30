@@ -2,27 +2,6 @@
 
 <odoo>
     <data>
-
-<!--        <record id="hr_rfid_employee_view_tree" model="ir.ui.view">-->
-<!--            <field name="name">hr.rfid.employee.tree</field>-->
-<!--            <field name="model">hr.employee</field>-->
-<!--            <field name="arch" type="xml">-->
-<!--                <tree string="Employee">-->
-<!--                    <field name="name"/>-->
-<!--                    <field name="department_id"/>-->
-<!--                </tree>-->
-<!--            </field>-->
-<!--        </record>-->
-
-<!--        <record id="hr_rfid_employee_action" model="ir.actions.act_window">-->
-<!--            <field name="name">Employees</field>-->
-<!--            <field name="res_model">hr.employee</field>-->
-<!--            &lt;!&ndash;      <field name="view_type">form</field>&ndash;&gt;-->
-<!--            <field name="view_mode">tree,form,search</field>-->
-<!--            <field name="view_id" ref="hr_rfid_employee_view_tree"/>-->
-<!--        </record>-->
-
-
         <record id="hr_view_employee_form_inherit_hr_rfid" model="ir.ui.view">
             <field name="name">hr.employee.rfid.info</field>
             <field name="model">hr.employee</field>
@@ -51,11 +30,15 @@
                         <notebook>
                             <page string="Cards">
                                 <field name="hr_rfid_card_ids"
-                                       context="{'default_employee_id': id}"
+                                       context="{'default_employee_id': active_id}"
                                        edit="0">
-                                    <tree string="Cards belonging to user" context="{'default_employee_id': id}">
+                                    <tree string="Cards belonging this employee" editable="bottom">
                                         <field name="number"/>
+                                        <field name="card_reference"/>
+                                        <field name="activate_on"/>
+                                        <field name="deactivate_on"/>
                                         <field name="card_type"/>
+                                        <field name="cloud_card"/>
                                     </tree>
                                 </field>
                             </page>

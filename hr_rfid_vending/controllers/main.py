@@ -44,7 +44,7 @@ class HrRfidVending(WebRfidController):
                       item_number=None):
             ev = {
                 'event_action': ev_num,
-                'event_time': self._get_ws_time_str(),
+                'event_time': controller.webstack_id.get_ws_time_str(post_data=event),
                 'controller_id': controller.id,
                 'ctrl_addr': controller.ctrl_id,
                 'reader_id': controller.reader_ids.filtered(lambda r: r.number == event['reader']).id,
@@ -61,17 +61,6 @@ class HrRfidVending(WebRfidController):
                 ev['item_sold'] = item_number
             return ev_env.create(ev)
 
-        # TODO Use self._report_sys_ev instead of this
-        def create_sys_ev(controller, event, message):
-            sys_ev_env.create({
-                'webstack_id': self._webstack.id,
-                'controller_id': controller.id,
-                'timestamp': self._get_ws_time_str(),
-                'event_action': str(self._post['event']['event_n']),
-                'error_description': message,
-                'input_js': json.dumps(self._post),
-            })
-
         def get_item_price(controller, item, event, err_msg):
             """
             Gets an item's balance. If item does not exist, returns 0 and creates a system event with '
@@ -84,7 +73,7 @@ class HrRfidVending(WebRfidController):
             :return: 0 if item does not exist, else the cost of the item in human money
             """
             if len(item) == 0:
-                create_sys_ev(controller, event, err_msg)
+                controller.report_sys_ev(err_msg, event)
                 return -1
             return item.list_price
 
@@ -118,14 +107,14 @@ class HrRfidVending(WebRfidController):
                         and emp.attendance_state != 'checked_in':
                     return ret_super()
 
-                date = self._get_ws_time()
+                date = controller.webstack_id.get_ws_time()
                 if date + datetime.timedelta(minutes=5) <= datetime.datetime.now():
                     ev = create_ev(controller, event, card, '64')
-                    return self._check_for_unsent_cmd(status_code, ev)
+                    return controller.webstack_id.check_for_unsent_cmd(status_code, ev)
 
                 if event['bos'] < event['tos']:
                     ev = create_ev(controller, event, card, '64')
-                    return self._check_for_unsent_cmd(status_code, ev)
+                    return controller.webstack_id.check_for_unsent_cmd(status_code, ev)
 
                 balance_str, balance = card.employee_id.get_employee_balance(controller)
                 card_number = reduce(operator.add, list('0' + str(a) for a in card.number), '')
@@ -138,7 +127,7 @@ class HrRfidVending(WebRfidController):
                     'cmd_data': '4000' + card_number + balance_str,
                 })
                 ev.command_id = cmd
-                return self._send_command(cmd, status_code)
+                return cmd.send_command(status_code)
             # TODO Move into function "deal_with_ev_47"
             elif event['event_n'] == 47:
                 card = card_env.search(
@@ -165,7 +154,7 @@ class HrRfidVending(WebRfidController):
 
                     if row_num < 1 or row_num > 18:
                         ev = create_ev(controller, event, card, '-1')
-                        return self._check_for_unsent_cmd(status_code, ev)
+                        return controller.webstack_id.check_for_unsent_cmd(status_code, ev)
 
                     rows_env = request.env['hr.rfid.ctrl.vending.row'].sudo()
                     row = rows_env.search([
@@ -193,8 +182,7 @@ class HrRfidVending(WebRfidController):
                     if item_price >= 0:
                         purchase_money = item_price
                         if item_price != calced_price:
-                            create_sys_ev(controller, event, item_cost_diff_err_str
-                                          % (item.name, item.list_price, calced_price))
+                            controller.report_sys_ev(item_cost_diff_err_str % (item.name, item.list_price, calced_price), event)
 
                     # TODO Reduce item quantity
 
@@ -205,11 +193,11 @@ class HrRfidVending(WebRfidController):
                     controller.cash_contained = controller.cash_contained + item_price
                     ev = create_ev(controller, event, card, '47', item, item_price, item_number=item_sold)
 
-                return self._check_for_unsent_cmd(status_code, ev)
+                return controller.webstack_id.check_for_unsent_cmd(status_code, ev)
             # TODO Move into function "deal_with_err_evs"
             elif event['event_n'] in [48, 49]:
-                create_sys_ev(controller, event, 'Vending machine sent us an error')
-                return self._check_for_unsent_cmd(status_code)
+                controller.report_sys_ev('Vending machine sent us an error', event)
+                return controller.webstack_id.check_for_unsent_cmd(status_code)
 
             return ret_super()
 

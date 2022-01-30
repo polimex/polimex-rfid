@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="andromeda_welcome_wizard_form" model="ir.ui.view">
+            <field name="name">andromeda_welcome_form_wizard</field>
+            <field name="model">hr.rfid.andromeda.welcome.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Welcome to Andromeda Import">
+                    <header>
+                        <h1>
+                            <p>Welcome to Andromeda Import Wizard</p>
+                        </h1>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="ip_address" placeholder="192.168.10.10"/>
+                                <field name="database_path"
+                                       placeholder="C:\Program Files (x86)\Polimex\Andromeda\Database\Andromeda.fdb"/>
+                            </group>
+                            <group>
+                                <p>
+                                    From here you can import all important data from existing Andromeda Access control
+                                    system.
+                                    To do it you have to provide the IP address and Database path of the system
+                                </p>
+                            </group>
+                            <group>
+                                <field name="import_users"/>
+                                <field name="default_import_as"/>
+                                <field name="import_access_groups"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="do_check_connection" type="object"
+                                string="Check Connection &amp; continue  " class="oe_highlight"/>
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="andromeda_welcome_wizard_action" model="ir.actions.act_window">
+            <field name="name">Andromeda Data Import</field>
+            <field name="res_model">hr.rfid.andromeda.welcome.wiz</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="andromeda_welcome_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="andromeda_welcome_wizard_menu"
+                  name="Andromeda Import"
+                  parent="hr_rfid.hr_rfid_root_menu_hardware_manager"
+                  action="andromeda_welcome_wizard_action"
+                  groups="base.group_no_one"
+                  sequence="7"/>
+    </data>
+</odoo>

@@ -59,6 +59,12 @@
                   action="hr_rfid_command_action"
                   groups="hr_rfid_group_manager"
                   sequence="20"/>
+        <menuitem id="hr_rfid_menu_temp_and_humidity"
+                  name="Temperature and Humidity Log"
+                  parent="hr_rfid_events_menu"
+                  action="hr_rfid_ctrl_th_log_action"
+                  groups="hr_rfid_group_manager"
+                  sequence="30"/>
 
         <!--#######################################################
         #####                 MASTER DATA                     #####
@@ -163,6 +169,18 @@
                   action="hr_rfid_reader_action"
                   groups="hr_rfid_group_manager"
                   sequence="25"/>
+        <menuitem id="hr_rfid_menu_alarm_lines"
+                  name="Alarm lines"
+                  parent="hr_rfid_root_menu_hardware_manager"
+                  action="hr_rfid_ctrl_alarm_action"
+                  groups="hr_rfid_group_manager"
+                  sequence="30"/>
+        <menuitem id="hr_rfid_menu_th"
+                  name="Temperature and Humidity"
+                  parent="hr_rfid_root_menu_hardware_manager"
+                  action="hr_rfid_ctrl_th_action"
+                  groups="hr_rfid_group_officer"
+                  sequence="35"/>
 
         <!--#######################################################
         #####                   Configuration                 #####

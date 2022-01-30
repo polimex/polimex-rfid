@@ -10,13 +10,13 @@ import json
 from odoo.addons.hr_rfid.models.hr_rfid_card import HrRfidCard
 from odoo.addons.hr_rfid.models.hr_rfid_event_system import HrRfidSystemEvent
 from odoo.addons.hr_rfid.models.hr_rfid_event_user import HrRfidUserEvent
-from ..wizards.helpers import create_and_ret_d_box, return_wiz_form_view
 
 
 class HrRfidDoor(models.Model):
     _name = 'hr.rfid.door'
     _description = 'Door'
-    _inherit = ['mail.thread']
+    _inherit = ['mail.thread', 'balloon.mixin']
+    _order = "controller_id,number"
 
     name = fields.Char(
         string='Name',
@@ -57,18 +57,13 @@ class HrRfidDoor(models.Model):
         ondelete='cascade',
     )
 
+    hotel_readers = fields.Integer(related='controller_id.hotel_readers')
+
     access_group_ids = fields.One2many(
         comodel_name='hr.rfid.access.group.door.rel',
         inverse_name='door_id',
         string='Door Access Groups',
         help='The access groups this door is a part of',
-    )
-
-    user_event_ids = fields.One2many(
-        comodel_name='hr.rfid.event.user',
-        inverse_name='door_id',
-        string='Events',
-        help='Events concerning this door',
     )
 
     reader_ids = fields.Many2many(
@@ -102,6 +97,47 @@ class HrRfidDoor(models.Model):
         related='controller_id.webstack_id',
     )
 
+    lock_time = fields.Integer(
+        help='The unlock time in seconds.',
+        compute='_compute_lock_time',
+        inverse='_set_lock_time'
+    )
+    lock_state = fields.Boolean(
+        help='If in the controller check box for read state is True, the status is present.',
+        compute='_compute_lock_status',
+        inverse='_set_lock_state'
+    )
+    lock_output = fields.Integer(
+        help='The Lock Output on controller for this door',
+        compute='_compute_lock_output'
+    )
+    alarm_line_ids = fields.One2many(
+        comodel_name='hr.rfid.ctrl.alarm',
+        inverse_name='door_id',
+        # auto_join=True,
+        help='Alarm lines connected to this door'
+    )
+    alarm_state = fields.Selection([
+        ('no_alarm', 'No Alarm functionality'),
+        ('arm', 'Armed'),
+        ('disarm', 'Disarmed'),
+        ],
+        compute='_compute_alarm_state',
+    )
+    siren_state = fields.Boolean(
+        related='controller_id.siren_state'
+    )
+    th_id = fields.One2many(
+        comodel_name='hr.rfid.ctrl.th',
+        inverse_name='door_id'
+    )
+    temperature = fields.Float(
+        related='th_id.temperature'
+    )
+    humidity = fields.Float(
+        related='th_id.humidity'
+    )
+
     hb_dnd = fields.Boolean(
         string='DND button pressed',
         compute='_compute_hotel_buttons',
@@ -118,10 +154,29 @@ class HrRfidDoor(models.Model):
     )
 
     access_group_count = fields.Char(compute='_compute_counts')
-    user_event_count = fields.Char(compute='_compute_counts')
     reader_count = fields.Char(compute='_compute_counts')
     card_count = fields.Char(compute='_compute_counts')
     zone_count = fields.Char(compute='_compute_counts')
+    alarm_lines_count = fields.Char(compute='_compute_counts')
+    user_event_count = fields.Char(compute='_compute_counts')
+    system_event_count = fields.Char(compute='_compute_counts')
+
+    @api.constrains('apb_mode')
+    def _check_apb_mode(self):
+        for door in self:
+            if door.apb_mode is True and len(door.reader_ids) < 2:
+                raise exceptions.ValidationError('Cannot activate APB Mode for a door if it has less than 2 readers')
+
+    @api.depends('access_group_ids', 'reader_ids', 'card_rel_ids', 'zone_ids', 'alarm_line_ids')
+    def _compute_counts(self):
+        for r in self:
+            r.access_group_count = len(r.access_group_ids)
+            r.reader_count = len(r.reader_ids)
+            r.card_count = len(r.card_rel_ids)
+            r.zone_count = len(r.zone_ids)
+            r.alarm_lines_count = len(r.alarm_line_ids)
+            r.user_event_count = self.env['hr.rfid.event.user'].search_count([('door_id', '=', r.id)])
+            r.system_event_count = self.env['hr.rfid.event.system'].search_count([('door_id', '=', r.id)])
 
     @api.depends('controller_id.hotel_readers_buttons_pressed', 'controller_id.hotel_readers_card_presence')
     def _compute_hotel_buttons(self):
@@ -134,7 +189,7 @@ class HrRfidDoor(models.Model):
 
     def _set_hb_dnd(self):
         for d in self:
-            d.open_close_door(int(d.hb_dnd), 99, 20)
+            d.controller_id.change_output_state(20, int(d.hb_dnd), 99)
             if d.hb_dnd:
                 d.controller_id.hotel_readers_buttons_pressed = d.controller_id.hotel_readers_buttons_pressed | 1
             else:
@@ -142,11 +197,85 @@ class HrRfidDoor(models.Model):
 
     def _set_hb_clean(self):
         for d in self:
-            d.open_close_door(int(d.hb_clean), 99, 21)
+            d.controller_id.change_output_state(21, int(d.hb_dnd), 99)
             if d.hb_clean:
                 d.controller_id.hotel_readers_buttons_pressed = d.controller_id.hotel_readers_buttons_pressed | 2
             else:
                 d.controller_id.hotel_readers_buttons_pressed = d.controller_id.hotel_readers_buttons_pressed - 2
+
+    @api.depends('alarm_line_ids.armed')
+    def _compute_alarm_state(self):
+        for d in self:
+            if d.alarm_line_ids:
+                d.alarm_state = d.alarm_line_ids[0].armed
+            else:
+                d.alarm_state = 'no_alarm'
+
+    @api.depends('controller_id.io_table')
+    def _compute_lock_time(self):
+        for d in self:
+            io_line = d._get_io_line(1, d.reader_ids[0].number)
+            if io_line:
+                d.lock_time = io_line[0][1]
+            else:
+                d.lock_time = 0
+
+    def _set_lock_time(self):
+        for d in self:
+            for r in d.reader_ids:
+                io_line = d._get_io_line(1, r.number)
+                io_line = [(i[0], d.lock_time) for i in io_line]
+                d._set_io_line(1, io_line, r.number)
+
+    @api.depends('reader_ids')
+    def _compute_lock_output(self):
+        for d in self:
+            if d.controller_id.is_relay_ctrl():
+                d.lock_output = d.number
+            else:
+                io_line = d._get_io_line(1, d.reader_ids[0].number)
+                if len(io_line) > 0:
+                    d.lock_output = io_line[0][0]
+                else:
+                    d.lock_output = 0
+
+    @api.depends('controller_id.outputs')
+    def _compute_lock_status(self):
+        for d in self:
+            if d.lock_output > 0:
+                d.lock_state = (d.controller_id.output_states & 2 ** (d.lock_output - 1)) == 2 ** (d.lock_output - 1)
+            else:
+                d.lock_state = False
+
+    def _set_lock_state(self):
+        for d in self:
+            d.controller_id.change_output_state(self.lock_output, int(d.lock_state), 99)
+
+    def _get_io_line(self, event: int, reader_number: int):
+        '''
+        Read IO line based on reader events 1,2,3,4 (Card OK, Card Error, Card TS Error, Card APB Error)
+        Return:
+            Array of tuple (out number, time)
+        '''
+        self.ensure_one()
+        line_number = 3 + (reader_number - 1) * 4 + (event - 1)
+        line = self.controller_id._get_io_line(line_number)
+        out_time = []
+        for i in range(8):
+            if line and line[i] > 0:
+                out_time.append((i + 1, line[i]))
+        return out_time
+
+    def _set_io_line(self, event: int, outs: [tuple], reader_number: int):
+        '''
+        Write IO Line based on reader event and array of tuple (out number, time)
+        '''
+        self.ensure_one()
+        line_number = 3 + (reader_number - 1) * 4 + (event - 1)
+        line = self.controller_id._get_io_line(line_number)
+        for o in outs:
+            line[o[0] - 1] = o[1]
+        self.controller_id._set_io_line(line_number, line)
 
     def proccess_event(self, event):
         self.ensure_one()
@@ -166,14 +295,6 @@ class HrRfidDoor(models.Model):
         elif isinstance(event, HrRfidSystemEvent):
             pass
 
-    def _compute_counts(self):
-        for r in self:
-            r.access_group_count = len(r.access_group_ids)
-            r.user_event_count = len(r.user_event_ids)
-            r.reader_count = len(r.reader_ids)
-            r.card_count = len(r.card_rel_ids)
-            r.zone_count = len(r.zone_ids)
-
     def get_potential_cards(self, access_groups=None):
         """
         Returns a list of tuples (card, time_schedule) for which the card potentially has access to this door
@@ -189,155 +310,69 @@ class HrRfidDoor(models.Model):
         for rel in acc_gr_rels:
             ts_id = rel.time_schedule_id
             acc_gr = rel.access_group_id
+            alarm_right = rel.alarm_rights
             employees = acc_gr.mapped('all_employee_ids').mapped('employee_id')
             contacts = acc_gr.mapped('all_contact_ids').mapped('contact_id')
             cards = employees.mapped('hr_rfid_card_ids') + contacts.mapped('hr_rfid_card_ids')
             for card in cards:
-                ret.append((card, ts_id))
+                ret.append((card, ts_id, alarm_right))
         return ret
 
     def open_door(self):
         self.ensure_one()
-        return self.open_close_door(1, 3)
+        cmd_id = self.controller_id.change_output_state(self.lock_output, 1, self.lock_time)
+        self.log_door_change(1, self.lock_time, cmd_id)
+        if self.controller_id.webstack_id.behind_nat:
+            return self.balloon(
+                title=_('Open door command success'),
+                message=_('Because the webstack is behind NAT, we have to wait for the webstack to call us, '
+                          'so we created a command. The door will open/close as soon as possible.'),
+                links=cmd_id and [{
+                     'label': cmd_id.name,
+                     'model': 'hr.rfid.command',
+                     'res_id': cmd_id.id,
+                     'action': 'hr_rfid.hr_rfid_command_action'
+                }] or None,
+                type='warning',
+                sticky= True
+            )
+        else:
+            return self.balloon(
+                title=_('Open door command success'),
+                message=_('Success opening')
+            )
 
     def close_door(self):
         self.ensure_one()
-        return self.open_close_door(0, 3)
-
-    def open_close_door(self, out: int, time: int, custom_out = None):
-        self.ensure_one()
-
-        if self.controller_id.webstack_id.behind_nat is True:
-            return self.create_door_out_cmd(out, time)
-        else:
-            return self.change_door_out(out, time, custom_out)
-
-    def create_door_out_cmd(self, out: int, time: int):
-        self.ensure_one()
-        cmd_env = self.env['hr.rfid.command']
-        ctrl = self.controller_id
-        cmd_dict = {
-            'webstack_id': ctrl.webstack_id.id,
-            'controller_id': ctrl.id,
-            'cmd': 'DB',
-        }
-        if not ctrl.is_relay_ctrl():
-            cmd_dict['cmd_data'] = '%02d%02d%02d' % (self.number, out, time)
-        else:
-            if out == 0:
-                return create_and_ret_d_box(self.env, _('Cannot close a relay door.'),
-                                            _('Relay doors cannot be closed.'))
-            cmd_dict['cmd_data'] = ('1F%02X' % self.reader_ids[0].number) + self.create_rights_data()
-
-        cmd_env.create([cmd_dict])
-        self.log_door_change(out, time, cmd=True)
-        return create_and_ret_d_box(
-            self.env,
-            _('Command creation successful'),
-            _(
-                'Because the webstack is behind NAT, we have to wait for the webstack to call us, so we created a command. The door will open/close as soon as possible.')
-        )
-
-    def create_rights_data(self):
-        self.ensure_one()
-        ctrl = self.controller_id
-        if not ctrl.is_relay_ctrl():
-            data = 1 << (self.reader_ids.number - 1)
-        else:
-            if ctrl.mode == 1:
-                data = 1 << (self.number - 1)
-            elif ctrl.mode == 2:
-                data = 1 << (self.number - 1)
-                if self.reader_ids.number == 2:
-                    data *= 0x10000
-            elif ctrl.mode == 3:
-                data = self.number
-            else:
-                raise exceptions.ValidationError(_('Controller %s has mode=%d, which is not supported!')
-                                                 % (ctrl.name, ctrl.mode))
-
-        return self.create_rights_int_to_str(data)
-
-    def create_rights_int_to_str(self, data):
-        ctrl = self.controller_id
-        if not ctrl.is_relay_ctrl():
-            cmd_data = '{:02X}'.format(data)
-        else:
-            cmd_data = '%03d%03d%03d%03d' % (
-                (data >> (3 * 8)) & 0xFF,
-                (data >> (2 * 8)) & 0xFF,
-                (data >> (1 * 8)) & 0xFF,
-                (data >> (0 * 8)) & 0xFF,
+        cmd_id = self.controller_id.change_output_state(self.lock_output, 0, self.lock_time)
+        self.log_door_change(0, self.lock_time, cmd_id)
+        if self.controller_id.webstack_id.behind_nat:
+            return self.balloon(
+                title=_('Close door command success'),
+                message=_('Because the webstack is behind NAT, we have to wait for the webstack to call us, '
+                          'so we created a command. The door will open/close as soon as possible.'),
+                links=[{
+                     'label': cmd_id.name,
+                     'model': 'hr.rfid.command',
+                     'res_id': cmd_id.id,
+                     'action': 'hr_rfid.hr_rfid_command_action'
+                }],
+                type='warning',
+                sticky=True
             )
-            cmd_data = ''.join(list('0' + ch for ch in cmd_data))
-        return cmd_data
-
-    def change_door_out(self, out: int, time: int, custom_out: bool):
-        """
-        :param out: 0 to open door, 1 to close door
-        :param time: Range: [0, 99]
-        """
-        self.ensure_one()
-        self.log_door_change(out, time)
-
-        ws = self.controller_id.webstack_id
-        if ws.module_username is False:
-            username = ''
         else:
-            username = str(ws.module_username)
+            return self.balloon(
+                title=_('Close door command success'),
+                message=_('Closing success')
+            )
 
-        if ws.module_password is False:
-            password = ''
-        else:
-            password = str(ws.module_password)
+    def arm_door(self):
+        return self.alarm_line_ids.arm()
 
-        auth = base64.b64encode((username + ':' + password).encode())
-        auth = auth.decode()
-        headers = {'content-type': 'application/json', 'Authorization': 'Basic ' + str(auth)}
-        cmd = {
-            'cmd': {
-                'id': self.controller_id.ctrl_id,
-                'c': 'DB',
-            }
-        }
+    def disarm_door(self):
+        return self.alarm_line_ids.disarm()
 
-        if self.controller_id.is_relay_ctrl():
-            if out == 0:
-                return create_and_ret_d_box(self.env, _('Cannot close a relay door.'),
-                                            _('Relay doors cannot be closed.'))
-            cmd['cmd']['d'] = ('1F%02X' % self.reader_ids[0].number) + self.create_rights_data()
-        else:
-            cmd['cmd']['d'] = '%02x%02d%02d' % (custom_out or self.number, out, time)
 
-        # cmd = json.dumps(cmd)
-
-        host = str(ws.last_ip)
-        try:
-            # conn = http.client.HTTPConnection(str(host), 80, timeout=2)
-            # conn.request('POST', '/sdk/cmd.json', cmd, headers)
-            response = requests.post('http://' + ws.last_ip + '/sdk/cmd.json', auth=(username, password), json=cmd,
-                                     timeout=2)
-            # response = conn.getresponse()
-            code = response.status_code
-            body_js = response.json()
-            # conn.close()
-            if code != 200:
-                raise exceptions.ValidationError('While trying to send the command to the module, '
-                                                 'it returned code ' + str(code) + ' with body:\n'
-                                                 + response.content.decode())
-
-            # body_js = json.loads(body.decode())
-            if body_js['response']['e'] != 0:
-                raise exceptions.ValidationError('Error. Controller returned body:\n' + str(response.content.decode()))
-        except socket.timeout:
-            raise exceptions.ValidationError('Could not connect to the module. '
-                                             "Check if it is turned on or if it's on a different ip.")
-        except (socket.error, socket.gaierror, socket.herror) as e:
-            raise exceptions.ValidationError('Error while trying to connect to the module.'
-                                             ' Information:\n' + str(e))
-
-        return create_and_ret_d_box(self.env, _('Door successfully opened/closed'),
-                                    _('Door will remain opened/closed for %d seconds.') % time)
 
     def log_door_change(self, action: int, time: int, cmd: bool = False):
         """
@@ -360,20 +395,14 @@ class HrRfidDoor(models.Model):
         else:
             if cmd is False:
                 if action == 1:
-                    self.message_post(body=_('Opened the door.') % time)
+                    self.message_post(body=_('Opened the door for %d seconds.') % time)
                 else:
-                    self.message_post(body=_('Closed the door.') % time)
+                    self.message_post(body=_('Closed the door for %d seconds.') % time)
             else:
                 if action == 1:
-                    self.message_post(body=_('Created a command to open the door.') % time)
+                    self.message_post(body=_('Created a command to open the door for %d seconds.') % time)
                 else:
-                    self.message_post(body=_('Created a command to close the door.') % time)
-
-    @api.constrains('apb_mode')
-    def _check_apb_mode(self):
-        for door in self:
-            if door.apb_mode is True and len(door.reader_ids) < 2:
-                raise exceptions.ValidationError('Cannot activate APB Mode for a door if it has less than 2 readers')
+                    self.message_post(body=_('Created a command to close the door for %d seconds.') % time)
 
     def write(self, vals):
         cmd_env = self.env['hr.rfid.command']
@@ -404,12 +433,16 @@ class HrRfidDoor(models.Model):
 
     def button_act_window(self):
         self.ensure_one()
+        view_mode = None
         res_model = self.env.context.get('res_model') or self._name
         if res_model == 'hr.rfid.access.group':
             name = _('Access groups with {}').format(self.name)
             domain = [('door_ids.door_id', '=', self.id)]
         elif res_model == 'hr.rfid.event.user':
             name = _('User Events on {}').format(self.name)
+            domain = [('door_id', 'in', [self.id])]
+        elif res_model == 'hr.rfid.event.system':
+            name = _('System Events on {}').format(self.name)
             domain = [('door_id', 'in', [self.id])]
         elif res_model == 'hr.rfid.reader':
             name = _('Readers for {}').format(self.name)
@@ -419,16 +452,20 @@ class HrRfidDoor(models.Model):
             domain = [('id', 'in', [rel.card_id.id for rel in self.card_rel_ids])]
         elif res_model == 'hr.rfid.zone':
             name = _('{} in zones').format(self.name)
-            domain = [('id', 'in', [rel.zone_id.id for rel in self.zone_ids])]
+            domain = [('door_id', 'in', [rel.zone_id.id for rel in self.zone_ids])]
+        elif res_model == 'hr.rfid.ctrl.alarm':
+            name = _('Alarm lines for {}').format(self.name)
+            domain = [('door_id', 'in', [rel.door_id.id for rel in self.alarm_line_ids])]
+        elif res_model == 'hr.rfid.ctrl.th.log':
+            name = _('Temperature and Humidity Log for {}').format(self.name)
+            domain = [('th_id', '=', self.th_id.id)]
+            view_mode='graph,pivot,tree'
         return {
             'name': name,
-            'view_mode': 'tree,form',
+            'view_mode': view_mode or 'tree,form',
             'res_model': res_model,
             'domain': domain,
             'type': 'ir.actions.act_window',
-            # 'help': _('''<p class="o_view_nocontent">
-            #         No events for this employee.
-            #     </p>'''),
         }
 
     # Door commands
@@ -445,8 +482,12 @@ class HrRfidDoor(models.Model):
                 ts_code = [0, 0, 0, 0]
                 ts_code[reader.number - 1] = time_schedule.number
                 ts_code = '%02X%02X%02X%02X' % (ts_code[0], ts_code[1], ts_code[2], ts_code[3])
-                door.controller_id.add_remove_card(card_number, pin_code, ts_code,
-                                     1 << (reader.number - 1), 1 << (reader.number - 1))
+                door.controller_id.add_remove_card(
+                    card_number, pin_code, ts_code,
+                    rights_data=1 << (reader.number - 1),
+                    rights_mask=1 << (reader.number - 1),
+
+                )
 
     def _add_card_to_relay(self, card_id):
         for door in self:
@@ -480,7 +521,7 @@ class HrRfidDoor(models.Model):
 
             for reader in door.reader_ids:
                 door.controller_id.add_remove_card(card_number, pin_code, '00000000',
-                                     0, 1 << (reader.number - 1))
+                                                   0, 1 << (reader.number - 1))
 
     def _remove_card_from_relay(self, card_number):
         for door in self:
@@ -505,11 +546,12 @@ class HrRfidDoor(models.Model):
             else:
                 rights = 0x20  # Bit 6
             door.controller_id.add_remove_card(card.number, card.get_owner().hr_rfid_pin_code,
-                                 '00000000', rights if can_exit else 0, rights)
+                                               '00000000', rights if can_exit else 0, rights)
 
 
 class HrRfidDoorOpenCloseWiz(models.TransientModel):
     _name = 'hr.rfid.door.open.close.wiz'
+    _inherit = ['balloon.mixin']
     _description = 'Open or close door'
 
     def _default_doors(self):
@@ -531,13 +573,19 @@ class HrRfidDoorOpenCloseWiz(models.TransientModel):
 
     def open_doors(self):
         for door in self.doors:
-            door.open_close_door(out=1, time=self.time)
-        return create_and_ret_d_box(self.env, 'Doors opened', 'Doors successfully opened')
+            door.controller_id.change_output_state(door.lock_output, 1, time=self.time)
+        return self.balloon(
+                    title=_('Doors opened'),
+                    message=_('Doors successfully opened'),
+                )
 
     def close_doors(self):
         for door in self.doors:
-            door.open_close_door(out=0, time=self.time)
-        return create_and_ret_d_box(self.env, 'Door closed', 'Doors successfully closed')
+            door.controller_id.change_output_state(door.lock_output, 0, time=self.time)
+        return self.balloon(
+                    title=_('Doors closed'),
+                    message=_('Doors successfully closed'),
+                )
 
 
 class HrRfidCardDoorRel(models.Model):
@@ -563,6 +611,10 @@ class HrRfidCardDoorRel(models.Model):
         required=True,
         ondelete='cascade',
     )
+    alarm_right = fields.Boolean(
+        required=True,
+        default=False
+    )
 
     @api.model
     def update_card_rels(self, card_id: HrRfidCard, access_group: models.Model = None):
@@ -573,8 +625,8 @@ class HrRfidCardDoorRel(models.Model):
          go through all access groups the owner of the card is in
          """
         potential_doors = card_id.get_potential_access_doors(access_group)
-        for door, ts in potential_doors:
-            self.check_relevance_fast(card_id, door, ts)
+        for door, ts, alarm_right in potential_doors:
+            self.check_relevance_fast(card_id, door, ts, alarm_right)
 
     @api.model
     def update_door_rels(self, door_id: models.Model, access_group: models.Model = None):
@@ -585,8 +637,8 @@ class HrRfidCardDoorRel(models.Model):
         go through all the access groups the door is in
         """
         potential_cards = door_id.get_potential_cards(access_group)
-        for card, ts in potential_cards:
-            self.check_relevance_fast(card, door_id, ts)
+        for card, ts, alarm_right in potential_cards:
+            self.check_relevance_fast(card, door_id, ts, alarm_right)
 
     @api.model
     def reload_door_rels(self, door_id: models.Model):
@@ -611,7 +663,7 @@ class HrRfidCardDoorRel(models.Model):
         potential_doors = card_id.get_potential_access_doors()
         found_door = False
 
-        for door, ts in potential_doors:
+        for door, ts, alarm_right in potential_doors:
             if door_id == door:
                 if ts_id is not None and ts_id != ts:
                     raise exceptions.ValidationError(
@@ -620,12 +672,12 @@ class HrRfidCardDoorRel(models.Model):
                 found_door = True
                 break
         if found_door and self._check_compat_n_rdy(card_id, door_id):
-            self.create_rel(card_id, door_id, ts_id)
+            self.create_rel(card_id, door_id, ts_id, alarm_right)
         else:
             self.remove_rel(card_id, door_id)
 
     @api.model
-    def check_relevance_fast(self, card_id: HrRfidCard, door_id: models.Model, ts_id: models.Model = None):
+    def check_relevance_fast(self, card_id: HrRfidCard, door_id: models.Model, ts_id: models.Model = None, alarm_right: bool = False):
         """
         Check if card is compatible with the door. If it is, create relation or do nothing if it exists,
         and if not remove relation or do nothing if it does not exist.
@@ -636,12 +688,12 @@ class HrRfidCardDoorRel(models.Model):
         card_id.ensure_one()
         door_id.ensure_one()
         if self._check_compat_n_rdy(card_id, door_id):
-            self.create_rel(card_id, door_id, ts_id)
+            self.create_rel(card_id, door_id, ts_id, alarm_right)
         else:
             self.remove_rel(card_id, door_id)
 
     @api.model
-    def create_rel(self, card_id: HrRfidCard, door_id: models.Model, ts_id: models.Model = None):
+    def create_rel(self, card_id: HrRfidCard, door_id: models.Model, ts_id: models.Model = None, alarm_right: bool = False):
         ret = self.search([
             ('card_id', '=', card_id.id),
             ('door_id', '=', door_id.id),
@@ -663,6 +715,7 @@ class HrRfidCardDoorRel(models.Model):
                 'card_id': card_id.id,
                 'door_id': door_id.id,
                 'time_schedule_id': ts_id.id,
+                'alarm_right': alarm_right,
             }])
 
     @api.model
@@ -704,7 +757,8 @@ class HrRfidCardDoorRel(models.Model):
             ts_id = rel.time_schedule_id.id
             pin_code = rel.card_id.pin_code
             card_id = rel.card_id.id
-            cmd_env.add_card(door_id, ts_id, pin_code, card_id)
+            alarm_right = rel.alarm_right
+            cmd_env.add_card(door_id, ts_id, pin_code, card_id, alarm_right)
 
     def _create_remove_card_command(self, number: str = None, door_id: int = None):
         cmd_env = self.env['hr.rfid.command']
