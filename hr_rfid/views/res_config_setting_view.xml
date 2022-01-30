@@ -34,16 +34,13 @@
                                  id="s_save_new_webstacks"
                                  title="Auto add Modules">
                                 <div class="o_setting_left_pane">
+                                    <field name="save_new_webstacks"/>
                                 </div>
                                 <div class="o_setting_right_pane">
-                                    <label for="save_new_webstacks"/>
-                                    <div class="content-group">
-                                        <field name="save_new_webstacks"/>
-                                    </div>
+                                    <label for="save_new_webstacks" string="Automatic add new contacting modules"/>
                                     <div class="text-muted">
                                         Permit automatic adding modules from communication. This feature do not support Multi Company. New Modules are added to first company!
                                     </div>
-
                                 </div>
                             </div>
                             <div class="col-12 col-lg-6 o_setting_box"
@@ -51,16 +48,13 @@
                                  groups="base.group_no_one"
                                  title="Debug Communication">
                                 <div class="o_setting_left_pane">
+                                    <field name="save_webstack_communications"/>
                                 </div>
                                 <div class="o_setting_right_pane">
-                                    <label for="save_webstack_communications"/>
-                                    <div class="content-group">
-                                        <field name="save_webstack_communications"/>
-                                    </div>
+                                    <label for="save_webstack_communications" string="Log communication commands for bug tracking"/>
                                     <div class="text-muted">
                                         Log all JSON data from communication to events. Visible only in debug mode
                                     </div>
-
                                 </div>
                             </div>
                             <div class="col-12 col-lg-6 o_setting_box"
@@ -74,6 +68,19 @@
                                     <label for="module_hr_rfid_andromeda_import" string="Andromeda Data Import"/>
                                     <div class="text-muted">
                                         Import Employees, Contacts, Cards, Access Groups, Card Access Rights
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6 o_setting_box"
+                                 id="module_hr_attendance_multi_rfid"
+                                 title="Managing Attendance with card system">
+                                <div class="o_setting_left_pane">
+                                    <field name="module_hr_attendance_multi_rfid"/>
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <label for="module_hr_attendance_multi_rfid" string="Managing Attendance with card system"/>
+                                    <div class="text-muted">
+                                        Manage Attendance records for Employees based on Access control system
                                     </div>
                                 </div>
                             </div>

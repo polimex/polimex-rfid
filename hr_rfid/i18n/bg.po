@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-30 14:29+0000\n"
-"PO-Revision-Date: 2022-01-30 16:32+0200\n"
+"POT-Creation-Date: 2022-01-30 15:35+0000\n"
+"PO-Revision-Date: 2022-01-30 17:40+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -840,6 +840,11 @@ msgid "Auto add Modules"
 msgstr "Автоматично добавяне на модули"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
+msgid "Automatic add new contacting modules"
+msgstr "Автоматично добавяй нови модули, които се свързват"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_webstack__available__a
 msgid "Available"
 msgstr "На разположение"
@@ -1202,8 +1207,12 @@ msgid "Cards Overflow"
 msgstr "Препълване на паметта за карти"
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_employee_form_inherit_hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_partner_form_inherit_hr_rfid
+msgid "Cards belonging this Contact"
+msgstr "Карти, принадлежащи на този Контакт"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_employee_form_inherit_hr_rfid
 msgid "Cards belonging this employee"
 msgstr "Карти, принадлежащи на този служител"
 
@@ -3454,7 +3463,7 @@ msgstr "Списък на системни събития"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_form_view
 msgid "List User Events"
-msgstr "списък с потребителски събития"
+msgstr "Списък с потребителски събития"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
@@ -3507,6 +3516,11 @@ msgid "Log all hardware communication. Debug purpose only and work in debug mode
 msgstr "Регистрира цялата комуникация с хардуера. Информация за програмисти само"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
+msgid "Log communication commands for bug tracking"
+msgstr "Регистрирай комуникационните команди за откриване на грешки"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__log_out_on_exit
 msgid "Logout on Exit"
 msgstr "Logout при излизане"
@@ -3548,6 +3562,11 @@ msgstr "Управление на групи"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
+msgid "Manage Attendance records for Employees based on Access control system"
+msgstr "Управление на записите за Присъствие на Служителите на база на контрола на достъп"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
 msgid "Manage Vending controller"
 msgstr "Управление на Вендинг контролер"
 
@@ -3555,6 +3574,11 @@ msgstr "Управление на Вендинг контролер"
 #: model:res.groups,name:hr_rfid.hr_rfid_group_manager
 msgid "Manager"
 msgstr "Мениджър"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
+msgid "Managing Attendance with card system"
+msgstr "Управление на присъствие с картовата система"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
@@ -4906,12 +4930,12 @@ msgstr "Отговорен потребител"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__rights_data
 msgid "Rights Data (debug info)"
-msgstr ""
+msgstr "Данни за права (Информация за разработчици)"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__rights_mask
 msgid "Rights Mask (debug info)"
-msgstr ""
+msgstr "Данни за маска (Информация за разработчици)"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_webstack__module_username__sdk
@@ -5445,6 +5469,11 @@ msgstr "Три врати"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_search
 msgid "Time"
 msgstr "Време"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_res_config_settings__module_hr_attendance_multi_rfid
+msgid "Time & Attendance control"
+msgstr "Контрол на Присъствие и Работно време"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__time_format
