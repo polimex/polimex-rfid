@@ -79,8 +79,8 @@
                                 <field name="workcode_id" attrs="{'invisible': [('workcode_id','=', False)]}"/>
                             </group>
                         </group>
-                        <group string="Debug Information">
-                            <field name="more_json"/>
+                        <group string="Debug Information" groups="base.group_no_one" colspan="4">
+                            <field name="input_js" readonly="1"/>
                         </group>
                     </sheet>
                 </form>
