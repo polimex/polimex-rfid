@@ -45,16 +45,6 @@ class HrRfidCtrlAlarm(models.Model):
         ondelete='cascade',
     )
 
-    user_event_ids = fields.One2many(
-        comodel_name='hr.rfid.event.user',
-        inverse_name='alarm_line_id'
-    )
-
-    system_event_ids = fields.One2many(
-        comodel_name='hr.rfid.event.system',
-        inverse_name='alarm_line_id'
-    )
-
     control_output = fields.Integer()
 
     door_id = fields.Many2one(
@@ -69,11 +59,10 @@ class HrRfidCtrlAlarm(models.Model):
         compute='_compute_counters'
     )
 
-    @api.depends('user_event_ids','system_event_ids')
     def _compute_counters(self):
         for l in self:
-            l.user_event_count = len(l.user_event_ids)
-            l.system_event_count = len(l.system_event_ids)
+            l.user_event_count = self.env['hr.rfid.event.user'].search_count([('alarm_line_id', '=', l.id)])
+            l.system_event_count = self.env['hr.rfid.event.system'].search_count([('alarm_line_id', '=', l.id)])
 
     @api.depends('controller_id.alarm_line_states')
     def _compute_states(self):

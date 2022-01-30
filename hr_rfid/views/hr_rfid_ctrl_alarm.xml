@@ -51,7 +51,7 @@
                             </button>
                             <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-user"
                                     context="{'xml_id':'hr_rfid_event_user'}"
-                                    help="List System Events"
+                                    help="List User Events"
                                     attrs="{'invisible':[('user_event_count', '=', 0)]}">
                                 <field name="user_event_count" widget="statinfo" string="User Events"/>
                             </button>

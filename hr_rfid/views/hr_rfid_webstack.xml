@@ -24,9 +24,7 @@
                         <field name="available" widget="statusbar"/>
                     </header>
                     <sheet>
-                        <field name="command_ids" invisible="1"/>
                         <field name="controllers" invisible="1"/>
-                        <field name="system_event_ids" invisible="1"/>
                         <div class="oe_button_box" name="button_box">
                             <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
                                     context="{'xml_id':'hr_rfid_ctrl_action'}"
@@ -37,13 +35,13 @@
                             <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
                                     context="{'xml_id':'hr_rfid_command_action'}"
                                     help="List Commands"
-                                    attrs="{'invisible':[('command_ids', '=', False)]}">
+                                    attrs="{'invisible':[('commands_count', '&gt;', 0)]}">
                                 <field name="commands_count" widget="statinfo" string="Commands"/>
                             </button>
                             <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
                                     context="{'xml_id':'hr_rfid_event_system_action'}"
                                     help="List System Events"
-                                    attrs="{'invisible':[('system_event_ids', '=', False)]}">
+                                    attrs="{'invisible':[('system_event_count', '&gt;', 0)]}">
                                 <field name="system_event_count" widget="statinfo" string="System Events"/>
                             </button>
                         </div>
@@ -147,9 +145,7 @@
                     <field name="commands_count"/>
                     <field name="behind_nat"/>
                     <field name="http_link"/>
-                    <field name="command_ids"/>
                     <field name="controllers"/>
-                    <field name="system_event_ids"/>
                     <templates>
                         <t t-name="kanban-box">
                             <div>
@@ -225,8 +221,7 @@
                                             <span t-if="record.system_event_count.value>0"
                                                   class="badge badge-pill" title="System Events">
                                                 <a name="return_action_to_open" type="object"
-                                                    context="{'xml_id':'hr_rfid_event_system_action'}"
-                                                    attrs="{'invisible':[('system_event_ids', '=', False)]}">
+                                                    context="{'xml_id':'hr_rfid_event_system_action'}">
                                                     <i class="fa fa-fw fa-list" role="img"
                                                        aria-label="System Events"/>
                                                     <t t-esc="record.system_event_count.value"/>
@@ -235,8 +230,7 @@
                                             <span t-if="record.commands_count.value>0"
                                                   class="badge badge-pill" title="Commands">
                                                 <a name="return_action_to_open" type="object"
-                                                    context="{'xml_id':'hr_rfid_command_action'}"
-                                                    attrs="{'invisible':[('command_ids', '=', False)]}">
+                                                    context="{'xml_id':'hr_rfid_command_action'}">
                                                     <i class="fa fa-fw fa-list" role="img"
                                                        aria-label="Commands"/>
                                                     <t t-esc="record.commands_count.value"/>

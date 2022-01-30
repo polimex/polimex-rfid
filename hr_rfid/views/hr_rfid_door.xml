@@ -46,7 +46,6 @@
                 <form create="false" delete="false">
                     <field name="card_rel_ids" invisible="1"/>
                     <field name="access_group_ids" invisible="1"/>
-                    <field name="user_event_ids" invisible="1"/>
                     <field name="reader_ids" invisible="1"/>
                     <field name="zone_ids" invisible="1"/>
                     <field name="alarm_line_ids" invisible="1"/>
@@ -60,16 +59,22 @@
                                 Temp Log
                             </button>
                             <button name="button_act_window"
+                                    context="{'res_model':'hr.rfid.event.user'}"
+                                    type="object" attrs="{'invisible':[('user_event_count', '&gt;', 0)]}"
+                                    class="oe_stat_button" icon="fa-list-alt">
+                                <field name="user_event_count" widget="statinfo" string="User Events"/>
+                            </button>
+                            <button name="button_act_window"
+                                    context="{'res_model':'hr.rfid.event.system'}"
+                                    type="object" attrs="{'invisible':[('system_event_count', '&gt;', 0)]}"
+                                    class="oe_stat_button" icon="fa-list-alt">
+                                <field name="system_event_count" widget="statinfo" string="System Events"/>
+                            </button>
+                            <button name="button_act_window"
                                     context="{'res_model':'hr.rfid.access.group'}"
                                     type="object" attrs="{'invisible':[('access_group_ids', '=', False)]}"
                                     class="oe_stat_button" icon="fa-list-alt">
                                 <field name="access_group_count" widget="statinfo" string="in Access Groups"/>
-                            </button>
-                            <button name="button_act_window"
-                                    context="{'res_model':'hr.rfid.event.user'}"
-                                    type="object" attrs="{'invisible':[('user_event_ids', '=', False)]}"
-                                    class="oe_stat_button" icon="fa-list-alt">
-                                <field name="user_event_count" widget="statinfo" string="User Events"/>
                             </button>
                             <button name="button_act_window"
                                     context="{'res_model':'hr.rfid.reader'}"
@@ -150,7 +155,7 @@
                     <field name="id"/>
                     <field name="card_type"/>
                     <field name="user_event_count"/>
-                    <field name="user_event_ids"/>
+                    <field name="system_event_count"/>
                     <field name="alarm_line_ids"/>
                     <field name="lock_state"/>
                     <field name="alarm_state"/>
@@ -252,11 +257,19 @@
                                             <span t-if="record.user_event_count.value>0"
                                                   class="badge badge-pill" title="User Events">
                                                 <a name="button_act_window" type="object"
-                                                    context="{'res_model':'hr.rfid.event.user'}"
-                                                    attrs="{'invisible':[('user_event_ids', '=', False)]}">
+                                                    context="{'res_model':'hr.rfid.event.user'}">
                                                     <i class="fa fa-fw fa-list" role="img"
                                                        aria-label="User Events"/>
                                                     <t t-esc="record.user_event_count.value"/>
+                                                </a>
+                                            </span>
+                                            <span t-if="record.system_event_count.value>0"
+                                                  class="badge badge-pill" title="System Events">
+                                                <a name="button_act_window" type="object"
+                                                    context="{'res_model':'hr.rfid.event.system'}">
+                                                    <i class="fa fa-fw fa-list" role="img"
+                                                       aria-label="System Events"/>
+                                                    <t t-esc="record.system_event_count.value"/>
                                                 </a>
                                             </span>
 <!--                                            <span t-if="record.system_event_count.value>0"-->

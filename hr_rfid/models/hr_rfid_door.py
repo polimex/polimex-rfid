@@ -66,13 +66,6 @@ class HrRfidDoor(models.Model):
         help='The access groups this door is a part of',
     )
 
-    user_event_ids = fields.One2many(
-        comodel_name='hr.rfid.event.user',
-        inverse_name='door_id',
-        string='Events',
-        help='Events concerning this door',
-    )
-
     reader_ids = fields.Many2many(
         comodel_name='hr.rfid.reader',
         relation='hr_rfid_reader_door_rel',
@@ -161,11 +154,12 @@ class HrRfidDoor(models.Model):
     )
 
     access_group_count = fields.Char(compute='_compute_counts')
-    user_event_count = fields.Char(compute='_compute_counts')
     reader_count = fields.Char(compute='_compute_counts')
     card_count = fields.Char(compute='_compute_counts')
     zone_count = fields.Char(compute='_compute_counts')
     alarm_lines_count = fields.Char(compute='_compute_counts')
+    user_event_count = fields.Char(compute='_compute_counts')
+    system_event_count = fields.Char(compute='_compute_counts')
 
     @api.constrains('apb_mode')
     def _check_apb_mode(self):
@@ -173,15 +167,16 @@ class HrRfidDoor(models.Model):
             if door.apb_mode is True and len(door.reader_ids) < 2:
                 raise exceptions.ValidationError('Cannot activate APB Mode for a door if it has less than 2 readers')
 
-    @api.depends('access_group_ids', 'user_event_ids', 'reader_ids', 'card_rel_ids', 'zone_ids', 'alarm_line_ids')
+    @api.depends('access_group_ids', 'reader_ids', 'card_rel_ids', 'zone_ids', 'alarm_line_ids')
     def _compute_counts(self):
         for r in self:
             r.access_group_count = len(r.access_group_ids)
-            r.user_event_count = len(r.user_event_ids)
             r.reader_count = len(r.reader_ids)
             r.card_count = len(r.card_rel_ids)
             r.zone_count = len(r.zone_ids)
             r.alarm_lines_count = len(r.alarm_line_ids)
+            r.user_event_count = self.env['hr.rfid.event.user'].search_count([('door_id', '=', r.id)])
+            r.system_event_count = self.env['hr.rfid.event.system'].search_count([('door_id', '=', r.id)])
 
     @api.depends('controller_id.hotel_readers_buttons_pressed', 'controller_id.hotel_readers_card_presence')
     def _compute_hotel_buttons(self):
@@ -445,6 +440,9 @@ class HrRfidDoor(models.Model):
             domain = [('door_ids.door_id', '=', self.id)]
         elif res_model == 'hr.rfid.event.user':
             name = _('User Events on {}').format(self.name)
+            domain = [('door_id', 'in', [self.id])]
+        elif res_model == 'hr.rfid.event.system':
+            name = _('System Events on {}').format(self.name)
             domain = [('door_id', 'in', [self.id])]
         elif res_model == 'hr.rfid.reader':
             name = _('Readers for {}').format(self.name)

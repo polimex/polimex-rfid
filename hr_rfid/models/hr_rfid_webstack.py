@@ -126,20 +126,6 @@ class HrRfidWebstack(models.Model):
         help='Controllers that this WebStack manages'
     )
 
-    system_event_ids = fields.One2many(
-        'hr.rfid.event.system',
-        'webstack_id',
-        string='Errors',
-        help='Errors that we have received from the module'
-    )
-
-    command_ids = fields.One2many(
-        'hr.rfid.command',
-        'webstack_id',
-        string='Commands',
-        help='Commands that have been or are in queue to send to this module.',
-    )
-
     http_link = fields.Char(
         compute='_compute_http_link'
     )
@@ -186,11 +172,11 @@ class HrRfidWebstack(models.Model):
             else:
                 ws.time_format = '%d.%m.%y %H:%M:%S'
 
-    @api.depends('command_ids', 'system_event_ids', 'controllers')
+    @api.depends('controllers')
     def _compute_counts(self):
         for a in self:
-            a.commands_count = len(a.command_ids)
-            a.system_event_count = len(a.system_event_ids)
+            a.commands_count = self.env['hr.rfid.command'].search_count([('webstack_id', '=', a.id)])
+            a.system_event_count = self.env['hr.rfid.event.system'].search_count([('webstack_id', '=', a.id)])
             a.controllers_count = len(a.controllers)
 
     def return_action_to_open(self):

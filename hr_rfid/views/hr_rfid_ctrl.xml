@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-<!--        Update Alarm lines-->
+        <!-- Update Alarm lines -->
         <function model="hr.rfid.ctrl" name="update_ctrl_alarm_lines"/>
 
         <record id="hr_rfid_controller_io_table_wiz" model="ir.ui.view">
@@ -55,8 +55,6 @@
                     <!--                    </header>-->
                     <field name="reader_ids" invisible="1"/>
                     <field name="door_ids" invisible="1"/>
-                    <field name="system_event_ids" invisible="1"/>
-                    <field name="command_ids" invisible="1"/>
                     <field name="alarm_line_ids" invisible="1"/>
                     <sheet>
                         <div class="oe_button_box" name="button_box" modifiers="{}">
@@ -89,14 +87,20 @@
                             <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
                                     context="{'xml_id':'hr_rfid_command_action'}"
                                     help="List Commands"
-                                    attrs="{'invisible':[('command_ids', '=', [])]}">
+                                    attrs="{'invisible':[('commands_count', '=', 0)]}">
                                 <field name="commands_count" widget="statinfo" string="Commands"/>
                             </button>
                             <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
                                     context="{'xml_id':'hr_rfid_event_system_action'}"
                                     help="List System Events"
-                                    attrs="{'invisible':[('system_event_ids', '=', [])]}">
+                                    attrs="{'invisible':[('system_event_count', '=', 0)]}">
                                 <field name="system_event_count" widget="statinfo" string="System Events"/>
+                            </button>
+                            <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
+                                    context="{'xml_id':'hr_rfid_event_user_action'}"
+                                    help="List User Events"
+                                    attrs="{'invisible':[('user_event_count', '=', 0)]}">
+                                <field name="user_event_count" widget="statinfo" string="User Events"/>
                             </button>
                         </div>
                         <div class="oe_title" modifiers="{}">
@@ -174,14 +178,13 @@
                     <field name="serial_number"/>
                     <field name="temperature"/>
                     <field name="humidity"/>
-                    <field name="system_event_ids"/>
                     <field name="reader_ids"/>
                     <field name="door_ids"/>
-                    <field name="command_ids"/>
                     <field name="readers_count"/>
                     <field name="doors_count"/>
                     <field name="commands_count"/>
                     <field name="system_event_count"/>
+                    <field name="user_event_count"/>
                     <field name="alarm_line_count"/>
                     <field name="alarm_line_ids"/>
                     <field name="siren_state"/>
@@ -320,24 +323,31 @@
                                                     <t t-esc="record.alarm_line_count.value"/>
                                                 </a>
                                             </span>
-                                            <span t-if="record.commands_count.value>0"
-                                                  class="badge badge-pill" title="Commands">
+                                            <span t-if="record.user_event_count.value>0"
+                                                  class="badge badge-pill" title="User Events">
                                                 <a name="return_action_to_open" type="object"
-                                                    context="{'xml_id':'hr_rfid_command_action'}"
-                                                    attrs="{'invisible':[('command_ids', '=', False)]}">
+                                                    context="{'xml_id':'hr_rfid_event_user_action'}">
                                                     <i class="fa fa-fw fa-list" role="img"
                                                        aria-label="Commands"/>
-                                                    <t t-esc="record.commands_count.value"/>
+                                                    <t t-esc="record.user_event_count.value"/>
                                                 </a>
                                             </span>
                                             <span t-if="record.system_event_count.value>0"
                                                   class="badge badge-pill" title="System Events">
                                                 <a name="return_action_to_open" type="object"
-                                                    context="{'xml_id':'hr_rfid_event_system_action'}"
-                                                    attrs="{'invisible':[('system_event_ids', '=', False)]}">
+                                                    context="{'xml_id':'hr_rfid_event_system_action'}">
                                                     <i class="fa fa-fw fa-list" role="img"
                                                        aria-label="System Events"/>
                                                     <t t-esc="record.system_event_count.value"/>
+                                                </a>
+                                            </span>
+                                            <span t-if="record.commands_count.value>0"
+                                                  class="badge badge-pill" title="Commands">
+                                                <a name="return_action_to_open" type="object"
+                                                    context="{'xml_id':'hr_rfid_command_action'}">
+                                                    <i class="fa fa-fw fa-list" role="img"
+                                                       aria-label="Commands"/>
+                                                    <t t-esc="record.commands_count.value"/>
                                                 </a>
                                             </span>
                                         </span>
