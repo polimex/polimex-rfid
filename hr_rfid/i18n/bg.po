@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-27 18:05+0000\n"
-"PO-Revision-Date: 2022-01-27 20:11+0200\n"
+"POT-Creation-Date: 2022-01-30 14:29+0000\n"
+"PO-Revision-Date: 2022-01-30 16:32+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -82,6 +82,7 @@ msgstr "<i class=\"fa fa-fw fa-list\" role=\"img\" aria-label=\"Команди\"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
 msgid "<i class=\"fa fa-fw fa-list\" role=\"img\" aria-label=\"System Events\"/>"
 msgstr "<i class=\"fa fa-fw fa-list\" role=\"img\" aria-label=\"Системни събития\"/>"
@@ -788,7 +789,7 @@ msgstr "Охрана"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__20
 #, python-format
 msgid "Arm On Siren"
-msgstr ""
+msgstr "Охранителна сирена Включена"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
@@ -1103,6 +1104,11 @@ msgid "Card number already exists!"
 msgstr "Номерът на картата вече съществува!"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__card_number
+msgid "Card number from this event"
+msgstr "Номер на картата от това събитие"
+
+#. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_card.py:0
 #, python-format
 msgid "Card number must be exactly 10 digits"
@@ -1198,8 +1204,8 @@ msgstr "Препълване на паметта за карти"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_employee_form_inherit_hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_partner_form_inherit_hr_rfid
-msgid "Cards belonging to user"
-msgstr "Карти принадлежащи на потребителя"
+msgid "Cards belonging this employee"
+msgstr "Карти, принадлежащи на този служител"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
@@ -1407,8 +1413,6 @@ msgid "Command to send/have sent to the module"
 msgstr "Команда към модула"
 
 #. module: hr_rfid
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__command_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__command_ids
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_commands model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
@@ -1456,16 +1460,6 @@ msgstr "Команди от тази година"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
 msgid "Commands from today"
 msgstr "Команди от днес"
-
-#. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__command_ids
-msgid "Commands that have been or are in queue to send to this module."
-msgstr "Команди, които са били или са в опашка за изпращане до този модул."
-
-#. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__command_ids
-msgid "Commands that have been sent to this controller"
-msgstr "Команди, изпратени до този контролер"
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_command_action
@@ -2407,22 +2401,6 @@ msgid "Error"
 msgstr "Грешка"
 
 #. module: hr_rfid
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__system_event_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__system_event_ids
-msgid "Errors"
-msgstr "Грешки"
-
-#. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__system_event_ids
-msgid "Errors received from the controller"
-msgstr "Грешки получени от Контролера"
-
-#. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__system_event_ids
-msgid "Errors that we have received from the module"
-msgstr "Грешки получени от Модула"
-
-#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_system_ev_view_pivot
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_pivot
 msgid "Event"
@@ -2450,8 +2428,6 @@ msgid "Event time"
 msgstr "Време на събитието"
 
 #. module: hr_rfid
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__user_event_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__user_event_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__user_event_ids
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_events_menu
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_employee_form_inherit_hr_rfid
@@ -2466,11 +2442,6 @@ msgid "Events concerning this contact"
 msgstr "Събития свързани с този контакт"
 
 #. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__user_event_ids
-msgid "Events concerning this door"
-msgstr "Събития свързани с тази врата"
-
-#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_employee__hr_rfid_event_ids
 msgid "Events concerning this employee"
 msgstr "Събития свързани с този служител"
@@ -2479,11 +2450,6 @@ msgstr "Събития свързани с този служител"
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__user_event_ids
 msgid "Events concerning this reader"
 msgstr "Събития свързани с този четец"
-
-#. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__user_event_ids
-msgid "Events concerning this user"
-msgstr "Събития свързани с този потребител"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_employee.py:0 code:addons/hr_rfid/models/hr_rfid_event_user.py:0
@@ -3483,6 +3449,12 @@ msgstr "Списък Врати"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "List System Events"
 msgstr "Списък на системни събития"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_form_view
+msgid "List User Events"
+msgstr "списък с потребителски събития"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
@@ -5202,7 +5174,6 @@ msgstr "Успешно отваряне"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__system_event_ids
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__99
 #, python-format
 msgid "System Event"
@@ -5210,6 +5181,7 @@ msgstr "Системно събитие"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__system_event_count
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__system_event_count
 msgid "System Event Count"
 msgstr "Брой системни събития"
 
@@ -5219,6 +5191,8 @@ msgstr "Брой системни събития"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_form_view
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
 msgid "System Events"
@@ -5229,6 +5203,12 @@ msgstr "Системни събития"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__system_event_count
 msgid "System Events count"
 msgstr "Брой системни събития"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_door.py:0
+#, python-format
+msgid "System Events on {}"
+msgstr "Системни събития за {}"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
@@ -5670,11 +5650,6 @@ msgid "Use this serial number in the field below and add Module to the system"
 msgstr "Използвайте този сериен номер в полето по-долу и добавете Модул към системата"
 
 #. module: hr_rfid
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__user_event_ids
-msgid "User Event"
-msgstr "Потребителско събитие"
-
-#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__user_event_count
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__user_event_count
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__user_event_count
@@ -5683,6 +5658,8 @@ msgstr "Брой на потребителските събития"
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_event_user_action model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_user_events
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_form_view
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_form
@@ -5701,6 +5678,11 @@ msgstr "Потребителски събития на {}"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__user_action
 msgid "User action"
 msgstr "Действие на потребителя"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__user_event_count
+msgid "User events count"
+msgstr "Брояч потребителски събития"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_employee__hr_rfid_pin_code

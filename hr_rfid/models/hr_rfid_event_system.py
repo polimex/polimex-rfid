@@ -128,6 +128,10 @@ class HrRfidSystemEvent(models.Model):
         help='Description on why the error happened',
     )
 
+    card_number = fields.Char(
+        string='Card number from this event',
+        readonly=True
+    )
 
     input_js = fields.Char(
         string='Input JSON',
@@ -243,11 +247,11 @@ class HrRfidSystemEventWizard(models.TransientModel):
     def _default_card_number(self):
         sys_ev = self._default_sys_ev()
 
-        if type(sys_ev.input_js) != type(''):
+        if type(sys_ev.card_number) != type(''):
             raise exceptions.ValidationError('System event does not have a card number in it')
 
-        if len(sys_ev.input_js) == 10:
-            return sys_ev.input_js
+        if len(sys_ev.card_number) == 10:
+            return sys_ev.card_number
 
         js = json.loads(sys_ev.input_js)
         try:

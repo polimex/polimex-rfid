@@ -139,6 +139,7 @@ class WebRfidController(http.Controller):
                     'door_id': door and door.id or False,
                     'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
                     'event_action': str(event_action),
+                    'card_number': card_num or None,
                     'input_js': card_num,
                 }
 

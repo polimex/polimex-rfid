@@ -2,25 +2,6 @@
 
 <odoo>
     <data>
-
-<!--        <record id="hr_rfid_partner_view_tree" model="ir.ui.view">-->
-<!--            <field name="name">hr.rfid.partner.tree</field>-->
-<!--            <field name="model">res.partner</field>-->
-<!--            <field name="arch" type="xml">-->
-<!--                <tree string="Partners">-->
-<!--                    <field name="name"/>-->
-<!--                </tree>-->
-<!--            </field>-->
-<!--        </record>-->
-
-<!--        <record id="hr_rfid_partner_action" model="ir.actions.act_window">-->
-<!--            <field name="name">Partners</field>-->
-<!--            <field name="res_model">res.partner</field>-->
-<!--            <field name="view_mode">tree,form,search</field>-->
-<!--            <field name="view_id" ref="hr_rfid_partner_view_tree"/>-->
-<!--            <field name="context">{"search_default_type_person": 1}</field>-->
-<!--        </record>-->
-
         <record id="hr_view_partner_form_inherit_hr_rfid" model="ir.ui.view">
             <field name="name">res.partner.rfid.info</field>
             <field name="model">res.partner</field>
@@ -48,10 +29,14 @@
                         </group>
                         <notebook>
                             <page string="Cards">
-                                <field name="hr_rfid_card_ids" context="{'contact_id': id}" edit="0">
-                                    <tree string="Cards belonging to user">
+                                <field name="hr_rfid_card_ids" context="{'default_contact_id': id}" edit="0">
+                                    <tree string="Cards belonging this Contact" editable="bottom">
                                         <field name="number"/>
+                                        <field name="card_reference"/>
+                                        <field name="activate_on"/>
+                                        <field name="deactivate_on"/>
                                         <field name="card_type"/>
+                                        <field name="cloud_card"/>
                                     </tree>
                                 </field>
                             </page>

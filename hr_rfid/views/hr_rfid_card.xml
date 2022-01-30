@@ -26,7 +26,7 @@
                             <button name="return_action_doors" type="object" class="oe_stat_button" icon="fa-info"
                                     context="{'xml_id':'hr_rfid_ctrl_action'}"
                                     help="List Controller"
-                                    attrs="{'invisible':[('door_ids', '=', False)]}">
+                                    attrs="{'invisible':['|',('door_ids', '=', False),('id', '=', False)]}">
                                 <field name="door_count" widget="statinfo" string="Doors"/>
                             </button>
                         </div>

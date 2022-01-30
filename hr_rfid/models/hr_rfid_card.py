@@ -17,12 +17,6 @@ class HrRfidCard(models.Model):
     _description = 'Card'
     _inherit = ['mail.thread']
 
-    def _get_cur_employee_id(self):
-        return self.env.context.get('employee_id', None)
-
-    def _get_cur_contact_id(self):
-        return self.env.context.get('contact_id', None)
-
     name = fields.Char(
         compute='_compute_card_name',
     )
@@ -57,23 +51,16 @@ class HrRfidCard(models.Model):
     employee_id = fields.Many2one(
         'hr.employee',
         string='Card Owner (Employee)',
-        # default=_get_cur_employee_id,
+        default=lambda self: self.env.context.get('default_employee_id', None),
         tracking=True,
     )
 
     contact_id = fields.Many2one(
         'res.partner',
         string='Card Owner (Partner)',
-        # default=_get_cur_contact_id,
+        default=lambda self: self.env.context.get('default_contact_id', None),
         tracking=True,
         domain=[('is_company', '=', False)],
-    )
-
-    user_event_ids = fields.One2many(
-        'hr.rfid.event.user',
-        'card_id',
-        string='Events',
-        help='Events concerning this user',
     )
 
     activate_on = fields.Datetime(
@@ -127,14 +114,14 @@ class HrRfidCard(models.Model):
         ('card_uniq', 'unique (number, company_id)', _("Card number already exists!")),
     ]
 
-    @api.model
-    def default_get(self, fields):
-        res = super(HrRfidCard, self).default_get(fields)
-        if not 'employee_id' in res.keys() and self.env.context.get('employee_id', None):
-            res['employee_id'] = self.env.context.get('employee_id', None)
-        if not 'contact_id' in res.keys() and self.env.context.get('contact_id', None):
-            res['contact_id'] = self.env.context.get('contact_id', None)
-        return res
+    # @api.model
+    # def default_get(self, fields):
+    #     res = super(HrRfidCard, self).default_get(fields)
+    #     if not 'employee_id' in res.keys() and self.env.context.get('default_employee_id', None):
+    #         res['employee_id'] = self.env.context.get('default_employee_id', None)
+    #     if not 'contact_id' in res.keys() and self.env.context.get('default_contact_id', None):
+    #         res['contact_id'] = self.env.context.get('default_contact_id', None)
+    #     return res
 
     # TODO add example
     # @api.model
@@ -150,9 +137,7 @@ class HrRfidCard(models.Model):
     def get_owner(self, event_dict: dict = None):
         self.ensure_one()
         if not event_dict:
-            if len(self.employee_id) == 1:
-                return self.employee_id
-            return self.contact_id
+            return self.employee_id or self.contact_id or None
         else:
             if self.contact_id:
                 event_dict['contact_id'] = self.contact_id.id
@@ -256,10 +241,10 @@ class HrRfidCard(models.Model):
             card = super(HrRfidCard, self).create([val])
             records = records + card
 
-            if len(card.employee_id) > 0 and len(card.contact_id) > 0:
+            if card.employee_id and card.contact_id:
                 raise exceptions.ValidationError(invalid_user_and_contact_msg)
 
-            if len(card.employee_id) == 0 and len(card.contact_id) == 0:
+            if not card.employee_id and not card.contact_id:
                 raise exceptions.ValidationError(invalid_user_and_contact_msg)
 
             card_door_rel_env.update_card_rels(card)
