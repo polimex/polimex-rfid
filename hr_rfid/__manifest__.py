@@ -11,7 +11,7 @@
 
     'website': 'https://www.polimex.co/',
 
-    'depends': ['hr', 'contacts',],
+    'depends': ['hr', 'contacts', 'digest'],
 
     'data': [
         'security/hr_rfid_security.xml',
@@ -42,6 +42,7 @@
         'views/hr_department_views.xml',
         'views/hr_employee_views.xml',
         'views/hr_rfid_menus.xml',
+        'views/digest_views.xml',
         'templates/banners.xml',
         'security/hr_rfid_multi_company.xml'
     ],

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_department_form_extend" model="ir.ui.view">
+            <field name="name">hr.department.form</field>
+            <field name="model">hr.department</field>
+            <field name="inherit_id" ref="hr.view_department_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group" position="after">
+                    <group col="4">
+                        <field name="minimum_late_time" widget="float_time"/>
+                        <field name="minimum_early_leave_time" widget="float_time"/>
+                        <field name="minimum_overtime" widget="float_time"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

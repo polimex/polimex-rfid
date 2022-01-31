@@ -669,7 +669,11 @@ class HrRfidController(models.Model):
                 SUPERUSER_ID).create([new_cmd])
         if commands and not self.webstack_id.in_cmd_execution() and not self.webstack_id.behind_nat:
             for c in commands:
-                self.webstack_id.direct_execute({}, c)
+                try:
+                    self.webstack_id.direct_execute({}, c)
+                except Exception as e:
+                    pass #the exception have to be logged before
+
         return commands
 
     def change_output_state(self, out_number: int, out_state: int, time: int):
