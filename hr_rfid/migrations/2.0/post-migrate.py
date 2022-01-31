@@ -41,3 +41,19 @@ def migrate(cr, version):
     cr.execute("alter table hr_rfid_ctrl_alarm drop column if exists system_event_ids;")
     # Deleting field hr.rfid.ctrl.alarm.user_event_ids
     cr.execute("alter table hr_rfid_ctrl_alarm drop column if exists user_event_ids;")
+    # Deleting field hr.rfid.door.user_event_ids
+    cr.execute("alter table hr_rfid_door drop column if exists user_event_ids;")
+    # Deleting field hr.rfid.ctrl.alarm.system_event_ids
+    cr.execute("alter table hr_rfid_ctrl_alarm drop column if exists system_event_ids;")
+    # Deleting field hr.rfid.ctrl.alarm.user_event_ids
+    cr.execute("alter table hr_rfid_ctrl_alarm drop column if exists user_event_ids;")
+    # Deleting field hr.rfid.ctrl.command_ids
+    cr.execute("alter table hr_rfid_ctrl drop column if exists commands_ids;")
+    # Deleting field hr.rfid.ctrl.system_event_ids
+    cr.execute("alter table hr_rfid_ctrl drop column if exists system_event_ids;")
+    # Deleting field hr.rfid.card.user_event_ids
+    cr.execute("alter table hr_rfid_card drop column if exists user_event_ids;")
+    # Deleting field hr.rfid.webstack.command_ids
+    cr.execute("alter table hr_rfid_webstack drop column if exists commands_ids;")
+    # Deleting field hr.rfid.webstack.system_event_ids
+    cr.execute("alter table hr_rfid_webstack drop column if exists system_event_ids;")
