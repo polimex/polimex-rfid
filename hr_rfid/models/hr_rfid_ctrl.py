@@ -382,20 +382,8 @@ class HrRfidController(models.Model):
 
     def button_reload_cards(self):
         cmd_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
-
-        cmd_env.create({
-            'webstack_id': self.webstack_id.id,
-            'controller_id': self.id,
-            'cmd': 'DC',
-            'cmd_data': '0303',
-        })
-
-        cmd_env.create({
-            'webstack_id': self.webstack_id.id,
-            'controller_id': self.id,
-            'cmd': 'DC',
-            'cmd_data': '0404',
-        })
+        self._base_command('DC', '0303')
+        self._base_command('DC', '0404')
 
         for door in self.door_ids:
             self.env['hr.rfid.card.door.rel'].reload_door_rels(door)
@@ -460,9 +448,7 @@ class HrRfidController(models.Model):
         self.change_io_table(''.join([f"{line[i]:02d}" for i in reversed(range(0, 8))]), line_number)
 
     def change_io_table(self, new_io_table, line=0):
-        cmd_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
         cmd_data = f"{line:02d}" + new_io_table
-
         for ctrl in self:
             if ctrl.io_table == new_io_table:
                 continue
@@ -473,23 +459,13 @@ class HrRfidController(models.Model):
                 )
             if line == 0:
                 ctrl.io_table = new_io_table
-                cmd_env.create({
-                    'webstack_id': ctrl.webstack_id.id,
-                    'controller_id': ctrl.id,
-                    'cmd': 'D9',
-                    'cmd_data': cmd_data,
-                })
+                ctrl._base_command('D9', cmd_data)
             else:
                 io_table = self.io_table[:16 * (line - 1)]
                 io_table += new_io_table
                 io_table += self.io_table[16 * (line - 1) + 16:]
                 ctrl.io_table = io_table
-                cmd_env.create({
-                    'webstack_id': ctrl.webstack_id.id,
-                    'controller_id': ctrl.id,
-                    'cmd': 'D9',
-                    'cmd_data': cmd_data,
-                })
+                ctrl._base_command('D9', cmd_data)
 
     def is_alarm_ctrl(self, hw_version=None):
         if hw_version:
@@ -532,9 +508,8 @@ class HrRfidController(models.Model):
         return _('Unknown')
 
     def re_read_ctrl_info(self):
-        cmd_env = self.env['hr.rfid.command']
         for ctrl in self:
-            cmd_env.read_controller_information_cmd(ctrl)
+            ctrl.read_controller_information_cmd(ctrl)
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
@@ -692,7 +667,9 @@ class HrRfidController(models.Model):
                 new_cmd.update({'cmd_data': cmd_data})
             commands += self.env['hr.rfid.command'].find_last_wait(new_cmd) or self.env['hr.rfid.command'].with_user(
                 SUPERUSER_ID).create([new_cmd])
-
+        if commands and not self.webstack_id.in_cmd_execution() and not self.webstack_id.behind_nat:
+            for c in commands:
+                self.webstack_id.direct_execute({}, c)
         return commands
 
     def change_output_state(self, out_number: int, out_state: int, time: int):
