@@ -243,9 +243,9 @@ class HrRfidController(models.Model):
         for c in self:
             if c.mode <= 2:
                 c.mode_selection = str(c.mode)
-                c.mode_selection_4 = str(c.mode)
+                c.mode_selection_4 = '2' # Fake
             else:
-                c.mode_selection = '1'
+                c.mode_selection = '1' # Fake
                 c.mode_selection_4 = str(c.mode)
 
     @api.depends('mode')
