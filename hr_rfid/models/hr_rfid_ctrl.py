@@ -889,6 +889,8 @@ class HrRfidController(models.Model):
             pass
         if new_mode is None:
             new_mode = self.mode
+        else:
+            self.mode = new_mode
         if new_ext_db is None:
             new_ext_db = self.external_db
         if new_ext_db is True:
