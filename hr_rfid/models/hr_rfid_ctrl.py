@@ -896,7 +896,9 @@ class HrRfidController(models.Model):
         if new_ext_db is True:
             new_mode = 0x20 + new_mode
         cmd_data = '%02X' % new_mode
-        return self._base_command('D5', cmd_data)
+        cmd = self._base_command('D5', cmd_data)
+        self.read_controller_information_cmd()
+        return cmd
 
     # Command parsers
 
