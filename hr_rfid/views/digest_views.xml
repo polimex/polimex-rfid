@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="digest_digest_view_form" model="ir.ui.view">
+        <field name="name">digest.digest.view.form.inherit.hr.rfid</field>
+        <field name="model">digest.digest</field>
+        <field name="inherit_id" ref="digest.digest_digest_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='kpi_general']" position="after">
+                <group name="kpi_hr_rfid" string="Access Control" groups="hr_rfid.hr_rfid_group_officer">
+                    <field name="kpi_hr_rfid_granted"/>
+                    <field name="kpi_hr_rfid_denied"/>
+                    <field name="kpi_hr_rfid_system"/>
+                    <field name="kpi_hr_rfid_command"/>
+                    <field name="kpi_hr_rfid_card"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
