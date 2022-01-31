@@ -34,8 +34,6 @@ def _tz_get(self):
 class BadTimeException(Exception):
     pass
 
-
-
 class HrRfidWebstack(models.Model):
     _name = 'hr.rfid.webstack'
     _inherit = ['mail.activity.mixin', 'mail.thread']
@@ -475,33 +473,50 @@ class HrRfidWebstack(models.Model):
 
 
     # Communication helpers
+    def _execute_direct_cmd(self, cmd: dict, retry=0):
+        self.ensure_one()
+        username = self.module_username and str(self.module_username) or ''
+        password = self.module_password and str(self.module_password) or ''
+        try:
+            _logger.info('Direct sending %s' % str(cmd))
+            response = requests.post('http://' + self.last_ip + '/sdk/cmd.json', auth=(username, password), json=cmd,
+                                     timeout=2)
+            result = response.json()
+            if response.status_code != 200:
+                _logger.error('While trying to send the command to the module, '
+                                                 'it returned code ' + str(response.status_code) + ' with body:\n'
+                                                 + response.content.decode())
+                if retry < 3:
+                    result = self._execute_direct_cmd(cmd, retry+1)
+                if not result:
+                    raise exceptions.ValidationError('While trying to send the command to the module, '
+                                                     'it returned code ' + str(response.status_code) + ' with body:\n'
+                                                     + response.content.decode())
+            _logger.info('Direct receiving %s' % str(result))
+
+            return result
+        except Exception as e:
+            _logger.exception(tools.exception_to_unicode(e))
+            raise
 
     def direct_execute(self, cmd: dict, command_id: models.Model = None):
         if command_id:
-            pass  # TODO Direct execution of stored commands
+            # TODO Direct execution of stored commands
+            cmd_response = command_id.webstack_id._execute_direct_cmd({'cmd': command_id.send_command(200)['cmd']})
+            if cmd_response:
+                command_id.webstack_id.parse_response(cmd_response, direct_cmd=True)
+            return cmd_response
         else:
             for ws in self:
-                if ws.module_username is False:
-                    username = ''
-                else:
-                    username = str(ws.module_username)
-
-                if ws.module_password is False:
-                    password = ''
-                else:
-                    password = str(ws.module_password)
                 # TODO Store command in model as in execution
-                try:
-                    response = requests.post('http://' + ws.last_ip + '/sdk/cmd.json', auth=(username, password), json=cmd,
-                                             timeout=2)
-                    if response.status_code != 200:
-                        raise exceptions.ValidationError('While trying to send the command to the module, '
-                                                         'it returned code ' + str(response.status_code) + ' with body:\n'
-                                                         + response.content.decode())
-                    return response.json()
-                except Exception as e:
-                    _logger.exception(tools.exception_to_unicode(e))
-                    raise
+                cmd_response = ws._execute_direct_cmd(cmd)
+                return cmd_response
+
+    def in_cmd_execution(self):
+        return self.env['hr.rfid.command'].search_count([
+            ('webstack_id', 'in', self.mapped('id')),
+            ('status', '=', 'Process')
+        ]) > 0
 
 
     def get_ws_time(self, post_data: dict):
@@ -614,14 +629,14 @@ class HrRfidWebstack(models.Model):
         self.version = str(post_data['FW'])
         return self.check_for_unsent_cmd(200)
 
-    def parse_response(self, post_data: dict):
+    def parse_response(self, post_data: dict, direct_cmd=False):
         self.ensure_one()
         command_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
         response = post_data['response']
         controller = self.controllers.filtered(lambda c: c.ctrl_id == response.get('id', -1))
         if not controller:
             self.report_sys_ev('Module sent us a response from a controller that does not exist', post_data=post_data)
-            return self.check_for_unsent_cmd(200)
+            return not direct_cmd and self.check_for_unsent_cmd(200)
 
         command = command_env.search([('webstack_id', '=', self.id),
                                       ('controller_id', '=', controller.id),
@@ -636,7 +651,7 @@ class HrRfidWebstack(models.Model):
 
         if len(command) == 0:
             controller.report_sys_ev('Controller sent us a response to a command we never sent')
-            return self.check_for_unsent_cmd(200)
+            return not direct_cmd and self.check_for_unsent_cmd(200)
 
         if response['e'] != 0:
             command.write({
@@ -645,7 +660,13 @@ class HrRfidWebstack(models.Model):
                 'ex_timestamp': fields.Datetime.now(),
                 'response': json.dumps(post_data),
             })
-            return self.check_for_unsent_cmd(200)
+            return not direct_cmd and self.check_for_unsent_cmd(200)
+
+        command.write({
+            'status': 'Success',
+            'ex_timestamp': fields.Datetime.now(),
+            'response': json.dumps(post_data),
+        })
 
         if response['c'] == 'F0':
             command.parse_f0_response(post_data=post_data)
@@ -734,10 +755,4 @@ class HrRfidWebstack(models.Model):
                     'h': humidity,
                 })
 
-        command.write({
-            'status': 'Success',
-            'ex_timestamp': fields.Datetime.now(),
-            'response': json.dumps(post_data),
-        })
-
-        return self.check_for_unsent_cmd(200)
+        return not direct_cmd and self.check_for_unsent_cmd(200)
