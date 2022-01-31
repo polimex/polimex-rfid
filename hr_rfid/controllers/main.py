@@ -84,7 +84,7 @@ class WebRfidController(http.Controller):
             except:
                 door_number = None
             if not door and card_id:  # relay door
-                door = reader_id.door_ids.filtered(lambda d: d.id in card_id.door_ids)
+                door = reader_id.door_ids.filtered(lambda d: d.id in card_id.door_ids.mapped('id'))
                 # door = set(card_id.door_ids) & set(reader_id.door_ids)
                 if len(door) > 1:
                     card_door_ids = card_id and card_id.door_ids or []
