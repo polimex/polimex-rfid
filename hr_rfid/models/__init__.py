@@ -8,6 +8,8 @@ from . import hr_rfid_webstack
 from . import hr_rfid_webstack_discovery
 from . import hr_rfid_card
 from . import hr_rfid_ctrl
+from . import hr_rfid_ctrl_time_schedule
+from . import hr_rfid_ctrl_iotable
 from . import hr_rfid_ctrl_reader
 from . import hr_rfid_ctrl_alarm
 from . import hr_rfid_ctrl_th
@@ -21,4 +23,5 @@ from . import hr_rfid_zone
 from . import res_partner
 from . import hr_rfid_settings
 from . import digest
+from . import res_company
 

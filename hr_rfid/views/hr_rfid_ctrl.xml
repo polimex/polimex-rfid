@@ -4,47 +4,6 @@
         <!-- Update Alarm lines -->
         <function model="hr.rfid.ctrl" name="update_ctrl_alarm_lines"/>
 
-        <record id="hr_rfid_controller_io_table_wiz" model="ir.ui.view">
-            <field name="name">hr.rfid.controller.io.table.wiz</field>
-            <field name="model">hr.rfid.ctrl.io.table.wiz</field>
-            <field name="arch" type="xml">
-                <form string="View/Modify IO table">
-                    <div>
-                        <field name="controller_id" invisible="True"/>
-                        <field name="outs" invisible="True"/>
-                        <h1>IO table:</h1>
-                        <br/>
-                        <field name="io_row_ids" widget="one2many_list">
-                            <tree create="false" delete="false" editable="bottom">
-                                <field name="event_number"/>
-                                <field name="out1" attrs="{'column_invisible': [('parent.outs','&lt;',1)]}"/>
-                                <field name="out2" attrs="{'column_invisible': [('parent.outs','&lt;',2)]}"/>
-                                <field name="out3" attrs="{'column_invisible': [('parent.outs','&lt;',3)]}"/>
-                                <field name="out4" attrs="{'column_invisible': [('parent.outs','&lt;',4)]}"/>
-                                <field name="out5" attrs="{'column_invisible': [('parent.outs','&lt;',5)]}"/>
-                                <field name="out6" attrs="{'column_invisible': [('parent.outs','&lt;',6)]}"/>
-                                <field name="out7" attrs="{'column_invisible': [('parent.outs','&lt;',7)]}"/>
-                                <field name="out8" attrs="{'column_invisible': [('parent.outs','&lt;',8)]}"/>
-                            </tree>
-                        </field>
-                    </div>
-                    <footer>
-                        <button name="save_table" type="object" string="Save" class="oe_highlight"/>
-                        <button special="cancel" string="Close" class="oe_highlight"/>
-                    </footer>
-                </form>
-            </field>
-        </record>
-
-        <record id="hr_rfid_controller_io_table_wiz_action" model="ir.actions.act_window">
-            <field name="name">View/modify IO table</field>
-            <field name="res_model">hr.rfid.ctrl.io.table.wiz</field>
-            <!--      <field name="view_type">form</field>-->
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="hr_rfid_controller_io_table_wiz"/>
-            <field name="target">new</field>
-        </record>
-
         <record id="hr_rfid_controller_view_form" model="ir.ui.view">
             <field name="name">hr.rfid.ctrl.form</field>
             <field name="model">hr.rfid.ctrl</field>
@@ -407,18 +366,6 @@
             <field name="code">record.button_reload_cards()</field>
             <field name="binding_model_id" ref="hr_rfid.model_hr_rfid_ctrl"/>
             <field name="binding_view_types">form</field>
-        </record>
-
-        <record id="hr_rfid_controller_io_table_action" model="ir.actions.act_window">
-            <field name="name">IO Table</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">hr.rfid.ctrl.io.table.wiz</field>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="hr_rfid.hr_rfid_controller_io_table_wiz"/>
-            <field name="binding_model_id" ref="hr_rfid.model_hr_rfid_ctrl"/>
-            <field name="binding_view_types">form</field>
-            <field name="groups_id" eval="[(4, ref('hr_rfid.hr_rfid_group_manager'))]"/>
-            <field name="target">new</field>
         </record>
 
         <record id="action_reload_controller_information" model="ir.actions.server">
