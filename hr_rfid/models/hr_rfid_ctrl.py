@@ -883,6 +883,25 @@ class HrRfidController(models.Model):
         self.read_controller_information_cmd()
         return cmd
 
+    def write_ts(self, ts_data: str):
+        return self._base_command('D3', ts_data)
+
+    def write_ts_id(self, ts_id):
+        if ts_id and ts_id.number != 0:
+            for ctrl in self.filtered(lambda c: c.id not in ts_id.controller_ids.mapped('id')):
+                ctrl.write_ts(ts_id.ts_data)
+                ts_id.sudo().write({'controller_ids': [(4, ctrl.id, 0)]})
+
+    def delete_ts_id(self, ts_id):
+        if ts_id and ts_id.number != 0:
+            for ctrl in self.filtered(lambda c: c.id in ts_id.controller_ids.mapped('id')):
+                ts_used = self.env['hr.rfid.access.group.door.rel'].search([
+                    ('door_id', 'in', ctrl.door_ids.mapped('id')),
+                    ('time_schedule_id', '=', ts_id.id),
+                ])
+                if not ts_used:
+                    ts_id.sudo().write({'controller_ids': [(3, ctrl.id, 0)]})
+
     # Command parsers
 
     def cp_input_masks(self, response):

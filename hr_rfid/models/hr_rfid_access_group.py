@@ -104,7 +104,7 @@ class HrRfidAccessGroup(models.Model):
 
     def add_doors(self, door_ids, time_schedule=None, alarm_rights=False):
         if time_schedule is None:
-            time_schedule = self.env.ref('hr_rfid.hr_rfid_time_schedule_0')
+            time_schedule = self.env['hr.rfid.time.schedule'].search([], limit=1, order='number')[0].id
 
         rel_env = self.env['hr.rfid.access.group.door.rel']
         for door in door_ids:
@@ -385,7 +385,7 @@ class HrRfidAccessGroupDoorRel(models.Model):
         'hr.rfid.time.schedule',
         string='Time schedule',
         help='Time schedule for the door/access group combination',
-        default=lambda self: self.env.ref('hr_rfid.hr_rfid_time_schedule_0').id,
+        default=lambda self: self.env['hr.rfid.time.schedule'].search([], limit=1, order='number')[0].id,
         required=True,
         ondelete='cascade',
     )
@@ -418,6 +418,7 @@ class HrRfidAccessGroupDoorRel(models.Model):
 
         for rel in records:
             card_door_rel_env.update_door_rels(rel.door_id, rel.access_group_id)
+            rel.door_id.controller_id.write_ts_id(rel.time_schedule_id)
 
         return records
 
@@ -427,11 +428,13 @@ class HrRfidAccessGroupDoorRel(models.Model):
     def unlink(self):
         card_door_rel_env = self.env['hr.rfid.card.door.rel']
         for rel in self:
-            door = rel.door_id
-            cards = door.get_potential_cards(access_groups=rel.access_group_id)
+            door_id = rel.door_id
+            ts_id = rel.time_schedule_id
+            cards = door_id.get_potential_cards(access_groups=rel.access_group_id)
             super(HrRfidAccessGroupDoorRel, rel).unlink()
+            door_id.controller_id.delete_ts_id(ts_id)
             for card, ts, alarm_right in cards:
-                card_door_rel_env.check_relevance_slow(card, door, alarm_right)
+                card_door_rel_env.check_relevance_slow(card, door_id, alarm_right)
 
 
 ###
@@ -669,7 +672,7 @@ class HrRfidAccessGroupWizard(models.TransientModel):
         string='Time Schedule',
         help='Time schedule for the door/access group combination',
         required=True,
-        default=lambda self: self.env.ref('hr_rfid.hr_rfid_time_schedule_0').id,
+        default=lambda self: self.env['hr.rfid.time.schedule'].search([], limit=1, order='number')[0].id,
     )
 
     alarm_rights = fields.Boolean(

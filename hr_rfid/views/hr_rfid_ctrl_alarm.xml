@@ -67,7 +67,7 @@
                             </group>
                             <group>
                                 <field name="controller_id"/>
-                                <field name="door_id"/>
+                                <field name="door_id" options='{"no_open": True, "no_create": True}'/>
                             </group>
                         </group>
                         <group string="Debug Information" groups="base.group_no_one" colspan="4">

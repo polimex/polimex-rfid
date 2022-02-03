@@ -48,16 +48,16 @@ class HrRfidTimeSchedule(models.Model):
         help='Which doors use this time schedule in which access group',
     )
 
-    controller_ids = fields.One2many(
+    controller_ids = fields.Many2many(
         comodel_name='hr.rfid.ctrl',
-        compute='_compute_controllers_ids'
+        # compute='_compute_controllers_ids'
     )
 
-    @api.depends('access_group_door_ids')
-    def _compute_controllers_ids(self):
-        for ts in self:
-            ctrl_ids = ts.access_group_door_ids.mapped(lambda rel: rel.door_id.controller_id)
-            ts.sudo().write({'controller_ids': [(6, 0, ctrl_ids.mapped('id'))]})
+    # @api.depends('access_group_door_ids')
+    # def _compute_controllers_ids(self):
+    #     for ts in self:
+    #         ctrl_ids = ts.access_group_door_ids.mapped(lambda rel: rel.door_id.controller_id)
+    #         ts.sudo().write({'controller_ids': [(6, 0, ctrl_ids.mapped('id'))]})
 
     @api.depends('ts_data')
     def _compute_is_empty(self):
@@ -204,5 +204,6 @@ class HrRfidTimeScheduleWizWeek(models.TransientModel):
     def save_ts(self):
         new_ts_data = self.ts_id.ts_data[:2] + self.interval_ids.get_set_str()
         self.sudo().ts_id.ts_data = new_ts_data
+        self.ts_id.controller_ids.write_ts(new_ts_data)
         return self.env.ref('hr_rfid.hr_rfid_time_schedule_action').read()[0]
 

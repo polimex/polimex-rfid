@@ -24,7 +24,7 @@
             <field name="priority">20</field>
             <field name="arch" type="xml">
                 <graph string="Temperature and Humidity Log" type="line" sample="1" stacked="False">
-                    <field name="create_date" interval="hour" type="col"/>
+                    <field name="create_date" interval="day" type="col"/>
                     <field name="humidity" type="measure"/>
                     <field name="temperature" type="measure"/>
                     <field name="th_id" type="row"/>
@@ -38,7 +38,7 @@
             <field name="priority">1</field>
             <field name="arch" type="xml">
                 <pivot string="Temperature and Humidity Log" sample="1">
-                    <field name="create_date" interval="hour" type="row"/>
+                    <field name="create_date" interval="day" type="row"/>
                     <field name="temperature" type="measure"/>
                     <field name="humidity" type="measure"/>
                     <field name="th_id" type="col"/>

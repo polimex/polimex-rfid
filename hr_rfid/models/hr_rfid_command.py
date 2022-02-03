@@ -64,7 +64,6 @@ class HrRfidCommands(models.Model):
         ('DD', _('Write Input Flags')),
         ('DE', _('Write Anti-Passback Mode')),
         ('DF', _('Write Outputs T/S Table')),
-        ('D3', _('Delete Time Schedule')),
         ('B3', _('Read Controller Status')),
         ('B4', _('Read/Write Hotel buttons sense')),
     ]
