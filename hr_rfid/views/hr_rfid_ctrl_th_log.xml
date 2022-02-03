@@ -24,7 +24,7 @@
             <field name="priority">20</field>
             <field name="arch" type="xml">
                 <graph string="Temperature and Humidity Log" type="line" sample="1" stacked="False">
-                    <field name="create_date" type="col"/>
+                    <field name="create_date" interval="day" type="col"/>
                     <field name="humidity" type="measure"/>
                     <field name="temperature" type="measure"/>
                     <field name="th_id" type="row"/>
@@ -33,12 +33,12 @@
         </record>
 
         <record id="hr_rfid_ctrl_th_log_pivot_view" model="ir.ui.view">
-            <field name="name">r.rfid.ctrl.th.log.pivot.view</field>
+            <field name="name">hr.rfid.ctrl.th.log.pivot.view</field>
             <field name="model">hr.rfid.ctrl.th.log</field>
             <field name="priority">1</field>
             <field name="arch" type="xml">
                 <pivot string="Temperature and Humidity Log" sample="1">
-                    <field name="create_date" type="row"/>
+                    <field name="create_date" interval="day" type="row"/>
                     <field name="temperature" type="measure"/>
                     <field name="humidity" type="measure"/>
                     <field name="th_id" type="col"/>

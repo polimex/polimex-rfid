@@ -31,7 +31,7 @@ hr_rfid_manager_event_user,hr.rfid.manager.event.user,model_hr_rfid_event_user,h
 hr_rfid_manager_event_system,hr.rfid.manager.event.system,model_hr_rfid_event_system,hr_rfid.hr_rfid_group_manager,1,1,1,1
 hr_rfid_manager_command,hr.rfid.manager.command,model_hr_rfid_command,hr_rfid.hr_rfid_group_manager,1,1,1,1
 hr_rfid_manager_access_group_door_rel,hr.rfid.manager.access.group.door.rel,model_hr_rfid_access_group_door_rel,hr_rfid.hr_rfid_group_manager,1,1,1,1
-hr_rfid_manager_time_schedule,hr.rfid.manager.time.schedule,model_hr_rfid_time_schedule,hr_rfid.hr_rfid_group_manager,1,0,0,0
+hr_rfid_manager_time_schedule,hr.rfid.manager.time.schedule,model_hr_rfid_time_schedule,hr_rfid.hr_rfid_group_manager,1,1,0,0
 hr_rfid_manager_card_door_rel,hr.rfid.manager.card.door.rel,model_hr_rfid_card_door_rel,hr_rfid.hr_rfid_group_manager,1,1,1,1
 hr_rfid_view_rfid_data_card,hr.rfid.view.rfid.data.card,model_hr_rfid_card,hr_rfid.hr_rfid_view_rfid_data,1,0,0,0
 hr_rfid_view_rfid_data_access_group,hr.rfid.view.rfid.data.access.group,model_hr_rfid_access_group,hr_rfid.hr_rfid_view_rfid_data,1,0,0,0
@@ -57,3 +57,5 @@ access_hr_rfid_door_open_close_wiz,access_hr_rfid_door_open_close_wiz,model_hr_r
 access_hr_rfid_zone_doors_wiz,access_hr_rfid_zone_doors_wiz,model_hr_rfid_zone_doors_wiz,hr_rfid.hr_rfid_group_manager,1,1,1,1
 access_hr_rfid_ctrl_th,access_hr_rfid_ctrl_th,model_hr_rfid_ctrl_th,hr_rfid.hr_rfid_group_officer,1,1,0,0
 access_hr_rfid_ctrl_th_log,access_hr_rfid_ctrl_th_log,model_hr_rfid_ctrl_th_log,hr_rfid.hr_rfid_group_officer,1,0,0,0
+access_hr_rfid_ctrl_ts_line,access_hr_rfid_ctrl_ts_line,model_hr_rfid_ctrl_ts_line,hr_rfid.hr_rfid_group_manager,1,1,1,1
+access_hr_rfid_ctrl_ts_week_wiz,access_hr_rfid_ctrl_ts_week_wiz,model_hr_rfid_ctrl_ts_week_wiz,hr_rfid.hr_rfid_group_manager,1,1,1,1

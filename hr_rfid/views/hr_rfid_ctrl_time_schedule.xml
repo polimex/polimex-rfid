@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <data>
+         <!-- Create TS based on company -->
+        <function model="hr.rfid.time.schedule" name="set_company_ts"/>
+
+        <record id="hr_rfid_time_schedule_view_form" model="ir.ui.view">
+            <field name="name">hr.rfid.time.schedule.form</field>
+            <field name="model">hr.rfid.time.schedule</field>
+            <field name="arch" type="xml">
+                <form create="0" delete="0">
+                    <sheet>
+                        <div class="oe_button_box" name="ts_button_box">
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" placeholder="Friendly name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="number"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Debug Information" groups="base.group_no_one" colspan="4">
+                            <field name="controller_ids" readonly="1"/>
+                            <field name="access_group_door_ids" readonly="1">
+                                <tree>
+                                    <field name="access_group_id" />
+                                    <field name="door_id"/>
+                                    <field name="alarm_rights"/>
+                                </tree>
+                            </field>
+                            <field name="ts_data" readonly="1"/>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_rfid_time_schedule_view_kanban" model="ir.ui.view">
+            <field name="name">hr.rfid.time.schedule.kanban</field>
+            <field name="model">hr.rfid.time.schedule</field>
+            <field name="arch" type="xml">
+                <kanban create="0" delete="0">
+                    <field name="id"/>
+                    <field name="name"/>
+                    <field name="number"/>
+                    <field name="is_empty"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_product_vignette oe_kanban_global_click">
+                                <ul style="list-style:none;margin:0;padding0;">
+                                    <li><field name="name"/></li>
+                                    <li>TS Number: <field name="number"/></li>
+<!--                                    <t t-debug="record"/>-->
+                                    <t t-if="((record.is_empty.raw_value == true) &amp;&amp; (record.number.raw_value &gt; 0))">
+                                        <li class="text-danger">TS is empty</li>
+                                    </t>
+                                    <t t-elif="(record.is_empty.raw_value == false)">
+                                        <li class="text-success">TS is not empty</li>
+                                    </t>
+                                </ul>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="hr_rfid_time_schedule_view_tree" model="ir.ui.view">
+            <field name="name">hr.rfid.time.schedule.tree</field>
+            <field name="model">hr.rfid.time.schedule</field>
+            <field name="arch" type="xml">
+                <tree create="false" delete="false">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_rfid_time_schedule_action" model="ir.actions.act_window">
+            <field name="name">Time Schedules</field>
+            <field name="res_model">hr.rfid.time.schedule</field>
+            <field name="view_mode">kanban,tree,form,search</field>
+        </record>
+
+
+<!--        Wizard for Time Schedules-->
+
+        <record id="hr_rfid_controller_ts_wiz" model="ir.ui.view">
+            <field name="name">hr.rfid.ctrl.ts.week.wizard</field>
+            <field name="model">hr.rfid.ctrl.ts.week.wiz</field>
+            <field name="arch" type="xml">
+                <form string="View/Modify Time Schedule">
+                    <div>
+                        <h1>Time schedule data for <field name="ts_id" readonly="1" options="{'clickable': '0'}" class="oe_inline"/> </h1>
+                        <br/>
+<!--                        <field name="interval_ids" widget="one2many_list" >-->
+                        <field name="interval_ids">
+                            <tree create="false" delete="false" editable="bottom" multi_edit="1" default_order="day asc">
+                                <field name="day" />
+                                <field name="number" />
+                                <field name="begin" widget="float_time"/>
+                                <field name="end" widget="float_time"/>
+                            </tree>
+                        </field>
+                    </div>
+                    <footer>
+                        <button name="save_ts" type="object" string="Save" class="oe_highlight"/>
+                        <button special="cancel" string="Close" class="oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+<!--        <record id="hr_rfid_controller_io_table_wiz_action" model="ir.actions.act_window">-->
+<!--            <field name="name">View/modify IO table</field>-->
+<!--            <field name="res_model">hr.rfid.ctrl.io.table.wiz</field>-->
+<!--            &lt;!&ndash;      <field name="view_type">form</field>&ndash;&gt;-->
+<!--            <field name="view_mode">form</field>-->
+<!--            <field name="view_id" ref="hr_rfid_controller_io_table_wiz"/>-->
+<!--            <field name="target">new</field>-->
+<!--        </record>-->
+
+        <record id="hr_rfid_ctrl_ts_week_wiz_action" model="ir.actions.act_window">
+            <field name="name">Time Schedule Wizard</field>
+            <field name="res_model">hr.rfid.ctrl.ts.week.wiz</field>
+            <field name="view_mode">form</field>
+<!--            <field name="view_id" ref="hr_rfid.hr_rfid_controller_ts_wiz"/>-->
+            <field name="view_id" ref="hr_rfid_controller_ts_wiz"/>
+            <field name="target">new</field>
+<!--            <field name="context">{}</field>-->
+            <field name="binding_model_id" ref="model_hr_rfid_time_schedule"/>
+            <field name="binding_view_types">form</field>
+<!--            <field name="groups_id" eval="[(4, ref('hr_rfid.hr_rfid_group_manager'))]"/>-->
+        </record>
+
+<!--        <record id="action_crm_send_mass_convert" model="ir.actions.act_window">-->
+<!--        <field name="name">Convert to opportunities</field>-->
+<!--        <field name="res_model">crm.lead2opportunity.partner.mass</field>-->
+<!--        <field name="view_mode">form</field>-->
+<!--        <field name="view_id" ref="view_crm_lead2opportunity_partner_mass"/>-->
+<!--        <field name="target">new</field>-->
+<!--        <field name="context">{}</field>-->
+<!--        <field name="binding_model_id" ref="model_crm_lead"/>-->
+<!--        <field name="binding_view_types">list</field>-->
+<!--    </record>-->
+
+    </data>
+</odoo>

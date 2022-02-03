@@ -41,8 +41,8 @@ class EmployeeTests(common.SavepointCase):
         cls._contacts[1].add_acc_gr(cls._acc_grs[1])
         cls._contacts[2].add_acc_gr(cls._acc_grs[2])
 
-        cls._def_ts = cls.env.ref('hr_rfid.hr_rfid_time_schedule_0')
-        cls._other_ts = cls.env.ref('hr_rfid.hr_rfid_time_schedule_1')
+        cls._def_ts = cls.env['hr.rfid.time.schedule'].search([], limit=1, order='number')[0].id
+        cls._other_ts = cls.env['hr.rfid.time.schedule'].search([], limit=1, order='number')[1].id
 
         cls._acc_grs[0].add_doors(cls._doors[0], cls._def_ts)
         cls._acc_grs[1].add_doors(cls._doors[1], cls._def_ts)

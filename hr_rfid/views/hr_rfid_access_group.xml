@@ -27,8 +27,8 @@
                 <form string="Add Doors">
                     <group>
                         <field name="acc_gr_doors" attrs="{'invisible': True}"/>
-                        <field name="door_ids" domain="[('id', 'not in', acc_gr_doors)]" widget="many2many_tags"/>
-                        <field name="time_schedule_id"/>
+                        <field name="door_ids" options='{"no_open": True, "no_create": True}' domain="[('id', 'not in', acc_gr_doors)]" widget="many2many_tags"/>
+                        <field name="time_schedule_id" options='{"no_open": True, "no_create": True}'/>
                         <field name="alarm_rights"/>
                     </group>
                     <footer>
@@ -47,7 +47,7 @@
                 <form string="Remove Doors">
                     <group>
                         <field name="acc_gr_doors" attrs="{'invisible': True}"/>
-                        <field name="door_ids" domain="[('id', 'in', acc_gr_doors)]" widget="many2many_tags"/>
+                        <field name="door_ids" options='{"no_open": True, "no_create": True}' domain="[('id', 'in', acc_gr_doors)]" widget="many2many_tags"/>
                     </group>
                     <footer>
                         <button name="del_doors" type="object"
@@ -297,9 +297,9 @@
             <field name="arch" type="xml">
                 <form create="0" edit="0" delete="0">
                     <group>
-                        <field name="access_group_id"/>
-                        <field name="door_id"/>
-                        <field name="time_schedule_id"/>
+                        <field name="access_group_id" options='{"no_open": True, "no_create": True}'/>
+                        <field name="door_id" options='{"no_open": True, "no_create": True}'/>
+                        <field name="time_schedule_id" options='{"no_open": True, "no_create": True}'/>
                         <field name="alarm_rights"/>
                     </group>
                 </form>

@@ -121,12 +121,31 @@
                   action="hr_rfid_access_group_action"
                   groups="hr_rfid_group_manager"
                   sequence="10"/>
+        <menuitem id="hr_rfid_menu_time_schedules"
+                  name="Time Schedules"
+                  parent="hr_rfid_root_menu_access_control"
+                  action="hr_rfid_time_schedule_action"
+                  groups="hr_rfid_group_manager"
+                  sequence="20"/>
+        <menuitem id="hr_rfid_menu_workcodes"
+                  name="Work codes"
+                  parent="hr_rfid_root_menu_access_control"
+                  action="hr_rfid_workcode_action"
+                  groups="hr_rfid_group_manager"
+                  sequence="30"/>
         <menuitem id="hr_rfid_menu_zones"
                   name="Zones"
                   parent="hr_rfid_root_menu_access_control"
                   action="hr_rfid_zone_action"
                   groups="hr_rfid_group_manager"
-                  sequence="20"/>
+                  sequence="40"/>
+        <menuitem id="hr_rfid_menu_card_types"
+                  name="Card Types"
+                  parent="hr_rfid_root_menu_access_control"
+                  action="hr_rfid_card_type_action"
+                  groups="hr_rfid_group_manager"
+                  sequence="50"/>
+
 
 
         <!--#######################################################
@@ -191,25 +210,6 @@
                   action="action_hr_rfid_configuration"
                   groups="hr_rfid_group_manager"
                   sequence="10"/>
-        <menuitem id="hr_rfid_menu_card_types"
-                  name="Card Types"
-                  parent="hr_rfid_settings_menu"
-                  action="hr_rfid_card_type_action"
-                  groups="hr_rfid_group_manager"
-                  sequence="15"/>
-        <menuitem id="hr_rfid_menu_time_schedules"
-                  name="Time Schedules"
-                  parent="hr_rfid_settings_menu"
-                  action="hr_rfid_time_schedule_action"
-                  groups="hr_rfid_group_manager"
-                  sequence="20"/>
-        <menuitem id="hr_rfid_menu_workcodes"
-                  name="Work codes"
-                  parent="hr_rfid_settings_menu"
-                  action="hr_rfid_workcode_action"
-                  groups="hr_rfid_group_manager"
-                  sequence="30"/>
-
 
     </data>
 </odoo>
