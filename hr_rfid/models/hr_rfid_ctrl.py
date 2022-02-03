@@ -887,7 +887,7 @@ class HrRfidController(models.Model):
         return self._base_command('D3', ts_data)
 
     def write_ts_id(self, ts_id):
-        if ts_id and ts_id.number != 0 and not ts_id.is_empty():
+        if ts_id and ts_id.number != 0 and not ts_id.is_empty:
             for ctrl in self.filtered(lambda c: c.id not in ts_id.controller_ids.mapped('id')):
                 ctrl.write_ts(ts_id.ts_data)
                 ts_id.sudo().write({'controller_ids': [(4, ctrl.id, 0)]})
