@@ -202,8 +202,9 @@ class HrRfidTimeScheduleWizWeek(models.TransientModel):
     )
 
     def save_ts(self):
-        new_ts_data = self.ts_id.ts_data[:2] + self.interval_ids.get_set_str()
+        new_ts_data = '%02X' % self.ts_id.number + self.interval_ids.get_set_str()
         self.sudo().ts_id.ts_data = new_ts_data
-        self.ts_id.controller_ids.write_ts(new_ts_data)
+        if not self.ts_id.is_empty():
+            self.ts_id.controller_ids.write_ts(new_ts_data)
         return self.env.ref('hr_rfid.hr_rfid_time_schedule_action').read()[0]
 
