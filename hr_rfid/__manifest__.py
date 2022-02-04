@@ -6,10 +6,12 @@
     'version': '2.0',
     'category': 'Human Resources',
     'summary': 'Manage employee access control',
-    'author': 'Polimex Holding Ltd',
+    'company': 'Polimex Holding Ltd',
+    'author': 'Polimex Dev Team',
     'license': 'AGPL-3',
 
     'website': 'https://polimex.co/',
+    'live_test_url': 'https://demo.polimex.co',
 
     'depends': ['hr', 'contacts', 'digest'],
 
