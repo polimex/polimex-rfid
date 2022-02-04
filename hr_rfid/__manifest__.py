@@ -9,7 +9,7 @@
     'author': 'Polimex Holding Ltd',
     'license': 'AGPL-3',
 
-    'website': 'https://www.polimex.co/',
+    'website': 'https://polimex.co/',
 
     'depends': ['hr', 'contacts', 'digest'],
 
