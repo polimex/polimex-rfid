@@ -16,22 +16,21 @@ _logger = logging.getLogger(__name__)
 
 
 class HrRfidVending(WebRfidController):
-    def __init__(self, *args, **kwargs):
-        self._post = None
-        self._webstacks_env = None
-        self._webstack = None
-        super(HrRfidVending, self).__init__(*args, **kwargs)
 
     @http.route(['/hr/rfid/event'], type='json', auth='none', methods=['POST'], cors='*', csrf=False,
                 save_session=False)
     def post_event(self, **post):
-        self._post = post
-        self._webstacks_env = request.env['hr.rfid.webstack'].sudo()
+        if not post:
+            # Controllers with no odoo functionality use the dd/mm/yyyy format
+            post_data = request.jsonrequest
+        else:
+            post_data = post
+
         cmd_env = request.env['hr.rfid.command'].sudo()
         ev_env = request.env['hr.rfid.vending.event'].sudo()
         sys_ev_env = request.env['hr.rfid.event.system'].sudo()
 
-        self._webstack = self._webstacks_env.search([('serial', '=', str(post['convertor']))])
+        webstack_id = request.env['hr.rfid.webstack'].sudo().search([('serial', '=', str(post_data['convertor']))])
         status_code = 200
 
         item_missing_err_str = _('Item number %d missing from vending machine configuration')
@@ -39,6 +38,11 @@ class HrRfidVending(WebRfidController):
 
         def ret_super():
             return super(HrRfidVending, self).post_event(**post)
+
+        def ret_local(data):
+            if not post and 'cmd' in data:
+                return {'cmd': data['cmd']}
+            return data
 
         def create_ev(controller, event, card, ev_num, item_sold_id=None, transaction_price=None,
                       item_number=None):
@@ -48,7 +52,7 @@ class HrRfidVending(WebRfidController):
                 'controller_id': controller.id,
                 'ctrl_addr': controller.ctrl_id,
                 'reader_id': controller.reader_ids.filtered(lambda r: r.number == event['reader']).id,
-                'input_js': json.dumps(post),
+                'input_js': json.dumps(post_data),
             }
             if len(card) > 0:
                 ev['card_id'] = card.id
@@ -82,8 +86,8 @@ class HrRfidVending(WebRfidController):
             return (received_balance * controller.scale_factor) / 100
 
         def parse_event():
-            controller = self._webstack.controllers.filtered(lambda r: r.ctrl_id == post['event']['id'])
-            event = post['event']
+            controller = webstack_id.controllers.filtered(lambda r: r.ctrl_id == post_data['event']['id'])
+            event = post_data['event']
             if len(controller) == 0:
                 return ret_super()
 
@@ -110,24 +114,24 @@ class HrRfidVending(WebRfidController):
                 date = controller.webstack_id.get_ws_time()
                 if date + datetime.timedelta(minutes=5) <= datetime.datetime.now():
                     ev = create_ev(controller, event, card, '64')
-                    return controller.webstack_id.check_for_unsent_cmd(status_code, ev)
+                    return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code, ev))
 
                 if event['bos'] < event['tos']:
                     ev = create_ev(controller, event, card, '64')
-                    return controller.webstack_id.check_for_unsent_cmd(status_code, ev)
+                    return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code, ev))
 
                 balance_str, balance = card.employee_id.get_employee_balance(controller)
                 card_number = reduce(operator.add, list('0' + str(a) for a in card.number), '')
 
                 ev = create_ev(controller, event, card, '64')
                 cmd = cmd_env.create({
-                    'webstack_id': self._webstack.id,
+                    'webstack_id': webstack_id.id,
                     'controller_id': controller.id,
                     'cmd': 'DB2',
                     'cmd_data': '4000' + card_number + balance_str,
                 })
                 ev.command_id = cmd
-                return cmd.send_command(status_code)
+                return ret_local(cmd.send_command(status_code))
             # TODO Move into function "deal_with_ev_47"
             elif event['event_n'] == 47:
                 card = card_env.search(
@@ -154,7 +158,7 @@ class HrRfidVending(WebRfidController):
 
                     if row_num < 1 or row_num > 18:
                         ev = create_ev(controller, event, card, '-1')
-                        return controller.webstack_id.check_for_unsent_cmd(status_code, ev)
+                        return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code, ev))
 
                     rows_env = request.env['hr.rfid.ctrl.vending.row'].sudo()
                     row = rows_env.search([
@@ -193,18 +197,18 @@ class HrRfidVending(WebRfidController):
                     controller.cash_contained = controller.cash_contained + item_price
                     ev = create_ev(controller, event, card, '47', item, item_price, item_number=item_sold)
 
-                return controller.webstack_id.check_for_unsent_cmd(status_code, ev)
+                return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code, ev))
             # TODO Move into function "deal_with_err_evs"
             elif event['event_n'] in [48, 49]:
                 controller.report_sys_ev('Vending machine sent us an error', event)
-                return controller.webstack_id.check_for_unsent_cmd(status_code)
+                return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code))
 
             return ret_super()
 
         try:
-            if 'event' in post:
+            if 'event' in post_data:
                 t0 = time.time()
-                _logger.debug('Vending: Received=' + str(post))
+                _logger.debug('Vending: Received=' + str(post_data))
                 ret = parse_event()
                 t1 = time.time()
                 _logger.debug('Took %2.03f time to form response=%s' % ((t1 - t0), str(ret)))
@@ -216,16 +220,16 @@ class HrRfidVending(WebRfidController):
                 exceptions.MissingError, exceptions.ValidationError,
                 psycopg2.DataError, ValueError) as __:
             # commented DeferredException ^
-            self._webstack.sys_log(error_description=traceback.format_exc(),
-                                   input_json=json.dumps(post))
+            webstack_id.sys_log(error_description=traceback.format_exc(),
+                                   input_json=json.dumps(post_data))
             _logger.debug('Vending: Caught an exception, returning status=500 and creating a system event')
             return {'status': 500}
         except BadTimeException:
-            t = self._post['event']['date'] + ' ' + self._post['event']['time']
-            ev_num = str(self._post['event']['event_n'])
-            controller = self._webstack.controllers.filtered(lambda r: r.ctrl_id == self._post['event']['id'])
+            t = post_data['event']['date'] + ' ' + post_data['event']['time']
+            ev_num = str(post_data['event']['event_n'])
+            controller = webstack_id.controllers.filtered(lambda r: r.ctrl_id == post_data['event']['id'])
             controller.sys_log(error_description=f'Controller sent us an invalid date or time: {t}',
                                ev_num=ev_num,
-                               input_json=json.dumps(self._post))
+                               input_json=json.dumps(post_data))
             _logger.debug('Caught a time error, returning status=200 and creating a system event')
             return {'status': 200}
