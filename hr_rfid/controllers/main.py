@@ -345,7 +345,8 @@ class WebRfidController(http.Controller):
                 # External db event, controller requests for permission to open or close door
                 ret = request.env['hr.rfid.access.group.door.rel'].sudo().search([
                     (
-                    'access_group_id', 'in', card_id.get_owner().hr_rfid_access_group_ids.mapped('access_group_id.id')),
+                        'access_group_id', 'in',
+                        card_id.get_owner().hr_rfid_access_group_ids.mapped('access_group_id.id')),
                     ('door_id', '=', reader_id.door_id.id)
                 ])
                 return self._respond_to_ev_64(len(ret) > 0 and card_id.active is True,
@@ -444,6 +445,8 @@ class WebRfidController(http.Controller):
 
         """
         t0 = time.time()
+        # with_context(key='value')
+
         if not post:
             # Controllers with no odoo functionality use the dd/mm/yyyy format
             post_data = request.jsonrequest
@@ -471,7 +474,8 @@ class WebRfidController(http.Controller):
                         'available': 'a',
                         'company_id': request.env['res.company'].search([])[0].id,
                     }
-                    webstack_id = request.env['hr.rfid.webstack'].sudo().with_context(tz=request.env['res.users'].sudo().browse(2).tz).create(new_webstack_dict)
+                    webstack_id = request.env['hr.rfid.webstack'].sudo().with_context(
+                        tz=request.env['res.users'].sudo().browse(2).tz).create(new_webstack_dict)
                 else:
                     return {'status': 400}
 
@@ -497,14 +501,15 @@ class WebRfidController(http.Controller):
 
             if 'heartbeat' in post_data:
                 _logger.info('Heartbeat from {}'.format(webstack_id.name))
-                result = webstack_id.parse_heartbeat(post_data=post_data)
+                result = webstack_id.with_context(old=not post).parse_heartbeat(post_data=post_data)
             elif 'event' in post_data:
                 _logger.info('Event from {}'.format(webstack_id.name))
-                result = self._parse_event(post_data=post_data, webstack=webstack_id)
+                result = self.with_context(old=not post)._parse_event(post_data=post_data, webstack=webstack_id)
             elif 'response' in post_data:
                 _logger.info('Command response from {}'.format(webstack_id.name))
-                result = webstack_id.parse_response(post_data=post_data)
-
+                result = webstack_id.with_context(old=not post).parse_response(post_data=post_data)
+            if not post and 'cmd' in result:
+                result = {'cmd': result['cmd']}
             webstack_id.write(self._ws_db_update_dict())
             t1 = time.time()
             _logger.debug('Took %2.03f time to form response=%s' % ((t1 - t0), str(result)))
@@ -537,6 +542,9 @@ class WebRfidController(http.Controller):
             request.env['hr.rfid.event.system'].sudo().create(sys_ev_dict)
             _logger.debug('Caught a time error, returning status=200 and creating a system event')
             # print('Caught a time error, returning status=200 and creating a system event')
+            if not post:
+                #return werkzeug.exceptions.NotFound(description)
+                pass
             return {'status': 200}
 
     def _parse_raw_data(self, post_data: dict):

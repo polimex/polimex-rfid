@@ -1,9 +1,7 @@
 import datetime
 import json
 from datetime import timedelta
-import requests
 
-import odoo
 from odoo import fields, models, api, exceptions, _, SUPERUSER_ID
 from enum import Enum
 
@@ -837,7 +835,7 @@ class HrRfidCommands(models.Model):
             self.controller_id.read_io_table_cmd()
             self.controller_id.read_status()
 
-        if not self.controller_id.is_relay_ctrl() and (ctrl_mode == 1 or ctrl_mode == 3):
+        if not self.controller_id.is_relay_ctrl() and (ctrl_mode == 1 or ctrl_mode == 3) and self.controller_id.readers > 1:
             cmd_env.read_anti_pass_back_mode_cmd(self.controller_id)
 
     # Communication Helpers

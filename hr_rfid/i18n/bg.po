@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-03 19:54+0000\n"
-"PO-Revision-Date: 2022-02-03 22:01+0200\n"
+"POT-Creation-Date: 2022-02-06 08:47+0000\n"
+"PO-Revision-Date: 2022-02-06 10:50+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1285,12 +1285,6 @@ msgid "Change and Apply for Everyone"
 msgstr "Промяна и прилагане за всички"
 
 #. module: hr_rfid
-#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
-msgid "Check connection to the Module"
-msgstr "Проверка на връзката с модула"
-
-#. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
 #, python-format
 msgid "Circular reference found in the inherited access groups: %s"
@@ -2472,6 +2466,16 @@ msgid "Error"
 msgstr "Грешка"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid ""
+"Error received while trying to setup the module!\n"
+" "
+msgstr ""
+"Грешка, получена при опит за настройка на модула!\n"
+" "
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_system_ev_view_pivot
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_pivot
 msgid "Event"
@@ -2592,12 +2596,6 @@ msgstr "Събития на {}"
 #: model:ir.model.fields,help:hr_rfid.field_hr_department__hr_rfid_default_access_group
 msgid "Every user added to this department gets this access group by default"
 msgstr "Всеки потребител, добавен към този отдел получава тази група за достъп по подразбиране"
-
-#. module: hr_rfid
-#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
-msgid "Everything looks just great!"
-msgstr "Всичко изглежда добре!"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__ex_timestamp
@@ -3226,16 +3224,6 @@ msgstr "Неправилен отговор на данни"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_reader_view_form
 msgid "Information"
 msgstr "Информация"
-
-#. module: hr_rfid
-#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
-msgid ""
-"Information sent to the Module. If everything is fine, the Module have to start communication with this instance. The URL in "
-"use is http://{} on port {}."
-msgstr ""
-"Информацията е изпратена към Модула. Ако всичко е наред, Модулът трябва да започне комуникация с тази инсталация. "
-"Използваният адрес е http://{} на порт {}."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
@@ -3998,12 +3986,6 @@ msgstr "Без грешка"
 #, python-format
 msgid "No Response from controller (WebSDK)"
 msgstr "Няма отговор от контролера (WebSDK)"
-
-#. module: hr_rfid
-#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
-msgid "No controllers detected in the Module or the Module is Archived"
-msgstr "Няма отрити контролери в Модула или модула е архивиран"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
@@ -4957,12 +4939,6 @@ msgid "Readers that open this door"
 msgstr "Четци, които отварят тази врата"
 
 #. module: hr_rfid
-#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
-msgid "Reading controllers from the Module"
-msgstr "Прочети контролерите от Модула"
-
-#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_form
 msgid "Receive Date"
 msgstr "Дата на получаване"
@@ -5255,12 +5231,6 @@ msgstr "Информация за настройка"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "Setup module for this odoo"
 msgstr "Настрой модула за работа с този сървър"
-
-#. module: hr_rfid
-#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
-msgid "Setup the Module"
-msgstr "Настрой Модула"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__state__short
@@ -5753,7 +5723,7 @@ msgstr "График"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_ts_wiz
 msgid "Time schedule data for"
-msgstr "Данни на времеви график "
+msgstr "Данни на времеви график"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
@@ -5851,6 +5821,9 @@ msgstr "Уникален номер за разграничаване на вс�
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0 code:addons/hr_rfid/models/hr_rfid_ctrl_reader.py:0
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__mode_selection_31__0
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__mode_selection_4__0
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__mode_selection__0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__state__unknown
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_reader__mode__00
 #, python-format
@@ -6352,10 +6325,11 @@ msgstr "Грешна стойност/параметър"
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 #, python-format
 msgid ""
-"Your current setup not permit this operation. You need to do it manually. Please call your support team for more information!"
+"Your current setup not permit this operation. You need to do it manually.\n"
+" Please call your support team for more information!"
 msgstr ""
-"Вашата текуща настройка не позволява тази операция. Трябва да се направи ръчно. Моля свържете се с поддръжката Ви за повече "
-"информация!"
+"Вашата текуща настройка не позволява тази операция. Трябва да се направи ръчно. \n"
+"Моля свържете се с поддръжката Ви за повече информация!"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_zone

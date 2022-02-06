@@ -4,7 +4,7 @@ from odoo.addons.hr_rfid.controllers.polimex import HW_TYPES
 
 class HrRfidController(models.Model):
     _name = 'hr.rfid.ctrl'
-    _inherit = ['mail.thread']
+    _inherit = ['mail.thread', 'balloon.mixin']
     _description = 'Controller'
     _sql_constraints = [('rfid_controller_unique', 'unique(serial_number)',
                          'Serial numbers must be unique!')]
@@ -98,21 +98,21 @@ class HrRfidController(models.Model):
 
     mode_selection = fields.Selection(
         string='Controller mode',
-        selection=[('1', 'One door'), ('2', 'Two doors')],
+        selection=[('0', 'Unknown'),('1', 'One door'), ('2', 'Two doors')],
         required=True,
         compute='_compute_controller_mode',
     )
 
     mode_selection_4 = fields.Selection(
         string='Controller mode',
-        selection=[('2', 'Two doors'), ('3', 'Three doors'), ('4', 'Four doors')],
+        selection=[('0', 'Unknown'),('2', 'Two doors'), ('3', 'Three doors'), ('4', 'Four doors')],
         required=True,
         compute='_compute_controller_mode',
     )
 
     mode_selection_31 = fields.Selection(
         string='Controller mode',
-        selection=[('1', '1 x 32 Relays'), ('2', '2 x 16 Relays'), ('3', '1 x 512 Relays')],
+        selection=[('0', 'Unknown'),('1', '1 x 32 Relays'), ('2', '2 x 16 Relays'), ('3', '1 x 512 Relays')],
         readonly=False,
         required=True,
         compute='_compute_controller_mode_31',
@@ -387,15 +387,10 @@ class HrRfidController(models.Model):
 
         for door in self.door_ids:
             self.env['hr.rfid.card.door.rel'].reload_door_rels(door)
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': _("Controller cards reload"),
-                'message': _("This will take time. For more information check controller's commands"),
-                'type': 'success',
-                'sticky': False,
-            }}
+        return self.balloon_success(
+            title=_("Controller cards reload"),
+            message=_("This will take time. For more information check controller's commands")
+        )
 
     def _get_alarm_line_state(self, zone_number):
         self.ensure_one()
@@ -510,15 +505,10 @@ class HrRfidController(models.Model):
     def re_read_ctrl_info(self):
         for ctrl in self:
             ctrl.read_controller_information_cmd(ctrl)
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': _("Refresh Controller information"),
-                'message': _("This will take time. For more information check controller's commands"),
-                'type': 'success',
-                'sticky': False,
-            }}
+        return self.balloon_success(
+            title=_("Refresh Controller information"),
+            message=_("This will take time. For more information check controller's commands")
+        )
 
     def write(self, vals):
         for ctrl in self:
@@ -702,18 +692,7 @@ class HrRfidController(models.Model):
         else:
             cmd_data = '%02x%02d%02d' % (out_number, out_state, time)
 
-        if self.webstack_id.behind_nat:
-            cmd_id = self.env['hr.rfid.command'].sudo().create([{
-                'webstack_id': self.webstack_id.id,
-                'controller_id': self.id,
-                'cmd': 'DB',
-                'cmd_data': cmd_data
-            }])
-        else:
-            cmd['cmd']['d'] = cmd_data
-            body_js = self.webstack_id.direct_execute(cmd=cmd)
-            if body_js['response']['e'] != 0:
-                raise exceptions.ValidationError('Error. Controller returned body:\n' + str(body_js))
+        res = self._base_command('DB', cmd_data)
 
     def read_controller_information_cmd(self):
         return self._base_command('F0')

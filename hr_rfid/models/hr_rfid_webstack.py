@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from requests import ConnectTimeout
+
 from odoo import api, fields, models, exceptions, _, SUPERUSER_ID, tools
 from datetime import datetime, timedelta
 import socket
@@ -9,11 +11,12 @@ import base64
 import pytz
 
 import logging
-_logger = logging.getLogger(__name__)
 
+_logger = logging.getLogger(__name__)
 
 # put POSIX 'Etc/*' entries at the end to avoid confusing users - see bug 1086728
 _tzs = [(tz, tz) for tz in sorted(pytz.all_timezones, key=lambda tz: tz if not tz.startswith('Etc/') else '_')]
+
 
 def get_local_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -28,15 +31,18 @@ def get_local_ip():
         s.close()
     return IP
 
+
 def _tz_get(self):
     return _tzs
+
 
 class BadTimeException(Exception):
     pass
 
+
 class HrRfidWebstack(models.Model):
     _name = 'hr.rfid.webstack'
-    _inherit = ['mail.activity.mixin', 'mail.thread']
+    _inherit = ['mail.activity.mixin', 'mail.thread', 'balloon.mixin']
     _description = 'Module'
 
     name = fields.Char(
@@ -227,15 +233,17 @@ class HrRfidWebstack(models.Model):
 
     def action_set_webstack_settings(self):
         self.ensure_one()
-        bad_hosts = ['localhost', '127.0.0.1','.local']
+        bad_hosts = ['localhost', '127.0.0.1', '.local']
         odoo_url = str(self.env['ir.config_parameter'].sudo().get_param('web.base.url'))
-        odoo_port = len(odoo_url.split(':'))==3 and int(odoo_url.split(':')[2], 10) or 80
+        odoo_port = len(odoo_url.split(':')) == 3 and int(odoo_url.split(':')[2], 10) or 80
         odoo_protocol = odoo_url.split('//')[0]
         if any([odoo_url.find(bh) < 0 for bh in bad_hosts]):
             local_ip = get_local_ip()
-            new_odoo_url =  f"{local_ip}"
+            new_odoo_url = f"{local_ip}"
             if odoo_url == new_odoo_url:
-                raise exceptions.ValidationError(_('Your current setup not permit this operation. You need to do it manually. Please call your support team for more information!'))
+                raise exceptions.ValidationError(
+                    _('Your current setup not permit this operation. You need to do it manually.\n '
+                      'Please call your support team for more information!'))
             else:
                 odoo_url = new_odoo_url
                 _logger.info(f"After investigation, the system url is: {odoo_url}")
@@ -244,92 +252,78 @@ class HrRfidWebstack(models.Model):
         username = str(self.module_username) if self.module_username else ''
         password = str(self.module_password) if self.module_password else ''
 
-        auth = base64.b64encode((username + ':' + password).encode())
-        auth = auth.decode()
-        req_headers = {"content-type": "application/json", "Authorization": "Basic " + str(auth)}
         host = str(self.last_ip)
-        js_uart_conf = json.dumps([
-            {
-                "br": 9600,
-                "db": 3,
-                "fc": 0,
-                "ft": 122,
-                "port": 0,
-                "pr": 0,
-                "rt": False,
-                "sb": 1,
-                "usage": 0
-            }, {
-                "br": 9600,
-                "db": 3,
-                "fc": 0,
-                "ft": 122,
-                "port": 2,
-                "pr": 0,
-                "rt": False,
-                "sb": 1,
-                "usage": 1
-            }
-        ])
-
-        config_params = 'sdk=1&stsd=1&sdts=1&stsu=' + odoo_url + '&prt=' \
-                        + str(odoo_port) + '&hb=1&thb=60&br=1&odoo=1'
+        uart_conf = [
+            {"br": 9600, "db": 3, "fc": 0, "ft": 122, "port": 0, "pr": 0, "rt": False, "sb": 1, "usage": 0},
+            {"br": 9600, "db": 3, "fc": 0, "ft": 122, "port": 2, "pr": 0, "rt": False, "sb": 1, "usage": 1}
+        ]
+        config_params_dict = {
+            'sdk': 1, 'stsd': 1, 'sdts': 1, 'stsu': odoo_url, 'prt': str(odoo_port),
+            'hb': 1, 'thb': 60, 'br': 1, 'odoo': 1,
+        }
         try:
-            if self.hw_version != '50.1':
-                conn = http.client.HTTPConnection(str(host), 80, timeout=2)
-                conn.request("POST", "/protect/uart/conf", js_uart_conf, req_headers)
-                response = conn.getresponse()
-                conn.close()
-                code = response.getcode()
-                body = response.read()
-                if code != 200:
-                    raise exceptions.ValidationError('While trying to setup /protect/uart/conf the module '
-                                                     'returned code ' + str(code) + ' with body:\n' +
-                                                     body.decode())
-
-            conn = http.client.HTTPConnection(str(host), 80, timeout=2)
-            conn.request("POST", "/protect/config.htm", config_params, req_headers)
-            response = conn.getresponse()
-            conn.close()
-            code = response.getcode()
-            body = response.read()
-            if code != 200:
-                raise exceptions.ValidationError('While trying to setup /protect/config.htm the module '
-                                                 'returned code ' + str(code) + ' with body:\n' +
-                                                 body.decode())
-        except socket.timeout:
-            raise exceptions.ValidationError('Could not connect to the module. '
-                                             "Check if it is turned on or if it's on a different ip.")
+            if self.hw_version == '100.1':
+                response = requests.post(
+                    url=f"http://{host}/protect/uart/conf",
+                    json=uart_conf, auth=(username, password), timeout=2
+                )
+                if response.status_code != 200:
+                    raise exceptions.ValidationError(
+                        _('Error received while trying to setup the module!\n ')+
+                        f'(/protect/uart/conf) returned {response.reason}({response.status_code}) with body:\n' +
+                        response.text
+                    )
+            if self.hw_version == '10.3':
+                del config_params_dict['odoo']
+            response = requests.post(
+                url=f"http://{host}/protect/config.htm",
+                data=config_params_dict, auth=(username, password), timeout=2
+            )
+            if response.status_code != 200:
+                raise exceptions.ValidationError(_('While trying to setup /protect/config.htm the module '
+                                                 f'error returned {response.reason}({response.status_code}) with body:\n') +
+                                                 response.text)
+            if self.hw_version == '10.3':
+                response = requests.post(
+                    url=f"http://{host}/protect/reboot.cgi",
+                    auth=(username, password), timeout=2
+                )
+                if response.status_code != 200:
+                    raise exceptions.ValidationError(_('While trying to reboot the module '
+                                                       f'error returned {response.reason}({response.status_code}) with body:\n') +
+                                                     response.text)
+            self.key = None
+        except (ConnectionError, ConnectTimeout) as e:
+            raise exceptions.ValidationError(_('Could not connect to the module. \n'
+                                             "Check if it is turned on or if it's on a different ip.\n")+
+                                             f"({str(e)})")
         except (socket.error, socket.gaierror, socket.herror) as e:
-            raise exceptions.ValidationError('Error while trying to connect to the module.'
+            raise exceptions.ValidationError(_('Error while trying to connect to the module.')+
+                                             ' Information:\n' + str(e))
+        except Exception as e:
+            raise exceptions.ValidationError(_('Error while trying to connect to the module.')+
                                              ' Information:\n' + str(e))
         self.key = None
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': _('Setup the Module'),
-                'message': _('Information sent to the Module. If everything is fine, the Module have to start '
-                             'communication with this instance. The URL in use is http://{} on port {}.').format(odoo_url, odoo_port),
-                'sticky': True,
-            }}
-
+        return self.balloon_success_sticky(
+            title=_('Setup the Module'),
+            message=_('Information sent to the Module. If everything is fine, the Module have to start '
+                      'communication with this instance. The URL in use is http://{} on port {}.').format(
+                      odoo_url, odoo_port)
+        )
 
     def action_check_if_ws_available(self):
         for ws in self:
             host = str(ws.last_ip)
             try:
-                conn = http.client.HTTPConnection(host, 80, timeout=2)
-                conn.request('GET', '/config.json')
-                response = conn.getresponse()
-                code = response.getcode()
-                body = response.read()
-                conn.close()
-                if code != 200:
-                    raise exceptions.ValidationError('Webstack sent us http code {}'
-                                                     ' when 200 was expected.'.format(code))
+                response = requests.get(f"http://{host}/config.json", timeout=5)
+                if response.status_code != 200:
+                    raise exceptions.ValidationError(_('Error response from Webstack. {} ({})').format(
+                        response.reason,
+                        response.status_code
+                    ))
 
-                js = json.loads(body.decode())
+                # js = json.loads(response.json())
+                js = response.json()
                 module = {
                     'version': js['sdk']['sdkVersion'],
                     'hw_version': js['sdk']['sdkHardware'],
@@ -337,24 +331,19 @@ class HrRfidWebstack(models.Model):
                     'available': 'a',
                 }
                 ws.write(module)
-            except socket.timeout:
-                raise exceptions.ValidationError('Could not connect to the webstack')
-            except(socket.error, socket.gaierror, socket.herror) as e:
-                raise exceptions.ValidationError('Unexpected error:\n' + str(e))
-            except KeyError as __:
-                raise exceptions.ValidationError('Information returned by the webstack invalid')
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': _('Check connection to the Module'),
-                'message': _('Everything looks just great!'),
-                # 'links': [{
-                #     'label': production.name,
-                #     'url': f'#action={action.id}&id={production.id}&model=mrp.production'
-                # }],
-                'sticky': False,
-            }}
+            except (ConnectionError, ConnectTimeout) as e:
+                raise exceptions.ValidationError(
+                    _('Could not connect to the module. \n'
+                    "Check if it is turned on or if it's on a different ip.\n") +
+                    f"({str(e)})")
+            except KeyError as e:
+                raise exceptions.ValidationError(_('Information returned by the webstack invalid \n'+str(e)))
+            except Exception as e:
+                raise exceptions.ValidationError(_('Module connection error:\n') + str(e))
+        return self.balloon_success(
+            title=_('Check connection to the Module'),
+            message=_('Everything looks just great!')
+        )
 
     def get_controllers(self):
         controllers = None
@@ -365,22 +354,23 @@ class HrRfidWebstack(models.Model):
             try:
                 response = requests.get(f'http://{host}/config.json', timeout=2)
                 if response.status_code != 200:
-                    raise exceptions.ValidationError('Webstack sent us http code {}'
-                                                     ' when 200 was expected.'.format(response.status_code))
+                    raise exceptions.ValidationError(_('Webstack sent us error {}({}) \n'
+                                                       ' while requesting device list')
+                                                       .format(response.reason, response.status_code))
                 js = response.json()
                 controllers = js['sdk']['devFound']
                 if ws.name == f"Module {ws.serial}":
                     ws.name = f"Module {ws.serial} ({js['netConfig']['Host_Name']})"
                 if not isinstance(controllers, int):
-                    raise exceptions.ValidationError('Webstack gave us bad data when requesting /config.json')
+                    raise exceptions.ValidationError(_('Webstack gave us bad data when requesting /config.json'))
 
                 for dev in range(controllers):
                     response = requests.get(f'http://{host}/sdk/status.json?dev={dev}')
 
                     if response.status_code != 200:
-                        raise exceptions.ValidationError('Webstack sent us http code {} when 200 was expected'
-                                                         ' while requesting /sdk/details.json?dev={}'
-                                                         .format(response.status_code, dev))
+                        raise exceptions.ValidationError(_('Webstack sent us error {}({}) \n'
+                                                         ' while requesting information for controller {}')
+                                                         .format(response.reason, response.status_code, dev))
                     try:
                         ctrl_js = response.json()
                     except Exception as e:
@@ -394,29 +384,23 @@ class HrRfidWebstack(models.Model):
                             'webstack_id': ws.id,
                         }])
                         controller.read_controller_information_cmd()
-            except socket.timeout:
-                raise exceptions.ValidationError('Could not connect to the webstack at ' + host)
-            except(socket.error, socket.gaierror, socket.herror) as e:
-                raise exceptions.ValidationError('Unexpected error:\n' + str(e))
+            except (ConnectionError, ConnectTimeout) as e:
+                raise exceptions.ValidationError(
+                    _('Could not connect to the module. \n'
+                      "Check if it is turned on or if it's on a different ip.\n") +
+                    f"({str(e)})")
             except KeyError as __:
-                raise exceptions.ValidationError('Information returned by the webstack at '
+                raise exceptions.ValidationError(_('Information returned by the webstack at ')
                                                  + host + ' invalid')
+            except Exception as e:
+                raise exceptions.ValidationError(_('Unexpected communication error:\n') + str(e))
         if controllers:
             return self.with_context(xml_id='hr_rfid_ctrl_action').return_action_to_open()
         else:
-            return {
-                    'type': 'ir.actions.client',
-                    'tag': 'display_notification',
-                    'params': {
-                        'title': _('Reading controllers from the Module'),
-                        'message': _('No controllers detected in the Module or the Module is Archived'),
-                        # 'links': [{
-                        #     'label': production.name,
-                        #     'url': f'#action={action.id}&id={production.id}&model=mrp.production'
-                        # }],
-                        'type': 'warning',
-                        'sticky': False,
-                    }}
+            return self.balloon_warning(
+                title=_('Reading controllers from the Module'),
+                message=_('No controllers detected in the Module or the Module is Archived')
+            )
 
     @api.depends('tz')
     def _compute_tz_offset(self):
@@ -471,33 +455,34 @@ class HrRfidWebstack(models.Model):
         for ws in self.env['hr.rfid.webstack'].search([('active', '=', True)]):
             ws.controllers.synchronize_clock_cmd()
 
-
     # Communication helpers
     def _execute_direct_cmd(self, cmd: dict, retry=0):
         self.ensure_one()
         username = self.module_username and str(self.module_username) or ''
         password = self.module_password and str(self.module_password) or ''
+        timeout = 2
         try:
             _logger.info('Direct sending %s' % str(cmd))
-            response = requests.post('http://' + self.last_ip + '/sdk/cmd.json', auth=(username, password), json=cmd,
-                                     timeout=2)
+            if cmd['cmd']['c'] in ['F9']:
+                timeout = 5
+            response = requests.post(f'http://{self.last_ip}/sdk/cmd.json', auth=(username, password), json=cmd,
+                                     timeout=timeout)
             result = response.json()
             if response.status_code != 200:
                 _logger.error('While trying to send the command to the module, '
-                                                 'it returned code ' + str(response.status_code) + ' with body:\n'
-                                                 + response.content.decode())
+                              'it returned code ' + str(response.status_code) + ' with body:\n'
+                              + response.content.decode())
                 if retry < 3:
-                    result = self._execute_direct_cmd(cmd, retry+1)
+                    result = self._execute_direct_cmd(cmd, retry + 1)
                 if not result:
                     raise exceptions.ValidationError('While trying to send the command to the module, '
                                                      'it returned code ' + str(response.status_code) + ' with body:\n'
                                                      + response.content.decode())
             _logger.info('Direct receiving %s' % str(result))
-
             return result
         except Exception as e:
             _logger.exception(tools.exception_to_unicode(e))
-            raise
+            # raise
 
     def direct_execute(self, cmd: dict, command_id: models.Model = None):
         if command_id:
@@ -505,6 +490,8 @@ class HrRfidWebstack(models.Model):
             cmd_response = command_id.webstack_id._execute_direct_cmd({'cmd': command_id.send_command(200)['cmd']})
             if cmd_response:
                 command_id.webstack_id.parse_response(cmd_response, direct_cmd=True)
+            else:
+                command_id.status = 'Wait'
             return cmd_response
         else:
             for ws in self:
@@ -517,7 +504,6 @@ class HrRfidWebstack(models.Model):
             ('webstack_id', 'in', self.mapped('id')),
             ('status', '=', 'Process')
         ]) > 0
-
 
     def get_ws_time(self, post_data: dict):
         self.ensure_one()
@@ -537,7 +523,7 @@ class HrRfidWebstack(models.Model):
     def _retry_command(self, status_code, cmd, event):
         if cmd.retries == 5:
             cmd.status = 'Failure'
-            return self.check_for_unsent_cmd(status_code, event,)
+            return self.check_for_unsent_cmd(status_code, event, )
 
         cmd.retries = cmd.retries + 1
 
@@ -572,7 +558,7 @@ class HrRfidWebstack(models.Model):
             event.command_id = command_id.id
         return command_id.send_command(status_code)
 
-    def report_sys_ev(self, description, post_data=None, controller_id=None, sys_ev_dict:dict = None):
+    def report_sys_ev(self, description, post_data=None, controller_id=None, sys_ev_dict: dict = None):
         '''
         Create System event
         Dict = {
@@ -586,7 +572,8 @@ class HrRfidWebstack(models.Model):
             'input_js': str Input JSON
         }
         '''
-        def get_timestamp(data:dict):
+
+        def get_timestamp(data: dict):
             if isinstance(data, dict) and 'event' in data:
                 try:
                     return self.get_ws_time_str(data['event'])
@@ -654,6 +641,8 @@ class HrRfidWebstack(models.Model):
             return not direct_cmd and self.check_for_unsent_cmd(200)
 
         if response['e'] != 0:
+            if response['e'] == 20: # controller not response!
+                return self._retry_command(command, 200)
             command.write({
                 'status': 'Failure',
                 'error': str(response['e']),
@@ -699,7 +688,7 @@ class HrRfidWebstack(models.Model):
             data = response['d']
             # 0000 0100 0711 0000 0000 0000 000000000000000000000000
             # '5a0000000719000000000000020202020000000000000000' iCON180
-            input_states = (int(data[0:2], 16) & 0x7f) + ((int(data[2:4], 16) & 0x7f ) << 7)
+            input_states = (int(data[0:2], 16) & 0x7f) + ((int(data[2:4], 16) & 0x7f) << 7)
             output_states = (int(data[4:6], 16) & 0x7f) + ((int(data[6:8], 16) & 0x7f) << 7)
             usys = [int(data[8:10], 16), int(data[10:12], 16)]
             uin = [int(data[12:14], 16), int(data[14:16], 16)]
@@ -750,7 +739,7 @@ class HrRfidWebstack(models.Model):
                 'read_b3_cmd': controller.read_b3_cmd or temperature != 0 or humidity != 0 or controller.alarm_lines > 0
             })
             if temperature != 0 or humidity != 0:
-                controller.update_th(0,{
+                controller.update_th(0, {
                     't': temperature,
                     'h': humidity,
                 })

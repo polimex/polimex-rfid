@@ -100,7 +100,7 @@ class HrRfidCtrlAlarm(models.Model):
         for l in self:
             cmd_id = self.controller_id.change_output_state(self.control_output, 0, 99)
 
-        return self.balloon(
+        return self.balloon_success(
             title=_('Disarm command success'),
             message=_('Success Line(s) Disarm')
         )
@@ -109,7 +109,7 @@ class HrRfidCtrlAlarm(models.Model):
         for l in self:
             cmd_id = self.controller_id.change_output_state(self.control_output, 1, 99)
 
-        return self.balloon(
+        return self.balloon_success(
             title=_('Arm command success'),
             message=_('Success Line(s) Arm')
         )

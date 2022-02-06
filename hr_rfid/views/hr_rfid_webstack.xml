@@ -236,8 +236,9 @@
                                                     <t t-esc="record.commands_count.value"/>
                                                 </a>
                                             </span>
-                                            <span t-if="record.behind_nat.value"
-                                                  class="badge badge-pill" title="Module Web Management">
+                                            <span t-if="!record.behind_nat.raw_value"
+                                                  class="badge badge-pill"
+                                                  title="Module Web Management">
                                                 <a t-att-href="record.http_link.value" target="_blank" style="text-decoration:none; color: #010199;">Web</a>
 
                                             </span>
