@@ -10,13 +10,26 @@ class HrRfidWebstackDiscoveryRow(models.TransientModel):
     _description = 'Webstack discovery rows'
 
     name = fields.Char()
-    last_ip = fields.Char()
-    version = fields.Char()
-    hw_version = fields.Char()
-    serial = fields.Char()
-    behind_nat = fields.Boolean()
+    last_ip = fields.Char(
+        readonly=True
+    )
+    version = fields.Char(
+        readonly=True
+    )
+    hw_version = fields.Char(
+        readonly=True
+    )
+    serial = fields.Char(
+        readonly=True
+    )
+    behind_nat = fields.Boolean(
+        invisible=True,
+        readonly=True
+    )
     discovery_id = fields.Many2one(
-        comodel_name='hr.rfid.webstack.discovery'
+        comodel_name='hr.rfid.webstack.discovery',
+        readonly=True,
+        invisible=True
     )
 
 class HrRfidWebstackDiscovery(models.TransientModel):
@@ -100,9 +113,6 @@ class HrRfidWebstackDiscovery(models.TransientModel):
         ],
         default='add'
     )
-
-
-
 
     def setup_modules(self):
         for ws in self.found_webstacks:

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+<!--        Fix Odoo base bullshits-->
+<!--        "base.lang_bg","Bulgarian / български език","bg_BG","bg","Left-to-Right","[3,0]",",",,"%d.%m.%Y","%H,%M,%S","1"-->
+        <record id="base.lang_bg" model="res.lang">
+            <field name="name">Bulgarian / Български език</field>
+            <field name="time_format">%H:%M:%S</field>
+        </record>
+
+    </data>
+</odoo>

@@ -6,16 +6,19 @@
     'version': '2.0',
     'category': 'Human Resources',
     'summary': 'Manage employee access control',
-    'author': 'Polimex Holding Ltd',
+    'company': 'Polimex Holding Ltd',
+    'author': 'Polimex Dev Team',
     'license': 'AGPL-3',
 
     'website': 'https://polimex.co/',
-
+    'live_test_url': 'https://demo.polimex.co',
+    "saas_demo_title": "Complete backend demo on Polimex servers",
     'depends': ['hr', 'contacts', 'digest'],
 
     'data': [
         'security/hr_rfid_security.xml',
         'security/ir.model.access.csv',
+        'data/res_lang.xml',
         'data/hr_rfid_card_type_data.xml',
         'data/hr_rfid_cron_jobs.xml',
         'data/hr_rfid_system_parameters.xml',

@@ -147,6 +147,8 @@ class HrRfidTimeScheduleWizDayLine(models.TransientModel):
                 raise ValidationError("End is not in range")
             if record.number < 0 and record.end > 3:
                 raise ValidationError("End is not in range")
+            if record.begin > record.end:
+                raise ValidationError("The begin time have to be before end time")
 
     @api.depends('day', 'number', )
     def _compute_display_name(self):

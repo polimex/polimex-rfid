@@ -8,6 +8,30 @@ class AliasMixin(models.AbstractModel):
     _description = 'Balloon Messages Mixin'
 
     @api.model
+    def balloon_success(self, title: str, message: str, links: [dict] = None, sticky: bool = False):
+        return self.balloon(title, message, links, sticky=sticky)
+
+    @api.model
+    def balloon_success_sticky(self, title: str, message: str, links: [dict] = None):
+        return self.balloon(title, message, links, sticky=True)
+
+    @api.model
+    def balloon_warning(self, title: str, message: str, links: [dict] = None, sticky: bool = False):
+        return self.balloon(title, message, links, type='warning', sticky=sticky)
+
+    @api.model
+    def balloon_warning_sticky(self, title: str, message: str, links: [dict] = None):
+        return self.balloon(title, message, links, type='warning', sticky=True)
+
+    @api.model
+    def balloon_danger(self, title: str, message: str, links: [dict] = None, sticky: bool = False):
+        return self.balloon(title, message, links, type='danger', sticky=sticky)
+
+    @api.model
+    def balloon_danger_sticky(self, title: str, message: str, links: [dict] = None):
+        return self.balloon(title, message, links, type='danger', sticky=True)
+
+    @api.model
     def balloon(self, title: str, message: str, links: [dict] = None, type: str = 'success', sticky: bool = False):
         '''
         Return action for message in balloon.

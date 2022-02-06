@@ -323,7 +323,7 @@ class HrRfidDoor(models.Model):
         cmd_id = self.controller_id.change_output_state(self.lock_output, 1, self.lock_time)
         self.log_door_change(1, self.lock_time, cmd_id)
         if self.controller_id.webstack_id.behind_nat:
-            return self.balloon(
+            return self.balloon_warning_sticky(
                 title=_('Open door command success'),
                 message=_('Because the webstack is behind NAT, we have to wait for the webstack to call us, '
                           'so we created a command. The door will open/close as soon as possible.'),
@@ -332,12 +332,10 @@ class HrRfidDoor(models.Model):
                      'model': 'hr.rfid.command',
                      'res_id': cmd_id.id,
                      'action': 'hr_rfid.hr_rfid_command_action'
-                }] or None,
-                type='warning',
-                sticky= True
+                }] or None
             )
         else:
-            return self.balloon(
+            return self.balloon_success(
                 title=_('Open door command success'),
                 message=_('Success opening')
             )
@@ -347,7 +345,7 @@ class HrRfidDoor(models.Model):
         cmd_id = self.controller_id.change_output_state(self.lock_output, 0, self.lock_time)
         self.log_door_change(0, self.lock_time, cmd_id)
         if self.controller_id.webstack_id.behind_nat:
-            return self.balloon(
+            return self.balloon_warning_sticky(
                 title=_('Close door command success'),
                 message=_('Because the webstack is behind NAT, we have to wait for the webstack to call us, '
                           'so we created a command. The door will open/close as soon as possible.'),
@@ -356,12 +354,10 @@ class HrRfidDoor(models.Model):
                      'model': 'hr.rfid.command',
                      'res_id': cmd_id.id,
                      'action': 'hr_rfid.hr_rfid_command_action'
-                }],
-                type='warning',
-                sticky=True
+                }]
             )
         else:
-            return self.balloon(
+            return self.balloon_success(
                 title=_('Close door command success'),
                 message=_('Closing success')
             )
@@ -574,17 +570,17 @@ class HrRfidDoorOpenCloseWiz(models.TransientModel):
     def open_doors(self):
         for door in self.doors:
             door.controller_id.change_output_state(door.lock_output, 1, time=self.time)
-        return self.balloon(
+        return self.balloon_success(
                     title=_('Doors opened'),
-                    message=_('Doors successfully opened'),
+                    message=_('Doors successfully opened')
                 )
 
     def close_doors(self):
         for door in self.doors:
             door.controller_id.change_output_state(door.lock_output, 0, time=self.time)
-        return self.balloon(
+        return self.balloon_success(
                     title=_('Doors closed'),
-                    message=_('Doors successfully closed'),
+                    message=_('Doors successfully closed')
                 )
 
 

@@ -209,28 +209,6 @@
 <!--                                                                   aria-label="Disarm the Door"/>-->
 <!--                                                            </a>-->
 <!--                                                        </span>-->
-<!--                                                        <span title="Arm the Door"-->
-<!--                                                              groups="hr_rfid.hr_rfid_view_door_arm_disarm"-->
-<!--                                                              attrs="{'invisible':[('alarm_line', '=', 0)]}">-->
-<!--                                                            <a name="arm_door" type="object">-->
-<!--                                                                <i class="fa fa-fw fa-shield text-danger" role="img"-->
-<!--                                                                   aria-label="Arm the Door"/>-->
-<!--                                                            </a>-->
-<!--                                                        </span>-->
-<!--                                                        <span title="Unlock the Door"-->
-<!--                                                              groups="hr_rfid.hr_rfid_view_door_open_close">-->
-<!--                                                            <a name="open_door" type="object">-->
-<!--                                                                <i class="fa fa-fw fa-unlock text-success" role="img"-->
-<!--                                                                   aria-label="Unlock the Door"/>-->
-<!--                                                            </a>-->
-<!--                                                        </span>-->
-<!--                                                        <span title="Lock the Door"-->
-<!--                                                              groups="hr_rfid.hr_rfid_view_door_open_close">-->
-<!--                                                            <a name="close_door" type="object">-->
-<!--                                                                <i class="fa fa-fw fa-lock text-danger" role="img"-->
-<!--                                                                   aria-label="Lock the Door"/>-->
-<!--                                                            </a>-->
-<!--                                                        </span>-->
 <!--                                                    </div>-->
                                                 </li>
                                                 <li t-if="record.hw_version.raw_value">
@@ -252,16 +230,6 @@
                                     </ul>
                                     <div class="o_row">
                                         <span class="oe_kanban_partner_links">
-                                            <span t-if="record.readers_count.value>0"
-                                                  class="badge badge-pill" title="Readers">
-                                                <a name="return_action_to_open" type="object"
-                                                    context="{'xml_id':'hr_rfid_reader_action'}"
-                                                    attrs="{'invisible':[('reader_ids', '=', False)]}">
-                                                    <i class="fa fa-fw fa-rss" role="img"
-                                                       aria-label="Readers"/>
-                                                    <t t-esc="record.readers_count.value"/>
-                                                </a>
-                                            </span>
                                             <span t-if="record.doors_count.value>0"
                                                   class="badge badge-pill" title="Doors">
                                                 <a name="return_action_to_open" type="object"
@@ -270,6 +238,16 @@
                                                     <i class="fa fa-fw fa-sign-in" role="img"
                                                        aria-label="Doors"/>
                                                     <t t-esc="record.doors_count.value"/>
+                                                </a>
+                                            </span>
+                                            <span t-if="record.readers_count.value>0"
+                                                  class="badge badge-pill" title="Readers">
+                                                <a name="return_action_to_open" type="object"
+                                                    context="{'xml_id':'hr_rfid_reader_action'}"
+                                                    attrs="{'invisible':[('reader_ids', '=', False)]}">
+                                                    <i class="fa fa-fw fa-rss" role="img"
+                                                       aria-label="Readers"/>
+                                                    <t t-esc="record.readers_count.value"/>
                                                 </a>
                                             </span>
                                             <span t-if="record.alarm_line_count.value>0"
