@@ -445,8 +445,6 @@ class WebRfidController(http.Controller):
 
         """
         t0 = time.time()
-        # with_context(key='value')
-
         if not post:
             # Controllers with no odoo functionality use the dd/mm/yyyy format
             post_data = request.jsonrequest
@@ -501,13 +499,13 @@ class WebRfidController(http.Controller):
 
             if 'heartbeat' in post_data:
                 _logger.info('Heartbeat from {}'.format(webstack_id.name))
-                result = webstack_id.with_context(old=not post).parse_heartbeat(post_data=post_data)
+                result = webstack_id.parse_heartbeat(post_data=post_data)
             elif 'event' in post_data:
                 _logger.info('Event from {}'.format(webstack_id.name))
-                result = self.with_context(old=not post)._parse_event(post_data=post_data, webstack=webstack_id)
+                result = self._parse_event(post_data=post_data, webstack=webstack_id)
             elif 'response' in post_data:
                 _logger.info('Command response from {}'.format(webstack_id.name))
-                result = webstack_id.with_context(old=not post).parse_response(post_data=post_data)
+                result = webstack_id.parse_response(post_data=post_data)
             if not post and 'cmd' in result:
                 result = {'cmd': result['cmd']}
             webstack_id.write(self._ws_db_update_dict())
