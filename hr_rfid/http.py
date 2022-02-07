@@ -23,7 +23,7 @@ def _json_response(self, result=None, error=None):
     if not self.jsonrequest.get('id', False) and not self.jsonrequest.get('jsonrpc', False) and (result is not None):
         # Non RPC Request not needed to respond with RPC structure
         body = json.dumps(result, default=date_utils.json_default)
-        if result.get('status', False) in [200, 500]:
+        if result.get('status', False) and len(result) == 1:
             body = ''
             return Response(
                 body, status=result.get('status', 200),
