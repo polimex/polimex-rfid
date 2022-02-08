@@ -111,7 +111,8 @@ class HrRfidWebstackDiscovery(models.TransientModel):
             ('add', 'Add as Inactive only'),
             ('full', 'Add as Active and read all information')
         ],
-        default='add'
+        default='add',
+        required=True
     )
 
     def setup_modules(self):
