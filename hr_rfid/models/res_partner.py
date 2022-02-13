@@ -45,7 +45,6 @@ class ResPartner(models.Model):
             e.partner_event_count = self.env['hr.rfid.event.user'].search_count([('contact_id', '=', e.id)])
             e.partner_doors_count = len(e.get_doors())
 
-
     def _compute_is_employee(self):
         empl_partners = self.env['resource.resource'].search([('user_id', '!=', False)]).mapped('user_id.partner_id.id')
         for p in self:
@@ -129,7 +128,7 @@ class ResPartner(models.Model):
         acc_gr_door_rel_env = self.env['hr.rfid.access.group.door.rel']
         acc_grs = self.hr_rfid_access_group_ids.mapped('access_group_id')
         for i in range(len(acc_grs)):
-            for j in range(i+1, len(acc_grs)):
+            for j in range(i + 1, len(acc_grs)):
                 door_rels1 = acc_grs[i].all_door_ids
                 door_rels2 = acc_grs[i].all_door_ids
                 acc_gr_door_rel_env.check_for_ts_inconsistencies(door_rels1, door_rels2)
@@ -139,14 +138,15 @@ class ResPartner(models.Model):
         for user in self:
             user.check_for_ts_inconsistencies()
 
-            doors = user.hr_rfid_access_group_ids.mapped('access_group_id').\
+            doors = user.hr_rfid_access_group_ids.mapped('access_group_id'). \
                 mapped('all_door_ids').mapped('door_id')
             relay_doors = dict()
             for door in doors:
                 ctrl = door.controller_id
                 if ctrl.is_relay_ctrl():
-                    if ctrl in relay_doors and relay_doors.get(ctrl, False) and door.card_type in relay_doors[ctrl].mapped(
-                            'card_type') and ctrl.mode == 3:
+                    if ctrl in relay_doors and relay_doors.get(ctrl, False) and door.card_type in relay_doors[
+                        ctrl].mapped(
+                        'card_type') and ctrl.mode == 3:
                         raise exceptions.ValidationError(
                             _('Doors "%s" and "%s" both belong to a controller that cannot give access to multiple doors with same card type in a group.')
                             % (','.join(relay_doors[ctrl].mapped('name')), door.name)
@@ -198,6 +198,96 @@ class ResPartner(models.Model):
                 if session['uid'] == user.id:
                     session_storage.delete(session)
 
-    # @api.onchange
-    # def res_partner_doors(self):
-    #     for r in self:
+    @api.model
+    def generate_partner(self, name, parent_id=None, card_number: str = None, unlink_card_if_exsist=True,
+                         access_group_id=None):
+        '''
+        Require:
+            name
+        Optional:
+            parent_id: int - res.partner.id
+            card_number: str
+            unlink_card_if_exsist:bool
+            access_group_id: hr.rfid.access.group.id
+        Context:
+            activate_on: datetime
+            deactivate_on: datetime
+        '''
+        partner_dict = {
+            "name": name,
+            "parent_id": parent_id or None,
+        }
+        if card_number is not None:
+            card_number = ('0000000000' + card_number)[-10:]
+            existing_card = self.env['hr.rfid.card'].with_context(active_test=False).search(
+                [('number', '=', card_number)])
+            if unlink_card_if_exsist:
+                existing_card.unlink()
+                existing_card = None
+            if existing_card:
+                partner_dict.update({
+                    'hr_rfid_card_ids': [(4, existing_card.id, 0), (1, existing_card.id, {
+                        # 'number': card_number,
+                        'activate_on': self.env.context.get('activate_on') or fields.Datetime.now(),
+                        'deactivate_on': self.env.context.get('deactivate_on') or fields.Datetime.now(),
+                    })]})
+            else:
+                partner_dict.update({
+                    'hr_rfid_card_ids': [(0, 0, {
+                        'number': card_number,
+                        'activate_on': self.env.context.get('activate_on') or fields.Datetime.now(),
+                        'deactivate_on': self.env.context.get('deactivate_on') or fields.Datetime.now(),
+                    })]})
+        if access_group_id is not None:
+            partner_dict.update({
+                'hr_rfid_access_group_ids': [(0, 0, {
+                    'access_group_id': access_group_id.id,
+                    'activate_on': self.env.context.get('activate_on') or fields.Datetime.now(),
+                    'expiration': self.env.context.get('deactivate_on') or fields.Datetime.now(),
+                })]
+            })
+        partner_id = self.env['res.partner'].create(partner_dict)
+        return partner_id
+
+    def add_access_group(self, access_group_id, activate_on=None, expire_on=None, visits: int = 0):
+        '''
+        Adding access group
+        '''
+        for p in self:
+            if access_group_id in p.hr_rfid_access_group_ids.mapped('access_group_id.id'):
+                existing = p.hr_rfid_access_group_ids.filtered(lambda ag: ag.access_group_id.id == access_group_id)
+                existing.visits_counting = visits > 0
+                existing.write({
+                    'activate_on': (activate_on < existing.activate_on) and activate_on or existing.activate_on,
+                    'expiration': (expire_on > existing.expire_on) and expire_on or existing.expire_on,
+                })
+
+                if (existing.permited_visits + visits) > 0:
+                    existing.permited_visits += visits
+                else:
+                    existing.permited_visits = None
+
+            else:
+                p.write({'hr_rfid_access_group_ids': [(0, 0, {
+                    'access_group_id': access_group_id,
+                    'activate_on': activate_on or fields.Datetime.now(),
+                    'expiration': expire_on or None,
+                    'visits_counting': visits > 0,
+                    'permited_visits': visits
+                })]})
+
+    def add_card_number(self, card_number, activate_on=None, expire_on=None):
+        for p in self:
+            if card_number in p.hr_rfid_card_ids.mapped('number'):
+                existing = p.hr_rfid_card_ids.filtered(lambda c: c.number == card_number)
+                existing.write({
+                    'activate_on': (activate_on < existing.activate_on) and activate_on or existing.activate_on,
+                    'deactivate_on': (expire_on > existing.deactivate_on) and expire_on or existing.deactivate_on,
+                })
+            else:
+                p.write({
+                    'hr_rfid_card_ids': [(0, 0, {
+                        'number': card_number,
+                        'activate_on': activate_on or fields.Datetime.now(),
+                        'deactivate_on': expire_on or None,
+                    })]})

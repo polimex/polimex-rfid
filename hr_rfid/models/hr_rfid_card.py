@@ -325,6 +325,12 @@ class HrRfidCard(models.Model):
         cards_to_activate.write({'active': True})
         cards_to_deactivate.write({'active': False})
 
+    @api.model
+    def do_cron_jobs(self):
+        self._update_cards()
+        self.env['hr.rfid.access.group.contact.rel']._check_expirations()
+        self.env['hr.rfid.access.group.employee.rel']._check_expirations()
+
     def return_action_doors(self):
         self.ensure_one()
         domain = [('id', 'in', [d.id for d in self.door_ids])]

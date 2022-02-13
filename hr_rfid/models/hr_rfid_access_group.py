@@ -550,12 +550,32 @@ class HrRfidAccessGroupContactRel(models.Model):
         string='Contact',
         required=True,
     )
+    #TODO New field. Need to implemented in cron job tasks!!!
+    activate_on = fields.Datetime(
+        string='Activation Date',
+        help='Access group will activate itself from the contact '
+             'on the  date. ',
+        default=lambda self: fields.Datetime.now(),
+        index=True,
+    )
 
     expiration = fields.Datetime(
         string='Expiration Date',
         help='Access group will remove itself from the contact '
              'on the expiration date. Will never expire if blank.',
         index=True,
+    )
+    visits_counting = fields.Boolean(
+        help='If True, the access group will counting card visits. The feature is used for RFID services in general',
+        default=False
+    )
+    permited_visits = fields.Integer(
+        help='Permited visits after this group will be deactivated. 0 mean',
+        default=0
+    )
+    visits_counter = fields.Integer(
+        help='Real visits this group will be deactivated. 0 mean',
+        default=0
     )
 
     @api.model
