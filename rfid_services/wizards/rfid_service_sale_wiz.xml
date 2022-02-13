@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="rfid_service_sale_wiz_action" model="ir.actions.act_window">
+            <field name="name">RFID Service Sales</field>
+            <field name="res_model">rfid.service.sale.wiz</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="rfid_service_sale_wiz_view_form" model="ir.ui.view">
+            <field name="name">rfid.service.sale.wiz.view.form</field>
+            <field name="model">rfid.service.sale.wiz</field>
+            <field name="arch" type="xml">
+                <form string="RFID Service Sale Wizard">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="card_number" class="oe_edit_only"/>
+                            <h1>
+                                <field name="card_number" placeholder="Scan the card on your reader"/>
+                            </h1>
+                        </div>
+                        <field name="card_number"/>
+                        <field name="partner_id"/>
+                        <field name="product_id"/>
+                        <field name="sale_id"/>
+                    </sheet>
+                    <footer>
+                        <button string="Done" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!-- actions opening views on models -->
+<!--        <record model="ir.actions.act_window" id="rfid_service.rfid_service_sale_wiz_act_window">-->
+<!--            <field name="name">Hotel Employees</field>-->
+<!--            <field name="res_model">hr.employee</field>-->
+<!--            <field name="view_mode">tree,form</field>-->
+<!--        </record>-->
+
+<!--        <record model="ir.actions.act_window" id="rfid_pms_base.action_window_partner">-->
+<!--            <field name="name">Hotel Guests</field>-->
+<!--            <field name="res_model">res.partner</field>-->
+<!--            <field name="view_mode">tree,form</field>-->
+<!--        </record>-->
+
+        <!-- server action to the one above -->
+
+
+    </data>
+</odoo>

@@ -480,6 +480,8 @@ class HrRfidWebstack(models.Model):
                                                      + response.content.decode())
             _logger.info('Direct receiving %s' % str(result))
             return result
+        except requests.exceptions.ReadTimeout as __:
+            _logger.error(f'Timeout {str(__.args)}')
         except Exception as e:
             _logger.exception(tools.exception_to_unicode(e))
             # raise
