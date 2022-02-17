@@ -150,7 +150,7 @@ class WebRfidController(http.Controller):
                     sys_ev_dict=sys_event_dict
                 )
             else:
-                raise Exception('Not Implemented! Non card event in card events.')
+                _logger.error(f'IGNORING EVENT: No card number in card event. {str(post_data)}')
             return webstack.check_for_unsent_cmd(200)
         # Emergency open
         elif event_action in [19]:
