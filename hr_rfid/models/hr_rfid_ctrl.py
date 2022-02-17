@@ -244,6 +244,12 @@ class HrRfidController(models.Model):
     doors_count = fields.Char(string='Doors count', compute='_compute_counts')
     alarm_line_count = fields.Char(string='Alarm line count', compute='_compute_counts')
 
+    @api.constrains('mode')
+    def _check_mode(self):
+        for ctrl in self:
+            if ctrl.mode == 0:
+                raise exceptions.ValidationError(_('The controller mode value is invalid. Please check it!'))
+
     @api.depends('mode')
     def _compute_controller_mode(self):
         for c in self:
@@ -463,21 +469,21 @@ class HrRfidController(models.Model):
             if ctrl.io_table == new_io_table:
                 continue
 
-            if (len(ctrl.io_table) != len(new_io_table) and line == 0) or (line != 0 and len(new_io_table) != 16):
+            if ((ctrl.io_table_lines*8*2) != len(new_io_table) and line == 0) or (line != 0 and len(new_io_table) != 16):
                 raise exceptions.ValidationError(
                     'IO table lengths are different, this should never happen????'
                 )
             if line == 0:
                 ctrl.io_table = new_io_table
                 if not no_command:
-                    ctrl._base_command('D9', cmd_data)
+                    ctrl.write_io_table_cmd(cmd_data)
             else:
                 io_table = self.io_table[:16 * (line - 1)]
                 io_table += new_io_table
                 io_table += self.io_table[16 * (line - 1) + 16:]
                 ctrl.io_table = io_table
                 if not no_command:
-                    ctrl._base_command('D9', cmd_data)
+                    ctrl.write_io_table_cmd(cmd_data)
 
     def is_alarm_ctrl(self, hw_version=None):
         if hw_version:
@@ -727,10 +733,15 @@ class HrRfidController(models.Model):
         return self._base_command('DC', '0404')
 
     def read_io_table_cmd(self):
-        if self.webstack_id.is_10_3:
+        if self.webstack_id.is_10_3():
             return [self._base_command('F9', '%02X' % (i+1)) for i in range(self.io_table_lines)]
         else:
             return self._base_command('F9', '00')
+    def write_io_table_cmd(self, cmd_data):
+        if self.webstack_id.is_10_3() and len(cmd_data) > (2+16):
+            return [self._base_command('D9', '%02X' % (i+1) + cmd_data[2+i*16:2+i*16+16]) for i in range(self.io_table_lines)]
+        else:
+            return self._base_command('D9', cmd_data)
 
     def read_readers_mode_cmd(self):
         return self._base_command('F6')
@@ -904,7 +915,7 @@ class HrRfidController(models.Model):
     def change_controller_mode(self, new_mode):
         for c in self:
             c.write_controller_mode(new_mode)
-            io = get_default_io_table(int(c.hw_version), new_mode)
+            io = polimex.get_default_io_table(int(c.hw_version), new_mode)
             if io is not None:
                 c.change_io_table(io)
 
