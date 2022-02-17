@@ -568,3 +568,6 @@ class WebRfidController(http.Controller):
 
     def vending_request_for_balance(self):
         raise NotImplementedError('Not implemented')
+
+
+
