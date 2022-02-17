@@ -1,5 +1,5 @@
 from odoo import fields, models, api, exceptions, _, SUPERUSER_ID
-from odoo.addons.hr_rfid.controllers.polimex import HW_TYPES
+from odoo.addons.hr_rfid.controllers import polimex
 
 
 class HrRfidController(models.Model):
@@ -25,7 +25,7 @@ class HrRfidController(models.Model):
     )
 
     hw_version = fields.Selection(
-        selection=HW_TYPES,
+        selection=polimex.HW_TYPES,
         string='Hardware Type',
         help='Type of the controller',
     )
@@ -98,21 +98,23 @@ class HrRfidController(models.Model):
 
     mode_selection = fields.Selection(
         string='Controller mode',
-        selection=[('0', 'Unknown'),('1', 'One door'), ('2', 'Two doors')],
+        selection=[('0', 'Unknown'), ('1', 'One door'), ('2', 'Two doors')],
         required=True,
         compute='_compute_controller_mode',
+        inverse='_inverse_controller_mode',
     )
 
     mode_selection_4 = fields.Selection(
         string='Controller mode',
-        selection=[('0', 'Unknown'),('2', 'Two doors'), ('3', 'Three doors'), ('4', 'Four doors')],
+        selection=[('0', 'Unknown'), ('2', 'Two doors'), ('3', 'Three doors'), ('4', 'Four doors')],
         required=True,
         compute='_compute_controller_mode',
+        inverse='_inverse_controller_mode_4',
     )
 
     mode_selection_31 = fields.Selection(
         string='Controller mode',
-        selection=[('0', 'Unknown'),('1', '1 x 32 Relays'), ('2', '2 x 16 Relays'), ('3', '1 x 512 Relays')],
+        selection=[('0', 'Unknown'), ('1', '1 x 32 Relays'), ('2', '2 x 16 Relays'), ('3', '1 x 512 Relays')],
         readonly=False,
         required=True,
         compute='_compute_controller_mode_31',
@@ -139,6 +141,11 @@ class HrRfidController(models.Model):
     max_cards_count = fields.Integer(
         string='Maximum Cards',
         help='Maximum amount of cards the controller can hold in memory',
+    )
+
+    cards_count = fields.Integer(
+        help='Amount of cards in the controller.',
+        default=0
     )
 
     max_events_count = fields.Integer(
@@ -237,15 +244,14 @@ class HrRfidController(models.Model):
     doors_count = fields.Char(string='Doors count', compute='_compute_counts')
     alarm_line_count = fields.Char(string='Alarm line count', compute='_compute_counts')
 
-
     @api.depends('mode')
     def _compute_controller_mode(self):
         for c in self:
             if c.mode <= 2:
                 c.mode_selection = str(c.mode)
-                c.mode_selection_4 = '2' # Fake
+                c.mode_selection_4 = '2'  # Fake
             else:
-                c.mode_selection = '1' # Fake
+                c.mode_selection = '1'  # Fake
                 c.mode_selection_4 = str(c.mode)
 
     @api.depends('mode')
@@ -258,7 +264,15 @@ class HrRfidController(models.Model):
 
     def _inverse_controller_mode_31(self):
         for ctrl in self:
-            ctrl.write_controller_mode(int(ctrl.mode_selection_31))
+            ctrl.change_controller_mode(int(ctrl.mode_selection_31))
+
+    def _inverse_controller_mode_4(self):
+        for ctrl in self:
+            ctrl.change_controller_mode(int(ctrl.mode_selection_4))
+
+    def _inverse_controller_mode(self):
+        for ctrl in self:
+            ctrl.change_controller_mode(int(ctrl.mode_selection))
 
     @api.depends('reader_ids', 'door_ids', 'alarm_line_ids')
     def _compute_counts(self):
@@ -268,7 +282,8 @@ class HrRfidController(models.Model):
             a.readers_count = len(a.reader_ids)
             a.doors_count = len(a.door_ids)
             a.alarm_line_count = len(a.alarm_line_ids)
-            a.user_event_count = self.env['hr.rfid.event.user'].search_count([('door_id', 'in', [d.id for d in a.door_ids])])
+            a.user_event_count = self.env['hr.rfid.event.user'].search_count(
+                [('door_id', 'in', [d.id for d in a.door_ids])])
 
     @api.depends('alarm_lines')
     def _compute_siren_state(self):
@@ -442,7 +457,7 @@ class HrRfidController(models.Model):
             raise "Invalid IO Line number"
         self.change_io_table(''.join([f"{line[i]:02d}" for i in reversed(range(0, 8))]), line_number)
 
-    def change_io_table(self, new_io_table, line=0):
+    def change_io_table(self, new_io_table, line=0, no_command=False):
         cmd_data = f"{line:02d}" + new_io_table
         for ctrl in self:
             if ctrl.io_table == new_io_table:
@@ -454,13 +469,15 @@ class HrRfidController(models.Model):
                 )
             if line == 0:
                 ctrl.io_table = new_io_table
-                ctrl._base_command('D9', cmd_data)
+                if not no_command:
+                    ctrl._base_command('D9', cmd_data)
             else:
                 io_table = self.io_table[:16 * (line - 1)]
                 io_table += new_io_table
                 io_table += self.io_table[16 * (line - 1) + 16:]
                 ctrl.io_table = io_table
-                ctrl._base_command('D9', cmd_data)
+                if not no_command:
+                    ctrl._base_command('D9', cmd_data)
 
     def is_alarm_ctrl(self, hw_version=None):
         if hw_version:
@@ -497,7 +514,7 @@ class HrRfidController(models.Model):
         elif self:
             self.ensure_one()
             tmp = self.hw_version
-        for m in HW_TYPES:
+        for m in polimex.HW_TYPES:
             if m[0] == tmp:
                 return m[1]
         return _('Unknown')
@@ -660,11 +677,11 @@ class HrRfidController(models.Model):
                 SUPERUSER_ID).create([new_cmd])
         # Execute commands
         for c in commands:
-            if not c.webstack_id.in_cmd_execution() and not c.webstack_id.behind_nat:
+            if not c.webstack_id.is_limit_executed_cmd_reached() and not c.webstack_id.behind_nat:
                 try:
                     c.webstack_id.direct_execute({}, c)
                 except Exception as e:
-                    pass #the exception have to be logged before
+                    pass  # the exception have to be logged before
 
         return commands
 
@@ -710,7 +727,10 @@ class HrRfidController(models.Model):
         return self._base_command('DC', '0404')
 
     def read_io_table_cmd(self):
-        return self._base_command('F9', '00')
+        if self.webstack_id.is_10_3:
+            return [self._base_command('F9', '%02X' % (i+1)) for i in range(self.io_table_lines)]
+        else:
+            return self._base_command('F9', '00')
 
     def read_readers_mode_cmd(self):
         return self._base_command('F6')
@@ -880,6 +900,13 @@ class HrRfidController(models.Model):
                 ])
                 if not ts_used:
                     ts_id.sudo().write({'controller_ids': [(3, ctrl.id, 0)]})
+
+    def change_controller_mode(self, new_mode):
+        for c in self:
+            c.write_controller_mode(new_mode)
+            io = get_default_io_table(int(c.hw_version), new_mode)
+            if io is not None:
+                c.change_io_table(io)
 
     # Command parsers
 

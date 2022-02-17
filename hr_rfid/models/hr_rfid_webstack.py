@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+from dateutil.relativedelta import relativedelta
 from requests import ConnectTimeout
 
+from odoo.addons.hr_rfid.controllers import polimex
 from odoo import api, fields, models, exceptions, _, SUPERUSER_ID, tools
 from datetime import datetime, timedelta
 import socket
@@ -467,8 +469,9 @@ class HrRfidWebstack(models.Model):
                 timeout = 5
             response = requests.post(f'http://{self.last_ip}/sdk/cmd.json', auth=(username, password), json=cmd,
                                      timeout=timeout)
-            result = response.json()
-            if response.status_code != 200:
+            if response.status_code == 200:
+                result = response.json()
+            else:  # response.status_code != 200:
                 _logger.error('While trying to send the command to the module, '
                               'it returned code ' + str(response.status_code) + ' with body:\n'
                               + response.content.decode())
@@ -482,6 +485,8 @@ class HrRfidWebstack(models.Model):
             return result
         except requests.exceptions.ReadTimeout as __:
             _logger.error(f'Timeout {str(__.args)}')
+        # except json.decoder.JSONDecodeError as __:
+        #     _logger.error(f'JSON decoder error {str(__.args)} in {}')
         except Exception as e:
             _logger.exception(tools.exception_to_unicode(e))
             # raise
@@ -501,11 +506,35 @@ class HrRfidWebstack(models.Model):
                 cmd_response = ws._execute_direct_cmd(cmd)
                 return cmd_response
 
+    def is_10_3(self):
+        return all([ws.hw_version == '10.3' for ws in self])
+    def is_50_1(self):
+        return all([ws.hw_version == '50.1' for ws in self])
+    def is_100_1(self):
+        return all([ws.hw_version == '100.1' for ws in self])
+
     def in_cmd_execution(self):
         return self.env['hr.rfid.command'].search_count([
             ('webstack_id', 'in', self.mapped('id')),
             ('status', '=', 'Process')
         ]) > 0
+
+    def count_cmds_in(self, seconds=10):
+        dt = fields.Datetime.now() - relativedelta(seconds=seconds)
+        return self.env['hr.rfid.command'].search_count([
+            ('webstack_id', 'in', self.ids),
+            ('ex_timestamp', '>', dt)
+        ])
+
+    def is_limit_executed_cmd_reached(self):
+        '''
+        Check if direct commands executions reach the limits
+
+        Returns:
+            True:
+
+        '''
+        return self.count_cmds_in(polimex.MAX_DIRECT_EXECUTE_TIME) > polimex.MAX_DIRECT_EXECUTE or self.in_cmd_execution()
 
     def get_ws_time(self, post_data: dict):
         self.ensure_one()
@@ -522,10 +551,10 @@ class HrRfidWebstack(models.Model):
         self.ensure_one()
         return self.get_ws_time(post_data).strftime('%Y-%m-%d %H:%M:%S')
 
-    def _retry_command(self, status_code, cmd, event):
+    def _retry_command(self, status_code, cmd, event=None):
         if cmd.retries == 5:
             cmd.status = 'Failure'
-            return self.check_for_unsent_cmd(status_code, event, )
+            return self.check_for_unsent_cmd(status_code, event )
 
         cmd.retries = cmd.retries + 1
 
@@ -644,7 +673,7 @@ class HrRfidWebstack(models.Model):
 
         if response['e'] != 0:
             if response['e'] == 20: # controller not response!
-                return self._retry_command(command, 200)
+                return self._retry_command(200, command)
             command.write({
                 'status': 'Failure',
                 'error': str(response['e']),
@@ -676,9 +705,12 @@ class HrRfidWebstack(models.Model):
                     })
 
         if response['c'] == 'F9':
-            controller.write({
-                'io_table': response['d']
-            })
+            if command.cmd_data != '00': #receiving single line from IOTable
+                controller.change_io_table(new_io_table=response['d'], line=int(command.cmd_data, 16), no_command=True)
+            else:
+                controller.write({
+                    'io_table': response['d']
+                })
 
         if response['c'] == 'FC':
             apb_mode = response['d']
@@ -745,5 +777,8 @@ class HrRfidWebstack(models.Model):
                     't': temperature,
                     'h': humidity,
                 })
+        if response['c'] == 'D1':
+            # 00 00 00 00 01
+            controller.cards_count = polimex.bytes_to_num(response['d'], 0, 5)
 
         return not direct_cmd and self.check_for_unsent_cmd(200)

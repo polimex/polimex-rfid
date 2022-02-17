@@ -2,6 +2,7 @@ import datetime
 import json
 from datetime import timedelta
 
+from odoo.addons.hr_rfid.controllers.polimex import bytes_to_num
 from odoo import fields, models, api, exceptions, _, SUPERUSER_ID
 from enum import Enum
 
@@ -27,6 +28,7 @@ class HrRfidCommands(models.Model):
     # Commands we have queued up to send to the controllers
     _name = 'hr.rfid.command'
     _description = 'Command to controller'
+    _inherit = 'balloon.mixin'
     _order = 'cr_timestamp desc, id desc'
 
     commands = [
@@ -211,6 +213,19 @@ class HrRfidCommands(models.Model):
     def _gc_clean_old_commands(self):
         self.env['hr.rfid.command'].search([('create_date', '<', fields.Datetime.now() - timedelta(days=14))]).unlink()
 
+    def resend_action(self):
+        for c in self.filtered(lambda cmd: cmd.status in ['Failure', 'Process']):
+            c.write({
+                'status': 'Wait',
+                'retries': c.retries + 1,
+                'response': None,
+                'error': 0,
+            })
+        return self.balloon_success(
+            title=_("Command resend"),
+            message=_("The command is marked for execution again.")
+        )
+    # Command to controller
     @api.model
     def read_controller_information_cmd(self, controller):
         return self.with_user(SUPERUSER_ID).create([{
@@ -560,7 +575,7 @@ class HrRfidCommands(models.Model):
 
             records += super(HrRfidCommands, self).create([vals])
 
-            if records and len(records) == 1 and not records.webstack_id.in_command_execution():
+            if records and len(records) == 1 and not records.webstack_id.is_limit_executed_cmd_reached():
                 records.webstack_id.direct_execute(command_id=records)
 
         return records
@@ -587,27 +602,18 @@ class HrRfidCommands(models.Model):
 
     @api.model
     def _parse_f0_cmd(self, data):
-        def bytes_to_num(start, digits):
-            digits = digits - 1
-            res = 0
-            for j in range(digits + 1):
-                multiplier = 10 ** (digits - j)
-                res = res + int(data[start:start + 2], 16) * multiplier
-                start = start + 2
-            return res
-
         return {
-            F0Parse.hw_ver: str(bytes_to_num(0, 2)),
-            F0Parse.serial_num: str(bytes_to_num(4, 4)),
-            F0Parse.sw_ver: str(bytes_to_num(12, 3)),
-            F0Parse.inputs: bytes_to_num(18, 3),
-            F0Parse.outputs: bytes_to_num(24, 3),
-            F0Parse.time_schedules: bytes_to_num(32, 2),
-            F0Parse.io_table_lines: bytes_to_num(36, 2),
-            F0Parse.alarm_lines: bytes_to_num(40, 1),
+            F0Parse.hw_ver: str(bytes_to_num(data, 0, 2)),
+            F0Parse.serial_num: str(bytes_to_num(data, 4, 4)),
+            F0Parse.sw_ver: str(bytes_to_num(data, 12, 3)),
+            F0Parse.inputs: bytes_to_num(data, 18, 3),
+            F0Parse.outputs: bytes_to_num(data, 24, 3),
+            F0Parse.time_schedules: bytes_to_num(data, 32, 2),
+            F0Parse.io_table_lines: bytes_to_num(data, 36, 2),
+            F0Parse.alarm_lines: bytes_to_num(data, 40, 1),
             F0Parse.mode: int(data[42:44], 16),
-            F0Parse.max_cards_count: bytes_to_num(44, 5),
-            F0Parse.max_events_count: bytes_to_num(54, 5),
+            F0Parse.max_cards_count: bytes_to_num(data, 44, 5),
+            F0Parse.max_events_count: bytes_to_num(data, 54, 5),
         }
 
     def parse_f0_response(self, post_data: dict):
@@ -814,6 +820,7 @@ class HrRfidCommands(models.Model):
             'readers': readers_count,
             'time_schedules': time_schedules,
             'io_table_lines': io_table_lines,
+            'io_table': self.controller_id.get_default_io_table(hw_ver, sw_ver, ctrl_mode),
             'alarm_lines': alarm_lines,
             'mode': ctrl_mode,
             'external_db': external_db,

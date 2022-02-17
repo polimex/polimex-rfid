@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-06 08:47+0000\n"
-"PO-Revision-Date: 2022-02-06 10:50+0200\n"
+"POT-Creation-Date: 2022-02-17 08:53+0000\n"
+"PO-Revision-Date: 2022-02-17 10:59+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -298,6 +298,12 @@ msgid "Access Group "
 msgstr "Група за достъп "
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+#, python-format
+msgid "Access Group 1"
+msgstr "Достъп за група 1"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__access_group_count
 msgid "Access Group Count"
 msgstr "Брой на групите за достъп"
@@ -340,6 +346,11 @@ msgstr "Групи за достъп"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_add_def_acc_grs__acc_gr
 msgid "Access group to add and set to default"
 msgstr "Група за добавяне и задаване по подразбиране"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_contact_rel__activate_on
+msgid "Access group will activate itself from the contact on the  date. "
+msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_contact_rel__expiration
@@ -409,6 +420,11 @@ msgstr "Активиране в бъдеще"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz__activate_on
 msgid "Activate on"
 msgstr "Активиране на"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__activate_on
+msgid "Activation Date"
+msgstr "Дата на активиране"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__active
@@ -751,6 +767,11 @@ msgstr "Всички служители от тази група, включит
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__all_employee_ids
 msgid "All employees that use this access group, including the ones from the inheritors"
 msgstr "Всички служители, които използват тази група за достъп, включително тези от наследниците"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__cards_count
+msgid "Amount of cards in the controller."
+msgstr "Брой карти в контролера"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door_open_close_wiz__time
@@ -1210,6 +1231,11 @@ msgid "Cards"
 msgstr "Карти"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__cards_count
+msgid "Cards Count"
+msgstr "Брой карти"
+
+#. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__7
 #, python-format
@@ -1409,6 +1435,12 @@ msgstr "Командата изчаква комуникация с модула
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__cmd_data
 msgid "Command data"
 msgstr "Командни данни"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_command.py:0
+#, python-format
+msgid "Command resend"
+msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__retries
@@ -2847,20 +2879,6 @@ msgid "Group By"
 msgstr "Групиране по"
 
 #. module: hr_rfid
-#: model:ir.actions.server,name:hr_rfid.hr_rfid_contact_acc_gr_expiration_ir_actions_server
-#: model:ir.cron,cron_name:hr_rfid.hr_rfid_contact_acc_gr_expiration
-#: model:ir.cron,name:hr_rfid.hr_rfid_contact_acc_gr_expiration
-msgid "HR RFID: Check contact access group expirations"
-msgstr ""
-
-#. module: hr_rfid
-#: model:ir.actions.server,name:hr_rfid.hr_rfid_employee_acc_gr_expiration_ir_actions_server
-#: model:ir.cron,cron_name:hr_rfid.hr_rfid_employee_acc_gr_expiration
-#: model:ir.cron,name:hr_rfid.hr_rfid_employee_acc_gr_expiration
-msgid "HR RFID: Check employee access group expirations"
-msgstr ""
-
-#. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.hr_rfid_set_card_active_inactive_status_ir_actions_server
 #: model:ir.cron,cron_name:hr_rfid.hr_rfid_set_card_active_inactive_status
 #: model:ir.cron,name:hr_rfid.hr_rfid_set_card_active_inactive_status
@@ -3082,6 +3100,11 @@ msgstr "Икона"
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__activity_exception_icon
 msgid "Icon to indicate an exception activity."
 msgstr "Икон за индикация на грешка в дейност."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_contact_rel__visits_counting
+msgid "If True, the access group will counting card visits. The feature is used for RFID services in general"
+msgstr "Ако е избрано, групата за достъп ще брои посещенията с с карти. Това се използва предимно в модул Услуги"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__message_needaction
@@ -4363,6 +4386,16 @@ msgstr ""
 "се добавят към първата намерена фирма!"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__permited_visits
+msgid "Permited Visits"
+msgstr "Разрешени посещения"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_contact_rel__permited_visits
+msgid "Permited visits after this group will be deactivated. 0 mean"
+msgstr "Разрешени посещения преди деактивация на групата. "
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__pin_code
 msgid "Pin Code"
 msgstr "ПИН код"
@@ -4382,6 +4415,11 @@ msgstr "PIN код за този контакт, четири нули озна�
 #: model:ir.model.fields,help:hr_rfid.field_hr_employee__hr_rfid_pin_code
 msgid "Pin code for this user, four zeroes means that the user has no pin code."
 msgstr "PIN код за този потребител, четири нули означава, че потребителят няма ПИН код."
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_form
+msgid "Please confirm! The execution again may override already executed commands."
+msgstr "Моля потвърди! Повторното изпълнение може да промени данни, които вече са променени от друга команда."
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_webstack_discovery.py:0
@@ -4933,6 +4971,11 @@ msgid "Readers that open this door"
 msgstr "Четци, които отварят тази врата"
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_contact_rel__visits_counter
+msgid "Real visits this group will be deactivated. 0 mean"
+msgstr ""
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_form
 msgid "Receive Date"
 msgstr "Дата на получаване"
@@ -5037,6 +5080,11 @@ msgstr "Заявете инструкции"
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__request
 msgid "Request json sent to the module"
 msgstr "JSON заявка изпратена до модула"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_form
+msgid "Resend"
+msgstr "Повторно изпрашане"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__response
@@ -5567,6 +5615,12 @@ msgid "The card is ready for use. All is Done"
 msgstr "Картата е готова за употреба. Всичко е готово"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_command.py:0
+#, python-format
+msgid "The command is marked for execution again."
+msgstr "Командата е маркирана за повторно изпълнение."
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_ts_line__day
 msgid "The day for this interval"
 msgstr "Денят за този интервал"
@@ -6043,6 +6097,16 @@ msgstr "Преглед/Редактиране на ВГ"
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_controller_io_table_wiz_action
 msgid "View/modify IO table"
 msgstr "Преглед/промяна на IO таблицата"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__visits_counter
+msgid "Visits Counter"
+msgstr "Брояч посещения"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__visits_counting
+msgid "Visits Counting"
+msgstr "Броене на посещения"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
