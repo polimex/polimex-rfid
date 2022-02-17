@@ -14,14 +14,24 @@
             <field name="model">hr.rfid.command</field>
             <field name="arch" type="xml">
                 <form create="0" delete="0" edit="0">
+                    <header>
+<!--                        <field name="status" widget="statusbar" statusbar_visible=" " />-->
+                    </header>
                     <sheet>
-                        <field name="status" readonly="1"
-                               class="oe_right" widget="badge"
-                               decoration-success="status == 'Success'"
-                               decoration-warning="status == 'Wait'"
-                               decoration-info="status == 'Process'"
-                               decoration-danger="status == 'Failure'"
-                        />
+<!--                        <field name="status" widget="statusbar" statusbar_visible=" " -->
+<!--                               decoration-success="status == 'Success'"-->
+<!--                               decoration-warning="status == 'Wait'"-->
+<!--                               decoration-info="status == 'Process'"-->
+<!--                               decoration-danger="status == 'Failure'"-->
+<!--                        />-->
+                        <div class="oe_button_box" name="button_box">
+                            <button string="Resend" name="resend_action"
+                                    type="object" class="oe_stat_button"
+                                    icon="fa-rotate-right"
+                                    groups="base.group_no_one"
+                                    confirm="Please confirm! The execution again may override already executed commands."
+                                    attrs="{'invisible':[('status','not in',['Failure', 'Process'])]}"/>
+                        </div>
                         <div class="oe_title" modifiers="{}">
                             <h1 modifiers="{}">
                                 <field name="cmd" readonly="1"/>
