@@ -3,20 +3,20 @@
 <odoo>
   <data>
 
-    <record model="ir.module.category" id="module_rfid_settings">
-        <field name="name">RFID Settings</field>
-        <field name="visible" eval="0" />
-        <field name="description">RFID settings</field>
-    </record>
-
     <record id="hr_rfid_management" model="ir.module.category">
       <field name="name">RFID Access</field>
       <field name="description">User rights for the RFID module</field>
-      <field name="sequence">3</field>
+      <field name="sequence">30</field>
+    </record>
+
+    <record id="hr_rfid_group_viewer" model="res.groups">
+      <field name="name">Guard</field>
+      <field name="category_id" ref="hr_rfid_management"/>
     </record>
 
     <record id="hr_rfid_group_officer" model="res.groups">
       <field name="name">Officer</field>
+      <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_group_viewer'))]" />
       <field name="category_id" ref="hr_rfid_management" />
     </record>
 
@@ -25,6 +25,13 @@
       <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_group_officer'))]" />
       <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
       <field name="category_id" ref="hr_rfid_management" />
+    </record>
+
+
+    <record id="module_rfid_settings" model="ir.module.category">
+        <field name="name">RFID Settings</field>
+        <field name="visible" eval="0" />
+        <field name="description">RFID settings</field>
     </record>
 
     <record id="hr_rfid_view_module_discovery" model="res.groups">

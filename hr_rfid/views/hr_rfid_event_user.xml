@@ -98,9 +98,9 @@
                     <field name="employee_id" widget="many2one_avatar_employee" optional="show"/>
                     <field name="contact_id" widget="many2one_avatar" optional="show"/>
                     <field name="event_action"/>
-                    <field name="reader_id"/>
+                    <field name="reader_id" optional="show"/>
                     <field name="door_id"/>
-                    <field name="alarm_line_id" optional="show"/>
+                    <field name="alarm_line_id" optional="hide"/>
                 </tree>
             </field>
         </record>
