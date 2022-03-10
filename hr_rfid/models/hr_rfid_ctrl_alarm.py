@@ -59,6 +59,10 @@ class HrRfidCtrlAlarm(models.Model):
         compute='_compute_counters'
     )
 
+    alarm_group_id = fields.Many2one(
+        comodel_name='hr.rfid.ctrl.alarm.group'
+    )
+
     def _compute_counters(self):
         for l in self:
             l.user_event_count = self.env['hr.rfid.event.user'].search_count([('alarm_line_id', '=', l.id)])
@@ -98,7 +102,7 @@ class HrRfidCtrlAlarm(models.Model):
 
     def disarm(self):
         for l in self:
-            cmd_id = self.controller_id.change_output_state(self.control_output, 0, 99)
+            cmd_id = l.controller_id.change_output_state(l.control_output, 0, 99)
 
         return self.balloon_success(
             title=_('Disarm command success'),
@@ -107,7 +111,7 @@ class HrRfidCtrlAlarm(models.Model):
 
     def arm(self):
         for l in self:
-            cmd_id = self.controller_id.change_output_state(self.control_output, 1, 99)
+            cmd_id = l.controller_id.change_output_state(l.control_output, 1, 99)
 
         return self.balloon_success(
             title=_('Arm command success'),

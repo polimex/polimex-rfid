@@ -12,6 +12,7 @@ from . import hr_rfid_ctrl_time_schedule
 from . import hr_rfid_ctrl_iotable
 from . import hr_rfid_ctrl_reader
 from . import hr_rfid_ctrl_alarm
+from . import hr_rfid_ctrl_alarm_group
 from . import hr_rfid_ctrl_th
 from . import hr_rfid_ctrl_th_log
 from . import hr_rfid_event_user
