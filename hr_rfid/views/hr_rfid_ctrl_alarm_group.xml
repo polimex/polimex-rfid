@@ -33,12 +33,14 @@
                     <sheet>
                         <div class="oe_button_box" name="button_box">
                             <button name="disarm" type="object" class="oe_stat_button text-danger" icon="fa-shield"
+                                    groups="hr_rfid.hr_rfid_view_door_arm_disarm"
                                     help="Disarm all lines in this group"
                                     confirm="Are you sure to Disarm all lines in the group?"
                                     states="arm,mixed">
                                 Disarm
                             </button>
                             <button name="arm" type="object" class="oe_stat_button text-success" icon="fa-shield"
+                                    groups="hr_rfid.hr_rfid_view_door_arm_disarm"
                                     help="Arm all lines in this group"
                                     confirm="Are you sure to Arm all lines in the group?"
                                     states="disarm,mixed">

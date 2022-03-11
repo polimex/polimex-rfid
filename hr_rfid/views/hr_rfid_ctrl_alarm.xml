@@ -36,11 +36,13 @@
                         <div class="oe_button_box" name="button_box">
                             <button name="disarm" type="object" class="oe_stat_button text-danger" icon="fa-shield"
                                     help="The Line is Armed! Press here to Disarm the Line"
+                                    groups="hr_rfid.hr_rfid_view_door_arm_disarm"
                                     attrs="{'invisible':[('armed', '=', 'disarm')]}">
                                 Arm
                             </button>
                             <button name="arm" type="object" class="oe_stat_button text-success" icon="fa-shield"
                                     help="The line is Disarmed! Press here to Arm the Line"
+                                    groups="hr_rfid.hr_rfid_view_door_arm_disarm"
                                     attrs="{'invisible':[('armed', '=', 'arm')]}">
                                 Disarm
                             </button>
