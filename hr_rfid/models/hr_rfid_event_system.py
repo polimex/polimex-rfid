@@ -114,7 +114,6 @@ class HrRfidSystemEvent(models.Model):
         ('64', _('Cloud Card Request')),    # User Event
         ('99', _('System Event')),
     ]
-
     event_nums = list(map(lambda a: a[0], action_selection))
 
     event_action = fields.Selection(

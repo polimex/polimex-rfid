@@ -16,7 +16,7 @@
                   name="Events"
                   parent="hr_rfid_root_menu"
                   groups="hr_rfid_group_viewer"
-                  sequence="0"/>
+                  sequence="5"/>
         <menuitem id="hr_rfid_card_management"
                   name="Card Management"
                   parent="hr_rfid_root_menu"
@@ -46,7 +46,7 @@
                   parent="hr_rfid_events_menu"
                   action="hr_rfid_event_user_action"
                   groups="hr_rfid_group_viewer"
-                  sequence="0"/>
+                  sequence="5"/>
         <menuitem id="hr_rfid_menu_system_events"
                   name="System Events"
                   parent="hr_rfid_events_menu"
