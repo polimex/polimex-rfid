@@ -7,6 +7,6 @@ class HrRfidDoor(models.Model):
 
     def write(self, vals):
         res = super(HrRfidDoor, self).write(vals)
-        res.refresh_views()
+        self.refresh_views()
         return res
 

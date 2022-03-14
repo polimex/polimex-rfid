@@ -11,5 +11,5 @@ class HrRfidCtrlAlarm(models.Model):
 
     def write(self, vals):
         res = super(HrRfidCtrlAlarm, self).write(vals)
-        res.refresh_views()
+        self.refresh_views()
         return res

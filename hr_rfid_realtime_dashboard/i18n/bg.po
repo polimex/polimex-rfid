@@ -1,0 +1,142 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* hr_rfid_realtime_dashboard
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-14 13:25+0000\n"
+"PO-Revision-Date: 2022-03-14 15:26+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: bg\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"X-Generator: Poedit 3.0.1\n"
+
+#. module: hr_rfid_realtime_dashboard
+#: model:ir.actions.act_window,name:hr_rfid_realtime_dashboard.act_alarm_lines
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard1_form_view
+msgid "Alarm Lines"
+msgstr "Алармени линии"
+
+#. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard1_form_view
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard2_form_view
+msgid "Alarm groups"
+msgstr "Алармени групи"
+
+#. module: hr_rfid_realtime_dashboard
+#: model:ir.actions.act_window,name:hr_rfid_realtime_dashboard.alarm_groups_act
+msgid "Alarm line Groups"
+msgstr "Групи алармени линии"
+
+#. module: hr_rfid_realtime_dashboard
+#: model:ir.model,name:hr_rfid_realtime_dashboard.model_board_board
+msgid "Board"
+msgstr "Табло за управление"
+
+#. module: hr_rfid_realtime_dashboard
+#: model:ir.model,name:hr_rfid_realtime_dashboard.model_hr_rfid_ctrl_alarm
+msgid "Controller Alarm Lines"
+msgstr "Алармени линии на контролера"
+
+#. module: hr_rfid_realtime_dashboard
+#: model:ir.ui.menu,name:hr_rfid_realtime_dashboard.hr_rfid_dashboard_menu
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard1_form_view
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard2_form_view
+msgid "Dashboard"
+msgstr "Табло"
+
+#. module: hr_rfid_realtime_dashboard
+#: model:ir.ui.menu,name:hr_rfid_realtime_dashboard.hr_rfid_dashboard_1_menu
+msgid "Dashboard 1"
+msgstr "Табло 1"
+
+#. module: hr_rfid_realtime_dashboard
+#: model:ir.ui.menu,name:hr_rfid_realtime_dashboard.hr_rfid_dashboard_2_menu
+msgid "Dashboard 2"
+msgstr "Табло 2"
+
+#. module: hr_rfid_realtime_dashboard
+#: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_board_board__display_name
+#: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_ctrl_alarm__display_name
+#: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_door__display_name
+#: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_event_system__display_name
+#: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_event_user__display_name
+msgid "Display Name"
+msgstr "Име за показване"
+
+#. module: hr_rfid_realtime_dashboard
+#: model:ir.model,name:hr_rfid_realtime_dashboard.model_hr_rfid_door
+msgid "Door"
+msgstr "Врата"
+
+#. module: hr_rfid_realtime_dashboard
+#: model:ir.actions.act_window,name:hr_rfid_realtime_dashboard.act_doors
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard1_form_view
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard2_form_view
+msgid "Doors"
+msgstr "Врати"
+
+#. module: hr_rfid_realtime_dashboard
+#: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_board_board__id
+#: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_ctrl_alarm__id
+#: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_door__id
+#: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_event_system__id
+#: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_event_user__id
+msgid "ID"
+msgstr "Номер (ID)"
+
+#. module: hr_rfid_realtime_dashboard
+#: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_board_board____last_update
+#: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_ctrl_alarm____last_update
+#: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_door____last_update
+#: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_event_system____last_update
+#: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_event_user____last_update
+msgid "Last Modified on"
+msgstr "Последно променено на"
+
+#. module: hr_rfid_realtime_dashboard
+#: model:ir.actions.act_window,name:hr_rfid_realtime_dashboard.hr_rfid_dashboard_1_act_window
+msgid "RFID Dashboard 1"
+msgstr "Табло за RFID 1"
+
+#. module: hr_rfid_realtime_dashboard
+#: model:ir.actions.act_window,name:hr_rfid_realtime_dashboard.hr_rfid_dashboard_2_act_window
+msgid "RFID Dashboard 2"
+msgstr "Табло за RFID 2"
+
+#. module: hr_rfid_realtime_dashboard
+#: model:ir.model,name:hr_rfid_realtime_dashboard.model_hr_rfid_event_system
+msgid "RFID System Event"
+msgstr "RFID Системно събитие"
+
+#. module: hr_rfid_realtime_dashboard
+#: model:ir.model,name:hr_rfid_realtime_dashboard.model_hr_rfid_event_user
+msgid "RFID User Event"
+msgstr "RFID потребителско събитие"
+
+#. module: hr_rfid_realtime_dashboard
+#: model:ir.actions.act_window,name:hr_rfid_realtime_dashboard.act_system_event
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard1_form_view
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard2_form_view
+msgid "System Events"
+msgstr "Системни събития"
+
+#. module: hr_rfid_realtime_dashboard
+#: model:ir.actions.act_window,name:hr_rfid_realtime_dashboard.act_th_log
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard1_form_view
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard2_form_view
+msgid "Temperature and Humidity"
+msgstr "Температура и Влажност"
+
+#. module: hr_rfid_realtime_dashboard
+#: model:ir.actions.act_window,name:hr_rfid_realtime_dashboard.act_user_events
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard1_form_view
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard2_form_view
+msgid "User Events"
+msgstr "Потребителски събития"

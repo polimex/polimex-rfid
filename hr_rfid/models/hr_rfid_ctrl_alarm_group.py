@@ -15,7 +15,7 @@ class HrRfidCtrlAlarmGroup(models.Model):
         ('arm', 'Armed'),  # 64 ON
         ('disarm', 'Disarmed'),  # 64 OFF
         ('mixed', 'Partially armed'),  # 64 OFF
-    ], compute='_compute_states', tracking=True)
+    ], compute='_compute_states', tracking=True, store=True)
     parent_id = fields.Many2one(comodel_name='hr.rfid.ctrl.alarm.group')
     child_ids = fields.One2many(
         comodel_name='hr.rfid.ctrl.alarm.group',

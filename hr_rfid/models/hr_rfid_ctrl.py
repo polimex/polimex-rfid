@@ -88,7 +88,8 @@ class HrRfidController(models.Model):
     siren_state = fields.Boolean(
         help='Alarm Siren state',
         compute='_compute_siren_state',
-        inverse='_set_siren_state'
+        inverse='_set_siren_state',
+        store=True
     )
 
     mode = fields.Integer(
@@ -300,7 +301,8 @@ class HrRfidController(models.Model):
     def _set_siren_state(self):
         for c in self:
             siren_out = (c.alarm_lines == 1) and 4 or 10
-            c.change_output_state(siren_out, int(c.siren_state), 99)
+            if not self.env.context.get('no_output', False):
+                c.change_output_state(siren_out, int(c.siren_state), 99)
 
     def return_action_to_open(self):
         """ This opens the xml view specified in xml_id for the current app """

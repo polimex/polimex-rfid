@@ -7,12 +7,6 @@ from odoo import api, models, fields
 class Board(models.AbstractModel):
     _inherit = 'board.board'
 
-    alarm_exist = fields.Boolean(compute='_computeFlags')
-
-    def _computeFlags(self):
-        for s in self:
-            s.alarm_exist == self.env['hr.rfid.ctrl'].search_count([('alarm_lines', '>', 0)]) > 0
-
     # @api.model
     # def create(self, vals):
     #     return self

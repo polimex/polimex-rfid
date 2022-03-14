@@ -14,6 +14,7 @@
             <field name="name">Alarm line Groups</field>
             <field name="model">hr.rfid.ctrl.alarm.group</field>
             <field name="inherit_id" ref="hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban"/>
+            <field name="mode">extension</field>
             <field name="arch" type="xml">
                 <xpath expr="//kanban" position="attributes">
                     <attribute name="class">o_kanban_dashboard o_rfid_dashboard_kanban</attribute>
@@ -24,6 +25,7 @@
         <record id="alarm_groups_act" model="ir.actions.act_window">
             <field name="name">Alarm line Groups</field>
             <field name="res_model">hr.rfid.ctrl.alarm.group</field>
+            <field name="domain">[('state', '!=', 'no_alarm')]</field>
             <field name="view_mode">kanban</field>
 
 <!--            <field name="view_id" ref="hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban"/>-->
@@ -116,6 +118,7 @@
             <field name="name">Alarm Lines</field>
             <field name="res_model">hr.rfid.ctrl.alarm</field>
             <field name="view_mode">kanban</field>
+            <field name="domain">[('armed', '!=', 'no_alarm')]</field>
             <field name="view_id" ref="alarm_line_kanban_view_dash"/>
         </record>
 
@@ -125,7 +128,6 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Dashboard">
-                    <field name="alarm_exist" invisible="0"/>
                     <board style="2-1">
                         <column>
                             <action
@@ -144,7 +146,6 @@
                         <column>
                             <action
                                 string="Alarm groups"
-                                attrs="{'invisible': [('alarm_exist', '=', False)]}"
                                 name="%(hr_rfid_realtime_dashboard.alarm_groups_act)d"
                             />
                             <action
@@ -153,7 +154,6 @@
                             />
                             <action
                                 string="Alarm Lines"
-                                attrs="{'invisible': [('alarm_exist', '=', False)]}"
                                 name="%(hr_rfid_realtime_dashboard.act_alarm_lines)d"
                             />
                         </column>
@@ -168,12 +168,10 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Dashboard">
-                    <field name="alarm_exist" invisible="0"/>
                     <board style="1">
                         <column>
                             <action
                                 string="Alarm groups"
-                                attrs="{'invisible': [('alarm_exist', '=', False)]}"
                                 name="%(hr_rfid_realtime_dashboard.alarm_groups_act)d"
                             />
                             <action

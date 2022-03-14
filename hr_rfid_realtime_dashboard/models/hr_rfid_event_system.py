@@ -22,6 +22,6 @@ class HrRfidSystemEvent(models.Model):
 
     def write(self, vals):
         res = super(HrRfidSystemEvent, self).write(vals)
-        res.refresh_views()
+        self.refresh_views()
         return res
 

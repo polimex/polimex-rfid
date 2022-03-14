@@ -34,7 +34,12 @@ class HrRfidCtrlAlarm(models.Model):
         ('no_alarm', 'No Alarm functionality'),  # 64 ON
         ('arm', 'Armed'),  # 64 ON
         ('disarm', 'Disarmed'),  # 64 OFF
-        ], compute='_compute_states')
+        ], compute='_compute_states', store=True)
+
+    siren_state = fields.Boolean(
+        help='Alarm Siren state',
+        related='controller_id.siren_state'
+    )
 
     controller_id = fields.Many2one(
         comodel_name='hr.rfid.ctrl',
@@ -72,7 +77,11 @@ class HrRfidCtrlAlarm(models.Model):
     def _compute_states(self):
         for l in self:
             armed, state = l.controller_id._get_alarm_line_state(l.line_number)
-            l.armed = armed
+            _logger.info('%d line in armed:%s and state:%s', l.line_number, armed, state)
+            if state == 'disabled':
+                l.armed = 'no_alarm'
+            else:
+                l.armed = armed
             l.state = state
 
     def return_action_to_open(self):

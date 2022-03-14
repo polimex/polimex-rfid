@@ -204,15 +204,18 @@
                                                     <div class="float-right">
                                                         <span title="Disarm the Door"
                                                               groups="hr_rfid.hr_rfid_view_door_arm_disarm"
-                                                              t-if="record.alarm_line_ids.raw_value.length &gt; 0">
+                                                              t-if="record.alarm_state.raw_value in ['arm','disarm']">
+<!--                                                              t-if="record.alarm_line_ids.raw_value.length &gt; 0">-->
                                                             <a name="disarm_door" type="object">
                                                                 <i class="fa fa-fw fa-universal-access text-success" role="img"
                                                                    aria-label="Disarm the Door"/>
+                                                                <field name="alarm_state"/>
                                                             </a>
                                                         </span>
                                                         <span title="Arm the Door"
                                                               groups="hr_rfid.hr_rfid_view_door_arm_disarm"
-                                                              t-if="record.alarm_line_ids.raw_value.length &gt; 0">
+                                                              t-if="record.alarm_state.raw_value in ['arm','disarm']">
+<!--                                                              t-if="record.alarm_line_ids.raw_value.length &gt; 0">-->
 <!--                                                            <t t-debug="pbt"/>-->
                                                             <a name="arm_door" type="object">
                                                                 <i class="fa fa-fw fa-shield text-danger" role="img"
