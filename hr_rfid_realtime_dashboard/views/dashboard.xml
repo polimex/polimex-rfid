@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="assets_backend" name="maintenance assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" type="text/scss" href="/hr_rfid_realtime_dashboard/static/src/scss/hr_rfid_dashboard.scss"/>
+            </xpath>
+        </template>
+
+
+
+        <record model="ir.ui.view" id="alarm_group_kanban_view_dash">
+            <field name="name">Alarm line Groups</field>
+            <field name="model">hr.rfid.ctrl.alarm.group</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban"/>
+            <field name="arch" type="xml">
+                <xpath expr="//kanban" position="attributes">
+                    <attribute name="class">o_kanban_dashboard o_rfid_dashboard_kanban</attribute>
+                    <attribute name="default_group_by"></attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="alarm_groups_act" model="ir.actions.act_window">
+            <field name="name">Alarm line Groups</field>
+            <field name="res_model">hr.rfid.ctrl.alarm.group</field>
+            <field name="view_mode">kanban</field>
+
+<!--            <field name="view_id" ref="hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban"/>-->
+            <field name="view_id" ref="alarm_group_kanban_view_dash"/>
+        </record>
+
+        <record id="user_event_tree_view_dash" model="ir.ui.view">
+            <field name="name">hr.rfid.event.user.tree</field>
+            <field name="model">hr.rfid.event.user</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_user_ev_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="limit">10</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="act_user_events" model="ir.actions.act_window">
+            <field name="name">User Events</field>
+            <field name="res_model">hr.rfid.event.user</field>
+            <field name="view_id" ref="user_event_tree_view_dash"/>
+        </record>
+
+        <record id="system_event_tree_view_dash" model="ir.ui.view">
+            <field name="name">hr.rfid.event.system.tree</field>
+            <field name="model">hr.rfid.event.system</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_sys_ev_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="limit">10</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="act_system_event" model="ir.actions.act_window">
+            <field name="name">System Events</field>
+            <field name="res_model">hr.rfid.event.system</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="system_event_tree_view_dash"/>
+        </record>
+
+        <record id="th_log_tree_view_dash" model="ir.ui.view">
+            <field name="name">th_log_view_tree</field>
+            <field name="model">hr.rfid.ctrl.th</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_ctrl_th_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="limit">10</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="act_th_log" model="ir.actions.act_window">
+            <field name="name">Temperature and Humidity</field>
+            <field name="res_model">hr.rfid.ctrl.th</field>
+<!--            <field name="view_mode">tree</field>-->
+            <field name="view_id" ref="th_log_tree_view_dash"/>
+<!--            <field name="domain">[('event_type','=','nfc')]</field>-->
+        </record>
+
+        <record id="door_kanban_view_dash" model="ir.ui.view">
+            <field name="name">door_kanban_view</field>
+            <field name="model">hr.rfid.door</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_door_view_kanban"/>
+            <field name="priority">99</field>
+            <field name="arch" type="xml">
+                <xpath expr="//kanban" position="attributes">
+                    <attribute name="class">o_kanban_dashboard o_rfid_dashboard_kanban</attribute>
+                    <attribute name="default_group_by"></attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="act_doors" model="ir.actions.act_window">
+            <field name="name">Doors</field>
+            <field name="res_model">hr.rfid.door</field>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="door_kanban_view_dash"/>
+        </record>
+
+        <record id="alarm_line_kanban_view_dash" model="ir.ui.view">
+            <field name="name">alarm_line_kanban_view</field>
+            <field name="model">hr.rfid.ctrl.alarm</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_ctrl_alarm_view_kanban"/>
+            <field name="priority">99</field>
+            <field name="arch" type="xml">
+                <xpath expr="//kanban" position="attributes">
+                    <attribute name="class">o_kanban_dashboard o_rfid_dashboard_kanban</attribute>
+                    <attribute name="default_group_by"></attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="act_alarm_lines" model="ir.actions.act_window">
+            <field name="name">Alarm Lines</field>
+            <field name="res_model">hr.rfid.ctrl.alarm</field>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="alarm_line_kanban_view_dash"/>
+        </record>
+
+        <record id="dashboard1_form_view" model="ir.ui.view">
+            <field name="name">Dashboard Form</field>
+            <field name="model">board.board</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Dashboard">
+                    <field name="alarm_exist" invisible="0"/>
+                    <board style="2-1">
+                        <column>
+                            <action
+                                string="User Events"
+                                name="%(hr_rfid_realtime_dashboard.act_user_events)d"
+                            />
+                            <action
+                                string="System Events"
+                                name="%(hr_rfid_realtime_dashboard.act_system_event)d"
+                            />
+                            <action
+                                string="Temperature and Humidity"
+                                name="%(hr_rfid_realtime_dashboard.act_th_log)d"
+                            />
+                        </column>
+                        <column>
+                            <action
+                                string="Alarm groups"
+                                attrs="{'invisible': [('alarm_exist', '=', False)]}"
+                                name="%(hr_rfid_realtime_dashboard.alarm_groups_act)d"
+                            />
+                            <action
+                                string="Doors"
+                                name="%(hr_rfid_realtime_dashboard.act_doors)d"
+                            />
+                            <action
+                                string="Alarm Lines"
+                                attrs="{'invisible': [('alarm_exist', '=', False)]}"
+                                name="%(hr_rfid_realtime_dashboard.act_alarm_lines)d"
+                            />
+                        </column>
+                    </board>
+                </form>
+            </field>
+        </record>
+
+        <record id="dashboard2_form_view" model="ir.ui.view">
+            <field name="name">Dashboard Form</field>
+            <field name="model">board.board</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Dashboard">
+                    <field name="alarm_exist" invisible="0"/>
+                    <board style="1">
+                        <column>
+                            <action
+                                string="Alarm groups"
+                                attrs="{'invisible': [('alarm_exist', '=', False)]}"
+                                name="%(hr_rfid_realtime_dashboard.alarm_groups_act)d"
+                            />
+                            <action
+                                string="User Events"
+                                name="%(hr_rfid_realtime_dashboard.act_user_events)d"
+                            />
+                            <action
+                                string="System Events"
+                                name="%(hr_rfid_realtime_dashboard.act_system_event)d"
+                            />
+                            <action
+                                string="Temperature and Humidity"
+                                name="%(hr_rfid_realtime_dashboard.act_th_log)d"
+                            />
+                            <action
+                                    string="Doors"
+                                    name="%(hr_rfid_realtime_dashboard.act_doors)d"
+                            />
+                        </column>
+                    </board>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_rfid_dashboard_1_act_window" model="ir.actions.act_window">
+            <field name="name">RFID Dashboard 1</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">board.board</field>
+            <field name="view_mode">form</field>
+            <field name="usage">menu</field>
+            <field name="view_id" ref="dashboard1_form_view"/>
+        </record>
+        <record id="hr_rfid_dashboard_2_act_window" model="ir.actions.act_window">
+            <field name="name">RFID Dashboard 2</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">board.board</field>
+            <field name="view_mode">form</field>
+            <field name="usage">menu</field>
+            <field name="view_id" ref="dashboard2_form_view"/>
+        </record>
+
+    </data>
+</odoo>
