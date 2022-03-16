@@ -230,7 +230,7 @@ class HrRfidSystemEvent(models.Model):
             records += super(HrRfidSystemEvent, self).create([vals])
 
         if 'siren' in vals and 'event_action' in vals and vals.get('event_action') == '20':
-            for e in records.with_context(no_ouptup=True):
+            for e in records.with_context(no_output=True):
                 e.controller_id.siren_state = vals.get('siren')
 
         return records

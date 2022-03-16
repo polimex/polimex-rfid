@@ -13,11 +13,15 @@ class HrRfidSystemEvent(models.Model):
         for e in res:
             if e.event_action in ['19', '20', '25', '26', '30']:
                 key_val_dict = dict(e._fields['event_action'].selection)
-                e.controller_id.webstack_id.message_follower_ids.notify_web_followers(
+                e.controller_id.webstack_id.message_follower_ids.notify_browser_followers(
                     title=key_val_dict[e.event_action],
                     message=e.name,
-                    sticky=True,
-                    m_type='danger')
+                )
+                # e.controller_id.webstack_id.message_follower_ids.notify_web_followers(
+                #     title=key_val_dict[e.event_action],
+                #     message=e.name,
+                #     sticky=True,
+                #     m_type='danger')
         return res
 
     def write(self, vals):

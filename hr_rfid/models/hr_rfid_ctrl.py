@@ -303,6 +303,7 @@ class HrRfidController(models.Model):
             siren_out = (c.alarm_lines == 1) and 4 or 10
             if not self.env.context.get('no_output', False):
                 c.change_output_state(siren_out, int(c.siren_state), 99)
+                c._update_output_state(siren_out, 1)
 
     def return_action_to_open(self):
         """ This opens the xml view specified in xml_id for the current app """
@@ -471,7 +472,8 @@ class HrRfidController(models.Model):
             if ctrl.io_table == new_io_table:
                 continue
 
-            if ((ctrl.io_table_lines*8*2) != len(new_io_table) and line == 0) or (line != 0 and len(new_io_table) != 16):
+            if ((ctrl.io_table_lines * 8 * 2) != len(new_io_table) and line == 0) or (
+                    line != 0 and len(new_io_table) != 16):
                 raise exceptions.ValidationError(
                     'IO table lengths are different, this should never happen????'
                 )
@@ -535,8 +537,24 @@ class HrRfidController(models.Model):
             message=_("This will take time. For more information check controller's commands")
         )
 
+    @api.model
+    def create(self, vals_list):
+        if 'mode' in vals_list and 'sw_version' in vals_list and 'hw_version' in vals_list and not 'io_table' in vals_list:
+            vals_list['io_table'] = self.get_default_io_table(
+                hw_type=vals_list.get('hw_version'),
+                sw_version=vals_list.get('sw_version'),
+                mode=vals_list.get('mode'),
+            )
+        return super(HrRfidController, self).create(vals_list)
+
     def write(self, vals):
         for ctrl in self:
+            if 'mode' in vals and 'sw_version' in vals and 'hw_version' in vals and not 'io_table' in vals:
+                vals['io_table'] = self.get_default_io_table(
+                    hw_type=vals.get('hw_version'),
+                    sw_version=vals.get('sw_version'),
+                    mode=vals.get('mode'),
+                )
             old_ext_db = ctrl.external_db
             super(HrRfidController, ctrl).write(vals)
             new_ext_db = ctrl.external_db
@@ -736,12 +754,14 @@ class HrRfidController(models.Model):
 
     def read_io_table_cmd(self):
         if self.webstack_id.is_10_3():
-            return [self._base_command('F9', '%02X' % (i+1)) for i in range(self.io_table_lines)]
+            return [self._base_command('F9', '%02X' % (i + 1)) for i in range(self.io_table_lines)]
         else:
             return self._base_command('F9', '00')
+
     def write_io_table_cmd(self, cmd_data):
-        if self.webstack_id.is_10_3() and len(cmd_data) > (2+16):
-            return [self._base_command('D9', '%02X' % (i+1) + cmd_data[2+i*16:2+i*16+16]) for i in range(self.io_table_lines)]
+        if self.webstack_id.is_10_3() and len(cmd_data) > (2 + 16):
+            return [self._base_command('D9', '%02X' % (i + 1) + cmd_data[2 + i * 16:2 + i * 16 + 16]) for i in
+                    range(self.io_table_lines)]
         else:
             return self._base_command('D9', cmd_data)
 

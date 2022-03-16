@@ -77,7 +77,7 @@ class HrRfidCtrlAlarm(models.Model):
     def _compute_states(self):
         for l in self:
             armed, state = l.controller_id._get_alarm_line_state(l.line_number)
-            _logger.info('%d line in armed:%s and state:%s', l.line_number, armed, state)
+            # _logger.info('%d line in armed:%s and state:%s', l.line_number, armed, state)
             if state == 'disabled':
                 l.armed = 'no_alarm'
             else:
@@ -125,4 +125,20 @@ class HrRfidCtrlAlarm(models.Model):
         return self.balloon_success(
             title=_('Arm command success'),
             message=_('Success Line(s) Arm')
+        )
+
+    def siren_off(self):
+        for s in self:
+            s.controller_id.siren_state = False
+        return self.balloon_success(
+            title=_('Siren Control'),
+            message=_('Siren turned Off successful')
+        )
+
+    def siren_on(self):
+        for s in self:
+            s.controller_id.siren_state = True
+        return self.balloon_success(
+            title=_('Siren Control'),
+            message=_('Siren turned On successful')
         )

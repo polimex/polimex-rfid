@@ -121,7 +121,7 @@ class HrRfidDoor(models.Model):
         ('no_alarm', 'No Alarm functionality'),
         ('arm', 'Armed'),
         ('disarm', 'Disarmed'),
-        ],
+    ],
         compute='_compute_alarm_state',
     )
     siren_state = fields.Boolean(
@@ -328,10 +328,10 @@ class HrRfidDoor(models.Model):
                 message=_('Because the webstack is behind NAT, we have to wait for the webstack to call us, '
                           'so we created a command. The door will open/close as soon as possible.'),
                 links=cmd_id and [{
-                     'label': cmd_id.name,
-                     'model': 'hr.rfid.command',
-                     'res_id': cmd_id.id,
-                     'action': 'hr_rfid.hr_rfid_command_action'
+                    'label': cmd_id.name,
+                    'model': 'hr.rfid.command',
+                    'res_id': cmd_id.id,
+                    'action': 'hr_rfid.hr_rfid_command_action'
                 }] or None
             )
         else:
@@ -350,10 +350,10 @@ class HrRfidDoor(models.Model):
                 message=_('Because the webstack is behind NAT, we have to wait for the webstack to call us, '
                           'so we created a command. The door will open/close as soon as possible.'),
                 links=[{
-                     'label': cmd_id.name,
-                     'model': 'hr.rfid.command',
-                     'res_id': cmd_id.id,
-                     'action': 'hr_rfid.hr_rfid_command_action'
+                    'label': cmd_id.name,
+                    'model': 'hr.rfid.command',
+                    'res_id': cmd_id.id,
+                    'action': 'hr_rfid.hr_rfid_command_action'
                 }]
             )
         else:
@@ -368,7 +368,21 @@ class HrRfidDoor(models.Model):
     def disarm_door(self):
         return self.alarm_line_ids.disarm()
 
+    def siren_off(self):
+        for s in self:
+            s.controller_id.siren_state = False
+        return self.balloon_success(
+            title=_('Siren Control'),
+            message=_('Siren turned Off successful')
+        )
 
+    def siren_on(self):
+        for s in self:
+            s.controller_id.siren_state = True
+        return self.balloon_success(
+            title=_('Siren Control'),
+            message=_('Siren turned On successful')
+        )
 
     def log_door_change(self, action: int, time: int, cmd: bool = False):
         """
@@ -455,7 +469,7 @@ class HrRfidDoor(models.Model):
         elif res_model == 'hr.rfid.ctrl.th.log':
             name = _('Temperature and Humidity Log for {}').format(self.name)
             domain = [('th_id', '=', self.th_id.id)]
-            view_mode='graph,pivot,tree'
+            view_mode = 'graph,pivot,tree'
         return {
             'name': name,
             'view_mode': view_mode or 'tree,form',
@@ -571,17 +585,17 @@ class HrRfidDoorOpenCloseWiz(models.TransientModel):
         for door in self.doors:
             door.controller_id.change_output_state(door.lock_output, 1, time=self.time)
         return self.balloon_success(
-                    title=_('Doors opened'),
-                    message=_('Doors successfully opened')
-                )
+            title=_('Doors opened'),
+            message=_('Doors successfully opened')
+        )
 
     def close_doors(self):
         for door in self.doors:
             door.controller_id.change_output_state(door.lock_output, 0, time=self.time)
         return self.balloon_success(
-                    title=_('Doors closed'),
-                    message=_('Doors successfully closed')
-                )
+            title=_('Doors closed'),
+            message=_('Doors successfully closed')
+        )
 
 
 class HrRfidCardDoorRel(models.Model):
@@ -673,7 +687,8 @@ class HrRfidCardDoorRel(models.Model):
             self.remove_rel(card_id, door_id)
 
     @api.model
-    def check_relevance_fast(self, card_id: HrRfidCard, door_id: models.Model, ts_id: models.Model = None, alarm_right: bool = False):
+    def check_relevance_fast(self, card_id: HrRfidCard, door_id: models.Model, ts_id: models.Model = None,
+                             alarm_right: bool = False):
         """
         Check if card is compatible with the door. If it is, create relation or do nothing if it exists,
         and if not remove relation or do nothing if it does not exist.
@@ -689,7 +704,8 @@ class HrRfidCardDoorRel(models.Model):
             self.remove_rel(card_id, door_id)
 
     @api.model
-    def create_rel(self, card_id: HrRfidCard, door_id: models.Model, ts_id: models.Model = None, alarm_right: bool = False):
+    def create_rel(self, card_id: HrRfidCard, door_id: models.Model, ts_id: models.Model = None,
+                   alarm_right: bool = False):
         ret = self.search([
             ('card_id', '=', card_id.id),
             ('door_id', '=', door_id.id),

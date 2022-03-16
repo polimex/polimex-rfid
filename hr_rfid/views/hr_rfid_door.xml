@@ -202,21 +202,33 @@
                                             <ul>
                                                 <li name="action_icons">
                                                     <div class="float-right">
+                                                        <span title="Siren Off"
+                                                              groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                                                              t-if="record.siren_state.raw_value">
+                                                            <a name="siren_off" type="object">
+                                                                <i class="fa fa-fw fa-bell-slash-o text-success" role="img"
+                                                                   aria-label="Siren Off"/>
+                                                            </a>
+                                                        </span>
+                                                        <span title="Siren On"
+                                                              groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                                                              t-if="!record.siren_state.raw_value">
+                                                            <a name="siren_on" type="object">
+                                                                <i class="fa fa-fw fa-bell text-danger" role="img"
+                                                                   aria-label="Siren On"/>
+                                                            </a>
+                                                        </span>
                                                         <span title="Disarm the Door"
                                                               groups="hr_rfid.hr_rfid_view_door_arm_disarm"
-                                                              t-if="record.alarm_state.raw_value in ['arm','disarm']">
-<!--                                                              t-if="record.alarm_line_ids.raw_value.length &gt; 0">-->
+                                                              t-if="record.alarm_state.raw_value == 'arm'">
                                                             <a name="disarm_door" type="object">
                                                                 <i class="fa fa-fw fa-universal-access text-success" role="img"
                                                                    aria-label="Disarm the Door"/>
-                                                                <field name="alarm_state"/>
                                                             </a>
                                                         </span>
                                                         <span title="Arm the Door"
                                                               groups="hr_rfid.hr_rfid_view_door_arm_disarm"
-                                                              t-if="record.alarm_state.raw_value in ['arm','disarm']">
-<!--                                                              t-if="record.alarm_line_ids.raw_value.length &gt; 0">-->
-<!--                                                            <t t-debug="pbt"/>-->
+                                                              t-if="record.alarm_state.raw_value == 'disarm'">
                                                             <a name="arm_door" type="object">
                                                                 <i class="fa fa-fw fa-shield text-danger" role="img"
                                                                    aria-label="Arm the Door"/>
@@ -275,31 +287,6 @@
                                                     <t t-esc="record.system_event_count.value"/>
                                                 </a>
                                             </span>
-<!--                                            <span t-if="record.system_event_count.value>0"-->
-<!--                                                  class="badge badge-pill" title="System Events">-->
-<!--                                                <a name="return_action_to_open" type="object"-->
-<!--                                                    context="{'xml_id':'hr_rfid_event_system_action'}"-->
-<!--                                                    attrs="{'invisible':[('system_event_ids', '=', False)]}">-->
-<!--                                                    <i class="fa fa-fw fa-list" role="img"-->
-<!--                                                       aria-label="System Events"/>-->
-<!--                                                    <t t-esc="record.system_event_count.value"/>-->
-<!--                                                </a>-->
-<!--                                            </span>-->
-<!--                                            <span t-if="record.commands_count.value>0"-->
-<!--                                                  class="badge badge-pill" title="Commands">-->
-<!--                                                <a name="return_action_to_open" type="object"-->
-<!--                                                    context="{'xml_id':'hr_rfid_command_action'}"-->
-<!--                                                    attrs="{'invisible':[('command_ids', '=', False)]}">-->
-<!--                                                    <i class="fa fa-fw fa-list" role="img"-->
-<!--                                                       aria-label="Commands"/>-->
-<!--                                                    <t t-esc="record.commands_count.value"/>-->
-<!--                                                </a>-->
-<!--                                            </span>-->
-<!--                                            <span t-if="record.behind_nat.value"-->
-<!--                                                  class="badge badge-pill" title="Module Web Management">-->
-<!--                                                <a t-att-href="record.http_link.value" target="_blank" style="text-decoration:none; color: #010199;">Web</a>-->
-
-<!--                                            </span>-->
                                         </span>
                                     </div>
                                 </div>
