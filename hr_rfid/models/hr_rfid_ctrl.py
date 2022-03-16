@@ -303,7 +303,7 @@ class HrRfidController(models.Model):
             siren_out = (c.alarm_lines == 1) and 4 or 10
             if not self.env.context.get('no_output', False):
                 c.change_output_state(siren_out, int(c.siren_state), 99)
-                c._update_output_state(siren_out, 1)
+            c._update_output_state(siren_out, 1)
 
     def return_action_to_open(self):
         """ This opens the xml view specified in xml_id for the current app """
@@ -537,24 +537,8 @@ class HrRfidController(models.Model):
             message=_("This will take time. For more information check controller's commands")
         )
 
-    @api.model
-    def create(self, vals_list):
-        if 'mode' in vals_list and 'sw_version' in vals_list and 'hw_version' in vals_list and not 'io_table' in vals_list:
-            vals_list['io_table'] = self.get_default_io_table(
-                hw_type=vals_list.get('hw_version'),
-                sw_version=vals_list.get('sw_version'),
-                mode=vals_list.get('mode'),
-            )
-        return super(HrRfidController, self).create(vals_list)
-
     def write(self, vals):
         for ctrl in self:
-            if 'mode' in vals and 'sw_version' in vals and 'hw_version' in vals and not 'io_table' in vals:
-                vals['io_table'] = self.get_default_io_table(
-                    hw_type=vals.get('hw_version'),
-                    sw_version=vals.get('sw_version'),
-                    mode=vals.get('mode'),
-                )
             old_ext_db = ctrl.external_db
             super(HrRfidController, ctrl).write(vals)
             new_ext_db = ctrl.external_db

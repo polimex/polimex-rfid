@@ -173,6 +173,9 @@
                                         <li>
                                             <a name="hr_rfid.hr_rfid_controller_io_table_action" type="action">IO Table</a>
                                         </li>
+                                        <li>
+                                            <a name="read_io_table_cmd" type="object">Read IO Table</a>
+                                        </li>
                                         <t t-if="widget.deletable">
                                             <li>
                                                 <a type="delete" confirm="Are you sure?">Delete</a>
