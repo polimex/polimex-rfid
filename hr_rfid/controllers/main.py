@@ -154,10 +154,16 @@ class WebRfidController(http.Controller):
             return webstack.check_for_unsent_cmd(200)
         # Emergency open
         elif event_action in [19]:
+            software = reader_b6
+            state = reader_num > 0
+            msg = _("Emergency from %s %s",
+                    software and _("Software") or _("Hardware"),
+                    state and _("Activated") or _("Deactivated"))
+
             sys_event_dict = {
                 'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
                 'event_action': str(event_action),
-                'error_description': 'All Door Opened!'
+                'error_description': msg
                 # 'input_js': card_num,
             }
             event = controller_id.report_sys_ev(
@@ -165,6 +171,17 @@ class WebRfidController(http.Controller):
                 post_data=post_data,
                 sys_ev_dict=sys_event_dict
             )
+            if controller_id.emergency_group_id:
+                if state:
+                    controller_id.emergency_group_id.emergency_on()
+                else:
+                    controller_id.emergency_group_id.emergency_off()
+            if software:
+                controller_id._update_input_state(14, int(state))
+                controller_id._update_input_state(controller_id.inputs, int(state))
+            else:
+                controller_id._update_input_state(controller_id.inputs, int(state))
+
             return webstack.check_for_unsent_cmd(200)
         # Exit button Open Door(1234) from IN(1234
         elif event_action in [21, 22, 23, 24]:

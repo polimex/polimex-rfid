@@ -92,6 +92,16 @@ class HrRfidController(models.Model):
         store=True
     )
 
+    emergency_group_id = fields.Many2one(
+        comodel_name='hr.rfid.ctrl.emergency.group'
+    )
+
+    emergency_state = fields.Selection([
+        ('off', 'No Emergency'),
+        ('soft', 'Group Emergency'),
+        ('hard', 'Hardware Emergency'),
+    ], compute='_compute_emergency_state', inverse='_inverse_emergency_state')
+
     mode = fields.Integer(
         string='Controller Mode',
         help='The mode of the controller',
@@ -250,6 +260,18 @@ class HrRfidController(models.Model):
         for ctrl in self:
             if ctrl.mode == 0:
                 raise exceptions.ValidationError(_('The controller mode value is invalid. Please check it!'))
+
+    @api.depends('input_states')
+    def _compute_emergency_state(self):
+        for c in self:
+            soft = c._get_input_state(14)
+            hard = c._get_input_state(c.inputs)
+            c.emergency_state = (soft and 'soft') or (hard and 'hard') or 'off'
+
+    def _inverse_emergency_state(self):
+        for c in self:
+            if c.emergency_state != 'hard':
+                c.change_output_state(99, c.emergency_state == 'soft' and 1 or 0)
 
     @api.depends('mode')
     def _compute_controller_mode(self):
@@ -590,6 +612,14 @@ class HrRfidController(models.Model):
         self.ensure_one()
         return self.input_states & (2 ** (input_number - 1)) == (2 ** (input_number - 1))
 
+    def _update_input_state(self, input_number, state:bool):
+        for c in self:
+            if state:
+                c.input_states = c.input_states or pow(2,input_number-1)
+            else:
+                c.input_states = (c.input_states and pow(2,input_number-1) == pow(2,input_number-1)) and (c.input_states - pow(2,input_number-1)) or c.input_states
+
+
     def _get_output_state(self, output_number):
         self.ensure_one()
         return self.output_states & (2 ** (output_number - 1)) == (2 ** (output_number - 1))
@@ -599,11 +629,12 @@ class HrRfidController(models.Model):
         Output Number from 1
         State 0 or 1, True or False
         '''
-        if state:  # !=0
-            if self.output_states & (2 ** (output_number - 1)) != (2 ** (output_number - 1)):
-                self.output_states += (2 ** (output_number - 1))
-        elif self.output_states & (2 ** (output_number - 1)) == (2 ** (output_number - 1)):
-            self.output_states -= (2 ** (output_number - 1))
+        for c in self:
+            if state:  # !=0
+                if c.output_states & (2 ** (output_number - 1)) != (2 ** (output_number - 1)):
+                    c.output_states += (2 ** (output_number - 1))
+            elif c.output_states & (2 ** (output_number - 1)) == (2 ** (output_number - 1)):
+                c.output_states -= (2 ** (output_number - 1))
 
     def convert_int_to_cmd_data_for_output_control(self, data):
         self.ensure_one()
@@ -695,7 +726,7 @@ class HrRfidController(models.Model):
 
         return commands
 
-    def change_output_state(self, out_number: int, out_state: int, time: int):
+    def change_output_state(self, out_number: int, out_state: int, time: int = 0):
         """
         :param out: 0 to open door, 1 to close door
         :param time: Range: [0, 99]

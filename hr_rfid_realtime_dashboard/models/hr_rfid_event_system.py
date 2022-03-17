@@ -18,11 +18,11 @@ class HrRfidSystemEvent(models.Model):
                     title=key_val_dict[e.event_action],
                     message=e.name,
                 )
-                # e.controller_id.webstack_id.message_follower_ids.notify_web_followers(
-                #     title=key_val_dict[e.event_action],
-                #     message=e.name,
-                #     sticky=True,
-                #     m_type='danger')
+                e.controller_id.webstack_id.message_follower_ids.notify_web_followers(
+                    title=key_val_dict[e.event_action],
+                    message=e.name,
+                    sticky=True,
+                    m_type='danger')
         return res
 
     def write(self, vals):

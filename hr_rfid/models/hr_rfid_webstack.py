@@ -786,7 +786,9 @@ class HrRfidWebstack(models.Model):
             out_num = polimex.bytes_to_num(response['d'], 0, 1)
             out_state = polimex.bytes_to_num(response['d'], 2, 1)
             out_timer = len(response['d']) == 6
-            if not out_timer:
+            if out_num == 99:
+                controller._update_imput_state(14, out_state)
+            elif not out_timer:
                 controller._update_output_state(out_num, out_state)
 
         return not direct_cmd and self.check_for_unsent_cmd(200)

@@ -80,6 +80,7 @@
                                     <field name="last_f0_read" readonly="1"/>
                                 </group>
                                 <group string="Current status">
+                                    <field name="emergency_state" readonly="1"/>
                                     <field name="temperature" readonly="1"/>
                                     <field name="humidity" readonly="1"/>
                                     <field name="system_voltage" readonly="1"/>
@@ -102,6 +103,7 @@
                                 <field name="read_b3_cmd"/>
                                 <field name="relay_time_factor" readonly="1"/>
                                 <field name="dual_person_mode" readonly="1"/>
+                                <field name="emergency_group_id"/>
                                 <field name="webstack_id" readonly="1"/>
                             </group>
                             </group>
