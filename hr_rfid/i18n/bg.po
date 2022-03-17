@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-10 12:59+0000\n"
-"PO-Revision-Date: 2022-03-10 15:07+0200\n"
+"POT-Creation-Date: 2022-03-17 23:18+0000\n"
+"PO-Revision-Date: 2022-03-18 01:31+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -73,6 +73,18 @@ msgstr "1-Wire грешка"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__mode_selection_31__2
 msgid "2 x 16 Relays"
 msgstr "2 x 16 Релета"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+msgid "<i class=\"fa fa-fw fa-bell text-danger\" role=\"img\" aria-label=\"Siren On\"/>"
+msgstr "<i class=\"fa fa-fw fa-bell text-danger\" role=\"img\" aria-label=\"Включи сирена\"/>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+msgid "<i class=\"fa fa-fw fa-bell-slash-o text-success\" role=\"img\" aria-label=\"Siren Off\"/>"
+msgstr "<i class=\"fa fa-fw fa-bell-slash-o text-success\" role=\"img\" aria-label=\"Изключи Сирена\"/>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
@@ -407,6 +419,7 @@ msgstr "Операция"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_needaction
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_needaction
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_needaction
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_needaction
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_needaction
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_needaction
@@ -431,6 +444,12 @@ msgstr "Активиране в бъдеще"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz__activate_on
 msgid "Activate on"
 msgstr "Активиране на"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/controllers/main.py:0
+#, python-format
+msgid "Activated"
+msgstr "Активиран"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__activate_on
@@ -656,6 +675,7 @@ msgstr "Алармени права"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__siren_state
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__siren_state
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__siren_state
 msgid "Alarm Siren state"
 msgstr "Състояние на Алармената сирена"
@@ -849,6 +869,11 @@ msgid "Are you sure to Disarm all lines in the group?"
 msgstr "Сигурни ли сте, че искате да свалите от охрана тази група?"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_form_view
+msgid "Are you sure to turn Emergency mode for the group"
+msgstr "Сигурни ли сте, че искате да включите аварийния режим за групата"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 msgid "Are you sure?"
 msgstr "Сигурен ли сте?"
@@ -909,6 +934,7 @@ msgstr "Под охрана"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_attachment_count
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_attachment_count
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_attachment_count
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_attachment_count
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_attachment_count
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_attachment_count
@@ -1589,6 +1615,7 @@ msgstr "Компании"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__company_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__company_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__company_id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__company_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__company_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__company_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__company_id
@@ -1702,6 +1729,7 @@ msgstr "Контролирани четци"
 #: model:ir.model,name:hr_rfid.model_hr_rfid_ctrl
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__controller_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__controller_id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__controller_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__controller_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__controller_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__controller_id
@@ -1848,6 +1876,7 @@ msgstr "Създадена команда за отваряне на врата�
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__create_uid
@@ -1888,6 +1917,7 @@ msgstr "Създаден от"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__create_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__create_date
@@ -1987,6 +2017,12 @@ msgstr "Номер на ден"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz__deactivate_on
 msgid "Deactivate on"
 msgstr "Деактивиране на"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/controllers/main.py:0
+#, python-format
+msgid "Deactivated"
+msgstr "Деактивиран"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
@@ -2180,6 +2216,7 @@ msgstr "Откриване"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__display_name
@@ -2449,11 +2486,66 @@ msgid "Ejected Card"
 msgstr "Извадена карта"
 
 #. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_emergency_group__state__emergency
+msgid "Emergency"
+msgstr "Извънредна ситуация"
+
+#. module: hr_rfid
+#: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_emergency_groups
+msgid "Emergency Distribution Groups"
+msgstr "Дистрибуция на пожарни сигнали"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__emergency_group_id
+msgid "Emergency Group"
+msgstr "Групи за извънредни ситуации"
+
+#. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__19
 #, python-format
 msgid "Emergency Input"
 msgstr "Авариен вход"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_form_view
+msgid "Emergency Off"
+msgstr "Изключи ПИС "
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_form_view
+msgid "Emergency On"
+msgstr "Включи ПИС"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__emergency_state
+msgid "Emergency State"
+msgstr "Състояние на ПИС"
+
+#. module: hr_rfid
+#: model:ir.actions.act_window,name:hr_rfid.emergency_group_act
+msgid "Emergency distribution group"
+msgstr "Групи за разпространение на ПИС сигнал"
+
+#. module: hr_rfid
+#: model_terms:ir.actions.act_window,help:hr_rfid.emergency_group_act
+msgid ""
+"Emergency distribution group manage the emergency signal from one controller to a group.\n"
+"                    The function decrease installation cost and manage the"
+msgstr ""
+"Групите за разпространение на ПИС сигнал разпраща сигнала до всички контролери в групата.\n"
+"                    Функцията се използва за намаляване стойността на монтажа"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/controllers/main.py:0
+#, python-format
+msgid "Emergency from %s %s"
+msgstr "ПИС сигнал от %s %s"
+
+#. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_hr_rfid_ctrl_emergency_group
+msgid "Emergency signal distribution group"
+msgstr "Групи за разпространение на ПИС сигнал"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_form
@@ -2800,6 +2892,7 @@ msgstr "Противопожарен Контрол"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_follower_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_follower_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_follower_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_follower_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_follower_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_follower_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_follower_ids
@@ -2816,6 +2909,7 @@ msgstr "Последователи"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_channel_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_channel_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_channel_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_channel_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_channel_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_channel_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_channel_ids
@@ -2832,6 +2926,7 @@ msgstr "Последователи (Канали)"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_partner_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_partner_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_partner_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_partner_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_partner_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_partner_ids
@@ -2958,6 +3053,11 @@ msgid "Group By"
 msgstr "Групиране по"
 
 #. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__emergency_state__soft
+msgid "Group Emergency"
+msgstr "Групи за ПИС"
+
+#. module: hr_rfid
 #: model:res.groups,name:hr_rfid.hr_rfid_group_viewer
 msgid "Guard"
 msgstr "Охранител"
@@ -2980,6 +3080,17 @@ msgstr ""
 #: model:ir.cron,cron_name:hr_rfid.hr_rfid_sync_ctrl_clock_cron model:ir.cron,name:hr_rfid.hr_rfid_sync_ctrl_clock_cron
 msgid "HR RFID: Synchronize controller clocks"
 msgstr ""
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/controllers/main.py:0
+#, python-format
+msgid "Hardware"
+msgstr "Хардуер"
+
+#. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__emergency_state__hard
+msgid "Hardware Emergency"
+msgstr "Хардуерен ПИС"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/controllers/main.py:0
@@ -3127,6 +3238,7 @@ msgstr "Грешка в I2C"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__id
@@ -3204,6 +3316,8 @@ msgstr "Ако е избрано, групата за достъп ще брои
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__message_unread
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_needaction
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_unread
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_needaction
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_unread
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__message_needaction
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__message_unread
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__message_needaction
@@ -3221,29 +3335,18 @@ msgstr "Ако е избрано новите съобщения ще изиск
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__message_has_error
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__message_has_error
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card_type__message_has_error
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card_type__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__message_has_error
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__message_has_error
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_has_error
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_has_sms_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_has_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__message_has_error
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__message_has_error
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__message_has_error
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__message_has_error
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__message_has_error
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone__message_has_error
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Ако е избрано някой съобщения имат грешка при доставка."
 
@@ -3437,6 +3540,7 @@ msgstr "Е празен"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_is_follower
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_is_follower
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_is_follower
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_is_follower
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_is_follower
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_is_follower
@@ -3537,6 +3641,7 @@ msgstr "Последно IP"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group____last_update
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz____last_update
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th____last_update
@@ -3595,6 +3700,7 @@ msgstr "Последна актуализация:"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__write_uid
@@ -3635,6 +3741,7 @@ msgstr "Последно актуализиран от"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__write_date
@@ -3789,6 +3896,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_main_attachment_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_main_attachment_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_main_attachment_id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_main_attachment_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_main_attachment_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_main_attachment_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_main_attachment_id
@@ -3918,6 +4026,7 @@ msgstr "Грешка в паметта"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_has_error
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_has_error
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_has_error
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_has_error
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_has_error
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_has_error
@@ -3934,6 +4043,7 @@ msgstr "Грешка при доставка на съобщение"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_ids
@@ -4048,6 +4158,7 @@ msgstr "Краен срок за моя дейност"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__name
@@ -4094,6 +4205,11 @@ msgid "No Cards"
 msgstr "Без карти"
 
 #. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__emergency_state__off
+msgid "No Emergency"
+msgstr "Няма ПИС сигнал"
+
+#. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__0
 #, python-format
@@ -4121,6 +4237,7 @@ msgstr "Не Облачни карта"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__state__normal
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_emergency_group__state__normal
 msgid "Normal"
 msgstr "Нормално"
 
@@ -4152,6 +4269,7 @@ msgstr "Брой"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_needaction_counter
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_needaction_counter
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_needaction_counter
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_needaction_counter
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_needaction_counter
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_needaction_counter
@@ -4168,6 +4286,7 @@ msgstr "Брой действия"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_has_error_counter
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_has_error_counter
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_has_error_counter
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_has_error_counter
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_has_error_counter
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_has_error_counter
@@ -4184,6 +4303,7 @@ msgstr "Брой грешки"
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__message_needaction_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__message_needaction_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_needaction_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__message_needaction_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__message_needaction_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__message_needaction_counter
@@ -4200,6 +4320,7 @@ msgstr "Брой на съобщения, които се нуждаят от д
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__message_has_error_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__message_has_error_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_has_error_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__message_has_error_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__message_has_error_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__message_has_error_counter
@@ -4241,6 +4362,7 @@ msgstr "Брой пъти, когато събитието се е случил�
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__message_unread_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__message_unread_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_unread_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_unread_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__message_unread_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__message_unread_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__message_unread_counter
@@ -4540,6 +4662,11 @@ msgid "Please confirm! The execution again may override already executed command
 msgstr "Моля потвърди! Повторното изпълнение може да промени данни, които вече са променени от друга команда."
 
 #. module: hr_rfid
+#: model_terms:ir.actions.act_window,help:hr_rfid.emergency_group_act
+msgid "Please create a new group from the Create button"
+msgstr "Моля създайте нова ггрупа от бутонът в ляво Създай"
+
+#. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_webstack_discovery.py:0
 #, python-format
 msgid "Please provide module serial number!"
@@ -4835,6 +4962,11 @@ msgstr "Прочети група от карти"
 #, python-format
 msgid "Read Holiday List"
 msgstr "Прочети списък на празниците"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
+msgid "Read IO Table"
+msgstr "Прочети таблицата"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
@@ -5241,22 +5373,6 @@ msgid "SDK"
 msgstr ""
 
 #. module: hr_rfid
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__message_has_sms_error
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__message_has_sms_error
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__message_has_sms_error
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_has_sms_error
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_has_sms_error
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_has_sms_error
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_has_sms_error
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_has_sms_error
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_has_sms_error
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_has_sms_error
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_has_sms_error
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__message_has_sms_error
-msgid "SMS Delivery error"
-msgstr "SMS при грешка на доставка"
-
-#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_ts_line__day__5
 msgid "Saturday"
 msgstr "Събота"
@@ -5356,6 +5472,11 @@ msgid "Set Default Access group"
 msgstr "Задаване на група за достъп по подразбиране"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_form_view
+msgid "Set friendly name"
+msgstr ""
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid ""
 "Set the webstack up to work with this odoo. Module username and password must be set to the admin username and password on "
@@ -5414,6 +5535,12 @@ msgid "Siren"
 msgstr "Сирена"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0 code:addons/hr_rfid/models/hr_rfid_door.py:0
+#, python-format
+msgid "Siren Control"
+msgstr "Управление на сирена"
+
+#. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__20
 #, python-format
@@ -5421,15 +5548,46 @@ msgid "Siren ON/OFF"
 msgstr "Сирена Вкл/Изкл"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+msgid "Siren Off"
+msgstr "Изключи сирена"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+msgid "Siren On"
+msgstr "Включи сирена"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__siren_state
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__siren_state
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__siren_state
 msgid "Siren State"
 msgstr "Статус сирена"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0 code:addons/hr_rfid/models/hr_rfid_door.py:0
+#, python-format
+msgid "Siren turned Off successful"
+msgstr "Сирената е изключена успешно"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0 code:addons/hr_rfid/models/hr_rfid_door.py:0
+#, python-format
+msgid "Siren turned On successful"
+msgstr "Сирената в Включена успешно"
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__io_table_lines
 msgid "Size of the input/output table"
 msgstr "Размер на входно/изходната таблица"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/controllers/main.py:0
+#, python-format
+msgid "Software"
+msgstr "Софтуер"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__version
@@ -5444,6 +5602,7 @@ msgstr "Начална дата"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__state
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__state
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__state
 msgid "State"
 msgstr "Статус"
 
@@ -5757,6 +5916,18 @@ msgid "The end time of the interval"
 msgstr "Краен час на интервала"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl_emergency_group.py:0
+#, python-format
+msgid "The group turn off Emergency Mode Manually"
+msgstr "Групата изключи ПИС сигнал"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl_emergency_group.py:0
+#, python-format
+msgid "The group turn on Emergency Mode Manually"
+msgstr "Групата включи ПИС сигнал"
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__updated_at
 msgid "The last date we received an event from the module"
 msgstr "Последната дата получихме събитие от модула"
@@ -5818,7 +5989,7 @@ msgid "This serial number already exist in the system!"
 msgstr "Този сериен номер вече съществува в системата!"
 
 #. module: hr_rfid
-#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0 code:addons/hr_rfid/models/hr_rfid_ctrl_emergency_group.py:0
 #, python-format
 msgid "This will take time. For more information check controller's commands"
 msgstr "Това ще отнеме малко време. Проверете командите на контролера за повече информация"
@@ -6043,6 +6214,7 @@ msgstr "Отключи вратата"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_unread
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_unread
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_unread
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_unread
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_unread
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_unread
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_unread
@@ -6059,6 +6231,7 @@ msgstr "Непрочетени съобщения"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_unread_counter
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_unread_counter
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_unread_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_unread_counter
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_unread_counter
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_unread_counter
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_unread_counter
@@ -6248,6 +6421,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__website_message_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__website_message_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__website_message_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__website_message_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__website_message_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__website_message_ids
@@ -6264,6 +6438,7 @@ msgstr ""
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__website_message_ids
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__website_message_ids
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm_group__website_message_ids
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_emergency_group__website_message_ids
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__website_message_ids
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__website_message_ids
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__website_message_ids

@@ -200,12 +200,18 @@
                   action="hr_rfid_ctrl_alarm_action"
                   groups="hr_rfid_group_viewer"
                   sequence="30"/>
+        <menuitem id="hr_rfid_menu_emergency_groups"
+                  name="Emergency Distribution Groups"
+                  parent="hr_rfid_root_menu_hardware_manager"
+                  action="emergency_group_act"
+                  groups="hr_rfid_group_viewer"
+                  sequence="40"/>
         <menuitem id="hr_rfid_menu_th"
                   name="Temperature and Humidity"
                   parent="hr_rfid_root_menu_hardware_manager"
                   action="hr_rfid_ctrl_th_action"
                   groups="hr_rfid_group_viewer"
-                  sequence="35"/>
+                  sequence="45"/>
 
         <!--#######################################################
         #####                   Configuration                 #####

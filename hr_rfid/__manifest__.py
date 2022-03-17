@@ -34,6 +34,7 @@
         'views/hr_rfid_door.xml',
         'views/hr_rfid_ctrl_alarm.xml',
         'views/hr_rfid_ctrl_alarm_group.xml',
+        'views/hr_rfid_ctrl_emergency_group.xml',
         'views/hr_rfid_card.xml',
         'views/hr_rfid_zone.xml',
         'views/hr_rfid_card_door_rel.xml',

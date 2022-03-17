@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="emergency_group_form_view" model="ir.ui.view">
+            <field name="name">emergency.group.form.view</field>
+            <field name="model">hr.rfid.ctrl.emergency.group</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <header>
+                        <field name="state"
+                               widget="statusbar"
+                               statusbar_colors="{'emergency':'red', 'normal':'green'}"
+                               statusbar_visible=" "/>
+                    </header>
+
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <div id="control_buttons" attrs="{'invisible':[('controller_ids', '=', 0)]}">
+                                <button name="emergency_on"
+                                        states="normal"
+                                        type="object"
+                                        confirm="Are you sure to turn Emergency mode for the group"
+                                        class="oe_stat_button" icon="fa-free-code-camp">
+                                    Emergency On
+                                </button>
+                                <button name="emergency_off"
+                                        states="emergency"
+                                        type="object"
+                                        confirm="Are you sure to turn Emergency mode for the group"
+                                        class="oe_stat_button" icon="fa-fire">
+                                    Emergency Off
+                                </button>
+                            </div>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" placeholder="Set friendly name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="controller_ids">
+                                <tree>
+                                    <field name="name" />
+                                    <field name="webstack_id" />
+                                    <field name="emergency_state" />
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="emergency_group_tree_view" model="ir.ui.view">
+            <field name="name">emergency.group.tree.view</field>
+            <field name="model">hr.rfid.ctrl.emergency.group</field>
+            <field name="arch" type="xml">
+                <tree string="">
+                    <field name="name"/>
+                    <field name="controller_ids" widget="many2many_tags"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="emergency_group_act" model="ir.actions.act_window">
+            <field name="name">Emergency distribution group</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.rfid.ctrl.emergency.group</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Please create a new group from the Create button
+                </p>
+                <p>
+                    Emergency distribution group manage the emergency signal from one controller to a group.
+                    The function decrease installation cost and manage the
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>
