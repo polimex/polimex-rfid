@@ -161,8 +161,9 @@ class HrRfidSystemEvent(models.Model):
     @api.depends('webstack_id.name', 'controller_id.name', 'timestamp')
     def _compute_sys_ev_name(self):
         for record in self:
-            record.name = str(record.webstack_id.name) + '-' + str(record.controller_id.name) +\
-                          ' at ' + str(record.timestamp)
+            key_val_dict = dict(record._fields['event_action'].selection)
+            record.name = key_val_dict[record.event_action] + ' on ' + str(record.webstack_id.name) + '/' + str(record.controller_id.name)
+            #               ' at ' + str(record.timestamp)
 
     def _check_save_comms(self, vals):
         save_comms = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.save_webstack_communications') in ['true', 'True']

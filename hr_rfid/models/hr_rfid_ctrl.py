@@ -292,7 +292,7 @@ class HrRfidController(models.Model):
             a.user_event_count = self.env['hr.rfid.event.user'].search_count(
                 [('door_id', 'in', [d.id for d in a.door_ids])])
 
-    @api.depends('alarm_lines')
+    @api.depends('output_states')
     def _compute_siren_state(self):
         for c in self:
             siren_out = (c.alarm_lines == 1) and 4 or 10
@@ -303,7 +303,7 @@ class HrRfidController(models.Model):
             siren_out = (c.alarm_lines == 1) and 4 or 10
             if not self.env.context.get('no_output', False):
                 c.change_output_state(siren_out, int(c.siren_state), 99)
-            c._update_output_state(siren_out, 1)
+            c._update_output_state(siren_out, c.siren_state)
 
     def return_action_to_open(self):
         """ This opens the xml view specified in xml_id for the current app """

@@ -11,8 +11,8 @@ class HrRfidSystemEvent(models.Model):
         res = super(HrRfidSystemEvent, self).create(vals_list)
         res.refresh_views()
         for e in res:
-            if e.event_action in ['19', '20']:
             # if e.event_action in ['19', '20', '25', '26', '30']:
+            if e.event_action in ['19', '20']:
                 key_val_dict = dict(e._fields['event_action'].selection)
                 e.controller_id.webstack_id.message_follower_ids.notify_browser_followers(
                     title=key_val_dict[e.event_action],

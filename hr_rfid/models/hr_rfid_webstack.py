@@ -651,7 +651,7 @@ class HrRfidWebstack(models.Model):
         self.ensure_one()
         command_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
         response = post_data['response']
-        controller = self.controllers.filtered(lambda c: c.ctrl_id == response.get('id', -1))
+        controller = self.controllers.filtered(lambda c: c.ctrl_id == response.get('id', -1)).with_context(no_output=True)
         if not controller:
             self.report_sys_ev('Module sent us a response from a controller that does not exist', post_data=post_data)
             return not direct_cmd and self.check_for_unsent_cmd(200)
@@ -777,8 +777,16 @@ class HrRfidWebstack(models.Model):
                     't': temperature,
                     'h': humidity,
                 })
+
         if response['c'] == 'D1':
             # 00 00 00 00 01
             controller.cards_count = polimex.bytes_to_num(response['d'], 0, 5)
+        if response['c'] == 'DB':
+            # 00 00 00 00 01
+            out_num = polimex.bytes_to_num(response['d'], 0, 1)
+            out_state = polimex.bytes_to_num(response['d'], 2, 1)
+            out_timer = len(response['d']) == 6
+            if not out_timer:
+                controller._update_output_state(out_num, out_state)
 
         return not direct_cmd and self.check_for_unsent_cmd(200)

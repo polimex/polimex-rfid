@@ -32,7 +32,7 @@ class WebRfidController(http.Controller):
         controller_id = ctrl_env.search([
             ('ctrl_id', '=', post_data['event']['id']),
             ('webstack_id', '=', webstack.id),
-        ])
+        ]).with_context(no_output=True)
         # Create new controller if needed
         if len(controller_id) == 0 and post_data['event']['id']:
             controller_id = controller_id.create({
@@ -278,7 +278,9 @@ class WebRfidController(http.Controller):
             # PIN last 2 digits = line_statu
             line_id = controller_id.alarm_line_ids.filtered(lambda l: l.line_number == reader_num)
             line_status = dt and dt[2:] or None
-            siren = bool(event_action == 20 and line_id)
+            # siren = bool(event_action == 20 and line_id)
+            siren = bool(event_action == 20 and reader_b6)
+            # siren = bool(event_action == 20 and reader_num != 0)
             if line_id:
                 new_states = []
                 for i in range(4):
@@ -311,6 +313,7 @@ class WebRfidController(http.Controller):
                     'error_description': line_id and f"{line_id.name} - {line_id.state} / {line_id.armed}" or ''
                 })
                 event = controller_id.report_sys_ev(_('Hardware Event'), post_data=post_data, sys_ev_dict=event_dict)
+                controller_id.siren_state = siren
 
             # return controller_id.read_status().send_command(200)
             return webstack.check_for_unsent_cmd(200)
