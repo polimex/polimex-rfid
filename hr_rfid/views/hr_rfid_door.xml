@@ -108,6 +108,8 @@
                                 <field name="name" placeholder="Enter friendly door name"/>
                             </h1>
                         </div>
+                        <field name="emergency_state" invisible="1"/>
+                        <widget name="web_ribbon" title="Emergency Opened" bg_color="bg-danger" attrs="{'invisible': [('emergency_state', '=', 'off')]}"/>
                         <group>
                             <group>
                                 <field name="card_type"/>
@@ -162,6 +164,7 @@
                     <field name="temperature"/>
                     <field name="humidity"/>
                     <field name="siren_state"/>
+                    <field name="emergency_state"/>
                     <templates>
                         <t t-name="kanban-box">
                             <div>
@@ -193,6 +196,13 @@
                                                         <i t-att-class="record.lock_state.raw_value ? 'fa fa-fw fa-unlock text-success' : 'fa fa-fw fa-lock text-danger'"
                                                            role="img"
                                                            t-att-aria-label="record.lock_state.raw_value ? 'Unlocked' : 'Locked'"/>
+                                                    </span>
+                                                    <span t-if="record.emergency_state.raw_value != 'off'">
+                                                        <i
+                                                       role="img"
+                                                       t-att-class="record.emergency_state.raw_value == 'soft' ? 'fa fa-fw fa-free-code-camp text-danger' : 'fa fa-fw fa-fire text-danger'"
+                                                       t-att-title="record.emergency_state.raw_value == 'soft' ? 'Software Emergency' : 'Hardware Emergency'"
+                                                       t-att-aria-label="record.emergency_state.raw_value == 'soft' ? 'Software Emergency' : 'Hardware Emergency'"/>
                                                     </span>
                                                     </div>
                                                 <h2>
@@ -249,6 +259,15 @@
                                                             </a>
                                                         </span>
                                                     </div>
+                                                </li>
+                                                <li t-if="record.emergency_state.raw_value">
+                                                    <i
+                                                       role="img"
+                                                       t-att-class="record.emergency_state.raw_value == 'off' ? 'fa fa-fw fa-free-code-camp text-success' : 'fa fa-fw fa-fire text-danger'"
+                                                       title="Emergency State"/>
+                                                    <field name="emergency_state"
+                                                           t-att-class="record.emergency_state.raw_value == 'off' ? 'bg-success' : 'bg-danger'"
+                                                           title="Emergency door state"/>
                                                 </li>
                                                 <li t-if="record.card_type.raw_value">
                                                     <field name="card_type"/>

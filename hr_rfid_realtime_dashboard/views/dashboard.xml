@@ -4,10 +4,10 @@
 
         <template id="assets_backend" name="maintenance assets" inherit_id="web.assets_backend">
             <xpath expr="." position="inside">
-                <link rel="stylesheet" type="text/scss" href="/hr_rfid_realtime_dashboard/static/src/scss/hr_rfid_dashboard.scss"/>
+                <link rel="stylesheet" type="text/scss"
+                      href="/hr_rfid_realtime_dashboard/static/src/scss/hr_rfid_dashboard.scss"/>
             </xpath>
         </template>
-
 
 
         <record model="ir.ui.view" id="alarm_group_kanban_view_dash">
@@ -28,7 +28,7 @@
             <field name="domain">[('state', '!=', 'no_alarm')]</field>
             <field name="view_mode">kanban</field>
 
-<!--            <field name="view_id" ref="hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban"/>-->
+            <!--            <field name="view_id" ref="hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban"/>-->
             <field name="view_id" ref="alarm_group_kanban_view_dash"/>
         </record>
 
@@ -78,9 +78,9 @@
         <record id="act_th_log" model="ir.actions.act_window">
             <field name="name">Temperature and Humidity</field>
             <field name="res_model">hr.rfid.ctrl.th</field>
-<!--            <field name="view_mode">tree</field>-->
+            <!--            <field name="view_mode">tree</field>-->
             <field name="view_id" ref="th_log_tree_view_dash"/>
-<!--            <field name="domain">[('event_type','=','nfc')]</field>-->
+            <!--            <field name="domain">[('event_type','=','nfc')]</field>-->
         </record>
 
         <record id="door_kanban_view_dash" model="ir.ui.view">
@@ -103,6 +103,7 @@
                     <field name="temperature"/>
                     <field name="humidity"/>
                     <field name="siren_state"/>
+                    <field name="emergency_state"/>
                     <templates>
                         <t t-name="kanban-box">
                             <div>
@@ -135,9 +136,19 @@
                                                            role="img"
                                                            t-att-aria-label="record.lock_state.raw_value ? 'Unlocked' : 'Locked'"/>
                                                     </span>
-                                                    </div>
+                                                    <span t-if="record.emergency_state.raw_value != 'off'">
+                                                        <i
+                                                                role="img"
+                                                                t-att-class="record.emergency_state.raw_value == 'soft' ? 'fa fa-fw fa-free-code-camp text-danger' : 'fa fa-fw fa-fire text-danger'"
+                                                                t-att-title="record.emergency_state.raw_value == 'soft' ? 'Software Emergency' : 'Hardware Emergency'"
+                                                                t-att-aria-label="record.emergency_state.raw_value == 'soft' ? 'Software Emergency' : 'Hardware Emergency'"/>
+                                                    </span>
+
+                                                </div>
                                                 <h2>
-                                                    <a type="open"><field name="name" title="Door Name"/></a>
+                                                    <a type="open">
+                                                        <field name="name" title="Door Name"/>
+                                                    </a>
                                                 </h2>
                                             </strong>
                                             <ul>
@@ -147,7 +158,8 @@
                                                               groups="hr_rfid.hr_rfid_view_door_arm_disarm"
                                                               t-if="record.siren_state.raw_value">
                                                             <a name="siren_off" type="object">
-                                                                <i class="fa fa-fw fa-bell-slash-o text-success" role="img"
+                                                                <i class="fa fa-fw fa-bell-slash-o text-success"
+                                                                   role="img"
                                                                    aria-label="Siren Off"/>
                                                             </a>
                                                         </span>
@@ -163,7 +175,8 @@
                                                               groups="hr_rfid.hr_rfid_view_door_arm_disarm"
                                                               t-if="record.alarm_state.raw_value == 'arm'">
                                                             <a name="disarm_door" type="object">
-                                                                <i class="fa fa-fw fa-universal-access text-success" role="img"
+                                                                <i class="fa fa-fw fa-universal-access text-success"
+                                                                   role="img"
                                                                    aria-label="Disarm the Door"/>
                                                             </a>
                                                         </span>
@@ -192,18 +205,22 @@
                                                     </div>
                                                 </li>
                                                 <li t-if="record.temperature.raw_value">
-                                                    <i class="fa fa-fw fa-thermometer-full text-info" role="img" title="Temperature"/>
-                                                    <field name="temperature" title="External temperature sensor value"/> ℃
+                                                    <i class="fa fa-fw fa-thermometer-full text-info" role="img"
+                                                       title="Temperature"/>
+                                                    <field name="temperature"
+                                                           title="External temperature sensor value"/>
+                                                    ℃
                                                     <i class="fa fa-fw fa-tint text-info" role="img" title="Humidity"/>
-                                                    <field name="humidity" title="External humidity sensor value"/> %
+                                                    <field name="humidity" title="External humidity sensor value"/>
+                                                    %
                                                 </li>
                                             </ul>
                                         </div>
                                     </div>
                                     <ul>
-<!--                                        <li class="o_force_ltr">Last IP:-->
-<!--                                            <field name="last_ip"/>-->
-<!--                                        </li>-->
+                                        <!--                                        <li class="o_force_ltr">Last IP:-->
+                                        <!--                                            <field name="last_ip"/>-->
+                                        <!--                                        </li>-->
                                     </ul>
                                 </div>
                             </div>
@@ -271,7 +288,8 @@
                                                               groups="hr_rfid.hr_rfid_view_door_arm_disarm"
                                                               t-if="record.siren_state.raw_value">
                                                             <a name="siren_off" type="object">
-                                                                <i class="fa fa-fw fa-bell-slash-o text-success" role="img"
+                                                                <i class="fa fa-fw fa-bell-slash-o text-success"
+                                                                   role="img"
                                                                    aria-label="Siren Off"/>
                                                             </a>
                                                         </span>
@@ -294,7 +312,7 @@
                                                             </a>
                                                         </span>
                                                         <span title="Arm manual"
-                                                               t-if="record.armed.raw_value == 'disarm'"
+                                                              t-if="record.armed.raw_value == 'disarm'"
                                                               groups="hr_rfid.hr_rfid_view_door_arm_disarm">
                                                             <a name="arm" type="object">
                                                                 <i class="fa fa-fw fa-shield text-danger" role="img"
@@ -347,30 +365,30 @@
                     <board style="2-1">
                         <column>
                             <action
-                                string="User Events"
-                                name="%(hr_rfid_realtime_dashboard.act_user_events)d"
+                                    string="User Events"
+                                    name="%(hr_rfid_realtime_dashboard.act_user_events)d"
                             />
                             <action
-                                string="System Events"
-                                name="%(hr_rfid_realtime_dashboard.act_system_event)d"
+                                    string="System Events"
+                                    name="%(hr_rfid_realtime_dashboard.act_system_event)d"
                             />
                             <action
-                                string="Temperature and Humidity"
-                                name="%(hr_rfid_realtime_dashboard.act_th_log)d"
+                                    string="Temperature and Humidity"
+                                    name="%(hr_rfid_realtime_dashboard.act_th_log)d"
                             />
                         </column>
                         <column>
                             <action
-                                string="Alarm groups"
-                                name="%(hr_rfid_realtime_dashboard.alarm_groups_act)d"
+                                    string="Alarm groups"
+                                    name="%(hr_rfid_realtime_dashboard.alarm_groups_act)d"
                             />
                             <action
-                                string="Doors"
-                                name="%(hr_rfid_realtime_dashboard.act_doors)d"
+                                    string="Doors"
+                                    name="%(hr_rfid_realtime_dashboard.act_doors)d"
                             />
                             <action
-                                string="Alarm Lines"
-                                name="%(hr_rfid_realtime_dashboard.act_alarm_lines)d"
+                                    string="Alarm Lines"
+                                    name="%(hr_rfid_realtime_dashboard.act_alarm_lines)d"
                             />
                         </column>
                     </board>
@@ -387,28 +405,28 @@
                     <board style="1">
                         <column>
                             <action
-                                string="Alarm groups"
-                                name="%(hr_rfid_realtime_dashboard.alarm_groups_act)d"
+                                    string="Alarm groups"
+                                    name="%(hr_rfid_realtime_dashboard.alarm_groups_act)d"
                             />
                             <action
-                                string="User Events"
-                                name="%(hr_rfid_realtime_dashboard.act_user_events)d"
+                                    string="User Events"
+                                    name="%(hr_rfid_realtime_dashboard.act_user_events)d"
                             />
                             <action
-                                string="System Events"
-                                name="%(hr_rfid_realtime_dashboard.act_system_event)d"
+                                    string="System Events"
+                                    name="%(hr_rfid_realtime_dashboard.act_system_event)d"
                             />
                             <action
-                                string="Temperature and Humidity"
-                                name="%(hr_rfid_realtime_dashboard.act_th_log)d"
+                                    string="Temperature and Humidity"
+                                    name="%(hr_rfid_realtime_dashboard.act_th_log)d"
                             />
                             <action
                                     string="Doors"
                                     name="%(hr_rfid_realtime_dashboard.act_doors)d"
                             />
                             <action
-                                string="Alarm Lines"
-                                name="%(hr_rfid_realtime_dashboard.act_alarm_lines)d"
+                                    string="Alarm Lines"
+                                    name="%(hr_rfid_realtime_dashboard.act_alarm_lines)d"
                             />
                         </column>
                     </board>
