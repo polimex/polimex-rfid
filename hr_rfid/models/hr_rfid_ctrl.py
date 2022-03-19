@@ -1,6 +1,9 @@
 from odoo import fields, models, api, exceptions, _, SUPERUSER_ID
 from odoo.addons.hr_rfid.controllers import polimex
 
+import logging
+_logger = logging.getLogger(__name__)
+
 
 class HrRfidController(models.Model):
     _name = 'hr.rfid.ctrl'
@@ -272,6 +275,7 @@ class HrRfidController(models.Model):
         for c in self:
             if c.emergency_state != 'hard':
                 c.change_output_state(99, c.emergency_state == 'soft' and 1 or 0)
+                c._update_input_state(14, c.emergency_state == 'soft' and 1 or 0)
 
     @api.depends('mode')
     def _compute_controller_mode(self):
@@ -613,11 +617,11 @@ class HrRfidController(models.Model):
         return self.input_states & (2 ** (input_number - 1)) == (2 ** (input_number - 1))
 
     def _update_input_state(self, input_number, state:bool):
-        for c in self:
+        for c in self.with_user(SUPERUSER_ID):
             if state:
                 c.input_states = c.input_states or pow(2,input_number-1)
-            else:
-                c.input_states = (c.input_states and pow(2,input_number-1) == pow(2,input_number-1)) and (c.input_states - pow(2,input_number-1)) or c.input_states
+            elif c.input_states and pow(2,input_number-1) == pow(2,input_number-1):
+                c.input_states = c.input_states - pow(2,input_number-1)
 
 
     def _get_output_state(self, output_number):
@@ -629,7 +633,7 @@ class HrRfidController(models.Model):
         Output Number from 1
         State 0 or 1, True or False
         '''
-        for c in self:
+        for c in self.with_user(SUPERUSER_ID):
             if state:  # !=0
                 if c.output_states & (2 ** (output_number - 1)) != (2 ** (output_number - 1)):
                     c.output_states += (2 ** (output_number - 1))
@@ -731,6 +735,7 @@ class HrRfidController(models.Model):
         :param out: 0 to open door, 1 to close door
         :param time: Range: [0, 99]
         """
+        _logger.info('Change Output %d state to %d for %d seconds.', out_number, out_state, time)
         self.ensure_one()
         cmd = {
             'cmd': {
@@ -750,7 +755,7 @@ class HrRfidController(models.Model):
         else:
             cmd_data = '%02x%02d%02d' % (out_number, out_state, time)
 
-        res = self._base_command('DB', cmd_data)
+        res = self.with_user(SUPERUSER_ID)._base_command('DB', cmd_data)
 
     def read_controller_information_cmd(self):
         return self._base_command('F0')

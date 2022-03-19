@@ -28,7 +28,10 @@ class EmergencyGroup(models.Model):
     @api.depends('controller_ids.emergency_state', 'controller_ids.input_states')
     def _compute_state(self):
         for g in self:
-            g.state = any([c.emergency_state != 'off' for c in g.controller_ids]) and 'emergency' or 'normal'
+            new_state = any([c.emergency_state != 'off' for c in g.controller_ids]) and 'emergency' or 'normal'
+            if g.state != new_state:
+                g._internal_state_change_call(new_state)
+            g.state = new_state
 
     def _inverse_state(self):
         for g in self:
@@ -54,3 +57,6 @@ class EmergencyGroup(models.Model):
             title=_("The group turn off Emergency Mode Manually"),
             message=_("This will take time. For more information check controller's commands")
         )
+
+    def _internal_state_change_call(self, state):
+        pass

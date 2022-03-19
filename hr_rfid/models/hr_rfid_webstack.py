@@ -13,7 +13,6 @@ import base64
 import pytz
 
 import logging
-
 _logger = logging.getLogger(__name__)
 
 # put POSIX 'Etc/*' entries at the end to avoid confusing users - see bug 1086728
@@ -309,8 +308,7 @@ class HrRfidWebstack(models.Model):
         return self.balloon_success_sticky(
             title=_('Setup the Module'),
             message=_('Information sent to the Module. If everything is fine, the Module have to start '
-                      'communication with this instance. The URL in use is http://{} on port {}.').format(
-                      odoo_url, odoo_port)
+                      'communication with this instance. The URL in use is http://%s on port %d.', odoo_url, odoo_port)
         )
 
     def action_check_if_ws_available(self):
@@ -521,7 +519,8 @@ class HrRfidWebstack(models.Model):
 
     def count_cmds_in(self, seconds=10):
         dt = fields.Datetime.now() - relativedelta(seconds=seconds)
-        return self.env['hr.rfid.command'].search_count([
+        return self.env['hr.rfid.command'].with_user(
+                SUPERUSER_ID).search_count([
             ('webstack_id', 'in', self.ids),
             ('ex_timestamp', '>', dt)
         ])
@@ -786,8 +785,9 @@ class HrRfidWebstack(models.Model):
             out_num = polimex.bytes_to_num(response['d'], 0, 1)
             out_state = polimex.bytes_to_num(response['d'], 2, 1)
             out_timer = len(response['d']) == 6
-            if out_num == 99:
-                controller._update_imput_state(14, out_state)
+            if out_num == 99:  # emergency control
+                controller._update_input_state(14, out_state)
+                # _logger.info('After DB Controller %s emergency state %s', controller.name, controller.emergency_state)
             elif not out_timer:
                 controller._update_output_state(out_num, out_state)
 

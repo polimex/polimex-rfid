@@ -14,13 +14,17 @@ class HrRfidSystemEvent(models.Model):
             # if e.event_action in ['19', '20', '25', '26', '30']:
             if e.event_action in ['19', '20']:
                 key_val_dict = dict(e._fields['event_action'].selection)
+                title = key_val_dict[e.event_action]
+                message = e.error_description
+                if e.event_action == '20':
+                    message = _('Siren %s', e.siren and 'On' or 'Off')
                 e.controller_id.webstack_id.message_follower_ids.notify_browser_followers(
-                    title=key_val_dict[e.event_action],
-                    message=e.name,
+                    title=title,
+                    message=message,
                 )
                 e.controller_id.webstack_id.message_follower_ids.notify_web_followers(
-                    title=key_val_dict[e.event_action],
-                    message=e.name,
+                    title=title,
+                    message=message,
                     sticky=True,
                     m_type='danger')
         return res

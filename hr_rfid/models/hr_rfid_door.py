@@ -127,6 +127,9 @@ class HrRfidDoor(models.Model):
     siren_state = fields.Boolean(
         related='controller_id.siren_state'
     )
+    emergency_state = fields.Selection(
+        related='controller_id.emergency_state'
+    )
     th_id = fields.One2many(
         comodel_name='hr.rfid.ctrl.th',
         inverse_name='door_id'
@@ -363,13 +366,13 @@ class HrRfidDoor(models.Model):
             )
 
     def arm_door(self):
-        return self.alarm_line_ids.arm()
+        return self.with_user(SUPERUSER_ID).alarm_line_ids.arm()
 
     def disarm_door(self):
-        return self.alarm_line_ids.disarm()
+        return self.with_user(SUPERUSER_ID).alarm_line_ids.disarm()
 
     def siren_off(self):
-        for s in self:
+        for s in self.with_user(SUPERUSER_ID):
             s.controller_id.siren_state = False
         return self.balloon_success(
             title=_('Siren Control'),
@@ -377,7 +380,7 @@ class HrRfidDoor(models.Model):
         )
 
     def siren_on(self):
-        for s in self:
+        for s in self.with_user(SUPERUSER_ID):
             s.controller_id.siren_state = True
         return self.balloon_success(
             title=_('Siren Control'),

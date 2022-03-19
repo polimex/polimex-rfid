@@ -1,6 +1,6 @@
 import logging
 
-from odoo import fields, models, api, _
+from odoo import fields, models, api, _, SUPERUSER_ID
 
 _logger = logging.getLogger(__name__)
 
@@ -129,7 +129,7 @@ class HrRfidCtrlAlarm(models.Model):
 
     def siren_off(self):
         for s in self:
-            s.controller_id.siren_state = False
+            s.controller_id.with_user(SUPERUSER_ID).siren_state = False
         return self.balloon_success(
             title=_('Siren Control'),
             message=_('Siren turned Off successful')
@@ -137,7 +137,7 @@ class HrRfidCtrlAlarm(models.Model):
 
     def siren_on(self):
         for s in self:
-            s.controller_id.siren_state = True
+            s.controller_id.with_user(SUPERUSER_ID).siren_state = True
         return self.balloon_success(
             title=_('Siren Control'),
             message=_('Siren turned On successful')

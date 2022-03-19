@@ -171,16 +171,17 @@ class WebRfidController(http.Controller):
                 post_data=post_data,
                 sys_ev_dict=sys_event_dict
             )
-            if controller_id.emergency_group_id:
+            if not software:
+                controller_id._update_input_state(controller_id.inputs, int(state))
+            # else:
+            #     controller_id._update_input_state(14, int(state))
+
+
+            if controller_id.emergency_group_id and not software:
                 if state:
                     controller_id.emergency_group_id.emergency_on()
                 else:
                     controller_id.emergency_group_id.emergency_off()
-            if software:
-                controller_id._update_input_state(14, int(state))
-                controller_id._update_input_state(controller_id.inputs, int(state))
-            else:
-                controller_id._update_input_state(controller_id.inputs, int(state))
 
             return webstack.check_for_unsent_cmd(200)
         # Exit button Open Door(1234) from IN(1234
