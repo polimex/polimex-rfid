@@ -18,14 +18,16 @@
                             <div id="control_buttons" attrs="{'invisible':[('controller_ids', '=', 0)]}">
                                 <button name="emergency_on"
                                         type="object"
+                                        states="emergency,normal"
                                         confirm="Are you sure to turn Emergency mode for the group"
-                                        class="oe_stat_button" icon="fa-free-code-camp">
+                                        class="oe_stat_button oe_read_only" icon="fa-free-code-camp">
                                     Emergency On
                                 </button>
                                 <button name="emergency_off"
                                         type="object"
+                                        states="emergency,normal"
                                         confirm="Are you sure to turn Emergency mode for the group"
-                                        class="oe_stat_button" icon="fa-fire">
+                                        class="oe_stat_button oe_read_only" icon="fa-fire">
                                     Emergency Off
                                 </button>
                             </div>

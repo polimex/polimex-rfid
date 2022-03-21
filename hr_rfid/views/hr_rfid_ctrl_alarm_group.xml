@@ -32,14 +32,14 @@
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
-                            <button name="disarm" type="object" class="oe_stat_button text-danger" icon="fa-shield"
+                            <button name="disarm" type="object" class="oe_stat_button text-danger oe_read_only" icon="fa-shield"
                                     groups="hr_rfid.hr_rfid_view_door_arm_disarm"
                                     help="Disarm all lines in this group"
                                     confirm="Are you sure to Disarm all lines in the group?"
                                     states="arm,mixed">
                                 Disarm
                             </button>
-                            <button name="arm" type="object" class="oe_stat_button text-success" icon="fa-shield"
+                            <button name="arm" type="object" class="oe_stat_button text-success oe_read_only" icon="fa-shield"
                                     groups="hr_rfid.hr_rfid_view_door_arm_disarm"
                                     help="Arm all lines in this group"
                                     confirm="Are you sure to Arm all lines in the group?"
@@ -64,19 +64,22 @@
                                 <field name="name"/>
                             </h1>
                         </div>
-                        <group>
-                            <group>
-                                <field name="alarm_line_ids" colspan="4"/>
-                            </group>
                             <group>
                                 <field name="parent_id"/>
                                 <field name="company_id" groups="base.group_multi_company"/>
-
                             </group>
                             <group>
-                                <field name="child_ids" colspan="4"/>
+                                <field name="alarm_line_ids" colspan="4" widget="many2many_tags"/>
                             </group>
-                        </group>
+                            <group>
+                                <field name="child_ids" colspan="4">
+                                    <tree editable="top">
+                                        <field name="name"/>
+                                        <field name="parent_id"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </group>
                         <group string="Debug Information" groups="base.group_no_one" colspan="4">
 <!--                            <field name="line_number" readonly="1"/>-->
 <!--                            <field name="control_output" readonly="1"/>-->
