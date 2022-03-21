@@ -7,8 +7,8 @@
             <field name="arch" type="xml">
                 <form string="Open/close door">
                     <group>
-                        <field name="doors">
-                            <tree>
+                        <field name="doors" readonly="1">
+                            <tree editable="top">
                                 <field name="name"/>
                                 <field name="controller_id"/>
                                 <field name="card_type"/>
