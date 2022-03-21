@@ -31,6 +31,7 @@ class HrRfidDoor(models.Model):
         help='Number of the door in the controller',
         required=True,
         index=True,
+        tracking=True
     )
 
     card_type = fields.Many2one(
@@ -55,6 +56,7 @@ class HrRfidDoor(models.Model):
         required=True,
         readonly=True,
         ondelete='cascade',
+        tracking=True
     )
 
     hotel_readers = fields.Integer(related='controller_id.hotel_readers')
@@ -100,12 +102,14 @@ class HrRfidDoor(models.Model):
     lock_time = fields.Integer(
         help='The unlock time in seconds.',
         compute='_compute_lock_time',
-        inverse='_set_lock_time'
+        inverse='_set_lock_time',
+        tracking = True
     )
     lock_state = fields.Boolean(
         help='If in the controller check box for read state is True, the status is present.',
         compute='_compute_lock_status',
-        inverse='_set_lock_state'
+        inverse='_set_lock_state',
+        tracking = True
     )
     lock_output = fields.Integer(
         help='The Lock Output on controller for this door',

@@ -1,4 +1,4 @@
-from odoo import fields, models, api, _
+from odoo import fields, models, api, _, SUPERUSER_ID
 
 
 class EmergencyGroup(models.Model):
@@ -7,15 +7,20 @@ class EmergencyGroup(models.Model):
     _description = 'Emergency signal distribution group'
 
     name = fields.Char(
-        default='Emergency Floor 1'
+        default='Emergency Floor 1',
+        tracking=True
     )
-    company_id = fields.Many2one('res.company',
-                                 string='Company',
-                                 default=lambda self: self.env.company)
+    company_id = fields.Many2one(
+        comodel_name='res.company',
+        string='Company',
+        groups='base.group_multi_company',
+        default=lambda self: self.env.company
+    )
 
     controller_ids = fields.One2many(
         comodel_name='hr.rfid.ctrl',
-        inverse_name='emergency_group_id'
+        inverse_name='emergency_group_id',
+        tracking=True
     )
     state = fields.Selection([
         ('normal', 'Normal'),
@@ -36,10 +41,10 @@ class EmergencyGroup(models.Model):
     def _inverse_state(self):
         for g in self:
             if g.state == 'normal':
-                ctrl_ids = g.controller_ids.filtered(lambda c: c.emergency_state == 'soft')
+                ctrl_ids = g.controller_ids.with_user(SUPERUSER_ID).filtered(lambda c: c.emergency_state == 'soft')
                 ctrl_ids.emergency_state = 'off'
             if g.state == 'emergency':
-                ctrl_ids = g.controller_ids.filtered(lambda c: c.emergency_state == 'off')
+                ctrl_ids = g.controller_ids.with_user(SUPERUSER_ID).filtered(lambda c: c.emergency_state == 'off')
                 ctrl_ids.emergency_state = 'soft'
 
     def emergency_on(self):

@@ -93,22 +93,26 @@ class HrRfidController(models.Model):
         help='Alarm Siren state',
         compute='_compute_siren_state',
         inverse='_set_siren_state',
-        store=True
+        tracking = True
     )
 
     emergency_group_id = fields.Many2one(
-        comodel_name='hr.rfid.ctrl.emergency.group'
+        comodel_name='hr.rfid.ctrl.emergency.group',
+        tracking=True
     )
 
     emergency_state = fields.Selection([
         ('off', 'No Emergency'),
         ('soft', 'Group Emergency'),
         ('hard', 'Hardware Emergency'),
-    ], compute='_compute_emergency_state', inverse='_inverse_emergency_state')
+    ], compute='_compute_emergency_state',
+        tracking=True,
+        inverse='_inverse_emergency_state')
 
     mode = fields.Integer(
         string='Controller Mode',
         help='The mode of the controller',
+        tracking=True
     )
 
     mode_selection = fields.Selection(
@@ -140,17 +144,20 @@ class HrRfidController(models.Model):
         string='External DB',
         help='If the controller uses the "ExternalDB" feature.',
         default=False,
+        tracking=True
     )
 
     relay_time_factor = fields.Selection(
         [('0', '1 second'), ('1', '0.1 seconds')],
         string='Relay Time Factor',
         default='0',
+        tracking=True
     )
 
     dual_person_mode = fields.Boolean(
         string='Dual Person Mode',
         default=False,
+        tracking=True
     )
 
     max_cards_count = fields.Integer(
@@ -273,7 +280,7 @@ class HrRfidController(models.Model):
             c.emergency_state = (soft and 'soft') or (hard and 'hard') or 'off'
 
     def _inverse_emergency_state(self):
-        for c in self:
+        for c in self.with_user(SUPERUSER_ID):
             if c.emergency_state != 'hard':
                 c.change_output_state(99, c.emergency_state == 'soft' and 1 or 0)
                 c._update_input_state(14, c.emergency_state == 'soft' and 1 or 0)
