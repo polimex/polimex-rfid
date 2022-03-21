@@ -780,6 +780,10 @@ class HrRfidWebstack(models.Model):
         if response['c'] == 'D1':
             # 00 00 00 00 01
             controller.cards_count = polimex.bytes_to_num(response['d'], 0, 5)
+        # if response['c'] == 'D5': # change controller mode
+        #     00 00 00 00 01
+
+            controller.cards_count = polimex.bytes_to_num(response['d'], 0, 5)
         if response['c'] == 'DB':
             # 00 00 00 00 01
             out_num = polimex.bytes_to_num(response['d'], 0, 1)

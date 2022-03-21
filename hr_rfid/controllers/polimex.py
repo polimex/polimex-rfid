@@ -394,7 +394,7 @@ def get_default_io_table(hw_version: int, mode: int, as_string=True):
     for line in DEFAULT_IO_TABLES:
         if line[0] == hw_version and line[1] == mode:
             if as_string:
-                return ''.join(["%02d" % i for i in line[2]])
+                return ''.join(["%02x" % i for i in line[2]])
             else:
                 return line[2]
 

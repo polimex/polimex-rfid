@@ -221,7 +221,9 @@ class HrRfidDoor(models.Model):
     @api.depends('controller_id.io_table')
     def _compute_lock_time(self):
         for d in self:
-            io_line = d._get_io_line(1, d.reader_ids[0].number)
+            io_line = None
+            if d.reader_ids:
+                io_line = d._get_io_line(1, d.reader_ids[0].number)
             if io_line:
                 d.lock_time = io_line[0][1]
             else:
@@ -240,8 +242,10 @@ class HrRfidDoor(models.Model):
             if d.controller_id.is_relay_ctrl():
                 d.lock_output = d.number
             else:
-                io_line = d._get_io_line(1, d.reader_ids[0].number)
-                if len(io_line) > 0:
+                io_line = None
+                if d.reader_ids:
+                    io_line = d._get_io_line(1, d.reader_ids[0].number)
+                if io_line:
                     d.lock_output = io_line[0][0]
                 else:
                     d.lock_output = 0
