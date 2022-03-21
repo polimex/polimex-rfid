@@ -17,14 +17,12 @@
                         <div class="oe_button_box" name="button_box">
                             <div id="control_buttons" attrs="{'invisible':[('controller_ids', '=', 0)]}">
                                 <button name="emergency_on"
-                                        states="normal"
                                         type="object"
                                         confirm="Are you sure to turn Emergency mode for the group"
                                         class="oe_stat_button" icon="fa-free-code-camp">
                                     Emergency On
                                 </button>
                                 <button name="emergency_off"
-                                        states="emergency"
                                         type="object"
                                         confirm="Are you sure to turn Emergency mode for the group"
                                         class="oe_stat_button" icon="fa-fire">
