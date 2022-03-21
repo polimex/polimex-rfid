@@ -69,6 +69,12 @@
       <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
     </record>
 
+    <record id="hr_rfid_view_emergency_on_off" model="res.groups">
+      <field name="name">View the Emergency On/Off buttons</field>
+      <field name="category_id" ref="module_rfid_settings" />
+      <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
     <record id="hr_view_own_department" model="res.groups">
       <field name="name">Only show employees from own department</field>
       <field name="category_id" ref="module_rfid_settings" />

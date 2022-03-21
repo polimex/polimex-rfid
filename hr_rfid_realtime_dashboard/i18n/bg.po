@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-14 13:25+0000\n"
-"PO-Revision-Date: 2022-03-14 15:26+0200\n"
+"POT-Creation-Date: 2022-03-21 10:21+0000\n"
+"PO-Revision-Date: 2022-03-21 12:26+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -18,8 +18,56 @@ msgstr ""
 "X-Generator: Poedit 3.0.1\n"
 
 #. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.alarm_line_kanban_view_dash
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.door_kanban_view_dash
+msgid "<i class=\"fa fa-fw fa-bell text-danger\" role=\"img\" aria-label=\"Siren On\"/>"
+msgstr "<i class=\"fa fa-fw fa-bell text-danger\" role=\"img\" aria-label=\"Вкл Сирена\"/>"
+
+#. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.alarm_line_kanban_view_dash
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.door_kanban_view_dash
+msgid "<i class=\"fa fa-fw fa-bell-slash-o text-success\" role=\"img\" aria-label=\"Siren Off\"/>"
+msgstr "<i class=\"fa fa-fw fa-bell-slash-o text-success\" role=\"img\" aria-label=\"Изкл Сирена\"/>"
+
+#. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.door_kanban_view_dash
+msgid "<i class=\"fa fa-fw fa-lock text-danger\" role=\"img\" aria-label=\"Lock the Door\"/>"
+msgstr "<i class=\"fa fa-fw fa-lock text-danger\" role=\"img\" aria-label=\"Закл Врата\"/>"
+
+#. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.door_kanban_view_dash
+msgid "<i class=\"fa fa-fw fa-shield text-danger\" role=\"img\" aria-label=\"Arm the Door\"/>"
+msgstr "<i class=\"fa fa-fw fa-shield text-danger\" role=\"img\" aria-label=\"Вкл Охрана\"/>"
+
+#. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.alarm_line_kanban_view_dash
+msgid "<i class=\"fa fa-fw fa-shield text-danger\" role=\"img\" aria-label=\"Arm the Line manually\"/>"
+msgstr "<i class=\"fa fa-fw fa-shield text-danger\" role=\"img\" aria-label=\"Вкл Ограната ръчно\"/>"
+
+#. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.door_kanban_view_dash
+msgid "<i class=\"fa fa-fw fa-thermometer-full text-info\" role=\"img\" title=\"Temperature\"/>"
+msgstr "<i class=\"fa fa-fw fa-thermometer-full text-info\" role=\"img\" title=\"Температура\"/>"
+
+#. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.door_kanban_view_dash
+msgid "<i class=\"fa fa-fw fa-universal-access text-success\" role=\"img\" aria-label=\"Disarm the Door\"/>"
+msgstr "<i class=\"fa fa-fw fa-universal-access text-success\" role=\"img\" aria-label=\"Изключи охрана на вратата\"/>"
+
+#. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.alarm_line_kanban_view_dash
+msgid "<i class=\"fa fa-fw fa-universal-access text-success\" role=\"img\" aria-label=\"Disarm the Line manually\"/>"
+msgstr "<i class=\"fa fa-fw fa-universal-access text-success\" role=\"img\" aria-label=\"Изключи охраната на линията ръчно\"/>"
+
+#. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.door_kanban_view_dash
+msgid "<i class=\"fa fa-fw fa-unlock text-success\" role=\"img\" aria-label=\"Unlock the Door\"/>"
+msgstr "<i class=\"fa fa-fw fa-unlock text-success\" role=\"img\" aria-label=\"Отключи вратата\"/>"
+
+#. module: hr_rfid_realtime_dashboard
 #: model:ir.actions.act_window,name:hr_rfid_realtime_dashboard.act_alarm_lines
 #: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard1_form_view
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard2_form_view
 msgid "Alarm Lines"
 msgstr "Алармени линии"
 
@@ -33,6 +81,21 @@ msgstr "Алармени групи"
 #: model:ir.actions.act_window,name:hr_rfid_realtime_dashboard.alarm_groups_act
 msgid "Alarm line Groups"
 msgstr "Групи алармени линии"
+
+#. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.alarm_line_kanban_view_dash
+msgid "Arm State"
+msgstr "Алармен статус"
+
+#. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.alarm_line_kanban_view_dash
+msgid "Arm manual"
+msgstr "Ръчно включване Охрана"
+
+#. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.door_kanban_view_dash
+msgid "Arm the Door"
+msgstr "Включване на охрана на вратата"
 
 #. module: hr_rfid_realtime_dashboard
 #: model:ir.model,name:hr_rfid_realtime_dashboard.model_board_board
@@ -62,8 +125,19 @@ msgid "Dashboard 2"
 msgstr "Табло 2"
 
 #. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.alarm_line_kanban_view_dash
+msgid "Disarm manual"
+msgstr "Деактивирай ръчно"
+
+#. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.door_kanban_view_dash
+msgid "Disarm the Door"
+msgstr "Деактивирай охраната на вратата"
+
+#. module: hr_rfid_realtime_dashboard
 #: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_board_board__display_name
 #: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_ctrl_alarm__display_name
+#: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_ctrl_emergency_group__display_name
 #: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_door__display_name
 #: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_event_system__display_name
 #: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_event_user__display_name
@@ -76,6 +150,11 @@ msgid "Door"
 msgstr "Врата"
 
 #. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.door_kanban_view_dash
+msgid "Door Name"
+msgstr "Име на врата"
+
+#. module: hr_rfid_realtime_dashboard
 #: model:ir.actions.act_window,name:hr_rfid_realtime_dashboard.act_doors
 #: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard1_form_view
 #: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard2_form_view
@@ -83,8 +162,34 @@ msgid "Doors"
 msgstr "Врати"
 
 #. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard1_form_view
+msgid "Emergency Group"
+msgstr "Аварйина група"
+
+#. module: hr_rfid_realtime_dashboard
+#: model:ir.actions.act_window,name:hr_rfid_realtime_dashboard.act_emergency_groups
+msgid "Emergency Groups"
+msgstr "Аварийни групи"
+
+#. module: hr_rfid_realtime_dashboard
+#: model:ir.model,name:hr_rfid_realtime_dashboard.model_hr_rfid_ctrl_emergency_group
+msgid "Emergency signal distribution group"
+msgstr "Групи за разпространение на ПИС сигнал"
+
+#. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.door_kanban_view_dash
+msgid "External humidity sensor value"
+msgstr "Стойност на влажността от външен сензор"
+
+#. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.door_kanban_view_dash
+msgid "External temperature sensor value"
+msgstr "Стойността на температурата от външен сензор"
+
+#. module: hr_rfid_realtime_dashboard
 #: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_board_board__id
 #: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_ctrl_alarm__id
+#: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_ctrl_emergency_group__id
 #: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_door__id
 #: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_event_system__id
 #: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_event_user__id
@@ -92,13 +197,29 @@ msgid "ID"
 msgstr "Номер (ID)"
 
 #. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.alarm_line_kanban_view_dash
+msgid "In group:"
+msgstr "В група:"
+
+#. module: hr_rfid_realtime_dashboard
 #: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_board_board____last_update
 #: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_ctrl_alarm____last_update
+#: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_ctrl_emergency_group____last_update
 #: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_door____last_update
 #: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_event_system____last_update
 #: model:ir.model.fields,field_description:hr_rfid_realtime_dashboard.field_hr_rfid_event_user____last_update
 msgid "Last Modified on"
 msgstr "Последно променено на"
+
+#. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.alarm_line_kanban_view_dash
+msgid "Line Name"
+msgstr "Име на линия"
+
+#. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.door_kanban_view_dash
+msgid "Lock the Door"
+msgstr "Заключи врата"
 
 #. module: hr_rfid_realtime_dashboard
 #: model:ir.actions.act_window,name:hr_rfid_realtime_dashboard.hr_rfid_dashboard_1_act_window
@@ -121,6 +242,29 @@ msgid "RFID User Event"
 msgstr "RFID потребителско събитие"
 
 #. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.alarm_line_kanban_view_dash
+msgid "Related door"
+msgstr "Свързана врата"
+
+#. module: hr_rfid_realtime_dashboard
+#: code:addons/hr_rfid_realtime_dashboard/models/hr_rfid_event_system.py:0
+#, python-format
+msgid "Siren %s"
+msgstr "Сирена %s"
+
+#. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.alarm_line_kanban_view_dash
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.door_kanban_view_dash
+msgid "Siren Off"
+msgstr "Изключи сирена"
+
+#. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.alarm_line_kanban_view_dash
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.door_kanban_view_dash
+msgid "Siren On"
+msgstr "Включи сирена"
+
+#. module: hr_rfid_realtime_dashboard
 #: model:ir.actions.act_window,name:hr_rfid_realtime_dashboard.act_system_event
 #: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard1_form_view
 #: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard2_form_view
@@ -135,8 +279,22 @@ msgid "Temperature and Humidity"
 msgstr "Температура и Влажност"
 
 #. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.door_kanban_view_dash
+msgid "Unlock the Door"
+msgstr "Отключи вратата"
+
+#. module: hr_rfid_realtime_dashboard
 #: model:ir.actions.act_window,name:hr_rfid_realtime_dashboard.act_user_events
 #: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard1_form_view
 #: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.dashboard2_form_view
 msgid "User Events"
 msgstr "Потребителски събития"
+
+#. module: hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid_realtime_dashboard.door_kanban_view_dash
+msgid ""
+"℃\n"
+"                                                    <i class=\"fa fa-fw fa-tint text-info\" role=\"img\" title=\"Humidity\"/>"
+msgstr ""
+"℃\n"
+"                                                    <i class=\"fa fa-fw fa-tint text-info\" role=\"img\" title=\"Влажност\"/>"

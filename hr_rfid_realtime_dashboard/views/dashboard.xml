@@ -75,6 +75,7 @@
                 </xpath>
             </field>
         </record>
+
         <record id="act_th_log" model="ir.actions.act_window">
             <field name="name">Temperature and Humidity</field>
             <field name="res_model">hr.rfid.ctrl.th</field>
@@ -356,6 +357,12 @@
             <field name="view_id" ref="alarm_line_kanban_view_dash"/>
         </record>
 
+        <record id="act_emergency_groups" model="ir.actions.act_window">
+            <field name="name">Emergency Groups</field>
+            <field name="res_model">hr.rfid.ctrl.emergency.group</field>
+            <field name="view_mode">kanban</field>
+        </record>
+
         <record id="dashboard1_form_view" model="ir.ui.view">
             <field name="name">Dashboard Form</field>
             <field name="model">board.board</field>
@@ -389,6 +396,10 @@
                             <action
                                     string="Alarm Lines"
                                     name="%(hr_rfid_realtime_dashboard.act_alarm_lines)d"
+                            />
+                            <action
+                                    string="Emergency Group"
+                                    name="%(hr_rfid_realtime_dashboard.act_emergency_groups)d"
                             />
                         </column>
                     </board>

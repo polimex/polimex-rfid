@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-17 23:18+0000\n"
-"PO-Revision-Date: 2022-03-18 01:31+0200\n"
+"POT-Creation-Date: 2022-03-21 10:14+0000\n"
+"PO-Revision-Date: 2022-03-21 12:20+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -85,6 +85,17 @@ msgstr "<i class=\"fa fa-fw fa-bell text-danger\" role=\"img\" aria-label=\"Вк
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "<i class=\"fa fa-fw fa-bell-slash-o text-success\" role=\"img\" aria-label=\"Siren Off\"/>"
 msgstr "<i class=\"fa fa-fw fa-bell-slash-o text-success\" role=\"img\" aria-label=\"Изключи Сирена\"/>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
+msgid "<i class=\"fa fa-fw fa-fire text-danger\" role=\"img\" aria-label=\"Turn on Emergency for this Group manually\"/>"
+msgstr "<i class=\"fa fa-fw fa-fire text-danger\" role=\"img\" aria-label=\"Включи ПИС за тази група ръчно\"/>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
+msgid ""
+"<i class=\"fa fa-fw fa-free-code-camp text-success\" role=\"img\" aria-label=\"Turn off Emergency for this Group manually\"/>"
+msgstr "<i class=\"fa fa-fw fa-free-code-camp text-success\" role=\"img\" aria-label=\"Изключи ПИС за тази група ръчно\"/>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
@@ -741,8 +752,8 @@ msgstr "Алармени линии към  {}"
 
 #. module: hr_rfid
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_alarm_groups
-msgid "Alarm lines group control"
-msgstr "Контрол на група алармени линии"
+msgid "Alarm lines group"
+msgstr "Група алармени линии"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__alarm_line_ids
@@ -2465,11 +2476,6 @@ msgid "DuressOK"
 msgstr ""
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
-msgid "Edit"
-msgstr "Редакция"
-
-#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
 msgid ""
 "Edit Department and set \"Default Access Group\" - this group will\n"
@@ -2509,16 +2515,26 @@ msgstr "Авариен вход"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_form_view
+#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
 msgid "Emergency Off"
 msgstr "Изключи ПИС "
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_form_view
+#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
 msgid "Emergency On"
 msgstr "Включи ПИС"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_form
+msgid "Emergency Opened"
+msgstr "Аварийно отворено"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__emergency_state
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__emergency_state
+#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Emergency State"
 msgstr "Състояние на ПИС"
 
@@ -2537,10 +2553,20 @@ msgstr ""
 "                    Функцията се използва за намаляване стойността на монтажа"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+msgid "Emergency door state"
+msgstr "Авариен статус на врата"
+
+#. module: hr_rfid
 #: code:addons/hr_rfid/controllers/main.py:0
 #, python-format
 msgid "Emergency from %s %s"
 msgstr "ПИС сигнал от %s %s"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
+msgid "Emergency group"
+msgstr "Аварийна група"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_ctrl_emergency_group
@@ -3271,10 +3297,16 @@ msgid "ID the controller differentiates itself from the others with on the same 
 msgstr "ID на Контролерът в Модул"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
+msgid ""
+"IO\n"
+"                                                Table"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_controller_io_table_action
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__io_row_ids
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 msgid "IO Table"
 msgstr "IO Таблица"
 
@@ -5223,7 +5255,7 @@ msgstr "Четци, които отварят тази врата"
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_contact_rel__visits_counter
 msgid "Real visits this group will be deactivated. 0 mean"
-msgstr ""
+msgstr "Реалните посещения за които групата ще бъде деактивирана. 0 изключено"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_form
@@ -5474,7 +5506,7 @@ msgstr "Задаване на група за достъп по подразби
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_form_view
 msgid "Set friendly name"
-msgstr ""
+msgstr "Удобно за Вас име"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
@@ -5791,21 +5823,21 @@ msgstr "Температура"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__52
 #, python-format
 msgid "Temperature High"
-msgstr ""
+msgstr "Висока Температурата"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__54
 #, python-format
 msgid "Temperature Low"
-msgstr ""
+msgstr "Ниска температура"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__53
 #, python-format
 msgid "Temperature Normal"
-msgstr ""
+msgstr "Нормална Температура"
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_ctrl_th_action model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_th
@@ -6037,6 +6069,11 @@ msgstr "График"
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_ctrl_ts_week_wiz_action
 msgid "Time Schedule Wizard"
 msgstr "Помощник за Времеви Графици"
+
+#. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_hr_rfid_ctrl_ts_line
+msgid "Time Schedule line Wizard"
+msgstr ""
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_time_schedule_action
@@ -6373,6 +6410,11 @@ msgstr "Преглед на данните в потребители"
 #: model:res.groups,name:hr_rfid.hr_rfid_view_rfid_pin_code_data
 msgid "View pin code data in users"
 msgstr "Преглед на данните за ПИН кода в потребители"
+
+#. module: hr_rfid
+#: model:res.groups,name:hr_rfid.hr_rfid_view_emergency_on_off
+msgid "View the Emergency On/Off buttons"
+msgstr "Вижда бутони ПИС вкл/изкл"
 
 #. module: hr_rfid
 #: model:res.groups,name:hr_rfid.hr_rfid_view_door_arm_disarm
@@ -6833,11 +6875,6 @@ msgstr "по Четец"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_log_search_view
 msgid "by Sensor"
 msgstr "по Сензор"
-
-#. module: hr_rfid
-#: model:ir.model,name:hr_rfid.model_hr_rfid_ctrl_ts_line
-msgid "hr.rfid.ctrl.ts.line"
-msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_ctrl_ts_week_wiz
