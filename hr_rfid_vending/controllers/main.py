@@ -111,7 +111,7 @@ class HrRfidVending(WebRfidController):
                         and emp.attendance_state != 'checked_in':
                     return ret_super()
 
-                date = controller.webstack_id.get_ws_time()
+                date = controller.webstack_id.get_ws_time(post_data['event'])
                 if date + datetime.timedelta(minutes=5) <= datetime.datetime.now():
                     ev = create_ev(controller, event, card, '64')
                     return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code, ev))

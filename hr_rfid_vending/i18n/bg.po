@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-21 12:35+0000\n"
-"PO-Revision-Date: 2021-12-21 15:14+0200\n"
+"POT-Creation-Date: 2022-03-22 12:00+0000\n"
+"PO-Revision-Date: 2022-03-22 14:03+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
-"Language: bg\n"
-"X-Generator: Poedit 3.0\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__event_action
@@ -51,6 +51,16 @@ msgid ""
 "the screen"
 msgstr ""
 "След колко време автоматът ще спре да показва цената на продукта на екрана"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__alarm_line_id
+msgid "Alarm line"
+msgstr "Алармена линия"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__alarm_line_id
+msgid "Alarm line affected by this event"
+msgstr "Алармена линия за това събитие"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_balance
@@ -96,7 +106,7 @@ msgstr "Автоматично зареждане на месечна база"
 #. module: hr_rfid_vending
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_rfid_vending_event__event_action__-1
 msgid "Bad Data Error"
-msgstr ""
+msgstr "Грешка от лоши данни"
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
@@ -396,8 +406,7 @@ msgid ""
 "refill will never go over."
 msgstr ""
 "Фиксираният тип добавя сумата за зареждане към потребителският баланс всеки "
-"месец\n"
-"Зареди До добавя баланс до определената максимална сума за месеца"
+"месец. Зареди До добавя баланс до определената максимална сума за месеца."
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_auto_refill_search
@@ -421,7 +430,7 @@ msgstr "Каква сума да се добави към потребителс
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_result
 msgid "How much the balance was after the change"
-msgstr ""
+msgstr "Колко е бил балансът след промяната"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_change
@@ -805,6 +814,11 @@ msgid "User cannot go in more debt than this value"
 msgstr "Потребителя не може да падне под тази стойност"
 
 #. module: hr_rfid_vending
+#: model:ir.module.category,description:hr_rfid_vending.hr_rfid_vending_management
+msgid "User rights for the Vending module"
+msgstr "Потребителски права за вендинг модула"
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__value
 msgid "Value"
 msgstr "Стойност"
@@ -819,6 +833,11 @@ msgstr "Вендинг"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__show_price_timeout
 msgid "Vending \"Show Price\" Timeout"
 msgstr "Време за показване на Цената"
+
+#. module: hr_rfid_vending
+#: model:ir.module.category,name:hr_rfid_vending.hr_rfid_vending_management
+msgid "Vending Access"
+msgstr "Достъп до вендинг"
 
 #. module: hr_rfid_vending
 #: model:ir.actions.act_window,name:hr_rfid_vending.hr_rfid_vending_auto_refill_action
@@ -863,11 +882,6 @@ msgstr ""
 #: model:ir.model,name:hr_rfid_vending.model_hr_rfid_ctrl_vending_settings
 msgid "Vending Machine Settings"
 msgstr "Настройки на Вендинг Машина"
-
-#. module: hr_rfid_vending
-#: model:ir.ui.menu,name:hr_rfid_vending.hr_rfid_vending_management_menu
-msgid "Vending Management"
-msgstr "Управление на Вендинг"
 
 #. module: hr_rfid_vending
 #: model:res.groups,name:hr_rfid_vending.group_operator
