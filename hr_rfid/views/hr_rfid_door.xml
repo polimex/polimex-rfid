@@ -7,8 +7,8 @@
             <field name="arch" type="xml">
                 <form string="Open/close door">
                     <group>
-                        <field name="doors">
-                            <tree>
+                        <field name="doors" readonly="1">
+                            <tree editable="top">
                                 <field name="name"/>
                                 <field name="controller_id"/>
                                 <field name="card_type"/>
@@ -108,6 +108,8 @@
                                 <field name="name" placeholder="Enter friendly door name"/>
                             </h1>
                         </div>
+                        <field name="emergency_state" invisible="1"/>
+                        <widget name="web_ribbon" title="Emergency Opened" bg_color="bg-danger" attrs="{'invisible': [('emergency_state', '=', 'off')]}"/>
                         <group>
                             <group>
                                 <field name="card_type"/>
@@ -162,6 +164,7 @@
                     <field name="temperature"/>
                     <field name="humidity"/>
                     <field name="siren_state"/>
+                    <field name="emergency_state"/>
                     <templates>
                         <t t-name="kanban-box">
                             <div>
@@ -194,6 +197,13 @@
                                                            role="img"
                                                            t-att-aria-label="record.lock_state.raw_value ? 'Unlocked' : 'Locked'"/>
                                                     </span>
+                                                    <span t-if="record.emergency_state.raw_value != 'off'">
+                                                        <i
+                                                       role="img"
+                                                       t-att-class="record.emergency_state.raw_value == 'soft' ? 'fa fa-fw fa-free-code-camp text-danger' : 'fa fa-fw fa-fire text-danger'"
+                                                       t-att-title="record.emergency_state.raw_value == 'soft' ? 'Software Emergency' : 'Hardware Emergency'"
+                                                       t-att-aria-label="record.emergency_state.raw_value == 'soft' ? 'Software Emergency' : 'Hardware Emergency'"/>
+                                                    </span>
                                                     </div>
                                                 <h2>
                                                     <a type="open"><field name="name" title="Door Name"/></a>
@@ -202,9 +212,25 @@
                                             <ul>
                                                 <li name="action_icons">
                                                     <div class="float-right">
+                                                        <span title="Siren Off"
+                                                              groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                                                              t-if="record.siren_state.raw_value">
+                                                            <a name="siren_off" type="object">
+                                                                <i class="fa fa-fw fa-bell-slash-o text-success" role="img"
+                                                                   aria-label="Siren Off"/>
+                                                            </a>
+                                                        </span>
+                                                        <span title="Siren On"
+                                                              groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                                                              t-if="!record.siren_state.raw_value">
+                                                            <a name="siren_on" type="object">
+                                                                <i class="fa fa-fw fa-bell text-danger" role="img"
+                                                                   aria-label="Siren On"/>
+                                                            </a>
+                                                        </span>
                                                         <span title="Disarm the Door"
                                                               groups="hr_rfid.hr_rfid_view_door_arm_disarm"
-                                                              t-if="record.alarm_line_ids.raw_value.length &gt; 0">
+                                                              t-if="record.alarm_state.raw_value == 'arm'">
                                                             <a name="disarm_door" type="object">
                                                                 <i class="fa fa-fw fa-universal-access text-success" role="img"
                                                                    aria-label="Disarm the Door"/>
@@ -212,8 +238,7 @@
                                                         </span>
                                                         <span title="Arm the Door"
                                                               groups="hr_rfid.hr_rfid_view_door_arm_disarm"
-                                                              t-if="record.alarm_line_ids.raw_value.length &gt; 0">
-<!--                                                            <t t-debug="pbt"/>-->
+                                                              t-if="record.alarm_state.raw_value == 'disarm'">
                                                             <a name="arm_door" type="object">
                                                                 <i class="fa fa-fw fa-shield text-danger" role="img"
                                                                    aria-label="Arm the Door"/>
@@ -234,6 +259,15 @@
                                                             </a>
                                                         </span>
                                                     </div>
+                                                </li>
+                                                <li t-if="record.emergency_state.raw_value">
+                                                    <i
+                                                       role="img"
+                                                       t-att-class="record.emergency_state.raw_value == 'off' ? 'fa fa-fw fa-free-code-camp text-success' : 'fa fa-fw fa-fire text-danger'"
+                                                       title="Emergency State"/>
+                                                    <field name="emergency_state"
+                                                           t-att-class="record.emergency_state.raw_value == 'off' ? 'bg-success' : 'bg-danger'"
+                                                           title="Emergency door state"/>
                                                 </li>
                                                 <li t-if="record.card_type.raw_value">
                                                     <field name="card_type"/>
@@ -272,31 +306,6 @@
                                                     <t t-esc="record.system_event_count.value"/>
                                                 </a>
                                             </span>
-<!--                                            <span t-if="record.system_event_count.value>0"-->
-<!--                                                  class="badge badge-pill" title="System Events">-->
-<!--                                                <a name="return_action_to_open" type="object"-->
-<!--                                                    context="{'xml_id':'hr_rfid_event_system_action'}"-->
-<!--                                                    attrs="{'invisible':[('system_event_ids', '=', False)]}">-->
-<!--                                                    <i class="fa fa-fw fa-list" role="img"-->
-<!--                                                       aria-label="System Events"/>-->
-<!--                                                    <t t-esc="record.system_event_count.value"/>-->
-<!--                                                </a>-->
-<!--                                            </span>-->
-<!--                                            <span t-if="record.commands_count.value>0"-->
-<!--                                                  class="badge badge-pill" title="Commands">-->
-<!--                                                <a name="return_action_to_open" type="object"-->
-<!--                                                    context="{'xml_id':'hr_rfid_command_action'}"-->
-<!--                                                    attrs="{'invisible':[('command_ids', '=', False)]}">-->
-<!--                                                    <i class="fa fa-fw fa-list" role="img"-->
-<!--                                                       aria-label="Commands"/>-->
-<!--                                                    <t t-esc="record.commands_count.value"/>-->
-<!--                                                </a>-->
-<!--                                            </span>-->
-<!--                                            <span t-if="record.behind_nat.value"-->
-<!--                                                  class="badge badge-pill" title="Module Web Management">-->
-<!--                                                <a t-att-href="record.http_link.value" target="_blank" style="text-decoration:none; color: #010199;">Web</a>-->
-
-<!--                                            </span>-->
                                         </span>
                                     </div>
                                 </div>

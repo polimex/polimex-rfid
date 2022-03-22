@@ -1,6 +1,10 @@
 from odoo import fields, models, api, exceptions, _, SUPERUSER_ID
 from odoo.addons.hr_rfid.controllers import polimex
 
+import logging
+
+_logger = logging.getLogger(__name__)
+
 
 class HrRfidController(models.Model):
     _name = 'hr.rfid.ctrl'
@@ -88,12 +92,27 @@ class HrRfidController(models.Model):
     siren_state = fields.Boolean(
         help='Alarm Siren state',
         compute='_compute_siren_state',
-        inverse='_set_siren_state'
+        inverse='_set_siren_state',
+        tracking = True
     )
+
+    emergency_group_id = fields.Many2one(
+        comodel_name='hr.rfid.ctrl.emergency.group',
+        tracking=True
+    )
+
+    emergency_state = fields.Selection([
+        ('off', 'No Emergency'),
+        ('soft', 'Group Emergency'),
+        ('hard', 'Hardware Emergency'),
+    ], compute='_compute_emergency_state',
+        tracking=True,
+        inverse='_inverse_emergency_state')
 
     mode = fields.Integer(
         string='Controller Mode',
         help='The mode of the controller',
+        tracking=True
     )
 
     mode_selection = fields.Selection(
@@ -125,17 +144,20 @@ class HrRfidController(models.Model):
         string='External DB',
         help='If the controller uses the "ExternalDB" feature.',
         default=False,
+        tracking=True
     )
 
     relay_time_factor = fields.Selection(
         [('0', '1 second'), ('1', '0.1 seconds')],
         string='Relay Time Factor',
         default='0',
+        tracking=True
     )
 
     dual_person_mode = fields.Boolean(
         string='Dual Person Mode',
         default=False,
+        tracking=True
     )
 
     max_cards_count = fields.Integer(
@@ -250,6 +272,19 @@ class HrRfidController(models.Model):
             if ctrl.mode == 0:
                 raise exceptions.ValidationError(_('The controller mode value is invalid. Please check it!'))
 
+    @api.depends('input_states')
+    def _compute_emergency_state(self):
+        for c in self:
+            soft = c._get_input_state(14)
+            hard = c._get_input_state(c.inputs)
+            c.emergency_state = (soft and 'soft') or (hard and 'hard') or 'off'
+
+    def _inverse_emergency_state(self):
+        for c in self.with_user(SUPERUSER_ID):
+            if c.emergency_state != 'hard':
+                c.change_output_state(99, c.emergency_state == 'soft' and 1 or 0)
+                c._update_input_state(14, c.emergency_state == 'soft' and 1 or 0)
+
     @api.depends('mode')
     def _compute_controller_mode(self):
         for c in self:
@@ -291,7 +326,7 @@ class HrRfidController(models.Model):
             a.user_event_count = self.env['hr.rfid.event.user'].search_count(
                 [('door_id', 'in', [d.id for d in a.door_ids])])
 
-    @api.depends('alarm_lines')
+    @api.depends('output_states')
     def _compute_siren_state(self):
         for c in self:
             siren_out = (c.alarm_lines == 1) and 4 or 10
@@ -300,7 +335,9 @@ class HrRfidController(models.Model):
     def _set_siren_state(self):
         for c in self:
             siren_out = (c.alarm_lines == 1) and 4 or 10
-            c.change_output_state(siren_out, int(c.siren_state), 99)
+            if not self.env.context.get('no_output', False):
+                c.change_output_state(siren_out, int(c.siren_state), 99)
+            c._update_output_state(siren_out, c.siren_state)
 
     def return_action_to_open(self):
         """ This opens the xml view specified in xml_id for the current app """
@@ -326,74 +363,6 @@ class HrRfidController(models.Model):
             )
             return res
         return False
-
-    @api.model
-    def get_default_io_table(self, hw_type, sw_version, mode):
-        io_tables = {
-            # iCON110
-            '6': {
-                1: [
-                    (734,
-                     '0000000000000000000000000000000000000000000000030000000000000300000000000000030000000000000003000000000000000003000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000040463000000000000030000000000000000030000000000000000000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000000300'),
-                ],
-                2: [
-                    (734,
-                     '0000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000300000000000000000000000000000000000000000000000000000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000046363000000000000030000000000000000030000000000000000000000000000030000000000000003000000000000000000000000000000000000000000000003000000000000000300'),
-                ],
-            },
-            # Turnstile
-            '9': {
-                1: [
-                    (734,
-                     '0000000003030303050505050000000000000000000000030000000300000000000000030000000000000003000000000000000000000300000003000000000000000300000000000000030000000000000000000003000000030000000000000003000000000000000300000000000000000000030000000300000000000000030000000000000003000000000000000000000063636363000000000000000000000000000000030000000000000300000000000003000000000000030000000404040401010101040404040000000000000000000000000000000000000000'),
-                    (740,
-                     '0000000003030303050505050000000000000000000000030000000300000000000000030000000000000003000000000000000000000300000003000000000000000300000000000000030000000000000000000003000000030000000000000003000000000000000300000000000000000000030000000300000000000000030000000000000003000000000000000000000063636363000000000305030500000000000000030000000000000300000000000003000000000000030000000404040401010101040404040000000000000000000000000000000000000000'),
-                ]
-            },
-            # iCON115
-            '11': {
-                1: [
-                    (734,
-                     '0000000000000000000000000000000000000000000000030000000000000300000000000000030000000000000003000000000000000003000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000006363000000000000000000000000000000030000000000000000000000000000030000000000000003000000000000000300000000000000030000000000000000000000000000000000'),
-                ],
-                2: [
-                    (734,
-                     '0000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000300000000000000000000000000000000000000000000000000000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000006363000000000000000000000000000000030000000000000000000000000000030000000000000003000000000000000000000000000000000000000000000000000000000000000000'),
-                ],
-            },
-            # iCON50
-            '12': {
-                1: [
-                    (734,
-                     '0000000000000003000000000000030000000000000000030000000000000300000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'),
-                ],
-            },
-            # iCON130
-            '17': {
-                2: [
-                    (734,
-                     '0000000000000303000005050000000000000000000000030000000300000000000000030000000000000003000000000000000000000003000000030000000000000003000000000000000300000000000000000003000000000300000000000000030000000000000003000000000000000000000300000000030000000000000003000000000000000300000000000000000000006363000000000000000000000000000000030000000000000300000000000000000000000000000000000000010100000303000001010000030300000000000000000000000000000000'),
-                ],
-                3: [
-                    (734,
-                     '0000000000030303000505050000000000000000000000030000000300000000000000030000000000000003000000000000000000000003000000030000000000000003000000000000000300000000000000000003000000000300000000000000030000000000000003000000000000000000030000000003000000000000000300000000000000030000000000000000000000636363000000000000000000000000000000030000000000000300000000000003000000000000000000000001010100030303000101010003030300000000000000000000000000000000'),
-                ],
-                4: [
-                    (734,
-                     '0000000003030303050505050000000000000000000000030000000300000000000000030000000000000003000000000000000000000300000003000000000000000300000000000000030000000000000000000003000000030000000000000003000000000000000300000000000000000000030000000300000000000000030000000000000003000000000000000000000063636363000000000000000000000000000000030000000000000300000000000003000000000000030000000101010103030303010101010303030300000000000000000000000000000000'),
-                ],
-            },
-        }
-
-        if hw_type not in io_tables or mode not in io_tables[hw_type]:
-            return ''
-
-        sw_versions = io_tables[hw_type][mode]
-        io_table = ''
-        for sw_v, io_t in sw_versions:
-            if int(sw_version) > sw_v:
-                io_table = io_t
-        return io_table
 
     @api.model
     def update_ctrl_alarm_lines(self):
@@ -469,7 +438,8 @@ class HrRfidController(models.Model):
             if ctrl.io_table == new_io_table:
                 continue
 
-            if ((ctrl.io_table_lines*8*2) != len(new_io_table) and line == 0) or (line != 0 and len(new_io_table) != 16):
+            if ((ctrl.io_table_lines * 8 * 2) != len(new_io_table) and line == 0) or (
+                    line != 0 and len(new_io_table) != 16):
                 raise exceptions.ValidationError(
                     'IO table lengths are different, this should never happen????'
                 )
@@ -584,7 +554,14 @@ class HrRfidController(models.Model):
 
     def _get_input_state(self, input_number):
         self.ensure_one()
-        return self.input_states & (2 ** (input_number - 1)) == (2 ** (input_number - 1))
+        return (self.input_states and pow(2, input_number - 1)) == pow(2, input_number - 1)
+
+    def _update_input_state(self, input_number, state: bool):
+        for c in self.with_user(SUPERUSER_ID):
+            if state:
+                c.input_states = c.input_states or pow(2, input_number - 1)
+            elif c.input_states and pow(2, input_number - 1) == pow(2, input_number - 1):
+                c.input_states = c.input_states - pow(2, input_number - 1)
 
     def _get_output_state(self, output_number):
         self.ensure_one()
@@ -595,11 +572,12 @@ class HrRfidController(models.Model):
         Output Number from 1
         State 0 or 1, True or False
         '''
-        if state:  # !=0
-            if self.output_states & (2 ** (output_number - 1)) != (2 ** (output_number - 1)):
-                self.output_states += (2 ** (output_number - 1))
-        elif self.output_states & (2 ** (output_number - 1)) == (2 ** (output_number - 1)):
-            self.output_states -= (2 ** (output_number - 1))
+        for c in self.with_user(SUPERUSER_ID):
+            if state:  # !=0
+                if c.output_states & (2 ** (output_number - 1)) != (2 ** (output_number - 1)):
+                    c.output_states += (2 ** (output_number - 1))
+            elif c.output_states & (2 ** (output_number - 1)) == (2 ** (output_number - 1)):
+                c.output_states -= (2 ** (output_number - 1))
 
     def convert_int_to_cmd_data_for_output_control(self, data):
         self.ensure_one()
@@ -691,11 +669,12 @@ class HrRfidController(models.Model):
 
         return commands
 
-    def change_output_state(self, out_number: int, out_state: int, time: int):
+    def change_output_state(self, out_number: int, out_state: int, time: int = 0):
         """
         :param out: 0 to open door, 1 to close door
         :param time: Range: [0, 99]
         """
+        _logger.info('Change Output %d state to %d for %d seconds.', out_number, out_state, time)
         self.ensure_one()
         cmd = {
             'cmd': {
@@ -715,7 +694,7 @@ class HrRfidController(models.Model):
         else:
             cmd_data = '%02x%02d%02d' % (out_number, out_state, time)
 
-        res = self._base_command('DB', cmd_data)
+        res = self.with_user(SUPERUSER_ID)._base_command('DB', cmd_data)
 
     def read_controller_information_cmd(self):
         return self._base_command('F0')
@@ -734,12 +713,14 @@ class HrRfidController(models.Model):
 
     def read_io_table_cmd(self):
         if self.webstack_id.is_10_3():
-            return [self._base_command('F9', '%02X' % (i+1)) for i in range(self.io_table_lines)]
+            return [self._base_command('F9', '%02X' % (i + 1)) for i in range(self.io_table_lines)]
         else:
             return self._base_command('F9', '00')
+
     def write_io_table_cmd(self, cmd_data):
-        if self.webstack_id.is_10_3() and len(cmd_data) > (2+16):
-            return [self._base_command('D9', '%02X' % (i+1) + cmd_data[2+i*16:2+i*16+16]) for i in range(self.io_table_lines)]
+        if self.webstack_id.is_10_3() and len(cmd_data) > (2 + 16):
+            return [self._base_command('D9', '%02X' % (i + 1) + cmd_data[2 + i * 16:2 + i * 16 + 16]) for i in
+                    range(self.io_table_lines)]
         else:
             return self._base_command('D9', cmd_data)
 
@@ -877,13 +858,10 @@ class HrRfidController(models.Model):
             return commands
 
     def write_controller_mode(self, new_mode: int = None, new_ext_db: bool = None):
-        if new_mode is not None:
-            # TODO Check if mode is being changed, change io table if so
-            pass
         if new_mode is None:
             new_mode = self.mode
-        else:
-            self.mode = new_mode
+        # else:
+        #     self.mode = new_mode
         if new_ext_db is None:
             new_ext_db = self.external_db
         if new_ext_db is True:
@@ -915,9 +893,6 @@ class HrRfidController(models.Model):
     def change_controller_mode(self, new_mode):
         for c in self:
             c.write_controller_mode(new_mode)
-            io = polimex.get_default_io_table(int(c.hw_version), new_mode)
-            if io is not None:
-                c.change_io_table(io)
 
     # Command parsers
 

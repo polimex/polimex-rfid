@@ -1,6 +1,6 @@
 import logging
 
-from odoo import fields, models, api, _
+from odoo import fields, models, api, _, SUPERUSER_ID
 
 _logger = logging.getLogger(__name__)
 
@@ -34,7 +34,12 @@ class HrRfidCtrlAlarm(models.Model):
         ('no_alarm', 'No Alarm functionality'),  # 64 ON
         ('arm', 'Armed'),  # 64 ON
         ('disarm', 'Disarmed'),  # 64 OFF
-        ], compute='_compute_states')
+        ], compute='_compute_states', store=True)
+
+    siren_state = fields.Boolean(
+        help='Alarm Siren state',
+        related='controller_id.siren_state'
+    )
 
     controller_id = fields.Many2one(
         comodel_name='hr.rfid.ctrl',
@@ -59,6 +64,10 @@ class HrRfidCtrlAlarm(models.Model):
         compute='_compute_counters'
     )
 
+    alarm_group_id = fields.Many2one(
+        comodel_name='hr.rfid.ctrl.alarm.group'
+    )
+
     def _compute_counters(self):
         for l in self:
             l.user_event_count = self.env['hr.rfid.event.user'].search_count([('alarm_line_id', '=', l.id)])
@@ -68,7 +77,11 @@ class HrRfidCtrlAlarm(models.Model):
     def _compute_states(self):
         for l in self:
             armed, state = l.controller_id._get_alarm_line_state(l.line_number)
-            l.armed = armed
+            # _logger.info('%d line in armed:%s and state:%s', l.line_number, armed, state)
+            if state == 'disabled':
+                l.armed = 'no_alarm'
+            else:
+                l.armed = armed
             l.state = state
 
     def return_action_to_open(self):
@@ -98,7 +111,7 @@ class HrRfidCtrlAlarm(models.Model):
 
     def disarm(self):
         for l in self:
-            cmd_id = self.controller_id.change_output_state(self.control_output, 0, 99)
+            cmd_id = l.controller_id.change_output_state(l.control_output, 0, 99)
 
         return self.balloon_success(
             title=_('Disarm command success'),
@@ -107,9 +120,25 @@ class HrRfidCtrlAlarm(models.Model):
 
     def arm(self):
         for l in self:
-            cmd_id = self.controller_id.change_output_state(self.control_output, 1, 99)
+            cmd_id = l.controller_id.change_output_state(l.control_output, 1, 99)
 
         return self.balloon_success(
             title=_('Arm command success'),
             message=_('Success Line(s) Arm')
+        )
+
+    def siren_off(self):
+        for s in self:
+            s.controller_id.with_user(SUPERUSER_ID).siren_state = False
+        return self.balloon_success(
+            title=_('Siren Control'),
+            message=_('Siren turned Off successful')
+        )
+
+    def siren_on(self):
+        for s in self:
+            s.controller_id.with_user(SUPERUSER_ID).siren_state = True
+        return self.balloon_success(
+            title=_('Siren Control'),
+            message=_('Siren turned On successful')
         )

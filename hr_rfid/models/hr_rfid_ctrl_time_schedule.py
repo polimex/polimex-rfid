@@ -104,6 +104,7 @@ class HrRfidTimeSchedule(models.Model):
 
 class HrRfidTimeScheduleWizDayLine(models.TransientModel):
     _name = 'hr.rfid.ctrl.ts.line'
+    _description = "Time Schedule line Wizard"
     _order = 'day'
     _rec_name = 'display_name'
 

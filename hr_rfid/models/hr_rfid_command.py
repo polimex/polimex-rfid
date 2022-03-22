@@ -8,6 +8,7 @@ from enum import Enum
 
 import logging
 _logger = logging.getLogger(__name__)
+from odoo.addons.hr_rfid.controllers import polimex
 
 
 class F0Parse(Enum):
@@ -811,7 +812,8 @@ class HrRfidCommands(models.Model):
                 id=self.controller_id.ctrl_id
             )
 
-        self.controller_id.write({
+
+        ctrl_dict = {
             'hw_version': hw_ver,
             'serial_number': serial_num,
             'sw_version': sw_ver,
@@ -820,7 +822,7 @@ class HrRfidCommands(models.Model):
             'readers': readers_count,
             'time_schedules': time_schedules,
             'io_table_lines': io_table_lines,
-            'io_table': self.controller_id.get_default_io_table(hw_ver, sw_ver, ctrl_mode),
+            # 'io_table': self.controller_id.get_default_io_table(hw_ver, sw_ver, ctrl_mode),
             'alarm_lines': alarm_lines,
             'mode': ctrl_mode,
             'external_db': external_db,
@@ -829,7 +831,13 @@ class HrRfidCommands(models.Model):
             'max_cards_count': max_cards_count,
             'max_events_count': max_events_count,
             'last_f0_read': fields.datetime.now(),
-        })
+        }
+        if ctrl_mode != self.controller_id.mode and self.controller_id.mode is not None:
+            # ctrl_dict['io_table'] = polimex.get_default_io_table(hw_ver, sw_ver, ctrl_mode)
+            self.controller_id.write(ctrl_dict)
+            self.controller_id.change_io_table(polimex.get_default_io_table(int(hw_ver), ctrl_mode))
+        else:
+            self.controller_id.write(ctrl_dict)
 
         cmd_env = self.env['hr.rfid.command'].sudo()
         if not ctrl_already_existed:

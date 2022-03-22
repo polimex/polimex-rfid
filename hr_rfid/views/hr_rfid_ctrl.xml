@@ -80,6 +80,7 @@
                                     <field name="last_f0_read" readonly="1"/>
                                 </group>
                                 <group string="Current status">
+                                    <field name="emergency_state" readonly="1"/>
                                     <field name="temperature" readonly="1"/>
                                     <field name="humidity" readonly="1"/>
                                     <field name="system_voltage" readonly="1"/>
@@ -88,22 +89,26 @@
                                 </group>
                             </group>
                             <group>
-                            <group string="Hotel equipment" attrs="{'invisible': [('hotel_readers', '=', 0)]}">
-                                <field name="hotel_readers" readonly="1"/>
-                                <field name="hotel_readers_card_presence" readonly="1"/>
-                                <field name="hotel_readers_buttons_pressed" readonly="1"/>
-                            </group>
-                            <group string="Setup">
-                                <field name="mode" readonly="1" invisible="1"/>
-                                <field name="mode_selection" attrs="{'invisible': [('hw_version', 'not in', ['6','9','11','12'])]}"/>
-                                <field name="mode_selection_4" attrs="{'invisible': [('hw_version', 'not in', ['10','17'])]}"/>
-                                <field name="mode_selection_31" attrs="{'invisible': [('hw_version', 'not in', ['31'])]}"/>
-                                <field name="external_db"/>
-                                <field name="read_b3_cmd"/>
-                                <field name="relay_time_factor" readonly="1"/>
-                                <field name="dual_person_mode" readonly="1"/>
-                                <field name="webstack_id" readonly="1"/>
-                            </group>
+                                <group string="Hotel equipment" attrs="{'invisible': [('hotel_readers', '=', 0)]}">
+                                    <field name="hotel_readers" readonly="1"/>
+                                    <field name="hotel_readers_card_presence" readonly="1"/>
+                                    <field name="hotel_readers_buttons_pressed" readonly="1"/>
+                                </group>
+                                <group string="Setup">
+                                    <field name="mode" readonly="1" invisible="1"/>
+                                    <field name="mode_selection"
+                                           attrs="{'invisible': [('hw_version', 'not in', ['6','9','11','12'])]}"/>
+                                    <field name="mode_selection_4"
+                                           attrs="{'invisible': [('hw_version', 'not in', ['10','17'])]}"/>
+                                    <field name="mode_selection_31"
+                                           attrs="{'invisible': [('hw_version', 'not in', ['31'])]}"/>
+                                    <field name="external_db"/>
+                                    <field name="read_b3_cmd"/>
+                                    <field name="relay_time_factor" readonly="1"/>
+                                    <field name="dual_person_mode" readonly="1"/>
+                                    <field name="emergency_group_id"/>
+                                    <field name="webstack_id" readonly="1"/>
+                                </group>
                             </group>
                             <group string="Debug Information" groups="base.group_no_one" colspan="4">
                                 <field name="inputs" readonly="1"/>
@@ -148,19 +153,43 @@
                     <field name="alarm_line_count"/>
                     <field name="alarm_line_ids"/>
                     <field name="siren_state"/>
+                    <field name="emergency_state"/>
                     <templates>
                         <t t-name="kanban-box">
                             <div>
+<!--                                <div class="o_kanban_card_manage_pane dropdown-menu" role="menu">-->
+<!--                                    <div class="o_kanban_card_manage_section">-->
+<!--                                        <div role="menuitem"-->
+<!--                                             class="o_kanban_card_manage_section o_kanban_manage_reports">-->
+<!--                                            <div class="o_kanban_card_manage_title">-->
+<!--                                                <strong>-->
+<!--                                                    <span>Setup</span>-->
+<!--                                                </strong>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <a t-if="widget.editable" role="menuitem" class="dropdown-item" type="edit">-->
+<!--                                        Configuration-->
+<!--                                    </a>-->
+<!--                                    <a name="read_controller_information_cmd" type="object">Refresh Setup</a>-->
+<!--                                    <a name="read_status" type="object">Refresh status</a>-->
+<!--                                    <a name="button_reload_cards" type="object">Reload cards</a>-->
+<!--                                    <a name="hr_rfid.hr_rfid_controller_io_table_action" type="action">IO-->
+<!--                                                Table-->
+<!--                                            </a>-->
+<!--                                    <a name="read_io_table_cmd" type="object">Read IO Table</a>-->
+<!--                                    <t t-if="widget.deletable">-->
+<!--                                        <li>-->
+<!--                                            <a type="delete" confirm="Are you sure?">Delete</a>-->
+<!--                                        </li>-->
+<!--                                    </t>-->
+<!--                                </div>-->
+
                                 <div class="o_dropdown_kanban dropdown">
                                     <button class="dropdown-toggle btn" data-toggle="dropdown" href="#">
                                         <span class="fa fa-bars fa-lg" title="Settings"/>
                                     </button>
                                     <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                        <t t-if="widget.editable">
-                                            <li>
-                                                <a type="edit">Edit</a>
-                                            </li>
-                                        </t>
                                         <li>
                                             <a name="read_controller_information_cmd" type="object">Refresh Setup</a>
                                         </li>
@@ -171,16 +200,21 @@
                                             <a name="button_reload_cards" type="object">Reload cards</a>
                                         </li>
                                         <li>
-                                            <a name="hr_rfid.hr_rfid_controller_io_table_action" type="action">IO Table</a>
+                                            <a name="hr_rfid.hr_rfid_controller_io_table_action" type="action">IO
+                                                Table
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a name="read_io_table_cmd" type="object">Read IO Table</a>
                                         </li>
                                         <t t-if="widget.deletable">
                                             <li>
                                                 <a type="delete" confirm="Are you sure?">Delete</a>
                                             </li>
                                         </t>
-<!--                                        <li>-->
-<!--                                            <ul class="oe_kanban_colorpicker" data-field="color"/>-->
-<!--                                        </li>-->
+                                        <!--                                        <li>-->
+                                        <!--                                            <ul class="oe_kanban_colorpicker" data-field="color"/>-->
+                                        <!--                                        </li>-->
                                     </ul>
                                 </div>
                                 <div class="oe_kanban_details">
@@ -188,54 +222,72 @@
                                         <div class="o_kanban_record_headings">
                                             <strong class="o_kanban_record_title">
                                                 <div class="float-right">
-                                                        <span t-att-title="record.siren_state.raw_value ? 'Siren On' : 'Siren Off'"
-                                                              t-if="record.alarm_line_count.value > 0">
-                                                            <i t-att-class="record.siren_state.raw_value ? 'fa fa-fw fa-bell text-danger' : 'fa fa-fw fa-bell-slash-o'"
-                                                               role="img"
-                                                               t-att-aria-label="record.siren_state.raw_value ? 'Siren On' : 'Siren Off'"/>
-                                                        </span>
-                                                    </div>
+                                                    <span t-att-title="record.siren_state.raw_value ? 'Siren On' : 'Siren Off'"
+                                                          t-if="record.alarm_line_count.value > 0">
+                                                        <i t-att-class="record.siren_state.raw_value ? 'fa fa-fw fa-bell text-danger' : 'fa fa-fw fa-bell-slash-o'"
+                                                           role="img"
+                                                           t-att-aria-label="record.siren_state.raw_value ? 'Siren On' : 'Siren Off'"/>
+                                                    </span>
+                                                    <span t-if="record.emergency_state.raw_value != 'off'">
+                                                        <i
+                                                                role="img"
+                                                                t-att-class="record.emergency_state.raw_value == 'soft' ? 'fa fa-fw fa-free-code-camp text-danger' : 'fa fa-fw fa-fire text-danger'"
+                                                                t-att-title="record.emergency_state.raw_value == 'soft' ? 'Software Emergency' : 'Hardware Emergency'"
+                                                                t-att-aria-label="record.emergency_state.raw_value == 'soft' ? 'Software Emergency' : 'Hardware Emergency'"/>
+                                                    </span>
+
+                                                </div>
                                                 <h2>
-                                                    <a type="open"><field name="name" title="Controller Name"/></a>
+                                                    <a type="open">
+                                                        <field name="name" title="Controller Name"/>
+                                                    </a>
                                                 </h2>
                                             </strong>
                                             <ul>
                                                 <li name="action_icons">
-<!--                                                    <div class="float-right">-->
-<!--                                                        <span title="Disarm the Door"-->
-<!--                                                              groups="hr_rfid.hr_rfid_view_door_arm_disarm"-->
-<!--                                                              attrs="{'invisible':[('alarm_line', '=', 0)]}">-->
-<!--                                                            <a name="disarm_door" type="object">-->
-<!--                                                                <i class="fa fa-fw fa-universal-access text-success" role="img"-->
-<!--                                                                   aria-label="Disarm the Door"/>-->
-<!--                                                            </a>-->
-<!--                                                        </span>-->
-<!--                                                    </div>-->
+                                                    <!--                                                    <div class="float-right">-->
+                                                    <!--                                                        <span title="Disarm the Door"-->
+                                                    <!--                                                              groups="hr_rfid.hr_rfid_view_door_arm_disarm"-->
+                                                    <!--                                                              attrs="{'invisible':[('alarm_line', '=', 0)]}">-->
+                                                    <!--                                                            <a name="disarm_door" type="object">-->
+                                                    <!--                                                                <i class="fa fa-fw fa-universal-access text-success" role="img"-->
+                                                    <!--                                                                   aria-label="Disarm the Door"/>-->
+                                                    <!--                                                            </a>-->
+                                                    <!--                                                        </span>-->
+                                                    <!--                                                    </div>-->
                                                 </li>
                                                 <li t-if="record.hw_version.raw_value">
-                                                    <field name="hw_version"/> / <field name="serial_number"/> / <field name="ctrl_id"/>
+                                                    <field name="hw_version"/>
+                                                    /
+                                                    <field name="serial_number"/>
+                                                    /
+                                                    <field name="ctrl_id"/>
                                                 </li>
                                                 <li t-if="record.temperature.raw_value">
-                                                    <i class="fa fa-fw fa-thermometer-full text-info" role="img" title="Temperature"/>
-                                                    <field name="temperature" title="External temperature sensor value"/> ℃
+                                                    <i class="fa fa-fw fa-thermometer-full text-info" role="img"
+                                                       title="Temperature"/>
+                                                    <field name="temperature"
+                                                           title="External temperature sensor value"/>
+                                                    ℃
                                                     <i class="fa fa-fw fa-tint text-info" role="img" title="Humidity"/>
-                                                    <field name="humidity" title="External humidity sensor value"/> %
+                                                    <field name="humidity" title="External humidity sensor value"/>
+                                                    %
                                                 </li>
                                             </ul>
                                         </div>
                                     </div>
                                     <ul>
-<!--                                        <li class="o_force_ltr">Last IP:-->
-<!--                                            <field name="last_ip"/>-->
-<!--                                        </li>-->
+                                        <!--                                        <li class="o_force_ltr">Last IP:-->
+                                        <!--                                            <field name="last_ip"/>-->
+                                        <!--                                        </li>-->
                                     </ul>
                                     <div class="o_row">
                                         <span class="oe_kanban_partner_links">
                                             <span t-if="record.doors_count.value>0"
                                                   class="badge badge-pill" title="Doors">
                                                 <a name="return_action_to_open" type="object"
-                                                    context="{'xml_id':'hr_rfid_door_action'}"
-                                                    attrs="{'invisible':[('door_ids', '=', False)]}">
+                                                   context="{'xml_id':'hr_rfid_door_action'}"
+                                                   attrs="{'invisible':[('door_ids', '=', False)]}">
                                                     <i class="fa fa-fw fa-sign-in" role="img"
                                                        aria-label="Doors"/>
                                                     <t t-esc="record.doors_count.value"/>
@@ -244,8 +296,8 @@
                                             <span t-if="record.readers_count.value>0"
                                                   class="badge badge-pill" title="Readers">
                                                 <a name="return_action_to_open" type="object"
-                                                    context="{'xml_id':'hr_rfid_reader_action'}"
-                                                    attrs="{'invisible':[('reader_ids', '=', False)]}">
+                                                   context="{'xml_id':'hr_rfid_reader_action'}"
+                                                   attrs="{'invisible':[('reader_ids', '=', False)]}">
                                                     <i class="fa fa-fw fa-rss" role="img"
                                                        aria-label="Readers"/>
                                                     <t t-esc="record.readers_count.value"/>
@@ -254,8 +306,8 @@
                                             <span t-if="record.alarm_line_count.value>0"
                                                   class="badge badge-pill" title="Alarm Lines">
                                                 <a name="return_action_to_open" type="object"
-                                                    context="{'xml_id':'hr_rfid_ctrl_alarm_action'}"
-                                                    attrs="{'invisible':[('alarm_line_ids', '=', False)]}">
+                                                   context="{'xml_id':'hr_rfid_ctrl_alarm_action'}"
+                                                   attrs="{'invisible':[('alarm_line_ids', '=', False)]}">
                                                     <i class="fa fa-fw fa-shield" role="img"
                                                        aria-label="Alarm lines"/>
                                                     <t t-esc="record.alarm_line_count.value"/>
@@ -264,7 +316,7 @@
                                             <span t-if="record.user_event_count.value>0"
                                                   class="badge badge-pill" title="User Events">
                                                 <a name="return_action_to_open" type="object"
-                                                    context="{'xml_id':'hr_rfid_event_user_action'}">
+                                                   context="{'xml_id':'hr_rfid_event_user_action'}">
                                                     <i class="fa fa-fw fa-list" role="img"
                                                        aria-label="Commands"/>
                                                     <t t-esc="record.user_event_count.value"/>
@@ -273,7 +325,7 @@
                                             <span t-if="record.system_event_count.value>0"
                                                   class="badge badge-pill" title="System Events">
                                                 <a name="return_action_to_open" type="object"
-                                                    context="{'xml_id':'hr_rfid_event_system_action'}">
+                                                   context="{'xml_id':'hr_rfid_event_system_action'}">
                                                     <i class="fa fa-fw fa-list" role="img"
                                                        aria-label="System Events"/>
                                                     <t t-esc="record.system_event_count.value"/>
@@ -282,7 +334,7 @@
                                             <span t-if="record.commands_count.value>0"
                                                   class="badge badge-pill" title="Commands">
                                                 <a name="return_action_to_open" type="object"
-                                                    context="{'xml_id':'hr_rfid_command_action'}">
+                                                   context="{'xml_id':'hr_rfid_command_action'}">
                                                     <i class="fa fa-fw fa-list" role="img"
                                                        aria-label="Commands"/>
                                                     <t t-esc="record.commands_count.value"/>

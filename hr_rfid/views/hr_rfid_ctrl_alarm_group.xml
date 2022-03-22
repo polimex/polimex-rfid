@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_rfid_ctrl_alarm_group_tree_view" model="ir.ui.view">
+            <field name="name">hr.rfid.ctrl.alarm.group.tree.view</field>
+            <field name="model">hr.rfid.ctrl.alarm.group</field>
+            <field name="arch" type="xml">
+                <tree string="Alarm line list"
+                      decoration-success="state == 'disarm'"
+                      decoration-warning="state == 'mixed'"
+                      decoration-info="state == 'no_alarm'"
+                      decoration-danger="state == 'arm'">
+
+                    <field name="name"/>
+                    <field name="parent_id"/>
+                    <field name="alarm_line_ids" widget="many2many_tags" optional="hide"/>
+                    <field name="state"/>
+               </tree>
+            </field>
+        </record>
+
+        <record id="hr_rfid_ctrl_alarm_group_form_view" model="ir.ui.view">
+            <field name="name">hr.rfid.ctrl.alarm.group.form.view</field>
+            <field name="model">hr.rfid.ctrl.alarm.group</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <header>
+                        <field name="state"
+                               widget="statusbar"
+                               statusbar_colors="{'no_alarm':'gray', 'arm':'red', 'mixed':'yellow', 'disarm':'green'}"
+                               statusbar_visible=" "/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="disarm" type="object" class="oe_stat_button text-danger oe_read_only" icon="fa-shield"
+                                    groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                                    help="Disarm all lines in this group"
+                                    confirm="Are you sure to Disarm all lines in the group?"
+                                    states="arm,mixed">
+                                Disarm
+                            </button>
+                            <button name="arm" type="object" class="oe_stat_button text-success oe_read_only" icon="fa-shield"
+                                    groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                                    help="Arm all lines in this group"
+                                    confirm="Are you sure to Arm all lines in the group?"
+                                    states="disarm,mixed">
+                                Arm
+                            </button>
+<!--                            <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"-->
+<!--                                    context="{'xml_id':'hr_rfid_event_system'}"-->
+<!--                                    help="List System Events"-->
+<!--                                    attrs="{'invisible':[('system_event_count', '=', 0)]}">-->
+<!--                                <field name="system_event_count" widget="statinfo" string="System Events"/>-->
+<!--                            </button>-->
+<!--                            <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-user"-->
+<!--                                    context="{'xml_id':'hr_rfid_event_user'}"-->
+<!--                                    help="List User Events"-->
+<!--                                    attrs="{'invisible':[('user_event_count', '=', 0)]}">-->
+<!--                                <field name="user_event_count" widget="statinfo" string="User Events"/>-->
+<!--                            </button>-->
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                            <group>
+                                <field name="parent_id"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
+                            <group>
+                                <field name="alarm_line_ids" colspan="4" widget="many2many_tags"/>
+                            </group>
+                            <group>
+                                <field name="child_ids" colspan="4">
+                                    <tree editable="top">
+                                        <field name="name"/>
+                                        <field name="parent_id"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        <group string="Debug Information" groups="base.group_no_one" colspan="4">
+<!--                            <field name="line_number" readonly="1"/>-->
+<!--                            <field name="control_output" readonly="1"/>-->
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_rfid_ctrl_alarm_group_view_kanban" model="ir.ui.view">
+            <field name="name">hr.rfid.ctrl.alarm.group.kanban</field>
+            <field name="model">hr.rfid.ctrl.alarm.group</field>
+            <field name="arch" type="xml">
+                <kanban group_create="false"
+                        group_edit="false"
+                        quick_create="false"
+                        default_group_by="parent_id">
+                    <field name="alarm_line_ids"/>
+                    <field name="parent_id"/>
+                    <field name="state"/>
+                    <field name="child_ids"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div>
+                                <div class="oe_kanban_details">
+                                    <div class="o_kanban_record_top">
+                                        <div class="o_kanban_record_headings">
+                                            <strong class="o_kanban_record_title">
+                                                <div class="float-right">
+                                                    <span t-att-title="record.state.raw_value == 'arm' ? 'Armed' : 'Disarmed'">
+                                                        <i t-att-class="record.state.raw_value == 'arm' ? 'fa fa-fw fa-shield text-danger' : 'fa fa-fw fa-shield text-success'"
+                                                           role="img"
+                                                           aria-label="Arm State"/>
+                                                    </span>
+                                                    </div>
+                                                <h2>
+                                                    <a type="open"><field name="name" title="Alarm group"/></a>
+                                                </h2>
+                                            </strong>
+                                            <ul>
+                                                <li name="action_icons">
+                                                    <div class="float-right">
+                                                        <span title="Disarm manual"
+                                                              groups="hr_rfid.hr_rfid_view_door_arm_disarm">
+                                                            <a name="disarm" type="object">
+                                                                <i class="fa fa-fw fa-universal-access text-success" role="img"
+                                                                   aria-label="Disarm the Group manually"/>
+                                                            </a>
+                                                        </span>
+                                                        <span title="Arm manual"
+                                                              groups="hr_rfid.hr_rfid_view_door_arm_disarm">
+                                                            <a name="arm" type="object">
+                                                                <i class="fa fa-fw fa-shield text-danger" role="img"
+                                                                   aria-label="Arm the Group manually"/>
+                                                            </a>
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                                <li >
+                                                    <t t-esc="record.state.string"/>:
+                                                    <strong>
+                                                    <field name="state"
+                                                           decoration-success="state == 'disarm'"
+                                                           decoration-warning="state == 'mixed'"
+                                                           decoration-info="state == 'no_alarm'"
+                                                           decoration-danger="state == 'arm'"/>
+                                                    </strong>
+                                                </li>
+<!--                                                <li t-if="record.door_id.raw_value">-->
+<!--                                                    <field name="door_id" title="Related door"/>-->
+<!--                                                </li>-->
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <ul>
+<!--                                        <li class="o_force_ltr">Last IP:-->
+<!--                                            <field name="last_ip"/>-->
+<!--                                        </li>-->
+                                    </ul>
+                                    <div class="o_row">
+                                        <span class="oe_kanban_partner_links">
+<!--                                            <span t-if="record.user_event_count.value>0"-->
+<!--                                                  class="badge badge-pill" title="User Events">-->
+<!--                                                <a name="return_action_to_open" type="object"-->
+<!--                                                    context="{'xml_id':'hr_rfid_event_user'}">-->
+<!--                                                    <i class="fa fa-fw fa-user" role="img"-->
+<!--                                                       aria-label="User Events"/>-->
+<!--                                                    <t t-esc="record.user_event_count.value"/>-->
+<!--                                                </a>-->
+<!--                                            </span>-->
+<!--                                            <span t-if="record.system_event_count.value>0"-->
+<!--                                                  class="badge badge-pill" title="System Events">-->
+<!--                                                <a name="return_action_to_open" type="object"-->
+<!--                                                    context="{'xml_id':'hr_rfid_event_system'}">-->
+<!--                                                    <i class="fa fa-fw fa-microchip" role="img"-->
+<!--                                                       aria-label="System Events"/>-->
+<!--                                                    <t t-esc="record.system_event_count.value"/>-->
+<!--                                                </a>-->
+<!--                                            </span>-->
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="hr_rfid_ctrl_alarm_group_search_view" model="ir.ui.view">
+           <field name="name">hr.rfid.ctrl.alarm.group.search.view</field>
+           <field name="model">hr.rfid.ctrl.alarm.group</field>
+            <field name="arch" type="xml">
+                <search string="">
+                    <field name="name"/>
+                    <field name="alarm_line_ids"/>
+                    <searchpanel>
+                        <field name="parent_id" icon="fa-info-circle" color="#875A7B"/>
+                    </searchpanel>
+
+                </search>
+           </field>
+        </record>
+
+        <record id="hr_rfid_ctrl_alarm_group_action" model="ir.actions.act_window">
+            <field name="name">Alarm Line Groups</field>
+            <field name="res_model">hr.rfid.ctrl.alarm.group</field>
+            <field name="view_mode">kanban,tree,form,search</field>
+            <field name="view_id" ref="hr_rfid_ctrl_alarm_group_view_kanban"/>
+        </record>
+
+    </data>
+</odoo>

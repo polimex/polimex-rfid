@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="emergency_group_form_view" model="ir.ui.view">
+            <field name="name">emergency.group.form.view</field>
+            <field name="model">hr.rfid.ctrl.emergency.group</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <header>
+                        <field name="state"
+                               widget="statusbar"
+                               statusbar_colors="{'emergency':'red', 'normal':'green'}"
+                               statusbar_visible=" "/>
+                    </header>
+
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <div id="control_buttons" attrs="{'invisible':[('controller_ids', '=', 0)]}">
+                                <button name="emergency_on"
+                                        type="object"
+                                        groups="hr_rfid.hr_rfid_view_emergency_on_off"
+                                        states="emergency,normal"
+                                        confirm="Are you sure to turn Emergency mode for the group"
+                                        class="oe_stat_button oe_read_only" icon="fa-free-code-camp">
+                                    Emergency On
+                                </button>
+                                <button name="emergency_off"
+                                        type="object"
+                                        groups="hr_rfid.hr_rfid_view_emergency_on_off"
+                                        states="emergency,normal"
+                                        confirm="Are you sure to turn Emergency mode for the group"
+                                        class="oe_stat_button oe_read_only" icon="fa-fire">
+                                    Emergency Off
+                                </button>
+                            </div>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" placeholder="Set friendly name"/>
+                            </h1>
+                        </div>
+                        <group class="oe_edit_only">
+                            <field name="controller_ids" widget="many2many_tags"/>
+                        </group>
+                        <group class="oe_read_only">
+                            <field name="controller_ids" >
+                                <tree edit="0" create="0">
+                                    <field name="name"/>
+                                    <field name="webstack_id"/>
+                                    <field name="emergency_state"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="emergency_group_tree_view" model="ir.ui.view">
+            <field name="name">emergency.group.tree.view</field>
+            <field name="model">hr.rfid.ctrl.emergency.group</field>
+            <field name="arch" type="xml">
+                <tree string="">
+                    <field name="name"/>
+                    <field name="controller_ids" widget="many2many_tags"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="emergency_group_view_kanban" model="ir.ui.view">
+            <field name="name">hr.rfid.ctrl.emergency.group.kanban</field>
+            <field name="model">hr.rfid.ctrl.emergency.group</field>
+            <field name="arch" type="xml">
+                <kanban group_create="false"
+                        group_edit="false"
+                        quick_create="false">
+                    <field name="name"/>
+                    <field name="state"/>
+                    <field name="controller_ids"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div>
+                                <div class="oe_kanban_details">
+                                    <div class="o_kanban_record_top">
+                                        <div class="o_kanban_record_headings">
+                                            <strong class="o_kanban_record_title">
+                                                <div class="float-right">
+                                                    <span t-att-title="record.state.raw_value == 'normal' ? 'Normal' : 'Emergency'">
+                                                        <i t-att-class="record.state.raw_value == 'emergency' ? 'fa fa-fw fa-fire text-danger' : 'fa fa-fw fa-free-code-camp text-success'"
+                                                           role="img"
+                                                           aria-label="Emergency State"/>
+                                                    </span>
+                                                </div>
+                                                <h2>
+                                                    <a type="open">
+                                                        <field name="name" title="Emergency group"/>
+                                                    </a>
+                                                </h2>
+                                            </strong>
+                                            <ul>
+                                                <li name="action_icons">
+                                                    <div class="float-right">
+                                                        <span title="Emergency On"
+                                                              groups="hr_rfid.hr_rfid_view_emergency_on_off">
+                                                            <a name="emergency_on" type="object">
+                                                                <i class="fa fa-fw fa-fire text-danger"
+                                                                   role="img"
+                                                                   aria-label="Turn on Emergency for this Group manually"/>
+                                                            </a>
+                                                        </span>
+                                                        <span title="Emergency Off"
+                                                              groups="hr_rfid.hr_rfid_view_emergency_on_off">
+                                                            <a name="emergency_off" type="object">
+                                                                <i class="fa fa-fw fa-free-code-camp text-success" role="img"
+                                                                   aria-label="Turn off Emergency for this Group manually"/>
+                                                            </a>
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <t t-esc="record.state.string"/>:
+                                                    <strong>
+                                                        <field name="state"
+                                                               decoration-success="state == 'normal'"
+                                                               decoration-danger="state == 'emergency'"/>
+                                                    </strong>
+                                                </li>
+                                                <!--                                                <li t-if="record.door_id.raw_value">-->
+                                                <!--                                                    <field name="door_id" title="Related door"/>-->
+                                                <!--                                                </li>-->
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <ul>
+                                        <!--                                        <li class="o_force_ltr">Last IP:-->
+                                        <!--                                            <field name="last_ip"/>-->
+                                        <!--                                        </li>-->
+                                    </ul>
+                                    <div class="o_row">
+                                        <span class="oe_kanban_partner_links">
+                                            <!--                                            <span t-if="record.user_event_count.value>0"-->
+                                            <!--                                                  class="badge badge-pill" title="User Events">-->
+                                            <!--                                                <a name="return_action_to_open" type="object"-->
+                                            <!--                                                    context="{'xml_id':'hr_rfid_event_user'}">-->
+                                            <!--                                                    <i class="fa fa-fw fa-user" role="img"-->
+                                            <!--                                                       aria-label="User Events"/>-->
+                                            <!--                                                    <t t-esc="record.user_event_count.value"/>-->
+                                            <!--                                                </a>-->
+                                            <!--                                            </span>-->
+                                            <!--                                            <span t-if="record.system_event_count.value>0"-->
+                                            <!--                                                  class="badge badge-pill" title="System Events">-->
+                                            <!--                                                <a name="return_action_to_open" type="object"-->
+                                            <!--                                                    context="{'xml_id':'hr_rfid_event_system'}">-->
+                                            <!--                                                    <i class="fa fa-fw fa-microchip" role="img"-->
+                                            <!--                                                       aria-label="System Events"/>-->
+                                            <!--                                                    <t t-esc="record.system_event_count.value"/>-->
+                                            <!--                                                </a>-->
+                                            <!--                                            </span>-->
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+
+        <record id="emergency_group_act" model="ir.actions.act_window">
+            <field name="name">Emergency distribution group</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.rfid.ctrl.emergency.group</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Please create a new group from the Create button
+                </p>
+                <p>
+                    Emergency distribution group manage the emergency signal from one controller to a group.
+                    The function decrease installation cost and manage the
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>
