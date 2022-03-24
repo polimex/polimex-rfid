@@ -4,7 +4,6 @@ from datetime import timedelta
 from odoo import fields, models, api, exceptions, _
 
 
-
 class HrRfidSystemEvent(models.Model):
     _name = 'hr.rfid.event.system'
     _description = 'RFID System Event'
@@ -68,28 +67,28 @@ class HrRfidSystemEvent(models.Model):
         ('0', _('Unknown Event?')),
         ('1', _('DuressOK')),
         ('2', _('DuressError')),
-        ('3', _('R1 Card OK')),         # User Event
-        ('4', _('R1 Card Error')),      # User Event
-        ('5', _('R1 T/S Error')),       # User Event
-        ('6', _('R1 APB Error')),       # User Event
-        ('7', _('R2 Card OK')),         # User Event
-        ('8', _('R2 Card Error')),      # User Event
-        ('9', _('R2 T/S Error')),       # User Event
-        ('10', _('R2 APB Error')),      # User Event
-        ('11', _('R3 Card OK')),        # User Event
-        ('12', _('R3 Card Error')),     # User Event
-        ('13', _('R3 T/S Error')),      # User Event
-        ('14', _('R3 APB Error')),      # User Event
-        ('15', _('R4 Card Ok')),        # User Event
-        ('16', _('R4 Card Error')),     # User Event
-        ('17', _('R4 T/S Error')),      # User Event
-        ('18', _('R4 APB Error')),      # User Event
+        ('3', _('R1 Card OK')),  # User Event
+        ('4', _('R1 Card Error')),  # User Event
+        ('5', _('R1 T/S Error')),  # User Event
+        ('6', _('R1 APB Error')),  # User Event
+        ('7', _('R2 Card OK')),  # User Event
+        ('8', _('R2 Card Error')),  # User Event
+        ('9', _('R2 T/S Error')),  # User Event
+        ('10', _('R2 APB Error')),  # User Event
+        ('11', _('R3 Card OK')),  # User Event
+        ('12', _('R3 Card Error')),  # User Event
+        ('13', _('R3 T/S Error')),  # User Event
+        ('14', _('R3 APB Error')),  # User Event
+        ('15', _('R4 Card Ok')),  # User Event
+        ('16', _('R4 Card Error')),  # User Event
+        ('17', _('R4 T/S Error')),  # User Event
+        ('18', _('R4 APB Error')),  # User Event
         ('19', _('Fire/Emergency')),
         ('20', _('Siren ON/OFF')),
         ('21', _('Exit button')),
-        ('22', _('OpenDoor2 from In2')),   # deprecated
-        ('23', _('OpenDoor3 from In3')),   # deprecated
-        ('24', _('OpenDoor4 from In4')),   # deprecated
+        ('22', _('OpenDoor2 from In2')),  # deprecated
+        ('23', _('OpenDoor3 from In3')),  # deprecated
+        ('24', _('OpenDoor4 from In4')),  # deprecated
         ('25', _('Door Overtime')),
         ('26', _('Forced Door Open')),
         ('27', _('DELAY ZONE ON (if out) Z4,Z3,Z2,Z1')),
@@ -98,11 +97,11 @@ class HrRfidSystemEvent(models.Model):
         ('30', _('Power On event')),
         ('31', _('Open/Close Door From PC')),
         ('32', _('reserved')),
-        ('33', _('Zone Arm/Disarm Denied')), # User Event
+        ('33', _('Zone Arm/Disarm Denied')),  # User Event
         ('34', _('Zone Status')),
-        ('35', _('Zone Arm/Disarm')),       # User Event
-        ('36', _('Inserted Card')),         # User Event
-        ('37', _('Ejected Card')),          # User Event
+        ('35', _('Zone Arm/Disarm')),  # User Event
+        ('36', _('Inserted Card')),  # User Event
+        ('37', _('Ejected Card')),  # User Event
         ('38', _('Hotel Button Pressed')),  # User Event
         ('45', _('1-W ERROR (wiring problems)')),
         ('47', _('Vending Purchase Complete')),
@@ -111,7 +110,7 @@ class HrRfidSystemEvent(models.Model):
         ('52', _('Temperature High')),
         ('53', _('Temperature Normal')),
         ('54', _('Temperature Low')),
-        ('64', _('Cloud Card Request')),    # User Event
+        ('64', _('Cloud Card Request')),  # User Event
         ('99', _('System Event')),
     ]
     event_nums = list(map(lambda a: a[0], action_selection))
@@ -141,7 +140,7 @@ class HrRfidSystemEvent(models.Model):
     @api.depends('event_action')
     def _compute_is_card_event(self):
         for e in self:
-            e.is_card_event = e.event_action in ['4','8','12','16']
+            e.is_card_event = e.event_action in ['4', '8', '12', '16', '64']
 
     @api.autovacuum
     def _gc_events_life(self):
@@ -152,7 +151,7 @@ class HrRfidSystemEvent(models.Model):
         lifetime = timedelta(days=int(event_lifetime))
         today = fields.Date.today()
         res = self.search([
-            ('timestamp', '<', today-lifetime)
+            ('timestamp', '<', today - lifetime)
         ])
         res.unlink()
 
@@ -162,11 +161,13 @@ class HrRfidSystemEvent(models.Model):
     def _compute_sys_ev_name(self):
         for record in self:
             key_val_dict = dict(record._fields['event_action'].selection)
-            record.name = key_val_dict[record.event_action] + ' on ' + str(record.webstack_id.name) + '/' + str(record.controller_id.name)
+            record.name = key_val_dict[record.event_action] + ' on ' + str(record.webstack_id.name) + '/' + str(
+                record.controller_id.name)
             #               ' at ' + str(record.timestamp)
 
     def _check_save_comms(self, vals):
-        save_comms = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.save_webstack_communications') in ['true', 'True']
+        save_comms = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.save_webstack_communications') in [
+            'true', 'True']
         if not save_comms:
             if 'input_js' not in vals:
                 return
@@ -284,7 +285,7 @@ class HrRfidSystemEventWizard(models.TransientModel):
 
     card_number = fields.Char(
         string='Card Number',
-        default =_default_card_number,
+        default=_default_card_number,
     )
 
     card_type = fields.Many2one(
@@ -340,5 +341,3 @@ class HrRfidSystemEventWizard(models.TransientModel):
         else:
             new_card['employee_id'] = self.employee_id.id
         card_env.create(new_card)
-
-

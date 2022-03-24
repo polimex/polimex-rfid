@@ -358,7 +358,21 @@ class WebRfidController(http.Controller):
         # Cloud request 64
         elif event_action in [64]:
             if not card_id:
-                controller_id.report_sys_ev(_('Could not find the card'), post_data=post_data)
+                sys_event_dict = {
+                    'door_id': door and door.id or False,
+                    'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
+                    'event_action': str(event_action),
+                    'card_number': card_num or None,
+                    # 'input_js': ,
+                }
+
+                event = controller_id.report_sys_ev(
+                    description=_('Could not find the card'),
+                    post_data=post_data,
+                    sys_ev_dict=sys_event_dict
+                )
+
+                # controller_id.report_sys_ev(_('Could not find the card'), post_data=post_data)
                 return webstack.check_for_unsent_cmd(200)
             if controller_id.is_vending_ctrl():
                 return self.vending_request_for_balance()

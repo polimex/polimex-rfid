@@ -622,6 +622,8 @@ class HrRfidWebstack(models.Model):
                 sys_ev_dict['timestamp'] = get_timestamp(post_data)
             if not 'input_js' in sys_ev_dict:
                 sys_ev_dict['input_js'] = json.dumps(post_data)
+            if not 'error_description' in sys_ev_dict:
+                sys_ev_dict['error_description'] = description
             return sys_ev_env.create(sys_ev_dict)
         sys_ev = {
             'webstack_id': self.id,
