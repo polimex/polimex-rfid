@@ -229,7 +229,7 @@ class HrRfidVending(WebRfidController):
             ev_num = str(post_data['event']['event_n'])
             controller = webstack_id.controllers.filtered(lambda r: r.ctrl_id == post_data['event']['id'])
             controller.sys_event(error_description=f'Controller sent us an invalid date or time: {t}',
-                               ev_num=ev_num,
+                               event_action=ev_num,
                                input_json=json.dumps(post_data))
             _logger.debug('Caught a time error, returning status=200 and creating a system event')
             return {'status': 200}
