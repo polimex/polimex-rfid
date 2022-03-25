@@ -170,7 +170,7 @@ class HrRfidWebstack(models.Model):
     @api.depends('hw_version')
     def _compute_time_format(self):
         for ws in self:
-            if ws.hw_version in ['100.1', '50.1']:
+            if (ws.hw_version and ws.hw_version in ['100.1', '50.1']) or (ws.firmware and float(ws.firmware) > 1.34):
                 ws.time_format = '%m.%d.%y %H:%M:%S'
             elif ws.hw_version in ['10.3']:
                 ws.time_format = '%d.%m.%y %H:%M:%S'
