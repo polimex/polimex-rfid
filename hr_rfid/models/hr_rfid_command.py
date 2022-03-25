@@ -754,8 +754,6 @@ class HrRfidCommands(models.Model):
             else:
                 raise exceptions.ValidationError(_('Got controller mode=%d for hw_ver=%s???')
                                                  % (ctrl_mode, hw_ver))
-        elif self.controller_id.is_vending_ctrl(hw_ver):
-            pass
         else:
             if ctrl_mode == 1 or ctrl_mode == 3:
                 last_door = create_door(gen_d_name(1, self.controller_id.ctrl_id), 1)
