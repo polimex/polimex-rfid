@@ -754,6 +754,8 @@ class HrRfidCommands(models.Model):
             else:
                 raise exceptions.ValidationError(_('Got controller mode=%d for hw_ver=%s???')
                                                  % (ctrl_mode, hw_ver))
+        elif self.controller_id.is_vending_ctrl(hw_ver):
+            pass
         else:
             if ctrl_mode == 1 or ctrl_mode == 3:
                 last_door = create_door(gen_d_name(1, self.controller_id.ctrl_id), 1)
@@ -832,10 +834,12 @@ class HrRfidCommands(models.Model):
             'max_events_count': max_events_count,
             'last_f0_read': fields.datetime.now(),
         }
-        if ctrl_mode != self.controller_id.mode and self.controller_id.mode is not None:
+        if ctrl_mode != self.controller_id.mode and self.controller_id.mode is not None and ctrl_already_existed:
             # ctrl_dict['io_table'] = polimex.get_default_io_table(hw_ver, sw_ver, ctrl_mode)
             self.controller_id.write(ctrl_dict)
-            self.controller_id.change_io_table(polimex.get_default_io_table(int(hw_ver), ctrl_mode))
+            new_io = polimex.get_default_io_table(int(hw_ver), ctrl_mode)
+            if new_io:
+                self.controller_id.change_io_table()
         else:
             self.controller_id.write(ctrl_dict)
 
