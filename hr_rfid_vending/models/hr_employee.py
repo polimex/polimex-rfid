@@ -103,7 +103,10 @@ class HrEmployee(models.Model):
             if limit < balance:
                 balance = limit
         balance *= 100
-        balance /= controller.scale_factor
+        if controller.scale_factor > 0:
+            balance /= controller.scale_factor
+        else:
+            balance = 0
         balance = int(balance)
         if balance > 0xFF:
             balance = 0xFF
