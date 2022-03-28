@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ir_rule_hr_rfid_vending_event_user_multi_company" model="ir.rule">
+            <field name="name">HR RFID User Vending Events: Multi Company</field>
+            <field name="model_id" ref="model_hr_rfid_vending_event"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[
+                '|',
+                '|', ('employee_id.company_id', 'in', company_ids),
+                ('employee_id.company_id', '=', False),
+                '|', ('contact_id.company_id', 'in', company_ids),
+                ('contact_id.company_id', '=', False)
+            ]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+    </data>
+</odoo>
