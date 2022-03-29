@@ -422,7 +422,7 @@ class HrRfidController(models.Model):
             if not (0 < line_number < self.io_table_lines + 1):
                 raise "Invalid IO Line number"
             line = self.io_table[16 * (line_number - 1):16 * (line_number - 1) + 16]
-            return [int(line[i * 2:i * 2 + 2]) for i in reversed(range(0, 8))]
+            return [int(line[i * 2:i * 2 + 2], 16) for i in reversed(range(0, 8))]
         else:
             return []
 
@@ -430,7 +430,7 @@ class HrRfidController(models.Model):
         self.ensure_one()
         if not (0 < line_number < self.io_table_lines + 1):
             raise "Invalid IO Line number"
-        self.change_io_table(''.join([f"{line[i]:02d}" for i in reversed(range(0, 8))]), line_number)
+        self.change_io_table(''.join([f"{line[i]:02X}" for i in reversed(range(0, 8))]), line_number)
 
     def change_io_table(self, new_io_table, line=0, no_command=False):
         cmd_data = f"{line:02d}" + new_io_table
