@@ -27,5 +27,18 @@
                   action="hr_rfid_dashboard_2_act_window"
                   groups="hr_rfid.hr_rfid_group_viewer"
                   sequence="4"/>
+
+        <menuitem id="hr_rfid_dashboard_3_menu"
+                  name="Dashboard 3"
+                  parent="hr_rfid_dashboard_menu"
+                  action="hr_rfid_dashboard_3_act_window"
+                  groups="hr_rfid.hr_rfid_group_viewer"
+                  sequence="6"/>
+        <menuitem id="hr_rfid_dashboard_4_menu"
+                  name="Dashboard 4"
+                  parent="hr_rfid_dashboard_menu"
+                  action="hr_rfid_dashboard_4_act_window"
+                  groups="hr_rfid.hr_rfid_group_viewer"
+                  sequence="8"/>
     </data>
 </odoo>

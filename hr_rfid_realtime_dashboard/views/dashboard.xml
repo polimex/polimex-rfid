@@ -157,7 +157,7 @@
                                                     <div class="float-right">
                                                         <span title="Siren Off"
                                                               groups="hr_rfid.hr_rfid_view_door_arm_disarm"
-                                                              t-if="record.siren_state.raw_value">
+                                                              t-if="record.siren_state.raw_value and record.alarm_state.raw_value != 'no_alarm'">
                                                             <a name="siren_off" type="object">
                                                                 <i class="fa fa-fw fa-bell-slash-o text-success"
                                                                    role="img"
@@ -166,7 +166,7 @@
                                                         </span>
                                                         <span title="Siren On"
                                                               groups="hr_rfid.hr_rfid_view_door_arm_disarm"
-                                                              t-if="!record.siren_state.raw_value">
+                                                              t-if="!record.siren_state.raw_value and record.alarm_state.raw_value != 'no_alarm'">
                                                             <a name="siren_on" type="object">
                                                                 <i class="fa fa-fw fa-bell text-danger" role="img"
                                                                    aria-label="Siren On"/>
@@ -235,6 +235,49 @@
             <field name="res_model">hr.rfid.door</field>
             <field name="view_mode">kanban</field>
             <field name="view_id" ref="door_kanban_view_dash"/>
+        </record>
+
+        <record id="door_list_view_dash" model="ir.ui.view">
+            <field name="name">door_list_view_dashboard</field>
+            <field name="model">hr.rfid.door</field>
+            <field name="priority">99</field>
+            <field name="arch" type="xml">
+                <tree create="false" delete="false" editable="bottom"
+                      decoration-success="alarm_state == 'disarm'"
+                      decoration-info="alarm_state == 'no_alarm'"
+                      decoration-danger="alarm_state == 'arm'">
+                    <field name="name" readonly="1"/>
+                    <field name="alarm_state" invisible="1"/>
+                    <field name="siren_state" invisible="1"/>
+                    <button name="open_door" string="Open"
+                            groups="hr_rfid.hr_rfid_view_door_open_close"
+                            class="oe_stat_button" icon="fa-1x fa-unlock" type="object"/>
+                    <button name="arm_door" string="Arm"
+                            groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                            attrs="{'invisible': [('alarm_state','!=', 'disarm')]}"
+                            class="oe_stat_button text-danger"
+                            icon="fa-1x fa-shield" type="object"/>
+                    <button name="disarm_door" string="Disarm"
+                            groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                            attrs="{'invisible': [('alarm_state','!=', 'arm')]}"
+                            class="oe_stat_button text-success" icon="fa-1x fa-shield" type="object"/>
+                    <button name="siren_off" string="Siren Off"
+                            groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                            attrs="{'invisible': ['|',('alarm_state','=', 'no_alarm'),('siren_state','=', False)]}"
+                            class="oe_stat_button text-success" icon="fa-1x fa-shield" type="object"/>
+                    <button name="siren_on" string="Siren On"
+                            groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                            attrs="{'invisible': ['|',('alarm_state','=', 'no_alarm'),('siren_state','=', True)]}"
+                            class="oe_stat_button text-danger" icon="fa-1x fa-shield" type="object"/>
+                </tree>
+
+            </field>
+        </record>
+        <record id="act_door_list" model="ir.actions.act_window">
+            <field name="name">Doors</field>
+            <field name="res_model">hr.rfid.door</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="door_list_view_dash"/>
         </record>
 
         <record id="alarm_line_kanban_view_dash" model="ir.ui.view">
@@ -357,6 +400,81 @@
             <field name="view_id" ref="alarm_line_kanban_view_dash"/>
         </record>
 
+        <record id="alarm_line_list_view_dash" model="ir.ui.view">
+            <field name="name">alarm_line_list_view</field>
+            <field name="model">hr.rfid.ctrl.alarm</field>
+            <field name="priority">99</field>
+            <field name="arch" type="xml">
+                <tree string="Alarm line list" create="0" delete="0" editable="bottom"
+                      decoration-success="state == 'normal'"
+                      decoration-warning="state in ['short','open']"
+                      decoration-info="state == 'disabled'"
+                      decoration-danger="state in ['s1','s2','s12']">
+
+                    <field name="name" readonly="1"/>
+                    <field name="armed" invisible="1"/>
+                    <field name="state" invisible="1"/>
+                    <field name="siren_state" invisible="1"/>
+                    <button name="arm" string="Arm"
+                            groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                            attrs="{'invisible': [('armed','!=', 'disarm')]}"
+                            class="oe_stat_button text-danger"
+                            icon="fa-1x fa-shield" type="object"/>
+                    <button name="disarm" string="Disarm"
+                            groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                            attrs="{'invisible': [('armed','!=', 'arm')]}"
+                            class="oe_stat_button text-success" icon="fa-1x fa-shield" type="object"/>
+                    <button name="siren_off" string="Siren Off"
+                            groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                            attrs="{'invisible': ['|',('armed','=', 'no_alarm'),('siren_state','=', False)]}"
+                            class="oe_stat_button text-success" icon="fa-1x fa-shield" type="object"/>
+                    <button name="siren_on" string="Siren On"
+                            groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                            attrs="{'invisible': ['|',('armed','=', 'no_alarm'),('siren_state','=', True)]}"
+                            class="oe_stat_button text-danger" icon="fa-1x fa-shield" type="object"/>
+
+                </tree>
+            </field>
+        </record>
+        <record id="act_alarm_line_tree" model="ir.actions.act_window">
+            <field name="name">Alarm Lines</field>
+            <field name="res_model">hr.rfid.ctrl.alarm</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[('armed', '!=', 'no_alarm')]</field>
+            <field name="view_id" ref="alarm_line_list_view_dash"/>
+        </record>
+
+        <record id="emergency_groups_tree_view_dash" model="ir.ui.view">
+            <field name="name">emergency_groups_tree_view_dash</field>
+            <field name="model">hr.rfid.ctrl.emergency.group</field>
+            <field name="priority">99</field>
+            <field name="arch" type="xml">
+                <tree string="Emergency Group list" create="0" delete="0" editable="bottom"
+                      decoration-success="state == 'normal'"
+                      decoration-danger="state == 'emergency'">
+
+                    <field name="name" readonly="1"/>
+                    <field name="state" invisible="1"/>
+                    <button name="emergency_on" string="Emergency"
+                            groups="hr_rfid.hr_rfid_view_emergency_on_off"
+                            attrs="{'invisible': [('state','=', 'emergency')]}"
+                            class="oe_stat_button text-danger"
+                            icon="fa-1x fa-fire" type="object"/>
+                    <button name="emergency_off" string="Normal"
+                            groups="hr_rfid.hr_rfid_view_emergency_on_off"
+                            attrs="{'invisible': [('state','=', 'normal')]}"
+                            class="oe_stat_button text-success" icon="fa-1x fa-fire" type="object"/>
+               </tree>
+            </field>
+        </record>
+        <record id="act_emergency_groups_tree" model="ir.actions.act_window">
+            <field name="name">Emergency Groups</field>
+            <field name="res_model">hr.rfid.ctrl.emergency.group</field>
+            <field name="view_mode">tree</field>
+<!--            <field name="domain">[('armed', '!=', 'no_alarm')]</field>-->
+            <field name="view_id" ref="emergency_groups_tree_view_dash"/>
+        </record>
+
         <record id="act_emergency_groups" model="ir.actions.act_window">
             <field name="name">Emergency Groups</field>
             <field name="res_model">hr.rfid.ctrl.emergency.group</field>
@@ -449,6 +567,96 @@
             </field>
         </record>
 
+        <record id="dashboard3_form_view" model="ir.ui.view">
+            <field name="name">Dashboard Form</field>
+            <field name="model">board.board</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Dashboard">
+                    <board style="2-1">
+                        <column>
+                            <action
+                                    string="User Events"
+                                    name="%(hr_rfid_realtime_dashboard.act_user_events)d"
+                            />
+                            <action
+                                    string="System Events"
+                                    name="%(hr_rfid_realtime_dashboard.act_system_event)d"
+                            />
+                            <action
+                                    string="Alarm Lines"
+                                    name="%(hr_rfid_realtime_dashboard.act_alarm_lines)d"
+                            />
+                            <action
+                                    string="Emergency Group"
+                                    name="%(hr_rfid_realtime_dashboard.act_emergency_groups_tree)d"
+                            />
+                            <action
+                                    string="Temperature and Humidity"
+                                    name="%(hr_rfid_realtime_dashboard.act_th_log)d"
+                            />
+                        </column>
+                        <column>
+                            <action
+                                    string="Alarm groups"
+                                    name="%(hr_rfid_realtime_dashboard.alarm_groups_act)d"
+                            />
+                            <action
+                                    string="Doors"
+                                    name="%(hr_rfid_realtime_dashboard.act_door_list)d"
+                            />
+                        </column>
+                    </board>
+                </form>
+            </field>
+        </record>
+
+        <record id="dashboard4_form_view" model="ir.ui.view">
+            <field name="name">Dashboard Form</field>
+            <field name="model">board.board</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Dashboard">
+                    <board style="1-1-1">
+                        <column>
+                            <action
+                                    string="User Events"
+                                    name="%(hr_rfid_realtime_dashboard.act_user_events)d"
+                            />
+                            <action
+                                    string="Alarm Lines"
+                                    name="%(hr_rfid_realtime_dashboard.act_alarm_line_tree)d"
+                            />
+                            <action
+                                    string="Temperature and Humidity"
+                                    name="%(hr_rfid_realtime_dashboard.act_th_log)d"
+                            />
+                        </column>
+                        <column>
+                            <action
+                                    string="Doors"
+                                    name="%(hr_rfid_realtime_dashboard.act_door_list)d"
+                            />
+                        </column>
+                        <column>
+                            <action
+                                    string="System Events"
+                                    name="%(hr_rfid_realtime_dashboard.act_system_event)d"
+                            />
+                            <action
+                                    string="Alarm groups"
+                                    name="%(hr_rfid_realtime_dashboard.alarm_groups_act)d"
+                            />
+                            <action
+                                    string="Emergency Group"
+                                    name="%(hr_rfid_realtime_dashboard.act_emergency_groups_tree)d"
+                            />
+                        </column>
+                    </board>
+                </form>
+            </field>
+        </record>
+
         <record id="hr_rfid_dashboard_1_act_window" model="ir.actions.act_window">
             <field name="name">RFID Dashboard 1</field>
             <field name="type">ir.actions.act_window</field>
@@ -457,6 +665,7 @@
             <field name="usage">menu</field>
             <field name="view_id" ref="dashboard1_form_view"/>
         </record>
+
         <record id="hr_rfid_dashboard_2_act_window" model="ir.actions.act_window">
             <field name="name">RFID Dashboard 2</field>
             <field name="type">ir.actions.act_window</field>
@@ -464,6 +673,24 @@
             <field name="view_mode">form</field>
             <field name="usage">menu</field>
             <field name="view_id" ref="dashboard2_form_view"/>
+        </record>
+
+        <record id="hr_rfid_dashboard_3_act_window" model="ir.actions.act_window">
+            <field name="name">RFID Dashboard 3</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">board.board</field>
+            <field name="view_mode">form</field>
+            <field name="usage">menu</field>
+            <field name="view_id" ref="dashboard3_form_view"/>
+        </record>
+
+        <record id="hr_rfid_dashboard_4_act_window" model="ir.actions.act_window">
+            <field name="name">RFID Dashboard 4</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">board.board</field>
+            <field name="view_mode">form</field>
+            <field name="usage">menu</field>
+            <field name="view_id" ref="dashboard4_form_view"/>
         </record>
 
     </data>
