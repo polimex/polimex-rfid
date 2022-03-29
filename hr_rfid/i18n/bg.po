@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-21 10:14+0000\n"
-"PO-Revision-Date: 2022-03-21 12:20+0200\n"
+"POT-Creation-Date: 2022-03-29 18:13+0000\n"
+"PO-Revision-Date: 2022-03-29 21:15+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -697,6 +697,11 @@ msgid "Alarm State"
 msgstr "Състояние на Аларма"
 
 #. module: hr_rfid
+#: model:ir.ui.menu,name:hr_rfid.hr_rfid_root_menu_alarm_system
+msgid "Alarm System"
+msgstr "Алармена система"
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_system__siren
 msgid "Alarm detected and Siren is ON"
 msgstr "Установена Аларма и сирената е включена"
@@ -892,6 +897,7 @@ msgstr "Сигурен ли сте?"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_form_view
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_form_view
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_tree
 msgid "Arm"
 msgstr "Охрана"
 
@@ -2169,6 +2175,7 @@ msgstr "Забранете хората в зоната да влизат отн
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_form_view
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_form_view
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_tree
 msgid "Disarm"
 msgstr "Деактивирай охрана"
 
@@ -4456,6 +4463,7 @@ msgstr "Показвайте само служители от собствен �
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__state__open
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_tree
 msgid "Open"
 msgstr "Отворен"
 
@@ -6454,7 +6462,7 @@ msgstr "Броене на посещения"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
 msgid "Web"
-msgstr ""
+msgstr "Уеб"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__website_message_ids

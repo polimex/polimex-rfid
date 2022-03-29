@@ -109,7 +109,8 @@
                             </h1>
                         </div>
                         <field name="emergency_state" invisible="1"/>
-                        <widget name="web_ribbon" title="Emergency Opened" bg_color="bg-danger" attrs="{'invisible': [('emergency_state', '=', 'off')]}"/>
+                        <widget name="web_ribbon" title="Emergency Opened" bg_color="bg-danger"
+                                attrs="{'invisible': [('emergency_state', '=', 'off')]}"/>
                         <group>
                             <group>
                                 <field name="card_type"/>
@@ -119,7 +120,7 @@
                             <group>
                                 <field name="controller_id" readonly="1"/>
                                 <field name="number" readonly="1"/>
-<!--                                <field name="th_id" widget="many2one"/>-->
+                                <!--                                <field name="th_id" widget="many2one"/>-->
                             </group>
                         </group>
                         <group>
@@ -143,6 +144,31 @@
                         <field name="message_ids" widget="mail_thread"/>
                     </div>
                 </form>
+            </field>
+        </record>
+
+        <record id="hr_rfid_door_view_tree" model="ir.ui.view">
+            <field name="name">hr.rfid.door.tree</field>
+            <field name="model">hr.rfid.door</field>
+            <field name="arch" type="xml">
+                <tree create="false" delete="false">
+                    <field name="name"/>
+                    <field name="controller_id"/>
+                    <field name="webstack_id" optional="show"/>
+                    <field name="card_type" optional="show"/>
+                    <field name="apb_mode" optional="show"/>
+                    <button name="open_door" string="Open"
+                            groups="hr_rfid.hr_rfid_view_door_open_close"
+                            class="oe_stat_button" icon="fa-1x fa-unlock" type="object"/>
+                    <button name="arm_door" string="Arm"
+                            groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                            class="oe_stat_button text-danger"
+                            icon="fa-1x fa-shield" type="object"/>
+                    <button name="disarm_door" string="Disarm"
+                            groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                            class="oe_stat_button text-success" icon="fa-1x fa-shield" type="object"/>
+
+                </tree>
             </field>
         </record>
 
@@ -199,14 +225,16 @@
                                                     </span>
                                                     <span t-if="record.emergency_state.raw_value != 'off'">
                                                         <i
-                                                       role="img"
-                                                       t-att-class="record.emergency_state.raw_value == 'soft' ? 'fa fa-fw fa-free-code-camp text-danger' : 'fa fa-fw fa-fire text-danger'"
-                                                       t-att-title="record.emergency_state.raw_value == 'soft' ? 'Software Emergency' : 'Hardware Emergency'"
-                                                       t-att-aria-label="record.emergency_state.raw_value == 'soft' ? 'Software Emergency' : 'Hardware Emergency'"/>
+                                                                role="img"
+                                                                t-att-class="record.emergency_state.raw_value == 'soft' ? 'fa fa-fw fa-free-code-camp text-danger' : 'fa fa-fw fa-fire text-danger'"
+                                                                t-att-title="record.emergency_state.raw_value == 'soft' ? 'Software Emergency' : 'Hardware Emergency'"
+                                                                t-att-aria-label="record.emergency_state.raw_value == 'soft' ? 'Software Emergency' : 'Hardware Emergency'"/>
                                                     </span>
-                                                    </div>
+                                                </div>
                                                 <h2>
-                                                    <a type="open"><field name="name" title="Door Name"/></a>
+                                                    <a type="open">
+                                                        <field name="name" title="Door Name"/>
+                                                    </a>
                                                 </h2>
                                             </strong>
                                             <ul>
@@ -214,15 +242,16 @@
                                                     <div class="float-right">
                                                         <span title="Siren Off"
                                                               groups="hr_rfid.hr_rfid_view_door_arm_disarm"
-                                                              t-if="record.siren_state.raw_value">
+                                                              t-if="record.siren_state.raw_value and record.alarm_state.raw_value != 'no_alarm'">
                                                             <a name="siren_off" type="object">
-                                                                <i class="fa fa-fw fa-bell-slash-o text-success" role="img"
+                                                                <i class="fa fa-fw fa-bell-slash-o text-success"
+                                                                   role="img"
                                                                    aria-label="Siren Off"/>
                                                             </a>
                                                         </span>
                                                         <span title="Siren On"
                                                               groups="hr_rfid.hr_rfid_view_door_arm_disarm"
-                                                              t-if="!record.siren_state.raw_value">
+                                                              t-if="!record.siren_state.raw_value and record.alarm_state.raw_value != 'no_alarm'">
                                                             <a name="siren_on" type="object">
                                                                 <i class="fa fa-fw fa-bell text-danger" role="img"
                                                                    aria-label="Siren On"/>
@@ -232,7 +261,8 @@
                                                               groups="hr_rfid.hr_rfid_view_door_arm_disarm"
                                                               t-if="record.alarm_state.raw_value == 'arm'">
                                                             <a name="disarm_door" type="object">
-                                                                <i class="fa fa-fw fa-universal-access text-success" role="img"
+                                                                <i class="fa fa-fw fa-universal-access text-success"
+                                                                   role="img"
                                                                    aria-label="Disarm the Door"/>
                                                             </a>
                                                         </span>
@@ -262,9 +292,9 @@
                                                 </li>
                                                 <li t-if="record.emergency_state.raw_value">
                                                     <i
-                                                       role="img"
-                                                       t-att-class="record.emergency_state.raw_value == 'off' ? 'fa fa-fw fa-free-code-camp text-success' : 'fa fa-fw fa-fire text-danger'"
-                                                       title="Emergency State"/>
+                                                            role="img"
+                                                            t-att-class="record.emergency_state.raw_value == 'off' ? 'fa fa-fw fa-free-code-camp text-success' : 'fa fa-fw fa-fire text-danger'"
+                                                            title="Emergency State"/>
                                                     <field name="emergency_state"
                                                            t-att-class="record.emergency_state.raw_value == 'off' ? 'bg-success' : 'bg-danger'"
                                                            title="Emergency door state"/>
@@ -273,25 +303,29 @@
                                                     <field name="card_type"/>
                                                 </li>
                                                 <li t-if="record.temperature.raw_value">
-                                                    <i class="fa fa-fw fa-thermometer-full text-info" role="img" title="Temperature"/>
-                                                    <field name="temperature" title="External temperature sensor value"/> ℃
+                                                    <i class="fa fa-fw fa-thermometer-full text-info" role="img"
+                                                       title="Temperature"/>
+                                                    <field name="temperature"
+                                                           title="External temperature sensor value"/>
+                                                    ℃
                                                     <i class="fa fa-fw fa-tint text-info" role="img" title="Humidity"/>
-                                                    <field name="humidity" title="External humidity sensor value"/> %
+                                                    <field name="humidity" title="External humidity sensor value"/>
+                                                    %
                                                 </li>
                                             </ul>
                                         </div>
                                     </div>
                                     <ul>
-<!--                                        <li class="o_force_ltr">Last IP:-->
-<!--                                            <field name="last_ip"/>-->
-<!--                                        </li>-->
+                                        <!--                                        <li class="o_force_ltr">Last IP:-->
+                                        <!--                                            <field name="last_ip"/>-->
+                                        <!--                                        </li>-->
                                     </ul>
                                     <div class="o_row">
                                         <span class="oe_kanban_partner_links">
                                             <span t-if="record.user_event_count.value>0"
                                                   class="badge badge-pill" title="User Events">
                                                 <a name="button_act_window" type="object"
-                                                    context="{'res_model':'hr.rfid.event.user'}">
+                                                   context="{'res_model':'hr.rfid.event.user'}">
                                                     <i class="fa fa-fw fa-list" role="img"
                                                        aria-label="User Events"/>
                                                     <t t-esc="record.user_event_count.value"/>
@@ -300,7 +334,7 @@
                                             <span t-if="record.system_event_count.value>0"
                                                   class="badge badge-pill" title="System Events">
                                                 <a name="button_act_window" type="object"
-                                                    context="{'res_model':'hr.rfid.event.system'}">
+                                                   context="{'res_model':'hr.rfid.event.system'}">
                                                     <i class="fa fa-fw fa-list" role="img"
                                                        aria-label="System Events"/>
                                                     <t t-esc="record.system_event_count.value"/>
@@ -339,20 +373,6 @@
             <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_view_door_open_close'))]"/>
         </record>
 
-        <record id="hr_rfid_door_view_tree" model="ir.ui.view">
-            <field name="name">hr.rfid.door.tree</field>
-            <field name="model">hr.rfid.door</field>
-            <field name="arch" type="xml">
-                <tree create="false" delete="false">
-                    <field name="name"/>
-                    <field name="controller_id"/>
-                    <field name="webstack_id" optional="show"/>
-                    <field name="card_type" optional="show"/>
-                    <field name="apb_mode" optional="show"/>
-                </tree>
-            </field>
-        </record>
-
         <record id="hr_rfid_door_view_search" model="ir.ui.view">
             <field name="name">hr.rfid.door.search</field>
             <field name="model">hr.rfid.door</field>
@@ -362,9 +382,9 @@
                     <field name="controller_id"/>
                     <field name="card_type"/>
                     <filter string="by Controller" name="groupby_controller"
-                                context="{'group_by':'controller_id'}"/>
+                            context="{'group_by':'controller_id'}"/>
                     <filter string="by Card Type" name="groupby_card_type"
-                                context="{'group_by':'card_type'}"/>
+                            context="{'group_by':'card_type'}"/>
                     <searchpanel>
                         <field name="controller_id" icon="fa-info-circle" color="#875A7B"/>
                     </searchpanel>
