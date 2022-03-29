@@ -4,16 +4,15 @@
 
         <menuitem id="hr_rfid_vending_products_menu"
                   name="Products"
-                  parent="hr_rfid.hr_rfid_settings_menu"
+                  parent="hr_rfid.hr_rfid_card_management"
                   action="stock.product_template_action_product"
                   groups="hr_rfid_vending.group_customer"
-                  sequence="100"/>
-
+                  sequence="10"/>
         <menuitem id="hr_rfid_vending_menu"
                   name="Vending"
-                  parent="hr_rfid.hr_rfid_events_menu"
+                  parent="hr_rfid.hr_rfid_root_menu"
                   groups="hr_rfid_vending.group_customer"
-                  sequence="100"/>
+                  sequence="7"/>
 
     </data>
 </odoo>
