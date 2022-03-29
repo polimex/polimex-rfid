@@ -448,9 +448,9 @@ class HrRfidController(models.Model):
                 if not no_command:
                     ctrl.write_io_table_cmd(cmd_data)
             else:
-                io_table = self.io_table[:16 * (line - 1)]
+                io_table = self.io_table and self.io_table[:16 * (line - 1)] or ''
                 io_table += new_io_table
-                io_table += self.io_table[16 * (line - 1) + 16:]
+                io_table += self.io_table and self.io_table[16 * (line - 1) + 16:] or ''
                 ctrl.io_table = io_table
                 if not no_command:
                     ctrl.write_io_table_cmd(cmd_data)
