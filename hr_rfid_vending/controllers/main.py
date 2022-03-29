@@ -111,8 +111,8 @@ class HrRfidVending(WebRfidController):
                         and emp.attendance_state != 'checked_in':
                     return ret_super()
 
-                date = controller.webstack_id.get_ws_time(post_data['event'])
-                if date + datetime.timedelta(minutes=5) <= datetime.datetime.now():
+                date = controller.webstack_id.get_ws_time(event)
+                if date + datetime.timedelta(minutes=5) <= fields.Datetime.now():
                     ev = create_ev(controller, event, card, '64')
                     return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code, ev))
 
@@ -220,7 +220,7 @@ class HrRfidVending(WebRfidController):
                 exceptions.MissingError, exceptions.ValidationError,
                 psycopg2.DataError, ValueError) as __:
             # commented DeferredException ^
-            webstack_id.sys_log(error_description=traceback.format_exc(),
+            webstack_id.sys_event(error_description=traceback.format_exc(),
                                    input_json=json.dumps(post_data))
             _logger.debug('Vending: Caught an exception, returning status=500 and creating a system event')
             return {'status': 500}
@@ -228,8 +228,8 @@ class HrRfidVending(WebRfidController):
             t = post_data['event']['date'] + ' ' + post_data['event']['time']
             ev_num = str(post_data['event']['event_n'])
             controller = webstack_id.controllers.filtered(lambda r: r.ctrl_id == post_data['event']['id'])
-            controller.sys_log(error_description=f'Controller sent us an invalid date or time: {t}',
-                               ev_num=ev_num,
+            controller.sys_event(error_description=f'Controller sent us an invalid date or time: {t}',
+                               event_action=ev_num,
                                input_json=json.dumps(post_data))
             _logger.debug('Caught a time error, returning status=200 and creating a system event')
             return {'status': 200}

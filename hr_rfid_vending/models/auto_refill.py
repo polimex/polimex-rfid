@@ -10,6 +10,10 @@ class VendingAutoRefillEvents(models.Model):
         string='Name',
         default=lambda self: self.env['ir.sequence'].next_by_code('hr.rfid.vending.auto.refill.event.seq'),
     )
+    company_id = fields.Many2one('res.company',
+                                 string='Company',
+                                 default=lambda self: self.env.company)
+
 
     create_date = fields.Datetime(
         string='Auto Refill Time',
@@ -26,6 +30,13 @@ class VendingAutoRefillEvents(models.Model):
         'auto_refill_id',
         string='Balance History Changes',
     )
+
+    # Cron job task
+    @api.model
+    def auto_refill_job(self):
+        for c in self.env['res.company']:
+            self.with_company(c.id)._auto_refill()
+            # self.with_context(allowed_company_ids=[c.id])._auto_refill()
 
     @api.model
     def _auto_refill(self):

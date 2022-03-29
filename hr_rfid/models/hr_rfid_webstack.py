@@ -170,7 +170,7 @@ class HrRfidWebstack(models.Model):
     @api.depends('hw_version')
     def _compute_time_format(self):
         for ws in self:
-            if ws.hw_version in ['100.1', '50.1']:
+            if (ws.hw_version and ws.hw_version in ['100.1', '50.1']) or (ws.version and float(ws.version) > 1.34):
                 ws.time_format = '%m.%d.%y %H:%M:%S'
             elif ws.hw_version in ['10.3']:
                 ws.time_format = '%d.%m.%y %H:%M:%S'
@@ -540,8 +540,10 @@ class HrRfidWebstack(models.Model):
         t = f"{post_data['date']} {post_data['time']}"
         t = t.replace('-', '.')  # fix for WiFi module format
         try:
+            _logger.info('------------------------t=%s, format=%s', t, self.time_format)
             ws_time = datetime.strptime(t, self.time_format)
             ws_time -= self._get_tz_offset()
+            _logger.info('------------------------ws_time=%s',ws_time)
         except ValueError:
             raise BadTimeException
         return ws_time
