@@ -540,10 +540,10 @@ class HrRfidWebstack(models.Model):
         t = f"{post_data['date']} {post_data['time']}"
         t = t.replace('-', '.')  # fix for WiFi module format
         try:
-            _logger.info('------------------------t=%s, format=%s', t, self.time_format)
+            # _logger.info('------------------------t=%s, format=%s', t, self.time_format)
             ws_time = datetime.strptime(t, self.time_format)
             ws_time -= self._get_tz_offset()
-            _logger.info('------------------------ws_time=%s',ws_time)
+            # _logger.info('------------------------ws_time=%s',ws_time)
         except ValueError:
             raise BadTimeException
         return ws_time

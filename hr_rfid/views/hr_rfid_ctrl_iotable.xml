@@ -8,8 +8,8 @@
             <field name="arch" type="xml">
                 <form string="View/Modify IO table">
                     <div>
-                        <field name="controller_id" invisible="True"/>
-                        <field name="outs" invisible="True"/>
+                        <field name="controller_id" invisible="1"/>
+                        <field name="outs" invisible="1"/>
                         <h1>IO table:</h1>
                         <br/>
                         <field name="io_row_ids" widget="one2many_list">

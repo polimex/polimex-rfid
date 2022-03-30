@@ -27,10 +27,15 @@
                   parent="hr_rfid_root_menu"
                   groups="hr_rfid_group_viewer"
                   sequence="20"/>
+        <menuitem id="hr_rfid_root_menu_alarm_system"
+                  name="Alarm System"
+                  parent="hr_rfid_root_menu"
+                  groups="hr_rfid_group_viewer"
+                  sequence="20"/>
         <menuitem id="hr_rfid_root_menu_hardware_manager"
                   name="Hardware Manager"
                   parent="hr_rfid_root_menu"
-                  groups="hr_rfid_group_viewer"
+                  groups="hr_rfid_group_officer"
                   sequence="30"/>
         <menuitem id="hr_rfid_settings_menu"
                   name="Configuration"
@@ -86,7 +91,7 @@
                   parent="hr_rfid_card_management"
                   action="hr.hr_department_kanban_action"
                   groups="hr_rfid_group_officer"
-                  sequence="5"/>
+                  sequence="6"/>
         <menuitem id="hr_rfid_menu_partners"
                   name="Partners"
                   parent="hr_rfid_card_management"
@@ -121,12 +126,6 @@
                   action="hr_rfid_access_group_action"
                   groups="hr_rfid_group_manager"
                   sequence="10"/>
-        <menuitem id="hr_rfid_menu_alarm_groups"
-                  name="Alarm lines group"
-                  parent="hr_rfid_root_menu_access_control"
-                  action="hr_rfid_ctrl_alarm_group_action"
-                  groups="hr_rfid_group_viewer"
-                  sequence="20"/>
         <menuitem id="hr_rfid_menu_time_schedules"
                   name="Time Schedules"
                   parent="hr_rfid_root_menu_access_control"
@@ -151,6 +150,24 @@
                   action="hr_rfid_card_type_action"
                   groups="hr_rfid_group_manager"
                   sequence="60"/>
+
+
+
+        <!--#######################################################
+        #####                   Alarm system                  #####
+        ########################################################-->
+        <menuitem id="hr_rfid_menu_alarm_lines"
+                  name="Alarm lines"
+                  parent="hr_rfid_root_menu_alarm_system"
+                  action="hr_rfid_ctrl_alarm_action"
+                  groups="hr_rfid_group_viewer"
+                  sequence="10"/>
+        <menuitem id="hr_rfid_menu_alarm_groups"
+                  name="Alarm lines group"
+                  parent="hr_rfid_root_menu_alarm_system"
+                  action="hr_rfid_ctrl_alarm_group_action"
+                  groups="hr_rfid_group_viewer"
+                  sequence="20"/>
 
 
 
@@ -194,12 +211,6 @@
                   action="hr_rfid_reader_action"
                   groups="hr_rfid_group_manager"
                   sequence="25"/>
-        <menuitem id="hr_rfid_menu_alarm_lines"
-                  name="Alarm lines"
-                  parent="hr_rfid_root_menu_hardware_manager"
-                  action="hr_rfid_ctrl_alarm_action"
-                  groups="hr_rfid_group_viewer"
-                  sequence="30"/>
         <menuitem id="hr_rfid_menu_emergency_groups"
                   name="Emergency Distribution Groups"
                   parent="hr_rfid_root_menu_hardware_manager"
