@@ -1,4 +1,4 @@
-from odoo import fields, models, api
+from odoo import fields, models, api, SUPERUSER_ID
 
 
 class VendingAutoRefillEvents(models.Model):
@@ -34,13 +34,17 @@ class VendingAutoRefillEvents(models.Model):
     # Cron job task
     @api.model
     def auto_refill_job(self):
-        for c in self.env['res.company']:
+        for c in self.env['res.company'].with_user(SUPERUSER_ID).search([]):
             self.with_company(c.id)._auto_refill()
             # self.with_context(allowed_company_ids=[c.id])._auto_refill()
 
     @api.model
     def _auto_refill(self):
-        employees = self.env['hr.employee'].search([])
+        employees = self.env['hr.employee'].search([
+            ('hr_rfid_vending_auto_refill', '=', True),
+            ('hr_rfid_vending_refill_amount', '>', 0),
+            ('company_id', '=', self.env.company.id),
+        ])
         balance_histories = self.env['hr.rfid.vending.balance.history']
         total_refill = 0.0
 
@@ -49,12 +53,6 @@ class VendingAutoRefillEvents(models.Model):
             refill_amount = emp.hr_rfid_vending_refill_amount
             refill_type = emp.hr_rfid_vending_refill_type
             refill_max = emp.hr_rfid_vending_refill_max
-
-            if auto_refill is False:
-                continue
-
-            if refill_amount == 0:
-                continue
 
             if refill_type == 'fixed':
                 if emp.hr_rfid_vending_balance != refill_amount:
