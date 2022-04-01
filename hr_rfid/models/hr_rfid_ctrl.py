@@ -554,13 +554,13 @@ class HrRfidController(models.Model):
 
     def _get_input_state(self, input_number):
         self.ensure_one()
-        return (self.input_states and pow(2, input_number - 1)) == pow(2, input_number - 1)
+        return (self.input_states & pow(2, input_number - 1)) == pow(2, input_number - 1)
 
     def _update_input_state(self, input_number, state: bool):
         for c in self.with_user(SUPERUSER_ID):
             if state:
-                c.input_states = c.input_states or pow(2, input_number - 1)
-            elif c.input_states and pow(2, input_number - 1) == pow(2, input_number - 1):
+                c.input_states = c.input_states | pow(2, input_number - 1)
+            elif (c.input_states & pow(2, input_number - 1)) == pow(2, input_number - 1):
                 c.input_states = c.input_states - pow(2, input_number - 1)
 
     def _get_output_state(self, output_number):
