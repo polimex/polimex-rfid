@@ -574,9 +574,9 @@ class HrRfidController(models.Model):
         '''
         for c in self.with_user(SUPERUSER_ID):
             if state:  # !=0
-                if c.output_states & (2 ** (output_number - 1)) != (2 ** (output_number - 1)):
+                if c.output_states and (2 ** (output_number - 1)) != (2 ** (output_number - 1)):
                     c.output_states += (2 ** (output_number - 1))
-            elif c.output_states & (2 ** (output_number - 1)) == (2 ** (output_number - 1)):
+            elif c.output_states and (2 ** (output_number - 1)) == (2 ** (output_number - 1)):
                 c.output_states -= (2 ** (output_number - 1))
 
     def convert_int_to_cmd_data_for_output_control(self, data):
