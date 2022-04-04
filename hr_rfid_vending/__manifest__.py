@@ -24,6 +24,7 @@
         'views/hr_rfid_vending_auto_refill.xml',
         'views/hr_rfid_vending_balance_history.xml',
         'views/vending_event.xml',
+        'views/digest_views.xml',
     ],
 
     'demo': [ ],
