@@ -3,6 +3,7 @@
 
 from odoo import fields, models, _
 from odoo.exceptions import AccessError
+from odoo.tools import float_round
 
 
 class Digest(models.Model):
@@ -26,8 +27,8 @@ class Digest(models.Model):
                 ('create_date', '<', end),
                 ('employee_id.company_id', 'in', [company.id]),
             ])
-            record.kpi_hr_rfid_vending_refill_value = sum(h.balance_change for h in vending_history.filtered(lambda bh: bh.balance_change > 0))
-            record.kpi_hr_rfid_vending_sale_value = abs(sum(h.balance_change for h in vending_history.filtered(lambda bh: bh.balance_change < 0)))
+            record.kpi_hr_rfid_vending_refill_value = float_round(sum(h.balance_change for h in vending_history.filtered(lambda bh: bh.balance_change > 0)), 2)
+            record.kpi_hr_rfid_vending_sale_value = float_round(abs(sum(h.balance_change for h in vending_history.filtered(lambda bh: bh.balance_change < 0))), 2)
             record.kpi_hr_rfid_vending_sale_count_value = len(vending_history.filtered(lambda bh: bh.balance_change < 0))
 
     def _compute_kpis_actions(self, company, user):
