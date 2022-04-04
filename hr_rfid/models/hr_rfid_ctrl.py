@@ -275,9 +275,12 @@ class HrRfidController(models.Model):
     @api.depends('input_states')
     def _compute_emergency_state(self):
         for c in self:
-            soft = c._get_input_state(14)
-            hard = c._get_input_state(c.inputs)
-            c.emergency_state = (soft and 'soft') or (hard and 'hard') or 'off'
+            if c.inputs > 0:
+                soft = c._get_input_state(14)
+                hard = c._get_input_state(c.inputs)
+                c.emergency_state = (soft and 'soft') or (hard and 'hard') or 'off'
+            else:
+                c.emergency_state = 'off'
 
     def _inverse_emergency_state(self):
         for c in self.with_user(SUPERUSER_ID):
@@ -574,9 +577,9 @@ class HrRfidController(models.Model):
         '''
         for c in self.with_user(SUPERUSER_ID):
             if state:  # !=0
-                if c.output_states & (2 ** (output_number - 1)) != (2 ** (output_number - 1)):
+                if c.output_states and (2 ** (output_number - 1)) != (2 ** (output_number - 1)):
                     c.output_states += (2 ** (output_number - 1))
-            elif c.output_states & (2 ** (output_number - 1)) == (2 ** (output_number - 1)):
+            elif c.output_states and (2 ** (output_number - 1)) == (2 ** (output_number - 1)):
                 c.output_states -= (2 ** (output_number - 1))
 
     def convert_int_to_cmd_data_for_output_control(self, data):

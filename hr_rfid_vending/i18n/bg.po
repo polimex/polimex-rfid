@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-22 12:00+0000\n"
-"PO-Revision-Date: 2022-03-22 14:03+0200\n"
+"POT-Creation-Date: 2022-04-04 08:15+0000\n"
+"PO-Revision-Date: 2022-04-04 11:17+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -97,6 +97,11 @@ msgstr "Време на автоматично зареждане"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
 msgid "Auto Refills"
 msgstr "Автоматично зареждане"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_refill
+msgid "Auto refill amount"
+msgstr "Количество за автоматично зареждане"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_auto_refill
@@ -231,6 +236,11 @@ msgid "Commands from today"
 msgstr "Команди от Днес"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__company_id
+msgid "Company"
+msgstr "Компания"
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__contact_id
 msgid "Contact"
 msgstr "Контакт"
@@ -287,6 +297,12 @@ msgid "Debug Information"
 msgstr "Информация за отстраняване на грешки"
 
 #. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_digest_digest
+msgid "Digest"
+msgstr "Доклад"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__display_name
@@ -298,6 +314,12 @@ msgstr "Информация за отстраняване на грешки"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_product_template__display_name
 msgid "Display Name"
 msgstr "Име за показване"
+
+#. module: hr_rfid_vending
+#: code:addons/hr_rfid_vending/models/digest.py:0
+#, python-format
+msgid "Do not have access, skip this data for user's digest email"
+msgstr "Нямате достъп. пропусни тези данни за потребителският доклад"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__door_id
@@ -332,7 +354,7 @@ msgstr "Служител засегнат от това събитие"
 #. module: hr_rfid_vending
 #: model:ir.model,name:hr_rfid_vending.model_hr_employee_vending_balance_wiz
 msgid "Employee balance setter"
-msgstr ""
+msgstr "Определяне на баланса на служителите"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_rfid_vending_event__event_action__48
@@ -438,6 +460,7 @@ msgid "How much was deposited/withdrawn from the employee's balance"
 msgstr "Колко да се добави/премахне от баланса на служителя"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__id
@@ -513,6 +536,22 @@ msgid "Item/Price"
 msgstr "Продукт/Цена"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_refill_value
+msgid "Kpi Hr Rfid Vending Refill Value"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_sale_count_value
+msgid "Kpi Hr Rfid Vending Sale Count Value"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_sale_value
+msgid "Kpi Hr Rfid Vending Sale Value"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest____last_update
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee____last_update
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz____last_update
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl____last_update
@@ -702,6 +741,16 @@ msgid "Sales Per Product"
 msgstr "Продажби по продукти"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_sale
+msgid "Sales amount"
+msgstr "Размер на продажбите"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_sale_count
+msgid "Sales count"
+msgstr "Брой продажби"
+
+#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_vending_prices_wiz
 msgid "Save"
 msgstr "Запази"
@@ -857,6 +906,11 @@ msgid "Vending Balance History"
 msgstr "История на Баланс"
 
 #. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.digest_digest_view_form
+msgid "Vending Control"
+msgstr "Управление на Вендинг"
+
+#. module: hr_rfid_vending
 #: model:res.groups,name:hr_rfid_vending.group_customer
 msgid "Vending Customer"
 msgstr "Вендинг Клиент"
@@ -876,7 +930,7 @@ msgstr "Вендинг Машини"
 #. module: hr_rfid_vending
 #: model:ir.model,name:hr_rfid_vending.model_hr_rfid_ctrl_vending_row
 msgid "Vending Machine Row"
-msgstr ""
+msgstr "Ред за вендинг машини"
 
 #. module: hr_rfid_vending
 #: model:ir.model,name:hr_rfid_vending.model_hr_rfid_ctrl_vending_settings
