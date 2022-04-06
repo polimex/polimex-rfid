@@ -270,8 +270,9 @@ class HrRfidWebstack(models.Model):
                 )
                 if response.status_code != 200:
                     raise exceptions.ValidationError(
-                        _('Error received while trying to setup the module!\n ')+
-                        f'(/protect/uart/conf) returned {response.reason}({response.status_code}) with body:\n' +
+                        _('''Error received while trying to setup the module!\n 
+                          (/protect/uart/conf) returned {reason}({code}) with body:\n''').format(
+                            reason=response.reason, code=response.status_code) +
                         response.text
                     )
             if self.hw_version == '10.3':
@@ -281,29 +282,31 @@ class HrRfidWebstack(models.Model):
                 data=config_params_dict, auth=(username, password), timeout=2
             )
             if response.status_code != 200:
-                raise exceptions.ValidationError(_('While trying to setup /protect/config.htm the module '
-                                                 f'error returned {response.reason}({response.status_code}) with body:\n') +
-                                                 response.text)
+                raise exceptions.ValidationError(_('''While trying to setup /protect/config.htm the module\n 
+                                                 error returned {reason}({code}) with body:\n''').format(
+                                                 reason=response.reason, code=response.status_code) +
+                                                response.text)
             if self.hw_version == '10.3':
                 response = requests.post(
                     url=f"http://{host}/protect/reboot.cgi",
                     auth=(username, password), timeout=2
                 )
                 if response.status_code != 200:
-                    raise exceptions.ValidationError(_('While trying to reboot the module '
-                                                       f'error returned {response.reason}({response.status_code}) with body:\n') +
-                                                     response.text)
+                    raise exceptions.ValidationError(_('''While trying to reboot the module \n
+                                                       error returned {response.reason}({response.status_code}) with body:\n''').format(
+                                                       reason=response.reason, code=response.status_code) +
+                                                       response.text)
             self.key = None
         except (ConnectionError, ConnectTimeout) as e:
             raise exceptions.ValidationError(_('Could not connect to the module. \n'
-                                             "Check if it is turned on or if it's on a different ip.\n")+
+                                             "Check if it is turned on or if it's on a different ip.\n") +
                                              f"({str(e)})")
         except (socket.error, socket.gaierror, socket.herror) as e:
-            raise exceptions.ValidationError(_('Error while trying to connect to the module.')+
-                                             ' Information:\n' + str(e))
+            raise exceptions.ValidationError(_('Error while trying to connect to the module.'
+                                             ' Information:\n') + str(e))
         except Exception as e:
-            raise exceptions.ValidationError(_('Error while trying to connect to the module.')+
-                                             ' Information:\n' + str(e))
+            raise exceptions.ValidationError(_('Error while trying to connect to the module.'
+                                             ' Information:\n') + str(e))
         self.key = None
         return self.balloon_success_sticky(
             title=_('Setup the Module'),
@@ -337,7 +340,7 @@ class HrRfidWebstack(models.Model):
                     "Check if it is turned on or if it's on a different ip.\n") +
                     f"({str(e)})")
             except KeyError as e:
-                raise exceptions.ValidationError(_('Information returned by the webstack invalid \n'+str(e)))
+                raise exceptions.ValidationError(_('Information returned by the webstack invalid: \n')+str(e))
             except Exception as e:
                 raise exceptions.ValidationError(_('Module connection error:\n') + str(e))
         return self.balloon_success(
@@ -387,11 +390,10 @@ class HrRfidWebstack(models.Model):
             except (ConnectionError, ConnectTimeout) as e:
                 raise exceptions.ValidationError(
                     _('Could not connect to the module. \n'
-                      "Check if it is turned on or if it's on a different ip.\n") +
-                    f"({str(e)})")
+                      "Check if it is turned on or if it's on a different ip:\n") +
+                    str(e))
             except KeyError as __:
-                raise exceptions.ValidationError(_('Information returned by the webstack at ')
-                                                 + host + ' invalid')
+                raise exceptions.ValidationError(_('Information returned by the webstack at {} is invalid', host))
             except Exception as e:
                 raise exceptions.ValidationError(_('Unexpected communication error:\n') + str(e))
         if controllers:
@@ -476,8 +478,8 @@ class HrRfidWebstack(models.Model):
                 if retry < 3:
                     result = self._execute_direct_cmd(cmd, retry + 1)
                 if not result:
-                    raise exceptions.ValidationError('While trying to send the command to the module, '
-                                                     'it returned code ' + str(response.status_code) + ' with body:\n'
+                    raise exceptions.ValidationError(_('While trying to send the command to the module, '
+                                                     'it returned code {} with body:\n', str(response.status_code))
                                                      + response.content.decode())
             _logger.info('Direct receiving %s' % str(result))
             return result
@@ -656,7 +658,7 @@ class HrRfidWebstack(models.Model):
         response = post_data['response']
         controller = self.controllers.filtered(lambda c: c.ctrl_id == response.get('id', -1)).with_context(no_output=True)
         if not controller:
-            self.report_sys_ev('Module sent us a response from a controller that does not exist', post_data=post_data)
+            self.report_sys_ev(_('Module sent us a response from a controller that does not exist'), post_data=post_data)
             return not direct_cmd and self.check_for_unsent_cmd(200)
 
         command = command_env.search([('webstack_id', '=', self.id),
@@ -671,7 +673,7 @@ class HrRfidWebstack(models.Model):
                                           ('cmd', '=', 'DB2'), ], limit=1)
 
         if len(command) == 0:
-            controller.report_sys_ev('Controller sent us a response to a command we never sent')
+            controller.report_sys_ev(_('Controller sent us a response to a command we never sent'))
             return not direct_cmd and self.check_for_unsent_cmd(200)
 
         if response['e'] != 0:

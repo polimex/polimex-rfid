@@ -167,7 +167,7 @@ class WebRfidController(http.Controller):
                 # 'input_js': card_num,
             }
             event = controller_id.report_sys_ev(
-                description=_(''),
+                description=msg,
                 post_data=post_data,
                 sys_ev_dict=sys_event_dict
             )
@@ -194,7 +194,7 @@ class WebRfidController(http.Controller):
                 # 'input_js': card_num,
             }
             event = controller_id.report_sys_ev(
-                description=_(''),
+                description=_('Exit button pressed'),
                 post_data=post_data,
                 sys_ev_dict=sys_event_dict
             )
@@ -207,7 +207,7 @@ class WebRfidController(http.Controller):
                 'event_action': str(event_action),
             }
             event = controller_id.report_sys_ev(
-                description=_(''),
+                description=_('The door is still opened'),
                 post_data=post_data,
                 sys_ev_dict=sys_event_dict
             )
@@ -221,7 +221,7 @@ class WebRfidController(http.Controller):
                 'event_action': str(event_action),
             }
             event = controller_id.report_sys_ev(
-                description=_(''),
+                description=_('The door is opened by force/key'),
                 post_data=post_data,
                 sys_ev_dict=sys_event_dict
             )
@@ -252,7 +252,7 @@ class WebRfidController(http.Controller):
                 'event_action': str(event_action),
             }
             event = controller_id.report_sys_ev(
-                description=_(''),
+                description=_('Output control from Software'),
                 post_data=post_data,
                 sys_ev_dict=sys_event_dict
             )
