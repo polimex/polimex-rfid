@@ -253,7 +253,7 @@ class HrRfidSystemEventWizard(models.TransientModel):
         sys_ev = self._default_sys_ev()
 
         if type(sys_ev.card_number) != type(''):
-            raise exceptions.ValidationError('System event does not have a card number in it')
+            raise exceptions.ValidationError(_('System event does not have a card number in it'))
 
         if len(sys_ev.card_number) == 10:
             return sys_ev.card_number
@@ -262,8 +262,8 @@ class HrRfidSystemEventWizard(models.TransientModel):
         try:
             card_number = js['event']['card']
             return card_number
-        except KeyError as _:
-            raise exceptions.ValidationError('System event does not have a card number in it')
+        except KeyError as e:
+            raise exceptions.ValidationError(_('System event does not have a card number in it'))
 
     sys_ev_id = fields.Many2one(
         'hr.rfid.event.system',

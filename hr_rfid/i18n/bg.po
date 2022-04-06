@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-29 18:13+0000\n"
-"PO-Revision-Date: 2022-03-29 21:15+0300\n"
+"POT-Creation-Date: 2022-04-06 08:40+0000\n"
+"PO-Revision-Date: 2022-04-06 11:49+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -845,7 +845,7 @@ msgstr "Всички служители, които използват тази 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__cards_count
 msgid "Amount of cards in the controller."
-msgstr "Брой карти в контролера"
+msgstr "Брой карти в контролера."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door_open_close_wiz__time
@@ -1406,6 +1406,12 @@ msgid "Change and Apply for Everyone"
 msgstr "Промяна и прилагане за всички"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid "Check connection to the Module"
+msgstr "Проверка на връзката с модула"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__child_ids
 msgid "Child"
 msgstr "Подчинени"
@@ -1821,6 +1827,12 @@ msgid "Controller mode"
 msgstr "Режим на Контролера"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid "Controller sent us a response to a command we never sent"
+msgstr "Контролерът ни изпрати отговор на команда, която никога не сме изпращали"
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__controller_id
 msgid "Controller that manages the alarm line"
 msgstr "Контролер управляващ тази алармена линия"
@@ -1857,6 +1869,26 @@ msgstr "Брой Контролери"
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__controllers
 msgid "Controllers that this WebStack manages"
 msgstr "Контролерите управлявани от този Модул"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid ""
+"Could not connect to the module. \n"
+"Check if it is turned on or if it's on a different ip.\n"
+msgstr ""
+"Не може да се свърже с модула\n"
+"Проверете дали е включен или дали е на друг IP адрес.\n"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid ""
+"Could not connect to the module. \n"
+"Check if it is turned on or if it's on a different ip:\n"
+msgstr ""
+"Не може да се свърже с модула\n"
+"Проверете дали е включен или дали е на друг IP адрес:\n"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/controllers/main.py:0
@@ -2524,7 +2556,7 @@ msgstr "Авариен вход"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_form_view
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
 msgid "Emergency Off"
-msgstr "Изключи ПИС "
+msgstr "Изключи ПИС"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_form_view
@@ -2697,10 +2729,24 @@ msgstr "Грешка"
 #, python-format
 msgid ""
 "Error received while trying to setup the module!\n"
-" "
+" \n"
+"                          (/protect/uart/conf) returned {reason}({code}) with body:\n"
 msgstr ""
-"Грешка, получена при опит за настройка на модула!\n"
-" "
+"Получена грешка при опит за настройка на модула!\n"
+" \n"
+"                          (/protect/uart/conf) върна {reason}({code}) с тяло:\n"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid "Error response from Webstack. {} ({})"
+msgstr "Отговор за грешка от Webstack. {} ({})"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid "Error while trying to connect to the module. Information:\n"
+msgstr "Грешка при опит за свързване с модула. Информация:\n"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_system_ev_view_pivot
@@ -2825,6 +2871,12 @@ msgid "Every user added to this department gets this access group by default"
 msgstr "Всеки потребител, добавен към този отдел получава тази група за достъп по подразбиране"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid "Everything looks just great!"
+msgstr "Всичко изглежда добре!"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__ex_timestamp
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
 msgid "Execution Time"
@@ -2864,6 +2916,12 @@ msgstr "Бутон за излизане 4"
 #, python-format
 msgid "Exit button"
 msgstr "Бутон за изход"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/controllers/main.py:0
+#, python-format
+msgid "Exit button pressed"
+msgstr "Натиснат бутон за излизане"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_mass_wiz__expiration
@@ -3100,19 +3158,19 @@ msgstr "Охранител"
 #: model:ir.cron,cron_name:hr_rfid.hr_rfid_set_card_active_inactive_status
 #: model:ir.cron,name:hr_rfid.hr_rfid_set_card_active_inactive_status
 msgid "HR RFID: Check if any cards need to be activated or deactivated"
-msgstr ""
+msgstr "HR RFID: Проверka дали има нужда от активиране или деактивиране на карти"
 
 #. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.hr_rfid_read_ctrl_status_cron_ir_actions_server
 #: model:ir.cron,cron_name:hr_rfid.hr_rfid_read_ctrl_status_cron model:ir.cron,name:hr_rfid.hr_rfid_read_ctrl_status_cron
 msgid "HR RFID: Read controller statuses"
-msgstr ""
+msgstr "HR RFID: Прочитане на състоянията на контролера"
 
 #. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.hr_rfid_sync_ctrl_clock_cron_ir_actions_server
 #: model:ir.cron,cron_name:hr_rfid.hr_rfid_sync_ctrl_clock_cron model:ir.cron,name:hr_rfid.hr_rfid_sync_ctrl_clock_cron
 msgid "HR RFID: Synchronize controller clocks"
-msgstr ""
+msgstr "HR RFID: Синхронизиране на часовниците на контролера"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/controllers/main.py:0
@@ -3309,6 +3367,8 @@ msgid ""
 "IO\n"
 "                                                Table"
 msgstr ""
+"ВИ\n"
+"                                                Таблица"
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_controller_io_table_action
@@ -3477,6 +3537,28 @@ msgstr "Неправилен отговор на данни"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_reader_view_form
 msgid "Information"
 msgstr "Информация"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid "Information returned by the webstack at {} is invalid"
+msgstr "Информацията, върната от webstack в {}, е невалидна"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid "Information returned by the webstack invalid: \n"
+msgstr "Информацията, върната от webstack, е невалидна:\n"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid ""
+"Information sent to the Module. If everything is fine, the Module have to start communication with this instance. The URL in "
+"use is http://%s on port %d."
+msgstr ""
+"Информацията е изпратена до модула. Ако всичко е наред, Модулът трябва да започне комуникация с тази инстанция. Използваният "
+"URL адрес е http://%s на порт %d."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
@@ -4140,6 +4222,18 @@ msgid "Module affected by this event"
 msgstr "Модул, засегнат от това събитие"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid "Module connection error:\n"
+msgstr "Грешка при свързването на модула:\n"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid "Module sent us a response from a controller that does not exist"
+msgstr "Модулът ни изпрати отговор от контролер, който не съществува"
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__webstack_id
 msgid "Module the command is/was intended for"
 msgstr "Модул, за който е предназначена командата"
@@ -4261,6 +4355,12 @@ msgstr "Без грешка"
 #, python-format
 msgid "No Response from controller (WebSDK)"
 msgstr "Няма отговор от контролера (WebSDK)"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid "No controllers detected in the Module or the Module is Archived"
+msgstr "В модула не са открити контролери или модулът е архивиран"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
@@ -4600,6 +4700,12 @@ msgid "Output States"
 msgstr "Състояния на Изходите"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/controllers/main.py:0
+#, python-format
+msgid "Output control from Software"
+msgstr "Управление на изхода от софтуера"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__outputs
 msgid "Outputs"
 msgstr "Изходи"
@@ -4673,7 +4779,7 @@ msgstr "Разрешени посещения"
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_contact_rel__permited_visits
 msgid "Permited visits after this group will be deactivated. 0 mean"
-msgstr "Разрешени посещения преди деактивация на групата. "
+msgstr "Разрешени посещения преди деактивация на групата"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__pin_code
@@ -5261,6 +5367,12 @@ msgid "Readers that open this door"
 msgstr "Четци, които отварят тази врата"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid "Reading controllers from the Module"
+msgstr "Прочети контролерите от Модула"
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_contact_rel__visits_counter
 msgid "Real visits this group will be deactivated. 0 mean"
 msgstr "Реалните посещения за които групата ще бъде деактивирана. 0 изключено"
@@ -5555,6 +5667,12 @@ msgid "Setup module for this odoo"
 msgstr "Настрой модула за работа с този сървър"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid "Setup the Module"
+msgstr "Настрой Модула"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__state__short
 msgid "Short"
 msgstr "Късо"
@@ -5772,6 +5890,12 @@ msgid "System event"
 msgstr "Системно събитие"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
+#, python-format
+msgid "System event does not have a card number in it"
+msgstr "Системното събитие няма номер на картата в него"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "System information"
@@ -5951,6 +6075,18 @@ msgid "The day for this interval"
 msgstr "Денят за този интервал"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/controllers/main.py:0
+#, python-format
+msgid "The door is opened by force/key"
+msgstr "Вратата е отворена със сила/ключ"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/controllers/main.py:0
+#, python-format
+msgid "The door is still opened"
+msgstr "Вратата все още е отворена"
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_ts_line__end
 msgid "The end time of the interval"
 msgstr "Краен час на интервала"
@@ -6081,7 +6217,7 @@ msgstr "Помощник за Времеви Графици"
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_ctrl_ts_line
 msgid "Time Schedule line Wizard"
-msgstr ""
+msgstr "Съветник за времеви график"
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_time_schedule_action
@@ -6203,6 +6339,12 @@ msgstr "Тип на четеца"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_webstack__available__u
 msgid "Unavailable"
 msgstr "Недостъпен"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid "Unexpected communication error:\n"
+msgstr "Неочаквана комуникационна грешка:\n"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__serial
@@ -6479,7 +6621,7 @@ msgstr "Уеб"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__website_message_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__website_message_ids
 msgid "Website Messages"
-msgstr ""
+msgstr "Съобщения в уебсайт"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__website_message_ids
@@ -6496,7 +6638,7 @@ msgstr ""
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__website_message_ids
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone__website_message_ids
 msgid "Website communication history"
-msgstr ""
+msgstr "История на комуникацията в уебсайт"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_webstack_manual_create
@@ -6512,6 +6654,32 @@ msgstr "Откриване на Webstack"
 #: model:ir.model,name:hr_rfid.model_hr_rfid_webstack_discovery_row
 msgid "Webstack discovery rows"
 msgstr ""
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid "Webstack gave us bad data when requesting /config.json"
+msgstr "Webstack ни даде лоши данни при заявка на /config.json"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid ""
+"Webstack sent us error {}({}) \n"
+" while requesting device list"
+msgstr ""
+"Webstack ни изпрати грешка {}({})\n"
+" при заявка на списък с устройства"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid ""
+"Webstack sent us error {}({}) \n"
+" while requesting information for controller {}"
+msgstr ""
+"Webstack ни изпрати грешка {}({})\n"
+" при поискване на информация за контролер {}"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_ts_line__day__2
@@ -6598,6 +6766,36 @@ msgstr "Кои врати да добавите към групата за до�
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__access_group_door_ids
 msgid "Which doors use this time schedule in which access group"
 msgstr "Кои врати използват този времеви график и в коя група за достъп"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid ""
+"While trying to reboot the module \n"
+"\n"
+"                                                       error returned {response.reason}({response.status_code}) with body:\n"
+msgstr ""
+"При опит за рестартиране на модула\n"
+"\n"
+"                                                       е върната грешка {response.reason}({response.status_code}) с тяло:\n"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid "While trying to send the command to the module, it returned code {} with body:\n"
+msgstr "При опит за изпращане на командата към модула той върна код {} с тяло:\n"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid ""
+"While trying to setup /protect/config.htm the module\n"
+" \n"
+"                                                 error returned {reason}({code}) with body:\n"
+msgstr ""
+"При опит за настройка на /protect/config.htm модулът\n"
+" \n"
+"                                                 върна грешка {reason}({code}) с тяло:\n"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_form
