@@ -107,7 +107,7 @@ class WebRfidController(http.Controller):
         if event_action in [1, 2]:
             raise Exception('Not Implemented')
         # Card Events
-        elif event_action in range(3, 18):
+        elif event_action in range(3, 19):
             ue_event_action = ((event_action - 3) % 4) + 1
             # Turnstile controller. If the 7th bit is not up, then there was no actual entry
             if controller_id.is_turnstile_ctrl() and (

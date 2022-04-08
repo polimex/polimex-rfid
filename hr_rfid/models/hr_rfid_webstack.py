@@ -284,8 +284,8 @@ class HrRfidWebstack(models.Model):
             if response.status_code != 200:
                 raise exceptions.ValidationError(_('''While trying to setup /protect/config.htm the module\n 
                                                  error returned {reason}({code}) with body:\n''').format(
-                                                 reason=response.reason, code=response.status_code) +
-                                                response.text)
+                    reason=response.reason, code=response.status_code) +
+                                                 response.text)
             if self.hw_version == '10.3':
                 response = requests.post(
                     url=f"http://{host}/protect/reboot.cgi",
@@ -294,19 +294,19 @@ class HrRfidWebstack(models.Model):
                 if response.status_code != 200:
                     raise exceptions.ValidationError(_('''While trying to reboot the module \n
                                                        error returned {response.reason}({response.status_code}) with body:\n''').format(
-                                                       reason=response.reason, code=response.status_code) +
-                                                       response.text)
+                        reason=response.reason, code=response.status_code) +
+                                                     response.text)
             self.key = None
         except (ConnectionError, ConnectTimeout) as e:
             raise exceptions.ValidationError(_('Could not connect to the module. \n'
-                                             "Check if it is turned on or if it's on a different ip.\n") +
+                                               "Check if it is turned on or if it's on a different ip.\n") +
                                              f"({str(e)})")
         except (socket.error, socket.gaierror, socket.herror) as e:
             raise exceptions.ValidationError(_('Error while trying to connect to the module.'
-                                             ' Information:\n') + str(e))
+                                               ' Information:\n') + str(e))
         except Exception as e:
             raise exceptions.ValidationError(_('Error while trying to connect to the module.'
-                                             ' Information:\n') + str(e))
+                                               ' Information:\n') + str(e))
         self.key = None
         return self.balloon_success_sticky(
             title=_('Setup the Module'),
@@ -337,10 +337,10 @@ class HrRfidWebstack(models.Model):
             except (ConnectionError, ConnectTimeout) as e:
                 raise exceptions.ValidationError(
                     _('Could not connect to the module. \n'
-                    "Check if it is turned on or if it's on a different ip.\n") +
+                      "Check if it is turned on or if it's on a different ip.\n") +
                     f"({str(e)})")
             except KeyError as e:
-                raise exceptions.ValidationError(_('Information returned by the webstack invalid: \n')+str(e))
+                raise exceptions.ValidationError(_('Information returned by the webstack invalid: \n') + str(e))
             except Exception as e:
                 raise exceptions.ValidationError(_('Module connection error:\n') + str(e))
         return self.balloon_success(
@@ -359,7 +359,7 @@ class HrRfidWebstack(models.Model):
                 if response.status_code != 200:
                     raise exceptions.ValidationError(_('Webstack sent us error {}({}) \n'
                                                        ' while requesting device list')
-                                                       .format(response.reason, response.status_code))
+                                                     .format(response.reason, response.status_code))
                 js = response.json()
                 controllers = js['sdk']['devFound']
                 if ws.name == f"Module {ws.serial}":
@@ -372,7 +372,7 @@ class HrRfidWebstack(models.Model):
 
                     if response.status_code != 200:
                         raise exceptions.ValidationError(_('Webstack sent us error {}({}) \n'
-                                                         ' while requesting information for controller {}')
+                                                           ' while requesting information for controller {}')
                                                          .format(response.reason, response.status_code, dev))
                     try:
                         ctrl_js = response.json()
@@ -479,7 +479,7 @@ class HrRfidWebstack(models.Model):
                     result = self._execute_direct_cmd(cmd, retry + 1)
                 if not result:
                     raise exceptions.ValidationError(_('While trying to send the command to the module, '
-                                                     'it returned code {} with body:\n', str(response.status_code))
+                                                       'it returned code {} with body:\n', str(response.status_code))
                                                      + response.content.decode())
             _logger.info('Direct receiving %s' % str(result))
             return result
@@ -508,8 +508,10 @@ class HrRfidWebstack(models.Model):
 
     def is_10_3(self):
         return all([ws.hw_version == '10.3' for ws in self])
+
     def is_50_1(self):
         return all([ws.hw_version == '50.1' for ws in self])
+
     def is_100_1(self):
         return all([ws.hw_version == '100.1' for ws in self])
 
@@ -522,7 +524,7 @@ class HrRfidWebstack(models.Model):
     def count_cmds_in(self, seconds=10):
         dt = fields.Datetime.now() - relativedelta(seconds=seconds)
         return self.env['hr.rfid.command'].with_user(
-                SUPERUSER_ID).search_count([
+            SUPERUSER_ID).search_count([
             ('webstack_id', 'in', self.ids),
             ('ex_timestamp', '>', dt)
         ])
@@ -535,7 +537,8 @@ class HrRfidWebstack(models.Model):
             True:
 
         '''
-        return self.count_cmds_in(polimex.MAX_DIRECT_EXECUTE_TIME) > polimex.MAX_DIRECT_EXECUTE or self.in_cmd_execution()
+        return self.count_cmds_in(
+            polimex.MAX_DIRECT_EXECUTE_TIME) > polimex.MAX_DIRECT_EXECUTE or self.in_cmd_execution()
 
     def get_ws_time(self, post_data: dict):
         self.ensure_one()
@@ -557,7 +560,7 @@ class HrRfidWebstack(models.Model):
     def _retry_command(self, status_code, cmd, event=None):
         if cmd.retries == 5:
             cmd.status = 'Failure'
-            return self.check_for_unsent_cmd(status_code, event )
+            return self.check_for_unsent_cmd(status_code, event)
 
         cmd.retries = cmd.retries + 1
 
@@ -656,9 +659,11 @@ class HrRfidWebstack(models.Model):
         self.ensure_one()
         command_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
         response = post_data['response']
-        controller = self.controllers.filtered(lambda c: c.ctrl_id == response.get('id', -1)).with_context(no_output=True)
+        controller = self.controllers.filtered(lambda c: c.ctrl_id == response.get('id', -1)).with_context(
+            no_output=True)
         if not controller:
-            self.report_sys_ev(_('Module sent us a response from a controller that does not exist'), post_data=post_data)
+            self.report_sys_ev(_('Module sent us a response from a controller that does not exist'),
+                               post_data=post_data)
             return not direct_cmd and self.check_for_unsent_cmd(200)
 
         command = command_env.search([('webstack_id', '=', self.id),
@@ -677,7 +682,7 @@ class HrRfidWebstack(models.Model):
             return not direct_cmd and self.check_for_unsent_cmd(200)
 
         if response['e'] != 0:
-            if response['e'] == 20: # controller not response!
+            if response['e'] == 20:  # controller not response!
                 return self._retry_command(200, command)
             command.write({
                 'status': 'Failure',
@@ -710,7 +715,7 @@ class HrRfidWebstack(models.Model):
                     })
 
         if response['c'] == 'F9':
-            if command.cmd_data != '00': #receiving single line from IOTable
+            if command.cmd_data != '00':  # receiving single line from IOTable
                 controller.change_io_table(new_io_table=response['d'], line=int(command.cmd_data, 16), no_command=True)
             else:
                 controller.write({
@@ -786,8 +791,8 @@ class HrRfidWebstack(models.Model):
         if response['c'] == 'D1':
             # 00 00 00 00 01
             controller.cards_count = polimex.bytes_to_num(response['d'], 0, 5)
-        # if response['c'] == 'D5': # change controller mode
-        #     00 00 00 00 01
+            # if response['c'] == 'D5': # change controller mode
+            #     00 00 00 00 01
 
             controller.cards_count = polimex.bytes_to_num(response['d'], 0, 5)
         if response['c'] == 'DB':
