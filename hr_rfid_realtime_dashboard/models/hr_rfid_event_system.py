@@ -9,7 +9,8 @@ class HrRfidSystemEvent(models.Model):
 
     def create(self, vals_list):
         res = super(HrRfidSystemEvent, self).create(vals_list)
-        res.refresh_views()
+        if any([e.event_action != '34' for e in res]):
+            res.refresh_views()
         for e in res:
             # if e.event_action in ['19', '20', '25', '26', '30']:
             if e.event_action in ['19', '20']:

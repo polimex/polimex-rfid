@@ -404,6 +404,48 @@ class HrRfidWebstack(models.Model):
                 message=_('No controllers detected in the Module or the Module is Archived')
             )
 
+    def reboot_cmd(self):
+        for ws in self:
+            username = str(ws.module_username) if ws.module_username else ''
+            password = str(ws.module_password) if ws.module_password else ''
+
+            host = str(ws.last_ip)
+            try:
+                if self.hw_version == '100.1':
+                    response = requests.get(
+                        url=f"http://{host}/protect/restart",
+                        auth=(username, password), timeout=2
+                    )
+                    if response.status_code != 200:
+                        raise exceptions.ValidationError(
+                            _('''Error received while trying to reboot the module!\n 
+                              Return {reason}({code}) with body:\n''').format(
+                                reason=response.reason, code=response.status_code) +
+                            response.text
+                        )
+                if self.hw_version == '10.3':
+                    response = requests.post(
+                        url=f"http://{host}/protect/reboot.cgi",
+                        auth=(username, password), timeout=2
+                    )
+                    if response.status_code != 200:
+                        raise exceptions.ValidationError(_('''While trying to reboot the module \n
+                                                           error returned {response.reason}({response.status_code}) with body:\n''').format(
+                            reason=response.reason, code=response.status_code) +
+                                                         response.text)
+            except (ConnectionError, ConnectTimeout) as e:
+                raise exceptions.ValidationError(_('Could not connect to the module. \n'
+                                                   "Check if it is turned on or if it's on a different ip.\n") +
+                                                 f"({str(e)})")
+            except Exception as e:
+                raise exceptions.ValidationError(_('Error while trying to connect to the module.'
+                                                   ' Information:\n') + str(e))
+            return self.balloon_success_sticky(
+                title=_('Reboot the Module'),
+                message=_('The module was rebooted. It takes up to 10 sec to restore the work conditions')
+            )
+
+
     @api.depends('tz')
     def _compute_tz_offset(self):
         for user in self:
