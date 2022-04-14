@@ -12,6 +12,7 @@
 
     'author': "Polimex Team <software@polimex.co>",
     'website': "https://polimex.co",
+    'license': 'AGPL-3',
 
     # for the full list
     'category': 'Administration',

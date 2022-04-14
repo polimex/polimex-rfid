@@ -16,6 +16,7 @@
     # for the full list
     'category': 'Administration',
     'version': '0.2',
+    'license': 'AGPL-3',
 
     # any module necessary for this one to work correctly
     'depends': ['hr_rfid', 'hr'],
