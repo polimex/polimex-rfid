@@ -10,7 +10,7 @@ class HrRfidController(models.Model):
     _name = 'hr.rfid.ctrl'
     _inherit = ['mail.thread', 'balloon.mixin']
     _description = 'Controller'
-    _sql_constraints = [('rfid_controller_unique', 'unique(serial_number)',
+    _sql_constraints = [('rfid_controller_unique', 'unique(serial_number,hw_version)',
                          'Serial numbers must be unique!')]
     _order = 'webstack_id, ctrl_id'
 
