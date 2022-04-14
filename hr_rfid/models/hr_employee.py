@@ -198,11 +198,16 @@ class HrEmployee(models.Model):
         for user in self:
             old_pin_code = user.hr_rfid_pin_code[:]
             old_dep = user.department_id
+            old_active = user.active
 
             super(HrEmployee, user).write(vals)
 
             new_pin_code = user.hr_rfid_pin_code
             new_dep = user.department_id
+            new_active = user.active
+
+            if old_active != new_active:
+                user.hr_rfid_card_ids.write({'active':new_active})
 
             if old_dep != new_dep:
                 new_dep_acc_grs = new_dep.hr_rfid_allowed_access_groups

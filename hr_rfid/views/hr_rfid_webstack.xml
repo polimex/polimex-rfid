@@ -44,6 +44,11 @@
                                     attrs="{'invisible':[('system_event_count', '&gt;', 0)]}">
                                 <field name="system_event_count" widget="statinfo" string="System Events"/>
                             </button>
+                            <button name="reboot_cmd" type="object"
+                                    class="oe_stat_button" icon="fa-refresh"
+                                    confirm="The module does not be behind NAT!"
+                                    groups="base.group_no_one"
+                                    string="Reboot"/>
                         </div>
                         <widget name="web_ribbon" title="Disabled" bg_color="bg-danger"
                                 attrs="{'invisible': [('active', '=', True)]}"/>

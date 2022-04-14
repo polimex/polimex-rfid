@@ -62,6 +62,7 @@
             <field name="name">System Events</field>
             <field name="res_model">hr.rfid.event.system</field>
             <field name="view_mode">tree</field>
+            <field name="domain">[('event_action', '!=', '34')]</field>
             <field name="view_id" ref="system_event_tree_view_dash"/>
         </record>
 

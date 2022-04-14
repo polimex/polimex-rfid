@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-06 08:40+0000\n"
-"PO-Revision-Date: 2022-04-06 11:49+0300\n"
+"POT-Creation-Date: 2022-04-13 13:32+0000\n"
+"PO-Revision-Date: 2022-04-13 16:34+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -2297,7 +2297,7 @@ msgstr "Име за показване"
 #: code:addons/hr_rfid/models/digest.py:0
 #, python-format
 msgid "Do not have access, skip this data for user's digest email"
-msgstr "Нямате достъп. пропусни тези данни за потребителският доклад"
+msgstr "Нямате достъп, пропуснете тези данни за електронната поща на потребителя"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_door
@@ -2723,6 +2723,18 @@ msgstr "Въведете удобно за Вас име на четеца"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
 msgid "Error"
 msgstr "Грешка"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid ""
+"Error received while trying to reboot the module!\n"
+" \n"
+"                              Return {reason}({code}) with body:\n"
+msgstr ""
+"Получена е грешка при опит за рестартиране на модула!\n"
+" \n"
+"                              Отговаря с {reason}({code}) и тяло:\n"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
@@ -5378,6 +5390,17 @@ msgid "Real visits this group will be deactivated. 0 mean"
 msgstr "Реалните посещения за които групата ще бъде деактивирана. 0 изключено"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
+msgid "Reboot"
+msgstr "Рестартиране"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid "Reboot the Module"
+msgstr "Рестартиране на модула"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_form
 msgid "Receive Date"
 msgstr "Дата на получаване"
@@ -6119,6 +6142,17 @@ msgid "The mode of the controller"
 msgstr "Режимът на контролера"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
+msgid "The module does not be behind NAT!"
+msgstr "Модулът не трябва да е зад NAT!"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid "The module was rebooted. It takes up to 10 sec to restore the work conditions"
+msgstr "Модулът е рестартиран. Възстановяването на работните условия отнема до 10 сек"
+
+#. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
 #, python-format
 msgid "The requested day is not in the range!"
@@ -6766,6 +6800,16 @@ msgstr "Кои врати да добавите към групата за до�
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__access_group_door_ids
 msgid "Which doors use this time schedule in which access group"
 msgstr "Кои врати използват този времеви график и в коя група за достъп"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid ""
+"While trying to reboot the module \n"
+"\n"
+"                                                           error returned {response.reason}({response.status_code}) with "
+"body:\n"
+msgstr ""
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0

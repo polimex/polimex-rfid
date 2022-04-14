@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--#######################################################
+        #####                   MENU ITEMS                    #####
+        ########################################################-->
+
+        <menuitem id="hr_rfid_visitor_root_menu"
+                  name="RFID Visitors Management System"
+                  groups="hr_rfid_visitor_management.group_operator"
+                  web_icon="hr_rfid_visitor_management,static/description/icon.png"/>
+
+        <menuitem id="hr_rfid_visitors_plan_menu"
+                  name="Visitor Management"
+                  parent="hr_rfid_visitor_management.hr_rfid_visitor_root_menu"
+                  action="hr_rfid_visitor_management_act"
+                  groups="hr_rfid_visitor_management.group_operator"
+                  sequence="10"/>
+        <menuitem id="hr_rfid_visits_menu"
+                  name="Visits"
+                  parent="hr_rfid_visitor_management.hr_rfid_visitor_root_menu"
+                  action="hr_rfid_visitor_management_visit_act"
+                  groups="hr_rfid_visitor_management.group_manager"
+                  sequence="20"/>
+
+    </data>
+</odoo>

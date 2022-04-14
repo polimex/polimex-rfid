@@ -174,7 +174,11 @@ class ResPartner(models.Model):
     def write(self, vals):
         for user in self:
             old_pin_code = user.hr_rfid_pin_code[:]
+            old_active = user.active
             super(ResPartner, user).write(vals)
+
+            if old_active != user.active:
+                user.hr_rfid_card_ids.write({'active':user.active})
 
             if old_pin_code != user.hr_rfid_pin_code:
                 user.hr_rfid_card_ids.mapped('door_rel_ids').pin_code_changed()
