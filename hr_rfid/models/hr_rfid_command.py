@@ -837,7 +837,7 @@ class HrRfidCommands(models.Model):
             self.controller_id.write(ctrl_dict)
             new_io = polimex.get_default_io_table(int(hw_ver), ctrl_mode)
             if new_io:
-                self.controller_id.change_io_table()
+                self.controller_id.change_io_table(new_io)
         else:
             self.controller_id.write(ctrl_dict)
 
