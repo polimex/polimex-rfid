@@ -1,3 +1,4 @@
+from odoo.addons.hr_rfid.controllers import polimex
 from odoo import fields, models, api, _, exceptions
 
 
@@ -67,10 +68,12 @@ class HrRfidCtrlIoTableWiz(models.TransientModel):
         row_len = 8 * 2  # 8 outs, 2 symbols each to display the number
         ctrl = self._default_ctrl()
 
-        if len(ctrl.io_table) % row_len != 0:
-            raise exceptions.ValidationError('Controller does now have an input/output table loaded!')
-
-        io_table = ctrl.io_table
+        if not ctrl.io_table or len(ctrl.io_table) % row_len != 0:
+            # fix if the module can't read io table we use default io table
+            io_table = polimex.get_default_io_table(ctrl.hw_version, ctrl.mode)
+            # raise exceptions.ValidationError('Controller does now have an input/output table loaded!')
+        else:
+            io_table = ctrl.io_table
         rows = rows_env
 
         for i in range(0, len(ctrl.io_table), row_len):
