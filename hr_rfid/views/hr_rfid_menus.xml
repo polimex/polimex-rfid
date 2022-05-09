@@ -15,7 +15,7 @@
         <menuitem id="hr_rfid_events_menu"
                   name="Events"
                   parent="hr_rfid_root_menu"
-                  groups="hr_rfid_group_viewer"
+                  groups="hr_rfid_group_officer"
                   sequence="5"/>
         <menuitem id="hr_rfid_card_management"
                   name="Card Management"
@@ -25,12 +25,12 @@
         <menuitem id="hr_rfid_root_menu_access_control"
                   name="Access Control"
                   parent="hr_rfid_root_menu"
-                  groups="hr_rfid_group_viewer"
+                  groups="hr_rfid_group_officer"
                   sequence="20"/>
         <menuitem id="hr_rfid_root_menu_alarm_system"
                   name="Alarm System"
                   parent="hr_rfid_root_menu"
-                  groups="hr_rfid_group_viewer"
+                  groups="hr_rfid_group_officer"
                   sequence="20"/>
         <menuitem id="hr_rfid_root_menu_hardware_manager"
                   name="Hardware Manager"
@@ -50,13 +50,13 @@
                   name="User Events"
                   parent="hr_rfid_events_menu"
                   action="hr_rfid_event_user_action"
-                  groups="hr_rfid_group_viewer"
+                  groups="hr_rfid_group_officer"
                   sequence="5"/>
         <menuitem id="hr_rfid_menu_system_events"
                   name="System Events"
                   parent="hr_rfid_events_menu"
                   action="hr_rfid_event_system_action"
-                  groups="hr_rfid_group_viewer"
+                  groups="hr_rfid_group_officer"
                   sequence="10"/>
         <menuitem id="hr_rfid_menu_commands"
                   name="Commands"
@@ -68,7 +68,7 @@
                   name="Temperature and Humidity Log"
                   parent="hr_rfid_events_menu"
                   action="hr_rfid_ctrl_th_log_action"
-                  groups="hr_rfid_group_viewer"
+                  groups="hr_rfid_group_officer"
                   sequence="30"/>
 
         <!--#######################################################
@@ -160,13 +160,13 @@
                   name="Alarm lines"
                   parent="hr_rfid_root_menu_alarm_system"
                   action="hr_rfid_ctrl_alarm_action"
-                  groups="hr_rfid_group_viewer"
+                  groups="hr_rfid_group_officer"
                   sequence="10"/>
         <menuitem id="hr_rfid_menu_alarm_groups"
                   name="Alarm lines group"
                   parent="hr_rfid_root_menu_alarm_system"
                   action="hr_rfid_ctrl_alarm_group_action"
-                  groups="hr_rfid_group_viewer"
+                  groups="hr_rfid_group_officer"
                   sequence="20"/>
 
 
@@ -203,7 +203,7 @@
                   name="Doors"
                   parent="hr_rfid_root_menu_hardware_manager"
                   action="hr_rfid_door_action"
-                  groups="hr_rfid_group_viewer"
+                  groups="hr_rfid_group_officer"
                   sequence="20"/>
         <menuitem id="hr_rfid_menu_readers"
                   name="Readers"
@@ -215,13 +215,13 @@
                   name="Emergency Distribution Groups"
                   parent="hr_rfid_root_menu_hardware_manager"
                   action="emergency_group_act"
-                  groups="hr_rfid_group_viewer"
+                  groups="hr_rfid_group_officer"
                   sequence="40"/>
         <menuitem id="hr_rfid_menu_th"
                   name="Temperature and Humidity"
                   parent="hr_rfid_root_menu_hardware_manager"
                   action="hr_rfid_ctrl_th_action"
-                  groups="hr_rfid_group_viewer"
+                  groups="hr_rfid_group_officer"
                   sequence="45"/>
 
         <!--#######################################################
