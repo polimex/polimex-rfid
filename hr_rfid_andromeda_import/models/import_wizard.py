@@ -371,9 +371,9 @@ class AndromedaImportWiz(models.TransientModel):
                 doors = '; '.join([d[0] for d in doors])
                 nag.message_post(
                     subject=_('Imported from Andromeda Access Control System'),
-                    body=_(f'Existing doors in Andromeda: {doors}')
+                    body=_("Existing doors in Andromeda: %s", doors)
                 )
-        return _('Imported %d Access groups from Andromeda. ' % len(ags))
+        return _('Imported %d Access groups from Andromeda. ',len(ags))
 
     def import_u(self, selected = False):
         imported_user_count = 0

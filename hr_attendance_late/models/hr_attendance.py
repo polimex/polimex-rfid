@@ -78,7 +78,7 @@ class HrAttendance(models.Model):
 
     def _in_interval(self, dt):
         self.ensure_one()
-        # return self.employee_id.resource_calendar_id._attendance_intervals(dt, dt + timedelta(seconds=1))
+        return self.employee_id.resource_calendar_id._attendance_intervals_batch(dt, dt + timedelta(seconds=1))
 
     def _previous_interval_for_today(self):
         self.ensure_one()
