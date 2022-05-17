@@ -84,7 +84,7 @@ class HrRfidZone(models.Model):
                 continue
 
             if zone.anti_pass_back:
-                HrRfidZone._create_person_entered_cmd(zone, person, event)
+                zone._change_apb_state(person, event, enable_exiting=True)
 
             if is_employee:
                 zone.employee_ids = zone.employee_ids + person
@@ -100,7 +100,7 @@ class HrRfidZone(models.Model):
                 continue
 
             if event and zone.anti_pass_back or len(zone.door_ids.filtered("apb_mode")) > 0:
-                HrRfidZone._create_person_left_cmd(zone, person, event)
+                zone._change_apb_state(person, event, enable_exiting=False)
 
             if zone.log_out_on_exit:
                 HrRfidZone._log_person_out(zone, person)
@@ -122,21 +122,12 @@ class HrRfidZone(models.Model):
                 zone.person_left(cont, self.env['hr.rfid.event.user'])
             zone.contact_ids = self.env['res.partner']
 
-    def _create_person_entered_cmd(self, person, event):
-        self._change_apb_cmd(person, event, True)
-
-    def _create_person_left_cmd(self, person, event):
-        self._change_apb_cmd(person, event, False)
-
-    def _change_apb_cmd(self, person, event, enable_exiting=True):
-        cmd_env = self.env['hr.rfid.command']
+    def _change_apb_state(self, person, event, enable_exiting=True):
         for zone in self:
-            doors = zone.door_ids - event.door_id
-            for door in doors:
-                if not door.apb_mode:
-                    continue
-                for card in person.hr_rfid_card_ids:
-                    cmd_env.change_apb_flag(door, card, enable_exiting)
+            doors = zone.door_ids.filtered(lambda d: d.apb_mode) - event.door_id
+            for card in person.hr_rfid_card_ids:
+                doors.change_apb_flag(card, enable_exiting)
+
 
     def _log_person_out(self, person):
         session_storage = http.root.session_store
