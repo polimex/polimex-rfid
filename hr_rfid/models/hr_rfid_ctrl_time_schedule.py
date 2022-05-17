@@ -172,6 +172,7 @@ class HrRfidTimeScheduleWizDayLine(models.TransientModel):
 
 class HrRfidTimeScheduleWizWeek(models.TransientModel):
     _name = 'hr.rfid.ctrl.ts.week.wiz'
+    _description = 'Time Schedule Week Wizard'
 
     @api.model
     def _default_interval_ids(self):
