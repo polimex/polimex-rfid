@@ -9,13 +9,6 @@
             <field name="view_mode">tree,form,search</field>
         </record>
 
-        <menuitem id="hr_rfid_vending_menu_auto_refill"
-                  name="Vending Auto Refill Events"
-                  parent="hr_rfid_vending_menu"
-                  action="hr_rfid_vending_auto_refill_action"
-                  groups="hr_rfid_vending.group_customer"
-                  sequence="10"/>
-
         <record id="hr_rfid_vending_auto_refill_form" model="ir.ui.view">
             <field name="name">hr.rfid.vending.auto.refill.form</field>
             <field name="model">hr.rfid.vending.auto.refill</field>

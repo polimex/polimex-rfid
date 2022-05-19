@@ -9,13 +9,6 @@
             <field name="view_mode">tree,form,graph</field>
         </record>
 
-        <menuitem id="hr_rfid_vending_menu_balance_history"
-                  name="Vending Balance History"
-                  parent="hr_rfid_vending_menu"
-                  action="hr_rfid_vending_balance_history_action"
-                  groups="hr_rfid_vending.group_customer"
-                  sequence="20"/>
-
         <record id="hr_rfid_vending_balance_history_form" model="ir.ui.view">
             <field name="name">hr.rfid.vending.balance.history.form</field>
             <field name="model">hr.rfid.vending.balance.history</field>
