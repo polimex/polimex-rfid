@@ -140,8 +140,6 @@ class HrRfidVending(WebRfidController):
                 if len(card) == 0:
                     if event['card'] != '0000000000':
                         return ret_super()
-                elif len(card.employee_id) == 0:
-                    return ret_super()
 
                 item_number = int(event['dt'][4:6], 16)
                 item_price = -1

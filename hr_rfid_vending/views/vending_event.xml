@@ -11,13 +11,6 @@
             </field>
         </record>
 
-        <menuitem id="hr_rfid_vending_menu_events"
-                  name="Vending Events"
-                  parent="hr_rfid_vending_menu"
-                  action="hr_rfid_vending_event_action"
-                  groups="hr_rfid_vending.group_customer"
-                  sequence="0"/>
-
         <record id="hr_rfid_vending_event_form" model="ir.ui.view">
             <field name="name">hr.rfid.vending.event.form</field>
             <field name="model">hr.rfid.vending.event</field>

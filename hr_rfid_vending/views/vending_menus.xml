@@ -2,17 +2,47 @@
 <odoo>
     <data>
 
-        <menuitem id="hr_rfid_vending_products_menu"
-                  name="Products"
-                  parent="hr_rfid.hr_rfid_card_management"
-                  action="stock.product_template_action_product"
-                  groups="hr_rfid_vending.group_customer"
-                  sequence="10"/>
         <menuitem id="hr_rfid_vending_menu"
                   name="Vending"
                   parent="hr_rfid.hr_rfid_root_menu"
                   groups="hr_rfid_vending.group_customer"
                   sequence="7"/>
+
+        <menuitem id="hr_rfid_vending_menu_events"
+                  name="Vending Events"
+                  parent="hr_rfid_vending_menu"
+                  action="hr_rfid_vending_event_action"
+                  groups="hr_rfid_vending.group_customer"
+                  sequence="0"/>
+
+        <menuitem id="hr_rfid_vending_menu_auto_refill"
+                  name="Vending Auto Refill Events"
+                  parent="hr_rfid_vending_menu"
+                  action="hr_rfid_vending_auto_refill_action"
+                  groups="hr_rfid_vending.group_customer"
+                  sequence="10"/>
+
+
+        <menuitem id="hr_rfid_vending_menu_balance_history"
+                  name="Vending Balance History"
+                  parent="hr_rfid_vending_menu"
+                  action="hr_rfid_vending_balance_history_action"
+                  groups="hr_rfid_vending.group_customer"
+                  sequence="20"/>
+
+        <menuitem id="hr_rfid_vending_products_menu"
+                  name="Products"
+                  parent="hr_rfid_vending.hr_rfid_vending_menu"
+                  action="stock.product_template_action_product"
+                  groups="hr_rfid_vending.group_customer"
+                  sequence="30"/>
+
+        <menuitem id="hr_rfid_vending_products_pricelist_menu"
+                  name="Product Price list"
+                  parent="hr_rfid_vending.hr_rfid_vending_menu"
+                  action="product.product_pricelist_action2"
+                  groups="hr_rfid_vending.group_customer"
+                  sequence="25"/>
 
     </data>
 </odoo>
