@@ -131,3 +131,14 @@ class VendingEvents(models.Model):
                 ret = ret.filtered(lambda a: a.employee_id)
 
         return ret
+
+    def _compute_user_ev_name(self):
+        for record in self:
+            if record.event_action == '47':
+                name = record.item_sold_id.name
+                if record.employee_id:
+                    name += ' - %s' % record.employee_id.name
+                    
+                record.name = name
+            else:
+                record.name = super(VendingEvents, self)._compute_user_ev_name()

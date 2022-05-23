@@ -175,10 +175,11 @@ class HrRfidUserEvent(models.Model):
                 rec.employee_id = rec.card_id.employee_id
                 rec.contact_id = rec.card_id.contact_id
 
-            if not rec.employee_id and not rec.contact_id:
+            # Vending sale with money no user
+            if not rec.employee_id and not rec.contact_id and rec.event_action != '47':
                 _logger.error('User event without employee, contact and card. FATAL for event')
             # '1' == Granted
-            if rec.event_action != '1':
+            if rec.event_action not in ['1']:
                 continue
 
             if not rec.employee_id and not rec.contact_id:
@@ -269,7 +270,7 @@ class HrRfidUserEvent(models.Model):
             #         No events for this employee.
             #     </p>'''),
         }
-    
+
     def button_show_door_events(self):
         self.ensure_one()
         return {
