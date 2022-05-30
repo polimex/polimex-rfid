@@ -579,6 +579,17 @@ class WebRfidController(http.Controller):
                 #return werkzeug.exceptions.NotFound(description)
                 pass
             return {'status': 200}
+        except Exception as e:
+            # commented DeferredException ^
+            request.env['hr.rfid.event.system'].sudo().create([{
+                'webstack_id': webstack_id and webstack_id.id,
+                'timestamp': fields.Datetime.now(),
+                'error_description': traceback.format_exc(),
+                'input_js': json.dumps(post_data),
+            }])
+            _logger.error('Caught an unexpected exception, returning status=500 and creating a system event')
+            # print('Caught an exception, returning status=500 and creating a system event')
+            return {'status': 500}
 
     def _parse_raw_data(self, post_data: dict):
         if 'serial' in post_data and 'security' in post_data and 'events' in post_data:

@@ -4,6 +4,14 @@ from odoo import models, exceptions, _, api, fields
 class HrEmployee(models.Model):
     _inherit = "hr.employee"
 
+    def _last_open_checkin(self, zone_id):
+        self.ensure_one()
+        return self.env['hr.attendance'].search([
+            ('employee_id', '=', self.id),
+            ('check_out', '=', False),
+            ('in_zone_id', '=', zone_id),
+        ], limit=1)
+
     def attendance_action_change_with_date(self, action_date, zone_id=None):
         """ Check In/Check Out action
             Check In: create a new attendance record
