@@ -20,6 +20,18 @@ class HrAttendance(models.Model):
         # store=True
     )
 
+    def _update_check_in(self, new):
+        self.ensure_one()
+        vals = {
+                'employee_id': self.employee_id.id,
+                'check_in': new,
+                'in_zone_id': self.in_zone_id.id
+            }
+        self.unlink()
+        self.flush()
+        return self.create(vals)
+
+
     @api.depends('check_in','check_out')
     def _compute_checkin_zone(self):
         for att in self:

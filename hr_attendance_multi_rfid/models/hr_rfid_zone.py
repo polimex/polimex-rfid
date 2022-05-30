@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, api, fields, _, exceptions
+from datetime import timedelta
 
 
 class HrRfidZone(models.Model):
@@ -50,9 +51,11 @@ class HrRfidZone(models.Model):
 
             if check and zone.overwrite_check_in:
                 event.in_or_out = 'in'
-                check.check_in = event.event_time
+                if person.last_attendance_id and person.last_attendance_id.check_out and person.last_attendance_id.check_out < event.event_time:
+                    check.check_in = event.event_time
+                # check = check._update_check_in(event.event_time)
             elif check:
-                check.check_out = check.check_in
+                check.check_out = check.check_in + timedelta(minutes=1)
                 check = None
             if not check:
                 event.in_or_out = 'in'
