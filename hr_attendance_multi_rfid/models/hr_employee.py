@@ -4,7 +4,7 @@ from odoo import models, exceptions, _, api, fields
 class HrEmployee(models.Model):
     _inherit = "hr.employee"
 
-    def attendance_action_change_with_date(self, action_date):
+    def attendance_action_change_with_date(self, action_date, zone_id=None):
         """ Check In/Check Out action
             Check In: create a new attendance record
             Check Out: modify check_out field of appropriate attendance record
@@ -15,6 +15,7 @@ class HrEmployee(models.Model):
             vals = {
                 'employee_id': self.id,
                 'check_in': action_date,
+                'in_zone_id': zone_id
             }
             return self.env['hr.attendance'].create(vals)
 

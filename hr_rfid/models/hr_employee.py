@@ -28,7 +28,7 @@ class HrEmployee(models.Model):
         'employee_id',
         string='RFID Card',
         help='Cards owned by the employee',
-        context = {'active_test': False},
+        context={'active_test': False},
         groups="hr.group_hr_user"
     )
 
@@ -43,7 +43,7 @@ class HrEmployee(models.Model):
     in_zone_ids = fields.Many2many(
         'hr.rfid.zone',
         compute='_compute_zones_for_employee',
-        groups = "hr.group_hr_user"
+        groups="hr.group_hr_user"
     )
 
     employee_event_count = fields.Char(compute='_compute_employee_event_count', groups="hr.group_hr_user")
@@ -84,7 +84,7 @@ class HrEmployee(models.Model):
         for e in self:
             e.in_zone_ids = self.env['hr.rfid.zone'].search([]).filtered(lambda z: e in z.employee_ids)
 
-    def add_acc_gr(self, access_groups, expiration=None):     
+    def add_acc_gr(self, access_groups, expiration=None):
         rel_env = self.env['hr.rfid.access.group.employee.rel']
         for emp in self:
             for acc_gr in access_groups:
@@ -136,7 +136,7 @@ class HrEmployee(models.Model):
         acc_gr_door_rel_env = self.env['hr.rfid.access.group.door.rel']
         acc_grs = self.hr_rfid_access_group_ids.mapped('access_group_id')
         for i in range(len(acc_grs)):
-            for j in range(i+1, len(acc_grs)):
+            for j in range(i + 1, len(acc_grs)):
                 door_rels1 = acc_grs[i].all_door_ids
                 door_rels2 = acc_grs[j].all_door_ids
                 acc_gr_door_rel_env.check_for_ts_inconsistencies(door_rels1, door_rels2)
@@ -152,13 +152,14 @@ class HrEmployee(models.Model):
                     raise exceptions.ValidationError('Access group must be one of the access '
                                                      'groups assigned to the department!')
 
-            doors = user.hr_rfid_access_group_ids.mapped('access_group_id')\
+            doors = user.hr_rfid_access_group_ids.mapped('access_group_id') \
                 .mapped('all_door_ids').mapped('door_id')
             relay_doors = dict()
             for door in doors:
                 ctrl = door.controller_id
                 if ctrl.is_relay_ctrl():
-                    if ctrl in relay_doors and relay_doors.get(ctrl, False) and door.card_type in relay_doors[ctrl].mapped(
+                    if ctrl in relay_doors and relay_doors.get(ctrl, False) and door.card_type in relay_doors[
+                        ctrl].mapped(
                             'card_type') and ctrl.mode == 3:
                         raise exceptions.ValidationError(
                             _('Doors "%s" and "%s" both belong to a controller that cannot give access to multiple doors with same card type in a group.')
@@ -207,7 +208,7 @@ class HrEmployee(models.Model):
             new_active = user.active
 
             if old_active != new_active:
-                user.hr_rfid_card_ids.write({'active':new_active})
+                user.hr_rfid_card_ids.write({'active': new_active})
 
             if old_dep != new_dep:
                 new_dep_acc_grs = new_dep.hr_rfid_allowed_access_groups

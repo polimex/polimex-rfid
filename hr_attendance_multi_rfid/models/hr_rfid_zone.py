@@ -55,7 +55,7 @@ class HrRfidZone(models.Model):
                 check.check_in = event.event_time
             elif person not in zone.employee_ids and person.attendance_state == 'checked_out':
                 event.in_or_out = 'in'
-                person.attendance_action_change_with_date(event.event_time)
+                person.attendance_action_change_with_date(event.event_time, zone.id)
         return super(HrRfidZone, self).person_entered(person, event)
 
     def person_left(self, person, event=None):
@@ -73,9 +73,9 @@ class HrRfidZone(models.Model):
             elif person in zone.employee_ids and person.attendance_state == 'checked_in':
                 if event:
                     event.in_or_out = 'out'
-                    person.attendance_action_change_with_date(event.event_time)
+                    person.attendance_action_change_with_date(event.event_time, zone.id)
                 else:
-                    person.attendance_action_change_with_date(fields.datetime.now())
+                    person.attendance_action_change_with_date(fields.datetime.now(), zone.id)
 
         return super(HrRfidZone, self).person_left(person, event)
 

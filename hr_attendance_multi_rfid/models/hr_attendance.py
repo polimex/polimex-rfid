@@ -16,8 +16,8 @@ class HrAttendance(models.Model):
     )
     in_zone_id = fields.Many2one(
         'hr.rfid.zone',
-        compute='_compute_checkin_zone',
-        store=True
+        # compute='_compute_checkin_zone',
+        # store=True
     )
 
     @api.depends('check_in','check_out')
