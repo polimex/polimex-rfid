@@ -587,7 +587,7 @@ class WebRfidController(http.Controller):
                 'error_description': traceback.format_exc(),
                 'input_js': json.dumps(post_data),
             }])
-            _logger.error('Caught an unexpected exception, returning status=500 and creating a system event')
+            _logger.error('Caught an unexpected exception, returning status=500 and creating a system event - '+str(e))
             # print('Caught an exception, returning status=500 and creating a system event')
             return {'status': 500}
 
