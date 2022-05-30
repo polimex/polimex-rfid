@@ -51,7 +51,10 @@ class HrRfidZone(models.Model):
             if check and zone.overwrite_check_in:
                 event.in_or_out = 'in'
                 check.check_in = event.event_time
-            elif not check:
+            elif check:
+                check.check_out = check.check_in
+                check = None
+            if not check:
                 event.in_or_out = 'in'
                 person.attendance_action_change_with_date(event.event_time, zone.id)
         return super(HrRfidZone, self).person_entered(person, event)
