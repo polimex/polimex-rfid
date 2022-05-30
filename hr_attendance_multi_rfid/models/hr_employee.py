@@ -6,11 +6,20 @@ class HrEmployee(models.Model):
 
     def _last_open_checkin(self, zone_id):
         self.ensure_one()
+        if zone_id:
+            _last = self.env['hr.attendance'].search([
+                ('employee_id', '=', self.id),
+                ('check_out', '=', False),
+                ('in_zone_id', '=', zone_id),
+            ], limit=1)
+            if _last:
+                return _last
         return self.env['hr.attendance'].search([
             ('employee_id', '=', self.id),
             ('check_out', '=', False),
-            ('in_zone_id', '=', zone_id),
         ], limit=1)
+
+
 
     def attendance_action_change_with_date(self, action_date, zone_id=None):
         """ Check In/Check Out action

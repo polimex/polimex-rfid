@@ -61,7 +61,7 @@ class HrRfidZone(models.Model):
             return super(HrRfidZone, self).person_left(person, event)
 
         for zone in self.filtered(lambda z: z.attendance and event):
-            checkin = person._last_open_checkin()
+            checkin = person._last_open_checkin(zone.id)
             if not checkin and zone.overwrite_check_out:
                 if event:
                     event.in_or_out = 'out'
