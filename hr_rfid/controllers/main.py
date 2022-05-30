@@ -557,7 +557,7 @@ class WebRfidController(http.Controller):
                 'error_description': traceback.format_exc(),
                 'input_js': json.dumps(post_data),
             }])
-            _logger.debug('Caught an exception, returning status=500 and creating a system event')
+            _logger.error('Caught an exception, returning status=500 and creating a system event')
             # print('Caught an exception, returning status=500 and creating a system event')
             return {'status': 500}
         except BadTimeException:
@@ -573,7 +573,7 @@ class WebRfidController(http.Controller):
                 'input_js': json.dumps(post_data),
             }
             request.env['hr.rfid.event.system'].sudo().create(sys_ev_dict)
-            _logger.debug('Caught a time error, returning status=200 and creating a system event')
+            _logger.error('Caught a time error, returning status=200 and creating a system event')
             # print('Caught a time error, returning status=200 and creating a system event')
             if not post:
                 #return werkzeug.exceptions.NotFound(description)
