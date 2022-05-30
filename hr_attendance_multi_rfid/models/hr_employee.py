@@ -4,9 +4,9 @@ from odoo import models, exceptions, _, api, fields
 class HrEmployee(models.Model):
     _inherit = "hr.employee"
 
-    def _last_open_checkin(self, zone_id):
+    def _last_open_checkin(self, zone_id=None):
         self.ensure_one()
-        if zone_id:
+        if zone_id is not None:
             _last = self.env['hr.attendance'].search([
                 ('employee_id', '=', self.id),
                 ('check_out', '=', False),
