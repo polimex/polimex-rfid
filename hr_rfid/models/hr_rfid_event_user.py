@@ -229,7 +229,6 @@ class HrRfidUserEvent(models.Model):
                             rec.door_id.zone_ids.person_left(rec.employee_id, rec)
                         else:
                             rec.door_id.zone_ids.person_entered(rec.employee_id, rec)
-        # self.refresh_views()
         return records
 
     def button_show_employee_events(self):

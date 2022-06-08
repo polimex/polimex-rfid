@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, api, fields, _, exceptions
+from datetime import timedelta
 
 
 class HrRfidZone(models.Model):
@@ -46,16 +47,19 @@ class HrRfidZone(models.Model):
         for zone in self:
             if zone.attendance is False:
                 continue
+            check = person._last_open_checkin(zone.id)
 
-            if person in zone.employee_ids and zone.overwrite_check_in:
-                check = self.env['hr.attendance'].search([('employee_id', '=', person.id)], limit=1)
-                if check.check_out:
-                    continue
+            if check and zone.overwrite_check_in:
                 event.in_or_out = 'in'
-                check.check_in = event.event_time
-            elif person not in zone.employee_ids and person.attendance_state == 'checked_out':
+                if person.last_attendance_id and person.last_attendance_id.check_out and person.last_attendance_id.check_out < event.event_time:
+                    check.check_in = event.event_time
+                # check = check._update_check_in(event.event_time)
+            elif check:
+                check.check_out = check.check_in + timedelta(minutes=1)
+                check = None
+            if not check:
                 event.in_or_out = 'in'
-                person.attendance_action_change_with_date(event.event_time)
+                person.attendance_action_change_with_date(event.event_time, zone.id)
         return super(HrRfidZone, self).person_entered(person, event)
 
     def person_left(self, person, event=None):
@@ -63,19 +67,19 @@ class HrRfidZone(models.Model):
             return super(HrRfidZone, self).person_left(person, event)
 
         for zone in self.filtered(lambda z: z.attendance and event):
-            if person not in zone.employee_ids and zone.overwrite_check_out:
-                check = self.env['hr.attendance'].search([('employee_id', '=', person.id)], limit=1)
+            checkin = person._last_open_checkin(zone.id)
+            if not checkin and zone.overwrite_check_out:
                 if event:
                     event.in_or_out = 'out'
-                    check.check_out = event.event_time
+                    person.last_attendance_id.check_out = event.event_time
                 else:
-                    check.check_out = fields.datetime.now()
-            elif person in zone.employee_ids and person.attendance_state == 'checked_in':
-                if event:
-                    event.in_or_out = 'out'
-                    person.attendance_action_change_with_date(event.event_time)
-                else:
-                    person.attendance_action_change_with_date(fields.datetime.now())
+                    person.last_attendance_id.check_out = fields.datetime.now()
+            # elif not check:
+            #     if event:
+            #         event.in_or_out = 'out'
+            #         person.attendance_action_change_with_date(event.event_time, zone.id)
+            #     else:
+            #         person.attendance_action_change_with_date(fields.datetime.now(), zone.id)
 
         return super(HrRfidZone, self).person_left(person, event)
 
