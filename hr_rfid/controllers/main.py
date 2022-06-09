@@ -24,8 +24,8 @@ class WebRfidController(http.Controller):
     def _parse_event(self, post_data: dict, webstack):
         # Helpers
         ctrl_env = request.env['hr.rfid.ctrl'].sudo()
-        card_env = request.env['hr.rfid.card'].sudo()
-        workcodes_env = request.env['hr.rfid.workcode'].sudo()
+        card_env = request.env['hr.rfid.card'].with_company(webstack.company_id).sudo()
+        workcodes_env = request.env['hr.rfid.workcode'].with_company(webstack.company_id).sudo()
         ev_env = request.env['hr.rfid.event.user'].sudo()
 
         # Find Controller
