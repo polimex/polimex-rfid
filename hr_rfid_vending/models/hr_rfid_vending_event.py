@@ -135,7 +135,7 @@ class VendingEvents(models.Model):
     def _compute_user_ev_name(self):
         for record in self:
             if record.event_action == '47':
-                name = record.item_sold_id.name
+                name = record.item_sold_id and record.item_sold_id.name or ''
                 if record.employee_id:
                     name += ' - %s' % record.employee_id.name
                     
