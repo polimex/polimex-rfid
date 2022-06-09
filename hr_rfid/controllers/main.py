@@ -24,8 +24,8 @@ class WebRfidController(http.Controller):
     def _parse_event(self, post_data: dict, webstack):
         # Helpers
         ctrl_env = request.env['hr.rfid.ctrl'].sudo()
-        card_env = request.env['hr.rfid.card'].with_company(webstack.company_id).sudo()
-        workcodes_env = request.env['hr.rfid.workcode'].with_company(webstack.company_id).sudo()
+        card_env = request.env['hr.rfid.card'].sudo()
+        workcodes_env = request.env['hr.rfid.workcode'].sudo()
         ev_env = request.env['hr.rfid.event.user'].sudo()
 
         # Find Controller
@@ -48,7 +48,10 @@ class WebRfidController(http.Controller):
         card_num = post_data['event']['card']
         is_card_event = card_num != '0000000000'
         if is_card_event:
-            card_id = card_env.with_context(active_test=False).search([('number', '=', post_data['event']['card'])])
+            card_id = card_env.with_context(active_test=False).search([
+                ('number', '=', post_data['event']['card']),
+                ('company_id', '=', webstack.company_id.id)
+            ])
         else:
             card_id = None
 
@@ -127,6 +130,7 @@ class WebRfidController(http.Controller):
                 if reader_id.mode == '03' and not controller_id.is_vending_ctrl():  # Card and workcode
                     wc = workcodes_env.search([
                         ('workcode', '=', dt)
+                        ('company_id', '=', webstack.company_id.id)
                     ])
                     if len(wc) == 0:
                         event_dict['workcode'] = dt
@@ -279,6 +283,7 @@ class WebRfidController(http.Controller):
                 if reader_id.mode == '03' and not controller_id.is_vending_ctrl():  # Card and workcode
                     wc = workcodes_env.search([
                         ('workcode', '=', dt)
+                        ('company_id', '=', webstack.company_id.id)
                     ])
                     if len(wc) == 0:
                         event_dict['workcode'] = dt
@@ -555,7 +560,7 @@ class WebRfidController(http.Controller):
             request.env['hr.rfid.event.system'].sudo().create([{
                 'webstack_id': webstack_id and webstack_id.id,
                 'timestamp': fields.Datetime.now(),
-                'error_description': traceback.format_exc(),
+                'error_description': traceback.format_exc() or str(e),
                 'input_js': json.dumps(post_data),
             }])
             # print('Caught an exception, returning status=500 and creating a system event')
