@@ -688,7 +688,8 @@ class HrRfidCardDoorRel(models.Model):
             if door_id == door:
                 if ts_id is not None and ts_id != ts:
                     raise exceptions.ValidationError(
-                        'This should never happen. Please contact the developers. 95328359')
+                        'This should never happen. Please contact the developers. (%s != %s)' % (str(ts_id), str(ts))
+                    )
                 ts_id = ts
                 found_door = True
                 break

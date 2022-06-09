@@ -549,13 +549,13 @@ class HrRfidWebstack(models.Model):
                 return cmd_response
 
     def is_10_3(self):
-        return all([ws.hw_version == '10.3' for ws in self])
+        return all([(ws.hw_version == '10.3') or (ws.version == '1.3400') for ws in self])
 
     def is_50_1(self):
         return all([ws.hw_version == '50.1' for ws in self])
 
     def is_100_1(self):
-        return all([ws.hw_version == '100.1' for ws in self])
+        return all([(ws.hw_version == '100.1') and (ws.version != '1.3400') for ws in self])
 
     def in_cmd_execution(self):
         return self.env['hr.rfid.command'].search_count([
