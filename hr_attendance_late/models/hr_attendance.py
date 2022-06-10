@@ -26,7 +26,7 @@ class HrAttendance(models.Model):
                  'employee_id.resource_calendar_id.attendance_ids')
     def _compute_times(self):
         for a in self:
-            if not a.employee_id or a.check_in:
+            if not a.id or not a.employee_id or a.check_in:
                 a.late = 0
                 a.early = 0
                 a.overtime = 0
