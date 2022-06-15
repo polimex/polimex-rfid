@@ -51,5 +51,15 @@
             </field>
         </record>
 
+        # Commands
+        <record id="action_recalc_attendance" model="ir.actions.server">
+            <field name="name">Re-calc attendance</field>
+            <field name="model_id" ref="model_hr_employee"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">records.recalc_attendance()</field>
+            <field name="binding_model_id" ref="hr.model_hr_employee"/>
+            <field name="binding_view_types">form,list</field>
+        </record>
     </data>
 </odoo>
