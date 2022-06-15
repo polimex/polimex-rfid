@@ -84,10 +84,16 @@ class HrEmployee(models.Model):
                 ('attendance_reason_ids', '=', False),
                 ('employee_id', '=', employee_id.id),
             ]).unlink()
+            manual_att_ids = self.env['hr.attendance'].search([
+                ('check_in', '>=', from_date),
+                ('employee_id', '=', employee_id.id),
+            ])
             presence = [None, None]
             in_zone = None
             previous_attendance_id = None
             for e in event_ids:
+                if manual_att_ids.filtered(lambda a: a.check_in == e.event_time or a.check_out == e.event_time):
+                    continue
                 e.in_or_out = 'no_info'
                 if ((presence[0] and in_zone.overwrite_check_in) or (not presence[0])) and e.reader_id in in_readers_ids:
                     presence[0] = e.event_time
