@@ -1,4 +1,5 @@
 from odoo import models, exceptions, _, api, fields
+from dateutil.relativedelta import relativedelta
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -50,17 +51,73 @@ class HrEmployee(models.Model):
         return attendance
 
     # TODO Recalculate attendance records (needed in some cases)
-    def recalc_attendance(self, from_date, to_date: None, zone_id = None):
-        if to_date is None:
-            to_date = fields.Date.today()
-        if zone_id is None:
-            _logger.info('Search for first attendance zone...')
-            zone_ids = self.env['hr.rfid.zone'].search([('attendance', '=', True)])
-            zone_id =  zone_ids and zone_ids[0] or None
-            if zone_id is None:
-                _logger.error('No defined attendance zone for calculation')
-        for e in self:
-            pass
+    def recalc_attendance(self, from_date=None):
+        if from_date is None:
+            from_date = fields.Datetime.now() - relativedelta(days=30)
+        # if to_date is None:
+        to_date = fields.Date.today()
+        # if zone_id is None:
+        #     _logger.info('Search for first attendance zone...')
+        #     zone_ids = self.env['hr.rfid.zone'].search([('attendance', '=', True)])
+        #     zone_id =  zone_ids and zone_ids[0] or None
+        #     if zone_id is None:
+        #         _logger.error('No defined attendance zone for calculation')
+        att_zone_ids = self.env['hr.rfid.zone'].search([('attendance', "=", True)])
+        doors_with_attendance = att_zone_ids.mapped('door_ids')
+        readers_ids = doors_with_attendance.mapped('reader_ids')
+        in_readers_ids = readers_ids.filtered(lambda r: r.reader_type == '0')
+        out_readers_ids = readers_ids.filtered(lambda r: r.reader_type == '1')
+
+        for employee_id in self:
+            event_ids = self.env['hr.rfid.event.user'].search([
+                ('employee_id', '=', employee_id.id),
+                ('door_id', 'in', doors_with_attendance.mapped('id')),
+                ('event_time', '>=', from_date)
+            ], order='event_time')
+
+            if not event_ids: # no events for processing
+                continue
+
+            # Remove all attendance till now
+            self.env['hr.attendance'].search([
+                ('check_in', '>=', from_date),
+                ('employee_id', '=', employee_id.id),
+            ]).unlink()
+            presence = [None, None]
+            in_zone = None
+            previous_attendance_id = None
+            for e in event_ids:
+                e.in_or_out = 'no_info'
+                if ((presence[0] and in_zone.overwrite_check_in) or (not presence[0])) and e.reader_id in in_readers_ids:
+                    presence[0] = e.event_time
+                    e.in_or_out = 'in'
+                    in_zone = att_zone_ids.filtered(lambda z: e.door_id in z.door_ids)
+                if e.reader_id in out_readers_ids and presence[0]:
+                    presence[1] = e.event_time
+                    e.in_or_out = 'out'
+                if e.reader_id in out_readers_ids and not presence[0] and previous_attendance_id: # update last att record
+                    in_zone = att_zone_ids.filtered(lambda z: e.door_id in z.door_ids)
+                    if in_zone.overwrite_check_out:
+                        previous_attendance_id.check_out = e.event_time
+                        e.in_or_out = 'out'
+                        previous_attendance_id._compute_times()
+                if all(presence):
+                    previous_attendance_id = self.env['hr.attendance'].create({
+                        'check_in':presence[0],
+                        'check_out':presence[1],
+                        'employee_id':employee_id.id,
+                    })
+                    previous_attendance_id._compute_times()
+                    presence = [None, None]
+            # last one may be opened
+            if presence[0] and not presence[1]:
+                self.env['hr.attendance'].create({
+                    'check_in':presence[0],
+                    'in_zone_id':in_zone and in_zone.id ,
+                    'employee_id':employee_id.id,
+                })._compute_times()
+
+            # Check and store open attendance records or bypass attendance constrains
             # Clear old attendance records for the period
             # Search all events based on zone
             # Create all attendance records

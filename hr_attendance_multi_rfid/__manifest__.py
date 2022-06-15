@@ -14,7 +14,7 @@
 
     'website': 'polimex.co',
 
-    'depends': ['hr_rfid', 'hr_attendance',],
+    'depends': ['hr_rfid', 'hr_attendance', 'hr_attendance_reason'],
 
     'data': [
         'views/hr_attendance.xml',

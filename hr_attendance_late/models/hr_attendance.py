@@ -93,3 +93,7 @@ class HrAttendance(models.Model):
             ('check_in', '>=', fields.Datetime.start_of(self.check_in, 'day')),
             ('check_in', '<', self.check_in)
         ], limit=1, order='check_in desc')
+
+    def write(self, vals):
+        super(HrAttendance, self).write(vals)
+        self._compute_times
