@@ -56,6 +56,7 @@ class HrRfidZone(models.Model):
                 # check = check._update_check_in(event.event_time)
             elif check and check.check_in < event.event_time:
                 check.check_out = check.check_in + timedelta(minutes=1)
+                check.in_zone_id = False
                 check = None
             if not check:
                 event.in_or_out = 'in'
