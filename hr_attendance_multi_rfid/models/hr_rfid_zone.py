@@ -54,7 +54,7 @@ class HrRfidZone(models.Model):
                 if person.last_attendance_id and person.last_attendance_id.check_out and person.last_attendance_id.check_out < event.event_time:
                     check.check_in = event.event_time
                 # check = check._update_check_in(event.event_time)
-            elif check:
+            elif check and check.check_in < event.event_time:
                 check.check_out = check.check_in + timedelta(minutes=1)
                 check = None
             if not check:
