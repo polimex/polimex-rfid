@@ -72,7 +72,8 @@ class HrEmployee(models.Model):
             event_ids = self.env['hr.rfid.event.user'].search([
                 ('employee_id', '=', employee_id.id),
                 ('door_id', 'in', doors_with_attendance.mapped('id')),
-                ('event_time', '>=', from_date)
+                ('event_time', '>=', from_date),
+                ('event_action', '=', '1')
             ], order='event_time')
 
             if not event_ids: # no events for processing
@@ -91,14 +92,20 @@ class HrEmployee(models.Model):
             presence = [None, None]
             in_zone = None
             previous_attendance_id = None
+            previous_event_id = None
             for e in event_ids:
+                # Ignore events already recorded in attendance
                 if manual_att_ids.filtered(lambda a: a.check_in == e.event_time or a.check_out == e.event_time):
                     continue
                 e.in_or_out = 'no_info'
+                # Make New presence Checkin or override last one if needed
                 if ((presence[0] and in_zone.overwrite_check_in) or (not presence[0])) and e.reader_id in in_readers_ids:
+                    if presence[0] and in_zone.overwrite_check_in and previous_event_id:
+                        previous_event_id.in_or_out = 'no_info'
                     presence[0] = e.event_time
                     e.in_or_out = 'in'
                     in_zone = att_zone_ids.filtered(lambda z: e.door_id in z.door_ids)
+                # Make Checkout
                 if e.reader_id in out_readers_ids and presence[0]:
                     presence[1] = e.event_time
                     e.in_or_out = 'out'
@@ -116,6 +123,8 @@ class HrEmployee(models.Model):
                     })
                     previous_attendance_id._compute_times()
                     presence = [None, None]
+                previous_event_id = e
+
             # last one may be opened
             if presence[0] and not presence[1]:
                 self.env['hr.attendance'].create({
