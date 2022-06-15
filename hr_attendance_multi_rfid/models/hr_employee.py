@@ -78,9 +78,10 @@ class HrEmployee(models.Model):
             if not event_ids: # no events for processing
                 continue
 
-            # Remove all attendance till now
+            # Remove all attendance till now without manual
             self.env['hr.attendance'].search([
                 ('check_in', '>=', from_date),
+                ('attendance_reason_ids', '=', False),
                 ('employee_id', '=', employee_id.id),
             ]).unlink()
             presence = [None, None]
@@ -102,7 +103,7 @@ class HrEmployee(models.Model):
                         e.in_or_out = 'out'
                         previous_attendance_id._compute_times()
                 if all(presence):
-                    previous_attendance_id = self.env['hr.attendance'].create({
+                    previous_attendance_id = self.env['hr.attendance'].with_context(no_validity_check=True).create({
                         'check_in':presence[0],
                         'check_out':presence[1],
                         'employee_id':employee_id.id,

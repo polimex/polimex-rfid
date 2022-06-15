@@ -77,3 +77,8 @@ class HrAttendance(models.Model):
         if reason:
             vals["attendance_reason_ids"] = [(4, reason.id)]
         self.write(vals)
+
+    # bypass validity if old events processed
+    def _check_validity(self):
+        if self.env.context.get('no_validity_check', None) is None:
+            super(HrAttendance, self)._check_validity()
