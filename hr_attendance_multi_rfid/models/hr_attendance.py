@@ -23,16 +23,15 @@ class HrAttendance(models.Model):
     def _update_check_in(self, new):
         self.ensure_one()
         vals = {
-                'employee_id': self.employee_id.id,
-                'check_in': new,
-                'in_zone_id': self.in_zone_id.id
-            }
+            'employee_id': self.employee_id.id,
+            'check_in': new,
+            'in_zone_id': self.in_zone_id.id
+        }
         self.unlink()
         self.flush()
         return self.create(vals)
 
-
-    @api.depends('check_in','check_out')
+    @api.depends('check_in', 'check_out')
     def _compute_checkin_zone(self):
         for att in self:
             if att.check_out:
@@ -43,9 +42,10 @@ class HrAttendance(models.Model):
 
     def write(self, vals):
         for att in self:
-            in_zone_ids = att.employee_id.in_zone_ids.filtered(lambda z: z.attendance)
-            if vals.get('check_out', False) and not att.check_out and in_zone_ids:
-               in_zone_ids.person_left(att.employee_id)
+            # in_zone_ids = att.employee_id.in_zone_ids.filtered(lambda z: z.attendance)
+            if vals.get('check_out', False) and not att.check_out and att.in_zone_id:
+                att.in_zone_id.person_left(att.employee_id)
+                vals['in_zone_id'] = False
         return super(HrAttendance, self).write(vals)
 
     def _get_zone_settings(self):
