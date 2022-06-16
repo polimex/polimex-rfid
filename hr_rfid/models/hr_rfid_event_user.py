@@ -190,10 +190,10 @@ class HrRfidUserEvent(models.Model):
             if zones:
                 # Reader type is In
                 if rec.reader_id.reader_type == '0':
-                    zones.person_entered(rec.employee_id or rec.contact_id, rec)
+                    zones.with_context(from_event=True).person_entered(rec.employee_id or rec.contact_id, rec)
                 # Reader type is Out
                 else:
-                    zones.person_left(rec.employee_id or rec.contact_id, rec)
+                    zones.with_context(from_event=True).person_left(rec.employee_id or rec.contact_id, rec)
                 continue
 
             if rec.reader_id.mode != '03':

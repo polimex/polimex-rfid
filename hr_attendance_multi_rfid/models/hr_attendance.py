@@ -44,7 +44,8 @@ class HrAttendance(models.Model):
         for att in self:
             # in_zone_ids = att.employee_id.in_zone_ids.filtered(lambda z: z.attendance)
             if vals.get('check_out', False) and not att.check_out and att.in_zone_id:
-                att.in_zone_id.person_left(att.employee_id)
+                if self.env.context.get('from_event', None) is None:
+                    att.in_zone_id.person_left(att.employee_id)
                 vals['in_zone_id'] = False
         return super(HrAttendance, self).write(vals)
 
