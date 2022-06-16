@@ -9,20 +9,26 @@ _logger = logging.getLogger(__name__)
 class HrEmployee(models.Model):
     _inherit = "hr.employee"
 
-    def _last_open_checkin(self, zone_id=None):
+    def _last_open_checkin(self, zone_id=None, before_dt=None):
         self.ensure_one()
         if zone_id is not None:
-            _last = self.env['hr.attendance'].search([
+            domain = [
                 ('employee_id', '=', self.id),
                 ('check_out', '=', False),
                 ('in_zone_id', '=', zone_id),
-            ], limit=1)
+            ]
+            if before_dt is not None:
+                domain.append(('check_in', '<', before_dt))
+            _last = self.env['hr.attendance'].search(domain, limit=1)
             if _last:
                 return _last
-        return self.env['hr.attendance'].search([
+        domain = [
             ('employee_id', '=', self.id),
             ('check_out', '=', False),
-        ], limit=1)
+        ]
+        if before_dt is not None:
+            domain.append(('check_in', '<', before_dt))
+        return self.env['hr.attendance'].search(domain, limit=1)
 
     def attendance_action_change_with_date(self, action_date, zone_id=None):
         """ Check In/Check Out action
@@ -111,7 +117,7 @@ class HrEmployee(models.Model):
                     e.in_or_out = 'out'
                 if e.reader_id in out_readers_ids and not presence[0] and previous_attendance_id: # update last att record
                     in_zone = att_zone_ids.filtered(lambda z: e.door_id in z.door_ids)
-                    if in_zone.overwrite_check_out:
+                    if in_zone.overwrite_check_out and (e.event_time - previous_attendance_id.check_out) < relativedelta(hours=6):
                         previous_attendance_id.check_out = e.event_time
                         e.in_or_out = 'out'
                         previous_attendance_id._compute_times()
