@@ -93,14 +93,20 @@ class HrRfidZone(models.Model):
                     ], order='check_out desc', limit=1)
                     # If event older than last checkout ignor it (6+ hours)
                     if last_att_id and (event.event_time - last_att_id.check_out) < relativedelta(hours=8):
-                        last_att_id.write({'check_out': event.event_time})
+                        last_att_id.with_context(from_event=True).write({'check_out': event.event_time})
                 else:
-                    person.last_attendance_id.check_out = fields.Datetime.now()
+                    person.last_attendance_id.with_context(from_event=True).write({
+                        'check_out': fields.Datetime.now()
+                    })
             elif checkin and event:
                 event.in_or_out = 'out'
-                checkin.check_out = event.event_time
+                checkin.with_context(from_event=True).write({
+                    'check_out': event.event_time
+                })
             elif checkin:
-                checkin.check_out = fields.Datetime.now()
+                checkin.with_context(from_event=True).write({
+                    'check_out': fields.Datetime.now()
+                })
 
         # elif not check:
         #     if event:
