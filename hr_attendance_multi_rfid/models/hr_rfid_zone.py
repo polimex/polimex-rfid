@@ -51,10 +51,15 @@ class HrRfidZone(models.Model):
             check = person._last_open_checkin(zone.id, before_dt=event and event.event_time or None)
 
             if check and zone.overwrite_check_in:
-                event.in_or_out = 'in'
-                if person.last_attendance_id and person.last_attendance_id.check_out and person.last_attendance_id.check_out < event.event_time:
+                if event:
+                    event.in_or_out = 'in'
+                    if person.last_attendance_id and person.last_attendance_id.check_out and person.last_attendance_id.check_out < event.event_time:
+                        check.with_context(no_validity_check=True).write({
+                            'check_in': event.event_time
+                        })
+                else:
                     check.with_context(no_validity_check=True).write({
-                        'check_in': event.event_time
+                        'check_in': fields.Datetime.now()
                     })
                     # check.check_in = event.event_time
                 # check = check._update_check_in(event.event_time)
@@ -63,9 +68,13 @@ class HrRfidZone(models.Model):
             #     check.in_zone_id = False
             #     check = None
             if not check:
-                event.in_or_out = 'in'
-                person.with_context(no_validity_check=True).attendance_action_change_with_date(event.event_time,
+                if event:
+                    event.in_or_out = 'in'
+                    person.with_context(no_validity_check=True).attendance_action_change_with_date(event.event_time,
                                                                                                zone.id)
+                else:
+                    person.with_context(no_validity_check=True).attendance_action_change_with_date(fields.Datetime.now(),
+                                                                                                   zone.id)
         return super(HrRfidZone, self).person_entered(person, event)
 
     def person_left(self, person, event=None):
@@ -86,17 +95,19 @@ class HrRfidZone(models.Model):
                     if last_att_id and (event.event_time - last_att_id.check_out) < relativedelta(hours=8):
                         last_att_id.write({'check_out': event.event_time})
                 else:
-                    person.last_attendance_id.check_out = fields.datetime.now()
-            elif checkin:
+                    person.last_attendance_id.check_out = fields.Datetime.now()
+            elif checkin and event:
                 event.in_or_out = 'out'
                 checkin.check_out = event.event_time
+            elif checkin:
+                checkin.check_out = fields.Datetime.now()
 
         # elif not check:
         #     if event:
         #         event.in_or_out = 'out'
         #         person.attendance_action_change_with_date(event.event_time, zone.id)
         #     else:
-        #         person.attendance_action_change_with_date(fields.datetime.now(), zone.id)
+        #         person.attendance_action_change_with_date(fields.Datetime.now(), zone.id)
 
         return super(HrRfidZone, self).person_left(person, event)
 
