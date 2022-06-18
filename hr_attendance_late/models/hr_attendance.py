@@ -26,6 +26,11 @@ class HrAttendance(models.Model):
                  'employee_id.resource_calendar_id.attendance_ids')
     def _compute_times(self):
         for a in self:
+            if not a.id or not a.employee_id or a.check_in:
+                a.late = 0
+                a.early = 0
+                a.overtime = 0
+                continue
             check_in = fields.Datetime.context_timestamp(a.employee_id.resource_calendar_id, a.check_in)
             day_start = fields.Datetime.context_timestamp(
                 a.employee_id.resource_calendar_id,
@@ -88,3 +93,7 @@ class HrAttendance(models.Model):
             ('check_in', '>=', fields.Datetime.start_of(self.check_in, 'day')),
             ('check_in', '<', self.check_in)
         ], limit=1, order='check_in desc')
+
+    def write(self, vals):
+        super(HrAttendance, self).write(vals)
+        self._compute_times

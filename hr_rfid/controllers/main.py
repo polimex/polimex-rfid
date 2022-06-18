@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
+import json
+import traceback
+import time
+import psycopg2
+
 from ..models.hr_rfid_webstack import BadTimeException
 from odoo import http, fields, exceptions, _, SUPERUSER_ID
 from odoo.http import request
 
-import json
-import traceback
-import psycopg2
-import time
 
 import logging
 
@@ -96,7 +97,6 @@ class WebRfidController(http.Controller):
                         door = reader_id.door_ids and reader_id.door_ids[0] or None
                     else:
                         door = None
-
                     # TODO Debug and test relay controller with this event
                     # Received={"convertor": 446111, "event": {"bos": 3, "card": "0023023153", "cmd": "FA", "date": "01.08.22", "day": 6, "dt": "00000000000000000000010100000205060000000002", "err": 0, "event_n": 3, "id": 40, "reader": 0, "time": "14:59:35", "tos": 23}, "key": "44FC"}
                     if isinstance(door, set) and len(door) > 0:
@@ -129,7 +129,7 @@ class WebRfidController(http.Controller):
 
                 if reader_id.mode == '03' and not controller_id.is_vending_ctrl():  # Card and workcode
                     wc = workcodes_env.search([
-                        ('workcode', '=', dt)
+                        ('workcode', '=', dt),
                         ('company_id', '=', webstack.company_id.id)
                     ])
                     if len(wc) == 0:
@@ -282,7 +282,7 @@ class WebRfidController(http.Controller):
 
                 if reader_id.mode == '03' and not controller_id.is_vending_ctrl():  # Card and workcode
                     wc = workcodes_env.search([
-                        ('workcode', '=', dt)
+                        ('workcode', '=', dt),
                         ('company_id', '=', webstack.company_id.id)
                     ])
                     if len(wc) == 0:

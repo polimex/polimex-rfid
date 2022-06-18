@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, api, fields, _, exceptions
-from datetime import timedelta
+from dateutil.relativedelta import relativedelta
 
 
 class HrRfidZone(models.Model):
@@ -40,6 +40,7 @@ class HrRfidZone(models.Model):
         digits=(2, 2)
     )
 
+    # TODO Need to added .with_context(no_validity_check=True) for attendance management!!!
     def person_entered(self, person, event):
         if not isinstance(person, type(self.env['hr.employee'])):
             return super(HrRfidZone, self).person_entered(person, event)
@@ -47,39 +48,72 @@ class HrRfidZone(models.Model):
         for zone in self:
             if zone.attendance is False:
                 continue
-            check = person._last_open_checkin(zone.id)
+            check = person._last_open_checkin(zone.id, before_dt=event and event.event_time or None)
 
             if check and zone.overwrite_check_in:
-                event.in_or_out = 'in'
-                if person.last_attendance_id and person.last_attendance_id.check_out and person.last_attendance_id.check_out < event.event_time:
-                    check.check_in = event.event_time
+                if event:
+                    event.in_or_out = 'in'
+                    if person.last_attendance_id and person.last_attendance_id.check_out and person.last_attendance_id.check_out < event.event_time:
+                        check.with_context(no_validity_check=True).write({
+                            'check_in': event.event_time
+                        })
+                else:
+                    check.with_context(no_validity_check=True).write({
+                        'check_in': fields.Datetime.now()
+                    })
+                    # check.check_in = event.event_time
                 # check = check._update_check_in(event.event_time)
-            elif check:
-                check.check_out = check.check_in + timedelta(minutes=1)
-                check = None
+            # elif check and check.check_in < event.event_time:
+            #     check.check_out = check.check_in + timedelta(minutes=1)
+            #     check.in_zone_id = False
+            #     check = None
             if not check:
-                event.in_or_out = 'in'
-                person.attendance_action_change_with_date(event.event_time, zone.id)
+                if event:
+                    event.in_or_out = 'in'
+                    person.with_context(no_validity_check=True).attendance_action_change_with_date(event.event_time,
+                                                                                               zone.id)
+                else:
+                    person.with_context(no_validity_check=True).attendance_action_change_with_date(fields.Datetime.now(),
+                                                                                                   zone.id)
         return super(HrRfidZone, self).person_entered(person, event)
 
     def person_left(self, person, event=None):
         if not isinstance(person, type(self.env['hr.employee'])):
             return super(HrRfidZone, self).person_left(person, event)
 
-        for zone in self.filtered(lambda z: z.attendance and event):
-            checkin = person._last_open_checkin(zone.id)
+        for zone in self.filtered(lambda z: z.attendance):
+            checkin = person._last_open_checkin(zone.id, before_dt=event and event.event_time or None)
             if not checkin and zone.overwrite_check_out:
                 if event:
                     event.in_or_out = 'out'
-                    person.last_attendance_id.check_out = event.event_time
+                    last_att_id = self.env['hr.attendance'].search([
+                        ('check_out', '<', event.event_time),
+                        ('employee_id', '=', person.id),
+                        ('in_zone_id', '=', zone.id),
+                    ], order='check_out desc', limit=1)
+                    # If event older than last checkout ignor it (6+ hours)
+                    if last_att_id and (event.event_time - last_att_id.check_out) < relativedelta(hours=8):
+                        last_att_id.with_context(from_event=True).write({'check_out': event.event_time})
                 else:
-                    person.last_attendance_id.check_out = fields.datetime.now()
-            # elif not check:
-            #     if event:
-            #         event.in_or_out = 'out'
-            #         person.attendance_action_change_with_date(event.event_time, zone.id)
-            #     else:
-            #         person.attendance_action_change_with_date(fields.datetime.now(), zone.id)
+                    person.last_attendance_id.with_context(from_event=True).write({
+                        'check_out': fields.Datetime.now()
+                    })
+            elif checkin and event:
+                event.in_or_out = 'out'
+                checkin.with_context(from_event=True).write({
+                    'check_out': event.event_time
+                })
+            elif checkin:
+                checkin.with_context(from_event=True).write({
+                    'check_out': fields.Datetime.now()
+                })
+
+        # elif not check:
+        #     if event:
+        #         event.in_or_out = 'out'
+        #         person.attendance_action_change_with_date(event.event_time, zone.id)
+        #     else:
+        #         person.attendance_action_change_with_date(fields.Datetime.now(), zone.id)
 
         return super(HrRfidZone, self).person_left(person, event)
 
