@@ -173,8 +173,11 @@ class HrRfidSystemEvent(models.Model):
                 return
 
             if 'error_description' in vals and vals['error_description'] == 'Could not find the card':
-                js = json.loads(vals['input_js'])
-                vals['input_js'] = js['event']['card']
+                try:
+                    js = json.loads(vals['input_js'])
+                    vals['input_js'] = js['event']['card']
+                finally:
+                    return
             else:
                 vals.pop('input_js')
 
