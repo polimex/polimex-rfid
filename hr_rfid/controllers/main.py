@@ -557,12 +557,12 @@ class WebRfidController(http.Controller):
                 psycopg2.DataError, ValueError) as e:
             # commented DeferredException ^
             _logger.error('Caught an exception, returning status=500 and creating a system event (%s)' % str(e))
-            request.env['hr.rfid.event.system'].sudo().create([{
+            request.env['hr.rfid.event.system'].sudo().create({
                 'webstack_id': webstack_id and webstack_id.id,
                 'timestamp': fields.Datetime.now(),
                 'error_description': traceback.format_exc() or str(e),
                 'input_js': json.dumps(post_data),
-            }])
+            })
             # print('Caught an exception, returning status=500 and creating a system event')
             return {'status': 500}
         except BadTimeException:
