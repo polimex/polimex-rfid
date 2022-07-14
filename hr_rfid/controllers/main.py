@@ -350,7 +350,7 @@ class WebRfidController(http.Controller):
                 'event_time': webstack.get_ws_time_str(post_data['event']),
                 'event_action': str(8 - int(pin)) if event_action == 36 else '12' if event_action == 38 else '9',
             }
-            if event_dict['event_action'] == '8' or (event_dict['event_action'] == '9' and not card_id): # Card Denied Insert or Ejected unknown card
+            if (event_dict['event_action'] in ['8', '9']) and not card_id: # Card Denied Insert or Ejected unknown card
                 sys_event_dict = {
                     'door_id': door and door.id or False,
                     'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
