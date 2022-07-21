@@ -350,6 +350,21 @@ class WebRfidController(http.Controller):
                 'event_time': webstack.get_ws_time_str(post_data['event']),
                 'event_action': str(8 - int(pin)) if event_action == 36 else '12' if event_action == 38 else '9',
             }
+            if (event_dict['event_action'] in ['8', '9']) and not card_id: # Card Denied Insert or Ejected unknown card
+                sys_event_dict = {
+                    'door_id': door and door.id or False,
+                    'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
+                    'event_action': event_dict['event_action'],
+                    'card_number': card_num or None,
+                    'input_js': card_num,
+                }
+
+                event = controller_id.report_sys_ev(
+                    description=_('Could not find the card'),
+                    post_data=post_data,
+                    sys_ev_dict=sys_event_dict
+                )
+                return webstack.check_for_unsent_cmd(200)
             if event_action in [38]:  # button
                 event_dict['more_json'] = json.dumps({"state": int(pin) == 1})
             # if event_action in [37]:  # eject
