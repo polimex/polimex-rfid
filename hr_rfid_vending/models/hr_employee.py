@@ -90,6 +90,8 @@ class HrEmployee(models.Model):
         balance = Decimal(str(self.hr_rfid_vending_balance))
         if self.hr_rfid_vending_negative_balance is True:
             balance += Decimal(str(abs(self.hr_rfid_vending_limit)))
+        if balance <= 0:
+            return '0000', 0
         if self.hr_rfid_vending_in_attendance is True:
             if self.attendance_state == 'checked_out':
                 return '0000', 0
