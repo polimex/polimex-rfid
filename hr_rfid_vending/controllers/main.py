@@ -124,6 +124,8 @@ class HrRfidVending(WebRfidController):
                 card_number = reduce(operator.add, list('0' + str(a) for a in card.number), '')
 
                 ev = create_ev(controller, event, card, '64')
+                if balance <= 0:
+                    return ret_super()
                 cmd = cmd_env.create({
                     'webstack_id': webstack_id.id,
                     'controller_id': controller.id,
