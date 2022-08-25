@@ -85,6 +85,11 @@ class HrEmployee(models.Model):
         string='Balance History',
     )
 
+    def employee_vending_balance_history_action(self):
+        self.ensure_one()
+        bh_action = self.env.ref('hr_rfid_vending.hr_rfid_vending_balance_history_action').sudo().read()[0]
+        bh_action['domain'] = [('employee_id', '=', self.id)]
+        return bh_action
     def get_employee_balance(self, controller):
         self.ensure_one()
         balance = Decimal(str(self.hr_rfid_vending_balance))
@@ -95,8 +100,6 @@ class HrEmployee(models.Model):
         if self.hr_rfid_vending_in_attendance is True:
             if self.attendance_state == 'checked_out':
                 return '0000', 0
-        if balance <= 0:
-            return '0000', 0
         balance += Decimal(str(self.hr_rfid_vending_recharge_balance))
         if self.hr_rfid_vending_daily_limit != 0:
             limit = abs(self.hr_rfid_vending_daily_limit)
