@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, exceptions
+from odoo import api, fields, models, exceptions, _
 from decimal import Decimal
 
 
@@ -13,7 +13,7 @@ class HrEmployee(models.Model):
     )
 
     hr_rfid_vending_recharge_balance = fields.Float(
-        string='Recharge Balance',
+        string='Self Recharge Balance',
         help='Amount of self charged money the employee can spend on the vending machine',
         default=0,
     )
@@ -196,8 +196,10 @@ class VendingBalanceWiz(models.TransientModel):
 
     def _default_value(self):
         emp = self._default_employee()
-        if self._context.get('setting_balance', False) is True:
+        if self._context.get('setting_balance', False) == 2:
             return emp.hr_rfid_vending_balance
+        if self._context.get('setting_balance', False) == 3:
+            return emp.hr_rfid_vending_recharge_balance
         return 0.0
 
     employee_id = fields.Many2one(
@@ -230,7 +232,14 @@ class VendingBalanceWiz(models.TransientModel):
 
     def set_value(self):
         self.ensure_one()
-        res = self.employee_id.hr_rfid_vending_set_balance(self.value)
+        if self._context.get('setting_balance', False) == 2:
+            res = self.employee_id.hr_rfid_vending_set_balance(self.value)
+        if self._context.get('setting_balance', False) == 3:
+            res = True
+            self.employee_id.message_post(
+                body=_('Manual updated employee personal balance from %d to %d') % (self.employee_id.hr_rfid_vending_recharge_balance, self.value)
+            )
+            self.employee_id.hr_rfid_vending_recharge_balance = self.value
         if not res:
             raise exceptions.ValidationError(
                 "Could not set the balance. Please check if it's going under the limit."
