@@ -6,7 +6,7 @@
             <field name="name">Vending Balance History</field>
             <field name="res_model">hr.rfid.vending.balance.history</field>
             <!--      <field name="view_type">form</field>-->
-            <field name="view_mode">tree,form,graph</field>
+            <field name="view_mode">tree,form,pivot,graph</field>
         </record>
 
         <record id="hr_rfid_vending_balance_history_form" model="ir.ui.view">
@@ -54,6 +54,8 @@
 <!--                    </field>-->
 
                     <filter name="auto_refill" string="Auto Refills" domain="[('auto_refill_id','!=',False)]"/>
+                    <filter name="balance_decrease" string="Balance Decrease" domain="[('balance_change','&lt;',0)]"/>
+                    <filter name="balance_increase" string="Balance Increases" domain="[('balance_change','&gt;',0)]"/>
                     <separator/>
                     <filter name="last_week" string="Events from last week"
                             domain="[('create_date', '&gt;=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
@@ -93,6 +95,17 @@
                     <field name="employee_id" type="row"/>
                     <field name="balance_change" type="measure"/>
                 </graph>
+            </field>
+        </record>
+        <record id="hr_rfid_vending_balance_history_pivot" model="ir.ui.view">
+            <field name="name">hr.rfid.vending.balance.history.pivot</field>
+            <field name="model">hr.rfid.vending.balance.history</field>
+            <field name="arch" type="xml">
+                <pivot string="Balance Changes Per Employee" >
+                    <field name="create_date" type="col"/>
+                    <field name="employee_id" type="row"/>
+                    <field name="balance_change" type="measure"/>
+                </pivot>
             </field>
         </record>
 
