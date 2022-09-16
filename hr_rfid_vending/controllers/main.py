@@ -81,9 +81,13 @@ class HrRfidVending(WebRfidController):
                 return -1
             return item.list_price
 
-        def calc_balance(controller, event):
-            received_balance = int(event['dt'][6:8], 16) * 0x10 + int(event['dt'][8:10], 16)
-            return (received_balance * controller.scale_factor) / 100
+        def calc_balance(controller, event, second=False):
+            if not second:
+                received_balance = int(event['dt'][6:8], 16) * 0x10 + int(event['dt'][8:10], 16)
+                return (received_balance * controller.scale_factor) / 100
+            else:
+                received_balance = int(event['dt'][10:12], 16) * 0x10 + int(event['dt'][12:14], 16)
+                return (received_balance * controller.scale_factor) / 100
 
         def parse_event():
             controller = webstack_id.controllers.filtered(lambda r: r.ctrl_id == post_data['event']['id'])
@@ -124,6 +128,8 @@ class HrRfidVending(WebRfidController):
                 card_number = reduce(operator.add, list('0' + str(a) for a in card.number), '')
 
                 ev = create_ev(controller, event, card, '64')
+                if balance <= 0:
+                    return ret_super()
                 cmd = cmd_env.create({
                     'webstack_id': webstack_id.id,
                     'controller_id': controller.id,
@@ -200,7 +206,20 @@ class HrRfidVending(WebRfidController):
             elif event['event_n'] in [48, 49]:
                 controller.report_sys_ev('Vending machine sent us an error', event)
                 return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code))
+            elif event['event_n'] == 50:
+                card = card_env.search(
+                    ['|', ('active', '=', True), ('active', '=', False), ('number', '=', event['card'])])
 
+                if len(card) == 0:
+                    if event['card'] != '0000000000':
+                        return ret_super()
+
+                item_number = int(event['dt'][4:6], 16)  # must be 99 (0x63)
+                recharge_balance = calc_balance(controller, event, True)
+                if len(card) > 0 and item_number == 99 and recharge_balance > 0:
+                    ev = create_ev(controller, event, card, '50', transaction_price=recharge_balance)
+                    card.employee_id.hr_rfid_vending_recharge_balance += ev.transaction_price
+                    return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code, ev))
             return ret_super()
 
         try:

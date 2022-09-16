@@ -25,6 +25,6 @@ class ProductTemplate(models.Model):
                 ])
                 if len(ret) == 0:
                     continue
-
-                wiz = self.env['hr.rfid.ctrl.vending.settings'].with_context(active_ids=[ret.controller_id.id]).create({})
-                wiz.save_settings()
+                for ctrl in ret:
+                    wiz = self.env['hr.rfid.ctrl.vending.settings'].with_context(active_ids=[ctrl.controller_id.id]).create({})
+                    wiz.save_settings()

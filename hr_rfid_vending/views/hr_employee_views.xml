@@ -63,12 +63,20 @@
                 <xpath expr="//div[@name='button_box']" position="inside">
                     <button name="%(hr_employee_vending_balance_change_action)d" id="hr_employee_vending_balance_btn"
                             type="action" class="oe_stat_button" icon="fa-money" string="Add/Subtract from balance"
-                            context="{'setting_balance':False}" groups="hr_rfid_vending.group_customer"
+                            context="{'setting_balance':1}" groups="hr_rfid_vending.group_customer"
                             help="Add or remove balance to person's account"/>
                     <button name="%(hr_employee_vending_balance_set_action)d" id="hr_employee_vending_balance_fixed_btn"
                             type="action" class="oe_stat_button" icon="fa-money" string="Set balance to"
-                            context="{'setting_balance':True}" groups="hr_rfid_vending.group_customer"
+                            context="{'setting_balance':2}" groups="hr_rfid_vending.group_customer"
                             help="Set person's balance"/>
+                    <button name="%(hr_employee_vending_balance_set_action)d" id="hr_employee_vending_own_balance_btn"
+                            type="action" class="oe_stat_button" icon="fa-money" string="Set private balance"
+                            context="{'setting_balance':3}" groups="hr_rfid_vending.group_customer"
+                            help="Set person's balance"/>
+                    <button name="employee_vending_balance_history_action" id="hr_employee_vending_balance_history_btn"
+                            type="object" class="oe_stat_button" icon="fa-list" string="Balance History"
+                            groups="hr_rfid_vending.group_customer"
+                            help="Show employee history balance"/>
                 </xpath>
                 <notebook position="inside">
                     <page string="Vending" groups="hr_rfid_vending.group_customer">
@@ -92,16 +100,6 @@
                                        attrs="{'invisible':[('hr_rfid_vending_auto_refill','=',False)]}"/>
                                 <field name="hr_rfid_vending_refill_max"
                                        attrs="{'invisible':['|',('hr_rfid_vending_auto_refill','=',False),('hr_rfid_vending_refill_type','=','fixed')]}"/>
-                            </group>
-                            <group string="Balance History" colspan="4">
-                                <field name="hr_rfid_vending_balance_history" readonly="1">
-                                    <tree default_order="id desc" create="0" delete="0">
-                                        <field name="name"/>
-                                        <field name="balance_change"/>
-                                        <field name="balance_result"/>
-                                        <field name="create_date" string="Operation Date"/>
-                                    </tree>
-                                </field>
                             </group>
                         </group>
                     </page>

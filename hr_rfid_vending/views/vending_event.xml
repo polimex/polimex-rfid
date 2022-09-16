@@ -53,7 +53,9 @@
                     <field name="employee_id"/>
                     <field name="event_action"/>
                     <field name="item_sold_id"/>
-                    <field name="controller_id"/>
+                    <field name="item_sold" optional="hide"/>
+                    <field name="controller_id" optional="hide"/>
+                    <field name="transaction_price" optional="hide"/>
                 </tree>
             </field>
         </record>
@@ -68,7 +70,7 @@
                     <field name="event_time"/>
                     <field name="employee_id"/>
                     <field name="card_id"/>
-                    <filter name="sale_events" string="Transaction events" domain="[('event_action','=','47')]"/>
+                    <filter name="sale_events" string="Transaction events" domain="[('event_action','in',['47',50])]"/>
                     <filter name="sale_employee_events" string="Employee Transaction Events"
                             domain="[('event_action','=','47'),('employee_id','!=',False)]"/>
                     <filter name="sale_non_employee_events" string="Non-Employee Transaction Events"

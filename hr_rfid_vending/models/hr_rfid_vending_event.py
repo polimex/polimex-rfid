@@ -13,6 +13,7 @@ class VendingEvents(models.Model):
         ('47', 'Purchase Complete'),
         ('48', 'Error'),  # TODO What type of error?
         ('49', 'Error'),  # TODO What type of error?
+        ('50', 'Collect cash'),  # TODO What type of error?
         # ('64', 'Requesting User Balance'),
     ]
 
@@ -27,7 +28,8 @@ class VendingEvents(models.Model):
         ondelete={'-1': 'cascade',
                   '47': 'cascade',
                   '48': 'cascade',
-                  '49': 'cascade'},
+                  '49': 'cascade',
+                  '50': 'cascade'},
         string='Action',
         help='What happened to trigger the event',
     )
@@ -46,6 +48,7 @@ class VendingEvents(models.Model):
 
     item_sold = fields.Integer(
         string='Item Sold Number',
+        group_operator='count_distinct'
     )
 
     # employee_id = fields.Many2one(

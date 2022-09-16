@@ -18,10 +18,8 @@
             <field name="global" eval="True"/>
             <field name="domain_force">[
                 '|',
-                '|', ('employee_id.company_id', 'in', company_ids),
-                ('employee_id.company_id', '=', False),
-                '|', ('item_id.company_id', 'in', company_ids),
-                ('item_id.company_id', '=', False)
+                '|', ('employee_id.company_id', 'in', company_ids), ('employee_id.company_id', '=', False),
+                '|', ('item_id.company_id', 'in', company_ids), ('item_id.company_id', '=', False)
             ]</field>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>

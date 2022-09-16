@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, exceptions
+from odoo import api, fields, models, exceptions, _
 from decimal import Decimal
 
 
@@ -13,7 +13,7 @@ class HrEmployee(models.Model):
     )
 
     hr_rfid_vending_recharge_balance = fields.Float(
-        string='Recharge Balance',
+        string='Self Recharge Balance',
         help='Amount of self charged money the employee can spend on the vending machine',
         default=0,
     )
@@ -85,16 +85,21 @@ class HrEmployee(models.Model):
         string='Balance History',
     )
 
+    def employee_vending_balance_history_action(self):
+        self.ensure_one()
+        bh_action = self.env.ref('hr_rfid_vending.hr_rfid_vending_balance_history_action').sudo().read()[0]
+        bh_action['domain'] = [('employee_id', '=', self.id)]
+        return bh_action
     def get_employee_balance(self, controller):
         self.ensure_one()
         balance = Decimal(str(self.hr_rfid_vending_balance))
         if self.hr_rfid_vending_negative_balance is True:
             balance += Decimal(str(abs(self.hr_rfid_vending_limit)))
+        if balance <= 0:
+            return '0000', 0
         if self.hr_rfid_vending_in_attendance is True:
             if self.attendance_state == 'checked_out':
                 return '0000', 0
-        if balance <= 0:
-            return '0000', 0
         balance += Decimal(str(self.hr_rfid_vending_recharge_balance))
         if self.hr_rfid_vending_daily_limit != 0:
             limit = abs(self.hr_rfid_vending_daily_limit)
@@ -191,8 +196,10 @@ class VendingBalanceWiz(models.TransientModel):
 
     def _default_value(self):
         emp = self._default_employee()
-        if self._context.get('setting_balance', False) is True:
+        if self._context.get('setting_balance', False) == 2:
             return emp.hr_rfid_vending_balance
+        if self._context.get('setting_balance', False) == 3:
+            return emp.hr_rfid_vending_recharge_balance
         return 0.0
 
     employee_id = fields.Many2one(
@@ -225,7 +232,14 @@ class VendingBalanceWiz(models.TransientModel):
 
     def set_value(self):
         self.ensure_one()
-        res = self.employee_id.hr_rfid_vending_set_balance(self.value)
+        if self._context.get('setting_balance', False) == 2:
+            res = self.employee_id.hr_rfid_vending_set_balance(self.value)
+        if self._context.get('setting_balance', False) == 3:
+            res = True
+            self.employee_id.message_post(
+                body=_('Manual updated employee personal balance from %d to %d') % (self.employee_id.hr_rfid_vending_recharge_balance, self.value)
+            )
+            self.employee_id.hr_rfid_vending_recharge_balance = self.value
         if not res:
             raise exceptions.ValidationError(
                 "Could not set the balance. Please check if it's going under the limit."
