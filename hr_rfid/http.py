@@ -9,35 +9,46 @@ from odoo.tools import date_utils
 
 _logger = logging.getLogger(__name__)
 
-def _json_response(self, result=None, error=None):
-    response = {
-        'jsonrpc': '2.0',
-        'id': self.jsonrequest.get('id')
-        }
+# def _json_response(self, result=None, error=None):
+#     response = {
+#         'jsonrpc': '2.0',
+#         'id': self.jsonrequest.get('id')
+#         }
+#     if error is not None:
+#         response['error'] = error
+#     if result is not None:
+#         response['result'] = result
+#
+#     mime = 'application/json'
+#     if not self.jsonrequest.get('id', False) and not self.jsonrequest.get('jsonrpc', False) and (result is not None):
+#         # Non RPC Request not needed to respond with RPC structure
+#         body = json.dumps(result, default=date_utils.json_default)
+#         if result.get('status', False) and len(result) == 1:
+#             body = ''
+#             return Response(
+#                 body, status=result.get('status', 200),
+#                 headers=[('Content-Type', mime), ('Content-Length', len(body))]
+#             )
+#     else:
+#         body = json.dumps(response, default=date_utils.json_default)
+#
+#     return Response(
+#         body, status=error and error.pop('http_status', 200) or 200,
+#         headers=[('Content-Type', mime), ('Content-Length', len(body))]
+#     )
+def _response(self, result=None, error=None):
+    request_id = self.jsonrequest.get('id')
+    status = 200
+    response = {'jsonrpc': '2.0', 'id': request_id}
     if error is not None:
         response['error'] = error
+        status = error.pop('http_status', 200)
     if result is not None:
         response['result'] = result
 
-    mime = 'application/json'
-    if not self.jsonrequest.get('id', False) and not self.jsonrequest.get('jsonrpc', False) and (result is not None):
-        # Non RPC Request not needed to respond with RPC structure
-        body = json.dumps(result, default=date_utils.json_default)
-        if result.get('status', False) and len(result) == 1:
-            body = ''
-            return Response(
-                body, status=result.get('status', 200),
-                headers=[('Content-Type', mime), ('Content-Length', len(body))]
-            )
-    else:
-        body = json.dumps(response, default=date_utils.json_default)
+    return self.request.make_json_response(response)
 
-    return Response(
-        body, status=error and error.pop('http_status', 200) or 200,
-        headers=[('Content-Type', mime), ('Content-Length', len(body))]
-    )
-
-setattr(http.JsonRequest, '_json_response', _json_response)
+setattr(http.JsonRPCDispatcher, '_response', _response)
 
 # class CustomRoot(http.Root):
 
