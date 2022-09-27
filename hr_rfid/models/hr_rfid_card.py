@@ -123,17 +123,12 @@ class HrRfidCard(models.Model):
     #         res['contact_id'] = self.env.context.get('default_contact_id', None)
     #     return res
 
-    # TODO add example
-    # @api.model
-    # def get_import_templates(self):
-    #     """
-    #     Get the import templates label and path.
-    #
-    #     :return: a list(dict) containing label and template path
-    #              like ``[{'label': 'foo', 'template': 'path'}]``
-    #     """
-    #     return []
-
+    @api.model
+    def get_import_templates(self):
+        return [{
+            'label': _('Import Template for Cards'),
+            'template': '/hr_rfid/static/xls/Polimex RFID card import template.xls'
+        }]
     def get_owner(self, event_dict: dict = None):
         self.ensure_one()
         if not event_dict:
