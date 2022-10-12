@@ -270,15 +270,6 @@ class HrRfidCommands(models.Model):
         }])
 
     @api.model
-    def read_io_table_cmd(self, controller):
-        return self.create([{
-            'webstack_id': controller.webstack_id.id,
-            'controller_id': controller.id,
-            'cmd': 'F9',
-            'cmd_data': '00',
-        }])
-
-    @api.model
     def read_anti_pass_back_mode_cmd(self, controller):
         return self.create([{
             'webstack_id': controller.webstack_id.id,

@@ -5,6 +5,7 @@ from odoo import api, fields, models, exceptions, _
 class HrRfidVendingRow(models.Model):
     _name = 'hr.rfid.ctrl.vending.row'
     _description = 'Vending Machine Row'
+    _order = 'row_num'
 
     row_num = fields.Integer(required=True, readonly=True)
     controller_id = fields.Many2one('hr.rfid.ctrl', required=True, readonly=True, ondelete='cascade')

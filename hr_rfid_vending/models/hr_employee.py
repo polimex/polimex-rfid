@@ -9,13 +9,13 @@ class HrEmployee(models.Model):
     hr_rfid_vending_balance = fields.Float(
         string='Vending Balance',
         help='Amount of money an employee can spend on the vending machine',
-        default=0,
+        default=0.0,
     )
 
     hr_rfid_vending_recharge_balance = fields.Float(
         string='Self Recharge Balance',
         help='Amount of self charged money the employee can spend on the vending machine',
-        default=0,
+        default=0.0,
     )
 
     hr_rfid_vending_negative_balance = fields.Boolean(
@@ -28,6 +28,7 @@ class HrEmployee(models.Model):
     hr_rfid_vending_limit = fields.Float(
         string='Limit',
         help='User cannot go in more debt than this value',
+        default=0.0,
         tracking=True,
     )
 
@@ -40,12 +41,12 @@ class HrEmployee(models.Model):
     hr_rfid_vending_daily_limit = fields.Float(
         string='Daily Limit',
         help='Maximum amount of funds allowed for the employee to spend each day. No limit if set to 0.',
-        default=0,
+        default=0.0,
     )
 
     hr_rfid_vending_spent_today = fields.Float(
         string='Spend Today',
-        default=0,
+        default=0.0,
     )
 
     hr_rfid_vending_auto_refill = fields.Boolean(
@@ -58,8 +59,7 @@ class HrEmployee(models.Model):
     hr_rfid_vending_refill_amount = fields.Float(
         string='Refill Amount',
         help="How much money to be added to the person's balance",
-        default=0,
-        required=True,
+        default=0.0,
         tracking=True,
     )
 
@@ -68,15 +68,13 @@ class HrEmployee(models.Model):
         string='Refill Type',
         help="Fixed type just adds the refill amount to the user's balance every month. Up To type adds to the user's balance every month with a maximum the auto refill will never go over.",
         default='fixed',
-        required=True,
         tracking=True,
     )
 
     hr_rfid_vending_refill_max = fields.Float(
         string='Refill Max',
         help='The limit of cash the auto refill should never go over',
-        default=0,
-        required=True,
+        default=0.0,
     )
 
     hr_rfid_vending_balance_history = fields.One2many(
@@ -90,6 +88,7 @@ class HrEmployee(models.Model):
         bh_action = self.env.ref('hr_rfid_vending.hr_rfid_vending_balance_history_action').sudo().read()[0]
         bh_action['domain'] = [('employee_id', '=', self.id)]
         return bh_action
+
     def get_employee_balance(self, controller):
         self.ensure_one()
         balance = Decimal(str(self.hr_rfid_vending_balance))
@@ -237,7 +236,8 @@ class VendingBalanceWiz(models.TransientModel):
         if self._context.get('setting_balance', False) == 3:
             res = True
             self.employee_id.message_post(
-                body=_('Manual updated employee personal balance from %d to %d') % (self.employee_id.hr_rfid_vending_recharge_balance, self.value)
+                body=_('Manual updated employee personal balance from %d to %d') % (
+                self.employee_id.hr_rfid_vending_recharge_balance, self.value)
             )
             self.employee_id.hr_rfid_vending_recharge_balance = self.value
         if not res:

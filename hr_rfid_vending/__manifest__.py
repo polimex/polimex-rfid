@@ -18,12 +18,12 @@
         'security/hr_rfid_vending_security.xml',
         'security/hr_rfid_multi_company.xml',
         'security/ir.model.access.csv',
-        'views/vending_menus.xml',
         'views/hr_employee_views.xml',
         'views/hr_rfid_ctrl.xml',
         'views/hr_rfid_vending_auto_refill.xml',
         'views/hr_rfid_vending_balance_history.xml',
         'views/vending_event.xml',
+        'views/vending_menus.xml',
         'views/digest_views.xml',
     ],
 

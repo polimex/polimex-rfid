@@ -148,7 +148,7 @@ class HrRfidVending(WebRfidController):
                         return ret_super()
 
                 item_number = int(event['dt'][4:6], 16)
-                item_price = -1
+                item_price = (int(event['dt'][6:8], 16) * 16 + int(event['dt'][8:10], 16)) * controller.scale_factor / 100
                 calced_price = calc_balance(controller, event)
                 item = None
                 purchase_money = calced_price
@@ -190,7 +190,8 @@ class HrRfidVending(WebRfidController):
                     if item_price >= 0:
                         purchase_money = item_price
                         if item_price != calced_price:
-                            controller.report_sys_ev(item_cost_diff_err_str % (item.name, item.list_price, calced_price), event)
+                            controller.report_sys_ev(
+                                item_cost_diff_err_str % (item.name, item.list_price, calced_price), event)
 
                     # TODO Reduce item quantity
 
@@ -198,7 +199,7 @@ class HrRfidVending(WebRfidController):
                     ev = create_ev(controller, event, card, '47', item, purchase_money, item_number=item_sold)
                     card.employee_id.hr_rfid_vending_purchase(purchase_money, ev.id)
                 else:
-                    controller.cash_contained = controller.cash_contained + item_price
+                    controller.cash_contained += item_price
                     ev = create_ev(controller, event, card, '47', item, item_price, item_number=item_sold)
 
                 return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code, ev))
@@ -238,7 +239,7 @@ class HrRfidVending(WebRfidController):
                 psycopg2.DataError, ValueError) as __:
             # commented DeferredException ^
             webstack_id.sys_event(error_description=traceback.format_exc(),
-                                   input_json=json.dumps(post_data))
+                                  input_json=json.dumps(post_data))
             _logger.debug('Vending: Caught an exception, returning status=500 and creating a system event')
             return {'status': 500}
         except BadTimeException:
@@ -246,7 +247,7 @@ class HrRfidVending(WebRfidController):
             ev_num = str(post_data['event']['event_n'])
             controller = webstack_id.controllers.filtered(lambda r: r.ctrl_id == post_data['event']['id'])
             controller.sys_event(error_description=f'Controller sent us an invalid date or time: {t}',
-                               event_action=ev_num,
-                               input_json=json.dumps(post_data))
+                                 event_action=ev_num,
+                                 input_json=json.dumps(post_data))
             _logger.debug('Caught a time error, returning status=200 and creating a system event')
             return {'status': 200}
