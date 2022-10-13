@@ -103,8 +103,8 @@ class HrRfidVending(WebRfidController):
 
             # TODO Move into function "deal_with_ev_64"
             if event['event_n'] == 64:
-                card = card_env.with_context(with_company=webstack_id.company_id).search(
-                    ['|', ('active', '=', True), ('active', '=', False), ('number', '=', event['card'])])
+                card = card_env.with_context(active_test=False).search(
+                    [('company_id', '=', webstack_id.company_id), ('number', '=', event['card'])])
 
                 if len(card) == 0 or len(card.employee_id) == 0:
                     return ret_super()
@@ -140,15 +140,16 @@ class HrRfidVending(WebRfidController):
                 return ret_local(cmd.send_command(status_code))
             # TODO Move into function "deal_with_ev_47"
             elif event['event_n'] == 47:
-                card = card_env.with_context(with_company=webstack_id.company_id).search(
-                    ['|', ('active', '=', True), ('active', '=', False), ('number', '=', event['card'])])
+                card = card_env.with_context(active_test=False).search(
+                    [('company_id', '=', webstack_id.company_id), ('number', '=', event['card'])])
 
                 if len(card) == 0:
                     if event['card'] != '0000000000':
                         return ret_super()
 
                 item_number = int(event['dt'][4:6], 16)
-                item_price = (int(event['dt'][6:8], 16) * 16 + int(event['dt'][8:10], 16)) * controller.scale_factor / 100
+                item_price = (int(event['dt'][6:8], 16) * 16 + int(event['dt'][8:10],
+                                                                   16)) * controller.scale_factor / 100
                 calced_price = calc_balance(controller, event)
                 item = None
                 purchase_money = calced_price
@@ -208,8 +209,8 @@ class HrRfidVending(WebRfidController):
                 controller.report_sys_ev('Vending machine sent us an error', event)
                 return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code))
             elif event['event_n'] == 50:
-                card = card_env.with_context(with_company=webstack_id.company_id).search(
-                    ['|', ('active', '=', True), ('active', '=', False), ('number', '=', event['card'])])
+                card = card_env.with_context(active_test=False).search(
+                    [('company_id', '=', webstack_id.company_id), ('number', '=', event['card'])])
 
                 if len(card) == 0:
                     if event['card'] != '0000000000':
@@ -239,16 +240,15 @@ class HrRfidVending(WebRfidController):
                 psycopg2.DataError, ValueError) as __:
             # commented DeferredException ^
             # TODO Fix sys events!!!====================================================================================
-            webstack_id.report_sys_ev(error_description=traceback.format_exc(),
-                                  input_json=json.dumps(post_data))
+            webstack_id.report_sys_ev(description=traceback.format_exc(),
+                                      post_data=json.dumps(post_data))
             _logger.debug('Vending: Caught an exception, returning status=500 and creating a system event')
             return {'status': 500}
         except BadTimeException:
             t = post_data['event']['date'] + ' ' + post_data['event']['time']
             ev_num = str(post_data['event']['event_n'])
             controller = webstack_id.controllers.filtered(lambda r: r.ctrl_id == post_data['event']['id'])
-            controller.report_sys_ev(error_description=f'Controller sent us an invalid date or time: {t}',
-                                 event_action=ev_num,
-                                 input_json=json.dumps(post_data))
+            controller.report_sys_ev(description=f'Controller sent us an invalid date or time: {t}',
+                                     post_data=json.dumps(post_data))
             _logger.debug('Caught a time error, returning status=200 and creating a system event')
             return {'status': 200}
