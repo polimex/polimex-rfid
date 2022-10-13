@@ -1,257 +1,275 @@
 from odoo.api import Environment
-from odoo import models
-from random import randint
+from odoo import models, fields
+from odoo.tests import common
+import json
+from odoo.addons.hr_rfid.controllers.polimex import get_default_io_table
 
 _controllers_created = 0
 
 
-def create_webstacks(env: Environment, webstacks: int = 0, controllers: list = None):
-    """
-    Creates a set number of webstacks
-    :param env: Environment
-    :param webstacks: Number of webstacks to create
-    :param controllers: A list of modes the controllers should be for the webstacks. Example:
-                        [1, 2]: would create 2 controllers per webstack, the first one with mode 1
-                                and the second one with mode 2
-    :return: Recordset with all the webstacks
-    """
-    if controllers is None:
-        controllers = []
+class RFIDAppCase(common.TransactionCase):
+    def setUp(self):
+        super(RFIDAppCase, self).setUp()
+        # Create an mobile app
+        self.app_url = "/hr/rfid/event"
+        self.test_company_id = self.env['res.company'].create({'name': 'Test Company 1'}).id
+        self.test_company2_id = self.env['res.company'].create({'name': 'Test Company 2'}).id
+        self.env.ref('base.user_admin').company_ids = [
+            (4, self.test_company2_id, 0),
+            (4, self.test_company_id, 0)
+        ]
+        self.test_webstack_10_3_id = self.env['hr.rfid.webstack'].create({
+            'name': 'Test Stack',
+            'serial': '234567',
+            'company_id': self.test_company_id,
+            'available': 'a',
+            'tz': 'Europe/Sofia',
+            'active': True,
+        })
+        self.test_now = fields.Datetime.context_timestamp(
+            self.test_webstack_10_3_id, fields.Datetime.now()
+        )
+        self.test_date_10_3 = '%02d.%02d.%02d' % (
+            self.test_now.day,
+            self.test_now.month,
+            self.test_now.year - 2000,
+        )
+        self.test_dow_10_3 = '%d' % self.test_now.weekday()
+        self.test_time_10_3 = '%02d:%02d:%02d' % (
+            self.test_now.hour + 1,
+            self.test_now.minute,
+            self.test_now.second,
+        )
 
-    def _create_wss():
-        _records = env['hr.rfid.webstack']
-        _ws_env = env['hr.rfid.webstack']
+        self.test_department_id = self.env['hr.department'].create({
+            'name': 'Test Department',
+            'company_id': self.test_company_id,
+        })
 
-        def gen_serial(cur_webstacks):
-            _cur_serials = cur_webstacks.mapped('serial')
+        self.test_employee_id = self.env['hr.employee'].create({
+            'name': 'Pesho Employee',
+            'company_id': self.test_company_id,
+            'department_id': self.test_department_id.id,
+        })
 
-            while True:
-                _serial = str(randint(400000, 499999))
-                if _serial not in _cur_serials:
-                    return _serial
+        self.test_card_employee = self.env['hr.rfid.card'].create({
+            'number': '1234512345',
+            'card_reference': 'Badge 77',
+            'employee_id': self.test_employee_id.id,
+            'company_id': self.test_company_id,
+        })
 
-        for i in range(webstacks):
-            serial = gen_serial(_records)
+        self.test_partner = self.env['res.partner'].create({
+            'name': 'Test Partner',
+            'company_type': 'person',
+            'is_company': False,
+            'type': 'contact',
+            'company_id': self.test_company_id,
+        })
 
-            _records += _ws_env.create({
-                'name': 'Module ' + serial,
-                'serial': serial,
-                'key': '0000',
-                'active': True,
-                'version': '9.99',
-                'behind_nat': False,
-                'last_ip': '0.0.0.0',
+        self.test_card_partner = self.env['hr.rfid.card'].create({
+            'number': '0012312345',
+            'card_reference': 'Badge 33',
+            'contact_id': self.test_partner.id,
+            'company_id': self.test_company_id,
+        })
+        self.c_50 = None
+        self.c_110 = None
+        self.c_115 = None
+        self.c_130 = None
+        self.c_180 = None
+        self.c_turnstile = None
+        self.c_vending = None
+
+    def _assertResponse(self, response):
+        self.assertEqual(response.status_code, 200)
+        if response.text != '':
+            self.assertTrue(isinstance(response.json(), dict), 'Response is not JSON')
+        # if 'error' in response.json().keys():
+        #     self.assertTrue(False, 'Response contain error' + response.json()['error']['data']['message'])
+        return response
+
+    def _hearbeat(self, webstack_id):
+        response = self.url_open(self.app_url,
+                                 data=json.dumps({'convertor': webstack_id.serial, 'FW': '1.3400', 'key': webstack_id.key, 'heartbeat': 22}),
+                                 timeout=20,
+                                 headers={'Content-Type': 'application/json'})
+        return self._assertResponse(response).json()
+
+    def _count_system_events(self, company_id):
+        return self.env['hr.rfid.event.system'].with_company(company_id or self.test_company_id).search_count([
+            ('webstack_id', '=', self.test_webstack_10_3_id.id)
+        ])
+
+    def _user_events(self, company_id, count=True, last=False):
+        if count:
+            return self.env['hr.rfid.event.user'].with_company(company_id or self.test_company_id).search_count([
+                # ('webstack_id', '=', self.test_webstack_10_3_id.id)
+            ])
+        if last:
+            return self.env['hr.rfid.event.user'].with_company(company_id or self.test_company_id).search([
+                # ('webstack_id', '=', self.test_webstack_10_3_id.id)
+            ], limit=1)
+
+    def _make_F0(self, hw_ver=12, serial_num=5, sw_ver=740, mode=1, inputs=1,  outputs=3,
+                 time_schedules=4,  io_table_lines=28, alarm_lines=0, max_cards_count=3000, max_events_count=3000):
+        #0102000000010703090000010000030100000208000100010502060003000506 iCON50
+        #0102000000010703090000010000030004000002080100030500000001050000
+        #12 0001 739 001 003 1 0028 0 1 01526 03056 iCON50
+        f0 = '%02d%04d%03d%03d%03d%02d%02d%d%d%05d%05d' % (
+            hw_ver, serial_num, sw_ver, inputs, outputs, time_schedules, alarm_lines, io_table_lines,
+            mode, max_cards_count, max_events_count
+        )
+        f0 = ''.join(['%02d' % int(i) for i in f0])
+        pass
+        # F0Parse.hw_ver: str(bytes_to_num(data, 0, 2)),
+        # F0Parse.serial_num: str(bytes_to_num(data, 4, 4)),
+        # F0Parse.sw_ver: str(bytes_to_num(data, 12, 3)),
+        # F0Parse.inputs: bytes_to_num(data, 18, 3),
+        # F0Parse.outputs: bytes_to_num(data, 24, 3),
+        # F0Parse.time_schedules: bytes_to_num(data, 32, 2),
+        # F0Parse.io_table_lines: bytes_to_num(data, 36, 2),
+        # F0Parse.alarm_lines: bytes_to_num(data, 40, 1),
+        # F0Parse.mode: int(data[42:44], 16),
+        # F0Parse.max_cards_count: bytes_to_num(data, 44, 5),
+        # F0Parse.max_events_count: bytes_to_num(data, 54, 5),
+        #
+        # hw_ver = 0
+        # serial_num = 1
+        # sw_ver = 2
+        # inputs = 3
+        # outputs = 4
+        # time_schedules = 5
+        # io_table_lines = 6
+        # alarm_lines = 7
+        # mode = 8
+        # max_cards_count = 9
+        # max_events_count = 10
+
+    def _send_cmd(self, cmd, system_event=False, company_id=None):
+        sys_events_count = self._count_system_events(company_id or self.test_company_id)
+        response = self.url_open(self.app_url,
+                                 data=json.dumps(cmd),
+                                 timeout=20,
+                                 headers={'Content-Type': 'application/json'})
+        if not response.ok:
+            pass
+        self.assertTrue(response.ok)
+        sys_events_count -= self._count_system_events(company_id or self.test_company_id)
+        if sys_events_count != 0 and not system_event:
+            pass
+        self.assertTrue(sys_events_count != 0 or not system_event, 'System event generated')
+        if response.text != '':
+            return self._assertResponse(response).json()
+        else:
+            return {}
+
+    def _send_cmd_response(self, request_cmd, data='', module=234567, key='0000'):
+        response = self._send_cmd({
+            "convertor": module,
+            "response": {
+                "id": request_cmd['cmd']['id'],
+                "c": request_cmd['cmd']['c'],
+                "e": 0,
+                "d": data
+            },
+            "key": key
+        })
+        return response
+
+    def _process_io_table(self, response, ctrl, module=234567, key='0000'):
+        ctrl.read()
+        self.assertTrue(response['cmd']['c'] == 'F9' and response['cmd']['d'] == '01')
+        self.assertNotEqual(ctrl.default_io_table, '')
+        io_count = 0
+        while response['cmd']['c'] == 'F9':
+            line = int(response['cmd']['d'], 16)
+            self.assertNotEqual(ctrl.default_io_table[(line - 1) * 16:(line - 1) * 16 + 16], '')
+            response = self._send_cmd({
+                "convertor": module,
+                "response": {
+                    "id": ctrl.ctrl_id,
+                    "c": "F9",
+                    "e": 0,
+                    "d": ctrl.default_io_table[(line - 1) * 16:(line - 1) * 16 + 16]
+                },
+                "key": key
             })
-        return _records
+            io_count += 1
+        ctrl.read()
+        self.assertEqual(io_count, ctrl.io_table_lines)
+        self.assertEqual(len(ctrl.io_table), len(ctrl.default_io_table))
+        self.assertEqual(ctrl.io_table, ctrl.default_io_table)
+        return response
 
-    def _create_ctrl(_ws: models.Model, _mode: int):
-        _ctrl_env = env['hr.rfid.ctrl']
-        _door_env = env['hr.rfid.door']
-        _reader_env = env['hr.rfid.reader']
+    def _check_added_controller(self, ctrl):
+        ctrl.read()
+        self.assertTrue(ctrl.hw_version != '')
+        self.assertTrue(ctrl.serial_number != '')
+        self.assertTrue(ctrl.sw_version != '')
+        self.assertTrue(ctrl.inputs > 0)
+        self.assertTrue(ctrl.outputs > 0)
+        self.assertTrue(ctrl.io_table_lines > 0)
+        self.assertTrue(ctrl.mode > 0)
+        self.assertTrue(ctrl.max_cards_count > 0)
+        self.assertTrue(ctrl.max_events_count > 0)
 
-        def _gen_id():
-            _cur_ids = _ws.controllers.mapped('ctrl_id')
-            while True:
-                _new_id = randint(1, 254)
-                if _new_id == 0xCB or _new_id == 0xCE:
-                    continue
-                if _new_id not in _cur_ids:
-                    return _new_id
+    def _make_event(self, ctrl,
+                    card=None,
+                    pin=None,
+                    reader=None,
+                    date=None,
+                    day=None,
+                    time=None,
+                    event_code=None,
+                    system_event=False):
+        ctrl.read()
+        return self._send_cmd({
+            "convertor": ctrl.webstack_id.serial,
+            "event": {"bos": 1,
+                      "tos": 1,
+                      "card": card or self.test_card_employee.number,
+                      "cmd": "FA",
+                      "time": time or self.test_time_10_3,
+                      "date": date or self.test_date_10_3,
+                      "day": day or self.test_dow_10_3,
+                      "dt": (pin or '0000') + "0000000000",
+                      "err": 0,
+                      "event_n": event_code or 4,  # Int(action_selection[X]
+                      "id": ctrl.ctrl_id,
+                      "reader": reader or 1},
+            "key": ctrl.webstack_id.key
+        }, system_event=system_event)
 
-        def _gen_door_name(_door_num, _ctrl_id):
-            return 'Door ' + str(_door_num) + ' of ctrl ' + str(_ctrl_id)
+    def _test_R_event(self, ctrl, reader=1):
+        response = self._make_event(ctrl, reader=reader, event_code=3)
+        self.assertEqual(response, {})
+        response = self._make_event(ctrl, reader=reader, event_code=4)
+        self.assertEqual(response, {})
+        response = self._make_event(ctrl, reader=reader, event_code=5)
+        self.assertEqual(response, {})
+        response = self._make_event(ctrl, reader=reader, event_code=6)
+        self.assertEqual(response, {})
+        # response = self._make_event(self.ctrl, reader=reader+1, event_code=3, system_event=True)
+        # self.assertEqual(response, {})
+        pass
 
-        def _create_door(_name, _number, _ctrl_id):
-            return _door_env.create({
-                'name': _name,
-                'number': _number,
-                'controller_id': _ctrl_id,
-            })
+    def _test_R1R2(self, ctrl):
+        self._test_R_event(ctrl, 1)
+        self._test_R_event(ctrl, 2)
+        pass
 
-        def _create_reader(_name, _number, _reader_type, _ctrl_id, _door_id):
-            _reader_env.create({
-                'name': _name,
-                'number': _number,
-                'reader_type': _reader_type,
-                'controller_id': _ctrl_id,
-                'door_id': _door_id,
-            })
+    def _test_R1R2R3R4(self, ctrl):
+        self._test_R_event(ctrl, 1)
+        self._test_R_event(ctrl, 2)
+        self._test_R_event(ctrl, 3)
+        self._test_R_event(ctrl, 4)
+        pass
 
-        _external_db = _mode & 0x20 > 0
-        _mode = _mode & 0x0F
-        _id = _gen_id()
+    def _change_mode(self, ctrl, mode):
+        if mode < 3:
+            ctrl.mode_selection = str(mode)
+        else:
+            ctrl.mode_selection_4 = str(mode)
+        response = self._hearbeat(ctrl.webstack_id)
 
-        global _controllers_created
-        _controllers_created += 1
-        _ctrl = _ctrl_env.create({
-            'name': 'Controller ' + str(_id),
-            'ctrl_id': _id,
-            'hw_version': '17',
-            'serial_number': _controllers_created,
-            'sw_version': '999',
-            'external_db': _external_db,
-            'mode': _mode,
-            'webstack_id': _ws.id,
-        })
-
-        if _mode == 1 or _mode == 3:
-            _door = _create_door(_gen_door_name(1, _ctrl.id), 1, _ctrl.id)
-            _create_reader('R1', 1, '0', _ctrl.id, _door.id)
-            _create_reader('R2', 2, '1', _ctrl.id, _door.id)
-        else:  # (_mode == 2 and readers_count == 2) or _mode == 4
-            _door = _create_door(_gen_door_name(1, _ctrl.id), 1, _ctrl.id)
-            _create_reader('R1', 1, '0', _ctrl.id, _door.id)
-            _door = _create_door(_gen_door_name(2, _ctrl.id), 2, _ctrl.id)
-            _create_reader('R2', 2, '0', _ctrl.id, _door.id)
-
-        if _mode == 3:
-            _door = _create_door(_gen_door_name(2, _ctrl.id), 2, _ctrl.id)
-            _create_reader('R3', 3, '0', _ctrl.id, _door.id)
-            _door = _create_door(_gen_door_name(3, _ctrl.id), 3, _ctrl.id)
-            _create_reader('R4', 4, '0', _ctrl.id, _door.id)
-        elif _mode == 4:
-            _door = _create_door(_gen_door_name(3, _ctrl.id), 3, _ctrl.id)
-            _create_reader('R3', 3, '0', _ctrl.id, _door.id)
-            _door = _create_door(_gen_door_name(4, _ctrl.id), 4, _ctrl.id)
-            _create_reader('R4', 4, '0', _ctrl.id, _door.id)
-
-    records = _create_wss()
-    for ws in records:
-        for mode in controllers:
-            _create_ctrl(ws, mode)
-
-    return records
-
-
-def create_acc_grs_nms(env: Environment, names: list = None):
-    """
-    Create access groups
-    :param env: Environment
-    :param names: Names of access groups in a list
-    :return: Set with the access groups
-    """
-    records = env['hr.rfid.access.group']
-    acc_gr_env = records
-
-    if names is None:
-        return records
-
-    for name in names:
-        records += acc_gr_env.create({
-            'name': name,
-        })
-
-    return records
-
-
-def create_acc_grs_cnt(env: Environment, count: int = 0):
-    """
-    Create access groups
-    :param env: Environment
-    :param count: Number of access groups to create
-    :return: Set with the access groups
-    """
-    records = env['hr.rfid.access.group']
-    acc_gr_env = records
-
-    for __ in range(0, count):
-        records += acc_gr_env.create({})
-
-    return records
-
-
-def create_departments(env: Environment, names: list = None):
-    records = env['hr.department']
-    dep_env = records
-
-    if names is None:
-        return records
-
-    for name in names:
-        records += dep_env.create({
-            'name': name,
-        })
-
-    return records
-
-
-def create_employees(env: Environment, names: list = None, departments: list = None):
-    records = env['hr.employee']
-    emp_env = records
-
-    if names is None:
-        return records
-    if departments is None:
-        departments = []
-
-    dep_it = 0
-
-    for name in names:
-        emp_dict = {
-            'name': name,
-        }
-        if dep_it < len(departments):
-            emp_dict['department_id'] = departments[dep_it].id
-            if dep_it < (len(departments) -1):
-                dep_it += 1
-        records += emp_env.create(emp_dict)
-
-    return records
-
-
-def create_contacts(env: Environment, names: list = None):
-    records = env['res.partner']
-    contact_env = records
-
-    if names is None:
-        return records
-
-    for name in names:
-        records += contact_env.create({
-            'name': name,
-        })
-
-    return records
-
-
-def create_card(env: Environment, number: str, owner: models.Model, card_type=None, activate_on=None,
-                deactivate_on=None, card_active=None, cloud_card=None):
-    card_dict = {
-        'number': number,
-    }
-    if 'hr.employee' in str(owner.__class__):
-        card_dict['employee_id'] = owner.id
-    else:
-        card_dict['contact_id'] = owner.id
-
-    if card_type is not None:
-        card_dict['card_type'] = card_type
-
-    if activate_on is not None:
-        card_dict['activate_on'] = activate_on
-
-    if deactivate_on is not None:
-        card_dict['deactivate_on'] = deactivate_on
-
-    if card_active is not None:
-        card_dict['card_active'] = card_active
-
-    if cloud_card is not None:
-        card_dict['cloud_card'] = cloud_card
-
-    return env['hr.rfid.card'].create(card_dict)
-
-
-def card_door_rels_search(env: Environment, card: models.Model, door: models.Model, ts: models.Model = None):
-    rel_env = env['hr.rfid.card.door.rel']
-    search_params = [
-        ('card_id', '=', card.id),
-        ('door_id', '=', door.id),
-    ]
-    if ts is not None:
-        search_params.append( ('time_schedule_id', '=', ts.id) )
-    return rel_env.search(search_params)
-
-
-def get_ws_doors(webstacks):
-    return webstacks.mapped('controllers').mapped('door_ids')

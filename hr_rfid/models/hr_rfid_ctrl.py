@@ -93,7 +93,7 @@ class HrRfidController(models.Model):
         help='Alarm Siren state',
         compute='_compute_siren_state',
         inverse='_set_siren_state',
-        tracking = True
+        tracking=True
     )
 
     emergency_group_id = fields.Many2one(
@@ -266,6 +266,8 @@ class HrRfidController(models.Model):
     doors_count = fields.Char(string='Doors count', compute='_compute_counts')
     alarm_line_count = fields.Char(string='Alarm line count', compute='_compute_counts')
 
+    default_io_table = fields.Char(compute='_compute_default_io_table')
+
     @api.constrains('mode')
     def _check_mode(self):
         for ctrl in self:
@@ -341,6 +343,13 @@ class HrRfidController(models.Model):
             if not self.env.context.get('no_output', False):
                 c.change_output_state(siren_out, int(c.siren_state), 99)
             c._update_output_state(siren_out, c.siren_state)
+
+    @api.depends('hw_version')
+    def _compute_default_io_table(self):
+        for c in self:
+            empty_io_table = ''.join(['0000000000000000' for i in range(0, c.io_table_lines)])
+            default_io_table = polimex.get_default_io_table(int(c.hw_version), int(c.mode))
+            c.default_io_table = default_io_table or empty_io_table
 
     def return_action_to_open(self):
         """ This opens the xml view specified in xml_id for the current app """
@@ -443,6 +452,7 @@ class HrRfidController(models.Model):
 
             if ((ctrl.io_table_lines * 8 * 2) != len(new_io_table) and line == 0) or (
                     line != 0 and len(new_io_table) != 16):
+                pass
                 raise exceptions.ValidationError(
                     'IO table lengths are different, this should never happen????'
                 )
@@ -451,8 +461,10 @@ class HrRfidController(models.Model):
                 if not no_command:
                     ctrl.write_io_table_cmd(cmd_data)
             else:
-                io_table = self.io_table and self.io_table[:16 * (line - 1)] or ''
-                io_table += new_io_table
+                self.io_table = self.io_table or self.default_io_table
+                io_table = self.io_table[16 * (line - 1): 16 * (line - 1) + 16]
+                if io_table == new_io_table:
+                    continue
                 io_table += self.io_table and self.io_table[16 * (line - 1) + 16:] or ''
                 ctrl.io_table = io_table
                 if not no_command:

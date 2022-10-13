@@ -71,8 +71,7 @@
                             </group>
                             <group string="When">
                                 <field name="event_time" readonly="1"/>
-                                <field name="create_date" readonly="1" string="Receive Date"
-                                       help="Time odoo received the event"/>
+                                <field name="create_date" readonly="1" string="Receive Date"/>
                             </group>
                             <group>
                                 <field name="workcode" attrs="{'invisible': [('workcode','=', '-')]}"/>
