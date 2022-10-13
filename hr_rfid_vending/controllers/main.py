@@ -99,11 +99,11 @@ class HrRfidVending(WebRfidController):
             if controller.hw_version != '16':
                 return ret_super()
 
-            card_env = request.env['hr.rfid.card'].with_context(force_company=webstack_id.company_id).sudo()
+            card_env = request.env['hr.rfid.card'].with_context(with_company=webstack_id.company_id).sudo()
 
             # TODO Move into function "deal_with_ev_64"
             if event['event_n'] == 64:
-                card = card_env.with_context(force_company=webstack_id.company_id).search(
+                card = card_env.with_context(with_company=webstack_id.company_id).search(
                     ['|', ('active', '=', True), ('active', '=', False), ('number', '=', event['card'])])
 
                 if len(card) == 0 or len(card.employee_id) == 0:
@@ -140,7 +140,7 @@ class HrRfidVending(WebRfidController):
                 return ret_local(cmd.send_command(status_code))
             # TODO Move into function "deal_with_ev_47"
             elif event['event_n'] == 47:
-                card = card_env.with_context(force_company=webstack_id.company_id).search(
+                card = card_env.with_context(with_company=webstack_id.company_id).search(
                     ['|', ('active', '=', True), ('active', '=', False), ('number', '=', event['card'])])
 
                 if len(card) == 0:
@@ -208,7 +208,7 @@ class HrRfidVending(WebRfidController):
                 controller.report_sys_ev('Vending machine sent us an error', event)
                 return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code))
             elif event['event_n'] == 50:
-                card = card_env.with_context(force_company=webstack_id.company_id).search(
+                card = card_env.with_context(with_company=webstack_id.company_id).search(
                     ['|', ('active', '=', True), ('active', '=', False), ('number', '=', event['card'])])
 
                 if len(card) == 0:
