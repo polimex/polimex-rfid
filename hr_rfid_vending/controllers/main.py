@@ -104,7 +104,7 @@ class HrRfidVending(WebRfidController):
             # TODO Move into function "deal_with_ev_64"
             if event['event_n'] == 64:
                 card = card_env.with_context(active_test=False).search(
-                    [('company_id', '=', webstack_id.company_id), ('number', '=', event['card'])])
+                    [('company_id', '=', webstack_id.company_id.id), ('number', '=', event['card'])])
 
                 if len(card) == 0 or len(card.employee_id) == 0:
                     return ret_super()
@@ -141,7 +141,7 @@ class HrRfidVending(WebRfidController):
             # TODO Move into function "deal_with_ev_47"
             elif event['event_n'] == 47:
                 card = card_env.with_context(active_test=False).search(
-                    [('company_id', '=', webstack_id.company_id), ('number', '=', event['card'])])
+                    [('company_id', '=', webstack_id.company_id.id), ('number', '=', event['card'])])
 
                 if len(card) == 0:
                     if event['card'] != '0000000000':
@@ -210,7 +210,7 @@ class HrRfidVending(WebRfidController):
                 return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code))
             elif event['event_n'] == 50:
                 card = card_env.with_context(active_test=False).search(
-                    [('company_id', '=', webstack_id.company_id), ('number', '=', event['card'])])
+                    [('company_id', '=', webstack_id.company_id.id), ('number', '=', event['card'])])
 
                 if len(card) == 0:
                     if event['card'] != '0000000000':
