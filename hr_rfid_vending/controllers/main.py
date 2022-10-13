@@ -25,12 +25,12 @@ class HrRfidVending(WebRfidController):
             post_data = request.jsonrequest
         else:
             post_data = post
-        webstack_id = request.env['hr.rfid.webstack'].sudo().search([('serial', '=', str(post_data['convertor']))])
 
         cmd_env = request.env['hr.rfid.command'].sudo()
         ev_env = request.env['hr.rfid.vending.event'].sudo()
         sys_ev_env = request.env['hr.rfid.event.system'].sudo()
 
+        webstack_id = request.env['hr.rfid.webstack'].sudo().search([('serial', '=', str(post_data['convertor']))])
         status_code = 200
 
         item_missing_err_str = _('Item number %d missing from vending machine configuration')

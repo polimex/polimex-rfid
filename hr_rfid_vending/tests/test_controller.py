@@ -5,7 +5,8 @@ from odoo.addons.hr_rfid.controllers.polimex import get_default_io_table
 from odoo.tests.common import HttpCase, tagged
 import json
 
-
+# {'convertor': 242865, 'key': '0000', 'event': {'id': 38, 'cmd': 'FA', 'err': 0, 'tos': 1, 'bos': 1, 'event_n': 4, 'time': '17:45:15', 'day': 4, 'date': '13.10.22', 'card': '1598240645', 'reader': 1, 'dt': '00000000000000'}}
+# TODO Add this event if happend
 @tagged('rfid_vending')
 class VendingController(RFIDAppCase, HttpCase):
     def test_app(self):
@@ -22,7 +23,7 @@ class VendingController(RFIDAppCase, HttpCase):
         })
         self.c_vending.read_controller_information_cmd()
 
-        response = self._hearbeat(serial=module, key=key)
+        response = self._hearbeat(self.c_vending.webstack_id)
         self.assertEqual(response, {'cmd': {'id': id, 'c': 'F0', 'd': ''}}, )
         response = self._send_cmd_response(response, '0106000003090704020000010000010201050200002200090702070003000506')
         self.assertTrue(
@@ -74,7 +75,7 @@ class VendingController(RFIDAppCase, HttpCase):
         wiz.scale_factor = 5
 
         wiz.save_settings()
-        response = self._hearbeat(serial=module, key=key)
+        response = self._hearbeat(self.c_vending.webstack_id)
         io_count = 0
         while 'cmd' in response.keys() and response['cmd']['c'] == 'D9':
             response = self._send_cmd_response(response)
@@ -95,9 +96,6 @@ class VendingController(RFIDAppCase, HttpCase):
             ])
         )
         # request balance
-        # {"convertor": 405301,
-        #  "event": {"bos": 1, "card": "0003243636", "cmd": "FA", "date": "10.12.22", "day": 3, "dt": "00000000000000",
-        #            "err": 0, "event_n": 64, "id": 1, "reader": 1, "time": "16:29:10", "tos": 1}, "key": "F70C"}
         response = self._send_cmd({
             "convertor": module,
             "event": {"bos": 1,

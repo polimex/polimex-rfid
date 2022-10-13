@@ -344,11 +344,12 @@ class HrRfidController(models.Model):
                 c.change_output_state(siren_out, int(c.siren_state), 99)
             c._update_output_state(siren_out, c.siren_state)
 
+    @api.depends('hw_version')
     def _compute_default_io_table(self):
-        self.ensure_one()
-        empty_io_table = ''.join(['0000000000000000' for i in range(1, 28)])
-        default_io_table = polimex.get_default_io_table(int(self.hw_version), int(self.mode))
-        self.default_io_table = default_io_table or empty_io_table
+        for c in self:
+            empty_io_table = ''.join(['0000000000000000' for i in range(0, c.io_table_lines)])
+            default_io_table = polimex.get_default_io_table(int(c.hw_version), int(c.mode))
+            c.default_io_table = default_io_table or empty_io_table
 
     def return_action_to_open(self):
         """ This opens the xml view specified in xml_id for the current app """

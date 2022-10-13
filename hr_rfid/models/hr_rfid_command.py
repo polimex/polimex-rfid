@@ -689,7 +689,7 @@ class HrRfidCommands(models.Model):
 
         def create_reader(name, number, reader_type, door_id=None):
             create_dict = {
-                'name': name,
+                'name': '%s (%s)' % (name, (reader_type == '0') and _('In') or _('Out')),
                 'number': number,
                 'reader_type': reader_type,
                 'controller_id': self.controller_id.id,
@@ -714,7 +714,8 @@ class HrRfidCommands(models.Model):
             _reader.door_ids += _door
 
         def gen_d_name(door_num, controller_id):
-            return _('Door ') + str(door_num) + _(' of ctrl ') + str(controller_id)
+            name = _('Door %d of ctrl id %d (%s)') % (door_num, controller_id.ctrl_id, controller_id.name)
+            return name
 
         if self.controller_id.is_relay_ctrl(hw_ver):
             if ctrl_mode == 1 or ctrl_mode == 3:
@@ -747,29 +748,29 @@ class HrRfidCommands(models.Model):
                                                  % (ctrl_mode, hw_ver))
         else:
             if ctrl_mode == 1 or ctrl_mode == 3:
-                last_door = create_door(gen_d_name(1, self.controller_id.ctrl_id), 1)
+                last_door = create_door(gen_d_name(1, self.controller_id), 1)
                 last_door = last_door.id
                 create_reader('R1', 1, '0', last_door)
                 if readers_count > 1:
                     create_reader('R2', 2, '1', last_door)
             elif ctrl_mode == 2 and readers_count == 4:
-                last_door = create_door(gen_d_name(1, self.controller_id.ctrl_id), 1)
+                last_door = create_door(gen_d_name(1, self.controller_id), 1)
                 last_door = last_door.id
                 create_reader('R1', 1, '0', last_door)
                 create_reader('R2', 2, '1', last_door)
-                last_door = create_door(gen_d_name(2, self.controller_id.ctrl_id), 2)
+                last_door = create_door(gen_d_name(2, self.controller_id), 2)
                 last_door = last_door.id
                 create_reader('R3', 3, '0', last_door)
                 create_reader('R4', 4, '1', last_door)
             else:  # (ctrl_mode == 2 and readers_count == 2) or ctrl_mode == 4
                 # print('harware version', hw_ver)
-                last_door = create_door(gen_d_name(1, self.controller_id.ctrl_id), 1)
+                last_door = create_door(gen_d_name(1, self.controller_id), 1)
                 if last_door:
                     last_door = last_door.id
                 else:
                     last_door = None
                 create_reader('R1', 1, '0', last_door)
-                last_door = create_door(gen_d_name(2, self.controller_id.ctrl_id), 2)
+                last_door = create_door(gen_d_name(2, self.controller_id), 2)
                 if last_door:
                     last_door = last_door.id
                 else:
@@ -777,17 +778,17 @@ class HrRfidCommands(models.Model):
                 create_reader('R2', 2, '0', last_door)
 
             if ctrl_mode == 3:
-                last_door = create_door(gen_d_name(2, self.controller_id.ctrl_id), 2)
+                last_door = create_door(gen_d_name(2, self.controller_id), 2)
                 last_door = last_door.id
                 create_reader('R3', 3, '0', last_door)
-                last_door = create_door(gen_d_name(3, self.controller_id.ctrl_id), 3)
+                last_door = create_door(gen_d_name(3, self.controller_id), 3)
                 last_door = last_door.id
                 create_reader('R4', 4, '0', last_door)
             elif ctrl_mode == 4:
-                last_door = create_door(gen_d_name(3, self.controller_id.ctrl_id), 3)
+                last_door = create_door(gen_d_name(3, self.controller_id), 3)
                 last_door = last_door.id
                 create_reader('R3', 3, '0', last_door)
-                last_door = create_door(gen_d_name(4, self.controller_id.ctrl_id), 4)
+                last_door = create_door(gen_d_name(4, self.controller_id), 4)
                 last_door = last_door.id
                 create_reader('R4', 4, '0', last_door)
 

@@ -12,7 +12,12 @@ class RFIDAppCase(common.TransactionCase):
         super(RFIDAppCase, self).setUp()
         # Create an mobile app
         self.app_url = "/hr/rfid/event"
-        self.test_company_id = 1
+        self.test_company_id = self.env['res.company'].create({'name': 'Test Company 1'}).id
+        self.test_company2_id = self.env['res.company'].create({'name': 'Test Company 2'}).id
+        self.env.ref('base.user_admin').company_ids = [
+            (4, self.test_company2_id, 0),
+            (4, self.test_company_id, 0)
+        ]
         self.test_webstack_10_3_id = self.env['hr.rfid.webstack'].create({
             'name': 'Test Stack',
             'serial': '234567',
@@ -22,16 +27,16 @@ class RFIDAppCase(common.TransactionCase):
             'active': True,
         })
         self.test_now = fields.Datetime.context_timestamp(
-                    self.test_webstack_10_3_id, fields.Datetime.now()
-                )
-        self.test_date_10_3 = '%d.%d.%d' %(
+            self.test_webstack_10_3_id, fields.Datetime.now()
+        )
+        self.test_date_10_3 = '%02d.%02d.%02d' % (
             self.test_now.day,
             self.test_now.month,
-            self.test_now.year-2000,
+            self.test_now.year - 2000,
         )
         self.test_dow_10_3 = '%d' % self.test_now.weekday()
-        self.test_time_10_3 = '%d:%d:%d' %(
-            self.test_now.hour+1,
+        self.test_time_10_3 = '%02d:%02d:%02d' % (
+            self.test_now.hour + 1,
             self.test_now.minute,
             self.test_now.second,
         )
@@ -51,6 +56,7 @@ class RFIDAppCase(common.TransactionCase):
             'number': '1234512345',
             'card_reference': 'Badge 77',
             'employee_id': self.test_employee_id.id,
+            'company_id': self.test_company_id,
         })
 
         self.test_partner = self.env['res.partner'].create({
@@ -65,7 +71,7 @@ class RFIDAppCase(common.TransactionCase):
             'number': '0012312345',
             'card_reference': 'Badge 33',
             'contact_id': self.test_partner.id,
-
+            'company_id': self.test_company_id,
         })
         self.c_50 = None
         self.c_110 = None
@@ -83,17 +89,65 @@ class RFIDAppCase(common.TransactionCase):
         #     self.assertTrue(False, 'Response contain error' + response.json()['error']['data']['message'])
         return response
 
-    def _hearbeat(self, serial=234567, key='0000'):
+    def _hearbeat(self, webstack_id):
         response = self.url_open(self.app_url,
-                                 data=json.dumps({'convertor': serial, 'FW': '1.3400', 'key': key, 'heartbeat': 22}),
+                                 data=json.dumps({'convertor': webstack_id.serial, 'FW': '1.3400', 'key': webstack_id.key, 'heartbeat': 22}),
                                  timeout=20,
                                  headers={'Content-Type': 'application/json'})
         return self._assertResponse(response).json()
 
-    def _send_cmd(self, cmd):
-        sys_events_count = self.env['hr.rfid.event.system'].search_count([
+    def _count_system_events(self, company_id):
+        return self.env['hr.rfid.event.system'].with_company(company_id or self.test_company_id).search_count([
             ('webstack_id', '=', self.test_webstack_10_3_id.id)
         ])
+
+    def _user_events(self, company_id, count=True, last=False):
+        if count:
+            return self.env['hr.rfid.event.user'].with_company(company_id or self.test_company_id).search_count([
+                # ('webstack_id', '=', self.test_webstack_10_3_id.id)
+            ])
+        if last:
+            return self.env['hr.rfid.event.user'].with_company(company_id or self.test_company_id).search([
+                # ('webstack_id', '=', self.test_webstack_10_3_id.id)
+            ], limit=1)
+
+    def _make_F0(self, hw_ver=12, serial_num=5, sw_ver=740, mode=1, inputs=1,  outputs=3,
+                 time_schedules=4,  io_table_lines=28, alarm_lines=0, max_cards_count=3000, max_events_count=3000):
+        #0102000000010703090000010000030100000208000100010502060003000506 iCON50
+        #0102000000010703090000010000030004000002080100030500000001050000
+        #12 0001 739 001 003 1 0028 0 1 01526 03056 iCON50
+        f0 = '%02d%04d%03d%03d%03d%02d%02d%d%d%05d%05d' % (
+            hw_ver, serial_num, sw_ver, inputs, outputs, time_schedules, alarm_lines, io_table_lines,
+            mode, max_cards_count, max_events_count
+        )
+        f0 = ''.join(['%02d' % int(i) for i in f0])
+        pass
+        # F0Parse.hw_ver: str(bytes_to_num(data, 0, 2)),
+        # F0Parse.serial_num: str(bytes_to_num(data, 4, 4)),
+        # F0Parse.sw_ver: str(bytes_to_num(data, 12, 3)),
+        # F0Parse.inputs: bytes_to_num(data, 18, 3),
+        # F0Parse.outputs: bytes_to_num(data, 24, 3),
+        # F0Parse.time_schedules: bytes_to_num(data, 32, 2),
+        # F0Parse.io_table_lines: bytes_to_num(data, 36, 2),
+        # F0Parse.alarm_lines: bytes_to_num(data, 40, 1),
+        # F0Parse.mode: int(data[42:44], 16),
+        # F0Parse.max_cards_count: bytes_to_num(data, 44, 5),
+        # F0Parse.max_events_count: bytes_to_num(data, 54, 5),
+        #
+        # hw_ver = 0
+        # serial_num = 1
+        # sw_ver = 2
+        # inputs = 3
+        # outputs = 4
+        # time_schedules = 5
+        # io_table_lines = 6
+        # alarm_lines = 7
+        # mode = 8
+        # max_cards_count = 9
+        # max_events_count = 10
+
+    def _send_cmd(self, cmd, system_event=False, company_id=None):
+        sys_events_count = self._count_system_events(company_id or self.test_company_id)
         response = self.url_open(self.app_url,
                                  data=json.dumps(cmd),
                                  timeout=20,
@@ -101,12 +155,10 @@ class RFIDAppCase(common.TransactionCase):
         if not response.ok:
             pass
         self.assertTrue(response.ok)
-        sys_events_count -= self.env['hr.rfid.event.system'].search_count([
-            ('webstack_id', '=', self.test_webstack_10_3_id.id)
-        ])
-        if sys_events_count != 0:
+        sys_events_count -= self._count_system_events(company_id or self.test_company_id)
+        if sys_events_count != 0 and not system_event:
             pass
-        self.assertEqual(sys_events_count, 0, 'System event generated')
+        self.assertTrue(sys_events_count != 0 or not system_event, 'System event generated')
         if response.text != '':
             return self._assertResponse(response).json()
         else:
@@ -126,11 +178,13 @@ class RFIDAppCase(common.TransactionCase):
         return response
 
     def _process_io_table(self, response, ctrl, module=234567, key='0000'):
+        ctrl.read()
         self.assertTrue(response['cmd']['c'] == 'F9' and response['cmd']['d'] == '01')
-        self.assertNotEqual(ctrl.default_io_table, None)
+        self.assertNotEqual(ctrl.default_io_table, '')
         io_count = 0
         while response['cmd']['c'] == 'F9':
             line = int(response['cmd']['d'], 16)
+            self.assertNotEqual(ctrl.default_io_table[(line - 1) * 16:(line - 1) * 16 + 16], '')
             response = self._send_cmd({
                 "convertor": module,
                 "response": {
@@ -142,7 +196,80 @@ class RFIDAppCase(common.TransactionCase):
                 "key": key
             })
             io_count += 1
+        ctrl.read()
         self.assertEqual(io_count, ctrl.io_table_lines)
         self.assertEqual(len(ctrl.io_table), len(ctrl.default_io_table))
         self.assertEqual(ctrl.io_table, ctrl.default_io_table)
         return response
+
+    def _check_added_controller(self, ctrl):
+        ctrl.read()
+        self.assertTrue(ctrl.hw_version != '')
+        self.assertTrue(ctrl.serial_number != '')
+        self.assertTrue(ctrl.sw_version != '')
+        self.assertTrue(ctrl.inputs > 0)
+        self.assertTrue(ctrl.outputs > 0)
+        self.assertTrue(ctrl.io_table_lines > 0)
+        self.assertTrue(ctrl.mode > 0)
+        self.assertTrue(ctrl.max_cards_count > 0)
+        self.assertTrue(ctrl.max_events_count > 0)
+
+    def _make_event(self, ctrl,
+                    card=None,
+                    pin=None,
+                    reader=None,
+                    date=None,
+                    day=None,
+                    time=None,
+                    event_code=None,
+                    system_event=False):
+        ctrl.read()
+        return self._send_cmd({
+            "convertor": ctrl.webstack_id.serial,
+            "event": {"bos": 1,
+                      "tos": 1,
+                      "card": card or self.test_card_employee.number,
+                      "cmd": "FA",
+                      "time": time or self.test_time_10_3,
+                      "date": date or self.test_date_10_3,
+                      "day": day or self.test_dow_10_3,
+                      "dt": (pin or '0000') + "0000000000",
+                      "err": 0,
+                      "event_n": event_code or 4,  # Int(action_selection[X]
+                      "id": ctrl.ctrl_id,
+                      "reader": reader or 1},
+            "key": ctrl.webstack_id.key
+        }, system_event=system_event)
+
+    def _test_R_event(self, ctrl, reader=1):
+        response = self._make_event(ctrl, reader=reader, event_code=3)
+        self.assertEqual(response, {})
+        response = self._make_event(ctrl, reader=reader, event_code=4)
+        self.assertEqual(response, {})
+        response = self._make_event(ctrl, reader=reader, event_code=5)
+        self.assertEqual(response, {})
+        response = self._make_event(ctrl, reader=reader, event_code=6)
+        self.assertEqual(response, {})
+        # response = self._make_event(self.ctrl, reader=reader+1, event_code=3, system_event=True)
+        # self.assertEqual(response, {})
+        pass
+
+    def _test_R1R2(self, ctrl):
+        self._test_R_event(ctrl, 1)
+        self._test_R_event(ctrl, 2)
+        pass
+
+    def _test_R1R2R3R4(self, ctrl):
+        self._test_R_event(ctrl, 1)
+        self._test_R_event(ctrl, 2)
+        self._test_R_event(ctrl, 3)
+        self._test_R_event(ctrl, 4)
+        pass
+
+    def _change_mode(self, ctrl, mode):
+        if mode < 3:
+            ctrl.mode_selection = str(mode)
+        else:
+            ctrl.mode_selection_4 = str(mode)
+        response = self._hearbeat(ctrl.webstack_id)
+
