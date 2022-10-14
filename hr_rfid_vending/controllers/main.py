@@ -99,7 +99,7 @@ class HrRfidVending(WebRfidController):
             if controller.hw_version != '16':
                 return ret_super()
 
-            card_env = request.env['hr.rfid.card'].with_context(with_company=webstack_id.company_id).sudo()
+            card_env = request.env['hr.rfid.card'].with_company(webstack_id.company_id).sudo()
 
             # TODO Move into function "deal_with_ev_64"
             if event['event_n'] == 64:
