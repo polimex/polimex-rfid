@@ -10,6 +10,7 @@ _controllers_created = 0
 class RFIDAppCase(common.TransactionCase):
     def setUp(self):
         super(RFIDAppCase, self).setUp()
+        self.env.user.tz = 'Europe/Sofia'
         # Create an mobile app
         self.app_url = "/hr/rfid/event"
         self.test_company_id = self.env['res.company'].create({'name': 'Test Company 1'}).id
@@ -36,7 +37,7 @@ class RFIDAppCase(common.TransactionCase):
         )
         self.test_dow_10_3 = '%d' % self.test_now.weekday()
         self.test_time_10_3 = '%02d:%02d:%02d' % (
-            self.test_now.hour + 1,
+            self.test_now.hour,
             self.test_now.minute,
             self.test_now.second,
         )
