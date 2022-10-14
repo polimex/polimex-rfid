@@ -186,7 +186,6 @@ class HrEmployee(models.Model):
                 raise exceptions.ValidationError('Invalid pin code, digits must be from 0 to 9')
 
     @api.model_create_multi
-    @api.returns('self', lambda value: value.id)
     def create(self, vals_list):
         records = super(HrEmployee, self).create(vals_list)
 

@@ -126,6 +126,7 @@ class VendingController(RFIDAppCase, HttpCase):
                       "err": 0, "event_n": 50, "id": id, "reader": 1},
             "key": key
         })
+        self.test_employee_id.read(['hr_rfid_vending_recharge_balance'])
         self.assertEqual(self.test_employee_id.hr_rfid_vending_recharge_balance, 0.05)
         self.assertEqual(response, {})
         response = self._send_cmd({
@@ -230,5 +231,6 @@ class VendingController(RFIDAppCase, HttpCase):
             "key": key
         })
         self.assertEqual(response, {})
+        self.c_vending.read(['cash_contained'])
         self.assertEqual(self.c_vending.cash_contained, 0.05)
         pass
