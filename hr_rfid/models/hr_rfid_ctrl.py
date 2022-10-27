@@ -228,11 +228,16 @@ class HrRfidController(models.Model):
         string='Controlled Alarm Lines',
         help='Alarm lines that belong to this controller',
     )
-
     read_b3_cmd = fields.Boolean(
         string='Read Controller Status',
         default=False,
         index=True,
+    )
+    sensor_ids = fields.One2many(
+        comodel_name='hr.rfid.ctrl.th',
+        inverse_name='controller_id',
+        string='Sensors',
+        help='Sensors that belong to this controller',
     )
 
     temperature = fields.Float(
@@ -498,6 +503,13 @@ class HrRfidController(models.Model):
             self.ensure_one()
             return self.hw_version in ['9']
 
+    def is_temperature_ctrl(self, hw_version=None):
+        if hw_version:
+            return hw_version in ['22']
+        elif self:
+            self.ensure_one()
+            return self.hw_version in ['22']
+
     def get_ctrl_model_name(self, hw_id):
         tmp = -1
         if hw_id:
@@ -750,6 +762,28 @@ class HrRfidController(models.Model):
 
     def read_outputs_ts_cmd(self):
         return self._base_command('FF')
+
+    def read_cards_cmd(self, position=0, count=0):
+        if count == 0:
+            return self._base_command(
+                cmd='F2',
+                cmd_data=''.join(['0%s' % d for d in ('%.5d' % position)]) + '%.2d' % count,
+            )
+        else:
+            if (self.cards_count > 0) and (self.cards_count >= position):
+                if self.cards_count < (position + polimex.READ_CARDS_BLOCK_SIZE):
+                    cmd_count = self.cards_count - position + 1
+                else:
+                    cmd_count = polimex.READ_CARDS_BLOCK_SIZE
+                first_command = self._base_command(
+                    cmd='F2',
+                    cmd_data=''.join(['0%s' % d for d in ('%.5d' % position)]) + '%.2d' % cmd_count,
+                )
+                if count - cmd_count > 0:
+                    self.read_cards_cmd(position=position + cmd_count, count=count - cmd_count)
+                return first_command
+            else:
+                pass
 
     def create_d1_cmd(self, card_num, pin_code, ts_code, rights_data, rights_mask):
         commands = []

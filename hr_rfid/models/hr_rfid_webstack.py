@@ -13,6 +13,7 @@ import base64
 import pytz
 
 import logging
+
 _logger = logging.getLogger(__name__)
 
 # put POSIX 'Etc/*' entries at the end to avoid confusing users - see bug 1086728
@@ -445,7 +446,6 @@ class HrRfidWebstack(models.Model):
                 message=_('The module was rebooted. It takes up to 10 sec to restore the work conditions')
             )
 
-
     @api.depends('tz')
     def _compute_tz_offset(self):
         for user in self:
@@ -743,6 +743,51 @@ class HrRfidWebstack(models.Model):
         if response['c'] == 'F0':
             command.parse_f0_response(post_data=post_data)
 
+        if response['c'] == 'F2':
+            if len(response['d']) == 10:  # card counter only
+                controller.cards_count = polimex.bytes_to_num(response['d'], 0, 5)
+                if controller.is_temperature_ctrl():
+                    controller.read_cards_cmd(position=1, count=controller.cards_count)
+                else:
+                    pass
+            else:  # card list
+                if controller.is_temperature_ctrl():
+                    sensors = []
+                    for block in [response['d'][i * 36:i * 36 + 36] for i in range(0, len(response['d']) // 36)]:
+                        barray = polimex.str_hex_to_array(block)
+                        sensor_uid = ''.join([f'{c:x}' for c in barray[0:16]])
+                        sensor_id = barray[16]
+                        sensor_flag = barray[17]
+                        # controller.update_th(0, {
+                        #     't': temperature,
+                        #     'h': humidity,
+                        # })
+                        th_id = controller.sensor_ids.filtered(lambda s: s.uid == sensor_uid)
+                        if not th_id:
+                            self.env['hr.rfid.ctrl.th'].create({
+                                'name': _('External Sensor {} on {}').format(len(controller.sensor_ids),
+                                                                             controller.name),
+                                'uid': sensor_uid,
+                                'internal_number': sensor_id,
+                                'active': sensor_flag == 1,
+                                'controller_id': controller.id,
+                                'sensor_number': len(controller.sensor_ids),
+                            })
+                        # if not th_id:
+                        #     controller.write({
+                        #         'sensor_ids': [(0, 0, {
+                        #             'name': _('External Sensor {} on {}').format(len(controller.sensor_ids),
+                        #                                                          controller.name),
+                        #             'uid': sensor_uid,
+                        #             'internal_number': sensor_id,
+                        #             'active': sensor_flag == 1,
+                        #             'controller_id': controller.id,
+                        #             'sensor_number': len(controller.sensor_ids),
+                        #         })]
+                        #     })
+                    pass
+                else:
+                    pass
         if response['c'] == 'F6':
             data = response['d']
             readers = [None, None, None, None]

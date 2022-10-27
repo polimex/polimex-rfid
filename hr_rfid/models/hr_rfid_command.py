@@ -7,6 +7,7 @@ from odoo import fields, models, api, exceptions, _, SUPERUSER_ID
 from enum import Enum
 
 import logging
+
 _logger = logging.getLogger(__name__)
 from odoo.addons.hr_rfid.controllers import polimex
 
@@ -207,6 +208,7 @@ class HrRfidCommands(models.Model):
             for it in HrRfidCommands.commands:
                 if it[0] == cmd:
                     return it[1]
+
         for record in self:
             record.name = str(record.cmd) + ' ' + find_desc(record.cmd)
 
@@ -226,6 +228,7 @@ class HrRfidCommands(models.Model):
             title=_("Command resend"),
             message=_("The command is marked for execution again.")
         )
+
     # Command to controller
     @api.model
     def read_controller_information_cmd(self, controller):
@@ -236,30 +239,28 @@ class HrRfidCommands(models.Model):
         }])
 
     @api.model
-    def synchronize_clock_cmd(self, controller):
-        return self.create([{
-            'webstack_id': controller.webstack_id.id,
-            'controller_id': controller.id,
-            'cmd': 'D7',
-        }])
-
-    @api.model
-    def delete_all_cards_cmd(self, controller):
-        return self.create([{
-            'webstack_id': controller.webstack_id.id,
-            'controller_id': controller.id,
-            'cmd': 'DC',
-            'cmd_data': '0303',
-        }])
-
-    @api.model
-    def delete_all_events_cmd(self, controller):
-        return self.create([{
-            'webstack_id': controller.webstack_id.id,
-            'controller_id': controller.id,
-            'cmd': 'DC',
-            'cmd_data': '0404',
-        }])
+    def read_cards_cmd(self, controller, position=0, count=0):
+        if count == 0:
+            return self.with_user(SUPERUSER_ID).create([{
+                'webstack_id': controller.webstack_id.id,
+                'controller_id': controller.id,
+                'cmd': 'F2',
+                'cmd_data': '0000000000',
+            }])
+        else:
+            if (controller.cards_count > 0) and (controller.cards_count >= position):
+                if controller.cardCount < (position + polimex.READ_CARDS_BLOCK_SIZE):
+                    count.push(controller.card_count - position + 1)
+                else:
+                    count.push(polimex.READ_CARDS_BLOCK_SIZE)
+                return self.with_user(SUPERUSER_ID).create([{
+                    'webstack_id': controller.webstack_id.id,
+                    'controller_id': controller.id,
+                    'cmd': 'F2',
+                    'cmd_data': ''.join(['0%s' % d for d in ('%.5d' % position)]) + '%.2d' % count,
+                }])
+            else:
+                pass
 
     @api.model
     def read_readers_mode_cmd(self, controller):
@@ -276,6 +277,34 @@ class HrRfidCommands(models.Model):
             'controller_id': controller.id,
             'cmd': 'FC',
         }])
+
+    @api.model
+    def synchronize_clock_cmd(self, controller):
+        return self.create([{
+            'webstack_id': controller.webstack_id.id,
+            'controller_id': controller.id,
+            'cmd': 'D7',
+        }])
+
+    @api.model
+    def _system_init(self, controller, data):
+        '''
+        Data = 1, 2, 3, 4 ..type of system event operation
+        '''
+        return self.create([{
+            'webstack_id': controller.webstack_id.id,
+            'controller_id': controller.id,
+            'cmd': 'DC',
+            'cmd_data': '%.2d%.2d' % (data, data),
+        }])
+
+    @api.model
+    def delete_all_cards_cmd(self, controller):
+        return self._system_init(controller, 3)
+
+    @api.model
+    def delete_all_events_cmd(self, controller):
+        return self._system_init(controller, 4)
 
     @api.model
     def create_d1_cmd(self, ws_id, ctrl_id, card_num, pin_code, ts_code, rights_data, rights_mask, alarm_right):
@@ -631,7 +660,7 @@ class HrRfidCommands(models.Model):
 
         mode_reader_relation = {1: [1, 2], 2: [2, 4], 3: [4], 4: [4]}
 
-        if not ctrl_env.is_relay_ctrl(hw_ver) and \
+        if hw_ver not in ['22', '30', '31', '32'] and \
                 readers_count not in mode_reader_relation[ctrl_mode]:
             return self.log_cmd_error_and_return_next('F0 sent us a wrong reader-controller '
                                                       'mode combination', '31', 200, post_data=post_data)
@@ -804,7 +833,6 @@ class HrRfidCommands(models.Model):
                 id=self.controller_id.ctrl_id
             )
 
-
         ctrl_dict = {
             'hw_version': hw_ver,
             'serial_number': serial_num,
@@ -834,17 +862,24 @@ class HrRfidCommands(models.Model):
             self.controller_id.write(ctrl_dict)
 
         cmd_env = self.env['hr.rfid.command'].sudo()
+
         if not ctrl_already_existed:
             if self.controller_id.alarm_lines > 0:
                 self.controller_id._setup_alarm_lines()
             self.controller_id.synchronize_clock_cmd()
             self.controller_id.delete_all_cards_cmd()
             self.controller_id.delete_all_events_cmd()
-            self.controller_id.read_readers_mode_cmd()
+            if not self.controller_id.is_temperature_ctrl():
+                self.controller_id.read_readers_mode_cmd()
             self.controller_id.read_io_table_cmd()
             self.controller_id.read_status()
 
-        if not self.controller_id.is_relay_ctrl() and (ctrl_mode == 1 or ctrl_mode == 3) and self.controller_id.readers > 1:
+        if self.controller_id.is_temperature_ctrl():
+            self.controller_id.read_cards_cmd()
+        if not self.controller_id.is_relay_ctrl() and \
+                not self.controller_id.is_temperature_ctrl() and \
+                (ctrl_mode == 1 or ctrl_mode == 3) and \
+                self.controller_id.readers > 1:
             cmd_env.read_anti_pass_back_mode_cmd(self.controller_id)
 
     # Communication Helpers
@@ -875,8 +910,8 @@ class HrRfidCommands(models.Model):
                 rights_mask = '{:02X}'.format(command.rights_mask)
                 if command.controller_id.is_alarm_ctrl():
                     json_cmd['cmd']['d'] = card_num + pin_code + ts_code + rights_data + rights_mask + (
-                                command.alarm_right and rights_data or '00') + (
-                                command.alarm_right and rights_mask or '00')
+                            command.alarm_right and rights_data or '00') + (
+                                                   command.alarm_right and rights_mask or '00')
                 else:
                     json_cmd['cmd']['d'] = card_num + pin_code + ts_code + rights_data + rights_mask
             else:
