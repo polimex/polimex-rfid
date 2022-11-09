@@ -3,9 +3,13 @@ from odoo import fields, models, api, _, SUPERUSER_ID
 
 class CtrlTemperatureAndHumidity(models.Model):
     _name = 'hr.rfid.ctrl.th'
+    _inherit = ['mail.thread']
     _description = 'Temperature and Humidity log'
 
-    active = fields.Boolean(default=True)
+    active = fields.Boolean(
+        default=True,
+        tracking=True
+    )
     name = fields.Char(
         help='Sensor friendly name',
         required=True,
@@ -15,7 +19,8 @@ class CtrlTemperatureAndHumidity(models.Model):
         help='Sensor unique/serial number',
     )
     internal_number = fields.Char(
-        help='Sensor internal number',
+        help='Sensor internal number in the controller',
+        tracking=True
     )
     temperature = fields.Float(
         help='Current Temperature value',
@@ -40,11 +45,18 @@ class CtrlTemperatureAndHumidity(models.Model):
     door_id = fields.Many2one(
         comodel_name='hr.rfid.door',
         ondelete='cascade',
+        tracking=True
     )
     th_log_ids = fields.One2many(
         comodel_name='hr.rfid.ctrl.th.log',
         inverse_name='th_id'
 
+    )
+    log_every_read = fields.Boolean(
+        tracking=True,
+        default=0,
+        help='If True, the value will be logged every time. If False, the value will be logged'
+             ' only if value has changed from previous read'
     )
 
     def button_log(self):
@@ -63,9 +75,9 @@ class CtrlTemperatureAndHumidity(models.Model):
                     'webstack_id': sensor.controller_id.webstack_id.id,
                     'controller_id': sensor.controller_id.id,
                     'cmd': 'D1',
-                    # 'card_number': card_num,
-                    # 'pin_code': pin_code,
-                    # 'ts_code': ts_code,
+                    'card_number': sensor.uid,
+                    'pin_code': sensor.internal_number,
+                    'ts_code': int(sensor.active),
                     # 'rights_data': rights_data,
                     # 'rights_mask': rights_mask,
                 }])
@@ -81,7 +93,7 @@ class CtrlTemperatureAndHumidity(models.Model):
             update_dict.update({'temperature': vals['temperature']})
         if 'humidity' in vals and vals['humidity'] != self.humidity:
             update_dict.update({'humidity': vals['humidity']})
-        if update_dict:
+        if update_dict and self.sensor_number == 0:
             if not ('temperature' in update_dict):
                 update_dict.update({'temperature': self.temperature})
             if not ('humidity' in update_dict):
@@ -93,3 +105,18 @@ class CtrlTemperatureAndHumidity(models.Model):
             for s in self.filtered(lambda sensor: sensor.uid):
                 s.create_d1_temperature_cmd()
         return res
+
+    def write_log(self, timestamp, values: dict):
+        self.ensure_one()
+        update_dict = {}
+        if 't' in values and (self.log_every_read or values['t'] != self.temperature):
+            update_dict.update({'temperature': values['t']})
+
+        if 'h' in values and (self.log_every_read or values['h'] != self.humidity):
+            update_dict.update({'humidity': values['h']})
+
+        if update_dict != {}:
+            self.write(update_dict)
+            update_dict.update({'th_id': self.id})
+            update_dict.update({'event_time': timestamp})
+            self.env['hr.rfid.ctrl.th.log'].sudo().create(update_dict)

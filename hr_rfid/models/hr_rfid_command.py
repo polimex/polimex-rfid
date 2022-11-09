@@ -66,6 +66,7 @@ class HrRfidCommands(models.Model):
         ('DD', _('Write Input Flags')),
         ('DE', _('Write Anti-Passback Mode')),
         ('DF', _('Write Outputs T/S Table')),
+        ('B1', _('Read/Write temperature range')),
         ('B3', _('Read Controller Status')),
         ('B4', _('Read/Write Hotel buttons sense')),
     ]
@@ -186,7 +187,7 @@ class HrRfidCommands(models.Model):
     card_number = fields.Char(
         string='Card',
         help='Card the command will do an operation for',
-        size=10,
+        # size=10,
         index=True,
     )
 
@@ -876,6 +877,7 @@ class HrRfidCommands(models.Model):
 
         if self.controller_id.is_temperature_ctrl():
             self.controller_id.read_cards_cmd()
+            self.controller_id.temp_range_cmd()
         if not self.controller_id.is_relay_ctrl() and \
                 not self.controller_id.is_temperature_ctrl() and \
                 (ctrl_mode == 1 or ctrl_mode == 3) and \
@@ -902,19 +904,11 @@ class HrRfidCommands(models.Model):
         }
         # Commands addons
         if command.cmd == 'D1':
-            if not command.controller_id.is_relay_ctrl():
-                card_num = ''.join(list('0' + ch for ch in command.card_number))
-                pin_code = ''.join(list('0' + ch for ch in command.pin_code))
-                ts_code = str(command.ts_code)
-                rights_data = '{:02X}'.format(command.rights_data)
-                rights_mask = '{:02X}'.format(command.rights_mask)
-                if command.controller_id.is_alarm_ctrl():
-                    json_cmd['cmd']['d'] = card_num + pin_code + ts_code + rights_data + rights_mask + (
-                            command.alarm_right and rights_data or '00') + (
-                                                   command.alarm_right and rights_mask or '00')
-                else:
-                    json_cmd['cmd']['d'] = card_num + pin_code + ts_code + rights_data + rights_mask
-            else:
+            if command.controller_id.is_temperature_ctrl():
+                sensor_uid = ''.join(["0"+c for c in command.card_number])
+                json_cmd['cmd']['d'] = sensor_uid + "%.2d" % int(command.pin_code) + "%.2d" % int(command.ts_code)
+                pass
+            elif command.controller_id.is_relay_ctrl():
                 card_num = ''.join(list('0' + ch for ch in command.card_number))
                 rights_data = '%03d%03d%03d%03d' % (
                     (command.rights_data >> (3 * 8)) & 0xFF,
@@ -934,6 +928,19 @@ class HrRfidCommands(models.Model):
                 rights_data = ''.join(list('0' + ch for ch in rights_data))
                 rights_mask = ''.join(list('0' + ch for ch in rights_mask))
                 json_cmd['cmd']['d'] = card_num + rights_data + rights_mask
+            else:
+                card_num = ''.join(list('0' + ch for ch in command.card_number))
+                pin_code = ''.join(list('0' + ch for ch in command.pin_code))
+                ts_code = str(command.ts_code)
+                rights_data = '{:02X}'.format(command.rights_data)
+                rights_mask = '{:02X}'.format(command.rights_mask)
+                if command.controller_id.is_alarm_ctrl():
+                    json_cmd['cmd']['d'] = card_num + pin_code + ts_code + rights_data + rights_mask + (
+                            command.alarm_right and rights_data or '00') + (
+                                                   command.alarm_right and rights_mask or '00')
+                else:
+                    json_cmd['cmd']['d'] = card_num + pin_code + ts_code + rights_data + rights_mask
+
         if command.cmd == 'D7':
             dt = datetime.datetime.now()
             dt += command.webstack_id._get_tz_offset()

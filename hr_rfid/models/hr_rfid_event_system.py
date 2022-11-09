@@ -9,6 +9,9 @@ class HrRfidSystemEvent(models.Model):
     _description = 'RFID System Event'
     _order = 'timestamp desc'
 
+    def _get_action_selection(self):
+        pass
+
     name = fields.Char(
         compute='_compute_sys_ev_name'
     )
@@ -107,9 +110,10 @@ class HrRfidSystemEvent(models.Model):
         ('47', _('Vending Purchase Complete')),
         ('48', _('Vending Error1')),
         ('49', _('Vending Error2')),
-        ('52', _('Temperature High')),
-        ('53', _('Temperature Normal')),
-        ('54', _('Temperature Low')),
+        ('51', _('Temperature High')),
+        ('52', _('Temperature Normal')),
+        ('53', _('Temperature Low')),
+        ('54', _('Temperature Error')),
         ('64', _('Cloud Card Request')),  # User Event
         ('99', _('System Event')),
     ]

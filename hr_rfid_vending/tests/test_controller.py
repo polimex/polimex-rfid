@@ -14,6 +14,7 @@ class VendingController(RFIDAppCase, HttpCase):
         self._add_products()
         self._balance_test()
         self._sale_test()
+        self._event_test()
 
     def _add_Vending(self, module=234567, key='0000', id=7):
         self.c_vending = self.env['hr.rfid.ctrl'].create({
@@ -173,6 +174,110 @@ class VendingController(RFIDAppCase, HttpCase):
                       "dt": "00000000000000",
                       "time": self.test_time_10_3,
                       "err": 0, "event_n": 64, "id": id, "reader": 1},
+            "key": key
+        })
+        self.assertEqual(response, {'cmd': {'id': 7, 'c': 'DB', 'd': '4000010203040501020304050208'}})
+        response = self._send_cmd_response(response, '0000')
+        self.assertEqual(response, {})
+
+        # sale with card without product
+        response = self._send_cmd({
+            "convertor": module,
+            "event": {"bos": 1,
+                      "tos": 1,
+                      "card": self.test_card_employee.number,
+                      "cmd": "FA",
+                      "date": self.test_date_10_3,
+                      "day": self.test_dow_10_3,
+                      "dt": "00000000010207",
+                      "time": self.test_time_10_3,
+                      "err": 0, "event_n": 47, "id": id, "reader": 1},
+            "key": key
+        })
+        self.assertEqual(response, {})
+        # request balance for check
+        response = self._send_cmd({
+            "convertor": module,
+            "event": {"bos": 1,
+                      "tos": 1,
+                      "card": self.test_card_employee.number,
+                      "cmd": "FA",
+                      "date": self.test_date_10_3,
+                      "day": self.test_dow_10_3,
+                      "dt": "00000000000000",
+                      "time": self.test_time_10_3,
+                      "err": 0, "event_n": 64, "id": id, "reader": 1},
+            "key": key
+        })
+        self.assertEqual(response, {'cmd': {'id': 7, 'c': 'DB', 'd': '4000010203040501020304050207'}})
+        response = self._send_cmd_response(response, '0000')
+        self.assertEqual(response, {})
+
+        # sale without card and without product
+        # {"convertor": 425757,
+        #  "event": {"bos": 1, "card": "0000000000", "cmd": "FA", "date": "10.12.22", "day": 3, "dt": "00000d000c0f06",
+        #            "err": 0, "event_n": 47, "id": 1, "reader": 1, "time": "17:06:54", "tos": 1}, "key": "66F6"}
+        response = self._send_cmd({
+            "convertor": module,
+            "event": {"bos": 1,
+                      "tos": 1,
+                      "card": '0000000000',
+                      "cmd": "FA",
+                      "date": self.test_date_10_3,
+                      "day": self.test_dow_10_3,
+                      "dt": "00000000010f0e",
+                      "time": self.test_time_10_3,
+                      "err": 0, "event_n": 47, "id": id, "reader": 1},
+            "key": key
+        })
+        self.assertEqual(response, {})
+        self.assertEqual(self.c_vending.cash_contained, 0.05)
+        pass
+    def _event_test(self, module=234567, key='0000', id=7):
+        #{"convertor":242865,"key":"0000","event":{"id":38,"cmd":"FA","err":99,"tos":9,"bos":1,"event_n":50,"time":"11:01:51","day":1,"date":"31.10.22","card":"0016226318","reader":1,"dt":"00006300000000"}
+        # sale with card and product
+        a = {"convertor": 242865,
+             "key": "0000",
+             "event": {
+                 "id": 38,
+                 "cmd": "FA",
+                 "err": 99,
+                 "tos": 9,
+                 "bos": 1,
+                 "event_n": 50,
+                 "time": "11:01:51",
+                 "day": 1,
+                 "date": "31.10.22",
+                 "card": "0016226318",
+                 "reader": 1,
+                 "dt": "00006300000000"}
+             }
+        response = self._send_cmd({
+            "convertor": module,
+            "event": {"bos": 1,
+                      "tos": 1,
+                      "card": self.test_card_employee.number,
+                      "cmd": "FA",
+                      "date": self.test_date_10_3,
+                      "day": self.test_dow_10_3,
+                      "dt": "00000100010208",
+                      "time": self.test_time_10_3,
+                      "err": 0, "event_n": 47, "id": id, "reader": 1},
+            "key": key
+        })
+        self.assertEqual(response, {})
+        # request balance for check
+        response = self._send_cmd({
+            "convertor": module,
+            "event": {"bos": 1,
+                      "tos": 1,
+                      "card": self.test_card_employee.number,
+                      "cmd": "FA",
+                      "date": self.test_date_10_3,
+                      "day": self.test_dow_10_3,
+                      "dt": "00000000000000",
+                      "time": self.test_time_10_3,
+                      "err": 15, "event_n": 64, "id": id, "reader": 1},
             "key": key
         })
         self.assertEqual(response, {'cmd': {'id': 7, 'c': 'DB', 'd': '4000010203040501020304050208'}})

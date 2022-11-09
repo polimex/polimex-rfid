@@ -94,6 +94,16 @@
                                     <field name="hotel_readers_card_presence" readonly="1"/>
                                     <field name="hotel_readers_buttons_pressed" readonly="1"/>
                                 </group>
+                                <group string="Temperature control" attrs="{'invisible': [('hw_version', '!=', '22')]}">
+                                    <field name="event_interval" widget="numeric_step"
+                                           options="{'step': 1, 'min': 0, 'max': 99}"/>
+                                    <field name="high_temperature" widget="numeric_step"
+                                           options="{'step': 0.5, 'min': -55, 'max': 125}"/>
+                                    <field name="low_temperature" widget="numeric_step"
+                                           options="{'step': 0.5, 'min': -55, 'max': 125}"/>
+                                    <field name="hysteresis" widget="numeric_step"
+                                           options="{'step': 0.5, 'min': 0.5, 'max': 9}"/>
+                                </group>
                                 <group string="Setup">
                                     <field name="mode" readonly="1" invisible="1"/>
                                     <field name="mode_selection"

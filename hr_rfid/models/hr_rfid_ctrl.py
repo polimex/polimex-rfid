@@ -3,6 +3,8 @@ from odoo.addons.hr_rfid.controllers import polimex
 
 import logging
 
+from odoo.exceptions import ValidationError
+
 _logger = logging.getLogger(__name__)
 
 
@@ -249,6 +251,57 @@ class HrRfidController(models.Model):
         string='Humidity',
         default=0,
     )
+
+    # Temperature Controller
+    event_interval = fields.Integer(
+        help="Time in minutes. 0 means disable function. Range 0..99 min",
+        compute="_compute_event_interval",
+        inverse="_inverse_event_interval"
+    )
+
+    def _inverse_event_interval(self):
+        for c in self.filtered(lambda ctrl: ctrl.hw_version == '22'):
+            io_line = c._get_io_line(1)
+            io_line[4] = c.event_interval
+            c._set_io_line(1, io_line)
+
+    @api.depends('io_table')
+    def _compute_event_interval(self):
+        for c in self.filtered(lambda ctrl: ctrl.hw_version == '22'):
+            io_line = c._get_io_line(1)
+            c.event_interval = len(io_line) > 0 and io_line[4] or 0
+
+    @api.constrains('event_interval')
+    def _check_value(self):
+        if self.event_interval > 99 or self.event_interval < 0:
+            raise ValidationError(_('Valid interval range is 0-99 min.'))
+
+    high_temperature = fields.Float(
+        help="Temperature above the controller will trigger High temperature event. Range -55..125 ℃"
+    )
+
+    @api.constrains('high_temperature')
+    def _check_value(self):
+        if self.high_temperature > 125 or self.high_temperature < -55:
+            raise ValidationError(_('Valid High Temperature range is -55 .. 125 ℃'))
+
+    low_temperature = fields.Float(
+        help="Temperature below the controller will trigger Low temperature event. Range -55..125 ℃"
+    )
+
+    @api.constrains('low_temperature')
+    def _check_value(self):
+        if self.low_temperature > 125 or self.low_temperature < -55:
+            raise ValidationError(_('Valid Low Temperature range is -55 .. 125 ℃'))
+
+    hysteresis = fields.Float(
+        help="Hysteresis for event triggering. Range 0.5..9 ℃"
+    )
+
+    @api.constrains('hysteresis')
+    def _check_value(self):
+        if self.low_temperature > 9 or self.low_temperature < 0.5:
+            raise ValidationError(_('Valid Low Temperature range is 0.5 .. 9 ℃'))
 
     system_voltage = fields.Float(
         string='System Voltage',
@@ -538,6 +591,12 @@ class HrRfidController(models.Model):
 
             if old_ext_db != new_ext_db:
                 ctrl.write_controller_mode(new_ext_db=new_ext_db)
+            if ('high_temperature' in vals or 'low_temperature' in vals or 'hysteresis' in vals) and not self.env.context.get('readed', False):
+                ctrl.temp_range_cmd(
+                    ctrl.high_temperature,
+                    ctrl.low_temperature,
+                    ctrl.hysteresis
+                )
 
     def sys_event(self, error_description, event_action, input_json):
         for ctrl in self:
@@ -637,33 +696,53 @@ class HrRfidController(models.Model):
 
         return self.convert_int_to_cmd_data_for_output_control(data)
 
-    def update_th(self, sensor_number: int, data_dict: dict):
+    def _find_th_sensor(self, sensor_number: int = None, internal_number: int = None):
+        self.ensure_one()
+        if sensor_number is None and internal_number is None:
+            return
+        th_id = None
+        if sensor_number is not None:
+            th_id = self.env['hr.rfid.ctrl.th'].with_context(test_active=False).search([
+                ('controller_id', '=', self.id),
+                ('sensor_number', '=', sensor_number),
+            ])
+        elif internal_number is not None:
+            th_id = self.env['hr.rfid.ctrl.th'].with_context(test_active=False).search([
+                ('controller_id', '=', self.id),
+                ('internal_number', '=', internal_number),
+            ])
+        return th_id
+
+    def update_th(self, sensor_number: int = None, internal_number: int = None, data_dict: dict = {}):
         '''
         sensor_number:int any number!. system sensor(integrated) number 0
         data_dict: expect {'t':float, 'h':float}
         '''
         for c in self:
-            th_id = self.env['hr.rfid.ctrl.th'].search([
-                ('controller_id', '=', c.id),
-                ('sensor_number', '=', sensor_number),
-            ])
-            if not th_id:
+            th_id = c._find_th_sensor(sensor_number, internal_number)
+            if not th_id and sensor_number is not None:
                 th_id = self.env['hr.rfid.ctrl.th'].create([{
                     'name': _('T&H Sensor {} on {}').format(sensor_number, c.name),
                     'controller_id': c.id,
                     'sensor_number': sensor_number
                 }])
+
+            if not th_id:
+                _logger.error('Receiving data for Temperature and/or Humidity but can not find the sensor in DB')
+                return
+
             new_dict = {}
             if 't' in data_dict:
                 new_dict.update({'temperature': data_dict['t']})
-                if sensor_number == 0:
-                    c.temperature = data_dict['t']
+                # if sensor_number == 0:
+                c.temperature = data_dict['t']
             if 'h' in data_dict:
                 new_dict.update({'humidity': data_dict['h']})
-                if sensor_number == 0:
-                    c.humidity = data_dict['h']
+                # if sensor_number == 0:
+                c.humidity = data_dict['h']
             if new_dict:
                 th_id.write(new_dict)
+                return th_id
 
     def decode_door_number_for_relay(self, data):
         self.ensure_one()
@@ -762,6 +841,16 @@ class HrRfidController(models.Model):
 
     def read_outputs_ts_cmd(self):
         return self._base_command('FF')
+
+    def temp_range_cmd(self, high_temp=None, low_tempt=None, hyst=None):
+        if high_temp is None:
+            return self._base_command('B1', '01')
+        else:
+            ht = ['%.2d' % i for i in polimex.get_reverse_temperature(self.high_temperature)]
+            lt = ['%.2d' % i for i in polimex.get_reverse_temperature(self.low_temperature)]
+            h = ['%.2d' % i for i in polimex.get_reverse_temperature(self.hysteresis)]
+            # 00 0100 0090 0010       00 0001 5a00 0a00
+            return self._base_command('B1', '00%s%s%s' % (''.join(ht), ''.join(lt), ''.join(h)))
 
     def read_cards_cmd(self, position=0, count=0):
         if count == 0:

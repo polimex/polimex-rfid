@@ -1,3 +1,5 @@
+import math
+
 MAX_DIRECT_EXECUTE = 10  # command count for direct execute
 MAX_DIRECT_EXECUTE_TIME = 5  # last X seconds for counting executed cmds
 
@@ -444,3 +446,22 @@ def str_hex_to_array(str):
     return [int("0x"+str[i * 2: i * 2 + 2],16) for i in range(0, len(str) // 2)]
 def str_dec_to_array(str):
     return [int(str[i * 2: i * 2 + 2]) for i in range(0, len(str) // 2)]
+
+def get_temperature(h, l, precision=0.5):
+    negative = 1
+    if (h & 80) == 80:
+        negative = -1
+        h = h - 80
+    result = negative * math.floor(int('%.2d%.2d' % (h, l)) / 10 / precision) / (1 / precision)
+    return result
+
+def get_reverse_temperature(temp):
+      negative = temp < 0
+      t = "%.4d" % (abs(temp*10) + 8000*negative)
+      # t = ('0000' + math.abs(temp * 10).toString()).slice(-4)
+      H = t[0:2]
+      L = t[2:4]
+      return [int(H, 10), int(L, 10)]
+
+# 01 0001 2080 0232
+# 00 0001 2080 1000

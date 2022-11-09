@@ -194,7 +194,7 @@ class RFIDController(RFIDAppCase, HttpCase):
         response = self._hearbeat(self.c_temperature.webstack_id)
         self.assertEqual(response, {'cmd': {'id': id, 'c': 'F0', 'd': ''}}, )
         # tmp = self._make_F0(12, 1, 739, 1, 1, 3, 4, 28, 0, 3500, 1500 )
-        response = self._send_cmd_response(response, '0202000407080704040000050000040001050208000200000102070004000604')
+        response = self._send_cmd_response(response, '0202000207080704040000050000040001050208000200000102070004000604')
         self._check_added_controller(self.c_temperature)
         self.assertTrue(response['cmd']['c'] == 'D7')
         response = self._send_cmd_response(response)
@@ -208,9 +208,74 @@ class RFIDController(RFIDAppCase, HttpCase):
         self.assertTrue(response['cmd']['c'] == 'F2')
         response = self._send_cmd_response(response, '0000000004')
         self.assertEqual(self.c_temperature.cards_count, 4)
+        self.assertTrue(response['cmd']['c'] == 'B1' and response['cmd']['d'] == '01')
+        response = self._send_cmd_response(response, '01040000500010')
         self.assertTrue(response['cmd']['c'] == 'F2' and response['cmd']['d'] == '000000000104')
         response = self._send_cmd_response(response,
-            '02080800020807050d000001030c0d0b00000208000d070907050d000001030c0203000002080f0b090107050d000001030c000700000208010f0d0d07050d000001030c030a0000')
+                                           '02080800020807050d000001030c0d0b02010208000d070907050d000001030c020301010208010f0d0d07050d000001030c030a040102080f0b090107050d000001030c00070000')
+        self.assertTrue(response == {})
+        self.assertTrue(len(self.c_temperature.sensor_ids) == 4)
+        self.c_temperature.sensor_ids[2].active = False
         # self.assertTrue(response['cmd']['c'] == 'B4')
         # response = self._send_cmd_response(response, '01900000018500000195000001900000')
-        self.assertTrue(response == {})
+        response = self._hearbeat(self.c_temperature.webstack_id)
+        self.assertTrue(
+            response['cmd']['c'] == 'D1' and response['cmd']['d'].upper() == '0208000D070907050D000001030C02030100')
+        # {'convertor': 428030,
+        #  'event': {'bos': 1, 'card': '0000000000', 'cmd': 'FA', 'date': '11.07.22', 'day': 1, 'dt': '01900000',
+        #            'err': 0, 'event_n': 52, 'id': 29, 'reader': 2, 'time': '11:41:39', 'tos': 282},
+        #  'key': '1764'}
+        # {"c": "FA", "d": "0000000002 0000000001 34363922050411220000000002000000040002000000", "e": 0, "id": 29}
+
+        self._send_cmd({
+            "convertor": self.c_temperature.webstack_id.serial,
+            "event": {"bos": 1,
+                      "tos": 1,
+                      "card": '0000000000',
+                      "cmd": "FA",
+                      "time": self.test_time_10_3,
+                      "date": self.test_date_10_3,
+                      "day": self.test_dow_10_3,
+                      "dt": "02560000",
+                      "err": 0,
+                      "event_n": 51,
+                      "id": self.c_temperature.ctrl_id,
+                      "reader": 2},
+            "key": self.c_temperature.webstack_id.key
+        }, system_event=True)
+
+        self._send_cmd({
+            "convertor": self.c_temperature.webstack_id.serial,
+            "event": {"bos": 1,
+                      "tos": 1,
+                      "card": '0000000000',
+                      "cmd": "FA",
+                      "time": self.test_time_10_3,
+                      "date": self.test_date_10_3,
+                      "day": self.test_dow_10_3,
+                      "dt": "01900000",
+                      "err": 0,
+                      "event_n": 52,
+                      "id": self.c_temperature.ctrl_id,
+                      "reader": 2},
+            "key": self.c_temperature.webstack_id.key
+        })
+
+        self._send_cmd({
+            "convertor": self.c_temperature.webstack_id.serial,
+            "event": {"bos": 1,
+                      "tos": 1,
+                      "card": '0000000000',
+                      "cmd": "FA",
+                      "time": self.test_time_10_3,
+                      "date": self.test_date_10_3,
+                      "day": self.test_dow_10_3,
+                      "dt": "00800000",
+                      "err": 0,
+                      "event_n": 53,
+                      "id": self.c_temperature.ctrl_id,
+                      "reader": 2},
+            "key": self.c_temperature.webstack_id.key
+        }, system_event=True)
+
+        pass

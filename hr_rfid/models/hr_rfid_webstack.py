@@ -765,13 +765,15 @@ class HrRfidWebstack(models.Model):
                         th_id = controller.sensor_ids.filtered(lambda s: s.uid == sensor_uid)
                         if not th_id:
                             self.env['hr.rfid.ctrl.th'].create({
-                                'name': _('External Sensor {} on {}').format(len(controller.sensor_ids),
-                                                                             controller.name),
+                                'name': _('External Sensor %s connected to %s') % (
+                                    len(controller.with_context(active_test=False).sensor_ids),
+                                    controller.name
+                                ),
                                 'uid': sensor_uid,
                                 'internal_number': sensor_id,
                                 'active': sensor_flag == 1,
                                 'controller_id': controller.id,
-                                'sensor_number': len(controller.sensor_ids),
+                                'sensor_number': len(controller.with_context(active_test=False).sensor_ids),
                             })
                         # if not th_id:
                         #     controller.write({
@@ -814,6 +816,17 @@ class HrRfidWebstack(models.Model):
             for door in controller.door_ids:
                 door.apb_mode = (door.number == '1' and (apb_mode & 1)) \
                                 or (door.number == '2' and (apb_mode & 2))
+        if response['c'] == 'B1':
+            if response['d'] != '00':
+                # '01 0400 0050 0010'
+                high_temp = polimex.get_temperature(int(response['d'][2:4]), int(response['d'][4:6]))
+                low_temp = polimex.get_temperature(int(response['d'][6:8]), int(response['d'][8:10]))
+                hyst = polimex.get_temperature(int(response['d'][10:12]), int(response['d'][12:14]))
+                controller.with_context(readed=True).write({
+                    'high_temperature': high_temp,
+                    'low_temperature': low_temp,
+                    'hysteresis': hyst
+                })
 
         if response['c'] == 'B3':
             data = response['d']
@@ -870,7 +883,7 @@ class HrRfidWebstack(models.Model):
                 'read_b3_cmd': controller.read_b3_cmd or temperature != 0 or humidity != 0 or controller.alarm_lines > 0
             })
             if temperature != 0 or humidity != 0:
-                controller.update_th(0, {
+                controller.update_th(sensor_number=0, data_dict={
                     't': temperature,
                     'h': humidity,
                 })

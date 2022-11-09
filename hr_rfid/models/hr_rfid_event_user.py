@@ -76,7 +76,7 @@ class HrRfidUserEvent(models.Model):
         'hr.rfid.card',
         string='Card',
         help='Card affected by this event',
-        ondelete='cascade',
+        ondelete='set null',
     )
 
     command_id = fields.Many2one(
