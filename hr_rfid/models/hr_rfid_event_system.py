@@ -148,17 +148,15 @@ class HrRfidSystemEvent(models.Model):
 
     @api.autovacuum
     def _gc_events_life(self):
-        event_lifetime = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.event_lifetime')
-        if event_lifetime is None:
-            return False
-
-        lifetime = timedelta(days=int(event_lifetime))
-        today = fields.Date.today()
-        res = self.search([
-            ('timestamp', '<', today - lifetime)
-        ])
-        res.unlink()
-
+        for c in self.env['res.company'].search([]):
+            if c.event_lifetime is None:
+                return False
+            lifetime = timedelta(days=int(c.event_lifetime))
+            today = fields.Date.today()
+            res = self.with_company(c).search([
+                ('timestamp', '<', today - lifetime)
+            ])
+            res.unlink()
         return True
 
     @api.depends('webstack_id.name', 'controller_id.name', 'timestamp')

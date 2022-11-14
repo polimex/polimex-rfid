@@ -129,16 +129,16 @@ class HrRfidUserEvent(models.Model):
 
     @api.autovacuum
     def _gc_user_events_life(self):
-        event_lifetime = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.event_lifetime')
-        if event_lifetime is None:
-            return False
-
-        lifetime = timedelta(days=int(event_lifetime))
-        today = fields.Date.today()
-        res = self.search([
-            ('event_time', '<', today-lifetime)
-        ])
-        res.unlink()
+        for c in self.env['res.company'].search([]):
+            if c.event_lifetime is None:
+                return False
+            lifetime = timedelta(days=int(c.event_lifetime))
+            today = fields.Date.today()
+            res = self.with_company(c).search([
+                ('event_time', '<', today - lifetime)
+            ])
+            res.unlink()
+        return True
 
     @api.depends('employee_id.name', 'contact_id.name', 'door_id.name', 'event_action')
     def _compute_user_ev_name(self):

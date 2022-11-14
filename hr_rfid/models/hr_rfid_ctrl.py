@@ -767,7 +767,7 @@ class HrRfidController(models.Model):
                 SUPERUSER_ID).create([new_cmd])
         # Execute commands
         for c in commands:
-            if not c.webstack_id.is_limit_executed_cmd_reached() and not c.webstack_id.behind_nat:
+            if not c.webstack_id.is_limit_executed_cmd_reached() and not c.webstack_id.behind_nat and c.webstack_id.active:
                 try:
                     c.webstack_id.direct_execute({}, c)
                 except Exception as e:

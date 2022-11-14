@@ -597,7 +597,7 @@ class HrRfidCommands(models.Model):
 
             records += super(HrRfidCommands, self).create([vals])
 
-            if records and len(records) == 1 and not records.webstack_id.is_limit_executed_cmd_reached():
+            if records and len(records) == 1 and not records.webstack_id.is_limit_executed_cmd_reached() and records.webstack_id.active:
                 records.webstack_id.direct_execute(command_id=records)
 
         return records

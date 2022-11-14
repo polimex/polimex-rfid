@@ -171,7 +171,7 @@ class HrRfidWebstack(models.Model):
     @api.depends('hw_version')
     def _compute_time_format(self):
         for ws in self:
-            if (ws.hw_version and ws.hw_version in ['100.1', '50.1']) or (ws.version and float(ws.version) > 1.34):
+            if (ws.hw_version and ws.hw_version in ['100.1', '50.1']) or (ws.version and float(ws.version) > 1.40):
                 ws.time_format = '%m.%d.%y %H:%M:%S'
             elif ws.hw_version in ['10.3']:
                 ws.time_format = '%d.%m.%y %H:%M:%S'
@@ -283,7 +283,7 @@ class HrRfidWebstack(models.Model):
                 data=config_params_dict, auth=(username, password), timeout=2
             )
             if response.status_code != 200:
-                raise exceptions.ValidationError(_('''While trying to setup /protect/config.htm the module\n 
+                raise exceptions.ValidationError(_('''While trying to setup /protect/config.htm the module\n
                                                  error returned {reason}({code}) with body:\n''').format(
                     reason=response.reason, code=response.status_code) +
                                                  response.text)
@@ -549,13 +549,13 @@ class HrRfidWebstack(models.Model):
                 return cmd_response
 
     def is_10_3(self):
-        return all([(ws.hw_version == '10.3') or (ws.version == '1.3400') for ws in self])
+        return all([(ws.hw_version == '10.3') or (float(ws.version) < 1.40) for ws in self])
 
     def is_50_1(self):
         return all([ws.hw_version == '50.1' for ws in self])
 
     def is_100_1(self):
-        return all([(ws.hw_version == '100.1') and (ws.version != '1.3400') for ws in self])
+        return all([(ws.hw_version == '100.1') and (float(ws.version) > 1.40) for ws in self])
 
     def in_cmd_execution(self):
         return self.env['hr.rfid.command'].search_count([
