@@ -28,6 +28,14 @@
     ],
     # only loaded in demonstration mode
 
+    "assets": {
+        "web.assets_backend": [
+            "/hr_rfid_realtime_dashboard/static/src/scss/hr_rfid_dashboard.scss",
+        ],
+        "web.assets_qweb": [
+        ],
+    },
+
     'application': False,
     'auto_install': True
 }

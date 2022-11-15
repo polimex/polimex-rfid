@@ -1,6 +1,13 @@
 from odoo import fields, models, api, SUPERUSER_ID
+from dateutil.relativedelta import relativedelta
 
-
+_intervalTypes = {
+    'days': lambda interval: relativedelta(days=interval),
+    'hours': lambda interval: relativedelta(hours=interval),
+    'weeks': lambda interval: relativedelta(days=7*interval),
+    'months': lambda interval: relativedelta(months=interval),
+    'minutes': lambda interval: relativedelta(minutes=interval),
+}
 class VendingAutoRefillEvents(models.Model):
     _name = 'hr.rfid.vending.auto.refill'
     _description = 'Auto Refill Events'
@@ -35,8 +42,12 @@ class VendingAutoRefillEvents(models.Model):
     @api.model
     def auto_refill_job(self):
         for c in self.env['res.company'].with_user(SUPERUSER_ID).search([]):
-            self.with_company(c.id)._auto_refill()
-            # self.with_context(allowed_company_ids=[c.id])._auto_refill()
+            if c.refill_nextcall <= fields.Datetime.now():
+                try:
+                    self.with_company(c.id)._auto_refill()
+                finally:
+                    c.refill_nextcall = fields.Datetime.now() + _intervalTypes[c.refill_interval_type](c.refill_interval_number)
+
 
     @api.model
     def _auto_refill(self):

@@ -126,27 +126,28 @@ class HrEmployee(models.Model):
         :param ev: Event id, ignored if 0
         :return: Balance history if successful
         """
-        bh_env = self.env['hr.rfid.vending.balance.history']
+        bh_ids = self.env['hr.rfid.vending.balance.history']
+        for e in self:
+            new_vend_balance = e.hr_rfid_vending_balance + value
+            new_recharge_balance = e.hr_rfid_vending_recharge_balance
+            if new_vend_balance < 0 and abs(new_vend_balance) > abs(e.hr_rfid_vending_limit):
+                new_recharge_balance -= abs(new_vend_balance) - abs(e.hr_rfid_vending_limit)
+                new_vend_balance = -abs(e.hr_rfid_vending_limit)
 
-        new_vend_balance = self.hr_rfid_vending_balance + value
-        new_recharge_balance = self.hr_rfid_vending_recharge_balance
-        if new_vend_balance < 0 and abs(new_vend_balance) > abs(self.hr_rfid_vending_limit):
-            new_recharge_balance -= abs(new_vend_balance) - abs(self.hr_rfid_vending_limit)
-            new_vend_balance = -abs(self.hr_rfid_vending_limit)
+            e.write({
+                'hr_rfid_vending_balance': new_vend_balance,
+                'hr_rfid_vending_recharge_balance': new_recharge_balance,
+            })
 
-        self.write({
-            'hr_rfid_vending_balance': new_vend_balance,
-            'hr_rfid_vending_recharge_balance': new_recharge_balance,
-        })
-
-        bh_dict = {
-            'balance_change': value,
-            'employee_id': self.id,
-            'balance_result': self.hr_rfid_vending_balance,
-        }
-        if ev > 0:
-            bh_dict['vending_event_id'] = ev
-        return bh_env.create(bh_dict)
+            bh_dict = {
+                'balance_change': value,
+                'employee_id': e.id,
+                'balance_result': e.hr_rfid_vending_balance,
+            }
+            if ev > 0:
+                bh_dict['vending_event_id'] = ev
+            bh_ids += self.env['hr.rfid.vending.balance.history'].create(bh_dict)
+        return bh_ids
 
     @api.returns('hr.rfid.vending.balance.history')
     def hr_rfid_vending_set_balance(self, value: float, max_add: float = 0, min_add: float = 0, ev: int = 0):
@@ -158,14 +159,15 @@ class HrEmployee(models.Model):
         :param ev: Event id, ignored if 0
         :return: Balance history on success
         """
-
-        val = value - self.hr_rfid_vending_balance
-        if max_add != 0 and val > max_add:
-            val = max_add
-        if min_add != 0 and val < min_add:
-            val = min_add
-
-        return self.hr_rfid_vending_add_to_balance(val, ev)
+        bh_ids = self.env['hr.rfid.vending.balance.history']
+        for c in self:
+            val = value - c.hr_rfid_vending_balance
+            if max_add != 0 and val > max_add:
+                val = max_add
+            if min_add != 0 and val < min_add:
+                val = min_add
+            bh_ids += c.hr_rfid_vending_add_to_balance(val, ev)
+        return bh_ids
 
     @api.returns('hr.rfid.vending.balance.history')
     def hr_rfid_vending_purchase(self, cost: float, ev: int = 0):
@@ -184,63 +186,3 @@ class HrEmployee(models.Model):
         ]).write({
             'hr_rfid_vending_spent_today': 0,
         })
-
-
-class VendingBalanceWiz(models.TransientModel):
-    _name = 'hr.employee.vending.balance.wiz'
-    _description = 'Employee balance setter'
-
-    def _default_employee(self):
-        return self.env['hr.employee'].browse(self._context.get('active_ids'))
-
-    def _default_value(self):
-        emp = self._default_employee()
-        if self._context.get('setting_balance', False) == 2:
-            return emp.hr_rfid_vending_balance
-        if self._context.get('setting_balance', False) == 3:
-            return emp.hr_rfid_vending_recharge_balance
-        return 0.0
-
-    employee_id = fields.Many2one(
-        'hr.employee',
-        required=True,
-        default=_default_employee,
-    )
-
-    value = fields.Float(
-        string='Value',
-        required=True,
-        default=_default_value,
-    )
-
-    def add_value(self):
-        self.ensure_one()
-        res = self.employee_id.hr_rfid_vending_add_to_balance(self.value)
-        if res is False:
-            raise exceptions.ValidationError(
-                "Could not add to the balance. Please check if it's going under the limit."
-            )
-
-    def subtract_value(self):
-        self.ensure_one()
-        res = self.employee_id.hr_rfid_vending_add_to_balance(-self.value)
-        if res is False:
-            raise exceptions.ValidationError(
-                "Could not subtract from the balance. Please check if it's going under the limit."
-            )
-
-    def set_value(self):
-        self.ensure_one()
-        if self._context.get('setting_balance', False) == 2:
-            res = self.employee_id.hr_rfid_vending_set_balance(self.value)
-        if self._context.get('setting_balance', False) == 3:
-            res = True
-            self.employee_id.message_post(
-                body=_('Manual updated employee personal balance from %d to %d') % (
-                self.employee_id.hr_rfid_vending_recharge_balance, self.value)
-            )
-            self.employee_id.hr_rfid_vending_recharge_balance = self.value
-        if not res:
-            raise exceptions.ValidationError(
-                "Could not set the balance. Please check if it's going under the limit."
-            )

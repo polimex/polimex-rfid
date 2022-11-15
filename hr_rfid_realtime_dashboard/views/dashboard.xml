@@ -2,14 +2,6 @@
 <odoo>
     <data>
 
-        <template id="assets_backend" name="maintenance assets" inherit_id="web.assets_backend">
-            <xpath expr="." position="inside">
-                <link rel="stylesheet" type="text/scss"
-                      href="/hr_rfid_realtime_dashboard/static/src/scss/hr_rfid_dashboard.scss"/>
-            </xpath>
-        </template>
-
-
         <record model="ir.ui.view" id="alarm_group_kanban_view_dash">
             <field name="name">Alarm line Groups</field>
             <field name="model">hr.rfid.ctrl.alarm.group</field>

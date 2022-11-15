@@ -18,6 +18,7 @@ class ResConfigSettings(models.TransientModel):
     module_hr_attendance_multi_rfid = fields.Boolean(string="Time & Attendance control")
     module_hr_attendance_late = fields.Boolean(string="Time & Attendance additional calculations")
     module_hr_rfid_vending = fields.Boolean(string="Vending Control")
+    module_hr_rfid_realtime_dashboard = fields.Boolean(string="Realtime Dashboards")
     module_rfid_pms_base = fields.Boolean(string="PMS Base functionality")
     module_hr_rfid_andromeda_import = fields.Boolean(string="Andromeda Import")
 
