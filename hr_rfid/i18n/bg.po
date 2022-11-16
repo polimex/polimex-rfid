@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-09 09:58+0000\n"
-"PO-Revision-Date: 2022-11-09 12:02+0200\n"
+"POT-Creation-Date: 2022-11-16 17:06+0000\n"
+"PO-Revision-Date: 2022-11-16 19:08+0200\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -259,6 +259,15 @@ msgid ""
 msgstr ""
 "<span class=\"fa fa-circle text-warning\" role=\"img\" aria-label=\"Активен но не работи\" title=\"Активен но не работи\" "
 "name=\"webstack_enabled\"/>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
+msgid ""
+"<span class=\"fa fa-lg fa-building-o\" title=\"Values set here are company-specific.\" aria-label=\"Values set here are "
+"company-specific.\" groups=\"base.group_multi_company\" role=\"img\"/>"
+msgstr ""
+"<span class=\"fa fa-lg fa-building-o\" title=\"Зададените тук стойности са специфични за компанията.\" role=\"img\" aria-"
+"label=\"Зададените тук стойности са специфични за компанията.\" groups=\"base.group_multi_company\"/>"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__cloud_card
@@ -2036,6 +2045,11 @@ msgid "DND button pressed"
 msgstr "Натиснат бутон НЕ МЕ БЕЗПОКОЙ"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
+msgid "Dashboards"
+msgstr "Табла"
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__activate_on
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_sys_wiz__activate_on
 msgid "Date and time the card will be activated on"
@@ -2292,7 +2306,7 @@ msgstr "Име за показване"
 #: code:addons/hr_rfid/models/digest.py:0
 #, python-format
 msgid "Do not have access, skip this data for user's digest email"
-msgstr "Нямате достъп, пропуснете тези данни за електронната поща на потребителя"
+msgstr "Нямате достъп. пропусни тези данни за потребителският доклад"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_door
@@ -2699,6 +2713,7 @@ msgid "End last action (return from break, leave work, etc)"
 msgstr "Прекратете последното действие (връщане от почивка, напускане на работа и т.н.)"
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_res_company__event_lifetime
 #: model:ir.model.fields,help:hr_rfid.field_res_config_settings__event_lifetime
 msgid "Enter event lifetime. Older events will be deleted"
 msgstr "Въведете живот на събитията. Старите събития ще бъдат изтрити"
@@ -2789,6 +2804,7 @@ msgid "Event from Temperature Sensor"
 msgstr "Събитие от температурния сензор"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_res_company__event_lifetime
 #: model:ir.model.fields,field_description:hr_rfid.field_res_config_settings__event_lifetime
 msgid "Event life time"
 msgstr "Живот на събитието"
@@ -5464,6 +5480,22 @@ msgid "Real visits this group will be deactivated. 0 mean"
 msgstr "Реалните посещения за които групата ще бъде деактивирана. 0 изключено"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_res_config_settings__module_hr_rfid_realtime_dashboard
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
+msgid "Realtime Dashboards"
+msgstr "Информационни табла в реално време"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
+msgid ""
+"Realtime dashboards provide pre-defined boards with mix of all available data in one screen.\n"
+"                                        Suitable for Monitoring centers and guards screens"
+msgstr ""
+"Информационните табла в реално време предоставят предварително дефинирани табла с комбинация от всички налични данни на един "
+"екран.\n"
+"                                        Подходящи за центрове за наблюдение и екрани за охрана"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "Reboot"
 msgstr "Рестартиране"
@@ -6685,7 +6717,7 @@ msgstr "Валиден диапазон на ниска температура �
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #, python-format
 msgid "Valid interval range is 0-99 min."
-msgstr ""
+msgstr "Валидният интервал е 0-99 мин."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_form_view
@@ -6994,12 +7026,12 @@ msgstr "При опит за изпращане на командата към �
 #, python-format
 msgid ""
 "While trying to setup /protect/config.htm the module\n"
-" \n"
+"\n"
 "                                                 error returned {reason}({code}) with body:\n"
 msgstr ""
 "При опит за настройка на /protect/config.htm модулът\n"
-" \n"
-"                                                 върна грешка {reason}({code}) с тяло:\n"
+"\n"
+"                                                 грешка върна {reason}({code}) с тяло:\n"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_form
@@ -7384,7 +7416,7 @@ msgstr "резервиран"
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #, python-format
 msgid "{hw_type} SN:{serial} ID:{id}"
-msgstr ""
+msgstr "{hw_type} Сериен Номер:{serial} ID:{id}"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
