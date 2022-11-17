@@ -518,12 +518,12 @@ class HrRfidController(models.Model):
                 ctrl.io_table = new_io_table
                 if not no_command:
                     ctrl.write_io_table_cmd(cmd_data)
-            else:
+            else:  # line != 0 !!!
                 self.io_table = self.io_table or self.default_io_table
                 io_table = self.io_table[16 * (line - 1): 16 * (line - 1) + 16]
                 if io_table == new_io_table:
                     continue
-                io_table += self.io_table and self.io_table[16 * (line - 1) + 16:] or ''
+                io_table = self.io_table[:16 * (line - 1)] + new_io_table + self.io_table[16 * (line - 1) + 16:]
                 ctrl.io_table = io_table
                 if not no_command:
                     ctrl.write_io_table_cmd(cmd_data)
@@ -591,7 +591,9 @@ class HrRfidController(models.Model):
 
             if old_ext_db != new_ext_db:
                 ctrl.write_controller_mode(new_ext_db=new_ext_db)
-            if ('high_temperature' in vals or 'low_temperature' in vals or 'hysteresis' in vals) and not self.env.context.get('readed', False):
+            if (
+                    'high_temperature' in vals or 'low_temperature' in vals or 'hysteresis' in vals) and not self.env.context.get(
+                    'readed', False):
                 ctrl.temp_range_cmd(
                     ctrl.high_temperature,
                     ctrl.low_temperature,
