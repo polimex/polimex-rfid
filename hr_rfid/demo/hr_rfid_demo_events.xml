@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="False">
+        <record id="demo_user_event_1" model="hr.rfid.event.user">
+            <field name="event_action">1</field>    <!-- Access Granted-->
+            <field name="employee_id" ref="hr.employee_admin"/>
+            <field name="card_id" ref="demo_card_1"/>
+            <field name="ctrl_addr" eval="1"/>
+            <field name="door_id" ref="demo_ctrl_icon110_D1"/>
+            <field name="reader_id" ref="demo_ctrl_icon110_R1"/>
+            <field name="event_time" eval="(datetime.now()+relativedelta(days=-1))"/>
+        </record>
+        <record id="demo_user_event_1_partner" model="hr.rfid.event.user">
+            <field name="event_action">1</field>    <!-- Access Granted-->
+            <field name="contact_id" ref="base.res_partner_address_15"/>
+            <field name="card_id" ref="demo_card_1"/>
+            <field name="ctrl_addr" eval="1"/>
+            <field name="door_id" ref="demo_ctrl_icon110_D1"/>
+            <field name="reader_id" ref="demo_ctrl_icon110_R1"/>
+            <field name="event_time" eval="(datetime.now()+relativedelta(hours=-25))"/>
+        </record>
+        <record id="demo_user_event_2" model="hr.rfid.event.user">
+            <field name="event_action">2</field>    <!-- Access Denied-->
+            <field name="employee_id" ref="hr.employee_admin"/>
+            <field name="card_id" ref="demo_card_1"/>
+            <field name="ctrl_addr" eval="1"/>
+            <field name="door_id" ref="demo_ctrl_icon110_D2"/>
+            <field name="reader_id" ref="demo_ctrl_icon110_R2"/>
+            <field name="event_time" eval="(datetime.now()+relativedelta(hours=-23))"/>
+        </record>
+        <record id="demo_user_event_3" model="hr.rfid.event.user">
+            <field name="event_action">3</field>    <!-- Access Denied T/S-->
+            <field name="employee_id" ref="hr.employee_admin"/>
+            <field name="card_id" ref="demo_card_1"/>
+            <field name="ctrl_addr" eval="1"/>
+            <field name="door_id" ref="demo_ctrl_icon115_D1"/>
+            <field name="reader_id" ref="demo_ctrl_icon115_R1"/>
+            <field name="event_time" eval="(datetime.now()+relativedelta(hours=-22))"/>
+        </record>
+        <record id="demo_user_event_4" model="hr.rfid.event.user">
+            <field name="event_action">4</field>    <!-- Access Denied APB-->
+            <field name="employee_id" ref="hr.employee_admin"/>
+            <field name="card_id" ref="demo_card_1"/>
+            <field name="ctrl_addr" eval="1"/>
+            <field name="door_id" ref="demo_ctrl_icon115_D2"/>
+            <field name="reader_id" ref="demo_ctrl_icon115_R2"/>
+            <field name="event_time" eval="(datetime.now()+relativedelta(hours=-22))"/>
+        </record>
+        <record id="demo_user_event_5" model="hr.rfid.event.user">
+            <field name="event_action">5</field>    <!-- Zone Arm Denied -->
+            <field name="employee_id" ref="hr.employee_admin"/>
+            <field name="card_id" ref="demo_card_1"/>
+            <field name="ctrl_addr" eval="1"/>
+            <field name="door_id" ref="demo_ctrl_icon115_D1"/>
+            <field name="reader_id" ref="demo_ctrl_icon115_R1"/>
+            <field name="alarm_line_id" ref="demo_ctrl_icon115_alarm_line_1"/>
+            <field name="event_time" eval="(datetime.now()+relativedelta(hours=-21))"/>
+        </record>
+        <record id="demo_user_event_10" model="hr.rfid.event.user">
+            <field name="event_action">10</field>    <!-- Zone Arm -->
+            <field name="employee_id" ref="hr.employee_admin"/>
+            <field name="card_id" ref="demo_card_1"/>
+            <field name="ctrl_addr" eval="1"/>
+            <field name="door_id" ref="demo_ctrl_icon115_D1"/>
+            <field name="reader_id" ref="demo_ctrl_icon115_R1"/>
+            <field name="alarm_line_id" ref="demo_ctrl_icon115_alarm_line_1"/>
+            <field name="event_time" eval="(datetime.now()+relativedelta(hours=-20))"/>
+        </record>
+        <record id="demo_user_event_11" model="hr.rfid.event.user">
+            <field name="event_action">11</field>    <!-- Zone Disarm-->
+            <field name="employee_id" ref="hr.employee_admin"/>
+            <field name="card_id" ref="demo_card_1"/>
+            <field name="ctrl_addr" eval="1"/>
+            <field name="door_id" ref="demo_ctrl_icon115_D1"/>
+            <field name="reader_id" ref="demo_ctrl_icon115_R1"/>
+            <field name="alarm_line_id" ref="demo_ctrl_icon115_alarm_line_1"/>
+            <field name="event_time" eval="(datetime.now()+relativedelta(hours=-19))"/>
+        </record>
+        <record id="demo_user_event_15" model="hr.rfid.event.user">
+            <field name="event_action">15</field>    <!-- Zone Disarm Denied-->
+            <field name="employee_id" ref="hr.employee_admin"/>
+            <field name="card_id" ref="demo_card_1"/>
+            <field name="ctrl_addr" eval="1"/>
+            <field name="door_id" ref="demo_ctrl_icon115_D1"/>
+            <field name="reader_id" ref="demo_ctrl_icon115_R1"/>
+            <field name="alarm_line_id" ref="demo_ctrl_icon115_alarm_line_1"/>
+            <field name="event_time" eval="(datetime.now()+relativedelta(hours=-18))"/>
+        </record>
+        <record id="demo_system_event_64" model="hr.rfid.event.system">
+            <field name="event_action">64</field>    <!-- Cloud request-->
+            <field name="card_number">5432154321</field>
+            <field name="webstack_id" ref="demo_module"/>
+            <field name="controller_id" ref="demo_ctrl_icon110"/>
+            <field name="door_id" ref="demo_ctrl_icon110_D1"/>
+            <field name="timestamp" eval="(datetime.now()+relativedelta(hours=-22))"/>
+        </record>
+
+    </data>
+</odoo>

@@ -17,3 +17,6 @@ class HrRfidUserEvent(models.Model):
         res = super(HrRfidUserEvent, self).write(vals)
         self.refresh_views()
         return res
+
+    def test_refresh(self):
+        self.refresh_views()
