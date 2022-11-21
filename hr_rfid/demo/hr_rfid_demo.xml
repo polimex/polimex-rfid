@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="True">
+        <record id="base.user_demo" model="res.users">
+            <field name="groups_id" eval="[(4, ref('hr_rfid.hr_rfid_group_manager'))]"/>
+        </record>
+
+        <record id="demo_module" model="hr.rfid.webstack">
+            <field name="name">Demo Module</field>
+            <field name="serial">12345678</field>
+            <field name="key">1234</field>
+            <field name="hw_version">10.3</field>
+            <field name="version">1.35</field>
+            <field name="active">True</field>
+            <field name="tz">Europe/Brussels</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <record id="demo_ctrl_icon110" model="hr.rfid.ctrl">
+            <field name="name">Demo controller iCON110</field>
+            <field name="ctrl_id">1</field>
+            <field name="serial_number">12345</field>
+            <field name="webstack_id" ref="demo_module"/>
+            <field name="hw_version">6</field>
+            <field name="sw_version">741</field>
+            <field name="max_cards_count">1526</field>
+            <field name="max_events_count">3056</field>
+            <field name="readers">2</field>
+            <field name="mode">2</field>
+            <field name="temperature">23.5</field>
+            <field name="humidity">56.7</field>
+            <field name="system_voltage">12.5</field>
+            <field name="input_voltage">13.0</field>
+            <field name="inputs">3</field>
+            <field name="input_states">0</field>
+            <field name="outputs">3</field>
+            <field name="output_states">0</field>
+            <field name="alarm_lines">0</field>
+            <field name="io_table_lines">28</field>
+            <field name="io_table">
+                0000000000000000000000000000000000000000000000030000000000000300000000000000030000000000000003000000000000000003000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000040463000000000000030000000000000000030000000000000000000000000000030000000000000003000000000000000300000000000000030000000000000003000000000000000300
+            </field>
+        </record>
+        <record id="demo_ctrl_icon110_D1" model="hr.rfid.door">
+            <field name="name">Demo Door 1 on iCON110</field>
+            <field name="card_type" ref="hr_rfid.hr_rfid_card_type_def"/>
+            <field name="number">1</field>
+            <field name="controller_id" ref="demo_ctrl_icon110"/>
+        </record>
+        <record id="demo_ctrl_icon110_D2" model="hr.rfid.door">
+            <field name="name">Demo Door 2 on iCON110</field>
+            <field name="card_type" ref="hr_rfid.hr_rfid_card_type_def"/>
+            <field name="number">2</field>
+            <field name="controller_id" ref="demo_ctrl_icon110"/>
+        </record>
+        <record id="demo_ctrl_icon110_R1" model="hr.rfid.reader">
+            <field name="name">Demo R1 on iCON110</field>
+            <field name="mode">01</field>
+            <field name="reader_type">0</field>
+            <field name="number">1</field>
+            <field name="controller_id" ref="demo_ctrl_icon110"/>
+            <field name="door_id" ref="demo_ctrl_icon110_D1"/>
+        </record>
+        <record id="demo_ctrl_icon110_R2" model="hr.rfid.reader">
+            <field name="name">Demo R2 on iCON110</field>
+            <field name="mode">01</field>
+            <field name="reader_type">0</field>
+            <field name="number">2</field>
+            <field name="controller_id" ref="demo_ctrl_icon110"/>
+            <field name="door_id" ref="demo_ctrl_icon110_D2"/>
+        </record>
+        <record id="demo_ctrl_icon115" model="hr.rfid.ctrl">
+            <field name="name">Demo controller iCON115</field>
+            <field name="ctrl_id">2</field>
+            <field name="serial_number">12346</field>
+            <field name="webstack_id" ref="demo_module"/>
+            <field name="hw_version">11</field>
+            <field name="sw_version">741</field>
+            <field name="max_cards_count">9727</field>
+            <field name="max_events_count">3056</field>
+            <field name="read_b3_cmd" eval="False"/>
+            <field name="readers">2</field>
+            <field name="mode">2</field>
+            <field name="temperature">22.5</field>
+            <field name="humidity">60.3</field>
+            <field name="system_voltage">12.8</field>
+            <field name="input_voltage">14.3</field>
+            <field name="inputs">5</field>
+            <field name="input_states">0</field>
+            <field name="outputs">4</field>
+            <field name="output_states">0</field>
+            <field name="alarm_lines">1</field>
+            <field name="alarm_line_states">02000000</field>
+            <field name="io_table_lines">28</field>
+            <field name="io_table">
+                00000000000003030000000000050000000000000000000300000000000300000000000000030000000000000003000000000000000003000000000003000000000000000300000000000000030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000636363630000000000001e1e000000000000000300000000000003000000000000000000000000000000000000000000010105050000000000000505000003000000000a0000030000000001
+            </field>
+        </record>
+        <record id="demo_ctrl_icon115_D1" model="hr.rfid.door">
+            <field name="name">Demo Door 1 on iCON115</field>
+            <field name="card_type" ref="hr_rfid.hr_rfid_card_type_def"/>
+            <field name="number">1</field>
+            <field name="controller_id" ref="demo_ctrl_icon115"/>
+        </record>
+        <record id="demo_ctrl_icon115_D2" model="hr.rfid.door">
+            <field name="name">Demo Door 2 on iCON115</field>
+            <field name="card_type" ref="hr_rfid.hr_rfid_card_type_def"/>
+            <field name="number">2</field>
+            <field name="controller_id" ref="demo_ctrl_icon115"/>
+        </record>
+        <record id="demo_ctrl_icon115_alarm_line_1" model="hr.rfid.ctrl.alarm">
+            <field name="name">Alarm Line 1 on iCON115</field>
+            <field name="armed">disarm</field>
+            <field name="line_number">1</field>
+            <field name="control_output">5</field>
+            <field name="controller_id" ref="demo_ctrl_icon115"/>
+            <field name="door_id" ref="demo_ctrl_icon115_D1"/>
+        </record>
+        <record id="demo_ctrl_icon115_R1" model="hr.rfid.reader">
+            <field name="name">Demo R1 on iCON115</field>
+            <field name="mode">01</field>
+            <field name="reader_type">0</field>
+            <field name="number">1</field>
+            <field name="controller_id" ref="demo_ctrl_icon115"/>
+            <field name="door_id" ref="demo_ctrl_icon115_D1"/>
+        </record>
+        <record id="demo_ctrl_icon115_R2" model="hr.rfid.reader">
+            <field name="name">Demo R2 on iCON115</field>
+            <field name="mode">01</field>
+            <field name="reader_type">0</field>
+            <field name="number">2</field>
+            <field name="controller_id" ref="demo_ctrl_icon115"/>
+            <field name="door_id" ref="demo_ctrl_icon115_D2"/>
+        </record>
+
+
+        <record id="demo_emergency_group_1" model="hr.rfid.ctrl.emergency.group">
+            <field name="name">Demo Emergency Group 1</field>
+            <field name="controller_ids"
+                   eval="[(4,ref('hr_rfid.demo_ctrl_icon110'), 0), (4,ref('hr_rfid.demo_ctrl_icon115'), 0)]"/>
+        </record>
+
+        <record id="demo_access_group_1" model="hr.rfid.access.group">
+            <field name="name">Demo Access Group 1 (Partners)</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="door_ids"
+                   eval="[(0, 0, {'door_id':ref('hr_rfid.demo_ctrl_icon110_D1')}), (0, 0, {'door_id': ref('hr_rfid.demo_ctrl_icon110_D2')})]"/>
+        </record>
+        <record id="demo_access_group_2" model="hr.rfid.access.group">
+            <field name="name">Demo Access Group 1 (Employees)</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="door_ids"
+                   eval="[(0, 0, {'door_id':ref('hr_rfid.demo_ctrl_icon115_D1')}), (0, 0, {'door_id': ref('hr_rfid.demo_ctrl_icon115_D2')})]"/>
+<!--            <field name="default_department_ids" eval="[(4,ref('hr.dep_management'), 0)]"/>-->
+<!--            <field name="department_ids" eval="[(4,ref('hr.dep_management'), 0)]"/>-->
+        </record>
+      <record id="hr.dep_management" model="hr.department">
+          <field name="hr_rfid_default_access_group" ref="demo_access_group_2"/>
+          <field name="hr_rfid_allowed_access_groups" eval="[(4, ref('demo_access_group_2'), 0)]"/>
+      </record>
+
+        <record id="demo_card_1" model="hr.rfid.card">
+            <field name="employee_id" ref="hr.employee_admin"/>
+            <field name="number">0012312345</field>
+            <field name="card_reference">Badge 66</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="demo_card_2" model="hr.rfid.card">
+            <field name="contact_id" ref="base.res_partner_address_15"/>
+            <field name="number">1234512345</field>
+            <field name="card_reference">Temporary Badge 37</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <record id="demo_access_group_contact_rel_1" model="hr.rfid.access.group.contact.rel">
+            <field name="access_group_id" ref="demo_access_group_1"/>
+            <field name="contact_id" ref="base.res_partner_address_15"/>
+        </record>
+
+        <record id="demo_zone_APB" model="hr.rfid.zone">
+            <field name="name">Demo Zone for APB</field>
+            <field name="anti_pass_back" eval="True"/>
+            <field name="door_ids"
+                   eval="[
+                   (4, ref('hr_rfid.demo_ctrl_icon115_D1'), 0),
+                   (4, ref('hr_rfid.demo_ctrl_icon115_D2'), 0),
+                   (4, ref('hr_rfid.demo_ctrl_icon110_D1'), 0),
+                   (4, ref('hr_rfid.demo_ctrl_icon110_D2'), 0),
+                   ]"/>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="demo_alarm_group" model="hr.rfid.ctrl.alarm.group">
+            <field name="name">Demo Alarm group</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="alarm_line_ids" eval="[(4, ref('demo_ctrl_icon115_alarm_line_1'), 0)]"/>
+        </record>
+    </data>
+</odoo>

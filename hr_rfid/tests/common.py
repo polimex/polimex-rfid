@@ -81,6 +81,7 @@ class RFIDAppCase(common.TransactionCase):
         self.c_180 = None
         self.c_turnstile = None
         self.c_vending = None
+        self.c_temperature = None
 
     def _assertResponse(self, response):
         self.assertEqual(response.status_code, 200)
@@ -151,7 +152,7 @@ class RFIDAppCase(common.TransactionCase):
         sys_events_count = self._count_system_events(company_id or self.test_company_id)
         response = self.url_open(self.app_url,
                                  data=json.dumps(cmd),
-                                 timeout=20,
+                                 timeout=200,
                                  headers={'Content-Type': 'application/json'})
         if not response.ok:
             pass

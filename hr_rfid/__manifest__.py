@@ -56,6 +56,10 @@
         'static/src/xml/pivot_view_field_selection.xml',
     ],
 
+    'demo': [
+        'demo/hr_rfid_demo.xml',
+        'demo/hr_rfid_demo_events.xml',
+    ],
     "images": [
         'static/images/main_screenshot.png',
     ],

@@ -220,7 +220,7 @@ class HrRfidVending(WebRfidController):
                 recharge_balance = calc_balance(controller, event, True)
                 if len(card) > 0 and item_number == 99 and recharge_balance > 0:
                     ev = create_ev(controller, event, card, '50', transaction_price=recharge_balance)
-                    card.employee_id.hr_rfid_vending_recharge_balance += recharge_balance
+                    card.employee_id.hr_rfid_vending_recharge_balance += ev.transaction_price
                     return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code, ev))
             return ret_super()
 

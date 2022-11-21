@@ -4,9 +4,11 @@ import traceback
 import time
 import psycopg2
 
-from ..models.hr_rfid_webstack import BadTimeException
+from odoo.addons.hr_rfid.models.hr_rfid_webstack import BadTimeException
+from odoo.addons.hr_rfid.models.hr_rfid_event_system import HrRfidSystemEvent
 from odoo import http, fields, exceptions, _, SUPERUSER_ID
 from odoo.http import request
+from odoo.addons.hr_rfid.controllers import polimex
 
 
 import logging
@@ -76,6 +78,12 @@ class WebRfidController(http.Controller):
 
         # Find PIN code or additional data for event
         dt = post_data['event']['dt'] or None
+        temp_data = None
+        if controller_id.is_temperature_ctrl:
+            temp_data = polimex.get_temperature(
+                int(post_data['event']['dt'][0:2]),
+                int(post_data['event']['dt'][2:4])
+            )
 
         # Find Door ID
         door = None
@@ -179,7 +187,6 @@ class WebRfidController(http.Controller):
                 controller_id._update_input_state(controller_id.inputs, int(state))
             # else:
             #     controller_id._update_input_state(14, int(state))
-
 
             if controller_id.emergency_group_id and not software:
                 if state:
@@ -350,7 +357,7 @@ class WebRfidController(http.Controller):
                 'event_time': webstack.get_ws_time_str(post_data['event']),
                 'event_action': str(8 - int(pin)) if event_action == 36 else '12' if event_action == 38 else '9',
             }
-            if (event_dict['event_action'] in ['8', '9']) and not card_id: # Card Denied Insert or Ejected unknown card
+            if (event_dict['event_action'] in ['8', '9']) and not card_id:  # Card Denied Insert or Ejected unknown card
                 sys_event_dict = {
                     'door_id': door and door.id or False,
                     'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
@@ -374,6 +381,27 @@ class WebRfidController(http.Controller):
             card_id.get_owner(event_dict)
             event = ev_env.create(event_dict)
             door.proccess_event(event)
+            return webstack.check_for_unsent_cmd(200)
+        # Temperature Control
+        elif event_action in [51, 52, 53, 54]:
+            # ('51', _('Temperature High')),        # System Event, Temperature Event
+            # ('52', _('Temperature Normal')),      # Temperature Event
+            # ('53', _('Temperature Low')),         # System Event, Temperature Event
+            # ('54', _('Temperature Error')),       # System Event
+            if event_action in [51, 53, 54]:  # System Event
+                controller_id.report_sys_ev(
+                    description=_('Event from Temperature Sensor'),
+                    post_data=post_data
+                )
+
+            if event_action in [51, 52, 53]:  # Temperature Event
+                th_id = controller_id._find_th_sensor(internal_number=reader_num)
+                if th_id:
+                    th_id.write_log(
+                        webstack.get_ws_time_str(post_data=post_data['event']),
+                        {'t': temp_data}
+                    )
+
             return webstack.check_for_unsent_cmd(200)
         # Cloud request 64
         elif event_action in [64]:
@@ -492,8 +520,7 @@ class WebRfidController(http.Controller):
             "body": {"cmd": {"reader": 1, "type": 0}}
         }]
 
-    @http.route(['/hr/rfid/event'], type='json', auth='none', methods=['POST'], cors='*', csrf=False,
-                save_session=False)
+    @http.route(['/hr/rfid/event'], type='json', auth='none', methods=['POST'], cors='*', csrf=False, save_session=False)
     def post_event(self, **post):
         """
         Process events from equipment
@@ -556,7 +583,10 @@ class WebRfidController(http.Controller):
                 _logger.info('Heartbeat from {}'.format(webstack_id.name))
                 result = webstack_id.parse_heartbeat(post_data=post_data)
             elif 'event' in post_data:
-                _logger.info('Event from {}'.format(webstack_id.name))
+                _logger.info('Event (%s) from %s' % (
+                    ''.join([a[1] for a in HrRfidSystemEvent.action_selection if a[0] == str(post_data['event']['event_n'])]),
+                    webstack_id.name)
+                )
                 result = self._parse_event(post_data=post_data, webstack=webstack_id)
             elif 'response' in post_data:
                 _logger.info('Command response from {}'.format(webstack_id.name))
@@ -596,7 +626,7 @@ class WebRfidController(http.Controller):
             _logger.error('Caught a time error, returning status=200 and creating a system event')
             # print('Caught a time error, returning status=200 and creating a system event')
             if not post:
-                #return werkzeug.exceptions.NotFound(description)
+                # return werkzeug.exceptions.NotFound(description)
                 pass
             return {'status': 200}
         except Exception as e:
@@ -607,7 +637,8 @@ class WebRfidController(http.Controller):
                 'error_description': str(e),
                 'input_js': json.dumps(post_data),
             }])
-            _logger.error('Caught an unexpected exception, returning status=500 and creating a system event - '+str(e))
+            _logger.error(
+                'Caught an unexpected exception, returning status=500 and creating a system event - ' + str(e))
             return {'status': 500}
 
     def _parse_raw_data(self, post_data: dict):
@@ -633,6 +664,3 @@ class WebRfidController(http.Controller):
 
     def vending_request_for_balance(self):
         raise NotImplementedError('Not implemented')
-
-
-

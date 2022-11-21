@@ -41,9 +41,9 @@
             <field name="name">Change vending balance</field>
             <field name="res_model">hr.employee.vending.balance.wiz</field>
             <!--      <field name="view_type">form</field>-->
-            <field name="view_mode">form</field>
+            <field name="view_mode">tree,form</field>
             <field name="view_id" ref="hr_employee_vending_balance_change_form"/>
-            <field name="target">new</field>
+            <field name="binding_model_id" ref="model_hr_employee"/>
         </record>
 
         <record id="hr_employee_vending_balance_set_action" model="ir.actions.act_window">
@@ -52,7 +52,8 @@
             <!--      <field name="view_type">form</field>-->
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_employee_vending_balance_set_form"/>
-            <field name="target">new</field>
+            <field name="binding_model_id" ref="model_hr_employee"/>
+            <field name="context">{'setting_balance':2}</field>
         </record>
 
         <record id="hr_rfid_employee_form_inherit_hr_rfid_vending" model="ir.ui.view">

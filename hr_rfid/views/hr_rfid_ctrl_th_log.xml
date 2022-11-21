@@ -10,7 +10,7 @@
 <!--                      decoration-warning="state in ['short','open']"-->
 <!--                      decoration-info="state == 'disabled'"-->
 <!--                      decoration-danger="state in ['s1','s2','s12']">-->
-                    <field name="create_date"/>
+                    <field name="event_time"/>
                     <field name="th_id"/>
                     <field name="temperature" optional="show"/>
                     <field name="humidity" optional="show"/>
@@ -24,7 +24,7 @@
             <field name="priority">20</field>
             <field name="arch" type="xml">
                 <graph string="Temperature and Humidity Log" type="line" sample="1" stacked="False">
-                    <field name="create_date" interval="day" type="col"/>
+                    <field name="event_time" interval="day" type="col"/>
                     <field name="humidity" type="measure"/>
                     <field name="temperature" type="measure"/>
                     <field name="th_id" type="row"/>
@@ -38,10 +38,10 @@
             <field name="priority">1</field>
             <field name="arch" type="xml">
                 <pivot string="Temperature and Humidity Log" sample="1">
-                    <field name="create_date" interval="day" type="row"/>
+                    <field name="event_time" interval="day" type="col"/>
                     <field name="temperature" type="measure"/>
                     <field name="humidity" type="measure"/>
-                    <field name="th_id" type="col"/>
+                    <field name="th_id" type="row"/>
                 </pivot>
             </field>
         </record>
@@ -52,24 +52,24 @@
             <field name="arch" type="xml">
                 <search>
                     <field name="th_id"/>
-                    <filter string="Measure time" name="filter_event_time" date="create_date" default_period="last_month"/>
+                    <filter string="Measure time" name="filter_event_time" date="event_time" default_period="last_month"/>
                     <filter name="filter_this_day" string="Measures from today"
-                            domain="[('create_date', '&gt;=',  (context_today()).strftime('%%Y-%%m-%%d 00:00:00'))]"/>
+                            domain="[('event_time', '&gt;=',  (context_today()).strftime('%%Y-%%m-%%d 00:00:00'))]"/>
                     <filter name="filter_this_week" string="Measures from this week"
-                            domain="[('create_date', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('create_date', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]"/>
+                            domain="[('event_time', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('event_time', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]"/>
                     <filter name="filter_this_month" string="Measures from this month"
-                            domain="[('create_date', '&gt;=', context_today().strftime('%%Y-%%m-1'))]"/>
+                            domain="[('event_time', '&gt;=', context_today().strftime('%%Y-%%m-1'))]"/>
                     <filter name="filter_this_year" string="Measures from this year"
-                            domain="[('create_date', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('create_date', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]"/>
+                            domain="[('event_time', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('event_time', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]"/>
                     <separator/>
                     <filter name="filter_this_day" string="Measures from Yesterday"
-                            domain="[('create_date', '&gt;=',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d 00:00:00')),('create_date', '&lt;=',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d 23:59:59'))]"/>
+                            domain="[('event_time', '&gt;=',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d 00:00:00')),('event_time', '&lt;=',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d 23:59:59'))]"/>
                     <filter name="filter_last_week" string="Measures from last week"
-                            domain="[('create_date', '&gt;=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
+                            domain="[('event_time', '&gt;=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
                     <filter name="filter_last_month" string="Measures from last month"
-                            domain="[('create_date', '&gt;=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]"/>
+                            domain="[('event_time', '&gt;=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]"/>
                     <filter name="filter_last_year" string="Measures from last year"
-                            domain="[('create_date', '&gt;=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]"/>
+                            domain="[('event_time', '&gt;=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]"/>
                     <filter string="by Sensor" name="groupby_sensor"
                                 context="{'group_by':'th_id'}"/>
                     <searchpanel>
