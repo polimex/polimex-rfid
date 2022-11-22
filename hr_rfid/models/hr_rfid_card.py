@@ -196,7 +196,8 @@ class HrRfidCard(models.Model):
     @api.constrains('number')
     def _check_number(self):
         for card in self:
-            dupes = self.search([('number', '=', card.number), ('card_type', '=', card.card_type.id)])
+            dupes = self.search([('number', '=', card.number), ('card_type', '=', card.card_type.id), ('company_id', '=', card.company_id.id)])
+            # dupes = self.end['hr.rfid.card'].with_company(card.company_id).search([('number', '=', card.number), ('card_type', '=', card.card_type.id)])
             if len(dupes) > 1:
                 raise exceptions.ValidationError(_('Card number must be unique for every card type!'))
 

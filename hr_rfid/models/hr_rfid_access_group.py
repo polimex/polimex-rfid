@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from dateutil.relativedelta import relativedelta
+
 from odoo import api, fields, models, exceptions, _
 import logging
 import queue
@@ -29,6 +31,13 @@ class HrRfidAccessGroup(models.Model):
     company_id = fields.Many2one('res.company',
                                  string='Company',
                                  default=lambda self: self.env.company)
+
+    delay_between_events = fields.Integer(
+        help="Minimum time in seconds between events on listed doors."
+             "The card will be rejected if this time is not pass since last event. "
+             "0 means disabled. IMPORTANT: The function works ONLY with controllers(doors) with enabled External DB.",
+        default=0
+    )
 
     employee_ids = fields.One2many(
         'hr.rfid.access.group.employee.rel',
@@ -102,9 +111,18 @@ class HrRfidAccessGroup(models.Model):
         compute='_compute_all_contacts',
     )
 
+    def _calc_last_user_event_in_ag(self, partner_id=None, employee_id=None):
+        last_event = self.env['hr.rfid.event.user']
+        for ag in self:
+            ag_last_event = self.env['hr.rfid.event.user'].last_event(ag.all_door_ids.mapped('door_id'), partner_id, employee_id)
+            if ag_last_event and (ag_last_event.event_time >= (
+                    fields.Datetime.now() + relativedelta(seconds=-1 * ag.delay_between_events))):
+                last_event += ag_last_event
+        return last_event
+
     def add_doors(self, door_ids, time_schedule=None, alarm_rights=False):
         if time_schedule is None:
-            time_schedule = self.env['hr.rfid.time.schedule'].search([], limit=1, order='number')[0].id
+            time_schedule = self.env['hr.rfid.time.schedule'].search([], limit=1, order='number')[0]
 
         rel_env = self.env['hr.rfid.access.group.door.rel']
         for door in door_ids:
@@ -348,6 +366,7 @@ class HrRfidAccessGroup(models.Model):
 
         return True
 
+    # TODO Need to review and delete this
     def unlink(self):
         for acc_gr in self:
             acc_gr.door_ids.unlink()  # Unlinks the relations

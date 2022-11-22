@@ -12,19 +12,21 @@ _logger = logging.getLogger(__name__)
 @tagged('rfid')
 class RFIDController(RFIDAppCase, HttpCase):
     def test_app(self):
-        # _logger.info('Start tests for iCON50 ')
-        # self._add_iCon50()
-        # self._test_R_event(self.c_50)
-        # _logger.info('Start tests for iCON110 ')
-        # self._add_iCon110()
-        # self._test_R1R2(self.c_110)
+        _logger.info('Start tests for iCON50 ')
+        self._add_iCon50()
+        self._test_R_event(self.c_50)
+        _logger.info('Start tests for iCON110 ')
+        self._add_iCon110()
+        self._test_R1R2(self.c_110)
         # self._change_mode(self.c_110, 2)
-        # _logger.info('Start tests for iCON115 ')
-        # self._add_iCon115()
-        # self._test_R1R2(self.c_115)
-        # _logger.info('Start tests for iCON130 ')
-        # self._add_iCon130()
-        # self._test_R1R2R3R4(self.c_130)
+        self._ev64(self.c_110)
+
+        _logger.info('Start tests for iCON115 ')
+        self._add_iCon115()
+        self._test_R1R2(self.c_115)
+        _logger.info('Start tests for iCON130 ')
+        self._add_iCon130()
+        self._test_R1R2R3R4(self.c_130)
         # _logger.info('Start tests for iCON180 ')
         # self._add_iCon180()
         # _logger.info('Start tests for Turnstile ')
@@ -60,7 +62,6 @@ class RFIDController(RFIDAppCase, HttpCase):
 
     def _add_iCon180(self, module=234567, key='0000', id=5):
         self.c_180 = self.env['hr.rfid.ctrl'].create({
-            # Copyright 2022 Polimex Holding Ltd..
             'name': 'Controller iCON180',
             'ctrl_id': id,
             'webstack_id': self.test_webstack_10_3_id.id

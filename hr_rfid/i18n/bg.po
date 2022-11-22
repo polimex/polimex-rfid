@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-16 17:06+0000\n"
-"PO-Revision-Date: 2022-11-16 19:08+0200\n"
+"POT-Creation-Date: 2022-11-22 17:30+0000\n"
+"PO-Revision-Date: 2022-11-22 19:32+0200\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -2124,6 +2124,11 @@ msgstr ""
 "автоматично."
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__delay_between_events
+msgid "Delay Between Events"
+msgstr "Забавяне между събитията"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 msgid "Delete"
 msgstr "Изтрий"
@@ -3137,8 +3142,12 @@ msgstr "Отидете във формата на служител и добав
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
-msgid "Go to Employee Form for manage additional access groups in tab RFID Information"
-msgstr "Отидете във формата на служителя за управление на допълнителните групи за достъп в раздела RFID информация"
+msgid ""
+"Go to Employee Form for manage additional access groups in tab RFID\n"
+"                                            Information"
+msgstr ""
+"Отидете във формуляра за служители, за да управлявате допълнителни групи за достъп в раздела RFID\n"
+"                                            Информация"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_manual_create_wiz
@@ -4260,6 +4269,15 @@ msgid "Messages"
 msgstr "Съобщения"
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__delay_between_events
+msgid ""
+"Minimum time in seconds between events on listed doors.The card will be rejected if this time is not pass since last event. "
+"0 means disabled. IMPORTANT: The function works ONLY with controllers(doors) with enabled External DB."
+msgstr ""
+"Минимално време в секунди между събитията на изброените врати.Картата ще бъде отхвърлена, ако това време не е минало от "
+"последното събитие. 0 означава изключено. ВАЖНО: Функцията работи САМО с контролери (врати) с активирана външна база данни."
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__mode
 msgid "Mode of the reader"
 msgstr "Режим на четеца"
@@ -5205,6 +5223,7 @@ msgid "Read Holiday List"
 msgstr "Прочети списък на празниците"
 
 #. module: hr_rfid
+#: model:ir.actions.server,name:hr_rfid.action_read_io_table
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 msgid "Read IO Table"
 msgstr "Прочети таблицата"
