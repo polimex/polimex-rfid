@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-22 17:30+0000\n"
-"PO-Revision-Date: 2022-11-22 19:32+0200\n"
+"POT-Creation-Date: 2022-11-24 10:56+0000\n"
+"PO-Revision-Date: 2022-11-24 12:57+0200\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -1566,6 +1566,11 @@ msgid "Command retries"
 msgstr "Повторно изпълнение на команда"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
+msgid "Command time"
+msgstr "Време на команда"
+
+#. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_command
 msgid "Command to controller"
 msgstr "Команда към контролера"
@@ -1596,33 +1601,13 @@ msgstr "Изпълнени команди"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
-msgid "Commands from last month"
-msgstr "Команди от миналия месец"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
 msgid "Commands from last week"
 msgstr "Команди от миналата седмица"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
-msgid "Commands from last year"
-msgstr "Команди от миналата година"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
-msgid "Commands from this month"
-msgstr "Команди от този месец"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
 msgid "Commands from this week"
 msgstr "Команди от тази седмица"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
-msgid "Commands from this year"
-msgstr "Команди от тази година"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
@@ -2815,6 +2800,7 @@ msgid "Event life time"
 msgstr "Живот на събитието"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_search
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
 msgid "Event time"
 msgstr "Време на събитието"
@@ -2853,38 +2839,14 @@ msgstr "Събития за {}"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_search
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
-msgid "Events from last month"
-msgstr "Събития от миналия месец"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_search
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
 msgid "Events from last week"
 msgstr "Събития от миналата седмица"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_search
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
-msgid "Events from last year"
-msgstr "Събития от миналата година"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_search
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
-msgid "Events from this month"
-msgstr "Събития от този месец"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_search
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
 msgid "Events from this week"
 msgstr "Събития от тази седмица"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_search
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
-msgid "Events from this year"
-msgstr "Събития от тази година"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_search
@@ -4187,38 +4149,13 @@ msgstr "Време на измерване"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_log_search_view
-msgid "Measures from Yesterday"
-msgstr "Измервания от Вчера"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_log_search_view
-msgid "Measures from last month"
-msgstr "Измервания от последният месец"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_log_search_view
 msgid "Measures from last week"
 msgstr "Измервания от последната седмица"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_log_search_view
-msgid "Measures from last year"
-msgstr "Измервания от последната година"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_log_search_view
-msgid "Measures from this month"
-msgstr "Измервания от този месец"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_log_search_view
 msgid "Measures from this week"
 msgstr "Измервания от тази седмица"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_log_search_view
-msgid "Measures from this year"
-msgstr "Измервания от тази година"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_log_search_view
