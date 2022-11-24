@@ -593,7 +593,7 @@ class HrRfidController(models.Model):
                 ctrl.write_controller_mode(new_ext_db=new_ext_db)
             if (
                     'high_temperature' in vals or 'low_temperature' in vals or 'hysteresis' in vals) and not self.env.context.get(
-                    'readed', False):
+                'readed', False):
                 ctrl.temp_range_cmd(
                     ctrl.high_temperature,
                     ctrl.low_temperature,
@@ -1000,13 +1000,10 @@ class HrRfidController(models.Model):
     def write_controller_mode(self, new_mode: int = None, new_ext_db: bool = None):
         if new_mode is None:
             new_mode = self.mode
-        # else:
-        #     self.mode = new_mode
         if new_ext_db is None:
             new_ext_db = self.external_db
-        if new_ext_db is True:
-            new_mode = 0x20 + new_mode
-        cmd_data = '%02X' % new_mode
+
+        cmd_data = '%02X' % (int(new_ext_db) * 0x20 + int(new_mode))
         cmd = self._base_command('D5', cmd_data)
         self.read_controller_information_cmd()
         return cmd

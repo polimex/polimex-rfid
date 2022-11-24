@@ -44,6 +44,7 @@
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="hr_employee_vending_balance_change_form"/>
             <field name="binding_model_id" ref="model_hr_employee"/>
+            <field name="target">new</field>
         </record>
 
         <record id="hr_employee_vending_balance_set_action" model="ir.actions.act_window">
@@ -54,6 +55,18 @@
             <field name="view_id" ref="hr_employee_vending_balance_set_form"/>
             <field name="binding_model_id" ref="model_hr_employee"/>
             <field name="context">{'setting_balance':2}</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="hr_employee_vending_recharge_balance_set_action" model="ir.actions.act_window">
+            <field name="name">Set recharge vending balance (self balance)</field>
+            <field name="res_model">hr.employee.vending.balance.wiz</field>
+            <!--      <field name="view_type">form</field>-->
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_employee_vending_balance_set_form"/>
+            <field name="binding_model_id" ref="model_hr_employee"/>
+            <field name="context">{'setting_balance':3}</field>
+            <field name="target">new</field>
         </record>
 
         <record id="hr_rfid_employee_form_inherit_hr_rfid_vending" model="ir.ui.view">
@@ -70,9 +83,9 @@
                             type="action" class="oe_stat_button" icon="fa-money" string="Set balance to"
                             context="{'setting_balance':2}" groups="hr_rfid_vending.group_customer"
                             help="Set person's balance"/>
-                    <button name="%(hr_employee_vending_balance_set_action)d" id="hr_employee_vending_own_balance_btn"
+                    <button name="%(hr_employee_vending_recharge_balance_set_action)d" id="hr_employee_vending_own_balance_btn"
                             type="action" class="oe_stat_button" icon="fa-money" string="Set private balance"
-                            context="{'setting_balance':3}" groups="hr_rfid_vending.group_customer"
+                            groups="hr_rfid_vending.group_customer"
                             help="Set person's balance"/>
                     <button name="employee_vending_balance_history_action" id="hr_employee_vending_balance_history_btn"
                             type="object" class="oe_stat_button" icon="fa-list" string="Balance History"

@@ -5,8 +5,9 @@
         <record id="hr_rfid_vending_balance_history_action" model="ir.actions.act_window">
             <field name="name">Vending Balance History</field>
             <field name="res_model">hr.rfid.vending.balance.history</field>
-            <!--      <field name="view_type">form</field>-->
             <field name="view_mode">tree,form,pivot,graph</field>
+            <field name="context">{'search_default_this_day': 1}</field>
+
         </record>
 
         <record id="hr_rfid_vending_balance_history_form" model="ir.ui.view">
@@ -57,21 +58,16 @@
                     <filter name="balance_decrease" string="Balance Decrease" domain="[('balance_change','&lt;',0)]"/>
                     <filter name="balance_increase" string="Balance Increases" domain="[('balance_change','&gt;',0)]"/>
                     <separator/>
-                    <filter name="last_week" string="Events from last week"
-                            domain="[('create_date', '&gt;=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
-                    <filter name="last_month" string="Events from last month"
-                            domain="[('create_date', '&gt;=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]"/>
-                    <filter name="last_year" string="Events from last year"
-                            domain="[('create_date', '&gt;=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]"/>
-                    <separator/>
-                    <filter name="this_day" string="Events from today"
-                            domain="[('create_date', '&gt;=',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('create_date', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]"/>
-                    <filter name="this_week" string="Events from this week"
-                            domain="[('create_date', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('create_date', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]"/>
-                    <filter name="this_month" string="Events from this month"
-                            domain="[('create_date', '&gt;=', context_today().strftime('%%Y-%%m-1'))]"/>
-                    <filter name="this_year" string="Events from this year"
-                            domain="[('create_date', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('create_date', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]"/>
+                    <filter string="Event time" name="filter_event_time" date="create_date" default_period="last_month"/>
+
+                    <filter name="this_day" string="Events from today" domain="[
+                            ('create_date', '&gt;=', (datetime.datetime.combine(context_today(), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                    <filter name="this_week" string="Events from this week" domain="[
+                        ('create_date', '>=', (datetime.datetime.combine(context_today() + relativedelta(weeks=-1,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')),
+                        ('create_date', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                    <filter name="last_week" string="Events from last week" domain="[
+                        ('create_date', '>=', (datetime.datetime.combine(context_today() + relativedelta(weeks=-2,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')),
+                        ('create_date', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(weeks=-1, days=0,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
                     <separator/>
 
                     <newline/>
