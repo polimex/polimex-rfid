@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_employee_filter" model="ir.ui.view">
+            <field name="name">hr.employee.search.inherit.hr.rfid.attendance</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='inactive']" position="after">
+                    <filter string="Not checked In" name="missing"
+                            domain="['|',
+                                ('last_check_in', '&lt;', context_today().strftime('%Y-%m-%d')),
+                                ('last_check_in', '=', False),
+                            ]"/>
+                </xpath>
+<!--                <search string="Employees">-->
+<!--                    <field name="name" string="Employee"-->
+<!--                           filter_domain="['|', ('work_email', 'ilike', self), ('name', 'ilike', self)]"/>-->
+<!--                    <field name="category_ids" groups="hr.group_hr_user"/>-->
+<!--                    <field name="job_id"/>-->
+<!--                    <separator/>-->
+<!--                    <filter string="Unread Messages" name="message_needaction"-->
+<!--                            domain="[('message_needaction', '=', True)]"/>-->
+<!--                    <separator/>-->
+<!--                    <filter invisible="1" string="Late Activities" name="activities_overdue"-->
+<!--                            domain="[('my_activity_date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>-->
+<!--                    <filter invisible="1" string="Today Activities" name="activities_today"-->
+<!--                            domain="[('my_activity_date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"/>-->
+<!--                    <filter invisible="1" string="Future Activities" name="activities_upcoming_all"-->
+<!--                            domain="[('my_activity_date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))]"/>-->
+<!--                    <separator/>-->
+<!--                    <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>-->
+<!--                    <group expand="0" string="Group By">-->
+<!--                        <filter name="group_manager" string="Manager" domain="[]" context="{'group_by': 'parent_id'}"/>-->
+<!--                        <filter name="group_department" string="Department" domain="[]"-->
+<!--                                context="{'group_by': 'department_id'}"/>-->
+<!--                        <filter name="group_job" string="Job" domain="[]" context="{'group_by': 'job_id'}"/>-->
+<!--                    </group>-->
+<!--                    <searchpanel>-->
+<!--                        <field name="company_id" groups="base.group_multi_company" icon="fa-building"-->
+<!--                               enable_counters="1"/>-->
+<!--                        <field name="department_id" icon="fa-users" enable_counters="1"/>-->
+<!--                    </searchpanel>-->
+<!--                </search>-->
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

@@ -25,6 +25,8 @@
         'views/vending_event.xml',
         'views/vending_menus.xml',
         'views/digest_views.xml',
+        # 'views/res_config_setting_view.xml',
+        'views/res_company.xml',
     ],
 
     'demo': [ ],

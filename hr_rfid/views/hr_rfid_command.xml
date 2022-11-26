@@ -4,7 +4,6 @@
         <record id="hr_rfid_command_action" model="ir.actions.act_window">
             <field name="name">Commands to Modules</field>
             <field name="res_model">hr.rfid.command</field>
-            <!--      <field name="view_type">form</field>-->
             <field name="view_mode">tree,form,search,calendar</field>
             <field name="context">{"search_default_this_day": 1}</field>
         </record>
@@ -105,21 +104,16 @@
                     <field name="cr_timestamp"/>
                     <field name="ex_timestamp"/>
 
-                    <filter name="last_week" string="Commands from last week"
-                            domain="[('cr_timestamp', '&gt;=', (context_today()-datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
-                    <filter name="last_month" string="Commands from last month"
-                            domain="[('cr_timestamp', '&gt;=', (context_today()-datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]"/>
-                    <filter name="last_year" string="Commands from last year"
-                            domain="[('cr_timestamp', '&gt;=', (context_today()-datetime.timedelta(days=365)).strftime('%%Y-%%m-%%d'))]"/>
-                    <separator/>
-                    <filter name="this_day" string="Commands from today"
-                            domain="[('cr_timestamp', '&gt;=',  (context_today()).strftime('%%Y-%%m-%%d 00:00:00'))]"/>
-                    <filter name="this_week" string="Commands from this week"
-                            domain="[('cr_timestamp', '&gt;=', (context_today()-datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),('cr_timestamp', '&lt;=', (context_today()-datetime.timedelta(days=context_today().weekday())+ datetime.timedelta(days=6)).strftime('%%Y-%%m-%%d'))]"/>
-                    <filter name="this_month" string="Commands from this month"
-                            domain="[('cr_timestamp', '&gt;=', context_today().strftime('%%Y-%%m-1'))]"/>
-                    <filter name="this_year" string="Commands from this year"
-                            domain="[('cr_timestamp', '&gt;=', (datetime.date(datetime.date.today().year, 1, 1)).strftime('%%Y-%%m-%%d')),('cr_timestamp', '&lt;=', (datetime.date(datetime.date.today().year, 12, 31)).strftime('%%Y-%%m-%%d'))]"/>
+                    <filter string="Command time" name="filter_command_time" date="cr_timestamp" default_period="last_month"/>
+
+                    <filter name="this_day" string="Commands from today" domain="[
+                            ('cr_timestamp', '&gt;=', (datetime.datetime.combine(context_today(), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                    <filter name="this_week" string="Commands from this week" domain="[
+                        ('cr_timestamp', '>=', (datetime.datetime.combine(context_today() + relativedelta(weeks=-1,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')),
+                        ('cr_timestamp', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                    <filter name="last_week" string="Commands from last week" domain="[
+                        ('cr_timestamp', '>=', (datetime.datetime.combine(context_today() + relativedelta(weeks=-2,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')),
+                        ('cr_timestamp', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(weeks=-1, days=0,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
                     <separator/>
 
                     <newline/>

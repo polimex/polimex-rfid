@@ -76,7 +76,7 @@ class HrRfidUserEvent(models.Model):
         'hr.rfid.card',
         string='Card',
         help='Card affected by this event',
-        ondelete='cascade',
+        ondelete='set null',
     )
 
     command_id = fields.Many2one(
@@ -129,16 +129,16 @@ class HrRfidUserEvent(models.Model):
 
     @api.autovacuum
     def _gc_user_events_life(self):
-        event_lifetime = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.event_lifetime')
-        if event_lifetime is None:
-            return False
-
-        lifetime = timedelta(days=int(event_lifetime))
-        today = fields.Date.today()
-        res = self.search([
-            ('event_time', '<', today-lifetime)
-        ])
-        res.unlink()
+        for c in self.env['res.company'].search([]):
+            if c.event_lifetime is None:
+                return False
+            lifetime = timedelta(days=int(c.event_lifetime))
+            today = fields.Date.today()
+            res = self.with_company(c).search([
+                ('event_time', '<', today - lifetime)
+            ])
+            res.unlink()
+        return True
 
     @api.depends('employee_id.name', 'contact_id.name', 'door_id.name', 'event_action')
     def _compute_user_ev_name(self):
@@ -296,5 +296,23 @@ class HrRfidUserEvent(models.Model):
             #     </p>'''),
         }
 
+    @api.model
+    def last_event(self, door_ids=None, partner_id=None, employee_id=None):
+        """ Get last event for user
 
+            """
+        domain = []
+        if door_ids is not None:
+            domain.append(
+                ('door_id', 'in', door_ids.mapped('id'))
+            )
+        if partner_id is not None:
+            domain.append(
+                ('contact_id', '=', partner_id.id)
+            )
+        if employee_id is not None:
+            domain.append(
+                ('employee_id', '=', employee_id.id)
+            )
+        return self.search(domain, limit=1)
 

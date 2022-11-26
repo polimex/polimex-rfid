@@ -18,7 +18,7 @@ class RawData(models.Model):
 
     receive_ts = fields.Datetime(
         string='Receive timestamp',
-        default=fields.Datetime.now()
+        default=fields.Datetime.now
     )
 
     identification = fields.Char(

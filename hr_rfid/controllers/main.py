@@ -4,10 +4,11 @@ import traceback
 import time
 import psycopg2
 
-from ..models.hr_rfid_webstack import BadTimeException
+from odoo.addons.hr_rfid.models.hr_rfid_webstack import BadTimeException
+from odoo.addons.hr_rfid.models.hr_rfid_event_system import HrRfidSystemEvent
 from odoo import http, fields, exceptions, _, SUPERUSER_ID
 from odoo.http import request
-
+from odoo.addons.hr_rfid.controllers import polimex
 
 import logging
 
@@ -76,6 +77,12 @@ class WebRfidController(http.Controller):
 
         # Find PIN code or additional data for event
         dt = post_data['event']['dt'] or None
+        temp_data = None
+        if controller_id.is_temperature_ctrl:
+            temp_data = polimex.get_temperature(
+                int(post_data['event']['dt'][0:2]),
+                int(post_data['event']['dt'][2:4])
+            )
 
         # Find Door ID
         door = None
@@ -179,7 +186,6 @@ class WebRfidController(http.Controller):
                 controller_id._update_input_state(controller_id.inputs, int(state))
             # else:
             #     controller_id._update_input_state(14, int(state))
-
 
             if controller_id.emergency_group_id and not software:
                 if state:
@@ -350,7 +356,7 @@ class WebRfidController(http.Controller):
                 'event_time': webstack.get_ws_time_str(post_data['event']),
                 'event_action': str(8 - int(pin)) if event_action == 36 else '12' if event_action == 38 else '9',
             }
-            if (event_dict['event_action'] in ['8', '9']) and not card_id: # Card Denied Insert or Ejected unknown card
+            if (event_dict['event_action'] in ['8', '9']) and not card_id:  # Card Denied Insert or Ejected unknown card
                 sys_event_dict = {
                     'door_id': door and door.id or False,
                     'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
@@ -375,6 +381,27 @@ class WebRfidController(http.Controller):
             event = ev_env.create(event_dict)
             door.proccess_event(event)
             return webstack.check_for_unsent_cmd(200)
+        # Temperature Control
+        elif event_action in [51, 52, 53, 54]:
+            # ('51', _('Temperature High')),        # System Event, Temperature Event
+            # ('52', _('Temperature Normal')),      # Temperature Event
+            # ('53', _('Temperature Low')),         # System Event, Temperature Event
+            # ('54', _('Temperature Error')),       # System Event
+            if event_action in [51, 53, 54]:  # System Event
+                controller_id.report_sys_ev(
+                    description=_('Event from Temperature Sensor'),
+                    post_data=post_data
+                )
+
+            if event_action in [51, 52, 53]:  # Temperature Event
+                th_id = controller_id._find_th_sensor(internal_number=reader_num)
+                if th_id:
+                    th_id.write_log(
+                        webstack.get_ws_time_str(post_data=post_data['event']),
+                        {'t': temp_data}
+                    )
+
+            return webstack.check_for_unsent_cmd(200)
         # Cloud request 64
         elif event_action in [64]:
             if not card_id:
@@ -383,53 +410,31 @@ class WebRfidController(http.Controller):
                     'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
                     'event_action': str(event_action),
                     'card_number': card_num or None,
-                    # 'input_js': ,
                 }
-
                 event = controller_id.report_sys_ev(
                     description=_('Could not find the card'),
                     post_data=post_data,
                     sys_ev_dict=sys_event_dict
                 )
-
-                # controller_id.report_sys_ev(_('Could not find the card'), post_data=post_data)
                 return webstack.check_for_unsent_cmd(200)
             if controller_id.is_vending_ctrl():
                 return self.vending_request_for_balance()
             else:
                 # External db event, controller requests for permission to open or close door
+                ag_ids = card_id.get_owner().hr_rfid_access_group_ids
                 ret = request.env['hr.rfid.access.group.door.rel'].sudo().search([
-                    (
-                        'access_group_id', 'in',
-                        card_id.get_owner().hr_rfid_access_group_ids.mapped('access_group_id.id')),
+                    ('access_group_id', 'in', ag_ids.mapped('access_group_id.id')),
                     ('door_id', '=', reader_id.door_id.id)
                 ])
-                return self._respond_to_ev_64(len(ret) > 0 and card_id.active is True,
+                flag = True
+                if len(ret) > 0:
+                    if card_id.get_owner()._name == 'hr.employee':
+                        flag = 0 == len(ret.access_group_id._calc_last_user_event_in_ag(employee_id=card_id.get_owner()))
+                    else:
+                        flag = 0 == len(ret.access_group_id._calc_last_user_event_in_ag(partner_id=card_id.get_owner()))
+
+                return self._respond_to_ev_64(len(ret) > 0 and card_id.active is True and flag,
                                               controller_id, reader_id, card_id, post_data)
-                # cmd_env = request.env['hr.rfid.command'].sudo()
-                # cmd = {
-                #     'webstack_id': controller.webstack_id.id,
-                #     'controller_id': controller.id,
-                #     'cmd': 'DB',
-                #     'status': 'Process',
-                #     'ex_timestamp': fields.Datetime.now(),
-                #     'cmd_data': '40%02X00' % (4 + 4 * (reader.number - 1)),
-                # }
-                # cmd = cmd_env.create(cmd)
-                # cmd_js = {
-                #     'status': 200,
-                #     'cmd': {
-                #         'id': cmd.controller_id.ctrl_id,
-                #         'c': cmd.cmd[:2],
-                #         'd': cmd.cmd_data,
-                #     }
-                # }
-                # cmd.request = json.dumps(cmd_js)
-                # if post_data['event']['card'] == '0000000000':
-                #     controller_id._report_sys_ev('', post_data=post_data)
-                # else:
-                #     controller_id._report_sys_ev(_('Could not find the card'), post_data=post_data)
-                # return cmd_js
         # Don't know what is this. Just report it
         else:
             controller_id.report_sys_ev(_('Unknown event. Please contact with your support!'), post_data=post_data)
@@ -446,15 +451,15 @@ class WebRfidController(http.Controller):
             'status': 'Process',
             'ex_timestamp': fields.Datetime.now(),
         }
-        if not controller.is_relay_ctrl():
-            cmd['cmd_data'] = '40%02X00' % (open_door + 4 * (reader.number - 1))
-        else:
+        if controller.is_relay_ctrl():
             data = 0
             user_doors = card.get_owner().get_doors()
             for door in reader.door_ids:
                 if door in user_doors:
                     data |= 1 << (door.number - 1)
             cmd['cmd_data'] = '4000' + controller.convert_int_to_cmd_data_for_output_control(data)
+        else:
+            cmd['cmd_data'] = '40%02X00' % (open_door + 4 * (reader.number - 1))
         event = {
             'ctrl_addr': controller.ctrl_id,
             'door_id': reader.door_id.id,
@@ -465,19 +470,9 @@ class WebRfidController(http.Controller):
         }
         card.get_owner(event)
         cmd = cmd_env.create(cmd)
-        # cmd_js = {
-        #     'status': 200,
-        #     'cmd': {
-        #         'id': cmd.controller_id.ctrl_id,
-        #         'c': cmd.cmd[:2],
-        #         'd': cmd.cmd_data,
-        #     }
-        # }
-        # cmd.request = json.dumps(cmd_js)
         event['command_id'] = cmd.id
         ev_env.create(event)
-        return cmd.semd_command(200)
-        # return cmd_js
+        return cmd.send_command(200)
 
     @http.route(['/hr/rfid/barcode'], type='json', auth='none', methods=['POST'], cors='*', csrf=False,
                 save_session=False)
@@ -556,7 +551,11 @@ class WebRfidController(http.Controller):
                 _logger.info('Heartbeat from {}'.format(webstack_id.name))
                 result = webstack_id.parse_heartbeat(post_data=post_data)
             elif 'event' in post_data:
-                _logger.info('Event from {}'.format(webstack_id.name))
+                _logger.info('Event (%s) from %s' % (
+                    ''.join([a[1] for a in HrRfidSystemEvent.action_selection if
+                             a[0] == str(post_data['event']['event_n'])]),
+                    webstack_id.name)
+                             )
                 result = self._parse_event(post_data=post_data, webstack=webstack_id)
             elif 'response' in post_data:
                 _logger.info('Command response from {}'.format(webstack_id.name))
@@ -596,7 +595,7 @@ class WebRfidController(http.Controller):
             _logger.error('Caught a time error, returning status=200 and creating a system event')
             # print('Caught a time error, returning status=200 and creating a system event')
             if not post:
-                #return werkzeug.exceptions.NotFound(description)
+                # return werkzeug.exceptions.NotFound(description)
                 pass
             return {'status': 200}
         except Exception as e:
@@ -607,7 +606,8 @@ class WebRfidController(http.Controller):
                 'error_description': str(e),
                 'input_js': json.dumps(post_data),
             }])
-            _logger.error('Caught an unexpected exception, returning status=500 and creating a system event - '+str(e))
+            _logger.error(
+                'Caught an unexpected exception, returning status=500 and creating a system event - ' + str(e))
             return {'status': 500}
 
     def _parse_raw_data(self, post_data: dict):
@@ -633,6 +633,3 @@ class WebRfidController(http.Controller):
 
     def vending_request_for_balance(self):
         raise NotImplementedError('Not implemented')
-
-
-

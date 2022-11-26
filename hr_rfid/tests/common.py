@@ -1,3 +1,5 @@
+from dateutil.relativedelta import relativedelta
+
 from odoo.api import Environment
 from odoo import models, fields
 from odoo.tests import common
@@ -42,9 +44,18 @@ class RFIDAppCase(common.TransactionCase):
             self.test_now.second,
         )
 
+        self.test_ag_employee_1 = self.env['hr.rfid.access.group'].create({
+            'name': 'Test Access Group 1',
+            'company_id': self.test_company_id,
+            # 'door_ids': "[(0, 0, {'door_id':ref('hr_rfid.demo_ctrl_icon110_D1')}), (0, 0, {'door_id': ref('hr_rfid.demo_ctrl_icon110_D2')})]"
+        })
+
         self.test_department_id = self.env['hr.department'].create({
             'name': 'Test Department',
             'company_id': self.test_company_id,
+            'hr_rfid_default_access_group': self.test_ag_employee_1.id,
+            'hr_rfid_allowed_access_groups': [(4, self.test_ag_employee_1.id, 0)],
+
         })
 
         self.test_employee_id = self.env['hr.employee'].create({
@@ -60,12 +71,22 @@ class RFIDAppCase(common.TransactionCase):
             'company_id': self.test_company_id,
         })
 
+        self.test_ag_partner_1 = self.env['hr.rfid.access.group'].create({
+            'name': 'Test Access Group 2',
+            'company_id': self.test_company_id,
+            # 'door_ids': "[(0, 0, {'door_id':ref('hr_rfid.demo_ctrl_icon110_D1')}), (0, 0, {'door_id': ref('hr_rfid.demo_ctrl_icon110_D2')})]"
+        })
+
         self.test_partner = self.env['res.partner'].create({
             'name': 'Test Partner',
             'company_type': 'person',
             'is_company': False,
             'type': 'contact',
             'company_id': self.test_company_id,
+        })
+        self.test_partner_ag_rel = self.env['hr.rfid.access.group.contact.rel'].create({
+            'access_group_id':  self.test_ag_partner_1.id,
+            'contact_id':  self.test_partner.id,
         })
 
         self.test_card_partner = self.env['hr.rfid.card'].create({
@@ -74,6 +95,7 @@ class RFIDAppCase(common.TransactionCase):
             'contact_id': self.test_partner.id,
             'company_id': self.test_company_id,
         })
+
         self.c_50 = None
         self.c_110 = None
         self.c_115 = None
@@ -81,7 +103,15 @@ class RFIDAppCase(common.TransactionCase):
         self.c_180 = None
         self.c_turnstile = None
         self.c_vending = None
+        self.c_temperature = None
 
+    def _time_10_3(self, delta_in_seconds):
+        now = self.test_now - relativedelta(seconds=delta_in_seconds)
+        return '%02d:%02d:%02d' % (
+            now.hour,
+            now.minute,
+            now.second,
+        )
     def _assertResponse(self, response):
         self.assertEqual(response.status_code, 200)
         if response.text != '':
@@ -151,7 +181,7 @@ class RFIDAppCase(common.TransactionCase):
         sys_events_count = self._count_system_events(company_id or self.test_company_id)
         response = self.url_open(self.app_url,
                                  data=json.dumps(cmd),
-                                 timeout=20,
+                                 timeout=200,
                                  headers={'Content-Type': 'application/json'})
         if not response.ok:
             pass
@@ -274,3 +304,26 @@ class RFIDAppCase(common.TransactionCase):
             ctrl.mode_selection_4 = str(mode)
         response = self._hearbeat(ctrl.webstack_id)
 
+    def _ev64(self, ctrl):
+        if not ctrl.external_db:
+            ctrl.external_db = True
+            response = self._hearbeat(ctrl.webstack_id)
+            self.assertEqual(response, {'cmd': {'id': ctrl.ctrl_id, 'c': 'D5', 'd': '22'}}, )
+            response = self._send_cmd_response(response)
+            self.assertEqual(response, {'cmd': {'id': ctrl.ctrl_id, 'c': 'F0', 'd': ''}}, )
+            response = self._send_cmd_response(response,'0006000400000704000000030000030201050208002200010502060003000506')
+            self.assertEqual(response, {})
+            self.test_ag_employee_1.add_doors(ctrl.door_ids)
+            # response = self._hearbeat(ctrl.webstack_id)
+            # self.assertEqual(response, {})
+            response = self._make_event(ctrl, card=self.test_card_employee.number, reader=1, event_code=64)
+            self.assertEqual(response, {'cmd': {'id': ctrl.ctrl_id, 'c': 'DB', 'd': '400300'}}, )
+            response = self._send_cmd_response(response, '400300')
+            self.test_ag_employee_1.delay_between_events = 60
+            response = self._make_event(ctrl, card=self.test_card_employee.number, reader=1, event_code=64)
+            self.assertEqual(response, {'cmd': {'id': ctrl.ctrl_id, 'c': 'DB', 'd': '400400'}}, )
+            response = self._send_cmd_response(response, '400400')
+            # response = self._make_event(ctrl, card=self.test_card_employee.number, reader=1, time=self._time_10_3(30), event_code=3)
+            # response = self._make_event(ctrl, card=self.test_card_employee.number, reader=1, event_code=64)
+            # self.assertEqual(response, {'cmd': {'id': ctrl.ctrl_id, 'c': 'DB', 'd': '400400'}}, )
+            pass

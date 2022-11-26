@@ -4,7 +4,7 @@ from odoo import fields, models, api
 class CtrlTemperatureAndHumidityLog(models.Model):
     _name = 'hr.rfid.ctrl.th.log'
     _description = 'Temperature and humidity log'
-    _order = 'id'
+    _order = 'event_time desc, id'
 
     temperature = fields.Float(
         help='Current Temperature value',
@@ -21,3 +21,10 @@ class CtrlTemperatureAndHumidityLog(models.Model):
         readonly=True,
         ondelete='cascade',
     )
+    event_time = fields.Datetime(
+        string='Timestamp',
+        help='Time the event triggered',
+        default=lambda self: fields.Datetime.now(),
+        index=True,
+    )
+

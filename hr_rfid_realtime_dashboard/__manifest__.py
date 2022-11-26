@@ -25,6 +25,7 @@
     'data': [
         'views/dashboard.xml',
         'views/hr_rfid_menus.xml',
+        'views/hr_rfid_user_event.xml',
     ],
     # only loaded in demonstration mode
 

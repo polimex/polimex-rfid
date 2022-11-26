@@ -13,6 +13,7 @@ import base64
 import pytz
 
 import logging
+
 _logger = logging.getLogger(__name__)
 
 # put POSIX 'Etc/*' entries at the end to avoid confusing users - see bug 1086728
@@ -170,7 +171,7 @@ class HrRfidWebstack(models.Model):
     @api.depends('hw_version')
     def _compute_time_format(self):
         for ws in self:
-            if (ws.hw_version and ws.hw_version in ['100.1', '50.1']) or (ws.version and float(ws.version) > 1.34):
+            if (ws.hw_version and ws.hw_version in ['100.1', '50.1']) or (ws.version and float(ws.version) > 1.40):
                 ws.time_format = '%m.%d.%y %H:%M:%S'
             elif ws.hw_version in ['10.3']:
                 ws.time_format = '%d.%m.%y %H:%M:%S'
@@ -282,7 +283,7 @@ class HrRfidWebstack(models.Model):
                 data=config_params_dict, auth=(username, password), timeout=2
             )
             if response.status_code != 200:
-                raise exceptions.ValidationError(_('''While trying to setup /protect/config.htm the module\n 
+                raise exceptions.ValidationError(_('''While trying to setup /protect/config.htm the module\n
                                                  error returned {reason}({code}) with body:\n''').format(
                     reason=response.reason, code=response.status_code) +
                                                  response.text)
@@ -445,7 +446,6 @@ class HrRfidWebstack(models.Model):
                 message=_('The module was rebooted. It takes up to 10 sec to restore the work conditions')
             )
 
-
     @api.depends('tz')
     def _compute_tz_offset(self):
         for user in self:
@@ -549,13 +549,13 @@ class HrRfidWebstack(models.Model):
                 return cmd_response
 
     def is_10_3(self):
-        return all([(ws.hw_version == '10.3') or (ws.version == '1.3400') for ws in self])
+        return all([(ws.hw_version == '10.3') or (float(ws.version) < 1.40) for ws in self])
 
     def is_50_1(self):
         return all([ws.hw_version == '50.1' for ws in self])
 
     def is_100_1(self):
-        return all([(ws.hw_version == '100.1') and (ws.version != '1.3400') for ws in self])
+        return all([(ws.hw_version == '100.1') and (float(ws.version) > 1.40) for ws in self])
 
     def in_cmd_execution(self):
         return self.env['hr.rfid.command'].search_count([
@@ -723,6 +723,7 @@ class HrRfidWebstack(models.Model):
             controller.report_sys_ev(_('Controller sent us a response to a command we never sent'))
             return not direct_cmd and self.check_for_unsent_cmd(200)
 
+        # controller not response!
         if response['e'] != 0:
             if response['e'] == 20:  # controller not response!
                 return self._retry_command(200, command)
@@ -743,6 +744,53 @@ class HrRfidWebstack(models.Model):
         if response['c'] == 'F0':
             command.parse_f0_response(post_data=post_data)
 
+        if response['c'] == 'F2':
+            if len(response['d']) == 10:  # card counter only
+                controller.cards_count = polimex.bytes_to_num(response['d'], 0, 5)
+                if controller.is_temperature_ctrl():
+                    controller.read_cards_cmd(position=1, count=controller.cards_count)
+                else:
+                    pass
+            else:  # card list
+                if controller.is_temperature_ctrl():
+                    sensors = []
+                    for block in [response['d'][i * 36:i * 36 + 36] for i in range(0, len(response['d']) // 36)]:
+                        barray = polimex.str_hex_to_array(block)
+                        sensor_uid = ''.join([f'{c:x}' for c in barray[0:16]])
+                        sensor_id = barray[16]
+                        sensor_flag = barray[17]
+                        # controller.update_th(0, {
+                        #     't': temperature,
+                        #     'h': humidity,
+                        # })
+                        th_id = controller.sensor_ids.filtered(lambda s: s.uid == sensor_uid)
+                        if not th_id:
+                            self.env['hr.rfid.ctrl.th'].create({
+                                'name': _('External Sensor %s connected to %s') % (
+                                    len(controller.with_context(active_test=False).sensor_ids),
+                                    controller.name
+                                ),
+                                'uid': sensor_uid,
+                                'internal_number': sensor_id,
+                                'active': sensor_flag == 1,
+                                'controller_id': controller.id,
+                                'sensor_number': len(controller.with_context(active_test=False).sensor_ids),
+                            })
+                        # if not th_id:
+                        #     controller.write({
+                        #         'sensor_ids': [(0, 0, {
+                        #             'name': _('External Sensor {} on {}').format(len(controller.sensor_ids),
+                        #                                                          controller.name),
+                        #             'uid': sensor_uid,
+                        #             'internal_number': sensor_id,
+                        #             'active': sensor_flag == 1,
+                        #             'controller_id': controller.id,
+                        #             'sensor_number': len(controller.sensor_ids),
+                        #         })]
+                        #     })
+                    pass
+                else:
+                    pass
         if response['c'] == 'F6':
             data = response['d']
             readers = [None, None, None, None]
@@ -769,6 +817,17 @@ class HrRfidWebstack(models.Model):
             for door in controller.door_ids:
                 door.apb_mode = (door.number == '1' and (apb_mode & 1)) \
                                 or (door.number == '2' and (apb_mode & 2))
+        if response['c'] == 'B1':
+            if response['d'] != '00':
+                # '01 0400 0050 0010'
+                high_temp = polimex.get_temperature(int(response['d'][2:4]), int(response['d'][4:6]))
+                low_temp = polimex.get_temperature(int(response['d'][6:8]), int(response['d'][8:10]))
+                hyst = polimex.get_temperature(int(response['d'][10:12]), int(response['d'][12:14]))
+                controller.with_context(readed=True).write({
+                    'high_temperature': high_temp,
+                    'low_temperature': low_temp,
+                    'hysteresis': hyst
+                })
 
         if response['c'] == 'B3':
             data = response['d']
@@ -825,7 +884,7 @@ class HrRfidWebstack(models.Model):
                 'read_b3_cmd': controller.read_b3_cmd or temperature != 0 or humidity != 0 or controller.alarm_lines > 0
             })
             if temperature != 0 or humidity != 0:
-                controller.update_th(0, {
+                controller.update_th(sensor_number=0, data_dict={
                     't': temperature,
                     'h': humidity,
                 })

@@ -87,17 +87,15 @@ class VendingEvents(models.Model):
 
     @api.autovacuum
     def _gc_delete_old_vending_events(self):
-        event_lifetime = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.event_lifetime')
-        if event_lifetime is None:
-            return False
-
-        lifetime = timedelta(days=int(event_lifetime))
-        today = datetime.today()
-        res = self.search([
-            ('event_time', '<', today-lifetime)
-        ])
-        res.unlink()
-
+        for c in self.env['res.company'].search([]):
+            if c.event_lifetime is None:
+                return False
+            lifetime = timedelta(days=int(c.event_lifetime))
+            today = fields.Date.today()
+            res = self.with_company(c).search([
+                ('event_time', '<', today - lifetime)
+            ])
+            res.unlink()
         return True
 
     def _check_save_comms(self, vals):

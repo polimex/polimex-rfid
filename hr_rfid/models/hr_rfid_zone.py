@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from dateutil.relativedelta import relativedelta
+
 from odoo import api, fields, models, _, http
 
 
@@ -56,8 +58,6 @@ class HrRfidZone(models.Model):
         for z in self:
             z.employee_count = len(z.employee_ids)
             z.contact_count = len(z.contact_ids)
-
-
 
     def person_went_through(self, event):
         person = event.employee_id or event.contact_id
