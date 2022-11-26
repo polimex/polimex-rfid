@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-13 13:32+0000\n"
-"PO-Revision-Date: 2022-11-20 23:46+0800\n"
+"PO-Revision-Date: 2022-11-26 13:10+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -33,7 +33,7 @@ msgstr "%d 对于io表来说不是一个有效值. 有效值范围应从 0 到 9
 #: code:addons/hr_rfid/models/hr_rfid_card.py:0
 #, python-format
 msgid "%s list"
-msgstr ""
+msgstr "%s 列表"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__relay_time_factor__1
@@ -204,6 +204,9 @@ msgid ""
 "                    No accessible doors for this employee.\n"
 "                </p>"
 msgstr ""
+"<p class=\"o_view_nocontent\">\n"
+"                    该员工未关联无障碍门。\n"
+"                </p>"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/res_partner.py:0
@@ -213,6 +216,9 @@ msgid ""
 "                    No accessible doors for this partner.\n"
 "                </p>"
 msgstr ""
+"<p class=\"o_view_nocontent\">\n"
+"                    该合作伙伴未关联无障碍门。\n"
+"                </p>"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_employee.py:0
@@ -222,6 +228,9 @@ msgid ""
 "                    No events for this employee.\n"
 "                </p>"
 msgstr ""
+"<p class=\"o_view_nocontent\">\n"
+"                    该员工无事件消息。\n"
+"                </p>"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/res_partner.py:0
@@ -231,17 +240,21 @@ msgid ""
 "                    No events for this partner.\n"
 "                </p>"
 msgstr ""
+"<p class=\"o_view_nocontent\">\n"
+"                    该合作伙伴无事件消息。\n"
+"                </p>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 msgid "<span class=\"fa fa-bars fa-lg\" title=\"Settings\"/>"
-msgstr ""
+msgstr "<span class=\"fa fa-bars fa-lg\" title=\"设置\"/>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
 msgid ""
 "<span class=\"fa fa-circle text-danger\" role=\"img\" aria-label=\"Disabled\" title=\"Disabled\" name=\"webstack_disabled\"/>"
 msgstr ""
+"<span class=\"fa fa-circle text-danger\" role=\"img\" aria-label=\"Disabled\" title=\"禁用\" name=\"webstack_disabled\"/>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
@@ -249,6 +262,8 @@ msgid ""
 "<span class=\"fa fa-circle text-success\" role=\"img\" aria-label=\"Up and running\" title=\"Up and running\" name="
 "\"webstack_enabled_and_running\"/>"
 msgstr ""
+"<span class=\"fa fa-circle text-success\" role=\"img\" aria-label=\"Up and running\" title=\"正常运行\" name="
+"\"webstack_enabled_and_running\"/>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
@@ -256,17 +271,19 @@ msgid ""
 "<span class=\"fa fa-circle text-warning\" role=\"img\" aria-label=\"Enabled but not running\" title=\"Enabled but not running"
 "\" name=\"webstack_enabled\"/>"
 msgstr ""
+"<span class=\"fa fa-circle text-warning\" role=\"img\" aria-label=\"Enabled but not running\" title=\"启用但未运行中\" name="
+"\"webstack_enabled\"/>"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__cloud_card
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_sys_wiz__cloud_card
 msgid "A cloud card will not be added to controllers that are in the \"externalDB\" mode."
-msgstr ""
+msgstr "此云端卡不会被添加到处于 \"externalDB外部数据库\" 模式的控制器中。"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__name
 msgid "A label to easily differentiate doors"
-msgstr ""
+msgstr "易于区分门的标签"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__name
@@ -407,7 +424,7 @@ msgstr "权限 {}"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_employee_form_inherit_hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_partner_form_inherit_hr_rfid
 msgid "Accessible doors"
-msgstr ""
+msgstr "无障碍门"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__event_action
@@ -479,7 +496,7 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_exception_decoration
 msgid "Activity Exception Decoration"
-msgstr ""
+msgstr "活动异常标志"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_state
@@ -512,7 +529,7 @@ msgstr "新增门"
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_create_module_manual
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_manual_create_wiz
 msgid "Add Module"
-msgstr ""
+msgstr "添加模块"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_department_mass_acc_grs_wiz
@@ -695,7 +712,7 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_system__siren
 msgid "Alarm detected and Siren is ON"
-msgstr ""
+msgstr "检测到警报且警报器开启"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
@@ -801,7 +818,7 @@ msgstr "所有联系人"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
 msgid "All contacts assigned to this access group, including ones from inheritor access groups"
-msgstr ""
+msgstr "分配给该访问组的所有联系人，包括来自继承人访问组的联系人"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__all_contact_ids
@@ -841,7 +858,7 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door_open_close_wiz__time
 msgid "Amount of time (in seconds) the doors will stay open or closed. 0 for infinity."
-msgstr ""
+msgstr "门保持打开或关闭的时间（秒）。0表示无限长。"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
@@ -859,7 +876,7 @@ msgstr "导入图片"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__anti_pass_back
 msgid "Anti-Pass Back"
-msgstr ""
+msgstr "反传回"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_form
@@ -6084,9 +6101,8 @@ msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_ts_line__begin
-#, fuzzy
 msgid "The begin time of the interval"
-msgstr "间隔"
+msgstr "间隔时间的开始时间"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
@@ -6107,9 +6123,8 @@ msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_ts_line__day
-#, fuzzy
 msgid "The day for this interval"
-msgstr "间隔"
+msgstr "这个区间的天数"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/controllers/main.py:0
@@ -6125,9 +6140,8 @@ msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_ts_line__end
-#, fuzzy
 msgid "The end time of the interval"
-msgstr "间隔"
+msgstr "区间的结束时间"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_emergency_group.py:0
@@ -6169,9 +6183,9 @@ msgstr ""
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
-#, fuzzy, python-format
+#, python-format
 msgid "The requested day is not in the range!"
-msgstr "日"
+msgstr "所要求的日期不在范围内!"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
@@ -6254,9 +6268,8 @@ msgstr ""
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_ctrl_ts_week_wiz_action
-#, fuzzy
 msgid "Time Schedule Wizard"
-msgstr "显示信息的弹出式向导"
+msgstr "时间安排向导"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_ctrl_ts_line
@@ -6292,9 +6305,8 @@ msgstr ""
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_ts_wiz
-#, fuzzy
 msgid "Time schedule data for"
-msgstr "带数据标记的雷达图"
+msgstr "时间计划数据"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
@@ -6326,15 +6338,13 @@ msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__tz
-#, fuzzy
 msgid "Timezone"
-msgstr "执行在 (timezone=UTC)"
+msgstr "时区"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__tz_offset
-#, fuzzy
 msgid "Timezone offset"
-msgstr "执行在 (timezone=UTC)"
+msgstr "时区偏移"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_manual_create_wiz
@@ -6343,9 +6353,8 @@ msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__ts_data
-#, fuzzy
 msgid "Ts Data"
-msgstr "带数据标记的雷达图"
+msgstr "Ts 数据"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_ts_line__day__1
