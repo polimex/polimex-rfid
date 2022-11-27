@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-11-24 13:21+0000\n"
-"PO-Revision-Date: 2022-11-27 13:03+0800\n"
+"PO-Revision-Date: 2022-11-28 00:32+0800\n"
 "Last-Translator: 老天 <liangjia@qq.com>\n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -356,7 +356,7 @@ msgstr "权限组统计"
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_acc_gr_contact_rel_action
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_acc_gr_contact_rels
 msgid "Access Group/Contact Relations"
-msgstr "权限组/联系人关系"
+msgstr "关联权限组/联系人"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__access_group_door_ids
@@ -371,7 +371,7 @@ msgstr "权限组/门禁组合"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_acc_gr_employee_rel_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_acc_gr_employee_rel_view_tree
 msgid "Access Group/Employee Relations"
-msgstr "权限组/员工关系"
+msgstr "关联权限组/员工"
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_access_group_action
@@ -1328,7 +1328,7 @@ msgstr "卡的事件"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_door_rel_view_search
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_door_rel_view_tree
 msgid "Card/Door Relations"
-msgstr "卡/门关联"
+msgstr "关联卡/门"
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_card_action
@@ -1423,7 +1423,7 @@ msgstr "检查与模块的连接"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__child_ids
 msgid "Child"
-msgstr "子"
+msgstr "子级"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
@@ -2064,7 +2064,7 @@ msgstr "天数"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__deactivate_on
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz__deactivate_on
 msgid "Deactivate on"
-msgstr ""
+msgstr "停用于"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/controllers/main.py:0
@@ -2109,6 +2109,9 @@ msgstr "控制器IO表向导"
 msgid ""
 "Define how long the Events in the system will live in DAYS! After this period of days, the system will delete old events."
 msgstr ""
+"定义系统中事件的保存时间（单位天）！在这段时间之后，系统将删除旧事件。【译者老天注：此RFID模块必须与模块作者的https://websdk."
+"polimex.online/（账号密码admin/admin）相结合才能用，购买该作者的硬件https://www.securitybulgaria.com/en（用保加利亚元购买"
+"吗？）才能行，作者演示网址https://demo.polimex.co/（账号密码rfid/rfid）】"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__delay_between_events
@@ -2537,7 +2540,7 @@ msgstr "弹出的卡"
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_emergency_group__state__emergency
 msgid "Emergency"
-msgstr "没有紧急情况"
+msgstr "紧急情况"
 
 #. module: hr_rfid
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_emergency_groups
@@ -2554,24 +2557,24 @@ msgstr "应急小组"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__19
 #, python-format
 msgid "Emergency Input"
-msgstr "没有紧急情况"
+msgstr "紧急输入"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_form_view
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
 msgid "Emergency Off"
-msgstr "没有紧急情况"
+msgstr "紧急关闭"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_form_view
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
 msgid "Emergency On"
-msgstr "没有紧急情况"
+msgstr "紧急开启"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_form
 msgid "Emergency Opened"
-msgstr "没有紧急情况"
+msgstr "紧急情况已打开"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__emergency_state
@@ -2592,6 +2595,8 @@ msgid ""
 "Emergency distribution group manage the emergency signal from one controller to a group.\n"
 "                    The function decrease installation cost and manage the"
 msgstr ""
+"应急配电组管理从一个控制器到一个组的应急信号。\n"
+"                    该功能可降低安装成本并管理应急配电"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
@@ -2860,7 +2865,7 @@ msgstr "事件源于 {}"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
 msgid "Events lifetime"
-msgstr ""
+msgstr "事件保存天数"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
@@ -3510,7 +3515,7 @@ msgstr ""
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
 msgid "Import Employees, Contacts, Cards, Access Groups, Card Access Rights"
-msgstr ""
+msgstr "导入员工, 联系人, 卡, 权限组, 卡权限组"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_card.py:0
@@ -3662,7 +3667,7 @@ msgstr "插入卡"
 msgid ""
 "Install Basic PMS for manage Reservation Cards, Room Energy Safe Readers, Room management controllers, Clean, DND BMS "
 "functionality"
-msgstr ""
+msgstr "安装基本PMS以管理预订卡、房间能源安全读取器、房间管理控制器、清洁、DND BMS功能"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
@@ -4028,7 +4033,7 @@ msgstr ""
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
 msgid "Log all JSON data from communication to events. Visible only in debug mode"
-msgstr ""
+msgstr "记录从通信到事件的所有JSON数据。仅在调试模式下可见"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_res_config_settings__save_webstack_communications
@@ -4038,7 +4043,7 @@ msgstr ""
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
 msgid "Log communication commands for bug tracking"
-msgstr ""
+msgstr "记录错误跟踪的通信命令"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__log_out_on_exit
@@ -4085,7 +4090,7 @@ msgstr "主要附件"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
 msgid "Make additional Attendance calculations as Late, Early leave, Overtime"
-msgstr ""
+msgstr "进行额外的出勤计算，如迟到、早退、加班"
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_department_add_access_group_action
@@ -4096,7 +4101,7 @@ msgstr "管理权限组"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
 msgid "Manage Attendance records for Employees based on Access control system"
-msgstr ""
+msgstr "基于访问控制系统管理员工的出勤记录"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
@@ -4558,7 +4563,7 @@ msgstr "未读信息数"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__occurrences
 msgid "Occurrences"
-msgstr "发生次数"
+msgstr "次数"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
@@ -4774,7 +4779,7 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__parent_id
 msgid "Parent"
-msgstr "父"
+msgstr "父级"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm_group__state__mixed
@@ -4813,7 +4818,7 @@ msgstr ""
 msgid ""
 "Permit automatic adding modules from communication. This feature do not support Multi Company. New Modules are added to "
 "first company!"
-msgstr ""
+msgstr "允许从通信中自动添加模块。此功能不支持多公司。新模块添加到第一家公司！"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__permited_visits
@@ -4854,7 +4859,7 @@ msgstr ""
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.emergency_group_act
 msgid "Please create a new group from the Create button"
-msgstr ""
+msgstr "请从“创建”按钮创建新组"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_webstack_discovery.py:0
@@ -4865,12 +4870,12 @@ msgstr ""
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_discovery_wiz
 msgid "Please remove unwanted modules from list. Choose the operation for rest of them. Press Add to add them in the system!"
-msgstr ""
+msgstr "请从列表中删除不需要的模块。选择其余操作。按添加按钮将它们添加到系统中！"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
 msgid "Polimex SmartVend Controllers provide full management of Vending sales with any Executive compatible Vending Machines"
-msgstr ""
+msgstr "Polimex SmartVend控制器可通过任何与Executive兼容的自动售货机全面管理自动售货机"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
@@ -4892,7 +4897,7 @@ msgstr "已按下酒店读卡器已连接控制器的按钮"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_discovery_wiz
 msgid "Process"
-msgstr ""
+msgstr "处理"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
@@ -5431,7 +5436,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_res_config_settings__module_hr_rfid_realtime_dashboard
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
 msgid "Realtime Dashboards"
-msgstr ""
+msgstr "实时看板"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
@@ -6263,6 +6268,11 @@ msgid ""
 "                    <br>\n"
 "                    Please find detailed instruction in the menu \"Hardware Manager / Add Module\""
 msgstr ""
+"系统受到保护，不受未注册模块的影响！\n"
+"                    <br>\n"
+"                    您必须从上面的菜单中手动添加模块序列号。\n"
+"                    <br>\n"
+"                    请在“硬件管理器/添加模块”菜单中找到详细说明\""
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__lock_time
@@ -6400,7 +6410,7 @@ msgstr "按事件时间"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__timestamp
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__event_time
 msgid "Timestamp"
-msgstr ""
+msgstr "时间戳"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__tz
