@@ -4,24 +4,18 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 14.0\n"
+"Project-Id-Version: Odoo Server 14.0-20220708\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-13 13:32+0000\n"
-"PO-Revision-Date: 2022-11-27 00:51+0800\n"
+"POT-Creation-Date: 2022-11-27 02:10+0000\n"
+"PO-Revision-Date: 2022-11-27 10:21+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Plural-Forms: \n"
 "X-Generator: Poedit 3.2\n"
-
-#. module: hr_rfid
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
-#, python-format
-msgid " of ctrl "
-msgstr " of ctrl "
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
@@ -1496,7 +1490,7 @@ msgstr "云端卡"
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_workcode__user_action__start
 msgid "Coming to work"
-msgstr ""
+msgstr "工作代码"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__cmd
@@ -1562,7 +1556,7 @@ msgstr "命令重发"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__retries
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
 msgid "Command retries"
-msgstr ""
+msgstr "命令"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_command
@@ -1720,7 +1714,7 @@ msgstr "当前在此区域中的联系人"
 #: code:addons/hr_rfid/models/hr_rfid_zone.py:0
 #, python-format
 msgid "Contacts in {}"
-msgstr ""
+msgstr "联系人"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
@@ -1730,7 +1724,7 @@ msgstr "仅联系人"
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__contact_ids
 msgid "Contacts part of this access group"
-msgstr ""
+msgstr "分配给此权限组的联系人"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__control_output
@@ -1740,7 +1734,7 @@ msgstr "控制输出"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__alarm_line_ids
 msgid "Controlled Alarm Lines"
-msgstr ""
+msgstr "警戒线 {}"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__door_ids
@@ -1778,7 +1772,7 @@ msgstr "控制器 %s 模式=%d, 不受支持的模式!"
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_ctrl_alarm
 msgid "Controller Alarm Lines"
-msgstr ""
+msgstr "属于此控制器的警戒线"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
@@ -1854,7 +1848,7 @@ msgstr "管理读卡器的控制器"
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__controller_id
 msgid "Controller the command is/was intended for"
-msgstr ""
+msgstr "控制器命令"
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_ctrl_action
@@ -1872,7 +1866,7 @@ msgstr "控制器数"
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__controllers
 msgid "Controllers that this WebStack manages"
-msgstr ""
+msgstr "控制器"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
@@ -2075,7 +2069,7 @@ msgstr ""
 #: code:addons/hr_rfid/controllers/main.py:0
 #, python-format
 msgid "Deactivated"
-msgstr ""
+msgstr "HR RFID：检查是否需要激活或停用任何卡"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
@@ -2103,6 +2097,11 @@ msgstr "调试JSON通信"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department__hr_rfid_default_access_group
 msgid "Default Access Group"
 msgstr "默认权限组"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__default_io_table
+msgid "Default Io Table"
+msgstr "控制器IO表向导"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
@@ -2316,8 +2315,8 @@ msgstr "门"
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #, python-format
-msgid "Door "
-msgstr "门 "
+msgid "Door %d of ctrl id %d (%s)"
+msgstr ""
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
@@ -2404,7 +2403,7 @@ msgstr ""
 #: code:addons/hr_rfid/models/hr_employee.py:0 code:addons/hr_rfid/models/res_partner.py:0
 #, python-format
 msgid "Doors accessible from {}"
-msgstr ""
+msgstr "无障碍门"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
@@ -2479,7 +2478,7 @@ msgstr "门 打开/关闭"
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_reader.py:0
 #, python-format
 msgid "Doors using {}"
-msgstr ""
+msgstr "门"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__dual_person_mode
@@ -2498,7 +2497,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__2
 #, python-format
 msgid "Duress Error"
-msgstr ""
+msgstr "没有错误"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
@@ -2531,12 +2530,12 @@ msgstr "弹出的卡"
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_emergency_group__state__emergency
 msgid "Emergency"
-msgstr ""
+msgstr "没有紧急情况"
 
 #. module: hr_rfid
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_emergency_groups
 msgid "Emergency Distribution Groups"
-msgstr ""
+msgstr "应急配电组"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__emergency_group_id
@@ -2548,24 +2547,24 @@ msgstr "应急小组"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__19
 #, python-format
 msgid "Emergency Input"
-msgstr ""
+msgstr "没有紧急情况"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_form_view
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
 msgid "Emergency Off"
-msgstr ""
+msgstr "没有紧急情况"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_form_view
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
 msgid "Emergency On"
-msgstr ""
+msgstr "没有紧急情况"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_form
 msgid "Emergency Opened"
-msgstr ""
+msgstr "没有紧急情况"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__emergency_state
@@ -2596,7 +2595,7 @@ msgstr "应急门的状态"
 #: code:addons/hr_rfid/controllers/main.py:0
 #, python-format
 msgid "Emergency from %s %s"
-msgstr ""
+msgstr "来自 %s %s 的紧急情况"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
@@ -2606,12 +2605,12 @@ msgstr "应急小组"
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_ctrl_emergency_group
 msgid "Emergency signal distribution group"
-msgstr ""
+msgstr "应急配电组"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_form
 msgid "Emlpoyee's Events"
-msgstr ""
+msgstr "事件"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_employee
@@ -2667,7 +2666,7 @@ msgstr "当前在此区域中的员工"
 #: code:addons/hr_rfid/models/hr_rfid_zone.py:0
 #, python-format
 msgid "Employees in {}"
-msgstr ""
+msgstr "员工"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
@@ -2742,7 +2741,7 @@ msgstr ""
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 #, python-format
 msgid "Error response from Webstack. {} ({})"
-msgstr ""
+msgstr "控制器无响应（WebSDK）"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
@@ -2768,14 +2767,20 @@ msgid "Event Type"
 msgstr "事件类型"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/controllers/main.py:0
+#, python-format
+msgid "Event from Temperature Sensor"
+msgstr "卡号来自此事件"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_res_config_settings__event_lifetime
 msgid "Event life time"
-msgstr ""
+msgstr "按事件时间"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
 msgid "Event time"
-msgstr ""
+msgstr "按事件时间"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__user_event_ids
@@ -2789,42 +2794,42 @@ msgstr "事件"
 #: model:ir.model.fields,help:hr_rfid.field_res_partner__hr_rfid_event_ids
 #: model:ir.model.fields,help:hr_rfid.field_res_users__hr_rfid_event_ids
 msgid "Events concerning this contact"
-msgstr ""
+msgstr "联系人事件"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_employee__hr_rfid_event_ids
 msgid "Events concerning this employee"
-msgstr ""
+msgstr "员工"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__user_event_ids
 msgid "Events concerning this reader"
-msgstr ""
+msgstr "读卡器事件"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_employee.py:0 code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: code:addons/hr_rfid/models/res_partner.py:0
 #, python-format
 msgid "Events for {}"
-msgstr ""
+msgstr "事件"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_search
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
 msgid "Events from last month"
-msgstr ""
+msgstr "当月事件"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_search
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
 msgid "Events from last week"
-msgstr ""
+msgstr "本周事件"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_search
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
 msgid "Events from last year"
-msgstr ""
+msgstr "本年事件"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_search
@@ -2865,7 +2870,7 @@ msgstr ""
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #, python-format
 msgid "Events on {}"
-msgstr ""
+msgstr "事件"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_department__hr_rfid_default_access_group
@@ -2947,16 +2952,22 @@ msgid "External DB"
 msgstr "扩展数据库"
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid "External humidity sensor value"
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid "External Sensor %s connected to %s"
 msgstr ""
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+msgid "External humidity sensor value"
+msgstr "当前湿度"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "External temperature sensor value"
-msgstr ""
+msgstr "当前温度"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
@@ -2968,7 +2979,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__19
 #, python-format
 msgid "Fire/Emergency"
-msgstr ""
+msgstr "没有紧急情况"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__13
@@ -3085,12 +3096,12 @@ msgstr ""
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
 msgid "Giving access right to Contacts:"
-msgstr ""
+msgstr "分配给此权限组的联系人："
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
 msgid "Giving access right to Employee:"
-msgstr ""
+msgstr "权限组/员工关系："
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
@@ -3136,7 +3147,7 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_digest_digest__kpi_hr_rfid_granted
 msgid "Granted Events"
-msgstr ""
+msgstr "状态：授予"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_search
@@ -3392,12 +3403,12 @@ msgstr "IO 表格："
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_exception_icon
 msgid "Icon"
-msgstr ""
+msgstr "图标"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__activity_exception_icon
 msgid "Icon to indicate an exception activity."
-msgstr ""
+msgstr "激活类型图标。"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_contact_rel__visits_counting
@@ -3436,18 +3447,31 @@ msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card_type__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card_type__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr ""
 
@@ -3477,7 +3501,13 @@ msgid "Import Employees, Contacts, Cards, Access Groups, Card Access Rights"
 msgstr ""
 
 #. module: hr_rfid
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_reader.py:0
+#: code:addons/hr_rfid/models/hr_rfid_card.py:0
+#, python-format
+msgid "Import Template for Cards"
+msgstr "模板文件名称"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_command.py:0 code:addons/hr_rfid/models/hr_rfid_ctrl_reader.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_reader__reader_type__0
 #, python-format
 msgid "In"
@@ -3513,7 +3543,7 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_employee__in_zone_ids
 msgid "In Zone"
-msgstr ""
+msgstr "区域"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
@@ -3523,7 +3553,7 @@ msgstr "组内:"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_zone_view_form
 msgid "Included doors"
-msgstr ""
+msgstr "此权限组中包含的门"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
@@ -3700,22 +3730,22 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__name
 msgid "Label for the time schedule"
-msgstr ""
+msgstr "时间安排向导"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__name
 msgid "Label to differentiate readers"
-msgstr ""
+msgstr "易于区分门的标签"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card_type__name
 msgid "Label to differentiate types with"
-msgstr ""
+msgstr "易于区分门的标签"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__name
 msgid "Label to easily distinguish the controller"
-msgstr ""
+msgstr "用于区分不同模块的标签"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__last_ip
@@ -3788,7 +3818,7 @@ msgstr "最后修改时间"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__last_f0_read
 msgid "Last System Information Update"
-msgstr ""
+msgstr "系统信息"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__updated_at
@@ -4042,7 +4072,7 @@ msgstr ""
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
 msgid "Manage Vending controller"
-msgstr ""
+msgstr "管理权限组"
 
 #. module: hr_rfid
 #: model:res.groups,name:hr_rfid.hr_rfid_group_manager
@@ -4087,7 +4117,7 @@ msgstr ""
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_log_search_view
 msgid "Measure time"
-msgstr ""
+msgstr "测量时间"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_log_search_view
@@ -4097,22 +4127,22 @@ msgstr "昨天的措施"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_log_search_view
 msgid "Measures from last month"
-msgstr ""
+msgstr "上月命令"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_log_search_view
 msgid "Measures from last week"
-msgstr ""
+msgstr "本周的措施"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_log_search_view
 msgid "Measures from last year"
-msgstr ""
+msgstr "本年的措施"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_log_search_view
 msgid "Measures from this month"
-msgstr ""
+msgstr "昨天的措施"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_log_search_view
@@ -4232,13 +4262,13 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__webstack_id
 msgid "Module the command is/was intended for"
-msgstr ""
+msgstr "发送/接收命令到模块"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__webstack_id
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__webstack_id
 msgid "Module the controller serves"
-msgstr ""
+msgstr "模块"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
@@ -4278,7 +4308,7 @@ msgstr "更多信息"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__my_activity_date_deadline
 msgid "My Activity Deadline"
-msgstr ""
+msgstr "下一个活动截止日期"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__name
@@ -4302,7 +4332,7 @@ msgstr "名称"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_def_acc_gr__def_acc_gr
 msgid "New default access group"
-msgstr ""
+msgstr "设为默认权限组"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_date_deadline
@@ -4340,7 +4370,6 @@ msgstr "没有紧急情况"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__0
 #, python-format
 msgid "No Error"
 msgstr "没有错误"
@@ -4363,7 +4392,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__30
 #, python-format
 msgid "No response from the Module"
-msgstr ""
+msgstr "控制器无响应（WebSDK）"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_search
@@ -4388,7 +4417,7 @@ msgstr "不使用"
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
 #, python-format
 msgid "Not using TS"
-msgstr ""
+msgstr "TS 为空"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_line__number
@@ -4463,17 +4492,17 @@ msgstr ""
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__message_has_error_counter
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone__message_has_error_counter
 msgid "Number of messages with delivery error"
-msgstr ""
+msgstr "消息传递错误"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__readers
 msgid "Number of readers on the controller"
-msgstr ""
+msgstr "酒店读卡器已连接控制器"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__number
 msgid "Number of the door in the controller"
-msgstr ""
+msgstr "控制器的串口号"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_ts_line__number
@@ -4483,7 +4512,7 @@ msgstr "一天中的间隔数"
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__number
 msgid "Number of the reader on the controller"
-msgstr ""
+msgstr "管理读卡器的控制器"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_system__occurrences
@@ -4617,14 +4646,14 @@ msgstr ""
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__23
 #, python-format
 msgid "OpenDoor3 from In3"
-msgstr ""
+msgstr "事件源于 {}"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__24
 #, python-format
 msgid "OpenDoor4 from In4"
-msgstr ""
+msgstr "事件源于 {}"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
@@ -4641,11 +4670,11 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_reader.py:0
+#: code:addons/hr_rfid/models/hr_rfid_command.py:0 code:addons/hr_rfid/models/hr_rfid_ctrl_reader.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_reader__reader_type__1
 #, python-format
 msgid "Out"
-msgstr ""
+msgstr "延迟区域打开 (假如在) Z4,Z3,Z2,Z1"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__out1
@@ -4690,18 +4719,18 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__output_states
 msgid "Output States"
-msgstr ""
+msgstr "输入状态"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/controllers/main.py:0
 #, python-format
 msgid "Output control from Software"
-msgstr ""
+msgstr "控制输出"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__outputs
 msgid "Outputs"
-msgstr ""
+msgstr "控制器的硬件输出"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__outs
@@ -4726,19 +4755,19 @@ msgstr "父"
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm_group__state__mixed
 msgid "Partially armed"
-msgstr ""
+msgstr "已防护"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_res_partner__partner_doors_count
 #: model:ir.model.fields,field_description:hr_rfid.field_res_users__partner_doors_count
 msgid "Partner Doors Count"
-msgstr ""
+msgstr "员工的门数"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_res_partner__partner_event_count
 #: model:ir.model.fields,field_description:hr_rfid.field_res_users__partner_event_count
 msgid "Partner Event Count"
-msgstr ""
+msgstr "员工的事件数"
 
 #. module: hr_rfid
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_partners
@@ -4748,7 +4777,7 @@ msgstr "合作伙伴"
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__module_password
 msgid "Password for the admin account for the module"
-msgstr ""
+msgstr "模块admin账号的用户名"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_res_config_settings__save_new_webstacks
@@ -4989,7 +5018,7 @@ msgstr "RFID 事件"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
 msgid "RFID Events life"
-msgstr ""
+msgstr "RFID 事件"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_employee_form_inherit_hr_rfid
@@ -5046,7 +5075,7 @@ msgstr "RS485 错误"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__fc
 #, python-format
 msgid "Read Anti-Passback Mode"
-msgstr ""
+msgstr "读取控制器模式"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
@@ -5068,14 +5097,14 @@ msgstr "读取控制器状态"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__f8
 #, python-format
 msgid "Read Duress Mode"
-msgstr ""
+msgstr "读取控制器模式"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__fd
 #, python-format
 msgid "Read Fire & Security Status"
-msgstr ""
+msgstr "读取控制器状态"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
@@ -5096,7 +5125,7 @@ msgstr "读取卡群组"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__f4
 #, python-format
 msgid "Read Holiday List"
-msgstr ""
+msgstr "节假日"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
@@ -5108,14 +5137,14 @@ msgstr "读取IO表格"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__f9
 #, python-format
 msgid "Read Input/Output Table"
-msgstr ""
+msgstr "输入/输出表大小"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__fb
 #, python-format
 msgid "Read Inputs Flags"
-msgstr ""
+msgstr "输入"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
@@ -5129,28 +5158,28 @@ msgstr ""
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__f6
 #, python-format
 msgid "Read Readers Mode"
-msgstr ""
+msgstr "读取控制器模式"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__f7
 #, python-format
 msgid "Read System Clock"
-msgstr ""
+msgstr "读卡器控制器"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__f0
 #, python-format
 msgid "Read System Information"
-msgstr ""
+msgstr "系统信息"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__f3
 #, python-format
 msgid "Read Time Schedules"
-msgstr ""
+msgstr "时间计划"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
@@ -5160,7 +5189,7 @@ msgstr "读卡器控制器"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "Read controllers detected in Module"
-msgstr ""
+msgstr "读卡器控制器"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
@@ -5174,6 +5203,12 @@ msgstr "读取/搜索卡和信息"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__b4
 #, python-format
 msgid "Read/Write Hotel buttons sense"
+msgstr ""
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_command.py:0
+#, python-format
+msgid "Read/Write temperature range"
 msgstr ""
 
 #. module: hr_rfid
@@ -5343,7 +5378,7 @@ msgstr "读卡器数"
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 #, python-format
 msgid "Readers for {}"
-msgstr ""
+msgstr "读卡器"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__reader_ids
@@ -5353,7 +5388,7 @@ msgstr "属于此控制器的读卡器"
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__reader_ids
 msgid "Readers that open this door"
-msgstr ""
+msgstr "门已强制打开"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
@@ -5406,22 +5441,22 @@ msgstr "已关联门"
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_access_group_contact_rel
 msgid "Relation between access groups and contacts"
-msgstr ""
+msgstr "用于区分不同权限组的标签"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_access_group_door_rel
 msgid "Relation between access groups and doors"
-msgstr ""
+msgstr "用于区分不同权限组的标签"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_access_group_employee_rel
 msgid "Relation between access groups and employees"
-msgstr ""
+msgstr "用于区分不同权限组的标签"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__relay_time_factor
 msgid "Relay Time Factor"
-msgstr ""
+msgstr "创建时间"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__31
@@ -5444,7 +5479,7 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.action_reload_controller_information
 msgid "Reload Controller Information"
-msgstr ""
+msgstr "控制器卡重新加载"
 
 #. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.action_reload_cards
@@ -5469,19 +5504,19 @@ msgstr "从员工中移除"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__request
 msgid "Request"
-msgstr ""
+msgstr "云端卡请求"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__64
 #, python-format
 msgid "Request Instructions"
-msgstr ""
+msgstr "云端卡请求"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__request
 msgid "Request json sent to the module"
-msgstr ""
+msgstr "发送/接收命令到模块"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_form
@@ -5492,7 +5527,7 @@ msgstr "重发"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__response
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__command_id
 msgid "Response"
-msgstr ""
+msgstr "数据响应不正确"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__command_id
@@ -5507,22 +5542,39 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_user_id
 msgid "Responsible User"
-msgstr ""
+msgstr "用户"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__rights_data
 msgid "Rights Data (debug info)"
-msgstr ""
+msgstr "报警数据（调试信息）。"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__rights_mask
 msgid "Rights Mask (debug info)"
-msgstr ""
+msgstr "报警数据（调试信息）。"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_webstack__module_username__sdk
 msgid "SDK"
 msgstr "SDK"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "消息传递错误"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_ts_line__day__5
@@ -5601,7 +5653,7 @@ msgstr "串口号"
 #. module: hr_rfid
 #: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_webstack_rfid_webstack_serial_unique
 msgid "Serial number for webstacks must be unique!"
-msgstr "webstacks 的串口号必须唯一！"
+msgstr "网站钉webstacks的序列号必须是唯一的！"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__serial_number
@@ -5864,14 +5916,14 @@ msgstr "系统事件数"
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 #, python-format
 msgid "System Events on {}"
-msgstr ""
+msgstr "系统事件"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__dc
 #, python-format
 msgid "System Initialization"
-msgstr ""
+msgstr "系统信息"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__system_voltage
@@ -5942,6 +5994,12 @@ msgstr "临时RH"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th_log__temperature
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__temperature
 msgid "Temperature"
+msgstr "温度"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
+#, python-format
+msgid "Temperature Error"
 msgstr "温度"
 
 #. module: hr_rfid
@@ -6023,7 +6081,7 @@ msgstr "警戒线已防护！请点击此处以便解除警戒线的防护"
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__lock_output
 msgid "The Lock Output on controller for this door"
-msgstr ""
+msgstr "锁定门"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/controllers/main.py:0
@@ -6034,12 +6092,12 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__access_group_ids
 msgid "The access groups this door is a part of"
-msgstr ""
+msgstr "门的权限组"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__workcode
 msgid "The actual workcode "
-msgstr ""
+msgstr "工作代码 "
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_ts_line__begin
@@ -6055,7 +6113,7 @@ msgstr ""
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #, python-format
 msgid "The command is marked for execution again."
-msgstr ""
+msgstr "命令执行不成功。"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
@@ -6078,7 +6136,7 @@ msgstr ""
 #: code:addons/hr_rfid/controllers/main.py:0
 #, python-format
 msgid "The door is still opened"
-msgstr ""
+msgstr "门已成功打开"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_ts_line__end
@@ -6089,13 +6147,13 @@ msgstr "区间的结束时间"
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_emergency_group.py:0
 #, python-format
 msgid "The group turn off Emergency Mode Manually"
-msgstr ""
+msgstr "你确定要为该组打开紧急模式吗"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_emergency_group.py:0
 #, python-format
 msgid "The group turn on Emergency Mode Manually"
-msgstr ""
+msgstr "你确定要为该组打开紧急模式吗"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__updated_at
@@ -6110,12 +6168,12 @@ msgstr "警戒线已解除防护！请点击此处以便将警戒线防护起来
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__mode
 msgid "The mode of the controller"
-msgstr ""
+msgstr "读取控制器模式"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "The module does not be behind NAT!"
-msgstr ""
+msgstr "该模块不在NAT后面！"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
@@ -6155,7 +6213,7 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__sw_version
 msgid "The version of the software on the controller"
-msgstr ""
+msgstr "模块软件版本"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_webstack_discovery.py:0
@@ -6188,12 +6246,12 @@ msgstr "时间"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_res_config_settings__module_hr_attendance_late
 msgid "Time & Attendance additional calculations"
-msgstr ""
+msgstr "额外出勤计算"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_res_config_settings__module_hr_attendance_multi_rfid
 msgid "Time & Attendance control"
-msgstr ""
+msgstr "时间"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__time_format
@@ -6207,6 +6265,11 @@ msgstr "时间格式"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_week_wiz__ts_id
 msgid "Time Schedule"
 msgstr "时间计划"
+
+#. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_hr_rfid_ctrl_ts_week_wiz
+msgid "Time Schedule Week Wizard"
+msgstr "时间计划向导"
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_ctrl_ts_week_wiz_action
@@ -6236,11 +6299,6 @@ msgid "Time at which the module returned a response from the command"
 msgstr ""
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_form
-msgid "Time odoo received the event"
-msgstr ""
-
-#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_door_rel__time_schedule_id
 msgid "Time schedule"
 msgstr "时间计划"
@@ -6265,12 +6323,12 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_system__timestamp
 msgid "Time the event occurred"
-msgstr ""
+msgstr "按事件时间"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__event_time
 msgid "Time the event triggered"
-msgstr ""
+msgstr "按事件时间"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__timestamp
@@ -6291,7 +6349,7 @@ msgstr "时区偏移"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_manual_create_wiz
 msgid "To setup a module follow this steps:"
-msgstr ""
+msgstr "按以下步骤安装模块："
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__ts_data
@@ -6327,7 +6385,7 @@ msgstr "控制器类型"
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__activity_exception_decoration
 msgid "Type of the exception activity on record."
-msgstr ""
+msgstr "记录中异常活动的类型。"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__reader_type
@@ -6343,7 +6401,7 @@ msgstr "不可用"
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 #, python-format
 msgid "Unexpected communication error:\n"
-msgstr ""
+msgstr "意外通信错误：\n"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__serial
@@ -6356,7 +6414,6 @@ msgstr ""
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__mode_selection_4__0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__mode_selection__0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__state__unknown
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_reader__mode__00
 #, python-format
 msgid "Unknown"
 msgstr "未知"
@@ -6373,7 +6430,7 @@ msgstr "未知命令"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__-1
 #, python-format
 msgid "Unknown Error"
-msgstr "未知错误"
+msgstr ""
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
@@ -6391,7 +6448,7 @@ msgstr "未知事件。请联系高手支援！"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Unlock the Door"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-unlock text-success\" role=\"img\" aria-label=\"开门\"/>"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__message_unread
@@ -6430,7 +6487,7 @@ msgstr "未读信息统计"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_form
 msgid "Up to 10 digits card number"
-msgstr ""
+msgstr "卡号必须刚好10位数字"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_manual_create_wiz
@@ -6495,6 +6552,30 @@ msgstr "用户"
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__employee_ids
 msgid "Users part of this access group"
+msgstr "权限组"
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
+#, python-format
+msgid "Valid High Temperature range is -55 .. 125 ℃"
+msgstr ""
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
+#, python-format
+msgid "Valid Low Temperature range is -55 .. 125 ℃"
+msgstr ""
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
+#, python-format
+msgid "Valid Low Temperature range is 0.5 .. 9 ℃"
+msgstr ""
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
+#, python-format
+msgid "Valid interval range is 0-99 min."
 msgstr ""
 
 #. module: hr_rfid
@@ -6510,7 +6591,7 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_res_config_settings__module_hr_rfid_vending
 msgid "Vending Control"
-msgstr ""
+msgstr "访问控制"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
@@ -6548,7 +6629,7 @@ msgstr "版本："
 #. module: hr_rfid
 #: model:res.groups,name:hr_rfid.hr_rfid_view_module_discovery
 msgid "View Module Discovery"
-msgstr ""
+msgstr "发现模块"
 
 #. module: hr_rfid
 #: model:res.groups,name:hr_rfid.hr_rfid_view_rfid_data
@@ -6558,12 +6639,12 @@ msgstr "用户查看数据"
 #. module: hr_rfid
 #: model:res.groups,name:hr_rfid.hr_rfid_view_rfid_pin_code_data
 msgid "View pin code data in users"
-msgstr ""
+msgstr "用户查看数据"
 
 #. module: hr_rfid
 #: model:res.groups,name:hr_rfid.hr_rfid_view_emergency_on_off
 msgid "View the Emergency On/Off buttons"
-msgstr ""
+msgstr "查看门的防护/解除防护按钮"
 
 #. module: hr_rfid
 #: model:res.groups,name:hr_rfid.hr_rfid_view_door_arm_disarm
@@ -6573,27 +6654,27 @@ msgstr "查看门的防护/解除防护按钮"
 #. module: hr_rfid
 #: model:res.groups,name:hr_rfid.hr_rfid_view_door_open_close
 msgid "View the door open/close buttons"
-msgstr ""
+msgstr "查看门的防护/解除防护按钮"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_io_table_wiz
 msgid "View/Modify IO table"
-msgstr ""
+msgstr "控制器IO表向导"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_ts_wiz
 msgid "View/Modify Time Schedule"
-msgstr ""
+msgstr "时间安排向导"
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_controller_io_table_wiz_action
 msgid "View/modify IO table"
-msgstr ""
+msgstr "控制器IO表向导"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__visits_counter
 msgid "Visits Counter"
-msgstr ""
+msgstr "未读信息统计"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__visits_counting
@@ -6637,22 +6718,22 @@ msgstr "网页信息"
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__website_message_ids
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone__website_message_ids
 msgid "Website communication history"
-msgstr ""
+msgstr "调试通信"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_webstack_manual_create
 msgid "Webstack Manual Creation"
-msgstr ""
+msgstr "手动防护"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_webstack_discovery
 msgid "Webstack discovery"
-msgstr ""
+msgstr "发现"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_webstack_discovery_row
 msgid "Webstack discovery rows"
-msgstr ""
+msgstr "发现"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
@@ -6710,7 +6791,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_form
 msgid "When"
-msgstr "何时"
+msgstr ""
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_form
@@ -6723,7 +6804,7 @@ msgstr "何地"
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__active
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_sys_wiz__active
 msgid "Whether the card is active or not"
-msgstr "卡是否处于激活状态"
+msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__available
@@ -6744,7 +6825,7 @@ msgstr ""
 #: model:ir.model.fields,help:hr_rfid.field_res_partner__hr_rfid_access_group_ids
 #: model:ir.model.fields,help:hr_rfid.field_res_users__hr_rfid_access_group_ids
 msgid "Which access group the contact is a part of"
-msgstr ""
+msgstr "权限组/联系人关系"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_employee__hr_rfid_access_group_ids
@@ -6755,7 +6836,7 @@ msgstr ""
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_wizard__door_ids
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone_doors_wiz__door_ids
 msgid "Which doors to add to the access group"
-msgstr ""
+msgstr "添加或移除门权限组"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__access_group_door_ids
@@ -6785,6 +6866,15 @@ msgstr ""
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 #, python-format
 msgid "While trying to send the command to the module, it returned code {} with body:\n"
+msgstr ""
+
+#. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+#, python-format
+msgid ""
+"While trying to setup /protect/config.htm the module\n"
+"\n"
+"                                                 error returned {reason}({code}) with body:\n"
 msgstr ""
 
 #. module: hr_rfid
@@ -6826,7 +6916,7 @@ msgstr "工作代码 (Raw)"
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__workcode_id
 msgid "Workcode that arrived from the event"
-msgstr ""
+msgstr "卡号来自此事件"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__workcode
@@ -6864,42 +6954,42 @@ msgstr "写入控制器 ID"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__d5
 #, python-format
 msgid "Write Controller Mode"
-msgstr ""
+msgstr "写入控制器 ID"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__d7
 #, python-format
 msgid "Write Controller System Clock"
-msgstr ""
+msgstr "写入控制器 ID"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__d8
 #, python-format
 msgid "Write Duress Mode"
-msgstr ""
+msgstr "写入控制器 ID"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__d4
 #, python-format
 msgid "Write Holiday List"
-msgstr ""
+msgstr "节假日"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__dd
 #, python-format
 msgid "Write Input Flags"
-msgstr ""
+msgstr "写入控制器 ID"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__d9
 #, python-format
 msgid "Write Input/Output Table"
-msgstr ""
+msgstr "输入/输出表大小"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
@@ -6913,14 +7003,14 @@ msgstr ""
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__d6
 #, python-format
 msgid "Write Readers Mode"
-msgstr ""
+msgstr "写入控制器 ID"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__d3
 #, python-format
 msgid "Write Time Schedules"
-msgstr ""
+msgstr "时间计划"
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
@@ -7017,7 +7107,7 @@ msgstr "区域"
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__zone_ids
 msgid "Zones containing this door"
-msgstr ""
+msgstr "{} 在区域内"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_webstack__module_username__admin
@@ -7076,11 +7166,6 @@ msgstr "按刷卡器"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_log_search_view
 msgid "by Sensor"
 msgstr "按传感器"
-
-#. module: hr_rfid
-#: model:ir.model,name:hr_rfid.model_hr_rfid_ctrl_ts_week_wiz
-msgid "hr.rfid.ctrl.ts.week.wiz"
-msgstr "hr.rfid.ctrl.ts.week.wiz"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__6
@@ -7166,7 +7251,7 @@ msgstr "在区域内"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_manual_create_wiz
 msgid "or"
-msgstr "或"
+msgstr ""
 
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
@@ -7197,3 +7282,13 @@ msgid ""
 msgstr ""
 "℃\n"
 "                                                    <i class=\"fa fa-fw fa-tint text-info\" role=\"img\" title=\"湿度\"/>"
+
+#. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_reader__mode__00
+msgid "未知"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__0
+msgid "没有错误"
+msgstr ""
