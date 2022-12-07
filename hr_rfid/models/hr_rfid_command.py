@@ -751,7 +751,7 @@ class HrRfidCommands(models.Model):
             if ctrl_mode == 1 or ctrl_mode == 3:
                 reader = create_reader('R1', 1, '0')
                 for i in range(outputs):
-                    door = create_door(gen_d_name(i + 1, self.controller_id.ctrl_id), i + 1)
+                    door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
                     add_door_to_reader(reader, door)
                 for i in range(1, readers_count):
                     create_reader('R' + str(i + 1), i + 1, '0')
@@ -761,12 +761,12 @@ class HrRfidCommands(models.Model):
                                                               '31', 200, post_data=post_data)
                 reader = create_reader('R1', 1, '0')
                 for i in range(outputs):
-                    door = create_door(gen_d_name(i + 1, self.controller_id.ctrl_id), i + 1)
+                    door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
                     add_door_to_reader(reader, door)
                 if outputs > 16:
                     reader = create_reader('R2', 2, '0')
                     for i in range(outputs - 16):
-                        door = create_door(gen_d_name(i + 1, self.controller_id.id), i + 1)
+                        door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
                         add_door_to_reader(reader, door)
                     for i in range(2, readers_count):
                         create_reader('R' + str(i + 1), i + 1, '0')
