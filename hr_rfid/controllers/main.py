@@ -115,7 +115,8 @@ class WebRfidController(http.Controller):
         # ==============EVENTS Parser======================================================
         # Durres OK, Durres Error
         if event_action in [1, 2]:
-            raise Exception('Not Implemented')
+            # raise Exception('Not Implemented')
+            _logger.error('Not Implemented event 1 or 2 (Duress mode)')
         # Card Events
         elif event_action in range(3, 19):
             ue_event_action = ((event_action - 3) % 4) + 1
@@ -424,7 +425,7 @@ class WebRfidController(http.Controller):
                 ag_ids = card_id.get_owner().hr_rfid_access_group_ids
                 ret = request.env['hr.rfid.access.group.door.rel'].sudo().search([
                     ('access_group_id', 'in', ag_ids.mapped('access_group_id.id')),
-                    ('door_id', '=', reader_id.door_id.id)
+                    ('door_id', 'in', reader_id.door_ids.mapped('id'))
                 ])
                 flag = True
                 if len(ret) > 0:
