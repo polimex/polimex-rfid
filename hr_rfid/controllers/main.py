@@ -117,6 +117,7 @@ class WebRfidController(http.Controller):
         if event_action in [1, 2]:
             # raise Exception('Not Implemented')
             _logger.error('Not Implemented event 1 or 2 (Duress mode)')
+            return webstack.check_for_unsent_cmd(200)
         # Card Events
         elif event_action in range(3, 19):
             ue_event_action = ((event_action - 3) % 4) + 1
