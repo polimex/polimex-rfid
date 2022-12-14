@@ -438,8 +438,10 @@ class WebRfidController(http.Controller):
                                               controller_id, reader_id, card_id, post_data)
         # Don't know what is this. Just report it
         else:
-            controller_id.report_sys_ev(_('Unknown event. Please contact with your support!'), post_data=post_data)
-            return webstack.check_for_unsent_cmd(200)
+            try:
+                controller_id.report_sys_ev(_('Unknown event. Please contact with your support!'), post_data=post_data)
+            finally:
+                return webstack.check_for_unsent_cmd(200)
 
     def _respond_to_ev_64(self, open_door, controller, reader, card, post_data):
         cmd_env = request.env['hr.rfid.command'].sudo()
