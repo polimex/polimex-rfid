@@ -46,7 +46,7 @@ class VendingAutoRefillEvents(models.Model):
                 try:
                     self.with_company(c.id)._auto_refill()
                 finally:
-                    c.refill_nextcall = fields.Datetime.now() + _intervalTypes[c.refill_interval_type](c.refill_interval_number)
+                    c.refill_nextcall = c.refill_nextcall + _intervalTypes[c.refill_interval_type](c.refill_interval_number)
 
 
     @api.model
