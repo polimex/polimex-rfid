@@ -2,20 +2,20 @@
 <odoo>
     <data>
 
-        <record id="view_attendance_tree_inherit" model="ir.ui.view">
-            <field name="name">hr.attendance.tree.rfid.attendance</field>
-            <field name="model">hr.attendance</field>
-            <field name="inherit_id" ref="hr_attendance.view_attendance_tree"/>
-            <field name="arch" type="xml">
+<!--        <record id="view_attendance_tree_inherit" model="ir.ui.view">-->
+<!--            <field name="name">hr.attendance.tree.rfid.attendance</field>-->
+<!--            <field name="model">hr.attendance</field>-->
+<!--            <field name="inherit_id" ref="hr_attendance.view_attendance_tree"/>-->
+<!--            <field name="arch" type="xml">-->
 
-<!--                <xpath expr="//field[@name='worked_hours']" position="after">-->
-<!--                    <field name="late" widget="float_time"/>-->
-<!--                    <field name="early" widget="float_time"/>-->
-<!--                    <field name="overtime" widget="float_time"/>-->
-<!--                </xpath>-->
+<!--&lt;!&ndash;                <xpath expr="//field[@name='worked_hours']" position="after">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <field name="late" widget="float_time"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <field name="early" widget="float_time"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <field name="overtime" widget="float_time"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                </xpath>&ndash;&gt;-->
 
-            </field>
-        </record>
+<!--            </field>-->
+<!--        </record>-->
 
         <record id="hr_attendance_view_filter_inherit" model="ir.ui.view">
             <field name="name">hr_attendance_view_filter</field>
