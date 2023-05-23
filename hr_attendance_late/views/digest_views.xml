@@ -7,9 +7,11 @@
         <field name="arch" type="xml">
             <xpath expr="//group[@name='kpi_general']" position="after">
                 <group name="kpi_hr_rfid_att" string="Attendance analise" groups="hr.group_hr_user">
+                    <field name="kpi_hr_rfid_att_early_come"/>
                     <field name="kpi_hr_rfid_att_late"/>
                     <field name="kpi_hr_rfid_att_leave"/>
                     <field name="kpi_hr_rfid_att_overtime"/>
+                    <field name="kpi_hr_rfid_att_extra"/>
                 </group>
             </xpath>
         </field>
