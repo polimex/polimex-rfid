@@ -1,0 +1,455 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* hr_rfid_old_cloud_import
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 13:50+0000\n"
+"PO-Revision-Date: 2023-01-12 16:00+0200\n"
+"Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
+"Language-Team: Polimex Dev Team\n"
+"Language: bg_BG\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.2.2\n"
+
+#. module: hr_rfid_old_cloud_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
+msgid "< Go Back"
+msgstr "< Обратно"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__url_token
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__url_token
+msgid "Access token"
+msgstr "Токен за достъп"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__ag_dict
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__ag_dict
+msgid "Ag Dict"
+msgstr ""
+
+#. module: hr_rfid_old_cloud_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
+msgid "Are you sure to start import of ALL EXISTING RECORDS?"
+msgstr "Сугурни ли сте, че искате да направите импорт на ВСИЧКИ НАЛИЧНИ ЗАПИСИ?"
+
+#. module: hr_rfid_old_cloud_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_welcome_wizard_form
+msgid "Cancel"
+msgstr "Отказ"
+
+#. module: hr_rfid_old_cloud_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_welcome_wizard_form
+msgid "Check Connection & continue"
+msgstr "Провери връзката и продължи"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__company_dict
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__company_dict
+msgid "Company Dict"
+msgstr ""
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__c_id
+msgid "Company ID"
+msgstr "Идентификатор на компанията"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__c_name
+msgid "Company Name"
+msgstr "Име на компанията"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__connection_checked
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__connection_checked
+msgid "Connection Checked"
+msgstr "Проверена връзка"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields.selection,name:hr_rfid_old_cloud_import.selection__hr_rfid_old_cloud_import_users__import_as__contact
+msgid "Contact"
+msgstr "Контакт"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields.selection,name:hr_rfid_old_cloud_import.selection__hr_rfid_old_cloud_import_wiz__default_import_as__contact
+#: model:ir.model.fields.selection,name:hr_rfid_old_cloud_import.selection__hr_rfid_old_cloud_import_wiz__import_as__contact
+#: model:ir.model.fields.selection,name:hr_rfid_old_cloud_import.selection__hr_rfid_old_cloud_welcome_wiz__default_import_as__contact
+msgid "Contacts"
+msgstr "Контакти"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__create_uid
+msgid "Created by"
+msgstr "Създаден от"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__create_date
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__create_date
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__create_date
+msgid "Created on"
+msgstr "Създадено на"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__default_company
+msgid "Default Company"
+msgstr "Фирма по подразбиране"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__default_department
+msgid "Default Department"
+msgstr "Отдел по подразбиране"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__default_import_as
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__default_import_as
+msgid "Default Import As"
+msgstr "Импортирай като"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__d_id
+msgid "Department ID"
+msgstr "Идентификатор на отдела"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__d_name
+msgid "Department Name"
+msgstr "Име на отдел"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__display_name
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__display_name
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__display_name
+msgid "Display Name"
+msgstr "Име за показване"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__do_import
+msgid "Do Import"
+msgstr "Стартирай Импорта"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields.selection,name:hr_rfid_old_cloud_import.selection__hr_rfid_old_cloud_import_users__import_as__employee
+msgid "Employee"
+msgstr "Слуцител"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields.selection,name:hr_rfid_old_cloud_import.selection__hr_rfid_old_cloud_import_wiz__default_import_as__employee
+#: model:ir.model.fields.selection,name:hr_rfid_old_cloud_import.selection__hr_rfid_old_cloud_import_wiz__import_as__employee
+#: model:ir.model.fields.selection,name:hr_rfid_old_cloud_import.selection__hr_rfid_old_cloud_welcome_wiz__default_import_as__employee
+msgid "Employees"
+msgstr "Служители"
+
+#. module: hr_rfid_old_cloud_import
+#: code:addons/hr_rfid_old_cloud_import/models/welcome_wizard.py:0
+#, python-format
+msgid "Error response from %s. %s (%s)"
+msgstr "Отговор за грешка от %s. %s (%s)"
+
+#. module: hr_rfid_old_cloud_import
+#: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
+#, python-format
+msgid "Existing doors in Old Cloud: %s"
+msgstr "Съществуващи врати в Old Cloud: %s"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_fname
+msgid "First Name"
+msgstr "Първо Име"
+
+#. module: hr_rfid_old_cloud_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
+msgid "For Contacts only"
+msgstr "За Контакти само"
+
+#. module: hr_rfid_old_cloud_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
+msgid "For Employees only"
+msgstr "За Служители само"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__force_default_company
+msgid "Force Default Company"
+msgstr "Използвай тази Фирма само"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__force_default_department
+msgid "Force Default Department"
+msgstr "Използвай този Отдел само"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__force_default_company
+msgid "Force use only this company for selected import"
+msgstr "Принудително използване само на тази Фирма за всички избрани записи"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__force_default_department
+msgid "Force use only this department for selected import"
+msgstr "Принудително използване на този Отдел за всички избрани записи"
+
+#. module: hr_rfid_old_cloud_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_welcome_wizard_form
+msgid ""
+"From here you can import all important data from existing Old Cloud Access control\n"
+"                                    system.\n"
+"                                    To do it you have to provide your access token to system. More information"
+msgstr ""
+"Оттук можете да импортирате всички важни данни от съществуващия Old Cloud \n"
+"                                    система.\n"
+"                                    За да го направите, трябва да предоставите своя токен за достъп в системата. Повече информация"
+
+#. module: hr_rfid_old_cloud_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_welcome_wizard_form
+msgid "Here"
+msgstr "Тук"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__id
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__id
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__id
+msgid "ID"
+msgstr "ИН"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model,name:hr_rfid_old_cloud_import.model_hr_rfid_old_cloud_import_wiz
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__import_id
+msgid "Import"
+msgstr "Импорт"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__import_access_groups
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__import_access_groups
+msgid "Import Access Groups"
+msgstr "Импорт на Групи за достъп"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__import_as
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__import_as
+msgid "Import As"
+msgstr "Импортирай като"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__import_events
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__import_events
+msgid "Import Events"
+msgstr "Импортиране на събития"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__import_hardware
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__import_hardware
+msgid "Import Hardware"
+msgstr "Импорт на хардуер"
+
+#. module: hr_rfid_old_cloud_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
+msgid "Import Selected"
+msgstr "Импортирай избраните"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__import_users
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__import_users
+msgid "Import Users"
+msgstr "Импорт на потребители"
+
+#. module: hr_rfid_old_cloud_import
+#: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
+#, python-format
+msgid "Import success"
+msgstr "Успешен импорт"
+
+#. module: hr_rfid_old_cloud_import
+#: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
+#, python-format
+msgid "Imported %d Access groups from %s "
+msgstr "Импортирани %d Групи за достъп от %s"
+
+#. module: hr_rfid_old_cloud_import
+#: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
+#, python-format
+msgid "Imported %d from %d users from %s. "
+msgstr "Импортирани %d от %d потребители от %s."
+
+#. module: hr_rfid_old_cloud_import
+#: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
+#, python-format
+msgid "Imported from %s Access Control System"
+msgstr "Импортирани от %s Система за контрол на достъпа"
+
+#. module: hr_rfid_old_cloud_import
+#: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
+#, python-format
+msgid "Imported from Old Cloud Access Control System"
+msgstr "Импортирани от старата система за контрол на достъпа в облака"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_id
+msgid "Internal ID"
+msgstr "Вътрешен номер"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__json_data
+msgid "Json Data"
+msgstr "Json данни"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users____last_update
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz____last_update
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz____last_update
+msgid "Last Modified on"
+msgstr "Последно променен на"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_lname
+msgid "Last Name"
+msgstr "Фамилия"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__write_uid
+msgid "Last Updated by"
+msgstr "Последно обновено от"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__write_date
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__write_date
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__write_date
+msgid "Last Updated on"
+msgstr "Последно обновено на"
+
+#. module: hr_rfid_old_cloud_import
+#: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
+#, python-format
+msgid "Missing data: Partner AND Employee"
+msgstr "Липсващи данни: Партньор И служител"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.actions.act_window,name:hr_rfid_old_cloud_import.old_cloud_import_wizard_action
+#: model:ir.actions.act_window,name:hr_rfid_old_cloud_import.old_cloud_welcome_wizard_action
+msgid "Old Cloud Data Import"
+msgstr "Импортиране на данни от стара облачна услуга"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.ui.menu,name:hr_rfid_old_cloud_import.old_cloud_welcome_wizard_menu
+msgid "Old Cloud Import"
+msgstr "Импорт от стария облак"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model,name:hr_rfid_old_cloud_import.model_hr_rfid_old_cloud_import_users
+msgid "Old Cloud Import Users"
+msgstr "Потребители на стария облак за импортиране"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model,name:hr_rfid_old_cloud_import.model_hr_rfid_old_cloud_welcome_wiz
+msgid "Old Polimex Cloud Import Welcome"
+msgstr "Стар Полимекс Облак Импорт Добре дошли"
+
+#. module: hr_rfid_old_cloud_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
+msgid "Operations"
+msgstr "Операции"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_sname
+msgid "Second Name"
+msgstr "Бащино Име"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__select_all
+msgid "Select All"
+msgstr "Избери всички"
+
+#. module: hr_rfid_old_cloud_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
+msgid "Start Full Import"
+msgstr "Стартирай пълен импорт"
+
+#. module: hr_rfid_old_cloud_import
+#: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
+#, python-format
+msgid "Tag have no employee or contact. Something is wrong with data. Check the log"
+msgstr "Картата няма нито служител нито контакт. Нещо е грешно в данните. Проверете лога"
+
+#. module: hr_rfid_old_cloud_import
+#: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
+#, python-format
+msgid "The process finish successful! "
+msgstr "Процесът завърши успешно!"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__url_domain
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__url_domain
+msgid "Url Domain"
+msgstr "URL адрес"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__default_company
+msgid "Use this company if Contact have no Company and Department"
+msgstr "Използвай тази Фирма ако Контакта няма собствени Фирма и Отдел"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__default_department
+msgid "Use this department if Employee have no Company and Department"
+msgstr "Използвай този отдел ако Служителя няма собстени Фирма и Отдел"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__user_data
+msgid "User Data"
+msgstr "Данни за потребителя"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_code
+msgid "User code"
+msgstr "Потребителски код"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_name
+msgid "User name"
+msgstr "Потребителско име"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__users_ids
+msgid "Users"
+msgstr "Потребители"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__users_count
+#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__users_count
+msgid "Users Count"
+msgstr "Брояч потребители"
+
+#. module: hr_rfid_old_cloud_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_welcome_wizard_form
+msgid "Welcome to Old Cloud Import"
+msgstr "Добре дошли в Old Cloud Импорт"
+
+#. module: hr_rfid_old_cloud_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_welcome_wizard_form
+msgid "Welcome to Old Cloud Import Wizard"
+msgstr "Добре дошли в съветника за импортиране от Old Cloud"
+
+#. module: hr_rfid_old_cloud_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
+msgid "Welcome to Old Cloud platform Import Wizard"
+msgstr "Добре дошли в съветника за импортиране от платформата Old Cloud"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields.selection,name:hr_rfid_old_cloud_import.selection__hr_rfid_old_cloud_import_wiz__url_domain__pc
+#: model:ir.model.fields.selection,name:hr_rfid_old_cloud_import.selection__hr_rfid_old_cloud_welcome_wiz__url_domain__pc
+msgid "my.polimex.online"
+msgstr ""
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields.selection,name:hr_rfid_old_cloud_import.selection__hr_rfid_old_cloud_import_wiz__url_domain__ss
+#: model:ir.model.fields.selection,name:hr_rfid_old_cloud_import.selection__hr_rfid_old_cloud_welcome_wiz__url_domain__ss
+msgid "schoolsafety.online"
+msgstr ""

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="old_cloud_welcome_wizard_form" model="ir.ui.view">
+            <field name="name">old_cloud_welcome_form_wizard</field>
+            <field name="model">hr.rfid.old.cloud.welcome.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Welcome to Old Cloud Import">
+                    <header>
+                        <h1>
+                            <p>Welcome to Old Cloud Import Wizard</p>
+                        </h1>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="url_domain" />
+                                <field name="url_token"/>
+                            </group>
+                            <group>
+                                <p>
+                                    From here you can import all important data from existing Old Cloud Access control
+                                    system.
+                                    To do it you have to provide your access token to system. More information
+                                    <a target="_blank" href="https://my.polimex.online/api/#token">Here</a>
+                                </p>
+                            </group>
+                            <group>
+<!--                                <field name="import_hardware"/>-->
+                                <field name="import_users"/>
+                                <field name="default_import_as"/>
+                                <field name="import_access_groups"/>
+<!--                                <field name="import_events"/>-->
+                            </group>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="do_check_connection" type="object"
+                                string="Check Connection &amp; continue  " class="oe_highlight"/>
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="old_cloud_welcome_wizard_action" model="ir.actions.act_window">
+            <field name="name">Old Cloud Data Import</field>
+            <field name="res_model">hr.rfid.old.cloud.welcome.wiz</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="old_cloud_welcome_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="old_cloud_welcome_wizard_menu"
+                  name="Old Cloud Import"
+                  parent="hr_rfid.hr_rfid_root_menu_hardware_manager"
+                  action="old_cloud_welcome_wizard_action"
+                  groups="base.group_no_one"
+                  sequence="8"/>
+    </data>
+</odoo>
