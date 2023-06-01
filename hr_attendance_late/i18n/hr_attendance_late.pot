@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-23 21:37+0000\n"
-"PO-Revision-Date: 2023-05-23 21:37+0000\n"
+"POT-Creation-Date: 2023-06-01 10:04+0000\n"
+"PO-Revision-Date: 2023-06-01 10:04+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -156,6 +156,11 @@ msgid "End Date"
 msgstr ""
 
 #. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__extra_night
+msgid "Extra Night"
+msgstr ""
+
+#. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__extra_time
 msgid "Extra Time"
 msgstr ""
@@ -178,6 +183,11 @@ msgid "Extra time Employees Records"
 msgstr ""
 
 #. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Extra time Night"
+msgstr ""
+
+#. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__for_date
 msgid "For Date"
 msgstr ""
@@ -195,6 +205,31 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_department__id
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_employee__id
 msgid "ID"
+msgstr ""
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_department__ignore_early_come_time
+msgid "Ignore Early Come Time"
+msgstr ""
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_department__ignore_early_leave_time
+msgid "Ignore Early Leave Time"
+msgstr ""
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_department__ignore_extra_time
+msgid "Ignore Extra Time"
+msgstr ""
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_department__ignore_late_time
+msgid "Ignore Late Time"
+msgstr ""
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_department__ignore_overtime
+msgid "Ignore Overtime"
 msgstr ""
 
 #. module: hr_attendance_late
@@ -261,18 +296,18 @@ msgid "Late Time"
 msgstr ""
 
 #. module: hr_attendance_late
-#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_department__minimum_early_leave_time
-msgid "Minimum Early Leave Time"
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Night Extra time Employees Records"
 msgstr ""
 
 #. module: hr_attendance_late
-#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_department__minimum_late_time
-msgid "Minimum Late Time"
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Night Overtime"
 msgstr ""
 
 #. module: hr_attendance_late
-#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_department__minimum_overtime
-msgid "Minimum Overtime"
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Night Overtime Employees Records"
 msgstr ""
 
 #. module: hr_attendance_late
@@ -288,7 +323,18 @@ msgid "Overtime Employees Records"
 msgstr ""
 
 #. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__overtime_night
+msgid "Overtime Night"
+msgstr ""
+
+#. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.view_department_form_extend
+msgid "Per Day"
+msgstr ""
+
+#. module: hr_attendance_late
 #: model:ir.actions.act_window,name:hr_attendance_late.recompute_employee_extra_attendance
+#: model:ir.actions.act_window,name:hr_attendance_late.recompute_extra_attendance
 msgid "Recompute Extra Attendance"
 msgstr ""
 
@@ -315,6 +361,17 @@ msgstr ""
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__theoretical_work_time
 msgid "Theoretical Work Time"
+msgstr ""
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_department__ignore_early_come_time
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_department__ignore_early_leave_time
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_department__ignore_extra_time
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_department__ignore_late_time
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_department__ignore_overtime
+msgid ""
+"Times smaller than this will be ignored in the calculations on a daily "
+"basis."
 msgstr ""
 
 #. module: hr_attendance_late

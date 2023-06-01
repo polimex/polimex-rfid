@@ -12,7 +12,7 @@
        Description
        """,
 
-    'website': 'polimex.co',
+    'website': 'https://polimex.co',
 
     'depends': ['hr_attendance','digest', 'hr_attendance_multi_rfid'],
 
@@ -20,8 +20,8 @@
         'security/ir.model.access.csv',
         'views/hr_department.xml',
         'views/digest_views.xml',
-        'views/hr_attendance_extra.xml',
         'wizards/hr_attendance_extra_wizard.xml',
+        'views/hr_attendance_extra.xml',
     ],
 
     "images": [

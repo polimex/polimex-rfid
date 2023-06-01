@@ -16,7 +16,7 @@ class HrEmployee(models.Model):
         inverse_name='employee_id'
     )
 
-    def update_extra_attendance_data(self, from_datetime, to_datetime=None):
+    def update_extra_attendance_data(self, from_datetime, to_datetime=None, overwrite_existing=False):
         def line_to_tz_datetime(for_date, line, tz):
             return (
                 tz.localize(
@@ -44,18 +44,26 @@ class HrEmployee(models.Model):
             current_date = from_datetime
             tz = timezone(e.resource_calendar_id.tz) if e.resource_calendar_id.tz else UTC
             while current_date <= to_datetime:
+                attendance_extra_id = self.env['hr.attendance.extra'].sudo().search([
+                    ('employee_id', '=', e.id),
+                    ('for_date', '=', current_date),
+                ])
+                if not overwrite_existing and attendance_extra_id:
+                    current_date += timedelta(days=1)
+                    continue
+
                 work_time_ranges = [line_to_tz_datetime(current_date, line, tz) for line in
                                     e.resource_calendar_id.attendance_ids if
                                     line.dayofweek == str(current_date.weekday())]
                 attendance_ranges = self.env['hr.attendance'].search(
                     [('employee_id', '=', e.id),
                      ('check_in', '>=', current_date),
+                     '|',
                      ('check_out', '<', current_date + timedelta(days=1)),
-                     ], order='check_in').mapped(lambda r: (r.check_in, r.check_out))
-                attendance_extra_id = self.env['hr.attendance.extra'].sudo().search([
-                    ('employee_id', '=', e.id),
-                    ('for_date', '=', current_date),
-                ])
+                     ('check_out', '=', False),
+                     ], order='check_in').mapped(
+                    lambda r: (r.check_in, r.check_out))
+
                 att_extra_vals = self.get_work_time_details(
                     work_time_ranges,
                     attendance_ranges,
@@ -92,7 +100,7 @@ class HrEmployee(models.Model):
 
         def intersection_time(time_ranges1, time_ranges2):
             intersection = [(max(start1, start2), min(end1, end2)) for start1, end1 in time_ranges1 for start2, end2 in
-                            time_ranges2 if end1 > start2 and end2 > start1]
+                            time_ranges2 if end1 and end2 and end1 > start2 and end2 > start1]
             return intersection
 
         def day_time(time_ranges):
@@ -119,8 +127,12 @@ class HrEmployee(models.Model):
             return total_time(night_ranges)
 
         def early_time(work_time_ranges, attendance_ranges):
+            # Filter out attendance ranges with 'False' as end point
+            attendance_ranges = [range for range in attendance_ranges if range[1]]
+
             if not attendance_ranges:
                 return 0
+
             first_attendance, first_work = attendance_ranges[0][0], work_time_ranges[0][0]
             return max(0, (first_work - first_attendance).total_seconds())
 
@@ -131,29 +143,35 @@ class HrEmployee(models.Model):
             return max(0, (first_attendance - first_work).total_seconds())
 
         def early_leave_time(work_time_ranges, attendance_ranges):
+            # Filter out attendance ranges with 'False' as end point
+            attendance_ranges = [range for range in attendance_ranges if range[1]]
             if not attendance_ranges:
                 return 0
             last_attendance, last_work = (attendance_ranges[-1][1] or attendance_ranges[-1][0]), work_time_ranges[-1][1]
             return max(0, (last_work - last_attendance).total_seconds())
 
         def overtime(work_time_ranges, attendance_ranges):
+            # Filter out attendance ranges with 'False' as end point
+            attendance_ranges = [range for range in attendance_ranges if range[1]]
             if not work_time_ranges or not attendance_ranges:
                 return 0
             last_work = work_time_ranges[-1][-1] if work_time_ranges else None
             overtime_start = next((start for start, end in reversed(attendance_ranges) if
-                                   start < last_work and (end is None or end > last_work)), None)
+                                   start < last_work and (end is False or end > last_work)), None)
             if overtime_start is None:
                 return 0
             overtime_ranges = [(max(start, last_work), end) for start, end in attendance_ranges if
-                               start >= overtime_start and end is not None]
+                               start >= overtime_start and end is not False]
             return total_time(overtime_ranges)
 
         def overtime_night(work_time_ranges, attendance_ranges):
+            # Filter out attendance ranges with 'False' as end point
+            attendance_ranges = [range for range in attendance_ranges if range[1]]
             if not work_time_ranges or not attendance_ranges:
                 return 0
             last_work = work_time_ranges[-1][-1]
             overtime_ranges = [(max(start, last_work), end) for start, end in attendance_ranges if
-                               start < last_work and end is not None and end > last_work]
+                               start < last_work and end is not False and end > last_work]
             if not overtime_ranges:
                 return 0
 
@@ -175,11 +193,15 @@ class HrEmployee(models.Model):
             return total_time(overtime_night_ranges)
 
         def extra_time(work_time_ranges, attendance_ranges):
+            # Filter out attendance ranges with 'False' as end point
+            attendance_ranges = [range for range in attendance_ranges if range[1]]
             if not work_time_ranges:
                 return total_time(attendance_ranges)
             return 0
 
         def extra_night(work_time_ranges, attendance_ranges):
+            # Filter out attendance ranges with 'False' as end point
+            attendance_ranges = [range for range in attendance_ranges if range[1]]
             if work_time_ranges:
                 return 0
             return night_time(attendance_ranges)

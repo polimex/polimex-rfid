@@ -157,11 +157,26 @@
             <field name="view_mode">pivot,tree,form</field>
         </record>
         <menuitem
+                id="menu_hr_attendance_report"
+                name="Attendances Analysis"
+                parent="hr_attendance.menu_hr_attendance_report"
+                sequence="10"
+                groups="hr_attendance.group_hr_attendance_user"
+                action="hr_attendance.hr_attendance_action_graph"
+        />
+        <menuitem
                 id="menu_hr_attendance_extra"
                 name="Extra calculations"
                 sequence="50"
                 parent="hr_attendance.menu_hr_attendance_report"
                 action="hr_attendance_extra_action"
+                groups="hr_attendance.group_hr_attendance_user"/>
+        <menuitem
+                id="menu_hr_attendance_extra_recompute"
+                name="Recompute Extra Attendance"
+                sequence="51"
+                parent="hr_attendance.menu_hr_attendance_report"
+                action="recompute_extra_attendance_menu"
                 groups="hr_attendance.group_hr_attendance_user"/>
     </data>
 </odoo>
