@@ -41,6 +41,7 @@ class HrEmployee(models.Model):
 
         to_datetime = to_datetime or from_datetime
         for e in self:
+            _logger.info('Attendance extra calculation for %s' % e.name)
             current_date = from_datetime
             tz = timezone(e.resource_calendar_id.tz) if e.resource_calendar_id.tz else UTC
             while current_date <= to_datetime:
@@ -52,9 +53,6 @@ class HrEmployee(models.Model):
                     current_date += timedelta(days=1)
                     continue
 
-                work_time_ranges = [line_to_tz_datetime(current_date, line, tz) for line in
-                                    e.resource_calendar_id.attendance_ids if
-                                    line.dayofweek == str(current_date.weekday())]
                 attendance_ranges = self.env['hr.attendance'].search(
                     [('employee_id', '=', e.id),
                      ('check_in', '>=', current_date),
@@ -63,6 +61,14 @@ class HrEmployee(models.Model):
                      ('check_out', '=', False),
                      ], order='check_in').mapped(
                     lambda r: (r.check_in, r.check_out))
+
+                if not attendance_ranges:
+                    current_date += timedelta(days=1)
+                    continue
+
+                work_time_ranges = [line_to_tz_datetime(current_date, line, tz) for line in
+                                    e.resource_calendar_id.attendance_ids if
+                                    line.dayofweek == str(current_date.weekday())]
 
                 att_extra_vals = self.get_work_time_details(
                     work_time_ranges,
@@ -127,17 +133,14 @@ class HrEmployee(models.Model):
             return total_time(night_ranges)
 
         def early_time(work_time_ranges, attendance_ranges):
-            # Filter out attendance ranges with 'False' as end point
-            attendance_ranges = [range for range in attendance_ranges if range[1]]
-
-            if not attendance_ranges:
+            if not attendance_ranges or not work_time_ranges:
                 return 0
 
             first_attendance, first_work = attendance_ranges[0][0], work_time_ranges[0][0]
             return max(0, (first_work - first_attendance).total_seconds())
 
         def late_time(work_time_ranges, attendance_ranges):
-            if not attendance_ranges:
+            if not attendance_ranges or not work_time_ranges:
                 return 0
             first_attendance, first_work = attendance_ranges[0][0], work_time_ranges[0][0]
             return max(0, (first_attendance - first_work).total_seconds())
@@ -259,6 +262,7 @@ class HrEmployee(models.Model):
             debug_msg += f"{key.replace('_', ' ').title()}: {value:.2f} hours" + '\n'
         debug_msg += '-----------------------------------------------------------\n'
         _logger.debug(debug_msg)
+        # print(debug_msg)
 
         assert all(time >= 0 for time in
                    [theoretical_work_time, actual_work_time, actual_work_time_day, actual_work_time_night,
