@@ -18,7 +18,6 @@
 
     'data': [
         'views/hr_attendance.xml',
-        'views/hr_employee.xml',
         'views/hr_rfid_webstack_views.xml',
     ],
 
