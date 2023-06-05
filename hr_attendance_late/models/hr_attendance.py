@@ -7,9 +7,19 @@ class HrAttendance(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         res = super().create(vals_list)
-        res.mapped('employee_id').update_extra_attendance_data(self.check_in.date(),overwrite_existing=True)
+        e_ids = res.mapped('employee_id')
+        dates = res.mapped('check_in')
+        calc = [e_id.update_extra_attendance_data(a_date.date(),overwrite_existing=True) for e_id,a_date in zip(e_ids,dates)]
         return res
 
     def write(self, vals):
         super(HrAttendance, self).write(vals)
-        self.mapped('employee_id').update_extra_attendance_data(self.check_in.date(),overwrite_existing=True)
+        e_ids = self.mapped('employee_id')
+        dates = self.mapped('check_in')
+        res = [e_id.update_extra_attendance_data(a_date.date(),overwrite_existing=True) for e_id,a_date in zip(e_ids,dates)]
+
+    def unlink(self):
+        e_ids = self.mapped('employee_id')
+        dates = self.mapped('check_in')
+        super().unlink()
+        res = [e_id.update_extra_attendance_data(a_date.date(),overwrite_existing=True) for e_id,a_date in zip(e_ids,dates)]
