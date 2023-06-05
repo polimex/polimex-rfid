@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-14 14:53+0000\n"
-"PO-Revision-Date: 2021-11-14 16:54+0200\n"
+"POT-Creation-Date: 2023-06-05 09:10+0000\n"
+"PO-Revision-Date: 2023-06-05 12:11+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
-"Language: bg\n"
-"X-Generator: Poedit 3.0\n"
+"X-Generator: Poedit 3.3.1\n"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model,name:hr_attendance_multi_rfid.model_hr_attendance
@@ -61,6 +61,11 @@ msgid "Auto Close Time For Zone"
 msgstr "Автоматично време за затваряне в зона"
 
 #. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.view_hr_attendance_records_recompute_wizard
+msgid "Cancel"
+msgstr "Отказ"
+
+#. module: hr_attendance_multi_rfid
 #: code:addons/hr_attendance_multi_rfid/models/hr_employee.py:0
 #, python-format
 msgid ""
@@ -91,6 +96,16 @@ msgid "Check Out"
 msgstr "Отписване"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__create_uid
+msgid "Created by"
+msgstr "Създадено от"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__create_date
+msgid "Created on"
+msgstr "Създадено на"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__delete_attendance_if_late_more_than
 msgid "Delete Attendance If Late More Than"
 msgstr "Изтрий присъствието, ако е закъснял с повече от"
@@ -107,6 +122,7 @@ msgstr "Отдели"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__display_name
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__display_name
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_employee__display_name
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_event_user__display_name
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__display_name
@@ -124,7 +140,23 @@ msgid "Employee"
 msgstr "Служител"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__employee_ids
+msgid "Employees"
+msgstr "Служители"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__end_date
+msgid "End Date"
+msgstr "Крайна дата"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.actions.server,name:hr_attendance_multi_rfid.hr_attendance_multi_rfid_forgotten_attendance_ir_actions_server
+msgid "HR Attendance Multi RFID: Check forgotten check-outs"
+msgstr ""
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__id
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__id
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_employee__id
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_event_user__id
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__id
@@ -156,11 +188,22 @@ msgstr "В зона"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance____last_update
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard____last_update
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_employee____last_update
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_event_user____last_update
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone____last_update
 msgid "Last Modified on"
 msgstr "Последно променено на"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__write_uid
+msgid "Last Updated by"
+msgstr "Последно актуализирано от"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__write_date
+msgid "Last Updated on"
+msgstr "Последно актуализирано на"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__max_time_in_zone
@@ -197,6 +240,22 @@ msgid "RFID User Event"
 msgstr "RFID потребителско събитие"
 
 #. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.view_hr_attendance_records_recompute_wizard
+msgid "Re-Create"
+msgstr "Създайте отново"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__employee_ids
+msgid "Re-Create Attendance records for employee"
+msgstr "Повторно създаване на записи за присъствие за служителя"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.actions.act_window,name:hr_attendance_multi_rfid.act_wizard_recompute_attendance_records
+#: model:ir.actions.act_window,name:hr_attendance_multi_rfid.recreate_attendance_records_action
+msgid "Re-create Attendance records"
+msgstr "Повторно създаване на записи за присъствие"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_zone__delete_attendance_if_late_more_than
 msgid ""
 "Remove attendance for employee if late is more than this time. Set zeo to "
@@ -204,6 +263,16 @@ msgid ""
 msgstr ""
 "Премахва присъствието на служител, ако закъснението му е повече от . "
 "Настройте Нула за да забраните функцията."
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.view_hr_attendance_records_recompute_wizard
+msgid "Select Date Range"
+msgstr "Изберете диапазон от дати"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__start_date
+msgid "Start Date"
+msgstr "Начална Дата"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_event_user__in_or_out
@@ -214,6 +283,13 @@ msgstr "Дали потребителят е влязъл или излязъл"
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_view_filter_inherit
 msgid "With Check Out"
 msgstr "С отписване"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model,name:hr_attendance_multi_rfid.model_hr_attendance_recalc_wizard
+msgid "Wizard for re-create attendance records based on RFID events"
+msgstr ""
+"Съветник за повторно създаване на записи за присъствие въз основа на RFID "
+"събития"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model,name:hr_attendance_multi_rfid.model_hr_rfid_zone

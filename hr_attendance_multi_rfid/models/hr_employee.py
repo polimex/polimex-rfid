@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from odoo import models, exceptions, _, api, fields
 from dateutil.relativedelta import relativedelta
 
@@ -56,12 +58,11 @@ class HrEmployee(models.Model):
                                          ' by human resources.') % {'empl_name': self.name, })
         return attendance
 
-    # TODO Recalculate attendance records (needed in some cases)
-    def recalc_attendance(self, from_date=None):
+    def recalc_attendance(self, from_date=None, to_date=None):
         if from_date is None:
-            from_date = fields.Datetime.now() - relativedelta(days=30)
+            from_date = fields.Date.today() - relativedelta(days=30)
         # if to_date is None:
-        to_date = fields.Date.today()
+        to_date = to_date or fields.Date.today()
         # if zone_id is None:
         #     _logger.info('Search for first attendance zone...')
         #     zone_ids = self.env['hr.rfid.zone'].search([('attendance', '=', True)])
@@ -120,7 +121,8 @@ class HrEmployee(models.Model):
                     0] and previous_attendance_id:  # update last att record
                     in_zone = att_zone_ids.filtered(lambda z: e.door_id in z.door_ids)
                     if in_zone.overwrite_check_out and (
-                            e.event_time - previous_attendance_id.check_out) < relativedelta(hours=8):
+                            e.event_time - previous_attendance_id.check_out) < timedelta(hours=8):
+                            # e.event_time - previous_attendance_id.check_out) < relativedelta(hours=8):
                         previous_attendance_id.check_out = e.event_time
                         e.in_or_out = 'out'
                         # previous_attendance_id._compute_times()
