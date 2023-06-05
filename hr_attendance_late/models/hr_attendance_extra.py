@@ -16,13 +16,15 @@ class HrAttendanceExtra(models.Model):
     early_leave_time = fields.Float(digits=(2,2))
     early_come_time = fields.Float(digits=(2,2))
     overtime = fields.Float(digits=(2,2))
+    overtime_night = fields.Float(digits=(2,2))
     extra_time = fields.Float(digits=(2,2))
+    extra_night = fields.Float(digits=(2,2))
 
     attendance_count = fields.Char(string='Attendance records', compute='_compute_counts')
 
     def _compute_counts(self):
         for ae in self:
-            ae.attendance_count = self.env['hr.attendance'].search([
+            ae.attendance_count = self.env['hr.attendance'].search_count([
                 ('employee_id', '=', ae.employee_id.id),
                 ('check_in', '>=', datetime.combine(ae.for_date,time(0,0))),
                 ('check_in', '<=', datetime.combine(ae.for_date,time(0,0))+timedelta(days=1))

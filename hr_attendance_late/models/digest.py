@@ -63,7 +63,9 @@ class Digest(models.Model):
 
     def _compute_kpis_actions(self, company, user):
         res = super(Digest, self)._compute_kpis_actions(company, user)
-        res['kpi_hr_rfid_att_late'] = 'hr_attendance.hr_attendance_action&menu_id=%s' % self.env.ref('hr_attendance.menu_hr_attendance_root').id
-        res['kpi_hr_rfid_att_leave'] = 'hr_attendance.hr_attendance_action&menu_id=%s' % self.env.ref('hr_attendance.menu_hr_attendance_root').id
-        res['kpi_hr_rfid_att_overtime'] = 'hr_attendance.hr_attendance_action&menu_id=%s' % self.env.ref('hr_attendance.menu_hr_attendance_root').id
+        res['kpi_hr_rfid_att_early_come_value'] = 'hr_attendance.hr_attendance_action&menu_id=%s' % self.env.ref('hr_attendance_late.menu_hr_attendance_extra').id
+        res['kpi_hr_rfid_att_late'] = 'hr_attendance.hr_attendance_action&menu_id=%s' % self.env.ref('hr_attendance_late.menu_hr_attendance_extra').id
+        res['kpi_hr_rfid_att_leave'] = 'hr_attendance.hr_attendance_action&menu_id=%s' % self.env.ref('hr_attendance_late.menu_hr_attendance_extra').id
+        res['kpi_hr_rfid_att_overtime'] = 'hr_attendance.hr_attendance_action&menu_id=%s' % self.env.ref('hr_attendance_late.menu_hr_attendance_extra').id
+        res['kpi_hr_rfid_att_extra_value'] = 'hr_attendance.hr_attendance_action&menu_id=%s' % self.env.ref('hr_attendance_late.menu_hr_attendance_extra').id
         return res
