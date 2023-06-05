@@ -1,7 +1,6 @@
 from datetime import timedelta
 
 from odoo import models, exceptions, _, api, fields
-from dateutil.relativedelta import relativedelta
 
 import logging
 
@@ -60,7 +59,7 @@ class HrEmployee(models.Model):
 
     def recalc_attendance(self, from_date=None, to_date=None):
         if from_date is None:
-            from_date = fields.Date.today() - relativedelta(days=30)
+            from_date = fields.Date.today() - timedelta(days=30)
         # if to_date is None:
         to_date = to_date or fields.Date.today()
         # if zone_id is None:
