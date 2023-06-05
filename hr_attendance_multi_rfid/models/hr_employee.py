@@ -86,10 +86,15 @@ class HrEmployee(models.Model):
                 continue
 
             # Remove all attendance till now without manual
+            auto_close_reason = False
+            if self.env.company._fields.get('hr_attendance_autoclose_reason', False):
+                auto_close_reason = self.env.company.hr_attendance_autoclose_reason and self.env.company.hr_attendance_autoclose_reason.id or False
             self.env['hr.attendance'].search([
                 ('check_in', '>=', from_date),
-                ('attendance_reason_ids', '=', False),
                 ('employee_id', '=', employee_id.id),
+                ('|'),
+                ('attendance_reason_ids', '=', False),
+                ('attendance_reason_ids', '=', auto_close_reason),
             ]).unlink()
             manual_att_ids = self.env['hr.attendance'].search([
                 ('check_in', '>=', from_date),
