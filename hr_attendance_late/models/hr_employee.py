@@ -90,9 +90,11 @@ class HrEmployee(models.Model):
                         att_extra_vals['early_come_time'] = 0
                     if e.department_id.ignore_late_time >= att_extra_vals['late_time']:
                         att_extra_vals['actual_work_time'] += att_extra_vals['late_time']
+                        att_extra_vals['actual_work_time_day'] += att_extra_vals['late_time']
                         att_extra_vals['late_time'] = 0
                     if e.department_id.ignore_early_leave_time >= att_extra_vals['early_leave_time']:
                         att_extra_vals['actual_work_time'] += att_extra_vals['early_leave_time']
+                        att_extra_vals['actual_work_time_day'] += att_extra_vals['early_leave_time']
                         att_extra_vals['early_leave_time'] = 0
                     if e.department_id.ignore_overtime >= att_extra_vals['overtime']:
                         att_extra_vals['overtime'] = 0
