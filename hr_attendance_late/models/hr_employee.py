@@ -78,10 +78,10 @@ class HrEmployee(models.Model):
                                     line.dayofweek == str(current_date.weekday())]
 
                 att_extra_vals = self.get_work_time_details(
-                    current_date,
-                    work_time_ranges,
-                    attendance_ranges,
-                    convert_day_period_to_utc((time(6, 0), time(22, 0)), tz)
+                    for_date=current_date,
+                    work_time_ranges=work_time_ranges,
+                    attendance_ranges=attendance_ranges,
+                    day_period=convert_day_period_to_utc((time(6, 0), time(22, 0)), tz)
                 )
                 # if att_extra_vals and (att_extra_vals.get('theoretical_work_time',0.0) > 0 or att_extra_vals.get('extra_time',0.0) > 0):
                 if att_extra_vals and (
@@ -89,8 +89,12 @@ class HrEmployee(models.Model):
                     if e.department_id.ignore_early_come_time >= att_extra_vals['early_come_time']:
                         att_extra_vals['early_come_time'] = 0
                     if e.department_id.ignore_late_time >= att_extra_vals['late_time']:
+                        att_extra_vals['actual_work_time'] += att_extra_vals['late_time']
+                        att_extra_vals['actual_work_time_day'] += att_extra_vals['late_time']
                         att_extra_vals['late_time'] = 0
                     if e.department_id.ignore_early_leave_time >= att_extra_vals['early_leave_time']:
+                        att_extra_vals['actual_work_time'] += att_extra_vals['early_leave_time']
+                        att_extra_vals['actual_work_time_day'] += att_extra_vals['early_leave_time']
                         att_extra_vals['early_leave_time'] = 0
                     if e.department_id.ignore_overtime >= att_extra_vals['overtime']:
                         att_extra_vals['overtime'] = 0
@@ -131,25 +135,7 @@ class HrEmployee(models.Model):
         def day_time(time_ranges):
             if not time_ranges:
                 return 0
-            # day_start, day_end = day_period
-            # day_ranges = [(max(start, datetime.combine(start.date(), day_start)),
-            #                min(end, datetime.combine(end.date(), day_end))) for start, end in time_ranges if
-            #               end.time() > day_start and start.time() < day_end]
             return total_time(intersection_time(time_ranges, day_time_intersection()))
-
-        # def night_time(time_ranges):
-        #     if not time_ranges:
-        #         return 0
-        #     day_start, day_end = day_period
-        #     night_start = day_end
-        #     night_duration = timedelta(hours=24) - (
-        #             datetime.combine(date.today(), day_end) - datetime.combine(date.today(), day_start))
-        #     night_end = (datetime.combine(date.today(), night_start) + night_duration).time()
-        #
-        #     night_ranges = [(max(start, datetime.combine(start.date(), night_start)),
-        #                      min(end, datetime.combine(end.date(), night_end))) for start, end in time_ranges if
-        #                     end.time() > night_start and start.time() < night_end]
-        #     return total_time(night_ranges)
 
         def early_time(work_time_ranges, attendance_ranges):
             if not attendance_ranges or not work_time_ranges:
@@ -165,7 +151,6 @@ class HrEmployee(models.Model):
             return max(0, (first_attendance - first_work).total_seconds())
 
         def early_leave_time(work_time_ranges, attendance_ranges):
-            # Filter out attendance ranges with 'False' as end point
             attendance_ranges = [range for range in attendance_ranges if range[1]]
             if not attendance_ranges:
                 return 0
@@ -203,6 +188,22 @@ class HrEmployee(models.Model):
                 return extra_time(work_time_ranges, attendance_ranges) - extra_day_time
             else:
                 return 0
+
+        debug_msg = ''
+        debug_msg += 'Work Ranges:\n'
+        for start_time, end_time in work_time_ranges:
+            formatted_start_time = start_time.strftime('%Y-%m-%d %H:%M')
+            formatted_end_time = end_time.strftime('%Y-%m-%d %H:%M') if end_time else "-"
+            debug_msg += f'{formatted_start_time} - {formatted_end_time}' + '\n'
+        debug_msg += 'Attendance Ranges:\n'
+        for start_time, end_time in attendance_ranges:
+            formatted_start_time = start_time.strftime('%Y-%m-%d %H:%M')
+            formatted_end_time = end_time.strftime('%Y-%m-%d %H:%M') if end_time else "-"
+            debug_msg += f'{formatted_start_time} - {formatted_end_time}' + '\n'
+        debug_msg += 'Daly period:\n'
+        debug_msg += f"{day_period[0].strftime('%H:%M')} - {day_period[1].strftime('%H:%M')}" + '\n'
+        _logger.debug(debug_msg)
+        # print(debug_msg)
 
         theoretical_work_time = total_time(work_time_ranges)
         extra_time_value = extra_time(work_time_ranges, attendance_ranges)
@@ -242,18 +243,6 @@ class HrEmployee(models.Model):
         }
 
         debug_msg = ''
-        debug_msg += 'Work Ranges:\n'
-        for start_time, end_time in work_time_ranges:
-            formatted_start_time = start_time.strftime('%Y-%m-%d %H:%M')
-            formatted_end_time = end_time.strftime('%Y-%m-%d %H:%M') if end_time else "-"
-            debug_msg += f'{formatted_start_time} - {formatted_end_time}' + '\n'
-        debug_msg += 'Attendance Ranges:\n'
-        for start_time, end_time in attendance_ranges:
-            formatted_start_time = start_time.strftime('%Y-%m-%d %H:%M')
-            formatted_end_time = end_time.strftime('%Y-%m-%d %H:%M') if end_time else "-"
-            debug_msg += f'{formatted_start_time} - {formatted_end_time}' + '\n'
-        debug_msg += 'Daly period:\n'
-        debug_msg += f"{day_period[0].strftime('%H:%M')} - {day_period[1].strftime('%H:%M')}" + '\n'
         for key, value in data.items():
             debug_msg += f"{key.replace('_', ' ').title()}: {value:.2f} hours" + '\n'
         debug_msg += '-----------------------------------------------------------\n'
@@ -271,190 +260,3 @@ class HrEmployee(models.Model):
 
         return data
 
-        # def get_work_time_details(self, work_time_ranges, attendance_ranges, day_period=(time(6, 0), time(22, 0))):
-    #     def get_overlapping_period(period1, period2):
-    #         return max(period1[0], period2[0]), min(period1[1], period2[1])
-    #
-    #     def get_theoretical_work_time(work_time_ranges):
-    #         theoretical_work_time = timedelta()
-    #         for work_period in work_time_ranges:
-    #             if len(work_period) == 2:
-    #                 theoretical_work_time += work_period[1] - work_period[0]
-    #         return theoretical_work_time
-    #
-    #     def get_actual_work_time_day_night(attendance_range, day_period):
-    #         actual_work_time_day = timedelta()
-    #         actual_work_time_night = timedelta()
-    #
-    #         start_day_time = datetime.combine(attendance_range[0].date(), day_period[0])
-    #         end_day_time = datetime.combine(attendance_range[0].date(), day_period[1])
-    #
-    #         day_start, day_end = get_overlapping_period((attendance_range[0], attendance_range[1]),
-    #                                                     (start_day_time, end_day_time))
-    #
-    #         if day_end > day_start:
-    #             actual_work_time_day += day_end - day_start
-    #
-    #         night_periods = [(attendance_range[0], day_start), (day_end, attendance_range[1])]
-    #
-    #         for night_start, night_end in night_periods:
-    #             if night_end > night_start:
-    #                 actual_work_time_night += night_end - night_start
-    #
-    #         return actual_work_time_day, actual_work_time_night
-    #
-    #     def get_time_in_period(start, end, period_start, period_end):
-    #         latest_start = max(start, period_start)
-    #         earliest_end = min(end, period_end)
-    #         delta = (earliest_end - latest_start).total_seconds()
-    #         overlap = max(0, delta)
-    #         return overlap / 3600
-    #
-    #     def get_day_night_hours(start_time, end_time, day_start, day_end):
-    #         total_hours = (end_time - start_time).total_seconds() / 3600
-    #         day_hours = get_time_in_period(start_time, end_time, day_start, day_end)
-    #         night_hours = total_hours - day_hours
-    #         return day_hours, night_hours
-    #
-    #     actual_work_time = timedelta()
-    #     theoretical_work_time = get_theoretical_work_time(work_time_ranges)
-    #     late_time = timedelta()
-    #     early_leave_time = timedelta()
-    #     early_come_time = timedelta()
-    #     overtime = timedelta()
-    #     extra_time = timedelta()
-    #     actual_work_time_day = timedelta()
-    #     actual_work_time_night = timedelta()
-    #
-    #     for attendance_range in attendance_ranges:
-    #         if len(attendance_range) == 2:
-    #             for i, work_period in enumerate(work_time_ranges):
-    #                 if len(work_period) == 2 and attendance_range[0] < work_period[1] and attendance_range[1] > \
-    #                         work_period[0]:
-    #                     actual_start = max(attendance_range[0], work_period[0])
-    #                     actual_end = min(attendance_range[1], work_period[1])
-    #
-    #                     day_start = datetime.combine(attendance_range[0].date(), day_period[0])
-    #                     day_end = datetime.combine(attendance_range[0].date(), day_period[1])
-    #
-    #                     day_hours, night_hours = get_day_night_hours(actual_start, actual_end, day_start, day_end)
-    #                     actual_work_time_day += day_hours
-    #                     actual_work_time_night += night_hours
-    #             if not work_time_ranges:  # If work_time_ranges is empty
-    #                 extra_time += attendance_range[1] - attendance_range[0]
-    #
-    #     last_work_period_end = None
-    #
-    #     for j, attendance_range in enumerate(attendance_ranges):
-    #         if len(attendance_range) == 2:
-    #             for i, work_period in enumerate(work_time_ranges):
-    #                 if len(work_period) == 2 and attendance_range[0] < work_period[1] and attendance_range[1] > \
-    #                         work_period[0]:
-    #                     actual_start = max(attendance_range[0], work_period[0])
-    #                     actual_end = min(attendance_range[1], work_period[1])
-    #
-    #                     if j == 0 and actual_start > work_period[0]:
-    #                         for k in range(i + 1):
-    #                             if len(work_time_ranges[k]) == 2 and actual_start > work_time_ranges[k][1]:
-    #                                 late_time += work_time_ranges[k][1] - work_time_ranges[k][0]
-    #
-    #                         late_time += actual_start - work_period[0]
-    #
-    #                     if j == len(attendance_ranges) - 1 and attendance_range[1] < work_period[1]:
-    #                         early_leave_time += work_period[1] - actual_end
-    #
-    #                     if j == 0 and i == 0 and attendance_range[0] < work_period[0]:
-    #                         early_come_time += work_period[0] - attendance_range[0]
-    #
-    #                     last_work_period_end = work_period[1]
-    #
-    #                     # Breaking the loop as the corresponding work_period for this attendance range is found
-    #                     break
-    #
-    #     if attendance_ranges and work_time_ranges and attendance_ranges[-1][1] > work_time_ranges[-1][1]:
-    #         overtime = attendance_ranges[-1][1] - work_time_ranges[-1][1]
-    #
-    #     return {
-    #         'theoretical_work_time': theoretical_work_time.total_seconds() / 3600,
-    #         'actual_work_time': actual_work_time.total_seconds() / 3600,
-    #         'actual_work_time_day': actual_work_time_day.total_seconds() / 3600,
-    #         'actual_work_time_night': actual_work_time_night.total_seconds() / 3600,
-    #         'early_come_time': early_come_time.total_seconds() / 3600,
-    #         'late_time': late_time.total_seconds() / 3600,
-    #         'early_leave_time': early_leave_time.total_seconds() / 3600,
-    #         'overtime': overtime.total_seconds() / 3600,
-    #         'extra_time': extra_time.total_seconds() / 3600,
-    #     }
-
-    # def get_work_time_details(self, work_time_ranges, attendance_ranges, day_period=(time(8, 0), time(22, 0))):
-    #     actual_work_time = timedelta()
-    #     theoretical_work_time = timedelta()
-    #     late_time = timedelta()
-    #     early_leave_time = timedelta()
-    #     early_come_time = timedelta()
-    #     overtime = timedelta()
-    #     extra_time = timedelta()
-    #     actual_work_time_day = timedelta()
-    #     actual_work_time_night = timedelta()
-    #
-    #     # Calculate theoretical work time regardless of attendance_ranges
-    #     for work_period in work_time_ranges:
-    #         if len(work_period) == 2:
-    #             theoretical_work_time += work_period[1] - work_period[0]
-    #
-    #     if not work_time_ranges:  # If work_time_ranges is empty
-    #         for attendance_range in attendance_ranges:
-    #             if len(attendance_range) == 2:
-    #                 extra_time += attendance_range[1] - attendance_range[0]
-    #                 actual_work_time += attendance_range[1] - attendance_range[0]
-    #
-    #                 start_day_time = datetime.combine(attendance_range[0].date(), day_period[0])
-    #                 end_day_time = datetime.combine(attendance_range[0].date(), day_period[1])
-    #
-    #                 if attendance_range[0] < start_day_time:
-    #                     actual_work_time_night += start_day_time - attendance_range[0]
-    #                 if attendance_range[1] > end_day_time:
-    #                     actual_work_time_night += attendance_range[1] - end_day_time
-    #
-    #                 actual_work_time_day += actual_work_time - actual_work_time_night
-    #
-    #     else:
-    #         for i, work_period in enumerate(work_time_ranges):
-    #             for j, attendance_range in enumerate(attendance_ranges):
-    #                 if len(attendance_range) == 2 and len(work_period) == 2:
-    #                     if attendance_range[0] < work_period[1] and attendance_range[1] > work_period[0]:
-    #                         actual_start = max(attendance_range[0], work_period[0])
-    #                         actual_end = min(attendance_range[1], work_period[1])
-    #                         actual_work_time += actual_end - actual_start
-    #
-    #                         start_day_time = datetime.combine(actual_start.date(), day_period[0])
-    #                         end_day_time = datetime.combine(actual_start.date(), day_period[1])
-    #
-    #                         if actual_start < start_day_time:
-    #                             actual_work_time_night += start_day_time - actual_start
-    #                         if actual_end > end_day_time:
-    #                             actual_work_time_night += actual_end - end_day_time
-    #
-    #                         actual_work_time_day += actual_end - actual_start - actual_work_time_night
-    #
-    #                         if j == 0 and attendance_range[0] > work_period[0]:
-    #                             late_time += actual_start - work_period[0]
-    #                         if j == len(attendance_ranges) - 1 and attendance_range[1] < work_period[1]:
-    #                             early_leave_time += work_period[1] - actual_end
-    #
-    #                 if j == 0 and i == 0 and attendance_range[0] < work_period[0]:
-    #                     early_come_time += work_period[0] - attendance_range[0]
-    #
-    #         if attendance_ranges and attendance_ranges[-1][1] > work_time_ranges[-1][1]:
-    #             overtime += attendance_ranges[-1][1] - work_time_ranges[-1][1]
-    #     return {
-    #         'theoretical_work_time': theoretical_work_time.total_seconds() / 3600,
-    #         'actual_work_time': actual_work_time.total_seconds() / 3600,
-    #         'actual_work_time_day': actual_work_time_day.total_seconds() / 3600,
-    #         'actual_work_time_night': actual_work_time_night.total_seconds() / 3600,
-    #         'early_come_time': early_come_time.total_seconds() / 3600,
-    #         'late_time': late_time.total_seconds() / 3600,
-    #         'early_leave_time': early_leave_time.total_seconds() / 3600,
-    #         'overtime': overtime.total_seconds() / 3600,
-    #         'extra_time': extra_time.total_seconds() / 3600,
-    #     }

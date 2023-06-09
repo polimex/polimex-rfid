@@ -54,6 +54,11 @@ msgid "Attendance records"
 msgstr "Записи за присъствие"
 
 #. module: hr_attendance_late
+#: model:ir.ui.menu,name:hr_attendance_late.menu_hr_attendance_report
+msgid "Attendances Analysis"
+msgstr "Анализ на Присъствията"
+
+#. module: hr_attendance_late
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.view_hr_attendance_extra_wizard
 msgid "Calculate"
 msgstr "Изчисли"
@@ -331,6 +336,16 @@ msgid "Overtime Night"
 msgstr "Нощен Извънреден труд"
 
 #. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra_wizard__overwrite_existing
+msgid "Overwrite Existing"
+msgstr "Презаписване на съществуващ"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra_wizard__overwrite_existing
+msgid "Overwrite existing calculations or make only new one."
+msgstr "Презаписвайте съществуващите изчисления или правете само нови."
+
+#. module: hr_attendance_late
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.view_department_form_extend
 msgid "Per Day"
 msgstr "За Ден"
@@ -338,6 +353,8 @@ msgstr "За Ден"
 #. module: hr_attendance_late
 #: model:ir.actions.act_window,name:hr_attendance_late.recompute_employee_extra_attendance
 #: model:ir.actions.act_window,name:hr_attendance_late.recompute_extra_attendance
+#: model:ir.actions.act_window,name:hr_attendance_late.recompute_extra_attendance_menu
+#: model:ir.ui.menu,name:hr_attendance_late.menu_hr_attendance_extra_recompute
 msgid "Recompute Extra Attendance"
 msgstr "Преизчисляване на разшиереното присъствие"
 
