@@ -61,14 +61,7 @@ class HrEmployee(models.Model):
     def recalc_attendance(self, from_date=None, to_date=None):
         if from_date is None:
             from_date = fields.Date.today() - relativedelta(days=30)
-        # if to_date is None:
         to_date = to_date or fields.Date.today()
-        # if zone_id is None:
-        #     _logger.info('Search for first attendance zone...')
-        #     zone_ids = self.env['hr.rfid.zone'].search([('attendance', '=', True)])
-        #     zone_id =  zone_ids and zone_ids[0] or None
-        #     if zone_id is None:
-        #         _logger.error('No defined attendance zone for calculation')
         att_zone_ids = self.env['hr.rfid.zone'].search([('attendance', "=", True)])
         doors_with_attendance = att_zone_ids.mapped('door_ids')
         readers_ids = doors_with_attendance.mapped('reader_ids')
@@ -125,7 +118,6 @@ class HrEmployee(models.Model):
                             # e.event_time - previous_attendance_id.check_out) < relativedelta(hours=8):
                         previous_attendance_id.check_out = e.event_time
                         e.in_or_out = 'out'
-                        # previous_attendance_id._compute_times()
                 if all(presence):
                     previous_attendance_id = self.env['hr.attendance'].with_context(no_validity_check=True).create({
                         'check_in': presence[0],

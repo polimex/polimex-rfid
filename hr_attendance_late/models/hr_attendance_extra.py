@@ -3,6 +3,7 @@ from datetime import datetime, timedelta, time
 
 class HrAttendanceExtra(models.Model):
     _name = 'hr.attendance.extra'
+    _order = 'for_date'
 
     for_date = fields.Date()
     employee_id = fields.Many2one(comodel_name='hr.employee', required=True)
