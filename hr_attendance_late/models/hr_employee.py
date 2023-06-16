@@ -63,6 +63,7 @@ class HrEmployee(models.Model):
                 attendance_ranges = self.env['hr.attendance'].search(
                     [('employee_id', '=', e.id),
                      ('check_in', '>=', current_date),
+                     ('check_in', '<', current_date + timedelta(days=1)),
                      '|',
                      ('check_out', '<', current_date + timedelta(days=1)),
                      ('check_out', '=', False),
@@ -70,6 +71,8 @@ class HrEmployee(models.Model):
                     lambda r: (r.check_in, r.check_out))
 
                 if not attendance_ranges:
+                    if overwrite_existing and attendance_extra_id:
+                        attendance_extra_id.unlink()
                     current_date += timedelta(days=1)
                     continue
 
