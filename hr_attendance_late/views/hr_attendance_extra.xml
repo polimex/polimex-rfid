@@ -43,6 +43,9 @@
                                 <field name="extra_time" widget="float_time"/>
                                 <field name="extra_night" widget="float_time"/>
                             </group>
+                            <group attrs="{'invisible': [('shift_number', '!=', None)]}">
+                                <field name="shift_number"/>
+                            </group>
                         </group>
                     </sheet>
                 </form>
@@ -63,7 +66,8 @@
                     <field name="overtime" type="measure"/>
                     <field name="overtime_night" type="measure"/>
                     <field name="extra_time" type="measure"/>
-                    <field name="extra_night" type="measure"/>
+                    <field name="shift_number" type="measure"/>
+
                 </pivot>
             </field>
         </record>
@@ -86,6 +90,7 @@
                     <field name="overtime_night" widget="float_time" optional="hide"/>
                     <field name="extra_time" widget="float_time" optional="show"/>
                     <field name="extra_night" widget="float_time" optional="hide"/>
+                    <field name="shift_number" widget="float_time" optional="hide"/>
                 </tree>
             </field>
         </record>

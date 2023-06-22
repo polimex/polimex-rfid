@@ -22,6 +22,7 @@
         'views/digest_views.xml',
         'wizards/hr_attendance_extra_wizard.xml',
         'views/hr_attendance_extra.xml',
+        'views/resource_calendar.xml',
     ],
 
     "images": [

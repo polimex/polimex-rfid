@@ -20,6 +20,7 @@ class HrAttendanceExtra(models.Model):
     overtime_night = fields.Float(digits=(2,2))
     extra_time = fields.Float(digits=(2,2))
     extra_night = fields.Float(digits=(2,2))
+    shift_number = fields.Integer(group_operator='count_distinct')
 
     attendance_count = fields.Char(string='Attendance records', compute='_compute_counts')
 

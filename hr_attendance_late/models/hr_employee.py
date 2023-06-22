@@ -10,6 +10,7 @@ from odoo.tools import float_compare
 
 _logger = logging.getLogger(__name__)
 
+
 class HrEmployee(models.Model):
     _inherit = 'hr.employee'
 
@@ -17,6 +18,20 @@ class HrEmployee(models.Model):
         comodel_name='hr.attendance.extra',
         inverse_name='employee_id'
     )
+
+    @api.model
+    def _total_time(self, time_ranges):
+        return sum((end - start).total_seconds() for start, end in time_ranges)
+
+    @api.model
+    def _intersection_time(self, time_ranges1, time_ranges2):
+        # intersection = [(max(start1, start2), min(end1, end2)) for start1, end1 in time_ranges1 for start2, end2 in
+        #                 time_ranges2 if end1 and end2 and end1 > start2 and end2 > start1]
+        intersection = [(max(start1, start2), min(end1, end2))
+                        for start1, end1 in time_ranges1
+                        for start2, end2 in time_ranges2
+                        if end1 and end2 and start1 <= end2 and start2 <= end1]
+        return intersection
 
     def update_extra_attendance_data(self, from_datetime, to_datetime=None, overwrite_existing=False):
         def line_to_tz_datetime(for_date, line, tz):
@@ -79,6 +94,13 @@ class HrEmployee(models.Model):
                 work_time_ranges = [line_to_tz_datetime(current_date, line, tz) for line in
                                     e.resource_calendar_id.attendance_ids if
                                     line.dayofweek == str(current_date.weekday())]
+                shift_number = None
+                if e.resource_calendar_id.daily_ranges_are_shifts:
+                    shift_intersections = [self._total_time(self._intersection_time([wr], attendance_ranges)) for
+                                           wr in work_time_ranges]
+                    max_shift_time = max(shift_intersections)
+                    shift_number = shift_intersections.index(max_shift_time)
+                    work_time_ranges = [work_time_ranges[shift_number]]
 
                 att_extra_vals = self.get_work_time_details(
                     for_date=current_date,
@@ -86,6 +108,8 @@ class HrEmployee(models.Model):
                     attendance_ranges=attendance_ranges,
                     day_period=convert_day_period_to_utc((time(6, 0), time(22, 0)), tz)
                 )
+                if shift_number is not None:
+                    att_extra_vals['shift_number'] = shift_number + 1
                 # if att_extra_vals and (att_extra_vals.get('theoretical_work_time',0.0) > 0 or att_extra_vals.get('extra_time',0.0) > 0):
                 if att_extra_vals and (
                         sum(att_extra_vals.values()) - att_extra_vals.get('theoretical_work_time', 0.0)) > 0:
@@ -115,30 +139,22 @@ class HrEmployee(models.Model):
                 current_date += timedelta(days=1)
 
     @api.model
-    def get_work_time_details(self, for_date, work_time_ranges, attendance_ranges, day_period=(time(6, 0), time(22, 0))):
-        def total_time(time_ranges):
-            return sum((end - start).total_seconds() for start, end in time_ranges)
-
-        def intersection_time(time_ranges1, time_ranges2):
-            # intersection = [(max(start1, start2), min(end1, end2)) for start1, end1 in time_ranges1 for start2, end2 in
-            #                 time_ranges2 if end1 and end2 and end1 > start2 and end2 > start1]
-            intersection = [(max(start1, start2), min(end1, end2))
-                            for start1, end1 in time_ranges1
-                            for start2, end2 in time_ranges2
-                            if end1 and end2 and start1 <= end2 and start2 <= end1]
-            return intersection
+    def get_work_time_details(self, for_date, work_time_ranges, attendance_ranges,
+                              day_period=(time(6, 0), time(22, 0))):
 
         def day_time_intersection():
             return [
-                (datetime.combine(for_date - timedelta(days=1), day_period[0]), datetime.combine(for_date - timedelta(days=1), day_period[1])),
+                (datetime.combine(for_date - timedelta(days=1), day_period[0]),
+                 datetime.combine(for_date - timedelta(days=1), day_period[1])),
                 (datetime.combine(for_date, day_period[0]), datetime.combine(for_date, day_period[1])),
-                (datetime.combine(for_date + timedelta(days=1), day_period[0]), datetime.combine(for_date + timedelta(days=1), day_period[1])),
+                (datetime.combine(for_date + timedelta(days=1), day_period[0]),
+                 datetime.combine(for_date + timedelta(days=1), day_period[1])),
             ]
 
         def day_time(time_ranges):
             if not time_ranges:
                 return 0
-            return total_time(intersection_time(time_ranges, day_time_intersection()))
+            return self._total_time(self._intersection_time(time_ranges, day_time_intersection()))
 
         def early_time(work_time_ranges, attendance_ranges):
             if not attendance_ranges or not work_time_ranges:
@@ -165,29 +181,29 @@ class HrEmployee(models.Model):
             if not work_time_ranges or not attendance_ranges:
                 return 0
             overtime_intersec = [(attendance_ranges[-1][1], attendance_ranges[-1][1] + timedelta(days=1))]
-            overtime_ranges = intersection_time(attendance_ranges, overtime_intersec)
-            return total_time(overtime_ranges)
+            overtime_ranges = self._intersection_time(attendance_ranges, overtime_intersec)
+            return self._total_time(overtime_ranges)
 
         def overtime_night(work_time_ranges, attendance_ranges):
             attendance_ranges = [range for range in attendance_ranges if range[1]]
             if not work_time_ranges or not attendance_ranges:
                 return 0
             overtime_intersec = [(attendance_ranges[-1][1], attendance_ranges[-1][1] + timedelta(days=1))]
-            overtime_ranges = intersection_time(attendance_ranges, overtime_intersec)
-            overtime_day_ranges = intersection_time(overtime_ranges, day_time_intersection())
-            return total_time(overtime_ranges) - total_time(overtime_day_ranges)
+            overtime_ranges = self._intersection_time(attendance_ranges, overtime_intersec)
+            overtime_day_ranges = self._intersection_time(overtime_ranges, day_time_intersection())
+            return self._total_time(overtime_ranges) - self._total_time(overtime_day_ranges)
 
         def extra_time(work_time_ranges, attendance_ranges):
             attendance_ranges = [range for range in attendance_ranges if range[1]]
             if not work_time_ranges and attendance_ranges:
-                return total_time(attendance_ranges)
+                return self._total_time(attendance_ranges)
             return 0
 
         def extra_night(work_time_ranges, attendance_ranges):
             attendance_ranges = [range for range in attendance_ranges if range[1]]
             if not work_time_ranges and attendance_ranges:
-                extra_day_intersec = intersection_time(attendance_ranges, day_time_intersection())
-                extra_day_time = total_time(extra_day_intersec)
+                extra_day_intersec = self._intersection_time(attendance_ranges, day_time_intersection())
+                extra_day_time = self._total_time(extra_day_intersec)
                 return extra_time(work_time_ranges, attendance_ranges) - extra_day_time
             else:
                 return 0
@@ -208,7 +224,7 @@ class HrEmployee(models.Model):
         _logger.debug(debug_msg)
         # print(debug_msg)
 
-        theoretical_work_time = total_time(work_time_ranges)
+        theoretical_work_time = self._total_time(work_time_ranges)
         extra_time_value = extra_time(work_time_ranges, attendance_ranges)
         extra_night_time = extra_night(work_time_ranges, attendance_ranges)
 
@@ -225,8 +241,8 @@ class HrEmployee(models.Model):
             overtime_value = overtime(work_time_ranges, attendance_ranges)
             overtime_night_time = overtime_night(work_time_ranges, attendance_ranges)
 
-        list_of_intersection = intersection_time(work_time_ranges, attendance_ranges)
-        actual_work_time = total_time(list_of_intersection)
+        list_of_intersection = self._intersection_time(work_time_ranges, attendance_ranges)
+        actual_work_time = self._total_time(list_of_intersection)
         actual_work_time_day = day_time(list_of_intersection)
         actual_work_time_night = actual_work_time - actual_work_time_day
         # actual_work_time_night = night_time(list_of_intersection)
@@ -262,4 +278,3 @@ class HrEmployee(models.Model):
                                               overtime_value]), "Extra time found but other times are not zero"
 
         return data
-

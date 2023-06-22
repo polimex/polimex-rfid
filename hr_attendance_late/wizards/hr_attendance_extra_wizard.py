@@ -41,6 +41,7 @@ class WizardHrEmployee(models.TransientModel):
     )
     overwrite_existing = fields.Boolean(help="Overwrite existing calculations or make only new one.", default=False)
 
+
     def execute(self):
         self.employee_ids.update_extra_attendance_data(self.start_date, self.end_date,
                                                        overwrite_existing=self.overwrite_existing)
@@ -51,3 +52,4 @@ class WizardHrEmployee(models.TransientModel):
         #     domain=domain
         # )
         return res
+
