@@ -43,7 +43,7 @@
                                 <field name="extra_time" widget="float_time"/>
                                 <field name="extra_night" widget="float_time"/>
                             </group>
-                            <group attrs="{'invisible': [('shift_number', '!=', None)]}">
+                            <group attrs="{'invisible': [('shift_number', '=', None)]}">
                                 <field name="shift_number"/>
                             </group>
                         </group>

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-05 09:32+0000\n"
-"PO-Revision-Date: 2023-06-05 12:32+0300\n"
+"POT-Creation-Date: 2023-06-22 20:42+0000\n"
+"PO-Revision-Date: 2023-06-22 23:42+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -81,6 +81,11 @@ msgid "Created on"
 msgstr "Създадено на"
 
 #. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_resource_calendar__daily_ranges_are_shifts
+msgid "Daily Ranges Are Shifts"
+msgstr "Дневните диапазони са смени"
+
+#. module: hr_attendance_late
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
 msgid "Date"
 msgstr "Дата"
@@ -104,6 +109,7 @@ msgstr "Публикация"
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra_wizard__display_name
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_department__display_name
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_employee__display_name
+#: model:ir.model.fields,field_description:hr_attendance_late.field_resource_calendar__display_name
 msgid "Display Name"
 msgstr "Име за показване"
 
@@ -211,6 +217,7 @@ msgstr "Групирай по"
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra_wizard__id
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_department__id
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_employee__id
+#: model:ir.model.fields,field_description:hr_attendance_late.field_resource_calendar__id
 msgid "ID"
 msgstr "Номер (ID)"
 
@@ -271,6 +278,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra_wizard____last_update
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_department____last_update
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_employee____last_update
+#: model:ir.model.fields,field_description:hr_attendance_late.field_resource_calendar____last_update
 msgid "Last Modified on"
 msgstr "Последно променено на"
 
@@ -368,9 +376,19 @@ msgid "Recompute these employees extra attendances"
 msgstr "Преизчисляване на допълнителните присъствия на тези служители"
 
 #. module: hr_attendance_late
+#: model:ir.model,name:hr_attendance_late.model_resource_calendar
+msgid "Resource Working Time"
+msgstr "Работно време на ресурсите"
+
+#. module: hr_attendance_late
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.view_hr_attendance_extra_wizard
 msgid "Select Date Range"
 msgstr "Изберете диапазон от дати"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__shift_number
+msgid "Shift Number"
+msgstr "Номер на смяната"
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra_wizard__start_date
