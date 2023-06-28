@@ -180,7 +180,8 @@ class HrEmployee(models.Model):
             attendance_ranges = [range for range in attendance_ranges if range[1]]
             if not work_time_ranges or not attendance_ranges:
                 return 0
-            overtime_intersec = [(attendance_ranges[-1][1], attendance_ranges[-1][1] + timedelta(days=1))]
+            overtime_intersec = [(work_time_ranges[-1][1], work_time_ranges[-1][1] + timedelta(days=1))]
+            # overtime_intersec = [(attendance_ranges[-1][1], attendance_ranges[-1][1] + timedelta(days=1))]
             overtime_ranges = self._intersection_time(attendance_ranges, overtime_intersec)
             return self._total_time(overtime_ranges)
 
