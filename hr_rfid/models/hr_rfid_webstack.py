@@ -725,7 +725,7 @@ class HrRfidWebstack(models.Model):
 
         # controller not response!
         if response['e'] != 0:
-            if response['e'] == 20:
+            if response['e'] == 20:  # controller not response!
                 return self._retry_command(200, command)
             command.write({
                 'status': 'Failure',

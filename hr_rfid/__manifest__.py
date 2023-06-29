@@ -63,6 +63,7 @@
     "images": [
         'static/images/main_screenshot.png',
     ],
+
     'application': True,
     'installable': True,
     'auto_install': False,
