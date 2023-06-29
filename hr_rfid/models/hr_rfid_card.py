@@ -197,22 +197,15 @@ class HrRfidCard(models.Model):
     def _check_number(self):
         for card in self:
             dupes = self.search([('number', '=', card.number), ('card_type', '=', card.card_type.id), ('company_id', '=', card.company_id.id)])
-            # dupes = self.end['hr.rfid.card'].with_company(card.company_id).search([('number', '=', card.number), ('card_type', '=', card.card_type.id)])
             if len(dupes) > 1:
                 raise exceptions.ValidationError(_('Card number must be unique for every card type!'))
 
             if len(card.number) > 10:
                 raise exceptions.ValidationError(_('Card number must be exactly 10 digits'))
 
-            # if len(card.number) < 10:
-            #     zeroes = 10 - len(card.number)
-            #     card.number = (zeroes * '0') + card.number
-
-            try:
-                for char in card.number:
-                    int(char, 10)
-            except ValueError:
+            if not card.number.isdigit():
                 raise exceptions.ValidationError('Card number digits must be from 0 to 9')
+
 
     @api.depends('card_reference', 'number')
     def _compute_card_name(self):
@@ -235,6 +228,7 @@ class HrRfidCard(models.Model):
         records = self.env['hr.rfid.card']
         for val in vals:
             card = super(HrRfidCard, self).create([val])
+            card._check_len_number()
             records = records + card
 
             if card.employee_id and card.contact_id:
