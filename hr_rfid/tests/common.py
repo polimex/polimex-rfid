@@ -85,8 +85,8 @@ class RFIDAppCase(common.TransactionCase):
             'company_id': self.test_company_id,
         })
         self.test_partner_ag_rel = self.env['hr.rfid.access.group.contact.rel'].create({
-            'access_group_id':  self.test_ag_partner_1.id,
-            'contact_id':  self.test_partner.id,
+            'access_group_id': self.test_ag_partner_1.id,
+            'contact_id': self.test_partner.id,
         })
 
         self.test_card_partner = self.env['hr.rfid.card'].create({
@@ -104,6 +104,13 @@ class RFIDAppCase(common.TransactionCase):
         self.c_turnstile = None
         self.c_vending = None
         self.c_temperature = None
+        self.default_F0 = {
+            6:  '0006000400000704000000030000030201050208000200010502060003000506',  # iCON110
+            9:  '0009050006030704010000090000080201050208000101050807000008010900',  # Turnstile
+            11: '0101000202000704000000050000040201050208010200090702070003000506',  # iCON115
+            12: '0102000000010703090000010000030100000208000100010502060003000506',  # iCON50
+            17: '0107000601000703090000090000080401050208000401050807000008010900',  # iCON130
+        }
 
     def _time_10_3(self, delta_in_seconds):
         now = self.test_now - relativedelta(seconds=delta_in_seconds)
@@ -112,20 +119,25 @@ class RFIDAppCase(common.TransactionCase):
             now.minute,
             now.second,
         )
+
     def _assertResponse(self, response):
         self.assertEqual(response.status_code, 200)
         if response.text != '':
             self.assertTrue(isinstance(response.json(), dict), 'Response is not JSON')
-        # if 'error' in response.json().keys():
-        #     self.assertTrue(False, 'Response contain error' + response.json()['error']['data']['message'])
-        return response
+            # if 'error' in response.json().keys():
+            #     self.assertTrue(False, 'Response contain error' + response.json()['error']['data']['message'])
+            return response.json()
+        else:
+            return {}
 
     def _hearbeat(self, webstack_id):
         response = self.url_open(self.app_url,
-                                 data=json.dumps({'convertor': webstack_id.serial, 'FW': '1.3400', 'key': webstack_id.key, 'heartbeat': 22}),
+                                 data=json.dumps(
+                                     {'convertor': webstack_id.serial, 'FW': '1.3400', 'key': webstack_id.key,
+                                      'heartbeat': 22}),
                                  timeout=20,
                                  headers={'Content-Type': 'application/json'})
-        return self._assertResponse(response).json()
+        return self._assertResponse(response)
 
     def _count_system_events(self, company_id):
         return self.env['hr.rfid.event.system'].with_company(company_id or self.test_company_id).search_count([
@@ -142,11 +154,11 @@ class RFIDAppCase(common.TransactionCase):
                 # ('webstack_id', '=', self.test_webstack_10_3_id.id)
             ], limit=1)
 
-    def _make_F0(self, hw_ver=12, serial_num=5, sw_ver=740, mode=1, inputs=1,  outputs=3,
-                 time_schedules=4,  io_table_lines=28, alarm_lines=0, max_cards_count=3000, max_events_count=3000):
-        #0102000000010703090000010000030100000208000100010502060003000506 iCON50
-        #0102000000010703090000010000030004000002080100030500000001050000
-        #12 0001 739 001 003 1 0028 0 1 01526 03056 iCON50
+    def _make_F0(self, hw_ver=12, serial_num=5, sw_ver=740, mode=1, inputs=1, outputs=3,
+                 time_schedules=4, io_table_lines=28, alarm_lines=0, max_cards_count=3000, max_events_count=3000):
+        # 0102000000010703090000010000030100000208000100010502060003000506 iCON50
+        # 0102000000010703090000010000030004000002080100030500000001050000
+        # 12 0001 739 001 003 1 0028 0 1 01526 03056 iCON50
         f0 = '%02d%04d%03d%03d%03d%02d%02d%d%d%05d%05d' % (
             hw_ver, serial_num, sw_ver, inputs, outputs, time_schedules, alarm_lines, io_table_lines,
             mode, max_cards_count, max_events_count
@@ -191,11 +203,17 @@ class RFIDAppCase(common.TransactionCase):
             pass
         self.assertTrue(sys_events_count != 0 or not system_event, 'System event generated')
         if response.text != '':
-            return self._assertResponse(response).json()
+            return self._assertResponse(response)
         else:
             return {}
 
     def _send_cmd_response(self, request_cmd, data='', module=234567, key='0000'):
+        self.assertTrue(request_cmd != {})
+        if data == '':
+            if request_cmd['cmd'] == 'D5':
+                data = request_cmd['cmd']['d']
+            if request_cmd['cmd'] == 'D9':
+                data = request_cmd['cmd']['d'][:2]
         response = self._send_cmd({
             "convertor": module,
             "response": {
@@ -303,6 +321,24 @@ class RFIDAppCase(common.TransactionCase):
         else:
             ctrl.mode_selection_4 = str(mode)
         response = self._hearbeat(ctrl.webstack_id)
+        self.assertNotEqual(response, {})
+        mode = response['cmd']['d']
+        response = self._send_cmd_response(response)  # To D5 change mode
+        # F0 Mode 2: 0006000400000704000000030000030201050208002200010502060003000506
+        # F0 Mode 1: 0006000400000704000000030000030201050208002100010502060003000506
+        #             '0006000400000704000000030000030201050208000200010502060003000506'
+        #             '0006000400000704000000030000030201050208002100010502060003000506'
+        '0107000601000703090000090000080401050208000401050807000008010900'
+        '0107000601000703090000090000080401050208000201050807000008010900'
+        original_F0 = self.default_F0[int(ctrl.hw_version)]
+        new_F0 = original_F0[:42] + mode + original_F0[44:]
+
+        response = self._send_cmd_response(response, new_F0)
+        while response != {} and response['cmd']['c'] == 'D9':
+            response = self._send_cmd_response(response)  # To F0 to confirm the mode
+
+        response = self._send_cmd_response(response, '00')  # To FC read APB
+        pass
 
     def _ev64(self, ctrl):
         if not ctrl.external_db:
@@ -311,7 +347,8 @@ class RFIDAppCase(common.TransactionCase):
             self.assertEqual(response, {'cmd': {'id': ctrl.ctrl_id, 'c': 'D5', 'd': '22'}}, )
             response = self._send_cmd_response(response)
             self.assertEqual(response, {'cmd': {'id': ctrl.ctrl_id, 'c': 'F0', 'd': ''}}, )
-            response = self._send_cmd_response(response,'0006000400000704000000030000030201050208002200010502060003000506')
+            response = self._send_cmd_response(response,
+                                               '0006000400000704000000030000030201050208002200010502060003000506')
             self.assertEqual(response, {})
             self.test_ag_employee_1.add_doors(ctrl.door_ids)
             # response = self._hearbeat(ctrl.webstack_id)

@@ -880,8 +880,7 @@ class HrRfidCommands(models.Model):
             self.controller_id.temp_range_cmd()
         if not self.controller_id.is_relay_ctrl() and \
                 not self.controller_id.is_temperature_ctrl() and \
-                (ctrl_mode == 1 or ctrl_mode == 3) and \
-                self.controller_id.readers > 1:
+                ((self.controller_id.readers == 2 and ctrl_mode == 1) or (self.controller_id.readers > 2 and ctrl_mode < 4)):
             cmd_env.read_anti_pass_back_mode_cmd(self.controller_id)
 
     # Communication Helpers
