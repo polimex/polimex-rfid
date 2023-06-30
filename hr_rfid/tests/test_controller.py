@@ -15,38 +15,113 @@ class RFIDController(RFIDAppCase, HttpCase):
         _logger.info('Start tests for iCON50 ')
         self._add_iCon50()
         self._test_R_event(self.c_50)
+
+        # Check for not processed responses
+        response = self._hearbeat(self.test_webstack_10_3_id)
+        self.assertEqual(response, {})
+
         _logger.info('Start tests for iCON110 ')
         self._add_iCon110()
         self._test_R1R2(self.c_110)
         # self._change_mode(self.c_110, 2)
         self._ev64(self.c_110)
 
+        # Check for not processed responses
+        response = self._hearbeat(self.test_webstack_10_3_id)
+        self.assertEqual(response, {})
+
         _logger.info('Start tests for iCON115 ')
         self._add_iCon115()
         self._test_R1R2(self.c_115)
+
+        # Check for not processed responses
+        response = self._hearbeat(self.test_webstack_10_3_id)
+        self.assertEqual(response, {})
+
         _logger.info('Start tests for iCON130 ')
         self._add_iCon130()
         self._test_R1R2R3R4(self.c_130)
+
         # _logger.info('Start tests for iCON180 ')
         # self._add_iCon180()
-        # _logger.info('Start tests for Turnstile ')
-        # self._add_Turnstile()
-        _logger.info('Start tests for Temperature ')
-        self._add_Temperature()
+
+        # Check for not processed responses
+        # response = self._hearbeat(self.test_webstack_10_3_id)
+        # self.assertEqual(response, {})
+
+        _logger.info('Start tests for Turnstile ')
+        self._add_Turnstile()
+
+        # Check for not processed responses
+        # response = self._hearbeat(self.test_webstack_10_3_id)
+        # self.assertEqual(response, {})
+        #
+        # _logger.info('Start tests for Temperature ')
+        # self._add_Temperature()
+        #
+        # Check for not processed responses
+        response = self._hearbeat(self.test_webstack_10_3_id)
+        self.assertEqual(response, {})
+
+        self._test_global_APB()
+        pass
+
+    def _test_global_APB(self):
+        self._change_mode(self.c_110, 1)  # Change mode to 1 door with two readers
+        self.assertTrue(self.c_110.mode == 1)
+        self._change_mode(self.c_115, 1)  # Change mode to 1 door with two readers
+        self.assertTrue(self.c_115.mode == 1)
+        self._change_mode(self.c_130, 2)  # Change mode to 2 door with two readers
+        self.assertTrue(self.c_130.mode == 2)
+
+        self.c_110.door_ids.apb_mode = True
+        response = self._hearbeat(self.test_webstack_10_3_id)
+        response = self._send_cmd_response(response)
+        self.c_115.door_ids.apb_mode = True
+        response = self._hearbeat(self.test_webstack_10_3_id)
+        response = self._send_cmd_response(response)
+        self.c_130.door_ids.apb_mode = True
+        response = self._hearbeat(self.test_webstack_10_3_id)
+        response = self._send_cmd_response(response)
+        response = self._send_cmd_response(response)
+        self.c_turnstile.door_ids.apb_mode = True
+        response = self._hearbeat(self.test_webstack_10_3_id)
+        response = self._send_cmd_response(response)
+        # Make zone for Global APB
+        test_apb_zone = self.env['hr.rfid.zone'].create({
+            'name': 'Test APB Zone',
+            'company_id': self.test_company_id,
+            'anti_pass_back': True,
+            'door_ids': [
+                (4, self.c_110.door_ids[0].id, 0),
+                (4, self.c_115.door_ids[0].id, 0),
+                (4, self.c_130.door_ids[0].id, 0),
+                (4, self.c_130.door_ids[1].id, 0),
+                (4, self.c_turnstile.door_ids[0].id, 0),
+            ]
+        })
+
+        # Make event with card on entrance on first door
+        response = self._make_event(self.c_turnstile, reader=1, event_code=3)
+        # Check if new command generated for APB flag change and clear it
+        response = self._send_cmd_response(response, '0000000000')
+        response = self._send_cmd_response(response, '0000000000')
+        response = self._send_cmd_response(response, '0000000000')
+        self.assertEqual(response, {})
         pass
 
     def _add_Turnstile(self, module=234567, key='0000', id=6):
-        c_turnstile = self.env['hr.rfid.ctrl'].create({
-            'name': 'Turnstile iCONturnstile',
+        self.c_turnstile = self.env['hr.rfid.ctrl'].create({
+            'name': 'Turnstile iCON Turnstile',
             'ctrl_id': id,
             'webstack_id': self.test_webstack_10_3_id.id
         })
-        c_turnstile.read_controller_information_cmd()
+        self.c_turnstile.read_controller_information_cmd()
 
         response = self._hearbeat(self.c_turnstile.webstack_id)
         self.assertEqual(response, {'cmd': {'id': id, 'c': 'F0', 'd': ''}}, )
 
-        response = self._send_cmd_response(response, '0009000601000703090000090000080401050208000401050807000008010900')
+        response = self._send_cmd_response(response, self.default_F0[9])
         self.assertTrue(response['cmd']['c'] == 'D7')
         response = self._send_cmd_response(response)
         self.assertTrue(response['cmd']['c'] == 'DC')
@@ -55,9 +130,11 @@ class RFIDController(RFIDAppCase, HttpCase):
         response = self._send_cmd_response(response)
         self.assertTrue(response['cmd']['c'] == 'F6')
         response = self._send_cmd_response(response, '010100010100010100010100')
-        response = self._process_io_table(response, c_turnstile, module, key)
+        response = self._process_io_table(response, self.c_turnstile, module, key)
         self.assertTrue(response['cmd']['c'] == 'B3')
         response = self._send_cmd_response(response, '00006E010752079200000000000000000000000000000000')
+        self.assertTrue(response['cmd']['c'] == 'FC')
+        response = self._send_cmd_response(response, '00')
         self.assertTrue(response == {})
 
     def _add_iCon180(self, module=234567, key='0000', id=5):
@@ -96,7 +173,7 @@ class RFIDController(RFIDAppCase, HttpCase):
         response = self._hearbeat(self.c_130.webstack_id)
         self.assertEqual(response, {'cmd': {'id': id, 'c': 'F0', 'd': ''}}, )
 
-        response = self._send_cmd_response(response, '0107000601000703090000090000080401050208000401050807000008010900')
+        response = self._send_cmd_response(response, self.default_F0[17])
         self.assertTrue(response['cmd']['c'] == 'D7')
         response = self._send_cmd_response(response)
         self.assertTrue(response['cmd']['c'] == 'DC')
@@ -121,7 +198,7 @@ class RFIDController(RFIDAppCase, HttpCase):
         response = self._hearbeat(self.c_115.webstack_id)
         self.assertEqual(response, {'cmd': {'id': id, 'c': 'F0', 'd': ''}}, )
 
-        response = self._send_cmd_response(response, '0101000202000704000000050000040201050208010200090702070003000506')
+        response = self._send_cmd_response(response, self.default_F0[11])
         self.assertTrue(response['cmd']['c'] == 'D7')
         response = self._send_cmd_response(response)
         self.assertTrue(response['cmd']['c'] == 'DC')
@@ -146,7 +223,7 @@ class RFIDController(RFIDAppCase, HttpCase):
         response = self._hearbeat(self.c_110.webstack_id)
         self.assertEqual(response, {'cmd': {'id': id, 'c': 'F0', 'd': ''}}, )
 
-        response = self._send_cmd_response(response, '0006000400000704000000030000030201050208000200010502060003000506')
+        response = self._send_cmd_response(response, self.default_F0[6])
         self.assertTrue(response['cmd']['c'] == 'D7')
         response = self._send_cmd_response(response)
         self.assertTrue(response['cmd']['c'] == 'DC')
@@ -169,8 +246,8 @@ class RFIDController(RFIDAppCase, HttpCase):
         self.c_50.read_controller_information_cmd()
         response = self._hearbeat(self.c_50.webstack_id)
         self.assertEqual(response, {'cmd': {'id': id, 'c': 'F0', 'd': ''}}, )
-        tmp = self._make_F0(12, 1, 739, 1, 1, 3, 4, 28, 0, 3500, 1500 )
-        response = self._send_cmd_response(response, '0102000000010703090000010000030100000208000100010502060003000506')
+        tmp = self._make_F0(12, 1, 739, 1, 1, 3, 4, 28, 0, 3500, 1500)
+        response = self._send_cmd_response(response, self.default_F0[12])
         self._check_added_controller(self.c_50)
         self.assertTrue(response['cmd']['c'] == 'D7')
         response = self._send_cmd_response(response)
@@ -227,7 +304,7 @@ class RFIDController(RFIDAppCase, HttpCase):
         #            'err': 0, 'event_n': 52, 'id': 29, 'reader': 2, 'time': '11:41:39', 'tos': 282},
         #  'key': '1764'}
         # {"c": "FA", "d": "0000000002 0000000001 34363922050411220000000002000000040002000000", "e": 0, "id": 29}
-
+        self._send_cmd_response(response, '0000')  # TODO ???!?? 0000 do not know what is it
         self._send_cmd({
             "convertor": self.c_temperature.webstack_id.serial,
             "event": {"bos": 1,

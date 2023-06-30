@@ -12,9 +12,9 @@ class Digest(models.Model):
     kpi_hr_rfid_vending_refill = fields.Boolean('Auto refill amount')
     kpi_hr_rfid_vending_sale = fields.Boolean('Sales amount')
     kpi_hr_rfid_vending_sale_count = fields.Boolean('Sales count')
-    kpi_hr_rfid_vending_refill_value = fields.Float(digits=(16, 2), compute='_compute_kpi_hr_rfid_vending_values')
-    kpi_hr_rfid_vending_sale_value = fields.Float(digits=(16, 2), compute='_compute_kpi_hr_rfid_vending_values')
-    kpi_hr_rfid_vending_sale_count_value = fields.Float(digits=(16, 2), compute='_compute_kpi_hr_rfid_vending_values')
+    kpi_hr_rfid_vending_refill_value = fields.Monetary(compute='_compute_kpi_hr_rfid_vending_values')
+    kpi_hr_rfid_vending_sale_value = fields.Monetary(compute='_compute_kpi_hr_rfid_vending_values')
+    kpi_hr_rfid_vending_sale_count_value = fields.Integer(compute='_compute_kpi_hr_rfid_vending_values')
 
     def _compute_kpi_hr_rfid_vending_values(self):
         if not self.env.user.has_group('hr_rfid_vending.group_operator'):
