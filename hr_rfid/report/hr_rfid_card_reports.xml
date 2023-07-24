@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="paperformat_card_foldable_badge" model="report.paperformat">
+        <field name="name">Custom Paperformat for the Card Foldable Badge report</field>
+        <field name="default" eval="False"/>
+        <field name="disable_shrinking" eval="True"/>
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">0</field>
+        <field name="margin_bottom">0</field>
+        <field name="margin_left">0</field>
+        <field name="margin_right">0</field>
+        <field name="dpi">96</field>
+    </record>
+
+    <record id="action_report_hr_rfid_card_foldable_badge" model="ir.actions.report">
+        <field name="name">Foldable Barcode Badge (Card)</field>
+        <field name="model">hr.rfid.card</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">hr_rfid.hr_rfid_card_report_template_foldable_badge</field>
+        <field name="report_file">hr_rfid.hr_rfid_card_report_template_foldable_badge</field>
+        <field name="print_report_name">'Foldable Badge - %s - %s' % ((object.name or 'Access Badge').replace('/',''), object.get_owner().name.replace('/',''))</field>
+        <field name="binding_model_id" ref="model_hr_rfid_card"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="paperformat_card_foldable_badge"/>
+    </record>
+
+    <record id="action_report_res_partner_foldable_badge" model="ir.actions.report">
+        <field name="name">Foldable Barcode Badge (Partner)</field>
+        <field name="model">res.partner</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">hr_rfid.res_partner_report_template_foldable_badge</field>
+        <field name="report_file">hr_rfid.res_partner_report_template_foldable_badge</field>
+        <field name="print_report_name">'Foldable Badge - %s' % (object.name or 'Access Badge').replace('/','')</field>
+        <field name="binding_model_id" ref="model_res_partner"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="paperformat_card_foldable_badge"/>
+    </record>
+
+    <record id="action_report_hr_employee_foldable_badge" model="ir.actions.report">
+        <field name="name">Foldable Barcode Badge (Employee)</field>
+        <field name="model">hr.employee</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">hr_rfid.hr_employee_report_template_foldable_badge</field>
+        <field name="report_file">hr_rfid.hr_employee_report_template_foldable_badge</field>
+        <field name="print_report_name">'Foldable Badge - %s' % (object.name or 'Access Badge').replace('/','')</field>
+        <field name="binding_model_id" ref="model_hr_employee"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="paperformat_card_foldable_badge"/>
+    </record>
+
+</odoo>

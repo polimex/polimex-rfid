@@ -168,6 +168,12 @@ class HrRfidWebstack(models.Model):
     _sql_constraints = [('rfid_webstack_serial_unique', 'unique(serial)',
                          'Serial number for webstacks must be unique!')]
 
+    def _notify_inactive(self):
+        self.mapped('last_update')
+        # for ws in self:
+        #     datetime.datetime.combine(context_today() + relativedelta(weeks=-1,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))
+            # if ws.active and (ws.updated_at + relativedelta(minutes=-30)
+
     @api.depends('hw_version')
     def _compute_time_format(self):
         for ws in self:
@@ -891,11 +897,15 @@ class HrRfidWebstack(models.Model):
 
         if response['c'] == 'D1':
             # 00 00 00 00 01
-            controller.cards_count = polimex.bytes_to_num(response['d'], 0, 5)
-            # if response['c'] == 'D5': # change controller mode
-            #     00 00 00 00 01
-
-            controller.cards_count = polimex.bytes_to_num(response['d'], 0, 5)
+            if not controller.is_temperature_ctrl:
+                controller.cards_count = polimex.bytes_to_num(response['d'], 0, 5)
+                db_count = [d.card_rel_id for d in controller.door_ids]
+                waiting_cmd = self.env['hr.rfid.command'].search_count(
+                    [('controller_id', '=', controller.id), ('status', '=', 'Wait')]) == 0
+                if db_count != controller.cards_count and waiting_cmd:
+                    controller.report_sys_ev(
+                        _('Card count in controller and DB are different. Reload cards to solve the problem'),
+                        post_data=post_data)
         if response['c'] == 'DB':
             # 00 00 00 00 01
             out_num = polimex.bytes_to_num(response['d'], 0, 1)

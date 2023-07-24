@@ -2,6 +2,7 @@
 from odoo import api, fields, models, exceptions, _
 from datetime import timedelta, datetime
 from enum import Enum
+import secrets
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -110,18 +111,16 @@ class HrRfidCard(models.Model):
 
     pin_code = fields.Char(compute='_compute_pin_code')
 
+    barcode_number = fields.Char(compute='_compute_barcode_number')
+    is_barcode = fields.Boolean(compute='_compute_barcode_number')
+
     _sql_constraints = [
         ('card_uniq', 'unique (number, company_id)', _("Card number already exists!")),
-    ]
+        ('check_card_owner',
+         'check((contact_id is null or employee_id is not null) or (contact_id is not null or employee_id is null))',
+         'Card user and contact cannot both be set in the same time, and cannot both be empty.')
 
-    # @api.model
-    # def default_get(self, fields):
-    #     res = super(HrRfidCard, self).default_get(fields)
-    #     if not 'employee_id' in res.keys() and self.env.context.get('default_employee_id', None):
-    #         res['employee_id'] = self.env.context.get('default_employee_id', None)
-    #     if not 'contact_id' in res.keys() and self.env.context.get('default_contact_id', None):
-    #         res['contact_id'] = self.env.context.get('default_contact_id', None)
-    #     return res
+    ]
 
     @api.model
     def get_import_templates(self):
@@ -129,6 +128,7 @@ class HrRfidCard(models.Model):
             'label': _('Import Template for Cards'),
             'template': '/hr_rfid/static/xls/Polimex RFID card import template.xls'
         }]
+
     def get_owner(self, event_dict: dict = None):
         self.ensure_one()
         if not event_dict:
@@ -147,10 +147,10 @@ class HrRfidCard(models.Model):
         """
         if access_groups is None:
             owner = self.get_owner()
-            access_groups = owner.hr_rfid_access_group_ids.mapped('access_group_id')
+            access_groups = owner.hr_rfid_access_group_ids._filter_active().mapped('access_group_id')
         else:
             owner = self.get_owner()
-            valid_access_groups = owner.hr_rfid_access_group_ids.mapped('access_group_id')
+            valid_access_groups = owner.hr_rfid_access_group_ids._filter_active().mapped('access_group_id')
             if access_groups not in valid_access_groups:
                 return []
         door_rel_ids = access_groups.mapped('all_door_ids')
@@ -158,10 +158,21 @@ class HrRfidCard(models.Model):
 
     def door_compatible(self, door_id):
         return self.card_type == door_id.card_type \
-               and not (self.cloud_card is True and door_id.controller_id.external_db is True)
+            and not (self.cloud_card is True and door_id.controller_id.external_db is True)
 
     def card_ready(self):
-        return self.active
+        res = []
+        for c in self:
+            res.append(c.active)
+            if c.activate_on:
+                res.append(c.activate_on <= fields.Datetime.now())
+            else:
+                res.append(True)
+            if c.deactivate_on:
+                res.append(c.deactivate_on > fields.Datetime.now())
+            else:
+                res.append(True)
+        return len(res) > 0 and all(res)
 
     @api.onchange('activate_on', 'number')
     def _check_activate_on(self):
@@ -173,6 +184,11 @@ class HrRfidCard(models.Model):
     def _compute_pin_code(self):
         for card in self:
             card.pin_code = card.get_owner().hr_rfid_pin_code
+    @api.depends('number', 'card_type')
+    def _compute_barcode_number(self):
+        for c in self:
+            c.barcode_number = c.number and self.w34_to_hex(c.number).upper() or False
+            c.is_barcode = c.card_type == self.env.ref('hr_rfid.hr_rfid_card_type_barcode')
 
     @api.constrains('employee_id', 'contact_id')
     def _check_user(self):
@@ -196,7 +212,9 @@ class HrRfidCard(models.Model):
     @api.constrains('number')
     def _check_number(self):
         for card in self:
-            dupes = self.search([('number', '=', card.number), ('card_type', '=', card.card_type.id), ('company_id', '=', card.company_id.id)])
+            dupes = self.search([('number', '=', card.number), ('card_type', '=', card.card_type.id),
+                                 ('company_id', '=', card.company_id.id)])
+            # dupes = self.end['hr.rfid.card'].with_company(card.company_id).search([('number', '=', card.number), ('card_type', '=', card.card_type.id)])
             if len(dupes) > 1:
                 raise exceptions.ValidationError(_('Card number must be unique for every card type!'))
 
@@ -286,10 +304,41 @@ class HrRfidCard(models.Model):
             if old_cloud != card.cloud_card:
                 rel_env.update_card_rels(card)
 
+            if vals.keys() & ['activate_on', 'deactivate_on', 'active']:
+                if card.card_ready():
+                    rel_env.update_card_rels(card)
+                else:
+                    card.door_rel_ids.unlink()
+
+
     def unlink(self):
         for card in self:
             card.door_rel_ids.unlink()
         return super(HrRfidCard, self).unlink()
+
+    @api.model
+    def hex_to_w34(self, bc):
+        return f"{int(bc[:4], 16):05}"f"{int(bc[4:], 16):05}"
+
+    @api.model
+    def w34_to_hex(self, w34):
+        return f"{int(w34[:5]):04x}"f"{int(w34[5:]):04x}"
+
+    @api.model
+    def create_bc_card(self):
+        i = 0
+        while True:
+            new_card_hex = secrets.token_hex(4)
+            card_number = self.hex_to_w34(new_card_hex)
+            card_ids = self.env['hr.rfid.card'].search([
+                ('number', '=', card_number)
+            ])
+            if len(card_ids) == 0:
+                return new_card_hex, card_number
+            if i > 10:
+                _logger.warning('Can not create barcode data. Random data duplicated 10 times!')
+                return None, None
+            i += 1
 
     @api.model
     def _update_cards(self):
@@ -297,11 +346,11 @@ class HrRfidCard(models.Model):
         str_before = str(now - timedelta(seconds=31))
         str_after = str(now + timedelta(seconds=31))
         cards_to_activate = self.env['hr.rfid.card'].search(['|', ('active', '=', True), ('active', '=', False),
-                                         ('activate_on', '<', str_after),
-                                         ('activate_on', '>', str_before)])
+                                                             ('activate_on', '<', str_after),
+                                                             ('activate_on', '>', str_before)])
         cards_to_deactivate = self.env['hr.rfid.card'].search(['|', ('active', '=', True), ('active', '=', False),
-                                           ('deactivate_on', '<', str_after),
-                                           ('deactivate_on', '>', str_before)])
+                                                               ('deactivate_on', '<', str_after),
+                                                               ('deactivate_on', '>', str_before)])
 
         neutral_cards = cards_to_activate & cards_to_deactivate
         cards_to_activate = cards_to_activate - neutral_cards
@@ -320,6 +369,7 @@ class HrRfidCard(models.Model):
         self._update_cards()
         self.env['hr.rfid.access.group.contact.rel']._check_expirations()
         self.env['hr.rfid.access.group.employee.rel']._check_expirations()
+        self.env['hr.rfid.webstack']._notify_inactive()
 
     def return_action_doors(self):
         self.ensure_one()
@@ -329,6 +379,16 @@ class HrRfidCard(models.Model):
             context=dict(self.env.context, group_by=False),
             domain=domain
         )
+        return res
+
+    def _message_auto_subscribe_followers(self, updated_values, subtype_ids):
+        res = super(HrRfidCard, self)._message_auto_subscribe_followers(updated_values, subtype_ids)
+        if updated_values.get('employee_id'):
+            employee = self.env['hr.employee'].browse(updated_values['employee_id'])
+            if employee.user_id:
+                res.append((employee.user_id.partner_id.id, subtype_ids, False))
+        if updated_values.get('contact_id'):
+            res.append((updated_values.get('contact_id'), subtype_ids, False))
         return res
 
 

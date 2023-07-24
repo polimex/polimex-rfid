@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="sale_wiz_form_inherit" model="ir.ui.view">
+            <field name="name">Sale RFID Service</field>
+            <field name="model">rfid.service.sale.wiz</field>
+            <field name="inherit_id" ref="rfid_service_base.sale_wiz_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//button[@name='email_card']" position="after">
+                    <button name="share_card" type="object"
+                            string="Share" icon="fa-share-alt"
+                            attrs="{'invisible': [('generate_barcode_card', '!=', True)]}"/>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

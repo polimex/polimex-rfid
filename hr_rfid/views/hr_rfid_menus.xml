@@ -98,6 +98,14 @@
                   action="contacts.action_contacts"
                   groups="hr_rfid_group_officer"
                   sequence="7"/>
+        <menuitem name="Resource calendar"
+                  id="resource_calendar_menu"
+                  parent="hr_rfid_card_management"
+                  groups="hr_rfid_group_officer"
+                  action="resource.action_resource_calendar_form"
+                  sequence="8"
+        />
+
         <menuitem id="hr_rfid_menu_card_door_rels"
                   name="Card/Door Relations"
                   parent="hr_rfid_card_management"
@@ -152,7 +160,6 @@
                   sequence="60"/>
 
 
-
         <!--#######################################################
         #####                   Alarm system                  #####
         ########################################################-->
@@ -168,7 +175,6 @@
                   action="hr_rfid_ctrl_alarm_group_action"
                   groups="hr_rfid_group_officer"
                   sequence="20"/>
-
 
 
         <!--#######################################################

@@ -7,6 +7,7 @@ class HrRfidSystemEvent(models.Model):
     _name = 'hr.rfid.event.system'
     _inherit = 'hr.rfid.event.system'
 
+    @api.model_create_multi
     def create(self, vals_list):
         res = super(HrRfidSystemEvent, self).create(vals_list)
         if any([e.event_action != '34' for e in res]):

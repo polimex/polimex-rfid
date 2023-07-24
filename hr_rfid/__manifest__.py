@@ -3,7 +3,7 @@
 
 {
     'name': 'RFID Access Control',
-    'version': '2.0',
+    'version': '2.1',
     'category': 'Human Resources',
     'summary': 'Manage employee access control',
     'company': 'Polimex Holding Ltd',
@@ -49,7 +49,10 @@
         'views/hr_rfid_menus.xml',
         'views/digest_views.xml',
         'templates/banners.xml',
-        'security/hr_rfid_multi_company.xml'
+        'security/hr_rfid_multi_company.xml',
+        'report/hr_rfid_card_templates.xml',
+        'report/hr_rfid_card_reports.xml',
+        'data/mail_template_data.xml',
     ],
 
     'qweb': [
@@ -63,16 +66,22 @@
     "images": [
         'static/images/main_screenshot.png',
     ],
-
+    'assets': {
+        # 'web.assets_common': [
+        #     'hr_rfid/static/src/js/tours/**/*',
+        # ],
+        # 'web.assets_qweb': [
+        #     'hr_rfid/static/src/xml/**/*',
+        # ],
+        'web.report_assets_common': [
+            '/hr_rfid/static/src/scss/card_foldable_badge_report.scss',
+            '/hr_rfid/static/src/scss/card_full_page_ticket_report.scss',
+        ],
+        'web.report_assets_pdf': [
+            '/hr_rfid/static/src/scss/card_full_page_ticket_report_pdf.scss',
+        ],
+    },
     'application': True,
     'installable': True,
     'auto_install': False,
 }
-
-
-
-
-
-
-
-

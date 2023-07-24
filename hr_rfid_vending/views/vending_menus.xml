@@ -33,7 +33,7 @@
         <menuitem id="hr_rfid_vending_products_menu"
                   name="Products"
                   parent="hr_rfid_vending.hr_rfid_vending_menu"
-                  action="stock.product_template_action_product"
+                  action="product.product_template_action"
                   groups="hr_rfid_vending.group_customer"
                   sequence="30"/>
 
@@ -42,7 +42,7 @@
                   parent="hr_rfid_vending.hr_rfid_vending_menu"
                   action="product.product_pricelist_action2"
                   groups="hr_rfid_vending.group_customer"
-                  sequence="25"/>
+                  sequence="40"/>
 
     </data>
 </odoo>

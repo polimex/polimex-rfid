@@ -297,7 +297,7 @@ class HrRfidUserEvent(models.Model):
         }
 
     @api.model
-    def last_event(self, door_ids=None, partner_id=None, employee_id=None):
+    def last_event(self, door_ids=None, partner_id=None, employee_id=None, event_action=None):
         """ Get last event for user
 
             """
@@ -313,6 +313,10 @@ class HrRfidUserEvent(models.Model):
         if employee_id is not None:
             domain.append(
                 ('employee_id', '=', employee_id.id)
+            )
+        if event_action is not None:
+            domain.append(
+                ('event_action', '=', str(event_action))
             )
         return self.search(domain, limit=1)
 

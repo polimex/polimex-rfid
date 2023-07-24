@@ -104,7 +104,7 @@
             <field name="model">hr.rfid.event.system</field>
             <field name="arch" type="xml">
                 <tree create="0" delete="0" decoration-success="event_action in ['21','31','35']"
-                      decoration-danger="event_action in ['19','20','25','26']"
+                      decoration-danger="event_action in ['1','2','19','20','25','26']"
                       decoration-warning="event_action in ['4','8','12','16','31','34']" >
                     <field name="event_action"/>
                     <field name="timestamp"/>

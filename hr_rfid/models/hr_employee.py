@@ -11,7 +11,7 @@ class HrEmployee(models.Model):
         size=4,
         default='0000',
         tracking=True,
-        groups="hr.group_hr_user"
+        groups="hr_rfid.hr_rfid_group_officer"
     )
 
     hr_rfid_access_group_ids = fields.One2many(
@@ -20,7 +20,7 @@ class HrEmployee(models.Model):
         string='Access Groups',
         help='Which access groups the user is a part of',
         tracking=True,
-        groups="hr.group_hr_user"
+        groups="hr_rfid.hr_rfid_group_officer"
     )
 
     hr_rfid_card_ids = fields.One2many(
@@ -29,7 +29,7 @@ class HrEmployee(models.Model):
         string='RFID Card',
         help='Cards owned by the employee',
         context={'active_test': False},
-        groups="hr.group_hr_user"
+        groups="hr_rfid.hr_rfid_group_officer"
     )
 
     hr_rfid_event_ids = fields.One2many(
@@ -37,17 +37,24 @@ class HrEmployee(models.Model):
         'employee_id',
         string='RFID Events',
         help='Events concerning this employee',
-        groups="hr.group_hr_user"
+        groups="hr_rfid.hr_rfid_group_officer"
     )
 
     in_zone_ids = fields.Many2many(
         'hr.rfid.zone',
         compute='_compute_zones_for_employee',
-        groups="hr.group_hr_user"
+        groups="hr_rfid.hr_rfid_group_officer"
+
     )
 
-    employee_event_count = fields.Char(compute='_compute_employee_event_count', groups="hr.group_hr_user")
-    employee_doors_count = fields.Char(compute='_compute_employee_event_count', groups="hr.group_hr_user")
+    employee_event_count = fields.Char(
+        compute='_compute_employee_event_count',
+        groups="hr_rfid.hr_rfid_group_officer"
+    )
+    employee_doors_count = fields.Char(
+        compute='_compute_employee_event_count',
+        groups="hr_rfid.hr_rfid_group_officer"
+    )
 
     def _compute_employee_event_count(self):
         for e in self:
@@ -184,6 +191,16 @@ class HrEmployee(models.Model):
                     int(char, 10)
             except ValueError:
                 raise exceptions.ValidationError('Invalid pin code, digits must be from 0 to 9')
+
+    def generate_random_barcode_card(self):
+        self.ensure_one()
+        new_card_hex, card_number = self.env['hr.rfid.card'].create_bc_card()
+        self.write({
+            'hr_rfid_card_ids': [(0, 0, {
+                'number': card_number,
+                'card_type': self.env.ref('hr_rfid.hr_rfid_card_type_barcode').id
+            })]
+        })
 
     @api.model
     def create(self, vals_list):

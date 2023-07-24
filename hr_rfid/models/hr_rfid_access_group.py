@@ -114,7 +114,8 @@ class HrRfidAccessGroup(models.Model):
     def _calc_last_user_event_in_ag(self, partner_id=None, employee_id=None):
         last_event = self.env['hr.rfid.event.user']
         for ag in self:
-            ag_last_event = self.env['hr.rfid.event.user'].last_event(ag.all_door_ids.mapped('door_id'), partner_id, employee_id)
+            ag_last_event = self.env['hr.rfid.event.user'].last_event(ag.all_door_ids.mapped('door_id'), partner_id,
+                                                                      employee_id, event_action=1)
             if ag_last_event and (ag_last_event.event_time >= (
                     fields.Datetime.now() + relativedelta(seconds=-1 * ag.delay_between_events))):
                 last_event += ag_last_event
@@ -179,8 +180,9 @@ class HrRfidAccessGroup(models.Model):
             for rel in acc_gr.all_door_ids:
                 ctrl = rel.door_id.controller_id
                 if ctrl.is_relay_ctrl():
-                    if ctrl in relay_doors and relay_doors.get(ctrl, False) and rel.door_id.card_type in relay_doors[ctrl].mapped(
-                            'card_type') and ctrl.mode == 3:
+                    if ctrl in relay_doors and relay_doors.get(ctrl, False) and rel.door_id.card_type in relay_doors[
+                        ctrl].mapped(
+                        'card_type') and ctrl.mode == 3:
                         raise exceptions.ValidationError(
                             _('Doors "%s" and "%s" both belong to a controller that cannot give access to multiple doors with same card type in a group.')
                             % (','.join(relay_doors[ctrl].mapped('name')), rel.door_id.name)
@@ -445,76 +447,159 @@ class HrRfidAccessGroupDoorRel(models.Model):
         raise exceptions.ValidationError('Not permitted to write here (hr.rfid.access.group.door.rel)')
 
     def unlink(self):
-        card_door_rel_env = self.env['hr.rfid.card.door.rel']
         for rel in self:
             door_id = rel.door_id
             ts_id = rel.time_schedule_id
-            cards = door_id.get_potential_cards(access_groups=rel.access_group_id)
+            cards = door_id.get_cards(access_groups=rel.access_group_id)
             super(HrRfidAccessGroupDoorRel, rel).unlink()
             door_id.controller_id.delete_ts_id(ts_id)
             for card, ts, alarm_right in cards:
-                card_door_rel_env.check_relevance_slow(card, door_id, alarm_right)
+                self.env['hr.rfid.card.door.rel'].check_relevance_slow(card, door_id, alarm_right)
 
 
-###
-# Possible to have 'hr.rfid.access.group.employee.rel' and '...contact.rel' inherit another model,
-# but then we'll have an empty table in the database. Better to just copy-paste a few fields i guess.
-# Maybe there is a model that does not create a database table?
-###
-
-class HrRfidAccessGroupEmployeeRel(models.Model):
-    _name = 'hr.rfid.access.group.employee.rel'
+class HrRfidAccessGroupRelations(models.AbstractModel):
+    _name = 'hr.rfid.access.group.rel'
     _description = 'Relation between access groups and employees'
+
+    state = fields.Boolean(
+        default=False,
+        compute='_compute_state',
+        store=True,
+    )
+    internal_state = fields.Boolean(default=False)
 
     access_group_id = fields.Many2one(
         'hr.rfid.access.group',
         string='Access Group',
         required=True,
     )
+    # TODO New field. Need to implemented in cron job tasks!!!
+    activate_on = fields.Datetime(
+        string='Activation Date',
+        help='Access group will activate itself from the contact '
+             'on the  date. ',
+        default=lambda self: fields.Datetime.now(),
+        index=True,
+    )
+
+    expiration = fields.Datetime(
+        string='Expiration Date',
+        help='Access group will remove itself from the contact '
+             'on the expiration date. Will never expire if blank.',
+        index=True,
+    )
+
+    visits_counting = fields.Boolean(
+        help='If True, the access group will counting card visits. The feature is used for RFID services in general',
+        default=False
+    )
+    permitted_visits = fields.Integer(
+        help='Permited visits after this group will be deactivated. 0 mean',
+        default=0
+    )
+    visits_counter = fields.Integer(
+        help='Real visits this group will be deactivated. 0 mean',
+        default=0
+    )
+
+    def _deactivate(self):
+        raise exceptions.ValidationError('Not implemented yet!')
+
+    def _activate(self):
+        raise exceptions.ValidationError('Not implemented yet!')
+
+    def inc_visits(self):
+        for s in self:
+            s.visits_counter += 1
+            s.state
+
+    def _active_state_change(self, new_state):
+        for agr in self:
+            if new_state:  # activating rights
+                self._activate()
+            else:  # de-activating rights
+                self._deactivate()
+            agr.internal_state = new_state
+
+    @api.depends('activate_on', 'expiration', 'visits_counting', 'permitted_visits', 'visits_counter')
+    def _compute_state(self):
+        for agr in self:
+            res = [agr.activate_on <= fields.Datetime.now()]
+            if agr.expiration:
+                res.append(agr.expiration >= fields.Datetime.now())
+            if agr.visits_counting and agr.permitted_visits > 0:
+                res.append(agr.visits_counter < agr.permitted_visits)
+            if agr.internal_state != all(res):
+                agr._active_state_change(all(res))
+            agr.state = all(res)
+
+    @api.model
+    def _check_expirations(self):
+        self.search([])._compute_state()
+        # self.search([]).mapped('state')
+
+    def _filter_active(self):
+        res = self.env[self._name]
+        for agcr in self:
+            if agcr.activate_on <= fields.Datetime.now() and (
+                    not agcr.expiration or agcr.expiration > fields.Datetime.now()):
+                res += agcr
+        return res
+
+    def _filter_inactive(self):
+        return self - self._filter_active()
+
+    def ag_ready(self):
+        res = []
+        for ag in self:
+            res.append(ag.activate_on and ag.activate_on <= fields.Datetime.now() or True)
+            res.append(ag.expiration and ag.expiration > fields.Datetime.now() or True)
+        return len(res) > 0 and all(res) or False
+
+    def write(self, vals):
+        super().write(vals)
+        if set(vals.keys()).intersection(
+                set(['activate_on', 'expiration', 'visits_counting', 'permitted_visits', 'visits_counter'])):
+            self.mapped('state')
+
+
+class HrRfidAccessGroupEmployeeRel(models.Model):
+    _name = 'hr.rfid.access.group.employee.rel'
+    _description = 'Relation between access groups and employees'
+    _inherit = ['hr.rfid.access.group.rel']
 
     employee_id = fields.Many2one(
         'hr.employee',
         string='Employee',
         required=True,
     )
+    _sql_constraints = [
+        ('check_duplicates', 'unique (access_group_id, employee_id)',
+         _("Employee can't have the same access group twice!")),
+    ]
 
-    expiration = fields.Datetime(
-        string='Expiration Date',
-        help='Access group will remove itself from the employee '
-             'on the expiration date. Will never expire if blank.',
-        index=True,
-    )
-
-    @api.model
-    def _check_expirations(self):
-        self.search([
-            ('expiration', '<=', fields.Datetime.now())
-        ]).unlink()
-
-    @api.constrains('employee_id', 'access_group_id')
-    def _check_for_duplicates(self):
+    def _deactivate(self):
         for rel in self:
-            duplicates = self.search([
-                ('access_group_id', '=', rel.access_group_id.id),
-                ('employee_id', '=', rel.employee_id.id),
-            ])
-            if len(duplicates) > 1:
-                raise exceptions.ValidationError(
-                    _("Employees (%s) can't have the same access group twice (%s)!")
-                    % (rel.employee_id.name, rel.access_group_id.name))
+            cards = rel.employee_id.hr_rfid_card_ids.filtered(lambda c: c.card_ready())
+            doors = rel.access_group_id.all_door_ids.mapped('door_id')
+            self.env['hr.rfid.card.door.rel']._remove_cards(cards, doors)
+            # for card in cards:
+            #     for door in doors:
+            #         self.env['hr.rfid.card.door.rel'].check_relevance_slow(card, door)
 
-    @api.model
+    def _activate(self):
+        for rel in self:
+            cards = rel.employee_id.hr_rfid_card_ids.filtered(lambda c: c.card_ready())
+            for card in cards:
+                self.env['hr.rfid.card.door.rel'].update_card_rels(card, rel.access_group_id)
+
     @api.model_create_multi
     def create(self, vals_list):
-        card_door_rel_env = self.env['hr.rfid.card.door.rel']
+        # card_door_rel_env = self.env['hr.rfid.card.door.rel']
 
         records = super(HrRfidAccessGroupEmployeeRel, self).create(vals_list)
         records.mapped('employee_id').check_access_group()
-
-        for rel in records:
-            cards = rel.employee_id.hr_rfid_card_ids
-            for card in cards:
-                card_door_rel_env.update_card_rels(card, rel.access_group_id)
+        records.mapped('state')  # recalc new states
 
         return records
 
@@ -543,90 +628,47 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
                     card_door_rel_env.update_card_rels(card, new_acc_gr)
 
     def unlink(self):
-        card_door_rel_env = self.env['hr.rfid.card.door.rel']
-
-        for rel in self:
-            cards = rel.employee_id.hr_rfid_card_ids
-            doors = rel.access_group_id.all_door_ids.mapped('door_id')
-            super(HrRfidAccessGroupEmployeeRel, rel).unlink()
-            for card in cards:
-                for door in doors:
-                    card_door_rel_env.check_relevance_slow(card, door)
+        self._deactivate()
+        super(HrRfidAccessGroupEmployeeRel, self).unlink()
 
 
 class HrRfidAccessGroupContactRel(models.Model):
     _name = 'hr.rfid.access.group.contact.rel'
     _description = 'Relation between access groups and contacts'
-
-    access_group_id = fields.Many2one(
-        'hr.rfid.access.group',
-        string='Access Group',
-        required=True,
-    )
+    _inherit = ['hr.rfid.access.group.rel']
 
     contact_id = fields.Many2one(
         'res.partner',
         string='Contact',
         required=True,
     )
-    #TODO New field. Need to implemented in cron job tasks!!!
-    activate_on = fields.Datetime(
-        string='Activation Date',
-        help='Access group will activate itself from the contact '
-             'on the  date. ',
-        default=lambda self: fields.Datetime.now(),
-        index=True,
-    )
+    _sql_constraints = [
+        ('check_duplicates', 'unique (access_group_id, contact_id)',
+         _("Partner can't have the same access group twice!")),
+    ]
 
-    expiration = fields.Datetime(
-        string='Expiration Date',
-        help='Access group will remove itself from the contact '
-             'on the expiration date. Will never expire if blank.',
-        index=True,
-    )
-    visits_counting = fields.Boolean(
-        help='If True, the access group will counting card visits. The feature is used for RFID services in general',
-        default=False
-    )
-    permited_visits = fields.Integer(
-        help='Permited visits after this group will be deactivated. 0 mean',
-        default=0
-    )
-    visits_counter = fields.Integer(
-        help='Real visits this group will be deactivated. 0 mean',
-        default=0
-    )
-
-    @api.model
-    def _check_expirations(self):
-        self.search([
-            ('expiration', '<=', fields.Datetime.now())
-        ]).unlink()
-
-    @api.constrains('contact_id', 'access_group_id')
-    def _check_for_duplicates(self):
+    def _deactivate(self):
         for rel in self:
-            duplicates = self.search([
-                ('access_group_id', '=', rel.access_group_id.id),
-                ('contact_id', '=', rel.contact_id.id),
-            ])
-            if len(duplicates) > 1:
-                raise exceptions.ValidationError(
-                    _("Employees (%s) can't have the same access group twice (%s)!")
-                    % (rel.contact_id.name, rel.access_group_id.name))
+            cards = rel.contact_id.hr_rfid_card_ids.filtered(lambda c: c.card_ready())
+            doors = rel.access_group_id.all_door_ids.mapped('door_id')
+            self.env['hr.rfid.card.door.rel']._remove_cards(cards, doors)
+            # for card in cards:
+            #     for door in doors:
+            #         self.env['hr.rfid.card.door.rel'].check_relevance_slow(card, door)
 
-    @api.model
+    def _activate(self):
+        for rel in self:
+            cards = rel.contact_id.hr_rfid_card_ids.filtered(lambda c: c.card_ready())
+            for card in cards:
+                self.env['hr.rfid.card.door.rel'].update_card_rels(card, rel.access_group_id)
+
     @api.model_create_multi
     def create(self, vals_list):
-        card_door_rel_env = self.env['hr.rfid.card.door.rel']
-
         records = super(HrRfidAccessGroupContactRel, self).create(vals_list)
         records.mapped('contact_id').check_access_group()
-
-        for rel in records:
-            cards = rel.contact_id.hr_rfid_card_ids
-            for card in cards:
-                card_door_rel_env.update_card_rels(card, rel.access_group_id)
+        records._compute_state()
+        # records.mapped('state') # recalc new states
+        # records._filter_active()._activate()
 
         return records
 
@@ -641,7 +683,7 @@ class HrRfidAccessGroupContactRel(models.Model):
 
             rel.contact_id.check_access_group()
 
-            if new_acc_gr != old_acc_gr:
+            if (new_acc_gr != old_acc_gr):
                 # Potentially remove old rels
                 cards = rel.contact_id.hr_rfid_card_ids
                 doors = old_acc_gr.all_door_ids.mapped('door_id')
@@ -655,15 +697,8 @@ class HrRfidAccessGroupContactRel(models.Model):
                     card_door_rel_env.update_card_rels(card, new_acc_gr)
 
     def unlink(self):
-        card_door_rel_env = self.env['hr.rfid.card.door.rel']
-
-        for rel in self:
-            cards = rel.contact_id.hr_rfid_card_ids
-            doors = rel.access_group_id.all_door_ids.mapped('door_id')
-            super(HrRfidAccessGroupContactRel, rel).unlink()
-            for card in cards:
-                for door in doors:
-                    card_door_rel_env.check_relevance_slow(card, door)
+        self._deactivate()
+        super(HrRfidAccessGroupContactRel, self).unlink()
 
 
 class HrRfidAccessGroupWizard(models.TransientModel):
@@ -719,7 +754,6 @@ class HrRfidAccessGroupWizard(models.TransientModel):
         default=False,
         required=True
     )
-
 
     def add_doors(self):
         self.ensure_one()

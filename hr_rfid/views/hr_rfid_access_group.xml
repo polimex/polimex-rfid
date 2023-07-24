@@ -108,12 +108,12 @@
                         </div>
 
                         <group>
-                        <group>
-                            <field name="delay_between_events"/>
-                        </group>
-                        <group>
-                            <field name="company_id" groups="base.group_multi_company"/>
-                        </group>
+                            <group>
+                                <field name="delay_between_events"/>
+                            </group>
+                            <group>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
                         </group>
                         <div attrs="{'invisible': [('id', '!=', False)]}">
                             <p>
@@ -325,9 +325,21 @@
                 <form string="Access Group/Employee Relations" create="0" edit="0" delete="0">
                     <sheet>
                         <group>
-                            <field name="access_group_id"/>
-                            <field name="employee_id"/>
-                            <field name="expiration"/>
+                            <group>
+                                <field name="state"/>
+                                <field name="internal_state"/>
+                            </group>
+                            <group>
+                                <field name="access_group_id"/>
+                                <field name="employee_id"/>
+                            </group>
+                            <group>
+                                <field name="activate_on"/>
+                                <field name="expiration"/>
+                                <field name="visits_counting"/>
+                                <field name="permitted_visits"/>
+                                <field name="visits_counter"/>
+                            </group>
                         </group>
                     </sheet>
                 </form>
@@ -341,7 +353,9 @@
                 <tree string="Access Group/Employee Relations" create="0" edit="0" delete="0">
                     <field name="access_group_id"/>
                     <field name="employee_id"/>
+                    <field name="activate_on"/>
                     <field name="expiration"/>
+                    <field name="state"/>
                 </tree>
             </field>
         </record>
@@ -353,10 +367,23 @@
                 <form string="Access Group/Employee Relations" create="0" edit="0" delete="0">
                     <sheet>
                         <group>
-                            <field name="access_group_id"/>
-                            <field name="contact_id"/>
-                            <field name="expiration"/>
+                            <group>
+                                <field name="state"/>
+                                <field name="internal_state"/>
+                            </group>
+                            <group>
+                                <field name="access_group_id"/>
+                                <field name="contact_id"/>
+                            </group>
+                            <group>
+                                <field name="activate_on"/>
+                                <field name="expiration"/>
+                                <field name="visits_counting"/>
+                                <field name="permitted_visits"/>
+                                <field name="visits_counter"/>
+                            </group>
                         </group>
+
                     </sheet>
                 </form>
             </field>
@@ -369,7 +396,9 @@
                 <tree string="Access Group/Employee Relations" create="0" edit="0" delete="0">
                     <field name="access_group_id"/>
                     <field name="contact_id"/>
+                    <field name="activate_on"/>
                     <field name="expiration"/>
+                    <field name="state"/>
                 </tree>
             </field>
         </record>

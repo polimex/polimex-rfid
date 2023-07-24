@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="card_barcode_mail_template_badge" model="mail.template">
+            <field name="name">Your access control barcode badge</field>
+            <field name="model_id" ref="model_res_partner"/>
+            <field name="subject">Access Barcode badge for {{ object.name }}</field>
+            <!--            <field name="email_from">{{ (object.event_id.organizer_id.email_formatted or object.event_id.user_id.email_formatted or '') }}</field>-->
+            <field name="email_to">{{ (object.email and '"%s" &lt;%s&gt;' % (object.name, object.email) or
+                object.partner_id.email_formatted or '') }}
+            </field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    Dear <t t-out="object.name or ''">Oscar Morgan</t>,
+                    <br/>
+                    In our system is generated barcode badge for access control.
+                    <br/>
+                    Please find the attached PDF file.
+                    <br/>
+                    If you have any questions, please let us know.
+                    <br/>
+                    <br/>
+                    Thank you,
+                    <t t-if="user.signature">
+                        <br/>
+                        <t t-out="user.signature or ''">--<br/>Mitchell Admin
+                        </t>
+                    </t>
+                </div>
+            </field>
+            <field name="report_template" ref="action_report_res_partner_foldable_badge"/>
+            <field name="report_name">Foldable Badge - {{ (object.name or 'Access Control Badge').replace('/','_') }}</field>
+            <field name="lang">{{ object.lang }}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

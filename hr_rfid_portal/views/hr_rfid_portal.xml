@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="portal_my_home" name="Show RFID Information" customize_show="True"
+                  inherit_id="portal.portal_my_home" priority="60">
+            <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="title">Barcodes</t>
+                    <t t-set="url" t-value="'/my/webcard'"/>
+                    <t t-set="placeholder_count" t-value="'project_count'"/>
+                </t>
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="title">Cards</t>
+                    <t t-set="url" t-value="'/my/cards'"/>
+                    <t t-set="placeholder_count" t-value="'project_count'"/>
+                </t>
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="title">Events</t>
+                    <t t-set="url" t-value="'/my/events'"/>
+                    <t t-set="placeholder_count" t-value="'task_count'"/>
+                </t>
+            </xpath>
+        </template>
+
+        <template id="portal_my_barcode" name="My Barcode">
+            <t t-call="web.basic_layout">
+                <t t-set="head">
+                    <t t-call-assets="web.assets_common" t-js="false"/>
+                    <t t-call-assets="web.assets_frontend" t-js="false"/>
+                </t>
+                <t t-set="title" t-value="owner.name or 'Access QR Code by Polimex'"/>
+                <div class="container">
+                    <div class="o_logo text-center">
+                        <img t-attf-src="/web/binary/company_logo?company={{ company.id }}" alt="Logo"/>
+                    </div>
+                    <div class="card testimonial-card mt-2 mb-3">
+                        <div class="card-up aqua-gradient">
+                            <h5 t-if="card.card_reference"
+                                class="o_card_barcode_foldable__foldable_badge_event_name font-weight-bold text-center"
+                                t-field="card.card_reference"/>
+                        </div>
+                        <div t-if="owner.image_1920" class="avatar mx-auto white">
+                            <img t-att-src="image_data_uri(owner.avatar_1920)"
+                                 style="max-height:85pt;max-width:90%" alt="Image" class="rounded-circle img-fluid"/>
+                        </div>
+                        <div class="card-body text-center">
+                            <h4 class="card-title font-weight-bold" t-field="owner.name"/>
+                            <hr/>
+                            <div class="text-center o_card_barcode_foldable_badge_font_small">
+                                <span itemprop="startDate" t-esc="card.activate_on.date()"
+                                      class="font-weight-bold"/>
+                                <span itemprop="startDateTime" t-esc="card.activate_on"
+                                      class="font-weight-bold"
+                                      t-options='{"widget": "datetime", "time_only": True, "hide_seconds": True}'/>
+                                <span class="fa fa-arrow-right o_card_barcode_foldable_badge_font_faded"/>
+                                <span t-if="card.deactivate_on"
+                                      itemprop="endDate" t-esc="card.deactivate_on.date()"
+                                      class="font-weight-bold"/>
+                                <span itemprop="endDateTime" t-esc="card.deactivate_on"
+                                      class="font-weight-bold"
+                                      t-options='{"widget": "datetime", "time_only": True, "hide_seconds": True}'/>
+                            </div>
+                            <hr/>
+                            <img alt="barcode"
+                                 t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('QR', card.barcode_number, 200, 200)"
+                                 style="width:200px;height:200px"/>
+                            <hr/>
+                            <div class="d-flex justify-content-between">
+                                Barcode instruction information
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between card-footer">
+                            <address class="mb-0" style="width:100%">
+                                <t t-if="company.phone">
+                                    <a target="_blank" t-attf-href="'tel:%s' % {{ company.phone }}"
+                                       style="text-decoration:none; color: #454748;"
+                                       t-out="company.phone or ''">+1 650-123-4567
+                                    </a>
+                                </t>
+                                <t t-if="company.phone and (company.email or company.website)">
+                                    |
+                                </t>
+                                <t t-if="company.email">
+                                    <a target="_blank" t-attf-href="'mailto:%s' % {{ company.email }}"
+                                       style="text-decoration:none; color: #454748;"
+                                       t-out="company.email or ''">info@yourcompany.com
+                                    </a>
+                                </t>
+                                <t t-if="company.email and company.website">|</t>
+                                <t t-if="company.website">
+                                    <a t-attf-href="'%s' % {{ company.website }}" target="_blank"
+                                       style="text-decoration:none; color: #454748;"
+                                       t-out="company.website or ''">http://www.example.com
+                                    </a>
+                                </t>
+                            </address>
+                        </div>
+                    </div>
+
+                </div>
+            </t>
+        </template>
+
+    </data>
+</odoo>

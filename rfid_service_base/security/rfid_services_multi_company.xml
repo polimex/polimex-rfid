@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ir_rule_rfid_service_multi_company" model="ir.rule">
+            <field name="name">RFID Service: Multi Company</field>
+            <field name="model_id" ref="model_rfid_service"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="ir_rule_rfid_service_sale_multi_company" model="ir.rule">
+            <field name="name">RFID Service Sale: Multi Company</field>
+            <field name="model_id" ref="model_rfid_service_sale"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="ir_rule_rfid_service_tag_multi_company" model="ir.rule">
+            <field name="name">RFID Service tag: Multi Company</field>
+            <field name="model_id" ref="model_rfid_service_tags"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+    </data>
+</odoo>

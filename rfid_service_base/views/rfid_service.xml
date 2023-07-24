@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_rfid_service_action" model="ir.actions.act_window">
+            <field name="name">Services</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">rfid.service</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <!--            <field name="context">{'active_test': False}</field>-->
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    <!-- Add Text Here -->
+                </p>
+                <p>
+                    <!-- More details about what a user can do with this object will be OK -->
+                </p>
+            </field>
+        </record>
+        <record id="hr_rfid_service_kanban" model="ir.ui.view">
+            <field name="name">hr.rfid.service.kanban</field>
+            <field name="model">rfid.service</field>
+            <field name="arch" type="xml">
+                <kanban class="oe_background_grey o_kanban_dashboard o_project_kanban o_emphasize_colors">
+                    <!--                        on_create="project.open_create_project" js_class="project_project_kanban" sample="1">-->
+                    <field name="name"/>
+                    <field name="service_type"/>
+                    <field name="access_group_id"/>
+                    <field name="zone_id"/>
+                    <field name="color"/>
+                    <field name="displayed_image_id"/>
+                    <!--                    <progressbar field="last_update_status"-->
+                    <!--                                 colors='{"on_track": "success", "at_risk": "warning", "off_track": "danger", "on_hold": "info"}'/>-->
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="#{kanban_color(record.color.raw_value)} o_has_icon oe_kanban_content oe_kanban_card">  <!--oe_kanban_global_click-->
+                                <div class="o_project_kanban_main ">
+                                    <div class="o_kanban_card_content mw-100">
+                                        <div class="o_kanban_primary_left">
+                                            <div class="o_primary">
+                                                <span class="o_text_overflow">
+                                                    <t t-esc="record.name.value"/>
+                                                </span>
+                                                <div t-if="record.displayed_image_id.value">
+                                                    <a name="action_new_sale" type="object">
+                                                        <field name="displayed_image_id" widget="attachment_image"/>
+                                                    </a>
+                                                </div>
+                                                <span class="o_text_overflow text-muted"
+                                                      t-if="record.service_type.value">
+                                                    <span class="fa fa-user mr-2" aria-label="Type"
+                                                          title="Type"></span>
+                                                    <t t-esc="record.service_type.value"/>
+                                                </span>
+                                                <div t-if="record.time_interval_start.raw_value or record.time_interval_end.raw_value"
+                                                     class="text-muted o_row">
+                                                    <span class="fa fa-clock-o mr-2" title="Start"></span>
+                                                    <field name="time_interval_start" widget="float_time"/>
+                                                    <i t-if="record.time_interval_end.raw_value"
+                                                       class="fa fa-long-arrow-right mx-2 oe_read_only"
+                                                       aria-label="Arrow icon" title="Arrow"/>
+                                                    <field name="time_interval_end" widget="float_time"/>
+                                                </div>
+                                                <div t-if="record.access_group_id.value"
+                                                     class="text-muted">
+                                                    <span class="fa fa-envelope-o mr-2" aria-label="Group"
+                                                          title="Group"></span>
+                                                    <t t-esc="record.access_group_id.value"/>
+                                                </div>
+                                                <!--                                                <div t-if="record.rating_active.raw_value" class="text-muted"-->
+                                                <!--                                                     title="Percentage of happy ratings over the past 30 days."-->
+                                                <!--                                                     groups="project.group_project_rating">-->
+                                                <!--                                                    <b>-->
+                                                <!--                                                        <t t-if="record.rating_percentage_satisfaction.value != -1">-->
+                                                <!--                                                            <i class="fa fa-smile-o" role="img"-->
+                                                <!--                                                               aria-label="Percentage of satisfaction"-->
+                                                <!--                                                               title="Percentage of satisfaction"/>-->
+                                                <!--                                                            <t t-esc="record.rating_percentage_satisfaction.value"/>%-->
+                                                <!--                                                        </t>-->
+                                                <!--                                                    </b>-->
+                                                <!--                                                </div>-->
+                                                <field name="tag_ids" widget="many2many_tags"
+                                                       options="{'color_field': 'color'}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="container o_kanban_card_manage_pane dropdown-menu" role="menu"
+                                         groups="base.group_user">
+                                        <div class="row">
+                                            <div class="col-6 o_kanban_card_manage_section o_kanban_manage_view">
+                                                <div role="menuitem" class="o_kanban_card_manage_title">
+                                                    <span>Tasks</span>
+                                                </div>
+                                                <div role="menuitem">
+                                                    <a name="action_new_sale" type="object">Sale Service</a>
+                                                </div>
+                                                <!--                                                <div role="menuitem" t-if="record.doc_count.raw_value">-->
+                                                <!--                                                    <a name="attachment_tree_view" type="object">Documents</a>-->
+                                                <!--                                                </div>-->
+                                            </div>
+                                            <div class="col-6 o_kanban_card_manage_section o_kanban_manage_reporting"
+                                                 groups="rfid_service_base.group_card_manager">
+                                                <div role="menuitem" class="o_kanban_card_manage_title">
+                                                    <span>Reporting</span>
+                                                </div>
+                                                <div role="menuitem">
+                                                    <a name="action_view_sales" type="object">Sales history</a>
+                                                </div>
+                                                <!--                                                <div role="menuitem">-->
+                                                <!--                                                    <a name="(action_project_task_burndown_chart_report)d"-->
+                                                <!--                                                       type="action">Burndown Chart-->
+                                                <!--                                                    </a>-->
+                                                <!--                                                </div>-->
+                                            </div>
+                                        </div>
+                                        <div class="o_kanban_card_manage_settings row"
+                                             groups="rfid_service_base.group_card_manager">
+                                            <div role="menuitem" aria-haspopup="true" class="col-8">
+                                                <ul class="oe_kanban_colorpicker" data-field="color" role="popup"/>
+                                            </div>
+                                            <div role="menuitem" class="col-4">
+                                                <!--                                                <a t-if="record.privacy_visibility.raw_value == 'portal'"-->
+                                                <!--                                                   class="dropdown-item" role="menuitem"-->
+                                                <!--                                                   name="(project.project_share_wizard_action)d" type="action">Share-->
+                                                <!--                                                </a>-->
+                                                <!-- [XBO] TODO: remove the name attribute in this a tag in master -->
+                                                <a t-if="widget.editable" role="menuitem" type="set_cover" class="dropdown-item" data-field="displayed_image_id">Set Cover Image</a>
+                                                <a class="dropdown-item" role="menuitem" type="edit"
+                                                   name="action_view_kanban_project"
+                                                   groups="rfid_service_base.group_card_manager">Edit
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a class="o_kanban_manage_toggle_button o_dropdown_kanban" href="#"
+                                       groups="base.group_user">
+                                        <i class="fa fa-ellipsis-v" role="img" aria-label="Manage" title="Manage"/>
+                                    </a>
+                                    <span>
+                                        <!--                                        <field name="is_favorite" widget="boolean_favorite" nolabel="1" force_save="1"/>-->
+                                    </span>
+                                </div>
+                                <div class="o_kanban_record_bottom mt-3">
+                                    <div class="oe_kanban_bottom_left">
+                                        <div class="o_project_kanban_boxes">
+                                            <a class="o_project_kanban_box" name="action_new_sale" type="object">
+                                                <div>
+                                                    <!--                                                    <span class="o_value">-->
+                                                    <!--                                                        <t t-esc="record.task_count.value"/>-->
+                                                    <!--                                                    </span>-->
+                                                    <span class="o_label">
+                                                        <!--                                                        <t t-esc="record.label_tasks.value"/>-->
+                                                        New sale
+                                                    </span>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <field name="activity_ids" widget="kanban_activity"
+                                               groups="rfid_service_base.group_card_manager"/>
+                                    </div>
+                                    <!--                                    <div class="oe_kanban_bottom_right">-->
+                                    <!--                                        <span t-att-class="'o_status_bubble mx-0 o_color_bubble_' + record.last_update_color.value"-->
+                                    <!--                                              t-att-title="record.last_update_status.value"></span>-->
+                                    <!--                                        <field name="user_id" widget="many2one_avatar_user"-->
+                                    <!--                                               t-if="record.user_id.raw_value"/>-->
+                                    <!--                                    </div>-->
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="services_form" model="ir.ui.view">
+            <field name="name">RFID Services</field>
+            <field name="model">rfid.service</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <sheet>
+                        <field name="active" invisible="1"/>
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                                attrs="{'invisible': [('active', '=', True)]}"/>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h2>
+                                <div>
+                                    <field name="name" placeholder="Friendly name of the domain" class="oe_inline"/>
+                                    <span class="oe_inline oe_read_only">-</span>
+                                    <field name="service_type" class="oe_inline"/>
+                                </div>
+                            </h2>
+                        </div>
+                        <group>
+                            <group string="Time based" attrs="{'invisible': [('service_type', '=', 'count')]}">
+                                <label for="time_interval_number"/>
+                                <div>
+                                    <field name="time_interval_number" class="oe_inline"/>
+                                    <span class="oe_inline oe_read_only"></span>
+                                    <field name="time_interval_type" class="oe_inline"/>
+                                </div>
+                                <label for="time_interval_start" string="Start and End time"/>
+                                <div>
+                                    <field name="time_interval_start" widget="float_time" class="oe_inline"/>
+                                    <span class="oe_inline oe_read_only">-</span>
+                                    <field name="time_interval_end" widget="float_time" class="oe_inline"/>
+                                </div>
+                            </group>
+                            <group string="Visit based" attrs="{'invisible':[('service_type', '=', 'time')]}">
+                                <field name="visits"/>
+                            </group>
+                            <group>
+                                <field name="generate_barcode_card" widget="generate_barcode_card"/>
+                                <field name="parent_id"/>
+                                <field name="card_type" options='{"no_open": True, "no_create": True}'/>
+                                <field name="fixed_time" />
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Settings">
+                                <group>
+                                    <group string="Default Access Rights">
+                                        <field name="access_group_id"/>
+                                    </group>
+                                    <group string="Related company" groups="base.group_multi_company">
+                                        <field name="company_id" groups="base.group_multi_company"/>
+                                    </group>
+                                    <group>
+                                        <field name="tag_ids" widget="many2many_tags"
+                                               options="{'color_field': 'color'}"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids" options="{'post_refresh': 'recipients'}"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="services_tree" model="ir.ui.view">
+            <field name="name">RFID Services List</field>
+            <field name="model">rfid.service</field>
+            <field name="arch" type="xml">
+                <tree string="RFID Services List" decoration-success="active==True" decoration-danger="active!=True">
+                    <field name="active" invisible="1"/>
+                    <field name="name"/>
+                    <field name="service_type"/>
+                </tree>
+            </field>
+        </record>
+
+    </data>
+</odoo>

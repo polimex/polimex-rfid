@@ -8,26 +8,36 @@
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//div[@name='button_box']" position="inside">
-                     <button name="button_partner_events"
-                             type="object"
-                             attrs="{'invisible':[('partner_event_count', '=', 0)]}"
-                             class="oe_stat_button oe_read_only" icon="fa-list-alt">
+                    <button name="action_send_badge_email"
+                            type="object"
+                            string="Send Barcode Badge"
+                            groups="hr_rfid.hr_rfid_group_officer"
+                            attrs="{'invisible':['|', ('hr_rfid_card_ids', '=', []), '|', ('is_company','=',True), ('is_employee', '=', True)]}"
+                            class="oe_stat_button oe_read_only" icon="fa-envelope-o">
+                    </button>
+<!--                    <field name="hr_rfid_event_ids" invisible="1"/>-->
+                    <button name="button_partner_events"
+                            type="object"
+                            groups="hr_rfid.hr_rfid_group_officer"
+                            attrs="{'invisible':[('partner_event_count', '=', '0')]}"
+                            class="oe_stat_button oe_read_only" icon="fa-list-alt">
                         <field name="partner_event_count" widget="statinfo" string="Events"/>
                     </button>
-                     <button name="button_doors_list" title="Accessible doors"
-                             type="object" class="oe_stat_button oe_read_only" icon="fa-list-alt"
-                             groups="hr_rfid.hr_rfid_view_rfid_data"
-                             attrs="{'invisible':[('partner_doors_count', '=', 0)]}">
+<!--                    <field name="hr_rfid_access_group_ids" invisible="1"/>-->
+                    <button name="button_doors_list" title="Accessible doors"
+                            type="object" class="oe_stat_button oe_read_only" icon="fa-list-alt"
+                            groups="hr_rfid.hr_rfid_group_officer"
+                            attrs="{'invisible':[('partner_doors_count', '=', '0')]}">
                         <field name="partner_doors_count" widget="statinfo" string="Doors"/>
                     </button>
                 </xpath>
                 <notebook position="inside">
                     <field name="is_employee" invisible="1"/>
                     <page string="RFID Info"
-                          groups="hr_rfid.hr_rfid_view_rfid_data"
+                          groups="hr_rfid.hr_rfid_group_officer"
                           attrs="{'invisible':['|',('is_company','=',True), ('is_employee', '=', True)]}">
                         <group string="Settings" groups="hr_rfid.hr_rfid_view_rfid_pin_code_data">
-                            <field name="hr_rfid_pin_code" />
+                            <field name="hr_rfid_pin_code"/>
                         </group>
                         <notebook>
                             <page string="Cards">
@@ -41,13 +51,23 @@
                                         <field name="cloud_card"/>
                                     </tree>
                                 </field>
+                                <label for="hr_rfid_card_ids" string="New Barcode card" />
+                                <div class="o_row">
+                                    <button string="Generate" class="btn btn-link" type="object"
+                                            name="generate_random_barcode_card"/>
+                                </div>
+
                             </page>
 
                             <page string="Access Groups">
                                 <field name="hr_rfid_access_group_ids" widget="one2many_list">
                                     <tree editable="bottom">
                                         <field name="access_group_id"/>
+                                        <field name="activate_on"/>
                                         <field name="expiration"/>
+                                        <field name="visits_counting"/>
+                                        <field name="permitted_visits"/>
+                                        <field name="visits_counter" readonly="1"/>
                                     </tree>
                                 </field>
                             </page>
@@ -57,13 +77,13 @@
             </field>
         </record>
 
-         <record id="view_res_partner_filter_inherit" model="ir.ui.view">
+        <record id="view_res_partner_filter_inherit" model="ir.ui.view">
             <field name="name">res.partner.select.inherit</field>
             <field name="inherit_id" ref="base.view_res_partner_filter"/>
             <field name="model">res.partner</field>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="before">
-                   <field name="hr_rfid_card_ids" filter_domain="[('hr_rfid_card_ids.number', 'ilike', self)]"/>
+                    <field name="hr_rfid_card_ids" filter_domain="[('hr_rfid_card_ids.number', 'ilike', self)]"/>
                 </xpath>
             </field>
         </record>

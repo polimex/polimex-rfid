@@ -17,6 +17,8 @@ class RFIDAppCase(common.TransactionCase):
     def setUp(self):
         super(RFIDAppCase, self).setUp()
         self.env.ref('hr_rfid.hr_rfid_read_ctrl_status_cron').active = False
+        self.env.ref('hr_rfid.hr_rfid_sync_ctrl_clock_cron').active = False
+        self.env.ref('hr_rfid.hr_rfid_set_card_active_inactive_status').active = False
         self.env.user.tz = 'Europe/Sofia'
         # Create an mobile app
         self.app_url = "/hr/rfid/event"
@@ -100,23 +102,6 @@ class RFIDAppCase(common.TransactionCase):
             'contact_id': self.test_partner.id,
             'company_id': self.test_company_id,
         })
-
-        self.c_50 = None
-        self.c_110 = None
-        self.c_115 = None
-        self.c_Relay = None
-        self.c_130 = None
-        self.c_180 = None
-        self.c_turnstile = None
-        self.c_vending = None
-        self.c_temperature = None
-        self.default_F0 = {
-            6:  '0006000400000704000000030000030201050208000200010502060003000506',  # iCON110
-            9:  '0009050006030704010000090000080201050208000101050807000008010900',  # Turnstile
-            11: '0101000202000704000000050000040201050208010200090702070003000506',  # iCON115
-            12: '0102000000010703090000010000030100000208000100010502060003000506',  # iCON50
-            17: '0107000601000703090000090000080401050208000401050807000008010900',  # iCON130
-        }
         self.heartbeat = 1
         self.id_num = 1
 
@@ -127,6 +112,13 @@ class RFIDAppCase(common.TransactionCase):
     def _get_heartbeat(self):
         self.heartbeat += 1
         return self.heartbeat - 1
+
+    def _check_no_commands(self, module_id=None):
+        # Check for not processed responses
+        module_id = module_id or self.test_webstack_10_3_id
+        response = self._hearbeat(module_id)
+        self.assertEqual(response, {}, 'Check no commands in queue')
+
 
     def _make_F0(self, hw_version=None, serial_number=None, sw_version=None, mode=None, inputs=None, outputs=None,
                  readers=None, time_schedules=None, io_table_lines=None, alarm_lines=None, max_cards_count=None,
@@ -282,13 +274,15 @@ class RFIDAppCase(common.TransactionCase):
             self.env['hr.rfid.command'].search_count([('controller_id', '=', ctrl.id), ('status', '=', 'Wait')]) == 0,
             'Command exists for execution. Not expecting command!!! (%s)' % ctrl.name)
 
-    def _check_cmd_add_card(self, ctrl):
-        cmd = self.env['hr.rfid.command'].search([('controller_id', '=', ctrl.id), ('status', '=', 'Wait')], limit=1)
-        self.assertTrue(len(cmd) == 1, 'No command. Expecting Add card command (%s)' % ctrl.name)
+    def _check_cmd_add_card(self, ctrl, count=None, rights=None):
+        cmd = self.env['hr.rfid.command'].search([('controller_id', '=', ctrl.id), ('status', '=', 'Wait')], limit=count or 1)
+        self.assertTrue(len(cmd) == (count or 1), 'No command. Expecting Add card command (%s)' % ctrl.name)
         if ctrl.is_relay_ctrl():
             operation = cmd.cmd == 'D1' and cmd.rights_data > 0 and cmd.rights_mask > 0
         else:
-            operation = cmd.cmd == 'D1' and cmd.rights_data > 0 and cmd.rights_mask > 0
+            operation = all([c.cmd == 'D1' for c in cmd]) and \
+                        all([(c.rights_data == rights) if rights else (c.rights_data > 0) for c in cmd]) and \
+                        all([(c.rights_mask == rights) if rights else (c.rights_mask > 0) for c in cmd])
         self.assertTrue(operation,
                         'Command exists for add card, but something is wrong with command parameters(%s)' % ctrl.name)
         return cmd
@@ -304,14 +298,14 @@ class RFIDAppCase(common.TransactionCase):
                         'Command exists for delete card, but something is wrong with command parameters (%s)' % ctrl.name)
         return cmd
 
-    def _check_cmd_add_card_and_remove(self, ctrl):
-        self._check_cmd_add_card(ctrl).unlink()
+    def _check_cmd_add_card_and_remove(self, ctrl, count=None, rights=None):
+        self._check_cmd_add_card(ctrl, count, rights).unlink()
 
     def _check_cmd_delete_card_and_remove(self, ctrl):
         self._check_cmd_delete_card(ctrl).unlink()
 
     def _clear_ctrl_cmd(self, ctrl):
-        cmd_ids = self.env['hr.rfid.command'].search([('controller_id', '=', ctrl.id), ('status', '=', 'Wait')])
+        cmd_ids = self.env['hr.rfid.command'].search([('controller_id', '=', ctrl.id), ('status', 'in', ['Wait','Process'])])
         self.assertTrue(cmd_ids, 'No commands for delete. Expecting to delete something (%s)' % ctrl.name)
         cmd_ids.unlink()
 
@@ -461,13 +455,17 @@ class RFIDAppCase(common.TransactionCase):
         return [self._make_event(ctrl, reader=d.reader_ids[0].number, event_code=21) for d in ctrl.door_ids]
 
     def _test_Door_Overtime(self, ctrl):
-        return [self._make_event(ctrl, reader=d.reader_ids[0].number, event_code=25) for d in ctrl.door_ids]
+        res = [self._make_event(ctrl, reader=d.reader_ids[0].number, event_code=25) for d in ctrl.door_ids]
+        self._clear_ctrl_cmd(ctrl)
+        return res
 
     def _test_Force_Door_Open(self, ctrl):
         return [self._make_event(ctrl, reader=d.reader_ids[0].number, event_code=26) for d in ctrl.door_ids]
 
     def _test_Power_On(self, ctrl):
-        return self._make_event(ctrl, event_code=30)
+        res = self._make_event(ctrl, event_code=30)
+        self._clear_ctrl_cmd(ctrl)  # Ignore new time sync
+        return res
 
     # ('20', True, 'Siren ON/OFF'),
     # ('27', False, 'DELAY ZONE ON (if out) Z4,Z3,Z2,Z1'),
@@ -504,8 +502,8 @@ class RFIDAppCase(common.TransactionCase):
         # F0 Mode 1: 0006000400000704000000030000030201050208002100010502060003000506
         #             '0006000400000704000000030000030201050208000200010502060003000506'
         #             '0006000400000704000000030000030201050208002100010502060003000506'
-        '0107000601000703090000090000080401050208000401050807000008010900'
-        '0107000601000703090000090000080401050208000201050807000008010900'
+        #'0107000601000703090000090000080401050208000401050807000008010900'
+        #'0107000601000703090000090000080401050208000201050807000008010900'
         original_F0 = self.default_F0[int(ctrl.hw_version)]
         new_F0 = original_F0[:42] + mode + original_F0[44:]
 

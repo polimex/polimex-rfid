@@ -115,8 +115,19 @@ class WebRfidController(http.Controller):
         # ==============EVENTS Parser======================================================
         # Durres OK, Durres Error
         if event_action in [1, 2]:
-            # raise Exception('Not Implemented')
-            _logger.error('Not Implemented event 1 or 2 (Duress mode)')
+            sys_event_dict = {
+                'door_id': door and door.id or False,
+                'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
+                'event_action': str(event_action),
+                'input_js': card_num,
+            }
+
+            event = controller_id.report_sys_ev(
+                description=_('Duress mode'),
+                post_data=post_data,
+                sys_ev_dict=sys_event_dict
+            )
+            # _logger.error('Not Implemented event 1 or 2 (Duress mode)')
             return webstack.check_for_unsent_cmd(200)
         # Card Events
         elif event_action in range(3, 19):
@@ -148,6 +159,11 @@ class WebRfidController(http.Controller):
 
                 card_id.get_owner(event_dict)
                 event = ev_env.create(event_dict)
+                if event.event_action == '1' and event.contact_id:
+                    ag_rel = event.contact_id.hr_rfid_access_group_ids.filtered(
+                        lambda agr: event.door_id in agr.access_group_id.door_ids.mapped('door_id'))
+                    if ag_rel and ag_rel.visits_counting:
+                        ag_rel.visits += 1
             elif is_card_event and not card_id:  # Card event with unknown card
                 sys_event_dict = {
                     'door_id': door and door.id or False,
@@ -431,7 +447,8 @@ class WebRfidController(http.Controller):
                 flag = True
                 if len(ret) > 0:
                     if card_id.get_owner()._name == 'hr.employee':
-                        flag = 0 == len(ret.access_group_id._calc_last_user_event_in_ag(employee_id=card_id.get_owner()))
+                        flag = 0 == len(
+                            ret.access_group_id._calc_last_user_event_in_ag(employee_id=card_id.get_owner()))
                     else:
                         flag = 0 == len(ret.access_group_id._calc_last_user_event_in_ag(partner_id=card_id.get_owner()))
 
@@ -457,9 +474,9 @@ class WebRfidController(http.Controller):
         }
         if controller.is_relay_ctrl():
             data = 0
-            user_doors = card.get_owner().get_doors()
-            for door in reader.door_ids:
-                if door in user_doors:
+            if open_door == 3:
+                user_doors = card.get_owner().get_doors()
+                for door in reader.door_ids.filtered(lambda d: d in user_doors):
                     data |= 1 << (door.number - 1)
             cmd['cmd_data'] = '4000' + controller.convert_int_to_cmd_data_for_output_control(data)
         else:

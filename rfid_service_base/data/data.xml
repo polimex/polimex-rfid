@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.sequence" id="seq_base_service_reservation">
+            <field name="name">RFID Base Service</field>
+            <field name="code">base.rfid.service</field>
+            <field name="prefix">RFID%(y)s</field>
+            <field name="padding">6</field>
+        </record>
+
+    </data>
+</odoo>

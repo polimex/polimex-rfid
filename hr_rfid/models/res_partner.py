@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, exceptions, http, _
+import re
+from datetime import datetime
 
 
 class ResPartner(models.Model):
-    _inherit = 'res.partner'
+    _inherit = ['res.partner']
+
+    company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
 
     hr_rfid_pin_code = fields.Char(
         string='Contact pin code',
@@ -19,6 +23,8 @@ class ResPartner(models.Model):
         string='Access Group',
         help='Which access group the contact is a part of',
         tracking=True,
+        groups="hr_rfid.hr_rfid_group_officer"
+
     )
 
     hr_rfid_card_ids = fields.One2many(
@@ -26,6 +32,8 @@ class ResPartner(models.Model):
         'contact_id',
         string='RFID Card',
         help='Cards owned by the contact',
+        groups="hr_rfid.hr_rfid_group_officer"
+
     )
 
     hr_rfid_event_ids = fields.One2many(
@@ -33,12 +41,20 @@ class ResPartner(models.Model):
         'contact_id',
         string='RFID Events',
         help='Events concerning this contact',
+        groups="hr_rfid.hr_rfid_group_officer"
+
     )
 
     is_employee = fields.Boolean(compute='_compute_is_employee')
 
-    partner_event_count = fields.Char(compute='_compute_partner_event_count')
-    partner_doors_count = fields.Char(compute='_compute_partner_event_count')
+    partner_event_count = fields.Char(
+        compute='_compute_partner_event_count',
+        groups="hr_rfid.hr_rfid_group_officer"
+    )
+    partner_doors_count = fields.Char(
+        compute='_compute_partner_event_count',
+        groups="hr_rfid.hr_rfid_group_officer"
+    )
 
     def _compute_partner_event_count(self):
         for e in self:
@@ -138,8 +154,7 @@ class ResPartner(models.Model):
         for user in self:
             user.check_for_ts_inconsistencies()
 
-            doors = user.hr_rfid_access_group_ids.mapped('access_group_id'). \
-                mapped('all_door_ids').mapped('door_id')
+            doors = user.hr_rfid_access_group_ids.mapped('access_group_id').mapped('all_door_ids').mapped('door_id')
             relay_doors = dict()
             for door in doors:
                 ctrl = door.controller_id
@@ -201,6 +216,16 @@ class ResPartner(models.Model):
                 session = session_storage.get(sid)
                 if session['uid'] == user.id:
                     session_storage.delete(session)
+
+    def generate_random_barcode_card(self):
+        self.ensure_one()
+        new_card_hex, card_number = self.env['hr.rfid.card'].create_bc_card()
+        self.write({
+            'hr_rfid_card_ids': [(0, 0, {
+                'number': card_number,
+                'card_type': self.env.ref('hr_rfid.hr_rfid_card_type_barcode').id
+            })]
+        })
 
     @api.model
     def generate_partner(self, name, parent_id=None, card_number: str = None, unlink_card_if_exsist=True,
@@ -295,3 +320,128 @@ class ResPartner(models.Model):
                         'activate_on': activate_on or fields.Datetime.now(),
                         'deactivate_on': expire_on or None,
                     })]})
+
+    def action_send_badge_email(self):
+        """ Open a window to compose an email, with the template - 'card_badge'
+            message loaded by default
+        """
+        self.ensure_one()
+        template = self.env.ref('hr_rfid.card_barcode_mail_template_badge', raise_if_not_found=False)
+        compose_form = self.env.ref('mail.email_compose_message_wizard_form')
+        ctx = dict(
+            default_model='res.partner',
+            default_res_id=self.id,
+            default_partner_ids=self.mapped('id'),
+            default_use_template=bool(template),
+            # default_template_id=template and template.id,
+            default_composition_mode='comment',
+            custom_layout="mail.mail_notification_light",
+        )
+        return {
+            'name': _('Send Barcode card - Compose Email'),
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'mail.compose.message',
+            'views': [(compose_form.id, 'form')],
+            'view_id': compose_form.id,
+            'target': 'new',
+            'context': ctx,
+        }
+
+    @api.model
+    def decode_mrz(self, mrz_string):
+        """
+            This function receives a string containing the Machine Readable Zone (MRZ) data of a personal document,
+            decodes the MRZ data and returns it as a dictionary.
+            The function also performs basic validation on the input MRZ string and the extracted data.
+            :param mrz_string: string, the MRZ data of the personal document.
+            :return: dictionary, the decoded MRZ data.
+            :raises ValueError: if the input MRZ string is invalid.
+        """
+        def validate_check_digits(mrz_data):
+            # Code to validate the check digits using the MRZ data goes here
+            # You can use any algorithm or library to perform the validation
+            return True
+
+        pattern = "^[A-Z<]{2}[A-Z0-9<]{44}[0-9]{2}[A-Z<]{3}[0-9]{6}[0-9]{6}[0-9]{1}[A-Z<]{1}[0-9]{7}[A-Z0-9<]{14}[A-Z0-9< ]{30}$"
+        if not re.match(pattern, mrz_string):
+            raise ValueError("Invalid MRZ format string")
+        mrz_lines = mrz_string.strip().split('\n')
+        if len(mrz_lines) < 2:
+            raise ValueError("Invalid MRZ string no 2 lines")
+        if len(mrz_lines) > 3:
+            raise ValueError("Invalid MRZ string more than 3 lines")
+        if len(mrz_lines) == 2:
+            mrz_lines.append(" " * 36)
+
+        # Extract information from MRZ
+        document_type = mrz_lines[0][0]
+        country_code = mrz_lines[0][2:5]
+        last_name = mrz_lines[0][5:44].replace('<', ' ')
+        first_name = mrz_lines[1][0:30].replace('<', ' ')
+        document_number = mrz_lines[1][30:44]
+        dob = mrz_lines[1][44:52]
+        expiry_date = mrz_lines[1][52:60]
+        check_digit1 = mrz_lines[1][60]
+        check_digit2 = mrz_lines[1][61]
+        nationality= mrz_lines[1][62:65]
+        gender = mrz_lines[1][65]
+        personal_id_number = mrz_lines[1][66:73]
+        check_digit3 = mrz_lines[1][73]
+        issuing_authority = mrz_lines[1][74:90]
+        place_of_birth = mrz_lines[2][0:30]
+        optional_data = mrz_lines[2][30:36]
+
+        # Create a dictionary with the extracted information
+        # Validate the date format
+        try:
+            mrz_data = {
+                "document_type": document_type,
+                "country_code": country_code,
+                "last_name": last_name,
+                "first_name": first_name,
+                "document_number": document_number,
+                "dob": datetime.strptime(dob, '%y%m%d'),
+                "expiry_date": datetime.strptime(expiry_date, '%y%m%d'),
+                "check_digit1": check_digit1,
+                "check_digit2": check_digit2,
+                "nationality": nationality,
+                "gender": gender,
+                "personal_id_number": personal_id_number,
+                "check_digit3": check_digit3,
+                "issuing_authority": issuing_authority,
+                "place_of_birth": place_of_birth,
+                "optional_data": optional_data
+            }
+        except ValueError:
+            raise ValueError("Invalid MRZ date format")
+
+        # Check the date of birth and expiry date are not expired
+        if datetime.now() > mrz_data["expiry_date"]:
+            raise ValueError("Expiry date has passed")
+
+        # Check the date of birth is not in the future
+        if datetime.now() < mrz_data["dob"]:
+            raise ValueError("Date of birth is in the future")
+
+        # Check the country code is valid
+        if not country_code.isalpha() or len(country_code) != 3:
+            raise ValueError("Invalid country code")
+
+        # Check the nationality is valid
+        if not nationality.isalpha() or len(nationality) != 3:
+            raise ValueError("Invalid nationality code")
+
+        # Check the gender is valid
+        if gender not in ["M", "F"]:
+            raise ValueError("Invalid gender")
+
+        # Check the document number is valid
+        if not document_number.isalnum():
+            raise ValueError("Invalid document number")
+
+        # Check the check digits
+        if not validate_check_digits(mrz_data):
+            raise ValueError("Invalid check digits")
+
+        return mrz_data

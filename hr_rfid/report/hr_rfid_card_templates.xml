@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- BARCODE CARD FOLDABLE BADGE -->
+
+    <template id="card_barcode_report_template_foldable_badge">
+        <div class="o_card_barcode_foldable_badge_container">
+            <div class="row">
+                <!-- Front -->
+                <div class="page p-1 col-6 o_card_barcode_foldable_badge_top">
+                    <div class="oe_structure"/>
+<!--                    <span class="o_card_barcode_foldable_badge_top_bottom_text">-->
+<!--                        Polimex Access Control System-->
+<!--                    </span>-->
+                </div>
+                <!-- Back -->
+                <div class="page col-6 o_card_barcode_foldable_badge_top o_card_barcode_foldable_badge pt-4">
+                    <div class="oe_structure"/>
+                    <div class="o_card_barcode_foldable_badge_ticket_wrapper p-2">
+                        <div class="o_card_barcode_foldable_badge_ticket_wrapper_top page">
+                            <h5 t-if="card.card_reference"
+                                class="o_card_barcode_foldable__foldable_badge_event_name font-weight-bold text-center"
+                                t-field="card.card_reference"/>
+                            <h5 t-else=""
+                                class="o_card_barcode_foldable__foldable_badge_event_name font-weight-bold text-center">
+                                Access Control Badge
+                            </h5>
+                            <div class="text-center o_card_barcode_foldable_badge_font_small">
+                                <span itemprop="startDate" t-esc="card.activate_on.date()"
+                                      class="font-weight-bold"/>
+                                <span itemprop="startDateTime" t-esc="card.activate_on"
+                                      class="font-weight-bold"
+                                      t-options='{"widget": "datetime", "time_only": True, "hide_seconds": True}'/>
+                                <span class="fa fa-arrow-right o_card_barcode_foldable_badge_font_faded"/>
+                                <span t-if="card.deactivate_on"
+                                      itemprop="endDate" t-esc="card.deactivate_on.date()"
+                                      class="font-weight-bold"/>
+                                <span t-else="">Unlimited</span>
+                                <span itemprop="endDateTime" t-esc="card.deactivate_on"
+                                      class="font-weight-bold"
+                                      t-options='{"widget": "datetime", "time_only": True, "hide_seconds": True}'/>
+                                <br/>
+                                <img t-if="partner.image_1920" t-att-src="image_data_uri(partner.avatar_1920)"
+                                     style="max-height:85pt;max-width:90%" alt="Image"/>
+                            </div>
+                            <div t-if="partner"
+                                 class="o_card_barcode_foldable_badge_font_faded o_card_barcode_foldable_badge_font_small text-center">
+                            </div>
+                            <div class="text-center mt-5 pt-2">
+                                <h2 t-field="partner.name"/>
+                                <img alt="barcode"
+                                     t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('QR', card.barcode_number, 150, 150)"
+                                     style="width:150px;height:150px"/>
+                            </div>
+                        </div>
+                        <div class="o_card_barcode_foldable_badge_barcode mt-2">
+                            <div class="o_card_barcode_foldable_badge_barcode_container text-center">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Inner left -->
+                <div class="page o_card_barcode_foldable_badge_bottom o_card_barcode_foldable_badge_left p-1 px-2 col-6 overflow-hidden">
+                    <div class="oe_structure"/>
+                    <div class="p-4">
+                        Instruction for use this barcode
+                    </div>
+
+                </div>
+                <!-- Inner right -->
+                <div class="page o_card_barcode_foldable_badge_bottom o_card_barcode_foldable_badge_right col-6 text-center">
+                    <div class="oe_structure"/>
+                    <div class="h-50 col-12 row m-0">
+                        <div class="col-6 h-100 p-0">
+                            <div class="o_card_barcode_foldable_badge_step font-weight-bold">1</div>
+                            <img src="/hr_rfid/static/src/img/how_to_fold_1.png" class="w-100 h-100"
+                                 alt="How to Fold (1)"/>
+                        </div>
+                        <div class="col-6 h-100 p-0">
+                            <div class="o_card_barcode_foldable_badge_step font-weight-bold">2</div>
+                            <img src="/hr_rfid/static/src/img/how_to_fold_2.png" class="w-100 h-100"
+                                 alt="How to Fold (2)"/>
+                        </div>
+                    </div>
+                    <div class="h-50 col-12 row m-0">
+                        <div class="col-6 h-100 p-0">
+                            <div class="o_card_barcode_foldable_badge_step font-weight-bold">3</div>
+                            <img src="/hr_rfid/static/src/img/how_to_fold_3.png" class="w-100 h-100"
+                                 alt="How to Fold (3)"/>
+                        </div>
+                        <div class="col-6 h-100 p-0">
+                            <div class="o_card_barcode_foldable_badge_step font-weight-bold">4</div>
+                            <img src="/hr_rfid/static/src/img/how_to_fold_4.png" class="w-100 h-100"
+                                 alt="How to Fold (4)"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="hr_rfid_card_report_template_foldable_badge">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="card">
+                <t t-set="partner" t-if="card.contact_id" t-value="card.contact_id"/>
+                <t t-set="partner" t-if="card.employee_id" t-value="card.employee_id"/>
+                <t t-call="hr_rfid.card_barcode_report_template_foldable_badge"/>
+            </t>
+        </t>
+    </template>
+
+    <template id="res_partner_report_template_foldable_badge">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="partner">
+                <t t-foreach="partner.hr_rfid_card_ids" t-as="card">
+                    <t t-if="card.is_barcode" t-call="hr_rfid.card_barcode_report_template_foldable_badge"/>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="hr_employee_report_template_foldable_badge">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="partner">
+                <t t-foreach="partner.hr_rfid_card_ids" t-as="card">
+                    <t t-if="card.is_barcode" t-call="hr_rfid.card_barcode_report_template_foldable_badge"/>
+                </t>
+            </t>
+        </t>
+    </template>
+
+
+    <!-- MISC -->
+
+    <template id="card_barcode_report_template_formatted_address">
+        <!-- Small utility template to display "Venue" as:
+        fa-map-marker PartnerName
+        RestOfAddress -->
+        <span class="fa fa-map-marker"/>
+        <t t-if="partner.contact_address.strip()">
+            <t t-set="address_bits" t-value="partner.contact_address.split('\n')"/>
+            <t t-if="address_bits">
+                <t t-set="partner_name" t-value="address_bits[0]"/>
+                <span t-esc="partner_name"/>
+            </t>
+            <t t-if="len(address_bits) > 1">
+                <br/>
+            </t>
+            <t t-set="remaining_bits" t-value="address_bits[1:]"/>
+            <t t-foreach="remaining_bits" t-as="address_bit">
+                <t t-if="address_bit and address_bit.strip()">
+                    <span t-esc="address_bit"/>
+                </t>
+            </t>
+        </t>
+        <t t-else="" t-esc="partner.name"/>
+    </template>
+
+</odoo>

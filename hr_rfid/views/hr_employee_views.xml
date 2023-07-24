@@ -8,15 +8,16 @@
             <field name="inherit_id" ref="hr.view_employee_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//div[@name='button_box']" position="inside">
-                     <button name="button_employee_events"
+                    <button name="button_employee_events"
                             type="object" attrs="{'invisible':[('employee_event_count', '=', '0')]}"
                             groups="hr_rfid.hr_rfid_group_officer"
                             class="oe_stat_button" icon="fa-list-alt">
                         <field name="employee_event_count" widget="statinfo" string="Events"/>
                     </button>
-                     <button name="button_doors_list" title="Accessible doors"
-                             type="object" class="oe_stat_button" icon="fa-list-alt"
-                             groups="hr_rfid.hr_rfid_view_rfid_data"  attrs="{'invisible':[('employee_doors_count', '=', '0')]}">
+                    <button name="button_doors_list" title="Accessible doors"
+                            type="object" class="oe_stat_button" icon="fa-list-alt"
+                            groups="hr_rfid.hr_rfid_group_officer"
+                            attrs="{'invisible':[('employee_doors_count', '=', '0')]}">
                         <field name="employee_doors_count" widget="statinfo" string="Doors"/>
                     </button>
                 </xpath>
@@ -42,6 +43,12 @@
                                         <field name="cloud_card"/>
                                     </tree>
                                 </field>
+                                <label for="hr_rfid_card_ids" string="New Barcode card"/>
+                                <div class="o_row">
+                                    <button string="Generate" class="btn btn-link" type="object"
+                                            name="generate_random_barcode_card"/>
+                                </div>
+
                             </page>
 
                             <page string="Access Groups">
@@ -49,6 +56,7 @@
                                     <tree editable="bottom">
                                         <field name="access_group_id"
                                                domain="[('department_ids','in',[parent.department_id])]"/>
+                                        <field name="activate_on"/>
                                         <field name="expiration"/>
                                     </tree>
                                 </field>
@@ -58,17 +66,5 @@
                 </notebook>
             </field>
         </record>
-
-
-        <record model="ir.actions.server" id="action_clear_employees">
-            <field name="name">Clear Employees</field>
-            <field name="model_id" ref="hr_rfid.model_hr_rfid_zone"/>
-            <field name="type">ir.actions.server</field>
-            <field name="state">code</field>
-            <field name="code">record.clear_employees()</field>
-            <field name="binding_model_id" ref="hr_rfid.model_hr_rfid_zone"/>
-            <field name="binding_view_types">form</field>
-        </record>
-
     </data>
 </odoo>

@@ -161,7 +161,7 @@ class RfidPmsBaseCardEncodeWiz(models.TransientModel):
             'validity_to': int(self.checkout_date.timestamp()),
             'validity_from': int(self.checkin_date.timestamp()),
         }
-        card_number = ('0000000000' + self.card_number)[-10:]
+        card_number = self.card_number.zfill(10)
 
         _logger.debug('Data for encode:\n{data}'.format(data=data))
 

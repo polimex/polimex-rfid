@@ -16,7 +16,8 @@ class HrEmployee(models.Model):
 
     attendance_extra_ids = fields.One2many(
         comodel_name='hr.attendance.extra',
-        inverse_name='employee_id'
+        inverse_name='employee_id',
+        groups='hr_attendance.group_hr_attendance_user'
     )
 
     @api.model

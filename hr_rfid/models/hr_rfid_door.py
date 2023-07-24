@@ -306,7 +306,7 @@ class HrRfidDoor(models.Model):
         elif isinstance(event, HrRfidSystemEvent):
             pass
 
-    def get_potential_cards(self, access_groups=None):
+    def get_cards(self, access_groups=None, all=True):
         """
         Returns a list of tuples (card, time_schedule) for which the card potentially has access to this door
         """
@@ -317,6 +317,9 @@ class HrRfidDoor(models.Model):
                 ('id', 'in', self.access_group_ids.ids),
                 ('access_group_id', 'in', access_groups.ids),
             ])
+        # filter inactive relations
+        if not all:
+            acc_gr_rels = acc_gr_rels.filtered(lambda r: r.state)
         ret = []
         for rel in acc_gr_rels:
             ts_id = rel.time_schedule_id
@@ -608,7 +611,6 @@ class HrRfidDoorOpenCloseWiz(models.TransientModel):
             message=_('Doors successfully closed')
         )
 
-
 class HrRfidCardDoorRel(models.Model):
     _name = 'hr.rfid.card.door.rel'
     _description = 'Card and door relation model'
@@ -637,6 +639,8 @@ class HrRfidCardDoorRel(models.Model):
         default=False
     )
 
+    def _remove_cards(self, card_ids, door_ids):
+        self.search([('card_id', 'in', card_ids.mapped('id')), ('door_id', 'in', door_ids.mapped('id'))]).unlink()
     @api.model
     def update_card_rels(self, card_id: HrRfidCard, access_group: models.Model = None):
         """
@@ -657,7 +661,7 @@ class HrRfidCardDoorRel(models.Model):
         :param access_group: Which access groups to go through when searching for the cards. If None will
         go through all the access groups the door is in
         """
-        potential_cards = door_id.get_potential_cards(access_group)
+        potential_cards = door_id.get_cards(access_group)
         for card, ts, alarm_right in potential_cards:
             self.check_relevance_fast(card, door_id, ts, alarm_right)
 
@@ -686,7 +690,7 @@ class HrRfidCardDoorRel(models.Model):
 
         for door, ts, alarm_right in potential_doors:
             if door_id == door:
-                if ts_id is not None and ts_id != ts:
+                if ts_id != False and ts_id != ts:
                     raise exceptions.ValidationError(
                         'This should never happen. Please contact the developers. (%s != %s)' % (str(ts_id), str(ts))
                     )
@@ -696,7 +700,7 @@ class HrRfidCardDoorRel(models.Model):
         if found_door and self._check_compat_n_rdy(card_id, door_id):
             self.create_rel(card_id, door_id, ts_id, alarm_right)
         else:
-            self.remove_rel(card_id, door_id)
+            self._remove_cards(card_id, door_id)
 
     @api.model
     def check_relevance_fast(self, card_id: HrRfidCard, door_id: models.Model, ts_id: models.Model = None,
@@ -713,7 +717,7 @@ class HrRfidCardDoorRel(models.Model):
         if self._check_compat_n_rdy(card_id, door_id):
             self.create_rel(card_id, door_id, ts_id, alarm_right)
         else:
-            self.remove_rel(card_id, door_id)
+            self.search([('card_id', '=', card_id.id), ('door_id', '=', door_id.id)]).unlink()
 
     @api.model
     def create_rel(self, card_id: HrRfidCard, door_id: models.Model, ts_id: models.Model = None,
@@ -741,15 +745,6 @@ class HrRfidCardDoorRel(models.Model):
                 'time_schedule_id': ts_id.id,
                 'alarm_right': alarm_right,
             }])
-
-    @api.model
-    def remove_rel(self, card_id: models.Model, door_id: models.Model):
-        ret = self.search([
-            ('card_id', '=', card_id.id),
-            ('door_id', '=', door_id.id),
-        ])
-        if len(ret) > 0:
-            ret.unlink()
 
     def check_rel_relevance(self):
         for rel in self:

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <!-- Top menu item -->
+        <menuitem
+                name="RFID Services"
+                id="rfid_service_base.menu_root"
+                groups="rfid_service_base.group_card_user"
+                web_icon="rfid_service_base,static/description/icon.png"
+        />
+        <!-- menu categories -->
+        <menuitem name="Services" id="rfid_service_base.service_menu" parent="rfid_service_base.menu_root"
+                  sequence="1"
+                  action="hr_rfid_service_action"/>
+        <menuitem name="Service Sales" id="rfid_service_base.service_sale_menu" parent="rfid_service_base.menu_root"
+                  sequence="2"
+                  groups="rfid_service_base.group_card_user"
+                  action="hr_rfid_service_sale_action"/>
+    </data>
+</odoo>

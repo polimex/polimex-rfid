@@ -38,7 +38,8 @@ class HrRfidVending(WebRfidController):
 
         def ret_super():
             return super(HrRfidVending, self).post_event(**post)
-
+        def ret_local_no_command(controller, ev):
+            return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code, ev))
         def ret_local(data):
             if not post and 'cmd' in data:
                 return {'cmd': data['cmd']}
@@ -107,29 +108,29 @@ class HrRfidVending(WebRfidController):
                     [('company_id', '=', webstack_id.company_id.id), ('number', '=', event['card'])])
 
                 if len(card) == 0 or len(card.employee_id) == 0:
-                    return ret_super()
+                    return ret_local_no_command(controller, None)
 
                 emp = card.employee_id
 
                 if emp.hr_rfid_vending_in_attendance is True \
                         and emp.attendance_state != 'checked_in':
-                    return ret_super()
+                    return ret_local_no_command(controller, None)
 
                 date = controller.webstack_id.get_ws_time(event)
                 if date + datetime.timedelta(minutes=5) <= fields.Datetime.now():
                     ev = create_ev(controller, event, card, '64')
-                    return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code, ev))
+                    return ret_local_no_command(controller, ev)
 
                 if event['bos'] < event['tos']:
                     ev = create_ev(controller, event, card, '64')
-                    return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code, ev))
+                    return ret_local_no_command(controller, ev)
 
                 balance_str, balance = card.employee_id.get_employee_balance(controller)
                 card_number = reduce(operator.add, list('0' + str(a) for a in card.number), '')
 
                 ev = create_ev(controller, event, card, '64')
                 if balance <= 0:
-                    return ret_super()
+                    return ret_local_no_command(controller, ev)
                 cmd = cmd_env.create({
                     'webstack_id': webstack_id.id,
                     'controller_id': controller.id,
@@ -163,7 +164,7 @@ class HrRfidVending(WebRfidController):
 
                     if row_num < 1 or row_num > 18:
                         ev = create_ev(controller, event, card, '-1')
-                        return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code, ev))
+                        return ret_local_no_command(controller, ev)
 
                     rows_env = request.env['hr.rfid.ctrl.vending.row'].sudo()
                     row = rows_env.search([
@@ -203,11 +204,11 @@ class HrRfidVending(WebRfidController):
                     controller.cash_contained += item_price
                     ev = create_ev(controller, event, card, '47', item, item_price, item_number=item_sold)
 
-                return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code, ev))
+                return ret_local_no_command(controller, ev)
             # TODO Move into function "deal_with_err_evs"
             elif event['event_n'] in [48, 49]:
                 controller.report_sys_ev('Vending machine sent us an error', event)
-                return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code))
+                return ret_local_no_command(None)
             elif event['event_n'] == 50:
                 card = card_env.with_context(active_test=False).search(
                     [('company_id', '=', webstack_id.company_id.id), ('number', '=', event['card'])])
@@ -221,7 +222,7 @@ class HrRfidVending(WebRfidController):
                 if len(card) > 0 and item_number == 99 and recharge_balance > 0:
                     ev = create_ev(controller, event, card, '50', transaction_price=recharge_balance)
                     card.employee_id.hr_rfid_vending_recharge_balance += ev.transaction_price
-                    return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code, ev))
+                    return ret_local_no_command(controller, ev)
             return ret_super()
 
         try:

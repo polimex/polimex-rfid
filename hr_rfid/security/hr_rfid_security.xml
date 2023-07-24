@@ -12,12 +12,14 @@
     <record id="hr_rfid_group_viewer" model="res.groups">
       <field name="name">Guard</field>
       <field name="category_id" ref="hr_rfid_management"/>
+      <field name="comment">The user will be able to see User Events.</field>
     </record>
 
     <record id="hr_rfid_group_officer" model="res.groups">
       <field name="name">Officer</field>
-      <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_group_viewer'))]" />
+      <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_group_viewer')),(4, ref('hr.group_hr_user'))]" />
       <field name="category_id" ref="hr_rfid_management" />
+      <field name="comment">The user will be able to manage cards without hardware setup</field>
     </record>
 
     <record id="hr_rfid_group_manager" model="res.groups">
@@ -25,6 +27,7 @@
       <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_group_officer'))]" />
       <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
       <field name="category_id" ref="hr_rfid_management" />
+      <field name="comment">The user have full rights for access control management</field>
     </record>
 
 <!--Additional technical rights-->
@@ -38,6 +41,7 @@
       <field name="name">View Module Discovery</field>
       <field name="category_id" ref="module_rfid_settings" />
       <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+      <field name="comment">The user will be able to Search Hardware in local network.</field>
     </record>
 
     <record id="hr_rfid_view_rfid_data" model="res.groups">
@@ -55,34 +59,40 @@
       <field name="name">View pin code data in users</field>
       <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_view_rfid_data'))]" />
       <field name="category_id" ref="module_rfid_settings" />
+      <field name="comment">The user will be able to see Users PIN codes for system</field>
     </record>
 
     <record id="hr_rfid_view_door_open_close" model="res.groups">
       <field name="name">View the door open/close buttons</field>
       <field name="category_id" ref="module_rfid_settings" />
       <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+      <field name="comment">The user will be able to control the doors from interface</field>
     </record>
 
     <record id="hr_rfid_view_door_arm_disarm" model="res.groups">
       <field name="name">View the door arm/disarm buttons</field>
       <field name="category_id" ref="module_rfid_settings" />
       <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+      <field name="comment">The user will be able to control the alarm lines from interface</field>
     </record>
 
     <record id="hr_rfid_view_emergency_on_off" model="res.groups">
       <field name="name">View the Emergency On/Off buttons</field>
       <field name="category_id" ref="module_rfid_settings" />
       <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+      <field name="comment">The user will be able to control the Emergency lines from interface</field>
     </record>
 
     <record id="hr_view_own_department" model="res.groups">
       <field name="name">Only show employees from own department</field>
       <field name="category_id" ref="module_rfid_settings" />
+      <field name="comment">The user will be able to control ONLY the employees from his Department. Usefully for Head of Department</field>
     </record>
 
     <record id="hr_rfid_view_own_department" model="res.groups">
       <field name="name">Only show data from own department</field>
       <field name="category_id" ref="module_rfid_settings" />
+      <field name="comment">The user will be able to control ONLY the employees from his Department. Usefully for Head of Department</field>
     </record>
 
 <!--Security Rules for access rights    -->

@@ -5,12 +5,12 @@
     'version': '1.6',
     'category': 'Vending',
     'summary': 'Manage EXECUTIVE based vending machines',
-    'author': 'Polimex',
+    'author': 'Polimex Dev Team',
     'license': 'AGPL-3',
 
-    'website': 'http://www.securitybulgaria.com',
+    'website': 'https://polimex.co',
 
-    'depends': [ 'base', 'hr_rfid', 'stock', 'hr_attendance' ],
+    'depends': ['hr_rfid', 'product', 'hr_attendance'],
 
     'data': [
         'data/hr_rfid_vending_cron_jobs.xml',
