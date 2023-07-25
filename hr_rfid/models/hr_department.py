@@ -14,6 +14,7 @@ class HrDepartment(models.Model):
         help='Every user added to this department gets this access group by default',
         ondelete='set null',
         tracking=True,
+        groups="hr_rfid.hr_rfid_group_officer"
     )
 
     hr_rfid_allowed_access_groups = fields.Many2many(
@@ -21,6 +22,7 @@ class HrDepartment(models.Model):
         string='Available Access Groups',
         help='Available access groups for employees in this department',
         ondelete='cascade',
+        groups="hr_rfid.hr_rfid_group_officer"
     )
 
     @api.constrains('hr_rfid_default_access_group')

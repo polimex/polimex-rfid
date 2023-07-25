@@ -11,6 +11,7 @@ class ResPartner(models.Model):
         size=4,
         default='0000',
         tracking=True,
+        groups="hr_rfid.hr_rfid_group_officer"
     )
 
     hr_rfid_access_group_ids = fields.One2many(
@@ -19,6 +20,8 @@ class ResPartner(models.Model):
         string='Access Group',
         help='Which access group the contact is a part of',
         tracking=True,
+        groups="hr_rfid.hr_rfid_group_officer"
+
     )
 
     hr_rfid_card_ids = fields.One2many(
@@ -26,6 +29,8 @@ class ResPartner(models.Model):
         'contact_id',
         string='RFID Card',
         help='Cards owned by the contact',
+        groups="hr_rfid.hr_rfid_group_officer"
+
     )
 
     hr_rfid_event_ids = fields.One2many(
@@ -33,12 +38,20 @@ class ResPartner(models.Model):
         'contact_id',
         string='RFID Events',
         help='Events concerning this contact',
+        groups="hr_rfid.hr_rfid_group_officer"
+
     )
 
     is_employee = fields.Boolean(compute='_compute_is_employee')
 
-    partner_event_count = fields.Char(compute='_compute_partner_event_count')
-    partner_doors_count = fields.Char(compute='_compute_partner_event_count')
+    partner_event_count = fields.Char(
+        compute='_compute_partner_event_count',
+        groups="hr_rfid.hr_rfid_group_officer"
+    )
+    partner_doors_count = fields.Char(
+        compute='_compute_partner_event_count',
+        groups="hr_rfid.hr_rfid_group_officer"
+    )
 
     def _compute_partner_event_count(self):
         for e in self:
