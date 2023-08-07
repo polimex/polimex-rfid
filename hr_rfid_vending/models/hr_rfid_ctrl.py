@@ -26,6 +26,23 @@ class HrRfidControllerVending(models.Model):
         string='Pricelist',
     )
 
+    @api.model
+    def _convert_balance_to_ctrl(self, balance):
+        self.ensure_one()
+        # convert balance in units for machine
+        balance *= 100
+        if self.scale_factor > 0:
+            balance /= self.scale_factor
+        else:
+            balance = 0
+        balance = int(balance)
+        if balance > 0xFF:
+            balance = 0xFF
+        b1 = (balance & 0xF0) // 0x10
+        b2 = balance & 0x0F
+        return '%02X%02X' % (b1, b2), balance
+
+
     def _compute_show_price_timeout(self):
         for ctrl in self:
             if not ctrl.io_table or ctrl.io_table == '' or ctrl.hw_version != '16':

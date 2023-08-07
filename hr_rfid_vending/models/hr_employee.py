@@ -53,10 +53,15 @@ class HrEmployee(models.Model):
         default='day',
     )
     hr_rfid_vending_spent_today = fields.Monetary(
+        string='Spend Today',
         compute='_compute_spend_today'
     )
+    hr_rfid_vending_current_balance = fields.Monetary(
+        string='Current balance',
+        compute='_compute_current_balance'
+    )
     currency_id = fields.Many2one(string='Company Currency', readonly=True,
-                                          related='company_id.currency_id')
+                                  related='company_id.currency_id')
 
     hr_rfid_vending_auto_refill = fields.Boolean(
         string='Auto Refill',
@@ -97,6 +102,17 @@ class HrEmployee(models.Model):
         bh_action = self.env.ref('hr_rfid_vending.hr_rfid_vending_balance_history_action').sudo().read()[0]
         bh_action['domain'] = [('employee_id', '=', self.id)]
         return bh_action
+
+    @api.depends('hr_rfid_vending_balance',
+                 'hr_rfid_vending_negative_balance',
+                 'hr_rfid_vending_daily_limit',
+                 'hr_rfid_vending_spent_today',
+                 'hr_rfid_vending_recharge_balance',
+                 'hr_rfid_vending_limit')
+    def _compute_current_balance(self):
+        for e in self:
+            e.hr_rfid_vending_current_balance = e.get_employee_balance()
+
     @api.depends('hr_rfid_vending_balance_history')
     def _compute_spend_today(self):
         for e in self:
@@ -124,37 +140,36 @@ class HrEmployee(models.Model):
                 )
             e.hr_rfid_vending_spent_today = spent_today
 
-
-    def get_employee_balance(self, controller):
+    def get_employee_balance(self, controller=None):
         self.ensure_one()
         # Get Main balance
-        balance = Decimal(str(self.hr_rfid_vending_balance))
+        balance = self.hr_rfid_vending_balance
         if self.hr_rfid_vending_negative_balance is True:
-            balance += Decimal(str(abs(self.hr_rfid_vending_limit)))
+            balance += self.hr_rfid_vending_limit
         if balance <= 0:
+            if controller is None:
+                return 0
             return '0000', 0
         if self.hr_rfid_vending_in_attendance is True and self.attendance_state == 'checked_out':
-                return '0000', 0
+            if controller is None:
+                return 0
+            return '0000', 0
         if self.hr_rfid_vending_daily_limit != 0:
-            limit = abs(self.hr_rfid_vending_daily_limit)
-            limit = Decimal(str(limit))
+            limit = self.hr_rfid_vending_daily_limit
             limit -= self.hr_rfid_vending_spent_today
             if limit < balance:
                 balance = limit
         # add self balance
-        balance += Decimal(str(self.hr_rfid_vending_recharge_balance))
-        # convert balance in units for machine
-        balance *= 100
-        if controller.scale_factor > 0:
-            balance /= controller.scale_factor
-        else:
-            balance = 0
-        balance = int(balance)
-        if balance > 0xFF:
-            balance = 0xFF
-        b1 = (balance & 0xF0) // 0x10
-        b2 = balance & 0x0F
-        return '%02X%02X' % (b1, b2), balance
+        # balance += Decimal(str(self.hr_rfid_vending_recharge_balance))
+        balance += self.hr_rfid_vending_recharge_balance
+        if balance <= 0:
+            if controller is None:
+                return 0
+            return '0000', 0
+
+        if controller is None:
+            return balance
+        return controller._convert_balance_to_ctrl(balance)
 
     @api.returns('hr.rfid.vending.balance.history')
     def hr_rfid_vending_add_to_balance(self, value: float, ev: int = 0):

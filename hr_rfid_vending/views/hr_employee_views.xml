@@ -123,6 +123,10 @@
                                 <field name="hr_rfid_vending_refill_max"
                                        attrs="{'invisible':['|',('hr_rfid_vending_auto_refill','=',False),('hr_rfid_vending_refill_type','=','fixed')]}"/>
                             </group>
+                            <group string="Current state">
+                                <field name="hr_rfid_vending_spent_today"/>
+                                <field name="hr_rfid_vending_current_balance"/>
+                            </group>
                         </group>
                     </page>
                 </notebook>

@@ -193,7 +193,7 @@ class HrRfidZone(models.Model):
                     # Employees
                     employees_in_zone = self.env['hr.employee']
                     for e in self.env['hr.employee'].search([('hr_rfid_card_ids', '!=', False)]):
-                        _logger.info('Processing employee %s' % e.name)
+                        # _logger.info('Processing employee %s' % e.name)
                         empl_zone_door_ids = e.get_doors() & z.door_ids
                         if empl_zone_door_ids:
                             e_event = self.env['hr.rfid.event.user'].search([
@@ -208,7 +208,7 @@ class HrRfidZone(models.Model):
                     # Contacts
                     contacts_in_zone = self.env['res.partner']
                     for e in self.env['res.partner'].search([('hr_rfid_card_ids', '!=', False)]):
-                        _logger.info('Processing partner %s' % e.name)
+                        # _logger.info('Processing partner %s' % e.name)
                         contacts_zone_door_ids = e.get_doors() & z.door_ids
                         if contacts_zone_door_ids:
                             e_event = self.env['hr.rfid.event.user'].search([
