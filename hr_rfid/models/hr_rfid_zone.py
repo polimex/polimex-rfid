@@ -2,7 +2,9 @@
 from dateutil.relativedelta import relativedelta
 
 from odoo import api, fields, models, _, http
+import logging
 
+_logger = logging.getLogger(__name__)
 
 class HrRfidZone(models.Model):
     _name = 'hr.rfid.zone'
@@ -114,17 +116,20 @@ class HrRfidZone(models.Model):
         for zone in self:
             for emp in zone.employee_ids:
                 zone.person_left(emp, self.env['hr.rfid.event.user'])
-            zone.employee_ids = self.env['hr.employee']
+            # zone.employee_ids = self.env['hr.employee']
 
     def clear_contacts(self):
         for zone in self:
             for cont in zone.contact_ids:
                 zone.person_left(cont, self.env['hr.rfid.event.user'])
-            zone.contact_ids = self.env['res.partner']
+            # zone.contact_ids = self.env['res.partner']
 
-    def _change_apb_state(self, person, event, enable_exiting=True):
+    def _change_apb_state(self, person, event=None, enable_exiting=True):
         for zone in self:
-            doors = zone.door_ids.filtered(lambda d: d.apb_mode) - event.door_id
+            if not event:
+                doors = zone.door_ids.filtered(lambda d: d.apb_mode)
+            else:
+                doors = zone.door_ids.filtered(lambda d: d.apb_mode) - event.door_id
             for card in person.hr_rfid_card_ids:
                 doors.change_apb_flag(card, enable_exiting)
 
@@ -158,6 +163,65 @@ class HrRfidZone(models.Model):
                 #         Buy Odoo Enterprise now to get more providers.
                 #     </p>'''),
             }
+
+    def write(self, vals):
+        apb_changed = 'anti_pass_back' in vals.keys()
+        doors_changed = 'door_ids' in vals.keys()
+        new_apb = vals.get('anti_pass_back', None)
+        res = []
+        for z in self:
+            old_door_ids = z.door_ids
+            old_apb = z.anti_pass_back
+            # Clear employees in zone
+            if apb_changed or (z.anti_pass_back and doors_changed):
+                vals['employee_ids'] = [(5, 0, 0)]
+                vals['contact_ids'] = [(5, 0, 0)]
+            res.append(super(HrRfidZone, z).write(vals))
+            new_door_ids = z.door_ids
+
+            if apb_changed or (z.anti_pass_back and doors_changed):
+                if new_door_ids != old_door_ids:
+                    excluded_door_ids = old_door_ids - new_door_ids
+                    # excluded_door_ids = new_door_ids.filtered(lambda d: d.id not in old_door_ids.ids)
+                else:
+                    excluded_door_ids = self.env['hr.rfid.door']
+                included_door_ids = new_door_ids - excluded_door_ids
+                #Apply new APB to all doors
+                included_door_ids.apb_mode = new_apb
+                excluded_door_ids.apb_mode = False
+                if new_apb:
+                    # Employees
+                    employees_in_zone = self.env['hr.employee']
+                    for e in self.env['hr.employee'].search([('hr_rfid_card_ids', '!=', False)]):
+                        _logger.info('Processing employee %s' % e.name)
+                        empl_zone_door_ids = e.get_doors() & z.door_ids
+                        if empl_zone_door_ids:
+                            e_event = self.env['hr.rfid.event.user'].search([
+                                ('employee_id', '=', e.id),
+                                ('door_id', 'in', empl_zone_door_ids.ids)
+                            ], limit=1)
+                            in_zone = e_event and e_event.reader_id.reader_type == '0'
+                            if in_zone:
+                                employees_in_zone += e
+                                z._change_apb_state(e)
+                    z.employee_ids = employees_in_zone
+                    # Contacts
+                    contacts_in_zone = self.env['res.partner']
+                    for e in self.env['res.partner'].search([('hr_rfid_card_ids', '!=', False)]):
+                        _logger.info('Processing partner %s' % e.name)
+                        contacts_zone_door_ids = e.get_doors() & z.door_ids
+                        if contacts_zone_door_ids:
+                            e_event = self.env['hr.rfid.event.user'].search([
+                                ('contact_id', '=', e.id),
+                                ('door_id', 'in', contacts_zone_door_ids.ids)
+                            ], limit=1)
+                            in_zone = e_event and e_event.reader_id.reader_type == '0'
+                            if in_zone:
+                                contacts_in_zone += e
+                                z._change_apb_state(e)
+                    z.contact_ids = contacts_in_zone
+
+        return all(res)
 
 
 class HrRfidZoneDoorsWizard(models.TransientModel):

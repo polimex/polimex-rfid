@@ -287,8 +287,7 @@ class HrRfidCard(models.Model):
                 new_owner_doors = card.get_owner().get_doors()
                 removed_doors = old_owner_doors - new_owner_doors
                 added_doors = new_owner_doors - old_owner_doors
-                for door in removed_doors:
-                    rel_env.remove_rel(card, door)
+                rel_env._remove_cards(card, removed_doors)
                 for door in added_doors:
                     rel_env.check_relevance_fast(card, door)
 
