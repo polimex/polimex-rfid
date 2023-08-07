@@ -9,8 +9,9 @@
         <field name="state">code</field>
         <field name="code">model.auto_refill_job()</field>
         <field name="interval_type">minutes</field>
-        <field name="interval_number">1</field>
+        <field name="interval_number">10</field>
         <field name="nextcall" eval="DateTime.now().strftime('%Y-%m-%d 00:00:00')"/>
+        <field name="numbercall">-1</field>
     </record>
 </odoo>
 
