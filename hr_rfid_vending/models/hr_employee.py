@@ -138,7 +138,7 @@ class HrEmployee(models.Model):
                     fields=['balance_change'],
                     groupby=['employee_id']
                 )
-            e.hr_rfid_vending_spent_today = spent_today
+            e.hr_rfid_vending_spent_today = 0 if spent_today == [] else abs(spent_today[0]['balance_change'])
 
     def get_employee_balance(self, controller=None):
         self.ensure_one()

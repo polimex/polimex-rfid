@@ -87,6 +87,11 @@
                     <field name="ex_timestamp" optional="show"/>
                     <field name="error" optional="show"/>
                     <field name="retries" optional="show"/>
+                    <field name="ts_code" readonly="1" groups="base.group_no_one"/>
+                    <field name="rights_data" readonly="1" groups="base.group_no_one"/>
+                    <field name="rights_mask" readonly="1" groups="base.group_no_one"/>
+                    <field name="alarm_right" readonly="1" groups="base.group_no_one"/>
+
                 </tree>
             </field>
         </record>
