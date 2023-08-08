@@ -201,9 +201,9 @@ class HrRfidZone(models.Model):
                                 ('door_id', 'in', empl_zone_door_ids.ids)
                             ], limit=1)
                             in_zone = e_event and e_event.reader_id.reader_type == '0'
+                            z._change_apb_state(person=e, enable_exiting=in_zone)
                             if in_zone:
                                 employees_in_zone += e
-                                z._change_apb_state(e)
                     z.employee_ids = employees_in_zone
                     # Contacts
                     contacts_in_zone = self.env['res.partner']
@@ -216,9 +216,10 @@ class HrRfidZone(models.Model):
                                 ('door_id', 'in', contacts_zone_door_ids.ids)
                             ], limit=1)
                             in_zone = e_event and e_event.reader_id.reader_type == '0'
+                            z._change_apb_state(person=e, enable_exiting=in_zone)
                             if in_zone:
                                 contacts_in_zone += e
-                                z._change_apb_state(e)
+
                     z.contact_ids = contacts_in_zone
 
         return all(res)
