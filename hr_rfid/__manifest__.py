@@ -48,6 +48,7 @@
         'views/hr_employee_views.xml',
         'views/hr_rfid_menus.xml',
         'views/digest_views.xml',
+        'views/res_company.xml',
         'templates/banners.xml',
         'security/hr_rfid_multi_company.xml',
         'report/hr_rfid_card_templates.xml',

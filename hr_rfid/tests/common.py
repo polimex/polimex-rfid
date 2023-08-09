@@ -73,6 +73,7 @@ class RFIDAppCase(common.TransactionCase):
 
         self.test_card_employee = self.env['hr.rfid.card'].create({
             'number': '1234512345',
+            'card_input_type': 'w34',
             'card_reference': 'Badge 77',
             'employee_id': self.test_employee_id.id,
             'company_id': self.test_company_id,
@@ -98,6 +99,7 @@ class RFIDAppCase(common.TransactionCase):
 
         self.test_card_partner = self.env['hr.rfid.card'].create({
             'number': '0012312345',
+            'card_input_type': 'w34',
             'card_reference': 'Badge 33',
             'contact_id': self.test_partner.id,
             'company_id': self.test_company_id,
@@ -274,15 +276,18 @@ class RFIDAppCase(common.TransactionCase):
             self.env['hr.rfid.command'].search_count([('controller_id', '=', ctrl.id), ('status', '=', 'Wait')]) == 0,
             'Command exists for execution. Not expecting command!!! (%s)' % ctrl.name)
 
-    def _check_cmd_add_card(self, ctrl, count=None, rights=None):
-        cmd = self.env['hr.rfid.command'].search([('controller_id', '=', ctrl.id), ('status', '=', 'Wait')], limit=count or 1)
+    def _check_cmd_add_card(self, ctrl, count=None, rights=None, mask=None):
+        cmd = self.env['hr.rfid.command'].search([
+            ('controller_id', '=', ctrl.id),
+            ('status', 'in', ['Wait', 'Process'])
+        ], limit=count or 1)
         self.assertTrue(len(cmd) == (count or 1), 'No command. Expecting Add card command (%s)' % ctrl.name)
         if ctrl.is_relay_ctrl():
             operation = cmd.cmd == 'D1' and cmd.rights_data > 0 and cmd.rights_mask > 0
         else:
             operation = all([c.cmd == 'D1' for c in cmd]) and \
-                        all([(c.rights_data == rights) if rights else (c.rights_data > 0) for c in cmd]) and \
-                        all([(c.rights_mask == rights) if rights else (c.rights_mask > 0) for c in cmd])
+                        all([(c.rights_data == rights) if rights is not None else (c.rights_data > 0) for c in cmd]) and \
+                        all([(c.rights_mask == mask) if mask is not None else (c.rights_mask > 0) for c in cmd])
         self.assertTrue(operation,
                         'Command exists for add card, but something is wrong with command parameters(%s)' % ctrl.name)
         return cmd
@@ -298,8 +303,8 @@ class RFIDAppCase(common.TransactionCase):
                         'Command exists for delete card, but something is wrong with command parameters (%s)' % ctrl.name)
         return cmd
 
-    def _check_cmd_add_card_and_remove(self, ctrl, count=None, rights=None):
-        self._check_cmd_add_card(ctrl, count, rights).unlink()
+    def _check_cmd_add_card_and_remove(self, ctrl, count=None, rights=None, mask=None):
+        self._check_cmd_add_card(ctrl, count, rights, mask).unlink()
 
     def _check_cmd_delete_card_and_remove(self, ctrl):
         self._check_cmd_delete_card(ctrl).unlink()

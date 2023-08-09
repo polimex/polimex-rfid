@@ -226,19 +226,22 @@ class RFIDTests(RFIDController, HttpCase):
         self._change_mode(self.c_130, 2)  # Change mode to 2 door with two readers
         self.assertTrue(self.c_130.mode == 2)
 
-        self.c_110.door_ids.apb_mode = True
-        response = self._hearbeat(self.test_webstack_10_3_id)
-        response = self._send_cmd_response(response)
-        self.c_115.door_ids.apb_mode = True
-        response = self._hearbeat(self.test_webstack_10_3_id)
-        response = self._send_cmd_response(response)
-        self.c_130.door_ids.apb_mode = True
-        response = self._hearbeat(self.test_webstack_10_3_id)
-        response = self._send_cmd_response(response)
-        response = self._send_cmd_response(response)
-        self.c_turnstile.door_ids.apb_mode = True
-        response = self._hearbeat(self.test_webstack_10_3_id)
-        response = self._send_cmd_response(response)
+        add_door_to_ag1_wiz = self.env['hr.rfid.access.group.wizard'].with_context({'active_ids':[self.test_ag_partner_1.id]}).create([{
+            'door_ids':[
+                (4, self.c_110.door_ids[0].id, 0),
+                (4, self.c_115.door_ids[0].id, 0),
+                (4, self.c_turnstile.door_ids[0].id, 0),
+                (4, self.c_130.door_ids[0].id, 0),
+                (4, self.c_130.door_ids[1].id, 0),
+            ]
+        }])
+        add_door_to_ag1_wiz.add_doors()
+        add_door_to_ag1_wiz.unlink()
+        self._check_cmd_add_card_and_remove(self.c_110,1,3)
+        self._check_cmd_add_card_and_remove(self.c_115,1,3)
+        self._check_cmd_add_card_and_remove(self.c_130,1,15)
+        self._check_cmd_add_card_and_remove(self.c_turnstile,1,3)
+
         # Make zone for Global APB
         test_apb_zone = self.env['hr.rfid.zone'].create({
             'name': 'Test APB Zone',
@@ -253,11 +256,37 @@ class RFIDTests(RFIDController, HttpCase):
             ]
         })
 
+        # self.c_110.door_ids.apb_mode = True
+        response = self._hearbeat(self.test_webstack_10_3_id)
+        response = self._send_cmd_response(response)
+        # self.c_115.door_ids.apb_mode = True
+        # response = self._hearbeat(self.test_webstack_10_3_id)
+        response = self._send_cmd_response(response)
+        # self.c_130.door_ids.apb_mode = True
+        # response = self._hearbeat(self.test_webstack_10_3_id)
+        response = self._send_cmd_response(response)
+        response = self._send_cmd_response(response)
+        # self.c_turnstile.door_ids.apb_mode = True
+        # response = self._hearbeat(self.test_webstack_10_3_id)
+        response = self._send_cmd_response(response)
+
+        self._check_cmd_add_card_and_remove(self.c_110,count=1,rights=0, mask=64)
+        self._check_cmd_add_card_and_remove(self.c_115,count=1,rights=0, mask=64)
+        self._check_cmd_add_card_and_remove(self.c_130,count=1,rights=0, mask=96)
+        self._check_cmd_add_card_and_remove(self.c_turnstile,count=1,rights=0, mask=64)
+
+
         # Make event with card on entrance on first door
         response = self._make_event(self.c_turnstile, reader=1, event_code=3)
         # Check if new command generated for APB flag change and clear it
-        response = self._send_cmd_response(response, '0000000000')
-        response = self._send_cmd_response(response, '0000000000')
-        response = self._send_cmd_response(response, '0000000000')
-        self.assertEqual(response, {})
+        self._check_cmd_add_card_and_remove(self.c_110,count=1,rights=64, mask=64)
+        self._check_cmd_add_card_and_remove(self.c_115,count=1,rights=64, mask=64)
+        self._check_cmd_add_card_and_remove(self.c_130,count=1,rights=96, mask=96)
+
+        self._check_no_cmd(self.c_110)
+        self._check_no_cmd(self.c_115)
+        self._check_no_cmd(self.c_130)
+        self._check_no_cmd(self.c_turnstile)
+
+        self.assertTrue(test_apb_zone.employee_ids.ids == self.test_employee_id.ids)
         pass

@@ -43,9 +43,15 @@
                             <h1>
                                 <field name="number" placeholder="Up to 10 digits card number"/>
                             </h1>
-                            <label for="card_reference" class="oe_edit_only"/>
-                            <field name="card_reference" placeholder="Badge №37"/>
                         </div>
+                        <group>
+                            <group>
+                                <field name="card_reference" placeholder="Badge №37"/>
+                            </group>
+                            <group>
+                                <field name="card_input_type"/>
+                            </group>
+                        </group>
                         <group>
                             <group string="Owner">
                                 <field name="employee_id" attrs="{'invisible':[('contact_id','!=',False)]}"/>
@@ -63,6 +69,9 @@
                             <group string="End date">
                                 <field name="deactivate_on"/>
                             </group>
+                        </group>
+                        <group groups="base.group_no_one">
+                            <field name="internal_number"/>
                         </group>
                     </sheet>
                     <div class="oe_chatter">

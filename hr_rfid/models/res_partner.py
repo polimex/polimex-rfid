@@ -305,13 +305,14 @@ class ResPartner(models.Model):
                     'permited_visits': visits
                 })]})
 
-    def add_card_number(self, card_number, activate_on=None, expire_on=None):
+    def add_card_number(self, card_number, activate_on=None, expire_on=None, card_input_type=None):
         for p in self:
             if card_number in p.hr_rfid_card_ids.mapped('number'):
                 existing = p.hr_rfid_card_ids.filtered(lambda c: c.number == card_number)
                 existing.write({
                     'activate_on': (activate_on < existing.activate_on) and activate_on or existing.activate_on,
                     'deactivate_on': (expire_on > existing.deactivate_on) and expire_on or existing.deactivate_on,
+                    'card_input_type': card_input_type or self.env.company.card_input_type,
                 })
             else:
                 p.write({
@@ -319,6 +320,7 @@ class ResPartner(models.Model):
                         'number': card_number,
                         'activate_on': activate_on or fields.Datetime.now(),
                         'deactivate_on': expire_on or None,
+                        'card_input_type': card_input_type or self.env.company.card_input_type,
                     })]})
 
     def action_send_badge_email(self):

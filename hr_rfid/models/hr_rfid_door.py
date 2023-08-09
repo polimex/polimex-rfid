@@ -78,23 +78,23 @@ class HrRfidDoor(models.Model):
     )
 
     card_rel_ids = fields.One2many(
-        'hr.rfid.card.door.rel',
-        'door_id',
+        comodel_name='hr.rfid.card.door.rel',
+        inverse_name='door_id',
         string='Cards',
         help='Cards that have access to this door',
     )
 
     zone_ids = fields.Many2many(
-        'hr.rfid.zone',
-        'hr_rfid_zone_door_rel',
-        'door_id',
-        'zone_id',
+        comodel_name='hr.rfid.zone',
+        relation='hr_rfid_zone_door_rel',
+        column1='door_id',
+        column2='zone_id',
         string='Zones',
         help='Zones containing this door',
     )
 
     webstack_id = fields.Many2one(
-        'hr.rfid.webstack',
+        comodel_name='hr.rfid.webstack',
         string='Module',
         related='controller_id.webstack_id',
     )
@@ -121,12 +121,12 @@ class HrRfidDoor(models.Model):
         # auto_join=True,
         help='Alarm lines connected to this door'
     )
-    alarm_state = fields.Selection([
-        ('no_alarm', 'No Alarm functionality'),
-        ('arm', 'Armed'),
-        ('disarm', 'Disarmed'),
-    ],
-        compute='_compute_alarm_state',
+    alarm_state = fields.Selection(
+        selection=[
+            ('no_alarm', 'No Alarm functionality'),
+            ('arm', 'Armed'),
+            ('disarm', 'Disarmed'),
+        ], compute='_compute_alarm_state',
     )
     siren_state = fields.Boolean(
         related='controller_id.siren_state'
@@ -288,7 +288,7 @@ class HrRfidDoor(models.Model):
             line[o[0] - 1] = o[1]
         self.controller_id._set_io_line(line_number, line)
 
-    def proccess_event(self, event):
+    def process_event(self, event):
         self.ensure_one()
         if isinstance(event, HrRfidUserEvent):
             if event.more_json:
@@ -493,75 +493,73 @@ class HrRfidDoor(models.Model):
         }
 
     # Door commands
-    def add_card(self, ts_id, pin_code, card_id):
-        for door in self:
-            time_schedule = self.env['hr.rfid.time.schedule'].browse(ts_id)
-            card = self.env['hr.rfid.card'].browse(card_id)
-            card_number = card.number
-
-            if door.controller_id.is_relay_ctrl():
-                return door.controller_id._add_card_to_relay(door.id, card_id)
-
-            for reader in door.reader_ids:
-                ts_code = [0, 0, 0, 0]
-                ts_code[reader.number - 1] = time_schedule.number
-                ts_code = '%02X%02X%02X%02X' % (ts_code[0], ts_code[1], ts_code[2], ts_code[3])
-                door.controller_id.add_remove_card(
-                    card_number, pin_code, ts_code,
-                    rights_data=1 << (reader.number - 1),
-                    rights_mask=1 << (reader.number - 1),
-
-                )
-
-    def _add_card_to_relay(self, card_id):
-        for door in self:
-            card = self.env['hr.rfid.card'].browse(card_id)
-            ctrl = door.controller_id
-
-            if ctrl.mode == 1:
-                rdata = 1 << (door.number - 1)
-                rmask = rdata
-            elif ctrl.mode == 2:
-                rdata = 1 << (door.number - 1)
-                if door.reader_ids.number == 2:
-                    rdata *= 0x10000
-                rmask = rdata
-            elif ctrl.mode == 3:
-                rdata = door.number
-                rmask = -1
-            else:
-                raise exceptions.ValidationError(_('Controller %s has mode=%d, which is not supported!')
-                                                 % (ctrl.name, ctrl.mode))
-            ctrl._add_remove_card_relay(card.number, rdata, rmask)
-
-    def remove_card(self, pin_code, card_number=None, card_id=None):
-        for door in self:
-            if card_id is not None:
-                card = self.env['hr.rfid.card'].browse(card_id)
-                card_number = card.number
-
-            if door.controller_id.is_relay_ctrl():
-                return door._remove_card_from_relay(card_number)
-
-            for reader in door.reader_ids:
-                door.controller_id.add_remove_card(card_number, pin_code, '00000000',
-                                                   0, 1 << (reader.number - 1))
-
-    def _remove_card_from_relay(self, card_number):
-        for door in self:
-            if door.controller_id.mode == 1:
-                rmask = 1 << (door.number - 1)
-            elif door.controller_id.mode == 2:
-                rmask = 1 << (door.number - 1)
-                if door.reader_ids.number == 2:
-                    rmask *= 0x10000
-            elif door.controller_id.mode == 3:
-                rmask = -1
-            else:
-                raise exceptions.ValidationError(_('Controller %s has mode=%d, which is not supported!')
-                                                 % (door.controller_id.name, door.controller_id.mode))
-
-            door.controller_id._add_remove_card_relay(card_number, 0, rmask)
+    # def add_card(self, ts_id, pin_code, card_id):
+    #     time_schedule = self.env['hr.rfid.time.schedule'].browse(ts_id)
+    #     card = self.env['hr.rfid.card'].browse(card_id)
+    #     card_number = card.internal_number
+    #     for door in self:
+    #         if door.controller_id.is_relay_ctrl():
+    #             return door.controller_id._add_card_to_relay(door.id, card_id)
+    #
+    #         for reader in door.reader_ids:
+    #             ts_code = [0, 0, 0, 0]
+    #             ts_code[reader.number - 1] = time_schedule.number
+    #             ts_code = '%02X%02X%02X%02X' % (ts_code[0], ts_code[1], ts_code[2], ts_code[3])
+    #             door.controller_id.add_remove_card(
+    #                 card_number, pin_code, ts_code,
+    #                 rights_data=1 << (reader.number - 1),
+    #                 rights_mask=1 << (reader.number - 1),
+    #             )
+    #
+    # def _add_card_to_relay(self, card_id):
+    #     for door in self:
+    #         card = self.env['hr.rfid.card'].browse(card_id)
+    #         ctrl = door.controller_id
+    #
+    #         if ctrl.mode == 1:
+    #             rdata = 1 << (door.number - 1)
+    #             rmask = rdata
+    #         elif ctrl.mode == 2:
+    #             rdata = 1 << (door.number - 1)
+    #             if door.reader_ids.number == 2:
+    #                 rdata *= 0x10000
+    #             rmask = rdata
+    #         elif ctrl.mode == 3:
+    #             rdata = door.number
+    #             rmask = -1
+    #         else:
+    #             raise exceptions.ValidationError(_('Controller %s has mode=%d, which is not supported!')
+    #                                              % (ctrl.name, ctrl.mode))
+    #         ctrl._add_remove_card_relay(card.number, rdata, rmask)
+    #
+    # def remove_card(self, pin_code, card_number=None, card_id=None):
+    #     for door in self:
+    #         if card_id is not None:
+    #             card = self.env['hr.rfid.card'].browse(card_id)
+    #             card_number = card.number
+    #
+    #         if door.controller_id.is_relay_ctrl():
+    #             return door._remove_card_from_relay(card_number)
+    #
+    #         for reader in door.reader_ids:
+    #             door.controller_id.add_remove_card(card_number, pin_code, '00000000',
+    #                                                0, 1 << (reader.number - 1))
+    #
+    # def _remove_card_from_relay(self, card_number):
+    #     for door in self:
+    #         if door.controller_id.mode == 1:
+    #             rmask = 1 << (door.number - 1)
+    #         elif door.controller_id.mode == 2:
+    #             rmask = 1 << (door.number - 1)
+    #             if door.reader_ids.number == 2:
+    #                 rmask *= 0x10000
+    #         elif door.controller_id.mode == 3:
+    #             rmask = -1
+    #         else:
+    #             raise exceptions.ValidationError(_('Controller %s has mode=%d, which is not supported!')
+    #                                              % (door.controller_id.name, door.controller_id.mode))
+    #
+    #         door.controller_id._add_remove_card_relay(card_number, 0, rmask)
 
     def change_apb_flag(self, card, can_exit=True):
         for door in self:
@@ -569,8 +567,21 @@ class HrRfidDoor(models.Model):
                 rights = 0x40  # Bit 7
             else:
                 rights = 0x20  # Bit 6
-            door.controller_id.add_remove_card(card.number, card.get_owner().hr_rfid_pin_code,
-                                               '00000000', rights if can_exit else 0, rights)
+            card_door_rel_id = self.env['hr.rfid.card.door.rel'].search([
+                ('card_id', '=', card.id),
+                ('door_id', '=', door.id),
+            ])
+            self.env['hr.rfid.command'].add_remove_card(
+                card_number=card.internal_number,
+                ctrl_id=door.controller_id.id,
+                pin_code=card.get_owner().hr_rfid_pin_code,
+                ts_code='00000000',
+                rights_data=rights if can_exit else 0,
+                rights_mask=rights,
+                alarm_right=card_door_rel_id.alarm_right
+            )
+            # door.controller_id.add_remove_card(card.number, card.get_owner().hr_rfid_pin_code,
+            #                                    '00000000', rights if can_exit else 0, rights)
 
 
 class HrRfidDoorOpenCloseWiz(models.TransientModel):
@@ -638,6 +649,17 @@ class HrRfidCardDoorRel(models.Model):
         required=True,
         default=False
     )
+
+    def get_ts_code_string(self):
+        self.ensure_one()
+        ts_code = None
+        for reader in self.door_id.reader_ids:
+            ts_code = [0, 0, 0, 0]
+            ts_code[reader.number - 1] = self.time_schedule_id.number
+        if ts_code is not None:
+            return '%02X%02X%02X%02X' % (ts_code[0], ts_code[1], ts_code[2], ts_code[3])
+        else:
+            return '%02X%02X%02X%02X' % (0, 0, 0, 0)
 
     def _remove_cards(self, card_ids, door_ids):
         self.search([('card_id', 'in', card_ids.mapped('id')), ('door_id', 'in', door_ids.mapped('id'))]).unlink()
@@ -770,24 +792,22 @@ class HrRfidCardDoorRel(models.Model):
         return card_id.door_compatible(door_id) and card_id.card_ready()
 
     def _create_add_card_command(self):
-        cmd_env = self.env['hr.rfid.command']
         for rel in self:
             door_id = rel.door_id.id
             ts_id = rel.time_schedule_id.id
             pin_code = rel.card_id.pin_code
             card_id = rel.card_id.id
             alarm_right = rel.alarm_right
-            cmd_env.add_card(door_id, ts_id, pin_code, card_id, alarm_right)
+            self.env['hr.rfid.command'].add_card(door_id, ts_id, pin_code, card_id, alarm_right)
 
     def _create_remove_card_command(self, number: str = None, door_id: int = None):
-        cmd_env = self.env['hr.rfid.command']
         for rel in self:
             if door_id is None:
                 door_id = rel.door_id.id
             if number is None:
                 number = rel.card_id.number[:]
             pin_code = rel.card_id.pin_code
-            cmd_env.remove_card(door_id, pin_code, card_number=number)
+            self.env['hr.rfid.command'].remove_card(door_id, pin_code, card_number=number)
 
     @api.constrains('door_id')
     def _door_constrains(self):

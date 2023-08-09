@@ -51,7 +51,7 @@ class WebRfidController(http.Controller):
         is_card_event = card_num != '0000000000'
         if is_card_event:
             card_id = card_env.with_context(active_test=False).search([
-                ('number', '=', post_data['event']['card']),
+                ('internal_number', '=', post_data['event']['card']),
                 ('company_id', '=', webstack.company_id.id)
             ])
         else:
@@ -397,7 +397,7 @@ class WebRfidController(http.Controller):
             #     event_dict['more_json'] = json.dumps({"insert": reader.id})
             card_id.get_owner(event_dict)
             event = ev_env.create(event_dict)
-            door.proccess_event(event)
+            door.process_event(event)
             return webstack.check_for_unsent_cmd(200)
         # Temperature Control
         elif event_action in [51, 52, 53, 54]:

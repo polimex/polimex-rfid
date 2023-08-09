@@ -105,7 +105,7 @@ class HrRfidVending(WebRfidController):
             # TODO Move into function "deal_with_ev_64"
             if event['event_n'] == 64:
                 card = card_env.with_context(active_test=False).search(
-                    [('company_id', '=', webstack_id.company_id.id), ('number', '=', event['card'])])
+                    [('company_id', '=', webstack_id.company_id.id), ('internal_number', '=', event['card'])])
 
                 if len(card) == 0 or len(card.employee_id) == 0:
                     return ret_local_no_command(controller, None)
@@ -126,7 +126,7 @@ class HrRfidVending(WebRfidController):
                     return ret_local_no_command(controller, ev)
 
                 balance_str, balance = card.employee_id.get_employee_balance(controller)
-                card_number = reduce(operator.add, list('0' + str(a) for a in card.number), '')
+                card_number = reduce(operator.add, list('0' + str(a) for a in card.internal_number), '')
 
                 ev = create_ev(controller, event, card, '64')
                 if balance <= 0:
@@ -142,7 +142,7 @@ class HrRfidVending(WebRfidController):
             # TODO Move into function "deal_with_ev_47"
             elif event['event_n'] == 47:
                 card = card_env.with_context(active_test=False).search(
-                    [('company_id', '=', webstack_id.company_id.id), ('number', '=', event['card'])])
+                    [('company_id', '=', webstack_id.company_id.id), ('internal_number', '=', event['card'])])
 
                 if len(card) == 0:
                     if event['card'] != '0000000000':
@@ -211,7 +211,7 @@ class HrRfidVending(WebRfidController):
                 return ret_local_no_command(None)
             elif event['event_n'] == 50:
                 card = card_env.with_context(active_test=False).search(
-                    [('company_id', '=', webstack_id.company_id.id), ('number', '=', event['card'])])
+                    [('company_id', '=', webstack_id.company_id.id), ('internal_number', '=', event['card'])])
 
                 if len(card) == 0:
                     if event['card'] != '0000000000':

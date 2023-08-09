@@ -6,6 +6,7 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
+
 class HrRfidZone(models.Model):
     _name = 'hr.rfid.zone'
     _description = 'Zone'
@@ -55,7 +56,7 @@ class HrRfidZone(models.Model):
     employee_count = fields.Char(compute='_compute_counts')
     contact_count = fields.Char(compute='_compute_counts')
 
-    @api.depends('employee_ids','contact_ids')
+    @api.depends('employee_ids', 'contact_ids')
     def _compute_counts(self):
         for z in self:
             z.employee_count = len(z.employee_ids)
@@ -133,7 +134,6 @@ class HrRfidZone(models.Model):
             for card in person.hr_rfid_card_ids:
                 doors.change_apb_flag(card, enable_exiting)
 
-
     def _log_person_out(self, person):
         session_storage = http.root.session_store
         sids = session_storage.list()
@@ -151,18 +151,62 @@ class HrRfidZone(models.Model):
             #         Buy Odoo Enterprise now to get more providers.
             #     </p>'''),
         }
+
     def contact_in_current_zone(self):
-            self.ensure_one()
-            return {
-                'name': _('Contacts in {}').format(self.name),
-                'view_mode': 'kanban,form',
-                'res_model': 'res.partner',
-                'domain': [('id', 'in', [i.id for i in self.contact_ids])],
-                'type': 'ir.actions.act_window',
-                # 'help': _('''<p class="o_view_nocontent">
-                #         Buy Odoo Enterprise now to get more providers.
-                #     </p>'''),
-            }
+        self.ensure_one()
+        return {
+            'name': _('Contacts in {}').format(self.name),
+            'view_mode': 'kanban,form',
+            'res_model': 'res.partner',
+            'domain': [('id', 'in', [i.id for i in self.contact_ids])],
+            'type': 'ir.actions.act_window',
+            # 'help': _('''<p class="o_view_nocontent">
+            #         Buy Odoo Enterprise now to get more providers.
+            #     </p>'''),
+        }
+
+    def _add_and_fix(self, z):
+        employees_in_zone = self.env['hr.employee']
+        for e in self.env['hr.employee'].search([('hr_rfid_card_ids', '!=', False)]):
+            # _logger.info('Processing employee %s' % e.name)
+            empl_zone_door_ids = e.get_doors() & z.door_ids
+            if empl_zone_door_ids:
+                e_event = self.env['hr.rfid.event.user'].search([
+                    ('employee_id', '=', e.id),
+                    ('door_id', 'in', empl_zone_door_ids.ids)
+                ], limit=1)
+                in_zone = e_event and e_event.reader_id.reader_type == '0'
+                z._change_apb_state(person=e, enable_exiting=in_zone)
+                if in_zone:
+                    employees_in_zone += e
+        z.employee_ids = employees_in_zone
+        # Contacts
+        contacts_in_zone = self.env['res.partner']
+        for e in self.env['res.partner'].search([('hr_rfid_card_ids', '!=', False)]):
+            # _logger.info('Processing partner %s' % e.name)
+            contacts_zone_door_ids = e.get_doors() & z.door_ids
+            if contacts_zone_door_ids:
+                e_event = self.env['hr.rfid.event.user'].search([
+                    ('contact_id', '=', e.id),
+                    ('door_id', 'in', contacts_zone_door_ids.ids)
+                ], limit=1)
+                in_zone = e_event and e_event.reader_id.reader_type == '0'
+                z._change_apb_state(person=e, enable_exiting=in_zone)
+                if in_zone:
+                    contacts_in_zone += e
+
+        z.contact_ids = contacts_in_zone
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        res = self
+        for vals in vals_list:
+            z = super().create(vals)
+            if vals.get('anti_pass_back', False):
+                z.door_ids.apb_mode = True
+                self._add_and_fix(z)
+            res += z
+        return res
 
     def write(self, vals):
         apb_changed = 'anti_pass_back' in vals.keys()
@@ -186,41 +230,11 @@ class HrRfidZone(models.Model):
                 else:
                     excluded_door_ids = self.env['hr.rfid.door']
                 included_door_ids = new_door_ids - excluded_door_ids
-                #Apply new APB to all doors
+                # Apply new APB to all doors
                 included_door_ids.apb_mode = new_apb
                 excluded_door_ids.apb_mode = False
                 if new_apb:
-                    # Employees
-                    employees_in_zone = self.env['hr.employee']
-                    for e in self.env['hr.employee'].search([('hr_rfid_card_ids', '!=', False)]):
-                        # _logger.info('Processing employee %s' % e.name)
-                        empl_zone_door_ids = e.get_doors() & z.door_ids
-                        if empl_zone_door_ids:
-                            e_event = self.env['hr.rfid.event.user'].search([
-                                ('employee_id', '=', e.id),
-                                ('door_id', 'in', empl_zone_door_ids.ids)
-                            ], limit=1)
-                            in_zone = e_event and e_event.reader_id.reader_type == '0'
-                            z._change_apb_state(person=e, enable_exiting=in_zone)
-                            if in_zone:
-                                employees_in_zone += e
-                    z.employee_ids = employees_in_zone
-                    # Contacts
-                    contacts_in_zone = self.env['res.partner']
-                    for e in self.env['res.partner'].search([('hr_rfid_card_ids', '!=', False)]):
-                        # _logger.info('Processing partner %s' % e.name)
-                        contacts_zone_door_ids = e.get_doors() & z.door_ids
-                        if contacts_zone_door_ids:
-                            e_event = self.env['hr.rfid.event.user'].search([
-                                ('contact_id', '=', e.id),
-                                ('door_id', 'in', contacts_zone_door_ids.ids)
-                            ], limit=1)
-                            in_zone = e_event and e_event.reader_id.reader_type == '0'
-                            z._change_apb_state(person=e, enable_exiting=in_zone)
-                            if in_zone:
-                                contacts_in_zone += e
-
-                    z.contact_ids = contacts_in_zone
+                    self._add_and_fix(z)
 
         return all(res)
 

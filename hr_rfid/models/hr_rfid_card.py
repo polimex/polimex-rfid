@@ -22,12 +22,25 @@ class HrRfidCard(models.Model):
         compute='_compute_card_name',
     )
 
+    internal_number = fields.Char(
+        index=True,
+        store=True,
+        compute='_compute_internal_number'
+    )
     number = fields.Char(
         string='Card Number',
         required=True,
         size=10,
         index=True,
         tracking=True,
+    )
+
+    card_input_type = fields.Selection(
+        selection=[
+            ('w34','Wiegand 34 bit (5d+5d)'),
+            ('w34s','Wiegand 34 bit (10d)'),
+        ],
+        default=lambda self: self.env.company.card_input_type or 'w34'
     )
 
     card_reference = fields.Char(
@@ -121,6 +134,24 @@ class HrRfidCard(models.Model):
          'Card user and contact cannot both be set in the same time, and cannot both be empty.')
 
     ]
+
+    @api.depends('number','card_input_type')
+    def _compute_internal_number(self):
+        for c in self:
+            if c.number and c.card_input_type:
+                c._check_len_number()
+                if c.card_input_type == 'w34s':
+                    h4 = '{:08X}'.format(int(c.number))
+                    # Split the 8-character hex string into two parts
+                    part1, part2 = h4[:4], h4[4:]
+                    # Convert each part to decimal
+                    dec1 = '{:05}'.format(int(part1, 16))
+                    dec2 = '{:05}'.format(int(part2, 16))
+                    c.internal_number = dec1+dec2
+                else:
+                    c.internal_number = c.number
+            else:
+                c.internal_number=''
 
     @api.model
     def get_import_templates(self):
