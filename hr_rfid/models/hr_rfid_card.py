@@ -68,7 +68,7 @@ class HrRfidCard(models.Model):
         string='Activate on',
         help='Date and time the card will be activated on',
         tracking=True,
-        default=lambda self: datetime.now(),
+        default=lambda self: fields.Datetime.now(),
         index=True,
     )
 

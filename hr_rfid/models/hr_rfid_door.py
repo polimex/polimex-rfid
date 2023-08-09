@@ -796,7 +796,6 @@ class HrRfidCardDoorRel(models.Model):
                 raise exceptions.ValidationError('Door must be part of an access group!')
 
     @api.model_create_multi
-    @api.returns('self', lambda value: value.id)
     def create(self, vals_list):
         records = self.env['hr.rfid.card.door.rel']
 
