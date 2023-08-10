@@ -1,5 +1,6 @@
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 from datetime import datetime, timedelta
+import base64
 
 
 class HrAttendance(models.Model):

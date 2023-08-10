@@ -104,6 +104,18 @@ class RFIDAppCase(common.TransactionCase):
             'contact_id': self.test_partner.id,
             'company_id': self.test_company_id,
         })
+        self.assertTrue(self.test_card_partner.internal_number == '0012312345', 'Check cad number w34')
+        self.test_card2_partner = self.env['hr.rfid.card'].create({
+            'number': '2760500060',
+            'card_input_type': 'w34s',
+            'card_reference': 'Badge 34',
+            'contact_id': self.test_partner.id,
+            'company_id': self.test_company_id,
+        })
+        self.assertTrue(self.test_card2_partner.internal_number == '4212158204', 'Check cad number w34s')
+        self.test_card2_partner.unlink()
+
+
         self.heartbeat = 1
         self.id_num = 1
 
