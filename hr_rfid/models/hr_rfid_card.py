@@ -129,6 +129,7 @@ class HrRfidCard(models.Model):
 
     _sql_constraints = [
         ('card_uniq', 'unique (number, company_id)', _("Card number already exists!")),
+        ('card_int_uniq', 'unique (internal_number, company_id)', _("Card internal number already exists!")),
         ('check_card_owner',
          'check((contact_id is null or employee_id is not null) or (contact_id is not null or employee_id is null))',
          'Card user and contact cannot both be set in the same time, and cannot both be empty.')
