@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from . import balloon_mixin
+from . import res_company
 from . import hr_department
 from . import hr_employee
 from . import hr_rfid_access_group
@@ -25,5 +26,4 @@ from . import hr_rfid_zone
 from . import res_partner
 from . import hr_rfid_settings
 from . import digest
-from . import res_company
 

@@ -177,7 +177,7 @@
             <field name="name">hr.rfid.user.ev.pivot</field>
             <field name="model">hr.rfid.event.user</field>
             <field name="arch" type="xml">
-                <pivot string="Event" disable_linking="True">
+                <pivot string="Event">
                     <field name="event_time" type="row"/>
                     <field name="event_action" type="col"/>
                 </pivot>
