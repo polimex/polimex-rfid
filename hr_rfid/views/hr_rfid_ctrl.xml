@@ -69,69 +69,121 @@
                         </div>
                         <group>
                             <group>
-                                <group string="System information">
+                                <field name="serial_number" readonly="1"/>
+                                <field name="ctrl_id" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="hw_version" readonly="1"/>
+                                <field name="sw_version" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="System information" name="system_information">
+                                <group>
+                                <group>
                                     <field name="ctrl_id" readonly="1"/>
                                     <field name="serial_number" readonly="1"/>
                                     <field name="hw_version" readonly="1"/>
                                     <field name="sw_version" readonly="1"/>
+                                </group>
+                                <group>
                                     <field name="max_cards_count" readonly="1"/>
                                     <field name="max_events_count" readonly="1"/>
                                     <field name="readers" readonly="1"/>
                                     <field name="last_f0_read" readonly="1"/>
                                 </group>
-                                <group string="Current status">
-                                    <field name="emergency_state" readonly="1"/>
-                                    <field name="temperature" readonly="1"/>
-                                    <field name="humidity" readonly="1"/>
-                                    <field name="system_voltage" readonly="1"/>
-                                    <field name="input_voltage" readonly="1"/>
-                                    <field name="cards_count" readonly="1"/>
                                 </group>
-                            </group>
-                            <group>
-                                <group string="Hotel equipment" attrs="{'invisible': [('hotel_readers', '=', 0)]}">
-                                    <field name="hotel_readers" readonly="1"/>
-                                    <field name="hotel_readers_card_presence" readonly="1"/>
-                                    <field name="hotel_readers_buttons_pressed" readonly="1"/>
+                            </page>
+                            <page string="Current status" name="current_status">
+                                <group>
+                                    <group>
+                                        <field name="emergency_state" readonly="1"/>
+                                        <field name="temperature" readonly="1"/>
+                                        <field name="humidity" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <field name="system_voltage" readonly="1"/>
+                                        <field name="input_voltage" readonly="1"/>
+                                        <field name="cards_count" readonly="1"/>
+                                    </group>
                                 </group>
-                                <group string="Temperature control" attrs="{'invisible': [('hw_version', '!=', '22')]}">
-                                    <field name="event_interval" widget="numeric_step"
-                                           options="{'step': 1, 'min': 0, 'max': 99}"/>
-                                    <field name="high_temperature" widget="numeric_step"
-                                           options="{'step': 0.5, 'min': -55, 'max': 125}"/>
-                                    <field name="low_temperature" widget="numeric_step"
-                                           options="{'step': 0.5, 'min': -55, 'max': 125}"/>
-                                    <field name="hysteresis" widget="numeric_step"
-                                           options="{'step': 0.5, 'min': 0.5, 'max': 9}"/>
+                            </page>
+                            <page string="Hotel equipment" name="hotel_equipment" attrs="{'invisible': [('hotel_readers', '=', 0)]}">
+                                <group>
+                                    <group>
+                                        <field name="hotel_readers" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <field name="hotel_readers_card_presence" readonly="1"/>
+                                        <field name="hotel_readers_buttons_pressed" readonly="1"/>
+                                    </group>
                                 </group>
-                                <group string="Setup">
-                                    <field name="mode" readonly="1" invisible="1"/>
-                                    <field name="mode_selection"
-                                           attrs="{'invisible': [('hw_version', 'not in', ['6','9','11','12'])]}"/>
-                                    <field name="mode_selection_4"
-                                           attrs="{'invisible': [('hw_version', 'not in', ['10','17'])]}"/>
-                                    <field name="mode_selection_31"
-                                           attrs="{'invisible': [('hw_version', 'not in', ['31'])]}"/>
-                                    <field name="external_db"/>
-                                    <field name="read_b3_cmd"/>
-                                    <field name="relay_time_factor" readonly="1"/>
-                                    <field name="dual_person_mode" readonly="1"/>
-                                    <field name="emergency_group_id"/>
-                                    <field name="webstack_id" readonly="1"/>
+                            </page>
+                            <page string="Temperature control" name="temperature_control" attrs="{'invisible': [('hw_version', '!=', '22')]}">
+                                <group>
+                                    <group>
+                                        <field name="event_interval" widget="numeric_step"
+                                               options="{'step': 1, 'min': 0, 'max': 99}"/>
+                                        <field name="hysteresis" widget="numeric_step"
+                                               options="{'step': 0.5, 'min': 0.5, 'max': 9}"/>
+                                    </group>
+                                    <group>
+                                        <field name="high_temperature" widget="numeric_step"
+                                               options="{'step': 0.5, 'min': -55, 'max': 125}"/>
+                                        <field name="low_temperature" widget="numeric_step"
+                                               options="{'step': 0.5, 'min': -55, 'max': 125}"/>
+                                    </group>
                                 </group>
-                            </group>
-                            <group string="Debug Information" groups="base.group_no_one" colspan="4">
-                                <field name="inputs" readonly="1"/>
-                                <field name="outputs" readonly="1"/>
-                                <field name="input_states" readonly="1"/>
-                                <field name="output_states" readonly="1"/>
-                                <field name="alarm_lines" readonly="1"/>
-                                <field name="alarm_line_states" readonly="1"/>
-                                <field name="siren_state" widget="boolean_toggle"/>
-                                <field name="io_table" readonly="1" widget="text"/>
-                                <field name="io_table_lines" readonly="1"/>
-                            </group>
-                        </group>
+                            </page>
+                            <page string="Setup" name="setup">
+                                <group>
+                                    <group>
+                                        <field name="mode" readonly="1" invisible="1"/>
+                                        <field name="mode_selection"
+                                               attrs="{'invisible': [('hw_version', 'not in', ['6','9','11','12'])]}"/>
+                                        <field name="mode_selection_4"
+                                               attrs="{'invisible': [('hw_version', 'not in', ['10','17'])]}"/>
+                                        <field name="mode_selection_31"
+                                               attrs="{'invisible': [('hw_version', 'not in', ['31'])]}"/>
+                                        <field name="external_db"/>
+                                    </group>
+                                    <group>
+                                        <field name="read_b3_cmd"/>
+                                        <field name="relay_time_factor" readonly="1"/>
+                                        <field name="dual_person_mode" readonly="1"/>
+                                        <field name="emergency_group_id"/>
+                                        <field name="webstack_id" readonly="1"/>
+                                    </group>
+                                </group>
+                                <group col="4">
+                                    <field name="output_ts_ids">
+                                        <tree editable="bottom">
+                                            <field name="output_number" />
+                                            <field name="time_schedule_id" />
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                            <page string="Debug Information" name="debug" groups="base.group_no_one">
+                                <group>
+                                    <group>
+                                        <field name="inputs" readonly="1"/>
+                                        <field name="outputs" readonly="1"/>
+                                        <field name="input_states" readonly="1"/>
+                                        <field name="output_states" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <field name="alarm_lines" readonly="1"/>
+                                        <field name="alarm_line_states" readonly="1"/>
+                                        <field name="siren_state" widget="boolean_toggle"/>
+                                        <field name="io_table_lines" readonly="1"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <field name="io_table" readonly="1" widget="text"/>
+                                </group>
+                            </page>
+                        </notebook>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers"/>

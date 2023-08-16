@@ -63,13 +63,13 @@
                             icon="fa-table"
                             attrs="{'invisible':[('hw_version','!=','16')]}"/>
                 </xpath>
-                <group position="inside">
+                <xpath expr="//page[@name='setup']" position="inside">
                     <group string="Vending info" attrs="{'invisible':[('hw_version','!=','16')]}">
                         <field name="show_price_timeout" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}"/>
                         <field name="scale_factor" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}"/>
                         <field name="cash_contained" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}"/>
                     </group>
-                </group>
+                </xpath>
             </field>
         </record>
 

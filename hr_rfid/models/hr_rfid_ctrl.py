@@ -7,6 +7,50 @@ from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
+class HrRfidControllerOutputTS(models.Model):
+    _name = 'hr.rfid.ctrl.output.ts'
+    _description = 'Output TS for Controllers'
+    _sql_constraints = [
+        ('controller_output_unique', 'unique(controller_id,output_number)', 'Output must be unique!'),
+    ]
+    output_number = fields.Integer(
+        string="Output number",
+        default=1,
+        required=True,
+    )
+    time_schedule_id = fields.Many2one(
+        comodel_name='hr.rfid.time.schedule',
+        required=True
+    )
+    controller_id = fields.Many2one(
+        comodel_name='hr.rfid.ctrl',
+        required=True,
+    )
+    output_count = fields.Integer(
+        related='controller_id.outputs'
+    )
+    max_ts = fields.Integer(
+        related='controller_id.time_schedules'
+    )
+    time_schedule_number = fields.Integer(
+        related='time_schedule_id.number'
+    )
+
+    @api.constrains('output_number','time_schedule_id')
+    def _constrains_output_number_ts(self):
+        for rel in self:
+            if rel.output_number < 0 or rel.output_number > rel.output_count:
+                raise exceptions.ValidationError(
+                    _('Output number %(out)d not in range from 1 to %(to)d', out=rel.output_number, to=rel.output_count))
+            if rel.time_schedule_id.number < 1 or rel.output_number > rel.max_ts:
+                raise exceptions.ValidationError(
+                    _('Time Schedule number  %(ts)d not in range from 1 to %(to)d', ts=rel.time_schedule_id.number, to=rel.max_ts))
+
+    def name_get(self):
+        def get_names(rel):
+            return _('Output %d working with TS %s') % (rel.output_number, rel.time_schedule_id.name)
+        return [(rel.id, get_names(rel)) for rel in self]
+
 
 class HrRfidController(models.Model):
     _name = 'hr.rfid.ctrl'
@@ -64,7 +108,15 @@ class HrRfidController(models.Model):
     output_states = fields.Integer(
         help='States the outputs of the controller',
     )
-
+    output_ts_ids = fields.One2many(
+        comodel_name='hr.rfid.ctrl.output.ts',
+        inverse_name='controller_id',
+        string="Output's Time schedules",
+        help="Control the Output's Time schedules of the controller.\n"
+             "You can add PLC-like logic for all controller's outputs.\n"
+             "Choose the output number and the Time Schedule code.\n"
+             "The relay will open working hours and closed in non-working hours",
+    )
     readers = fields.Integer(
         string='Readers',
         help='Number of readers on the controller'
@@ -589,6 +641,9 @@ class HrRfidController(models.Model):
             super(HrRfidController, ctrl).write(vals)
             new_ext_db = ctrl.external_db
 
+            # if 'output_ts_ids' in vals.keys():
+
+
             if old_ext_db != new_ext_db:
                 ctrl.write_controller_mode(new_ext_db=new_ext_db)
             if (
@@ -1030,6 +1085,20 @@ class HrRfidController(models.Model):
     def change_controller_mode(self, new_mode):
         for c in self:
             c.write_controller_mode(new_mode)
+
+    def write_output_ts(self):
+        pass
+        # for ctrl in self:
+        #
+        # if new_mode is None:
+        #     new_mode = self.mode
+        # if new_ext_db is None:
+        #     new_ext_db = self.external_db
+        #
+        # cmd_data = '%02X' % (int(new_ext_db) * 0x20 + int(new_mode))
+        # cmd = self._base_command('D5', cmd_data)
+        # self.read_controller_information_cmd()
+        # return cmd
 
     # Command parsers
 
