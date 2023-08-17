@@ -68,9 +68,9 @@
                             <group string="Security">
                                 <field name="key"/>
                                 <field name="module_username"
-                                       attrs="{'invisible':[('behind_nat', '=', True)]}" />
+                                       attrs="{'invisible':[('behind_nat', '=', True)]}"/>
                                 <field name="module_password" password="True"
-                                       attrs="{'invisible':[('behind_nat', '=', True)]}" />
+                                       attrs="{'invisible':[('behind_nat', '=', True)]}"/>
                             </group>
                             <group string="Setup">
                                 <field name="tz" required="1"/>
@@ -87,9 +87,9 @@
                         </group>
                     </sheet>
                     <div class="oe_chatter">
-                        <field name="message_follower_ids" />
-                        <field name="activity_ids" />
-                        <field name="message_ids" />
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
                     </div>
                 </form>
             </field>
@@ -179,28 +179,33 @@
                                                           name="webstack_enabled"/>
                                                 </div>
                                                 <h2>
-                                                    <a type="open"><field name="name" title="Module's Name"/></a>
+                                                    <a type="open">
+                                                        <field name="name" title="Module's Name"/>
+                                                    </a>
                                                 </h2>
                                             </strong>
                                             <ul>
                                                 <li t-if="record.version.raw_value">
-                                                    Version:<field name="version"/>
+                                                    Version:
+                                                    <field name="version"/>
                                                 </li>
                                                 <li t-if="record.hw_version.raw_value">
-                                                    Hardware:<field name="hw_version"/>
+                                                    Hardware:
+                                                    <field name="hw_version"/>
                                                 </li>
                                                 <li t-if="record.serial.raw_value">
-                                                    Serial:<field name="serial"/>
+                                                    Serial:
+                                                    <field name="serial"/>
                                                 </li>
                                             </ul>
-<!--                                            <span class="o_kanban_record_subtitle">Version:-->
-<!--                                                <field-->
-<!--                                                        name="version"/>-->
-<!--                                            </span>-->
-<!--                                            <span class="o_kanban_record_subtitle">Hardware Version:-->
-<!--                                                <field-->
-<!--                                                        name="hw_version"/>-->
-<!--                                            </span>-->
+                                            <!--                                            <span class="o_kanban_record_subtitle">Version:-->
+                                            <!--                                                <field-->
+                                            <!--                                                        name="version"/>-->
+                                            <!--                                            </span>-->
+                                            <!--                                            <span class="o_kanban_record_subtitle">Hardware Version:-->
+                                            <!--                                                <field-->
+                                            <!--                                                        name="hw_version"/>-->
+                                            <!--                                            </span>-->
                                         </div>
                                     </div>
                                     <ul>
@@ -216,8 +221,8 @@
                                             <span t-if="record.controllers_count.value>0"
                                                   class="badge badge-pill" title="Controllers">
                                                 <a name="return_action_to_open" type="object"
-                                                    context="{'xml_id':'hr_rfid_ctrl_action'}"
-                                                    attrs="{'invisible':[('controllers', '=', False)]}">
+                                                   context="{'xml_id':'hr_rfid_ctrl_action'}"
+                                                   attrs="{'invisible':[('controllers', '=', False)]}">
                                                     <i class="fa fa-fw fa-microchip" role="img"
                                                        aria-label="Controllers"/>
                                                     <t t-esc="record.controllers_count.value"/>
@@ -226,7 +231,7 @@
                                             <span t-if="record.system_event_count.value>0"
                                                   class="badge badge-pill" title="System Events">
                                                 <a name="return_action_to_open" type="object"
-                                                    context="{'xml_id':'hr_rfid_event_system_action'}">
+                                                   context="{'xml_id':'hr_rfid_event_system_action'}">
                                                     <i class="fa fa-fw fa-list" role="img"
                                                        aria-label="System Events"/>
                                                     <t t-esc="record.system_event_count.value"/>
@@ -235,7 +240,7 @@
                                             <span t-if="record.commands_count.value>0"
                                                   class="badge badge-pill" title="Commands">
                                                 <a name="return_action_to_open" type="object"
-                                                    context="{'xml_id':'hr_rfid_command_action'}">
+                                                   context="{'xml_id':'hr_rfid_command_action'}">
                                                     <i class="fa fa-fw fa-list" role="img"
                                                        aria-label="Commands"/>
                                                     <t t-esc="record.commands_count.value"/>
@@ -244,10 +249,20 @@
                                             <span t-if="!record.behind_nat.raw_value"
                                                   class="badge badge-pill"
                                                   title="Module Web Management">
-                                                <a t-att-href="record.http_link.value" target="_blank" style="text-decoration:none; color: #010199;">Web</a>
+                                                <a t-att-href="record.http_link.value" target="_blank"
+                                                   style="text-decoration:none; color: #010199;">Web
+                                                </a>
 
                                             </span>
                                         </span>
+                                    </div>
+                                </div>
+                                <div class="oe_kanban_content position-absolute fixed-bottom mr-2">
+                                    <div class="o_kanban_record_bottom">
+                                        <div class="oe_kanban_bottom_left"/>
+                                        <div class="oe_kanban_bottom_right float-right">
+                                            <field name="activity_ids" widget="kanban_activity"/>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -159,7 +159,11 @@ class HrRfidWebstack(models.Model):
         default='u',
     )
 
-    last_update = fields.Boolean(string='Contacted in last 10 min', compute='_compute_last_update')
+    last_update = fields.Boolean(
+        string='Contacted in last 10 min',
+        compute='_compute_last_update',
+        store=True
+    )
 
     commands_count = fields.Char(string='Commands count', compute='_compute_counts')
     system_event_count = fields.Char(string='System Events count', compute='_compute_counts')
@@ -168,13 +172,36 @@ class HrRfidWebstack(models.Model):
     _sql_constraints = [('rfid_webstack_serial_unique', 'unique(serial)',
                          'Serial number for webstacks must be unique!')]
 
+    @api.model
     def _notify_inactive(self):
-        self.mapped('last_update')
-        # TODO need to finish it
-        # for ws in self:
-        #     datetime.datetime.combine(context_today() + relativedelta(weeks=-1,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))
-            # if ws.active and (ws.updated_at + relativedelta(minutes=-30)
+        todo_activity_type = self.env.ref('mail.mail_activity_data_todo')
 
+        # Get all records of the model
+        all_records = self.search([
+            ('active', '=', True),
+            ('updated_at', '<', fields.Datetime.now() - relativedelta(days=1)),
+        ])
+
+        for record in all_records:
+            todo_activity = record.activity_ids.filtered(lambda a: a.activity_type_id == todo_activity_type)
+            if not todo_activity:
+                for follower in record.message_follower_ids:
+                    # If the follower is a user
+                    user = self.env['res.users'].search([('partner_id', '=', follower.partner_id.id)], limit=1)
+                    if user:
+                        # Set the user's language in the context
+                        lang_context = self.env.context.copy()
+                        lang_context['lang'] = user.lang or 'en_US'
+
+                        # Create the activity with the new context
+                        self.env['mail.activity'].with_context(lang_context).create({
+                            'activity_type_id': todo_activity_type.id,
+                            'res_id': record.id,
+                            'res_model_id': self.env['ir.model']._get(self._name).id,
+                            'user_id': user.id,
+                            'summary': _('Todo Check communication or contact with support team'),
+                            'note': _('This is a automatic Todo activity based on communication statistics with the module.')
+                        })
     @api.depends('hw_version')
     def _compute_time_format(self):
         for ws in self:
