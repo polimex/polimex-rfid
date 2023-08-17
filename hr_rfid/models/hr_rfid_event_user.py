@@ -126,7 +126,6 @@ class HrRfidUserEvent(models.Model):
         string='More info about event in JSON',
     )
 
-
     @api.autovacuum
     def _gc_user_events_life(self):
         for c in self.env['res.company'].search([]):
@@ -144,12 +143,12 @@ class HrRfidUserEvent(models.Model):
     def _compute_user_ev_name(self):
         for record in self:
             if record.employee_id:
-                name = record.employee_id.name
+                name = record.employee_id.name or ''
             elif record.contact_id:
-                name = record.contact_id.name
+                name = record.contact_id.name or ''
             else:
-                name = record.door_id.name
-            name += ' - '
+                name = record.door_id.name or ''
+            name += ' - ' if name != '' else ''
             if record.event_action != '64':
                 key_val_dict = dict(self._fields['event_action'].selection)
                 name += key_val_dict[record.event_action]
@@ -163,7 +162,7 @@ class HrRfidUserEvent(models.Model):
     @api.depends('event_action')
     def _compute_user_ev_action_str(self):
         for record in self:
-            record.action_string = _('Access {}').format(self.action_selection[int(record.event_action)-1][1])
+            record.action_string = _('Access {}').format(self.action_selection[int(record.event_action) - 1][1])
 
     @api.model_create_multi
     @api.returns('self', lambda value: value.id)
@@ -210,9 +209,9 @@ class HrRfidUserEvent(models.Model):
                 elif wc.user_action == 'stop':
                     stack = []
                     last_events = self.search([
-                        ('event_time',  '>=', fields.Datetime.now() - timedelta(hours=12)),
-                        ('employee_id',  '=', rec.employee_id.id),
-                        ('id',          '!=', rec.id),
+                        ('event_time', '>=', fields.Datetime.now() - timedelta(hours=12)),
+                        ('employee_id', '=', rec.employee_id.id),
+                        ('id', '!=', rec.id),
                         ('workcode_id', '!=', None),
                     ], order='event_time')
                     # TODO Check the search above to limit result!!!
@@ -319,4 +318,3 @@ class HrRfidUserEvent(models.Model):
                 ('event_action', '=', str(event_action))
             )
         return self.search(domain, limit=1)
-

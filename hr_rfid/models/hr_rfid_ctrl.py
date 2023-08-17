@@ -7,6 +7,7 @@ from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
+
 class HrRfidControllerOutputTS(models.Model):
     _name = 'hr.rfid.ctrl.output.ts'
     _description = 'Output TS for Controllers'
@@ -36,19 +37,22 @@ class HrRfidControllerOutputTS(models.Model):
         related='time_schedule_id.number'
     )
 
-    @api.constrains('output_number','time_schedule_id')
+    @api.constrains('output_number', 'time_schedule_id')
     def _constrains_output_number_ts(self):
         for rel in self:
             if rel.output_number < 0 or rel.output_number > rel.output_count:
                 raise exceptions.ValidationError(
-                    _('Output number %(out)d not in range from 1 to %(to)d', out=rel.output_number, to=rel.output_count))
+                    _('Output number %(out)d not in range from 1 to %(to)d', out=rel.output_number,
+                      to=rel.output_count))
             if rel.time_schedule_id.number < 1 or rel.output_number > rel.max_ts:
                 raise exceptions.ValidationError(
-                    _('Time Schedule number  %(ts)d not in range from 1 to %(to)d', ts=rel.time_schedule_id.number, to=rel.max_ts))
+                    _('Time Schedule number  %(ts)d not in range from 1 to %(to)d', ts=rel.time_schedule_id.number,
+                      to=rel.max_ts))
 
     def name_get(self):
         def get_names(rel):
             return _('Output %d working with TS %s') % (rel.output_number, rel.time_schedule_id.name)
+
         return [(rel.id, get_names(rel)) for rel in self]
 
 
@@ -641,8 +645,6 @@ class HrRfidController(models.Model):
             super(HrRfidController, ctrl).write(vals)
             new_ext_db = ctrl.external_db
 
-            # if 'output_ts_ids' in vals.keys():
-
 
             if old_ext_db != new_ext_db:
                 ctrl.write_controller_mode(new_ext_db=new_ext_db)
@@ -654,6 +656,8 @@ class HrRfidController(models.Model):
                     ctrl.low_temperature,
                     ctrl.hysteresis
                 )
+        if 'output_ts_ids' in vals.keys():
+            self.write_output_ts()
 
     def sys_event(self, error_description, event_action, input_json):
         for ctrl in self:
@@ -1087,9 +1091,16 @@ class HrRfidController(models.Model):
             c.write_controller_mode(new_mode)
 
     def write_output_ts(self):
-        pass
-        # for ctrl in self:
-        #
+        # Write for {"cmd":{"id":17,"c":"DF","d":"00 00 00 0F"}} - {"c":"DF","d":"","e":0,"id":17}
+        # Write for {"cmd":{"id":8,"c":"DF","d":"00 00 00 00 00 00 00 0F"}} - {"c":"DF","d":"","e":0,"id":8}
+        # Read for {"cmd":{"id":17,"c":"FF","d":""}} - {"c":"FF","d":"0000000000000000","e":0,"id":17}
+        for ctrl in self:
+            cmd_data = ''
+            for out in range(ctrl.outputs if ctrl.outputs <= 8 else 8):
+                out_ts = ctrl.output_ts_ids.filtered(lambda rel: rel.output_number == out+1)
+                cmd_data += '%02X' % (out_ts and out_ts.time_schedule_id.number or 0)
+            ctrl._base_command('DF', cmd_data)
+
         # if new_mode is None:
         #     new_mode = self.mode
         # if new_ext_db is None:
@@ -1122,4 +1133,4 @@ class HrRfidController(models.Model):
         }
         '''
         self.ensure_one()
-        return self.webstack_id.report_sys_ev(description, post_data, self, sys_ev_dict)
+        

@@ -170,6 +170,7 @@ class HrRfidWebstack(models.Model):
 
     def _notify_inactive(self):
         self.mapped('last_update')
+        # TODO need to finish it
         # for ws in self:
         #     datetime.datetime.combine(context_today() + relativedelta(weeks=-1,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))
             # if ws.active and (ws.updated_at + relativedelta(minutes=-30)
