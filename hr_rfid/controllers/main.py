@@ -163,7 +163,7 @@ class WebRfidController(http.Controller):
                     ag_rel = event.contact_id.hr_rfid_access_group_ids.filtered(
                         lambda agr: event.door_id in agr.access_group_id.door_ids.mapped('door_id'))
                     if ag_rel and ag_rel.visits_counting:
-                        ag_rel.visits += 1
+                        ag_rel.visits_counter += 1
             elif is_card_event and not card_id:  # Card event with unknown card
                 sys_event_dict = {
                     'door_id': door and door.id or False,

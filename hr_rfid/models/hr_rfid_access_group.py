@@ -511,7 +511,6 @@ class HrRfidAccessGroupRelations(models.AbstractModel):
     def inc_visits(self):
         for s in self:
             s.visits_counter += 1
-            s.state
 
     def _active_state_change(self, new_state):
         for agr in self:
