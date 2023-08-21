@@ -1091,25 +1091,12 @@ class HrRfidController(models.Model):
             c.write_controller_mode(new_mode)
 
     def write_output_ts(self):
-        # Write for {"cmd":{"id":17,"c":"DF","d":"00 00 00 0F"}} - {"c":"DF","d":"","e":0,"id":17}
-        # Write for {"cmd":{"id":8,"c":"DF","d":"00 00 00 00 00 00 00 0F"}} - {"c":"DF","d":"","e":0,"id":8}
-        # Read for {"cmd":{"id":17,"c":"FF","d":""}} - {"c":"FF","d":"0000000000000000","e":0,"id":17}
         for ctrl in self:
             cmd_data = ''
             for out in range(ctrl.outputs if ctrl.outputs <= 8 else 8):
                 out_ts = ctrl.output_ts_ids.filtered(lambda rel: rel.output_number == out+1)
                 cmd_data += '%02X' % (out_ts and out_ts.time_schedule_id.number or 0)
             ctrl._base_command('DF', cmd_data)
-
-        # if new_mode is None:
-        #     new_mode = self.mode
-        # if new_ext_db is None:
-        #     new_ext_db = self.external_db
-        #
-        # cmd_data = '%02X' % (int(new_ext_db) * 0x20 + int(new_mode))
-        # cmd = self._base_command('D5', cmd_data)
-        # self.read_controller_information_cmd()
-        # return cmd
 
     # Command parsers
 

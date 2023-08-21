@@ -457,7 +457,7 @@ class HrRfidCommands(models.Model):
             raise exceptions.ValidationError(_('Controller %s has mode=%d, which is not supported!')
                                              % (ctrl.name, ctrl.mode))
 
-        self._add_remove_card_relay(card.number, ctrl.id, rdata, rmask)
+        self._add_remove_card_relay(card.internal_number, ctrl.id, rdata, rmask)
 
     @api.model
     def remove_card(self, door_id, pin_code, card_number=None, card_id=None):
