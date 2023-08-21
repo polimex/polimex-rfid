@@ -80,18 +80,18 @@
                         <notebook>
                             <page string="System information" name="system_information">
                                 <group>
-                                <group>
-                                    <field name="ctrl_id" readonly="1"/>
-                                    <field name="serial_number" readonly="1"/>
-                                    <field name="hw_version" readonly="1"/>
-                                    <field name="sw_version" readonly="1"/>
-                                </group>
-                                <group>
-                                    <field name="max_cards_count" readonly="1"/>
-                                    <field name="max_events_count" readonly="1"/>
-                                    <field name="readers" readonly="1"/>
-                                    <field name="last_f0_read" readonly="1"/>
-                                </group>
+                                    <group>
+                                        <field name="ctrl_id" readonly="1"/>
+                                        <field name="serial_number" readonly="1"/>
+                                        <field name="hw_version" readonly="1"/>
+                                        <field name="sw_version" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <field name="max_cards_count" readonly="1"/>
+                                        <field name="max_events_count" readonly="1"/>
+                                        <field name="readers" readonly="1"/>
+                                        <field name="last_f0_read" readonly="1"/>
+                                    </group>
                                 </group>
                             </page>
                             <page string="Current status" name="current_status">
@@ -108,7 +108,8 @@
                                     </group>
                                 </group>
                             </page>
-                            <page string="Hotel equipment" name="hotel_equipment" attrs="{'invisible': [('hotel_readers', '=', 0)]}">
+                            <page string="Hotel equipment" name="hotel_equipment"
+                                  attrs="{'invisible': [('hotel_readers', '=', 0)]}">
                                 <group>
                                     <group>
                                         <field name="hotel_readers" readonly="1"/>
@@ -119,7 +120,8 @@
                                     </group>
                                 </group>
                             </page>
-                            <page string="Temperature control" name="temperature_control" attrs="{'invisible': [('hw_version', '!=', '22')]}">
+                            <page string="Temperature control" name="temperature_control"
+                                  attrs="{'invisible': [('hw_version', '!=', '22')]}">
                                 <group>
                                     <group>
                                         <field name="event_interval" widget="numeric_step"
@@ -158,8 +160,8 @@
                                 <group col="4">
                                     <field name="output_ts_ids">
                                         <tree editable="bottom">
-                                            <field name="output_number" />
-                                            <field name="time_schedule_id" />
+                                            <field name="output_number"/>
+                                            <field name="time_schedule_id"/>
                                         </tree>
                                     </field>
                                 </group>
