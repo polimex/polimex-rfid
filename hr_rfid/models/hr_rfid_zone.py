@@ -131,6 +131,7 @@ class HrRfidZone(models.Model):
                 doors = zone.door_ids.filtered(lambda d: d.apb_mode)
             else:
                 doors = zone.door_ids.filtered(lambda d: d.apb_mode) - event.door_id
+
             for card in person.hr_rfid_card_ids:
                 doors.change_apb_flag(card, enable_exiting)
 
