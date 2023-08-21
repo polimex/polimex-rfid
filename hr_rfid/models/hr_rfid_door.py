@@ -571,6 +571,9 @@ class HrRfidDoor(models.Model):
                 ('card_id', '=', card.id),
                 ('door_id', '=', door.id),
             ])
+            # ignore doors without rights (optimisation)
+            if door.id not in card_door_rel_id.mapped('door_id'):
+                continue
             self.env['hr.rfid.command'].add_remove_card(
                 card_number=card.internal_number,
                 ctrl_id=door.controller_id.id,
@@ -580,8 +583,6 @@ class HrRfidDoor(models.Model):
                 rights_mask=rights,
                 alarm_right=card_door_rel_id.alarm_right
             )
-            # door.controller_id.add_remove_card(card.number, card.get_owner().hr_rfid_pin_code,
-            #                                    '00000000', rights if can_exit else 0, rights)
 
 
 class HrRfidDoorOpenCloseWiz(models.TransientModel):
