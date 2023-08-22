@@ -1119,5 +1119,7 @@ class HrRfidController(models.Model):
             'input_js': str Input JSON
         }
         '''
-        self.ensure_one()
+        for ctrl in self:
+            ctrl.webstack_id.report_sys_ev(description, post_data, ctrl, sys_ev_dict)
+
         

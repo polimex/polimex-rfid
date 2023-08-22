@@ -110,6 +110,7 @@ class HrRfidSystemEvent(models.Model):
         ('47', _('Vending Purchase Complete')),
         ('48', _('Vending Error1')),
         ('49', _('Vending Error2')),
+        ('50', _('Vending collect to card')),
         ('51', _('Temperature High')),
         ('52', _('Temperature Normal')),
         ('53', _('Temperature Low')),

@@ -426,6 +426,7 @@ class RFIDAppCase(common.TransactionCase):
         return cmd
 
     def _test_R_event(self, ctrl, reader=1):
+        # Test with known card
         response = self._make_event(ctrl, reader=reader, event_code=3)
         self.assertEqual(response, {}, '(%s)' % ctrl.name)
         response = self._make_event(ctrl, reader=reader, event_code=4)
@@ -434,6 +435,11 @@ class RFIDAppCase(common.TransactionCase):
         self.assertEqual(response, {}, '(%s)' % ctrl.name)
         response = self._make_event(ctrl, reader=reader, event_code=6)
         self.assertEqual(response, {}, '(%s)' % ctrl.name)
+
+        # Test with unknown card
+        response = self._make_event(ctrl, card='1122334455', reader=reader, event_code=4)
+        self.assertEqual(response, {}, '(%s)' % ctrl.name)
+
         # response = self._make_event(self.ctrl, reader=reader+1, event_code=3, system_event=True)
         # self.assertEqual(response, {})
         pass
