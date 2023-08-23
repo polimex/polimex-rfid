@@ -228,9 +228,14 @@ class RFIDAppCase(common.TransactionCase):
                                  headers={'Content-Type': 'application/json'})
         return self._assertResponse(response)
 
-    def _count_system_events(self, company_id):
+    def _count_system_events(self, company_id = None):
         return self.env['hr.rfid.event.system'].with_company(company_id or self.test_company_id).search_count([
             ('webstack_id', '=', self.test_webstack_10_3_id.id)
+        ])
+
+    def _count_user_events(self, company_id = None):
+        return self.env['hr.rfid.event.user'].search_count([
+            ('employee_id.company_id', '=', company_id or self.test_company_id)
         ])
 
     def _user_events(self, company_id, count=True, last=False):
@@ -426,6 +431,7 @@ class RFIDAppCase(common.TransactionCase):
         return cmd
 
     def _test_R_event(self, ctrl, reader=1):
+        user_events_count = self._count_user_events()
         # Test with known card
         response = self._make_event(ctrl, reader=reader, event_code=3)
         self.assertEqual(response, {}, '(%s)' % ctrl.name)
@@ -436,9 +442,14 @@ class RFIDAppCase(common.TransactionCase):
         response = self._make_event(ctrl, reader=reader, event_code=6)
         self.assertEqual(response, {}, '(%s)' % ctrl.name)
 
+        self.assertEqual(user_events_count + 4, self._count_user_events(), '(%s)' % ctrl.name)
+
         # Test with unknown card
+        system_events_count = self._count_system_events()
         response = self._make_event(ctrl, card='1122334455', reader=reader, event_code=4)
         self.assertEqual(response, {}, '(%s)' % ctrl.name)
+        self.assertEqual(system_events_count + 1, self._count_system_events(), '(%s)' % ctrl.name)
+        self.co
 
         # response = self._make_event(self.ctrl, reader=reader+1, event_code=3, system_event=True)
         # self.assertEqual(response, {})
