@@ -19,6 +19,8 @@ class VendingController(RFIDController, HttpCase):
 
         self._sale_test()
 
+        pass
+
     def _add_products(self, ctrl_id=None):
         ctrl_id = ctrl_id or self.c_vending
         products = []

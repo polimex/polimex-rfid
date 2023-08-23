@@ -19,6 +19,8 @@
         'security/hr_rfid_multi_company.xml',
         'security/ir.model.access.csv',
         'views/hr_employee_views.xml',
+        'views/ctrl_cash_collect_wizard.xml',
+        'views/ctrl_cash_collect_log.xml',
         'views/hr_rfid_ctrl.xml',
         'views/hr_rfid_vending_auto_refill.xml',
         'views/hr_rfid_vending_balance_history.xml',

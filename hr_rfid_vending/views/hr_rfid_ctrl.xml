@@ -50,6 +50,9 @@
             <field name="model">hr.rfid.ctrl</field>
             <field name="inherit_id" ref="hr_rfid.hr_rfid_controller_view_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button name="%(ctrl_cash_collect_wizard_action)d" string="Collect cash" type="action" groups="hr_rfid_vending.group_operator" attrs="{'invisible': [('cash_contained', '=', 0)]}"/>
+                </xpath>
                 <xpath expr="//button[@id='hr_rfid_view_modify_io_table_btn']" position="attributes">
                     <!-- If controller is a vending controller, turn this button invisible -->
                     <attribute name="attrs">{'invisible':[('hw_version','=','16')]}</attribute>
@@ -63,12 +66,14 @@
                             icon="fa-table"
                             attrs="{'invisible':[('hw_version','!=','16')]}"/>
                 </xpath>
-                <xpath expr="//page[@name='setup']" position="inside">
-                    <group string="Vending info" attrs="{'invisible':[('hw_version','!=','16')]}">
-                        <field name="show_price_timeout" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}"/>
-                        <field name="scale_factor" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}"/>
-                        <field name="cash_contained" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}"/>
-                    </group>
+                <xpath expr="//page[@name='debug']" position="before">
+                    <page string="Vending info" name='vending' attrs="{'invisible':[('hw_version','!=','16')]}">
+                        <group>
+                            <field name="show_price_timeout" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}"/>
+                            <field name="scale_factor" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}"/>
+                            <field name="cash_contained" readonly="1" attrs="{'invisible':[('hw_version','!=','16')]}"/>
+                        </group>
+                    </page>
                 </xpath>
             </field>
         </record>

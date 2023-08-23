@@ -30,6 +30,13 @@
                   groups="hr_rfid_vending.group_customer"
                   sequence="20"/>
 
+        <menuitem id="hr_rfid_vending_menu_cash_log"
+                  name="Cash collect log"
+                  parent="hr_rfid_vending_menu"
+                  action="ctrl_cash_collect_log_action"
+                  groups="hr_rfid_vending.group_operator"
+                  sequence="25"/>
+
         <menuitem id="hr_rfid_vending_products_menu"
                   name="Products"
                   parent="hr_rfid_vending.hr_rfid_vending_menu"
