@@ -446,10 +446,9 @@ class RFIDAppCase(common.TransactionCase):
 
         # Test with unknown card
         system_events_count = self._count_system_events()
-        response = self._make_event(ctrl, card='1122334455', reader=reader, event_code=4)
+        response = self._make_event(ctrl, card='1122334455', reader=reader, event_code=4+(reader-1)*4)
         self.assertEqual(response, {}, '(%s)' % ctrl.name)
         self.assertEqual(system_events_count + 1, self._count_system_events(), '(%s)' % ctrl.name)
-        self.co
 
         # response = self._make_event(self.ctrl, reader=reader+1, event_code=3, system_event=True)
         # self.assertEqual(response, {})
@@ -475,7 +474,8 @@ class RFIDAppCase(common.TransactionCase):
     def _test_inputs(self, ctrl):
         res = [
             self._test_Emergency(ctrl), self._test_Exit_buttons(ctrl), self._test_Door_Overtime(ctrl),
-            self._test_Force_Door_Open(ctrl), self._test_Power_On(ctrl)
+            self._test_Force_Door_Open(ctrl), self._test_Power_On(ctrl),
+            self._test_External_control(ctrl)
         ]
         return res
 
@@ -487,6 +487,8 @@ class RFIDAppCase(common.TransactionCase):
 
     def _test_Exit_buttons(self, ctrl):
         return [self._make_event(ctrl, reader=d.reader_ids[0].number, event_code=21) for d in ctrl.door_ids]
+    def _test_External_control(self, ctrl):
+        return [self._make_event(ctrl, reader=0, event_code=29)]
 
     def _test_Door_Overtime(self, ctrl):
         res = [self._make_event(ctrl, reader=d.reader_ids[0].number, event_code=25) for d in ctrl.door_ids]

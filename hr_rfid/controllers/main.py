@@ -262,7 +262,8 @@ class WebRfidController(http.Controller):
             raise Exception('Not Implemented (DELAY ZONE OFF (if out) Z4,Z3,Z2,Z1)')
         # Reserved
         elif event_action in [29]:
-            raise Exception('Not Implemented (Reserved 29)')
+            controller_id.report_sys_ev('External control', post_data=post_data)
+            return controller_id.synchronize_clock_cmd().send_command(200)
         # Power On controller
         elif event_action in [30]:
             controller_id.report_sys_ev('Controller restarted or Power Fail', post_data=post_data)

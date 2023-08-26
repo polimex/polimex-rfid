@@ -31,7 +31,7 @@ class HrRfidCommands(models.Model):
     _name = 'hr.rfid.command'
     _description = 'Command to controller'
     _inherit = 'balloon.mixin'
-    _order = 'cr_timestamp desc, id desc'
+    _order = 'create_date desc, id desc'
 
     commands = [
         ('F0', _('Read System Information')),
@@ -160,14 +160,7 @@ class HrRfidCommands(models.Model):
              'to the reason for why it was unsuccessful',
         default='0'
     )
-
-    cr_timestamp = fields.Datetime(
-        string='Creation Time',
-        help='Time at which the command was created',
-        readonly=True,
-        required=True,
-        default=lambda self: fields.Datetime.now(),
-    )
+    create_date = fields.Datetime(index=True)
 
     ex_timestamp = fields.Datetime(
         string='Execution Time',
@@ -215,7 +208,14 @@ class HrRfidCommands(models.Model):
 
     @api.autovacuum
     def _gc_clean_old_commands(self):
-        self.env['hr.rfid.command'].search([('create_date', '<', fields.Datetime.now() - timedelta(days=14))]).unlink()
+        # self.env['hr.rfid.command'].search([
+        #     ('create_date', '<', fields.Datetime.now() - timedelta(days=14))
+        # ],limit=1000).unlink()
+        self._cr.execute("""
+                    DELETE FROM hr_rfid_command 
+                    WHERE create_date < NOW() - INTERVAL '14 days'
+                """)
+        _logger.info("GC'd %d old rfid cmd entries", self._cr.rowcount)
 
     def resend_action(self):
         for c in self.filtered(lambda cmd: cmd.status in ['Failure', 'Process']):
@@ -523,7 +523,7 @@ class HrRfidCommands(models.Model):
     def _update_commands(self):
         failed_commands = self.search([
             ('status', '=', 'Process'),
-            ('cr_timestamp', '<', str(fields.datetime.now() - timedelta(minutes=1)))
+            ('create_date', '<', str(fields.datetime.now() - timedelta(minutes=1)))
         ])
 
         for it in failed_commands:
@@ -534,7 +534,7 @@ class HrRfidCommands(models.Model):
 
         failed_commands = self.search([
             ('status', '=', 'Wait'),
-            ('cr_timestamp', '<', str(fields.datetime.now() - timedelta(minutes=1)))
+            ('create_date', '<', str(fields.datetime.now() - timedelta(minutes=1)))
         ])
 
         for it in failed_commands:

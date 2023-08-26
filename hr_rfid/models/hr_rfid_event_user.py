@@ -131,12 +131,18 @@ class HrRfidUserEvent(models.Model):
         for c in self.env['res.company'].search([]):
             if c.event_lifetime is None:
                 return False
-            lifetime = timedelta(days=int(c.event_lifetime))
-            today = fields.Date.today()
-            res = self.with_company(c).search([
-                ('event_time', '<', today - lifetime)
-            ])
-            res.unlink()
+            # lifetime = timedelta(days=int(c.event_lifetime))
+            # today = fields.Date.today()
+            # res = self.with_company(c).search([
+            #     ('event_time', '<', today - lifetime)
+            # ])
+            # res.unlink()
+            self._cr.execute("""
+                        DELETE FROM hr_rfid_event_user
+                        WHERE event_time < NOW() - INTERVAL '%s days'
+                    """, [c.event_lifetime])
+            _logger.info("GC'd %d old rfid user event entries", self._cr.rowcount)
+
         return True
 
     @api.depends('employee_id.name', 'contact_id.name', 'door_id.name', 'event_action')

@@ -3,6 +3,8 @@ from datetime import timedelta
 
 from odoo import fields, models, api, exceptions, _
 
+import logging
+_logger = logging.getLogger(__name__)
 
 class HrRfidSystemEvent(models.Model):
     _name = 'hr.rfid.event.system'
@@ -96,7 +98,7 @@ class HrRfidSystemEvent(models.Model):
         ('26', _('Forced Door Open')),
         ('27', _('DELAY ZONE ON (if out) Z4,Z3,Z2,Z1')),
         ('28', _('DELAY ZONE OFF (if in) Z4,Z3,Z2,Z1')),
-        ('29', _('reserved')),
+        ('29', _('External Control')),
         ('30', _('Power On event')),
         ('31', _('Open/Close Door From PC')),
         ('32', _('reserved')),
@@ -152,12 +154,17 @@ class HrRfidSystemEvent(models.Model):
         for c in self.env['res.company'].search([]):
             if c.event_lifetime is None:
                 return False
-            lifetime = timedelta(days=int(c.event_lifetime))
-            today = fields.Date.today()
-            res = self.with_company(c).search([
-                ('timestamp', '<', today - lifetime)
-            ])
-            res.unlink()
+            self._cr.execute("""
+                                   DELETE FROM hr_rfid_event_system
+                                   WHERE timestamp < NOW() - INTERVAL '%s days'
+                               """, [c.event_lifetime])
+            _logger.info("GC'd %d old rfid system event entries", self._cr.rowcount)
+            # today = fields.Date.today()
+            # res = self.with_company(c).search([
+            #     ('timestamp', '<', today - lifetime)
+            # ])
+            # res.unlink()
+
         return True
 
     @api.depends('webstack_id.name', 'controller_id.name', 'timestamp')

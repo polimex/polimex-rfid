@@ -47,7 +47,7 @@
                                 <field name="webstack_id" readonly="1"/>
                             </group>
                             <group string="When">
-                                <field name="cr_timestamp" readonly="1"/>
+                                <field name="create_date" readonly="1"/>
                                 <field name="ex_timestamp" readonly="1"/>
                                 <field name="retries" readonly="1"/>
                             </group>
@@ -83,7 +83,7 @@
                            decoration-danger="status == 'Failure'"
                            />
 
-                    <field name="cr_timestamp" optional="show"/>
+                    <field name="create_date" optional="show"/>
                     <field name="ex_timestamp" optional="show"/>
                     <field name="error" optional="show"/>
                     <field name="retries" optional="show"/>
@@ -106,19 +106,19 @@
                     <field name="cmd"/>
                     <field name="status"/>
                     <field name="error"/>
-                    <field name="cr_timestamp"/>
+                    <field name="create_date"/>
                     <field name="ex_timestamp"/>
 
-                    <filter string="Command time" name="filter_command_time" date="cr_timestamp" default_period="last_month"/>
+                    <filter string="Command time" name="filter_command_time" date="create_date" default_period="last_month"/>
 
                     <filter name="this_day" string="Commands from today" domain="[
-                            ('cr_timestamp', '&gt;=', (datetime.datetime.combine(context_today(), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                            ('create_date', '&gt;=', (datetime.datetime.combine(context_today(), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
                     <filter name="this_week" string="Commands from this week" domain="[
-                        ('cr_timestamp', '>=', (datetime.datetime.combine(context_today() + relativedelta(weeks=-1,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')),
-                        ('cr_timestamp', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                        ('create_date', '>=', (datetime.datetime.combine(context_today() + relativedelta(weeks=-1,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')),
+                        ('create_date', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
                     <filter name="last_week" string="Commands from last week" domain="[
-                        ('cr_timestamp', '>=', (datetime.datetime.combine(context_today() + relativedelta(weeks=-2,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')),
-                        ('cr_timestamp', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(weeks=-1, days=0,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                        ('create_date', '>=', (datetime.datetime.combine(context_today() + relativedelta(weeks=-2,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')),
+                        ('create_date', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(weeks=-1, days=0,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
                     <separator/>
 
                     <newline/>
@@ -130,7 +130,7 @@
                         <filter string="Status" name="status" domain="[]" context="{'group_by':'status'}"/>
                         <filter string="Error" name="error" domain="[]" context="{'group_by':'error'}"/>
                         <filter string="Creation Time" name="create_time" domain="[]"
-                                context="{'group_by':'cr_timestamp'}"/>
+                                context="{'group_by':'create_date'}"/>
                         <filter string="Execution Time" name="exec_time" domain="[]"
                                 context="{'group_by':'ex_timestamp'}"/>
                         <filter string="Command retries" name="retries" domain="[]" context="{'group_by':'retries'}"/>
@@ -149,7 +149,7 @@
             <field name="name">hr.rfid.command.calendar</field>
             <field name="model">hr.rfid.command</field>
             <field name="arch" type="xml">
-                <calendar date_start="cr_timestamp" date_stop="ex_timestamp" color="webstack_id">
+                <calendar date_start="create_date" date_stop="ex_timestamp" color="webstack_id">
                     <field name="webstack_id"/>
                     <field name="controller_id"/>
                     <field name="cmd"/>
