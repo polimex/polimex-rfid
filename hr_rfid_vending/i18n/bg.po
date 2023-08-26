@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-24 11:00+0000\n"
-"PO-Revision-Date: 2022-11-24 13:01+0200\n"
+"POT-Creation-Date: 2023-08-26 11:30+0000\n"
+"PO-Revision-Date: 2023-08-26 14:35+0300\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: \n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: \n"
-"X-Generator: Poedit 3.2.1\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.3.2\n"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__event_action
@@ -68,10 +68,21 @@ msgid "Amount of money an employee can spend on the vending machine"
 msgstr "Сума пари, които служител може да похарчи на автомата"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__value
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__value
+msgid "Amount of money collected from Vending machine"
+msgstr "Сума пари, които служител зарежда на автомата"
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_recharge_balance
 msgid ""
 "Amount of self charged money the employee can spend on the vending machine"
 msgstr "Сума собствени пари, които служителят може да похарчи на автомата"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__in_or_out
+msgid "Attendance"
+msgstr "Присъствие"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_auto_refill
@@ -171,6 +182,7 @@ msgid "Balance result"
 msgstr "Балансов резултат"
 
 #. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.ctrl_cash_collect_wizard_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_change_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_set_form
 msgid "Cancel"
@@ -187,9 +199,29 @@ msgid "Card affected by this event"
 msgstr "Карти засегнати от това събитие"
 
 #. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_rfid_ctrl_cash_log
+msgid "Cash Collect log from Vending Machines"
+msgstr "Регистър на Извадените пари от автомат"
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__cash_contained
 msgid "Cash Contained"
 msgstr "Съдържа монети"
+
+#. module: hr_rfid_vending
+#: model:ir.actions.act_window,name:hr_rfid_vending.ctrl_cash_collect_log_action
+msgid "Cash collect Log"
+msgstr "Регистър на Извадените пари"
+
+#. module: hr_rfid_vending
+#: model:ir.ui.menu,name:hr_rfid_vending.hr_rfid_vending_menu_cash_log
+msgid "Cash collect log"
+msgstr "Регистър на Извадените пари"
+
+#. module: hr_rfid_vending
+#: model:ir.actions.act_window,name:hr_rfid_vending.ctrl_cash_collect_wizard_action
+msgid "Cash collect wizard"
+msgstr "Съветник за изваждане на пари в брой"
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_change_form
@@ -213,6 +245,7 @@ msgstr "Затвори"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_rfid_vending_event__event_action__50
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_view_form_inherit_hr_rfid_vending
 msgid "Collect cash"
 msgstr "Зареждане"
 
@@ -247,6 +280,11 @@ msgid "Company"
 msgstr "Компания"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__currency_id
+msgid "Company Currency"
+msgstr "Валута на компанията"
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__contact_id
 msgid "Contact"
 msgstr "Контакт"
@@ -258,6 +296,8 @@ msgstr "Кнтакти засегнати от това събитие"
 
 #. module: hr_rfid_vending
 #: model:ir.model,name:hr_rfid_vending.model_hr_rfid_ctrl
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__controller_id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__controller_ids
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__controller_id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__controller_id
 msgid "Controller"
@@ -270,6 +310,8 @@ msgstr "ИН на контролер"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__create_uid
@@ -280,6 +322,8 @@ msgstr "Създаден от"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__create_date
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__create_date
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__create_date
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__create_date
@@ -288,9 +332,35 @@ msgid "Created on"
 msgstr "Създаден на"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__currency_id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__currency_id
+msgid "Currency"
+msgstr "Валута"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_employee__daily_limit_type__day
+msgid "Current Calendar day"
+msgstr "Текущ календарен ден"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_current_balance
+msgid "Current balance"
+msgstr "Текущо салдо"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
+msgid "Current state"
+msgstr "Текущо състояние"
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_daily_limit
 msgid "Daily Limit"
 msgstr "Дневен Лимит"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__daily_limit_type
+msgid "Daily Limit Type"
+msgstr "Тип дневен лимит"
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_auto_refill_search
@@ -314,6 +384,8 @@ msgstr "Доклад"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__display_name
@@ -460,6 +532,8 @@ msgstr "Колко да се добави/премахне от баланса �
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__id
@@ -551,7 +625,14 @@ msgid "Kpi Hr Rfid Vending Sale Value"
 msgstr ""
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_employee__daily_limit_type__last_24
+msgid "Last 24 hours"
+msgstr "Последните 24 часа"
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz____last_update
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_log____last_update
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz____last_update
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row____last_update
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings____last_update
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill____last_update
@@ -562,6 +643,8 @@ msgstr "Последно променено на"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__write_uid
@@ -572,6 +655,8 @@ msgstr "Последно актуализиран от"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__write_date
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__write_date
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__write_date
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__write_date
@@ -584,6 +669,12 @@ msgstr "Последно актуализиран на"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_limit
 msgid "Limit"
 msgstr "Лимит"
+
+#. module: hr_rfid_vending
+#: code:addons/hr_rfid_vending/models/ctrl_cash_collect_wizard.py:0
+#, python-format
+msgid "Manual cash collect amount: %f %s"
+msgstr "Ръчно събиране на суми в брой: %f %s"
 
 #. module: hr_rfid_vending
 #: code:addons/hr_rfid_vending/models/hr_employee_wizards.py:0
@@ -911,6 +1002,8 @@ msgstr "Потребителски права за вендинг модула"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__value
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__value
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__value
 msgid "Value"
 msgstr "Стойност"
 
@@ -1041,6 +1134,11 @@ msgid "Where"
 msgstr "Къде"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__in_or_out
+msgid "Whether the user came in or out"
+msgstr "Дали потребителят е влязъл или излязъл"
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_negative_balance
 msgid "Whether the user is allowed to have a negative balance or not"
 msgstr "Дали на потребителя е позволен отрицателен баланс или не"
@@ -1049,6 +1147,11 @@ msgstr "Дали на потребителя е позволен отрицат�
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
 msgid "Who"
 msgstr "Кой"
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_rfid_ctrl_cash_wiz
+msgid "Wizard for Collect cash from Vending Machine"
+msgstr "Съветник за събиране на пари от вендинг машина"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__workcode_id
@@ -1074,6 +1177,22 @@ msgid ""
 msgstr ""
 "Работен код, пристигнал от събитието. Ако виждате тази версия, това "
 "означава, че не сте създали етикет на работния код на страницата с кодове."
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.ctrl_cash_collect_wizard_view_form
+msgid "_Collect"
+msgstr "_Извади"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.ctrl_cash_collect_log_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.ctrl_cash_collect_wizard_view_form
+msgid "_form"
+msgstr ""
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.ctrl_cash_collect_log_view_tree
+msgid "_tree"
+msgstr ""
 
 #. module: hr_rfid_vending
 #: code:addons/hr_rfid_vending/models/hr_rfid_ctrl_settings.py:0
