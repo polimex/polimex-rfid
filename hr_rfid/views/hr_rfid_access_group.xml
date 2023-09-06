@@ -27,7 +27,8 @@
                 <form string="Add Doors">
                     <group>
                         <field name="acc_gr_doors" attrs="{'invisible': True}"/>
-                        <field name="door_ids" options='{"no_open": True, "no_create": True}' domain="[('id', 'not in', acc_gr_doors)]" widget="many2many_tags"/>
+                        <field name="door_ids" options='{"no_open": True, "no_create": True}'
+                               domain="[('id', 'not in', acc_gr_doors)]" widget="many2many_tags"/>
                         <field name="time_schedule_id" options='{"no_open": True, "no_create": True}'/>
                         <field name="alarm_rights"/>
                     </group>
@@ -47,7 +48,8 @@
                 <form string="Remove Doors">
                     <group>
                         <field name="acc_gr_doors" attrs="{'invisible': True}"/>
-                        <field name="door_ids" options='{"no_open": True, "no_create": True}' domain="[('id', 'in', acc_gr_doors)]" widget="many2many_tags"/>
+                        <field name="door_ids" options='{"no_open": True, "no_create": True}'
+                               domain="[('id', 'in', acc_gr_doors)]" widget="many2many_tags"/>
                     </group>
                     <footer>
                         <button name="del_doors" type="object"
@@ -104,8 +106,14 @@
                                 <field name="name"/>
                             </h1>
                         </div>
+
+                        <group>
+                        <group>
+                            <field name="delay_between_events"/>
+                        </group>
                         <group>
                             <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
                         </group>
                         <div attrs="{'invisible': [('id', '!=', False)]}">
                             <p>
@@ -126,11 +134,15 @@
                                     <ol>
                                         <li>Go to Department setup in Employee menu</li>
                                         <li>Edit Department and set "Default Access Group" - this group will
-                                            be added to all existing or future added Employees in department</li>
+                                            be added to all existing or future added Employees in department
+                                        </li>
                                         <li>Optionally add Available Access groups - this groups can be added manually
                                             to Employees in this Department. If no Available groups in Employee setup
-                                            menu you will see <strong>only</strong> Default Access Group!!! </li>
-                                        <li>Go to Employee Form for manage additional access groups in tab RFID Information</li>
+                                            menu you will see <strong>only</strong> Default Access Group!!!
+                                        </li>
+                                        <li>Go to Employee Form for manage additional access groups in tab RFID
+                                            Information
+                                        </li>
                                         <li>Go to Employee Form and add card to Employee in tab RFID Information</li>
                                         <li>The card is ready for use. All is Done</li>
                                     </ol>

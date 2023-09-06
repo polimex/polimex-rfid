@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_attendance_extra_view_form" model="ir.ui.view">
+            <field name="name">hr_attendance_extra_view_form</field>
+            <field name="model">hr.attendance.extra</field>
+            <field name="arch" type="xml">
+                <form string="hr_attendance_extra_form">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="open_attendance_logs"
+                                    type="object"
+                                    class="oe_stat_button"
+                                    icon="fa-history">
+                                <field name="attendance_count" widget="statinfo" string="Attendance records"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="employee_id" class="oe_edit_only"/>
+                            <h1>
+                                <field name="employee_id"/>
+                            </h1>
+                            <h3>
+                                <field name="for_date"/>
+                            </h3>
+                            <h5>
+                                <field name="department_id"/>
+                            </h5>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="theoretical_work_time" widget="float_time"/>
+                                <field name="actual_work_time" widget="float_time"/>
+                                <field name="actual_work_time_day" widget="float_time"/>
+                                <field name="actual_work_time_night" widget="float_time"/>
+                            </group>
+                            <group>
+                                <field name="early_come_time" widget="float_time"/>
+                                <field name="late_time" widget="float_time"/>
+                                <field name="early_leave_time" widget="float_time"/>
+                                <field name="overtime" widget="float_time"/>
+                                <field name="overtime_night" widget="float_time"/>
+                                <field name="extra_time" widget="float_time"/>
+                                <field name="extra_night" widget="float_time"/>
+                            </group>
+                            <group attrs="{'invisible': [('shift_number', '=', None)]}">
+                                <field name="shift_number"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_attendance_extra_view_pivot" model="ir.ui.view">
+            <field name="name">hr.attendance.extra.view.pivot</field>
+            <field name="model">hr.attendance.extra</field>
+            <field name="arch" type="xml">
+                <pivot sample="1">
+                    <field name="for_date" type="col" interval="month"/>
+                    <field name="department_id" type="row"/>
+                    <field name="employee_id" type="row"/>
+                    <field name="theoretical_work_time" type="measure"/>
+                    <field name="actual_work_time" type="measure"/>
+                    <field name="late_time" type="measure"/>
+                    <field name="overtime" type="measure"/>
+                    <field name="overtime_night" type="measure"/>
+                    <field name="extra_time" type="measure"/>
+                    <field name="shift_number" type="measure"/>
+
+                </pivot>
+            </field>
+        </record>
+
+        <record id="hr_attendance_extra_view_tree" model="ir.ui.view">
+            <field name="name">hr_attendance_extra_view_tree</field>
+            <field name="model">hr.attendance.extra</field>
+            <field name="arch" type="xml">
+                <tree string="hr_attendance_extra_tree">
+                    <field name="for_date"/>
+                    <field name="employee_id"/>
+                    <field name="theoretical_work_time" widget="float_time" optional="show"/>
+                    <field name="actual_work_time" widget="float_time" optional="show"/>
+                    <field name="actual_work_time_day" widget="float_time" optional="hide"/>
+                    <field name="actual_work_time_night" widget="float_time" optional="hide"/>
+                    <field name="early_come_time" widget="float_time" optional="show"/>
+                    <field name="late_time" widget="float_time" optional="show"/>
+                    <field name="early_leave_time" widget="float_time" optional="show"/>
+                    <field name="overtime" widget="float_time" optional="show"/>
+                    <field name="overtime_night" widget="float_time" optional="hide"/>
+                    <field name="extra_time" widget="float_time" optional="show"/>
+                    <field name="extra_night" widget="float_time" optional="hide"/>
+                    <field name="shift_number" widget="float_time" optional="hide"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_attendance_extra_view_search" model="ir.ui.view">
+            <field name="name">hr.attendance.extra.view.search</field>
+            <field name="model">hr.attendance.extra</field>
+            <field name="arch" type="xml">
+                <search string="">
+                    <field name="employee_id" string="string"/>
+                    <field name="department_id" string="string"/>
+                    <filter
+                            string="Today"
+                            name="today"
+                            domain="[('for_date', '=', context_today().strftime('%Y-%m-%d'))]"
+                            help="Today"
+                    />
+                    <filter
+                            string="Yesterday"
+                            name="yesterday"
+                            domain="[('for_date', '=', (context_today()-datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]"
+                    />
+                    <filter string="Date" name="for_date" date="for_date"/>
+                    <separator/>
+                    <filter string="Early come" name="early_come"
+                            domain="[('early_come_time','>',0.0)]"
+                            help="Early come Employees Records"
+                    />
+                    <filter string="Late" name="late"
+                            domain="[('late_time','>',0.0)]"
+                            help="Late Employees Records"
+                    />
+                    <filter string="Early leave" name="early_leave"
+                            domain="[('early_leave_time','>',0.0)]"
+                            help="Early leave Employees Records"
+                    />
+                    <filter string="Overtime" name="overtime"
+                            domain="[('overtime','>',0.0)]"
+                            help="Overtime Employees Records"
+                    />
+                    <filter string="Night Overtime" name="overtime_night"
+                            domain="[('overtime_night','>',0.0)]"
+                            help="Night Overtime Employees Records"
+                    />
+                    <filter string="Extra time" name="extra_time"
+                            domain="[('extra_time','>',0.0)]"
+                            help="Extra time Employees Records"
+                    />
+                    <filter string="Extra time Night" name="extra_night"
+                            domain="[('extra_night','>',0.0)]"
+                            help="Night Extra time Employees Records"
+                    />
+                    <group expand="1" string="Group By">
+                        <filter name="groupby_for_date" context="{'group_by' : 'for_date'}" string="Date"/>
+                        <filter name="groupby_employee" context="{'group_by' : 'employee_id'}" string="Employee"/>
+                        <filter name="groupby_department" context="{'group_by' : 'department_id'}" string="Department"/>
+                    </group>
+                    <searchpanel>
+                        <field name="department_id" icon="fa-users" enable_counters="1"/>
+                    </searchpanel>
+                </search>
+            </field>
+        </record>
+
+        <record id="hr_attendance_extra_action" model="ir.actions.act_window">
+            <field name="name">Extra calculations</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.attendance.extra</field>
+            <field name="view_mode">pivot,tree,form</field>
+        </record>
+        <menuitem
+                id="menu_hr_attendance_report"
+                name="Attendances Analysis"
+                parent="hr_attendance.menu_hr_attendance_report"
+                sequence="10"
+                groups="hr_attendance.group_hr_attendance_user"
+                action="hr_attendance.hr_attendance_action_graph"
+        />
+        <menuitem
+                id="menu_hr_attendance_extra"
+                name="Extra calculations"
+                sequence="50"
+                parent="hr_attendance.menu_hr_attendance_report"
+                action="hr_attendance_extra_action"
+                groups="hr_attendance.group_hr_attendance_user"/>
+        <menuitem
+                id="menu_hr_attendance_extra_recompute"
+                name="Recompute Extra Attendance"
+                sequence="51"
+                parent="hr_attendance.menu_hr_attendance_report"
+                action="recompute_extra_attendance_menu"
+                groups="hr_attendance.group_hr_attendance_user"/>
+    </data>
+</odoo>

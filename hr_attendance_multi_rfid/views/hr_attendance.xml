@@ -35,7 +35,7 @@
             <field name="inherit_id" ref="hr_attendance.hr_attendance_view_filter"/>
             <field name="arch" type="xml">
                 <xpath expr="//group" position="before">
-                    <filter string="With Check Out" name="withcheckout" domain="[('check_out', '!=', False)]" />
+                    <filter string="With Check Out" name="withcheckout" domain="[('check_out', '!=', False)]"/>
                     <filter name="today" string="Attendance for today"
                             domain="[('check_in', '&gt;',  (context_today()-datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d')),('check_in', '&lt;',  (context_today()+datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]"/>
                 </xpath>
@@ -51,15 +51,15 @@
             </field>
         </record>
 
-        # Commands
-        <record id="action_recalc_attendance" model="ir.actions.server">
-            <field name="name">Re-calc attendance</field>
-            <field name="model_id" ref="model_hr_employee"/>
-            <field name="type">ir.actions.server</field>
-            <field name="state">code</field>
-            <field name="code">records.recalc_attendance()</field>
-            <field name="binding_model_id" ref="hr.model_hr_employee"/>
-            <field name="binding_view_types">form,list</field>
-        </record>
+<!--        # Commands-->
+<!--        <record id="action_recalc_attendance" model="ir.actions.server">-->
+<!--            <field name="name">Re-calc attendance</field>-->
+<!--            <field name="model_id" ref="model_hr_employee"/>-->
+<!--            <field name="type">ir.actions.server</field>-->
+<!--            <field name="state">code</field>-->
+<!--            <field name="code">records.recalc_attendance()</field>-->
+<!--            <field name="binding_model_id" ref="hr.model_hr_employee"/>-->
+<!--            <field name="binding_view_types">form,list</field>-->
+<!--        </record>-->
     </data>
 </odoo>

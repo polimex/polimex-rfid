@@ -12,14 +12,17 @@
        Description
        """,
 
-    'website': 'polimex.co',
+    'website': 'https://polimex.co',
 
-    'depends': ['hr_attendance'],
+    'depends': ['hr_attendance','digest', 'hr_attendance_multi_rfid'],
 
     'data': [
-        'views/hr_attendance.xml',
+        'security/ir.model.access.csv',
         'views/hr_department.xml',
         'views/digest_views.xml',
+        'wizards/hr_attendance_extra_wizard.xml',
+        'views/hr_attendance_extra.xml',
+        'views/resource_calendar.xml',
     ],
 
     "images": [

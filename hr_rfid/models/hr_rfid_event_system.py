@@ -9,6 +9,9 @@ class HrRfidSystemEvent(models.Model):
     _description = 'RFID System Event'
     _order = 'timestamp desc'
 
+    def _get_action_selection(self):
+        pass
+
     name = fields.Char(
         compute='_compute_sys_ev_name'
     )
@@ -107,9 +110,10 @@ class HrRfidSystemEvent(models.Model):
         ('47', _('Vending Purchase Complete')),
         ('48', _('Vending Error1')),
         ('49', _('Vending Error2')),
-        ('52', _('Temperature High')),
-        ('53', _('Temperature Normal')),
-        ('54', _('Temperature Low')),
+        ('51', _('Temperature High')),
+        ('52', _('Temperature Normal')),
+        ('53', _('Temperature Low')),
+        ('54', _('Temperature Error')),
         ('64', _('Cloud Card Request')),  # User Event
         ('99', _('System Event')),
     ]
@@ -144,17 +148,15 @@ class HrRfidSystemEvent(models.Model):
 
     @api.autovacuum
     def _gc_events_life(self):
-        event_lifetime = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.event_lifetime')
-        if event_lifetime is None:
-            return False
-
-        lifetime = timedelta(days=int(event_lifetime))
-        today = fields.Date.today()
-        res = self.search([
-            ('timestamp', '<', today - lifetime)
-        ])
-        res.unlink()
-
+        for c in self.env['res.company'].search([]):
+            if c.event_lifetime is None:
+                return False
+            lifetime = timedelta(days=int(c.event_lifetime))
+            today = fields.Date.today()
+            res = self.with_company(c).search([
+                ('timestamp', '<', today - lifetime)
+            ])
+            res.unlink()
         return True
 
     @api.depends('webstack_id.name', 'controller_id.name', 'timestamp')
@@ -234,9 +236,9 @@ class HrRfidSystemEvent(models.Model):
 
             records += super(HrRfidSystemEvent, self).create([vals])
 
-        if 'siren' in vals and 'event_action' in vals and vals.get('event_action') == '20':
-            for e in records.with_context(no_output=True):
-                e.controller_id.siren_state = vals.get('siren')
+            if 'siren' in vals and 'event_action' in vals and vals.get('event_action') == '20':
+                for e in records.with_context(no_output=True):
+                    e.controller_id.siren_state = vals.get('siren')
 
         return records
 

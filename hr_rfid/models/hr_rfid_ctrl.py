@@ -3,6 +3,8 @@ from odoo.addons.hr_rfid.controllers import polimex
 
 import logging
 
+from odoo.exceptions import ValidationError
+
 _logger = logging.getLogger(__name__)
 
 
@@ -93,7 +95,7 @@ class HrRfidController(models.Model):
         help='Alarm Siren state',
         compute='_compute_siren_state',
         inverse='_set_siren_state',
-        tracking = True
+        tracking=True
     )
 
     emergency_group_id = fields.Many2one(
@@ -228,11 +230,16 @@ class HrRfidController(models.Model):
         string='Controlled Alarm Lines',
         help='Alarm lines that belong to this controller',
     )
-
     read_b3_cmd = fields.Boolean(
         string='Read Controller Status',
         default=False,
         index=True,
+    )
+    sensor_ids = fields.One2many(
+        comodel_name='hr.rfid.ctrl.th',
+        inverse_name='controller_id',
+        string='Sensors',
+        help='Sensors that belong to this controller',
     )
 
     temperature = fields.Float(
@@ -244,6 +251,57 @@ class HrRfidController(models.Model):
         string='Humidity',
         default=0,
     )
+
+    # Temperature Controller
+    event_interval = fields.Integer(
+        help="Time in minutes. 0 means disable function. Range 0..99 min",
+        compute="_compute_event_interval",
+        inverse="_inverse_event_interval"
+    )
+
+    def _inverse_event_interval(self):
+        for c in self.filtered(lambda ctrl: ctrl.hw_version == '22'):
+            io_line = c._get_io_line(1)
+            io_line[4] = c.event_interval
+            c._set_io_line(1, io_line)
+
+    @api.depends('io_table')
+    def _compute_event_interval(self):
+        for c in self.filtered(lambda ctrl: ctrl.hw_version == '22'):
+            io_line = c._get_io_line(1)
+            c.event_interval = len(io_line) > 0 and io_line[4] or 0
+
+    @api.constrains('event_interval')
+    def _check_value(self):
+        if self.event_interval > 99 or self.event_interval < 0:
+            raise ValidationError(_('Valid interval range is 0-99 min.'))
+
+    high_temperature = fields.Float(
+        help="Temperature above the controller will trigger High temperature event. Range -55..125 ℃"
+    )
+
+    @api.constrains('high_temperature')
+    def _check_value(self):
+        if self.high_temperature > 125 or self.high_temperature < -55:
+            raise ValidationError(_('Valid High Temperature range is -55 .. 125 ℃'))
+
+    low_temperature = fields.Float(
+        help="Temperature below the controller will trigger Low temperature event. Range -55..125 ℃"
+    )
+
+    @api.constrains('low_temperature')
+    def _check_value(self):
+        if self.low_temperature > 125 or self.low_temperature < -55:
+            raise ValidationError(_('Valid Low Temperature range is -55 .. 125 ℃'))
+
+    hysteresis = fields.Float(
+        help="Hysteresis for event triggering. Range 0.5..9 ℃"
+    )
+
+    @api.constrains('hysteresis')
+    def _check_value(self):
+        if self.low_temperature > 9 or self.low_temperature < 0.5:
+            raise ValidationError(_('Valid Low Temperature range is 0.5 .. 9 ℃'))
 
     system_voltage = fields.Float(
         string='System Voltage',
@@ -265,6 +323,8 @@ class HrRfidController(models.Model):
     readers_count = fields.Char(string='Readers count', compute='_compute_counts')
     doors_count = fields.Char(string='Doors count', compute='_compute_counts')
     alarm_line_count = fields.Char(string='Alarm line count', compute='_compute_counts')
+
+    default_io_table = fields.Char(compute='_compute_default_io_table')
 
     @api.constrains('mode')
     def _check_mode(self):
@@ -341,6 +401,13 @@ class HrRfidController(models.Model):
             if not self.env.context.get('no_output', False):
                 c.change_output_state(siren_out, int(c.siren_state), 99)
             c._update_output_state(siren_out, c.siren_state)
+
+    @api.depends('hw_version')
+    def _compute_default_io_table(self):
+        for c in self:
+            empty_io_table = ''.join(['0000000000000000' for i in range(0, c.io_table_lines)])
+            default_io_table = polimex.get_default_io_table(int(c.hw_version), int(c.mode))
+            c.default_io_table = default_io_table or empty_io_table
 
     def return_action_to_open(self):
         """ This opens the xml view specified in xml_id for the current app """
@@ -443,6 +510,7 @@ class HrRfidController(models.Model):
 
             if ((ctrl.io_table_lines * 8 * 2) != len(new_io_table) and line == 0) or (
                     line != 0 and len(new_io_table) != 16):
+                pass
                 raise exceptions.ValidationError(
                     'IO table lengths are different, this should never happen????'
                 )
@@ -450,10 +518,12 @@ class HrRfidController(models.Model):
                 ctrl.io_table = new_io_table
                 if not no_command:
                     ctrl.write_io_table_cmd(cmd_data)
-            else:
-                io_table = self.io_table and self.io_table[:16 * (line - 1)] or ''
-                io_table += new_io_table
-                io_table += self.io_table and self.io_table[16 * (line - 1) + 16:] or ''
+            else:  # line != 0 !!!
+                self.io_table = self.io_table or self.default_io_table
+                io_table = self.io_table[16 * (line - 1): 16 * (line - 1) + 16]
+                if io_table == new_io_table:
+                    continue
+                io_table = self.io_table[:16 * (line - 1)] + new_io_table + self.io_table[16 * (line - 1) + 16:]
                 ctrl.io_table = io_table
                 if not no_command:
                     ctrl.write_io_table_cmd(cmd_data)
@@ -486,6 +556,13 @@ class HrRfidController(models.Model):
             self.ensure_one()
             return self.hw_version in ['9']
 
+    def is_temperature_ctrl(self, hw_version=None):
+        if hw_version:
+            return hw_version in ['22']
+        elif self:
+            self.ensure_one()
+            return self.hw_version in ['22']
+
     def get_ctrl_model_name(self, hw_id):
         tmp = -1
         if hw_id:
@@ -514,6 +591,14 @@ class HrRfidController(models.Model):
 
             if old_ext_db != new_ext_db:
                 ctrl.write_controller_mode(new_ext_db=new_ext_db)
+            if (
+                    'high_temperature' in vals or 'low_temperature' in vals or 'hysteresis' in vals) and not self.env.context.get(
+                'readed', False):
+                ctrl.temp_range_cmd(
+                    ctrl.high_temperature,
+                    ctrl.low_temperature,
+                    ctrl.hysteresis
+                )
 
     def sys_event(self, error_description, event_action, input_json):
         for ctrl in self:
@@ -613,33 +698,53 @@ class HrRfidController(models.Model):
 
         return self.convert_int_to_cmd_data_for_output_control(data)
 
-    def update_th(self, sensor_number: int, data_dict: dict):
+    def _find_th_sensor(self, sensor_number: int = None, internal_number: int = None):
+        self.ensure_one()
+        if sensor_number is None and internal_number is None:
+            return
+        th_id = None
+        if sensor_number is not None:
+            th_id = self.env['hr.rfid.ctrl.th'].with_context(test_active=False).search([
+                ('controller_id', '=', self.id),
+                ('sensor_number', '=', sensor_number),
+            ])
+        elif internal_number is not None:
+            th_id = self.env['hr.rfid.ctrl.th'].with_context(test_active=False).search([
+                ('controller_id', '=', self.id),
+                ('internal_number', '=', internal_number),
+            ])
+        return th_id
+
+    def update_th(self, sensor_number: int = None, internal_number: int = None, data_dict: dict = {}):
         '''
         sensor_number:int any number!. system sensor(integrated) number 0
         data_dict: expect {'t':float, 'h':float}
         '''
         for c in self:
-            th_id = self.env['hr.rfid.ctrl.th'].search([
-                ('controller_id', '=', c.id),
-                ('sensor_number', '=', sensor_number),
-            ])
-            if not th_id:
+            th_id = c._find_th_sensor(sensor_number, internal_number)
+            if not th_id and sensor_number is not None:
                 th_id = self.env['hr.rfid.ctrl.th'].create([{
                     'name': _('T&H Sensor {} on {}').format(sensor_number, c.name),
                     'controller_id': c.id,
                     'sensor_number': sensor_number
                 }])
+
+            if not th_id:
+                _logger.error('Receiving data for Temperature and/or Humidity but can not find the sensor in DB')
+                return
+
             new_dict = {}
             if 't' in data_dict:
                 new_dict.update({'temperature': data_dict['t']})
-                if sensor_number == 0:
-                    c.temperature = data_dict['t']
+                # if sensor_number == 0:
+                c.temperature = data_dict['t']
             if 'h' in data_dict:
                 new_dict.update({'humidity': data_dict['h']})
-                if sensor_number == 0:
-                    c.humidity = data_dict['h']
+                # if sensor_number == 0:
+                c.humidity = data_dict['h']
             if new_dict:
                 th_id.write(new_dict)
+                return th_id
 
     def decode_door_number_for_relay(self, data):
         self.ensure_one()
@@ -664,7 +769,7 @@ class HrRfidController(models.Model):
                 SUPERUSER_ID).create([new_cmd])
         # Execute commands
         for c in commands:
-            if not c.webstack_id.is_limit_executed_cmd_reached() and not c.webstack_id.behind_nat:
+            if not c.webstack_id.is_limit_executed_cmd_reached() and not c.webstack_id.behind_nat and c.webstack_id.active:
                 try:
                     c.webstack_id.direct_execute({}, c)
                 except Exception as e:
@@ -738,6 +843,38 @@ class HrRfidController(models.Model):
 
     def read_outputs_ts_cmd(self):
         return self._base_command('FF')
+
+    def temp_range_cmd(self, high_temp=None, low_tempt=None, hyst=None):
+        if high_temp is None:
+            return self._base_command('B1', '01')
+        else:
+            ht = ['%.2d' % i for i in polimex.get_reverse_temperature(self.high_temperature)]
+            lt = ['%.2d' % i for i in polimex.get_reverse_temperature(self.low_temperature)]
+            h = ['%.2d' % i for i in polimex.get_reverse_temperature(self.hysteresis)]
+            # 00 0100 0090 0010       00 0001 5a00 0a00
+            return self._base_command('B1', '00%s%s%s' % (''.join(ht), ''.join(lt), ''.join(h)))
+
+    def read_cards_cmd(self, position=0, count=0):
+        if count == 0:
+            return self._base_command(
+                cmd='F2',
+                cmd_data=''.join(['0%s' % d for d in ('%.5d' % position)]) + '%.2d' % count,
+            )
+        else:
+            if (self.cards_count > 0) and (self.cards_count >= position):
+                if self.cards_count < (position + polimex.READ_CARDS_BLOCK_SIZE):
+                    cmd_count = self.cards_count - position + 1
+                else:
+                    cmd_count = polimex.READ_CARDS_BLOCK_SIZE
+                first_command = self._base_command(
+                    cmd='F2',
+                    cmd_data=''.join(['0%s' % d for d in ('%.5d' % position)]) + '%.2d' % cmd_count,
+                )
+                if count - cmd_count > 0:
+                    self.read_cards_cmd(position=position + cmd_count, count=count - cmd_count)
+                return first_command
+            else:
+                pass
 
     def create_d1_cmd(self, card_num, pin_code, ts_code, rights_data, rights_mask):
         commands = []
@@ -863,13 +1000,10 @@ class HrRfidController(models.Model):
     def write_controller_mode(self, new_mode: int = None, new_ext_db: bool = None):
         if new_mode is None:
             new_mode = self.mode
-        # else:
-        #     self.mode = new_mode
         if new_ext_db is None:
             new_ext_db = self.external_db
-        if new_ext_db is True:
-            new_mode = 0x20 + new_mode
-        cmd_data = '%02X' % new_mode
+
+        cmd_data = '%02X' % (int(new_ext_db) * 0x20 + int(new_mode))
         cmd = self._base_command('D5', cmd_data)
         self.read_controller_information_cmd()
         return cmd

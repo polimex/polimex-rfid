@@ -11,6 +11,7 @@
                      <button name="button_partner_events"
                              type="object"
                              attrs="{'invisible':[('partner_event_count', '=', 0)]}"
+                             groups="hr_rfid.hr_rfid_group_officer"
                              class="oe_stat_button oe_read_only" icon="fa-list-alt">
                         <field name="partner_event_count" widget="statinfo" string="Events"/>
                     </button>

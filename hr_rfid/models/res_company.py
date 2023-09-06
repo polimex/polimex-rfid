@@ -5,6 +5,13 @@ class ResCompany(models.Model):
     _name = 'res.company'
     _inherit = 'res.company'
 
+    event_lifetime = fields.Integer(
+        string='Event life time',
+        default=365,
+        help='Enter event lifetime. Older events will be deleted',
+        groups="hr_rfid.hr_rfid_group_officer"
+    )
+
     @api.model_create_multi
     def create(self, values_list):
         res = super(ResCompany, self).create(values_list)

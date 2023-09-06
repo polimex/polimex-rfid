@@ -94,6 +94,16 @@
                                     <field name="hotel_readers_card_presence" readonly="1"/>
                                     <field name="hotel_readers_buttons_pressed" readonly="1"/>
                                 </group>
+                                <group string="Temperature control" attrs="{'invisible': [('hw_version', '!=', '22')]}">
+                                    <field name="event_interval" widget="numeric_step"
+                                           options="{'step': 1, 'min': 0, 'max': 99}"/>
+                                    <field name="high_temperature" widget="numeric_step"
+                                           options="{'step': 0.5, 'min': -55, 'max': 125}"/>
+                                    <field name="low_temperature" widget="numeric_step"
+                                           options="{'step': 0.5, 'min': -55, 'max': 125}"/>
+                                    <field name="hysteresis" widget="numeric_step"
+                                           options="{'step': 0.5, 'min': 0.5, 'max': 9}"/>
+                                </group>
                                 <group string="Setup">
                                     <field name="mode" readonly="1" invisible="1"/>
                                     <field name="mode_selection"
@@ -157,34 +167,6 @@
                     <templates>
                         <t t-name="kanban-box">
                             <div>
-<!--                                <div class="o_kanban_card_manage_pane dropdown-menu" role="menu">-->
-<!--                                    <div class="o_kanban_card_manage_section">-->
-<!--                                        <div role="menuitem"-->
-<!--                                             class="o_kanban_card_manage_section o_kanban_manage_reports">-->
-<!--                                            <div class="o_kanban_card_manage_title">-->
-<!--                                                <strong>-->
-<!--                                                    <span>Setup</span>-->
-<!--                                                </strong>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                    <a t-if="widget.editable" role="menuitem" class="dropdown-item" type="edit">-->
-<!--                                        Configuration-->
-<!--                                    </a>-->
-<!--                                    <a name="read_controller_information_cmd" type="object">Refresh Setup</a>-->
-<!--                                    <a name="read_status" type="object">Refresh status</a>-->
-<!--                                    <a name="button_reload_cards" type="object">Reload cards</a>-->
-<!--                                    <a name="hr_rfid.hr_rfid_controller_io_table_action" type="action">IO-->
-<!--                                                Table-->
-<!--                                            </a>-->
-<!--                                    <a name="read_io_table_cmd" type="object">Read IO Table</a>-->
-<!--                                    <t t-if="widget.deletable">-->
-<!--                                        <li>-->
-<!--                                            <a type="delete" confirm="Are you sure?">Delete</a>-->
-<!--                                        </li>-->
-<!--                                    </t>-->
-<!--                                </div>-->
-
                                 <div class="o_dropdown_kanban dropdown">
                                     <button class="dropdown-toggle btn" data-toggle="dropdown" href="#">
                                         <span class="fa fa-bars fa-lg" title="Settings"/>
@@ -212,9 +194,6 @@
                                                 <a type="delete" confirm="Are you sure?">Delete</a>
                                             </li>
                                         </t>
-                                        <!--                                        <li>-->
-                                        <!--                                            <ul class="oe_kanban_colorpicker" data-field="color"/>-->
-                                        <!--                                        </li>-->
                                     </ul>
                                 </div>
                                 <div class="oe_kanban_details">
@@ -415,6 +394,16 @@
             <field name="type">ir.actions.server</field>
             <field name="state">code</field>
             <field name="code">records.read_status()</field>
+            <field name="binding_model_id" ref="hr_rfid.model_hr_rfid_ctrl"/>
+            <field name="binding_view_types">list,form</field>
+        </record>
+
+        <record id="action_read_io_table" model="ir.actions.server">
+            <field name="name">Read IO Table</field>
+            <field name="model_id" ref="hr_rfid.model_hr_rfid_ctrl"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">records.read_io_table_cmd()</field>
             <field name="binding_model_id" ref="hr_rfid.model_hr_rfid_ctrl"/>
             <field name="binding_view_types">list,form</field>
         </record>

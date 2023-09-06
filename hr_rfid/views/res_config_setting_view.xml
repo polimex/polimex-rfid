@@ -21,6 +21,7 @@
                                 </div>
                                 <div class="o_setting_right_pane">
                                     <label for="event_lifetime" string="Events lifetime"/>
+                                    <span class="fa fa-lg fa-building-o" title="Values set here are company-specific." aria-label="Values set here are company-specific." groups="base.group_multi_company" role="img"/>
                                     <div class="content-group">
                                         <field name="event_lifetime"/>
                                     </div>
@@ -108,6 +109,20 @@
                                     <label for="module_hr_rfid_vending" string="Manage Vending controller"/>
                                     <div class="text-muted">
                                         Polimex SmartVend Controllers provide full management of Vending sales with any Executive compatible Vending Machines
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6 o_setting_box"
+                                 id="module_hr_rfid_realtime_dashboard"
+                                 title="Realtime Dashboards">
+                                <div class="o_setting_left_pane">
+                                    <field name="module_hr_rfid_realtime_dashboard"/>
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <label for="module_hr_rfid_realtime_dashboard" string="Dashboards"/>
+                                    <div class="text-muted">
+                                        Realtime dashboards provide pre-defined boards with mix of all available data in one screen.
+                                        Suitable for Monitoring centers and guards screens
                                     </div>
                                 </div>
                             </div>

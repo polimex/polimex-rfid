@@ -7,6 +7,7 @@ from odoo import fields, models, api, exceptions, _, SUPERUSER_ID
 from enum import Enum
 
 import logging
+
 _logger = logging.getLogger(__name__)
 from odoo.addons.hr_rfid.controllers import polimex
 
@@ -65,6 +66,7 @@ class HrRfidCommands(models.Model):
         ('DD', _('Write Input Flags')),
         ('DE', _('Write Anti-Passback Mode')),
         ('DF', _('Write Outputs T/S Table')),
+        ('B1', _('Read/Write temperature range')),
         ('B3', _('Read Controller Status')),
         ('B4', _('Read/Write Hotel buttons sense')),
     ]
@@ -185,7 +187,7 @@ class HrRfidCommands(models.Model):
     card_number = fields.Char(
         string='Card',
         help='Card the command will do an operation for',
-        size=10,
+        # size=10,
         index=True,
     )
 
@@ -207,6 +209,7 @@ class HrRfidCommands(models.Model):
             for it in HrRfidCommands.commands:
                 if it[0] == cmd:
                     return it[1]
+
         for record in self:
             record.name = str(record.cmd) + ' ' + find_desc(record.cmd)
 
@@ -226,6 +229,7 @@ class HrRfidCommands(models.Model):
             title=_("Command resend"),
             message=_("The command is marked for execution again.")
         )
+
     # Command to controller
     @api.model
     def read_controller_information_cmd(self, controller):
@@ -233,6 +237,46 @@ class HrRfidCommands(models.Model):
             'webstack_id': controller.webstack_id.id,
             'controller_id': controller.id,
             'cmd': 'F0',
+        }])
+
+    @api.model
+    def read_cards_cmd(self, controller, position=0, count=0):
+        if count == 0:
+            return self.with_user(SUPERUSER_ID).create([{
+                'webstack_id': controller.webstack_id.id,
+                'controller_id': controller.id,
+                'cmd': 'F2',
+                'cmd_data': '0000000000',
+            }])
+        else:
+            if (controller.cards_count > 0) and (controller.cards_count >= position):
+                if controller.cardCount < (position + polimex.READ_CARDS_BLOCK_SIZE):
+                    count.push(controller.card_count - position + 1)
+                else:
+                    count.push(polimex.READ_CARDS_BLOCK_SIZE)
+                return self.with_user(SUPERUSER_ID).create([{
+                    'webstack_id': controller.webstack_id.id,
+                    'controller_id': controller.id,
+                    'cmd': 'F2',
+                    'cmd_data': ''.join(['0%s' % d for d in ('%.5d' % position)]) + '%.2d' % count,
+                }])
+            else:
+                pass
+
+    @api.model
+    def read_readers_mode_cmd(self, controller):
+        return self.create([{
+            'webstack_id': controller.webstack_id.id,
+            'controller_id': controller.id,
+            'cmd': 'F6',
+        }])
+
+    @api.model
+    def read_anti_pass_back_mode_cmd(self, controller):
+        return self.create([{
+            'webstack_id': controller.webstack_id.id,
+            'controller_id': controller.id,
+            'cmd': 'FC',
         }])
 
     @api.model
@@ -244,47 +288,24 @@ class HrRfidCommands(models.Model):
         }])
 
     @api.model
-    def delete_all_cards_cmd(self, controller):
+    def _system_init(self, controller, data):
+        '''
+        Data = 1, 2, 3, 4 ..type of system event operation
+        '''
         return self.create([{
             'webstack_id': controller.webstack_id.id,
             'controller_id': controller.id,
             'cmd': 'DC',
-            'cmd_data': '0303',
+            'cmd_data': '%.2d%.2d' % (data, data),
         }])
+
+    @api.model
+    def delete_all_cards_cmd(self, controller):
+        return self._system_init(controller, 3)
 
     @api.model
     def delete_all_events_cmd(self, controller):
-        return self.create([{
-            'webstack_id': controller.webstack_id.id,
-            'controller_id': controller.id,
-            'cmd': 'DC',
-            'cmd_data': '0404',
-        }])
-
-    @api.model
-    def read_readers_mode_cmd(self, controller):
-        return self.create([{
-            'webstack_id': controller.webstack_id.id,
-            'controller_id': controller.id,
-            'cmd': 'F6',
-        }])
-
-    @api.model
-    def read_io_table_cmd(self, controller):
-        return self.create([{
-            'webstack_id': controller.webstack_id.id,
-            'controller_id': controller.id,
-            'cmd': 'F9',
-            'cmd_data': '00',
-        }])
-
-    @api.model
-    def read_anti_pass_back_mode_cmd(self, controller):
-        return self.create([{
-            'webstack_id': controller.webstack_id.id,
-            'controller_id': controller.id,
-            'cmd': 'FC',
-        }])
+        return self._system_init(controller, 4)
 
     @api.model
     def create_d1_cmd(self, ws_id, ctrl_id, card_num, pin_code, ts_code, rights_data, rights_mask, alarm_right):
@@ -576,7 +597,7 @@ class HrRfidCommands(models.Model):
 
             records += super(HrRfidCommands, self).create([vals])
 
-            if records and len(records) == 1 and not records.webstack_id.is_limit_executed_cmd_reached():
+            if records and len(records) == 1 and not records.webstack_id.is_limit_executed_cmd_reached() and records.webstack_id.active:
                 records.webstack_id.direct_execute(command_id=records)
 
         return records
@@ -640,7 +661,7 @@ class HrRfidCommands(models.Model):
 
         mode_reader_relation = {1: [1, 2], 2: [2, 4], 3: [4], 4: [4]}
 
-        if not ctrl_env.is_relay_ctrl(hw_ver) and \
+        if hw_ver not in ['22', '30', '31', '32'] and \
                 readers_count not in mode_reader_relation[ctrl_mode]:
             return self.log_cmd_error_and_return_next('F0 sent us a wrong reader-controller '
                                                       'mode combination', '31', 200, post_data=post_data)
@@ -698,7 +719,7 @@ class HrRfidCommands(models.Model):
 
         def create_reader(name, number, reader_type, door_id=None):
             create_dict = {
-                'name': name,
+                'name': '%s (%s)' % (name, (reader_type == '0') and _('In') or _('Out')),
                 'number': number,
                 'reader_type': reader_type,
                 'controller_id': self.controller_id.id,
@@ -723,13 +744,14 @@ class HrRfidCommands(models.Model):
             _reader.door_ids += _door
 
         def gen_d_name(door_num, controller_id):
-            return _('Door ') + str(door_num) + _(' of ctrl ') + str(controller_id)
+            name = _('Door %d of ctrl id %d (%s)') % (door_num, controller_id.ctrl_id, controller_id.name)
+            return name
 
         if self.controller_id.is_relay_ctrl(hw_ver):
             if ctrl_mode == 1 or ctrl_mode == 3:
                 reader = create_reader('R1', 1, '0')
                 for i in range(outputs):
-                    door = create_door(gen_d_name(i + 1, self.controller_id.ctrl_id), i + 1)
+                    door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
                     add_door_to_reader(reader, door)
                 for i in range(1, readers_count):
                     create_reader('R' + str(i + 1), i + 1, '0')
@@ -739,12 +761,12 @@ class HrRfidCommands(models.Model):
                                                               '31', 200, post_data=post_data)
                 reader = create_reader('R1', 1, '0')
                 for i in range(outputs):
-                    door = create_door(gen_d_name(i + 1, self.controller_id.ctrl_id), i + 1)
+                    door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
                     add_door_to_reader(reader, door)
                 if outputs > 16:
                     reader = create_reader('R2', 2, '0')
                     for i in range(outputs - 16):
-                        door = create_door(gen_d_name(i + 1, self.controller_id.id), i + 1)
+                        door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
                         add_door_to_reader(reader, door)
                     for i in range(2, readers_count):
                         create_reader('R' + str(i + 1), i + 1, '0')
@@ -756,29 +778,29 @@ class HrRfidCommands(models.Model):
                                                  % (ctrl_mode, hw_ver))
         else:
             if ctrl_mode == 1 or ctrl_mode == 3:
-                last_door = create_door(gen_d_name(1, self.controller_id.ctrl_id), 1)
+                last_door = create_door(gen_d_name(1, self.controller_id), 1)
                 last_door = last_door.id
                 create_reader('R1', 1, '0', last_door)
                 if readers_count > 1:
                     create_reader('R2', 2, '1', last_door)
             elif ctrl_mode == 2 and readers_count == 4:
-                last_door = create_door(gen_d_name(1, self.controller_id.ctrl_id), 1)
+                last_door = create_door(gen_d_name(1, self.controller_id), 1)
                 last_door = last_door.id
                 create_reader('R1', 1, '0', last_door)
                 create_reader('R2', 2, '1', last_door)
-                last_door = create_door(gen_d_name(2, self.controller_id.ctrl_id), 2)
+                last_door = create_door(gen_d_name(2, self.controller_id), 2)
                 last_door = last_door.id
                 create_reader('R3', 3, '0', last_door)
                 create_reader('R4', 4, '1', last_door)
             else:  # (ctrl_mode == 2 and readers_count == 2) or ctrl_mode == 4
                 # print('harware version', hw_ver)
-                last_door = create_door(gen_d_name(1, self.controller_id.ctrl_id), 1)
+                last_door = create_door(gen_d_name(1, self.controller_id), 1)
                 if last_door:
                     last_door = last_door.id
                 else:
                     last_door = None
                 create_reader('R1', 1, '0', last_door)
-                last_door = create_door(gen_d_name(2, self.controller_id.ctrl_id), 2)
+                last_door = create_door(gen_d_name(2, self.controller_id), 2)
                 if last_door:
                     last_door = last_door.id
                 else:
@@ -786,17 +808,17 @@ class HrRfidCommands(models.Model):
                 create_reader('R2', 2, '0', last_door)
 
             if ctrl_mode == 3:
-                last_door = create_door(gen_d_name(2, self.controller_id.ctrl_id), 2)
+                last_door = create_door(gen_d_name(2, self.controller_id), 2)
                 last_door = last_door.id
                 create_reader('R3', 3, '0', last_door)
-                last_door = create_door(gen_d_name(3, self.controller_id.ctrl_id), 3)
+                last_door = create_door(gen_d_name(3, self.controller_id), 3)
                 last_door = last_door.id
                 create_reader('R4', 4, '0', last_door)
             elif ctrl_mode == 4:
-                last_door = create_door(gen_d_name(3, self.controller_id.ctrl_id), 3)
+                last_door = create_door(gen_d_name(3, self.controller_id), 3)
                 last_door = last_door.id
                 create_reader('R3', 3, '0', last_door)
-                last_door = create_door(gen_d_name(4, self.controller_id.ctrl_id), 4)
+                last_door = create_door(gen_d_name(4, self.controller_id), 4)
                 last_door = last_door.id
                 create_reader('R4', 4, '0', last_door)
 
@@ -811,7 +833,6 @@ class HrRfidCommands(models.Model):
                 serial=serial_num,
                 id=self.controller_id.ctrl_id
             )
-
 
         ctrl_dict = {
             'hw_version': hw_ver,
@@ -842,17 +863,24 @@ class HrRfidCommands(models.Model):
             self.controller_id.write(ctrl_dict)
 
         cmd_env = self.env['hr.rfid.command'].sudo()
+
         if not ctrl_already_existed:
             if self.controller_id.alarm_lines > 0:
                 self.controller_id._setup_alarm_lines()
             self.controller_id.synchronize_clock_cmd()
             self.controller_id.delete_all_cards_cmd()
             self.controller_id.delete_all_events_cmd()
-            self.controller_id.read_readers_mode_cmd()
+            if not self.controller_id.is_temperature_ctrl():
+                self.controller_id.read_readers_mode_cmd()
             self.controller_id.read_io_table_cmd()
             self.controller_id.read_status()
 
-        if not self.controller_id.is_relay_ctrl() and (ctrl_mode == 1 or ctrl_mode == 3) and self.controller_id.readers > 1:
+        if self.controller_id.is_temperature_ctrl():
+            self.controller_id.read_cards_cmd()
+            self.controller_id.temp_range_cmd()
+        if not self.controller_id.is_relay_ctrl() and \
+                not self.controller_id.is_temperature_ctrl() and \
+                ((self.controller_id.readers == 2 and ctrl_mode == 1) or (self.controller_id.readers > 2 and ctrl_mode < 4)):
             cmd_env.read_anti_pass_back_mode_cmd(self.controller_id)
 
     # Communication Helpers
@@ -875,19 +903,11 @@ class HrRfidCommands(models.Model):
         }
         # Commands addons
         if command.cmd == 'D1':
-            if not command.controller_id.is_relay_ctrl():
-                card_num = ''.join(list('0' + ch for ch in command.card_number))
-                pin_code = ''.join(list('0' + ch for ch in command.pin_code))
-                ts_code = str(command.ts_code)
-                rights_data = '{:02X}'.format(command.rights_data)
-                rights_mask = '{:02X}'.format(command.rights_mask)
-                if command.controller_id.is_alarm_ctrl():
-                    json_cmd['cmd']['d'] = card_num + pin_code + ts_code + rights_data + rights_mask + (
-                                command.alarm_right and rights_data or '00') + (
-                                command.alarm_right and rights_mask or '00')
-                else:
-                    json_cmd['cmd']['d'] = card_num + pin_code + ts_code + rights_data + rights_mask
-            else:
+            if command.controller_id.is_temperature_ctrl():
+                sensor_uid = ''.join(["0"+c for c in command.card_number])
+                json_cmd['cmd']['d'] = sensor_uid + "%.2d" % int(command.pin_code) + "%.2d" % int(command.ts_code)
+                pass
+            elif command.controller_id.is_relay_ctrl():
                 card_num = ''.join(list('0' + ch for ch in command.card_number))
                 rights_data = '%03d%03d%03d%03d' % (
                     (command.rights_data >> (3 * 8)) & 0xFF,
@@ -907,6 +927,19 @@ class HrRfidCommands(models.Model):
                 rights_data = ''.join(list('0' + ch for ch in rights_data))
                 rights_mask = ''.join(list('0' + ch for ch in rights_mask))
                 json_cmd['cmd']['d'] = card_num + rights_data + rights_mask
+            else:
+                card_num = ''.join(list('0' + ch for ch in command.card_number))
+                pin_code = ''.join(list('0' + ch for ch in command.pin_code))
+                ts_code = str(command.ts_code)
+                rights_data = '{:02X}'.format(command.rights_data)
+                rights_mask = '{:02X}'.format(command.rights_mask)
+                if command.controller_id.is_alarm_ctrl():
+                    json_cmd['cmd']['d'] = card_num + pin_code + ts_code + rights_data + rights_mask + (
+                            command.alarm_right and rights_data or '00') + (
+                                                   command.alarm_right and rights_mask or '00')
+                else:
+                    json_cmd['cmd']['d'] = card_num + pin_code + ts_code + rights_data + rights_mask
+
         if command.cmd == 'D7':
             dt = datetime.datetime.now()
             dt += command.webstack_id._get_tz_offset()
