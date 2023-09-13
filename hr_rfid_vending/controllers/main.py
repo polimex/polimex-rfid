@@ -38,7 +38,7 @@ class HrRfidVending(WebRfidController):
 
         def ret_super():
             return super(HrRfidVending, self).post_event(**post)
-        def ret_local_no_command(controller, ev):
+        def ret_local_no_command(controller, ev=None):
             return ret_local(controller.webstack_id.check_for_unsent_cmd(status_code, ev))
         def ret_local(data):
             if not post and 'cmd' in data:
