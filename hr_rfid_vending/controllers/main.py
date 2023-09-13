@@ -208,7 +208,7 @@ class HrRfidVending(WebRfidController):
             # TODO Move into function "deal_with_err_evs"
             elif event['event_n'] in [48, 49]:
                 controller.report_sys_ev('Vending machine sent us an error', event)
-                return ret_local_no_command(None)
+                return ret_local_no_command(controller)
             elif event['event_n'] == 50:
                 card = card_env.with_context(active_test=False).search(
                     [('company_id', '=', webstack_id.company_id.id), ('internal_number', '=', event['card'])])
