@@ -41,6 +41,17 @@ class HrRfidZone(models.Model):
         tracking=True,
     )
 
+    permitted_department_ids = fields.Many2many(
+        'hr.department',
+        string='Departments',
+        help='Permitted departments for this zone. If empty, it applies to all departments.',
+    )
+    permitted_employee_category_ids = fields.Many2many(
+        'hr.employee.category',
+        string='Tags',
+        help='Permitted employee tags for this zone. If empty, it applies to all employees.',
+    )
+
     employee_ids = fields.Many2many(
         'hr.employee',
         string='Employees',
@@ -56,6 +67,14 @@ class HrRfidZone(models.Model):
     employee_count = fields.Char(compute='_compute_counts')
     contact_count = fields.Char(compute='_compute_counts')
 
+    def _check_employee_permit(self, employee_id):
+        res = []
+        for z in self:
+            if z.permitted_department_ids:
+                res.append(employee_id.id in z.permitted_department_ids.member_ids.ids)
+            if z.permitted_employee_category_ids:
+                res.append(set(employee_id.category_ids.ids) & set(z.permitted_employee_category_ids.ids) is not {})
+        return res and all(res) or True
     @api.depends('employee_ids', 'contact_ids')
     def _compute_counts(self):
         for z in self:

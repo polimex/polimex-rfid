@@ -95,7 +95,13 @@
                             <group string="Included doors">
                                 <field name="door_ids" readonly="1" widget="many2many_tags"/>
                             </group>
-                            <field name="company_id" groups="base.group_multi_company"/>
+                            <group string="Permitted employees">
+                                <field name="permitted_department_ids" widget="many2many_tags"/>
+                                <field name="permitted_employee_category_ids" widget="many2many_tags"/>
+                            </group>
+                            <group>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
                         </group>
                     </sheet>
                     <div class="oe_chatter">

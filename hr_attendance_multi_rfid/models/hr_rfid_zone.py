@@ -45,8 +45,8 @@ class HrRfidZone(models.Model):
         if not isinstance(person, type(self.env['hr.employee'])):
             return super(HrRfidZone, self).person_entered(person, event)
 
-        for zone in self:
-            if zone.attendance is False:
+        for zone in self.filtered(lambda z: z.attendance):
+            if isinstance(person, type(self.env['hr.employee'])) and not zone._check_employee_permit(person):
                 continue
             check = person._last_open_checkin(zone.id, before_dt=event and event.event_time or None)
 
@@ -61,12 +61,6 @@ class HrRfidZone(models.Model):
                     check.with_context(no_validity_check=True).write({
                         'check_in': fields.Datetime.now()
                     })
-                    # check.check_in = event.event_time
-                # check = check._update_check_in(event.event_time)
-            # elif check and check.check_in < event.event_time:
-            #     check.check_out = check.check_in + timedelta(minutes=1)
-            #     check.in_zone_id = False
-            #     check = None
             if not check:
                 if event:
                     event.in_or_out = 'in'
@@ -82,6 +76,8 @@ class HrRfidZone(models.Model):
             return super(HrRfidZone, self).person_left(person, event)
 
         for zone in self.filtered(lambda z: z.attendance):
+            if isinstance(person, type(self.env['hr.employee'])) and not zone._check_employee_permit(person):
+                continue
             checkin = person._last_open_checkin(zone.id, before_dt=event and event.event_time or None)
             if not checkin and zone.overwrite_check_out:
                 if event:
@@ -107,14 +103,6 @@ class HrRfidZone(models.Model):
                 checkin.with_context(from_event=True).write({
                     'check_out': fields.Datetime.now()
                 })
-
-        # elif not check:
-        #     if event:
-        #         event.in_or_out = 'out'
-        #         person.attendance_action_change_with_date(event.event_time, zone.id)
-        #     else:
-        #         person.attendance_action_change_with_date(fields.Datetime.now(), zone.id)
-
         return super(HrRfidZone, self).person_left(person, event)
 
     def attendance_for_current_zone(self):
