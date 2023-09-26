@@ -162,6 +162,12 @@
         <record id="demo_service_yearly" model="rfid.service">
             <field name="displayed_image_id" ref="demo_service_yearly_img"/>
         </record>
+        <record id="demo_service_card_2" model="hr.rfid.card">
+            <field name="contact_id" ref="base.res_partner_address_15"/>
+            <field name="number">5432154321</field>
+            <field name="card_reference">Service Badge 73</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
 
 <!--        Sales-->
         <record id="demo_service_half_day_sale1" model="rfid.service.sale">
