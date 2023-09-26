@@ -47,7 +47,7 @@ class BaseRFIDService(models.Model):
         help="Linked partner to this service sale")
     card_id = fields.Many2one(
         comodel_name='hr.rfid.card', check_company=True,
-        required=True
+        # required=True
     )
     access_group_contact_rel = fields.Many2one(
         comodel_name='hr.rfid.access.group.contact.rel', check_company=True
