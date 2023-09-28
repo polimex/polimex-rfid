@@ -42,11 +42,12 @@ class HrRfidZone(models.Model):
 
     # TODO Need to added .with_context(no_validity_check=True) for attendance management!!!
     def person_entered(self, person, event):
-        if not isinstance(person, type(self.env['hr.employee'])):
+        is_employee = isinstance(person, type(self.env['hr.employee']))
+        if not is_employee:
             return super(HrRfidZone, self).person_entered(person, event)
 
         for zone in self.filtered(lambda z: z.attendance):
-            if isinstance(person, type(self.env['hr.employee'])) and not zone._check_employee_permit(person):
+            if is_employee and not zone._check_employee_permit(person):
                 continue
             check = person._last_open_checkin(zone.id, before_dt=event and event.event_time or None)
 
@@ -72,11 +73,12 @@ class HrRfidZone(models.Model):
         return super(HrRfidZone, self).person_entered(person, event)
 
     def person_left(self, person, event=None):
-        if not isinstance(person, type(self.env['hr.employee'])):
+        is_employee = isinstance(person, type(self.env['hr.employee']))
+        if not is_employee:
             return super(HrRfidZone, self).person_left(person, event)
 
         for zone in self.filtered(lambda z: z.attendance):
-            if isinstance(person, type(self.env['hr.employee'])) and not zone._check_employee_permit(person):
+            if is_employee and not zone._check_employee_permit(person):
                 continue
             checkin = person._last_open_checkin(zone.id, before_dt=event and event.event_time or None)
             if not checkin and zone.overwrite_check_out:

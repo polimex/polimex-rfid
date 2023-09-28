@@ -20,7 +20,7 @@ class HrEmployee(models.Model):
                 ('in_zone_id', '=', zone_id),
             ]
             if before_dt is not None:
-                domain.append(('check_in', '<', before_dt))
+                domain.append(('check_in', '<=', before_dt))
             _last = self.env['hr.attendance'].search(domain, limit=1)
             if _last:
                 return _last

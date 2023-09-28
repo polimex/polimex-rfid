@@ -64,11 +64,14 @@ class RFIDAppCase(common.TransactionCase):
             'hr_rfid_allowed_access_groups': [(4, self.test_ag_employee_1.id, 0)],
 
         })
+        self.test_employee_tag1_id = self.env['hr.employee.category'].create({'name': 'Tag1'})
+        self.test_employee_tag2_id = self.env['hr.employee.category'].create({'name': 'Tag2'})
 
         self.test_employee_id = self.env['hr.employee'].create({
             'name': 'Pesho Employee',
             'company_id': self.test_company_id,
             'department_id': self.test_department_id.id,
+            'category_ids': [(4, self.test_employee_tag1_id.id)],
         })
 
         self.test_card_employee = self.env['hr.rfid.card'].create({
@@ -76,6 +79,21 @@ class RFIDAppCase(common.TransactionCase):
             'card_input_type': 'w34',
             'card_reference': 'Badge 77',
             'employee_id': self.test_employee_id.id,
+            'company_id': self.test_company_id,
+        })
+
+        self.test_employee_2_id = self.env['hr.employee'].create({
+            'name': 'Ivan Employee',
+            'company_id': self.test_company_id,
+            'department_id': self.test_department_id.id,
+            'category_ids': [(4, self.test_employee_tag2_id.id)],
+        })
+
+        self.test_card_employee_2 = self.env['hr.rfid.card'].create({
+            'number': '1234612346',
+            'card_input_type': 'w34',
+            'card_reference': 'Badge 78',
+            'employee_id': self.test_employee_2_id.id,
             'company_id': self.test_company_id,
         })
 

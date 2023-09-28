@@ -73,8 +73,12 @@ class HrRfidZone(models.Model):
             if z.permitted_department_ids:
                 res.append(employee_id.id in z.permitted_department_ids.member_ids.ids)
             if z.permitted_employee_category_ids:
-                res.append(set(employee_id.category_ids.ids) & set(z.permitted_employee_category_ids.ids) is not {})
-        return res and all(res) or True
+                # res.append(set(employee_id.category_ids.ids) & set(z.permitted_employee_category_ids.ids) is not {})
+                res.append(bool(set(employee_id.category_ids.ids) & set(z.permitted_employee_category_ids.ids)))
+        if len(res) > 0:
+            return all(res)
+        else:
+            return True
     @api.depends('employee_ids', 'contact_ids')
     def _compute_counts(self):
         for z in self:
@@ -101,6 +105,8 @@ class HrRfidZone(models.Model):
         is_employee = isinstance(person, type(self.env['hr.employee']))
 
         for zone in self:
+            if is_employee and not zone._check_employee_permit(person):
+                continue
             if (is_employee and person in zone.employee_ids) \
                     or (not is_employee and person in zone.contact_ids):
                 continue
@@ -117,6 +123,8 @@ class HrRfidZone(models.Model):
         is_employee = isinstance(person, type(self.env['hr.employee']))
 
         for zone in self:
+            if is_employee and not zone._check_employee_permit(person):
+                continue
             if (is_employee and person not in zone.employee_ids) \
                     or (not is_employee and person not in zone.contact_ids):
                 continue
