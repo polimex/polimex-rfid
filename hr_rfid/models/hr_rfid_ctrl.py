@@ -88,12 +88,14 @@ class HrRfidController(models.Model):
         string='Serial',
         help='Serial number of the controller',
         size=4,
+        tracking=True,
     )
 
     sw_version = fields.Char(
         string='Version',
         help='The version of the software on the controller',
         size=3,
+        tracking=True,
     )
 
     inputs = fields.Integer(

@@ -280,14 +280,6 @@ class HrRfidCommands(models.Model):
         }])
 
     @api.model
-    def synchronize_clock_cmd(self, controller):
-        return self.create([{
-            'webstack_id': controller.webstack_id.id,
-            'controller_id': controller.id,
-            'cmd': 'D7',
-        }])
-
-    @api.model
     def _system_init(self, controller, data):
         '''
         Data = 1, 2, 3, 4 ..type of system event operation

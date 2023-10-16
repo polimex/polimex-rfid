@@ -168,11 +168,12 @@ class HrRfidDoor(models.Model):
     user_event_count = fields.Char(compute='_compute_counts')
     system_event_count = fields.Char(compute='_compute_counts')
 
-    @api.constrains('apb_mode')
-    def _check_apb_mode(self):
-        for door in self:
-            if door.apb_mode is True and len(door.reader_ids) < 2:
-                raise exceptions.ValidationError('Cannot activate APB Mode for a door if it has less than 2 readers')
+    # TODO Make doors with one reader to work in GAPB
+    # @api.constrains('apb_mode')
+    # def _check_apb_mode(self):
+    #     for door in self:
+    #         if door.apb_mode is True and len(door.reader_ids) < 2:
+    #             raise exceptions.ValidationError('Cannot activate APB Mode for a door if it has less than 2 readers')
 
     @api.depends('access_group_ids', 'reader_ids', 'card_rel_ids', 'zone_ids', 'alarm_line_ids')
     def _compute_counts(self):
@@ -572,7 +573,7 @@ class HrRfidDoor(models.Model):
                 ('door_id', '=', door.id),
             ])
             # ignore doors without rights (optimisation)
-            if door.id not in card_door_rel_id.mapped('door_id'):
+            if door.id not in card_door_rel_id.mapped('door_id').ids:
                 continue
             self.env['hr.rfid.command'].add_remove_card(
                 card_number=card.internal_number,
