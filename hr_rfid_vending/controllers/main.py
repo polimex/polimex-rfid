@@ -101,6 +101,7 @@ class HrRfidVending(WebRfidController):
                 return ret_super()
 
             card_env = request.env['hr.rfid.card'].with_company(webstack_id.company_id).sudo()
+            _logger.debug('Start processing event %d on controller %s', event['event_n'], controller.name)
 
             # TODO Move into function "deal_with_ev_64"
             if event['event_n'] == 64:
@@ -147,10 +148,21 @@ class HrRfidVending(WebRfidController):
                 if len(card) == 0:
                     if event['card'] != '0000000000':
                         return ret_super()
+                # is_card = len(card) == 0
 
-                item_number = int(event['dt'][4:6], 16)
+                item_number = int(event['dt'][4:6], 16) # 00 0019 000c 0000
+                shifted_item_number = int(event['dt'][8:10], 16) # 000000 0003 000a
                 item_price = (int(event['dt'][6:8], 16) * 16 + int(event['dt'][8:10],
                                                                    16)) * controller.scale_factor / 100
+                change_price = (int(event['dt'][10:12], 16) * 16 + int(event['dt'][12:14],
+                                                                   16)) * controller.scale_factor / 100
+                # Fix for Leonid shifts!!!
+                # if is_card and item_number == 0 and shifted_item_number != 0:
+                if item_number == 0 and shifted_item_number != 0 and change_price != 0:
+                    item_number = shifted_item_number
+                    item_price = change_price
+                # Fix for Leonid shifts!!!
+
                 calced_price = calc_balance(controller, event)
                 item = None
                 purchase_money = calced_price

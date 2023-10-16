@@ -160,9 +160,17 @@ class VendingController(RFIDController, HttpCase):
 
     def _sale_test(self, ctrl_id=None):
         ctrl_id = ctrl_id or self.c_vending
+        current_balance = 7
         # sale with card and product
         self._sale_event(product=1, price_in_units=1, change_in_units=0, card_number=self.test_card_employee.number)
-        self._check_balance(6)
+        self._check_balance(current_balance-1)
+        current_balance = current_balance-1
+
+        # sale with card and product with wrong shifted data
+        self._sale_event(product=0, price_in_units=1, change_in_units=1, card_number=self.test_card_employee.number)
+        self._check_balance(current_balance-1)
+        current_balance = current_balance-1
+        self.test_employee_id.hr_rfid_vending_add_to_balance(0.05)
 
         # sale with card without product over balance
         self._sale_event(product=0, price_in_units=7, change_in_units=0, card_number=self.test_card_employee.number)
@@ -200,4 +208,12 @@ class VendingController(RFIDController, HttpCase):
         self.assertEqual(ctrl_id.cash_contained, 0.05)
 
         self._check_no_commands()
+
+        # # sale without card and without product with shifted data
+        # self._sale_event(product=0, price_in_units=1, change_in_units=0, card_number='0000000000')
+        # self.assertEqual(ctrl_id.cash_contained, 0.1)
+        #
+        # self._check_no_commands()
+
+
 
