@@ -1,4 +1,4 @@
-from odoo import fields, models, api, _, SUPERUSER_ID
+from odoo import fields, models, api, _, SUPERUSER_ID, exceptions
 
 
 class HrRfidReader(models.Model):
@@ -46,6 +46,7 @@ class HrRfidReader(models.Model):
         string='Reader mode',
         help='Mode of the reader',
         default='01',
+        required=True,
     )
 
     controller_id = fields.Many2one(
@@ -107,6 +108,11 @@ class HrRfidReader(models.Model):
             reader.door_ids = reader.door_id
 
     def write(self, vals):
+        for r in self:
+            if ('mode' in vals and r.mode != '00' and vals.get('mode') == '00'):
+                raise exceptions.ValidationError(
+                    _("You can not change the reader mode to this value!")
+                )
         if 'mode' not in vals or ('no_d6_cmd' in vals and vals['no_d6_cmd'] is True):
             if 'no_d6_cmd' in vals:
                 vals.pop('no_d6_cmd')
