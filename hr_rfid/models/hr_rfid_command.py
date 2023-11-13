@@ -8,7 +8,7 @@ from enum import Enum
 
 import logging
 
-from polimex.hr_rfid.models.hr_rfid_door import HrRfidDoor
+from odoo.addons.hr_rfid.models.hr_rfid_door import HrRfidDoor
 
 _logger = logging.getLogger(__name__)
 from odoo.addons.hr_rfid.controllers import polimex
