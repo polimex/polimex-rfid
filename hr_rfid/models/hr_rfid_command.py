@@ -2,13 +2,12 @@ import datetime
 import json
 from datetime import timedelta
 
+from odoo.addons.hr_rfid.models.hr_rfid_door import HrRfidDoor
 from odoo.addons.hr_rfid.controllers.polimex import bytes_to_num
 from odoo import fields, models, api, exceptions, _, SUPERUSER_ID
 from enum import Enum
 
 import logging
-
-from odoo.addons.hr_rfid.models.hr_rfid_door import HrRfidDoor
 
 _logger = logging.getLogger(__name__)
 from odoo.addons.hr_rfid.controllers import polimex
