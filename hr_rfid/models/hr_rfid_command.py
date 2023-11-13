@@ -8,6 +8,8 @@ from enum import Enum
 
 import logging
 
+from polimex.hr_rfid.models.hr_rfid_door import HrRfidDoor
+
 _logger = logging.getLogger(__name__)
 from odoo.addons.hr_rfid.controllers import polimex
 
@@ -406,7 +408,7 @@ class HrRfidCommands(models.Model):
 
     @api.model
     def add_card(self, door_id, ts_id, pin_code, card_id, alarm_right):
-        door = isinstance(door_id, self.env['hr.rfid.door']) and door_id or self.env['hr.rfid.door'].browse(door_id)
+        door = door_id and isinstance(door_id, HrRfidDoor) and door_id or self.env['hr.rfid.door'].browse(door_id)
         door = self.env['hr.rfid.door'].browse(door_id)
         time_schedule = self.env['hr.rfid.time.schedule'].browse(ts_id)
         card = self.env['hr.rfid.card'].browse(card_id)
