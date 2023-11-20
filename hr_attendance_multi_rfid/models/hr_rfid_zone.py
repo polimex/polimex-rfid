@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from datetime import timedelta
+
 from odoo import models, api, fields, _, exceptions
 from dateutil.relativedelta import relativedelta
 
@@ -90,8 +92,10 @@ class HrRfidZone(models.Model):
                         ('in_zone_id', '=', zone.id),
                     ], order='check_out desc', limit=1)
                     # If event older than last checkout ignor it (6+ hours)
-                    if last_att_id and (event.event_time - last_att_id.check_out) < relativedelta(hours=8):
+                    if last_att_id and (event.event_time - last_att_id.check_out) < timedelta(hours=8):
                         last_att_id.with_context(from_event=True).write({'check_out': event.event_time})
+                    # if last_att_id and (event.event_time - last_att_id.check_out) < relativedelta(hours=8):
+                    #     last_att_id.with_context(from_event=True).write({'check_out': event.event_time})
                 else:
                     person.last_attendance_id.with_context(from_event=True).write({
                         'check_out': fields.Datetime.now()
