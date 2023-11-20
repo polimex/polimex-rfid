@@ -592,7 +592,10 @@ class WebRfidController(http.Controller):
                 exceptions.MissingError, exceptions.ValidationError,
                 psycopg2.DataError, ValueError) as e:
             # commented DeferredException ^
-            _logger.error('Caught an exception, returning status=500 and creating a system event (%s)' % str(e))
+            _logger.error('Caught an exception, returning status=500 and creating a system event: %s\n%s', str(e),
+                          traceback.format_exc())
+
+            # _logger.error('Caught an exception, returning status=500 and creating a system event (%s)' % str(e))
             request.env['hr.rfid.event.system'].sudo().create({
                 'webstack_id': webstack_id and webstack_id.id,
                 'timestamp': fields.Datetime.now(),
