@@ -14,9 +14,9 @@
             <field name="model">rfid.service.sale</field>
             <field name="arch" type="xml">
                 <search string="RFID Service sales">
+                    <field name="name" filter_domain="['|', ('name', 'ilike', self), ('partner_id', 'ilike', self)]"/>
                     <field name="partner_id"/>
                     <field name="service_id"/>
-                    <field name="name"/>
                     <filter name="filter_this_day_start" string="Sales from today (service start)" domain="[
                             ('start_date', '&gt;=', (datetime.datetime.combine(context_today(), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
                     <filter name="filter_this_week_start" string="Sales from this week (service start)" domain="[
@@ -39,11 +39,13 @@
                     <filter string="This Month (service created)" name="filter_create_date" date="create_date"
                             default_period="last_month"/>
                     <separator/>
-<!--                    <filter name="group_service_state" string="State" domain="[]" context="{'group_by':'partner_id'}"/>-->
+                    <!--                    <filter name="group_service_state" string="State" domain="[]" context="{'group_by':'partner_id'}"/>-->
                     <filter name="group_service_type" string="Service" domain="[]" context="{'group_by':'service_id'}"/>
-                    <filter name="group_service_partner" string="Partner" domain="[]" context="{'group_by':'partner_id'}"/>
+                    <filter name="group_service_partner" string="Partner" domain="[]"
+                            context="{'group_by':'partner_id'}"/>
                     <searchpanel>
-                        <field name="service_id" select="multi" string="Services" icon="fa-user" color="#875A7B" enable_counters="1"/>
+                        <field name="service_id" select="multi" string="Services" icon="fa-user" color="#875A7B"
+                               enable_counters="1"/>
                     </searchpanel>
                 </search>
             </field>
@@ -54,7 +56,34 @@
             <field name="model">rfid.service.sale</field>
             <field name="arch" type="xml">
                 <form string="">
+                    <header>
+                        <field name="state" widget="statusbar" nolabel="1"/>
+                        <button
+                                string="Extend Service"
+                                name="extend_service"
+                                type="object"
+                                class="btn-primary"
+                                groups="hr.group_hr_manager"
+                        />
+                    </header>
                     <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <!--                            <button name="action_model_vehicle" type="object" icon="fa-car" class="oe_stat_button"-->
+                            <!--                                    attrs="{'invisible': [('vehicle_count', '=', 0)]}">-->
+                            <!--                                <field name="vehicle_count" widget="statinfo" string="Vehicles"/>-->
+                            <!--                            </button>-->
+                        </div>
+
+                        <widget name="web_ribbon" title="Finished" bg_color="bg-danger"
+                                attrs="{'invisible': [('state', '!=', 'finished')]}"/>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h2>
+                                <div>
+                                    <field name="name"/>
+                                </div>
+                            </h2>
+                        </div>
                         <group>
                             <group>
                                 <field name="name"/>
@@ -73,8 +102,16 @@
                         <group string="Related company" groups="base.group_multi_company">
                             <field name="company_id" groups="base.group_multi_company"/>
                         </group>
+                        <group string="Technical information" groups="base.group_no_one">
+                            <field name="card_id" readonly="True"/>
+                        </group>
 
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user"/>
+<!--                        <field name="activity_ids"/>-->
+                        <field name="message_ids"/>
+                    </div>
                 </form>
             </field>
         </record>
@@ -88,9 +125,9 @@
                     <field name="partner_id"/>
                     <field name="service_id"/>
                     <field name="company_id" groups="base.group_multi_company"/>
-                    <field name="create_date" />
-                    <field name="start_date" />
-                    <field name="end_date" />
+                    <field name="create_date"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
                     <field name="state" widget="badge"
                            decoration-danger="state == 'finished'"
                            decoration-warning="state == 'registered'"
@@ -108,7 +145,7 @@
                 <pivot string="RFID Service Sales">
                     <field name="service_id" type="col"/>
                     <field name="start_date" interval="day" type="row"/>
-<!--                    <field name="state" type="row"/>-->
+                    <!--                    <field name="state" type="row"/>-->
                 </pivot>
             </field>
         </record>

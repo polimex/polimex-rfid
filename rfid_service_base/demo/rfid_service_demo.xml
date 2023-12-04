@@ -162,11 +162,29 @@
         <record id="demo_service_yearly" model="rfid.service">
             <field name="displayed_image_id" ref="demo_service_yearly_img"/>
         </record>
+        <record id="demo_service_card_1" model="hr.rfid.card">
+            <field name="contact_id" ref="base.res_partner_address_14"/>
+            <field name="number">5432154311</field>
+            <field name="card_reference">Service Badge 71</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="activate_on" eval="datetime.now() - timedelta(hours=2)"/>
+            <field name="deactivate_on" eval="datetime.now() - timedelta(hours=1)"/>
+        </record>
         <record id="demo_service_card_2" model="hr.rfid.card">
             <field name="contact_id" ref="base.res_partner_address_15"/>
-            <field name="number">5432154321</field>
+            <field name="number">5432154312</field>
+            <field name="card_reference">Service Badge 72</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="activate_on" eval="datetime.now() - timedelta(hours=1)"/>
+            <field name="deactivate_on" eval="datetime.now() + timedelta(hours=1)"/>
+        </record>
+        <record id="demo_service_card_3" model="hr.rfid.card">
+            <field name="contact_id" ref="base.res_partner_address_16"/>
+            <field name="number">5432154313</field>
             <field name="card_reference">Service Badge 73</field>
             <field name="company_id" ref="base.main_company"/>
+            <field name="activate_on" eval="datetime.now() + timedelta(hours=1)"/>
+            <field name="deactivate_on" eval="datetime.now() + timedelta(hours=2)"/>
         </record>
 
 <!--        Sales-->
@@ -174,7 +192,8 @@
             <field name="name">DEMO23000001</field>
             <field name="service_id" ref="demo_service_half_day"/>
             <field name="company_id" ref="base.main_company"/>
-            <field name="partner_id" ref="base.res_partner_address_15"/>
+            <field name="card_id" ref="demo_service_card_1"/>
+            <field name="partner_id" ref="base.res_partner_address_14"/>
             <field name="start_date" eval="datetime.now() - timedelta(hours=2)"/>
             <field name="end_date" eval="datetime.now() - timedelta(hours=1)"/>
         </record>
@@ -182,6 +201,7 @@
             <field name="name">DEMO23000002</field>
             <field name="service_id" ref="demo_service_half_day"/>
             <field name="company_id" ref="base.main_company"/>
+            <field name="card_id" ref="demo_service_card_2"/>
             <field name="partner_id" ref="base.res_partner_address_15"/>
             <field name="start_date" eval="datetime.now() - timedelta(hours=1)"/>
             <field name="end_date" eval="datetime.now() + timedelta(hours=1)"/>
@@ -190,7 +210,8 @@
             <field name="name">DEMO23000003</field>
             <field name="service_id" ref="demo_service_half_day"/>
             <field name="company_id" ref="base.main_company"/>
-            <field name="partner_id" ref="base.res_partner_address_15"/>
+            <field name="card_id" ref="demo_service_card_3"/>
+            <field name="partner_id" ref="base.res_partner_address_16"/>
             <field name="start_date" eval="datetime.now() + timedelta(hours=1)"/>
             <field name="end_date" eval="datetime.now() + timedelta(hours=2)"/>
         </record>

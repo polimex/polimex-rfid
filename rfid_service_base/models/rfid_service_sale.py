@@ -3,6 +3,8 @@ from odoo.exceptions import UserError, ValidationError
 
 import logging
 
+from odoo.osv import expression
+
 _logger = logging.getLogger(__name__)
 
 
@@ -10,6 +12,12 @@ class BaseRFIDService(models.Model):
     _name = 'rfid.service.sale'
     _description = 'RFID Service Sales'
     _order = 'create_date desc'
+    _inherit = "mail.thread"
+
+    _sql_constraints = [
+        ('check_duplicates', 'unique (service_id, start_date, end_date, partner_id)',
+         _("Only one service for same period for given Customer!")),
+    ]
 
     name = fields.Char(
         string='Reference',
@@ -69,3 +77,19 @@ class BaseRFIDService(models.Model):
             elif end_date <= fields.Datetime.now():
                 state = 'finished'
             s.state = state
+
+    def unlink(self):
+        for s in self:
+            ag_ids = s.partner_id.hr_rfid_access_group_ids.filtered(
+                lambda ag: ag.activate_on == s.start_date and ag.expiration == s.end_date
+                    )
+            ag_ids.unlink()
+        return super(BaseRFIDService, self).unlink()
+    def extend_service(self):
+        self.ensure_one()
+        action = self.env["ir.actions.act_window"]._for_xml_id("rfid_service_base.sale_wiz_action")
+        action["name"] = _("Extend RFID Service for %s" % self.partner_id.name)
+        action['binding_model_id'] = self.service_id
+        action['view_id'] = self.env.ref("rfid_service_base.sale_wiz_action").id
+        action["context"] = {'extend': self.id}
+        return action
