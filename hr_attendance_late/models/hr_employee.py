@@ -102,13 +102,17 @@ class HrEmployee(models.Model):
                     max_shift_time = max(shift_intersections)
                     shift_number = shift_intersections.index(max_shift_time)
                     work_time_ranges = [work_time_ranges[shift_number]]
+                try:
+                    att_extra_vals = self.get_work_time_details(
+                        for_date=current_date,
+                        work_time_ranges=work_time_ranges,
+                        attendance_ranges=attendance_ranges,
+                        day_period=convert_day_period_to_utc((time(6, 0), time(22, 0)), tz)
+                    )
+                except:
+                    _logger.info('ERROR in Attendance extra calculation for %s' % e.name)
+                    continue
 
-                att_extra_vals = self.get_work_time_details(
-                    for_date=current_date,
-                    work_time_ranges=work_time_ranges,
-                    attendance_ranges=attendance_ranges,
-                    day_period=convert_day_period_to_utc((time(6, 0), time(22, 0)), tz)
-                )
                 if shift_number is not None:
                     att_extra_vals['shift_number'] = shift_number + 1
                 # if att_extra_vals and (att_extra_vals.get('theoretical_work_time',0.0) > 0 or att_extra_vals.get('extra_time',0.0) > 0):
