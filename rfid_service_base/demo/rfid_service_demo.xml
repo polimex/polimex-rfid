@@ -37,9 +37,23 @@
             <field name="color">6</field>
             <field name="company_id" ref="base.main_company"/>
         </record>
+
+        <record id="res_partner_half_day" model="res.partner">
+            <field name="name">Half Day Tickets</field>
+            <field name="is_company">1</field>
+            <field name="street">1 Narodno Sabranie Square</field>
+            <field name="city">Sofia</field>
+            <field name="zip">1000</field>
+            <field name="country_id" ref="base.bg"/>
+            <field name="email">inf@parliament.bg</field>
+            <field name="phone">(02)-939-39</field>
+            <field name="website">https://www.parliament.bg/</field>
+        </record>
+
         <record id="demo_service_half_day" model="rfid.service">
             <field name="name">Half Day ticket</field>
             <field name="company_id" ref="base.main_company"/>
+            <field name="parent_id" ref="rfid_service_base.res_partner_half_day"/>
             <field name="color">1</field>
             <field name="generate_barcode_card" eval="True"/>
             <field name="tag_ids"
@@ -67,6 +81,7 @@
         <record id="demo_service_daily" model="rfid.service">
             <field name="name">Daily ticket</field>
             <field name="company_id" ref="base.main_company"/>
+            <field name="parent_id" ref="base.res_partner_4"/>
             <field name="color">2</field>
             <field name="tag_ids"
                    eval="[(4, ref('rfid_service_base.demo_tag_promo'), 0), (4, ref('rfid_service_base.demo_tag_ticket'), 0)]"/>

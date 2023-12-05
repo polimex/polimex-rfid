@@ -57,6 +57,7 @@ class BaseRFIDService(models.Model):
         comodel_name='hr.rfid.card', check_company=True,
         # required=True
     )
+    card_number = fields.Char(related='card_id.number')
     access_group_contact_rel = fields.Many2one(
         comodel_name='hr.rfid.access.group.contact.rel', check_company=True
     )

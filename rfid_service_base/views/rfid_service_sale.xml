@@ -6,7 +6,7 @@
             <field name="name">Sale RFID Service</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">rfid.service.sale</field>
-            <field name="view_mode">tree,form,pivot</field>
+            <field name="view_mode">tree,form,pivot,graph,calendar</field>
         </record>
 
         <record id="hr_rfid_service_sale_action_search" model="ir.ui.view">
@@ -14,7 +14,7 @@
             <field name="model">rfid.service.sale</field>
             <field name="arch" type="xml">
                 <search string="RFID Service sales">
-                    <field name="name" filter_domain="['|', ('name', 'ilike', self), ('partner_id', 'ilike', self)]"/>
+                    <field name="name" filter_domain="['|', '|', ('name', 'ilike', self), ('partner_id', 'ilike', self), ('card_number', 'ilike', self)]"/>
                     <field name="partner_id"/>
                     <field name="service_id"/>
                     <filter name="filter_this_day_start" string="Sales from today (service start)" domain="[
@@ -160,6 +160,21 @@
                     <field name="create_date" type="row"/>
                     <field name="start_date" type="row"/>
                 </graph>
+            </field>
+        </record>
+
+        <record id="hr_rfid_service_sale_calendar" model="ir.ui.view">
+            <field name="name">Sale RFID Service Calendar</field>
+            <field name="model">rfid.service.sale</field>
+            <field name="arch" type="xml">
+                <calendar string="Service sales on time" date_start="start_date" date_stop="end_date"
+                          color="service_id" mode="month" quick_add="0" create="0" delete="0">
+                    <field name="service_id" readonly="1"/>
+                    <field name="partner_id" readonly="1"/>
+                    <field name="start_date" readonly="1"/>
+                    <field name="end_date" readonly="1"/>
+                    <field name="service_id" filters="True" invisible="1" />
+                </calendar>
             </field>
         </record>
 

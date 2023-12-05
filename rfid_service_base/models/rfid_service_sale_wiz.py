@@ -158,28 +158,28 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         else:
             self.end_date = self.end_date
 
-    def _gen_partner(self, partner_id=None):
+    def _gen_partner(self, partner_id=None, start_date=None, end_date=None):
         transaction_name = self._get_service_sale_seq()
+        access_group_contact_rel = None
         if partner_id is None:
             partner_id = self.env['res.partner'].create({
                 'name': '%s (%s)' % (transaction_name, self.service_id.name),
                 'company_id': self.service_id.company_id.id,
                 'mobile': self.mobile,
                 'email': self.email,
-                'parent_id': self.service_id.parent_id,
+                'parent_id': self.service_id.parent_id.id,
             })
         else:
             partner_id.write({
                 'mobile': self.mobile,
                 'email': self.email,
             })
-
             access_group_contact_rel = self.env['hr.rfid.access.group.contact.rel'].sudo().search([
-            ('access_group_id', '=', self.service_id.access_group_id.id),
-            ('contact_id', '=', partner_id.id),
-        ])
+                ('access_group_id', '=', self.service_id.access_group_id.id),
+                ('contact_id', '=', partner_id.id),
+            ])
         if access_group_contact_rel:
-            if not access_group_contact_rel.expiration or access_group_contact_rel.expiration <= fields.Datetime.now():
+            if not access_group_contact_rel.expiration or access_group_contact_rel.expiration <= start_date:
                 access_group_contact_rel.sudo().write({
                     'activate_on': self.start_date,
                     'expiration': self.end_date,
@@ -237,7 +237,7 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
 
     def write_card(self):
         sale_id, partner_id, access_group_contact_rel, card_id = self._write_card()
-        if self.extend_sale_id is not None:
+        if self.extend_sale_id:
             return self.env["ir.actions.act_window"]._for_xml_id("rfid_service_base.hr_rfid_service_sale_action")
         return {
             'type': 'ir.actions.client',
@@ -256,9 +256,12 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         if not self.service_id.access_group_id.door_ids:
             raise UserError(_('The access group for this service have no any doors. Please fix it and try again!'))
         if not self.partner_id:
-            self.partner_id, access_group_contact_rel, card_id, transaction_name = self._gen_partner()
+            self.partner_id, access_group_contact_rel, card_id, transaction_name = self._gen_partner(
+                start_date=self.start_date, end_date=self.end_date)
         else:
-            self.partner_id, access_group_contact_rel, card_id, transaction_name = self._gen_partner(self.partner_id)
+            self.partner_id, access_group_contact_rel, card_id, transaction_name = self._gen_partner(self.partner_id,
+                                                                                                     start_date=self.start_date,
+                                                                                                     end_date=self.end_date)
         sale_id = self.env['rfid.service.sale'].create({
             'name': '%s (%s)' % (transaction_name, self.service_id.name),
             'service_id': self.service_id.id,
@@ -268,7 +271,7 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
             'card_id': card_id.id,
             'access_group_contact_rel': access_group_contact_rel.id
         })
-        if self.extend_sale_id is not None:
+        if self.extend_sale_id:
             base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
 
             link = f"{base_url}/web#id={sale_id.id}&model=rfid.service.sale&view_type=form"
