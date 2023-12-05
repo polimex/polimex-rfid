@@ -146,10 +146,6 @@ class HrEmployee(models.Model):
         balance = self.hr_rfid_vending_balance
         if self.hr_rfid_vending_negative_balance is True:
             balance += self.hr_rfid_vending_limit
-        if balance <= 0:
-            if controller is None:
-                return 0
-            return '0000', 0
         if self.hr_rfid_vending_in_attendance is True and self.attendance_state == 'checked_out':
             if controller is None:
                 return 0
@@ -159,6 +155,10 @@ class HrEmployee(models.Model):
             limit -= self.hr_rfid_vending_spent_today
             if limit < balance:
                 balance = limit
+        # if balance <= 0:
+        #     if controller is None:
+        #         return 0
+        #     return '0000', 0
         # add self balance
         # balance += Decimal(str(self.hr_rfid_vending_recharge_balance))
         balance += self.hr_rfid_vending_recharge_balance
@@ -169,6 +169,7 @@ class HrEmployee(models.Model):
 
         if controller is None:
             return balance
+
         return controller._convert_balance_to_ctrl(balance)
 
     @api.returns('hr.rfid.vending.balance.history')

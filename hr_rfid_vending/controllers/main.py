@@ -108,7 +108,7 @@ class HrRfidVending(WebRfidController):
                 card = card_env.with_context(active_test=False).search(
                     [('company_id', '=', webstack_id.company_id.id), ('internal_number', '=', event['card'])])
 
-                if len(card) == 0 or len(card.employee_id) == 0:
+                if len(card) == 0 or len(card.employee_id) == 0 or not card.active:
                     return ret_local_no_command(controller, None)
 
                 emp = card.employee_id
@@ -150,8 +150,8 @@ class HrRfidVending(WebRfidController):
                         return ret_super()
                 # is_card = len(card) == 0
 
-                item_number = int(event['dt'][4:6], 16) # 00 0019 000c 0000
-                shifted_item_number = int(event['dt'][8:10], 16) # 000000 0003 000a
+                item_number = int(event['dt'][4:6], 16)  # 00 0019 000c 0000
+                shifted_item_number = int(event['dt'][8:10], 16)  # 000000 0003 000a
                 item_price = (int(event['dt'][6:8], 16) * 16 + int(event['dt'][8:10],
                                                                    16)) * controller.scale_factor / 100
                 change_price = (int(event['dt'][10:12], 16) * 16 + int(event['dt'][12:14],
