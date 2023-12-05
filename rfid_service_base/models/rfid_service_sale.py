@@ -83,9 +83,10 @@ class BaseRFIDService(models.Model):
         for s in self:
             ag_ids = s.partner_id.hr_rfid_access_group_ids.filtered(
                 lambda ag: ag.activate_on == s.start_date and ag.expiration == s.end_date
-                    )
+            )
             ag_ids.unlink()
         return super(BaseRFIDService, self).unlink()
+
     def extend_service(self):
         self.ensure_one()
         action = self.env["ir.actions.act_window"]._for_xml_id("rfid_service_base.sale_wiz_action")
@@ -94,3 +95,13 @@ class BaseRFIDService(models.Model):
         action['view_id'] = self.env.ref("rfid_service_base.sale_wiz_action").id
         action["context"] = {'extend': self.id}
         return action
+
+    def email_card(self):
+        self.ensure_one()
+        if not self.partner_id.email:
+            raise UserError(_('Please fill the Customer e-mail'))
+        return self.partner_id.action_send_badge_email()
+
+    def print_card(self):
+        self.ensure_one()
+        return self.env.ref('hr_rfid.action_report_res_partner_foldable_badge').report_action(self.partner_id)

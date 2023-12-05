@@ -108,6 +108,7 @@
             <field name="name">Weekly membership</field>
             <field name="company_id" ref="base.main_company"/>
             <field name="color">3</field>
+            <field name="generate_barcode_card" eval="True"/>
             <field name="tag_ids"
                    eval="[(4, ref('rfid_service_base.demo_tag_18'), 0), (4, ref('rfid_service_base.demo_tag_membership'), 0)]"/>
             <field name="service_type">time</field>

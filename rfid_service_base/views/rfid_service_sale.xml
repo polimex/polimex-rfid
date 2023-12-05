@@ -58,21 +58,22 @@
                 <form string="">
                     <header>
                         <field name="state" widget="statusbar" nolabel="1"/>
-                        <button
-                                string="Extend Service"
+                        <button string="Extend Service"
                                 name="extend_service"
                                 type="object"
                                 class="btn-primary"
-                                groups="hr.group_hr_manager"
-                        />
+                                groups="hr.group_hr_manager"/>
+                        <button string="E-mail"
+                                name="email_card"
+                                type="object"
+                                groups="hr.group_hr_manager"/>
+                        <button string="Print"
+                                name="print_card"
+                                type="object"
+                                groups="hr.group_hr_manager"/>
                     </header>
                     <sheet>
-                        <div class="oe_button_box" name="button_box">
-                            <!--                            <button name="action_model_vehicle" type="object" icon="fa-car" class="oe_stat_button"-->
-                            <!--                                    attrs="{'invisible': [('vehicle_count', '=', 0)]}">-->
-                            <!--                                <field name="vehicle_count" widget="statinfo" string="Vehicles"/>-->
-                            <!--                            </button>-->
-                        </div>
+                        <div class="oe_button_box" name="button_box"/>
 
                         <widget name="web_ribbon" title="Finished" bg_color="bg-danger"
                                 attrs="{'invisible': [('state', '!=', 'finished')]}"/>

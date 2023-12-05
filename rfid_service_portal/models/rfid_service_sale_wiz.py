@@ -26,6 +26,7 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         act['context'] = {
             'active_id': card_id.id,
             'force_website': True,
+            'partner_ids': [self.partner_id.id],
             'active_model': card_id._name,
             'default_partner_ids': partner_id.ids,
         }

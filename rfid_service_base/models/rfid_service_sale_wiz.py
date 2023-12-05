@@ -271,6 +271,7 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
             'card_id': card_id.id,
             'access_group_contact_rel': access_group_contact_rel.id
         })
+        sale_id.message_subscribe(partner_ids=[self.partner_id.id])
         if self.extend_sale_id:
             base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
 
