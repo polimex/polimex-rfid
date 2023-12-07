@@ -21,6 +21,14 @@ _tzs = [(tz, tz) for tz in sorted(pytz.all_timezones, key=lambda tz: tz if not t
 
 
 def get_local_ip():
+    """Return the IP address of the machine running the code.
+
+    The method uses a socket to connect to a non-existent IP address (10.255.255.255) with a timeout of 0 seconds.
+    This ensures that the socket does not actually establish a connection.
+    By calling `getsockname()` on the socket, the local IP address is retrieved.
+
+    :return: The local IP address as a string.
+    """
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.settimeout(0)
     try:
@@ -174,6 +182,13 @@ class HrRfidWebstack(models.Model):
 
     @api.model
     def _notify_inactive(self):
+        """
+        Notify Inactive
+
+        Notify all records that are inactive and have not been updated within the last 24 hours by creating a todo activity for each record.
+
+        :return: None
+        """
         todo_activity_type = self.env.ref('mail.mail_activity_data_todo')
 
         # Get all records of the model
@@ -200,8 +215,10 @@ class HrRfidWebstack(models.Model):
                             'res_model_id': self.env['ir.model']._get(self._name).id,
                             'user_id': user.id,
                             'summary': _('Todo Check communication or contact with support team'),
-                            'note': _('This is a automatic Todo activity based on communication statistics with the module.')
+                            'note': _(
+                                'This is a automatic Todo activity based on communication statistics with the module.')
                         })
+
     @api.depends('hw_version')
     def _compute_time_format(self):
         for ws in self:
@@ -268,6 +285,11 @@ class HrRfidWebstack(models.Model):
         return timedelta(hours=tz_h, minutes=tz_m)
 
     def action_set_webstack_settings(self):
+        """
+        Set webstack settings for the module.
+
+        :return: None
+        """
         self.ensure_one()
         bad_hosts = ['localhost', '127.0.0.1', '.local']
         odoo_url = str(self.env['ir.config_parameter'].sudo().get_param('web.base.url'))
@@ -384,6 +406,11 @@ class HrRfidWebstack(models.Model):
         )
 
     def get_controllers(self):
+        """
+        Retrieve the list of controllers from the webstack.
+
+        :return: an action to open the controller view if controllers are found, or a warning balloon message if no controllers are detected or the webstack is archived.
+        """
         controllers = None
         for ws in self:
             if ws.behind_nat or not ws.active:
@@ -440,6 +467,11 @@ class HrRfidWebstack(models.Model):
             )
 
     def reboot_cmd(self):
+        """
+        Reboots the module.
+
+        :return: None
+        """
         for ws in self:
             username = str(ws.module_username) if ws.module_username else ''
             password = str(ws.module_password) if ws.module_password else ''
@@ -520,6 +552,21 @@ class HrRfidWebstack(models.Model):
 
     # Log system event for this webstack/s
     def sys_log(self, error_description, input_json):
+        """
+        :param error_description: (str) Description of the error that occurred.
+        :param input_json: (str) JSON input for the logs.
+        :return: None
+
+        This method is used to log system errors and input JSON in the HR RFID webstack. It creates a new record in the 'hr.rfid.event.system' model with the following fields:
+        - webstack_id: The ID of the current webstack.
+        - timestamp: The current date and time.
+        - error_description: The description of the error that occurred.
+        - input_json: The input JSON for the logs.
+
+        Example Usage:
+            hr_rfid_webstack = HrRfidWebstack()
+            hr_rfid_webstack.sys_log("Error occurred", "{\"key\": \"value\"}")
+        """
         for ws in self:
             self.env['hr.rfid.event.system'].sudo().create({
                 'webstack_id': ws.id,
@@ -535,6 +582,24 @@ class HrRfidWebstack(models.Model):
 
     # Communication helpers
     def _execute_direct_cmd(self, cmd: dict, retry=0):
+        """
+        :param cmd: A dictionary containing the command to be executed
+        :param retry: Number of times to retry the command if it fails (default is 0)
+        :return: The result of the command execution
+
+        This method is used to execute a command directly to a remote module using HTTP requests.
+        The command is provided as a dictionary in the `cmd` parameter. The `retry` parameter specifies the number of times to retry the command if it fails.
+
+        Example usage:
+            cmd = {
+                'cmd': {
+                    'c': 'F9',
+                    'param1': 'value1',
+                    'param2': 'value2'
+                }
+            }
+            result = self._execute_direct_cmd(cmd, retry=3)
+        """
         self.ensure_one()
         username = self.module_username and str(self.module_username) or ''
         password = self.module_password and str(self.module_password) or ''
@@ -568,6 +633,17 @@ class HrRfidWebstack(models.Model):
             # raise
 
     def direct_execute(self, cmd: dict, command_id: models.Model = None):
+        """
+        :param cmd: A dictionary that contains the command to be executed.
+        :param command_id: (optional) A model instance representing a stored command.
+        :return: The response from the command execution.
+
+        This method is used to execute a command directly. If the parameter "command_id" is provided, the method will execute the stored command represented by that model instance. If no "command_id" is provided, the method will execute the command specified in the "cmd" parameter.
+
+        If "command_id" is provided, the method will execute the stored command by calling the "_execute_direct_cmd" method of the associated "webstack_id" model instance, passing the command as a parameter. The method will then check if a response is received and call the "parse_response" method of the "webstack_id" model instance to process the response. If no response is received, the status of the "command_id" will be set to "Wait". The method will return the response from the command execution.
+
+        If no "command_id" is provided, the method will execute the command by calling the "_execute_direct_cmd" method of the current model instance, passing the command as a parameter. The method will then return the response from the command execution.
+        """
         if command_id:
             # TODO Direct execution of stored commands
             cmd_response = command_id.webstack_id._execute_direct_cmd({'cmd': command_id.send_command(200)['cmd']})
@@ -583,6 +659,11 @@ class HrRfidWebstack(models.Model):
                 return cmd_response
 
     def is_10_3(self):
+        """
+        Check if the hardware version is '10.3' or the version number is less than 1.40 for all instances of `HrRfidWebstack`.
+
+        :return: True if all instances meet the conditions, False otherwise.
+        """
         return all([(ws.hw_version == '10.3') or (float(ws.version) < 1.40) for ws in self])
 
     def is_50_1(self):
@@ -606,17 +687,27 @@ class HrRfidWebstack(models.Model):
         ])
 
     def is_limit_executed_cmd_reached(self):
-        '''
-        Check if direct commands executions reach the limits
+        """
+        Check if the limit of executed commands has been reached.
 
-        Returns:
-            True:
-
-        '''
+        :return: True if the limit is reached, False otherwise
+        """
         return self.count_cmds_in(
             polimex.MAX_DIRECT_EXECUTE_TIME) > polimex.MAX_DIRECT_EXECUTE or self.in_cmd_execution()
 
     def get_ws_time(self, post_data: dict):
+        """
+        :param post_data: A dictionary containing 'date' and 'time' as keys, with their corresponding values.
+        :return: A datetime object representing the time retrieved from the web service.
+
+        This method takes in a dictionary of post_data, containing the date and time retrieved from the web service.
+        It ensures that there is only one record in the current model instance.
+        The 'date' and 'time' values are combined into a string 't', with a format fix for the WiFi module.
+        The 't' string is then converted into a datetime object 'ws_time' using the self.time_format specified in the model.
+        An offset is subtracted from 'ws_time' to adjust for the timezone.
+        If 't' cannot be converted into a datetime object, a BadTimeException is raised.
+        The resulting 'ws_time' is returned.
+        """
         self.ensure_one()
         t = f"{post_data['date']} {post_data['time']}"
         t = t.replace('-', '.')  # fix for WiFi module format
@@ -645,6 +736,14 @@ class HrRfidWebstack(models.Model):
         return cmd.send_command(status_code)
 
     def check_for_unsent_cmd(self, status_code, event=None):
+        """
+        :param status_code: The status code of the command to be checked.
+        :param event: The corresponding event object. Defaults to None.
+        :return: If there are processing commands, it retries the command based on the status code and event.
+                 If there are waiting commands, it sends the command based on the status code and event.
+                 If there are no commands, it returns the status code.
+
+        """
         self.ensure_one()
 
         commands_env = self.env['hr.rfid.command'].sudo()
@@ -732,6 +831,13 @@ class HrRfidWebstack(models.Model):
         return self.check_for_unsent_cmd(200)
 
     def parse_response(self, post_data: dict, direct_cmd=False):
+        """
+        :param post_data: A dictionary containing the response data received from a request.
+        :param direct_cmd: A boolean indicating whether the command was sent directly or not.
+        :return: None
+
+        This method parses the response received from a controller and performs actions based on the command type and response data. It updates the status and response fields of the corresponding command record. If the response indicates an error, it handles the error accordingly. It also updates various fields of the controller based on the response data for different command types.
+        """
         self.ensure_one()
         command_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
         response = post_data['response']
