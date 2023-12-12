@@ -268,6 +268,7 @@ class HrRfidController(models.Model):
         ondelete='cascade',
     )
 
+
     door_ids = fields.One2many(
         comodel_name='hr.rfid.door',
         inverse_name='controller_id',

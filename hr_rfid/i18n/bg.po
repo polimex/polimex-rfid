@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-12 09:01+0000\n"
-"PO-Revision-Date: 2023-12-12 11:11+0200\n"
+"POT-Creation-Date: 2023-12-12 12:26+0000\n"
+"PO-Revision-Date: 2023-12-12 14:29+0200\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -1177,7 +1177,6 @@ msgstr "Брой карти"
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__2
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__2
 #, python-format
 msgid "Card Denied"
 msgstr "Отказана карта"
@@ -1185,7 +1184,6 @@ msgstr "Отказана карта"
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__4
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__4
 #, python-format
 msgid "Card Denied APB"
 msgstr "Отказ APB на карта"
@@ -1193,7 +1191,6 @@ msgstr "Отказ APB на карта"
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__8
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__8
 #, python-format
 msgid "Card Denied Insert"
 msgstr "Отказана карта (Хотел)"
@@ -1201,7 +1198,6 @@ msgstr "Отказана карта (Хотел)"
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__3
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__3
 #, python-format
 msgid "Card Denied T/S"
 msgstr "Отказ T/S на карта"
@@ -1209,7 +1205,6 @@ msgstr "Отказ T/S на карта"
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__9
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__9
 #, python-format
 msgid "Card Ejected"
 msgstr "Извадена карта"
@@ -1217,7 +1212,6 @@ msgstr "Извадена карта"
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__1
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__1
 #, python-format
 msgid "Card Granted"
 msgstr "Разрешена карта"
@@ -1225,7 +1219,6 @@ msgstr "Разрешена карта"
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__6
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__6
 #, python-format
 msgid "Card Granted (no entry)"
 msgstr "Разрешена карта (без вход)"
@@ -1233,7 +1226,6 @@ msgstr "Разрешена карта (без вход)"
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__7
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__7
 #, python-format
 msgid "Card Granted Insert"
 msgstr "Разрешено поставяне на карта"
@@ -1929,6 +1921,12 @@ msgid "Controller mode"
 msgstr "Режим на Контролера"
 
 #. module: hr_rfid
+#: code:addons/hr_rfid/models/hr_rfid_webstack_replace_wiz.py:0
+#, python-format
+msgid "Controller moved from <a href='%s'>Module %s</a>"
+msgstr "Контролерът е преместен от <a href='%s'>Модул %s</a>"
+
+#. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 #, python-format
 msgid "Controller sent us a response to a command we never sent"
@@ -1958,7 +1956,6 @@ msgstr "Контролера за който е предназначена ко�
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_ctrl_action
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__controllers
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__destination_controller_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__source_controller_ids
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_controllers model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
 msgid "Controllers"
@@ -1984,7 +1981,6 @@ msgstr "Контролерите са преместени в <a href='%s'>мо�
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__controllers
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_replace_wiz__destination_controller_ids
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_replace_wiz__source_controller_ids
 msgid "Controllers that this WebStack manages"
 msgstr "Контролерите управлявани от този Модул"
 
@@ -2330,6 +2326,11 @@ msgid "Description on why the error happened"
 msgstr "Описание на причината за грешка"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__destination_active_state
+msgid "Destination Active State"
+msgstr "Активен статус на Приемащия"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__destination_webstack_id
 msgid "Destination Webstack"
 msgstr "Получаващ модул"
@@ -2444,7 +2445,7 @@ msgstr "Направи трансфер"
 #: code:addons/hr_rfid/models/digest.py:0
 #, python-format
 msgid "Do not have access, skip this data for user's digest email"
-msgstr ""
+msgstr "Нямате достъп. пропусни тези данни за потребителският доклад"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_door
@@ -3445,7 +3446,6 @@ msgstr "Празник"
 #: code:addons/hr_rfid/models/hr_rfid_event_system.py:0 code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__38
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__12
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__12
 #, python-format
 msgid "Hotel Button Pressed"
 msgstr "Натиснат Хотелски бутон"
@@ -4560,6 +4560,11 @@ msgstr "Повече информация в JSON на събитието"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_form
 msgid "More information"
 msgstr "Повече информация"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_replace_wiz_view_form
+msgid "Move"
+msgstr "Премести"
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_webstack_replace_source_wiz_action
@@ -5889,8 +5894,12 @@ msgstr "Замяна на съществуващи"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_replace_wiz__replace_existing
-msgid "Replace existing controllers in destination module"
-msgstr "Замяна на съществуващите контролери в приемащият модула"
+msgid ""
+"Replace existing controllers in destination module. \n"
+"This will remove the existing controller in destination module"
+msgstr ""
+"Заменете съществуващите контролери в модула на местоназначението.\n"
+"Това ще премахне съществуващите контролери в получаващият модула"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_replace_wiz_view_form
@@ -5905,7 +5914,6 @@ msgstr "Заявка"
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__64
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__64
 #, python-format
 msgid "Request Instructions"
 msgstr "Заявете инструкции"
@@ -6221,6 +6229,11 @@ msgid "Software version of the module"
 msgstr "Софтуерна версия на модула"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__source_controller_ids
+msgid "Source Controller"
+msgstr "Контролер на източника"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__source_webstack_id
 msgid "Source Webstack"
 msgstr "Модул Източник"
@@ -6527,6 +6540,11 @@ msgid "Th Log"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_replace_wiz__destination_active_state
+msgid "The Active state of the destination module."
+msgstr "Активното състояние на получаващият модул."
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_form_view
 msgid "The Line is Armed! Press here to Disarm the Line"
 msgstr "Линията е под охрана! Натиснете тук за да деактивирате охраната"
@@ -6723,7 +6741,7 @@ msgstr "Версията на софтуера на контролера"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_replace_wiz_view_form
 msgid ""
 "This function will move controllers from one module to another. The source module will be\n"
-"                                disabled.The Destination module will be Enabled. We suggest to make both modules inactive!"
+"                            disabled.The Destination module will be Enabled. We suggest to make both modules inactive!"
 msgstr ""
 "Тази функция премества контролерите от един модул в друг. Източника ще бъде\n"
 "                                Забранен. Получаващият ще бъде разрешен. Предлагаме да направите и двата модула неактивни!"
@@ -7640,7 +7658,6 @@ msgstr "Зона"
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__10
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__10
 #, python-format
 msgid "Zone Arm"
 msgstr "Зона под охрана"
@@ -7648,7 +7665,6 @@ msgstr "Зона под охрана"
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__5
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__5
 #, python-format
 msgid "Zone Arm Denied"
 msgstr "Зона под охрана Отказана"
@@ -7675,7 +7691,6 @@ msgstr "Брой зони"
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__11
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__11
 #, python-format
 msgid "Zone Disarm"
 msgstr "Деактивирана Зона"
@@ -7683,7 +7698,6 @@ msgstr "Деактивирана Зона"
 #. module: hr_rfid
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__15
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__15
 #, python-format
 msgid "Zone Disarm Denied"
 msgstr "Деактивирана Зона Отказ"
