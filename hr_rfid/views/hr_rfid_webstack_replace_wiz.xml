@@ -49,6 +49,9 @@
                                 <field name="destination_webstack_id" options="{'no_create': True, 'no_open': True}"/>
                                 <field name="destination_controller_ids" widget="many2many_tags"/>
                             </group>
+                            <group>
+                                <field name="replace_existing"/>
+                            </group>
                         </group>
                     </sheet>
                     <footer>
