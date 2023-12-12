@@ -179,28 +179,20 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
                 ('contact_id', '=', partner_id.id),
             ])
         if access_group_contact_rel:
-            if not access_group_contact_rel.expiration or access_group_contact_rel.expiration <= start_date:
-                access_group_contact_rel.sudo().write({
-                    'activate_on': self.start_date,
-                    'expiration': self.end_date,
-                    'permitted_visits': self.visits,
-                    'visits_counting': self.visits > 0,
-                    'write_uid': self.env.user.id,
-                })
-            else:
+            if self.start_date <= access_group_contact_rel.expiration < self.end_date:
                 raise UserError(_('The partner have valid service for this period!'))
-        else:
-            access_group_contact_rel = self.env['hr.rfid.access.group.contact.rel'].sudo().create({
-                'access_group_id': self.service_id.access_group_id.id,
-                'contact_id': partner_id.id,
-                'activate_on': self.start_date,
-                'expiration': self.end_date,
-                'permitted_visits': self.visits,
-                'visits_counting': self.visits > 0,
-                'create_uid': self.env.user.id,
-                'write_uid': self.env.user.id,
-            })
-        existing_card_id = self.env['hr.rfid.card'].sudo().with_context(test_active=False).search([
+
+        access_group_contact_rel = self.env['hr.rfid.access.group.contact.rel'].sudo().create({
+            'access_group_id': self.service_id.access_group_id.id,
+            'contact_id': partner_id.id,
+            'activate_on': self.start_date,
+            'expiration': self.end_date,
+            'permitted_visits': self.visits,
+            'visits_counting': self.visits > 0,
+            'create_uid': self.env.user.id,
+            'write_uid': self.env.user.id,
+        })
+        existing_card_id = self.env['hr.rfid.card'].sudo().with_context(active_test=False).search([
             ('number', '=', self.card_number),
         ])
         if existing_card_id and existing_card_id.contact_id != partner_id:
@@ -220,8 +212,11 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
                 'write_uid': self.env.user.id,
             })
         else:
+            existing_card_id.write({
+                'deactivate_on': self.end_date,
+            })
             card_id = existing_card_id
-            card_id.active = True
+            # card_id.active = True
 
         return partner_id, access_group_contact_rel, card_id, transaction_name
 
