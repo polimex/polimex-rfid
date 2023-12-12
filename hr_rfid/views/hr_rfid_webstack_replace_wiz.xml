@@ -21,7 +21,6 @@
             <field name="view_mode">form</field>
             <field name="target">new</field>
             <field name="context">{
-                'destination': True,
                 'default_destination_webstack_id': active_id,
                 }
             </field>
@@ -37,13 +36,11 @@
                     <sheet>
                         <div class="alert alert-info" role="alert">
                             This function will move controllers from one module to another. The source module will be
-                                disabled.The Destination module will be Enabled. We suggest to make both modules inactive!
+                            disabled.The Destination module will be Enabled. We suggest to make both modules inactive!
                         </div>
                         <group>
                             <group>
                                 <field name="source_webstack_id" options="{'no_create': True, 'no_open': True}"/>
-                                <field name="source_controller_ids" widget="many2many_tags"/>
-
                             </group>
                             <group>
                                 <field name="destination_webstack_id" options="{'no_create': True, 'no_open': True}"/>
@@ -52,6 +49,18 @@
                             <group>
                                 <field name="replace_existing"/>
                             </group>
+                            <group>
+                                <field name="destination_active_state"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="source_controller_ids" options="{'no_create': True, 'no_open': True}">
+                                <tree string="Move" editable="0" create="0" >
+                                    <field name="ctrl_id" readonly="1"/>
+                                    <field name="name" readonly="1"/>
+                                    <field name="serial_number" readonly="1"/>
+                                </tree>
+                            </field>
                         </group>
                     </sheet>
                     <footer>
