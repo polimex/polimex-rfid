@@ -31,6 +31,7 @@ class ResPartner(models.Model):
         'hr.rfid.card',
         'contact_id',
         string='RFID Card',
+        context={'active_test': False},
         help='Cards owned by the contact',
         groups="hr_rfid.hr_rfid_group_officer"
 

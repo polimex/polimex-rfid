@@ -3,7 +3,7 @@
 
 {
     'name': 'RFID Access Control',
-    'version': '2.1',
+    'version': '2.2',
     'category': 'Human Resources',
     'summary': 'Manage employee access control',
     'company': 'Polimex Holding Ltd',
@@ -25,6 +25,7 @@
         'views/res_config_setting_view.xml',
         'views/hr_rfid_webstack.xml',
         'views/hr_rfid_webstack_discovery.xml',
+        'views/hr_rfid_webstack_replace_wiz.xml',
         'views/hr_rfid_ctrl_time_schedule.xml',
         'views/hr_rfid_ctrl_iotable.xml',
         'views/hr_rfid_ctrl.xml',

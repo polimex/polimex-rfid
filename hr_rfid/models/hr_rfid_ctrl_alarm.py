@@ -27,6 +27,7 @@ class HrRfidCtrlAlarm(models.Model):
       ],
         compute='_compute_states',
         tracking=True,
+        compute_sudo=True,
         help="Alarm line state",
     )
 
@@ -34,7 +35,7 @@ class HrRfidCtrlAlarm(models.Model):
         ('no_alarm', 'No Alarm functionality'),  # 64 ON
         ('arm', 'Armed'),  # 64 ON
         ('disarm', 'Disarmed'),  # 64 OFF
-        ], compute='_compute_states', store=True)
+        ], compute='_compute_states', compute_sudo=True, store=True)
 
     siren_state = fields.Boolean(
         help='Alarm Siren state',

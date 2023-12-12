@@ -376,12 +376,24 @@ class HrRfidCard(models.Model):
         now = fields.datetime.now()
         str_before = str(now - timedelta(seconds=31))
         str_after = str(now + timedelta(seconds=31))
-        cards_to_activate = self.env['hr.rfid.card'].search(['|', ('active', '=', True), ('active', '=', False),
-                                                             ('activate_on', '<', str_after),
-                                                             ('activate_on', '>', str_before)])
-        cards_to_deactivate = self.env['hr.rfid.card'].search(['|', ('active', '=', True), ('active', '=', False),
-                                                               ('deactivate_on', '<', str_after),
-                                                               ('deactivate_on', '>', str_before)])
+        # cards_to_activate = self.env['hr.rfid.card'].search(['|', ('active', '=', True), ('active', '=', False),
+        #                                                      ('activate_on', '<', str_after),
+        #                                                      ('activate_on', '>', str_before)])
+        # cards_to_deactivate = self.env['hr.rfid.card'].search(['|', ('active', '=', True), ('active', '=', False),
+        #                                                        ('deactivate_on', '<', str_after),
+        #                                                        ('deactivate_on', '>', str_before)])
+        # Cards to activate
+        cards_to_activate = self.env['hr.rfid.card'].search([
+            ('active', '=', False),
+            ('activate_on', '<=', str_after),
+            ('deactivate_on', '>=', str_after)])
+
+        # Cards to deactivate
+        cards_to_deactivate = self.env['hr.rfid.card'].search([
+            ('active', '=', True),
+            ('deactivate_on', '<=', str_before),])
+                                                               # ('deactivate_on', '<=', str_after),
+                                                               # ('deactivate_on', '>=', str_before)])
 
         neutral_cards = cards_to_activate & cards_to_deactivate
         cards_to_activate = cards_to_activate - neutral_cards

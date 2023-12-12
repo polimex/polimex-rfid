@@ -5,6 +5,8 @@ from odoo import api, fields, models, exceptions, _
 import logging
 import queue
 
+from odoo.exceptions import ValidationError
+
 _logger = logging.getLogger(__name__)
 
 
@@ -457,6 +459,21 @@ class HrRfidAccessGroupDoorRel(models.Model):
                 self.env['hr.rfid.card.door.rel'].check_relevance_slow(card, door_id, alarm_right)
 
 
+def _check_overlap(ranges):
+    # Sort the ranges based on start time
+    # Replace False with datetime.now()
+    modified_ranges = [(start, end if end is not False else fields.Datetime.now()) for (start, end) in ranges]
+    sorted_ranges = sorted(modified_ranges, key=lambda x: x[0])
+
+                            # Iterate over the ranges and check for overlap
+    for i in range(len(sorted_ranges) - 1):
+        # If the end time of the current range is greater than the start time of the next range
+        if sorted_ranges[i][1] > sorted_ranges[i + 1][0]:
+            return True  # Overlap found
+
+    return False  # No overlaps
+
+
 class HrRfidAccessGroupRelations(models.AbstractModel):
     _name = 'hr.rfid.access.group.rel'
     _description = 'Relation between access groups and employees'
@@ -572,10 +589,16 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
         string='Employee',
         required=True,
     )
-    _sql_constraints = [
-        ('check_duplicates', 'unique (access_group_id, employee_id)',
-         _("Employee can't have the same access group twice!")),
-    ]
+    @api.constrains('access_group_id','employee_id', 'activate_on', 'expiration')
+    def _check_constrains_contacts(self):
+        employee_ids = self.mapped('employee_id')
+        for p in employee_ids:
+            p_rel_ids = self.search([('employee_id', '=', p.id)])
+            for ag_id in p_rel_ids.mapped('access_group_id'):
+                rel_ranges = [(rel.activate_on, rel.expiration) for rel in p_rel_ids.filtered(lambda ag:ag.access_group_id == ag_id)]
+                if _check_overlap(rel_ranges):
+                    raise ValidationError(_('Overlap found between access group(%s) active period ranges for (%s)', ag_id.name, p.name))
+
 
     def _deactivate(self):
         for rel in self:
@@ -641,10 +664,16 @@ class HrRfidAccessGroupContactRel(models.Model):
         string='Contact',
         required=True,
     )
-    _sql_constraints = [
-        ('check_duplicates', 'unique (access_group_id, contact_id)',
-         _("Partner can't have the same access group twice!")),
-    ]
+    @api.constrains('access_group_id','contact_id', 'activate_on', 'expiration')
+    def _check_constrains_contacts(self):
+        partner_ids = self.mapped('contact_id')
+        for p in partner_ids:
+            p_rel_ids = self.search([('contact_id', '=', p.id)])
+            for ag_id in p_rel_ids.mapped('access_group_id'):
+                rel_ranges = [(rel.activate_on, rel.expiration) for rel in p_rel_ids.filtered(lambda ag:ag.access_group_id == ag_id)]
+                if _check_overlap(rel_ranges):
+                    raise ValidationError(_('Overlap found between access group(%s) active period ranges for (%s)', ag_id.name, p.name))
+
 
     def _deactivate(self):
         for rel in self:
