@@ -19,29 +19,8 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
     _description = 'Base RFID Service Sale Wizard'
     _inherit = ['balloon.mixin']
 
-    def _get_extend_id(self):
-        extend_id = self._context.get('extend', None)
-        if extend_id is not None:
-            return self.env['rfid.service.sale'].browse(extend_id)
-        else:
-            return None
-
-    def _get_service_id(self):
-        extend_id = self._get_extend_id()
-        return extend_id and extend_id.service_id or self.env['rfid.service'].browse(self._context.get("active_id", []))
-
-    def _get_service_visits(self):
-        return self._get_service_id().visits
-
     def _get_service_sale_seq(self):
         return self.env['ir.sequence'].next_by_code('base.rfid.service')
-
-    def _get_partner_id(self):
-        extend_sale_id = self._get_extend_id()
-        if extend_sale_id is not None:
-            return extend_sale_id.partner_id
-        else:
-            return None
 
     def _default_start(self):
         def _calc_start(start_date=fields.Date.today()):
@@ -49,9 +28,9 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
                                   float_to_time(service_id.time_interval_start))
             return pytz.timezone(self.env.user.tz).localize(dt).astimezone(pytz.UTC).replace(tzinfo=None)
 
-        service_id = self._get_service_id()
-        extend_sale_id = self._get_extend_id()
-        if extend_sale_id is not None:
+        service_id = self.service_id
+        extend_sale_id = self.extend_sale_id
+        if extend_sale_id:
             if fields.Datetime.now() < extend_sale_id.start_date:
                 # "before"
                 return _calc_start(extend_sale_id.end_date.date())
@@ -64,19 +43,8 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         else:
             return _calc_start()
 
-    def _get_default_card_number(self):
-        extend_sale_id = self._get_extend_id()
-        if extend_sale_id is not None:
-            return extend_sale_id.card_id.number
-        else:
-            num = ''
-            if self._get_service_id().generate_barcode_card:
-                hex, num = self.env['hr.rfid.card'].create_bc_card()
-            return num
-
     extend_sale_id = fields.Many2one(
         comodel_name='rfid.service.sale',
-        default=_get_extend_id,
         readonly=True
     )
     ext_start_date = fields.Datetime(
@@ -89,14 +57,13 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         related='extend_sale_id.end_date',
         readonly=True
     )
-    service_id = fields.Many2one(comodel_name='rfid.service', default=_get_service_id)
+    service_id = fields.Many2one(comodel_name='rfid.service')
     fixed_time = fields.Boolean(related='service_id.fixed_time', readonly=True)
     generate_barcode_card = fields.Boolean(related='service_id.generate_barcode_card')
     partner_id = fields.Many2one(
         comodel_name='res.partner',
         domain=["&", ("is_company", "=", False), ("type", "=", "contact")],
         help='The value will be generated automatic if empty!',
-        default=_get_partner_id
     )
     email = fields.Char(
         compute='_compute_partner_contact',
@@ -110,11 +77,9 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
     )
     start_date = fields.Datetime(
         string="Service start",
-        default=_default_start,
     )
     end_date = fields.Datetime(
         string="Service end",
-        compute='_compute_end_date',
         inverse='_inverse_end_date'
     )
     end_date_manual = fields.Datetime(
@@ -123,7 +88,7 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
     card_number = fields.Char(
         string='The card number', size=10,
         required=True,
-        default=_get_default_card_number)
+    )
     visits = fields.Integer(related='service_id.visits')
 
     def _inverse_end_date(self):
@@ -134,18 +99,25 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         self.mobile = self.partner_id.mobile
         self.email = self.partner_id.email
 
-    @api.onchange('start_date', 'service_id')
-    def _compute_end_date(self):
-        # if self.fixed_time or not self.end_date:
-        #     dt = datetime.combine((self.start_date + _intervalTypes[self._get_service_id().time_interval_type](
-        #         self._get_service_id().time_interval_number)).date(),
-        #                           float_to_time(self._get_service_id().time_interval_end))
-        #     dt = pytz.timezone(self.env.user.tz).localize(dt).astimezone(pytz.UTC).replace(tzinfo=None)
-        service_id = self.service_id or self._get_service_id()
+    @api.onchange('service_id')
+    def _onchange_service_id(self):
+        # if self.generate_barcode_card:
+        #     if not self.card_number:
+        #         hex_num, num = self.env['hr.rfid.card'].create_bc_card()
+        #         self.card_number = num
+        # elif not self.extend_sale_id:
+        #     self.card_number = ''
+
+        self.start_date = self._default_start()
+
+    @api.onchange('start_date')
+    def _onchange_start_date(self):
+        service_id = self.service_id
         time_interval_type = service_id.time_interval_type
         time_interval_number = service_id.time_interval_number
         time_interval_end = service_id.time_interval_end
-        if self.fixed_time or not self.end_date:
+
+        if self.fixed_time:
             new_date = self.start_date + _intervalTypes[time_interval_type](time_interval_number)
             new_time = float_to_time(time_interval_end)
             dt = datetime.combine(new_date.date(), new_time)
@@ -155,6 +127,12 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
                 dt = dt + relativedelta(days=1)
                 self.start_date = self.start_date + relativedelta(days=1)
             self.end_date = self.end_date_manual or dt
+        elif not self.end_date:
+            self.end_date = self.start_date + _intervalTypes[time_interval_type](time_interval_number)
+            if self.end_date < fields.Datetime.now():
+                self.end_date = False
+                self.start_date = fields.Datetime.now()
+                self._onchange_start_date()
         else:
             self.end_date = self.end_date
 

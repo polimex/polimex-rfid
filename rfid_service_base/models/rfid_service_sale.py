@@ -93,7 +93,12 @@ class BaseRFIDService(models.Model):
         action["name"] = _("Extend RFID Service for %s" % self.partner_id.name)
         action['binding_model_id'] = self.service_id
         action['view_id'] = self.env.ref("rfid_service_base.sale_wiz_action").id
-        action["context"] = {'extend': self.id}
+        action["context"] = {
+            'default_extend_sale_id': self.id,
+            'default_service_id': self.service_id.id,
+            'default_partner_id': self.partner_id.id,
+            'default_card_number': self.card_number,
+        }
         return action
 
     def email_card(self):

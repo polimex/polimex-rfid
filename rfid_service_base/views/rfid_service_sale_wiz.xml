@@ -35,7 +35,7 @@
                                 <!--                                <field name="card_number" placeholder="Scan card on reader . . ."/>-->
                                 <field name="card_number"
                                        placeholder="Scan card on reader . . ."
-                                       attrs="{'readonly': [('generate_barcode_card', '=', True)]}"
+                                       attrs="{'readonly': ['|',('generate_barcode_card', '=', True),('extend_sale_id', '!=', False)]}"
                                 />
                             </h1>
                             <field name="service_id"
@@ -55,7 +55,10 @@
                                 <field name="visits"/>
                             </group>
                             <group>
-                                <field name="partner_id" placeholder="Will be generated"/>
+                                <field name="partner_id"
+                                       attrs="{'readonly': [('extend_sale_id', '!=', False)]}"
+                                       options='{"no_open": True, "no_create": True}'
+                                       placeholder="Will be generated"/>
                                 <field name="email" placeholder="If you want to send pdf"/>
                                 <field name="mobile" placeholder="If you want to send mobile link"/>
                             </group>

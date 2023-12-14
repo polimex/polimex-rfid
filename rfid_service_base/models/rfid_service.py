@@ -97,6 +97,10 @@ class BaseRFIDService(models.Model):
             'hr_rfid.hr_rfid_card_type_barcode').id or self.env.ref('hr_rfid.hr_rfid_card_type_def').id
 
     def action_new_sale(self):
+        ctx = {'default_service_id': self.id}
+        if self.generate_barcode_card:
+            hex_num, num = self.env['hr.rfid.card'].create_bc_card()
+            ctx['default_card_number'] = num
         return {
             'name': _('New Sale - %s', self.name),
             'view_mode': 'form',
@@ -105,7 +109,8 @@ class BaseRFIDService(models.Model):
             'type': 'ir.actions.act_window',
             # 'res_id': wizard.id,
             'target': 'new',
-            'context': self.env.context,
+            'context': ctx,
+            # 'context': self.env.context,
         }
 
     def action_view_sales(self):
