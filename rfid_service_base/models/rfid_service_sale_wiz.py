@@ -22,12 +22,11 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
     def _get_service_sale_seq(self):
         return self.env['ir.sequence'].next_by_code('base.rfid.service')
 
-    def _default_start(self):
+    def _calc_start(self):
         def _calc_start(start_date=fields.Date.today()):
             dt = datetime.combine(start_date,
                                   float_to_time(service_id.time_interval_start))
             return pytz.timezone(self.env.user.tz).localize(dt).astimezone(pytz.UTC).replace(tzinfo=None)
-
         service_id = self.service_id
         extend_sale_id = self.extend_sale_id
         if extend_sale_id:
@@ -42,6 +41,22 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
                 return _calc_start()
         else:
             return _calc_start()
+
+    def _calc_end(self, start_date=None):
+        service_id = self.service_id
+        time_interval_type = service_id.time_interval_type
+        time_interval_number = service_id.time_interval_number
+        time_interval_end = service_id.time_interval_end
+
+        if self.fixed_time:
+            new_date = (self.start_date or start_date) + _intervalTypes[time_interval_type](time_interval_number)
+            new_time = float_to_time(time_interval_end)
+            dt = datetime.combine(new_date.date(), new_time)
+            user_tz = pytz.timezone(self.env.user.tz)
+            dt = user_tz.localize(dt).astimezone(pytz.UTC).replace(tzinfo=None)
+            return dt
+        else:
+            return (self.start_date or start_date )+ _intervalTypes[time_interval_type](time_interval_number)
 
     extend_sale_id = fields.Many2one(
         comodel_name='rfid.service.sale',
@@ -59,7 +74,10 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
     )
     service_id = fields.Many2one(comodel_name='rfid.service')
     fixed_time = fields.Boolean(related='service_id.fixed_time', readonly=True)
-    generate_barcode_card = fields.Boolean(related='service_id.generate_barcode_card')
+    generate_barcode_card = fields.Boolean(
+        related='service_id.generate_barcode_card',
+        readonly=True
+    )
     partner_id = fields.Many2one(
         comodel_name='res.partner',
         domain=["&", ("is_company", "=", False), ("type", "=", "contact")],
@@ -77,22 +95,28 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
     )
     start_date = fields.Datetime(
         string="Service start",
+        compute='_onchange_service_id',
+        readonly=False,
+        store=True
     )
     end_date = fields.Datetime(
         string="Service end",
-        inverse='_inverse_end_date'
+        compute='_onchange_start_date',
+        readonly=False,
+        store=True
+        # inverse='_inverse_end_date',
     )
-    end_date_manual = fields.Datetime(
-        string="Custom Service end",
-    )
+    # end_date_manual = fields.Datetime(
+    #     string="Custom Service end",
+    # )
     card_number = fields.Char(
         string='The card number', size=10,
         required=True,
     )
     visits = fields.Integer(related='service_id.visits')
 
-    def _inverse_end_date(self):
-        self.end_date_manual = self.end_date
+    # def _inverse_end_date(self):
+    #     self.end_date_manual = self.end_date
 
     @api.onchange('partner_id')
     def _compute_partner_contact(self):
@@ -100,41 +124,24 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         self.email = self.partner_id.email
 
     @api.onchange('service_id')
+    @api.depends('service_id')
     def _onchange_service_id(self):
-        # if self.generate_barcode_card:
-        #     if not self.card_number:
-        #         hex_num, num = self.env['hr.rfid.card'].create_bc_card()
-        #         self.card_number = num
-        # elif not self.extend_sale_id:
-        #     self.card_number = ''
-
-        self.start_date = self._default_start()
+        calc_start = self._calc_start()
+        calc_end = self._calc_end(start_date=calc_start)
+        if (calc_end < fields.Datetime.now()) or (self.extend_sale_id and self.ext_end_date > calc_start):
+            calc_end = calc_end + relativedelta(days=1)
+            calc_start = calc_start + relativedelta(days=1)
+        # self.write({
+        #     'start_date': calc_start,
+        #     'end_date': calc_end
+        # })
+        self.start_date = calc_start
+        self.end_date = calc_end
 
     @api.onchange('start_date')
+    # @api.depends('start_date')
     def _onchange_start_date(self):
-        service_id = self.service_id
-        time_interval_type = service_id.time_interval_type
-        time_interval_number = service_id.time_interval_number
-        time_interval_end = service_id.time_interval_end
-
-        if self.fixed_time:
-            new_date = self.start_date + _intervalTypes[time_interval_type](time_interval_number)
-            new_time = float_to_time(time_interval_end)
-            dt = datetime.combine(new_date.date(), new_time)
-            user_tz = pytz.timezone(self.env.user.tz)
-            dt = user_tz.localize(dt).astimezone(pytz.UTC).replace(tzinfo=None)
-            if dt < fields.Datetime.now():
-                dt = dt + relativedelta(days=1)
-                self.start_date = self.start_date + relativedelta(days=1)
-            self.end_date = self.end_date_manual or dt
-        elif not self.end_date:
-            self.end_date = self.start_date + _intervalTypes[time_interval_type](time_interval_number)
-            if self.end_date < fields.Datetime.now():
-                self.end_date = False
-                self.start_date = fields.Datetime.now()
-                self._onchange_start_date()
-        else:
-            self.end_date = self.end_date
+        self.end_date = self._calc_end()
 
     def _gen_partner(self, partner_id=None, start_date=None, end_date=None):
         transaction_name = self._get_service_sale_seq()
@@ -157,6 +164,8 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
                 ('contact_id', '=', partner_id.id),
             ])
         if access_group_contact_rel:
+            if not access_group_contact_rel.expiration:
+                raise UserError(_('The partner have valid service for unlimited period!'))
             if self.start_date <= access_group_contact_rel.expiration < self.end_date:
                 raise UserError(_('The partner have valid service for this period!'))
 
@@ -222,6 +231,7 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         # )
 
     def _write_card(self):
+        # self._onchange_start_date()
         if not self.card_number:
             raise UserError(_('Please scan a card'))
         if self.end_date < fields.Datetime.now():

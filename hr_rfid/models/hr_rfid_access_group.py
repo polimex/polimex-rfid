@@ -554,11 +554,22 @@ class HrRfidAccessGroupRelations(models.AbstractModel):
         self.search([])._compute_state()
         # self.search([]).mapped('state')
 
-    def _filter_active(self):
+    def filter_by_door(self, door_id, active_only=True):
         res = self.env[self._name]
+        if active_only:
+            return self.filtered(
+                lambda agr: door_id in agr.access_group_id.door_ids.mapped('door_id') and agr.state)
+        else:
+            return self.filtered(
+                            lambda agr: door_id in agr.access_group_id.door_ids.mapped('door_id'))
+
+
+    def _filter_active(self, dt=None):
+        res = self.env[self._name]
+        for_date = dt or  fields.Datetime.now()
         for agcr in self:
-            if agcr.activate_on <= fields.Datetime.now() and (
-                    not agcr.expiration or agcr.expiration > fields.Datetime.now()):
+            if agcr.activate_on <= for_date and (
+                    not agcr.expiration or agcr.expiration > for_date):
                 res += agcr
         return res
 
