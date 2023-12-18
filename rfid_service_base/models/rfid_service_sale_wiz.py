@@ -139,13 +139,13 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         self.end_date = calc_end
 
     @api.onchange('start_date')
-    # @api.depends('start_date')
+    @api.depends('start_date')
     def _onchange_start_date(self):
         self.end_date = self._calc_end()
 
     def _gen_partner(self, partner_id=None, start_date=None, end_date=None):
         transaction_name = self._get_service_sale_seq()
-        access_group_contact_rel = None
+        access_group_contact_rel = self.env['hr.rfid.access.group.contact.rel']
         if partner_id is None:
             partner_id = self.env['res.partner'].create({
                 'name': '%s (%s)' % (transaction_name, self.service_id.name),
@@ -163,10 +163,10 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
                 ('access_group_id', '=', self.service_id.access_group_id.id),
                 ('contact_id', '=', partner_id.id),
             ])
-        if access_group_contact_rel:
-            if not access_group_contact_rel.expiration:
+        for rel in access_group_contact_rel:
+            if not rel.expiration:
                 raise UserError(_('The partner have valid service for unlimited period!'))
-            if self.start_date <= access_group_contact_rel.expiration < self.end_date:
+            if self.start_date <= rel.expiration <= self.end_date:
                 raise UserError(_('The partner have valid service for this period!'))
 
         access_group_contact_rel = self.env['hr.rfid.access.group.contact.rel'].sudo().create({

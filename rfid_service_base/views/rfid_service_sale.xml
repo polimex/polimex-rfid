@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
         <record id="hr_rfid_service_sale_action" model="ir.actions.act_window">
             <field name="name">Sale RFID Service</field>
             <field name="type">ir.actions.act_window</field>
@@ -44,6 +43,8 @@
                     <filter name="group_service_partner" string="Partner" domain="[]"
                             context="{'group_by':'partner_id'}"/>
                     <searchpanel>
+                        <field name="state" select="multi" icon="fa-check" color="#875A7B"
+                               enable_counters="1"/>
                         <field name="service_id" select="multi" string="Services" icon="fa-user" color="#875A7B"
                                enable_counters="1"/>
                     </searchpanel>
@@ -71,9 +72,21 @@
                                 name="print_card"
                                 type="object"
                                 groups="hr.group_hr_manager"/>
+                        <button string="Cancel Service"
+                                name="cancel_sale"
+                                states="registered,progress"
+                                type="object"
+                                confirm="Are you sure? This will stop the execution of the current service."
+                                groups="hr.group_hr_manager"/>
                     </header>
                     <sheet>
-                        <div class="oe_button_box" name="button_box"/>
+                        <div class="oe_button_box" name="button_box">
+                            <button string="Partner Sales"
+                                name="partner_sales"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-list" />
+                        </div>
 
                         <widget name="web_ribbon" title="Finished" bg_color="bg-danger"
                                 attrs="{'invisible': [('state', '!=', 'finished')]}"/>
@@ -126,7 +139,7 @@
                     <field name="partner_id"/>
                     <field name="service_id"/>
                     <field name="company_id" groups="base.group_multi_company"/>
-                    <field name="create_date"/>
+                    <field name="create_date" optional="hide"/>
                     <field name="start_date"/>
                     <field name="end_date"/>
                     <field name="state" widget="badge"
@@ -135,6 +148,7 @@
                            decoration-success="state == 'progress'"
                            optional="show"/>
                     <field name="create_uid" optional="hide"/>
+                    <field name="visits" optional="hide"/>
                 </tree>
             </field>
         </record>
