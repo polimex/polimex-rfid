@@ -507,11 +507,13 @@ class HrRfidAccessGroupRelations(models.AbstractModel):
     )
 
     visits_counting = fields.Boolean(
-        help='If True, the access group will counting card visits. The feature is used for RFID services in general',
+        help='If True, the access group will counting visits. \n'
+             'The feature is used for RFID services in general.',
         default=False
     )
     permitted_visits = fields.Integer(
-        help='Permited visits after this group will be deactivated. 0 mean',
+        help='After reaching the allowed visits for this group, the group will be deactivated.\n'
+             'Zero visits exclude the function for automatic deactivation.',
         default=0
     )
     visits_counter = fields.Integer(

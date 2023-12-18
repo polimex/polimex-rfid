@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-12 12:26+0000\n"
-"PO-Revision-Date: 2023-12-12 14:29+0200\n"
+"POT-Creation-Date: 2023-12-17 13:45+0000\n"
+"PO-Revision-Date: 2023-12-17 15:46+0200\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -321,6 +321,21 @@ msgid ""
 msgstr ""
 "<span class=\"fa fa-lg fa-building-o\" title=\"Зададените тук стойности са специфични за компанията.\" role=\"img\" aria-"
 "label=\"Зададените тук стойности са специфични за компанията.\" groups=\"base.group_multi_company\"/>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
+msgid "<span class=\"oe_inline ml8\">%</span>"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
+msgid "<span class=\"oe_inline ml8\">VDC</span>"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
+msgid "<span class=\"oe_inline ml8\">°C</span>"
+msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__cloud_card
@@ -691,6 +706,17 @@ msgstr "Добавя групата към всички служители в о
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_department_def_acc_gr_wiz
 msgid "Adds access group to employees in the department without any access groups"
 msgstr "Добавя групата на служителите в отдела без групи за достъп"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_contact_rel__permitted_visits
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_employee_rel__permitted_visits
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_rel__permitted_visits
+msgid ""
+"After reaching the allowed visits for this group, the group will be deactivated.\n"
+"Zero visits exclude the function for automatic deactivation."
+msgstr ""
+"След достигане на разрешения брой посещения за тази група, тя ще бъде деактивирана.\n"
+"Нулевите посещения изключват функцията за автоматично деактивиране."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_form
@@ -3639,8 +3665,12 @@ msgstr "Икон за индикация на грешка в дейност."
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_contact_rel__visits_counting
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_employee_rel__visits_counting
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_rel__visits_counting
-msgid "If True, the access group will counting card visits. The feature is used for RFID services in general"
-msgstr "Ако е избрано, групата за достъп ще брои посещенията с с карти. Това се използва предимно в модул Услуги"
+msgid ""
+"If True, the access group will counting visits. \n"
+"The feature is used for RFID services in general."
+msgstr ""
+"Ако е вярно, групата за достъп ще брои посещенията.\n"
+"Тази функция се използва за RFID услуги като цяло."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th__log_every_read
@@ -4467,6 +4497,7 @@ msgstr "Режим на четеца"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__webstack_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__webstack_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__webstack_id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__webstack_id
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_search
 msgid "Module"
@@ -4523,6 +4554,7 @@ msgstr "Модул, за който е предназначена команда
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__webstack_id
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__webstack_id
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__webstack_id
 msgid "Module the controller serves"
 msgstr "Модул управляващ контролера"
 
@@ -4605,11 +4637,6 @@ msgstr "Нова карта баркод"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_def_acc_gr__def_acc_gr
 msgid "New default access group"
 msgstr "Нова група за достъп по подразбиране"
-
-#. module: hr_rfid
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_calendar_event_id
-msgid "Next Activity Calendar Event"
-msgstr "Следващото събитие от календара на дейностите"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_date_deadline
@@ -5122,13 +5149,6 @@ msgid ""
 msgstr ""
 "Позволява автоматично добавяне на модули от комуникацията. Тази функция НЕ поддържа многофирмена инсталация. Новите модули "
 "се добавят към първата намерена фирма!"
-
-#. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_contact_rel__permitted_visits
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_employee_rel__permitted_visits
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_rel__permitted_visits
-msgid "Permited visits after this group will be deactivated. 0 mean"
-msgstr "Разрешените посещения след тази група ще бъдат деактивирани. 0 означава"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__permitted_visits
