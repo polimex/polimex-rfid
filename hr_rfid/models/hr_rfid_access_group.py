@@ -403,6 +403,10 @@ class HrRfidAccessGroupDoorRel(models.Model):
         required=True,
         ondelete='cascade',
     )
+    card_type = fields.Many2one(
+        comodel_name='hr.rfid.card.type',
+        related='door_id.card_type'
+    )
 
     time_schedule_id = fields.Many2one(
         'hr.rfid.time.schedule',
