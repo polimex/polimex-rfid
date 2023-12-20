@@ -78,7 +78,9 @@
                         <filter string="Employee" name="employee_id" domain="[]" context="{'group_by':'employee_id'}"/>
                         <filter string="Item Sold" name="item_sold" domain="[]" context="{'group_by':'item_id'}"/>
                     </group>
-
+                    <searchpanel>
+                        <field name="department_id" string="by Department" icon="fa-users" color="#875A7B"/>
+                    </searchpanel>
                 </search>
             </field>
         </record>
