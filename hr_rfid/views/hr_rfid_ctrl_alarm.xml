@@ -37,25 +37,25 @@
                             <button name="disarm" type="object" class="oe_stat_button oe_read_only text-danger" icon="fa-shield"
                                     help="The Line is Armed! Press here to Disarm the Line"
                                     groups="hr_rfid.hr_rfid_view_door_arm_disarm"
-                                    attrs="{'invisible':[('armed', '=', 'disarm')]}">
+                                    invisible="armed=='disarm'">
                                 Arm
                             </button>
                             <button name="arm" type="object" class="oe_stat_button oe_read_only text-success" icon="fa-shield"
                                     help="The line is Disarmed! Press here to Arm the Line"
                                     groups="hr_rfid.hr_rfid_view_door_arm_disarm"
-                                    attrs="{'invisible':[('armed', '=', 'arm')]}">
+                                    invisible="armed=='arm'">
                                 Disarm
                             </button>
                             <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
                                     context="{'xml_id':'hr_rfid_event_system'}"
                                     help="List System Events"
-                                    attrs="{'invisible':[('system_event_count', '=', 0)]}">
+                                    invisible="system_event_count==0">
                                 <field name="system_event_count" widget="statinfo" string="System Events"/>
                             </button>
                             <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-user"
                                     context="{'xml_id':'hr_rfid_event_user'}"
                                     help="List User Events"
-                                    attrs="{'invisible':[('user_event_count', '=', 0)]}">
+                                    invisible="user_event_count==0">
                                 <field name="user_event_count" widget="statinfo" string="User Events"/>
                             </button>
                         </div>
@@ -189,9 +189,6 @@
                                         </div>
                                     </div>
                                     <ul>
-                                        <!--                                        <li class="o_force_ltr">Last IP:-->
-                                        <!--                                            <field name="last_ip"/>-->
-                                        <!--                                        </li>-->
                                     </ul>
                                     <div class="o_row">
                                         <span class="oe_kanban_partner_links">

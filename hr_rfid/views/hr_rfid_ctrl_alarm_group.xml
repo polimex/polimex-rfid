@@ -36,28 +36,16 @@
                                     groups="hr_rfid.hr_rfid_view_door_arm_disarm"
                                     help="Disarm all lines in this group"
                                     confirm="Are you sure to Disarm all lines in the group?"
-                                    states="arm,mixed">
+                                    invisible="state in ['arm','mixed']">
                                 Disarm
                             </button>
                             <button name="arm" type="object" class="oe_stat_button text-success oe_read_only" icon="fa-shield"
                                     groups="hr_rfid.hr_rfid_view_door_arm_disarm"
                                     help="Arm all lines in this group"
                                     confirm="Are you sure to Arm all lines in the group?"
-                                    states="disarm,mixed">
+                                    invisible="state in ['disarm','disarm']">
                                 Arm
                             </button>
-<!--                            <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"-->
-<!--                                    context="{'xml_id':'hr_rfid_event_system'}"-->
-<!--                                    help="List System Events"-->
-<!--                                    attrs="{'invisible':[('system_event_count', '=', 0)]}">-->
-<!--                                <field name="system_event_count" widget="statinfo" string="System Events"/>-->
-<!--                            </button>-->
-<!--                            <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-user"-->
-<!--                                    context="{'xml_id':'hr_rfid_event_user'}"-->
-<!--                                    help="List User Events"-->
-<!--                                    attrs="{'invisible':[('user_event_count', '=', 0)]}">-->
-<!--                                <field name="user_event_count" widget="statinfo" string="User Events"/>-->
-<!--                            </button>-->
                         </div>
                         <div class="oe_title">
                             <h1>
@@ -81,8 +69,6 @@
                                 </field>
                             </group>
                         <group string="Debug Information" groups="base.group_no_one" colspan="4">
-<!--                            <field name="line_number" readonly="1"/>-->
-<!--                            <field name="control_output" readonly="1"/>-->
                         </group>
                     </sheet>
                     <div class="oe_chatter">
@@ -152,37 +138,13 @@
                                                            decoration-danger="state == 'arm'"/>
                                                     </strong>
                                                 </li>
-<!--                                                <li t-if="record.door_id.raw_value">-->
-<!--                                                    <field name="door_id" title="Related door"/>-->
-<!--                                                </li>-->
                                             </ul>
                                         </div>
                                     </div>
                                     <ul>
-<!--                                        <li class="o_force_ltr">Last IP:-->
-<!--                                            <field name="last_ip"/>-->
-<!--                                        </li>-->
                                     </ul>
                                     <div class="o_row">
                                         <span class="oe_kanban_partner_links">
-<!--                                            <span t-if="record.user_event_count.value>0"-->
-<!--                                                  class="badge badge-pill" title="User Events">-->
-<!--                                                <a name="return_action_to_open" type="object"-->
-<!--                                                    context="{'xml_id':'hr_rfid_event_user'}">-->
-<!--                                                    <i class="fa fa-fw fa-user" role="img"-->
-<!--                                                       aria-label="User Events"/>-->
-<!--                                                    <t t-esc="record.user_event_count.value"/>-->
-<!--                                                </a>-->
-<!--                                            </span>-->
-<!--                                            <span t-if="record.system_event_count.value>0"-->
-<!--                                                  class="badge badge-pill" title="System Events">-->
-<!--                                                <a name="return_action_to_open" type="object"-->
-<!--                                                    context="{'xml_id':'hr_rfid_event_system'}">-->
-<!--                                                    <i class="fa fa-fw fa-microchip" role="img"-->
-<!--                                                       aria-label="System Events"/>-->
-<!--                                                    <t t-esc="record.system_event_count.value"/>-->
-<!--                                                </a>-->
-<!--                                            </span>-->
                                         </span>
                                     </div>
                                 </div>

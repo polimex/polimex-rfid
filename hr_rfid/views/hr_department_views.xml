@@ -8,7 +8,7 @@
             <field name="arch" type="xml">
                 <form string="Manage Access Groups">
                     <group>
-                        <field name="dep_id" attrs="{'invisible': True}"/>
+                        <field name="dep_id" invisible="1"/>
                         <field name="acc_grs"
                                domain="[('department_ids', 'not in', [dep_id])]"
                                widget="many2many_tags"
@@ -41,7 +41,7 @@
             <field name="arch" type="xml">
                 <form string="Change Default Access Group for Current Department">
                     <group>
-                        <field name="dep_id" attrs="{'invisible': True}"/>
+                        <field name="dep_id" invisible="1"/>
                         <field name="def_acc_gr" domain="[('department_ids', 'in', [dep_id])]"/>
                     </group>
                     <footer>
@@ -63,7 +63,7 @@
             <field name="arch" type="xml">
                 <form string="Add/Remove Access Groups from Employees">
                     <group>
-                        <field name="dep_id" attrs="{'invisible': True}"/>
+                        <field name="dep_id" invisible="1"/>
                         <field name="acc_gr_ids"
                                domain="[('department_ids', 'in', [dep_id])]"
                                widget="many2many_tags"
@@ -94,17 +94,11 @@
                     <label for="hr_rfid_default_access_group"/>
                     <div class="o_row">
                         <field name="hr_rfid_default_access_group" readonly="1" groups="hr_rfid.hr_rfid_group_officer"/>
-                        <!--                <button string="Generate" class="btn btn-link" type="object"-->
-                        <!--                        name="generate_random_barcode" attrs="{'invisible': [('barcode', '!=', False)]}"/>-->
                         <button name="%(hr_rfid_department_add_access_group_action)d" string="Set Default Access group"
                                 class="btn btn-link" groups="hr_rfid.hr_rfid_group_officer"
-                                type="action" attrs="{'invisible': [('hr_rfid_default_access_group', '!=', False)]}"/>
+                                type="action"
+                                invisible="hr_rfid_default_access_group"/>
                     </div>
-
-                    <!--                    <field name="hr_rfid_default_access_group"-->
-                    <!--                           groups="hr_rfid.hr_rfid_group_officer"-->
-                    <!--                           domain="[('department_ids', 'in', [id])]"-->
-                    <!--                           readonly="1"/>-->
                     <field name="hr_rfid_allowed_access_groups"
                            groups="hr_rfid.hr_rfid_group_officer"
                            readonly="0" widget="many2many_tags">

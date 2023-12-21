@@ -9,57 +9,50 @@
             <field name="model">hr.rfid.ctrl</field>
             <field name="arch" type="xml">
                 <form string="RFID Controller" create="false">
-                    <!--                    <header>-->
-                    <!--                        <field name="hw_version"  nolabel="1" colspan="2" widget="statusbar" statusbar_visible=" "/>-->
-                    <!--                    </header>-->
                     <field name="reader_ids" invisible="1"/>
                     <field name="door_ids" invisible="1"/>
                     <field name="alarm_line_ids" invisible="1"/>
                     <header/>
                     <sheet>
                         <div class="oe_button_box" name="button_box" modifiers="{}">
-                            <!--                            <button string="Reload cards" name="button_reload_cards" type="object"-->
-                            <!--                                    class="oe_stat_button" icon="fa-refresh"/>-->
                             <button string="IO Table" name="%(hr_rfid_controller_io_table_wiz_action)d"
                                     id="hr_rfid_view_modify_io_table_btn" type="action"
                                     groups="hr_rfid.hr_rfid_group_manager" class="oe_stat_button"
                                     icon="fa-table"/>
-                            <!--                            <button string="Reload Controller Information" name="re_read_ctrl_info" type="object"-->
-                            <!--                                    class="oe_stat_button" icon="fa-refresh"/>-->
                             <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
                                     context="{'xml_id':'hr_rfid_reader_action'}"
                                     help="List readers"
-                                    attrs="{'invisible':[('reader_ids', '=', [])]}">
+                                    invisible="reader_ids==[]">
                                 <field name="readers_count" widget="statinfo" string="Readers"/>
                             </button>
                             <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
                                     context="{'xml_id':'hr_rfid_door_action'}"
                                     help="List Doors"
-                                    attrs="{'invisible':[('door_ids', '=', [])]}">
+                                    invisible="door_ids==[]">
                                 <field name="doors_count" widget="statinfo" string="Doors"/>
                             </button>
                             <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
                                     context="{'xml_id':'hr_rfid_ctrl_alarm_action'}"
                                     help="Alarm lines"
-                                    attrs="{'invisible':[('alarm_line_ids', '=', [])]}">
+                                    invisible="alarm_line_ids==[]">
                                 <field name="alarm_line_count" widget="statinfo" string="Alarm Lines"/>
                             </button>
                             <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
                                     context="{'xml_id':'hr_rfid_command_action'}"
                                     help="List Commands"
-                                    attrs="{'invisible':[('commands_count', '=', 0)]}">
+                                    invisible="commands_count==0">
                                 <field name="commands_count" widget="statinfo" string="Commands"/>
                             </button>
                             <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
                                     context="{'xml_id':'hr_rfid_event_system_action'}"
                                     help="List System Events"
-                                    attrs="{'invisible':[('system_event_count', '=', 0)]}">
+                                    invisible="system_event_count==0">
                                 <field name="system_event_count" widget="statinfo" string="System Events"/>
                             </button>
                             <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
                                     context="{'xml_id':'hr_rfid_event_user_action'}"
                                     help="List User Events"
-                                    attrs="{'invisible':[('user_event_count', '=', 0)]}">
+                                    invisible="user_event_count==0">
                                 <field name="user_event_count" widget="statinfo" string="User Events"/>
                             </button>
                         </div>
@@ -110,7 +103,7 @@
                                 </group>
                             </page>
                             <page string="Hotel equipment" name="hotel_equipment"
-                                  attrs="{'invisible': [('hotel_readers', '=', 0)]}">
+                                  invisible="hotel_readers==0">
                                 <group>
                                     <group>
                                         <field name="hotel_readers" readonly="1"/>
@@ -122,7 +115,7 @@
                                 </group>
                             </page>
                             <page string="Temperature control" name="temperature_control"
-                                  attrs="{'invisible': [('hw_version', '!=', '22')]}">
+                                  invisible="hw_version!='22'">
                                 <group>
                                     <group>
                                         <field name="event_interval" widget="numeric_step"
@@ -143,11 +136,11 @@
                                     <group>
                                         <field name="mode" readonly="1" invisible="1"/>
                                         <field name="mode_selection"
-                                               attrs="{'invisible': [('hw_version', 'not in', ['6','9','11','12'])]}"/>
+                                               invisible="hw_version not in ['6','9','11','12']"/>
                                         <field name="mode_selection_4"
-                                               attrs="{'invisible': [('hw_version', 'not in', ['10','17'])]}"/>
+                                               invisible="hw_version not in ['10','17']"/>
                                         <field name="mode_selection_31"
-                                               attrs="{'invisible': [('hw_version', 'not in', ['31'])]}"/>
+                                               invisible="hw_version not in ['31']"/>
                                         <field name="external_db"/>
                                     </group>
                                     <group>
@@ -279,16 +272,6 @@
                                             </strong>
                                             <ul>
                                                 <li name="action_icons">
-                                                    <!--                                                    <div class="float-right">-->
-                                                    <!--                                                        <span title="Disarm the Door"-->
-                                                    <!--                                                              groups="hr_rfid.hr_rfid_view_door_arm_disarm"-->
-                                                    <!--                                                              attrs="{'invisible':[('alarm_line', '=', 0)]}">-->
-                                                    <!--                                                            <a name="disarm_door" type="object">-->
-                                                    <!--                                                                <i class="fa fa-fw fa-universal-access text-success" role="img"-->
-                                                    <!--                                                                   aria-label="Disarm the Door"/>-->
-                                                    <!--                                                            </a>-->
-                                                    <!--                                                        </span>-->
-                                                    <!--                                                    </div>-->
                                                 </li>
                                                 <li t-if="record.hw_version.raw_value">
                                                     <field name="hw_version"/>
@@ -311,9 +294,6 @@
                                         </div>
                                     </div>
                                     <ul>
-                                        <!--                                        <li class="o_force_ltr">Last IP:-->
-                                        <!--                                            <field name="last_ip"/>-->
-                                        <!--                                        </li>-->
                                     </ul>
                                     <div class="o_row">
                                         <span class="oe_kanban_partner_links">
@@ -321,7 +301,7 @@
                                                   class="badge badge-pill" title="Doors">
                                                 <a name="return_action_to_open" type="object"
                                                    context="{'xml_id':'hr_rfid_door_action'}"
-                                                   attrs="{'invisible':[('door_ids', '=', False)]}">
+                                                   invisible="not door_ids">
                                                     <i class="fa fa-fw fa-sign-in" role="img"
                                                        aria-label="Doors"/>
                                                     <t t-esc="record.doors_count.value"/>
@@ -331,7 +311,7 @@
                                                   class="badge badge-pill" title="Readers">
                                                 <a name="return_action_to_open" type="object"
                                                    context="{'xml_id':'hr_rfid_reader_action'}"
-                                                   attrs="{'invisible':[('reader_ids', '=', False)]}">
+                                                   invisible="not reader_ids">
                                                     <i class="fa fa-fw fa-rss" role="img"
                                                        aria-label="Readers"/>
                                                     <t t-esc="record.readers_count.value"/>
@@ -341,7 +321,7 @@
                                                   class="badge badge-pill" title="Alarm Lines">
                                                 <a name="return_action_to_open" type="object"
                                                    context="{'xml_id':'hr_rfid_ctrl_alarm_action'}"
-                                                   attrs="{'invisible':[('alarm_line_ids', '=', False)]}">
+                                                   invisible="not alarm_line_ids">
                                                     <i class="fa fa-fw fa-shield" role="img"
                                                        aria-label="Alarm lines"/>
                                                     <t t-esc="record.alarm_line_count.value"/>

@@ -11,14 +11,14 @@
                     <header>
                         <button name="action_set_webstack_settings" type="object"
                                 string="Setup module for this odoo"
-                                attrs="{'invisible': [('behind_nat','=',True),('last_ip', '!=', '')]}"
+                                invisible="behind_nat and last_ip!=''"
                                 help="Set the webstack up to work with this odoo. Module username and password must be set to the admin username and password on the module. Last ip must be set to the correct ip of the module"/>
                         <button name="action_check_if_ws_available" type="object"
-                                attrs="{'invisible': [('behind_nat','=',True),('last_ip', '!=', '')]}"
+                                invisible="behind_nat and last_ip!=''"
                                 string="Test module connection"
                                 help="Connect to the module and request for information."/>
                         <button name="get_controllers" type="object"
-                                attrs="{'invisible': [('behind_nat','=',True),('last_ip', '!=', '')]}"
+                                invisible="behind_nat and last_ip!=''"
                                 string="Read controllers"
                                 help="Read controllers detected in Module"/>
                         <field name="available" widget="statusbar"/>
@@ -29,19 +29,19 @@
                             <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
                                     context="{'xml_id':'hr_rfid_ctrl_action'}"
                                     help="List Controller"
-                                    attrs="{'invisible':[('controllers', '=', False)]}">
+                                    invisible="not controllers">
                                 <field name="controllers_count" widget="statinfo" string="Controllers"/>
                             </button>
                             <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
                                     context="{'xml_id':'hr_rfid_command_action'}"
                                     help="List Commands"
-                                    attrs="{'invisible':[('commands_count', '&gt;', 0)]}">
+                                    invisible="commands_count &gt; 0">
                                 <field name="commands_count" widget="statinfo" string="Commands"/>
                             </button>
                             <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
                                     context="{'xml_id':'hr_rfid_event_system_action'}"
                                     help="List System Events"
-                                    attrs="{'invisible':[('system_event_count', '&gt;', 0)]}">
+                                    invisible="system_event_count &gt; 0">
                                 <field name="system_event_count" widget="statinfo" string="System Events"/>
                             </button>
                             <button name="reboot_cmd" type="object"
@@ -51,7 +51,7 @@
                                     string="Reboot"/>
                         </div>
                         <widget name="web_ribbon" title="Disabled" bg_color="bg-danger"
-                                attrs="{'invisible': [('active', '=', True)]}"/>
+                                       invisible="active"/>
                         <div class="oe_title">
                             <label for="name" class="oe_edit_only"/>
                             <h1>
@@ -68,9 +68,9 @@
                             <group string="Security">
                                 <field name="key"/>
                                 <field name="module_username"
-                                       attrs="{'invisible':[('behind_nat', '=', True)]}"/>
+                                       invisible="behind_nat"/>
                                 <field name="module_password" password="True"
-                                       attrs="{'invisible':[('behind_nat', '=', True)]}"/>
+                                       invisible="behind_nat"/>
                             </group>
                             <group string="Setup">
                                 <field name="tz" required="1"/>
@@ -82,7 +82,7 @@
                                 <field name="last_ip"/>
                                 <field name="updated_at" readonly="1"/>
                                 <field name="http_link" readonly="1" widget="url"
-                                       attrs="{'invisible':[('behind_nat','=',True)]}"/>
+                                   invisible="behind_nat"/>
                             </group>
                         </group>
                     </sheet>
@@ -154,25 +154,24 @@
                     <templates>
                         <t t-name="kanban-box">
                             <div>
-                                <!--                            <div class="oe_kanban_global_click">-->
                                 <div class="oe_kanban_details">
                                     <div class="o_kanban_record_top">
                                         <div class="o_kanban_record_headings">
                                             <strong class="o_kanban_record_title">
                                                 <div class="float-right"
-                                                     attrs="{'invisible': ['|',('active', '=', False), ('last_update', '=', False)]}">
+                                                     invisible="not active or not last_update">
                                                     <span class="fa fa-circle text-success" role="img"
                                                           aria-label="Up and running" title="Up and running"
                                                           name="webstack_enabled_and_running"/>
                                                 </div>
                                                 <div class="float-right"
-                                                     attrs="{'invisible': [('active', '=', True)]}">
+                                                    invisible="active">
                                                     <span class="fa fa-circle text-danger" role="img"
                                                           aria-label="Disabled" title="Disabled"
                                                           name="webstack_disabled"/>
                                                 </div>
                                                 <div class="float-right"
-                                                     attrs="{'invisible': ['|',('active', '=', False), ('last_update', '=', True)]}">
+                                                     invisible="not active or last_update">
                                                     <span class="fa fa-circle text-warning" role="img"
                                                           aria-label="Enabled but not running"
                                                           title="Enabled but not running"
@@ -198,14 +197,6 @@
                                                     <field name="serial"/>
                                                 </li>
                                             </ul>
-                                            <!--                                            <span class="o_kanban_record_subtitle">Version:-->
-                                            <!--                                                <field-->
-                                            <!--                                                        name="version"/>-->
-                                            <!--                                            </span>-->
-                                            <!--                                            <span class="o_kanban_record_subtitle">Hardware Version:-->
-                                            <!--                                                <field-->
-                                            <!--                                                        name="hw_version"/>-->
-                                            <!--                                            </span>-->
                                         </div>
                                     </div>
                                     <ul>
@@ -222,7 +213,7 @@
                                                   class="badge badge-pill" title="Controllers">
                                                 <a name="return_action_to_open" type="object"
                                                    context="{'xml_id':'hr_rfid_ctrl_action'}"
-                                                   attrs="{'invisible':[('controllers', '=', False)]}">
+                                                   invisible="controllers==False">
                                                     <i class="fa fa-fw fa-microchip" role="img"
                                                        aria-label="Controllers"/>
                                                     <t t-esc="record.controllers_count.value"/>

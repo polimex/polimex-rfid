@@ -4,7 +4,6 @@
         <record id="hr_rfid_event_user_action" model="ir.actions.act_window">
             <field name="name">User Events</field>
             <field name="res_model">hr.rfid.event.user</field>
-            <!--      <field name="view_type">form</field>-->
             <field name="view_mode">tree,form,search,calendar,pivot</field>
             <field name="context">{'search_default_filter_this_day': 1}</field>
         </record>
@@ -19,27 +18,27 @@
                             <button name="button_show_contact_events"
                                     string="Contact's Events"
                                     class="oe_stat_button" icon="fa-table"
-                                    attrs="{'invisible':[('contact_id', '=', False)]}"
+                                    invisible="not contact_id"
                                     type="object"/>
                             <button name="button_show_employee_events"
                                     string="Emlpoyee's Events"
                                     class="oe_stat_button" icon="fa-table"
-                                    attrs="{'invisible':[('employee_id', '=', False)]}"
+                                    invisible="not employee_id"
                                     type="object"/>
                             <button name="button_show_card_events"
                                     string="Card's Events"
                                     class="oe_stat_button" icon="fa-table"
-                                    attrs="{'invisible':[('card_id', '=', False)]}"
+                                    invisible="not card_id"
                                     type="object"/>
                             <button name="button_show_door_events"
                                     string="Door's Events"
                                     class="oe_stat_button" icon="fa-table"
-                                    attrs="{'invisible':[('door_id', '=', False)]}"
+                                    invisible="not door_id"
                                     type="object"/>
                             <button name="button_show_reader_events"
                                     string="Reader's Events"
                                     class="oe_stat_button" icon="fa-table"
-                                    attrs="{'invisible':[('reader_id', '=', False)]}"
+                                    invisible="not reader_id"
                                     type="object"/>
                         </div>
                             <field name="event_action" readonly="1"
@@ -58,8 +57,9 @@
                         <group>
                             <group string="Who">
                                 <field name="employee_id" readonly="1"
-                                       attrs="{'invisible':[('employee_id','=',False)]}"/>
-                                <field name="contact_id" readonly="1" attrs="{'invisible':[('contact_id','=',False)]}"/>
+                                       invisible="not employee_id"/>
+                                <field name="contact_id" readonly="1"
+                                       invisible="not contact_id"/>
                                 <field name="card_id" readonly="1"/>
                             </group>
                             <group string="Where">
@@ -74,8 +74,10 @@
                                 <field name="create_date" readonly="1" string="Receive Date"/>
                             </group>
                             <group>
-                                <field name="workcode" attrs="{'invisible': [('workcode','=', '-')]}"/>
-                                <field name="workcode_id" attrs="{'invisible': [('workcode_id','=', False)]}"/>
+                                <field name="workcode"
+                                       invisible="workcode=='-'"/>
+                                <field name="workcode_id"
+                                       invisible="not workcode_id"/>
                             </group>
                         </group>
                         <group string="Debug Information" groups="base.group_no_one" colspan="4">
@@ -133,19 +135,9 @@
                     <filter name="filter_this_week" string="Events from this week" domain="[
                         ('event_time', '>=', (datetime.datetime.combine(context_today() + relativedelta(weeks=-1,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')),
                         ('event_time', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
-<!--                    <filter name="filter_this_month" string="Events from this month" domain="[-->
-<!--                            ('event_time', '>=', (datetime.datetime.combine(context_today(), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-01 %H:%M:%S'))]"/>-->
-<!--                    <filter name="filter_this_year" string="Events from this year" domain="[-->
-<!--                            ('event_time', '>=', (datetime.datetime.combine(context_today(), datetime.time(0,0,0)).to_utc()).strftime('%Y-01-01 %H:%M:%S'))]"/>-->
                     <filter name="filter_last_week" string="Events from last week" domain="[
                         ('event_time', '>=', (datetime.datetime.combine(context_today() + relativedelta(weeks=-2,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')),
                         ('event_time', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(weeks=-1, days=0,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
-<!--                    <filter name="filter_last_month" string="Events from last month" domain="[-->
-<!--                        ('event_time', '>=', (datetime.datetime.combine(context_today() + relativedelta(months=-1), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-01 %H:%M:%S')),-->
-<!--                        ('event_time', '&lt;', (datetime.datetime.combine(context_today() , datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-01 %H:%M:%S'))]"/>-->
-<!--                    <filter name="filter_last_year" string="Events from last year" domain="[-->
-<!--                        ('event_time', '>=', (datetime.datetime.combine(context_today() + relativedelta(years=-1), datetime.time(0,0,0)).to_utc()).strftime('%Y-01-01 %H:%M:%S')),-->
-<!--                        ('event_time', '&lt;', (datetime.datetime.combine(context_today(), datetime.time(0,0,0)).to_utc()).strftime('%Y-01-01 %H:%M:%S'))]"/>-->
                     <separator/>
                     <filter name="groupby_door" string="by Door" context="{'group_by':'door_id'}"/>
                     <filter name="groupby_reader" string="by Reader" context="{'group_by':'reader_id'}"/>
@@ -154,7 +146,6 @@
                     <filter name="groupby_contact" string="by Contact" context="{'group_by':'contact_id'}"/>
                     <searchpanel>
                         <field name="event_action" string="Status" icon="fa-info-circle" color="#875A7B"/>
-                        <!--                        <field name="service_id" string="Service" icon="fa-users"/>-->
                     </searchpanel>
 
                 </search>

@@ -6,7 +6,6 @@
             <field name="name">Your access control barcode badge</field>
             <field name="model_id" ref="model_res_partner"/>
             <field name="subject">Access Barcode badge for {{ object.name }}</field>
-            <!--            <field name="email_from">{{ (object.event_id.organizer_id.email_formatted or object.event_id.user_id.email_formatted or '') }}</field>-->
             <field name="email_to">{{ (object.email and '"%s" &lt;%s&gt;' % (object.name, object.email) or
                 object.partner_id.email_formatted or '') }}
             </field>
@@ -29,8 +28,7 @@
                     </t>
                 </div>
             </field>
-            <field name="report_template" ref="action_report_res_partner_foldable_badge"/>
-            <field name="report_name">Foldable Badge - {{ (object.name or 'Access Control Badge').replace('/','_') }}</field>
+            <field name="report_template_ids" eval="[(4, ref('hr_rfid.action_report_res_partner_foldable_badge'))]"/>
             <field name="lang">{{ object.lang }}</field>
             <field name="auto_delete" eval="True"/>
         </record>

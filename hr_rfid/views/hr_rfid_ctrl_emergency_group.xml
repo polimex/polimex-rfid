@@ -15,21 +15,21 @@
 
                     <sheet>
                         <div class="oe_button_box" name="button_box">
-                            <div id="control_buttons" attrs="{'invisible':[('controller_ids', '=', 0)]}">
+                            <div id="control_buttons" invisible="controller_ids==0">
                                 <button name="emergency_on"
                                         type="object"
                                         groups="hr_rfid.hr_rfid_view_emergency_on_off"
-                                        states="emergency,normal"
+                                        invisible="state in ['emergency','normal']"
                                         confirm="Are you sure to turn Emergency mode for the group"
-                                        class="oe_stat_button oe_read_only" icon="fa-free-code-camp">
+                                class="oe_stat_button oe_read_only" icon="fa-free-code-camp">
                                     Emergency On
                                 </button>
                                 <button name="emergency_off"
                                         type="object"
                                         groups="hr_rfid.hr_rfid_view_emergency_on_off"
-                                        states="emergency,normal"
+                                        invisible="state in ['emergency','normal']"
                                         confirm="Are you sure to turn Emergency mode for the group"
-                                        class="oe_stat_button oe_read_only" icon="fa-fire">
+                                class="oe_stat_button oe_read_only" icon="fa-fire">
                                     Emergency Off
                                 </button>
                             </div>
@@ -130,37 +130,13 @@
                                                                decoration-danger="state == 'emergency'"/>
                                                     </strong>
                                                 </li>
-                                                <!--                                                <li t-if="record.door_id.raw_value">-->
-                                                <!--                                                    <field name="door_id" title="Related door"/>-->
-                                                <!--                                                </li>-->
                                             </ul>
                                         </div>
                                     </div>
                                     <ul>
-                                        <!--                                        <li class="o_force_ltr">Last IP:-->
-                                        <!--                                            <field name="last_ip"/>-->
-                                        <!--                                        </li>-->
                                     </ul>
                                     <div class="o_row">
                                         <span class="oe_kanban_partner_links">
-                                            <!--                                            <span t-if="record.user_event_count.value>0"-->
-                                            <!--                                                  class="badge badge-pill" title="User Events">-->
-                                            <!--                                                <a name="return_action_to_open" type="object"-->
-                                            <!--                                                    context="{'xml_id':'hr_rfid_event_user'}">-->
-                                            <!--                                                    <i class="fa fa-fw fa-user" role="img"-->
-                                            <!--                                                       aria-label="User Events"/>-->
-                                            <!--                                                    <t t-esc="record.user_event_count.value"/>-->
-                                            <!--                                                </a>-->
-                                            <!--                                            </span>-->
-                                            <!--                                            <span t-if="record.system_event_count.value>0"-->
-                                            <!--                                                  class="badge badge-pill" title="System Events">-->
-                                            <!--                                                <a name="return_action_to_open" type="object"-->
-                                            <!--                                                    context="{'xml_id':'hr_rfid_event_system'}">-->
-                                            <!--                                                    <i class="fa fa-fw fa-microchip" role="img"-->
-                                            <!--                                                       aria-label="System Events"/>-->
-                                            <!--                                                    <t t-esc="record.system_event_count.value"/>-->
-                                            <!--                                                </a>-->
-                                            <!--                                            </span>-->
                                         </span>
                                     </div>
                                 </div>

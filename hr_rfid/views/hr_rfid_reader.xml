@@ -5,7 +5,6 @@
         <record id="hr_rfid_reader_action" model="ir.actions.act_window">
             <field name="name">Readers</field>
             <field name="res_model">hr.rfid.reader</field>
-            <!--      <field name="view_type">form</field>-->
             <field name="view_mode">tree,form,search</field>
         </record>
 
@@ -19,12 +18,12 @@
                         <field name="user_event_ids" invisible="1"/>
                         <div class="oe_button_box" name="button_box">
                             <button name="button_door_list"
-                                    type="object" attrs="{'invisible':[('door_ids', '=', False)]}"
+                                    type="object" invisible="not door_ids"
                                     class="oe_stat_button" icon="fa-list-alt">
                                 <field name="door_count" widget="statinfo" string="Doors"/>
                             </button>
                             <button name="button_event_list"
-                                    type="object" attrs="{'invisible':[('user_event_ids', '=', False)]}"
+                                    type="object" invisible="not user_event_ids"
                                     class="oe_stat_button" icon="fa-list-alt">
                                 <field name="user_event_count" widget="statinfo" string="User Events"/>
                             </button>
@@ -44,7 +43,8 @@
                             <group string="Information">
                                 <field name="number" readonly="1"/>
                                 <field name="controller_id" readonly="1"/>
-                                <field name="door_id" readonly="1" attrs="{'invisible':[('door_id','=',False)]}"/>
+                                <field name="door_id" readonly="1"
+                                       invisible="not door_id"/>
                             </group>
                         </group>
                     </sheet>

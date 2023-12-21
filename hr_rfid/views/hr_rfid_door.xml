@@ -54,49 +54,57 @@
                         <div class="oe_button_box" name="button_box">
                             <button name="button_act_window"
                                     context="{'res_model':'hr.rfid.ctrl.th.log'}"
-                                    type="object" attrs="{'invisible':[('th_id', 'in', False)]}"
+                                    type="object"
+                                    invisible="not th_id"
                                     class="oe_stat_button" icon="fa-thermometer-full">
                                 Temp Log
                             </button>
                             <button name="button_act_window"
                                     context="{'res_model':'hr.rfid.event.user'}"
-                                    type="object" attrs="{'invisible':[('user_event_count', '&gt;', 0)]}"
+                                    type="object"
+                                    invisible="user_event_count &gt; 0"
                                     class="oe_stat_button" icon="fa-list-alt">
                                 <field name="user_event_count" widget="statinfo" string="User Events"/>
                             </button>
                             <button name="button_act_window"
                                     context="{'res_model':'hr.rfid.event.system'}"
-                                    type="object" attrs="{'invisible':[('system_event_count', '&gt;', 0)]}"
+                                    type="object"
+                                    invisible="system_event_count &gt; 0"
                                     class="oe_stat_button" icon="fa-list-alt">
                                 <field name="system_event_count" widget="statinfo" string="System Events"/>
                             </button>
                             <button name="button_act_window"
                                     context="{'res_model':'hr.rfid.access.group'}"
-                                    type="object" attrs="{'invisible':[('access_group_ids', '=', False)]}"
+                                    type="object"
+                                    invisible="not access_group_ids"
                                     class="oe_stat_button" icon="fa-list-alt">
                                 <field name="access_group_count" widget="statinfo" string="in Access Groups"/>
                             </button>
                             <button name="button_act_window"
                                     context="{'res_model':'hr.rfid.reader'}"
-                                    type="object" attrs="{'invisible':[('reader_ids', '=', False)]}"
+                                    type="object"
+                                    invisible="not reader_ids"
                                     class="oe_stat_button" icon="fa-list-alt">
                                 <field name="reader_count" widget="statinfo" string="Readers"/>
                             </button>
                             <button name="button_act_window"
                                     context="{'res_model':'hr.rfid.ctrl.alarm'}"
-                                    type="object" attrs="{'invisible':[('alarm_line_ids', '=', False)]}"
+                                    type="object"
+                                    invisible="not alarm_line_ids"
                                     class="oe_stat_button" icon="fa-list-alt">
                                 <field name="alarm_lines_count" widget="statinfo" string="Alarm Lines"/>
                             </button>
                             <button name="button_act_window"
                                     context="{'res_model':'hr.rfid.card'}"
-                                    type="object" attrs="{'invisible':[('card_rel_ids', '=', False)]}"
+                                    type="object"
+                                    invisible="not card_rel_ids"
                                     class="oe_stat_button" icon="fa-list-alt">
                                 <field name="card_count" widget="statinfo" string="Cards"/>
                             </button>
                             <button name="button_act_window"
                                     context="{'res_model':'hr.rfid.zone'}"
-                                    type="object" attrs="{'invisible':[('zone_ids', '=', False)]}"
+                                    type="object"
+                                    invisible="not zone_ids"
                                     class="oe_stat_button" icon="fa-list-alt">
                                 <field name="zone_count" widget="statinfo" string="in Zones"/>
                             </button>
@@ -110,7 +118,7 @@
                         </div>
                         <field name="emergency_state" invisible="1"/>
                         <widget name="web_ribbon" title="Emergency Opened" bg_color="bg-danger"
-                                attrs="{'invisible': [('emergency_state', '=', 'off')]}"/>
+                                invisible="emergency_state=='off'"/>
                         <group>
                             <group>
                                 <field name="card_type"/>
@@ -120,12 +128,11 @@
                             <group>
                                 <field name="controller_id" readonly="1"/>
                                 <field name="number" readonly="1"/>
-                                <!--                                <field name="th_id" widget="many2one"/>-->
                             </group>
                         </group>
                         <group>
                             <field name="hotel_readers" invisible="1"/>
-                            <group attrs="{'invisible': [('hotel_readers', '=', 0)]}">
+                            <group invisible="hotel_readers==0">
                                 <field name="hb_card_present" readonly="1"/>
                                 <field name="hb_clean" readonly="1"/>
                                 <field name="hb_dnd" readonly="1"/>
@@ -316,9 +323,6 @@
                                         </div>
                                     </div>
                                     <ul>
-                                        <!--                                        <li class="o_force_ltr">Last IP:-->
-                                        <!--                                            <field name="last_ip"/>-->
-                                        <!--                                        </li>-->
                                     </ul>
                                     <div class="o_row">
                                         <span class="oe_kanban_partner_links">

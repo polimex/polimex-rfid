@@ -37,7 +37,17 @@ def _json_response(self, result=None, error=None):
         headers=[('Content-Type', mime), ('Content-Length', len(body))]
     )
 
-setattr(http.JsonRequest, '_json_response', _json_response)
+def _response(self, result=None, error=None):
+    response = {'jsonrpc': '2.0', 'id': self.request_id}
+    if error is not None:
+        response['error'] = error
+    if result is not None:
+        response['result'] = result
+
+    return self.request.make_json_response(response)
+
+
+setattr(http.JsonRPCDispatcher, '_response', _response)
 
 # class CustomRoot(http.Root):
 

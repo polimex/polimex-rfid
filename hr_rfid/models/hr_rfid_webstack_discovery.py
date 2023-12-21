@@ -23,13 +23,11 @@ class HrRfidWebstackDiscoveryRow(models.TransientModel):
         readonly=True
     )
     behind_nat = fields.Boolean(
-        invisible=True,
         readonly=True
     )
     discovery_id = fields.Many2one(
         comodel_name='hr.rfid.webstack.discovery',
         readonly=True,
-        invisible=True
     )
 
 class HrRfidWebstackDiscovery(models.TransientModel):

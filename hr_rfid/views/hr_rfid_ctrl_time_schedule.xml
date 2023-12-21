@@ -58,7 +58,6 @@
                                 <ul style="list-style:none;margin:0;padding0;">
                                     <li><field name="name"/></li>
                                     <li>TS Number: <field name="number"/></li>
-<!--                                    <t t-debug="record"/>-->
                                     <t t-if="((record.is_empty.raw_value == true) &amp;&amp; (record.number.raw_value &gt; 0))">
                                         <li class="text-danger">TS is empty</li>
                                     </t>
@@ -100,7 +99,6 @@
                     <div>
                         <h1>Time schedule data for <field name="ts_id" readonly="1" options="{'clickable': '0'}" class="oe_inline"/> </h1>
                         <br/>
-<!--                        <field name="interval_ids" widget="one2many_list" >-->
                         <field name="interval_ids">
                             <tree create="false" delete="false" editable="bottom" multi_edit="1" default_order="day asc">
                                 <field name="day" />
@@ -118,38 +116,14 @@
             </field>
         </record>
 
-<!--        <record id="hr_rfid_controller_io_table_wiz_action" model="ir.actions.act_window">-->
-<!--            <field name="name">View/modify IO table</field>-->
-<!--            <field name="res_model">hr.rfid.ctrl.io.table.wiz</field>-->
-<!--            &lt;!&ndash;      <field name="view_type">form</field>&ndash;&gt;-->
-<!--            <field name="view_mode">form</field>-->
-<!--            <field name="view_id" ref="hr_rfid_controller_io_table_wiz"/>-->
-<!--            <field name="target">new</field>-->
-<!--        </record>-->
-
         <record id="hr_rfid_ctrl_ts_week_wiz_action" model="ir.actions.act_window">
             <field name="name">Time Schedule Wizard</field>
             <field name="res_model">hr.rfid.ctrl.ts.week.wiz</field>
             <field name="view_mode">form</field>
-<!--            <field name="view_id" ref="hr_rfid.hr_rfid_controller_ts_wiz"/>-->
             <field name="view_id" ref="hr_rfid_controller_ts_wiz"/>
             <field name="target">new</field>
-<!--            <field name="context">{}</field>-->
             <field name="binding_model_id" ref="model_hr_rfid_time_schedule"/>
             <field name="binding_view_types">form</field>
-<!--            <field name="groups_id" eval="[(4, ref('hr_rfid.hr_rfid_group_manager'))]"/>-->
         </record>
-
-<!--        <record id="action_crm_send_mass_convert" model="ir.actions.act_window">-->
-<!--        <field name="name">Convert to opportunities</field>-->
-<!--        <field name="res_model">crm.lead2opportunity.partner.mass</field>-->
-<!--        <field name="view_mode">form</field>-->
-<!--        <field name="view_id" ref="view_crm_lead2opportunity_partner_mass"/>-->
-<!--        <field name="target">new</field>-->
-<!--        <field name="context">{}</field>-->
-<!--        <field name="binding_model_id" ref="model_crm_lead"/>-->
-<!--        <field name="binding_view_types">list</field>-->
-<!--    </record>-->
-
     </data>
 </odoo>

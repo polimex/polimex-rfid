@@ -4,7 +4,6 @@
         <record id="hr_rfid_workcode_action" model="ir.actions.act_window">
             <field name="name">Workcodes</field>
             <field name="res_model">hr.rfid.workcode</field>
-            <!--      <field name="view_type">form</field>-->
             <field name="view_mode">tree,form</field>
         </record>
 
@@ -20,7 +19,7 @@
                             </h1>
                         </div>
                         <group>
-                            <field name="workcode" attrs="{'readonly':[('id','>',0)]}"/>
+                            <field name="workcode" readonly="id>0"/>
                             <field name="user_action"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                         </group>

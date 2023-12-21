@@ -71,7 +71,7 @@
                         <group>
                             <field name="behind_nat" widget="boolean_toggle"/>
                             <field name="local_ip_address"
-                                   attrs="{'invisible': [('behind_nat','=', True)]}" />
+                                   invisible="behind_nat"/>
                         </group>
                     </group>
                     <footer>

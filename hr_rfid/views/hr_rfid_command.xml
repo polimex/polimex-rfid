@@ -14,22 +14,15 @@
             <field name="arch" type="xml">
                 <form create="0" delete="0" edit="0">
                     <header>
-<!--                        <field name="status" widget="statusbar" statusbar_visible=" " />-->
                     </header>
                     <sheet>
-<!--                        <field name="status" widget="statusbar" statusbar_visible=" " -->
-<!--                               decoration-success="status == 'Success'"-->
-<!--                               decoration-warning="status == 'Wait'"-->
-<!--                               decoration-info="status == 'Process'"-->
-<!--                               decoration-danger="status == 'Failure'"-->
-<!--                        />-->
                         <div class="oe_button_box" name="button_box">
                             <button string="Resend" name="resend_action"
                                     type="object" class="oe_stat_button"
                                     icon="fa-rotate-right"
                                     groups="base.group_no_one"
                                     confirm="Please confirm! The execution again may override already executed commands."
-                                    attrs="{'invisible':[('status','not in',['Failure', 'Process'])]}"/>
+                                    invisible="status not in ['Failure', 'Process']"/>
                         </div>
                         <div class="oe_title" modifiers="{}">
                             <h1 modifiers="{}">
@@ -40,7 +33,8 @@
                             <group string="Information">
                                 <field name="name" readonly="1"/>
                                 <field name="status" readonly="1"/>
-                                <field name="error" readonly="1" attrs="{'invisible':[('ex_timestamp','=',False)]}"/>
+                                <field name="error" readonly="1"
+                                       invisible="not ex_timestamp"/>
                             </group>
                             <group string="Where">
                                 <field name="controller_id" readonly="1"/>

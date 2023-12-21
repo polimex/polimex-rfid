@@ -9,7 +9,8 @@
             <field name="arch" type="xml">
                 <xpath expr="//div[@name='button_box']" position="inside">
                     <button name="button_employee_events"
-                            type="object" attrs="{'invisible':[('employee_event_count', '=', '0')]}"
+                            type="object"
+                            invisible="employee_event_count == 0"
                             groups="hr_rfid.hr_rfid_group_officer"
                             class="oe_stat_button" icon="fa-list-alt">
                         <field name="employee_event_count" widget="statinfo" string="Events"/>
@@ -17,15 +18,14 @@
                     <button name="button_doors_list" title="Accessible doors"
                             type="object" class="oe_stat_button" icon="fa-list-alt"
                             groups="hr_rfid.hr_rfid_group_officer"
-                            attrs="{'invisible':[('employee_doors_count', '=', '0')]}">
+                            invisible="employee_doors_count == 0">
                         <field name="employee_doors_count" widget="statinfo" string="Doors"/>
                     </button>
                 </xpath>
                 <notebook position="inside">
                     <page string="RFID Info"
                           groups="hr_rfid.hr_rfid_group_officer"
-                          attrs="{'invisible': [('id','=', False)]}"
-                    >
+                          invisible="not id">
                         <group>
                             <field name="hr_rfid_pin_code" groups="hr_rfid.hr_rfid_view_rfid_pin_code_data"/>
                         </group>

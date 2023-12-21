@@ -26,7 +26,7 @@
             <field name="arch" type="xml">
                 <form string="Add Doors">
                     <group>
-                        <field name="acc_gr_doors" attrs="{'invisible': True}"/>
+                        <field name="acc_gr_doors" invisible="1"/>
                         <field name="door_ids" options='{"no_open": True, "no_create": True}'
                                domain="[('id', 'not in', acc_gr_doors)]" widget="many2many_tags"/>
                         <field name="time_schedule_id" options='{"no_open": True, "no_create": True}'/>
@@ -47,7 +47,7 @@
             <field name="arch" type="xml">
                 <form string="Remove Doors">
                     <group>
-                        <field name="acc_gr_doors" attrs="{'invisible': True}"/>
+                        <field name="acc_gr_doors" invisible="1"/>
                         <field name="door_ids" options='{"no_open": True, "no_create": True}'
                                domain="[('id', 'in', acc_gr_doors)]" widget="many2many_tags"/>
                     </group>
@@ -63,7 +63,6 @@
         <record id="hr_rfid_access_group_add_doors_wiz_action" model="ir.actions.act_window">
             <field name="name">Add Doors</field>
             <field name="res_model">hr.rfid.access.group.wizard</field>
-            <!--      <field name="view_type">form</field>-->
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_rfid_access_group_add_doors_wiz"/>
             <field name="target">new</field>
@@ -72,7 +71,6 @@
         <record id="hr_rfid_access_group_del_doors_wiz_action" model="ir.actions.act_window">
             <field name="name">Remove Doors</field>
             <field name="res_model">hr.rfid.access.group.wizard</field>
-            <!--      <field name="view_type">form</field>-->
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_rfid_access_group_del_doors_wiz"/>
             <field name="target">new</field>
@@ -84,7 +82,7 @@
             <field name="arch" type="xml">
                 <form string="Access Groups">
                     <sheet modifiers="{}">
-                        <div class="oe_button_box" name="button_box" attrs="{'invisible': [('id', '=', False)]}">
+                        <div class="oe_button_box" name="button_box" invisible="not id">
                             <button name="%(hr_rfid_access_group_add_doors_wiz_action)d"
                                     id="hr_rfid_access_group_add_doors_btn"
                                     type="action"
@@ -115,7 +113,7 @@
                                 <field name="company_id" groups="base.group_multi_company"/>
                             </group>
                         </group>
-                        <div attrs="{'invisible': [('id', '!=', False)]}">
+                        <div invisible="id">
                             <p>
                                 The system do not permit giving a access to door directly. You need to create an
                                 Access Group and add doors to it. Next you have two options to give access to
@@ -149,7 +147,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <notebook colspan="4" attrs="{'invisible': [('id', '=', False)]}">
+                        <notebook colspan="4" invisible="not id">
                             <page string="Doors">
                                 <field name="door_ids" readonly="1">
                                     <tree string="Doors group has access to">
@@ -218,7 +216,7 @@
                             </page>
 
                         </notebook>
-                        <notebook colspan="4" attrs="{'invisible': [('id', '=', False)]}">
+                        <notebook colspan="4" invisible="not id">
                             <page string="Inherited Access Groups">
                                 <field name="inherited_ids">
                                     <tree>

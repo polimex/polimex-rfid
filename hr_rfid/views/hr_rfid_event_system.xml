@@ -45,7 +45,6 @@
         <record id="hr_rfid_sys_ev_wiz_action" model="ir.actions.act_window">
             <field name="name">Add Card</field>
             <field name="res_model">hr.rfid.event.sys.wiz</field>
-            <!--      <field name="view_type">form</field>-->
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_rfid_sys_ev_wiz_form"/>
             <field name="target">new</field>
@@ -62,7 +61,7 @@
                             <button string="Add Card" name="%(hr_rfid_sys_ev_wiz_action)d"
                                     id="hr_rfid_sys_ev_add_card_btn" type="action" class="oe_stat_button"
                                     icon="fa-plus-square"
-                                    attrs="{'invisible':[('is_card_event','=',False)]}"/>
+                                    invisible="not is_card_event"/>
                         </div>
                         <div class="oe_title" modifiers="{}">
                             <h1 modifiers="{}">
@@ -79,12 +78,12 @@
                              <group string="When">
                                 <field name="timestamp" readonly="1"/>
                                 <field name="occurrences" readonly="1"
-                                       attrs="{'invisible':[('occurrences','&lt;=','1')]}"/>
+                                       invisible="occurrences &lt;= 1"/>
                                 <field name="last_occurrence" readonly="1"
-                                       attrs="{'invisible':[('occurrences','&lt;=','1')]}"/>
+                                       invisible="occurrences &lt;= 1"/>
                             </group>
                             <group string="Alarm"
-                                   attrs="{'invisible':[('alarm_line_id','=',False),('siren','=',False)]}">
+                                   invisible="not alarm_line_id and not siren">
                                 <field name="alarm_line_id" readonly="1"/>
                                 <field name="siren" readonly="1"/>
                             </group>
@@ -155,7 +154,6 @@
                     </group>
                     <searchpanel>
                         <field name="event_action" string="Event Type" icon="fa-info-circle" color="#875A7B"/>
-                        <!--                        <field name="service_id" string="Service" icon="fa-users"/>-->
                     </searchpanel>
                 </search>
             </field>

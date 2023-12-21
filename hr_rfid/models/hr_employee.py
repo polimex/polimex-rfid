@@ -202,7 +202,7 @@ class HrEmployee(models.Model):
             })]
         })
 
-    @api.model
+    @api.model_create_multi
     def create(self, vals_list):
         records = super(HrEmployee, self).create(vals_list)
 

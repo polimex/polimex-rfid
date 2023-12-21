@@ -24,7 +24,6 @@
         <record id="hr_rfid_zone_action" model="ir.actions.act_window">
             <field name="name">Zones</field>
             <field name="res_model">hr.rfid.zone</field>
-            <!--      <field name="view_type">form</field>-->
             <field name="view_mode">tree,form</field>
         </record>
 
@@ -51,7 +50,6 @@
         <record id="hr_rfid_zone_doors_wiz_action" model="ir.actions.act_window">
             <field name="name">Add/Remove Doors</field>
             <field name="res_model">hr.rfid.zone.doors.wiz</field>
-            <!--      <field name="view_type">form</field>-->
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_rfid_zone_doors_wiz"/>
             <field name="target">new</field>
@@ -65,20 +63,20 @@
                     <sheet>
                         <field name="contact_ids" invisible="1"/>
                         <field name="employee_ids" invisible="1"/>
-                        <div class="oe_button_box" name="button_box" attrs="{'invisible': [('id', '=', False)]}">
+                        <div class="oe_button_box" name="button_box" invisible="not id">
                             <button name="%(hr_rfid_zone_doors_wiz_action)d" id="hr_rfid_zone_doors_btn" type="action"
                                     class="oe_stat_button" icon="fa-table"
                                     string="Add/Remove Doors"/>
                             <button name="contact_in_current_zone"
                                     type="object"
                                     class="oe_stat_button" icon="fa-list"
-                                    attrs="{'invisible':[('contact_count', '=', 0)]}">
+                                    invisible="contact_count==0">
                                 <field name="contact_count" widget="statinfo" string="Contacts"/>
                             </button>
                             <button name="employee_in_current_zone"
                                     type="object"
                                     class="oe_stat_button" icon="fa-list"
-                                    attrs="{'invisible':[('employee_count', '=', 0)]}">
+                                    invisible="employee_count==0">
                                 <field name="employee_count" widget="statinfo" string="Employees"/>
                             </button>
                         </div>

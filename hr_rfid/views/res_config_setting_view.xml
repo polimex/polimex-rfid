@@ -8,139 +8,42 @@
             <field name="priority" eval="25"/>
             <field name="inherit_id" ref="base.res_config_settings_view_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//div[hasclass('settings')]" position="inside">
-                    <div class="app_settings_block" data-string="RFID System" string="RFID System"
-                         data-key="hr_rfid" groups="hr_rfid.hr_rfid_group_manager">
-                        <h2>RFID System Settings</h2>
-                        <div class="row mt16 o_settings_container" name="hr_rfid_setting_container">
+                <xpath expr="//form" position="inside">
+                    <app data-string="RFID System" id="hr_rfid" string="RFID System" name="hr_rfid"
+                         groups="hr_rfid.hr_rfid_group_manager">
 
-                            <div class="col-12 col-lg-6 o_setting_box"
-                                 id="s_event_lifetime"
-                                 title="RFID Events life">
-                                <div class="o_setting_left_pane">
+                        <block title="RFID System Settings" id="hr_rfid_general">
+                            <setting id="s_event_lifetime" title="RFID Events life" string="RFID Events life">
+                                <div class="content-group" name="hr_rfid_options">
+                                    <div class="d-flex">
+                                        <span class="flex-shrink-0 ml8 me-2">Define how long the Events in the system
+                                            will live in DAYS! After this period of days, the system will delete old
+                                            events.
+                                        </span>
+                                        <field name="event_lifetime" class="ml16"/>
+                                        <label for="event_lifetime" class="o_light_label"/>
+                                    </div>
+                                    <div class="d-flex">
+                                        <span class="flex-shrink-0 ml8 me-2">Permit automatic adding modules from
+                                            communication. This feature do not support Multi Company. New Modules are
+                                            added to first company!
+                                        </span>
+                                        <field name="save_new_webstacks" class="ml16"/>
+                                        <label for="save_new_webstacks" class="o_light_label"/>
+                                    </div>
+                                    <div class="d-flex" groups="base.group_no_one">
+                                        <span class="flex-shrink-0 ml8 me-2">Log all JSON data from communication to
+                                            events. Visible only in debug mode
+                                        </span>
+                                        <field name="save_webstack_communications" class="ml16"
+                                               help="Log communication commands for bug tracking"/>
+                                        <label for="save_webstack_communications" class="o_light_label"/>
+                                    </div>
                                 </div>
-                                <div class="o_setting_right_pane">
-                                    <label for="event_lifetime" string="Events lifetime"/>
-                                    <span class="fa fa-lg fa-building-o" title="Values set here are company-specific." aria-label="Values set here are company-specific." groups="base.group_multi_company" role="img"/>
-                                    <div class="content-group">
-                                        <field name="event_lifetime"/>
-                                    </div>
-                                    <div class="text-muted">
-                                        Define how long the Events in the system will live in DAYS! After this period of days, the system will delete old events.
-                                    </div>
+                            </setting>
+                        </block>
 
-                                </div>
-                            </div>
-                            <div class="col-12 col-lg-6 o_setting_box"
-                                 id="s_save_new_webstacks"
-                                 title="Auto add Modules">
-                                <div class="o_setting_left_pane">
-                                    <field name="save_new_webstacks"/>
-                                </div>
-                                <div class="o_setting_right_pane">
-                                    <label for="save_new_webstacks" string="Automatic add new contacting modules"/>
-                                    <div class="text-muted">
-                                        Permit automatic adding modules from communication. This feature do not support Multi Company. New Modules are added to first company!
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-lg-6 o_setting_box"
-                                 id="s_save_webstack_communications"
-                                 groups="base.group_no_one"
-                                 title="Debug Communication">
-                                <div class="o_setting_left_pane">
-                                    <field name="save_webstack_communications"/>
-                                </div>
-                                <div class="o_setting_right_pane">
-                                    <label for="save_webstack_communications" string="Log communication commands for bug tracking"/>
-                                    <div class="text-muted">
-                                        Log all JSON data from communication to events. Visible only in debug mode
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-lg-6 o_setting_box"
-                                 id="module_hr_rfid_andromeda_import"
-                                 groups="base.group_no_one"
-                                 title="Andromeda Import">
-                                <div class="o_setting_left_pane">
-                                    <field name="module_hr_rfid_andromeda_import"/>
-                                </div>
-                                <div class="o_setting_right_pane">
-                                    <label for="module_hr_rfid_andromeda_import" string="Andromeda Data Import"/>
-                                    <div class="text-muted">
-                                        Import Employees, Contacts, Cards, Access Groups, Card Access Rights
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-lg-6 o_setting_box"
-                                 id="module_hr_attendance_multi_rfid"
-                                 title="Managing Attendance with card system">
-                                <div class="o_setting_left_pane">
-                                    <field name="module_hr_attendance_multi_rfid"/>
-                                </div>
-                                <div class="o_setting_right_pane">
-                                    <label for="module_hr_attendance_multi_rfid" string="Managing Attendance with card system"/>
-                                    <div class="text-muted">
-                                        Manage Attendance records for Employees based on Access control system
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-lg-6 o_setting_box"
-                                 id="module_hr_attendance_late"
-                                 attrs="{'invisible': [('module_hr_attendance_multi_rfid', '=', False)]}"
-                                 title="Additional Attendance calculations">
-                                <div class="o_setting_left_pane">
-                                    <field name="module_hr_attendance_late"/>
-                                </div>
-                                <div class="o_setting_right_pane">
-                                    <label for="module_hr_attendance_late"/>
-                                    <div class="text-muted">
-                                        Make additional Attendance calculations as Late, Early leave, Overtime
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-lg-6 o_setting_box"
-                                 id="module_hr_rfid_vending"
-                                 title="Managing Polimex SmartVend controllers">
-                                <div class="o_setting_left_pane">
-                                    <field name="module_hr_rfid_vending"/>
-                                </div>
-                                <div class="o_setting_right_pane">
-                                    <label for="module_hr_rfid_vending" string="Manage Vending controller"/>
-                                    <div class="text-muted">
-                                        Polimex SmartVend Controllers provide full management of Vending sales with any Executive compatible Vending Machines
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-lg-6 o_setting_box"
-                                 id="module_hr_rfid_realtime_dashboard"
-                                 title="Realtime Dashboards">
-                                <div class="o_setting_left_pane">
-                                    <field name="module_hr_rfid_realtime_dashboard"/>
-                                </div>
-                                <div class="o_setting_right_pane">
-                                    <label for="module_hr_rfid_realtime_dashboard" string="Dashboards"/>
-                                    <div class="text-muted">
-                                        Realtime dashboards provide pre-defined boards with mix of all available data in one screen.
-                                        Suitable for Monitoring centers and guards screens
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-lg-6 o_setting_box"
-                                 id="module_rfid_pms_base"
-                                 title="Base PMS functionality">
-                                <div class="o_setting_left_pane">
-                                    <field name="module_rfid_pms_base"/>
-                                </div>
-                                <div class="o_setting_right_pane">
-                                    <label for="module_rfid_pms_base" string="Base PMS"/>
-                                    <div class="text-muted">
-                                        Install Basic PMS for manage Reservation Cards, Room Energy Safe Readers, Room management controllers, Clean, DND BMS functionality
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </app>
                 </xpath>
             </field>
         </record>
