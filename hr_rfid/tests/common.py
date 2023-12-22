@@ -230,10 +230,13 @@ class RFIDAppCase(common.TransactionCase):
     def _assertResponse(self, response):
         self.assertEqual(response.status_code, 200)
         if response.text != '':
-            self.assertTrue(isinstance(response.json(), dict), 'Response is not JSON')
+            res = response.json()
+            if isinstance(res, str):
+                res = json.loads(res)
+            self.assertTrue(isinstance(res, dict), 'Response is not JSON')
             # if 'error' in response.json().keys():
             #     self.assertTrue(False, 'Response contain error' + response.json()['error']['data']['message'])
-            return response.json()
+            return res
         else:
             return {}
 

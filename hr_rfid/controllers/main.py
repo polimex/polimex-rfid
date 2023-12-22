@@ -519,7 +519,10 @@ class WebRfidController(http.Controller):
         t0 = time.time()
         if not post:
             # Controllers with no odoo functionality use the dd/mm/yyyy format
-            post_data = request.jsonrequest
+            # Decode a to get a string
+            decoded_string = request.httprequest.data.decode('utf-8')
+            # Parse the string into a JSON object
+            post_data = json.loads(decoded_string)
         else:
             post_data = post
         _logger.info('Received=' + str(post_data))

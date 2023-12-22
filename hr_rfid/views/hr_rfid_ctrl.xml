@@ -213,90 +213,63 @@
                     <field name="siren_state"/>
                     <field name="emergency_state"/>
                     <templates>
+                        <t t-name="kanban-menu">
+                            <a role="menuitem" class="dropdown-item" name="read_controller_information_cmd"
+                               type="object">Refresh Setup
+                            </a>
+                            <a role="menuitem" class="dropdown-item" name="read_status" type="object">Refresh status</a>
+                            <a role="menuitem" class="dropdown-item" name="button_reload_cards" type="object">Reload
+                                cards
+                            </a>
+                            <a role="menuitem" class="dropdown-item" name="hr_rfid_controller_io_table_action"
+                               type="object">IO Table
+                            </a>
+                            <a role="menuitem" type="edit" class="dropdown-item">Edit</a>
+                            <a role="menuitem" type="delete" class="dropdown-item" confirm="Are you sure?">Delete</a>
+                        </t>
                         <t t-name="kanban-box">
                             <div>
-                                <div class="o_dropdown_kanban dropdown">
-                                    <button class="dropdown-toggle btn" data-toggle="dropdown" href="#">
-                                        <span class="fa fa-bars fa-lg" title="Settings"/>
-                                    </button>
-                                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                        <li>
-                                            <a name="read_controller_information_cmd" type="object">Refresh Setup</a>
-                                        </li>
-                                        <li>
-                                            <a name="read_status" type="object">Refresh status</a>
-                                        </li>
-                                        <li>
-                                            <a name="button_reload_cards" type="object">Reload cards</a>
-                                        </li>
-                                        <li>
-                                            <a name="hr_rfid.hr_rfid_controller_io_table_action" type="action">IO
-                                                Table
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a name="read_io_table_cmd" type="object">Read IO Table</a>
-                                        </li>
-                                        <t t-if="widget.deletable">
-                                            <li>
-                                                <a type="delete" confirm="Are you sure?">Delete</a>
-                                            </li>
-                                        </t>
-                                    </ul>
-                                </div>
-                                <div class="oe_kanban_details">
-                                    <div class="o_kanban_record_top">
-                                        <div class="o_kanban_record_headings">
-                                            <strong class="o_kanban_record_title">
-                                                <div class="float-right">
-                                                    <span t-att-title="record.siren_state.raw_value ? 'Siren On' : 'Siren Off'"
-                                                          t-if="record.alarm_line_count.value > 0">
-                                                        <i t-att-class="record.siren_state.raw_value ? 'fa fa-fw fa-bell text-danger' : 'fa fa-fw fa-bell-slash-o'"
-                                                           role="img"
-                                                           t-att-aria-label="record.siren_state.raw_value ? 'Siren On' : 'Siren Off'"/>
-                                                    </span>
-                                                    <span t-if="record.emergency_state.raw_value != 'off'">
-                                                        <i
-                                                                role="img"
-                                                                t-att-class="record.emergency_state.raw_value == 'soft' ? 'fa fa-fw fa-free-code-camp text-danger' : 'fa fa-fw fa-fire text-danger'"
-                                                                t-att-title="record.emergency_state.raw_value == 'soft' ? 'Software Emergency' : 'Hardware Emergency'"
-                                                                t-att-aria-label="record.emergency_state.raw_value == 'soft' ? 'Software Emergency' : 'Hardware Emergency'"/>
-                                                    </span>
-
-                                                </div>
-                                                <h2>
-                                                    <a type="open">
-                                                        <field name="name" title="Controller Name"/>
-                                                    </a>
-                                                </h2>
-                                            </strong>
-                                            <ul>
-                                                <li name="action_icons">
-                                                </li>
-                                                <li t-if="record.hw_version.raw_value">
-                                                    <field name="hw_version"/>
-                                                    /
-                                                    <field name="serial_number"/>
-                                                    /
-                                                    <field name="ctrl_id"/>
-                                                </li>
-                                                <li t-if="record.temperature.raw_value">
-                                                    <i class="fa fa-fw fa-thermometer-full text-info" role="img"
-                                                       title="Temperature"/>
-                                                    <field name="temperature"
-                                                           title="External temperature sensor value"/>
-                                                    ℃
-                                                    <i class="fa fa-fw fa-tint text-info" role="img" title="Humidity"/>
-                                                    <field name="humidity" title="External humidity sensor value"/>
-                                                    %
-                                                </li>
-                                            </ul>
+                                <div class="o_kanban_card_content">
+                                    <div class="o_kanban_card_header d-flex gap-1 align-items-baseline">
+                                        <!--                                        <field name="is_favorite" widget="boolean_favorite" nolabel="1"/>-->
+                                        <div class="o_kanban_card_header_title mb16">
+                                            <div class="o_primary">
+                                                <a type="edit"><field name="name"/></a>
+                                            </div>
                                         </div>
                                     </div>
-                                    <ul>
-                                    </ul>
-                                    <div class="o_row">
-                                        <span class="oe_kanban_partner_links">
+                                    <div class="row">
+                                        <div class="col-4">
+                                                <div t-if="record.hw_version.raw_value">
+                                                    <field name="hw_version"/>
+                                                </div>
+                                                <div t-if="record.hw_version.raw_value">
+                                                    <field name="serial_number" help="Controller Serial Number"/>
+                                                    <span class="ms-2 me-1">ID</span>
+                                                    <field name="ctrl_id" help="Controller ID on Serial line (behind IP Module)"/>
+                                                </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div t-if="record.temperature.raw_value">
+                                                <i class="fa fa-fw fa-thermometer-full text-info" role="img"
+                                                   title="Temperature"/>
+                                                <field name="temperature"
+                                                       title="External temperature sensor value"/>
+                                                ℃
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div t-if="record.temperature.raw_value">
+                                                <i class="fa fa-fw fa-tint text-info" role="img" title="Humidity"/>
+                                                <field name="humidity" title="External humidity sensor value"/>
+                                                %
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="oe_kanban_footer">
+                                    <div class="o_kanban_record_bottom mt-3">
+                                        <div class="oe_kanban_bottom_left">
                                             <span t-if="record.doors_count.value>0"
                                                   class="badge badge-pill" title="Doors">
                                                 <a name="return_action_to_open" type="object"
@@ -354,7 +327,22 @@
                                                     <t t-esc="record.commands_count.value"/>
                                                 </a>
                                             </span>
-                                        </span>
+
+                                        </div>
+                                        <div class="oe_kanban_bottom_right">
+                                            <span t-att-title="record.siren_state.raw_value ? 'Siren On' : 'Siren Off'"
+                                                  t-if="record.alarm_line_count.value > 0">
+                                                <i t-att-class="record.siren_state.raw_value ? 'fa fa-fw fa-bell text-danger' : 'fa fa-fw fa-bell-slash-o'"
+                                                   role="img"
+                                                   t-att-aria-label="record.siren_state.raw_value ? 'Siren On' : 'Siren Off'"/>
+                                            </span>
+                                            <span t-if="record.emergency_state.raw_value != 'off'">
+                                                <i role="img"
+                                                   t-att-class="record.emergency_state.raw_value == 'soft' ? 'fa fa-fw fa-free-code-camp text-danger' : 'fa fa-fw fa-fire text-danger'"
+                                                   t-att-title="record.emergency_state.raw_value == 'soft' ? 'Software Emergency' : 'Hardware Emergency'"
+                                                   t-att-aria-label="record.emergency_state.raw_value == 'soft' ? 'Software Emergency' : 'Hardware Emergency'"/>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

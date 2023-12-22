@@ -477,7 +477,7 @@ class HrRfidDoor(models.Model):
             domain = [('id', 'in', [rel.card_id.id for rel in self.card_rel_ids])]
         elif res_model == 'hr.rfid.zone':
             name = _('{} in zones').format(self.name)
-            domain = [('door_id', 'in', [rel.zone_id.id for rel in self.zone_ids])]
+            domain = [('id', 'in', [rel.id for rel in self.zone_ids])]
         elif res_model == 'hr.rfid.ctrl.alarm':
             name = _('Alarm lines for {}').format(self.name)
             domain = [('door_id', 'in', [rel.door_id.id for rel in self.alarm_line_ids])]

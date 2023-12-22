@@ -116,7 +116,7 @@ class HrRfidCard(models.Model):
 
     door_ids = fields.Many2many(
         'hr.rfid.door',
-        string='Doors',
+        string='Door List',
         compute='_compute_door_ids',
     )
 

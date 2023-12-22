@@ -11,14 +11,14 @@
                     <header>
                         <button name="action_set_webstack_settings" type="object"
                                 string="Setup module for this odoo"
-                                invisible="behind_nat and last_ip!=''"
+                                invisible="behind_nat and last_ip"
                                 help="Set the webstack up to work with this odoo. Module username and password must be set to the admin username and password on the module. Last ip must be set to the correct ip of the module"/>
                         <button name="action_check_if_ws_available" type="object"
-                                invisible="behind_nat and last_ip!=''"
+                                invisible="behind_nat and last_ip"
                                 string="Test module connection"
                                 help="Connect to the module and request for information."/>
                         <button name="get_controllers" type="object"
-                                invisible="behind_nat and last_ip!=''"
+                                invisible="behind_nat and last_ip"
                                 string="Read controllers"
                                 help="Read controllers detected in Module"/>
                         <field name="available" widget="statusbar"/>
@@ -51,7 +51,7 @@
                                     string="Reboot"/>
                         </div>
                         <widget name="web_ribbon" title="Disabled" bg_color="bg-danger"
-                                       invisible="active"/>
+                                invisible="active"/>
                         <div class="oe_title">
                             <label for="name" class="oe_edit_only"/>
                             <h1>
@@ -82,7 +82,7 @@
                                 <field name="last_ip"/>
                                 <field name="updated_at" readonly="1"/>
                                 <field name="http_link" readonly="1" widget="url"
-                                   invisible="behind_nat"/>
+                                       invisible="behind_nat"/>
                             </group>
                         </group>
                     </sheet>
@@ -152,43 +152,52 @@
                     <field name="http_link"/>
                     <field name="controllers"/>
                     <templates>
+                        <t t-name="kanban-menu">
+                            <a role="menuitem" class="dropdown-item" name="reboot_cmd"
+                               type="object">Reboot
+                            </a>
+                            <a role="menuitem" type="edit" class="dropdown-item">Edit</a>
+                            <a role="menuitem" type="delete" class="dropdown-item" confirm="Are you sure?">Delete</a>
+                        </t>
                         <t t-name="kanban-box">
                             <div>
                                 <div class="oe_kanban_details">
                                     <div class="o_kanban_record_top">
                                         <div class="o_kanban_record_headings">
                                             <strong class="o_kanban_record_title">
+                                                <a type="open">
+                                                    <field name="name" title="Module's Name"/>
+                                                </a>
+                                            </strong>
+                                            <div class="float-end me-1">
                                                 <div class="float-right"
                                                      invisible="not active or not last_update">
                                                     <span class="fa fa-circle text-success" role="img"
                                                           aria-label="Up and running" title="Up and running"
                                                           name="webstack_enabled_and_running"/>
                                                 </div>
-                                                <div class="float-right"
-                                                    invisible="active">
+                                                <div class="float-right me-1"
+                                                     invisible="active">
                                                     <span class="fa fa-circle text-danger" role="img"
                                                           aria-label="Disabled" title="Disabled"
                                                           name="webstack_disabled"/>
                                                 </div>
-                                                <div class="float-right"
+                                                <div class="float-right me-1"
                                                      invisible="not active or last_update">
                                                     <span class="fa fa-circle text-warning" role="img"
                                                           aria-label="Enabled but not running"
                                                           title="Enabled but not running"
                                                           name="webstack_enabled"/>
                                                 </div>
-                                                <h2>
-                                                    <a type="open">
-                                                        <field name="name" title="Module's Name"/>
-                                                    </a>
-                                                </h2>
-                                            </strong>
+                                            </div>
+                                            <span t-if="record.hw_version.raw_value" class="o_kanban_record_subtitle">
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
                                             <ul>
-                                                <li t-if="record.version.raw_value">
-                                                    Version:
-                                                    <field name="version"/>
-                                                </li>
-                                                <li t-if="record.hw_version.raw_value">
+                                                <li t-if="record.hw_version.raw_value" class="o_force_ltr">
                                                     Hardware:
                                                     <field name="hw_version"/>
                                                 </li>
@@ -198,17 +207,32 @@
                                                 </li>
                                             </ul>
                                         </div>
+                                        <div class="col-6">
+                                            <ul>
+                                                <li t-if="record.version.raw_value">
+                                                    Version:
+                                                    <field name="version"/>
+                                                </li>
+                                                <li t-if="record.last_ip.raw_value" class="o_force_ltr">
+                                                    <field name="last_ip"/>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                    <ul>
-                                        <li class="o_text_overflow">Last Update:
-                                            <field name="updated_at"/>
-                                        </li>
-                                        <li class="o_force_ltr">Last IP:
-                                            <field name="last_ip"/>
-                                        </li>
-                                    </ul>
-                                    <div class="o_row">
-                                        <span class="oe_kanban_partner_links">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <ul>
+                                                <li class="o_text_overflow">
+                                                    Last Update:
+                                                    <field name="updated_at"/>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="oe_kanban_footer">
+                                    <div class="o_kanban_record_bottom mt-3">
+                                        <div class="oe_kanban_bottom_left">
                                             <span t-if="record.controllers_count.value>0"
                                                   class="badge badge-pill" title="Controllers">
                                                 <a name="return_action_to_open" type="object"
@@ -243,16 +267,12 @@
                                                 <a t-att-href="record.http_link.value" target="_blank"
                                                    style="text-decoration:none; color: #010199;">Web
                                                 </a>
-
                                             </span>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="oe_kanban_content position-absolute fixed-bottom mr-2">
-                                    <div class="o_kanban_record_bottom">
-                                        <div class="oe_kanban_bottom_left"/>
-                                        <div class="oe_kanban_bottom_right float-right">
-                                            <field name="activity_ids" widget="kanban_activity"/>
+                                        </div>
+                                        <div class="oe_kanban_bottom_right">
+                                            <div class="hr_activity_container mb-1 ms-2 me-n1">
+                                                <field name="activity_ids" widget="kanban_activity"/>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

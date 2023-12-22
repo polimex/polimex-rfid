@@ -73,7 +73,7 @@ class HrRfidController(models.Model):
     )
 
     ctrl_id = fields.Integer(
-        string='ID',
+        string='ID behind IP Module',
         help='A number to distinguish the controller from others on the same module',
         index=True,
     )
@@ -184,7 +184,7 @@ class HrRfidController(models.Model):
     )
 
     mode_selection_4 = fields.Selection(
-        string='Controller mode',
+        string='Doors mode',
         selection=[('0', 'Unknown'), ('2', 'Two doors'), ('3', 'Three doors'), ('4', 'Four doors')],
         required=True,
         compute='_compute_controller_mode',
@@ -192,7 +192,7 @@ class HrRfidController(models.Model):
     )
 
     mode_selection_31 = fields.Selection(
-        string='Controller mode',
+        string='Relays mode',
         selection=[('0', 'Unknown'), ('1', '1 x 32 Relays'), ('2', '2 x 16 Relays'), ('3', '1 x 512 Relays')],
         readonly=False,
         required=True,
