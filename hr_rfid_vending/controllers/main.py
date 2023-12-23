@@ -20,11 +20,7 @@ class HrRfidVending(WebRfidController):
     @http.route(['/hr/rfid/event'], type='json', auth='none', methods=['POST'], cors='*', csrf=False,
                 save_session=False)
     def post_event(self, **post):
-        if not post:
-            # Controllers with no odoo functionality use the dd/mm/yyyy format
-            post_data = request.jsonrequest
-        else:
-            post_data = post
+        post_data = self._decode_post(post)
 
         cmd_env = request.env['hr.rfid.command'].sudo()
         ev_env = request.env['hr.rfid.vending.event'].sudo()

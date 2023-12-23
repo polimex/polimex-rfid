@@ -110,7 +110,8 @@
                                 <field name="hr_rfid_vending_recharge_balance" readonly="1"/>
                                 <field name="hr_rfid_vending_negative_balance"/>
                                 <field name="hr_rfid_vending_limit"
-                                       attrs="{'invisible':[('hr_rfid_vending_negative_balance','=',False)]}"/>
+
+                                       invisible="not hr_rfid_vending_negative_balance"/>
                             </group>
                             <group string="Balance Limits">
                                 <field name="hr_rfid_vending_daily_limit"/>
@@ -119,11 +120,11 @@
                             <group string="Balance Autorefill options">
                                 <field name="hr_rfid_vending_auto_refill"/>
                                 <field name="hr_rfid_vending_refill_amount"
-                                       attrs="{'invisible':[('hr_rfid_vending_auto_refill','=',False)]}"/>
+                                       invisible="not hr_rfid_vending_auto_refill"/>
                                 <field name="hr_rfid_vending_refill_type"
-                                       attrs="{'invisible':[('hr_rfid_vending_auto_refill','=',False)]}"/>
+                                       invisible="not hr_rfid_vending_auto_refill"/>
                                 <field name="hr_rfid_vending_refill_max"
-                                       attrs="{'invisible':['|',('hr_rfid_vending_auto_refill','=',False),('hr_rfid_vending_refill_type','=','fixed')]}"/>
+                                       invisible="not hr_rfid_vending_auto_refill or hr_rfid_vending_refill_type=='fixed'"/>
                             </group>
                             <group string="Current state">
                                 <field name="hr_rfid_vending_spent_today"/>

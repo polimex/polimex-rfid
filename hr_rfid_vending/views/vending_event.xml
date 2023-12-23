@@ -27,13 +27,13 @@
                                        help="Time Odoo received the event"/>
                             </group>
                             <group string="Who">
-                                <field name="employee_id" attrs="{'invisible':[('employee_id','=',False)]}"/>
-                                <field name="card_id" attrs="{'invisible':[('card_id','=',False)]}"/>
+                                <field name="employee_id" invisible="not employee_id"/>
+                                <field name="card_id" invisible="not card_id"/>
                             </group>
                             <group string="What">
-                                <field name="item_sold" attrs="{'invisible':[('item_sold_id','!=',False)]}"/>
-                                <field name="item_sold_id" attrs="{'invisible':[('item_sold_id','=',False)]}"/>
-                                <field name="transaction_price" attrs="{'invisible':[('transaction_price','&lt;',0)]}"/>
+                                <field name="item_sold" invisible="item_sold_id"/>
+                                <field name="item_sold_id" invisible="not item_sold_id"/>
+                                <field name="transaction_price" invisible="transaction_price &lt; 0"/>
                             </group>
                             <group string="Debug Information" colspan="4" groups="base.group_no_one">
                                 <field name="input_js"/>

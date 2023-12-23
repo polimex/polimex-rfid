@@ -509,6 +509,16 @@ class WebRfidController(http.Controller):
             "body": {"cmd": {"reader": 1, "type": 0}}
         }]
 
+    def _decode_post(self, post):
+        if not post:
+            # Controllers with no odoo functionality use the dd/mm/yyyy format
+            # Decode a to get a string
+            decoded_string = request.httprequest.data.decode('utf-8')
+            # Parse the string into a JSON object
+            return json.loads(decoded_string)
+        else:
+            return post
+
     @http.route(['/hr/rfid/event'], type='json', auth='none', methods=['POST'], cors='*', csrf=False,
                 save_session=False)
     def post_event(self, **post):
@@ -516,15 +526,7 @@ class WebRfidController(http.Controller):
         Process events from equipment
 
         """
-        t0 = time.time()
-        if not post:
-            # Controllers with no odoo functionality use the dd/mm/yyyy format
-            # Decode a to get a string
-            decoded_string = request.httprequest.data.decode('utf-8')
-            # Parse the string into a JSON object
-            post_data = json.loads(decoded_string)
-        else:
-            post_data = post
+        post_data = self._decode_post(post)
         _logger.info('Received=' + str(post_data))
 
         if 'convertor' not in post_data:
@@ -588,8 +590,6 @@ class WebRfidController(http.Controller):
             if not post and 'cmd' in result:
                 result = {'cmd': result['cmd']}
             webstack_id.write(self._ws_db_update_dict())
-            t1 = time.time()
-            _logger.debug('Took %2.03f time to form response=%s' % ((t1 - t0), str(result)))
             return result
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
                 exceptions.MissingError, exceptions.ValidationError,
