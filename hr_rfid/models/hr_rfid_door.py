@@ -103,13 +103,13 @@ class HrRfidDoor(models.Model):
         help='The unlock time in seconds.',
         compute='_compute_lock_time',
         inverse='_set_lock_time',
-        tracking = True
+        tracking=True
     )
     lock_state = fields.Boolean(
         help='If in the controller check box for read state is True, the status is present.',
         compute='_compute_lock_status',
         inverse='_set_lock_state',
-        tracking = True
+        tracking=True
     )
     lock_output = fields.Integer(
         help='The Lock Output on controller for this door',
@@ -563,18 +563,19 @@ class HrRfidDoor(models.Model):
     #         door.controller_id._add_remove_card_relay(card_number, 0, rmask)
 
     def change_apb_flag(self, card, can_exit=True):
+        card_door_rel_ids = self.env['hr.rfid.card.door.rel'].search([
+            ('card_id', '=', card.id),
+            ('door_id', 'in', self.ids),
+        ])
         for door in self:
             if door.number == 1:
                 rights = 0x40  # Bit 7
             else:
                 rights = 0x20  # Bit 6
-            card_door_rel_id = self.env['hr.rfid.card.door.rel'].search([
-                ('card_id', '=', card.id),
-                ('door_id', '=', door.id),
-            ])
+            card_door_rel_id = card_door_rel_ids.filtered(lambda d: d.door_id.id == door.id)
             # ignore doors without rights (optimisation)
-            if door.id not in card_door_rel_id.mapped('door_id').ids:
-                continue
+            # if door.id not in card_door_rel_id.mapped('door_id').ids:
+            #     continue
             self.env['hr.rfid.command'].add_remove_card(
                 card_number=card.internal_number,
                 ctrl_id=door.controller_id.id,
@@ -624,6 +625,7 @@ class HrRfidDoorOpenCloseWiz(models.TransientModel):
             message=_('Doors successfully closed')
         )
 
+
 class HrRfidCardDoorRel(models.Model):
     _name = 'hr.rfid.card.door.rel'
     _description = 'Card and door relation model'
@@ -665,6 +667,7 @@ class HrRfidCardDoorRel(models.Model):
 
     def _remove_cards(self, card_ids, door_ids):
         self.search([('card_id', 'in', card_ids.mapped('id')), ('door_id', 'in', door_ids.mapped('id'))]).unlink()
+
     @api.model
     def update_card_rels(self, card_id: HrRfidCard, access_group: models.Model = None):
         """

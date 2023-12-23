@@ -28,7 +28,6 @@ class RFIDTests(RFIDController, HttpCase):
         self._ev64(self.c_50)
         self._check_no_commands()
 
-
         _logger.info('Start tests for iCON110 ')
         self._add_iCon110()
         self._test_R1R2(self.c_110)
@@ -82,8 +81,8 @@ class RFIDTests(RFIDController, HttpCase):
         self._add_Vending()
         self._check_no_commands()
 
+        _logger.info('Start tests for Global Anti Pass Back')
         self._test_global_APB()
-
 
     def _test_add_remove_card_employee(self, ctrl):
         # fix ag validity
@@ -218,6 +217,7 @@ class RFIDTests(RFIDController, HttpCase):
         # call cron
 
         # check for new commands
+
     def _test_global_APB(self):
         self._change_mode(self.c_110, 1)  # Change mode to 1 door with two readers
         self.assertTrue(self.c_110.mode == 1)
@@ -226,8 +226,9 @@ class RFIDTests(RFIDController, HttpCase):
         self._change_mode(self.c_130, 2)  # Change mode to 2 door with two readers
         self.assertTrue(self.c_130.mode == 2)
 
-        add_door_to_ag1_wiz = self.env['hr.rfid.access.group.wizard'].with_context({'active_ids':[self.test_ag_partner_1.id]}).create([{
-            'door_ids':[
+        add_door_to_ag1_wiz = self.env['hr.rfid.access.group.wizard'].with_context(
+            {'active_ids': [self.test_ag_partner_1.id]}).create([{
+            'door_ids': [
                 (4, self.c_110.door_ids[0].id, 0),
                 (4, self.c_115.door_ids[0].id, 0),
                 (4, self.c_turnstile.door_ids[0].id, 0),
@@ -237,10 +238,10 @@ class RFIDTests(RFIDController, HttpCase):
         }])
         add_door_to_ag1_wiz.add_doors()
         add_door_to_ag1_wiz.unlink()
-        self._check_cmd_add_card_and_remove(self.c_110,1,3)
-        self._check_cmd_add_card_and_remove(self.c_115,1,3)
-        self._check_cmd_add_card_and_remove(self.c_130,1,15)
-        self._check_cmd_add_card_and_remove(self.c_turnstile,1,3)
+        self._check_cmd_add_card_and_remove(self.c_110, 1, 3)
+        self._check_cmd_add_card_and_remove(self.c_115, 1, 3)
+        self._check_cmd_add_card_and_remove(self.c_130, 1, 15)
+        self._check_cmd_add_card_and_remove(self.c_turnstile, 1, 3)
 
         # Make zone for Global APB
         test_apb_zone = self.env['hr.rfid.zone'].create({
@@ -270,18 +271,17 @@ class RFIDTests(RFIDController, HttpCase):
         # response = self._hearbeat(self.test_webstack_10_3_id)
         response = self._send_cmd_response(response)
 
-        self._check_cmd_add_card_and_remove(self.c_110,count=1,rights=0, mask=64)
-        self._check_cmd_add_card_and_remove(self.c_115,count=1,rights=0, mask=64)
-        self._check_cmd_add_card_and_remove(self.c_130,count=1,rights=0, mask=96)
-        self._check_cmd_add_card_and_remove(self.c_turnstile,count=1,rights=0, mask=64)
-
+        self._check_cmd_add_card_and_remove(self.c_110, count=1, rights=0, mask=64)
+        self._check_cmd_add_card_and_remove(self.c_115, count=1, rights=0, mask=64)
+        self._check_cmd_add_card_and_remove(self.c_130, count=1, rights=0, mask=96)
+        self._check_cmd_add_card_and_remove(self.c_turnstile, count=1, rights=0, mask=64)
 
         # Make event with card on entrance on first door
         response = self._make_event(self.c_turnstile, reader=1, event_code=3)
         # Check if new command generated for APB flag change and clear it
-        self._check_cmd_add_card_and_remove(self.c_110,count=1,rights=64, mask=64)
-        self._check_cmd_add_card_and_remove(self.c_115,count=1,rights=64, mask=64)
-        self._check_cmd_add_card_and_remove(self.c_130,count=1,rights=96, mask=96)
+        self._check_cmd_add_card_and_remove(self.c_110, count=1, rights=64, mask=64)
+        self._check_cmd_add_card_and_remove(self.c_115, count=1, rights=64, mask=64)
+        self._check_cmd_add_card_and_remove(self.c_130, count=1, rights=96, mask=96)
 
         self._check_no_cmd(self.c_110)
         self._check_no_cmd(self.c_115)
