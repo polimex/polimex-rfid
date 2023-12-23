@@ -20,7 +20,7 @@ class Digest(models.Model):
     kpi_hr_rfid_att_extra_value = fields.Integer(compute='_compute_kpi_hr_rfid_att_values')
 
     def _compute_kpi_hr_rfid_att_values(self):
-        if not self.env.user.has_group('hr_attendance.group_hr_attendance_user'):
+        if not self.env.user.has_group('hr_attendance.group_hr_attendance_officer'):
             raise AccessError(_("Do not have access, skip this data for user's digest email"))
         for record in self:
             start, end, company = record._get_kpi_compute_parameters()

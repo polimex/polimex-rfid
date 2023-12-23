@@ -49,7 +49,7 @@
                             <div class="text-center mt-5 pt-2">
                                 <h2 t-field="partner.name"/>
                                 <img alt="barcode"
-                                     t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('QR', card.barcode_number, 150, 150)"
+                                     t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('QR', card.barcode_number, 150, 150)"
                                      style="width:150px;height:150px"/>
                             </div>
                         </div>

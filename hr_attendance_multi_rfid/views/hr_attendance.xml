@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
         <record id="hr_attendance_calendar_view" model="ir.ui.view">
             <field name="name">hr.attendance.calendar</field>
             <field name="model">hr.attendance</field>
             <field name="arch" type="xml">
                 <calendar string="Attendance" date_start="check_in" date_stop="check_out"
-                          color="employee_id" mode="month" quick_add="0">
+                          color="employee_id" mode="month" quick_create="0" event_open_popup="1">
                     <field name="employee_id"/>
                     <field name="check_in" readonly="1"/>
                     <field name="check_out" readonly="1"/>
@@ -51,15 +50,15 @@
             </field>
         </record>
 
-<!--        # Commands-->
-<!--        <record id="action_recalc_attendance" model="ir.actions.server">-->
-<!--            <field name="name">Re-calc attendance</field>-->
-<!--            <field name="model_id" ref="model_hr_employee"/>-->
-<!--            <field name="type">ir.actions.server</field>-->
-<!--            <field name="state">code</field>-->
-<!--            <field name="code">records.recalc_attendance()</field>-->
-<!--            <field name="binding_model_id" ref="hr.model_hr_employee"/>-->
-<!--            <field name="binding_view_types">form,list</field>-->
-<!--        </record>-->
+        <!--        # Commands-->
+        <!--        <record id="action_recalc_attendance" model="ir.actions.server">-->
+        <!--            <field name="name">Re-calc attendance</field>-->
+        <!--            <field name="model_id" ref="model_hr_employee"/>-->
+        <!--            <field name="type">ir.actions.server</field>-->
+        <!--            <field name="state">code</field>-->
+        <!--            <field name="code">records.recalc_attendance()</field>-->
+        <!--            <field name="binding_model_id" ref="hr.model_hr_employee"/>-->
+        <!--            <field name="binding_view_types">form,list</field>-->
+        <!--        </record>-->
     </data>
 </odoo>

@@ -1,34 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <template id="portal_layout" name="Portal layout: RFID Information menu entry"
+                  inherit_id="portal.portal_breadcrumbs"
+                  priority="35">
+            <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+                <li t-if="page_name == 'webcards' or webcards"
+                    t-attf-class="breadcrumb-item #{'active' if not webcards else ''}">
+                    <t>Web Cards</t>
+                </li>
+                <li t-if="page_name == 'events' or events"
+                    t-attf-class="breadcrumb-item #{'active' if not events else ''}">
+                    <t>User Events</t>
+                </li>
+            </xpath>
+        </template>
 
-        <template id="portal_my_home" name="Show RFID Information" customize_show="True"
-                  inherit_id="portal.portal_my_home" priority="60">
-            <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+        <template id="portal_my_home_hr_rfid" name="RFID Information" customize_show="True"
+                  inherit_id="portal.portal_my_home" priority="47">
+            <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+                <t t-set="portal_service_category_enable" t-value="True"/>
+            </xpath>
+            <div id="portal_service_category" position="inside">
                 <t t-call="portal.portal_docs_entry">
-                    <t t-set="title">Barcodes</t>
-                    <t t-set="url" t-value="'/my/webcard'"/>
-                    <t t-set="placeholder_count" t-value="'project_count'"/>
+                    <t t-set="icon" t-value="'/hr_rfid_portal/static/img/barcode.svg'"/>
+                    <t t-set="title">WebCards</t>
+                    <t t-set="url" t-value="'/my/webcards'"/>
+                    <t t-set="text">Review all WebCards related to you</t>
+                    <t t-set="placeholder_count" t-value="'barcode_count'"/>
                 </t>
+                <!--                <t t-call="portal.portal_docs_entry">-->
+                <!--                    <t t-set="icon" t-value="'/hr_rfid_portal/static/img/rfid.svg'"/>-->
+                <!--                    <t t-set="title">Cards</t>-->
+                <!--                    <t t-set="url" t-value="'/my/cards'"/>-->
+                <!--                    <t t-set="text">Review all Cards related to you</t>-->
+                <!--                    <t t-set="placeholder_count" t-value="'card_count'"/>-->
+                <!--                </t>-->
                 <t t-call="portal.portal_docs_entry">
-                    <t t-set="title">Cards</t>
-                    <t t-set="url" t-value="'/my/cards'"/>
-                    <t t-set="placeholder_count" t-value="'project_count'"/>
-                </t>
-                <t t-call="portal.portal_docs_entry">
+                    <t t-set="icon" t-value="'/hr_rfid_portal/static/img/events.svg'"/>
                     <t t-set="title">Events</t>
                     <t t-set="url" t-value="'/my/events'"/>
-                    <t t-set="placeholder_count" t-value="'task_count'"/>
+                    <t t-set="text">Review all Events generated from you</t>
+                    <t t-set="placeholder_count" t-value="'event_count'"/>
                 </t>
-            </xpath>
+            </div>
+        </template>
+
+        <template id="portal_barcode_table" name="Portal Barcode Table">
+            <t t-call="portal.portal_layout">
+                <t t-if="not cards">
+                    <div class="alert alert-warning" role="alert">
+                        There haven't Web Cards in your account.
+                    </div>
+                </t>
+                <t t-if="cards" t-call="portal.portal_table">
+                    <thead>
+                        <tr>
+                            <th>Reference</th>
+                            <th>Valid From</th>
+                            <th>Valid To</th>
+                            <th>Web Card</th>
+                            <th>Paper Card</th>
+                        </tr>
+                    </thead>
+                    <tr t-foreach="cards" t-as="card">
+                        <td>
+                            <t t-esc="card.name"/>
+                        </td>
+                        <td>
+                            <t t-esc="card.activate_on"/>
+                        </td>
+                        <td>
+                            <t t-esc="card.deactivate_on"/>
+                        </td>
+                        <td>
+                            <a target="_blank" t-attf-href="{{ card.get_portal_url() }}">Link</a>
+                        </td>
+                        <td>
+                            <a class="btn btn-secondary d-block o_download_btn" t-att-href="card.get_portal_url(report_type='pdf')" title="Download"><i class="fa fa-download"/> Download</a>
+                        </td>
+                    </tr>
+                </t>
+            </t>
         </template>
 
         <template id="portal_my_barcode" name="My Barcode">
             <t t-call="web.basic_layout">
-                <t t-set="head">
-                    <t t-call-assets="web.assets_common" t-js="false"/>
-                    <t t-call-assets="web.assets_frontend" t-js="false"/>
-                </t>
                 <t t-set="title" t-value="owner.name or 'Access QR Code by Polimex'"/>
                 <div class="container">
                     <div class="o_logo text-center">
@@ -57,13 +114,15 @@
                                 <span t-if="card.deactivate_on"
                                       itemprop="endDate" t-esc="card.deactivate_on.date()"
                                       class="font-weight-bold"/>
+                                <span t-else="" class="font-weight-bold">Not defined</span>
                                 <span itemprop="endDateTime" t-esc="card.deactivate_on"
                                       class="font-weight-bold"
                                       t-options='{"widget": "datetime", "time_only": True, "hide_seconds": True}'/>
                             </div>
                             <hr/>
                             <img alt="barcode"
-                                 t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('QR', card.barcode_number, 200, 200)"
+                                 t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('QR', card.barcode_number, 200, 200)"
+
                                  style="width:200px;height:200px"/>
                             <hr/>
                             <div class="d-flex justify-content-between">
@@ -101,6 +160,41 @@
                 </div>
             </t>
         </template>
+
+        <template id="portal_user_event_table" name="Portal User Events Table">
+            <t t-call="portal.portal_layout">
+                <t t-if="not events">
+                    <div class="alert alert-warning" role="alert">
+                        There haven't events generated from you.
+                    </div>
+                </t>
+                <t t-if="events" t-call="portal.portal_table">
+                    <thead>
+                        <tr>
+                            <th>When</th>
+                            <th>What</th>
+                            <th>Door</th>
+                            <th>Reader</th>
+                        </tr>
+                    </thead>
+                    <tr t-foreach="events" t-as="event">
+                        <td>
+                            <t t-esc="event.event_time" t-options='{"widget": "datetime", "hide_seconds": True}'/>
+                        </td>
+                        <td>
+                            <span t-field="event.event_action"/>
+                        </td>
+                        <td>
+                            <t t-esc="event.door_id.name"/>
+                        </td>
+                        <td>
+                            <t t-esc="event.reader_id.name"/>
+                        </td>
+                    </tr>
+                </t>
+            </t>
+        </template>
+
 
     </data>
 </odoo>

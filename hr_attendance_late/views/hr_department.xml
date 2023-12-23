@@ -8,7 +8,7 @@
             <field name="inherit_id" ref="hr.view_department_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//group" position="after">
-                    <group col="4" string="Per Day" groups='hr_attendance.group_hr_attendance_user'>
+                    <group col="4" string="Per Day" groups='hr_attendance.group_hr_attendance_officer'>
                         <field name="ignore_early_come_time" widget="float_time"/>
                         <field name="ignore_late_time" widget="float_time"/>
                         <field name="ignore_early_leave_time" widget="float_time"/>

@@ -6,24 +6,16 @@
             <field name="model">hr.rfid.old.cloud.welcome.wiz</field>
             <field name="arch" type="xml">
                 <form string="Welcome to Old Cloud Import">
-                    <header>
-                        <h1>
-                            <p>Welcome to Old Cloud Import Wizard</p>
-                        </h1>
-                    </header>
                     <sheet>
+                        <div class="alert alert-info text-center" role="status">
+From here you can import all important data from existing Old Cloud Access control
+                                    system.
+                                    To do it you have to provide your access token to system. More information
+                                    <a target="_blank" href="https://my.polimex.online/api/#token">Here</a>                        </div>
                         <group>
                             <group>
                                 <field name="url_domain" />
                                 <field name="url_token"/>
-                            </group>
-                            <group>
-                                <p>
-                                    From here you can import all important data from existing Old Cloud Access control
-                                    system.
-                                    To do it you have to provide your access token to system. More information
-                                    <a target="_blank" href="https://my.polimex.online/api/#token">Here</a>
-                                </p>
                             </group>
                             <group>
 <!--                                <field name="import_hardware"/>-->

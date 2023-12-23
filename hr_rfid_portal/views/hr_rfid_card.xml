@@ -11,24 +11,16 @@
             <field name="binding_view_types">form</field>
         </record>
 
-        <!-- Inherit Form View to Modify it -->
         <record id="hr_rfid_card_form_inherit" model="ir.ui.view">
             <field name="name">hr.rfid.card.form.inherit</field>
             <field name="model">hr.rfid.card</field>
             <field name="inherit_id" ref="hr_rfid.hr_rfid_card_view_form"/>
             <field name="arch" type="xml">
-
                 <xpath expr="//div[@name='button_box']" position="inside">
                     <button name="preview_card" string="Portal preview" type="object"
                             class="oe_stat_button" icon="fa-globe"/>
 
                 </xpath>
-<!--                <xpath expr="//button[@name='generate_random_barcode_number']" position="after">-->
-<!--                    <button name="%(portal_share_action)d" string="Share" class="btn btn-link" type="action"-->
-<!--                            attrs="{'invisible': [('number', '=', False)]}"/>-->
-
-<!--                </xpath>-->
-
             </field>
         </record>
 
