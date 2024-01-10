@@ -63,21 +63,21 @@
                                 name="extend_service"
                                 type="object"
                                 class="btn-primary"
-                                groups="hr.group_hr_manager"/>
+                                groups="rfid_service_base.group_card_user"/>
                         <button string="E-mail"
                                 name="email_card"
                                 type="object"
-                                groups="hr.group_hr_manager"/>
+                                groups="rfid_service_base.group_card_user"/>
                         <button string="Print"
                                 name="print_card"
                                 type="object"
-                                groups="hr.group_hr_manager"/>
+                                groups="rfid_service_base.group_card_user"/>
                         <button string="Cancel Service"
                                 name="cancel_sale"
                                 states="registered,progress"
                                 type="object"
                                 confirm="Are you sure? This will stop the execution of the current service."
-                                groups="hr.group_hr_manager"/>
+                                groups="rfid_service_base.group_card_user"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
