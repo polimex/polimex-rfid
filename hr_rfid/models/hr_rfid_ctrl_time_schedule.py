@@ -157,18 +157,19 @@ class HrRfidTimeScheduleWizDayLine(models.TransientModel):
             line.display_name = f"{line.day}-{line.number}"
 
     @api.model
-    def _get_float_to_str(self, f:float):
+    def _get_float_to_str(self, f: float):
         import math
         frac, whole = math.modf(f)
-        return '%02d%02d' % (int(whole), int(frac*60))
+        return '%02d%02d' % (int(whole), int(frac * 60))
 
     def get_interval_str(self):
         self.ensure_one()
-        return self._get_float_to_str(self.begin)+self._get_float_to_str(self.end)
+        return self._get_float_to_str(self.begin) + self._get_float_to_str(self.end)
 
     def get_set_str(self):
-        ordered_self = self.sorted(key=lambda i: i.day+str(i.number))
+        ordered_self = self.sorted(key=lambda i: i.day + str(i.number))
         return ''.join([i.get_interval_str() for i in ordered_self])
+
 
 class HrRfidTimeScheduleWizWeek(models.TransientModel):
     _name = 'hr.rfid.ctrl.ts.week.wiz'
@@ -210,5 +211,5 @@ class HrRfidTimeScheduleWizWeek(models.TransientModel):
         self.sudo().ts_id.ts_data = new_ts_data
         if not self.ts_id.is_empty:
             self.ts_id.controller_ids.write_ts(new_ts_data)
-        return self.env.ref('hr_rfid.hr_rfid_time_schedule_action').read()[0]
-
+        act_id = self.env.ref('hr_rfid.hr_rfid_time_schedule_action').sudo().read()[0]
+        return act_id
