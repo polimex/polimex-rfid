@@ -1,5 +1,17 @@
 from odoo import fields, models, api, _, exceptions
 from odoo.exceptions import ValidationError
+import math
+
+DEFAULT_TS_LINE = '''01
+                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00
+                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00 
+                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00
+                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00
+                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00
+                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00
+                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00
+                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00 00
+                '''.replace(' ', '').replace('\n', '')
 
 
 class HrRfidTimeSchedule(models.Model):
@@ -29,16 +41,7 @@ class HrRfidTimeSchedule(models.Model):
     )
 
     ts_data = fields.Char(
-        default=lambda self: '''01
-                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00
-                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00 
-                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00
-                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00
-                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00
-                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00
-                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00
-                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00 00
-                '''.replace(' ', '').replace('\n', '')
+        default=DEFAULT_TS_LINE
     )
 
     access_group_door_ids = fields.One2many(
@@ -81,6 +84,11 @@ class HrRfidTimeSchedule(models.Model):
         self.ensure_one()
         interval = self._get_interval_from_day_str(day, number)
         return (int(interval[:2]) + int(interval[2:4]) / 60, int(interval[4:6]) + int(interval[6:8]) / 60)
+
+    def reset_ts_data(self):
+        for ts in self:
+            ts.ts_data = '%02X' % ts.number + DEFAULT_TS_LINE[2:]
+            ts.controller_ids.write_ts(ts.ts_data)
 
     # ORM
     def unlink(self):
@@ -142,14 +150,14 @@ class HrRfidTimeScheduleWizDayLine(models.TransientModel):
     @api.constrains('begin', 'end', 'number')
     def _check_description(self):
         for record in self:
-            if record.begin < 0 and record.begin > 24:
-                raise ValidationError("Begin is not in range")
-            if record.end < 0 and record.end > 24:
-                raise ValidationError("End is not in range")
-            if record.number < 0 and record.end > 3:
-                raise ValidationError("End is not in range")
-            if record.begin > record.end:
-                raise ValidationError("The begin time have to be before end time")
+            if 0 > record.begin > 24:
+                raise ValidationError(_("Begin is not in range"))
+            if 0 > record.end > 24:
+                raise ValidationError(_("End is not in range"))
+            if 0 > record.number > 3:
+                raise ValidationError(_("The number is not in range"))
+            if record.begin >= record.end != 0:
+                raise ValidationError(_("The begin time have to be before end time"))
 
     @api.depends('day', 'number', )
     def _compute_display_name(self):
@@ -158,7 +166,6 @@ class HrRfidTimeScheduleWizDayLine(models.TransientModel):
 
     @api.model
     def _get_float_to_str(self, f: float):
-        import math
         frac, whole = math.modf(f)
         return '%02d%02d' % (int(whole), int(frac * 60))
 
@@ -205,6 +212,20 @@ class HrRfidTimeScheduleWizWeek(models.TransientModel):
         inverse_name='week_id',
         default=_default_interval_ids,
     )
+
+    @api.constrains('interval_ids')
+    def _check_interval_ids(self):
+        for day in range(8):
+            record = self.interval_ids.filtered(lambda i: i.day_number == day)
+            ranges = [[i.begin, i.end] for i in record]
+            # Sort intervals based on start time
+            ranges.sort(key=lambda x: x[0])
+
+            # Check for overlap
+            for i in range(1, len(ranges)):
+                # If the start of the current interval is less than the end of the previous, there's an overlap
+                if ranges[i][0] < ranges[i - 1][1]:
+                    raise ValidationError(_("The intervals for day %d are overlapping" % day))
 
     def save_ts(self):
         new_ts_data = '%02X' % self.ts_id.number + self.interval_ids.get_set_str()
