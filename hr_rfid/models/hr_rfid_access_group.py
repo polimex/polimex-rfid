@@ -134,8 +134,9 @@ class HrRfidAccessGroup(models.Model):
                 if len(doors) != len(set(doors)):
                     counter = Counter(doors)
                     duplicates = [item for item, count in counter.items() if count > 1]
-                    raise exceptions.ValidationError(
-                        _('Partner %s have the %s door twice via different access groups. This is not allowed.') % (p.name, ','.join([d.name for d in duplicates])))
+                    _logger.error('Partner %s have the %s door twice via different access groups. This is not allowed.',(p.name, ','.join([d.name for d in duplicates])))
+                    # raise exceptions.ValidationError(
+                    #     _('Partner %s have the %s door twice via different access groups. This is not allowed.') % (p.name, ','.join([d.name for d in duplicates])))
             for p in g.all_employee_ids.mapped('employee_id'):
                 doors = []
                 for ag in p.hr_rfid_access_group_ids.mapped('access_group_id'):
@@ -143,8 +144,9 @@ class HrRfidAccessGroup(models.Model):
                 if len(doors) != len(set(doors)):
                     counter = Counter(doors)
                     duplicates = [item for item, count in counter.items() if count > 1]
-                    raise exceptions.ValidationError(
-                        _('Employee %s have the %s door twice via different access groups. This is not allowed.') % (p.name, ','.join([d.name for d in duplicates])))
+                    _logger.error('Employee %s have the %s door twice via different access groups. This is not allowed.',(p.name, ','.join([d.name for d in duplicates])))
+                    # raise exceptions.ValidationError(
+                    #     _('Employee %s have the %s door twice via different access groups. This is not allowed.') % (p.name, ','.join([d.name for d in duplicates])))
         return {
             "type": "ir.actions.client",
             "tag": "display_notification",
