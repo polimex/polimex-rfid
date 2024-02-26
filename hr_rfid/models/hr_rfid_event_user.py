@@ -135,8 +135,8 @@ class HrRfidUserEvent(models.Model):
             today = fields.Date.today()
             res = self.with_company(c).search([
                 ('event_time', '<', today - lifetime)
-            ])
-            res[-200:].unlink()
+            ], limit=1000)
+            res.unlink()
             # self._cr.execute("""
             #             DELETE FROM hr_rfid_event_user
             #             WHERE event_time < NOW() - INTERVAL '%s days'
