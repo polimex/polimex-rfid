@@ -126,6 +126,7 @@ class HrRfidAccessGroup(models.Model):
         return last_event
 
     def check_doors(self):
+        errors = ''
         for g in self:
             for p in g.all_contact_ids.mapped('contact_id'):
                 doors = []
@@ -134,9 +135,13 @@ class HrRfidAccessGroup(models.Model):
                 if len(doors) != len(set(doors)):
                     counter = Counter(doors)
                     duplicates = [item for item, count in counter.items() if count > 1]
-                    _logger.error('Partner %s have the %s door twice via different access groups. This is not allowed.',p.name, ','.join([d.name for d in duplicates]))
+                    _logger.error('Partner %s have the %s door twice via different access groups. This is not allowed.',
+                                  p.name, ','.join([d.name for d in duplicates]))
+                    errors += _('Partner %s have the %s door twice via different access groups. This is not allowed.') % (
+                        p.name, ','.join([d.name for d in duplicates]))+'\n'
                     # raise exceptions.ValidationError(
-                    #     _('Partner %s have the %s door twice via different access groups. This is not allowed.') % (p.name, ','.join([d.name for d in duplicates])))
+                    #     _('Partner %s have the %s door twice via different access groups. This is not allowed.') %
+                    #     (p.name, ','.join([d.name for d in duplicates])))
             for p in g.all_employee_ids.mapped('employee_id'):
                 doors = []
                 for ag in p.hr_rfid_access_group_ids.mapped('access_group_id'):
@@ -144,20 +149,26 @@ class HrRfidAccessGroup(models.Model):
                 if len(doors) != len(set(doors)):
                     counter = Counter(doors)
                     duplicates = [item for item, count in counter.items() if count > 1]
-                    _logger.error('Employee %s have the %s door twice via different access groups. This is not allowed.',p.name, ','.join([d.name for d in duplicates]))
+                    _logger.error(
+                        'Employee %s have the %s door twice via different access groups. This is not allowed.', p.name,
+                        ','.join([d.name for d in duplicates]))
+                    errors += _('Employee %s have the %s door twice via different access groups. This is not allowed.') % (
+                        p.name, ','.join([d.name for d in duplicates]))+'\n'
                     # raise exceptions.ValidationError(
-                    #     _('Employee %s have the %s door twice via different access groups. This is not allowed.') % (p.name, ','.join([d.name for d in duplicates])))
+                    #     _('Employee %s have the %s door twice via different access groups. This is not allowed.') %
+                    #     (p.name, ','.join([d.name for d in duplicates])))
         return {
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
                 "message": _(
-                    "No found any door duplicates in the access groups."
+                    errors or "No found any door duplicates in the access groups."
                 ),
-                "type": "success",
-                "sticky": False,
+                "type": "warning" if errors else "success",
+                "sticky": False if errors else True,
             },
         }
+
     def add_doors(self, door_ids, time_schedule=None, alarm_rights=False):
         self.ensure_one()
         if time_schedule is None:
@@ -631,8 +642,6 @@ class HrRfidAccessGroupRelations(models.AbstractModel):
         if set(vals.keys()).intersection(
                 set(['activate_on', 'expiration', 'visits_counting', 'permitted_visits', 'visits_counter'])):
             self.mapped('state')
-
-
 
 
 class HrRfidAccessGroupEmployeeRel(models.Model):
