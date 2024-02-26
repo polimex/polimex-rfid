@@ -709,18 +709,18 @@ class HrRfidCardDoorRel(models.Model):
         if not card_id.card_ready():
             return
 
-        potential_doors = card_id.get_potential_access_doors()
+        potential_doors = list(filter(lambda pd: pd[0] == door_id, card_id.get_potential_access_doors()))
         found_door = False
 
         for door, ts, alarm_right in potential_doors:
-            if door_id == door:
-                if ts_id != False and ts_id != ts:
-                    raise exceptions.ValidationError(
-                        'This should never happen. Please contact the developers. (%s != %s)' % (str(ts_id), str(ts))
-                    )
-                ts_id = ts
-                found_door = True
-                break
+            if ts_id != None and ts_id != ts:
+                raise exceptions.ValidationError(
+                    'This should never happen. Please contact the developers. (%s != %s)' % (str(ts_id), str(ts))
+                )
+            ts_id = ts
+            found_door = True
+            break
+
         if found_door and self._check_compat_n_rdy(card_id, door_id):
             self.create_rel(card_id, door_id, ts_id, alarm_right)
         else:
