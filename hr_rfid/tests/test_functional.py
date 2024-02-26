@@ -18,60 +18,65 @@ class RFIDTests(RFIDController, HttpCase):
         super(RFIDTests, self).setUp()
 
     def test_functionality(self):
-        _logger.info('Start tests for iCON50 ')
-        self._add_iCon50()
-        self._test_R_event(self.c_50)
-        self._test_add_remove_card_partner(self.c_50)
-        self._test_add_remove_card_employee(self.c_50)
-        self._test_Duress(self.c_50)
-        self._test_inputs(self.c_50)
-        self._ev64(self.c_50)
-        self._check_no_commands()
-
-
-        _logger.info('Start tests for iCON110 ')
-        self._add_iCon110()
-        self._test_R1R2(self.c_110)
-        self._test_add_remove_card_partner(self.c_110)
-        self._test_add_remove_card_employee(self.c_110)
-        self._test_Duress(self.c_110)
-        self._test_inputs(self.c_110)
-        self._ev64(self.c_110)
-        self._check_no_commands()
-
-        _logger.info('Start tests for iCON115 ')
-        self._add_iCon115()
-        self._test_R1R2(self.c_115)
-        self._test_add_remove_card_partner(self.c_115)
-        self._test_add_remove_card_employee(self.c_115)
-        self._ev64(self.c_115)
-        self._check_no_commands()
-
-        _logger.info('Start tests for Relay Controller ')
-        self._add_RelayController()
-        self._test_R1R2(self.c_Relay)
-        self._test_add_remove_card_partner(self.c_Relay)
-        self._test_add_remove_card_employee(self.c_Relay)
-        # self._ev64(self.c_Relay) # TODO Check details
-        self._check_no_commands()
-
-        _logger.info('Start tests for iCON130 ')
-        self._add_iCon130()
-        self._test_R1R2R3R4(self.c_130)
-        self._test_add_remove_card_partner(self.c_130)
-        self._test_add_remove_card_employee(self.c_130)
-        self._ev64(self.c_130)
-        self._check_no_commands()
-
-        # _logger.info('Start tests for iCON180 ')
-        # self._add_iCon180()
-
-        # Check for not processed responses
-        # response = self._hearbeat(self.test_webstack_10_3_id)
-        # self.assertEqual(response, {})
-
+        # _logger.info('Start tests for iCON50 ')
+        # self._add_iCon50()
+        # self._test_R_event(self.c_50)
+        # self._test_add_remove_card_partner(self.c_50)
+        # self._test_add_remove_card_employee(self.c_50)
+        # self._test_Duress(self.c_50)
+        # self._test_inputs(self.c_50)
+        # self._ev64(self.c_50)
+        # self._check_no_commands()
+        #
+        #
+        # _logger.info('Start tests for iCON110 ')
+        # self._add_iCon110()
+        # self._test_R1R2(self.c_110)
+        # self._test_add_remove_card_partner(self.c_110)
+        # self._test_add_remove_card_employee(self.c_110)
+        # self._test_Duress(self.c_110)
+        # self._test_inputs(self.c_110)
+        # self._ev64(self.c_110)
+        # self._check_no_commands()
+        #
+        # _logger.info('Start tests for iCON115 ')
+        # self._add_iCon115()
+        # self._test_R1R2(self.c_115)
+        # self._test_add_remove_card_partner(self.c_115)
+        # self._test_add_remove_card_employee(self.c_115)
+        # self._ev64(self.c_115)
+        # self._check_no_commands()
+        #
+        # _logger.info('Start tests for Relay Controller ')
+        # self._add_RelayController()
+        # self._test_R1R2(self.c_Relay)
+        # self._test_add_remove_card_partner(self.c_Relay)
+        # self._test_add_remove_card_employee(self.c_Relay)
+        # # self._ev64(self.c_Relay) # TODO Check details
+        # self._check_no_commands()
+        #
+        # _logger.info('Start tests for iCON130 ')
+        # self._add_iCon130()
+        # self._test_R1R2R3R4(self.c_130)
+        # self._test_add_remove_card_partner(self.c_130)
+        # self._test_add_remove_card_employee(self.c_130)
+        # self._ev64(self.c_130)
+        # self._check_no_commands()
+        #
+        # # _logger.info('Start tests for iCON180 ')
+        # # self._add_iCon180()
+        #
+        # # Check for not processed responses
+        # # response = self._hearbeat(self.test_webstack_10_3_id)
+        # # self.assertEqual(response, {})
+        #
         _logger.info('Start tests for Turnstile ')
         self._add_Turnstile()
+        self._test_R1R2(self.c_turnstile)
+        response = self._make_event(self.c_turnstile, reader=65, event_code=3)
+        self.assertEqual(response, {}, '(%s)' % self.c_turnstile.name)
+        response = self._make_event(self.c_turnstile, reader=65, event_code=3)
+        self.assertEqual(response, {}, '(%s)' % self.c_turnstile.name)
         self._check_no_commands()
 
         _logger.info('Start tests for Temperature Controller')

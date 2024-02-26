@@ -133,8 +133,7 @@ class WebRfidController(http.Controller):
         elif event_action in range(3, 19):
             ue_event_action = ((event_action - 3) % 4) + 1
             # Turnstile controller. If the 7th bit is not up, then there was no actual entry
-            if controller_id.is_turnstile_ctrl() and (
-                    post_data['event']['reader'] & 64) == 0 and ue_event_action == '1':
+            if controller_id.is_turnstile_ctrl() and not reader_b6 and ue_event_action == 1:
                 ue_event_action = '6'
             if is_card_event and card_id:  # Card event with valid card
                 event_dict = {
