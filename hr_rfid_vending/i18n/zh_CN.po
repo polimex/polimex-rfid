@@ -1,0 +1,1094 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* hr_rfid_vending
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-11-24 13:28+0000\n"
+"PO-Revision-Date: 2022-11-30 05:19+0800\n"
+"Last-Translator: 老天 <liangjia@qq.com>\n"
+"Language-Team: odoo123.com\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"X-Generator: Poedit 3.2\n"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__event_action
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Action"
+msgstr "操作"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__action_string
+msgid "Action String"
+msgstr "操作字符串"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_change_form
+msgid "Add"
+msgstr "添加"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
+msgid "Add or remove balance to person's account"
+msgstr "增加或删除个人账户的余额"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
+msgid "Add/Subtract from balance"
+msgstr "增加或删除余额"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl__show_price_timeout
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__show_price_timeout
+msgid ""
+"After how long the vending machine will stop showing the product price on "
+"the screen"
+msgstr "多长时间后，自动售货机将停止在屏幕上显示产品价格"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__alarm_line_id
+msgid "Alarm line"
+msgstr "警戒线"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__alarm_line_id
+msgid "Alarm line affected by this event"
+msgstr "受此事件影响的警戒线"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_balance
+msgid "Amount of money an employee can spend on the vending machine"
+msgstr "员工可以在自动售货机上消费的金额"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_recharge_balance
+msgid ""
+"Amount of self charged money the employee can spend on the vending machine"
+msgstr "员工可以在自动售货机上消费的自费金额"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_auto_refill
+msgid "Auto Refill"
+msgstr "自动重新充满"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__auto_refill_id
+msgid "Auto Refill Event"
+msgstr "自动重新充满事件"
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_rfid_vending_auto_refill
+msgid "Auto Refill Events"
+msgstr "自动重新充满事件"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__create_date
+msgid "Auto Refill Time"
+msgstr "自动重新充满时间"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+msgid "Auto Refills"
+msgstr "自动重新充满"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_refill
+msgid "Auto refill amount"
+msgstr "自动重新充满金额"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_auto_refill
+msgid "Automatically refill balance monthly"
+msgstr "每月自动补足余额"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_rfid_vending_event__event_action__-1
+msgid "Bad Data Error"
+msgstr "数据损坏错误"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
+msgid "Balance"
+msgstr "余额"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
+msgid "Balance Autorefill options"
+msgstr "余额自动重新充满选项"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_graph
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_pivot
+msgid "Balance Changes Per Employee"
+msgstr "每位员工的余额变化"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+msgid "Balance Decrease"
+msgstr "余额减少"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_balance_history
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
+msgid "Balance History"
+msgstr "余额历史记录"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__balance_history_ids
+msgid "Balance History Changes"
+msgstr "余额历史变化"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+msgid "Balance Increases"
+msgstr "余额增加"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
+msgid "Balance Limits"
+msgstr "余额限额"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_change
+msgid "Balance change"
+msgstr "余额变化"
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_rfid_vending_balance_history
+msgid "Balance history for employees"
+msgstr "员工的余额历史记录"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_result
+msgid "Balance result"
+msgstr "余额结果"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_change_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_set_form
+msgid "Cancel"
+msgstr "取消"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__card_id
+msgid "Card"
+msgstr "卡"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__card_id
+msgid "Card affected by this event"
+msgstr "受此事件影响的卡"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__cash_contained
+msgid "Cash Contained"
+msgstr "所含现金"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_change_form
+msgid "Change Vending Balance"
+msgstr "更改自动售货机余额"
+
+#. module: hr_rfid_vending
+#: model:ir.actions.act_window,name:hr_rfid_vending.hr_rfid_ctrl_vending_prices_wiz_action
+msgid "Change Vending Settings"
+msgstr "更改自动售货机设置"
+
+#. module: hr_rfid_vending
+#: model:ir.actions.act_window,name:hr_rfid_vending.hr_employee_vending_balance_change_action
+msgid "Change vending balance"
+msgstr "更改自动售货机余额"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_vending_prices_wiz
+msgid "Close"
+msgstr "关闭"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_rfid_vending_event__event_action__50
+msgid "Collect cash"
+msgstr "收取现金"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_auto_refill_search
+msgid "Command time"
+msgstr "命令时间"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_auto_refill_search
+msgid "Commands from last week"
+msgstr "上周命令"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_auto_refill_search
+msgid "Commands from this week"
+msgstr "本周命令"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_auto_refill_search
+msgid "Commands from today"
+msgstr "当日命令"
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_res_company
+msgid "Companies"
+msgstr "公司"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__company_id
+msgid "Company"
+msgstr "公司"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__contact_id
+msgid "Contact"
+msgstr "联系人"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__contact_id
+msgid "Contact affected by this event"
+msgstr "受此事件影响的联系人"
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_rfid_ctrl
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__controller_id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__controller_id
+msgid "Controller"
+msgstr "控制器"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__ctrl_addr
+msgid "Controller ID"
+msgstr "控制器 ID"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__create_uid
+msgid "Created by"
+msgstr "创建人"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__create_date
+msgid "Created on"
+msgstr "创建于"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_daily_limit
+msgid "Daily Limit"
+msgstr "每日限额"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_auto_refill_search
+msgid "Date"
+msgstr "日期"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields.selection,name:hr_rfid_vending.selection__res_company__refill_interval_type__days
+msgid "Days"
+msgstr "天"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
+msgid "Debug Information"
+msgstr "调试信息"
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_digest_digest
+msgid "Digest"
+msgstr "摘要"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_product_template__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_res_company__display_name
+msgid "Display Name"
+msgstr "显示名称"
+
+#. module: hr_rfid_vending
+#: code:addons/hr_rfid_vending/models/digest.py:0
+#, python-format
+msgid "Do not have access, skip this data for user's digest email"
+msgstr "没有访问权限，请跳过此数据以获取用户的摘要电子邮件"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__door_id
+msgid "Door"
+msgstr "门"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__door_id
+msgid "Door affected by this event"
+msgstr "受此事件影响的门"
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_employee
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__employee_ids
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__employee_id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__employee_id
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Employee"
+msgstr "员工"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Employee Transaction Events"
+msgstr "员工事务处理事件"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__employee_id
+msgid "Employee affected by this event"
+msgstr "受此事件影响的员工"
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_employee_vending_balance_wiz
+msgid "Employee balance setter"
+msgstr "员工余额设置器"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_rfid_vending_event__event_action__48
+#: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_rfid_vending_event__event_action__49
+msgid "Error"
+msgstr "错误"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__vending_event_id
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_pivot
+msgid "Event"
+msgstr "事件"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Event Type"
+msgstr "事件类型"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Event time"
+msgstr "按事件时间"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Events from last week"
+msgstr "本周事件"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Events from this week"
+msgstr "本周事件"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Events from today"
+msgstr "当日事件"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.view_company_form_inherit_vending
+msgid "Execute Every"
+msgstr "每天执行"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_employee__hr_rfid_vending_refill_type__fixed
+msgid "Fixed"
+msgstr "固定"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_type
+msgid ""
+"Fixed type just adds the refill amount to the user's balance every month. "
+"Up To type adds to the user's balance every month with a maximum the auto "
+"refill will never go over."
+msgstr ""
+"固定类型只是将每月的充值金额添加到用户的余额中。上限类型每月会增加用户的余"
+"额，其自动充值永远不会超过最大值。"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_auto_refill_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Group By"
+msgstr "分组"
+
+#. module: hr_rfid_vending
+#: model:ir.actions.server,name:hr_rfid_vending.hr_rfid_vending_employees_auto_refill_ir_actions_server
+#: model:ir.cron,cron_name:hr_rfid_vending.hr_rfid_vending_employees_auto_refill
+#: model:ir.cron,name:hr_rfid_vending.hr_rfid_vending_employees_auto_refill
+msgid "HR RFID Vending: Employees Auto Refill"
+msgstr "人力资源RFID自动售货机：员工自动补货"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields.selection,name:hr_rfid_vending.selection__res_company__refill_interval_type__hours
+msgid "Hours"
+msgstr "小时"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_amount
+msgid "How much money to be added to the person's balance"
+msgstr "要向此人的余额中添加多少钱"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_result
+msgid "How much the balance was after the change"
+msgstr "更改后的余额是多少"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_change
+msgid "How much was deposited/withdrawn from the employee's balance"
+msgstr "从员工的余额中存入/取出了多少"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_product_template__id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_res_company__id
+msgid "ID"
+msgstr "ID"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__ctrl_addr
+msgid ""
+"ID the controller differentiates itself from the others with on the same "
+"webstack"
+msgstr "控制器在同一webstack上与其他控制器区分开来的ID"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__input_js
+msgid "Input JSON"
+msgstr "输入JSON"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_res_company__refill_interval_type
+msgid "Interval Unit"
+msgstr "间隔时间单位"
+
+#. module: hr_rfid_vending
+#: code:addons/hr_rfid_vending/controllers/main.py:0
+#, python-format
+msgid "Item %s has the cost of %f but vending reported it costs %f!"
+msgstr "物品 %s 成本为 %f 但自动售货机报告它的成本为 %f!"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__item_id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__item_sold_id
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Item Sold"
+msgstr "售出的物品"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__item_sold
+msgid "Item Sold Number"
+msgstr "物品售出编号"
+
+#. module: hr_rfid_vending
+#: code:addons/hr_rfid_vending/controllers/main.py:0
+#, python-format
+msgid "Item number %d missing from vending machine configuration"
+msgstr "自动售货机配置中缺少物品编号 %d "
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item1
+msgid "Item#1"
+msgstr "物品#1"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item2
+msgid "Item#2"
+msgstr "物品#2"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item3
+msgid "Item#3"
+msgstr "物品#3"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item4
+msgid "Item#4"
+msgstr "物品#4"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__vending_row_ids
+msgid "Item/Price"
+msgstr "物品/价格"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_refill_value
+msgid "Kpi Hr Rfid Vending Refill Value"
+msgstr "Kpi Hr Rfid 自动售货机重新充满参数值"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_sale_count_value
+msgid "Kpi Hr Rfid Vending Sale Count Value"
+msgstr "Kpi Hr Rfid 自动售货机销售额参数值"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_sale_value
+msgid "Kpi Hr Rfid Vending Sale Value"
+msgstr "Kpi Hr Rfid 自动售货机销售参数值"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest____last_update
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee____last_update
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz____last_update
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl____last_update
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row____last_update
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings____last_update
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill____last_update
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history____last_update
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event____last_update
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_product_template____last_update
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_res_company____last_update
+msgid "Last Modified on"
+msgstr "最后修改时间"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__write_uid
+msgid "Last Updated by"
+msgstr "最后更新时间"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__write_date
+msgid "Last Updated on"
+msgstr "最后更新于"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_limit
+msgid "Limit"
+msgstr "限度"
+
+#. module: hr_rfid_vending
+#: code:addons/hr_rfid_vending/models/hr_employee_wizards.py:0
+#, python-format
+msgid "Manual updated employee personal balance from %d to %d"
+msgstr "手动将员工个人余额从 %d 更新到 %d"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_daily_limit
+msgid ""
+"Maximum amount of funds allowed for the employee to spend each day. No "
+"limit if set to 0."
+msgstr "允许员工每天花费的最大资金量。如果设置为0，则无限制。"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Month"
+msgstr "月份"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields.selection,name:hr_rfid_vending.selection__res_company__refill_interval_type__months
+msgid "Months"
+msgstr "月份"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__more_json
+msgid "More info about event in JSON"
+msgstr "有关JSON中事件的更多信息"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__name
+msgid "Name"
+msgstr "名称"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_negative_balance
+msgid "Negative Balance"
+msgstr "负余额"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_res_company__refill_nextcall
+msgid "Next Execution Date"
+msgstr "下次执行日期"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_res_company__refill_nextcall
+msgid "Next planned execution date for this refill."
+msgstr "此重新填充的下一个计划执行日期。"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Non-Employee Transaction Events"
+msgstr "非员工事务事件"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_in_attendance
+msgid "Only allow the user to perform vending transactions while attending"
+msgstr "仅允许用户在参加会议时执行自动售货交易"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_in_attendance
+msgid "Only while attending"
+msgstr "仅在参加时"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+msgid "Person Responsible"
+msgstr "负责人"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__name
+msgid "Person Responsible/Item"
+msgstr "负责人/物品"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__person_responsible
+msgid "Person responsible for the change"
+msgstr "变更负责人"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__pricelist_id
+msgid "Pricelist"
+msgstr "价格表"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_view_form_inherit_hr_rfid_vending
+msgid "Prices"
+msgstr "价格"
+
+#. module: hr_rfid_vending
+#: model:ir.ui.menu,name:hr_rfid_vending.hr_rfid_vending_products_pricelist_menu
+msgid "Product Price list"
+msgstr "产品价格表"
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_product_template
+msgid "Product Template"
+msgstr "产品模板"
+
+#. module: hr_rfid_vending
+#: model:ir.ui.menu,name:hr_rfid_vending.hr_rfid_vending_products_menu
+msgid "Products"
+msgstr "产品"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_rfid_vending_event__event_action__47
+msgid "Purchase Complete"
+msgstr "采购完成"
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_rfid_vending_event
+msgid "RFID Vending Event"
+msgstr "RFID自动售货事件"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__reader_id
+msgid "Reader"
+msgstr "读卡器"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__reader_id
+msgid "Reader affected by this event"
+msgstr "受此事件影响的读卡器"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
+msgid "Receive Date"
+msgstr "接收日期"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_amount
+msgid "Refill Amount"
+msgstr "重新加注金额"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_res_company__refill_interval_number
+msgid "Refill Interval Number"
+msgstr "重新加注间隔编号"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_max
+msgid "Refill Max"
+msgstr "最大重新加注"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_type
+msgid "Refill Type"
+msgstr "重新加注类型"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_res_company__refill_interval_number
+msgid "Repeat every x."
+msgstr "每x重复一次。"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__command_id
+msgid "Response"
+msgstr "数据响应不正确"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__command_id
+msgid "Response command"
+msgstr "响应命令"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__row_num
+msgid "Row Num"
+msgstr "行编号"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_graph
+msgid "Sales Per Product"
+msgstr "每产品销售额"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_sale
+msgid "Sales amount"
+msgstr "销售金额"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_sale_count
+msgid "Sales count"
+msgstr "销售额"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_vending_prices_wiz
+msgid "Save"
+msgstr "保存"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__scale_factor
+msgid "Scale Factor"
+msgstr "比例因子"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_recharge_balance
+msgid "Self Recharge Balance"
+msgstr "自助充值余额"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_set_form
+msgid "Set Vending Balance"
+msgstr "设置自动售货机余额"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
+msgid "Set balance to"
+msgstr "将余额设置为"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
+msgid "Set person's balance"
+msgstr "设置人员余额"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
+msgid "Set private balance"
+msgstr "设置私人余额"
+
+#. module: hr_rfid_vending
+#: model:ir.actions.act_window,name:hr_rfid_vending.hr_employee_vending_recharge_balance_set_action
+msgid "Set recharge vending balance (self balance)"
+msgstr "设置充值自动售货余额（自平衡）"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_set_form
+msgid "Set to"
+msgstr "设置为"
+
+#. module: hr_rfid_vending
+#: model:ir.actions.act_window,name:hr_rfid_vending.hr_employee_vending_balance_set_action
+msgid "Set vending balance"
+msgstr "设置自动售货机余额"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__show_price_timeout
+msgid "Show Price Timeout"
+msgstr "显示价格超时"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
+msgid "Show employee history balance"
+msgstr "显示员工历史余额"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_spent_today
+msgid "Spend Today"
+msgstr "今天的花费"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_change_form
+msgid "Subtract"
+msgstr "减去"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl__cash_contained
+msgid "The amount of cash the vending machine currently contains"
+msgstr "自动售货机当前包含的现金数量"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__item_sold_id
+msgid "The item that was sold in the transaction"
+msgstr "交易中售出的商品"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_max
+msgid "The limit of cash the auto refill should never go over"
+msgstr "汽车加油的现金限额决不能超过"
+
+#. module: hr_rfid_vending
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl_settings.py:0
+#, python-format
+msgid "The value of %s is invalid. Must be between 0 and 255"
+msgstr "此 %s 值无效。必须介于0和255之间"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
+msgid "Time Odoo received the event"
+msgstr "收到 Odoo 事件的时间"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__event_time
+msgid "Time the event triggered"
+msgstr "按事件时间"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__event_time
+msgid "Timestamp"
+msgstr "时间戳"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__auto_refill_total
+msgid "Total Cash Refilled"
+msgstr "重新注入的现金总额"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__transaction_price
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Transaction Price"
+msgstr "交易价格"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Transaction events"
+msgstr "事务处理事件"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_employee__hr_rfid_vending_refill_type__up_to
+msgid "Up To"
+msgstr "高达"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_limit
+msgid "User cannot go in more debt than this value"
+msgstr "用户的债务不能超过此值"
+
+#. module: hr_rfid_vending
+#: model:ir.module.category,description:hr_rfid_vending.hr_rfid_vending_management
+msgid "User rights for the Vending module"
+msgstr "自动售货机模块的用户权限"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__value
+msgid "Value"
+msgstr "值"
+
+#. module: hr_rfid_vending
+#: model:ir.ui.menu,name:hr_rfid_vending.hr_rfid_vending_menu
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.view_company_form_inherit_vending
+msgid "Vending"
+msgstr "自动售货机"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__show_price_timeout
+msgid "Vending \"Show Price\" Timeout"
+msgstr "自动售货 “显示价格” 超时"
+
+#. module: hr_rfid_vending
+#: model:ir.module.category,name:hr_rfid_vending.hr_rfid_vending_management
+msgid "Vending Access"
+msgstr "自动售货机权限"
+
+#. module: hr_rfid_vending
+#: model:ir.actions.act_window,name:hr_rfid_vending.hr_rfid_vending_auto_refill_action
+#: model:ir.ui.menu,name:hr_rfid_vending.hr_rfid_vending_menu_auto_refill
+msgid "Vending Auto Refill Events"
+msgstr "自动补货事件"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_balance
+msgid "Vending Balance"
+msgstr "自动售货机余额"
+
+#. module: hr_rfid_vending
+#: model:ir.actions.act_window,name:hr_rfid_vending.hr_rfid_vending_balance_history_action
+#: model:ir.ui.menu,name:hr_rfid_vending.hr_rfid_vending_menu_balance_history
+msgid "Vending Balance History"
+msgstr "自动售货机余额历史"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.digest_digest_view_form
+msgid "Vending Control"
+msgstr "访问控制"
+
+#. module: hr_rfid_vending
+#: model:res.groups,name:hr_rfid_vending.group_customer
+msgid "Vending Customer"
+msgstr "自动售货机客户"
+
+#. module: hr_rfid_vending
+#: model:ir.actions.act_window,name:hr_rfid_vending.hr_rfid_vending_event_action
+#: model:ir.ui.menu,name:hr_rfid_vending.hr_rfid_vending_menu_events
+msgid "Vending Events"
+msgstr "自动售货机事件"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__controller_id
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
+msgid "Vending Machine"
+msgstr "自动售货机"
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_rfid_ctrl_vending_row
+msgid "Vending Machine Row"
+msgstr "自动售货机排"
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_rfid_ctrl_vending_settings
+msgid "Vending Machine Settings"
+msgstr "自动售货机设置"
+
+#. module: hr_rfid_vending
+#: model:res.groups,name:hr_rfid_vending.group_operator
+msgid "Vending Operator"
+msgstr "自动售货机操作员"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__scale_factor
+msgid "Vending Scale Factor"
+msgstr "自动售货机比例系数"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_vending_prices_wiz
+msgid "Vending Settings"
+msgstr "自动售货机设置"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_view_form_inherit_hr_rfid_vending
+msgid "Vending info"
+msgstr "自动售货机信息"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_vending_prices_wiz
+msgid "Vending prices table:"
+msgstr "自动售货机销售价："
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.view_company_form_inherit_vending
+msgid "Vending settings"
+msgstr "自动售货机设置"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_vending_prices_wiz
+msgid "Vending settings:"
+msgstr "自动售货机："
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields.selection,name:hr_rfid_vending.selection__res_company__refill_interval_type__weeks
+msgid "Weeks"
+msgstr "星期"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
+msgid "What"
+msgstr "什么"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__event_action
+msgid "What happened to trigger the event"
+msgstr "触发事件的原因"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
+msgid "When"
+msgstr "何时"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
+msgid "Where"
+msgstr "何地"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_negative_balance
+msgid "Whether the user is allowed to have a negative balance or not"
+msgstr "是否允许用户拥有负余额"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
+msgid "Who"
+msgstr "谁"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__workcode_id
+msgid "Workcode"
+msgstr "工作代码"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__workcode
+msgid "Workcode (Raw)"
+msgstr "工作代码 (Raw)"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__workcode_id
+msgid "Workcode that arrived from the event"
+msgstr "卡号来自此事件"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__workcode
+msgid ""
+"Workcode that arrived from the event. If you are seeing this version, it "
+"means that you haven't created a workcode label for this one in the "
+"workcodes page."
+msgstr ""
+"从事件中到达的工作代码。如果您看到此版本，则表示您尚未在工作代码页面中为此版"
+"本创建工作代码标签。"
+
+#. module: hr_rfid_vending
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl_settings.py:0
+#, python-format
+msgid "item %s: %f is not a valid price. Must be between %f and %f"
+msgstr "物品 %s: %f 不是有效价格。必须介于 %f 和 %f 之间"
