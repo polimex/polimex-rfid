@@ -713,7 +713,7 @@ class HrRfidCardDoorRel(models.Model):
         found_door = False
 
         for door, ts, alarm_right in potential_doors:
-            if ts_id != None and ts_id != ts:
+            if ts_id and ts_id != ts:
                 raise exceptions.ValidationError(
                     'This should never happen. Please contact the developers. (%s != %s)' % (str(ts_id), str(ts))
                 )
