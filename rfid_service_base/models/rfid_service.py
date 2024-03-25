@@ -1,8 +1,11 @@
 from random import randint
 
+from odoo.addons.resource.models.resource import float_to_time
 from odoo import fields, models, api, _
-from odoo.exceptions import UserError, ValidationError
-
+from odoo.addons.base.models.ir_cron import _intervalTypes
+from datetime import datetime, timedelta, date, time, timezone
+# from pytz import timezone, UTC
+import pytz
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -38,7 +41,17 @@ class BaseRFIDService(models.Model):
         ('time', 'Time based'),
         ('count', 'Visits based'),
         ('time_count', 'Time and Visits based'),
+        ('time_in', 'Time spend in the service area.'),
     ], default='time')
+    time_in_payment = fields.Selection([
+        ('pre_paid', 'Pre paid service time'),
+        ('post_paid', 'Post paid service time'),
+    ], default='pre_paid')
+    pre_defined_time = fields.Float(
+        help='Pre defined time for the service. It is used for time in based services. If 0 the operator can set the '
+             'time.',
+        default=0
+    )
     visits = fields.Integer(
         default=0,
         help='Visits count'
@@ -67,6 +80,16 @@ class BaseRFIDService(models.Model):
         comodel_name='hr.rfid.access.group',
         required=True,
     )
+    dual_access_group = fields.Boolean(
+        default=False,
+    )
+    access_group_in_id = fields.Many2one(
+        comodel_name='hr.rfid.access.group',
+    )
+    access_group_out_id = fields.Many2one(
+        comodel_name='hr.rfid.access.group',
+    )
+
     generate_barcode_card = fields.Boolean(
         default=False,
         help='The card will be generated automatically for barcode reading'
@@ -90,6 +113,27 @@ class BaseRFIDService(models.Model):
         default=True,
         help='If the time is not fixed, the operator can change the start and end time of the service.'
     )
+    activate_on_first_use = fields.Boolean(
+        default=False,
+        help='Activate your card upon first use. The timing interval begins as soon as the card is used for the first '
+             'time.'
+    )
+    valid_days_for_activation = fields.Integer(
+        default=30,
+        help='The card will be valid for use till N days since issuing date.'
+    )
+    example_start_date = fields.Datetime(
+        compute='_compute_example_start_end_date',
+    )
+    example_end_date = fields.Datetime(
+        compute='_compute_example_start_end_date',
+    )
+
+    @api.depends('time_interval_number', 'time_interval_type', 'time_interval_start', 'time_interval_end')
+    def _compute_example_start_end_date(self):
+        for r in self:
+            r.example_start_date = r.calc_start()
+            r.example_end_date = r.calc_end()
 
     @api.onchange('generate_barcode_card')
     def _onchange_barcode(self):
@@ -117,6 +161,35 @@ class BaseRFIDService(models.Model):
         result_action = self.env.ref('rfid_service_base.hr_rfid_service_sale_action').sudo().read()[0]
         result_action['domain'] = [('service_id', '=', self.id)]
         return result_action
+
+    def calc_start(self, start_date=None):
+        """
+        Calculate the start date of the service
+        :param start_date: prefer start date (default is Today)
+        :return:
+        """
+        self.ensure_one()
+        start_date = start_date or fields.Date.today()
+        dt = datetime.combine(start_date,
+                              float_to_time(self.time_interval_start))
+        return pytz.timezone(self.env.user.tz).localize(dt).astimezone(pytz.UTC).replace(tzinfo=None)
+
+    def calc_end(self, start_date=None):
+        self.ensure_one()
+        time_interval_type = self.time_interval_type
+        time_interval_number = self.time_interval_number
+        time_interval_end = self.time_interval_end
+        calc_start_date = self.calc_start(start_date=start_date)
+
+        if self.fixed_time:
+            new_date = (calc_start_date or start_date) + _intervalTypes[time_interval_type](time_interval_number)
+            new_time = float_to_time(time_interval_end)
+            dt = datetime.combine(new_date.date(), new_time)
+            user_tz = pytz.timezone(self.env.user.tz)
+            dt = user_tz.localize(dt).astimezone(pytz.UTC).replace(tzinfo=None)
+            return dt
+        else:
+            return (calc_start_date or start_date) + _intervalTypes[time_interval_type](time_interval_number)
 
 
 class ServiceTags(models.Model):

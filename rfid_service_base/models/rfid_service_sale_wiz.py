@@ -2,12 +2,10 @@ import pytz
 from dateutil.relativedelta import relativedelta
 
 from odoo import fields, models, api, _
-from datetime import datetime, timedelta, date, time, timezone
 from odoo.exceptions import UserError, ValidationError
 from odoo.addons.base.models.ir_cron import _intervalTypes
 from odoo.addons.resource.models.resource import float_to_time
-from pytz import timezone, UTC
-import requests
+from datetime import datetime, timedelta, date, time, timezone
 
 import logging
 
@@ -23,40 +21,23 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         return self.env['ir.sequence'].next_by_code('base.rfid.service')
 
     def _calc_start(self):
-        def _calc_start(start_date=fields.Date.today()):
-            dt = datetime.combine(start_date,
-                                  float_to_time(service_id.time_interval_start))
-            return pytz.timezone(self.env.user.tz).localize(dt).astimezone(pytz.UTC).replace(tzinfo=None)
         service_id = self.service_id
         extend_sale_id = self.extend_sale_id
         if extend_sale_id:
             if fields.Datetime.now() < extend_sale_id.start_date:
                 # "before"
-                return _calc_start(extend_sale_id.end_date.date())
+                return service_id.calc_start(extend_sale_id.end_date.date())
             elif extend_sale_id.start_date <= fields.Datetime.now() <= extend_sale_id.end_date:
                 # "in"
-                return _calc_start(extend_sale_id.end_date.date())
+                return service_id.calc_start(extend_sale_id.end_date.date())
             else:
                 # "after"
-                return _calc_start()
+                return service_id.calc_start()
         else:
-            return _calc_start()
+            return service_id.calc_start()
 
     def _calc_end(self, start_date=None):
-        service_id = self.service_id
-        time_interval_type = service_id.time_interval_type
-        time_interval_number = service_id.time_interval_number
-        time_interval_end = service_id.time_interval_end
-
-        if self.fixed_time:
-            new_date = (self.start_date or start_date) + _intervalTypes[time_interval_type](time_interval_number)
-            new_time = float_to_time(time_interval_end)
-            dt = datetime.combine(new_date.date(), new_time)
-            user_tz = pytz.timezone(self.env.user.tz)
-            dt = user_tz.localize(dt).astimezone(pytz.UTC).replace(tzinfo=None)
-            return dt
-        else:
-            return (self.start_date or start_date )+ _intervalTypes[time_interval_type](time_interval_number)
+        return self.service_id.calc_end(start_date=start_date)
 
     extend_sale_id = fields.Many2one(
         comodel_name='rfid.service.sale',
@@ -74,6 +55,11 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
     )
     service_id = fields.Many2one(comodel_name='rfid.service')
     fixed_time = fields.Boolean(related='service_id.fixed_time', readonly=True)
+    visits = fields.Integer(related='service_id.visits')
+    service_type = fields.Selection(
+        related='service_id.service_type',
+    )
+
     generate_barcode_card = fields.Boolean(
         related='service_id.generate_barcode_card',
         readonly=True
@@ -113,7 +99,6 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         string='The card number', size=10,
         required=True,
     )
-    visits = fields.Integer(related='service_id.visits')
 
     # def _inverse_end_date(self):
     #     self.end_date_manual = self.end_date

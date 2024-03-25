@@ -26,9 +26,13 @@
             <field name="model">rfid.service.sale.wiz</field>
             <field name="arch" type="xml">
                 <form string="">
+                    <header>
+                        <field name="service_type" widget="statusbar" nolabel="1"/>
+                    </header>
                     <sheet>
                         <field name="generate_barcode_card" invisible="1"/>
                         <field name="extend_sale_id" invisible="1"/>
+                        <field name="service_type" invisible="1"/>
                         <div class="oe_title">
                             <label for="card_number"/>
                             <h1>
@@ -52,7 +56,7 @@
                                 <field name="end_date" attrs="{'readonly':[('fixed_time','=',True)]}"/>
                             </group>
                             <group>
-                                <field name="visits"/>
+                                <field name="visits" attrs="{'invisible':[('service_type','not in',['time_count','count'])]}"/>
                             </group>
                             <group>
                                 <field name="partner_id"

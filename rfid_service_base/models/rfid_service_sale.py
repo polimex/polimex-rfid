@@ -2,11 +2,9 @@ from datetime import timedelta
 
 from odoo import fields, models, api, _
 from odoo.exceptions import UserError, ValidationError
+from odoo.addons.hr_rfid.models.hr_rfid_event_user import HrRfidUserEvent
 
 import logging
-
-from odoo.osv import expression
-
 _logger = logging.getLogger(__name__)
 
 
@@ -68,6 +66,7 @@ class BaseRFIDService(models.Model):
         string='Visits',
         related='access_group_contact_rel.visits_counter',
     )
+    activated_on = fields.Datetime()
 
     # @api.depends('partner_id.hr_rfid_card_ids', 'partner_id.hr_rfid_access_group_ids')
     @api.depends('access_group_contact_rel')
@@ -135,3 +134,14 @@ class BaseRFIDService(models.Model):
             })
             s.state = 'canceled'
             s.message_post(body=_('Manually canceled service'), message_type='comment')
+
+    def process_event_data(self, user_event_id: HrRfidUserEvent):
+        if self.service_id.activate_on_first_use and self.state == 'progress' and not self.activated_on:
+            if user_event_id.reader_id.reader_types == '0':
+                self.write({
+                    'activated_on': user_event_id.event_time
+                })
+                self.access_group_contact_rel.write({
+                    'activate_on': user_event_id.event_time,
+                    'expiration': self.service_id.calc_end(start_date=user_event_id.event_time)
+                })

@@ -8,6 +8,7 @@ import logging
 import queue
 
 from odoo.exceptions import ValidationError
+from odoo.addons.hr_rfid.models.hr_rfid_event_user import HrRfidUserEvent
 
 _logger = logging.getLogger(__name__)
 
@@ -573,6 +574,10 @@ class HrRfidAccessGroupRelations(models.AbstractModel):
         help='Real visits this group will be deactivated. 0 mean',
         default=0
     )
+
+    def process_event_data(self, user_event_id: HrRfidUserEvent):
+        for rel in self:
+            rel.visits_counter += 1
 
     def _deactivate(self):
         raise exceptions.ValidationError('Not implemented yet!')
