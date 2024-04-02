@@ -131,7 +131,7 @@ class HrRfidCard(models.Model):
         ('card_uniq', 'unique (number, company_id)', _("Card number already exists!")),
         ('card_int_uniq', 'unique (internal_number, company_id)', _("Card internal number already exists!")),
         ('check_card_owner',
-         'check((contact_id is null or employee_id is not null) or (contact_id is not null or employee_id is null))',
+         'check((contact_id is null and employee_id is not null) or (contact_id is not null and employee_id is null))',
          'Card user and contact cannot both be set in the same time, and cannot both be empty.')
 
     ]
@@ -314,7 +314,7 @@ class HrRfidCard(models.Model):
             if old_number != card.number:
                 card.door_rel_ids.card_number_changed(old_number)
 
-            if old_owner != card.get_owner():
+            if old_owner != card.get_owner() and old_owner:
                 old_owner_doors = old_owner.get_doors()
                 new_owner_doors = card.get_owner().get_doors()
                 removed_doors = old_owner_doors - new_owner_doors

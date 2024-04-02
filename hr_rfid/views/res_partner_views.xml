@@ -86,8 +86,9 @@
             <field name="inherit_id" ref="base.view_res_partner_filter"/>
             <field name="model">res.partner</field>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='name']" position="before">
-                    <field name="hr_rfid_card_ids" filter_domain="[('hr_rfid_card_ids.number', 'ilike', self)]"/>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="hr_rfid_card_ids" filter_domain="['|', ('name', 'ilike', self), ('hr_rfid_card_ids.number', 'ilike', self)]"/>
+<!--                    <field name="hr_rfid_card_ids" filter_domain="[('hr_rfid_card_ids.number', 'ilike', self)]"/>-->
                 </xpath>
             </field>
         </record>
