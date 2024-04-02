@@ -86,6 +86,12 @@
                                 type="object"
                                 class="oe_stat_button"
                                 icon="fa-list" />
+                            <button string="Fix Partner"
+                                name="fix_partner"
+                                type="object"
+                                class="oe_stat_button"
+                                groups="base.group_no_one"
+                                icon="fa-list" />
                         </div>
 
                         <widget name="web_ribbon" title="Finished" bg_color="bg-danger"
@@ -117,7 +123,10 @@
                             <field name="company_id" groups="base.group_multi_company"/>
                         </group>
                         <group string="Technical information" groups="base.group_no_one">
+                            <field name="card_number" readonly="True"/>
                             <field name="card_id" readonly="True"/>
+                            <field name="access_group_contact_rel" readonly="True"/>
+                            <field name="visits" readonly="True"/>
                         </group>
 
                     </sheet>
@@ -138,7 +147,7 @@
                     <field name="name"/>
                     <field name="partner_id"/>
                     <field name="service_id"/>
-                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="company_id" groups="base.group_multi_company" optional="show"/>
                     <field name="create_date" optional="hide"/>
                     <field name="start_date"/>
                     <field name="end_date"/>

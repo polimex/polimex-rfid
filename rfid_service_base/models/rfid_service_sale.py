@@ -70,7 +70,7 @@ class BaseRFIDService(models.Model):
     )
 
     # @api.depends('partner_id.hr_rfid_card_ids', 'partner_id.hr_rfid_access_group_ids')
-    @api.depends('access_group_contact_rel')
+    @api.depends('access_group_contact_rel', 'access_group_contact_rel.state')
     def _compute_state(self):
         for s in self:
             if not s.start_date:
@@ -82,7 +82,8 @@ class BaseRFIDService(models.Model):
             state = 'registered'
             if start_date <= fields.Datetime.now() <= end_date:
                 state = 'progress'
-            elif (s.access_group_contact_rel.expiration-s.access_group_contact_rel.activate_on) == timedelta(seconds=1):
+            elif (s.access_group_contact_rel.expiration - s.access_group_contact_rel.activate_on) == timedelta(
+                    seconds=1):
                 state = 'canceled'
             elif end_date <= fields.Datetime.now():
                 state = 'finished'
@@ -102,19 +103,21 @@ class BaseRFIDService(models.Model):
         action["name"] = _("Extend RFID Service for %s" % self.partner_id.name)
         action['binding_model_id'] = self.service_id
         action['view_id'] = self.env.ref("rfid_service_base.sale_wiz_action").id
+        card_number = self.card_number or self.partner_id.hr_rfid_card_ids and self.partner_id.hr_rfid_card_ids[
+            0].number
         action["context"] = {
             'default_extend_sale_id': self.id,
             'default_service_id': self.service_id.id,
-            'default_partner_id': self.partner_id.id,
-            'default_card_number': self.card_number,
+            'default_partner_id': self.partner_id and self.partner_id.id or self.card_id.contact_id.id,
+            'default_card_number': card_number or False,
         }
         return action
 
     def partner_sales(self):
         self.ensure_one()
         action = self.env["ir.actions.act_window"]._for_xml_id("rfid_service_base.hr_rfid_service_sale_action")
-        action["name"]=_('Service Calendar for %s', self.partner_id.display_name)
-        action["domain"]=[('partner_id', '=', self.partner_id.id)]
+        action["name"] = _('Service Calendar for %s', self.partner_id.display_name)
+        action["domain"] = [('partner_id', '=', self.partner_id.id)]
         return action
 
     def email_card(self):
@@ -135,3 +138,36 @@ class BaseRFIDService(models.Model):
             })
             s.state = 'canceled'
             s.message_post(body=_('Manually canceled service'), message_type='comment')
+
+    def fix_partner(self):
+        for sale in self:
+            if not sale.card_id and sale.partner_id:
+                sale.card_id = sale.partner_id.hr_rfid_card_ids and sale.partner_id.hr_rfid_card_ids[0]
+                sale.card_number = sale.card_id.number
+                if sale.card_number == sale.card_id.name:
+                    sale.card_id.card_reference = sale.name
+            if sale.partner_id != sale.card_id.contact_id and sale.partner_id and sale.card_id.contact_id:
+                if not sale.partner_id.hr_rfid_card_ids:
+                    old_contact = sale.partner_id
+                    sale.card_id.contact_id.write({
+                        'name': sale.partner_id.name,
+                        'email': sale.partner_id.email,
+                        'mobile': sale.partner_id.mobile,
+                    })
+                    sale.card_id.card_reference = sale.partner_id.name
+                    sale.partner_id = sale.card_id.contact_id
+                    self.env['rfid.service.sale'].search([('partner_id', '=', old_contact.id)]).write(
+                        {'partner_id': sale.partner_id.id})
+                    old_contact.unlink()
+            elif not sale.partner_id:
+                sale.partner_id = sale.card_id.contact_id
+            if not sale.access_group_contact_rel and sale.partner_id:
+                agcr_id = sale.partner_id.hr_rfid_access_group_ids.filtered(
+                    lambda
+                        agcr: agcr.activate_on.date() == sale.start_date.date() or agcr.expiration.date() == sale.end_date.date()
+                    # lambda agcr: agcr.expiration.date() == sale.end_date.date()
+                )
+                sale.access_group_contact_rel = agcr_id
+            sale._compute_state()
+
+        return True

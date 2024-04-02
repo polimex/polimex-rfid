@@ -27,6 +27,7 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
             dt = datetime.combine(start_date,
                                   float_to_time(service_id.time_interval_start))
             return pytz.timezone(self.env.user.tz).localize(dt).astimezone(pytz.UTC).replace(tzinfo=None)
+
         service_id = self.service_id
         extend_sale_id = self.extend_sale_id
         if extend_sale_id:
@@ -56,7 +57,7 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
             dt = user_tz.localize(dt).astimezone(pytz.UTC).replace(tzinfo=None)
             return dt
         else:
-            return (self.start_date or start_date )+ _intervalTypes[time_interval_type](time_interval_number)
+            return (self.start_date or start_date) + _intervalTypes[time_interval_type](time_interval_number)
 
     extend_sale_id = fields.Many2one(
         comodel_name='rfid.service.sale',
@@ -146,7 +147,7 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
     def _gen_partner(self, partner_id=None, start_date=None, end_date=None):
         transaction_name = self._get_service_sale_seq()
         access_group_contact_rel = self.env['hr.rfid.access.group.contact.rel']
-        if partner_id is None:
+        if not partner_id:
             partner_id = self.env['res.partner'].create({
                 'name': '%s (%s)' % (transaction_name, self.service_id.name),
                 'company_id': self.service_id.company_id.id,
@@ -183,9 +184,14 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
             ('number', '=', self.card_number),
         ])
         if existing_card_id and existing_card_id.contact_id != partner_id:
-            raise UserError(
-                _("The card (%s) is not related to this Customer (%s") % (self.card_number, partner_id.name)
-            )
+            if not existing_card_id.contact_id:
+                existing_card_id.contact_id = partner_id.id
+                partner_id.name = existing_card_id.card_reference
+            else:
+                raise UserError(
+                    _("The card %s (%s) is not related to this Customer (%s") % (
+                    existing_card_id.contact_id.name, self.card_number, partner_id.name)
+                )
         if not existing_card_id:
             card_id = self.env['hr.rfid.card'].sudo().create({
                 'contact_id': partner_id.id,
@@ -238,13 +244,14 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
             raise UserError(_('The period for this sale finish in the past. Please check details again!'))
         if not self.service_id.access_group_id.door_ids:
             raise UserError(_('The access group for this service have no any doors. Please fix it and try again!'))
-        if not self.partner_id:
-            self.partner_id, access_group_contact_rel, card_id, transaction_name = self._gen_partner(
-                start_date=self.start_date, end_date=self.end_date)
-        else:
-            self.partner_id, access_group_contact_rel, card_id, transaction_name = self._gen_partner(self.partner_id,
-                                                                                                     start_date=self.start_date,
-                                                                                                     end_date=self.end_date)
+        # if not self.partner_id:
+        #     self.partner_id, access_group_contact_rel, card_id, transaction_name = self._gen_partner(
+        #         start_date=self.start_date, end_date=self.end_date)
+        # else:
+        #     self.partner_id, access_group_contact_rel, card_id, transaction_name = self._gen_partner(self.partner_id,
+        self.partner_id, access_group_contact_rel, card_id, transaction_name = self._gen_partner(self.partner_id,
+                                                                                                 start_date=self.start_date,
+                                                                                                 end_date=self.end_date)
         sale_id = self.env['rfid.service.sale'].create({
             'name': '%s (%s)' % (transaction_name, self.service_id.name),
             'service_id': self.service_id.id,
@@ -256,13 +263,15 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         })
         sale_id.message_subscribe(partner_ids=[self.partner_id.id])
         if self.extend_sale_id:
-            base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+            # base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
 
-            link = f"{base_url}/web#id={sale_id.id}&model=rfid.service.sale&view_type=form"
+            # link = f"{base_url}/web#id={sale_id.id}&model=rfid.service.sale&view_type=form"
+            link = f"/web#id={sale_id.id}&model=rfid.service.sale&view_type=form"
             message = _("This Sale is extended by <a href='%s'>Sale %s</a>", link, sale_id.display_name)
             self.extend_sale_id.message_post(body=message, message_type='comment')
 
-            link = f"{base_url}/web#id={self.extend_sale_id.id}&model=rfid.service.sale&view_type=form"
+            # link = f"{base_url}/web#id={self.extend_sale_id.id}&model=rfid.service.sale&view_type=form"
+            link = f"/web#id={self.extend_sale_id.id}&model=rfid.service.sale&view_type=form"
             message = _("This Sale extends <a href='%s'>Sale %s</a>", link, self.extend_sale_id.display_name)
             sale_id.message_post(body=message, message_type='comment')
 

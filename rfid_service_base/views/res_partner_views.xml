@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <data>
+        <record id="hr_view_partner_form_inherit_hr_rfid" model="ir.ui.view">
+            <field name="name">res.partner.rfid.info</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button name="action_rfid_sales"
+                            type="object"
+                            groups="rfid_service_base.group_card_manager"
+                            attrs="{'invisible':['|', ('partner_rfid_sales_count', '=', 0), '|', ('is_company','=',True), ('is_employee', '=', True)]}"
+                            class="oe_stat_button oe_read_only" icon="fa-ticket">
+                         <field name="partner_rfid_sales_count" widget="statinfo" string="RFID Sales"/>
+                    </button>
+                    <!--                    <field name="hr_rfid_event_ids" invisible="1"/>-->
+                    <button name="button_partner_events"
+                            type="object"
+                            groups="hr_rfid.hr_rfid_group_officer"
+                            attrs="{'invisible':[('partner_event_count', '=', '0')]}"
+                            class="oe_stat_button oe_read_only" icon="fa-list-alt">
+                        <field name="partner_event_count" widget="statinfo" string="Events"/>
+                    </button>
+                    <!--                    <field name="hr_rfid_access_group_ids" invisible="1"/>-->
+                    <button name="button_doors_list" title="Accessible doors"
+                            type="object" class="oe_stat_button oe_read_only" icon="fa-list-alt"
+                            groups="hr_rfid.hr_rfid_group_officer"
+                            attrs="{'invisible':[('partner_doors_count', '=', '0')]}">
+                        <field name="partner_doors_count" widget="statinfo" string="Doors"/>
+                    </button>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
