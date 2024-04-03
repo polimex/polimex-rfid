@@ -614,7 +614,7 @@ class HrRfidAccessGroupRelations(models.AbstractModel):
 
     @api.model
     def _check_expirations(self):
-        _logger.info('Checking access group expirations...')
+        # _logger.info('Checking access group expirations...')
 
         all_records = self.search([])
         # _logger.info('All records: %d', len(all_records))
