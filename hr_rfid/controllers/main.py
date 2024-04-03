@@ -160,7 +160,7 @@ class WebRfidController(http.Controller):
                 event = ev_env.create(event_dict)
                 if event.event_action == '1' and event.contact_id:
                     ag_rel = event.contact_id.hr_rfid_access_group_ids.filter_by_door(event.door_id, True)
-                        # lambda agr: event.door_id in agr.access_group_id.door_ids.mapped('door_id') and state)
+                    # lambda agr: event.door_id in agr.access_group_id.door_ids.mapped('door_id') and state)
                     # if ag_rel and ag_rel.visits_counting:
                     if ag_rel:
                         ag_rel.visits_counter += 1
@@ -541,7 +541,6 @@ class WebRfidController(http.Controller):
         """
         # request.session.should_save = False
         return
-        t0 = time.time()
         _logger.info(request.jsonrequest)
         return [{
             "id": 1,
@@ -559,13 +558,13 @@ class WebRfidController(http.Controller):
         :return: A dictionary containing the result of the processing.
 
         """
-        t0 = time.time()
         if not post:
             # Controllers with no odoo functionality use the dd/mm/yyyy format
             post_data = request.jsonrequest
         else:
             post_data = post
-        _logger.info('Received=' + str(post_data))
+
+        # _logger.info('Received=' + str(post_data))
 
         if 'convertor' not in post_data:
             return self._parse_raw_data(post_data)
@@ -590,6 +589,7 @@ class WebRfidController(http.Controller):
                     webstack_id = request.env['hr.rfid.webstack'].sudo().with_context(
                         tz=request.env['res.users'].sudo().browse(2).tz).create(new_webstack_dict)
                 else:
+                    _logger.info('Unknown Module. Received=' + str(post_data))
                     return {'status': 400}
 
             if not webstack_id.key:
@@ -601,6 +601,8 @@ class WebRfidController(http.Controller):
 
             elif webstack_id.key != post_data['key']:
                 webstack_id.report_sys_ev('Webstack key and key in json did not match', post_data=post_data)
+                _logger.info(f'Wrong Module key for {webstack_id.name}/{webstack_id.company_id.name}! Received=' + str(
+                    post_data))
                 return {'status': 400}
 
             if not webstack_id.active:
@@ -614,29 +616,31 @@ class WebRfidController(http.Controller):
 
             if 'heartbeat' in post_data:
                 _logger.info('Heartbeat from {}'.format(webstack_id.name))
+                _logger.info(f'Heartbeat from {webstack_id.name}/{webstack_id.company_id.name}!')
                 result = webstack_id.parse_heartbeat(post_data=post_data)
             elif 'event' in post_data:
-                _logger.info('Event (%s) from %s' % (
+                _logger.info(f'Event (%s) from {webstack_id.name}/{webstack_id.company_id.name}' % (
                     ''.join([a[1] for a in HrRfidSystemEvent.action_selection if
-                             a[0] == str(post_data['event']['event_n'])]),
-                    webstack_id.name)
+                             a[0] == str(post_data['event']['event_n'])])
+                )
                              )
                 result = self._parse_event(post_data=post_data, webstack=webstack_id)
             elif 'response' in post_data:
-                _logger.info('Command response from {}'.format(webstack_id.name))
+                _logger.info(f'Command response from {webstack_id.name}/{webstack_id.company_id.name}')
                 result = webstack_id.parse_response(post_data=post_data)
             if not post and 'cmd' in result:
                 result = {'cmd': result['cmd']}
             webstack_id.write(self._ws_db_update_dict())
-            t1 = time.time()
-            _logger.debug('Took %2.03f time to form response=%s' % ((t1 - t0), str(result)))
             return result
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
                 exceptions.MissingError, exceptions.ValidationError,
                 psycopg2.DataError, ValueError) as e:
             # commented DeferredException ^
-            _logger.error('Caught an exception, returning status=500 and creating a system event: %s\n%s', str(e),
-                          traceback.format_exc())
+            _logger.error(
+                f'Caught an exception from {webstack_id.name}/{webstack_id.company_id.name}, returning status=500 and '
+                f'creating a system event: %s\n%s',
+                str(e),
+                traceback.format_exc())
 
             # _logger.error('Caught an exception, returning status=500 and creating a system event (%s)' % str(e))
             request.env['hr.rfid.event.system'].sudo().create({
@@ -648,6 +652,8 @@ class WebRfidController(http.Controller):
             # print('Caught an exception, returning status=500 and creating a system event')
             return {'status': 500}
         except BadTimeException:
+            _logger.error(f'Caught a time error from {webstack_id.name}/{webstack_id.company_id.name}, returning '
+                          f'status=200 and creating a system event')
             t = post_data['event']['date'] + ' ' + post_data['event']['time']
             ev_num = str(post_data['event']['event_n'])
             controller_id = webstack_id.controllers.filtered(lambda r: r.ctrl_id == post_data['event']['id'])
@@ -660,25 +666,17 @@ class WebRfidController(http.Controller):
                 'input_js': json.dumps(post_data),
             }
             request.env['hr.rfid.event.system'].sudo().create(sys_ev_dict)
-            _logger.error('Caught a time error, returning status=200 and creating a system event')
-            # print('Caught a time error, returning status=200 and creating a system event')
-            if not post:
-                # return werkzeug.exceptions.NotFound(description)
-                pass
             return {'status': 200}
         except Exception as e:
-            # commented DeferredException ^
+            _logger.error(f'Caught an exception from {webstack_id.name}/{webstack_id.company_id.name}, returning '
+                          f'status=500 and creating a system event: %s\n%s', str(e),
+                          traceback.format_exc())
             request.env['hr.rfid.event.system'].sudo().create([{
                 'webstack_id': webstack_id and webstack_id.id,
                 'timestamp': fields.Datetime.now(),
                 'error_description': str(e),
                 'input_js': json.dumps(post_data),
             }])
-            _logger.error('Caught an exception, returning status=500 and creating a system event: %s\n%s', str(e),
-                          traceback.format_exc())
-
-            # _logger.error(
-            #     'Caught an unexpected exception, returning status=500 and creating a system event - ' + str(e))
             return {'status': 500}
 
     def _parse_raw_data(self, post_data: dict):
