@@ -614,8 +614,24 @@ class HrRfidAccessGroupRelations(models.AbstractModel):
 
     @api.model
     def _check_expirations(self):
-        self.search([])._compute_state()
-        # self.search([]).mapped('state')
+        _logger.info('Checking access group expirations...')
+
+        all_records = self.search([])
+        # _logger.info('All records: %d', len(all_records))
+
+        expired_records = self.search([('state', '=', False), ('expiration', '<', fields.Datetime.now())])
+        # _logger.info('Expired records: %d', len(expired_records))
+
+        future_records = self.search([('state', '=', False), ('activate_on', '>', fields.Datetime.now())])
+        # _logger.info('Future records: %d', len(future_records))
+
+        active_records = self.search([('state', '=', True), ('expiration', '=', False)])
+        # _logger.info('Active records: %d', len(active_records))
+
+        records_for_check = all_records - expired_records - future_records - active_records
+        # _logger.info('Records for check: %d', len(records_for_check))
+
+        records_for_check._compute_state()
 
     def filter_by_door(self, door_id, active_only=True):
         res = self.env[self._name]
