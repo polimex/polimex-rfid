@@ -625,12 +625,13 @@ class HrRfidAccessGroupRelations(models.AbstractModel):
         future_records = self.search([('state', '=', False), ('activate_on', '>', fields.Datetime.now())])
         # _logger.info('Future records: %d', len(future_records))
 
-        active_records = self.search([('state', '=', True), ('expiration', '=', False)])
+        active_records = self.search([('state', '=', True), '|', ('expiration', '=', False), ('expiration', '>', fields.Datetime.now())])
         # _logger.info('Active records: %d', len(active_records))
 
         records_for_check = all_records - expired_records - future_records - active_records
         # _logger.info('Records for check: %d', len(records_for_check))
-
+        # if len(records_for_check) > 10:
+        #     pass
         records_for_check._compute_state()
 
     def filter_by_door(self, door_id, active_only=True):
