@@ -615,7 +615,6 @@ class WebRfidController(http.Controller):
             }
 
             if 'heartbeat' in post_data:
-                _logger.info('Heartbeat from {}'.format(webstack_id.name))
                 _logger.info(f'Heartbeat from {webstack_id.name}/{webstack_id.company_id.name}!')
                 result = webstack_id.parse_heartbeat(post_data=post_data)
             elif 'event' in post_data:
