@@ -136,16 +136,18 @@ class HrRfidAccessGroup(models.Model):
                     counter = Counter(doors)
                     duplicates = [item for item, count in counter.items() if count > 1]
                     if self.env['ir.config_parameter'].sudo().get_param('hr_rfid.raise_if_duplicate_doors') in ['true',
-                                                                                                             'True',
-                                                                                                             '1']:
+                                                                                                                'True',
+                                                                                                                '1']:
                         raise exceptions.ValidationError(
                             _('Partner %s have the %s door twice via different access groups. This is not allowed.') %
                             (p.name, ','.join([d.name for d in duplicates])))
                     else:
-                        _logger.error('Partner %s have the %s door twice via different access groups. This is not allowed.',
-                                      p.name, ','.join([d.name for d in duplicates]))
-                        errors += _('Partner %s have the %s door twice via different access groups. This is not allowed.') % (
-                            p.name, ','.join([d.name for d in duplicates]))+'\n'
+                        _logger.error(
+                            'Partner %s have the %s door twice via different access groups. This is not allowed.',
+                            p.name, ','.join([d.name for d in duplicates]))
+                        errors += _(
+                            'Partner %s have the %s door twice via different access groups. This is not allowed.') % (
+                                      p.name, ','.join([d.name for d in duplicates])) + '\n'
             for p in g.all_employee_ids.mapped('employee_id'):
                 doors = []
                 for ag in p.hr_rfid_access_group_ids.mapped('access_group_id'):
@@ -154,17 +156,19 @@ class HrRfidAccessGroup(models.Model):
                     counter = Counter(doors)
                     duplicates = [item for item, count in counter.items() if count > 1]
                     if self.env['ir.config_parameter'].sudo().get_param('hr_rfid.raise_if_duplicate_doors') in ['true',
-                                                                                                             'True',
-                                                                                                             '1']:
+                                                                                                                'True',
+                                                                                                                '1']:
                         raise exceptions.ValidationError(
                             _('Employee %s have the %s door twice via different access groups. This is not allowed.') %
                             (p.name, ','.join([d.name for d in duplicates])))
                     else:
                         _logger.error(
-                            'Employee %s have the %s door twice via different access groups. This is not allowed.', p.name,
+                            'Employee %s have the %s door twice via different access groups. This is not allowed.',
+                            p.name,
                             ','.join([d.name for d in duplicates]))
-                        errors += _('Employee %s have the %s door twice via different access groups. This is not allowed.') % (
-                            p.name, ','.join([d.name for d in duplicates]))+'\n'
+                        errors += _(
+                            'Employee %s have the %s door twice via different access groups. This is not allowed.') % (
+                                      p.name, ','.join([d.name for d in duplicates])) + '\n'
         return {
             "type": "ir.actions.client",
             "tag": "display_notification",
@@ -616,22 +620,36 @@ class HrRfidAccessGroupRelations(models.AbstractModel):
     def _check_expirations(self):
         # _logger.info('Checking access group expirations...')
 
-        all_records = self.search([])
-        # _logger.info('All records: %d', len(all_records))
-
-        expired_records = self.search([('state', '=', False), ('expiration', '<', fields.Datetime.now())])
+        expired_records = self.search_read([('state', '=', False), ('expiration', '<', fields.Datetime.now())], ['id'])
         # _logger.info('Expired records: %d', len(expired_records))
 
-        future_records = self.search([('state', '=', False), ('activate_on', '>', fields.Datetime.now())])
+        future_records = self.search_read([('state', '=', False), ('activate_on', '>', fields.Datetime.now())], ['id'])
         # _logger.info('Future records: %d', len(future_records))
 
-        active_records = self.search([('state', '=', True), '|', ('expiration', '=', False), ('expiration', '>', fields.Datetime.now())])
+        active_records = self.search_read([
+            ('state', '=', True),
+            '|',
+            ('expiration', '=', False),
+            ('expiration', '>', fields.Datetime.now())],
+            ['id'])
         # _logger.info('Active records: %d', len(active_records))
 
-        records_for_check = all_records - expired_records - future_records - active_records
+        finished_count_records = self.search_read([
+            ('state', '=', False),
+            ('visits_counting', '=', True)],
+            fields=['id', 'permitted_visits', 'visits_counter']
+        )
+        finished_count_records = [{'id': r['id']} for r in finished_count_records if
+                                  r['permitted_visits'] == r['visits_counter']]
+        # _logger.info('Active records: %d', len(active_records))
+
+        records_for_check = self.search([
+            ('id',
+             'not in',
+             [r['id'] for r in expired_records + future_records + active_records + finished_count_records])
+        ])
         # _logger.info('Records for check: %d', len(records_for_check))
-        # if len(records_for_check) > 10:
-        #     pass
+
         records_for_check._compute_state()
 
     def filter_by_door(self, door_id, active_only=True):
