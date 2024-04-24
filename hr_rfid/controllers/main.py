@@ -548,6 +548,16 @@ class WebRfidController(http.Controller):
             "body": {"cmd": {"reader": 1, "type": 0}}
         }]
 
+    def _decode_post(self, post):
+        if not post:
+            # Controllers with no odoo functionality use the dd/mm/yyyy format
+            # Decode a to get a string
+            decoded_string = request.httprequest.data.decode('utf-8')
+            # Parse the string into a JSON object
+            return json.loads(decoded_string)
+        else:
+            return post
+
     @http.route(['/hr/rfid/event'], type='json', auth='none', methods=['POST'], cors='*', csrf=False,
                 save_session=False)
     def post_event(self, **post):
@@ -558,13 +568,7 @@ class WebRfidController(http.Controller):
         :return: A dictionary containing the result of the processing.
 
         """
-        if not post:
-            # Controllers with no odoo functionality use the dd/mm/yyyy format
-            post_data = request.jsonrequest
-        else:
-            post_data = post
-
-        # _logger.info('Received=' + str(post_data))
+        post_data = self._decode_post(post)
 
         if 'convertor' not in post_data:
             return self._parse_raw_data(post_data)

@@ -1,7 +1,4 @@
-from collections import OrderedDict
-from operator import itemgetter
-from markupsafe import Markup
-
+# TODO Get new version from 17.0!!!
 from odoo import conf, http, _
 from odoo.exceptions import AccessError, MissingError
 from odoo.http import request
@@ -19,7 +16,7 @@ class ProjectCustomerPortal(CustomerPortal):
         values = super()._prepare_home_portal_values(counters)
         if 'barcode_count' in counters:
             values['barcode_count'] = request.env['hr.rfid.card'].search_count(
-                [('card_type', '=', self.env.ref('hr_rfid.hr_rfid_card_type_barcode'))]) \
+                [('card_type', '=', request.env.ref('hr_rfid.hr_rfid_card_type_barcode'))]) \
                 if request.env['hr.rfid.card'].check_access_rights('read', raise_exception=False) else 0
         if 'card_count' in counters:
             values['card_count'] = request.env['hr.rfid.card'].search_count([]) \
