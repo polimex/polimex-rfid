@@ -27,6 +27,7 @@
                 <form string="Add Doors">
                     <group>
                         <field name="acc_gr_doors" invisible="1"/>
+                        <field name="acc_gr_id" invisible="1"/>
                         <field name="door_ids" options='{"no_open": True, "no_create": True}'
                                domain="[('id', 'not in', acc_gr_doors)]" widget="many2many_tags"/>
                         <field name="time_schedule_id" options='{"no_open": True, "no_create": True}'/>
@@ -66,6 +67,7 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_rfid_access_group_add_doors_wiz"/>
             <field name="target">new</field>
+            <field name="context">{'default_acc_gr_id': active_id}</field>
         </record>
 
         <record id="hr_rfid_access_group_del_doors_wiz_action" model="ir.actions.act_window">
@@ -74,6 +76,7 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_rfid_access_group_del_doors_wiz"/>
             <field name="target">new</field>
+            <field name="context">{'default_acc_gr_id': active_id}</field>
         </record>
 
         <record id="hr_rfid_access_group_view_form" model="ir.ui.view">
@@ -81,7 +84,7 @@
             <field name="model">hr.rfid.access.group</field>
             <field name="arch" type="xml">
                 <form string="Access Groups">
-                    <sheet modifiers="{}">
+                    <sheet>
                         <div class="oe_button_box" name="button_box" invisible="not id">
                             <button name="%(hr_rfid_access_group_add_doors_wiz_action)d"
                                     id="hr_rfid_access_group_add_doors_btn"
@@ -154,6 +157,7 @@
                                         <field name="door_id"/>
                                         <field name="time_schedule_id"/>
                                         <field name="alarm_rights"/>
+                                        <field name="card_type"/>
                                     </tree>
                                 </field>
                             </page>
@@ -252,6 +256,15 @@
         </record>
 
         <!--        TODO remove buttons and move actions-->
+
+        <record id="hr_rfid_access_group_check_doors_action" model="ir.actions.server">
+            <field name="name">Check Doors</field>
+            <field name="model_id" ref="hr_rfid.model_hr_rfid_access_group"/>
+            <field name="binding_model_id" ref="hr_rfid.model_hr_rfid_access_group"/>
+            <field name="state">code</field>
+            <field name="code">action=records.check_doors()</field>
+        </record>
+
         <record id="hr_rfid_access_group_add_doors_action" model="ir.actions.act_window">
             <field name="name">Add Doors</field>
             <field name="type">ir.actions.act_window</field>
@@ -261,6 +274,7 @@
             <field name="binding_model_id" ref="hr_rfid.model_hr_rfid_access_group"/>
             <field name="binding_view_types">form</field>
             <field name="target">new</field>
+            <field name="context">{'default_acc_gr_id': active_id}</field>
         </record>
 
         <record id="hr_rfid_access_group_del_doors_action" model="ir.actions.act_window">
@@ -272,6 +286,7 @@
             <field name="binding_model_id" ref="hr_rfid.model_hr_rfid_access_group"/>
             <field name="binding_view_types">form</field>
             <field name="target">new</field>
+            <field name="context">{'default_acc_gr_id': active_id}</field>
         </record>
 
         <record id="hr_rfid_access_group_view_tree" model="ir.ui.view">

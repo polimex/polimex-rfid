@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
+from collections import Counter
+
 from dateutil.relativedelta import relativedelta
 
 from odoo import api, fields, models, exceptions, _
 import logging
 import queue
+
+from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -121,14 +125,72 @@ class HrRfidAccessGroup(models.Model):
                 last_event += ag_last_event
         return last_event
 
+    def check_doors(self):
+        errors = ''
+        for g in self:
+            for p in g.all_contact_ids.mapped('contact_id'):
+                doors = []
+                for ag in p.hr_rfid_access_group_ids.mapped('access_group_id'):
+                    doors += ag.all_door_ids.mapped('door_id')
+                if len(doors) != len(set(doors)):
+                    counter = Counter(doors)
+                    duplicates = [item for item, count in counter.items() if count > 1]
+                    if self.env['ir.config_parameter'].sudo().get_param('hr_rfid.raise_if_duplicate_doors') in ['true',
+                                                                                                                'True',
+                                                                                                                '1']:
+                        raise exceptions.ValidationError(
+                            _('Partner %s have the %s door twice via different access groups. This is not allowed.') %
+                            (p.name, ','.join([d.name for d in duplicates])))
+                    else:
+                        _logger.error(
+                            'Partner %s have the %s door twice via different access groups. This is not allowed.',
+                            p.name, ','.join([d.name for d in duplicates]))
+                        errors += _(
+                            'Partner %s have the %s door twice via different access groups. This is not allowed.') % (
+                                      p.name, ','.join([d.name for d in duplicates])) + '\n'
+            for p in g.all_employee_ids.mapped('employee_id'):
+                doors = []
+                for ag in p.hr_rfid_access_group_ids.mapped('access_group_id'):
+                    doors += ag.all_door_ids.mapped('door_id')
+                if len(doors) != len(set(doors)):
+                    counter = Counter(doors)
+                    duplicates = [item for item, count in counter.items() if count > 1]
+                    if self.env['ir.config_parameter'].sudo().get_param('hr_rfid.raise_if_duplicate_doors') in ['true',
+                                                                                                                'True',
+                                                                                                                '1']:
+                        raise exceptions.ValidationError(
+                            _('Employee %s have the %s door twice via different access groups. This is not allowed.') %
+                            (p.name, ','.join([d.name for d in duplicates])))
+                    else:
+                        _logger.error(
+                            'Employee %s have the %s door twice via different access groups. This is not allowed.',
+                            p.name,
+                            ','.join([d.name for d in duplicates]))
+                        errors += _(
+                            'Employee %s have the %s door twice via different access groups. This is not allowed.') % (
+                                      p.name, ','.join([d.name for d in duplicates])) + '\n'
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "message": _(
+                    errors or "No found any door duplicates in the access groups."
+                ),
+                "type": "warning" if errors else "success",
+                "sticky": False if errors else True,
+            },
+        }
+
     def add_doors(self, door_ids, time_schedule=None, alarm_rights=False):
+        self.ensure_one()
         if time_schedule is None:
             time_schedule = self.env['hr.rfid.time.schedule'].search([], limit=1, order='number')[0]
 
-        rel_env = self.env['hr.rfid.access.group.door.rel']
         for door in door_ids:
-            res = rel_env.search([('access_group_id', '=', self.id),
-                                  ('door_id', '=', door.id)])
+            res = self.env['hr.rfid.access.group.door.rel'].search([
+                ('access_group_id', '=', self.id),
+                ('door_id', '=', door.id)
+            ])
             if len(res) == 1:
                 if res.time_schedule_id != time_schedule:
                     res.time_schedule_id = time_schedule
@@ -139,13 +201,14 @@ class HrRfidAccessGroup(models.Model):
                 if door.controller_id.hw_version in ['17', '10'] and time_schedule.number > 3:
                     raise exceptions.ValidationError(_('Door %s can only use the first 3 time schedules') %
                                                      door.name)
-                rel_env.create([{
+                self.env['hr.rfid.access.group.door.rel'].create([{
                     'access_group_id': self.id,
                     'door_id': door.id,
                     'time_schedule_id': time_schedule.id,
                     'alarm_rights': alarm_rights,
                 }])
         self.check_for_ts_inconsistencies()
+        self.check_doors()
 
     def del_doors(self, door_ids):
         rel_env = self.env['hr.rfid.access.group.door.rel']
@@ -401,6 +464,10 @@ class HrRfidAccessGroupDoorRel(models.Model):
         required=True,
         ondelete='cascade',
     )
+    card_type = fields.Many2one(
+        comodel_name='hr.rfid.card.type',
+        related='door_id.card_type'
+    )
 
     time_schedule_id = fields.Many2one(
         'hr.rfid.time.schedule',
@@ -457,6 +524,21 @@ class HrRfidAccessGroupDoorRel(models.Model):
                 self.env['hr.rfid.card.door.rel'].check_relevance_slow(card, door_id, alarm_right)
 
 
+def _check_overlap(ranges):
+    # Sort the ranges based on start time
+    # Replace False with datetime.now()
+    modified_ranges = [(start, end if end is not False else fields.Datetime.now()) for (start, end) in ranges]
+    sorted_ranges = sorted(modified_ranges, key=lambda x: x[0])
+
+    # Iterate over the ranges and check for overlap
+    for i in range(len(sorted_ranges) - 1):
+        # If the end time of the current range is greater than the start time of the next range
+        if sorted_ranges[i][1] > sorted_ranges[i + 1][0]:
+            return True  # Overlap found
+
+    return False  # No overlaps
+
+
 class HrRfidAccessGroupRelations(models.AbstractModel):
     _name = 'hr.rfid.access.group.rel'
     _description = 'Relation between access groups and employees'
@@ -490,11 +572,13 @@ class HrRfidAccessGroupRelations(models.AbstractModel):
     )
 
     visits_counting = fields.Boolean(
-        help='If True, the access group will counting card visits. The feature is used for RFID services in general',
+        help='If True, the access group will counting visits. \n'
+             'The feature is used for RFID services in general.',
         default=False
     )
     permitted_visits = fields.Integer(
-        help='Permited visits after this group will be deactivated. 0 mean',
+        help='After reaching the allowed visits for this group, the group will be deactivated.\n'
+             'Zero visits exclude the function for automatic deactivation.',
         default=0
     )
     visits_counter = fields.Integer(
@@ -534,14 +618,55 @@ class HrRfidAccessGroupRelations(models.AbstractModel):
 
     @api.model
     def _check_expirations(self):
-        self.search([])._compute_state()
-        # self.search([]).mapped('state')
+        # _logger.info('Checking access group expirations...')
 
-    def _filter_active(self):
+        expired_records = self.search_read([('state', '=', False), ('expiration', '<', fields.Datetime.now())], ['id'])
+        # _logger.info('Expired records: %d', len(expired_records))
+
+        future_records = self.search_read([('state', '=', False), ('activate_on', '>', fields.Datetime.now())], ['id'])
+        # _logger.info('Future records: %d', len(future_records))
+
+        active_records = self.search_read([
+            ('state', '=', True),
+            '|',
+            ('expiration', '=', False),
+            ('expiration', '>', fields.Datetime.now())],
+            ['id'])
+        # _logger.info('Active records: %d', len(active_records))
+
+        finished_count_records = self.search_read([
+            ('state', '=', False),
+            ('visits_counting', '=', True)],
+            fields=['id', 'permitted_visits', 'visits_counter']
+        )
+        finished_count_records = [{'id': r['id']} for r in finished_count_records if
+                                  r['permitted_visits'] == r['visits_counter']]
+        # _logger.info('Active records: %d', len(active_records))
+
+        records_for_check = self.search([
+            ('id',
+             'not in',
+             [r['id'] for r in expired_records + future_records + active_records + finished_count_records])
+        ])
+        # _logger.info('Records for check: %d', len(records_for_check))
+
+        records_for_check._compute_state()
+
+    def filter_by_door(self, door_id, active_only=True):
         res = self.env[self._name]
+        if active_only:
+            return self.filtered(
+                lambda agr: door_id in agr.access_group_id.door_ids.mapped('door_id') and agr.state)
+        else:
+            return self.filtered(
+                lambda agr: door_id in agr.access_group_id.door_ids.mapped('door_id'))
+
+    def _filter_active(self, dt=None):
+        res = self.env[self._name]
+        for_date = dt or fields.Datetime.now()
         for agcr in self:
-            if agcr.activate_on <= fields.Datetime.now() and (
-                    not agcr.expiration or agcr.expiration > fields.Datetime.now()):
+            if agcr.activate_on <= for_date and (
+                    not agcr.expiration or agcr.expiration > for_date):
                 res += agcr
         return res
 
@@ -572,10 +697,18 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
         string='Employee',
         required=True,
     )
-    _sql_constraints = [
-        ('check_duplicates', 'unique (access_group_id, employee_id)',
-         _("Employee can't have the same access group twice!")),
-    ]
+
+    @api.constrains('access_group_id', 'employee_id', 'activate_on', 'expiration')
+    def _check_constrains_contacts(self):
+        employee_ids = self.mapped('employee_id')
+        for p in employee_ids:
+            p_rel_ids = self.search([('employee_id', '=', p.id)])
+            for ag_id in p_rel_ids.mapped('access_group_id'):
+                rel_ranges = [(rel.activate_on, rel.expiration) for rel in
+                              p_rel_ids.filtered(lambda ag: ag.access_group_id == ag_id)]
+                if _check_overlap(rel_ranges):
+                    raise ValidationError(
+                        _('Overlap found between access group(%s) active period ranges for (%s)', ag_id.name, p.name))
 
     def _deactivate(self):
         for rel in self:
@@ -641,10 +774,18 @@ class HrRfidAccessGroupContactRel(models.Model):
         string='Contact',
         required=True,
     )
-    _sql_constraints = [
-        ('check_duplicates', 'unique (access_group_id, contact_id)',
-         _("Partner can't have the same access group twice!")),
-    ]
+
+    @api.constrains('access_group_id', 'contact_id', 'activate_on', 'expiration')
+    def _check_constrains_contacts(self):
+        partner_ids = self.mapped('contact_id')
+        for p in partner_ids:
+            p_rel_ids = self.search([('contact_id', '=', p.id)])
+            for ag_id in p_rel_ids.mapped('access_group_id'):
+                rel_ranges = [(rel.activate_on, rel.expiration) for rel in
+                              p_rel_ids.filtered(lambda ag: ag.access_group_id == ag_id)]
+                if _check_overlap(rel_ranges):
+                    raise ValidationError(
+                        _('Overlap found between access group(%s) active period ranges for (%s)', ag_id.name, p.name))
 
     def _deactivate(self):
         for rel in self:
@@ -709,12 +850,9 @@ class HrRfidAccessGroupWizard(models.TransientModel):
 
     def _default_acc_gr_doors(self):
         acc_gr = self._default_acc_gr()
-        doors = self.env['hr.rfid.door']
-        for door_rel in acc_gr.door_ids:
-            doors += door_rel.door_id
-        return doors
+        return acc_gr.door_ids.mapped('door_id')
 
-    acc_gr_id = fields.Many2many(
+    acc_gr_id = fields.Many2one(
         'hr.rfid.access.group',
         string='Access Group',
         required=True,
@@ -755,9 +893,7 @@ class HrRfidAccessGroupWizard(models.TransientModel):
     )
 
     def add_doors(self):
-        self.ensure_one()
         self.acc_gr_id.add_doors(self.door_ids, self.time_schedule_id, self.alarm_rights)
 
     def del_doors(self):
-        self.ensure_one()
         self.acc_gr_id.del_doors(self.door_ids)

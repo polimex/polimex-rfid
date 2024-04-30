@@ -26,8 +26,8 @@ class HrRfidCtrlAlarm(models.Model):
         ('open', 'Open'),
       ],
         compute='_compute_states',
-        compute_sudo=True,
         tracking=True,
+        compute_sudo=True,
         help="Alarm line state",
     )
 

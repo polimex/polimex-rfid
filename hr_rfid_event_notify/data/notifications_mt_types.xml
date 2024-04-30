@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="mt_event_notification" model="mail.message.subtype">
+            <field name="name">event_notificatio</field>
+            <field name="res_model">hr.rfid.event.usert</field>
+            <field name="default" eval="False"/>
+            <field name="description">Event Notification</field>
+        </record>
+    </data>
+</odoo>

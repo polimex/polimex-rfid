@@ -2,7 +2,7 @@ from odoo import fields, models, api, _
 from datetime import datetime, timedelta, date, time, timezone
 from odoo.exceptions import UserError, ValidationError
 from odoo.addons.base.models.ir_cron import _intervalTypes
-from odoo.addons.resource.models.resource import float_to_time
+from odoo.addons.resource.models.utils import float_to_time
 from pytz import timezone, UTC
 import requests
 

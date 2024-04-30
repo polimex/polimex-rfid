@@ -19,6 +19,7 @@
 
     'data': [
         'security/ir.model.access.csv',
+        'security/resource_calendar_multi_company.xml',
         'views/hr_attendance.xml',
         'views/hr_rfid_webstack_views.xml',
         'wizards/hr_recalc_attendance_wizard.xml',

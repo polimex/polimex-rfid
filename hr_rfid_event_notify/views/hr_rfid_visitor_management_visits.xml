@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_rfid_visitor_management_visit_tree" model="ir.ui.view">
+            <field name="name">hr.rfid.visitor.management.visit.tree</field>
+            <field name="model">hr.rfid.visitor.management.visit</field>
+            <field name="arch" type="xml">
+                <tree string="Visits">
+                    <field name="plan"/>
+                    <field name="visited_partner_ids" optional="show"/>
+                    <field name="visited_employee_ids" optional="show"/>
+                    <field name="card" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_rfid_visitor_management_visit_act" model="ir.actions.act_window">
+            <field name="name">Visitor Visits</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.rfid.visitor.management.visit</field>
+            <field name="view_mode">tree</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                <!-- Add Text Here -->
+              </p><p>
+                <!-- More details about what a user can do with this object will be OK -->
+              </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

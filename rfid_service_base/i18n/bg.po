@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-04 18:02+0000\n"
-"PO-Revision-Date: 2023-12-04 20:04+0200\n"
+"POT-Creation-Date: 2023-12-17 13:54+0000\n"
+"PO-Revision-Date: 2023-12-17 15:54+0200\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -109,6 +109,11 @@ msgid "Archived"
 msgstr "Архивиран"
 
 #. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
+msgid "Are you sure? This will stop the execution of the current service."
+msgstr "Сигурни ли сте? Това ще спре изпълнението на текущата услуга."
+
+#. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
 msgid "Arrow"
 msgstr "Стрелка"
@@ -135,9 +140,24 @@ msgid "Cancel"
 msgstr "Отказ"
 
 #. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
+msgid "Cancel Service"
+msgstr "Анулирай услуга"
+
+#. module: rfid_service_base
+#: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service_sale__state__canceled
+msgid "Canceled"
+msgstr "Анулирана"
+
+#. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__card_id
 msgid "Card"
 msgstr "Карта"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__card_number
+msgid "Card Number"
+msgstr "Номер на карта"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__card_type
@@ -193,11 +213,6 @@ msgid "Created on"
 msgstr "Създадено на"
 
 #. module: rfid_service_base
-#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__end_date_manual
-msgid "Custom Service end"
-msgstr "Край на персонализираната услуга"
-
-#. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__partner_id
 msgid "Customer"
 msgstr "Клиент"
@@ -221,6 +236,7 @@ msgid "Display Name"
 msgstr "Име за показване"
 
 #. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form
 msgid "E-mail"
 msgstr "Имейл"
@@ -410,6 +426,12 @@ msgid "Manager"
 msgstr "Управление на карти / Управител"
 
 #. module: rfid_service_base
+#: code:addons/rfid_service_base/models/rfid_service_sale.py:0
+#, python-format
+msgid "Manually canceled service"
+msgstr "Ръчно анулирана услуга"
+
+#. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__message_has_error
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__message_has_error
 msgid "Message Delivery error"
@@ -457,11 +479,6 @@ msgstr "Нова продажба - %s"
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
 msgid "New sale"
 msgstr "Нова продажба"
-
-#. module: rfid_service_base
-#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_calendar_event_id
-msgid "Next Activity Calendar Event"
-msgstr "Следващото събитие от календара на дейностите"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_date_deadline
@@ -537,6 +554,17 @@ msgid "Partner"
 msgstr "Партньор"
 
 #. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
+msgid "Partner Sales"
+msgstr "Партньорски продажби"
+
+#. module: rfid_service_base
+#: code:addons/rfid_service_base/models/rfid_service_sale.py:0
+#, python-format
+msgid "Please fill the Customer e-mail"
+msgstr "Моля, попълнете електронната поща на клиента"
+
+#. module: rfid_service_base
 #: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0
 #, python-format
 msgid "Please fill the e-mail in the form"
@@ -549,6 +577,7 @@ msgid "Please scan a card"
 msgstr "Моля, сканирайте карта"
 
 #. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form
 msgid "Print"
 msgstr "Печат"
@@ -588,6 +617,11 @@ msgstr "Базови услуги RFID"
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.services_tree
 msgid "RFID Services List"
 msgstr "Списък с услуги за RFID"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__visits
+msgid "Real visits this group will be deactivated. 0 mean"
+msgstr "Реалните посещения на тази група ще бъдат деактивирани. 0 mean"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__name
@@ -679,6 +713,12 @@ msgid "Service"
 msgstr "Услуга"
 
 #. module: rfid_service_base
+#: code:addons/rfid_service_base/models/rfid_service_sale.py:0
+#, python-format
+msgid "Service Calendar for %s"
+msgstr "Календар на услугите за %s"
+
+#. module: rfid_service_base
 #: model:ir.ui.menu,name:rfid_service_base.service_sale_menu
 msgid "Service Sales"
 msgstr "Продажби на услуги"
@@ -700,6 +740,7 @@ msgid "Service end"
 msgstr "Услугата изтича"
 
 #. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_calendar
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_graph
 msgid "Service sales on time"
 msgstr "Продажби на услуги по време"
@@ -807,6 +848,12 @@ msgstr "Партньорът има валидна услуга за този п
 #. module: rfid_service_base
 #: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0
 #, python-format
+msgid "The partner have valid service for unlimited period!"
+msgstr "Партньорът има валидна услуга за неограничен период от време!"
+
+#. module: rfid_service_base
+#: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0
+#, python-format
 msgid "The period for this sale finish in the past. Please check details again!"
 msgstr ""
 "Периодът на тази продажба приключва в миналото. Моля, проверете отново подробностите!"
@@ -830,7 +877,7 @@ msgstr "Този месец (начало на услугата)"
 #: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0
 #, python-format
 msgid "This Sale extends <a href='%s'>Sale %s</a>"
-msgstr "Тази продажба удължава <a href='%s'>продажба %s</a> "
+msgstr "Тази продажба удължава <a href='%s'>продажба %s</a>"
 
 #. module: rfid_service_base
 #: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0
@@ -898,6 +945,7 @@ msgstr "Базиран на посещения"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__visits
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__visits
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__visits
 msgid "Visits"
 msgstr "Посещения"

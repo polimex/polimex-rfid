@@ -65,6 +65,7 @@
                     <field name="mode"/>
                     <field name="reader_type"/>
                     <field name="door_ids" widget="many2many_tags" optional="show"/>
+                    <field name="controller_id" invisible="1"/>
                 </tree>
             </field>
         </record>

@@ -235,11 +235,8 @@ class HrRfidVending(WebRfidController):
 
         try:
             if 'event' in post_data:
-                t0 = time.time()
                 _logger.debug('Vending: Received=' + str(post_data))
                 ret = parse_event()
-                t1 = time.time()
-                _logger.debug('Took %2.03f time to form response=%s' % ((t1 - t0), str(ret)))
             else:
                 ret = ret_super()
 

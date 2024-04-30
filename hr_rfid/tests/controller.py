@@ -259,7 +259,7 @@ class RFIDController(RFIDAppCase):
         response = self._process_io_table(response, self.c_50, module, key)
         self.assertTrue(response['cmd']['c'] == 'B3')
         response = self._send_cmd_response(response, self.default_B3[12])
-        self.assertTrue(response == {}, '(%s)' % self.c_50.name)
+        self.assertTrue(response == {}, '(%s (respnse=%s))' % (self.c_50.name, response))
 
     def _add_Temperature(self, module=234567, key='0000', id=None):
         id = id or self._get_id_num()

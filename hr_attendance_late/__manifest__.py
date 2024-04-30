@@ -6,7 +6,7 @@
     'category': 'Human Resources',
     'summary': 'Additional calculations for employee attendance',
     'author': 'Polimex',
-    'license': 'OPL-1',
+    'license': 'LGPL-3',
 
     'description': """
        Description

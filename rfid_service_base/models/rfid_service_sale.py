@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from odoo import fields, models, api, _
 from odoo.exceptions import UserError, ValidationError
 
@@ -40,8 +42,9 @@ class BaseRFIDService(models.Model):
         selection=[
             ('registered', 'Registered'),
             ('progress', 'Progress'),
-            ('finished', 'Finished')
-        ], compute='_compute_state',
+            ('finished', 'Finished'),
+            ('canceled', 'Canceled')
+        ], compute='_compute_state', store=True,
     )
     company_id = fields.Many2one(
         comodel_name='res.company',
@@ -50,8 +53,6 @@ class BaseRFIDService(models.Model):
     )
     partner_id = fields.Many2one(
         comodel_name='res.partner', string='Customer', check_company=True, index=True,
-        domain=["&", ("is_company", "=", False), ("type", "=", "contact")],
-        # domain="[('company_id', '=', company_id)]",
         help="Linked partner to this service sale")
     card_id = fields.Many2one(
         comodel_name='hr.rfid.card', check_company=True,
@@ -61,20 +62,26 @@ class BaseRFIDService(models.Model):
     access_group_contact_rel = fields.Many2one(
         comodel_name='hr.rfid.access.group.contact.rel', check_company=True
     )
+    visits = fields.Integer(
+        string='Visits',
+        related='access_group_contact_rel.visits_counter',
+    )
 
-    @api.depends('partner_id.hr_rfid_card_ids', 'partner_id.hr_rfid_access_group_ids')
+    @api.depends('access_group_contact_rel', 'access_group_contact_rel.state')
     def _compute_state(self):
         for s in self:
             if not s.start_date:
-                acgcr = self.env['hr.rfid.access.group.contact.rel'].search([('contact_id', '=', s.partner_id.id)])
-                start_date = acgcr and acgcr[0].activate_on
-                end_date = acgcr and acgcr[0].expiration
+                start_date = s.access_group_contact_rel.activate_on
+                end_date = s.access_group_contact_rel.expiration
             else:
                 start_date = s.start_date
                 end_date = s.end_date
             state = 'registered'
             if start_date <= fields.Datetime.now() <= end_date:
                 state = 'progress'
+            elif (s.access_group_contact_rel.expiration - s.access_group_contact_rel.activate_on) == timedelta(
+                    seconds=1):
+                state = 'canceled'
             elif end_date <= fields.Datetime.now():
                 state = 'finished'
             s.state = state
@@ -93,7 +100,21 @@ class BaseRFIDService(models.Model):
         action["name"] = _("Extend RFID Service for %s" % self.partner_id.name)
         action['binding_model_id'] = self.service_id
         action['view_id'] = self.env.ref("rfid_service_base.sale_wiz_action").id
-        action["context"] = {'extend': self.id}
+        card_number = self.card_number or self.partner_id.hr_rfid_card_ids and self.partner_id.hr_rfid_card_ids[
+            0].number
+        action["context"] = {
+            'default_extend_sale_id': self.id,
+            'default_service_id': self.service_id.id,
+            'default_partner_id': self.partner_id and self.partner_id.id or self.card_id.contact_id.id,
+            'default_card_number': card_number or False,
+        }
+        return action
+
+    def partner_sales(self):
+        self.ensure_one()
+        action = self.env["ir.actions.act_window"]._for_xml_id("rfid_service_base.hr_rfid_service_sale_action")
+        action["name"] = _('Service Calendar for %s', self.partner_id.display_name)
+        action["domain"] = [('partner_id', '=', self.partner_id.id)]
         return action
 
     def email_card(self):
@@ -105,3 +126,45 @@ class BaseRFIDService(models.Model):
     def print_card(self):
         self.ensure_one()
         return self.env.ref('hr_rfid.action_report_res_partner_foldable_badge').report_action(self.partner_id)
+
+    def cancel_sale(self):
+        for s in self.filtered(lambda sale: sale.state not in ['finished', 'canceled']):
+            s.access_group_contact_rel.write({
+                'activate_on': fields.Datetime.now() - timedelta(seconds=2),
+                'expiration': fields.Datetime.now() - timedelta(seconds=1),
+            })
+            s.state = 'canceled'
+            s.message_post(body=_('Manually canceled service'), message_type='comment')
+
+    def fix_partner(self):
+        for sale in self:
+            if not sale.card_id and sale.partner_id:
+                sale.card_id = sale.partner_id.hr_rfid_card_ids and sale.partner_id.hr_rfid_card_ids[0]
+                sale.card_number = sale.card_id.number
+                if sale.card_number == sale.card_id.name:
+                    sale.card_id.card_reference = sale.name
+            if sale.partner_id != sale.card_id.contact_id and sale.partner_id and sale.card_id.contact_id:
+                if not sale.partner_id.hr_rfid_card_ids:
+                    old_contact = sale.partner_id
+                    sale.card_id.contact_id.write({
+                        'name': sale.partner_id.name,
+                        'email': sale.partner_id.email,
+                        'mobile': sale.partner_id.mobile,
+                    })
+                    sale.card_id.card_reference = sale.partner_id.name
+                    sale.partner_id = sale.card_id.contact_id
+                    self.env['rfid.service.sale'].search([('partner_id', '=', old_contact.id)]).write(
+                        {'partner_id': sale.partner_id.id})
+                    old_contact.unlink()
+            elif not sale.partner_id:
+                sale.partner_id = sale.card_id.contact_id
+            if not sale.access_group_contact_rel and sale.partner_id:
+                agcr_id = sale.partner_id.hr_rfid_access_group_ids.filtered(
+                    lambda
+                        agcr: agcr.activate_on.date() == sale.start_date.date() or agcr.expiration.date() == sale.end_date.date()
+                    # lambda agcr: agcr.expiration.date() == sale.end_date.date()
+                )
+                sale.access_group_contact_rel = agcr_id
+            sale._compute_state()
+
+        return True

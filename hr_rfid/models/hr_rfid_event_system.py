@@ -154,16 +154,15 @@ class HrRfidSystemEvent(models.Model):
         for c in self.env['res.company'].search([]):
             if c.event_lifetime is None:
                 return False
-            self._cr.execute("""
-                                   DELETE FROM hr_rfid_event_system
-                                   WHERE timestamp < NOW() - INTERVAL '%s days'
-                               """, [c.event_lifetime])
-            _logger.info("GC'd %d old rfid system event entries", self._cr.rowcount)
-            # today = fields.Date.today()
-            # res = self.with_company(c).search([
-            #     ('timestamp', '<', today - lifetime)
-            # ])
-            # res.unlink()
+            # self._cr.execute("""
+            #                        DELETE FROM hr_rfid_event_system
+            #                        WHERE timestamp < NOW() - INTERVAL '%s days'
+            #                    """, [c.event_lifetime])
+            # _logger.info("GC'd %d old rfid system event entries", self._cr.rowcount)
+            res = self.with_company(c).search([
+                ('timestamp', '<', fields.Datetime.now() - timedelta(days=int(c.event_lifetime)))
+            ], limit=1000)
+            res.unlink()
 
         return True
 

@@ -10,7 +10,7 @@
                 <xpath expr="//button[@name='email_card']" position="after">
                     <button name="share_card" type="object"
                             string="Share" icon="fa-share-alt"
-                            attrs="{'invisible': [('generate_barcode_card', '!=', True)]}"/>
+                            invisible="not generate_barcode_card"/>
                 </xpath>
 
             </field>

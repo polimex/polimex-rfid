@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_rfid_webstack_replace_source_wiz_action" model="ir.actions.act_window">
+            <field name="name">Move controllers to ...</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.rfid.webstack.replace.wiz</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{
+                'default_source_webstack_id': active_id,
+                }
+            </field>
+            <field name="binding_model_id" ref="model_hr_rfid_webstack"/>
+            <field name="binding_view_types">form</field>
+        </record>
+        <record id="hr_rfid_webstack_replace_destination_wiz_action" model="ir.actions.act_window">
+            <field name="name">Get controllers from ...</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.rfid.webstack.replace.wiz</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{
+                'default_destination_webstack_id': active_id,
+                }
+            </field>
+            <field name="binding_model_id" ref="model_hr_rfid_webstack"/>
+            <field name="binding_view_types">form</field>
+        </record>
+
+        <record id="hr_rfid_webstack_replace_wiz_view_form" model="ir.ui.view">
+            <field name="name">hr_rfid_webstack_replace_wiz_view_form</field>
+            <field name="model">hr.rfid.webstack.replace.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Replacement Wizard">
+                    <sheet>
+                        <div class="alert alert-info" role="alert">
+                            This function will move controllers from one module to another. The source module will be
+                            disabled.The Destination module will be Enabled. We suggest to make both modules inactive!
+                        </div>
+                        <group>
+                            <group>
+                                <field name="source_webstack_id" options="{'no_create': True, 'no_open': True}"/>
+                            </group>
+                            <group>
+                                <field name="destination_webstack_id" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="destination_controller_ids" widget="many2many_tags"/>
+                            </group>
+                            <group>
+                                <field name="replace_existing"/>
+                            </group>
+                            <group>
+                                <field name="destination_active_state"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="source_controller_ids" options="{'no_create': True, 'no_open': True}">
+                                <tree string="Move" editable="0" create="0" >
+                                    <field name="ctrl_id" readonly="1"/>
+                                    <field name="name" readonly="1"/>
+                                    <field name="serial_number" readonly="1"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="confirm_transfer" string="Do Transfer"
+                                type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

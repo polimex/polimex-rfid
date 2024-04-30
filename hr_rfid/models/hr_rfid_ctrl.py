@@ -765,12 +765,12 @@ class HrRfidController(models.Model):
             return
         th_id = None
         if sensor_number is not None:
-            th_id = self.env['hr.rfid.ctrl.th'].with_context(test_active=False).search([
+            th_id = self.env['hr.rfid.ctrl.th'].with_context(active_test=False).search([
                 ('controller_id', '=', self.id),
                 ('sensor_number', '=', sensor_number),
             ])
         elif internal_number is not None:
-            th_id = self.env['hr.rfid.ctrl.th'].with_context(test_active=False).search([
+            th_id = self.env['hr.rfid.ctrl.th'].with_context(active_test=False).search([
                 ('controller_id', '=', self.id),
                 ('internal_number', '=', internal_number),
             ])
@@ -1095,10 +1095,15 @@ class HrRfidController(models.Model):
     def write_output_ts(self):
         for ctrl in self:
             cmd_data = ''
+            ts_for_send = []
             for out in range(ctrl.outputs if ctrl.outputs <= 8 else 8):
                 out_ts = ctrl.output_ts_ids.filtered(lambda rel: rel.output_number == out+1)
                 cmd_data += '%02X' % (out_ts and out_ts.time_schedule_id.number or 0)
+                if out_ts and out_ts.time_schedule_id.number > 0:
+                    ts_for_send.append(out_ts.time_schedule_id)
             ctrl._base_command('DF', cmd_data)
+            if ts_for_send:
+                [ctrl.write_ts_id(ts) for ts in ts_for_send]
 
     # Command parsers
 

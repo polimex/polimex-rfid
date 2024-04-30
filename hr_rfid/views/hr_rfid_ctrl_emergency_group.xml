@@ -21,7 +21,7 @@
                                         groups="hr_rfid.hr_rfid_view_emergency_on_off"
                                         invisible="state in ['emergency','normal']"
                                         confirm="Are you sure to turn Emergency mode for the group"
-                                class="oe_stat_button oe_read_only" icon="fa-free-code-camp">
+                                        class="oe_stat_button oe_read_only" icon="fa-free-code-camp">
                                     Emergency On
                                 </button>
                                 <button name="emergency_off"
@@ -29,7 +29,7 @@
                                         groups="hr_rfid.hr_rfid_view_emergency_on_off"
                                         invisible="state in ['emergency','normal']"
                                         confirm="Are you sure to turn Emergency mode for the group"
-                                class="oe_stat_button oe_read_only" icon="fa-fire">
+                                        class="oe_stat_button oe_read_only" icon="fa-fire">
                                     Emergency Off
                                 </button>
                             </div>

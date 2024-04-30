@@ -27,14 +27,15 @@ class BaseRFIDService(models.Model):
         default=lambda self: self.env.company
     )
     color = fields.Integer(string='Color Index')
-    displayed_image_id = fields.Many2one('ir.attachment',
-                                         domain="[('res_model', '=', 'rfid.service'), ('res_id', '=', id), ('mimetype', 'ilike', 'image')]",
-                                         string='Cover Image')
+    displayed_image_id = fields.Many2one(
+        'ir.attachment',
+        domain="[('res_model', '=', 'rfid.service'), ('res_id', '=', id), ('mimetype', 'ilike', 'image')]",
+        string='Cover Image')
     tag_ids = fields.Many2many(
         comodel_name='rfid.service.tags',
-        domain="[('company_id', '=', company_id)]",
         string='Tags')
     service_type = fields.Selection([
+        ('time', 'Time based'),
         ('time', 'Time based'),
         ('count', 'Visits based'),
         ('time_count', 'Time and Visits based'),
@@ -97,6 +98,10 @@ class BaseRFIDService(models.Model):
             'hr_rfid.hr_rfid_card_type_barcode').id or self.env.ref('hr_rfid.hr_rfid_card_type_def').id
 
     def action_new_sale(self):
+        ctx = {'default_service_id': self.id}
+        if self.generate_barcode_card:
+            hex_num, num = self.env['hr.rfid.card'].create_bc_card()
+            ctx['default_card_number'] = num
         return {
             'name': _('New Sale - %s', self.name),
             'view_mode': 'form',
@@ -105,7 +110,8 @@ class BaseRFIDService(models.Model):
             'type': 'ir.actions.act_window',
             # 'res_id': wizard.id,
             'target': 'new',
-            'context': self.env.context,
+            'context': ctx,
+            # 'context': self.env.context,
         }
 
     def action_view_sales(self):

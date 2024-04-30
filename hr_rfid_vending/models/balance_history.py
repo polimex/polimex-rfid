@@ -39,6 +39,13 @@ class BalanceHistory(models.Model):
         ondelete='cascade',
         readonly=True,
     )
+    department_id = fields.Many2one(
+        'hr.department', 'Department',
+        domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]",
+        related='employee_id.department_id',
+        store=True
+    )
+
 
     vending_event_id = fields.Many2one(
         'hr.rfid.vending.event',

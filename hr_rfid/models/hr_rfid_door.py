@@ -103,13 +103,13 @@ class HrRfidDoor(models.Model):
         help='The unlock time in seconds.',
         compute='_compute_lock_time',
         inverse='_set_lock_time',
-        tracking=True
+        tracking = True
     )
     lock_state = fields.Boolean(
         help='If in the controller check box for read state is True, the status is present.',
         compute='_compute_lock_status',
         inverse='_set_lock_state',
-        tracking=True
+        tracking = True
     )
     lock_output = fields.Integer(
         help='The Lock Output on controller for this door',
@@ -477,7 +477,7 @@ class HrRfidDoor(models.Model):
             domain = [('id', 'in', [rel.card_id.id for rel in self.card_rel_ids])]
         elif res_model == 'hr.rfid.zone':
             name = _('{} in zones').format(self.name)
-            domain = [('id', 'in', [rel.id for rel in self.zone_ids])]
+            domain = [('door_id', 'in', [rel.zone_id.id for rel in self.zone_ids])]
         elif res_model == 'hr.rfid.ctrl.alarm':
             name = _('Alarm lines for {}').format(self.name)
             domain = [('door_id', 'in', [rel.door_id.id for rel in self.alarm_line_ids])]
@@ -563,19 +563,18 @@ class HrRfidDoor(models.Model):
     #         door.controller_id._add_remove_card_relay(card_number, 0, rmask)
 
     def change_apb_flag(self, card, can_exit=True):
-        card_door_rel_ids = self.env['hr.rfid.card.door.rel'].search([
-            ('card_id', '=', card.id),
-            ('door_id', 'in', self.ids),
-        ])
         for door in self:
             if door.number == 1:
                 rights = 0x40  # Bit 7
             else:
                 rights = 0x20  # Bit 6
-            card_door_rel_id = card_door_rel_ids.filtered(lambda d: d.door_id.id == door.id)
+            card_door_rel_id = self.env['hr.rfid.card.door.rel'].search([
+                ('card_id', '=', card.id),
+                ('door_id', '=', door.id),
+            ])
             # ignore doors without rights (optimisation)
-            # if door.id not in card_door_rel_id.mapped('door_id').ids:
-            #     continue
+            if door.id not in card_door_rel_id.mapped('door_id').ids:
+                continue
             self.env['hr.rfid.command'].add_remove_card(
                 card_number=card.internal_number,
                 ctrl_id=door.controller_id.id,
@@ -712,18 +711,18 @@ class HrRfidCardDoorRel(models.Model):
         if not card_id.card_ready():
             return
 
-        potential_doors = card_id.get_potential_access_doors()
+        potential_doors = list(filter(lambda pd: pd[0] == door_id, card_id.get_potential_access_doors()))
         found_door = False
 
         for door, ts, alarm_right in potential_doors:
-            if door_id == door:
-                if ts_id != False and ts_id != ts:
-                    raise exceptions.ValidationError(
-                        'This should never happen. Please contact the developers. (%s != %s)' % (str(ts_id), str(ts))
-                    )
-                ts_id = ts
-                found_door = True
-                break
+            if ts_id and ts_id != ts:
+                raise exceptions.ValidationError(
+                    'This should never happen. Please contact the developers. (%s != %s)' % (str(ts_id), str(ts))
+                )
+            ts_id = ts
+            found_door = True
+            break
+
         if found_door and self._check_compat_n_rdy(card_id, door_id):
             self.create_rel(card_id, door_id, ts_id, alarm_right)
         else:

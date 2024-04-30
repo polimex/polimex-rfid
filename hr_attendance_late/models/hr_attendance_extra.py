@@ -1,7 +1,6 @@
 from odoo import api, fields, models
 from datetime import datetime, timedelta, time
 
-
 class HrAttendanceExtra(models.Model):
     _name = 'hr.attendance.extra'
     _description = 'Extra work time calculations'

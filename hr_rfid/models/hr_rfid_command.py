@@ -209,13 +209,14 @@ class HrRfidCommands(models.Model):
 
     @api.autovacuum
     def _gc_clean_old_commands(self):
-        # self.env['hr.rfid.command'].search([
-        #     ('create_date', '<', fields.Datetime.now() - timedelta(days=14))
-        # ],limit=1000).unlink()
-        self._cr.execute("""
-                    DELETE FROM hr_rfid_command 
-                    WHERE create_date < NOW() - INTERVAL '14 days'
-                """)
+        res = self.env['hr.rfid.command'].search([
+            ('create_date', '<', fields.Datetime.now() - timedelta(days=14))
+        ], limit=1000)
+        res.unlink()
+        # self._cr.execute("""
+        #             DELETE FROM hr_rfid_command
+        #             WHERE create_date < NOW() - INTERVAL '14 days'
+        #         """)
         _logger.info("GC'd %d old rfid cmd entries", self._cr.rowcount)
 
     def resend_action(self):

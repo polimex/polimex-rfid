@@ -31,6 +31,7 @@ class ResPartner(models.Model):
         'hr.rfid.card',
         'contact_id',
         string='RFID Card',
+        context={'active_test': False},
         help='Cards owned by the contact',
         groups="hr_rfid.hr_rfid_group_officer"
 
@@ -111,6 +112,7 @@ class ResPartner(models.Model):
                 if expiration is not None and expiration is not False:
                     creation_dict['expiration'] = str(expiration)
                 rel_env.create(creation_dict)
+                acc_gr.check_doors()
 
     def remove_acc_gr(self, access_groups):
         rel_env = self.env['hr.rfid.access.group.contact.rel']
@@ -153,7 +155,7 @@ class ResPartner(models.Model):
     def check_access_group(self):
         for user in self:
             user.check_for_ts_inconsistencies()
-
+            user.hr_rfid_access_group_ids.mapped('access_group_id').check_doors()
             doors = user.hr_rfid_access_group_ids.mapped('access_group_id').mapped('all_door_ids').mapped('door_id')
             relay_doors = dict()
             for door in doors:

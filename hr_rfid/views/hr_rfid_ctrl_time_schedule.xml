@@ -2,7 +2,7 @@
 
 <odoo>
     <data>
-         <!-- Create TS based on company -->
+        <!-- Create TS based on company -->
         <function model="hr.rfid.time.schedule" name="set_company_ts"/>
 
         <record id="hr_rfid_time_schedule_view_form" model="ir.ui.view">
@@ -10,8 +10,21 @@
             <field name="model">hr.rfid.time.schedule</field>
             <field name="arch" type="xml">
                 <form create="0" delete="0">
+                    <header>
+                        <field name="is_empty" invisible="1"/>
+                        <button name="reset_ts_data" string="Reset" type="object"
+                                confirm="Are you sure you want to reset the time schedule data?"
+                                invisible="is_empty"
+                        />
+                    </header>
                     <sheet>
-                        <div class="oe_button_box" name="ts_button_box">
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" name="hr_rfid.hr_rfid_ctrl_ts_week_wiz_action"
+                                    strting="Time Schedule Wizard" type="action" icon="fa-calendar">
+                                <div class="o_stat_info">
+                                    <span class="o_stat_text">Details</span>
+                                </div>
+                            </button>
                         </div>
                         <div class="oe_title">
                             <label for="name" class="oe_edit_only"/>
@@ -27,7 +40,7 @@
                             <field name="controller_ids" readonly="1"/>
                             <field name="access_group_door_ids" readonly="1">
                                 <tree>
-                                    <field name="access_group_id" />
+                                    <field name="access_group_id"/>
                                     <field name="door_id"/>
                                     <field name="alarm_rights"/>
                                 </tree>
@@ -100,9 +113,10 @@
                         <h1>Time schedule data for <field name="ts_id" readonly="1" options="{'clickable': '0'}" class="oe_inline"/> </h1>
                         <br/>
                         <field name="interval_ids">
-                            <tree create="false" delete="false" editable="bottom" multi_edit="1" default_order="day asc">
-                                <field name="day" />
-                                <field name="number" />
+                            <tree create="false" delete="false" editable="bottom" multi_edit="1"
+                                  default_order="day asc">
+                                <field name="day"/>
+                                <field name="number"/>
                                 <field name="begin" widget="float_time"/>
                                 <field name="end" widget="float_time"/>
                             </tree>

@@ -39,8 +39,11 @@
                         </group>
                         <notebook>
                             <page string="Cards">
-                                <field name="hr_rfid_card_ids" context="{'default_contact_id': id}" edit="0">
-                                    <tree string="Cards belonging this Contact" editable="bottom">
+                                <field name="hr_rfid_card_ids" context="{'active_test': False,'default_contact_id': id}" edit="0">
+                                    <tree string="Cards belonging this Contact" editable="bottom"
+                                          decoration-success="active"
+                                          decoration-danger="not active">
+                                        <field name="active" invisible="1"/>
                                         <field name="number"/>
                                         <field name="card_reference"/>
                                         <field name="activate_on"/>
@@ -49,7 +52,7 @@
                                         <field name="cloud_card"/>
                                     </tree>
                                 </field>
-                                <label for="hr_rfid_card_ids" string="New Barcode card" />
+                                <label for="hr_rfid_card_ids" string="New Barcode card"/>
                                 <div class="o_row">
                                     <button string="Generate" class="btn btn-link" type="object"
                                             name="generate_random_barcode_card"/>
@@ -66,6 +69,7 @@
                                         <field name="visits_counting"/>
                                         <field name="permitted_visits"/>
                                         <field name="visits_counter" readonly="1"/>
+                                        <field name="state" widget="boolean_toggle"/>
                                     </tree>
                                 </field>
                             </page>
@@ -80,8 +84,9 @@
             <field name="inherit_id" ref="base.view_res_partner_filter"/>
             <field name="model">res.partner</field>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='name']" position="before">
-                    <field name="hr_rfid_card_ids" filter_domain="[('hr_rfid_card_ids.number', 'ilike', self)]"/>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="hr_rfid_card_ids" filter_domain="['|', ('name', 'ilike', self), ('hr_rfid_card_ids.number', 'ilike', self)]"/>
+<!--                    <field name="hr_rfid_card_ids" filter_domain="[('hr_rfid_card_ids.number', 'ilike', self)]"/>-->
                 </xpath>
             </field>
         </record>

@@ -29,6 +29,7 @@
         'views/rfid_service.xml',
         'views/rfid_service_sale.xml',
         'views/rfid_service_sale_wiz.xml',
+        'views/res_partner_views.xml',
         'views/menus.xml',
         'data/data.xml',
         'security/rfid_services_multi_company.xml',

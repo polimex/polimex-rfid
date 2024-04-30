@@ -35,11 +35,11 @@
                                 <!--                                <field name="card_number" placeholder="Scan card on reader . . ."/>-->
                                 <field name="card_number"
                                        placeholder="Scan card on reader . . ."
-                                       attrs="{'readonly': [('generate_barcode_card', '=', True)]}"
+                                       readonly="generate_barcode_card or extend_sale_id != False"
                                 />
                             </h1>
                             <field name="service_id"
-                                   attrs="{'readonly': [('extend_sale_id', '=', False)]}"
+                                   readonly="extend_sale_id == False"
                                    options='{"no_open": True, "no_create": True}'/>
 
                         </div>
@@ -49,22 +49,25 @@
                             </group>
                             <group>
                                 <field name="fixed_time" invisible="1"/>
-                                <field name="end_date" attrs="{'readonly':[('fixed_time','=',True)]}"/>
+                                <field name="end_date" readonly="fixed_time"/>
                             </group>
                             <group>
                                 <field name="visits"/>
                             </group>
                             <group>
-                                <field name="partner_id" placeholder="Will be generated"/>
+                                <field name="partner_id"
+                                       readonly="extend_sale_id != False"
+                                       options='{"no_open": True, "no_create": True}'
+                                       placeholder="Will be generated"/>
                                 <field name="email" placeholder="If you want to send pdf"/>
                                 <field name="mobile" placeholder="If you want to send mobile link"/>
                             </group>
                             <separator/>
-                            <group attrs="{'invisible':[('extend_sale_id','=',False)]}">
+                            <group invisible="not extend_sale_id">
                                 <field name="ext_start_date" readonly="1"
                                        options='{"no_open": True, "no_create": True}'/>
                             </group>
-                            <group attrs="{'invisible':[('extend_sale_id','=',False)]}" >
+                            <group invisible="not extend_sale_id">
                                 <field name="ext_end_date" readonly="1" options='{"no_open": True, "no_create": True}'/>
                             </group>
                         </group>
@@ -73,10 +76,10 @@
                                     string="Register" class="oe_highlight" icon="fa-check"/>
                             <button name="print_card" type="object"
                                     string="Print" icon="fa-print"
-                                    attrs="{'invisible': [('generate_barcode_card', '!=', True)]}"/>
+                                    invisible="not generate_barcode_card"/>
                             <button name="email_card" type="object"
                                     string="E-mail" icon="fa-envelope-o"
-                                    attrs="{'invisible': [('generate_barcode_card', '!=', True)]}"/>
+                                    invisible="not generate_barcode_card"/>
                             <button string="Cancel" special="cancel" icon="fa-times"/>
                         </footer>
                     </sheet>

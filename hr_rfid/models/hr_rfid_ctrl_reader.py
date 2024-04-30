@@ -56,7 +56,11 @@ class HrRfidReader(models.Model):
         required=True,
         ondelete='cascade',
     )
-
+    webstack_id = fields.Many2one(
+        comodel_name='hr.rfid.webstack',
+        string='Module',
+        related='controller_id.webstack_id',
+    )
     user_event_ids = fields.One2many(
         'hr.rfid.event.user',
         'reader_id',

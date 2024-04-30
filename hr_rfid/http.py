@@ -47,18 +47,13 @@ def _response(self, result=None, error=None):
 
     if not self.jsonrequest.get('id', False) and not self.jsonrequest.get('jsonrpc', False) and (result is not None):
         # Non RPC Request not needed to respond with RPC structure
-        body = json.dumps(result, default=date_utils.json_default)
+        # body = json.dumps(result, default=date_utils.json_default)
+        response = result
         if result.get('status', False) and len(result) == 1:
-            body = ''
-            return Response(body, status=result.get('status', 200),
-                            headers=[('Content-Type', 'application/json'), ('Content-Length', len(body))]
-                            )
-            # return self.request.make_json_response(response)
-        else:
-            # body = json.dumps(response, default=date_utils.json_default)
-            return self.request.make_json_response(body)
-    else:
-        return self.request.make_json_response(response)
+            # response = {}
+            return Response('OK', status=200)
+
+    return self.request.make_json_response(response)
 
 
 setattr(http.JsonRPCDispatcher, '_response', _response)

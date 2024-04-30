@@ -92,12 +92,28 @@
                                 <group>
                                     <group>
                                         <field name="emergency_state" readonly="1"/>
-                                        <field name="temperature" readonly="1"/>
-                                        <field name="humidity" readonly="1"/>
+                                        <label for="temperature" />
+                                        <div>
+                                            <field name="temperature" readonly="1"/> <span class="oe_inline ml8">°C</span>
+                                        </div>
+                                        <label for="humidity" />
+                                        <div>
+                                            <field name="humidity" readonly="1"/> <span class="oe_inline ml8">%</span>
+                                        </div>
                                     </group>
                                     <group>
-                                        <field name="system_voltage" readonly="1"/>
-                                        <field name="input_voltage" readonly="1"/>
+                                        <label for="system_voltage" />
+                                        <div>
+                                            <field name="system_voltage" readonly="1"/> <span class="oe_inline ml8">VDC</span>
+                                        </div>
+                                        <label for="input_voltage" />
+                                        <div>
+                                            <field name="input_voltage" readonly="1"/> <span class="oe_inline ml8">VDC</span>
+                                        </div>
+                                        <label for="system_voltage" />
+                                        <div>
+                                            <field name="system_voltage" readonly="1"/> <span class="oe_inline ml8">VDC</span>
+                                        </div>
                                         <field name="cards_count" readonly="1"/>
                                     </group>
                                 </group>
