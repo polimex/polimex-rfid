@@ -51,7 +51,7 @@ def _response(self, result=None, error=None):
         response = result
         if result.get('status', False) and len(result) == 1:
             # response = {}
-            return Response('OK', status=200)
+            return Response('', status=200)
 
     return self.request.make_json_response(response)
 
