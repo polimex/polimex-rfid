@@ -16,6 +16,7 @@
                 </p>
             </field>
         </record>
+
         <record id="hr_rfid_service_kanban" model="ir.ui.view">
             <field name="name">hr.rfid.service.kanban</field>
             <field name="model">rfid.service</field>
@@ -28,9 +29,20 @@
                     <field name="zone_id"/>
                     <field name="color"/>
                     <field name="displayed_image_id"/>
-                    <!--                    <progressbar field="last_update_status"-->
-                    <!--                                 colors='{"on_track": "success", "at_risk": "warning", "off_track": "danger", "on_hold": "info"}'/>-->
                     <templates>
+                        <t t-name="kanban-menu">
+                            <a role="menuitem" class="dropdown-item" name="action_new_sale"
+                               type="object" groups="base.group_user">Sale Service
+                            </a>
+                            <a role="menuitem" class="dropdown-item" name="action_view_sales"
+                               type="object" groups="rfid_service_base.group_card_manager">Sales history</a>
+                            <a role="menuitem" class="dropdown-item" data-field="displayed_image_id"
+                               type="set_cover" groups="rfid_service_base.group_card_manager">Set Cover Image
+                            </a>
+                            <a t-if="widget.editable" role="menuitem" class="dropdown-item" type="edit">Configuration</a>
+                            <ul t-if="widget.editable" class="oe_kanban_colorpicker" data-field="color" role="menu"/>
+                        </t>
+
                         <t t-name="kanban-box">
                             <div t-attf-class="#{kanban_color(record.color.raw_value)} o_has_icon oe_kanban_content oe_kanban_card">  <!--oe_kanban_global_click-->
                                 <div class="o_project_kanban_main ">
@@ -66,78 +78,12 @@
                                                           title="Group"></span>
                                                     <t t-esc="record.access_group_id.value"/>
                                                 </div>
-                                                <!--                                                <div t-if="record.rating_active.raw_value" class="text-muted"-->
-                                                <!--                                                     title="Percentage of happy ratings over the past 30 days."-->
-                                                <!--                                                     groups="project.group_project_rating">-->
-                                                <!--                                                    <b>-->
-                                                <!--                                                        <t t-if="record.rating_percentage_satisfaction.value != -1">-->
-                                                <!--                                                            <i class="fa fa-smile-o" role="img"-->
-                                                <!--                                                               aria-label="Percentage of satisfaction"-->
-                                                <!--                                                               title="Percentage of satisfaction"/>-->
-                                                <!--                                                            <t t-esc="record.rating_percentage_satisfaction.value"/>%-->
-                                                <!--                                                        </t>-->
-                                                <!--                                                    </b>-->
-                                                <!--                                                </div>-->
                                                 <field name="tag_ids" widget="many2many_tags"
                                                        options="{'color_field': 'color'}"/>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="container o_kanban_card_manage_pane dropdown-menu" role="menu"
-                                         groups="base.group_user">
-                                        <div class="row">
-                                            <div class="col-6 o_kanban_card_manage_section o_kanban_manage_view">
-                                                <div role="menuitem" class="o_kanban_card_manage_title">
-                                                    <span>Tasks</span>
-                                                </div>
-                                                <div role="menuitem">
-                                                    <a name="action_new_sale" type="object">Sale Service</a>
-                                                </div>
-                                                <!--                                                <div role="menuitem" t-if="record.doc_count.raw_value">-->
-                                                <!--                                                    <a name="attachment_tree_view" type="object">Documents</a>-->
-                                                <!--                                                </div>-->
-                                            </div>
-                                            <div class="col-6 o_kanban_card_manage_section o_kanban_manage_reporting"
-                                                 groups="rfid_service_base.group_card_manager">
-                                                <div role="menuitem" class="o_kanban_card_manage_title">
-                                                    <span>Reporting</span>
-                                                </div>
-                                                <div role="menuitem">
-                                                    <a name="action_view_sales" type="object">Sales history</a>
-                                                </div>
-                                                <!--                                                <div role="menuitem">-->
-                                                <!--                                                    <a name="(action_project_task_burndown_chart_report)d"-->
-                                                <!--                                                       type="action">Burndown Chart-->
-                                                <!--                                                    </a>-->
-                                                <!--                                                </div>-->
-                                            </div>
-                                        </div>
-                                        <div class="o_kanban_card_manage_settings row"
-                                             groups="rfid_service_base.group_card_manager">
-                                            <div role="menuitem" aria-haspopup="true" class="col-8">
-                                                <ul class="oe_kanban_colorpicker" data-field="color" role="popup"/>
-                                            </div>
-                                            <div role="menuitem" class="col-4">
-                                                <!--                                                <a t-if="record.privacy_visibility.raw_value == 'portal'"-->
-                                                <!--                                                   class="dropdown-item" role="menuitem"-->
-                                                <!--                                                   name="(project.project_share_wizard_action)d" type="action">Share-->
-                                                <!--                                                </a>-->
-                                                <!-- [XBO] TODO: remove the name attribute in this a tag in master -->
-                                                <a t-if="widget.editable" role="menuitem" type="set_cover" class="dropdown-item" data-field="displayed_image_id">Set Cover Image</a>
-                                                <a class="dropdown-item" role="menuitem" type="edit"
-                                                   name="action_view_kanban_project"
-                                                   groups="rfid_service_base.group_card_manager">Edit
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <a class="o_kanban_manage_toggle_button o_dropdown_kanban" href="#"
-                                       groups="base.group_user">
-                                        <i class="fa fa-ellipsis-v" role="img" aria-label="Manage" title="Manage"/>
-                                    </a>
-                                    <span>
-                                        <!--                                        <field name="is_favorite" widget="boolean_favorite" nolabel="1" force_save="1"/>-->
-                                    </span>
+
                                 </div>
                                 <div class="o_kanban_record_bottom mt-3">
                                     <div class="oe_kanban_bottom_left">
@@ -157,12 +103,6 @@
                                         <field name="activity_ids" widget="kanban_activity"
                                                groups="rfid_service_base.group_card_manager"/>
                                     </div>
-                                    <!--                                    <div class="oe_kanban_bottom_right">-->
-                                    <!--                                        <span t-att-class="'o_status_bubble mx-0 o_color_bubble_' + record.last_update_color.value"-->
-                                    <!--                                              t-att-title="record.last_update_status.value"></span>-->
-                                    <!--                                        <field name="user_id" widget="many2one_avatar_user"-->
-                                    <!--                                               t-if="record.user_id.raw_value"/>-->
-                                    <!--                                    </div>-->
                                 </div>
                             </div>
                         </t>
@@ -211,7 +151,7 @@
                                 <field name="generate_barcode_card" widget="generate_barcode_card"/>
                                 <field name="parent_id"/>
                                 <field name="card_type" options='{"no_open": True, "no_create": True}'/>
-                                <field name="fixed_time" />
+                                <field name="fixed_time"/>
                             </group>
                         </group>
                         <notebook>
