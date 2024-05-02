@@ -90,7 +90,7 @@
             <field name="model">hr.department</field>
             <field name="inherit_id" ref="hr.view_department_form"/>
             <field name="arch" type="xml">
-                <field name="company_id" position="after">
+                <field name="color" position="after">
                     <label for="hr_rfid_default_access_group"/>
                     <div class="o_row">
                         <field name="hr_rfid_default_access_group" readonly="1" groups="hr_rfid.hr_rfid_group_officer"/>
