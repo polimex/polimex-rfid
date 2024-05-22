@@ -5,6 +5,47 @@
         <!-- Create TS based on company -->
         <function model="hr.rfid.time.schedule" name="set_company_ts"/>
 
+        <!--        Wizard for Time Schedules-->
+
+        <record id="hr_rfid_controller_ts_wiz" model="ir.ui.view">
+            <field name="name">hr.rfid.ctrl.ts.week.wizard</field>
+            <field name="model">hr.rfid.ctrl.ts.week.wiz</field>
+            <field name="arch" type="xml">
+                <form string="View/Modify Time Schedule">
+                    <div>
+                        <h1>Time schedule data for
+                            <field name="ts_id" readonly="1" options="{'clickable': '0'}" class="oe_inline"/>
+                        </h1>
+                        <br/>
+                        <field name="interval_ids">
+                            <tree create="false" delete="false" editable="bottom" multi_edit="1"
+                                  default_order="day asc">
+                                <field name="day"/>
+                                <field name="number"/>
+                                <field name="begin" widget="float_time"/>
+                                <field name="end" widget="float_time"/>
+                            </tree>
+                        </field>
+                    </div>
+                    <footer>
+                        <button name="save_ts" type="object" string="Save" class="oe_highlight"/>
+                        <button special="cancel" string="Close" class="oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="hr_rfid_ctrl_ts_week_wiz_action" model="ir.actions.act_window">
+            <field name="name">Time Schedule Wizard</field>
+            <field name="res_model">hr.rfid.ctrl.ts.week.wiz</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_rfid_controller_ts_wiz"/>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="model_hr_rfid_time_schedule"/>
+            <field name="binding_view_types">form</field>
+        </record>
+
         <record id="hr_rfid_time_schedule_view_form" model="ir.ui.view">
             <field name="name">hr.rfid.time.schedule.form</field>
             <field name="model">hr.rfid.time.schedule</field>
@@ -19,7 +60,7 @@
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
-                            <button class="oe_stat_button" name="hr_rfid.hr_rfid_ctrl_ts_week_wiz_action"
+                            <button class="oe_stat_button" name="%(hr_rfid_ctrl_ts_week_wiz_action)d"
                                     strting="Time Schedule Wizard" type="action" icon="fa-calendar">
                                 <div class="o_stat_info">
                                     <span class="o_stat_text">Details</span>
@@ -69,8 +110,12 @@
                         <t t-name="kanban-box">
                             <div class="oe_product_vignette oe_kanban_global_click">
                                 <ul style="list-style:none;margin:0;padding0;">
-                                    <li><field name="name"/></li>
-                                    <li>TS Number: <field name="number"/></li>
+                                    <li>
+                                        <field name="name"/>
+                                    </li>
+                                    <li>TS Number:
+                                        <field name="number"/>
+                                    </li>
                                     <t t-if="((record.is_empty.raw_value == true) &amp;&amp; (record.number.raw_value &gt; 0))">
                                         <li class="text-danger">TS is empty</li>
                                     </t>
@@ -99,45 +144,6 @@
             <field name="name">Time Schedules</field>
             <field name="res_model">hr.rfid.time.schedule</field>
             <field name="view_mode">kanban,tree,form,search</field>
-        </record>
-
-
-<!--        Wizard for Time Schedules-->
-
-        <record id="hr_rfid_controller_ts_wiz" model="ir.ui.view">
-            <field name="name">hr.rfid.ctrl.ts.week.wizard</field>
-            <field name="model">hr.rfid.ctrl.ts.week.wiz</field>
-            <field name="arch" type="xml">
-                <form string="View/Modify Time Schedule">
-                    <div>
-                        <h1>Time schedule data for <field name="ts_id" readonly="1" options="{'clickable': '0'}" class="oe_inline"/> </h1>
-                        <br/>
-                        <field name="interval_ids">
-                            <tree create="false" delete="false" editable="bottom" multi_edit="1"
-                                  default_order="day asc">
-                                <field name="day"/>
-                                <field name="number"/>
-                                <field name="begin" widget="float_time"/>
-                                <field name="end" widget="float_time"/>
-                            </tree>
-                        </field>
-                    </div>
-                    <footer>
-                        <button name="save_ts" type="object" string="Save" class="oe_highlight"/>
-                        <button special="cancel" string="Close" class="oe_highlight"/>
-                    </footer>
-                </form>
-            </field>
-        </record>
-
-        <record id="hr_rfid_ctrl_ts_week_wiz_action" model="ir.actions.act_window">
-            <field name="name">Time Schedule Wizard</field>
-            <field name="res_model">hr.rfid.ctrl.ts.week.wiz</field>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="hr_rfid_controller_ts_wiz"/>
-            <field name="target">new</field>
-            <field name="binding_model_id" ref="model_hr_rfid_time_schedule"/>
-            <field name="binding_view_types">form</field>
         </record>
     </data>
 </odoo>

@@ -13,33 +13,22 @@
                          groups="hr_rfid.hr_rfid_group_manager">
 
                         <block title="RFID System Settings" id="hr_rfid_general">
-                            <setting id="s_event_lifetime" title="RFID Events life" string="RFID Events life">
-                                <div class="content-group" name="hr_rfid_options">
-                                    <div class="d-flex">
-                                        <span class="flex-shrink-0 ml8 me-2">Define how long the Events in the system
+                            <setting id="s_event_lifetime" string="RFID Events life"
+                                     help="Define how long the Events in the system
                                             will live in DAYS! After this period of days, the system will delete old
-                                            events.
-                                        </span>
-                                        <field name="event_lifetime" class="ml16"/>
-                                        <label for="event_lifetime" class="o_light_label"/>
-                                    </div>
-                                    <div class="d-flex">
-                                        <span class="flex-shrink-0 ml8 me-2">Permit automatic adding modules from
+                                            events.">
+                                <field name="event_lifetime"/>
+                            </setting>
+                            <setting id="s_save_new_webstacks" string="Save new Webstacks"
+                                     help="Permit automatic adding modules from
                                             communication. This feature do not support Multi Company. New Modules are
-                                            added to first company!
-                                        </span>
-                                        <field name="save_new_webstacks" class="ml16"/>
-                                        <label for="save_new_webstacks" class="o_light_label"/>
-                                    </div>
-                                    <div class="d-flex" groups="base.group_no_one">
-                                        <span class="flex-shrink-0 ml8 me-2">Log all JSON data from communication to
-                                            events. Visible only in debug mode
-                                        </span>
-                                        <field name="save_webstack_communications" class="ml16"
-                                               help="Log communication commands for bug tracking"/>
-                                        <label for="save_webstack_communications" class="o_light_label"/>
-                                    </div>
-                                </div>
+                                            added to first company!">
+                                <field name="save_new_webstacks"/>
+                            </setting>
+                            <setting id="s_save_webstack_communications" string="Save Webstack Communications" groups="base.group_no_one"
+                                     help="Log all JSON data from communication to
+                                            events.">
+                                <field name="save_webstack_communications"/>
                             </setting>
                         </block>
 
