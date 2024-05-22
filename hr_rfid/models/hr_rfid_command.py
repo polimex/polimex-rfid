@@ -791,10 +791,10 @@ class HrRfidCommands(models.Model):
                         door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
                         add_door_to_reader(reader2, door)
                 elif io_count in [3, 4]:
-                    for i in range(io_size * 2):
+                    for i in range(min(io_size * 2, 16)):
                         door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
                         add_door_to_reader(reader1, door)
-                    for i in range(io_size*2, io_size*io_count):
+                    for i in range(min(io_size * 2, 16), min(io_size*io_count, 32)):
                         door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
                         add_door_to_reader(reader2, door)
 
