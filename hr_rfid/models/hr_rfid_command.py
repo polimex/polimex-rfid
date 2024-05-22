@@ -771,23 +771,43 @@ class HrRfidCommands(models.Model):
                 for i in range(1, readers_count):
                     create_reader('R' + str(i + 1), i + 1, '0')
             elif ctrl_mode == 2:
+
                 if outputs > 16 and readers_count < 2:
                     return self.log_cmd_error_and_return_next('F0 sent us too many outputs and not enough readers',
                                                               '31', 200, post_data=post_data)
-                reader = create_reader('R1', 1, '0')
-                for i in range(outputs):
-                    door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
-                    add_door_to_reader(reader, door)
-                if outputs > 16:
-                    reader = create_reader('R2', 2, '0')
-                    for i in range(outputs - 16):
+                io_size = 8 if outputs % 8 == 0 else 10
+                io_count = outputs // io_size
+                reader1 = create_reader('R1', 1, '0')
+                reader2 = create_reader('R2', 2, '0')
+                if io_count == 1:
+                    for i in range(io_size):
                         door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
-                        add_door_to_reader(reader, door)
-                    for i in range(2, readers_count):
-                        create_reader('R' + str(i + 1), i + 1, '0')
-                else:
-                    for i in range(1, readers_count):
-                        create_reader('R' + str(i + 1), i + 1, '0')
+                        add_door_to_reader(reader1, door)
+                elif io_count == 2:
+                    for i in range(io_size):
+                        door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
+                        add_door_to_reader(reader1, door)
+                    for i in range(io_size, io_size*io_count):
+                        door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
+                        add_door_to_reader(reader2, door)
+                elif io_count in [3, 4]:
+                    for i in range(io_size * 2):
+                        door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
+                        add_door_to_reader(reader1, door)
+                    for i in range(io_size*2, io_size*io_count):
+                        door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
+                        add_door_to_reader(reader2, door)
+
+                # if outputs > 16:
+                #     reader = create_reader('R2', 2, '0')
+                #     for i in range(outputs - 16):
+                #         door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
+                #         add_door_to_reader(reader, door)
+                #     for i in range(2, readers_count):
+                #         create_reader('R' + str(i + 1), i + 1, '0')
+                # else:
+                #     for i in range(1, readers_count):
+                #         create_reader('R' + str(i + 1), i + 1, '0')
             else:
                 raise exceptions.ValidationError(_('Got controller mode=%d for hw_ver=%s???')
                                                  % (ctrl_mode, hw_ver))
