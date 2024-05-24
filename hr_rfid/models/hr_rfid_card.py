@@ -277,7 +277,7 @@ class HrRfidCard(models.Model):
 
         records = self.env['hr.rfid.card']
         for val in vals:
-            if val['card_type'] == self.env.ref('hr_rfid.hr_rfid_card_type_barcode').id:
+            if 'card_type' in val and val['card_type'] == self.env.ref('hr_rfid.hr_rfid_card_type_barcode').id:
                 val['card_input_type'] = 'w34'
             card = super(HrRfidCard, self).create([val])
             card._check_len_number()

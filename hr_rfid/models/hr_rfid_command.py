@@ -193,8 +193,10 @@ class HrRfidCommands(models.Model):
 
     pin_code = fields.Char(string='Pin Code (debug info)')
     ts_code = fields.Char(string='TS Code (debug info)', size=8)
-    rights_data = fields.Integer(string='Rights Data (debug info)')
-    rights_mask = fields.Integer(string='Rights Mask (debug info)')
+
+    rights_data = fields.Char(string='Rights Data (debug info)')
+    rights_mask = fields.Char(string='Rights Mask (debug info)')
+
     alarm_right = fields.Boolean(string='Alarm Data (debug info)', default=False)
 
     @api.depends('cmd')
@@ -360,12 +362,12 @@ class HrRfidCommands(models.Model):
                 'ts_code': new_ts_code,
             }
 
-            new_rights_data = (rights_data | old_cmd.rights_data)
-            new_rights_data ^= (rights_mask & old_cmd.rights_data)
-            new_rights_data ^= (rights_data & old_cmd.rights_mask)
-            new_rights_mask = rights_mask | old_cmd.rights_mask
-            new_rights_mask ^= (rights_mask & old_cmd.rights_data)
-            new_rights_mask ^= (rights_data & old_cmd.rights_mask)
+            new_rights_data = (rights_data | int(old_cmd.rights_data))
+            new_rights_data ^= (rights_mask & int(old_cmd.rights_data))
+            new_rights_data ^= (rights_data & int(old_cmd.rights_mask))
+            new_rights_mask = rights_mask | int(old_cmd.rights_mask)
+            new_rights_mask ^= (rights_mask & int(old_cmd.rights_data))
+            new_rights_mask ^= (rights_data & int(old_cmd.rights_mask))
 
             write_dict['rights_mask'] = new_rights_mask
             write_dict['rights_data'] = new_rights_data
@@ -394,12 +396,12 @@ class HrRfidCommands(models.Model):
                 new_rights_data = rights_data
                 new_rights_mask = rights_mask
             else:
-                new_rights_data = (rights_data | old_cmd.rights_data)
-                new_rights_data ^= (rights_mask & old_cmd.rights_data)
-                new_rights_data ^= (rights_data & old_cmd.rights_mask)
-                new_rights_mask = rights_mask | old_cmd.rights_mask
-                new_rights_mask ^= (rights_mask & old_cmd.rights_data)
-                new_rights_mask ^= (rights_data & old_cmd.rights_mask)
+                new_rights_data = (rights_data | int(old_cmd.rights_data))
+                new_rights_data ^= (rights_mask & int(old_cmd.rights_data))
+                new_rights_data ^= (rights_data & int(old_cmd.rights_mask))
+                new_rights_mask = rights_mask | int(old_cmd.rights_mask)
+                new_rights_mask ^= (rights_mask & int(old_cmd.rights_data))
+                new_rights_mask ^= (rights_data & int(old_cmd.rights_mask))
 
             old_cmd.write({
                 'rights_mask': new_rights_mask,
@@ -935,19 +937,19 @@ class HrRfidCommands(models.Model):
             elif command.controller_id.is_relay_ctrl():
                 card_num = ''.join(list('0' + ch for ch in command.card_number))
                 rights_data = '%03d%03d%03d%03d' % (
-                    (command.rights_data >> (3 * 8)) & 0xFF,
-                    (command.rights_data >> (2 * 8)) & 0xFF,
-                    (command.rights_data >> (1 * 8)) & 0xFF,
-                    (command.rights_data >> (0 * 8)) & 0xFF,
+                    (int(command.rights_data) >> (3 * 8)) & 0xFF,
+                    (int(command.rights_data) >> (2 * 8)) & 0xFF,
+                    (int(command.rights_data) >> (1 * 8)) & 0xFF,
+                    (int(command.rights_data) >> (0 * 8)) & 0xFF,
                 )
                 if command.controller_id.mode == 3:
                     rights_mask = '255255255255'
                 else:
                     rights_mask = '%03d%03d%03d%03d' % (
-                        (command.rights_mask >> (3 * 8)) & 0xFF,
-                        (command.rights_mask >> (2 * 8)) & 0xFF,
-                        (command.rights_mask >> (1 * 8)) & 0xFF,
-                        (command.rights_mask >> (0 * 8)) & 0xFF,
+                        (int(command.rights_mask) >> (3 * 8)) & 0xFF,
+                        (int(command.rights_mask) >> (2 * 8)) & 0xFF,
+                        (int(command.rights_mask) >> (1 * 8)) & 0xFF,
+                        (int(command.rights_mask) >> (0 * 8)) & 0xFF,
                     )
                 rights_data = ''.join(list('0' + ch for ch in rights_data))
                 rights_mask = ''.join(list('0' + ch for ch in rights_mask))
@@ -956,8 +958,8 @@ class HrRfidCommands(models.Model):
                 card_num = ''.join(list('0' + ch for ch in command.card_number))
                 pin_code = ''.join(list('0' + ch for ch in command.pin_code))
                 ts_code = str(command.ts_code)
-                rights_data = '{:02X}'.format(command.rights_data)
-                rights_mask = '{:02X}'.format(command.rights_mask)
+                rights_data = '{:02X}'.format(int(command.rights_data))
+                rights_mask = '{:02X}'.format(int(command.rights_mask))
                 if command.controller_id.is_alarm_ctrl():
                     json_cmd['cmd']['d'] = card_num + pin_code + ts_code + rights_data + rights_mask + (
                             command.alarm_right and rights_data or '00') + (
