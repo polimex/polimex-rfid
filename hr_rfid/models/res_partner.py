@@ -225,7 +225,7 @@ class ResPartner(models.Model):
         self.write({
             'hr_rfid_card_ids': [(0, 0, {
                 'number': card_number,
-                'card_type': self.env.ref('hr_rfid.hr_rfid_card_type_barcode').id
+                'card_type': self.env.ref('hr_rfid.hr_rfid_card_type_barcode').id,
             })]
         })
 
