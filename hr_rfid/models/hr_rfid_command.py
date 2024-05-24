@@ -444,8 +444,9 @@ class HrRfidCommands(models.Model):
             rmask = rdata
         elif ctrl.mode == 2:
             rdata = 1 << (door.number - 1)
-            if door.reader_ids.number == 2:
-                rdata *= 0x10000
+            # TODO Why this is here?!
+            # if door.reader_ids.number == 2:
+            #     rdata *= 0x10000
             rmask = rdata
         elif ctrl.mode == 3:
             rdata = door.number
