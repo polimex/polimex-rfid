@@ -588,7 +588,7 @@ class WebRfidController(http.Controller):
                         'last_ip': request.httprequest.environ['REMOTE_ADDR'],
                         'updated_at': fields.Datetime.now(),
                         'available': 'a',
-                        'company_id': request.env['res.company'].search([])[0].id,
+                        'company_id': request.env['res.company'].sudo().search([])[0].id,
                     }
                     webstack_id = request.env['hr.rfid.webstack'].sudo().with_context(
                         tz=request.env['res.users'].sudo().browse(2).tz).create(new_webstack_dict)
