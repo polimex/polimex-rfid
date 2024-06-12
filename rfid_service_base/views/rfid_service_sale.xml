@@ -192,7 +192,7 @@
             <field name="model">rfid.service.sale</field>
             <field name="arch" type="xml">
                 <calendar string="Service sales on time" date_start="start_date" date_stop="end_date"
-                          color="service_id" mode="month" quick_create="0" create="0" delete="0">
+                          color="service_id" mode="month" quick_add="0" create="0" delete="0">
                     <field name="service_id" readonly="1"/>
                     <field name="partner_id" readonly="1"/>
                     <field name="start_date" readonly="1"/>
