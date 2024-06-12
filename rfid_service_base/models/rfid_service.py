@@ -32,7 +32,6 @@ class BaseRFIDService(models.Model):
                                          string='Cover Image')
     tag_ids = fields.Many2many(
         comodel_name='rfid.service.tags',
-        domain="[('company_id', '=', company_id)]",
         string='Tags')
     service_type = fields.Selection([
         ('time', 'Time based'),
