@@ -299,7 +299,7 @@ class HrRfidCard(models.Model):
                                        ' in the same time, and cannot both be empty.'
 
         for card in self:
-            old_number = str(card.number)[:]
+            old_number = str(card.internal_number)[:]
             old_owner = card.get_owner()
             old_active = card.active
             old_card_type_id = card.card_type
@@ -313,7 +313,8 @@ class HrRfidCard(models.Model):
             if len(card.employee_id) == 0 and len(card.contact_id) == 0:
                 raise exceptions.ValidationError(invalid_user_and_contact_msg)
 
-            if old_number != card.number:
+            if old_number != card.internal_number:
+                # card._compute_internal_number()
                 card.door_rel_ids.card_number_changed(old_number)
 
             if old_owner != card.get_owner() and old_owner:

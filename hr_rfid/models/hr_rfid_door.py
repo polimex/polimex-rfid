@@ -783,7 +783,7 @@ class HrRfidCardDoorRel(models.Model):
 
     def card_number_changed(self, old_number):
         for rel in self:
-            if old_number != rel.card_id.number:
+            if old_number != rel.card_id.internal_number:
                 rel._create_remove_card_command(old_number)
                 rel._create_add_card_command()
 
