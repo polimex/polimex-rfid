@@ -242,7 +242,7 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
             raise UserError(_('Please scan a card'))
         if self.end_date < fields.Datetime.now():
             raise UserError(_('The period for this sale finish in the past. Please check details again!'))
-        if not self.service_id.access_group_id.door_ids:
+        if not self.sudo().service_id.access_group_id.door_ids:
             raise UserError(_('The access group for this service have no any doors. Please fix it and try again!'))
         # if not self.partner_id:
         #     self.partner_id, access_group_contact_rel, card_id, transaction_name = self._gen_partner(
@@ -261,18 +261,18 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
             'card_id': card_id.id,
             'access_group_contact_rel': access_group_contact_rel.id
         })
-        sale_id.message_subscribe(partner_ids=[self.partner_id.id])
+        sale_id.sudo().message_subscribe(partner_ids=[self.partner_id.id])
         if self.extend_sale_id:
             # base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
 
             # link = f"{base_url}/web#id={sale_id.id}&model=rfid.service.sale&view_type=form"
             link = f"/web#id={sale_id.id}&model=rfid.service.sale&view_type=form"
             message = _("This Sale is extended by <a href='%s'>Sale %s</a>", link, sale_id.display_name)
-            self.extend_sale_id.message_post(body=message, message_type='comment')
+            self.extend_sale_id.sudo().message_post(body=message, message_type='comment')
 
             # link = f"{base_url}/web#id={self.extend_sale_id.id}&model=rfid.service.sale&view_type=form"
             link = f"/web#id={self.extend_sale_id.id}&model=rfid.service.sale&view_type=form"
             message = _("This Sale extends <a href='%s'>Sale %s</a>", link, self.extend_sale_id.display_name)
-            sale_id.message_post(body=message, message_type='comment')
+            sale_id.sudo().message_post(body=message, message_type='comment')
 
         return sale_id, self.partner_id, access_group_contact_rel, card_id
