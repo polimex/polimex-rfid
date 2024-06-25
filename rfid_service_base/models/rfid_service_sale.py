@@ -53,6 +53,8 @@ class BaseRFIDService(models.Model):
     )
     partner_id = fields.Many2one(
         comodel_name='res.partner', string='Customer', check_company=True, index=True,
+        domain=["&", ("is_company", "=", False), ("type", "=", "contact")],
+        # domain="[('company_id', '=', company_id)]",
         help="Linked partner to this service sale")
     card_id = fields.Many2one(
         comodel_name='hr.rfid.card', check_company=True,

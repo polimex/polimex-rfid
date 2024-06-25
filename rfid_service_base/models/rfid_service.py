@@ -36,7 +36,6 @@ class BaseRFIDService(models.Model):
         string='Tags')
     service_type = fields.Selection([
         ('time', 'Time based'),
-        ('time', 'Time based'),
         ('count', 'Visits based'),
         ('time_count', 'Time and Visits based'),
     ], default='time')
