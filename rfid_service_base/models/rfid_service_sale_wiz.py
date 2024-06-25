@@ -252,13 +252,15 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         self.partner_id, access_group_contact_rel, card_id, transaction_name = self._gen_partner(self.partner_id,
                                                                                                  start_date=self.start_date,
                                                                                                  end_date=self.end_date)
-        sale_id = self.env['rfid.service.sale'].create({
+        sale_id = self.env['rfid.service.sale'].sudo().create({
             'name': '%s (%s)' % (transaction_name, self.service_id.name),
             'service_id': self.service_id.id,
             'partner_id': self.partner_id.id,
             'start_date': self.start_date,
             'end_date': self.end_date,
             'card_id': card_id.id,
+            'create_uid': self.env.user,
+            'write_uid': self.env.user,
             'access_group_contact_rel': access_group_contact_rel.id
         })
         sale_id.sudo().message_subscribe(partner_ids=[self.partner_id.id])
