@@ -808,11 +808,12 @@ class HrRfidCardDoorRel(models.Model):
         for rel in self:
             if door_id is None:
                 door_id = rel.door_id.id
-            if number is None:
-                number = rel.card_id.number[:]
             pin_code = rel.card_id.pin_code
-            self.env['hr.rfid.command'].remove_card(door_id, pin_code, card_number=number)
-
+            if number is None:
+                # number = rel.card_id.number[:]
+                self.env['hr.rfid.command'].remove_card(door_id, pin_code, card_id=rel.card_id.id)
+            else:
+                self.env['hr.rfid.command'].remove_card(door_id, pin_code, card_number=number)
     @api.constrains('door_id')
     def _door_constrains(self):
         for rel in self:
