@@ -230,7 +230,7 @@ class RFIDAppCase(common.TransactionCase):
     def _assertResponse(self, response):
         self.assertEqual(response.status_code, 200)
         if response.text != '':
-            self.assertTrue(isinstance(response.json(), dict), 'Response is not JSON')
+            self.assertTrue(isinstance(response.json(), dict), 'Response is not JSON (%s)' % response.text)
             # if 'error' in response.json().keys():
             #     self.assertTrue(False, 'Response contain error' + response.json()['error']['data']['message'])
             return response.json()
@@ -318,11 +318,11 @@ class RFIDAppCase(common.TransactionCase):
         ], limit=count or 1)
         self.assertEqual(len(cmd), count or 1, 'No command. Expecting Add card command (%s)' % ctrl.name)
         if ctrl.is_relay_ctrl():
-            operation = cmd.cmd == 'D1' and cmd.rights_data > 0 and cmd.rights_mask > 0
+            operation = cmd.cmd == 'D1' and int(cmd.rights_data) > 0 and int(cmd.rights_mask) > 0
         else:
             operation = all([c.cmd == 'D1' for c in cmd]) and \
-                        all([(c.rights_data == rights) if rights is not None else (c.rights_data > 0) for c in cmd]) and \
-                        all([(c.rights_mask == mask) if mask is not None else (c.rights_mask > 0) for c in cmd])
+                        all([(int(c.rights_data) == rights) if rights is not None else (int(c.rights_data) > 0) for c in cmd]) and \
+                        all([(int(c.rights_mask) == mask) if mask is not None else (int(c.rights_mask) > 0) for c in cmd])
         self.assertTrue(operation,
                         'Command exists for add card, but something is wrong with command parameters(%s)' % ctrl.name)
         return cmd
@@ -331,9 +331,9 @@ class RFIDAppCase(common.TransactionCase):
         cmd = self.env['hr.rfid.command'].search([('controller_id', '=', ctrl.id), ('status', '=', 'Wait')], limit=1)
         self.assertTrue(len(cmd) == 1, 'No command. Expecting Delete card command (%s)' % ctrl.name)
         if ctrl.is_relay_ctrl():
-            operation = cmd.cmd == 'D1' and cmd.rights_data == 0 and cmd.rights_mask > 0
+            operation = cmd.cmd == 'D1' and int(cmd.rights_data) == 0 and int(cmd.rights_mask) > 0
         else:
-            operation = cmd.cmd == 'D1' and cmd.rights_data == 0 and cmd.rights_mask > 0
+            operation = cmd.cmd == 'D1' and int(cmd.rights_data) == 0 and int(cmd.rights_mask) > 0
         self.assertTrue(operation,
                         'Command exists for delete card, but something is wrong with command parameters (%s)' % ctrl.name)
         return cmd
