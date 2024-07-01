@@ -899,6 +899,7 @@ class HrRfidCommands(models.Model):
                 self.controller_id.read_readers_mode_cmd()
             self.controller_id.read_io_table_cmd()
             self.controller_id.read_status()
+            self.controller_id.read_input_masks_cmd()
 
         if self.controller_id.is_temperature_ctrl():
             self.controller_id.read_cards_cmd()

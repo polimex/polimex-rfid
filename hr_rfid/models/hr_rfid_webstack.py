@@ -943,7 +943,6 @@ class HrRfidWebstack(models.Model):
                         'mode': mode,
                         'no_d6_cmd': True,
                     })
-
         if response['c'] == 'F9':
             if command.cmd_data != '00':  # receiving single line from IOTable
                 controller.change_io_table(new_io_table=response['d'], line=int(command.cmd_data, 16), no_command=True)
@@ -951,6 +950,13 @@ class HrRfidWebstack(models.Model):
                 controller.write({
                     'io_table': response['d']
                 })
+
+        if response['c'] == 'FB':
+            input_masks = 0
+            byte_data = bytes.fromhex(response['d'])
+            for i in range(4):
+                input_masks += byte_data[i] & 0x7F << (i * 8)
+            controller.process_input_masks(input_masks)
 
         if response['c'] == 'FC':
             apb_mode = response['d']

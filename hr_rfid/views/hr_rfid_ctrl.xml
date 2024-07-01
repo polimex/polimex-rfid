@@ -174,6 +174,20 @@
                                         <field name="webstack_id" readonly="1"/>
                                     </group>
                                 </group>
+                                <group col="4" attrs="{'invisible': [('input_mask_ids', '!=', [])]}">
+                                    <button name="read_input_masks_cmd" type="object" string="Read Input Masks"
+                                            class="oe_highlight"/>
+                                </group>
+                                <group col="4" attrs="{'invisible': [('input_mask_ids', '=', [])]}">
+                                    <field name="input_mask_ids"
+                                           options="{'no_open': True, 'no_create': True, 'no_delete':True}"
+                                    >
+                                        <tree create="false" delete="false" editable="bottom">
+                                            <field name="i_number" readonly="1"/>
+                                            <field name="i_mask" widget="boolean_toggle"/>
+                                        </tree>
+                                    </field>
+                                </group>
                                 <group col="4">
                                     <field name="output_ts_ids">
                                         <tree editable="bottom">
@@ -188,6 +202,7 @@
                                     <group>
                                         <field name="inputs" readonly="1"/>
                                         <field name="outputs" readonly="1"/>
+                                        <field name="inputs_mask" readonly="1"/>
                                         <field name="input_states" readonly="1"/>
                                         <field name="output_states" readonly="1"/>
                                     </group>

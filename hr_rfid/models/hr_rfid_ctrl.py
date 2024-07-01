@@ -56,6 +56,41 @@ class HrRfidControllerOutputTS(models.Model):
         return [(rel.id, get_names(rel)) for rel in self]
 
 
+class HrRfidCtrlInputMask(models.Model):
+    _name = 'hr.rfid.ctrl.input.mask'
+    _order = 'i_number'
+    _sql_constraints = [
+        ('controller_input_mask_unique', 'unique(controller_id,i_number)', 'Input must be unique!'),
+    ]
+
+    i_number = fields.Integer(string='Number', required=True, readonly=True)
+    i_mask = fields.Boolean(string='Mask (NC/NO)', required=True)
+    controller_id = fields.Many2one(
+        comodel_name='hr.rfid.ctrl',
+        required=True,
+        ondelete='cascade',
+    )
+    input_count = fields.Integer(
+        related='controller_id.inputs'
+    )
+
+    @api.model
+    def _generate_input_masks(self, ctrl_id, masks):
+        im_ids = self.search([('controller_id', '=', ctrl_id.id)])
+        if im_ids:
+            im_ids._update_input_masks(masks)
+        else:
+            self.sudo().create([{
+                'i_number': i + 1,
+                'controller_id': ctrl_id.id,
+                'i_mask': masks & (1 << i) != 0} for i in range(ctrl_id.inputs)])
+
+    def _update_input_masks(self, masks):
+        for im in self:
+            if masks:
+                im.i_mask = masks & (1 << im.i_number - 1) != 0
+
+
 class HrRfidController(models.Model):
     _name = 'hr.rfid.ctrl'
     _inherit = ['mail.thread', 'balloon.mixin']
@@ -102,15 +137,21 @@ class HrRfidController(models.Model):
         string='Inputs',
         help='Hardware Inputs of the controller',
     )
-
-    outputs = fields.Integer(
-        string='Outputs',
-        help='Hardware Outputs of the controller',
+    inputs_mask = fields.Integer(
+        help='Mask for the inputs of the controller',
+    )
+    input_mask_ids = fields.One2many(
+        comodel_name='hr.rfid.ctrl.input.mask',
+        inverse_name='controller_id',
+        string='Input Masks',
     )
     input_states = fields.Integer(
         help='State of the inputs of the controller',
     )
-
+    outputs = fields.Integer(
+        string='Outputs',
+        help='Hardware Outputs of the controller',
+    )
     output_states = fields.Integer(
         help='States the outputs of the controller',
     )
@@ -267,7 +308,6 @@ class HrRfidController(models.Model):
         readonly=True,
         ondelete='cascade',
     )
-
 
     door_ids = fields.One2many(
         comodel_name='hr.rfid.door',
@@ -648,7 +688,6 @@ class HrRfidController(models.Model):
             super(HrRfidController, ctrl).write(vals)
             new_ext_db = ctrl.external_db
 
-
             if old_ext_db != new_ext_db:
                 ctrl.write_controller_mode(new_ext_db=new_ext_db)
             if (
@@ -661,6 +700,9 @@ class HrRfidController(models.Model):
                 )
         if 'output_ts_ids' in vals.keys():
             self.write_output_ts()
+        if "input_mask_ids" in vals.keys():
+            new_mask = sum((1 << i) for i, bit in enumerate(self.input_mask_ids) if bit.i_mask)
+            self.write_input_masks_cmd(new_mask)
 
     def sys_event(self, error_description, event_action, input_json):
         for ctrl in self:
@@ -903,6 +945,21 @@ class HrRfidController(models.Model):
     def read_input_masks_cmd(self):
         return self._base_command('FB')
 
+    def write_input_masks_cmd(self, masks: int = None):
+        result = self.env['hr.rfid.command']
+        for c in self:
+            m = masks or c.inputs_mask or 0
+            cmd_masks = [int(m >> (i * 7)) & 0x7F for i in range(5)]
+            cmd_data = ''.join(['%02X' % d for d in cmd_masks])
+            result += self._base_command('DB', cmd_data)
+            c.inputs_mask = m
+        return result
+
+    def process_input_masks(self, masks):
+        for c in self:
+            self.env['hr.rfid.ctrl.input.mask']._generate_input_masks(c, masks)
+            c.inputs_mask = masks
+
     def read_outputs_ts_cmd(self):
         return self._base_command('FF')
 
@@ -1098,7 +1155,7 @@ class HrRfidController(models.Model):
             cmd_data = ''
             ts_for_send = []
             for out in range(ctrl.outputs if ctrl.outputs <= 8 else 8):
-                out_ts = ctrl.output_ts_ids.filtered(lambda rel: rel.output_number == out+1)
+                out_ts = ctrl.output_ts_ids.filtered(lambda rel: rel.output_number == out + 1)
                 cmd_data += '%02X' % (out_ts and out_ts.time_schedule_id.number or 0)
                 if out_ts and out_ts.time_schedule_id.number > 0:
                     ts_for_send.append(out_ts.time_schedule_id)
@@ -1129,5 +1186,3 @@ class HrRfidController(models.Model):
         '''
         for ctrl in self:
             ctrl.webstack_id.report_sys_ev(description, post_data, ctrl, sys_ev_dict)
-
-        

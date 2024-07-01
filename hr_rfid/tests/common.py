@@ -316,7 +316,7 @@ class RFIDAppCase(common.TransactionCase):
             ('controller_id', '=', ctrl.id),
             ('status', 'in', ['Wait', 'Process'])
         ], limit=count or 1)
-        self.assertTrue(len(cmd) == (count or 1), 'No command. Expecting Add card command (%s)' % ctrl.name)
+        self.assertEqual(len(cmd), count or 1, 'No command. Expecting Add card command (%s)' % ctrl.name)
         if ctrl.is_relay_ctrl():
             operation = cmd.cmd == 'D1' and cmd.rights_data > 0 and cmd.rights_mask > 0
         else:
