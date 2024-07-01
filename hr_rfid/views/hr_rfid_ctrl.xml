@@ -94,25 +94,25 @@
                                         <field name="emergency_state" readonly="1"/>
                                         <label for="temperature" />
                                         <div>
-                                            <field name="temperature" readonly="1"/> <span class="oe_inline ml8">°C</span>
+                                            <field name="temperature" readonly="1" class="oe_inline"/><span class="oe_grey p-2">°C</span>
                                         </div>
                                         <label for="humidity" />
                                         <div>
-                                            <field name="humidity" readonly="1"/> <span class="oe_inline ml8">%</span>
+                                            <field name="humidity" readonly="1" class="oe_inline"/><span class="oe_grey p-2">%</span>
                                         </div>
                                     </group>
                                     <group>
                                         <label for="system_voltage" />
                                         <div>
-                                            <field name="system_voltage" readonly="1"/> <span class="oe_inline ml8">VDC</span>
+                                            <field name="system_voltage" readonly="1" class="oe_inline"/> <span class="oe_grey p-2">VDC</span>
                                         </div>
                                         <label for="input_voltage" />
                                         <div>
-                                            <field name="input_voltage" readonly="1"/> <span class="oe_inline ml8">VDC</span>
+                                            <field name="input_voltage" readonly="1" class="oe_inline"/> <span class="oe_grey p-2">VDC</span>
                                         </div>
                                         <label for="system_voltage" />
                                         <div>
-                                            <field name="system_voltage" readonly="1"/> <span class="oe_inline ml8">VDC</span>
+                                            <field name="system_voltage" readonly="1" class="oe_inline"/> <span class="oe_grey p-2">VDC</span>
                                         </div>
                                         <field name="cards_count" readonly="1"/>
                                     </group>
@@ -167,6 +167,20 @@
                                         <field name="webstack_id" readonly="1"/>
                                     </group>
                                 </group>
+                                <group col="4" invisible="input_mask_ids">
+                                    <button name="read_input_masks_cmd" type="object" string="Read Input Masks"
+                                            class="oe_highlight" help="Read Input statuses. The command will be executed till a minute. Come back later to see the result."/>
+                                </group>
+                                <group col="4" invisible="not input_mask_ids">
+                                    <field name="input_mask_ids"
+                                           options="{'no_open': True, 'no_create': True, 'no_delete':True}"
+                                    >
+                                        <tree create="false" delete="false" editable="bottom">
+                                            <field name="i_number" readonly="1"/>
+                                            <field name="i_mask" widget="boolean_toggle"/>
+                                        </tree>
+                                    </field>
+                                </group>
                                 <group col="4">
                                     <field name="output_ts_ids">
                                         <tree editable="bottom">
@@ -181,6 +195,7 @@
                                     <group>
                                         <field name="inputs" readonly="1"/>
                                         <field name="outputs" readonly="1"/>
+                                        <field name="inputs_mask" readonly="1"/>
                                         <field name="input_states" readonly="1"/>
                                         <field name="output_states" readonly="1"/>
                                     </group>
