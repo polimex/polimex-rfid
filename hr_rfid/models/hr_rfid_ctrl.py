@@ -58,6 +58,7 @@ class HrRfidControllerOutputTS(models.Model):
 
 class HrRfidCtrlInputMask(models.Model):
     _name = 'hr.rfid.ctrl.input.mask'
+    _description = 'Input Mask for Controllers'
     _order = 'i_number'
     _sql_constraints = [
         ('controller_input_mask_unique', 'unique(controller_id,i_number)', 'Input must be unique!'),
