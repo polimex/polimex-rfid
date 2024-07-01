@@ -35,7 +35,7 @@ class HrRfidCtrlAlarm(models.Model):
         ('no_alarm', 'No Alarm functionality'),  # 64 ON
         ('arm', 'Armed'),  # 64 ON
         ('disarm', 'Disarmed'),  # 64 OFF
-        ], compute='_compute_states', compute_sudo=True, store=True)
+        ], compute='_compute_armed', store=True, compute_sudo=True)
 
     siren_state = fields.Boolean(
         help='Alarm Siren state',
@@ -79,11 +79,21 @@ class HrRfidCtrlAlarm(models.Model):
         for l in self:
             armed, state = l.controller_id._get_alarm_line_state(l.line_number)
             # _logger.info('%d line in armed:%s and state:%s', l.line_number, armed, state)
+            # if state == 'disabled':
+            #     l.armed = 'no_alarm'
+            # else:
+            #     l.armed = armed
+            l.state = state
+    @api.depends('controller_id.alarm_line_states')
+    def _compute_armed(self):
+        for l in self:
+            armed, state = l.controller_id._get_alarm_line_state(l.line_number)
+            # _logger.info('%d line in armed:%s and state:%s', l.line_number, armed, state)
             if state == 'disabled':
                 l.armed = 'no_alarm'
             else:
                 l.armed = armed
-            l.state = state
+            # l.state = state
 
     def return_action_to_open(self):
         self.ensure_one()
