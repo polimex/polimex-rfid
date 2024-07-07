@@ -183,15 +183,28 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         existing_card_id = self.env['hr.rfid.card'].sudo().with_context(active_test=False).search([
             ('number', '=', self.card_number),
         ])
+        if existing_card_id.employee_id:
+            raise UserError(
+                _("The card %s is already used by employee %s") % (self.card_number, existing_card_id.employee_id.name)
+            )
         if existing_card_id and existing_card_id.contact_id != partner_id:
-            if not existing_card_id.contact_id:
-                existing_card_id.contact_id = partner_id.id
-                partner_id.name = existing_card_id.card_reference
-            else:
+            if existing_card_id.active:
                 raise UserError(
-                    _("The card %s (%s) is not related to this Customer (%s") % (
-                    existing_card_id.contact_id.name, self.card_number, partner_id.name)
+                    _("The card %s is already used by partner %s") % (self.card_number, existing_card_id.contact_id.name)
                 )
+            else:
+                existing_card_id.contact_id = partner_id.id
+                # existing_card_id.unlink()
+                # existing_card_id = False
+
+            # if not existing_card_id.contact_id:
+            #     existing_card_id.contact_id = partner_id.id
+            #     partner_id.name = existing_card_id.card_reference
+            # else:
+            #     raise UserError(
+            #         _("The card %s (%s) is not related to this Customer (%s") % (
+            #         existing_card_id.contact_id.name, self.card_number, partner_id.name)
+            #     )
         if not existing_card_id:
             card_id = self.env['hr.rfid.card'].sudo().create({
                 'contact_id': partner_id.id,
@@ -206,7 +219,11 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
             })
         else:
             existing_card_id.write({
+                'card_reference': '%s (%s)' % (partner_id.name, self.service_id.name),
+                'company_id': self.service_id.company_id.id,
+                'activate_on': self.start_date,
                 'deactivate_on': self.end_date,
+                'write_uid': self.env.user.id,
             })
             card_id = existing_card_id
             # card_id.active = True

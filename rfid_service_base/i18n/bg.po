@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-17 13:54+0000\n"
-"PO-Revision-Date: 2023-12-17 15:54+0200\n"
+"POT-Creation-Date: 2024-07-07 15:33+0000\n"
+"PO-Revision-Date: 2024-07-07 18:34+0300\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.1\n"
+"X-Generator: Poedit 3.4.3\n"
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
@@ -23,6 +23,30 @@ msgid "<i class=\"fa fa-ellipsis-v\" role=\"img\" aria-label=\"Manage\" title=\"
 msgstr ""
 "<i class=\"fa fa-ellipsis-v\" role=\"img\" aria-label=\"Управление\" title=\"Управление"
 "\"/>"
+
+#. module: rfid_service_base
+#: code:addons/rfid_service_base/models/res_partner.py:0
+#, python-format
+msgid ""
+"<p class=\"o_view_nocontent\">\n"
+"                    No Sales for this partner.\n"
+"                </p>"
+msgstr ""
+"<p class=\"o_view_nocontent\">\n"
+"                    Няма продажби за този партньор.\n"
+"                </p>"
+
+#. module: rfid_service_base
+#: code:addons/rfid_service_base/models/res_partner.py:0
+#, python-format
+msgid ""
+"<p class=\"o_view_nocontent\">\n"
+"                    No accessible doors for this partner.\n"
+"                </p>"
+msgstr ""
+"<p class=\"o_view_nocontent\">\n"
+"                    За този партньор няма достъпни врати.\n"
+"                </p>"
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
@@ -63,6 +87,11 @@ msgstr "Група за достъп"
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__access_group_contact_rel
 msgid "Access Group Contact Rel"
 msgstr ""
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_view_partner_form_inherit_hr_rfid
+msgid "Accessible doors"
+msgstr "Достъпни врати"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__message_needaction
@@ -192,6 +221,11 @@ msgid "Company"
 msgstr "Компания"
 
 #. module: rfid_service_base
+#: model:ir.model,name:rfid_service_base.model_res_partner
+msgid "Contact"
+msgstr "Контакт"
+
+#. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__displayed_image_id
 msgid "Cover Image"
 msgstr "Заглавно Изображение"
@@ -236,6 +270,27 @@ msgid "Display Name"
 msgstr "Име за показване"
 
 #. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_view_partner_form_inherit_hr_rfid
+msgid "Doors"
+msgstr "Врати"
+
+#. module: rfid_service_base
+#: code:addons/rfid_service_base/models/res_partner.py:0
+#, python-format
+msgid ""
+"Doors \"%s\" and \"%s\" both belong to a controller that cannot give access to multiple "
+"doors with same card type in a group."
+msgstr ""
+"Вратите \"%s\" и \"%s\" принадлежат на контролер, който не може да дава достъп до "
+"няколко врати с един и същ тип карта в група."
+
+#. module: rfid_service_base
+#: code:addons/rfid_service_base/models/res_partner.py:0
+#, python-format
+msgid "Doors accessible from {}"
+msgstr "Врати, достъпни от {}"
+
+#. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form
 msgid "E-mail"
@@ -250,6 +305,11 @@ msgstr "Редакция"
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__email
 msgid "Email"
 msgstr "Имейл"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_view_partner_form_inherit_hr_rfid
+msgid "Events"
+msgstr "Събития"
 
 #. module: rfid_service_base
 #: code:addons/rfid_service_base/models/rfid_service_sale.py:0
@@ -272,6 +332,11 @@ msgstr "Разширяване на услугата"
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
 msgid "Finished"
 msgstr "Завършен"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
+msgid "Fix Partner"
+msgstr "Fix Partner"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__fixed_time
@@ -351,7 +416,9 @@ msgstr "Ако е избрано новите съобщения ще изиск
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__message_has_error
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__message_has_sms_error
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__message_has_error
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Ако е избрано някой съобщения имат грешка при доставка."
 
@@ -481,6 +548,11 @@ msgid "New sale"
 msgstr "Нова продажба"
 
 #. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr "Следващо събитие в календара"
+
+#. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_date_deadline
 msgid "Next Activity Deadline"
 msgstr "Краен Срок на Следващо Действие"
@@ -554,6 +626,12 @@ msgid "Partner"
 msgstr "Партньор"
 
 #. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_res_partner__partner_rfid_sales_count
+#: model:ir.model.fields,field_description:rfid_service_base.field_res_users__partner_rfid_sales_count
+msgid "Partner Rfid Sales Count"
+msgstr "Партньорски продажби на Rfid"
+
+#. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
 msgid "Partner Sales"
 msgstr "Партньорски продажби"
@@ -586,6 +664,17 @@ msgstr "Печат"
 #: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service_sale__state__progress
 msgid "Progress"
 msgstr "В ход"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_view_partner_form_inherit_hr_rfid
+msgid "RFID Sales"
+msgstr "Продажби на RFID"
+
+#. module: rfid_service_base
+#: code:addons/rfid_service_base/models/res_partner.py:0
+#, python-format
+msgid "RFID Sales for {}"
+msgstr "Продажби с RFID за {}"
 
 #. module: rfid_service_base
 #: model:ir.model,name:rfid_service_base.model_rfid_service
@@ -655,6 +744,12 @@ msgid "Responsible User"
 msgstr "Отговорен потребител"
 
 #. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__message_has_sms_error
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "SMS при грешка на доставка"
+
+#. module: rfid_service_base
 #: model:ir.actions.act_window,name:rfid_service_base.hr_rfid_service_sale_action
 #: model:ir.actions.act_window,name:rfid_service_base.sale_wiz_action
 msgid "Sale RFID Service"
@@ -704,6 +799,12 @@ msgstr "История на продажбите"
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form
 msgid "Scan card on reader . . ."
 msgstr "Сканирай карта върху четеца ..."
+
+#. module: rfid_service_base
+#: code:addons/rfid_service_base/models/res_partner.py:0
+#, python-format
+msgid "Send Barcode card - Compose Email"
+msgstr "Изпращане на карта с баркод - Съставяне на имейл"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__service_id
@@ -825,8 +926,14 @@ msgstr "Групата за достъп за тази услуга няма в�
 #. module: rfid_service_base
 #: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0
 #, python-format
-msgid "The card (%s) is not related to this Customer (%s"
-msgstr "Картата (%s) не е свързана с този клиент (%s"
+msgid "The card %s is already used by employee %s"
+msgstr "Картата %s вече се използва от служител %s"
+
+#. module: rfid_service_base
+#: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0
+#, python-format
+msgid "The card %s is already used by partner %s"
+msgstr "Картата %s вече е използвана от партньора %s"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__card_number
