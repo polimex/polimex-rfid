@@ -218,7 +218,7 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
                 'write_uid': self.env.user.id,
             })
         else:
-            existing_card_id.write({
+            existing_card_id.sudo().write({
                 'card_reference': '%s (%s)' % (partner_id.name, self.service_id.name),
                 'company_id': self.service_id.company_id.id,
                 'activate_on': self.start_date,
