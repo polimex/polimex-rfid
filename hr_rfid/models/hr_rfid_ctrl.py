@@ -91,6 +91,10 @@ class HrRfidCtrlInputMask(models.Model):
             if masks:
                 im.i_mask = masks & (1 << im.i_number - 1) != 0
 
+    def write(self, vals):
+        res = super().write(vals)
+        for i in self:
+            i.controller_id.write_input_masks_cmd()
 
 class HrRfidController(models.Model):
     _name = 'hr.rfid.ctrl'
@@ -948,11 +952,16 @@ class HrRfidController(models.Model):
 
     def write_input_masks_cmd(self, masks: int = None):
         result = self.env['hr.rfid.command']
+        if masks is None:
+            for c in self:
+                new_mask = sum((1 << i) for i, bit in enumerate(c.input_mask_ids) if bit.i_mask)
+                result += c.write_input_masks_cmd(new_mask)
+            return result
         for c in self:
             m = masks or c.inputs_mask or 0
             cmd_masks = [int(m >> (i * 7)) & 0x7F for i in range(5)]
             cmd_data = ''.join(['%02X' % d for d in cmd_masks])
-            result += self._base_command('DB', cmd_data)
+            result += self._base_command('DD', cmd_data)
             c.inputs_mask = m
         return result
 

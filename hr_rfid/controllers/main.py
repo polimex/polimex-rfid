@@ -9,6 +9,7 @@ from odoo.addons.hr_rfid.models.hr_rfid_event_system import HrRfidSystemEvent
 from odoo import http, fields, exceptions, _, SUPERUSER_ID
 from odoo.http import request
 from odoo.addons.hr_rfid.controllers import polimex
+from odoo.addons.hr_rfid.models.hr_rfid_event_system import action_selection as system_action_selection
 
 import logging
 
@@ -582,7 +583,7 @@ class WebRfidController(http.Controller):
                 result = webstack_id.parse_heartbeat(post_data=post_data)
             elif 'event' in post_data:
                 _logger.info(f'Event (%s) from {webstack_id.name}/{webstack_id.company_id.name}' % (
-                    ''.join([a[1] for a in HrRfidSystemEvent.action_selection if
+                    ''.join([a[1] for a in system_action_selection if
                              a[0] == str(post_data['event']['event_n'])])
                 )
                              )
