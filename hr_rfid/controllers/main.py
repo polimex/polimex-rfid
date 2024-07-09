@@ -9,6 +9,7 @@ from odoo.addons.hr_rfid.models.hr_rfid_event_system import HrRfidSystemEvent
 from odoo import http, fields, exceptions, _, SUPERUSER_ID
 from odoo.http import request
 from odoo.addons.hr_rfid.controllers import polimex
+from odoo.addons.hr_rfid.models.hr_rfid_event_system import action_selection as system_action_selection
 
 import logging
 
@@ -133,7 +134,8 @@ class WebRfidController(http.Controller):
         elif event_action in range(3, 19):
             ue_event_action = ((event_action - 3) % 4) + 1
             # Turnstile controller. If the 7th bit is not up, then there was no actual entry
-            if controller_id.is_turnstile_ctrl() and not reader_b6 and ue_event_action == 1:
+            if controller_id.is_turnstile_ctrl() and (
+                    post_data['event']['reader'] & 64) == 0 and ue_event_action == '1':
                 ue_event_action = '6'
             if is_card_event and card_id:  # Card event with valid card
                 event_dict = {
@@ -623,7 +625,7 @@ class WebRfidController(http.Controller):
                 result = webstack_id.parse_heartbeat(post_data=post_data)
             elif 'event' in post_data:
                 _logger.info(f'Event (%s) from {webstack_id.name}/{webstack_id.company_id.name}' % (
-                    ''.join([a[1] for a in HrRfidSystemEvent.action_selection if
+                    ''.join([a[1] for a in system_action_selection if
                              a[0] == str(post_data['event']['event_n'])])
                 )
                              )

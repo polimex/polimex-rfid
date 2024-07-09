@@ -6,6 +6,23 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
+action_selection = [
+        ('1', _('Card Granted')),
+        ('2', _('Card Denied')),
+        ('3', _('Card Denied T/S')),
+        ('4', _('Card Denied APB')),
+        ('5', _('Zone Arm Denied')),
+        ('6', _('Card Granted (no entry)')),
+        ('7', _('Card Granted Insert')),
+        ('8', _('Card Denied Insert')),
+        ('9', _('Card Ejected')),
+        ('10', _('Zone Arm')),
+        ('11', _('Zone Disarm')),
+        ('12', _('Hotel Button Pressed')),
+        ('15', _('Zone Disarm Denied')),
+        ('64', _('Request Instructions')),
+    ]
+
 class HrRfidUserEvent(models.Model):
     _name = 'hr.rfid.event.user'
     _description = "RFID User Event"
@@ -93,23 +110,6 @@ class HrRfidUserEvent(models.Model):
         required=True,
         index=True,
     )
-
-    action_selection = [
-        ('1', _('Card Granted')),
-        ('2', _('Card Denied')),
-        ('3', _('Card Denied T/S')),
-        ('4', _('Card Denied APB')),
-        ('5', _('Zone Arm Denied')),
-        ('6', _('Card Granted (no entry)')),
-        ('7', _('Card Granted Insert')),
-        ('8', _('Card Denied Insert')),
-        ('9', _('Card Ejected')),
-        ('10', _('Zone Arm')),
-        ('11', _('Zone Disarm')),
-        ('12', _('Hotel Button Pressed')),
-        ('15', _('Zone Disarm Denied')),
-        ('64', _('Request Instructions')),
-    ]
 
     event_action = fields.Selection(
         selection=action_selection,
@@ -302,11 +302,10 @@ class HrRfidUserEvent(models.Model):
         }
 
     @api.model
-    def last_event(self, door_ids=None, partner_id=None, employee_id=None, event_action=None):
+    def last_event(self, door_ids=None, partner_id=None, employee_id=None, event_action=None, domain=[], limit=1):
         """ Get last event for user
 
             """
-        domain = []
         if door_ids is not None:
             domain.append(
                 ('door_id', 'in', door_ids.mapped('id'))
@@ -323,4 +322,4 @@ class HrRfidUserEvent(models.Model):
             domain.append(
                 ('event_action', '=', str(event_action))
             )
-        return self.search(domain, limit=1)
+        return self.search(domain, limit=limit)
