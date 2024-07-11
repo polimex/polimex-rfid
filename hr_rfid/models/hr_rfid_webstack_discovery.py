@@ -130,7 +130,7 @@ class HrRfidWebstackDiscovery(models.TransientModel):
             ws_id.action_set_webstack_settings()
             ws_id.get_controllers()
 
-        return self.env.ref('hr_rfid.hr_rfid_webstack_action').read()[0]
+        return self.env.ref('hr_rfid.hr_rfid_webstack_action').sudo().read()[0]
 
 
 class HrRfidWebstackManualCreate(models.TransientModel):
@@ -189,4 +189,4 @@ class HrRfidWebstackManualCreate(models.TransientModel):
         else:
             exceptions.ValidationError(_('Please provide module serial number!'))
 
-        return self.env.ref('hr_rfid.hr_rfid_webstack_action').read()[0]
+        return self.env.ref('hr_rfid.hr_rfid_webstack_action').sudo().read()[0]
