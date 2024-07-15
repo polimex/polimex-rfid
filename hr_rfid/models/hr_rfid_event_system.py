@@ -240,7 +240,7 @@ class HrRfidSystemEvent(models.Model):
             if 'last_occurrence' not in vals:
                 vals['last_occurrence'] = vals['timestamp']
             record = super(HrRfidSystemEvent, self).create([vals])
-            if record.door_id and record.door_id.zone_id:
+            if record.door_id and record.door_id.zone_ids:
                 record.door_id.zone_ids.process_event(record)
             elif not record.door_id and record.controller_id and record.controller_id.door_ids:
                 zone_ids = record.controller_id.door_ids and record.controller_id.door_ids.zone_ids
