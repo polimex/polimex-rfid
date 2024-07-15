@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="hr_rfid_notification_mail_template" name="RFID Notification" inherit_id="mail.message_notification">
+            <xpath expr="//div[@class='o_notification']" position="inside">
+                <div t-if="notification.rfid">
+                    <strong>RFID:</strong> <t t-esc="notification.rfid"/>
+                </div>
+            </xpath>
+
+    </data>
+</odoo>

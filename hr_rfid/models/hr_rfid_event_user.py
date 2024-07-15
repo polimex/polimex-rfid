@@ -25,6 +25,7 @@ action_selection = [
 
 class HrRfidUserEvent(models.Model):
     _name = 'hr.rfid.event.user'
+    _inherit = ['hr.rfid.event', 'mail.thread']
     _description = "RFID User Event"
     _order = 'event_time desc'
 
@@ -156,9 +157,7 @@ class HrRfidUserEvent(models.Model):
                 name = record.door_id.name or ''
             name += ' - ' if name != '' else ''
             if record.event_action != '64':
-                key_val_dict = dict(self._fields['event_action'].selection)
-                name += key_val_dict[record.event_action]
-                # name += self.action_selection[int(record.event_action)-1][1]
+                name += record.get_event_action_text()
             else:
                 name += _('Request Instructions')
             if record.door_id:
@@ -200,6 +199,7 @@ class HrRfidUserEvent(models.Model):
                 # Reader type is Out
                 else:
                     zones.with_context(from_event=True).person_left(rec.employee_id or rec.contact_id, rec)
+                zones.process_event(rec)
                 continue
 
             if rec.reader_id.mode != '03':
@@ -235,6 +235,12 @@ class HrRfidUserEvent(models.Model):
                         else:
                             rec.door_id.zone_ids.person_entered(rec.employee_id, rec)
         return records
+
+    def zone_process_event(self):
+        for rec in self:
+            zones = rec.door_id.zone_ids
+            if zones:
+                zones.process_event(rec)
 
     def button_show_employee_events(self):
         self.ensure_one()

@@ -90,17 +90,33 @@
                                 <field name="anti_pass_back"/>
                                 <field name="log_out_on_exit"/>
                             </group>
-                            <group string="Included doors">
-                                <field name="door_ids" readonly="1" widget="many2many_tags"/>
-                            </group>
-                            <group string="Permitted employees">
-                                <field name="permitted_department_ids" widget="many2many_tags"/>
-                                <field name="permitted_employee_category_ids" widget="many2many_tags"/>
-                            </group>
                             <group>
                                 <field name="company_id" groups="base.group_multi_company"/>
                             </group>
                         </group>
+                        <notebook>
+                            <page string="Included doors">
+                                <group>
+                                    <field name="door_ids" readonly="1" widget="many2many_tags"/>
+                                </group>
+                            </page>
+                            <page string="Permitted employees">
+                                <group>
+                                    <field name="permitted_department_ids" widget="many2many_tags"/>
+                                    <field name="permitted_employee_category_ids" widget="many2many_tags"/>
+                                </group>
+                            </page>
+                            <page string="Notifications">
+                                <field name="notification_ids">
+                                    <tree string="Notifications">
+                                        <field name="name"/>
+                                        <field name="user_event"/>
+                                        <field name="system_event"/>
+                                        <field name="notification_type"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers"/>

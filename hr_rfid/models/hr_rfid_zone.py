@@ -4,6 +4,8 @@ from dateutil.relativedelta import relativedelta
 from odoo import api, fields, models, _, http
 import logging
 
+from odoo.addons.hr_rfid.models.hr_rfid_event_user import HrRfidUserEvent
+
 _logger = logging.getLogger(__name__)
 
 
@@ -24,11 +26,13 @@ class HrRfidZone(models.Model):
     anti_pass_back = fields.Boolean(
         string='Anti-Pass Back',
         help="Disallow people in the zone to enter again, or leave if they're not in it",
+        tracking=True,
     )
 
     log_out_on_exit = fields.Boolean(
         string='Logout on Exit',
         help='Whether to log people out on exit',
+        tracking=True,
     )
 
     door_ids = fields.Many2many(
@@ -45,23 +49,34 @@ class HrRfidZone(models.Model):
         'hr.department',
         string='Departments',
         help='Permitted departments for this zone. If empty, it applies to all departments.',
+        tracking=True,
     )
     permitted_employee_category_ids = fields.Many2many(
         'hr.employee.category',
         string='Tags',
         help='Permitted employee tags for this zone. If empty, it applies to all employees.',
+        tracking=True,
     )
 
     employee_ids = fields.Many2many(
         'hr.employee',
         string='Employees',
         help='Employees currently in this zone',
+        tracking=True,
     )
 
     contact_ids = fields.Many2many(
         'res.partner',
         string='Contacts',
         help='Contacts currently in this zone',
+        tracking=True,
+    )
+
+    notification_ids = fields.One2many(
+        comodel_name='hr.rfid.notification',
+        inverse_name='zone_id',
+        string='Notifications',
+        tracking=True,
     )
 
     employee_count = fields.Char(compute='_compute_counts')
@@ -79,6 +94,7 @@ class HrRfidZone(models.Model):
             return all(res)
         else:
             return True
+
     @api.depends('employee_ids', 'contact_ids')
     def _compute_counts(self):
         for z in self:
@@ -265,6 +281,15 @@ class HrRfidZone(models.Model):
                     self._add_and_fix(z)
 
         return all(res)
+
+    def process_event(self, event):
+        is_employee_event = isinstance(event, HrRfidUserEvent) and event.employee_id
+        for zone in self:
+            for notification in zone.notification_ids:
+                if (
+                        notification.user_event == event.event_action or notification.system_event == event.event_action) and (
+                        not is_employee_event or self._check_employee_permit(event.employee_id)):
+                    notification.process_event(event)
 
 
 class HrRfidZoneDoorsWizard(models.TransientModel):

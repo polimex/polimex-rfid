@@ -61,11 +61,9 @@ action_selection = [
 
 class HrRfidSystemEvent(models.Model):
     _name = 'hr.rfid.event.system'
+    _inherit = ['hr.rfid.event', 'mail.thread']
     _description = 'RFID System Event'
     _order = 'timestamp desc'
-
-    def _get_action_selection(self):
-        pass
 
     name = fields.Char(
         compute='_compute_sys_ev_name'
@@ -241,14 +239,28 @@ class HrRfidSystemEvent(models.Model):
 
             if 'last_occurrence' not in vals:
                 vals['last_occurrence'] = vals['timestamp']
-
-            records += super(HrRfidSystemEvent, self).create([vals])
+            record = super(HrRfidSystemEvent, self).create([vals])
+            if record.door_id and record.door_id.zone_id:
+                record.door_id.zone_ids.process_event(record)
+            elif not record.door_id and record.controller_id and record.controller_id.door_ids:
+                zone_ids = record.controller_id.door_ids and record.controller_id.door_ids.zone_ids
+                zone_ids.process_event(record)
+            records += record
 
             if 'siren' in vals and 'event_action' in vals and vals.get('event_action') == '20':
                 for e in records.with_context(no_output=True):
                     e.controller_id.siren_state = vals.get('siren')
 
         return records
+
+    def zone_process_event(self):
+        for rec in self:
+            zones = rec.door_id.zone_ids if rec.door_id else None
+            if zones:
+                zones.process_event(rec)
+            elif not rec.door_id and rec.controller_id and record.controller_id.door_ids:
+                zone_ids = rec.controller_id.door_ids.zone_ids
+                zone_ids.process_event(rec)
 
     def write(self, vals):
         self._check_save_comms(vals)
