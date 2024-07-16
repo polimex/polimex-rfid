@@ -258,7 +258,7 @@ class HrRfidSystemEvent(models.Model):
             zones = rec.door_id.zone_ids if rec.door_id else None
             if zones:
                 zones.process_event(rec)
-            elif not rec.door_id and rec.controller_id and record.controller_id.door_ids:
+            elif not rec.door_id and rec.controller_id and rec.controller_id.door_ids:
                 zone_ids = rec.controller_id.door_ids.zone_ids
                 zone_ids.process_event(rec)
 
