@@ -10,19 +10,24 @@
                     <div>
                         <field name="controller_id" invisible="1"/>
                         <field name="outs" invisible="1"/>
-                        <h1>IO table:</h1>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <h1>IO table:</h1>
+                            <button name="load_system_defaults" type="object" string="Load factory defaults"
+                                    class="oe_highlight"/>
+                        </div>
                         <br/>
-                        <field name="io_row_ids" widget="one2many_list">
-                            <tree create="false" delete="false" editable="bottom">
+<!--                        <field name="io_row_ids" widget="one2many_list">-->
+                        <field name="io_row_ids" >
+                            <tree create="false" delete="false" editable="false">
                                 <field name="event_number"/>
-                                <field name="out1" attrs="{'column_invisible': [('parent.outs','&lt;',1)]}"/>
-                                <field name="out2" attrs="{'column_invisible': [('parent.outs','&lt;',2)]}"/>
-                                <field name="out3" attrs="{'column_invisible': [('parent.outs','&lt;',3)]}"/>
-                                <field name="out4" attrs="{'column_invisible': [('parent.outs','&lt;',4)]}"/>
-                                <field name="out5" attrs="{'column_invisible': [('parent.outs','&lt;',5)]}"/>
-                                <field name="out6" attrs="{'column_invisible': [('parent.outs','&lt;',6)]}"/>
-                                <field name="out7" attrs="{'column_invisible': [('parent.outs','&lt;',7)]}"/>
-                                <field name="out8" attrs="{'column_invisible': [('parent.outs','&lt;',8)]}"/>
+                                <field name="out1" column_invisible="parent.outs &lt; 1"/>
+                                <field name="out2" column_invisible="parent.outs &lt; 2"/>
+                                <field name="out3" column_invisible="parent.outs &lt; 3"/>
+                                <field name="out4" column_invisible="parent.outs &lt; 4"/>
+                                <field name="out5" column_invisible="parent.outs &lt; 5"/>
+                                <field name="out6" column_invisible="parent.outs &lt; 6"/>
+                                <field name="out7" column_invisible="parent.outs &lt; 7"/>
+                                <field name="out8" column_invisible="parent.outs &lt; 8"/>
                             </tree>
                         </field>
                     </div>

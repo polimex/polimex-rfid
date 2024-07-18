@@ -69,6 +69,11 @@
         'static/images/main_screenshot.png',
     ],
     'assets': {
+        'web.assets_backend': [
+            # 'board/static/src/**/*.scss',
+            # '/hr_rfid/static/src/**/*.js',
+            # 'board/static/src/**/*.xml',
+        ],
         # 'web.assets_common': [
         #     'hr_rfid/static/src/js/tours/**/*',
         # ],
