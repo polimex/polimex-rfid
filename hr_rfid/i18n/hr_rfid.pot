@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-15 07:54+0000\n"
-"PO-Revision-Date: 2024-07-15 07:54+0000\n"
+"POT-Creation-Date: 2024-07-19 11:38+0000\n"
+"PO-Revision-Date: 2024-07-19 11:38+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -3303,7 +3303,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
 #, python-format
-msgid "Exit button pressed"
+msgid "Exit button %d pressed "
 msgstr ""
 
 #. module: hr_rfid
@@ -3869,6 +3869,13 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__io_table_lines
 msgid "IO Table Lines"
+msgstr ""
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
+#, python-format
+msgid "IO table lengths are different, this should never happen????"
 msgstr ""
 
 #. module: hr_rfid
@@ -4450,6 +4457,11 @@ msgid "Load Controller Status"
 msgstr ""
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_io_table_wiz
+msgid "Load factory defaults"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_manual_create__local_ip_address
 msgid "Local Ip Address"
 msgstr ""
@@ -4863,6 +4875,13 @@ msgstr ""
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
 #, python-format
 msgid "No found any door duplicates in the access groups."
+msgstr ""
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_notification.py:0
+#, python-format
+msgid "No recipients for %s notification!"
 msgstr ""
 
 #. module: hr_rfid
@@ -6143,6 +6162,20 @@ msgstr ""
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_form
 msgid "Receive Date"
+msgstr ""
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_notification.py:0
+#, python-format
+msgid "Recipient %s has no email address in %s!"
+msgstr ""
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_notification.py:0
+#, python-format
+msgid "Recipient %s has no user account in %s!"
 msgstr ""
 
 #. module: hr_rfid

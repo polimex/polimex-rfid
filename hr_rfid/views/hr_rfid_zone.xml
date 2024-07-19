@@ -109,10 +109,11 @@
                             <page string="Notifications">
                                 <field name="notification_ids">
                                     <tree string="Notifications">
-                                        <field name="name"/>
+                                        <field name="notification_type"/>
                                         <field name="user_event"/>
                                         <field name="system_event"/>
-                                        <field name="notification_type"/>
+                                        <field name="notify_followers"/>
+                                        <field name="notify_partner_ids" widget="many2many_tags"/>
                                     </tree>
                                 </field>
                             </page>

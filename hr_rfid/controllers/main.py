@@ -221,10 +221,9 @@ class WebRfidController(http.Controller):
                 'door_id': door and door.id or False,
                 'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
                 'event_action': '21',
-                # 'input_js': card_num,
             }
             event = controller_id.report_sys_ev(
-                description=_('Exit button pressed'),
+                description=_('Exit button %d pressed ', event_action-20),
                 post_data=post_data,
                 sys_ev_dict=sys_event_dict
             )
