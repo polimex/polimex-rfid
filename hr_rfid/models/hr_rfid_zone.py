@@ -62,14 +62,12 @@ class HrRfidZone(models.Model):
         'hr.employee',
         string='Employees',
         help='Employees currently in this zone',
-        tracking=True,
     )
 
     contact_ids = fields.Many2many(
         'res.partner',
         string='Contacts',
         help='Contacts currently in this zone',
-        tracking=True,
     )
 
     notification_ids = fields.One2many(
