@@ -610,6 +610,7 @@ class HrRfidWebstack(models.Model):
                 timeout = 5
             response = requests.post(f'http://{self.last_ip}/sdk/cmd.json', auth=(username, password), json=cmd,
                                      timeout=timeout)
+            result = None
             if response.status_code == 200:
                 result = response.json()
             else:  # response.status_code != 200:
