@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_hr_attendance_extra_form_inherit" model="ir.ui.view">
+            <field name="name">hr.attendance.extra.form.inherit</field>
+            <field name="model">hr.attendance.extra</field>
+            <field name="inherit_id" ref="hr_attendance_late.hr_attendance_extra_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='actual_work_time_night']" position="after">
+                    <label for="actual_work_time_cost"/>
+                    <div name="actual_work_time_cost">
+                        <field name="actual_work_time_cost" class="oe_inline"/>
+                        <field name="currency_id" invisible="1"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_hr_attendance_extra_pivot_inherit" model="ir.ui.view">
+            <field name="name">hr.attendance.extra.pivot.inherit</field>
+            <field name="model">hr.attendance.extra</field>
+            <field name="inherit_id" ref="hr_attendance_late.hr_attendance_extra_view_pivot"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='shift_number']" position="after">
+                    <field name="actual_work_time_cost" widget="monetary"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_hr_attendance_extra_tree_inherit" model="ir.ui.view">
+            <field name="name">hr.attendance.extra.tree.inherit</field>
+            <field name="model">hr.attendance.extra</field>
+            <field name="inherit_id" ref="hr_attendance_late.hr_attendance_extra_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='shift_number']" position="after">
+                    <field name="actual_work_time_cost" widget="monetary" optional="hide"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
