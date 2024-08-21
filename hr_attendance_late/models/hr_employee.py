@@ -76,15 +76,19 @@ class HrEmployee(models.Model):
                     current_date += timedelta(days=1)
                     continue
 
-                attendance_ranges = self.env['hr.attendance'].search(
-                    [('employee_id', '=', e.id),
-                     ('check_in', '>=', current_date),
-                     ('check_in', '<', current_date + timedelta(days=1)),
-                     '|',
-                     ('check_out', '<', current_date + timedelta(days=1)),
-                     ('check_out', '=', False),
-                     ], order='check_in').mapped(
-                    lambda r: (r.check_in, r.check_out))
+                attendance_ranges = self.env['hr.attendance'].search([
+                        ('employee_id', '=', e.id),
+                        ('check_in', '>=', datetime.combine(current_date, datetime.min.time())),
+                        ('check_in', '<', datetime.combine(current_date, datetime.max.time()))
+                    ],order='check_in').mapped(lambda r: (r.check_in, r.check_out))
+                # [('employee_id', '=', e.id),
+                #  ('check_in', '>=', datetime.combine(current_date, datetime.min.time())),
+                #  ('check_in', '<', datetime.combine(current_date, datetime.min.time()) + timedelta(days=1)),
+                #  '|',
+                #  ('check_out', '<', datetime.combine(current_date, datetime.min.time()) + timedelta(days=1)),
+                #  ('check_out', '=', False),
+                #  ], order='check_in').mapped(
+                # lambda r: (r.check_in, r.check_out))
 
                 if not attendance_ranges:
                     if overwrite_existing and attendance_extra_id:
