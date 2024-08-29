@@ -20,20 +20,13 @@
         'views/vote_menus.xml',
         'views/voting_display_templates_frontend.xml',
         'reports/voting_session_reports.xml',
-        # 'data/ir_module_category_data.xml',
         # 'security/ir_rule.xml',
         'security/ir.model.access.csv',
     ],
-    # 'demo': [
-        # 'demo/room_office.xml',
-        # 'demo/room_room.xml',
-        # 'demo/room_booking.xml',
-    # ],
     'installable': True,
     'application': True,
     'assets': {
     #     'web.assets_backend': [
-            # 'room/static/src/room_booking_gantt_view/**/*',
         # ],
         'hr_rfid_vertical_elections.assets_display': [
             # 1 Define room variables (takes priority)
@@ -51,7 +44,7 @@
             'web/static/src/legacy/scss/ui.scss',
             'web/static/src/scss/base_frontend.scss',
 
-            # Room's specific assets
+            # Display's specific assets
             'hr_rfid_vertical_elections/static/src/display/**/*',
         ],
     },
