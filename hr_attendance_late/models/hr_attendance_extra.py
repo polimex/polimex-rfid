@@ -51,3 +51,4 @@ class HrAttendanceExtra(models.Model):
             domain=domain
         )
         return res
+
