@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="voting_display" name="Room Booking" inherit_id="web.layout" primary="True">
+        <xpath expr="//head/meta[last()]" position="after">
+            <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        </xpath>
+        <xpath expr="//head/meta[last()]" position="replace">
+             <title t-esc="'%s - %s by Polimex' % (display.name, display.company_id.display_name)"/>
+        </xpath>
+        <xpath expr="//head/link[last()]" position="after">
+            <link rel="preload" href="/web/static/src/libs/fontawesome/fonts/fontawesome-webfont.woff2?v=4.7.0" as="font" crossorigin=""/>
+            <t t-call-assets="hr_rfid_vertical_elections.assets_display" t-js="false"/>
+        </xpath>
+        <xpath expr="//head/script[@id='web.layout.odooscript']" position="after">
+            <script t-nocache="Session information should always be up to date." type="text/javascript">
+                odoo.__session_info__ = <t t-out="json.dumps(request.env['ir.http'].get_frontend_session_info())"/>;
+                    if (!/(^|;\s)tz=/.test(document.cookie)) {
+                    const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                    document.cookie = `tz=${userTZ}; path=/`;
+                }
+            </script>
+            <t t-set="title" t-value="display.name"/>
+            <t t-set="body_classname" t-value="'o_display_frontend'"/>
+            <t t-set="html_data" t-value="{'lang': lang}"/>
+            <t t-call-assets="web.assets_frontend_minimal" t-css="false" defer_load="True"/>
+            <t t-call="web.conditional_assets_tests">
+                <t t-set="ignore_missing_deps" t-value="True"/>
+            </t>
+            <t t-call-assets="web.assets_frontend_lazy" t-css="false" lazy_load="True"/>
+            <t t-call-assets="hr_rfid_vertical_elections.assets_display" t-css="false" lazy_load="True"/>
+        </xpath>
+        <xpath expr="//t[@t-out='0']" position="replace">
+            <div id="wrapwrap" t-attf-class="#{pageName or ''}">
+                <main>
+                    <owl-component name="hr_rfid_vertical_elections.display_view" t-att-props="json.dumps({
+                        'id': display.id,
+                        'description': display.description,
+                        'name': display.name,
+                        'company_name': display.company_id.display_name,
+                        'accessToken': display.access_token,
+                        'noVotingBgColor': display.no_voting_background_color,
+                        'votingBgColor': display.voting_background_color,
+                        })"/>
+                </main>
+            </div>
+        </xpath>
+    </template>
+</odoo>

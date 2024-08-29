@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem
+        id="vote_menu_root"
+        name="Elections"
+        web_icon="room,static/description/icon.png"
+        action="hr_rfid_vertical_elections.vote_session_action"
+        sequence="6"/>
+
+    <menuitem
+        id="vote_session_menu"
+        name="Sessions"
+        action="hr_rfid_vertical_elections.vote_session_action"
+        parent="hr_rfid_vertical_elections.vote_menu_root"
+        sequence="1"/>
+
+    <menuitem
+        id="voting_item_menu"
+        name="Items"
+        action="hr_rfid_vertical_elections.voting_item_action"
+        parent="hr_rfid_vertical_elections.vote_menu_root"
+        sequence="2"/>
+    <menuitem
+        id="voting_vote_menu"
+        name="Votes"
+        action="hr_rfid_vertical_elections.voting_vote_action"
+        parent="hr_rfid_vertical_elections.vote_menu_root"
+        sequence="3"/>
+    <menuitem
+        id="voting_display_menu"
+        name="Displays"
+        action="hr_rfid_vertical_elections.voting_display_action"
+        parent="hr_rfid_vertical_elections.vote_menu_root"
+        sequence="4"/>
+    <menuitem
+        id="voting_participants_menu"
+        name="Groups"
+        action="hr_rfid_vertical_elections.voting_participants_action"
+        parent="hr_rfid_vertical_elections.vote_menu_root"
+        sequence="5"/>
+
+</odoo>

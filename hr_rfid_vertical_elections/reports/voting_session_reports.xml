@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Main template -->
+        <template id="report_voting">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="hr_rfid_vertical_elections.report_voting_session" t-lang="doc.create_uid.lang"/>
+                </t>
+            </t>
+        </template>
+
+        <!-- Translatable template -->
+        <template id="report_voting_session">
+            <!-- Re-browse of the record with the partner lang -->
+            <t t-set="doc" t-value="doc.with_context(lang=doc.create_uid.lang)"/>
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <!--                <div class="oe_structure"/>-->
+                    <!--                <div class="row"/>-->
+                    <!--                <div class="col-6">-->
+                    <div class="row">
+                        <h1 class="text-center">Vote Protocol</h1>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 oe_structure">
+                            <p class="text-left">
+                                <spcan t-field="doc.name"/>
+                                /
+                                <span t-field="doc.planned_date"/>
+                            </p>
+                            <p class="text-left">Voted:
+                                <span t-field="doc.start_datetime"/>
+                                -
+                                <span t-field="doc.end_datetime"/>
+                            </p>
+                            <p class="text-left">Voting state:
+                                <span t-field="doc.state"/>
+                            </p>
+                            <p class="text-left">Description:
+                                <span t-field="doc.description"/>
+                            </p>
+                        </div>
+                        <div class="col-6 d-flex justify-content-center align-items-center position-relative"
+                             style="height: 100vh;">
+                            <h1 class="text-center">Final vote:
+                                <span t-field="doc.final_vote"/>
+                            </h1>
+                        </div>
+                    </div>
+                    <p>
+                        Yes:
+                        <span t-field="doc.vote_yes"/>
+                        /
+                        No:
+                        <span t-field="doc.vote_no"/>
+                        /
+                        Abstain:
+                        <span t-field="doc.vote_abstain"/>
+                        /
+                        Total Votes:
+                        <span t-field="doc.vote_total"/>
+                    </p>
+                    <t t-foreach="doc.item_ids" t-as="item">
+                        <hl/>
+                        <h1 t-field="item.name"/>
+                        <p t-field="item.document"/>
+                    </t>
+                    <div class="row">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>№</th>
+                                    <th>Voter</th>
+                                    <th>Vote</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="index" t-value="0"/>
+                                <tr t-foreach="doc.vote_ids" t-as="vote">
+                                    <t t-set="index" t-value="index + 1"/>
+                                    <td>
+                                        <t t-esc="index"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="vote.voter_id"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="vote.vote"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="vote.vote_time"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--                    <strong t-if="doc.partner_shipping_id == doc.partner_invoice_id">Invoice and shipping address:-->
+                    <!--                    </strong>-->
+                    <!--                    <strong t-if="doc.partner_shipping_id != doc.partner_invoice_id">Invoice address:</strong>-->
+                    <!--                    <div t-field="doc.partner_invoice_id" t-options="{&quot;no_marker&quot;: True}"/>-->
+                    <!--                    Sample 1-->
+                    <div class="oe_structure"/>
+                </div>
+            </t>
+        </template>
+
+        <record id="action_report_voting_session" model="ir.actions.report">
+            <field name="name">Voting session protocol</field>
+            <field name="model">voting.session</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">hr_rfid_vertical_elections.report_voting</field>
+            <field name="report_file">hr_rfid_vertical_elections.report_voting</field>
+            <field name="print_report_name">('Vote Protocol - %s' % (object.name))</field>
+            <field name="binding_model_id" ref="model_voting_session"/>
+            <field name="binding_type">report</field>
+        </record>
+
+
+    </data>
+</odoo>

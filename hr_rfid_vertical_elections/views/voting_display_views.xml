@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="voting_display_view_list" model="ir.ui.view">
+        <field name="name">voting.display.view.list</field>
+        <field name="model">voting.display</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" string="Name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="voting_display_view_form" model="ir.ui.view">
+        <field name="name">voting_display.view.form</field>
+        <field name="model">voting.display</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <header>
+                    <button string="Open display" type="object" name="action_open_display_view"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                    </div>
+                    <div class="oe_title mb-3">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="E.g. Friendly Display name "/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="short_code"/>
+                        </group>
+                        <group>
+                            <field name="display_url" widget="CopyClipboardChar"/>
+                            <br/>
+                            <button name="regenerate_display_key" type="object" string="Generate a new URL"
+                                    confirm="Are you sure you want to generate a new URL?"
+                                    class="btn-link oe-inline" icon="fa-refresh"
+                                    title="If your address is compromised, you can refresh it to generate a new one."/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="Appearance">
+                            <group>
+                                <group>
+                                    <field name="no_voting_background_color" widget="color"/>
+                                    <field name="voting_background_color" widget="color"/>
+                                </group>
+                                <group>
+                                    <field name="display_background_image" widget="image"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page name="Announcements">
+                            <field name="description" placeholder="E.g. Rules, notes and etc."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="voting_display_action" model="ir.actions.act_window">
+        <field name="name">Voting Display</field>
+        <field name="res_model">voting.display</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>
