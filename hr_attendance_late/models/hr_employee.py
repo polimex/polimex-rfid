@@ -103,9 +103,10 @@ class HrEmployee(models.Model):
                 if e.resource_calendar_id.daily_ranges_are_shifts:
                     shift_intersections = [self._total_time(self._intersection_time([wr], attendance_ranges)) for
                                            wr in work_time_ranges]
-                    max_shift_time = max(shift_intersections)
-                    shift_number = shift_intersections.index(max_shift_time)
-                    work_time_ranges = [work_time_ranges[shift_number]]
+                    if shift_intersections:
+                        max_shift_time = max(shift_intersections)
+                        shift_number = shift_intersections.index(max_shift_time)
+                        work_time_ranges = [work_time_ranges[shift_number]]
                 try:
                     att_extra_vals = self.get_work_time_details(
                         for_date=current_date,
