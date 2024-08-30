@@ -121,7 +121,7 @@ class HrEmployee(models.Model):
 
                 if shift_number is not None:
                     att_extra_vals['shift_number'] = shift_number + 1
-                if att_extra_vals.get('theoretical_work_time', None) is not None and e.resource_calendar_id.hours_per_day>0:
+                if att_extra_vals.get('theoretical_work_time', None) is not None and att_extra_vals['theoretical_work_time']>20:
                     att_extra_vals['theoretical_work_time'] = min(att_extra_vals['theoretical_work_time'],e.resource_calendar_id.hours_per_day)
                 # if att_extra_vals and (att_extra_vals.get('theoretical_work_time',0.0) > 0 or att_extra_vals.get('extra_time',0.0) > 0):
                 if att_extra_vals and (
