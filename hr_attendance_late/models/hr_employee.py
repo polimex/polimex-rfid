@@ -96,9 +96,10 @@ class HrEmployee(models.Model):
                     current_date += timedelta(days=1)
                     continue
 
+                line_ids = e.resource_calendar_id.attendance_ids.filtered(
+                    lambda r: r.dayofweek == str(current_date.weekday()))
                 work_time_ranges = [line_to_tz_datetime(current_date, line, tz) for line in
-                                    e.resource_calendar_id.attendance_ids if
-                                    line.dayofweek == str(current_date.weekday())]
+                                    line_ids]
                 shift_number = None
                 if e.resource_calendar_id.daily_ranges_are_shifts:
                     shift_intersections = [self._total_time(self._intersection_time([wr], attendance_ranges)) for
@@ -120,6 +121,8 @@ class HrEmployee(models.Model):
 
                 if shift_number is not None:
                     att_extra_vals['shift_number'] = shift_number + 1
+                if att_extra_vals.get('theoretical_work_time', None) is not None and e.resource_calendar_id.hours_per_day>0:
+                    att_extra_vals['theoretical_work_time'] = min(att_extra_vals['theoretical_work_time'],e.resource_calendar_id.hours_per_day)
                 # if att_extra_vals and (att_extra_vals.get('theoretical_work_time',0.0) > 0 or att_extra_vals.get('extra_time',0.0) > 0):
                 if att_extra_vals and (
                         sum(att_extra_vals.values()) - att_extra_vals.get('theoretical_work_time', 0.0)) > 0:
