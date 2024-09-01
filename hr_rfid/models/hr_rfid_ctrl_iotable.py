@@ -63,12 +63,12 @@ class HrRfidCtrlIoTableWiz(models.TransientModel):
     def _default_ctrl(self):
         return self.env['hr.rfid.ctrl'].browse(self._context.get('active_ids'))
 
-    def _generate_io_table(self):
-        rows_env = self.env['hr.rfid.ctrl.io.table.row']
+    def _generate_io_table(self, default=False):
+        rows_env = self.env['hr.rfid.ctrl.io.table.row'].sudo()
         row_len = 8 * 2  # 8 outs, 2 symbols each to display the number
         ctrl = self._default_ctrl()
 
-        if not ctrl.io_table or len(ctrl.io_table) % row_len != 0:
+        if not ctrl.io_table or len(ctrl.io_table) % row_len != 0 or default:
             # fix if the module can't read io table we use default io table
             io_table = polimex.get_default_io_table(ctrl.hw_version, ctrl.mode)
             # raise exceptions.ValidationError('Controller does now have an input/output table loaded!')
@@ -86,6 +86,9 @@ class HrRfidCtrlIoTableWiz(models.TransientModel):
         return rows
 
     def _default_outs(self):
+        ctrl = self._default_ctrl()
+        if ctrl.is_relay_ctrl(): # Relay controllers
+            return 4
         return self._default_ctrl().outputs
 
     controller_id = fields.Many2one(
@@ -103,6 +106,12 @@ class HrRfidCtrlIoTableWiz(models.TransientModel):
     outs = fields.Integer(
         default=_default_outs,
     )
+
+    def load_system_defaults(self):
+        self.io_row_ids = self._generate_io_table(default=True)
+        act_id = self.env.ref('hr_rfid.hr_rfid_controller_io_table_wiz_action').sudo().read()[0]
+        act_id['res_id'] = self.id
+        return act_id
 
     def save_table(self):
         self.ensure_one()

@@ -10,7 +10,11 @@
                     <div>
                         <field name="controller_id" invisible="1"/>
                         <field name="outs" invisible="1"/>
-                        <h1>IO table:</h1>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <h1>IO table:</h1>
+                            <button name="load_system_defaults" type="object" string="Load factory defaults"
+                                    class="oe_highlight"/>
+                        </div>
                         <br/>
                         <field name="io_row_ids" widget="one2many_list">
                             <tree create="false" delete="false" editable="bottom">
@@ -37,7 +41,6 @@
         <record id="hr_rfid_controller_io_table_wiz_action" model="ir.actions.act_window">
             <field name="name">View/modify IO table</field>
             <field name="res_model">hr.rfid.ctrl.io.table.wiz</field>
-            <!--      <field name="view_type">form</field>-->
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_rfid_controller_io_table_wiz"/>
             <field name="target">new</field>

@@ -4,7 +4,6 @@
         <record id="hr_rfid_event_user_action" model="ir.actions.act_window">
             <field name="name">User Events</field>
             <field name="res_model">hr.rfid.event.user</field>
-            <!--      <field name="view_type">form</field>-->
             <field name="view_mode">tree,form,search,calendar,pivot</field>
             <field name="context">{'search_default_filter_this_day': 1}</field>
         </record>
@@ -80,8 +79,14 @@
                         </group>
                         <group string="Debug Information" groups="base.group_no_one" colspan="4">
                             <field name="more_json" readonly="1"/>
+                            <button name="zone_process_event" type="object"
+                                        string="Process Event in Zone" class="oe_highlight"/>
                         </group>
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>
@@ -133,19 +138,9 @@
                     <filter name="filter_this_week" string="Events from this week" domain="[
                         ('event_time', '>=', (datetime.datetime.combine(context_today() + relativedelta(weeks=-1,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')),
                         ('event_time', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
-<!--                    <filter name="filter_this_month" string="Events from this month" domain="[-->
-<!--                            ('event_time', '>=', (datetime.datetime.combine(context_today(), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-01 %H:%M:%S'))]"/>-->
-<!--                    <filter name="filter_this_year" string="Events from this year" domain="[-->
-<!--                            ('event_time', '>=', (datetime.datetime.combine(context_today(), datetime.time(0,0,0)).to_utc()).strftime('%Y-01-01 %H:%M:%S'))]"/>-->
                     <filter name="filter_last_week" string="Events from last week" domain="[
                         ('event_time', '>=', (datetime.datetime.combine(context_today() + relativedelta(weeks=-2,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')),
                         ('event_time', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(weeks=-1, days=0,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
-<!--                    <filter name="filter_last_month" string="Events from last month" domain="[-->
-<!--                        ('event_time', '>=', (datetime.datetime.combine(context_today() + relativedelta(months=-1), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-01 %H:%M:%S')),-->
-<!--                        ('event_time', '&lt;', (datetime.datetime.combine(context_today() , datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-01 %H:%M:%S'))]"/>-->
-<!--                    <filter name="filter_last_year" string="Events from last year" domain="[-->
-<!--                        ('event_time', '>=', (datetime.datetime.combine(context_today() + relativedelta(years=-1), datetime.time(0,0,0)).to_utc()).strftime('%Y-01-01 %H:%M:%S')),-->
-<!--                        ('event_time', '&lt;', (datetime.datetime.combine(context_today(), datetime.time(0,0,0)).to_utc()).strftime('%Y-01-01 %H:%M:%S'))]"/>-->
                     <separator/>
                     <filter name="groupby_door" string="by Door" context="{'group_by':'door_id'}"/>
                     <filter name="groupby_reader" string="by Reader" context="{'group_by':'reader_id'}"/>
@@ -154,7 +149,6 @@
                     <filter name="groupby_contact" string="by Contact" context="{'group_by':'contact_id'}"/>
                     <searchpanel>
                         <field name="event_action" string="Status" icon="fa-info-circle" color="#875A7B"/>
-                        <!--                        <field name="service_id" string="Service" icon="fa-users"/>-->
                     </searchpanel>
 
                 </search>

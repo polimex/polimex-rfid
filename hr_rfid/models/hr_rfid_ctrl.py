@@ -616,7 +616,7 @@ class HrRfidController(models.Model):
                     line != 0 and len(new_io_table) != 16):
                 pass
                 raise exceptions.ValidationError(
-                    'IO table lengths are different, this should never happen????'
+                    _('IO table lengths are different, this should never happen????')
                 )
             if line == 0:
                 ctrl.io_table = new_io_table

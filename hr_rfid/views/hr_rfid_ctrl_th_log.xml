@@ -6,10 +6,6 @@
             <field name="model">hr.rfid.ctrl.th.log</field>
             <field name="arch" type="xml">
                 <tree string="Temperature and Humidity List" create="0" delete="0">
-<!--                      decoration-success="state == 'normal'"-->
-<!--                      decoration-warning="state in ['short','open']"-->
-<!--                      decoration-info="state == 'disabled'"-->
-<!--                      decoration-danger="state in ['s1','s2','s12']">-->
                     <field name="event_time"/>
                     <field name="th_id"/>
                     <field name="temperature" optional="show"/>

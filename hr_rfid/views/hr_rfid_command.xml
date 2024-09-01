@@ -14,15 +14,8 @@
             <field name="arch" type="xml">
                 <form create="0" delete="0" edit="0">
                     <header>
-<!--                        <field name="status" widget="statusbar" statusbar_visible=" " />-->
                     </header>
                     <sheet>
-<!--                        <field name="status" widget="statusbar" statusbar_visible=" " -->
-<!--                               decoration-success="status == 'Success'"-->
-<!--                               decoration-warning="status == 'Wait'"-->
-<!--                               decoration-info="status == 'Process'"-->
-<!--                               decoration-danger="status == 'Failure'"-->
-<!--                        />-->
                         <div class="oe_button_box" name="button_box">
                             <button string="Resend" name="resend_action"
                                     type="object" class="oe_stat_button"

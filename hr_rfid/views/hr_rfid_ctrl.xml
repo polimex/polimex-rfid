@@ -9,23 +9,16 @@
             <field name="model">hr.rfid.ctrl</field>
             <field name="arch" type="xml">
                 <form string="RFID Controller" create="false">
-                    <!--                    <header>-->
-                    <!--                        <field name="hw_version"  nolabel="1" colspan="2" widget="statusbar" statusbar_visible=" "/>-->
-                    <!--                    </header>-->
                     <field name="reader_ids" invisible="1"/>
                     <field name="door_ids" invisible="1"/>
                     <field name="alarm_line_ids" invisible="1"/>
                     <header/>
                     <sheet>
                         <div class="oe_button_box" name="button_box" modifiers="{}">
-                            <!--                            <button string="Reload cards" name="button_reload_cards" type="object"-->
-                            <!--                                    class="oe_stat_button" icon="fa-refresh"/>-->
                             <button string="IO Table" name="%(hr_rfid_controller_io_table_wiz_action)d"
                                     id="hr_rfid_view_modify_io_table_btn" type="action"
                                     groups="hr_rfid.hr_rfid_group_manager" class="oe_stat_button"
                                     icon="fa-table"/>
-                            <!--                            <button string="Reload Controller Information" name="re_read_ctrl_info" type="object"-->
-                            <!--                                    class="oe_stat_button" icon="fa-refresh"/>-->
                             <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-list"
                                     context="{'xml_id':'hr_rfid_reader_action'}"
                                     help="List readers"

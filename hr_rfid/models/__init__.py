@@ -18,12 +18,14 @@ from . import hr_rfid_ctrl_alarm_group
 from . import hr_rfid_ctrl_emergency_group
 from . import hr_rfid_ctrl_th
 from . import hr_rfid_ctrl_th_log
+from . import hr_rfid_event
 from . import hr_rfid_event_user
 from . import hr_rfid_event_system
 from . import hr_rfid_command
 from . import hr_rfid_door
 from . import hr_rfid_workcode
 from . import hr_rfid_zone
+from . import hr_rfid_notification
 from . import res_partner
 from . import hr_rfid_settings
 from . import digest

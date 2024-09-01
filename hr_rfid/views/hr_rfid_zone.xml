@@ -24,7 +24,6 @@
         <record id="hr_rfid_zone_action" model="ir.actions.act_window">
             <field name="name">Zones</field>
             <field name="res_model">hr.rfid.zone</field>
-            <!--      <field name="view_type">form</field>-->
             <field name="view_mode">tree,form</field>
         </record>
 
@@ -51,7 +50,6 @@
         <record id="hr_rfid_zone_doors_wiz_action" model="ir.actions.act_window">
             <field name="name">Add/Remove Doors</field>
             <field name="res_model">hr.rfid.zone.doors.wiz</field>
-            <!--      <field name="view_type">form</field>-->
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_rfid_zone_doors_wiz"/>
             <field name="target">new</field>
@@ -92,17 +90,34 @@
                                 <field name="anti_pass_back"/>
                                 <field name="log_out_on_exit"/>
                             </group>
-                            <group string="Included doors">
-                                <field name="door_ids" readonly="1" widget="many2many_tags"/>
-                            </group>
-                            <group string="Permitted employees">
-                                <field name="permitted_department_ids" widget="many2many_tags"/>
-                                <field name="permitted_employee_category_ids" widget="many2many_tags"/>
-                            </group>
                             <group>
                                 <field name="company_id" groups="base.group_multi_company"/>
                             </group>
                         </group>
+                        <notebook>
+                            <page string="Included doors">
+                                <group>
+                                    <field name="door_ids" readonly="1" widget="many2many_tags"/>
+                                </group>
+                            </page>
+                            <page string="Permitted employees">
+                                <group>
+                                    <field name="permitted_department_ids" widget="many2many_tags"/>
+                                    <field name="permitted_employee_category_ids" widget="many2many_tags"/>
+                                </group>
+                            </page>
+                            <page string="Notifications">
+                                <field name="notification_ids">
+                                    <tree string="Notifications">
+                                        <field name="notification_type"/>
+                                        <field name="user_event"/>
+                                        <field name="system_event"/>
+                                        <field name="notify_followers"/>
+                                        <field name="notify_partner_ids" widget="many2many_tags"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers"/>
