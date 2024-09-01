@@ -16,13 +16,23 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-class WebRfidController(http.Controller):
+def _ws_db_update_dict():
+    return {
+        'last_ip':_get_remote_ip_address() ,
+        'updated_at': fields.Datetime.now(),
+    }
 
-    def _ws_db_update_dict(self):
-        return {
-            'last_ip': request.httprequest.environ['REMOTE_ADDR'],
-            'updated_at': fields.Datetime.now(),
-        }
+
+def _get_remote_ip_address():
+    if hasattr(request, 'access_route') and request.access_route:
+        return request.access_route[-1]
+    elif 'HTTP_X_FORWARDED_FOR' in request.httprequest.environ:
+        return request.httprequest.environ['HTTP_X_FORWARDED_FOR'].split(',')[0]
+    else:
+        return request.httprequest.environ['REMOTE_ADDR']
+
+
+class WebRfidController(http.Controller):
 
     def _parse_event(self, post_data: dict, webstack):
         # Helpers
@@ -221,10 +231,9 @@ class WebRfidController(http.Controller):
                 'door_id': door and door.id or False,
                 'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
                 'event_action': '21',
-                # 'input_js': card_num,
             }
             event = controller_id.report_sys_ev(
-                description=_('Exit button pressed'),
+                description=_('Exit button %d pressed ', event_action-20),
                 post_data=post_data,
                 sys_ev_dict=sys_event_dict
             )
@@ -587,7 +596,7 @@ class WebRfidController(http.Controller):
                         'name': f"Module {post_data['convertor']}",
                         'serial': str(post_data['convertor']),
                         'key': post_data['key'],
-                        'last_ip': request.httprequest.environ['REMOTE_ADDR'],
+                        'last_ip': _get_remote_ip_address(),
                         'updated_at': fields.Datetime.now(),
                         'available': 'a',
                         'company_id': request.env['res.company'].sudo().search([])[0].id,
@@ -612,7 +621,7 @@ class WebRfidController(http.Controller):
                 return {'status': 400}
 
             if not webstack_id.active:
-                webstack_id.write(self._ws_db_update_dict())
+                webstack_id.write(_ws_db_update_dict())
                 webstack_id.report_sys_ev('Webstack is not active', post_data=post_data)
                 return {'status': 400}
 
@@ -635,7 +644,7 @@ class WebRfidController(http.Controller):
                 result = webstack_id.parse_response(post_data=post_data)
             if not post and 'cmd' in result:
                 result = {'cmd': result['cmd']}
-            webstack_id.write(self._ws_db_update_dict())
+            webstack_id.write(_ws_db_update_dict())
             return result
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
                 exceptions.MissingError, exceptions.ValidationError,
