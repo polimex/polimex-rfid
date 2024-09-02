@@ -115,8 +115,19 @@ class WebRfidController(http.Controller):
         # ==============EVENTS Parser======================================================
         # Durres OK, Durres Error
         if event_action in [1, 2]:
-            # raise Exception('Not Implemented')
-            _logger.error('Not Implemented event 1 or 2 (Duress mode)')
+            sys_event_dict = {
+                'door_id': door and door.id or False,
+                'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
+                'event_action': str(event_action),
+                'input_js': card_num,
+            }
+
+            event = controller_id.report_sys_ev(
+                description=_('Duress mode'),
+                post_data=post_data,
+                sys_ev_dict=sys_event_dict
+            )
+            # _logger.error('Not Implemented event 1 or 2 (Duress mode)')
             return webstack.check_for_unsent_cmd(200)
         # Card Events
         elif event_action in range(3, 19):
@@ -244,9 +255,10 @@ class WebRfidController(http.Controller):
         # DELAY ZONE OFF (if out) Z4,Z3,Z2,Z1
         elif event_action in [28]:
             raise Exception('Not Implemented (DELAY ZONE OFF (if out) Z4,Z3,Z2,Z1)')
-        # Reserved
+        # External control
         elif event_action in [29]:
-            raise Exception('Not Implemented (Reserved 29)')
+            controller_id.report_sys_ev('External control', post_data=post_data)
+            return webstack.check_for_unsent_cmd(200)
         # Power On controller
         elif event_action in [30]:
             controller_id.report_sys_ev('Controller restarted or Power Fail', post_data=post_data)
