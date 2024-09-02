@@ -26,8 +26,8 @@ def _ws_db_update_dict():
 def _get_remote_ip_address():
     if hasattr(request, 'access_route') and request.access_route:
         return request.access_route[-1]
-    elif 'HTTP_X_FORWARDED_FOR' in request.httprequest.environ:
-        return request.httprequest.environ['HTTP_X_FORWARDED_FOR'].split(',')[0]
+    # elif 'HTTP_X_FORWARDED_FOR' in request.httprequest.environ:
+    #     return request.httprequest.environ['HTTP_X_FORWARDED_FOR'].split(',')[0]
     else:
         return request.httprequest.environ['REMOTE_ADDR']
 
