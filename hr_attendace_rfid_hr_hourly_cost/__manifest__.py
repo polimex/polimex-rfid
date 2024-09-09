@@ -11,7 +11,7 @@
 
     'author': "Polimex Dev Team",
     'website': "https://polimex.co",
-    'license': 'LGPL-3',
+    'license': 'AGPL-3',
 
     'category': "Human Resources",
     'version': '1.0',

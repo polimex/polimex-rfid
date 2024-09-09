@@ -9,7 +9,7 @@
     'website': "https://polimex.co",
     'category': 'Human Resources',
     'version': '1.0',
-    'license': 'LGPL-3',
+    'license': 'AGPL-3',
     'depends': ['hr_rfid'],
     'data': [
         'views/vote_session_views.xml',

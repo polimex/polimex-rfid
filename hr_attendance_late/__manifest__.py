@@ -6,7 +6,7 @@
     'category': 'Human Resources',
     'summary': 'Enhances employee attendance tracking with additional work time calculations',
     'author': 'Polimex',
-    'license': 'LGPL-3',
+    'license': 'AGPL-3',
 
     'description': """
        The main functionality of this module is to perform extra work time calculations. 
