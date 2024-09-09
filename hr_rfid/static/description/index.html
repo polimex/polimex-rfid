@@ -1,508 +1,119 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Untitled</title>
-  <style type="text/css">
-      code{white-space: pre-wrap;}
-      span.smallcaps{font-variant: small-caps;}
-      span.underline{text-decoration: underline;}
-      div.column{display: inline-block; vertical-align: top; width: 50%;}
-  </style>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polimex RFID Professional Access Control System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-<style>
-    body {
-        font-family: Arial;
-        font-size: 17px;
-    }
-    a {
-        color: #054279;
-        text-decoration: none;
-    }
-
-    a:hover {
-        color: black;
-    }
-
-table.gridtable {
-    color:#333333;
-    border-width: 1px;
-    border-color: #666666;
-    border-collapse: collapse;
-}
-table.gridtable th {
-    border-width: 1px;
-    padding: 8px;
-    border-style: solid;
-    border-color: #666666;
-    background-color: #dedede;
-}
-table.gridtable td {
-    border-width: 1px;
-    padding: 8px;
-    border-style: solid;
-    border-color: #666666;
-    background-color: #ffffff;
-}
-
-h2 {
-  text-align: center;
-}
-
-h2:hover {
-  text-shadow: 2px 2px grey;
-}
-
-img {
-  border-radius: 5px;
-}
-
-</style>
-<div id="top">
-
-</div>
-<div id="top">
-
-</div>
-<center>
-<p><img src="./icon.png" /></p>
-<h1 id="rfid-access-control"><span class="header-section-number">1</span> RFID Access Control</h1>
-</center>
-<hr />
-<h2 id="brief-description"><span class="header-section-number">1.1</span> Brief description</h2>
-<p>RFID Access App is a TCP/IP interface Module with which you can receive information, real time, about all employees or partners of the company - their current access by authorization in building/rooms, done work, or employee’s current condition - who is sick, on a paid leave or didn’t come to work. The Module is a required support for the Polimex Holding’s controller (which uses our http based WEBSDK protocol) and LAN Modules.</p>
-<h2 id="features"><span class="header-section-number">1.2</span> Features</h2>
-<p>With the RFID Access App, you can:</p>
-<ul>
-<li><p>Gain information about the entrance of the company’s building/rooms or specific places;</p></li>
-<li><p>Create different access groups, and set each employee or partner to some of those groups, where each access group corresponds to access to one or more doors of the company’s building;</p></li>
-<li><p>Give expiration date of a given access group;</p></li>
-<li><p>Import cards and their owners using excel, or csv files, or create them manually;</p></li>
-<li><p>Control the access of each department in the company;</p></li>
-<li><p>Setting Time schedules;</p></li>
-<li><p>… and optionally you can get access to the vending machine at the office;</p></li>
-</ul>
-<p>And all that you can get on any platform, from anywhere - real time.</p>
-<p><a href="#explained">Click</a> here to learn more about the features.</p>
-<div id="install">
-
-</div>
-<h2 id="steps-of-installation"><span class="header-section-number">1.3</span> Steps of installation</h2>
-<ul>
-<li><a href="#basics"><strong>Basics</strong></a></li>
-<li><a href="#sdk"><strong>SDK Settings(Activation of Polimex TCP/IP Interface Module)</strong></a></li>
-<li><a href="#add"><strong>Adding a card</strong></a></li>
-</ul>
-<hr />
-<div id="basics">
-<p></a></p>
-<h3 id="basics"><span class="header-section-number">1.3.1</span> Basics</h3>
-<ol type="1">
-<li>Go to your Odoo page, and login. (make sure you have <a href="https://www.odoo.com/documentation/12.0/setup/install.html">odoo</a>)</li>
-</ol>
-<p><img src="./important.png" /> If you have any problems during the installation of odoo, you can get help from the users in <a href="https://www.odoo.com/forum/help-1"><strong>odoo’s forum</strong></a>, or in <a href="https://stackoverflow.com/questions/tagged/odoo-12">stack<strong>overflow</strong></a>.</p>
-<ol start="2" type="1">
-<li>Go to the menu at the top left corner and click on it.</li>
-</ol>
-<p><img src="./odoo_index.png" /></p>
-<ol start="3" type="1">
-<li>You will get a list with sub-menus. Click on the Apps menu.</li>
-</ol>
-<p><img src="./odoo_index_menu_options.png" /></p>
-<p><img src="./odoo_index_apps_menu_option.png" /></p>
-<ol start="4" type="1">
-<li>Remove the apps tag, and write rfid.</li>
-</ol>
-<p><img src="./apps_index_search_clean.png" /></p>
-<p><img src="./important.png" /> Your Apps page will look different, but you can modify it by creating a list of your favorite apps.</p>
-<ol start="5" type="1">
-<li><p>Click search (or press enter).</p></li>
-<li><p>You will get two results, the RFID attendance and RFID Access control.</p></li>
-<li><p>Click on the installation icon of RFID Access Control.</p></li>
-</ol>
-<p><img src="./result_search_rfid.png" /></p>
-<ol start="8" type="1">
-<li><p>Now you need to wait odoo to install all dependencies.</p></li>
-<li><p>After installation, odoo will redirect you back to your index page. Click again to the top left corner of the page. You have at least one new option - RFID System.</p></li>
-</ol>
-<p><img src="./odoo_index.png" /></p>
-<ol start="10" type="1">
-<li>Click to the RFID System option.</li>
-</ol>
-<p><img src="./rfid_option.png" /></p>
-<ol start="11" type="1">
-<li>Your page now should look like this:</li>
-</ol>
-<p><img src="./rfid_index.png" /></p>
-<h4 id="events"><span class="header-section-number">1.3.1.1</span> Events</h4>
-<p>Clicking on that menu, gives you a list with other 3 sub-menus.</p>
-<p><img src="./events_menu.png" /></p>
-<h5 id="user-events"><span class="header-section-number">1.3.1.1.1</span> User Events</h5>
-<p>Lists all times in which someone tried to enter the building/floor at some of the doors, when, number of the card, and etc.</p>
-<p><img src="./user_events.png" /></p>
-<h5 id="system-events"><span class="header-section-number">1.3.1.1.2</span> System Events</h5>
-<p>Lists all errors raised in the system, for example if the Webstack is not active, and someone tries to get access, or someone is trying to authorize with a card, which is not in the system.</p>
-<p><img src="./system_events.png" /></p>
-<h5 id="commands"><span class="header-section-number">1.3.1.1.3</span> Commands</h5>
-<h4 id="cards"><span class="header-section-number">1.3.1.2</span> Cards</h4>
-<p>If you click to that menu, your page should look like this.</p>
-<p><img src="./cards_index.png" /></p>
-<p>There are two options in that page: * Creating a card (Create button)</p>
-<p><img src="./create_card.png" /></p>
-<ul>
-<li>Or importing cards (Import button)</li>
-</ul>
-<p><img src="./import_card.png" /></p>
-<p>Click on <code>Create</code>. You should see the following form:</p>
-<p><img src="./card_form.png" /></p>
-<div id="fields">
-
-</div>
-<p>The fields included in the form, are:</p>
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Field name</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Card Number</td>
-<td>Number of the card</td>
-</tr>
-<tr class="even">
-<td>Card Owner (Employee)</td>
-<td>If the card is for employee of the company, you can write, or find the employee by clicking on the field. You will get a list with employees of the company. If you don’t find it, click on the search option of the list.</td>
-</tr>
-<tr class="odd">
-<td>Card Owner (Contact/Partner)</td>
-<td>If the card is for a partner of the company, again - you can write its name or select it from the list, which you get after clicking on the empty field nex2t to the label.</td>
-</tr>
-<tr class="even">
-<td>Active</td>
-<td>By default is set to active. If you want the card to become active, after specified time, change that in Active on (the next option) and uncheck option in Active.</td>
-</tr>
-<tr class="odd">
-<td>Active on</td>
-<td>Sets the starting date from which the card will be active from</td>
-</tr>
-<tr class="even">
-<td>Deactivate on</td>
-<td>Sets the ending date, when the card will no more be active</td>
-</tr>
-<tr class="odd">
-<td>Cloud Card</td>
-<td>Because each controller has its own memory, which is limited, its possible all information about the cards to be kept in an external place - an external db. Activating this option means that after authorization with a card, the controller will not check its own memory for that card, but will search for it in that external memory.</td>
-</tr>
-</tbody>
-</table>
-<p><a href="#top">Go back to the beginning of the page</a></p>
-<hr />
-<div id="sdk">
-
-</div>
-<h3 id="sdk-settings"><span class="header-section-number">1.3.2</span> SDK settings</h3>
-<ol type="1">
-<li>Go to your Polimex TCP/IP Interface Module /Get the IP of the Module and write it to your web browser, press Enter/.</li>
-</ol>
-<p><img src="./polimex_index.png" /></p>
-<ol start="2" type="1">
-<li><p>Go to the right top corner of the page - login, and click it.</p></li>
-<li><p>The default username is ‘admin’ and by default there is no password.</p></li>
-<li><p>There is a menu on the top page including Setup, IO Control and Device Manager.</p></li>
-<li><p>Hover over Setup and find the Services option, click on it.</p></li>
-</ol>
-<p><img src="./service_menu.png" /></p>
-<ol start="6" type="1">
-<li><p>Choose Enable for SDK sends events</p></li>
-<li><p>Choose Enable for RPC JSON format (Odoo)</p></li>
-<li><p>Change the <code>odoo.link</code> in the HTTP Server Push URL with a link or an IP to the odoo server.</p></li>
-<li><p>Change the Server PORT with the Odoo’s port.</p></li>
-<li><p>Save the settings.</p></li>
-</ol>
-<p><img src="./polimex_settings.png" /></p>
-<ol start="11" type="1">
-<li>Go to Device Manager -&gt; Scan</li>
-</ol>
-<p><img src="./scan_modules.png" /></p>
-<ol start="12" type="1">
-<li>Click Start, which will scan for controllers on the TCP/IP Interface Module</li>
-</ol>
-<p><img src="./start_scanning.png" /></p>
-<ol start="13" type="1">
-<li>After finishing, check the system by touching your card/tag to some of the controllers.</li>
-</ol>
-<hr />
-<p><img src="./important.png" /> <strong>For steps 14-16 you must have</strong></p>
-<ul>
-<li><p>Manager access to the RFID Access control app</p></li>
-<li><p>a controller connected to your Polimex TCP/IP Interface Module.</p></li>
-</ul>
-<hr />
-<ol start="14" type="1">
-<li><p>Go back to the odoo’s RFID Module page.</p></li>
-<li><p>Go to Settings -&gt; Modules</p></li>
-</ol>
-<p><img src="./settings_modules.png" /></p>
-<ol start="16" type="1">
-<li><p>In step 13, you made something called an event, which the TCP/IP interface Module sends to the Odoo. That Module is currently not active in Odoo, which means Odoo will not communicate with it. To set it active, click on <code>Set module to active</code>.</p></li>
-<li><p>After finishing with the previous steps, it’s time to add a card /cards/ to odoo.</p></li>
-</ol>
-<p><a href="#top">Go back to the beginning of the page</a></p>
-<hr />
-<div id="add">
-
-</div>
-<h3 id="add-a-card-to-odoo"><span class="header-section-number">1.3.3</span> Add a card to Odoo</h3>
-<hr />
-<p><img src="./important.png" /> <strong>You must have</strong></p>
-<ul>
-<li><p>Manager access to the RFID Access Control App</p></li>
-<li><p>a controller that can read cards connected with your Polimex TCP/IP Interface Module</p></li>
-</ul>
-<p><img src="./important.png" /> <strong>Your Polimex TCP/IP Interface Module must</strong></p>
-<ul>
-<li><p>be linked with Odoo</p></li>
-<li><p>be active</p></li>
-</ul>
-<hr />
-<ol type="1">
-<li><p>Touch the card/tag to the controller connected to your Polimex TCP/IP Interface Module.</p></li>
-<li><p>The device will send an event to Odoo.</p></li>
-<li><p>Go to the odoo’s RFID page, and click to the menu <strong>Events</strong>, then choose <strong>System Events</strong>.</p></li>
-<li><p>You should see an event of type <code>Could not find a card with this number</code>.</p></li>
-</ol>
-<p><img src="./card_event.png" /></p>
-<ol start="5" type="1">
-<li>Click on the event.</li>
-</ol>
-<p><img src="./card_event.png" /></p>
-<p>You should see:</p>
-<p><img src="./add_card_index.png" /></p>
-<ol start="6" type="1">
-<li>Click to the <code>Add card</code> option.</li>
-</ol>
-<p><img src="./add_card_option.png" /></p>
-<ol start="7" type="1">
-<li>Fill the fields in the form.</li>
-</ol>
-<p><img src="./important.png" /> <strong>Make sure to choose only one type of card owner - Employee or Contact/Partner.</strong></p>
-<p><img src="./card_form_fields.png" /></p>
-<p><img src="./important.png" /> If you are not sure for what each field is, click <a href="#fields">here</a>.</p>
-<p><img src="./card_form_filled.png" /></p>
-<ol start="8" type="1">
-<li>Click on the <code>Add card</code> option.</li>
-</ol>
-<p><img src="./safe_card.png" /></p>
-<ol start="9" type="1">
-<li>Now your card is created.</li>
-</ol>
-<p><a href="#top">Go back to the beginning of the page</a></p>
-<hr />
-<div id="explained">
-
-</div>
-<h2 id="features-1"><span class="header-section-number">1.4</span> Features</h2>
-<h3 id="card-types"><span class="header-section-number">1.4.1</span> Card Types</h3>
-<table>
-<thead>
-<tr class="header">
-<th>Card Type</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Regular RFID card</td>
-</tr>
-<tr class="even">
-<td>MiFare 13/56Mhz</td>
-</tr>
-<tr class="odd">
-<td>EM4100 125KHz</td>
-</tr>
-<tr class="even">
-<td>Biometric ID</td>
-</tr>
-<tr class="odd">
-<td>Remote Button 1</td>
-</tr>
-<tr class="even">
-<td>Remote Button 2</td>
-</tr>
-<tr class="odd">
-<td>Remote Button 3</td>
-</tr>
-<tr class="even">
-<td>Remote Button 4</td>
-</tr>
-<tr class="odd">
-<td>Licence Plate</td>
-</tr>
-<tr class="even">
-<td>Barcode</td>
-</tr>
-</tbody>
-</table>
-<h3 id="departments"><span class="header-section-number">1.4.2</span> Departments</h3>
-<p>Let’s say your company is divided by departments, and each department is responsible for different kind of job in the company, and each department works at a different floor in the company’s building. So you want each employee, who works at a particular department, to have access only to the entrance of the building and entrance to the floor to which his department works. So now we will show how to manage department access groups, and how to add each of the company employees to that group.</p>
-<p><img src="./important.png" /> If you don’t have <strong>RFID Access App</strong> installed, <a href="#install">click here</a></p>
-<ol type="1">
-<li>Go to your Odoo page, and login. (make sure you have <a href="https://www.odoo.com/documentation/12.0/setup/install.html">odoo</a>)</li>
-</ol>
-<p><img src="./important.png" /> If you have any problems during the installation of odoo, you can get help from the users in <a href="https://www.odoo.com/forum/help-1"><strong>odoo’s forum</strong></a>, or in <a href="https://stackoverflow.com/questions/tagged/odoo-12">stack<strong>overflow</strong></a>.</p>
-<ol start="2" type="1">
-<li>Click on the menu (at the top left corner), and choose <code>Employee</code> from the menu.</li>
-</ol>
-<p><img src="./employee_menu_option.png" /></p>
-<ol start="3" type="1">
-<li>There are three options next to the Employees logo - <code>Employees</code>, <code>Departments</code>, and <code>Configuration</code>.</li>
-</ol>
-<p><img src="./employees_menu_options.png" /></p>
-<ol start="4" type="1">
-<li>Click on <code>Departments</code>. Here you can create(manually or importing with a file) departments of the company.</li>
-</ol>
-<p><img src="./departments_option.png" /></p>
-<p><img src="./departments_company.png" /></p>
-<ol start="5" type="1">
-<li>Let’s say you want to manage the access of the <code>Administration</code> department. Click on the top right corner of the department, and choose <code>Settings</code>.</li>
-</ol>
-<p><img src="./departments_company_menu.png" /></p>
-<p><img src="./settings_options.png" /></p>
-<ol start="6" type="1">
-<li>There are 4 options for managing the access groups of that department.</li>
-</ol>
-<p><img src="./acc_group_options.png" /></p>
-<ul>
-<li><p>Add one or more access groups; (1. Add Access Groups)</p></li>
-<li><p>Remove one or more access groups; (2. Remove Access Groups)</p></li>
-<li><p>Change the default access group; (3. Change the default access group)</p></li>
-<li><p>Remove the default access group; (4. Remove default access group)</p></li>
-</ul>
-<p><strong>What is the difference between adding access group and changing the default access group?</strong></p>
-<p>When adding an employee to some department, that employee gets the default access group of the department (each department has its own access group). If you want to add the employee to some other access group, you need to choose the option <code>Add Access groups</code> from the employee’s page (check below in <code>Employee Access Group</code>)).</p>
-<h3 id="owner"><span class="header-section-number">1.4.3</span> Owner</h3>
-<p>If each department (or almost each) in your company has a manager(or managers), you can give him (them) privilege, for each new employee of the department, to give access to that employee, to the building and department’s floor.</p>
-<ol type="1">
-<li>Go to your Odoo page, and login. (make sure you have <a href="https://www.odoo.com/documentation/12.0/setup/install.html">odoo</a>)</li>
-</ol>
-<p><img src="./important.png" /> If you have any problems during the installation of odoo, you can get help from the users in <a href="https://www.odoo.com/forum/help-1"><strong>odoo’s forum</strong></a>, or in <a href="https://stackoverflow.com/questions/tagged/odoo-12">stack<strong>overflow</strong></a>.</p>
-<ol start="2" type="1">
-<li>Click on the menu (at the top left corner), and choose <code>Settings</code> from the menu.</li>
-</ol>
-<p><img src="./settings_menu_option.png" /></p>
-<ol start="3" type="1">
-<li>Find the option <code>Users &amp; Companies</code> at the header of the page.</li>
-</ol>
-<p><img src="./users_companies_header_option.png" /></p>
-<ol start="4" type="1">
-<li>Choose <code>Users</code>.</li>
-</ol>
-<p><img src="./users_choice_users_groups.png" /></p>
-<ol start="5" type="1">
-<li>Find the name of the person, to which you want to give access. (If there are more than one person, you need to repeat that step for each of them).</li>
-</ol>
-<p><img src="./user_group_change_option.png" /></p>
-<ol start="6" type="1">
-<li><p>Click to the name of that person.</p></li>
-<li><p>Choose <code>Edit</code>.</p></li>
-</ol>
-<p><img src="./edit_user_ug.png" /></p>
-<ol start="8" type="1">
-<li>You should see a field, with <code>RFID Access</code>.</li>
-</ol>
-<p><img src="./user_rfid_option_change.png" /></p>
-<ol start="9" type="1">
-<li>There are four possible options.</li>
-</ol>
-<ul>
-<li><strong>Officer</strong>: Allows access to the following things:
-<ol type="1">
-<li>Ability to view, modify, create or delete cards.</li>
-<li>Ability to view user events.</li>
-<li>Ability to view system events.</li>
-<li>Ability to add or remove access groups from employees or contacts.</li>
-<li>Ability to add or remove access groups from departments.</li>
-<li>Ability to change the default access group of a department.</li>
-</ol></li>
-<li><strong>Officer own department</strong>: Same as above but only for the user’s own department</li>
-<li><strong>Manager</strong>: Allows access to virtually anything that the module has.</li>
-<li><strong>Manager own department</strong>: Same as above but only for the user’s own department</li>
-</ul>
-<p>Choose one of them, and click <code>Save</code>.</p>
-<h3 id="employee-access-group"><span class="header-section-number">1.4.4</span> Employee Access Group</h3>
-<p>By default, when choosing a department of the employee, he/she gets the default access group of that department. If you want to add more access groups(or to remove some) to that employee, you need to do that from the employee’s page.</p>
-<ol type="1">
-<li>Go to your Odoo page, and login. (make sure you have <a href="https://www.odoo.com/documentation/12.0/setup/install.html">odoo</a>)</li>
-</ol>
-<p><img src="./important.png" /> If you have any problems during the installation of odoo, you can get help from the users in <a href="https://www.odoo.com/forum/help-1"><strong>odoo’s forum</strong></a>, or in <a href="https://stackoverflow.com/questions/tagged/odoo-12">stack<strong>overflow</strong></a>.</p>
-<ol start="2" type="1">
-<li>Click on the menu (at the top left corner), and choose <code>Employees</code> from the menu.</li>
-</ol>
-<p><img src="./employees_menu_options.png" /></p>
-<ol start="3" type="1">
-<li>Select the employee.</li>
-</ol>
-<p><img src="./employee_option.png" /></p>
-<ol start="4" type="1">
-<li>Go to the <code>RFID Info</code> option.</li>
-</ol>
-<p><img src="./employee_rfid_info.png" /></p>
-<ol start="5" type="1">
-<li>Select <code>Add Access Groups</code>, or <code>Remove Access Groups</code>.</li>
-</ol>
-<p><img src="./add_remove_acc_group_options_employee.png" /></p>
-<p><strong>Add Access Group</strong></p>
-<p><img src="./add_acc_group_employee.png" /></p>
-<p><strong>Remove Access Group</strong></p>
-<p><img src="./rem_acc_group_employee.png" /></p>
-<p><a href="#top">Go back to the beginning of the page</a></p>
-<hr />
-<h2 id="github"><span class="header-section-number">1.5</span> Github</h2>
-<p>If you have any problems, questions or suggestions, you can follow us on <a href="https://github.com/polimex/odoo_apps"><img src="./github.png" /></a>.</p>
-<script>
-
-function big_images() {
-    let imgs = document.getElementsByTagName("img");
-    imgs = Array.prototype.slice.call(imgs);
-    let filtered = imgs.filter(function(image) { return image.width > 700 });
-    return filtered;
-}
-
-window.addEventListener('resize', function() {
-  var imgs = big_images();
-
-  for(let i = 0; i < imgs.length; i++) {
-      imgs[i].style.width = '60%';
-      imgs[i].style.height = '60%';
-  }
-});
-
-document.title = 'RFID Access App';
-
-let hrs = document.getElementsByTagName('hr');
-hrs = Array.prototype.slice.call(hrs);
-
-for(let i = 0; i < hrs.length; i++) {
-    hrs[i].style.border = '1px dotted gray';
-    hrs[i].style.width = '50%';
-}
-
-let tables = document.getElementsByTagName('table');
-for(let i = 0; i < tables.length; i++) {
-    tables[i].className = 'gridtable';
-}
-
-</script>
+<header>
+    <div class="container">
+        <h1>Polimex RFID Professional Access Control System</h1>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="https://github.com/polimex" target="_blank"><i class="fab fa-github"></i> GitHub</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<main>
+    <section id="home">
+        <div class="container">
+        <img src="../images/main_screenshot.png">
+            <h2>Fully Functional Professional RFID Access Control System</h2>
+            <p>Enhance your Odoo experience with our professional RFID system.</p>
+        </div>
+    </section>
+    <section id="features">
+        <div class="container">
+            <h2>Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>General</h3>
+                    <ul>
+                        <li>Multi site and multi company support</li>
+                        <li>Fully integrated in Odoo models</li>
+                        <li>Easy to install and support</li>
+                        <li>Full remote support of the installed equipment on the customer site</li>
+                        <li>Cloud based installation for Installing companies</li>
+                        <li>Part of a existing Odoo installations</li>
+                        <li>Local installation on VM (polimex.cloud)</li>
+                        <li>Demo installation (demo.polimex.co)</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>Equipment</h3>
+                    <ul>
+                        <li>Multi technology readers support Wiegand 26/32/34 bit</li>
+                        <li>Reader modes: Card Only, Card and PIN, Card or Work code</li>
+                        <li>Local and Global Anti Pass Back</li>
+                        <li>Durress mode</li>
+                        <li>Global and Local emergency/Fire distribution</li>
+                        <li>Dual person mode</li>
+                        <li>Interlock management</li>
+                        <li>Turnstile ready</li>
+                        <li>Vending Machine support for Executive protocol</li>
+                        <li>Fully open equipment SDK/API</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>Module Features</h3>
+                    <ul>
+                        <li>Fully integrated in core Employee module</li>
+                        <li>Unlimited Access groups with inheritance</li>
+                        <li>Real-time user events</li>
+                        <li>Temperature and Humidity history</li>
+                        <li>Cards for Employee and for Partners</li>
+                        <li>Emergency Zone management</li>
+                        <li>Attendance Zone management on door, department, etc.</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>Sub-module Addons</h3>
+                    <ul>
+                        <li>Base PMS module vertical</li>
+                        <li>Attendance calculation</li>
+                        <li>Hourly cost & work time</li>
+                        <li>Portal integration</li>
+                        <li>Barcode Generation and partner share</li>
+                        <li>Vending product sales with Inventory option</li>
+                        <li>RFID Voting module vertical</li>
+                        <li>RFID Services sales and management</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>We Offer</h3>
+                    <ul>
+                        <li>Free and fast bugfix</li>
+                        <li>Open source project</li>
+                        <li>Multilanguage support</li>
+                        <li>Additional development on request</li>
+                        <li>Integration with other modules for different Odoo verticals</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="about">
+        <div class="container">
+            <h2>About Us</h2>
+            <img src="https://raw.githubusercontent.com/polimex/logos/5c5af675ad5d6ef12bb29664c250196c51ac2bc8/company_logo.png">
+            <p>Polimex Holding Ltd. has been a leader in the security and control systems industry since 1994. Our extensive experience and innovative approach have made us a trusted partner for businesses worldwide.</p>
+            <p>We are ISO 9001:2015 and ISO 27001:2017 certified, ensuring the highest quality standards in our products and services. As a proud member of the Bulgarian Chamber of Commerce and Industry (BCCI), we are committed to excellence and customer satisfaction.</p>
+            <p>Our expertise spans the design, production, construction, and maintenance of advanced security systems. We have successfully completed numerous projects in Bulgaria, Macedonia, Serbia, Kosovo, and Romania, and our products are available through trusted partners in Italy, Spain, England, Germany, the Netherlands, Belgium, France, Hungary, the Czech Republic, and Greece.</p>
+            <p>We invite companies in the security and control systems sector to partner with us. Together, we can achieve greater success and provide top-notch solutions to our clients. Contact us to explore partnership opportunities and join forces with a strong and reliable company.</p>
+        </div>
+    </section>
+</main>
+<footer>
+    <div class="container">
+        <p>&copy; 2018 Polimex RFID Module. All rights reserved.</p>
+    </div>
+</footer>
 </body>
 </html>
