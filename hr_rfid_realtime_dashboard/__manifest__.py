@@ -19,7 +19,8 @@
     'version': '0.2',
 
     # any module necessary for this one to work correctly
-    'depends': ['web_notify_extend', 'hr_rfid', 'board'],
+    # 'depends': ['web_notify_extend', 'hr_rfid', 'board'],
+    'depends': ['hr_rfid', 'board'],
 
     # always loaded
     'data': [
