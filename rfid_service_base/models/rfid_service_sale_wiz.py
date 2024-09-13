@@ -79,9 +79,15 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         related='service_id.generate_barcode_card',
         readonly=True
     )
+    parent_id = fields.Many2one(
+        comodel_name='res.partner',
+        related='service_id.parent_id',
+        readonly=True
+    )
     partner_id = fields.Many2one(
         comodel_name='res.partner',
         domain=["&", ("is_company", "=", False), ("type", "=", "contact")],
+        check_company=True,
         help='The value will be generated automatic if empty!',
     )
     email = fields.Char(
@@ -136,13 +142,18 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         #     'start_date': calc_start,
         #     'end_date': calc_end
         # })
+        if calc_end < calc_start:
+            calc_end = calc_start
         self.start_date = calc_start
         self.end_date = calc_end
 
     @api.onchange('start_date')
     @api.depends('start_date')
     def _onchange_start_date(self):
-        self.end_date = self._calc_end()
+        calc_end = self._calc_end()
+        if calc_end < self.start_date:
+            calc_end = self.start_date
+        self.end_date = calc_end
 
     def _gen_partner(self, partner_id=None, start_date=None, end_date=None):
         transaction_name = self._get_service_sale_seq()
@@ -153,7 +164,7 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
                 'company_id': self.service_id.company_id.id,
                 'mobile': self.mobile,
                 'email': self.email,
-                'parent_id': self.service_id.parent_id.id,
+                'parent_id': self.parent_id.id,
             })
         else:
             partner_id.write({
