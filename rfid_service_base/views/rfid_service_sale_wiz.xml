@@ -55,9 +55,12 @@
                                 <field name="visits"/>
                             </group>
                             <group>
+<!--                                       options="{'no_open': True, 'no_create': [('extend_sale_id', '!=', False)]}"-->
+                                <field name="parent_id" invisible="1"/>
                                 <field name="partner_id"
-                                       readonly="extend_sale_id != False"
-                                       options='{"no_open": True, "no_create": True}'
+                                       readonly="not extend_sale_id"
+                                       options="{'no_open': True}"
+                                       context="{'default_company_type': 'person', 'default_parent_id': parent_id}"
                                        placeholder="Will be generated"/>
                                 <field name="email" placeholder="If you want to send pdf"/>
                                 <field name="mobile" placeholder="If you want to send mobile link"/>
