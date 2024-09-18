@@ -170,10 +170,15 @@
         <!--                action="hr_attendance.hr_attendance_action_graph"-->
         <!--        />-->
         <menuitem
+                id="menu_hr_attendance_report"
+                name="Reports"
+                sequence="20"
+                parent="hr_attendance.menu_hr_attendance_root"/>
+        <menuitem
                 id="menu_hr_attendance_extra"
                 name="Extra calculations"
                 sequence="20"
-                parent="hr_attendance.menu_hr_attendance_root"
+                parent="hr_attendance_late.menu_hr_attendance_report"
                 action="hr_attendance_extra_action"
                 groups="hr_attendance.group_hr_attendance_officer"/>
 
