@@ -16,7 +16,7 @@ class RFIDNotification(models.Model):
          'CHECK (user_event IS NOT NULL or system_event IS NOT NULL)',
          'Notification must have at least one checked event!'),
         ('no_notification_recipients',
-         'CHECK (notify_followers=True or notify_user_ids IS NOT NULL)',
+         'CHECK (notify_followers or notify_user_ids IS NOT NULL)',
          'Notification must have at least one recipient!'),
     ]
 
