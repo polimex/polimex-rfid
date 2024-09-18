@@ -60,6 +60,7 @@
                                 <field name="partner_id"
                                        readonly="not extend_sale_id"
                                        options="{'no_open': True}"
+                                       domain="[('is_company', '=', False), ('type', '=', 'contact')]"
                                        context="{'default_company_type': 'person', 'default_parent_id': parent_id}"
                                        placeholder="Will be generated"/>
                                 <field name="email" placeholder="If you want to send pdf"/>

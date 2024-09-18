@@ -110,7 +110,7 @@
                                 <field name="name"/>
                             </group>
                             <group>
-                                <field name="partner_id"/>
+                                <field name="partner_id" domain="[('is_company', '=', False), ('type', '=', 'contact')]" />
                             </group>
                             <group>
                                 <field name="service_id"/>
@@ -121,7 +121,7 @@
                             </group>
                         </group>
                         <group string="Related company" groups="base.group_multi_company">
-                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="company_id"/>
                         </group>
                         <group string="Technical information" groups="base.group_no_one">
                             <field name="card_number" readonly="True"/>

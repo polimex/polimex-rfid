@@ -27,10 +27,9 @@ class BaseRFIDService(models.Model):
         default=lambda self: self.env.company
     )
     color = fields.Integer(string='Color Index')
-    displayed_image_id = fields.Many2one(
-        'ir.attachment',
-        domain="[('res_model', '=', 'rfid.service'), ('res_id', '=', id), ('mimetype', 'ilike', 'image')]",
-        string='Cover Image')
+    displayed_image_id = fields.Many2one('ir.attachment',
+                                         domain="[('res_model', '=', 'rfid.service'), ('res_id', '=', id), ('mimetype', 'ilike', 'image')]",
+                                         string='Cover Image')
     tag_ids = fields.Many2many(
         comodel_name='rfid.service.tags',
         string='Tags')
