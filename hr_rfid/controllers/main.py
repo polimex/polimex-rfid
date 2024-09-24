@@ -65,6 +65,8 @@ class WebRfidController(http.Controller):
                 ('internal_number', '=', post_data['event']['card']),
                 ('company_id', '=', webstack.company_id.id)
             ])
+            if len(card_id) > 1:
+                _logger.error(f'More than one card with the same number {card_num}')
         else:
             card_id = None
 
