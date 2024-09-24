@@ -65,6 +65,8 @@ class WebRfidController(http.Controller):
                 ('internal_number', '=', post_data['event']['card']),
                 ('company_id', '=', webstack.company_id.id)
             ])
+            if len(card_id) > 1:
+                _logger.error(f'More than one card with the same number {card_num}')
         else:
             card_id = None
 
@@ -407,8 +409,23 @@ class WebRfidController(http.Controller):
             #     event_dict['more_json'] = json.dumps({"eject": reader.id})
             # if event_action in [36] and event_dict['event_action'] == 7:  # Insert
             #     event_dict['more_json'] = json.dumps({"insert": reader.id})
-            card_id.get_owner(event_dict)
-            event = ev_env.create(event_dict)
+            if card_id:
+                card_id.get_owner(event_dict)
+                event = ev_env.create(event_dict)
+            else:  # Card event with unknown card
+                sys_event_dict = {
+                    'door_id': door and door.id or False,
+                    'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
+                    'event_action': str(event_action),
+                    'card_number': card_num or None,
+                    'input_js': card_num,
+                }
+
+                event = controller_id.report_sys_ev(
+                    description=_('Could not find the card'),
+                    post_data=post_data,
+                    sys_ev_dict=sys_event_dict
+                )
             door.process_event(event)
             return webstack.check_for_unsent_cmd(200)
         # Temperature Control
