@@ -39,7 +39,8 @@
                         </group>
                         <notebook>
                             <page string="Cards">
-                                <field name="hr_rfid_card_ids" context="{'active_test': False,'default_contact_id': id}" edit="0">
+                                <field name="hr_rfid_card_ids" context="{'active_test': False,'default_contact_id': id}"
+                                       edit="0">
                                     <tree string="Cards belonging this Contact" editable="bottom"
                                           decoration-success="active"
                                           decoration-danger="not active">
@@ -85,10 +86,47 @@
             <field name="model">res.partner</field>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="after">
-                    <field name="hr_rfid_card_ids" filter_domain="['|', ('name', 'ilike', self), ('hr_rfid_card_ids.number', 'ilike', self)]"/>
-<!--                    <field name="hr_rfid_card_ids" filter_domain="[('hr_rfid_card_ids.number', 'ilike', self)]"/>-->
+                    <field name="hr_rfid_card_ids"
+                           filter_domain="['|', ('name', 'ilike', self), ('hr_rfid_card_ids.number', 'ilike', self)]"/>
+                    <!--                    <field name="hr_rfid_card_ids" filter_domain="[('hr_rfid_card_ids.number', 'ilike', self)]"/>-->
                 </xpath>
             </field>
+        </record>
+
+        <record id="res_partner_mass_acc_grs_wiz" model="ir.ui.view">
+            <field name="name">res.partner.mass.acc.grs.wiz.form</field>
+            <field name="model">res.partner.mass.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Add/Remove Access Groups for Partners">
+                    <group>
+                        <field name="acc_gr_ids"
+                               widget="many2many_tags"
+                               options="{'no_create_edit': True}"/>
+                        <field name="expiration"/>
+                        <field name="remove_existing"/>
+                        <field name="partner_ids" widget="many2many_tags" readonly="1"/>
+                    </group>
+                    <footer>
+                        <button name="add_acc_grs" type="object"
+                                string="Add To Partners" class="oe_highlight"/>
+                        <button name="remove_acc_grs" type="object"
+                                string="Remove From Partners" class="oe_highlight"/>
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="res_partner_mass_remove_access_group_action" model="ir.actions.act_window">
+            <field name="name">RFID Add/Remove Access Groups</field>
+            <field name="res_model">res.partner.mass.wiz</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_rfid.res_partner_mass_acc_grs_wiz"/>
+            <field name="binding_model_id" ref="model_res_partner"/>
+            <field name="binding_view_types">list</field>
+            <field name="target">new</field>
+            <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_group_officer'))]"/>
+            <field name="context">{}</field>
         </record>
 
     </data>

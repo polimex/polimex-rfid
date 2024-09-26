@@ -449,3 +449,47 @@ class ResPartner(models.Model):
             raise ValueError("Invalid check digits")
 
         return mrz_data
+
+
+class HrPartnerMassAccGrsWiz(models.TransientModel):
+    _name = 'res.partner.mass.wiz'
+    _description = 'Add/remove multiple access groups from partners'
+
+    def _get_partner_ids(self):
+        return self.env['res.partner'].browse(self._context.get('active_ids'))
+
+    partner_ids = fields.Many2many(
+        comodel_name='res.partner',
+        string='Partners',
+        required=True,
+        default=_get_partner_ids,
+    )
+    remove_existing = fields.Boolean(
+        string='Remove existing access groups',
+        default=False,
+    )
+
+    acc_gr_ids = fields.Many2many(
+        'hr.rfid.access.group',
+        string='Access Groups',
+    )
+
+    expiration = fields.Datetime(
+        string='Expiration',
+    )
+
+    def add_acc_grs(self):
+        self.ensure_one()
+        if self.remove_existing:
+            rel_env = self.env['hr.rfid.access.group.contact.rel']
+            rel_env.search([
+                ('contact_id', 'in', self.partner_ids.ids),
+            ]).unlink()
+        if self.expiration is False:
+            self.partner_ids.add_acc_gr(self.acc_gr_ids)
+        else:
+            self.partner_ids.add_acc_gr(self.acc_gr_ids, self.expiration)
+
+    def remove_acc_grs(self):
+        self.ensure_one()
+        self.partner_ids.remove_acc_gr(self.acc_gr_ids)
