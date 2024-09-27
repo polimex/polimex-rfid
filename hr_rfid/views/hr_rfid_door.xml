@@ -120,12 +120,12 @@
                         <widget name="web_ribbon" title="Emergency Opened" bg_color="bg-danger"
                                 invisible="emergency_state=='off'"/>
                         <group>
-                            <group>
+                            <group name="setup">
                                 <field name="card_type"/>
                                 <field name="apb_mode"/>
                                 <field name="lock_time" min="0" max="99"/>
                             </group>
-                            <group>
+                            <group name="location">
                                 <field name="controller_id" readonly="1"/>
                                 <field name="number" readonly="1"/>
                             </group>
