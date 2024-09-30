@@ -31,6 +31,7 @@
     ],
     # only loaded in demonstration mode
 
+    'installable': False,
     'application': False,
     'auto_install': False
 }
