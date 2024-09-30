@@ -454,6 +454,7 @@ class HrRfidAccessGroupDoorRel(models.Model):
         'hr.rfid.access.group',
         string='Access Group',
         default=_get_cur_access_group_id,
+        ondelete='cascade',
         required=True,
     )
 
@@ -553,6 +554,7 @@ class HrRfidAccessGroupRelations(models.AbstractModel):
     access_group_id = fields.Many2one(
         'hr.rfid.access.group',
         string='Access Group',
+        ondelete='cascade',
         required=True,
     )
     # TODO New field. Need to implemented in cron job tasks!!!
