@@ -6,6 +6,11 @@
             <field name="res_model">hr.rfid.event.user</field>
             <field name="view_mode">tree,form,search,calendar,pivot</field>
             <field name="context">{'search_default_filter_this_day': 1}</field>
+            <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                There aren't any events form today. Have you already set up the system?
+            </p>
+        </field>
         </record>
 
         <record id="hr_rfid_user_ev_view_form" model="ir.ui.view">

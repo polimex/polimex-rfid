@@ -6,6 +6,9 @@
             <field name="res_model">hr.rfid.event.system</field>
             <field name="view_mode">tree,form,search,calendar,pivot</field>
             <field name="context">{"search_default_filter_this_day": 1}</field>
+            <p class="oe_view_nocontent_create">
+                There are no events for today, which is a good sign!
+            </p>
         </record>
 
         <record id="hr_rfid_sys_ev_wiz_form" model="ir.ui.view">
