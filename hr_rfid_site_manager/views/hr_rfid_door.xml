@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_rfid_door_view_form_inherit" model="ir.ui.view">
+            <field name="name">hr.rfid.door.form.inherit</field>
+            <field name="model">hr.rfid.door</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_door_view_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//group[@name='location']" position="inside">
+                    <field name="site_id" groups="hr_rfid_site_manager.hr_rfid_site_manager"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="hr_rfid_door_view_kanban_inherit" model="ir.ui.view">
+            <field name="name">hr.rfid.door.kanban.inherit</field>
+            <field name="model">hr.rfid.door</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_door_view_kanban"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='emergency_state']" position="after">
+                    <field name="site_id" groups="hr_rfid_site_manager.hr_rfid_site_manager"/>
+                </xpath>
+                <xpath expr="//ul" position="inside">
+                    <li t-if="record.card_type.raw_value">
+                        <field name="site_id" groups="hr_rfid_site_manager.hr_rfid_site_manager"/>
+                    </li>
+
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

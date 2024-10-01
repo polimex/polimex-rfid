@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_rfid_site_manager" model="res.groups">
+            <field name="name">RFID Site Manager</field>
+            <field name="category_id" ref="hr_rfid.module_rfid_settings"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+            <field name="comment">The user will be able to access and manage RFID sites</field>
+        </record>
+
+    </data>
+</odoo>

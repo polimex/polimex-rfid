@@ -1,0 +1,19 @@
+.o_widget_site_chart {
+    display: flex;
+    justify-content: flex-end;
+
+    .o_site_chart {
+        .o_site_chart_self {
+            .site_name {
+                font-weight: bold;
+            }
+        }
+
+        @include media-breakpoint-up(sm) {
+            width: 50%;
+        }
+        @include media-breakpoint-down(md) {
+            flex-grow: 1;
+        }
+    }
+}

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="hr_rfid_site_manager.SiteChart">
+        <div class="o_site_chart">
+            <div class="o_horizontal_separator mb-3 text-uppercase fw-bolder small">Site Organization</div>
+            <t t-if="state.hierarchy.self">
+                <div class="o_site_chart_parent">
+                    <t t-set="site" t-value="state.hierarchy.parent"/>
+                    <t t-set="hideTree" t-value="true"/>
+                    <t t-call="hr_rfid_site_manager.SiteChart.Site"/>
+                </div>
+
+                <div t-att-class="state.hierarchy.parent?'ms-4':''">
+                    <div class="o_site_chart_self">
+                        <t t-set="site" t-value="state.hierarchy.self"/>
+                        <t t-set="hideTree" t-value="!state.hierarchy.parent"/>
+                        <t t-call="hr_rfid_site_manager.SiteChart.Site"/>
+                    </div>
+
+                    <t t-set="hideTree" t-value="false"/>
+                    <div class="o_site_chart_children ms-4">
+                        <t t-foreach="state.hierarchy.children" t-as="site" t-key="site.name">
+                            <t t-call="hr_rfid_site_manager.SiteChart.Site"/>
+                        </t>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+
+    <t t-name="hr_rfid_site_manager.SiteChart.Site">
+        <t t-if="site">
+            <div t-attf-class="#{hideTree?'':'o_treeEntry'} mb-0 ps-4">
+                <div class="d-flex justify-content-between">
+                    <span class="site_name ms-2">
+                        <a t-att-title="site.name" role="button"
+                           t-on-click.prevent="() => this.openSite(site.id)">
+                            <t t-esc="site.name"/>
+                        </a>
+                    </span>
+                    <a class="badge rounded-pill bg-300 border px-2" role="button"
+                       title="Show doors"
+                       t-on-click.prevent="() => this.openSiteDoors(site.id)">
+                        <t t-esc="site.doors"/>
+                    </a>
+                </div>
+            </div>
+        </t>
+    </t>
+</templates>

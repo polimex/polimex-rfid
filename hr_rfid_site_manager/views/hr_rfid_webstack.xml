@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_rfid_webstack_view_form_inherit" model="ir.ui.view">
+            <field name="name">hr.rfid.webstack.form</field>
+            <field name="model">hr.rfid.webstack</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_webstack_view_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='company_id']" position="before">
+                        <field name="site_id" groups="hr_rfid_site_manager.hr_rfid_site_manager"/>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>

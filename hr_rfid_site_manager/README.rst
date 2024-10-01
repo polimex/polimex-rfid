@@ -3,7 +3,7 @@
    :alt: License: AGPL-3
 
 ======================
-HR RFID Events Notifications
+HR RFID Site Manager
 ======================
 
     TODO
@@ -28,8 +28,8 @@ Polimex Holding Development team
 Maintainer
 ----------
 
-.. image:: https://portal.polimex.co/logo.png
+.. image:: https://raw.githubusercontent.com/polimex/logos/5c5af675ad5d6ef12bb29664c250196c51ac2bc8/company_logo.png
    :alt: Polimex Logo
    :target: https://polimex.co
 
-This module is created and maintained by the Polimex.
+This module is created and maintained by the Polimex Dev Team.

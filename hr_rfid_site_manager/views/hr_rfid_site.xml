@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="hr_rfid_site_view_tree" model="ir.ui.view">
+            <field name="name">hr_rfid_site_view_tree</field>
+            <field name="model">hr.rfid.site</field>
+            <field name="arch" type="xml">
+                <tree string="hr_rfid_site_tree" >
+                    <field name="name"/>
+                    <field name="parent_id"/>
+                    <field name="door_ids" widget="many2many_tags"/>
+                    <field name="webstack_ids" widget="many2many_tags"/>
+                    <field name="controller_ids" widget="many2many_tags"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_rfid_site_view_form" model="ir.ui.view">
+            <field name="name">hr_rfid_site_view_form</field>
+            <field name="model">hr.rfid.site</field>
+            <field name="arch" type="xml">
+                <form string="Site manager">
+                    <sheet>
+                        <div name="button_box" class="oe_button_box"/>
+                        <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                        <field name="active" invisible="1"/>
+
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" placeholder="Your site Name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="parent_id"/>
+                                <field name="make_access_group"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="access_group_ids" widget="many2many_tags" readonly="1"/>
+                            </group>
+                            <field name="child_ids" invisible="1"/>
+                            <div invisible="not id or id and not child_ids and not parent_id">
+                                <widget name="site_chart"/>
+                            </div>
+                        </group>
+                        <notebook>
+                            <page name="door_list" string="Doors" invisible="not door_ids">
+                                <group>
+                                    <field name="door_ids" no_label="1" widget="many2many_tags"
+                                           domain="[('site_id','=',False)]"/>
+                                </group>
+                            </page>
+                            <page name="ctrl_list" string="Controllers" invisible="not controller_ids">
+                                <group>
+                                    <field name="controller_ids" no_label="1" widget="many2many_tags"
+                                           domain="[('site_id','=',False)]"/>
+                                </group>
+                            </page>
+                            <page name="module_list" string="Modules" invisible="not webstack_ids">
+                                <group>
+                                    <field name="webstack_ids" no_label="1" widget="many2many_tags"
+                                           domain="[('site_id','=',False)]"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <!--                    <field name="activity_ids" widget="mail_activity" />-->
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_site_filter" model="ir.ui.view">
+            <field name="name">hr.rfid.site.search</field>
+            <field name="model">hr.rfid.site</field>
+            <field name="arch" type="xml">
+                <search string="Sites">
+                    <field name="name" string="Site"/>
+                    <field name="parent_id"/>
+                    <field name="door_ids"/>
+                    <field name="controller_ids"/>
+                    <field name="webstack_ids"/>
+                    <filter string="Sites with doors" name="site_with_doors" domain="[('door_ids','!=',False)]"/>
+                    <filter string="Sites with controllers" name="site_with_ctrl"
+                            domain="[('controller_ids','!=',False)]"/>
+                    <filter string="Sites with modules" name="site_with_webstack"
+                            domain="[('webstack_ids','!=',False)]"/>
+                    <separator/>
+                    <filter string="Root Sites" name="root_site" domain="[('parent_id','=',False)]"/>
+                    <separator/>
+                    <filter string="Archived" name="inactive" domain="[('active','=',False)]"/>
+                    <searchpanel>
+                        <field name="company_id" groups="base.group_multi_company" icon="fa-building"
+                               enable_counters="1"/>
+                        <field name="parent_id" select="multi" string="Sites" icon="fa-building" color="#338FFC"
+                               enable_counters="1"/>
+                    </searchpanel>
+                </search>
+            </field>
+        </record>
+
+        <record id="hr_rfid_site_action" model="ir.actions.act_window">
+            <field name="name">Site Manager</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.rfid.site</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Add your first sites here.
+                </p>
+                <p>
+                    A site is a physical location where you can install doors, controllers and modules. This can be a
+                    building, a floor, a room, etc. You can create a hierarchy of sites to represent your company's
+                    physical
+                    organization.
+                </p>
+            </field>
+        </record>
+        <menuitem id="hr_rfid_menu_site_manager"
+                  name="Site Manager"
+                  parent="hr_rfid.hr_rfid_root_menu_hardware_manager"
+                  action="hr_rfid_site_action"
+                  groups="hr_rfid_site_manager.hr_rfid_site_manager"
+                  sequence="30"/>
+
+        <record id="act_site_from_sites" model="ir.actions.act_window">
+            <field name="name">Site</field>
+            <field name="res_model">hr.rfid.site</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <!--            <field name="search_view_id" ref="view_employee_filter"/>-->
+            <field name="context">{
+                <!--                "searchpanel_default_parent_id": active_id,-->
+                <!--                "default_parent_id": active_id,-->
+                "search_default_site_id": active_id,
+                "expand": 1}
+            </field>
+        </record>
+    </data>
+</odoo>

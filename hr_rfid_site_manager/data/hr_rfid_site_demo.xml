@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!--    <data noupdate="1">-->
+    <data>
+        <record id="siteA" model="hr.rfid.site">
+            <field name="name">Site A</field>
+            <field name="webstack_ids" eval="[Command.set([ref('hr_rfid.demo_module')])]"/>
+        </record>
+       <record id="siteA_building1" model="hr.rfid.site">
+            <field name="name">Building 1</field>
+            <field name="parent_id" ref="siteA"/>
+            <field name="controller_ids" eval="[Command.set([ref('hr_rfid.demo_ctrl_icon110')])]"/>
+        </record>
+       <record id="siteA_building1_entrance_A1" model="hr.rfid.site">
+            <field name="name">Entrance 1</field>
+            <field name="make_access_group">True</field>
+            <field name="parent_id" ref="siteA_building1"/>
+            <field name="door_ids" eval="[Command.set([ref('hr_rfid.demo_ctrl_icon110_D1')])]"/>
+        </record>
+       <record id="siteA_building1_entrance_A2" model="hr.rfid.site">
+            <field name="name">Entrance 2</field>
+            <field name="make_access_group">True</field>
+            <field name="parent_id" ref="siteA_building1"/>
+            <field name="door_ids" eval="[Command.set([ref('hr_rfid.demo_ctrl_icon110_D2')])]"/>
+        </record>
+       <record id="siteA_building2" model="hr.rfid.site">
+            <field name="name">Building 2</field>
+            <field name="parent_id" ref="siteA"/>
+            <field name="controller_ids" eval="[Command.set([ref('hr_rfid.demo_ctrl_icon115')])]"/>
+        </record>
+       <record id="siteA_building3" model="hr.rfid.site">
+            <field name="name">Building 3</field>
+            <field name="parent_id" ref="siteA"/>
+        </record>
+       <record id="siteB" model="hr.rfid.site">
+            <field name="name">Site B</field>
+        </record>
+    </data>
+</odoo>

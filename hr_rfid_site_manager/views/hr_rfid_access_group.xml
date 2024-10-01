@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Inherit Form View to Modify it -->
+        <record id="hr_rfid_access_group_view_form_inherit" model="ir.ui.view">
+            <field name="name">hr.rfid.access.group.form</field>
+            <field name="model">hr.rfid.access.group</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_access_group_view_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//form/sheet/group" position="inside">
+                    <group groups="hr_rfid_site_manager.hr_rfid_site_manager">
+                        <field name="site_id"/>
+                    </group>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="hr_rfid_access_group_view_tree_inherit" model="ir.ui.view">
+            <field name="name">hr.rfid.access.group.tree</field>
+            <field name="model">hr.rfid.access.group</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_access_group_view_tree"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='company_id']" position="before">
+                    <field name="site_id" optional='hide' widget="many2one"/>
+<!--                           groups="hr_rfid_site_manager.hr_rfid_site_manager"/>-->
+                </xpath>
+
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="decoration-warning">site_id</attribute>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>
