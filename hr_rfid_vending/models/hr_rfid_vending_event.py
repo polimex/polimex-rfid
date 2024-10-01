@@ -48,7 +48,7 @@ class VendingEvents(models.Model):
 
     item_sold = fields.Integer(
         string='Item Sold Number',
-        group_operator='count_distinct'
+        aggregator='count_distinct'
     )
 
     # employee_id = fields.Many2one(

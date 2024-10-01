@@ -76,7 +76,7 @@
             <field name="name">hr_attendance_extra_view_tree</field>
             <field name="model">hr.attendance.extra</field>
             <field name="arch" type="xml">
-                <tree string="hr_attendance_extra_tree">
+                <list string="hr_attendance_extra_tree">
                     <field name="for_date"/>
                     <field name="employee_id"/>
                     <field name="theoretical_work_time" widget="float_time" optional="show"/>
@@ -91,7 +91,7 @@
                     <field name="extra_time" widget="float_time" optional="show"/>
                     <field name="extra_night" widget="float_time" optional="hide"/>
                     <field name="shift_number" optional="hide"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -159,7 +159,7 @@
             <field name="name">Extra calculations</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">hr.attendance.extra</field>
-            <field name="view_mode">pivot,tree,form</field>
+            <field name="view_mode">pivot,list,form</field>
         </record>
         <!--        <menuitem-->
         <!--                id="menu_hr_attendance_report"-->

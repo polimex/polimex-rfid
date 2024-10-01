@@ -8,11 +8,11 @@ class CtrlTemperatureAndHumidityLog(models.Model):
 
     temperature = fields.Float(
         help='Current Temperature value',
-        group_operator='avg',
+        aggregator='avg',
     )
     humidity = fields.Float(
         help='Current Humidity value',
-        group_operator='avg',
+        aggregator='avg',
     )
     th_id = fields.Many2one(
         string='Sensor',

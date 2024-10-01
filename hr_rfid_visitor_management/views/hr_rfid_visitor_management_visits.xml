@@ -5,12 +5,12 @@
             <field name="name">hr.rfid.visitor.management.visit.tree</field>
             <field name="model">hr.rfid.visitor.management.visit</field>
             <field name="arch" type="xml">
-                <tree string="Visits">
+                <list string="Visits">
                     <field name="plan"/>
                     <field name="visited_partner_ids" optional="show"/>
                     <field name="visited_employee_ids" optional="show"/>
                     <field name="card" optional="show"/>
-                </tree>
+                </list>
             </field>
         </record>
 

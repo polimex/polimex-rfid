@@ -5,9 +5,9 @@
         <field name="name">voting.participants.view.list</field>
         <field name="model">voting.participants</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name" string="Name"/>
-            </tree>
+            </list>
         </field>
     </record>
 

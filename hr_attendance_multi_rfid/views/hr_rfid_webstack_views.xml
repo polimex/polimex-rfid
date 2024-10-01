@@ -29,7 +29,7 @@
             <field name="model">hr.rfid.event.user</field>
             <field name="inherit_id" ref="hr_rfid.hr_rfid_user_ev_view_tree"/>
             <field name="arch" type="xml">
-                <xpath expr="//tree" position="attributes">
+                <xpath expr="//list" position="attributes">
                     <attribute name="decoration-success">event_action == '1' and in_or_out == 'no_info'</attribute>
                     <attribute name="decoration-primary">in_or_out == 'in'</attribute>
                     <attribute name="decoration-info">in_or_out == 'out'</attribute>

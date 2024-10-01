@@ -36,7 +36,7 @@
                         </group>
                         <field name="users_ids" default_order="do_import"
                                limit="20" create="0">
-                            <tree editable="bottom" create="0">
+                            <list editable="bottom" create="0">
                                 <field name="do_import" readonly="0"/>
                                 <field name="import_as" readonly="0"/>
                                 <field name="u_code" readonly="1"/>
@@ -52,7 +52,7 @@
 <!--                                    attrs="{'invisible': [('is_imported', '=', True)]}"-->
 <!--                                    class="oe_highlight" icon="fa-magic"-->
 <!--                                />-->
-                            </tree>
+                            </list>
                         </field>
                     </sheet>
                     <footer>

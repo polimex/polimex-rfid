@@ -54,12 +54,12 @@
                             </group>
                         </group>
                         <group>
-                            <field name="source_controller_ids" options="{'no_create': True, 'no_open': True}">
-                                <tree string="Move" editable="0" create="0" >
+                            <field name="source_controller_ids" options="{'no_create': True, 'no_open': True, 'no_edit':True}">
+                                <list string="Move" >
                                     <field name="ctrl_id" readonly="1"/>
                                     <field name="name" readonly="1"/>
                                     <field name="serial_number" readonly="1"/>
-                                </tree>
+                                </list>
                             </field>
                         </group>
                     </sheet>

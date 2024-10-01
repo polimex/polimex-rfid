@@ -18,13 +18,13 @@
                         </h1>
                         <br/>
                         <field name="interval_ids">
-                            <tree create="false" delete="false" editable="bottom" multi_edit="1"
+                            <list create="false" delete="false" editable="bottom" multi_edit="1"
                                   default_order="day asc">
                                 <field name="day"/>
                                 <field name="number"/>
                                 <field name="begin" widget="float_time"/>
                                 <field name="end" widget="float_time"/>
-                            </tree>
+                            </list>
                         </field>
                     </div>
                     <footer>
@@ -80,11 +80,11 @@
                         <group string="Debug Information" groups="base.group_no_one" colspan="4">
                             <field name="controller_ids" readonly="1"/>
                             <field name="access_group_door_ids" readonly="1">
-                                <tree>
+                                <list>
                                     <field name="access_group_id"/>
                                     <field name="door_id"/>
                                     <field name="alarm_rights"/>
-                                </tree>
+                                </list>
                             </field>
                             <field name="ts_data" readonly="1"/>
                         </group>
@@ -134,16 +134,16 @@
             <field name="name">hr.rfid.time.schedule.tree</field>
             <field name="model">hr.rfid.time.schedule</field>
             <field name="arch" type="xml">
-                <tree create="false" delete="false">
+                <list create="false" delete="false">
                     <field name="name"/>
-                </tree>
+                </list>
             </field>
         </record>
 
         <record id="hr_rfid_time_schedule_action" model="ir.actions.act_window">
             <field name="name">Time Schedules</field>
             <field name="res_model">hr.rfid.time.schedule</field>
-            <field name="view_mode">kanban,tree,form,search</field>
+            <field name="view_mode">kanban,list,form,search</field>
         </record>
     </data>
 </odoo>

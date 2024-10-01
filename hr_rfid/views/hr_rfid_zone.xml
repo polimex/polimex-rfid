@@ -24,7 +24,7 @@
         <record id="hr_rfid_zone_action" model="ir.actions.act_window">
             <field name="name">Zones</field>
             <field name="res_model">hr.rfid.zone</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">list,form</field>
         </record>
 
         <record id="hr_rfid_zone_doors_wiz" model="ir.ui.view">
@@ -108,13 +108,13 @@
                             </page>
                             <page string="Notifications">
                                 <field name="notification_ids">
-                                    <tree string="Notifications">
+                                    <list string="Notifications">
                                         <field name="notification_type"/>
                                         <field name="user_event"/>
                                         <field name="system_event"/>
                                         <field name="notify_followers"/>
                                         <field name="notify_partner_ids" widget="many2many_tags"/>
-                                    </tree>
+                                    </list>
                                 </field>
                             </page>
                         </notebook>
@@ -142,7 +142,7 @@
             <field name="name">hr.rfid.zone.tree</field>
             <field name="model">hr.rfid.zone</field>
             <field name="arch" type="xml">
-                <tree>
+                <list>
                     <field name="name"/>
                     <field name="anti_pass_back"/>
                     <field name="log_out_on_exit"/>
@@ -150,7 +150,7 @@
                     <field name="employee_ids"/>
                     <field name="contact_ids"/>
                     <field name="company_id" groups="base.group_multi_company"/>
-                </tree>
+                </list>
             </field>
         </record>
 

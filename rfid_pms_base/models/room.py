@@ -120,5 +120,5 @@ class SchEncoderRoom(models.Model):
             raise ValidationError(_('Room number have to be between 1 and 65535'))
 
     _sql_constraints = [
-        ('unique_room_number', 'unique(number)', _("Duplicate room number.")),
+        ('unique_room_number', 'unique(number)', "Duplicate room number."),
     ]

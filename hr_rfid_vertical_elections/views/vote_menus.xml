@@ -2,9 +2,10 @@
 <odoo>
     <menuitem
         id="vote_menu_root"
-        name="Elections"
+        name="RFID Voting"
         web_icon="room,static/description/icon.png"
         action="hr_rfid_vertical_elections.vote_session_action"
+        groups="hr_rfid_vertical_elections.group_operator"
         sequence="6"/>
 
     <menuitem

@@ -8,7 +8,7 @@ class HrRfidWorkcode(models.Model):
     _inherit = ['mail.thread']
 
     _sql_constraints = [ ('rfid_workcode_unique', 'unique(workcode)',
-                          'Workcodes must be unique!') ]
+                          'Work code must be unique!') ]
     name = fields.Char(
         string='Name',
         help='A label to remind what the workcode represents.',

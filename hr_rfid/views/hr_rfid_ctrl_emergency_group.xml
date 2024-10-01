@@ -45,11 +45,11 @@
                         </group>
                         <group class="oe_read_only">
                             <field name="controller_ids" >
-                                <tree edit="0" create="0">
+                                <list edit="0" create="0">
                                     <field name="name"/>
                                     <field name="webstack_id"/>
                                     <field name="emergency_state"/>
-                                </tree>
+                                </list>
                             </field>
                         </group>
                     </sheet>
@@ -65,10 +65,10 @@
             <field name="name">emergency.group.tree.view</field>
             <field name="model">hr.rfid.ctrl.emergency.group</field>
             <field name="arch" type="xml">
-                <tree string="">
+                <list string="">
                     <field name="name"/>
                     <field name="controller_ids" widget="many2many_tags"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -152,7 +152,7 @@
             <field name="name">Emergency distribution group</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">hr.rfid.ctrl.emergency.group</field>
-            <field name="view_mode">kanban,tree,form</field>
+            <field name="view_mode">kanban,list,form</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
                     Please create a new group from the Create button

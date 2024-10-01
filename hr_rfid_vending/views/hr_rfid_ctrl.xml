@@ -16,7 +16,7 @@
                         <h3>Vending prices table:</h3>
                         <br/>
                         <field name="vending_row_ids" widget="one2many_list">
-                            <tree create="0" delete="0" editable="bottom">
+                            <list create="0" delete="0" editable="bottom">
                                 <field name="item_number1"/>
                                 <field name="item1"/>
                                 <field name="item_number2"/>
@@ -25,7 +25,7 @@
                                 <field name="item3"/>
                                 <field name="item_number4"/>
                                 <field name="item4"/>
-                            </tree>
+                            </list>
                         </field>
                     </div>
                     <footer>

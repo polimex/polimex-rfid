@@ -12,7 +12,6 @@
       <field name="code">model.do_cron_jobs()</field>
       <field name="interval_type">minutes</field>
       <field name="interval_number">1</field>
-      <field name="numbercall">-1</field>
     </record>
 
     <record id="hr_rfid_sync_ctrl_clock_cron" model="ir.cron">
@@ -24,7 +23,6 @@
       <field name="code">model._sync_clocks()</field>
       <field name="interval_type">hours</field>
       <field name="interval_number">3</field>
-      <field name="numbercall">-1</field>
     </record>
 
     <record id="hr_rfid_read_ctrl_status_cron" model="ir.cron">
@@ -36,7 +34,6 @@
       <field name="code">model._read_statuses()</field>
       <field name="interval_type">minutes</field>
       <field name="interval_number">5</field>
-      <field name="numbercall">-1</field>
     </record>
 
   </data>

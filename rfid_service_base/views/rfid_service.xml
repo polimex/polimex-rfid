@@ -5,7 +5,7 @@
             <field name="name">Services</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">rfid.service</field>
-            <field name="view_mode">kanban,tree,form</field>
+            <field name="view_mode">kanban,list,form</field>
             <!--            <field name="context">{'active_test': False}</field>-->
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
@@ -183,11 +183,11 @@
             <field name="name">RFID Services List</field>
             <field name="model">rfid.service</field>
             <field name="arch" type="xml">
-                <tree string="RFID Services List" decoration-success="active==True" decoration-danger="active!=True">
+                <list string="RFID Services List" decoration-success="active==True" decoration-danger="active!=True">
                     <field name="active" invisible="1"/>
                     <field name="name"/>
                     <field name="service_type"/>
-                </tree>
+                </list>
             </field>
         </record>
 

@@ -35,5 +35,6 @@
         'data/data.xml',
     ],
     "application": True,
+    'installable': False,
 }
 # -*- coding: utf-8 -*-

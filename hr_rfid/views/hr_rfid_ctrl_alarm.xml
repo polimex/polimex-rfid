@@ -5,7 +5,7 @@
             <field name="name">hr.rfid.ctrl.alarm.tree.view</field>
             <field name="model">hr.rfid.ctrl.alarm</field>
             <field name="arch" type="xml">
-                <tree string="Alarm line list" create="0" delete="0"
+                <list string="Alarm line list" create="0" delete="0"
                       decoration-success="state == 'normal'"
                       decoration-warning="state in ['short','open']"
                       decoration-info="state == 'disabled'"
@@ -17,7 +17,7 @@
                     <field name="alarm_group_id" optional="show"/>
                     <field name="armed"/>
                     <field name="state"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -240,7 +240,7 @@
         <record id="hr_rfid_ctrl_alarm_action" model="ir.actions.act_window">
             <field name="name">Alarm Lines</field>
             <field name="res_model">hr.rfid.ctrl.alarm</field>
-            <field name="view_mode">kanban,tree,form,search</field>
+            <field name="view_mode">kanban,list,form,search</field>
             <field name="view_id" ref="hr_rfid_ctrl_alarm_view_kanban"/>
         </record>
 

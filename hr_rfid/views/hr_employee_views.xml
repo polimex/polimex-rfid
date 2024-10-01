@@ -32,9 +32,9 @@
                         <notebook>
                             <page string="Cards">
                                 <field name="hr_rfid_card_ids"
-                                       context="{'active_test': False, 'default_employee_id': active_id}"
-                                       edit="0">
-                                    <tree string="Cards belonging this employee" editable="bottom"
+                                       context="{'active_test': False, 'default_employee_id': id}"
+                                       edit="0" groups="hr_rfid.hr_rfid_group_officer">
+                                    <list string="Cards belonging this employee" editable="bottom"
                                           decoration-success="active"
                                           decoration-danger="not active">
                                         <field name="active" invisible="1"/>
@@ -44,7 +44,7 @@
                                         <field name="deactivate_on"/>
                                         <field name="card_type"/>
                                         <field name="cloud_card"/>
-                                    </tree>
+                                    </list>
                                 </field>
                                 <label for="hr_rfid_card_ids" string="New Barcode card"/>
                                 <div class="o_row">
@@ -56,13 +56,13 @@
 
                             <page string="Access Groups">
                                 <field name="hr_rfid_access_group_ids" widget="one2many_list">
-                                    <tree editable="bottom">
+                                    <list editable="bottom">
                                         <field name="access_group_id"
                                                domain="[('department_ids','in',[parent.department_id])]"/>
                                         <field name="activate_on"/>
                                         <field name="expiration"/>
                                         <field name="state" widget="boolean_toggle"/>
-                                    </tree>
+                                    </list>
                                 </field>
                             </page>
                         </notebook>

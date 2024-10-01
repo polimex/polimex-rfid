@@ -44,12 +44,12 @@
         <field name="name">vote.session.view.list</field>
         <field name="model">voting.session</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name" string="Name"/>
                 <field name="start_datetime"/>
                 <field name="end_datetime"/>
                 <field name="state"/>
-            </tree>
+            </list>
         </field>
     </record>
 

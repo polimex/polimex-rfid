@@ -5,7 +5,7 @@
             <field name="name">hr.rfid.ctrl.alarm.group.tree.view</field>
             <field name="model">hr.rfid.ctrl.alarm.group</field>
             <field name="arch" type="xml">
-                <tree string="Alarm line list"
+                <list string="Alarm line list"
                       decoration-success="state == 'disarm'"
                       decoration-warning="state == 'mixed'"
                       decoration-info="state == 'no_alarm'"
@@ -15,7 +15,7 @@
                     <field name="parent_id"/>
                     <field name="alarm_line_ids" widget="many2many_tags" optional="hide"/>
                     <field name="state"/>
-               </tree>
+               </list>
             </field>
         </record>
 
@@ -61,11 +61,11 @@
                             </group>
                             <group>
                                 <field name="child_ids" colspan="4">
-                                    <tree editable="top">
+                                    <list editable="top">
                                         <field name="name"/>
                                         <field name="parent_id"/>
                                         <field name="state"/>
-                                    </tree>
+                                    </list>
                                 </field>
                             </group>
                         <group string="Debug Information" groups="base.group_no_one" colspan="4">
@@ -173,7 +173,7 @@
         <record id="hr_rfid_ctrl_alarm_group_action" model="ir.actions.act_window">
             <field name="name">Alarm Line Groups</field>
             <field name="res_model">hr.rfid.ctrl.alarm.group</field>
-            <field name="view_mode">kanban,tree,form,search</field>
+            <field name="view_mode">kanban,list,form,search</field>
             <field name="view_id" ref="hr_rfid_ctrl_alarm_group_view_kanban"/>
         </record>
 

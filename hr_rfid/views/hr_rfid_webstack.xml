@@ -99,11 +99,10 @@
             <field name="name">hr.rfid.webstack.tree</field>
             <field name="model">hr.rfid.webstack</field>
             <field name="arch" type="xml">
-                <tree create="0" delete="0" string="RFID Modules"
+                <list create="0" delete="0" string="RFID Modules"
                       decoration-danger="active==False"
                       decoration-success="active==True and last_update"
                       decoration-warning="active==True and not last_update"
-                      banner_route="/hr_rfid/banner/hr.rfid.webstack/tree"
                 >
                     <field name="name"/>
                     <field name="serial"/>
@@ -114,7 +113,7 @@
                     <field name="active" invisible="1"/>
                     <field name="last_update" invisible="1"/>
                     <field name="company_id" groups="base.group_multi_company"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -287,7 +286,7 @@
             <field name="name">Modules</field>
             <field name="res_model">hr.rfid.webstack</field>
             <field name="context">{"search_default_showall": 1}</field>
-            <field name="view_mode">kanban,tree,form,activity,search</field>
+            <field name="view_mode">kanban,list,form,activity,search</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
                     The system is protected against not registered modules!

@@ -41,7 +41,7 @@
 <!--            <field name="name">Recurring Payment</field>-->
 <!--            <field name="type">ir.actions.act_window</field>-->
 <!--            <field name="res_model">recurring.payment</field>-->
-<!--            <field name="view_mode">tree,form</field>-->
+<!--            <field name="view_mode">list,form</field>-->
 <!--            <field name="view_id" ref="view_account_recurring_payment_tree"/>-->
 <!--        </record>-->
 
@@ -49,7 +49,7 @@
             <field name="name">Change vending balance</field>
             <field name="res_model">hr.employee.vending.balance.wiz</field>
             <!--      <field name="view_type">form</field>-->
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">list,form</field>
             <field name="view_id" ref="hr_employee_vending_balance_change_form"/>
             <field name="binding_model_id" ref="model_hr_employee"/>
             <field name="target">new</field>

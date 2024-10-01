@@ -5,7 +5,7 @@
         <record id="hr_rfid_vending_auto_refill_action" model="ir.actions.act_window">
             <field name="name">Vending Auto Refill Events</field>
             <field name="res_model">hr.rfid.vending.auto.refill</field>
-            <field name="view_mode">tree,form,search</field>
+            <field name="view_mode">list,form,search</field>
             <field name="context">{'search_default_this_day': 1}</field>
         </record>
 
@@ -18,11 +18,11 @@
                         <field name="create_date"/>
                         <field name="auto_refill_total"/>
                         <field name="balance_history_ids">
-                            <tree create="0" delete="0" edit="0">
+                            <list create="0" delete="0" edit="0">
                                 <field name="employee_id"/>
                                 <field name="balance_change"/>
                                 <field name="balance_result"/>
-                            </tree>
+                            </list>
                         </field>
                     </group>
                 </form>
@@ -33,10 +33,10 @@
             <field name="name">hr.rfid.vending.auto.refill.tree</field>
             <field name="model">hr.rfid.vending.auto.refill</field>
             <field name="arch" type="xml">
-                <tree create="0" delete="0">
+                <list create="0" delete="0">
                     <field name="create_date"/>
                     <field name="auto_refill_total"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -46,7 +46,7 @@
             <field name="arch" type="xml">
                 <search>
                     <field name="name"/>
-                    <filter string="Command time" name="filter_command_time" date="create_date" default_period="last_month"/>
+                    <filter string="Command time" name="filter_command_time" date="create_date" default_period="month-1"/>
                     <filter name="this_day" string="Commands from today" domain="[
                             ('create_date', '&gt;=', (datetime.datetime.combine(context_today(), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
                     <filter name="this_week" string="Commands from this week" domain="[

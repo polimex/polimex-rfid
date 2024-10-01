@@ -24,12 +24,12 @@ class CtrlTemperatureAndHumidity(models.Model):
     )
     temperature = fields.Float(
         help='Current Temperature value',
-        group_operator='avg',
+        aggregator='avg',
         readonly=True,
     )
     humidity = fields.Float(
         help='Current Humidity value',
-        group_operator='avg',
+        aggregator='avg',
         readonly=True,
     )
     sensor_number = fields.Integer(

@@ -175,18 +175,18 @@
                                     <field name="input_mask_ids"
                                            options="{'no_open': True, 'no_create': True, 'no_delete':True}"
                                     >
-                                        <tree create="false" delete="false" editable="bottom">
+                                        <list create="false" delete="false" editable="bottom">
                                             <field name="i_number" readonly="1"/>
                                             <field name="i_mask" widget="boolean_toggle"/>
-                                        </tree>
+                                        </list>
                                     </field>
                                 </group>
                                 <group col="4">
                                     <field name="output_ts_ids">
-                                        <tree editable="bottom">
+                                        <list editable="bottom">
                                             <field name="output_number"/>
                                             <field name="time_schedule_id"/>
-                                        </tree>
+                                        </list>
                                     </field>
                                 </group>
                             </page>
@@ -387,7 +387,7 @@
             <field name="name">hr.rfid.ctrl.tree</field>
             <field name="model">hr.rfid.ctrl</field>
             <field name="arch" type="xml">
-                <tree string="RFID Controllers" create="false">
+                <list string="RFID Controllers" create="false">
                     <field name="name"/>
                     <field name="webstack_id" invisible="1"/>
                     <field name="serial_number"/>
@@ -395,7 +395,7 @@
                     <field name="door_ids" widget="many2many_tags" optional="show"/>
                     <field name="temperature" optional="show"/>
                     <field name="humidity" optional="show"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -418,7 +418,7 @@
         <record id="hr_rfid_ctrl_action" model="ir.actions.act_window">
             <field name="name">Controllers</field>
             <field name="res_model">hr.rfid.ctrl</field>
-            <field name="view_mode">kanban,tree,form,search</field>
+            <field name="view_mode">kanban,list,form,search</field>
         </record>
 
         # Commands

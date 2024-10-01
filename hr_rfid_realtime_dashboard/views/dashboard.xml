@@ -29,7 +29,7 @@
             <field name="model">hr.rfid.event.user</field>
             <field name="inherit_id" ref="hr_rfid.hr_rfid_user_ev_view_tree"/>
             <field name="arch" type="xml">
-                <xpath expr="//tree" position="attributes">
+                <xpath expr="//list" position="attributes">
                     <attribute name="limit">10</attribute>
                 </xpath>
             </field>
@@ -45,7 +45,7 @@
             <field name="model">hr.rfid.event.system</field>
             <field name="inherit_id" ref="hr_rfid.hr_rfid_sys_ev_view_tree"/>
             <field name="arch" type="xml">
-                <xpath expr="//tree" position="attributes">
+                <xpath expr="//list" position="attributes">
                     <attribute name="limit">10</attribute>
                 </xpath>
             </field>
@@ -63,7 +63,7 @@
             <field name="model">hr.rfid.ctrl.th</field>
             <field name="inherit_id" ref="hr_rfid.hr_rfid_ctrl_th_tree_view"/>
             <field name="arch" type="xml">
-                <xpath expr="//tree" position="attributes">
+                <xpath expr="//list" position="attributes">
                     <attribute name="limit">10</attribute>
                 </xpath>
             </field>
@@ -235,7 +235,7 @@
             <field name="model">hr.rfid.door</field>
             <field name="priority">99</field>
             <field name="arch" type="xml">
-                <tree create="false" delete="false" editable="bottom"
+                <list create="false" delete="false" editable="bottom"
                       decoration-success="alarm_state == 'disarm'"
                       decoration-info="alarm_state == 'no_alarm'"
                       decoration-danger="alarm_state == 'arm'">
@@ -262,7 +262,7 @@
                             groups="hr_rfid.hr_rfid_view_door_arm_disarm"
                             attrs="{'invisible': ['|',('alarm_state','=', 'no_alarm'),('siren_state','=', True)]}"
                             class="oe_stat_button text-danger" icon="fa-1x fa-shield" type="object"/>
-                </tree>
+                </list>
 
             </field>
         </record>
@@ -398,7 +398,7 @@
             <field name="model">hr.rfid.ctrl.alarm</field>
             <field name="priority">99</field>
             <field name="arch" type="xml">
-                <tree string="Alarm line list" create="0" delete="0" editable="bottom"
+                <list string="Alarm line list" create="0" delete="0" editable="bottom"
                       decoration-success="state == 'normal'"
                       decoration-warning="state in ['short','open']"
                       decoration-info="state == 'disabled'"
@@ -426,7 +426,7 @@
                             attrs="{'invisible': ['|',('armed','=', 'no_alarm'),('siren_state','=', True)]}"
                             class="oe_stat_button text-danger" icon="fa-1x fa-shield" type="object"/>
 
-                </tree>
+                </list>
             </field>
         </record>
         <record id="act_alarm_line_tree" model="ir.actions.act_window">
@@ -442,7 +442,7 @@
             <field name="model">hr.rfid.ctrl.emergency.group</field>
             <field name="priority">99</field>
             <field name="arch" type="xml">
-                <tree string="Emergency Group list" create="0" delete="0" editable="bottom"
+                <list string="Emergency Group list" create="0" delete="0" editable="bottom"
                       decoration-success="state == 'normal'"
                       decoration-danger="state == 'emergency'">
 
@@ -457,7 +457,7 @@
                             groups="hr_rfid.hr_rfid_view_emergency_on_off"
                             attrs="{'invisible': [('state','=', 'normal')]}"
                             class="oe_stat_button text-success" icon="fa-1x fa-fire" type="object"/>
-               </tree>
+               </list>
             </field>
         </record>
         <record id="act_emergency_groups_tree" model="ir.actions.act_window">

@@ -115,7 +115,7 @@
                 <field name="company_id" position="after">
                     <field name="hr_rfid_default_access_group"/>
                 </field>
-                <xpath expr="//div[hasclass('o_kanban_card_header_title')]" position="inside">
+                <xpath expr="//div[@name='kanban_primary_right']" position="inside">
                     <div class="o_secondary"><field name="hr_rfid_default_access_group"/></div>
                 </xpath>
 

@@ -26,18 +26,18 @@
                         </group>
                         <group>
                             <field name="all_contact_ids">
-                                <tree create="0" delete="0" edit="0">
+                                <list create="0" delete="0" edit="0">
                                     <field name="contact_id"/>
                                     <field name="expiration"/>
-                                </tree>
+                                </list>
                             </field>
                         </group>
                         <group>
                             <field name="all_employee_ids">
-                                <tree create="0" delete="0" edit="0">
+                                <list create="0" delete="0" edit="0">
                                     <field name="employee_id"/>
                                     <field name="expiration"/>
-                                </tree>
+                                </list>
                             </field>
                         </group>
                     </sheet>
@@ -49,13 +49,13 @@
             <field name="name">Schneider Room list</field>
             <field name="model">rfid_pms_base.room</field>
             <field name="arch" type="xml">
-                <tree import="False">
+                <list import="False">
                     <field name="name"/>
                     <field name="number"/>
                     <field name="hb_card_present"/>
                     <field name="hb_dnd"/>
                     <field name="hb_clean"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -215,7 +215,7 @@
         <record model="ir.actions.act_window" id="action_window_room">
             <field name="name">Hotel Rooms</field>
             <field name="res_model">rfid_pms_base.room</field>
-            <field name="view_mode">kanban,tree,form</field>
+            <field name="view_mode">kanban,list,form</field>
         </record>
 
     </data>

@@ -4,19 +4,19 @@
         <record id="hr_rfid_acc_gr_employee_rel_action" model="ir.actions.act_window">
             <field name="name">Access Group/Employee Relations</field>
             <field name="res_model">hr.rfid.access.group.employee.rel</field>
-            <field name="view_mode">tree,form,search</field>
+            <field name="view_mode">list,form,search</field>
         </record>
 
         <record id="hr_rfid_acc_gr_contact_rel_action" model="ir.actions.act_window">
             <field name="name">Access Group/Contact Relations</field>
             <field name="res_model">hr.rfid.access.group.contact.rel</field>
-            <field name="view_mode">tree,form,search</field>
+            <field name="view_mode">list,form,search</field>
         </record>
 
         <record id="hr_rfid_access_group_action" model="ir.actions.act_window">
             <field name="name">Access Groups</field>
             <field name="res_model">hr.rfid.access.group</field>
-            <field name="view_mode">tree,form,search</field>
+            <field name="view_mode">list,form,search</field>
         </record>
 
 
@@ -155,69 +155,69 @@
                                 <notebook colspan="4" invisible="not id">
                                     <page string="Doors">
                                         <field name="door_ids" readonly="1">
-                                            <tree string="Doors group has access to">
+                                            <list string="Doors group has access to">
                                                 <field name="door_id"/>
                                                 <field name="time_schedule_id"/>
                                                 <field name="alarm_rights"/>
                                                 <field name="card_type"/>
-                                            </tree>
+                                            </list>
                                         </field>
                                     </page>
 
                                     <page string="Departments">
                                         <field name="department_ids" readonly="1">
-                                            <tree string="Departments assigned to this access group">
+                                            <list string="Departments assigned to this access group">
                                                 <field name="name"/>
                                                 <field name="note"/>
-                                            </tree>
+                                            </list>
                                         </field>
                                     </page>
 
                                     <page string="Departments (default)"
                                           help="Departments that have this access group as the default one">
                                         <field name="default_department_ids" readonly="1">
-                                            <tree>
+                                            <list>
                                                 <field name="name"/>
                                                 <field name="note"/>
-                                            </tree>
+                                            </list>
                                         </field>
                                     </page>
 
                                     <page string="Employees" help="Employees assigned to this access group">
                                         <field name="employee_ids" readonly="1">
-                                            <tree>
+                                            <list>
                                                 <field name="employee_id"/>
                                                 <field name="expiration"/>
-                                            </tree>
+                                            </list>
                                         </field>
                                     </page>
 
                                     <page string="Contacts" help="Contacts assigned to this access group">
                                         <field name="contact_ids" readonly="1">
-                                            <tree>
+                                            <list>
                                                 <field name="contact_id"/>
                                                 <field name="expiration"/>
-                                            </tree>
+                                            </list>
                                         </field>
                                     </page>
 
                                     <page string="All Employees"
                                           help="All employees assigned to this access group, including ones from inheritor access groups">
                                         <field name="all_employee_ids" readonly="1">
-                                            <tree>
+                                            <list>
                                                 <field name="employee_id"/>
                                                 <field name="expiration"/>
-                                            </tree>
+                                            </list>
                                         </field>
                                     </page>
 
                                     <page string="All Contacts"
                                           help="All contacts assigned to this access group, including ones from inheritor access groups">
                                         <field name="all_contact_ids" readonly="1">
-                                            <tree>
+                                            <list>
                                                 <field name="contact_id"/>
                                                 <field name="expiration"/>
-                                            </tree>
+                                            </list>
                                         </field>
                                     </page>
 
@@ -227,26 +227,26 @@
                                 <notebook colspan="4" invisible="not id">
                                     <page string="Inherited Access Groups">
                                         <field name="inherited_ids">
-                                            <tree>
+                                            <list>
                                                 <field name="name"/>
-                                            </tree>
+                                            </list>
                                         </field>
                                     </page>
 
                                     <page string="All Doors">
                                         <field name="all_door_ids" readonly="1">
-                                            <tree string="Doors group has access to">
+                                            <list string="Doors group has access to">
                                                 <field name="door_id"/>
                                                 <field name="time_schedule_id"/>
-                                            </tree>
+                                            </list>
                                         </field>
                                     </page>
 
                                     <page string="Inheritor Access Groups">
                                         <field name="inheritor_ids" readonly="1">
-                                            <tree>
+                                            <list>
                                                 <field name="name"/>
-                                            </tree>
+                                            </list>
                                         </field>
                                     </page>
                                 </notebook>
@@ -299,12 +299,12 @@
             <field name="name">hr.rfid.access.group.tree</field>
             <field name="model">hr.rfid.access.group</field>
             <field name="arch" type="xml">
-                <tree string="Access Groups">
+                <list string="Access Groups">
                     <field name="name"/>
                     <field name="default_department_ids" widget="many2many_tags"/>
                     <field name="department_ids" widget="many2many_tags"/>
                     <field name="company_id" groups="base.group_multi_company"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -369,13 +369,13 @@
             <field name="name">hr.rfid.acc.gr.employee.rel.tree</field>
             <field name="model">hr.rfid.access.group.employee.rel</field>
             <field name="arch" type="xml">
-                <tree string="Access Group/Employee Relations" create="0" edit="0" delete="0">
+                <list string="Access Group/Employee Relations" create="0" edit="0" delete="0">
                     <field name="access_group_id"/>
                     <field name="employee_id"/>
                     <field name="activate_on"/>
                     <field name="expiration"/>
                     <field name="state"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -412,13 +412,13 @@
             <field name="name">hr.rfid.acc.gr.contact.rel.tree</field>
             <field name="model">hr.rfid.access.group.contact.rel</field>
             <field name="arch" type="xml">
-                <tree string="Access Group/Employee Relations" create="0" edit="0" delete="0">
+                <list string="Access Group/Employee Relations" create="0" edit="0" delete="0">
                     <field name="access_group_id"/>
                     <field name="contact_id"/>
                     <field name="activate_on"/>
                     <field name="expiration"/>
                     <field name="state"/>
-                </tree>
+                </list>
             </field>
         </record>
 

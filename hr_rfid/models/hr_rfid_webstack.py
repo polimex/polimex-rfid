@@ -178,7 +178,7 @@ class HrRfidWebstack(models.Model):
     controllers_count = fields.Char(string='Controllers count', compute='_compute_counts')
 
     _sql_constraints = [('rfid_webstack_serial_unique', 'unique(serial)',
-                         'Serial number for webstacks must be unique!')]
+                         'Serial number for Module must be unique!')]
 
     @api.model
     def _notify_inactive(self):

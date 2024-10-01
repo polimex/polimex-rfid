@@ -20,12 +20,12 @@
         <field name="name">voting.vote.view.list</field>
         <field name="model">voting.vote</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="voting_item_id"/>
                 <field name="voter_id"/>
                 <field name="vote"/>
                 <field name="vote_time"/>
-            </tree>
+            </list>
         </field>
     </record>
 

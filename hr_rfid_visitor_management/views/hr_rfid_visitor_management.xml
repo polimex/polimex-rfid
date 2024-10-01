@@ -40,13 +40,13 @@
             <field name="name">hr.rfid.visitor.management.tree</field>
             <field name="model">hr.rfid.visitor.management</field>
             <field name="arch" type="xml">
-                <tree string="">
+                <list string="">
                     <field name="name"/>
                     <field name="partner_id"/>
                     <field name="end_to"/>
                     <field name="permitted_user_ids"/>
                     <field name="access_group_ids"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -104,7 +104,7 @@
             <field name="name">Visitor Management</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">hr.rfid.visitor.management</field>
-            <field name="view_mode">kanban,tree,form</field>
+            <field name="view_mode">kanban,list,form</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
                     You have no created Visitors plans or access for Visitor Management

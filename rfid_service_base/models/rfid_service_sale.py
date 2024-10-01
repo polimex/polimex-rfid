@@ -18,7 +18,7 @@ class BaseRFIDService(models.Model):
 
     _sql_constraints = [
         ('check_duplicates', 'unique (service_id, start_date, end_date, partner_id)',
-         _("Only one service for same period for given Customer!")),
+         "Only one service for same period for given Customer!"),
     ]
 
     name = fields.Char(

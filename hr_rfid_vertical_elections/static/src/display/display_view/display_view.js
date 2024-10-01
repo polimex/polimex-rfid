@@ -1,7 +1,6 @@
 /** @odoo-module **/
 
 import {_t} from "@web/core/l10n/translation";
-import {ConfirmationDialog} from "@web/core/confirmation_dialog/confirmation_dialog";
 import {deserializeDateTime, serializeDateTime} from "@web/core/l10n/dates";
 import {redirect} from "@web/core/utils/urls";
 import {registry} from "@web/core/registry";
@@ -9,7 +8,10 @@ import {SessionRemainingTime} from "@hr_rfid_vertical_elections/display/session_
 import {SessionVoteResult} from "@hr_rfid_vertical_elections/display/session_vote_result";
 import {DisplayTime} from "@hr_rfid_vertical_elections/display/display_time";
 import {useInterval} from "@hr_rfid_vertical_elections/display/useInterval";
-import {useService} from "@web/core/utils/hooks";
+import { useService} from "@web/core/utils/hooks";
+import { makeEnv, startServices } from "@web/env";
+import { templates } from "@web/core/assets";
+import { busService } from "@bus/services/bus_service";
 
 import {
     Component,
@@ -18,24 +20,24 @@ import {
     onWillUnmount,
     useExternalListener,
     useState,
-    EventBus
+    EventBus, xml, whenReady, App
 } from "@odoo/owl";
 
 // Time (in ms, so 2 minutes) after which the user is considered inactive
 // and the app goes back to the main screen
 const INACTIVITY_TIMEOUT = 120000;
 
-export class DisplayView extends Component {
+export class DisplayViewApp extends Component {
     static components = {
         SessionRemainingTime,
         SessionVoteResult,
         DisplayTime,
     };
-    static template = "hr_rfid_vertical_elections.DisplayView";
 
     setup() {
         this.manageDisplayUrl = `/voting_display/${this.props.accessToken}`;
-
+        this.lang = this.props.lang;
+        this.msg_discuss = _t("Discussions");
         // const bus = new EventBus();
         // bus.addEventListener('voting-end', this.onVotingEnd.bind(this));
         this.state = useState({
@@ -46,6 +48,7 @@ export class DisplayView extends Component {
         });
         // Show sessions updates in live
         this.busService = this.env.services.bus_service;
+        // this.busService = useService("bus_service");
         const msg_prefix = 'display'
         this.busService.addChannel(msg_prefix + "#" + this.props.accessToken);
         this.busService.subscribe("session/change_state", (sessions) =>
@@ -239,4 +242,33 @@ export class DisplayView extends Component {
     }
 }
 
-registry.category("public_components").add("hr_rfid_vertical_elections.display_view", DisplayView);
+DisplayViewApp.template = "hr_rfid_vertical_elections.display_main_view";
+
+export async function createPublicDisplay(document, display_info) {
+    await whenReady();
+    const env = makeEnv();
+    await startServices(env);
+    const app = new App(DisplayViewApp, {
+        templates,
+        env: env,
+        props:
+            {
+                id: display_info.id,
+                description: display_info.description,
+                name: display_info.name,
+                company_name: display_info.company_name,
+                accessToken: display_info.access_token,
+                noVotingBgColor: display_info.no_voting_background_color,
+                votingBgColor: display_info.voting_background_color,
+                lang: display_info.lang,
+            },
+        dev: env.debug,
+        translateFn: _t,
+        translatableAttributes: ["data-tooltip"],
+    });
+    return app.mount(document.body);
+}
+
+export default { DisplayViewApp, createPublicDisplay };
+
+// registry.category("public_components").add("hr_rfid_vertical_elections.display_view", DisplayView);
