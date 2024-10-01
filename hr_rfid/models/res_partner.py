@@ -63,9 +63,9 @@ class ResPartner(models.Model):
             e.partner_doors_count = len(e.get_doors())
 
     def _compute_is_employee(self):
-        empl_partners = self.env['resource.resource'].search([('user_id', '!=', False)]).mapped('user_id.partner_id.id')
+        # empl_partners = self.env['resource.resource'].search([('user_id', '!=', False)]).mapped('user_id.partner_id.id')
         for p in self:
-            p.is_employee = p.id in empl_partners
+            p.is_employee = p.employees_count != 0
 
     def button_partner_events(self):
         self.ensure_one()
