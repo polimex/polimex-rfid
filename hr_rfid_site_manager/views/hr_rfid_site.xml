@@ -6,7 +6,7 @@
             <field name="name">hr_rfid_site_view_tree</field>
             <field name="model">hr.rfid.site</field>
             <field name="arch" type="xml">
-                <tree string="hr_rfid_site_tree" >
+                <tree string="hr_rfid_site_tree">
                     <field name="name"/>
                     <field name="parent_id"/>
                     <field name="door_ids" widget="many2many_tags"/>
@@ -103,11 +103,52 @@
             </field>
         </record>
 
+        <record id="hr_rfid_site_hierarchy_view" model="ir.ui.view">
+            <field name="name">hr_rfid_site_view_hierarchy</field>
+            <field name="model">hr.rfid.site</field>
+            <field name="arch" type="xml">
+                <hierarchy child_field="child_ids" draggable="1">
+                    <field name="name"/>
+                    <field name="color"/>
+                    <templates>
+                        <t t-name="hierarchy-box">
+                            <div t-attf-class="o_hierarchy_node_header d-flex justify-content-center align-items-center o_hierarchy_node_color_{{ record.color.raw_value }}">
+                                <field name="name"/>
+                                <field name="make_access_group" invisible="1"/>
+                                <i class="fa fa-circle text-success ms-auto"
+                                   t-if="record.make_access_group.raw_value"
+                                   title="Available Access Group"/>
+                            </div>
+                            <div class="o_hierarchy_node_body d-flex flex-column">
+                                <field name="door_ids" invisible="1"/>
+                                <field name="controller_ids" invisible="1"/>
+                                <field name="webstack_ids" invisible="1"/>
+                                <div>
+                                    <button class="btn btn-link" name="%(hr.act_employee_from_department)d"
+                                            type="action" t-if="record.door_ids.raw_value">
+                                        <field name="door_ids" widget="many2many_tags"/>
+                                    </button>
+                                    <button class="btn btn-link" name="%(hr.act_employee_from_department)d"
+                                            type="action" t-if="record.controller_ids.raw_value">
+                                        <field name="controller_ids" widget="many2many_tags"/>
+                                    </button>
+                                    <button class="btn btn-link" name="%(hr.act_employee_from_department)d"
+                                            type="action" t-if="record.webstack_ids.raw_value">
+                                        <field name="webstack_ids" widget="many2many_tags"/>
+                                    </button>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </hierarchy>
+            </field>
+        </record>
+
         <record id="hr_rfid_site_action" model="ir.actions.act_window">
             <field name="name">Site Manager</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">hr.rfid.site</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">hierarchy,tree,form</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
                     Add your first sites here.
@@ -130,7 +171,7 @@
         <record id="act_site_from_sites" model="ir.actions.act_window">
             <field name="name">Site</field>
             <field name="res_model">hr.rfid.site</field>
-            <field name="view_mode">tree,kanban,form</field>
+            <field name="view_mode">tree,kanban,hierarchy,form</field>
             <!--            <field name="search_view_id" ref="view_employee_filter"/>-->
             <field name="context">{
                 <!--                "searchpanel_default_parent_id": active_id,-->

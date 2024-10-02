@@ -19,7 +19,7 @@
     'license': 'AGPL-3',
 
     # any module necessary for this one to work correctly
-    'depends': ['hr_rfid'],
+    'depends': ['hr_rfid','web_hierarchy'],
 
     # always loaded
     'data': [
