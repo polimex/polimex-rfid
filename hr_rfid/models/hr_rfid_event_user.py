@@ -246,7 +246,7 @@ class HrRfidUserEvent(models.Model):
         self.ensure_one()
         return {
             'name': _('Events for {}').format(self.employee_id.name),
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'res_model': self._name,
             'domain': [('employee_id', '=', self.employee_id.id)],
             'type': 'ir.actions.act_window',
@@ -259,7 +259,7 @@ class HrRfidUserEvent(models.Model):
         self.ensure_one()
         return {
             'name': _('Events for {}').format(self.contact_id.name),
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'res_model': self._name,
             'domain': [('contact_id', '=', self.contact_id.id)],
             'type': 'ir.actions.act_window',
@@ -272,7 +272,7 @@ class HrRfidUserEvent(models.Model):
         self.ensure_one()
         return {
             'name': _('Events for {}').format(self.card_id.name),
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'res_model': self._name,
             'domain': [('card_id', '=', self.card_id.id)],
             'type': 'ir.actions.act_window',
@@ -285,7 +285,7 @@ class HrRfidUserEvent(models.Model):
         self.ensure_one()
         return {
             'name': _('Events on {}').format(self.door_id.name),
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'res_model': self._name,
             'domain': [('door_id', '=', self.door_id.id)],
             'type': 'ir.actions.act_window',
@@ -298,7 +298,7 @@ class HrRfidUserEvent(models.Model):
         self.ensure_one()
         return {
             'name': _('Events on {}').format(self.reader_id.name),
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'res_model': self._name,
             'domain': [('reader_id', '=', self.reader_id.id)],
             'type': 'ir.actions.act_window',

@@ -115,7 +115,7 @@ class HrRfidZone(models.Model):
         self.ensure_one()
         return {
             'name': _("Check In's {}").format(self.name),
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'res_model': 'hr.attendance',
             'domain': [('id', 'in', [i.id for i in self.employee_ids])],
             'type': 'ir.actions.act_window',

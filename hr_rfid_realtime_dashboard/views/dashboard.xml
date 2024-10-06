@@ -25,7 +25,7 @@
         </record>
 
         <record id="user_event_tree_view_dash" model="ir.ui.view">
-            <field name="name">hr.rfid.event.user.tree</field>
+            <field name="name">hr.rfid.event.user.list</field>
             <field name="model">hr.rfid.event.user</field>
             <field name="inherit_id" ref="hr_rfid.hr_rfid_user_ev_view_tree"/>
             <field name="arch" type="xml">
@@ -41,7 +41,7 @@
         </record>
 
         <record id="system_event_tree_view_dash" model="ir.ui.view">
-            <field name="name">hr.rfid.event.system.tree</field>
+            <field name="name">hr.rfid.event.system.list</field>
             <field name="model">hr.rfid.event.system</field>
             <field name="inherit_id" ref="hr_rfid.hr_rfid_sys_ev_view_tree"/>
             <field name="arch" type="xml">
@@ -53,7 +53,7 @@
         <record id="act_system_event" model="ir.actions.act_window">
             <field name="name">System Events</field>
             <field name="res_model">hr.rfid.event.system</field>
-            <field name="view_mode">tree</field>
+            <field name="view_mode">list</field>
             <field name="domain">[('event_action', '!=', '34')]</field>
             <field name="view_id" ref="system_event_tree_view_dash"/>
         </record>
@@ -72,7 +72,7 @@
         <record id="act_th_log" model="ir.actions.act_window">
             <field name="name">Temperature and Humidity</field>
             <field name="res_model">hr.rfid.ctrl.th</field>
-            <!--            <field name="view_mode">tree</field>-->
+            <!--            <field name="view_mode">list</field>-->
             <field name="view_id" ref="th_log_tree_view_dash"/>
             <!--            <field name="domain">[('event_type','=','nfc')]</field>-->
         </record>
@@ -269,7 +269,7 @@
         <record id="act_door_list" model="ir.actions.act_window">
             <field name="name">Doors</field>
             <field name="res_model">hr.rfid.door</field>
-            <field name="view_mode">tree</field>
+            <field name="view_mode">list</field>
             <field name="view_id" ref="door_list_view_dash"/>
         </record>
 
@@ -432,7 +432,7 @@
         <record id="act_alarm_line_tree" model="ir.actions.act_window">
             <field name="name">Alarm Lines</field>
             <field name="res_model">hr.rfid.ctrl.alarm</field>
-            <field name="view_mode">tree</field>
+            <field name="view_mode">list</field>
             <field name="domain">[('armed', '!=', 'no_alarm')]</field>
             <field name="view_id" ref="alarm_line_list_view_dash"/>
         </record>
@@ -463,7 +463,7 @@
         <record id="act_emergency_groups_tree" model="ir.actions.act_window">
             <field name="name">Emergency Groups</field>
             <field name="res_model">hr.rfid.ctrl.emergency.group</field>
-            <field name="view_mode">tree</field>
+            <field name="view_mode">list</field>
 <!--            <field name="domain">[('armed', '!=', 'no_alarm')]</field>-->
             <field name="view_id" ref="emergency_groups_tree_view_dash"/>
         </record>

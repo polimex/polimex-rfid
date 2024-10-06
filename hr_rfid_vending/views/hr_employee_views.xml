@@ -137,7 +137,7 @@
         </record>
 
         <record id="hr_rfid_employee_view_tree_inherit_hr_rfid_vending" model="ir.ui.view">
-            <field name="name">hr.rfid.vending.employee.tree</field>
+            <field name="name">hr.rfid.vending.employee.list</field>
             <field name="model">hr.employee</field>
             <field name="inherit_id" ref="hr.view_employee_tree"/>
             <field name="arch" type="xml">

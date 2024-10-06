@@ -25,7 +25,7 @@
         </record>
 
         <record id="hr_rfid_view_user_ev_tree_inherit_hr_attendance_multi_rfid" model="ir.ui.view">
-            <field name="name">hr.rfid.ev.usr.hr.attendance.multi.rfid.ev.usr.in.or.out.tree</field>
+            <field name="name">hr.rfid.ev.usr.hr.attendance.multi.rfid.ev.usr.in.or.out.list</field>
             <field name="model">hr.rfid.event.user</field>
             <field name="inherit_id" ref="hr_rfid.hr_rfid_user_ev_view_tree"/>
             <field name="arch" type="xml">
@@ -74,7 +74,7 @@
         </record>
 
         <record id="hr_rfid_view_zone_tree_inherit_hr_attendance_multi_rfid" model="ir.ui.view">
-            <field name="name">hr.rfid.zone.hr.attendance.multi.rfid.view.tree</field>
+            <field name="name">hr.rfid.zone.hr.attendance.multi.rfid.view.list</field>
             <field name="model">hr.rfid.zone</field>
             <field name="inherit_id" ref="hr_rfid.hr_rfid_zone_view_tree"/>
             <field name="arch" type="xml">

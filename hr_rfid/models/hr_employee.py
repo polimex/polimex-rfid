@@ -67,7 +67,7 @@ class HrEmployee(models.Model):
         self.ensure_one()
         return {
             'name': _('Events for {}').format(self.name),
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'res_model': 'hr.rfid.event.user',
             'domain': [('employee_id', '=', self.id)],
             'type': 'ir.actions.act_window',
@@ -80,7 +80,7 @@ class HrEmployee(models.Model):
         self.ensure_one()
         return {
             'name': _('Doors accessible from {}').format(self.name),
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'res_model': 'hr.rfid.door',
             'domain': [('id', 'in', self.get_doors().mapped('id'))],
             'type': 'ir.actions.act_window',

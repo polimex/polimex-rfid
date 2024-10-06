@@ -296,7 +296,7 @@
         </record>
 
         <record id="hr_rfid_access_group_view_tree" model="ir.ui.view">
-            <field name="name">hr.rfid.access.group.tree</field>
+            <field name="name">hr.rfid.access.group.list</field>
             <field name="model">hr.rfid.access.group</field>
             <field name="arch" type="xml">
                 <list string="Access Groups">
@@ -366,7 +366,7 @@
         </record>
 
         <record id="hr_rfid_acc_gr_employee_rel_view_tree" model="ir.ui.view">
-            <field name="name">hr.rfid.acc.gr.employee.rel.tree</field>
+            <field name="name">hr.rfid.acc.gr.employee.rel.list</field>
             <field name="model">hr.rfid.access.group.employee.rel</field>
             <field name="arch" type="xml">
                 <list string="Access Group/Employee Relations" create="0" edit="0" delete="0">
@@ -409,7 +409,7 @@
         </record>
 
         <record id="hr_rfid_acc_gr_contact_rel_view_tree" model="ir.ui.view">
-            <field name="name">hr.rfid.acc.gr.contact.rel.tree</field>
+            <field name="name">hr.rfid.acc.gr.contact.rel.list</field>
             <field name="model">hr.rfid.access.group.contact.rel</field>
             <field name="arch" type="xml">
                 <list string="Access Group/Employee Relations" create="0" edit="0" delete="0">

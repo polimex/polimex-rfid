@@ -30,7 +30,7 @@
         </record>
 
         <record id="ctrl_cash_collect_log_view_tree" model="ir.ui.view">
-            <field name="name">ctrl.cash.collect.log.view.tree</field>
+            <field name="name">ctrl.cash.collect.log.view.list</field>
             <field name="model">hr.rfid.ctrl.cash.log</field>
             <field name="arch" type="xml">
                 <list string="_tree" create="0" delete="0" edit="0">

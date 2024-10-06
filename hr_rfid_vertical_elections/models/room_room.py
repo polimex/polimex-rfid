@@ -106,7 +106,7 @@ class Room(models.Model):
             "name": _("Bookings"),
             "domain": [("room_id", "in", self.ids)],
             "context": {"default_room_id": self.id if len(self) == 1 else False},
-            "view_mode": "calendar,gantt,kanban,tree,form",
+            "view_mode": "calendar,gantt,kanban,list,form",
         }
 
     # ------------------------------------------------------

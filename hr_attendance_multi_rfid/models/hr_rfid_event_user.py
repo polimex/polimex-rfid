@@ -17,7 +17,7 @@ class HrRfidUserEvent(models.Model):
         self.ensure_one()
         return {
             'name': _('Attendance for {}').format(self.employee_id.name),
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'res_model': 'hr.attendance',
             'domain': [('employee_id', '=', self.employee_id.id)],
             'type': 'ir.actions.act_window',

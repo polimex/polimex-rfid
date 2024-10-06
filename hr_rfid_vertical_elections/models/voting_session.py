@@ -171,7 +171,7 @@ class VotingSession(models.Model):
             'type': 'ir.actions.act_window',
             'name': 'Votes',
             'res_model': 'voting.vote',
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'domain': [('voting_session_id', '=', self.id)],
             'context': {'default_voting_session_id': self.id},
         }

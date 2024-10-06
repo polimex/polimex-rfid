@@ -149,7 +149,7 @@ class HrRfidReader(models.Model):
         self.ensure_one()
         return {
             'name': _('Doors using {}').format(self.name),
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'res_model': 'hr.rfid.door',
             'domain': [('id', 'in', [d.id for d in self.door_ids])],
             'type': 'ir.actions.act_window',
@@ -162,7 +162,7 @@ class HrRfidReader(models.Model):
         self.ensure_one()
         return {
             'name': _('Events from {}').format(self.name),
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'res_model': 'hr.rfid.event.user',
             'domain': [('reader_id', '=', self.id)],
             'type': 'ir.actions.act_window',

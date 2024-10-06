@@ -27,8 +27,8 @@
             </field>
         </record>
 
-        <record id="view_hr_attendance_extra_tree_inherit" model="ir.ui.view">
-            <field name="name">hr.attendance.extra.tree.inherit</field>
+        <record id="view_hr_attendance_extra_list_inherit" model="ir.ui.view">
+            <field name="name">hr.attendance.extra.list.inherit</field>
             <field name="model">hr.attendance.extra</field>
             <field name="inherit_id" ref="hr_attendance_late.hr_attendance_extra_view_tree"/>
             <field name="arch" type="xml">

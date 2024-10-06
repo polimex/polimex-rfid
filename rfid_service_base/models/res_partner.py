@@ -20,7 +20,7 @@ class ResPartner(models.Model):
         self.ensure_one()
         return {
             'name': _('RFID Sales for {}').format(self.name),
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'res_model': 'rfid.service.sale',
             'domain': [('partner_id', '=', self.id)],
             'type': 'ir.actions.act_window',
@@ -33,7 +33,7 @@ class ResPartner(models.Model):
         self.ensure_one()
         return {
             'name': _('Doors accessible from {}').format(self.name),
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'res_model': 'hr.rfid.door',
             'domain': [('id', 'in', self.get_doors().mapped('id'))],
             'type': 'ir.actions.act_window',

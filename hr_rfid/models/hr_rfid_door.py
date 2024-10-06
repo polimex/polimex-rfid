@@ -487,7 +487,7 @@ class HrRfidDoor(models.Model):
             view_mode = 'graph,pivot,tree'
         return {
             'name': name,
-            'view_mode': view_mode or 'tree,form',
+            'view_mode': view_mode or 'list,form',
             'res_model': res_model,
             'domain': domain,
             'type': 'ir.actions.act_window',

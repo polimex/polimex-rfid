@@ -84,7 +84,7 @@ class VotingDisplay(models.Model):
             "name": _("Sessions for %s" % self.name),
             "domain": [("display_id", "in", self.ids)],
             "context": {"default_display_id": self.id if len(self) == 1 else False},
-            "view_mode": "kanban,tree,form",
+            "view_mode": "kanban,list,form",
         }
 
     # ------------------------------------------------------
