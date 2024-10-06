@@ -5,8 +5,7 @@
             <field name="name">hr.rfid.webstack.form</field>
             <field name="model">hr.rfid.webstack</field>
             <field name="arch" type="xml">
-                <form string="RFID Modules" banner_route="/hr_rfid/banner/hr.rfid.webstack/form"
-                >
+                <form string="RFID Modules" banner_route="/hr_rfid/banner/hr.rfid.webstack/form">
                     <field name="active" invisible="1" string="Active"/>
                     <header>
                         <button name="action_set_webstack_settings" type="object"
@@ -86,11 +85,7 @@
                             </group>
                         </group>
                     </sheet>
-                    <div class="oe_chatter">
-                        <field name="message_follower_ids"/>
-                        <field name="activity_ids"/>
-                        <field name="message_ids"/>
-                    </div>
+                     <chatter reload_on_follower="True"/>
                 </form>
             </field>
         </record>

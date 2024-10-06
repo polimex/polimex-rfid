@@ -37,10 +37,7 @@
                         <field name="vote_ids" widget="many2many_tags"/>
                     </group>
                 </sheet>
-                <div class="oe_chatter">
-                    <field name="message_follower_ids"/>
-                    <field name="message_ids"/>
-                </div>
+                 <chatter reload_on_follower="True"/>
             </form>
         </field>
     </record>
