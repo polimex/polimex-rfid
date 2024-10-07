@@ -9,8 +9,7 @@ class ProjectCustomerPortal(CustomerPortal):
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
         if 'service_count' in counters:
-            values['service_count'] = request.env['rfid.service.sale'].search_count([]) \
-                if request.env['rfid.service.sale'].check_access_rights('read', raise_exception=False) else 0
+            values['service_count'] = request.env['rfid.service.sale'].sudo().search_count([])
         return values
 
     def _card_get_page_view_values(self, card, access_token, **kwargs):

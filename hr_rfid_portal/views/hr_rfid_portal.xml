@@ -16,7 +16,7 @@
             </xpath>
         </template>
 
-        <template id="portal_my_home_hr_rfid" name="RFID Information" customize_show="True"
+        <template id="portal_my_home" name="RFID Information" customize_show="True"
                   inherit_id="portal.portal_my_home" priority="47">
             <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
                 <t t-set="portal_service_category_enable" t-value="True"/>
@@ -25,22 +25,22 @@
                 <t t-call="portal.portal_docs_entry">
                     <t t-set="icon" t-value="'/hr_rfid_portal/static/img/barcode.svg'"/>
                     <t t-set="title">WebCards</t>
-                    <t t-set="url" t-value="'/my/webcards'"/>
                     <t t-set="text">Review all WebCards related to you</t>
+                    <t t-set="url" t-value="'/my/webcards'"/>
                     <t t-set="placeholder_count" t-value="'barcode_count'"/>
                 </t>
-                <!--                <t t-call="portal.portal_docs_entry">-->
-                <!--                    <t t-set="icon" t-value="'/hr_rfid_portal/static/img/rfid.svg'"/>-->
-                <!--                    <t t-set="title">Cards</t>-->
-                <!--                    <t t-set="url" t-value="'/my/cards'"/>-->
-                <!--                    <t t-set="text">Review all Cards related to you</t>-->
-                <!--                    <t t-set="placeholder_count" t-value="'card_count'"/>-->
-                <!--                </t>-->
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="icon" t-value="'/hr_rfid_portal/static/img/rfid.svg'"/>
+                    <t t-set="title">Cards</t>
+                    <t t-set="url" t-value="'/my/cards'"/>
+                    <t t-set="text">Review all Cards related to you</t>
+                    <t t-set="placeholder_count" t-value="'card_count'"/>
+                </t>
                 <t t-call="portal.portal_docs_entry">
                     <t t-set="icon" t-value="'/hr_rfid_portal/static/img/events.svg'"/>
                     <t t-set="title">Events</t>
-                    <t t-set="url" t-value="'/my/events'"/>
                     <t t-set="text">Review all Events generated from you</t>
+                    <t t-set="url" t-value="'/my/events'"/>
                     <t t-set="placeholder_count" t-value="'event_count'"/>
                 </t>
             </div>
@@ -77,7 +77,11 @@
                             <a target="_blank" t-attf-href="{{ card.get_portal_url() }}">Link</a>
                         </td>
                         <td>
-                            <a class="btn btn-secondary d-block o_download_btn" t-att-href="card.get_portal_url(report_type='pdf')" title="Download"><i class="fa fa-download"/> Download</a>
+                            <a class="btn btn-secondary d-block o_download_btn"
+                               t-att-href="card.get_portal_url(report_type='pdf')" title="Download">
+                                <i class="fa fa-download"/>
+                                Download
+                            </a>
                         </td>
                     </tr>
                 </t>
@@ -121,7 +125,7 @@
                             </div>
                             <hr/>
                             <img alt="barcode"
-                                 t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('QR', card.barcode_number, 200, 200)"
+                                 t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s&amp;humanreadable=1&amp;quiet=0' % ('QR', card.barcode_number, 200, 200)"
 
                                  style="width:200px;height:200px"/>
                             <hr/>

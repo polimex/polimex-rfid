@@ -21,15 +21,7 @@
     'data': [
         'views/hr_rfid_card.xml',
         'views/hr_rfid_portal.xml',
-        # 'views/rfid_service_sale.xml',
-        # 'views/rfid_service_sale_wiz.xml',
-        # 'views/menus.xml',
-        # 'data/data.xml',
-        # 'security/rfid_services_multi_company.xml',
     ],
-    # "demo": [
-    #     'demo/rfid_service_demo.xml',
-    # ],
     'assets': {
         'web.report_assets_common': [
             '/hr_rfid_portal/static/src/scss/barcode_card_web.scss',
