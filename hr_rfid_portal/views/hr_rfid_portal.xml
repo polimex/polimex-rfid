@@ -25,8 +25,8 @@
                 <t t-call="portal.portal_docs_entry">
                     <t t-set="icon" t-value="'/hr_rfid_portal/static/img/barcode.svg'"/>
                     <t t-set="title">WebCards</t>
-                    <t t-set="url" t-value="'/my/webcards'"/>
                     <t t-set="text">Review all WebCards related to you</t>
+                    <t t-set="url" t-value="'/my/webcards'"/>
                     <t t-set="placeholder_count" t-value="'barcode_count'"/>
                 </t>
                 <!--                <t t-call="portal.portal_docs_entry">-->
@@ -39,8 +39,8 @@
                 <t t-call="portal.portal_docs_entry">
                     <t t-set="icon" t-value="'/hr_rfid_portal/static/img/events.svg'"/>
                     <t t-set="title">Events</t>
-                    <t t-set="url" t-value="'/my/events'"/>
                     <t t-set="text">Review all Events generated from you</t>
+                    <t t-set="url" t-value="'/my/events'"/>
                     <t t-set="placeholder_count" t-value="'event_count'"/>
                 </t>
             </div>

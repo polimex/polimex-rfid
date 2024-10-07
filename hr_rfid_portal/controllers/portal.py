@@ -15,15 +15,13 @@ class RFIDCustomerPortal(CustomerPortal):
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
         if 'barcode_count' in counters:
-            values['barcode_count'] = request.env['hr.rfid.card'].search_count(
-                [('card_type', '=', request.env.ref('hr_rfid.hr_rfid_card_type_barcode').id)]) \
-                if request.env['hr.rfid.card'].check_access_rights('read', raise_exception=False) else 0
+            values['barcode_count'] = request.env['hr.rfid.card'].sudo().search_count(
+                [('card_type', '=', request.env.ref('hr_rfid.hr_rfid_card_type_barcode').id)])
         if 'card_count' in counters:
-            values['card_count'] = request.env['hr.rfid.card'].search_count([]) \
-                if request.env['hr.rfid.card'].check_access_rights('read', raise_exception=False) else 0
+            values['card_count'] = request.env['hr.rfid.card'].sudo().search_count(
+                [('card_type', '!=', request.env.ref('hr_rfid.hr_rfid_card_type_barcode').id)])
         if 'event_count' in counters:
-            values['event_count'] = request.env['hr.rfid.event.user'].search_count([]) \
-                if request.env['hr.rfid.event.user'].check_access_rights('read', raise_exception=False) else 0
+            values['event_count'] = request.env['hr.rfid.event.user'].sudo().search_count([])
         return values
 
     def _card_get_page_view_values(self, card, access_token, **kwargs):
