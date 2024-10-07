@@ -42,12 +42,19 @@ class HrRFIDSite(models.Model):
             else:
                 record.display_name = record.name
 
+    def get_child_access_groups(self):
+        result =  self.env['hr.rfid.access.group']
+        for site in self:
+            for child in site.child_ids:
+                result |= child.access_group_ids + child.get_child_access_groups()
+                result |= child.get_child_access_groups()
+        return result
+
     def _make_access_group(self):
         self.ensure_one()
         if self.access_group_ids:
             return self.access_group_ids
         self.access_group_ids = [(0, 0, {'name': _('%s group', self.display_name)})]
-
         return self.access_group_ids
 
     @api.depends('child_ids', 'door_ids', 'make_access_group')
@@ -108,3 +115,27 @@ class HrRFIDSite(models.Model):
         }
 
         return hierarchy
+
+    def open_door_list_action(self):
+        self.ensure_one()
+        action = self.env['ir.actions.act_window']._for_xml_id('hr_rfid.hr_rfid_door_action')
+        action['domain'] = [('site_id', 'child_of', self.id)]
+        return action
+
+    def open_controller_list_action(self):
+        self.ensure_one()
+        action = self.env['ir.actions.act_window']._for_xml_id('hr_rfid.hr_rfid_ctrl_action')
+        action['domain'] = [('site_id', 'child_of', self.id)]
+        return action
+
+    def open_webstack_list_action(self):
+        self.ensure_one()
+        action = self.env['ir.actions.act_window']._for_xml_id('hr_rfid.hr_rfid_webstack_action')
+        action['domain'] = [('site_id', 'child_of', self.id)]
+        return action
+
+    def open_access_group_list_action(self):
+        self.ensure_one()
+        action = self.env['ir.actions.act_window']._for_xml_id('hr_rfid.hr_rfid_access_group_action')
+        action['domain'] = [('site_id', 'child_of', self.id)]
+        return action
