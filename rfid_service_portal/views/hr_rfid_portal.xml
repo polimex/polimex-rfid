@@ -7,11 +7,57 @@
             <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
                 <t t-call="portal.portal_docs_entry">
                     <t t-set="title">RFID Serices</t>
-                    <t t-set="url" t-value="'/my/rfid_service'"/>
+                    <t t-set="url" t-value="'/my/rfid/service'"/>
                     <t t-set="placeholder_count" t-value="'service_count'"/>
                 </t>
             </xpath>
         </template>
 
+        <template id="portal_my_rfid_services" name="My Services">
+            <t t-call="portal.portal_layout">
+                <t t-if="not services">
+                    <div class="alert alert-warning mt8" role="alert">
+                        There are no Web Cards for you.
+                    </div>
+                </t>
+                <t t-if="services" t-call="portal.portal_table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th class="text-right">Activate On</th>
+                            <th class="text-right">Deactivate On</th>
+                            <th class="text-right">Your Badge</th>
+                            <th class="text-right">State</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="services" t-as="service">
+                            <td>
+                                <span t-field="service.name"/>
+                            </td>
+                            <td class="text-right">
+                                <t t-out="service.start_date"/>
+                            </td>
+                            <td class="text-right">
+                                <t t-out="service.end_date"/>
+                            </td>
+                            <td class="text-right">
+                                <a t-attf-href="/my/webcard/{{service.card_id.id}}?access_token={{service.card_id.access_token}}"
+                                   target="_blank" t-if="service.state == 'progress'">
+                                    <span t-field="service.card_id.name"/>
+                                </a>
+                                <t t-else="">
+                                    <span t-field="service.card_id.name" class="text-muted"/>
+                                </t>
+                            </td>
+                            <td class="text-right">
+                                <t t-out="service.state"/>
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </t>
+            </t>
+        </template>
     </data>
 </odoo>

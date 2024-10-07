@@ -18,31 +18,18 @@ class ProjectCustomerPortal(CustomerPortal):
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
         if 'service_count' in counters:
-            values['service_count'] = request.env['rfid.service.sale'].search_count([]) \
-                if request.env['rfid.service.sale'].check_access_rights('read', raise_exception=False) else 0
+            values['service_count'] = request.env['rfid.service.sale'].sudo().search_count([
+                ('partner_id', '=', request.env.user.partner_id.id)
+            ])
         return values
 
-    def _card_get_page_view_values(self, card, access_token, **kwargs):
-        try:
-            card_accessible = bool(card and self._document_check_access('hr.rfid.card', card.id))
-        except (AccessError, MissingError):
-            card_accessible = False
-        values = {
-            'page_name': _('Web card for %s' % card.get_owner().name),
-            'card': card,
-            'owner': card.get_owner(),
-            'user': request.env.user,
-            'card_accessible': card_accessible,
-            'company': request.env.company,
-        }
-        return values
-
-    @http.route(['/my/webcard/<int:card_id>'], type='http', auth="public", website=True)
-    def portal_my_webcard(self, card_id, access_token=None, **kw):
-        try:
-            card_sudo = self._document_check_access('hr.rfid.card', card_id, access_token)
-        except (AccessError, MissingError):
-            return request.redirect('/my')
-
-        values = self._card_get_page_view_values(card_sudo, access_token, **kw)
-        return request.render("hr_rfid_portal.portal_my_barcode", values)
+    @http.route(['/my/rfid/service'], type='http', auth="user", website=True)
+    def portal_my_rfid_service(self, access_token=None, **kw):
+        sudo_rfid_service = request.env['rfid.service.sale'].sudo()
+        values = self._prepare_portal_layout_values()
+        domain = [('partner_id', '=', request.env.user.partner_id.id)]
+        partner_rfid_services = sudo_rfid_service.search(domain)
+        values.update({
+            'services': partner_rfid_services,
+        })
+        return request.render("rfid_service_portal.portal_my_rfid_services", values)

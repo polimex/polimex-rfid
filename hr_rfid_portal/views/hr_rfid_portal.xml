@@ -8,17 +8,17 @@
                 <t t-call="portal.portal_docs_entry">
                     <t t-set="title">Barcodes</t>
                     <t t-set="url" t-value="'/my/webcard'"/>
-                    <t t-set="placeholder_count" t-value="'project_count'"/>
+                    <t t-set="placeholder_count" t-value="'barcode_count'"/>
                 </t>
                 <t t-call="portal.portal_docs_entry">
                     <t t-set="title">Cards</t>
                     <t t-set="url" t-value="'/my/cards'"/>
-                    <t t-set="placeholder_count" t-value="'project_count'"/>
+                    <t t-set="placeholder_count" t-value="'card_count'"/>
                 </t>
                 <t t-call="portal.portal_docs_entry">
                     <t t-set="title">Events</t>
                     <t t-set="url" t-value="'/my/events'"/>
-                    <t t-set="placeholder_count" t-value="'task_count'"/>
+                    <t t-set="placeholder_count" t-value="'event_count'"/>
                 </t>
             </xpath>
         </template>
@@ -99,6 +99,76 @@
                     </div>
 
                 </div>
+            </t>
+        </template>
+
+        <template id="portal_my_webcards" name="My Barcodes">
+            <t t-call="portal.portal_layout">
+                <t t-if="not webcards">
+                    <div class="alert alert-warning mt8" role="alert">
+                        There are no Web Cards for you.
+                    </div>
+                </t>
+                <t t-if="webcards" t-call="portal.portal_table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th class="text-right">Activate On</th>
+                            <th class="text-right">Deactivate On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="webcards" t-as="card">
+                            <td>
+                                <a t-attf-href="/my/webcard/{{card.id}}?access_token={{card.access_token}}">
+                                    <span t-field="card.name"/>
+                                </a>
+                            </td>
+                            <td class="text-right">
+                                <t t-out="card.activate_on"/>
+                            </td>
+                            <td class="text-right">
+                                <t t-out="card.deactivate_on"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </t>
+            </t>
+        </template>
+
+        <template id="portal_my_cards" name="My Cards">
+            <t t-call="portal.portal_layout">
+                <t t-if="not cards">
+                    <div class="alert alert-warning mt8" role="alert">
+                        There are no Cards for you.
+                    </div>
+                </t>
+                <t t-if="cards" t-call="portal.portal_table">
+                    <tbody>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th class="text-right">Activate On</th>
+                                <th class="text-right">Deactivate On</th>
+                            </tr>
+                        </thead>
+                        <tr t-foreach="cards" t-as="card">
+                            <td>
+                                <span t-field="card.name"/>
+                            </td>
+                            <td>
+                                <t t-out="card.card_type.name"/>
+                            </td>
+                            <td class="text-right">
+                                <t t-out="card.activate_on"/>
+                            </td>
+                            <td class="text-right">
+                                <t t-out="card.deactivate_on"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </t>
             </t>
         </template>
 

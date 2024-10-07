@@ -15,15 +15,19 @@ class ProjectCustomerPortal(CustomerPortal):
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
         if 'barcode_count' in counters:
-            values['barcode_count'] = request.env['hr.rfid.card'].search_count(
-                [('card_type', '=', request.env.ref('hr_rfid.hr_rfid_card_type_barcode'))]) \
-                if request.env['hr.rfid.card'].check_access_rights('read', raise_exception=False) else 0
+            values['barcode_count'] = request.env['hr.rfid.card'].sudo().search_count([
+                ('card_type', '=', request.env.ref('hr_rfid.hr_rfid_card_type_barcode').id),
+                ('contact_id', '=', request.env.user.partner_id.id)
+            ])
         if 'card_count' in counters:
-            values['card_count'] = request.env['hr.rfid.card'].search_count([]) \
-                if request.env['hr.rfid.card'].check_access_rights('read', raise_exception=False) else 0
+            values['card_count'] = request.env['hr.rfid.card'].sudo().search_count([
+                ('card_type', '!=', request.env.ref('hr_rfid.hr_rfid_card_type_barcode').id),
+                ('contact_id', '=', request.env.user.partner_id.id)
+            ])
         if 'event_count' in counters:
-            values['event_count'] = request.env['hr.rfid.event.user'].search_count([]) \
-                if request.env['hr.rfid.event.user'].check_access_rights('read', raise_exception=False) else 0
+            values['event_count'] = request.env['hr.rfid.event.user'].sudo().search_count([
+                ('contact_id', '=', request.env.user.partner_id.id)
+            ])
         return values
 
     def _card_get_page_view_values(self, card, access_token, **kwargs):
@@ -50,3 +54,40 @@ class ProjectCustomerPortal(CustomerPortal):
 
         values = self._card_get_page_view_values(card_sudo, access_token, **kw)
         return request.render("hr_rfid_portal.portal_my_barcode", values)
+
+    @http.route(['/my/webcard'], type='http', auth="user", website=True)
+    def portal_my_webcards(self, access_token=None, **kw):
+        values = self._prepare_portal_layout_values()
+        WebCards = request.env['hr.rfid.card'].sudo()
+        domain = [
+            ('contact_id', '=', request.env.user.partner_id.id),
+            ('card_type', '=', request.env.ref('hr_rfid.hr_rfid_card_type_barcode').id),
+        ]
+        barcode_count = WebCards.search_count(domain)
+        webcards = WebCards.search(domain)
+        calc_tokens_if_neccessery = [wc._portal_ensure_token() for wc in webcards]
+
+        values.update({
+            'webcards': webcards,
+            'page_name': 'Web Cards',
+            'default_url': '/my/webcard',
+        })
+        return request.render("hr_rfid_portal.portal_my_webcards", values)
+
+    @http.route(['/my/cards'], type='http', auth="user", website=True)
+    def portal_my_cards(self, access_token=None, **kw):
+        values = self._prepare_portal_layout_values()
+        Cards = request.env['hr.rfid.card'].sudo()
+        domain = [
+            ('contact_id', '=', request.env.user.partner_id.id),
+            ('card_type', '!=', request.env.ref('hr_rfid.hr_rfid_card_type_barcode').id),
+        ]
+        cards_count = Cards.search_count(domain)
+        cards = Cards.search(domain)
+
+        values.update({
+            'cards': cards,
+            'page_name': 'Cards',
+            'default_url': '/my/cards',
+        })
+        return request.render("hr_rfid_portal.portal_my_cards", values)
