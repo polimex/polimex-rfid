@@ -130,27 +130,32 @@
                 <hierarchy child_field="child_ids" draggable="1">
                     <field name="name"/>
                     <field name="color"/>
-                    <!--                    <field name="total_employee"/>-->
                     <templates>
                         <t t-name="hierarchy-box">
                             <div t-attf-class="o_hierarchy_node_header d-flex justify-content-center align-items-center o_hierarchy_node_color_{{ record.color.raw_value }}">
                                 <field name="name"/>
+                                <field name="make_access_group" invisible="1"/>
+                                <button class="btn btn-link" name="open_access_group_list_action" type="object">
+                                <i class="fa fa-circle text-success ms-auto"
+                                   t-if="record.make_access_group.raw_value"
+                                   title="Available Access Group"/>
+                                </button>
                             </div>
                             <div class="o_hierarchy_node_body d-flex flex-column">
                                 <field name="door_ids" invisible="1"/>
                                 <field name="controller_ids" invisible="1"/>
                                 <field name="webstack_ids" invisible="1"/>
                                 <div>
-                                    <button class="btn btn-link" name="%(hr_rfid_site_manager.hr_rfid_site_action)d"
-                                            type="action" t-if="record.door_ids.raw_value">
+                                    <button class="btn btn-link" name="open_door_list_action"
+                                            type="object" t-if="record.door_ids.raw_value">
                                         <field name="door_ids" widget="many2many_tags"/>
                                     </button>
-                                    <button class="btn btn-link" name="%(hr_rfid_site_manager.hr_rfid_site_action)d"
-                                            type="action" t-if="record.controller_ids.raw_value">
+                                    <button class="btn btn-link" name="open_controller_list_action"
+                                            type="object" t-if="record.controller_ids.raw_value">
                                         <field name="controller_ids" widget="many2many_tags"/>
                                     </button>
-                                    <button class="btn btn-link" name="%(hr_rfid_site_manager.hr_rfid_site_action)d"
-                                            type="action" t-if="record.webstack_ids.raw_value">
+                                    <button class="btn btn-link" name="open_webstack_list_action"
+                                            type="object" t-if="record.webstack_ids.raw_value">
                                         <field name="webstack_ids" widget="many2many_tags"/>
                                     </button>
                                 </div>

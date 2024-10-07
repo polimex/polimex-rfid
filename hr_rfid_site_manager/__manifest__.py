@@ -24,6 +24,7 @@
     # always loaded
     'data': [
         'security/hr_rfid_site_security.xml',
+        'security/hr_rfid_multi_company.xml',
         'security/ir.model.access.csv',
         'views/hr_rfid_access_group.xml',
         'views/hr_rfid_door.xml',
