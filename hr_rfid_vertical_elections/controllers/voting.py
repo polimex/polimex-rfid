@@ -17,7 +17,17 @@ class VoteController(http.Controller):
         display_sudo = request.env["voting.display"].sudo().search([("short_code", "=", short_code)])
         if not display_sudo:
             raise exceptions.NotFound()
-        return request.render("hr_rfid_vertical_elections.voting_display", {"display": display_sudo})
+        return request.render("hr_rfid_vertical_elections.voting_display_layout",
+                              {"display_info": {
+                                  'id': display_sudo.id,
+                                  'description': display_sudo.description,
+                                  'name': display_sudo.name,
+                                  'company_name': display_sudo.company_id.display_name,
+                                  'accessToken': display_sudo.access_token,
+                                  'noVotingBgColor': display_sudo.no_voting_background_color,
+                                  'votingBgColor': display_sudo.voting_background_color,
+                                  'lang': display_sudo.create_uid.lang,
+                              }})
 
     @http.route("/voting_display/<string:access_token>/background", type="http", auth="public")
     def display_background_image(self, access_token):
@@ -30,7 +40,7 @@ class VoteController(http.Controller):
     @http.route("/voting_display/<string:access_token>/get_existing_sessions", type="json", auth="public")
     def get_existing_sessions(self, access_token):
         display_sudo = self._fetch_display_from_access_token(access_token)
-        return request.env["voting.session"].sudo().search_read(
+        return request.env["voting.session"].sudo().with_context({'lang':'bg_BG'}).search_read(
             [("display_id", "=", display_sudo.id), ("planned_date", "=", datetime.today())],
             ["name", "create_uid", "planned_date", "start_datetime", "end_datetime", "state",
              'voting_time', 'vote_results_time', 'vote_total', 'vote_yes', 'vote_no', 'vote_abstain', 'final_vote'],

@@ -7,3 +7,4 @@ from . import voting_session
 from . import voting_participants
 from . import vote
 from . import hr_rfid_event_user
+from . import hr_rfid_workcode
