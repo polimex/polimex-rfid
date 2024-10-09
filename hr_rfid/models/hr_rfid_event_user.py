@@ -170,7 +170,6 @@ class HrRfidUserEvent(models.Model):
             record.action_string = _('Access {}').format(self.action_selection[int(record.event_action) - 1][1])
 
     @api.model_create_multi
-    @api.returns('self', lambda value: value.id)
     def create(self, vals_list):
         records = super(HrRfidUserEvent, self).create(vals_list)
 
