@@ -225,7 +225,7 @@
                     </div>
                     <group>
                         <group>
-                            <field name="description"/>
+                            <field name="description" readonly="state == 'closed'"/>
                             <field name="voting_time" readonly="state!='draft'"/>
                             <field name="vote_results_time" readonly="state!='draft'"/>
 
@@ -237,13 +237,13 @@
                             <!--                            <field name="end_datetime" string="Date" widget="daterange" options="{'end_date_field': 'end_datetime'}"/>-->
                         </group>
                         <group string="Settings">
-                            <field name="item_ids" widget="many2many_tags"/>
-                            <field name="participant_group_id"/>
-                            <field name="display_id"/>
+                            <field name="item_ids" widget="many2many_tags" readonly="state == 'closed'"/>
+                            <field name="participant_group_id" readonly="state == 'closed'"/>
+                            <field name="display_id" readonly="state == 'closed'"/>
                         </group>
                         <group string="Organizer">
                             <field name="create_uid" widget="many2one_avatar_user" readonly="1"/>
-                            <field name="state"/>
+<!--                            <field name="state"/>-->
                             <field name="new_session_id" readonly="1" invisible="not new_session_id"/>
                             <field name="old_session_id" readonly="1" invisible="not old_session_id"/>
                         </group>

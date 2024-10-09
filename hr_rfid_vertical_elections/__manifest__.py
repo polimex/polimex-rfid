@@ -19,9 +19,8 @@
         'views/voting_vote_views.xml',
         'views/voting_display_views.xml',
         'views/vote_menus.xml',
+        'views/voting_display_templates_frontend.xml',
         'reports/voting_session_reports.xml',
-        # 'views/voting_display_templates_frontend.xml',
-        'views/voting_template_frontend.xml',
         # 'security/ir_rule.xml',
         'security/ir.model.access.csv',
     ],
@@ -31,27 +30,20 @@
     #     'web.assets_backend': [
         # ],
         'hr_rfid_vertical_elections.assets_display': [
-            # 1 Define display variables (takes priority)
+            # 1 Define room variables (takes priority)
             "hr_rfid_vertical_elections/static/src/display/primary_variables.scss",
             "hr_rfid_vertical_elections/static/src/display/bootstrap_overridden.scss",
 
-            #2  # Front-end libraries
+            #2 Load variables, Bootstrap and UI icons bundles
             ('include', 'web._assets_helpers'),
-            ('include', 'web._assets_frontend_helpers'),
-            'web/static/lib/jquery/jquery.js',
+            ('include', 'web._assets_backend_helpers'),
             'web/static/src/scss/pre_variables.scss',
             'web/static/lib/bootstrap/scss/_variables.scss',
-            ('include', 'web._assets_bootstrap_frontend'),
             ('include', 'web._assets_bootstrap_backend'),
-            '/web/static/lib/odoo_ui_icons/*',
-            '/web/static/lib/bootstrap/scss/_functions.scss',
-            '/web/static/lib/bootstrap/scss/_mixins.scss',
-            '/web/static/lib/bootstrap/scss/utilities/_api.scss',
-            'web/static/src/libs/fontawesome/css/font-awesome.css',
-            ('include', 'web._assets_core'),
-            'bus/static/src/*.js',
-            'bus/static/src/services/**/*.js',
-            'web/static/src/views/fields/formatters.js',
+            "web/static/src/libs/fontawesome/css/font-awesome.css",
+            "web/static/lib/odoo_ui_icons/*",
+            'web/static/src/legacy/scss/ui.scss',
+            'web/static/src/scss/base_frontend.scss',
 
             # Display's specific assets
             'hr_rfid_vertical_elections/static/src/display/**/*',

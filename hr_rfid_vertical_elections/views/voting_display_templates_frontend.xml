@@ -34,8 +34,7 @@
         <xpath expr="//t[@t-out='0']" position="replace">
             <div id="wrapwrap" t-attf-class="#{pageName or ''}">
                 <main>
-                    <owl-component name="hr_rfid_vertical_elections.display_view"
-                                   t-att-props="json.dumps({
+                    <owl-component name="hr_rfid_vertical_elections.display_view" t-att-props="json.dumps({
                         'id': display.id,
                         'description': display.description,
                         'name': display.name,

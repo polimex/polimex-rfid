@@ -4,7 +4,7 @@ from wheel.metadata import requires_to_requires_dist
 
 from odoo import fields, models, api
 from odoo.exceptions import ValidationError
-from odoo.tools import json
+
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -225,8 +225,9 @@ class VotingSession(models.Model):
                 session.display_id._notify_display_view("reload")
         return result
 
+    @api.model_create_multi
     def create(self, vals_list):
-        sessions = super(VotingSession, self).create(vals_list)
+        sessions = super().create(vals_list)
         for session in sessions:
             session.display_id._notify_display_view("reload")
         return sessions

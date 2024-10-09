@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<templates xml:space="preserve">
-<!--    <t t-name="hr_rfid_vertical_elections.display_main_view">-->
-<!--    <p t-out="props.lang"/>-->
-<!--        <t t-call="hr_rfid_vertical_elections.DisplayView" t-lang="lang"/>-->
-<!--    </t>-->
-    <t t-name="hr_rfid_vertical_elections.display_main_view">
-            <div>
-                <p>Test</p>
-            </div>
-    </t>
-    <t t-name="hr_rfid_vertical_elections.display_main_view1">
+<templates>
+    <t t-name="hr_rfid_vertical_elections.DisplayView">
         <div class="row d-flex g-0 h-lg-100 bg-white">
             <div class="o_display_main col-lg-8 col-xl-9 position-relative d-flex flex-column h-lg-100 overflow-lg-auto">
                 <div class="d-flex flex-column flex-grow-1 justify-content-between gap-5 p-3 text-white fs-2"
@@ -23,32 +14,31 @@
                             <div class="d-flex flex-column align-items-center">
                                 <i class="fa fa-check-circle fa-3x"/>
                                 <h1 class="mb-0 text-uppercase fw-bold display-3 text-white smooth-color-animate">
-                                    <t t-out="msg_discuss"/>
+                                    Дискусии
                                 </h1>
-                                <h3 class="mb-0 text-center fw-bold display-3 text-white">No open voting at this
-                                    moment
+                                <h3 class="mb-0 text-center fw-bold display-3 text-white">Няма открито гласуване в момента
                                 </h3>
                             </div>
                         </t>
                         <t t-else="">
                             <t t-if="!state.currentSessionVoteEnded">
                                 <div class="d-flex flex-column align-items-center">
-                                    <h3 class="mb-0    text-white">Please Vote for</h3>
+                                    <h3 class="mb-0    text-white">Моля гласувайте за</h3>
                                     <!--                                <i class="fa fa-hand-peace-o fa-3x"/>-->
                                     <h1 t-out="state.currentSession.name"
                                         class="mb-0 text-center text-uppercase fw-bold display-3 text-white opacity-75"/>
                                     <br/>
                                     <h1 class="text-white fw-bold">
-                                        Yes:
+                                        Да:
                                         <span class="f" t-out="state.currentSession.vote_yes"/>
                                         <br/>
-                                        No:
+                                        Не:
                                         <span t-out="state.currentSession.vote_no"/>
                                         <br/>
-                                        Abstain:
+                                        Въздържал се:
                                         <span t-out="state.currentSession.vote_abstain"/>
                                         <br/>
-                                        All Votes:
+                                        Общо гласували:
                                         <span t-out="state.currentSession.vote_total"/>
                                     </h1>
                                     <!--<h1 t-out="state.currentSession.name" class="fs-5 opacity-75"/>&ndash;&gt;-->
@@ -60,22 +50,22 @@
                             </t>
                             <t t-else="">
                                 <div class="d-flex flex-column align-items-center">
-                                    <h3 class="mb-0    text-white">Voting finish for</h3>
+                                    <h3 class="mb-0    text-white">Завърши гласуването за</h3>
                                     <!--                                <i class="fa fa-hand-peace-o fa-3x"/>-->
                                     <h1 t-out="state.currentSession.name"
                                         class="mb-0 text-center text-uppercase fw-bold display-3 text-white opacity-75"/>
                                     <br/>
                                     <h1 class="text-white fw-bold">
-                                        Yes:
+                                        Да:
                                         <span class="f" t-out="state.currentSession.vote_yes"/>
                                         <br/>
-                                        No:
+                                        Не:
                                         <span t-out="state.currentSession.vote_no"/>
                                         <br/>
-                                        Abstain:
+                                        Въздържал се:
                                         <span t-out="state.currentSession.vote_abstain"/>
                                         <br/>
-                                        All Votes:
+                                        Общо гласували:
                                         <span t-out="state.currentSession.vote_total"/>
                                     </h1>
                                     <!--<h1 t-out="state.currentSession.name" class="fs-5 opacity-75"/>&ndash;&gt;-->
@@ -87,6 +77,10 @@
                             </t>
                         </t>
                         <div class="d-flex flex-column flex-xl-row gap-4">
+                            <!--                            <button t-if="!state.currentSession and !state.scheduleBookingQuickCreate" class="btn btn-light btn-lg d-flex justify-content-between align-items-center gap-3 rounded-pill py-lg-3 px-3 px-lg-5" t-on-click="() => this.state.scheduleBookingQuickCreate = true">-->
+                            <!--                                Book now-->
+                            <!--                                <i class="fa fa-plus-circle"/>-->
+                            <!--                            </button>-->
                             <!--                            <button class="btn btn-lg d-flex justify-content-between align-items-center gap-3 rounded-pill py-lg-3 px-3 px-lg-5" t-att-class="state.currentSession ? 'btn-light' : 'btn-dark'" t-on-click="() => this.state.scheduleBooking = true">-->
                             <!--                                Schedule Booking-->
                             <!--                                <i class="fa fa-clock-o"/>-->
@@ -103,7 +97,7 @@
                 </div>
             </div>
             <div class="o_display_sidebar col-lg-4 col-xl-3 position-relative border-start bg-100">
-                <t t-call="hr_rfid_vertical_elections.DisplaySidebar" t-lang="lang"/>
+                <t t-call="hr_rfid_vertical_elections.DisplaySidebar"/>
             </div>
         </div>
     </t>
@@ -119,10 +113,8 @@
             </div>
             <div t-if="state.sessions.length === 0"
                  class="d-flex justify-content-center flex-column flex-fill py-3 text-center">
-                <h5>No Votes Planned</h5>
-                <span class="text-muted">There are currently no voting sessions scheduled. Please check back later or
-                    contact the administrator for more information.
-                </span>
+                <h5>Няма планирани гласувания</h5>
+                <span class="text-muted">В момента няма планирани сесии за гласуване.</span>
             </div>
             <div t-else="" class="flex-fill pt-1">
                 <!-- Today section is shown even if there are no bookings for this day -->
@@ -149,19 +141,19 @@
                             <div class="text-break">
                                 <div class="smaller text-bold" t-out="session.name"/>
                                 <div class="smaller smooth-color-animate" t-if="session.state ==='open'">
-                                    Vote in progress ...
+                                    Тече гласуване ...
                                 </div>
                                 <div class="smaller" t-if="session.state ==='closed'">
-                                    Final:
+                                    Резултат:
                                     <span t-out="session.final_vote" class="text-uppercase"/>
                                     <br/>
-                                    Yes:
+                                    Да:
                                     <span t-out="session.vote_yes"/>
-                                    No:
+                                    Не:
                                     <span t-out="session.vote_no"/>
-                                    Abstain:
+                                    Въздържали се:
                                     <span t-out="session.vote_abstain"/>
-                                    All Votes:
+                                    Общо гласували:
                                     <span t-out="session.vote_total"/>
                                 </div>
                             </div>
