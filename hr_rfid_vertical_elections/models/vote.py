@@ -42,7 +42,8 @@ class Vote(models.Model):
         ("uniq_vote", "unique(voting_session_id, voter_id)", "Vote must be unique"),
     ]
 
+    @api.model_create_multi
     def create(self, vals_list):
-        vote = super(Vote, self).create(vals_list)
+        vote = super().create(vals_list)
         vote.voting_session_id._compute_votes()
         return vote
