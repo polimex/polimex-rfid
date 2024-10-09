@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="voting_display" name="Voting" inherit_id="web.layout" primary="True">
+    <template id="voting_display" name="Voting Display" inherit_id="web.layout" primary="True">
         <xpath expr="//head/meta[last()]" position="after">
             <meta name="viewport" content="width=device-width, initial-scale=1"/>
         </xpath>
-        <xpath expr="//head/meta[last()]" position="replace">
+<!--        <xpath expr="//head/meta[last()]" position="replace">-->
+        <xpath expr="//head/title" position="replace">
              <title t-esc="'%s - %s by Polimex' % (display.name, display.company_id.display_name)"/>
         </xpath>
         <xpath expr="//head/link[last()]" position="after">
@@ -17,11 +18,12 @@
                     if (!/(^|;\s)tz=/.test(document.cookie)) {
                     const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
                     document.cookie = `tz=${userTZ}; path=/`;
+                    document.lang = <t t-out="display.create_uid.lang"/>;
                 }
             </script>
             <t t-set="title" t-value="display.name"/>
             <t t-set="body_classname" t-value="'o_display_frontend'"/>
-            <t t-set="html_data" t-value="{'lang': lang}"/>
+            <t t-set="html_data" t-value="{'lang': display.create_uid.lang.replace('_', '-')}"/>
             <t t-call-assets="web.assets_frontend_minimal" t-css="false" defer_load="True"/>
             <t t-call="web.conditional_assets_tests">
                 <t t-set="ignore_missing_deps" t-value="True"/>
@@ -40,6 +42,7 @@
                         'accessToken': display.access_token,
                         'noVotingBgColor': display.no_voting_background_color,
                         'votingBgColor': display.voting_background_color,
+                        'lang': display.create_uid.lang,
                         })"/>
                 </main>
             </div>

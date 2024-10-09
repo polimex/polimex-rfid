@@ -10,8 +10,9 @@
     'category': 'Human Resources',
     'version': '1.0',
     'license': 'AGPL-3',
-    'depends': ['hr_rfid'],
+    'depends': ['hr_rfid', 'bus'],
     'data': [
+        'security/hr_rfid_voting_security.xml',
         'views/vote_session_views.xml',
         'views/voting_participants_views.xml',
         'views/voting_item_views.xml',

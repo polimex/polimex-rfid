@@ -30,7 +30,7 @@ class VoteController(http.Controller):
     @http.route("/voting_display/<string:access_token>/get_existing_sessions", type="json", auth="public")
     def get_existing_sessions(self, access_token):
         display_sudo = self._fetch_display_from_access_token(access_token)
-        return request.env["voting.session"].sudo().search_read(
+        return request.env["voting.session"].sudo().with_context({'lang':'bg_BG'}).search_read(
             [("display_id", "=", display_sudo.id), ("planned_date", "=", datetime.today())],
             ["name", "create_uid", "planned_date", "start_datetime", "end_datetime", "state",
              'voting_time', 'vote_results_time', 'vote_total', 'vote_yes', 'vote_no', 'vote_abstain', 'final_vote'],
