@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-28 11:40+0000\n"
-"PO-Revision-Date: 2024-08-28 14:41+0300\n"
+"POT-Creation-Date: 2024-10-09 11:58+0000\n"
+"PO-Revision-Date: 2024-10-09 14:59+0300\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.3\n"
+"X-Generator: Poedit 3.5\n"
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.actions.report,print_report_name:hr_rfid_vertical_elections.action_report_voting_session
@@ -68,27 +68,6 @@ msgstr ""
 "                        Общо гласове:"
 
 #. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_view/room_booking_view.xml:0
-#, python-format
-msgid "1 hour"
-msgstr ""
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_view/room_booking_view.xml:0
-#, python-format
-msgid "15 min"
-msgstr ""
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_view/room_booking_view.xml:0
-#, python-format
-msgid "30 min"
-msgstr ""
-
-#. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
 msgid "<i class=\"fa fa-long-arrow-right mx-1\" title=\"Until\"/>"
 msgstr "<i class=\"fa fa-long-arrow-right mx-1\" title=\"До\"/>"
@@ -97,63 +76,56 @@ msgstr "<i class=\"fa fa-long-arrow-right mx-1\" title=\"До\"/>"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
 msgid ""
 "<span style=\"font-weight:bold;\" class=\"mt4 text-danger\">\n"
-"                                                    <strong>Final Vote: </"
+"                                                    <strong>Final Vote:</"
 "strong>\n"
 "                                                </span>"
 msgstr ""
 "<span style=\"font-weight:bold;\" class=\"mt4 text-danger\">\n"
 "                                                    <strong>Окончателно "
-"гласуване: </strong>\n"
+"гласуване:</strong>\n"
 "                                                </span>"
 
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
 msgid ""
 "<span style=\"font-weight:bold;\" class=\"mt4 text-success\">\n"
-"                                                    <strong>Final Vote: </"
+"                                                    <strong>Final Vote:</"
 "strong>\n"
 "                                                </span>"
 msgstr ""
 "<span style=\"font-weight:bold;\" class=\"mt4 text-success\">\n"
 "                                                    <strong>Окончателно "
-"гласуване: </strong>\n"
+"гласуване:</strong>\n"
 "                                                </span>"
 
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
 msgid ""
 "<span style=\"font-weight:bold;\" class=\"mt4 text-warning\">\n"
-"                                                    <strong>Final Vote: </"
+"                                                    <strong>Final Vote:</"
 "strong>\n"
 "                                                </span>"
 msgstr ""
 "<span style=\"font-weight:bold;\" class=\"mt4 text-warning\">\n"
 "                                                    <strong>Окончателно "
-"гласуване: </strong>\n"
+"гласуване:</strong>\n"
 "                                                </span>"
 
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
-msgid "<strong>Display: </strong>"
-msgstr "<strong>Дисплей: </strong>"
+msgid "<strong>Display:</strong>"
+msgstr "<strong>Дисплей:</strong>"
 
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
-msgid "<strong>Planned for: </strong>"
-msgstr "<strong>Планирано за: </strong>"
+msgid "<strong>Planned for:</strong>"
+msgstr "<strong>Планирано за:</strong>"
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__vote_abstain
 #: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_vote__vote__abstain
 msgid "Abstain"
 msgstr "Въздържал се"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-#, python-format
-msgid "Abstain:"
-msgstr "Въздържал се:"
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__access_token
@@ -184,13 +156,13 @@ msgstr "Декорация на съобщенията за грешки в де
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_state
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_state
 msgid "Activity State"
-msgstr ""
+msgstr "Състояние на дейността"
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_type_icon
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_type_icon
 msgid "Activity Type Icon"
-msgstr ""
+msgstr "Икона на типа действие"
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__vote_total
@@ -198,23 +170,9 @@ msgid "All Votes"
 msgstr "Всички гласове"
 
 #. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-#, python-format
-msgid "All Votes:"
-msgstr "Всички гласуве:"
-
-#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__description
 msgid "Announcements"
 msgstr "Известия"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_view/room_booking_view.js:0
-#, python-format
-msgid "Are you sure you want to delete this booking?"
-msgstr "Сигурни ли сте, че искате да изтриете тази резервация?"
 
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_form
@@ -230,60 +188,9 @@ msgid "Attachment Count"
 msgstr "Брой прикачени файлове"
 
 #. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_view/room_booking_view.xml:0
-#, python-format
-msgid "Available"
-msgstr "На разположение"
-
-#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__display_background_image
 msgid "Background Image"
 msgstr "Фоново изображение"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_view/room_booking_view.xml:0
-#, python-format
-msgid "Book now"
-msgstr "Резервирай сега"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_view/room_booking_view.xml:0
-#, python-format
-msgid "Booked"
-msgstr "Резервирано"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_form/room_booking_form.xml:0
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_view/room_booking_view.xml:0
-#, python-format
-msgid "Booking Name"
-msgstr "Име на резервацията"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_view/room_booking_view.xml:0
-#, python-format
-msgid "Booking Now"
-msgstr "Резервирай Сега"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-python
-#: code:addons/hr_rfid_vertical_elections/models/room_room.py:0
-#, python-format
-msgid "Bookings"
-msgstr "Резервации"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_form/room_booking_form.xml:0
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_view/room_booking_view.xml:0
-#, python-format
-msgid "Cancel"
-msgstr "Отказ"
 
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
@@ -323,13 +230,6 @@ msgid "Created on"
 msgstr "Създаден на"
 
 #. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_view/room_booking_view.js:0
-#, python-format
-msgid "Delete"
-msgstr "Изтрий"
-
-#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__description
 msgid "Description"
 msgstr "Описание"
@@ -348,13 +248,6 @@ msgstr "Описание на сесията за гласуване"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
 msgid "Description:"
 msgstr "Описание:"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-#, python-format
-msgid "Discussions"
-msgstr "Дискусии"
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__display_id
@@ -412,11 +305,6 @@ msgid "E.g. Vote for new rules"
 msgstr "Напр. гласуване за нови правила"
 
 #. module: hr_rfid_vertical_elections
-#: model:ir.ui.menu,name:hr_rfid_vertical_elections.vote_menu_root
-msgid "Elections"
-msgstr "Избори"
-
-#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__end_datetime
 msgid "End Datetime"
 msgstr "Крайна дата и час"
@@ -432,13 +320,6 @@ msgid "Final vote:"
 msgstr "Окончателно гласуване:"
 
 #. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-#, python-format
-msgid "Final:"
-msgstr "Окончателно:"
-
-#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_follower_ids
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_follower_ids
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_follower_ids
@@ -452,7 +333,7 @@ msgstr "Последователи"
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_partner_ids
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__message_partner_ids
 msgid "Followers (Partners)"
-msgstr ""
+msgstr "Последователи (Партньори)"
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__activity_type_icon
@@ -633,13 +514,6 @@ msgid "Next Activity Type"
 msgstr "Тип на Следващо Действие"
 
 #. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_form/room_booking_form.xml:0
-#, python-format
-msgid "Next Week"
-msgstr "Следващата седмица"
-
-#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__vote_no
 #: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_session__final_vote__no
 #: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_vote__vote__no
@@ -647,53 +521,14 @@ msgid "No"
 msgstr "Не"
 
 #. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_view/room_booking_view.xml:0
-#, python-format
-msgid "No Bookings Planned"
-msgstr "Няма планирани резервации"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_view/room_booking_view.xml:0
-#, python-format
-msgid "No Bookings for Today"
-msgstr "Няма резервации за днес"
-
-#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_session__final_vote__no_vote
 msgid "No Vote"
 msgstr "Без глас"
 
 #. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-#, python-format
-msgid "No Votes Planned"
-msgstr "Няма планирани гласувания"
-
-#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__no_voting_background_color
 msgid "No Voting Background Color"
 msgstr "Цветът на фона на гласуването"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-#, python-format
-msgid ""
-"No open voting at this\n"
-"                                    moment"
-msgstr ""
-"Без открито гласуване на този етап\n"
-"                                    в момента"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-#, python-format
-msgid "No:"
-msgstr "Не:"
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_needaction_counter
@@ -749,13 +584,6 @@ msgid "Open display"
 msgstr "Отвори дисплей"
 
 #. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_view/room_booking_view.xml:0
-#, python-format
-msgid "Or"
-msgstr "Или"
-
-#. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
 msgid "Organizer"
 msgstr "Организатор"
@@ -776,30 +604,14 @@ msgid "Planned Vote Date"
 msgstr "Планирана дата на гласуване"
 
 #. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-#, python-format
-msgid "Please Vote for"
-msgstr "Моля, гласувайте за"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_form/room_booking_form.xml:0
-#, python-format
-msgid "Previous Week"
-msgstr "Предишна седмица"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_view/room_booking_view.js:0
-#, python-format
-msgid "Public Booking"
-msgstr "Публична резервация"
-
-#. module: hr_rfid_vertical_elections
 #: model:ir.model,name:hr_rfid_vertical_elections.model_hr_rfid_event_user
 msgid "RFID User Event"
 msgstr "RFID потребителско събитие"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.ui.menu,name:hr_rfid_vertical_elections.vote_menu_root
+msgid "RFID Voting"
+msgstr "Избори"
 
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
@@ -826,34 +638,6 @@ msgstr "Подробности за резултатите"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_search
 msgid "Revoted"
 msgstr "Прегласувано"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-python
-#: code:addons/hr_rfid_vertical_elections/models/room_booking.py:0
-#, python-format
-msgid "Room %(room_name)s is already booked during the selected time slot."
-msgstr ""
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_form/room_booking_form.xml:0
-#, python-format
-msgid "Save"
-msgstr "Запази"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_form/room_booking_form.xml:0
-#, python-format
-msgid "Schedule"
-msgstr ""
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_view/room_booking_view.xml:0
-#, python-format
-msgid "Schedule Booking"
-msgstr ""
 
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_search
@@ -912,13 +696,6 @@ msgstr ""
 "Планирани: Бъдещи дейности."
 
 #. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_form/room_booking_form.js:0
-#, python-format
-msgid "Stop"
-msgstr "Спри"
-
-#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__terminal_ids
 msgid "Terminals"
 msgstr "Терминали"
@@ -945,43 +722,9 @@ msgstr ""
 "Окончателният вот за това гласуване е <strong>ДА.</strong> Точката е приета."
 
 #. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_view/room_booking_view.xml:0
-#, python-format
-msgid "The next booking is starting soon."
-msgstr ""
-
-#. module: hr_rfid_vertical_elections
 #: model:ir.model.constraint,message:hr_rfid_vertical_elections.constraint_voting_display_uniq_short_code
 msgid "The short code must be unique."
 msgstr "Краткият код трябва да е уникален."
-
-#. module: hr_rfid_vertical_elections
-#. odoo-python
-#: code:addons/hr_rfid_vertical_elections/models/room_booking.py:0
-#, python-format
-msgid "The start date of %(booking_name)s must be earlier than the end date."
-msgstr ""
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-#, python-format
-msgid ""
-"There are currently no voting sessions scheduled. Please check back later "
-"or\n"
-"                    contact the administrator for more information."
-msgstr ""
-"Понастоящем няма насрочени сесии за гласуване. Моля, проверете отново по-"
-"късно или\n"
-"                    се свържете с администратора за повече информация."
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/room_booking/room_booking_view/room_booking_view.xml:0
-#, python-format
-msgid "This room is as free as a fish in a sea of endless possibilities"
-msgstr ""
 
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
@@ -1020,10 +763,25 @@ msgid "Type of the exception activity on record."
 msgstr "Тип на активността на записа."
 
 #. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_hr_rfid_workcode__user_action
+msgid "User action"
+msgstr "Действие на потребителя"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.module.category,description:hr_rfid_vertical_elections.hr_rfid_voting_category
+msgid "User rights for the Voting System"
+msgstr "Потребителски права за системата за гласуване"
+
+#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__vote
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
 msgid "Vote"
 msgstr "Глас"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__hr_rfid_workcode__user_action__abstain
+msgid "Vote Abstain"
+msgstr "Гласуване Въздържал се"
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__vote_event_id
@@ -1036,9 +794,14 @@ msgid "Vote Finished"
 msgstr "Гласуването е завършено"
 
 #. module: hr_rfid_vertical_elections
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__hr_rfid_workcode__user_action__no
+msgid "Vote No"
+msgstr "Гласуване Против"
+
+#. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
-msgid "Vote Protocol"
-msgstr "Протокол за гласуване"
+msgid "Vote Result"
+msgstr "Резултат от гласуването"
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__vote_results_time
@@ -1056,16 +819,14 @@ msgid "Vote Time"
 msgstr "Време за гласуване"
 
 #. module: hr_rfid_vertical_elections
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__hr_rfid_workcode__user_action__yes
+msgid "Vote Yes"
+msgstr "Гласуване За"
+
+#. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
 msgid "Vote in Progress"
 msgstr "Гласуване в ход"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-#, python-format
-msgid "Vote in progress ..."
-msgstr "Гласуването е в ход ..."
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.constraint,message:hr_rfid_vertical_elections.constraint_voting_vote_uniq_vote
@@ -1140,6 +901,21 @@ msgid "Voting Sessions Count"
 msgstr "Брой сесии за гласуване"
 
 #. module: hr_rfid_vertical_elections
+#: model:ir.module.category,name:hr_rfid_vertical_elections.hr_rfid_voting_category
+msgid "Voting System"
+msgstr "Система за гласуване"
+
+#. module: hr_rfid_vertical_elections
+#: model:res.groups,name:hr_rfid_vertical_elections.group_manager
+msgid "Voting System Manager"
+msgstr "Мениджър на системата за гласуване"
+
+#. module: hr_rfid_vertical_elections
+#: model:res.groups,name:hr_rfid_vertical_elections.group_operator
+msgid "Voting System Operator"
+msgstr "Оператор на система за гласуване"
+
+#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__voting_time
 msgid "Voting Time"
 msgstr "Време за гласуване"
@@ -1148,13 +924,6 @@ msgstr "Време за гласуване"
 #: model:ir.model,name:hr_rfid_vertical_elections.model_voting_vote
 msgid "Voting Vote"
 msgstr "Глас"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-#, python-format
-msgid "Voting finish for"
-msgstr "Край на гласуването за"
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__voting_item_id
@@ -1182,7 +951,7 @@ msgstr "Състояние на гласуване:"
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__website_message_ids
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__website_message_ids
 msgid "Website Messages"
-msgstr ""
+msgstr "Съобщения в уебсайт"
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__website_message_ids
@@ -1190,7 +959,17 @@ msgstr ""
 #: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_participants__website_message_ids
 #: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__website_message_ids
 msgid "Website communication history"
-msgstr ""
+msgstr "История на комуникацията на уебсайт"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_hr_rfid_workcode__user_action
+msgid "What the user does when he submits this workcode"
+msgstr "Какво прави потребителят, когато подаде този работен код"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model,name:hr_rfid_vertical_elections.model_hr_rfid_workcode
+msgid "Workcode"
+msgstr "Работен код"
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__vote_yes
@@ -1200,11 +979,8 @@ msgid "Yes"
 msgstr "Да"
 
 #. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
-#, python-format
 msgid "Yes:"
 msgstr "Да:"
 
@@ -1212,3 +988,94 @@ msgstr "Да:"
 #: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_session__state__revoted
 msgid "re-Voted"
 msgstr "Прегласуване"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+#, python-format
+msgid "В момента няма планирани сесии за гласуване."
+msgstr ""
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+#, python-format
+msgid "Въздържал се:"
+msgstr ""
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+#, python-format
+msgid "Въздържали се:"
+msgstr ""
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+#, python-format
+msgid "Да:"
+msgstr ""
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+#, python-format
+msgid "Дискусии"
+msgstr ""
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+#, python-format
+msgid "Завърши гласуването за"
+msgstr ""
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+#, python-format
+msgid "Моля гласувайте за"
+msgstr ""
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+#, python-format
+msgid "Не:"
+msgstr ""
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+#, python-format
+msgid "Няма открито гласуване в момента"
+msgstr ""
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+#, python-format
+msgid "Няма планирани гласувания"
+msgstr ""
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+#, python-format
+msgid "Общо гласували:"
+msgstr ""
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+#, python-format
+msgid "Резултат:"
+msgstr ""
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+#, python-format
+msgid "Тече гласуване ..."
+msgstr ""
