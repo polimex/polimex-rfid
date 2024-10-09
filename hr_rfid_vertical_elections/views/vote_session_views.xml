@@ -225,7 +225,7 @@
                     </div>
                     <group>
                         <group>
-                            <field name="description"/>
+                            <field name="description" readonly="state == 'closed'"/>
                             <field name="voting_time" readonly="state!='draft'"/>
                             <field name="vote_results_time" readonly="state!='draft'"/>
 
