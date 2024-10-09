@@ -4,7 +4,7 @@ from wheel.metadata import requires_to_requires_dist
 
 from odoo import fields, models, api
 from odoo.exceptions import ValidationError
-from odoo.tools import json
+
 import logging
 _logger = logging.getLogger(__name__)
 
