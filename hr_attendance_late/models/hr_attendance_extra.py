@@ -1,13 +1,16 @@
 from odoo import api, fields, models
 from datetime import datetime, timedelta, time
 
+from odoo.api import ondelete
+
+
 class HrAttendanceExtra(models.Model):
     _name = 'hr.attendance.extra'
     _description = 'Extra work time calculations'
     _order = 'for_date'
 
     for_date = fields.Date()
-    employee_id = fields.Many2one(comodel_name='hr.employee', required=True)
+    employee_id = fields.Many2one(comodel_name='hr.employee', required=True, ondelete='cascade')
     department_id = fields.Many2one(related='employee_id.department_id', readonly=True, store=True)
 
     actual_work_time = fields.Float(digits=(2,2))
