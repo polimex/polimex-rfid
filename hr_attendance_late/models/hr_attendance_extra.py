@@ -7,7 +7,7 @@ class HrAttendanceExtra(models.Model):
     _order = 'for_date'
 
     for_date = fields.Date()
-    employee_id = fields.Many2one(comodel_name='hr.employee', required=True)
+    employee_id = fields.Many2one(comodel_name='hr.employee', required=True, ondelete='cascade')
     department_id = fields.Many2one(related='employee_id.department_id', readonly=True, store=True)
 
     actual_work_time = fields.Float(digits=(2, 2))
