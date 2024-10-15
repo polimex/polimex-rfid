@@ -588,6 +588,13 @@ class HrRfidAccessGroupRelations(models.AbstractModel):
         default=0
     )
 
+    def active_for_visits(self):
+        res = []
+        for agr in self:
+            if (agr.visits_counting and agr.permitted_visits < agr.visits_counter) or not agr.visits_counting:
+                res.append(True)
+        return res and all(res) or False
+
     def _deactivate(self):
         raise exceptions.ValidationError('Not implemented yet!')
 
@@ -784,7 +791,7 @@ class HrRfidAccessGroupContactRel(models.Model):
             p_rel_ids = self.search([('contact_id', '=', p.id)])
             for ag_id in p_rel_ids.mapped('access_group_id'):
                 rel_ranges = [(rel.activate_on, rel.expiration) for rel in
-                              p_rel_ids.filtered(lambda ag: ag.access_group_id == ag_id)]
+                              p_rel_ids.filtered(lambda ag: ag.access_group_id == ag_id) if rel.active_for_visits()]
                 if _check_overlap(rel_ranges):
                     raise ValidationError(
                         _('Overlap found between access group(%s) active period ranges for (%s)', ag_id.name, p.name))
