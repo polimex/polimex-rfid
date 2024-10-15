@@ -5,3 +5,4 @@ from . import rfid_service
 from . import rfid_service_sale
 from . import rfid_service_sale_wiz
 from . import res_partner
+from . import hr_rfid_access_group_contact_rel

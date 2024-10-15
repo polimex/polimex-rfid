@@ -44,7 +44,9 @@ class BaseRFIDService(models.Model):
             ('progress', 'Progress'),
             ('finished', 'Finished'),
             ('canceled', 'Canceled')
-        ], compute='_compute_state', store=True,
+        ], compute='_compute_state',
+        store=True,
+        tracking=True,
     )
     company_id = fields.Many2one(
         comodel_name='res.company',
@@ -70,7 +72,7 @@ class BaseRFIDService(models.Model):
     )
 
     # @api.depends('partner_id.hr_rfid_card_ids', 'partner_id.hr_rfid_access_group_ids')
-    @api.depends('access_group_contact_rel', 'access_group_contact_rel.state')
+    @api.depends('access_group_contact_rel', 'start_date', 'end_date')
     def _compute_state(self):
         for s in self:
             if not s.start_date:
@@ -80,12 +82,12 @@ class BaseRFIDService(models.Model):
                 start_date = s.start_date
                 end_date = s.end_date
             state = 'registered'
-            if start_date <= fields.Datetime.now() <= end_date:
+            if (start_date <= fields.Datetime.now() <= end_date) and s.access_group_contact_rel.active_for_visits():
                 state = 'progress'
             elif (s.access_group_contact_rel.expiration - s.access_group_contact_rel.activate_on) == timedelta(
                     seconds=1):
                 state = 'canceled'
-            elif end_date <= fields.Datetime.now():
+            elif (end_date <= fields.Datetime.now()) or not s.access_group_contact_rel.active_for_visits():
                 state = 'finished'
             s.state = state
 
