@@ -491,7 +491,7 @@ class HrRfidController(models.Model):
             a.doors_count = len(a.door_ids)
             a.alarm_line_count = len(a.alarm_line_ids)
             a.user_event_count = self.env['hr.rfid.event.user'].search_count(
-                [('door_id', 'in', [d.id for d in a.door_ids])])
+                [('reader_id', 'in', a.reader_ids.mapped('id'))])
 
     @api.depends('output_states')
     def _compute_siren_state(self):
@@ -525,7 +525,7 @@ class HrRfidController(models.Model):
         elif key and op:
             domain = [(key, op, self.id)]
         elif xml_id == 'hr_rfid_event_user_action':
-            domain = [('door_id', 'in', self.door_ids.mapped('id'))]
+            domain = [('reader_id', 'in', self.reader_ids.mapped('id'))]
         else:
             domain = [('controller_id', '=', self.id)]
         model = 'hr_rfid'
