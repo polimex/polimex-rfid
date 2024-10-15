@@ -790,10 +790,20 @@ class HrRfidCommands(models.Model):
                     for i in range(io_size):
                         door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
                         add_door_to_reader(reader1, door)
-                    for i in range(io_size, io_size*io_count):
+                    # for i in range(io_size, io_size*io_count):
+                    #     door = create_door(gen_d_name(i + 1, self.controller_id), i + 1) # !!!!!!!!!!!!!!!!!!
+                    #     add_door_to_reader(reader2, door)
+                    for i in range(io_size):
+                        door = create_door(gen_d_name(io_size+i + 1, self.controller_id), 16 + i + 1)
+                        add_door_to_reader(reader2, door)
+                elif io_count == 3:
+                    for i in range(min(io_size * 2, 16)):
+                        door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
+                        add_door_to_reader(reader1, door)
+                    for i in range(16, 16 + io_size):
                         door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
                         add_door_to_reader(reader2, door)
-                elif io_count in [3, 4]:
+                elif io_count == 4:
                     for i in range(min(io_size * 2, 16)):
                         door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
                         add_door_to_reader(reader1, door)
