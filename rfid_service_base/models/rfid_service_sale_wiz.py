@@ -160,17 +160,19 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         access_group_contact_rel = self.env['hr.rfid.access.group.contact.rel']
         if not partner_id:
             partner_id = self.env['res.partner'].create({
-                'name': '%s (%s)' % (transaction_name, self.service_id.name),
+                # 'name': '%s (%s)' % (transaction_name, self.service_id.name),
+                'name': transaction_name,
                 'company_id': self.service_id.company_id.id,
                 'mobile': self.mobile,
                 'email': self.email,
                 'parent_id': self.parent_id.id,
             })
         else:
-            partner_id.write({
-                'mobile': self.mobile,
-                'email': self.email,
-            })
+            if partner_id.mobile != self.mobile or partner_id.email != self.email:
+                partner_id.write({
+                    'mobile': self.mobile,
+                    'email': self.email,
+                })
             access_group_contact_rel = self.env['hr.rfid.access.group.contact.rel'].sudo().search([
                 ('access_group_id', '=', self.service_id.access_group_id.id),
                 ('contact_id', '=', partner_id.id),
@@ -178,7 +180,7 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         for rel in access_group_contact_rel:
             if not rel.expiration:
                 raise UserError(_('The partner have valid service for unlimited period!'))
-            if self.start_date < rel.expiration < self.end_date:
+            if (self.start_date < rel.expiration < self.end_date) and rel.state:
                 raise UserError(_('The partner have valid service for this period!'))
 
         access_group_contact_rel = self.env['hr.rfid.access.group.contact.rel'].sudo().create({
@@ -205,17 +207,6 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
                 )
             else:
                 existing_card_id.contact_id = partner_id.id
-                # existing_card_id.unlink()
-                # existing_card_id = False
-
-            # if not existing_card_id.contact_id:
-            #     existing_card_id.contact_id = partner_id.id
-            #     partner_id.name = existing_card_id.card_reference
-            # else:
-            #     raise UserError(
-            #         _("The card %s (%s) is not related to this Customer (%s") % (
-            #         existing_card_id.contact_id.name, self.card_number, partner_id.name)
-            #     )
         if not existing_card_id:
             card_id = self.env['hr.rfid.card'].sudo().create({
                 'contact_id': partner_id.id,
@@ -232,8 +223,8 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
             existing_card_id.sudo().write({
                 'card_reference': '%s (%s)' % (partner_id.name, self.service_id.name),
                 'company_id': self.service_id.company_id.id,
-                'activate_on': self.start_date,
-                'deactivate_on': self.end_date,
+                'activate_on': min( self.start_date, existing_card_id.activate_on),
+                'deactivate_on': max( self.end_date, existing_card_id.deactivate_on),
                 'write_uid': self.env.user.id,
             })
             card_id = existing_card_id
