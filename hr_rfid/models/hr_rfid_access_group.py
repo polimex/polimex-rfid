@@ -587,11 +587,11 @@ class HrRfidAccessGroupRelations(models.AbstractModel):
     )
 
     def active_for_visits(self):
-        self.ensure_one()
+        res = []
         for agr in self:
             if (agr.visits_counting and agr.permitted_visits < agr.visits_counter) or not agr.visits_counting:
-                return True
-        return False
+                res.append(True)
+        return res and all(res) or False
 
     def _deactivate(self):
         raise exceptions.ValidationError('Not implemented yet!')
