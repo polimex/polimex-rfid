@@ -56,7 +56,7 @@ class HrRfidWebstackDiscovery(models.TransientModel):
             udp_sock.settimeout(0.5)
             try:
                 data, addr = udp_sock.recvfrom(1024)
-                data = data.decode().split('\n')[:-1]
+                data = data.decode(errors='ignore').split('\n')[:-1]
                 data = list(map(str.strip, data))
                 if (len(data) == 0) or (len(data) > 100) or (data[4] in added_sn):
                     continue
