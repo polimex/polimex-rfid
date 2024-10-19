@@ -15,7 +15,7 @@
                     <field name="parent_id"/>
                     <field name="alarm_line_ids" widget="many2many_tags" optional="hide"/>
                     <field name="state"/>
-               </tree>
+                </tree>
             </field>
         </record>
 
@@ -32,14 +32,16 @@
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
-                            <button name="disarm" type="object" class="oe_stat_button text-danger oe_read_only" icon="fa-shield"
+                            <button name="disarm" type="object" class="oe_stat_button text-danger oe_read_only"
+                                    icon="fa-shield"
                                     groups="hr_rfid.hr_rfid_view_door_arm_disarm"
                                     help="Disarm all lines in this group"
                                     confirm="Are you sure to Disarm all lines in the group?"
                                     invisible="state in ['arm','mixed']">
                                 Disarm
                             </button>
-                            <button name="arm" type="object" class="oe_stat_button text-success oe_read_only" icon="fa-shield"
+                            <button name="arm" type="object" class="oe_stat_button text-success oe_read_only"
+                                    icon="fa-shield"
                                     groups="hr_rfid.hr_rfid_view_door_arm_disarm"
                                     help="Arm all lines in this group"
                                     confirm="Are you sure to Arm all lines in the group?"
@@ -48,26 +50,29 @@
                             </button>
                         </div>
                         <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
                             <h1>
-                                <field name="name"/>
+                                <field name="name" placeholder="The name of the alarm lines group"/>
                             </h1>
                         </div>
+                        <group>
                             <group>
                                 <field name="parent_id"/>
                                 <field name="company_id" groups="base.group_multi_company"/>
                             </group>
                             <group>
-                                <field name="alarm_line_ids" colspan="4" widget="many2many_tags"/>
+                                <field name="alarm_line_ids" widget="many2many_tags"/>
                             </group>
-                            <group>
-                                <field name="child_ids" colspan="4">
-                                    <tree editable="top">
-                                        <field name="name"/>
-                                        <field name="parent_id"/>
-                                        <field name="state"/>
-                                    </tree>
-                                </field>
-                            </group>
+                        </group>
+                        <group>
+                            <field name="child_ids">
+                                <tree editable="top">
+                                    <field name="name"/>
+                                    <field name="parent_id"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </group>
                         <group string="Debug Information" groups="base.group_no_one" colspan="4">
                         </group>
                     </sheet>
@@ -76,6 +81,44 @@
                         <field name="message_ids" widget="mail_thread"/>
                     </div>
                 </form>
+            </field>
+        </record>
+
+        <record id="hr_rfid_ctrl_alarm_group_hierarchy_view" model="ir.ui.view">
+            <field name="name">hr.rfid.ctrl.alarm.group.hierarchy.view</field>
+            <field name="model">hr.rfid.ctrl.alarm.group</field>
+            <field name="arch" type="xml">
+                <hierarchy child_field="child_ids" draggable="1">
+                    <field name="name"/>
+                    <field name="color"/>
+                    <templates>
+                        <t t-name="hierarchy-box">
+                            <div t-attf-class="o_hierarchy_node_header d-flex justify-content-center align-items-center o_hierarchy_node_color_{{ record.color.raw_value }}">
+                                <field name="name"/>
+                                <field name="state" invisible="1"/>
+                                <button class="btn btn-link" name="disarm" type="object"
+                                        t-if="record.state.raw_value == 'arm'">
+                                    <i class="fa fa-universal-access text-success ms-auto"
+                                       title="Disarm the Group"/>
+                                </button>
+                                <button class="btn btn-link" name="arm" type="object"
+                                        t-if="record.state.raw_value == 'disarm'">
+                                    <i class="fa fa-shield text-danger ms-auto"
+                                       title="Arm the Group"/>
+                                </button>
+                            </div>
+                            <div class="o_hierarchy_node_body d-flex flex-column">
+                                <field name="alarm_line_ids" invisible="1"/>
+                                <div>
+                                    <button class="btn btn-link" name="open_alarm_line_list_action"
+                                            type="object" t-if="record.alarm_line_ids.raw_value">
+                                        <field name="alarm_line_ids" widget="many2many_tags"/>
+                                    </button>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </hierarchy>
             </field>
         </record>
 
@@ -104,9 +147,11 @@
                                                            role="img"
                                                            aria-label="Arm State"/>
                                                     </span>
-                                                    </div>
+                                                </div>
                                                 <h2>
-                                                    <a type="open"><field name="name" title="Alarm group"/></a>
+                                                    <a type="open">
+                                                        <field name="name" title="Alarm group"/>
+                                                    </a>
                                                 </h2>
                                             </strong>
                                             <ul>
@@ -115,7 +160,8 @@
                                                         <span title="Disarm manual"
                                                               groups="hr_rfid.hr_rfid_view_door_arm_disarm">
                                                             <a name="disarm" type="object">
-                                                                <i class="fa fa-fw fa-universal-access text-success" role="img"
+                                                                <i class="fa fa-fw fa-universal-access text-success"
+                                                                   role="img"
                                                                    aria-label="Disarm the Group manually"/>
                                                             </a>
                                                         </span>
@@ -128,14 +174,14 @@
                                                         </span>
                                                     </div>
                                                 </li>
-                                                <li >
+                                                <li>
                                                     <t t-esc="record.state.string"/>:
                                                     <strong>
-                                                    <field name="state"
-                                                           decoration-success="state == 'disarm'"
-                                                           decoration-warning="state == 'mixed'"
-                                                           decoration-info="state == 'no_alarm'"
-                                                           decoration-danger="state == 'arm'"/>
+                                                        <field name="state"
+                                                               decoration-success="state == 'disarm'"
+                                                               decoration-warning="state == 'mixed'"
+                                                               decoration-info="state == 'no_alarm'"
+                                                               decoration-danger="state == 'arm'"/>
                                                     </strong>
                                                 </li>
                                             </ul>
@@ -156,8 +202,8 @@
         </record>
 
         <record id="hr_rfid_ctrl_alarm_group_search_view" model="ir.ui.view">
-           <field name="name">hr.rfid.ctrl.alarm.group.search.view</field>
-           <field name="model">hr.rfid.ctrl.alarm.group</field>
+            <field name="name">hr.rfid.ctrl.alarm.group.search.view</field>
+            <field name="model">hr.rfid.ctrl.alarm.group</field>
             <field name="arch" type="xml">
                 <search string="">
                     <field name="name"/>
@@ -167,14 +213,14 @@
                     </searchpanel>
 
                 </search>
-           </field>
+            </field>
         </record>
 
         <record id="hr_rfid_ctrl_alarm_group_action" model="ir.actions.act_window">
             <field name="name">Alarm Line Groups</field>
             <field name="res_model">hr.rfid.ctrl.alarm.group</field>
-            <field name="view_mode">kanban,tree,form,search</field>
-            <field name="view_id" ref="hr_rfid_ctrl_alarm_group_view_kanban"/>
+            <field name="view_mode">hierarchy,kanban,tree,form,search</field>
+            <field name="view_id" ref="hr_rfid_ctrl_alarm_group_hierarchy_view"/>
         </record>
 
     </data>
