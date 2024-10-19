@@ -120,7 +120,7 @@ class HrRfidWebstackDiscovery(models.TransientModel):
                 'version': ws.version,
                 'hw_version': ws.hw_version,
                 'serial': ws.serial,
-                'behind_nat': False,
+                'behind_nat': True,
                 'available': 'a',
                 'active': True,
                 'last_ip': ws.last_ip,
