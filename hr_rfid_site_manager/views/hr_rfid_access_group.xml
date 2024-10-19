@@ -18,7 +18,7 @@
         </record>
 
         <record id="hr_rfid_access_group_view_tree_inherit" model="ir.ui.view">
-            <field name="name">hr.rfid.access.group.tree</field>
+            <field name="name">hr.rfid.access.group.list</field>
             <field name="model">hr.rfid.access.group</field>
             <field name="inherit_id" ref="hr_rfid.hr_rfid_access_group_view_tree"/>
             <field name="arch" type="xml">
@@ -28,7 +28,7 @@
 <!--                           groups="hr_rfid_site_manager.hr_rfid_site_manager"/>-->
                 </xpath>
 
-                <xpath expr="//tree" position="attributes">
+                <xpath expr="//list" position="attributes">
                     <attribute name="decoration-warning">site_id</attribute>
                 </xpath>
 

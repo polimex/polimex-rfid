@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <record id="hr_rfid_site_action" model="ir.actions.act_window">
+            <field name="name">Site Manager</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.rfid.site</field>
+            <field name="view_mode">hierarchy,tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Add your first sites here.
+                </p>
+                <p>
+                    A site is a physical location where you can install doors, controllers and modules. This can be a
+                    building, a floor, a room, etc. You can create a hierarchy of sites to represent your company's
+                    physical
+                    organization.
+                </p>
+            </field>
+        </record>
+        <menuitem id="hr_rfid_menu_site_manager"
+                  name="Site Manager"
+                  parent="hr_rfid.hr_rfid_root_menu_hardware_manager"
+                  action="hr_rfid_site_action"
+                  groups="hr_rfid_site_manager.hr_rfid_site_manager"
+                  sequence="30"/>
+
 
         <record id="hr_rfid_site_view_tree" model="ir.ui.view">
             <field name="name">hr_rfid_site_view_tree</field>
@@ -145,30 +169,6 @@
                 </hierarchy>
             </field>
         </record>
-
-        <record id="hr_rfid_site_action" model="ir.actions.act_window">
-            <field name="name">Site Manager</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">hr.rfid.site</field>
-            <field name="view_mode">hierarchy,tree,form</field>
-            <field name="help" type="html">
-                <p class="o_view_nocontent_smiling_face">
-                    Add your first sites here.
-                </p>
-                <p>
-                    A site is a physical location where you can install doors, controllers and modules. This can be a
-                    building, a floor, a room, etc. You can create a hierarchy of sites to represent your company's
-                    physical
-                    organization.
-                </p>
-            </field>
-        </record>
-        <menuitem id="hr_rfid_menu_site_manager"
-                  name="Site Manager"
-                  parent="hr_rfid.hr_rfid_root_menu_hardware_manager"
-                  action="hr_rfid_site_action"
-                  groups="hr_rfid_site_manager.hr_rfid_site_manager"
-                  sequence="30"/>
 
         <record id="act_site_from_sites" model="ir.actions.act_window">
             <field name="name">Site</field>
