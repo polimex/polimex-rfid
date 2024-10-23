@@ -213,7 +213,7 @@ class HrRfidCommands(models.Model):
     def _gc_clean_old_commands(self):
         res = self.env['hr.rfid.command'].search([
             ('create_date', '<', fields.Datetime.now() - timedelta(days=14))
-        ], limit=1000)
+        ], limit=5000)
         res.unlink()
         # self._cr.execute("""
         #             DELETE FROM hr_rfid_command
