@@ -1028,7 +1028,7 @@ class HrRfidWebstack(models.Model):
                 'hotel_readers': hotel[0],
                 'hotel_readers_card_presence': hotel[1],
                 'hotel_readers_buttons_pressed': hotel[2],
-                'read_b3_cmd': controller.read_b3_cmd or temperature != 0 or humidity != 0 or controller.alarm_lines > 0
+                'read_b3_cmd': controller.read_b3_cmd or temperature != 0 or humidity != 0 or controller.enabled_alarm_lines()
             })
             if temperature != 0 or humidity != 0:
                 controller.update_th(sensor_number=0, data_dict={

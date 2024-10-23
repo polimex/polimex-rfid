@@ -720,6 +720,9 @@ class HrRfidController(models.Model):
                 'input_js': input_json,
             })
 
+    def enabled_alarm_lines(self):
+        return self.alarm_line_ids.filtered(lambda l: l.state != 'disabled')
+
     #  Helper functionality
 
     def _setup_alarm_lines(self):
