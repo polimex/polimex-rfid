@@ -117,6 +117,7 @@
                             <group>
                                 <field name="start_date"/>
                                 <field name="end_date"/>
+                                <field name="visits" readonly="True"/>
                             </group>
                         </group>
                         <group string="Related company" groups="base.group_multi_company">
@@ -126,7 +127,6 @@
                             <field name="card_number" readonly="True"/>
                             <field name="card_id" readonly="True"/>
                             <field name="access_group_contact_rel" readonly="True"/>
-                            <field name="visits" readonly="True"/>
                         </group>
 
                     </sheet>
