@@ -10,7 +10,7 @@ class ListRefreshController extends listView.Controller {
         this.busService = this.env.services.bus_service;
         const channelName = `polimex.${this.props.resModel}`;
         this.isLoading = false;
-        console.log("ListRefreshController channelName", channelName);
+        // console.log("ListRefreshController channelName", channelName);
         this.busService.addChannel(channelName);
         this.busService.subscribe(channelName+'.record_changed', this._onRecordUpdate.bind(this));
         this.busService.subscribe(channelName+'.record_created', this._onRecordCreate.bind(this));
