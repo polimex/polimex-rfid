@@ -67,6 +67,7 @@ class HrRfidCommands(models.Model):
         ('DD', _('Write Input Flags')),
         ('DE', _('Write Anti-Passback Mode')),
         ('DF', _('Write Outputs T/S Table')),
+        ('B0', _('Read/Write Alarm Lines')),
         ('B1', _('Read/Write temperature range')),
         ('B3', _('Read Controller Status')),
         ('B4', _('Read/Write Hotel buttons sense')),
@@ -213,7 +214,7 @@ class HrRfidCommands(models.Model):
     def _gc_clean_old_commands(self):
         res = self.env['hr.rfid.command'].search([
             ('create_date', '<', fields.Datetime.now() - timedelta(days=14))
-        ], limit=1000)
+        ], limit=5000)
         res.unlink()
         # self._cr.execute("""
         #             DELETE FROM hr_rfid_command
@@ -871,7 +872,7 @@ class HrRfidCommands(models.Model):
                 serial=serial_num,
                 id=self.controller_id.ctrl_id
             )
-
+# EXPLAIN DELETE FROM hr_rfid_command WHERE create_date < NOW() - INTERVAL '3 months' LIMIT 10000;
         ctrl_dict = {
             'hw_version': hw_ver,
             'serial_number': serial_num,
@@ -905,14 +906,15 @@ class HrRfidCommands(models.Model):
         if not ctrl_already_existed:
             if self.controller_id.alarm_lines > 0:
                 self.controller_id._setup_alarm_lines()
+                self.controller_id.read_alarm_lines_setup()
             self.controller_id.synchronize_clock_cmd()
             self.controller_id.delete_all_cards_cmd()
             self.controller_id.delete_all_events_cmd()
             if not self.controller_id.is_temperature_ctrl():
                 self.controller_id.read_readers_mode_cmd()
             self.controller_id.read_io_table_cmd()
-            self.controller_id.read_status()
             self.controller_id.read_input_masks_cmd()
+            self.controller_id.read_status()
 
         if self.controller_id.is_temperature_ctrl():
             self.controller_id.read_cards_cmd()

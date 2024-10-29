@@ -32,7 +32,7 @@
                         <notebook>
                             <page string="Cards">
                                 <field name="hr_rfid_card_ids"
-                                       context="{'active_test': False, 'default_employee_id': active_id}"
+                                       context="{'active_test': False, 'default_employee_id': context.get('active_id')}"
                                        edit="0">
                                     <tree string="Cards belonging this employee" editable="bottom"
                                           decoration-success="active"

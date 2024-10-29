@@ -194,6 +194,10 @@ class HrRfidController(models.Model):
         string='Alarm Line States',
         help='Status of the Alarm lines',
     )
+    alarm_lines_setup = fields.Char(
+        help='Alarm lines setup in (bytes)',
+        default='000000'
+    )
 
     siren_state = fields.Boolean(
         help='Alarm Siren state',
@@ -542,6 +546,7 @@ class HrRfidController(models.Model):
     def update_ctrl_alarm_lines(self):
         ctrl_ids = self.env['hr.rfid.ctrl'].sudo().search([('alarm_lines', '>', 0), ('alarm_line_ids', '=', False)])
         ctrl_ids._setup_alarm_lines()
+        ctrl_ids.read_alarm_lines_setup()
         return True
 
     def button_reload_cards(self):
@@ -690,8 +695,14 @@ class HrRfidController(models.Model):
     def write(self, vals):
         for ctrl in self:
             old_ext_db = ctrl.external_db
+            old_alarm_lines_setup = ctrl.alarm_lines_setup
             super(HrRfidController, ctrl).write(vals)
             new_ext_db = ctrl.external_db
+
+            if 'alarm_lines_setup' in vals.keys() and vals['alarm_lines_setup'] != old_alarm_lines_setup:
+                ctrl.update_alarm_lines_setup()
+            if 'alarm_line_states' in vals.keys():
+                ctrl.alarm_line_ids._compute_states()
 
             if old_ext_db != new_ext_db:
                 ctrl.write_controller_mode(new_ext_db=new_ext_db)
@@ -719,6 +730,9 @@ class HrRfidController(models.Model):
                 'error_description': error_description,
                 'input_js': input_json,
             })
+
+    def enabled_alarm_lines(self):
+        return self.alarm_line_ids.filtered(lambda l: l.state != 'disabled')
 
     #  Helper functionality
 
@@ -863,6 +877,20 @@ class HrRfidController(models.Model):
             pcs_int.append(int(''.join(str(int(pcs[i * 2: i * 2 + 2])) for i in range(3))))
         return int(''.join([str(p) for p in pcs_int]))
 
+    def update_alarm_lines_setup(self, new_data=None):
+        for c in self.filtered(lambda ctrl: ctrl.alarm_lines_setup != '').with_context({'from_controller':True}):
+            ctrlB0 = []
+            data = new_data or c.alarm_lines_setup
+            if len(data) == 6:
+                for number in range(self.alarm_lines):
+                    ctrlB0.append({
+                        'enableAC': not bool(1 if (int(data[0:2], 16) & (1 << number)) == (1 << number) else 0),
+                        'enableDC': not bool(1 if (int(data[2:4], 16) & (1 << number)) == (1 << number) else 0),
+                        'enabled': bool(1 if (int(data[4:6], 16) & (1 << number)) == (1 << number) else 0),
+                    })
+                    if number < len(c.alarm_line_ids):
+                        c.alarm_line_ids[number].write(ctrlB0[number])
+
     # Commands to controllers
     def _base_command(self, cmd: str, cmd_data: str = None, cmd_dict: dict = None):
         commands = self.env['hr.rfid.command']
@@ -919,6 +947,9 @@ class HrRfidController(models.Model):
     def read_status(self):
         return self._base_command('B3')
 
+    def read_alarm_lines_setup(self):
+        return self._base_command('B0', '01')
+
     def synchronize_clock_cmd(self):
         return self._base_command('D7')
 
@@ -963,6 +994,22 @@ class HrRfidController(models.Model):
             cmd_data = ''.join(['%02X' % d for d in cmd_masks])
             result += self._base_command('DD', cmd_data)
             c.inputs_mask = m
+        return result
+
+    def write_alarm_line_setup(self):
+        _logger.info('Write Alarm Line Setup')
+        result = self.env['hr.rfid.command']
+        for ctrl in self:
+            enableAC = enableDC = enabled = 0
+            for line in range(4):
+                if len(ctrl.alarm_line_ids)>=(line+1):
+                    enableAC += int(not ctrl.alarm_line_ids[line].enableAC) << line
+                    enableDC += int(not ctrl.alarm_line_ids[line].enableDC) << line
+                    enabled += int(ctrl.alarm_line_ids[line].enabled) << line
+            cmd_data = '00%02X%02X%02X' % (enableAC, enableDC, enabled)
+            result += ctrl._base_command('B0', cmd_data)
+            result += ctrl.read_status()
+            ctrl.read_b3_cmd = False
         return result
 
     def process_input_masks(self, masks):

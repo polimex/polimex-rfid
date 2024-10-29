@@ -371,7 +371,7 @@ class WebRfidController(http.Controller):
                     'timestamp': webstack.get_ws_time_str(post_data['event']),
                     'event_action': str(event_action),
                     'siren': siren,
-                    'error_description': line_id and f"{line_id.name} - {line_id.state} / {line_id.armed}" or ''
+                    'error_description': line_id and f"{line_id.state} / {line_id.armed}" or ''
                 })
                 event = controller_id.report_sys_ev(_('Hardware Event'), post_data=post_data, sys_ev_dict=event_dict)
                 controller_id.siren_state = siren
