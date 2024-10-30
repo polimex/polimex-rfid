@@ -211,11 +211,11 @@ class HrRfidDoor(models.Model):
             else:
                 d.controller_id.hotel_readers_buttons_pressed = d.controller_id.hotel_readers_buttons_pressed - 2
 
-    @api.depends('alarm_line_ids.armed')
+    @api.depends('alarm_line_ids.armed', 'alarm_line_ids.enableAC', 'alarm_line_ids.enabled')
     def _compute_alarm_state(self):
         for d in self:
-            if d.alarm_line_ids:
-                d.alarm_state = d.alarm_line_ids[0].armed if d.alarm_line_ids[0].enableAC else 'no_alarm'
+            if d.alarm_line_ids and d.alarm_line_ids[0].enableAC and d.alarm_line_ids[0].enabled:
+                d.alarm_state = d.alarm_line_ids[0].armed
             else:
                 d.alarm_state = 'no_alarm'
 

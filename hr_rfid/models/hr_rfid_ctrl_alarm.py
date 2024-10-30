@@ -174,4 +174,7 @@ class HrRfidCtrlAlarm(models.Model):
         res = super(HrRfidCtrlAlarm, self).write(vals)
         if not self.env.context.get('from_controller', False) and set(vals).intersection({'enableAC', 'enableDC', 'enabled'}):
             self.controller_id.write_alarm_line_setup()
+        for l in self:
+            if l.door_id and set(vals).intersection({'enableAC', 'enableDC', 'enabled'}):
+                l.door_id._compute_alarm_state()
         return res
