@@ -997,7 +997,7 @@ class HrRfidController(models.Model):
         return result
 
     def write_alarm_line_setup(self):
-        _logger.info('Write Alarm Line Setup')
+        # _logger.info('Write Alarm Line Setup')
         result = self.env['hr.rfid.command']
         for ctrl in self:
             enableAC = enableDC = enabled = 0
