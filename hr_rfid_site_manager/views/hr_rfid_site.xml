@@ -71,19 +71,19 @@
                         <notebook>
                             <page name="door_list" string="Doors" invisible="not door_ids">
                                 <group>
-                                    <field name="door_ids" no_label="1" widget="many2many_tags"
+                                    <field name="door_ids" nolabel="1" widget="many2many_tags"
                                            domain="[('site_id','=',False)]"/>
                                 </group>
                             </page>
                             <page name="ctrl_list" string="Controllers" invisible="not controller_ids">
                                 <group>
-                                    <field name="controller_ids" no_label="1" widget="many2many_tags"
+                                    <field name="controller_ids" nolabel="1" widget="many2many_tags"
                                            domain="[('site_id','=',False)]"/>
                                 </group>
                             </page>
                             <page name="module_list" string="Modules" invisible="not webstack_ids">
                                 <group>
-                                    <field name="webstack_ids" no_label="1" widget="many2many_tags"
+                                    <field name="webstack_ids" nolabel="1" widget="many2many_tags"
                                            domain="[('site_id','=',False)]"/>
                                 </group>
                             </page>

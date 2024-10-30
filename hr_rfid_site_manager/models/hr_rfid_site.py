@@ -31,7 +31,7 @@ class HrRFIDSite(models.Model):
 
     _sql_constraints = [
         ('no_loop', 'check(id != parent_id)', _('You cannot create a loop in the site hierarchy.')),
-        ('unique_name', 'unique(name, company_id)', _('The site name must be unique.')),
+        ('unique_name', 'unique(name, parent_id, company_id)', _('The site name must be unique.')),
     ]
 
     @api.depends('parent_id', 'name')

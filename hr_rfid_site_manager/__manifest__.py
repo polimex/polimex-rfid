@@ -28,6 +28,7 @@
         'security/ir.model.access.csv',
         'views/hr_rfid_access_group.xml',
         'views/hr_rfid_door.xml',
+        'views/hr_rfid_ctrl.xml',
         'views/hr_rfid_webstack.xml',
         'views/hr_rfid_site.xml',
     ],
