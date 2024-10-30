@@ -11,13 +11,15 @@ class RefreshMixin(models.AbstractModel):
     _refresh_on_create = False
     _refresh_on_write = True
 
-    def send_notice(self, operation):
-        # check if model have field company_id
+    def get_company_id(self):
         if 'company_id' not in self._fields:
             _logger.warning('Model %s does not have company_id field', self._name)
-            company_id = self.env.company.id or 0
-        else:
-            company_id = self.company_id.id
+            return self.env.company.id or 0
+        return self.company_id.id
+
+    def send_notice(self, operation):
+        # check if model have field company_id
+        company_id = self.get_company_id()
         self.env['bus.bus']._sendone(
             f'polimex.{self._name}',
             f'polimex.{self._name}.record_changed' if operation == 'write' else f'polimex.{self._name}.record_created',

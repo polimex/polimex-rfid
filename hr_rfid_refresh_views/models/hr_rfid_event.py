@@ -9,3 +9,6 @@ class HRRFIDEvent(models.AbstractModel):
 
     _refresh_on_create = True
     _refresh_on_write = False
+
+    def get_company_id(self):
+        return self.empolyee_id and self.empolyee_id.company_id.id or self.contact_id and self.contact_id.company_id.id or self.webstack_id and self.webstack_id.company_id.id or 0
