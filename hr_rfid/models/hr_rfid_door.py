@@ -215,7 +215,7 @@ class HrRfidDoor(models.Model):
     def _compute_alarm_state(self):
         for d in self:
             if d.alarm_line_ids:
-                d.alarm_state = d.alarm_line_ids[0].armed
+                d.alarm_state = d.alarm_line_ids[0].armed if d.alarm_line_ids[0].enableAC else 'no_alarm'
             else:
                 d.alarm_state = 'no_alarm'
 
