@@ -48,6 +48,11 @@
                                     invisible="state in ['disarm','disarm']">
                                 Arm
                             </button>
+                            <button name="create_child" type="object" class="oe_stat_button text-primary oe_read_only"
+                                    icon="fa-plus"
+                                    help="Create a new child group">
+                                Create Child
+                            </button>
                         </div>
                         <div class="oe_title">
                             <label for="name" class="oe_edit_only"/>
@@ -60,18 +65,13 @@
                                 <field name="parent_id"/>
                                 <field name="company_id" groups="base.group_multi_company"/>
                             </group>
-                            <group>
-                                <field name="alarm_line_ids" widget="many2many_tags"/>
-                            </group>
+
                         </group>
-                        <group>
-                            <field name="child_ids">
-                                <tree editable="top">
-                                    <field name="name"/>
-                                    <field name="parent_id"/>
-                                    <field name="state"/>
-                                </tree>
-                            </field>
+                        <group string="Included alarm lines">
+                            <field name="alarm_line_ids" widget="many2many_tags"/>
+                        </group>
+                        <group string="Child alarm groups">
+                            <field name="child_ids" readonly="1" widget="many2many_tags"/>
                         </group>
                         <group string="Debug Information" groups="base.group_no_one" colspan="4">
                         </group>

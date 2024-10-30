@@ -29,6 +29,16 @@ class HrRfidCtrlAlarmGroup(models.Model):
         required=True,
     )
 
+    def create_child(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Create Alarm Group',
+            'res_model': 'hr.rfid.ctrl.alarm.group',
+            'view_mode': 'form',
+            'context': {'default_parent_id': self.id},
+        }
+
     def open_alarm_line_list_action(self):
         return {
             'type': 'ir.actions.act_window',
