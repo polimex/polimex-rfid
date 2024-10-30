@@ -24,6 +24,7 @@
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
+        'views/hr_rfid_ctrl_alarm_group.xml',
         'views/hr_rfid_ctrl_alarm.xml',
         'views/hr_rfid_door.xml',
         'views/hr_rfid_command.xml',

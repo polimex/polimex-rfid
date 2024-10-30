@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_rfid_ctrl_alarm_group_hierarchy_view_refresh" model="ir.ui.view">
+            <field name="name">hr.rfid.ctrl.alarm.group.hierarchy_view.refresh</field>
+            <field name="model">hr.rfid.ctrl.alarm.group</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_ctrl_alarm_group_hierarchy_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//hierarchy" position="attributes">
+                    <attribute name="js_class">hierarchy_refresh_view</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
