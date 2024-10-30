@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-19 11:37+0000\n"
-"PO-Revision-Date: 2024-07-19 14:38+0300\n"
+"POT-Creation-Date: 2024-10-30 15:43+0000\n"
+"PO-Revision-Date: 2024-10-30 17:50+0200\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.3\n"
+"X-Generator: Poedit 3.5\n"
 
 #. module: hr_rfid
 #. odoo-python
@@ -264,9 +264,19 @@ msgid "<i class=\"fa fa-fw fa-user\" role=\"img\" aria-label=\"User Events\"/>"
 msgstr "<i class=\"fa fa-fw fa-user\" role=\"img\" aria-label=\"Потребителски събития\"/>"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_hierarchy_view
+msgid "<i class=\"fa fa-shield text-danger ms-auto\" title=\"Arm the Group\"/>"
+msgstr "<i class=\"fa fa-shield text-danger ms-auto\" title=\"Охрана на група\"/>"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.webstack_onboarding_panel
 msgid "<i class=\"fa fa-times\" title=\"Close the onboarding panel\"/>"
 msgstr "<i class=\"fa fa-times\" title=\"Затвори панела за назначаване\"/>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_hierarchy_view
+msgid "<i class=\"fa fa-universal-access text-success ms-auto\" title=\"Disarm the Group\"/>"
+msgstr "<i class=\"fa fa-universal-access text-success ms-auto\" title=\"Изкл Охрана на група\"/>"
 
 #. module: hr_rfid
 #. odoo-python
@@ -475,6 +485,7 @@ msgstr "Комбинации от група/служители"
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_access_group_action
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_mass_wiz__acc_gr_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_employee__hr_rfid_access_group_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__acc_gr_ids
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_access_groups
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_search
@@ -646,6 +657,11 @@ msgid "Add To Employees"
 msgstr "Добавяне към служителите"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_partner_mass_acc_grs_wiz
+msgid "Add To Partners"
+msgstr "Добавяне към партньори"
+
+#. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_department_add_def_acc_grs
 msgid "Add access group and change to default"
 msgstr "Добавяне на група и задаване по подразбиране"
@@ -704,6 +720,11 @@ msgid "Add/Delete Card"
 msgstr "Добавяне/изтриване на карта"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_partner_mass_acc_grs_wiz
+msgid "Add/Remove Access Groups for Partners"
+msgstr "Добавяне/премахване на групи за достъп за партньори"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_department_mass_acc_grs_wiz
 msgid "Add/Remove Access Groups from Employees"
 msgstr "Управление на групи за достъп за служители"
@@ -714,6 +735,11 @@ msgstr "Управление на групи за достъп за служит
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_zone_doors_wiz model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_zone_view_form
 msgid "Add/Remove Doors"
 msgstr "Добавяне/премахване на врати"
+
+#. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_res_partner_mass_wiz
+msgid "Add/remove multiple access groups from partners"
+msgstr "Добавяне/премахване на няколко групи за достъп от партньори"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_department_mass_wiz
@@ -797,6 +823,11 @@ msgstr "Алармени линии"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__alarm_lines_count
 msgid "Alarm Lines Count"
 msgstr "Брой алармени линии"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__alarm_lines_setup
+msgid "Alarm Lines Setup"
+msgstr "Настройка на алармените линии"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_door_rel__alarm_right
@@ -885,6 +916,11 @@ msgstr "Алармени линии към  {}"
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_alarm_groups
 msgid "Alarm lines group"
 msgstr "Група алармени линии"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__alarm_lines_setup
+msgid "Alarm lines setup in (bytes)"
+msgstr "Настройка на алармените линии в (байтове)"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__alarm_line_ids
@@ -1036,7 +1072,6 @@ msgstr "Охранителна сирена Включена"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
 msgid "Arm State"
 msgstr "Охранителен статус"
 
@@ -1062,6 +1097,11 @@ msgstr "Ръчно включване Охрана"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Arm the Door"
 msgstr "Включване на охрана на вратата"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
+msgid "Arm the Line manually"
+msgstr "Ръчно Охрана на линията"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__armed
@@ -1204,6 +1244,7 @@ msgstr "CRC Грешка"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_manual_create_wiz
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_replace_wiz_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_zone_doors_wiz
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_partner_mass_acc_grs_wiz
 msgid "Cancel"
 msgstr "Отказ"
 
@@ -1321,6 +1362,7 @@ msgstr "Картата не е намерена"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__number
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz__card_number
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__card_number
 msgid "Card Number"
 msgstr "Номер на Картата"
 
@@ -1602,6 +1644,11 @@ msgid "Child"
 msgstr "Подчинени"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_form_view
+msgid "Child alarm groups"
+msgstr "Подчинени алармени групи"
+
+#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
 #, python-format
@@ -1679,6 +1726,11 @@ msgstr "Заявка от облачна карта"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_search
 msgid "Cloud Cards"
 msgstr "Облачни карта"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__color
+msgid "Color Index"
+msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_workcode__user_action__start
@@ -1812,10 +1864,6 @@ msgstr "Команди към модули"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_res_company
-msgid "Companies"
-msgstr "Фирми"
-
-#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__company_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__company_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__company_id
@@ -1827,7 +1875,7 @@ msgstr "Фирми"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__company_id
 #: model:ir.model.fields,field_description:hr_rfid.field_res_partner__company_id
 msgid "Company"
-msgstr "Фирма"
+msgstr "Фирми"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_res_config_settings
@@ -2128,9 +2176,24 @@ msgid "Could not find the card"
 msgstr "Картата не можа да бъде намерена"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_form_view
+msgid "Create Child"
+msgstr "Създай подчинен"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__create_date
 msgid "Create Date"
 msgstr "Дата на създаване"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_form_view
+msgid "Create a new child group"
+msgstr "Създаване на подчинена фрупа"
+
+#. module: hr_rfid
+#: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_ctrl_alarm_group_action
+msgid "Create new документ"
+msgstr "Създаване на нов документ"
 
 #. module: hr_rfid
 #. odoo-python
@@ -2188,6 +2251,7 @@ msgstr "Създадена команда за отваряне на врата�
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__create_uid
 msgid "Created by"
 msgstr "Създаден от"
 
@@ -2232,6 +2296,7 @@ msgstr "Създаден от"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__create_date
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__create_date
 msgid "Created on"
 msgstr "Създаден на"
 
@@ -2464,6 +2529,8 @@ msgstr "Публикация"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__state__disabled
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_form_view
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_form_view
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "Disabled"
@@ -2503,6 +2570,11 @@ msgstr "Деактивирай ръчно"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Disarm the Door"
 msgstr "Деактивирай охраната на вратата"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
+msgid "Disarm the Line manually"
+msgstr "Ръчно деактивиране на линията"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__armed__disarm
@@ -2558,6 +2630,7 @@ msgstr "Откриване"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__display_name
 msgid "Display Name"
 msgstr "Име за показване"
 
@@ -3012,6 +3085,17 @@ msgid "Employees to Exclude"
 msgstr "Изключи служителите"
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__enabled
+msgid "Enable the alarm line in the controller"
+msgstr "Активиране на алармената линия в контролера"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__enableAC
+msgid "Enable the integration between access control system and alarm functionality of the line in the controller"
+msgstr "Разрешаване на интеграцията на системата за контрол на достъпа и алармената функционалност на линията в контролера"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__enabled
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_form_view
 msgid "Enabled"
 msgstr "Разрешен"
@@ -3133,6 +3217,11 @@ msgstr "Тип събитие"
 #, python-format
 msgid "Event from Temperature Sensor"
 msgstr "Събитие от температурния сензор"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__site_id
+msgid "Event happened on this site"
+msgstr "Събитието се е случило на този сайт"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_res_company__event_lifetime
@@ -3278,6 +3367,7 @@ msgstr "Натиснат %d бутон за изход"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_mass_wiz__expiration
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__expiration
 msgid "Expiration"
 msgstr "Изтичане"
 
@@ -3646,7 +3736,7 @@ msgstr "Има съобщение"
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_event
 msgid "Helper for RFID Events"
-msgstr ""
+msgstr "Помощник за събития RFID"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__high_temperature
@@ -3812,6 +3902,7 @@ msgstr "Грешка в I2C"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__id
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__id
 msgid "ID"
 msgstr "Номер (ID)"
 
@@ -3999,6 +4090,21 @@ msgid "In group:"
 msgstr "В група:"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__enableDC
+msgid "Include Door contact"
+msgstr "Използвай сензора на вратата"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__enableDC
+msgid "Include the door contact in the alarm functionality of the line in the controller"
+msgstr "Използване на контакта на вратата във функционалността на алармената линия в контролера"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_form_view
+msgid "Included alarm lines"
+msgstr "Включени алармени линии"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_zone_view_form
 msgid "Included doors"
 msgstr "Включени врати"
@@ -4093,6 +4199,11 @@ msgid "Input and output table for the controller."
 msgstr "Таблица за вход и изход за контролера."
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
+msgid "Input masks"
+msgstr "Входни маски"
+
+#. module: hr_rfid
 #: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_ctrl_input_mask_controller_input_mask_unique
 msgid "Input must be unique!"
 msgstr "Входът трябва да е уникален!"
@@ -4126,6 +4237,11 @@ msgstr "Поставена карта"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.card_barcode_report_template_foldable_badge
 msgid "Instruction for use this barcode"
 msgstr "Инструкция за използване на този баркод"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__enableAC
+msgid "Integrate with Access control"
+msgstr "Интегриран с контрол на достъпа"
 
 #. module: hr_rfid
 #. odoo-python
@@ -4316,6 +4432,7 @@ msgstr "Последна актуализация:"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__write_uid
 msgid "Last Updated by"
 msgstr "Последно актуализиран от"
 
@@ -4361,6 +4478,7 @@ msgstr "Последно актуализиран от"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__write_date
 msgid "Last Updated on"
 msgstr "Последно актуализиран на"
 
@@ -5244,6 +5362,11 @@ msgid "Output TS for Controllers"
 msgstr "ВГ за Изход на контролери"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
+msgid "Output Time schedules"
+msgstr "Времеви графици на изхода"
+
+#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
 #, python-format
@@ -5335,6 +5458,7 @@ msgid "Partner Event Count"
 msgstr "Брой събития на партньора"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__partner_ids
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_partners
 msgid "Partners"
 msgstr "Контрагенти"
@@ -5614,6 +5738,11 @@ msgid "RFID Access"
 msgstr "Достъп с RFID"
 
 #. module: hr_rfid
+#: model:ir.actions.act_window,name:hr_rfid.res_partner_mass_remove_access_group_action
+msgid "RFID Add/Remove Access Groups"
+msgstr "RFID Добавяне/премахване на групи за достъп"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_employee__hr_rfid_card_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_res_partner__hr_rfid_card_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_res_users__hr_rfid_card_ids
@@ -5864,6 +5993,14 @@ msgstr "Прочети контролерите открити в Модула"
 #, python-format
 msgid "Read/Search Card And Info"
 msgstr "Четене/Търсене на карта"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_command.py:0
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__b0
+#, python-format
+msgid "Read/Write Alarm Lines"
+msgstr "Четене/запис на алармени линии"
 
 #. module: hr_rfid
 #. odoo-python
@@ -6228,6 +6365,16 @@ msgid "Remove From Employees"
 msgstr "Премахване от служителите"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_partner_mass_acc_grs_wiz
+msgid "Remove From Partners"
+msgstr "Премахване от партньорите"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__remove_existing
+msgid "Remove existing access groups"
+msgstr "Премахване на съществуващи групи за достъп"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__replace_existing
 msgid "Replace Existing"
 msgstr "Замяна на съществуващи"
@@ -6576,6 +6723,11 @@ msgstr "Сирената е изключена успешно"
 #, python-format
 msgid "Siren turned On successful"
 msgstr "Сирената в Включена успешно"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__site_id
+msgid "Site"
+msgstr "Обект"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__io_table_lines
@@ -7068,6 +7220,11 @@ msgid "The module was rebooted. It takes up to 10 sec to restore the work condit
 msgstr "Модулът е рестартиран. Възстановяването на работните условия отнема до 10 сек"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_form_view
+msgid "The name of the alarm lines group"
+msgstr "Името на групата алармени линии"
+
+#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
 #, python-format
@@ -7159,6 +7316,16 @@ msgstr "Потребителят ще може да види ПИН кодове
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__sw_version
 msgid "The version of the software on the controller"
 msgstr "Версията на софтуера на контролера"
+
+#. module: hr_rfid
+#: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_event_system_action
+msgid "There are no events for today, which is a good sign!"
+msgstr "За днес няма събития, което е добър знак!"
+
+#. module: hr_rfid
+#: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_event_user_action
+msgid "There aren't any events form today. Have you already set up the system?"
+msgstr "Няма събития от днешния ден. Настроили ли ли сте системата вече?"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_replace_wiz_view_form
