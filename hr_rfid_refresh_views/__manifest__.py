@@ -28,6 +28,7 @@
         'views/hr_rfid_command.xml',
         'views/hr_rfid_event_system.xml',
         'views/hr_rfid_event_user.xml',
+        'views/res_company.xml',
     ],
     # only loaded in demonstration mode
     'assets': {

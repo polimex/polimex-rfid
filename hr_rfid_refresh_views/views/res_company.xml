@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="rfid_form_inherit_res_company" model="ir.ui.view">
+            <field name="name">res.company</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="hr_rfid.rfid_form_inherit_res_company"/>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='card_input_type']" position="after">
+                    <field name="realtime_refresh" widget="boolean_toggle"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

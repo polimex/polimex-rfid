@@ -20,6 +20,8 @@ class RefreshMixin(models.AbstractModel):
     def send_notice(self, operation):
         # check if model have field company_id
         company_id = self.get_company_id()
+        if not self.env['res.company'].browse(company_id).realtime_refresh:
+            return # do not send notice if company is not in realtime mode
         self.env['bus.bus']._sendone(
             f'polimex.{self._name}',
             f'polimex.{self._name}.record_changed' if operation == 'write' else f'polimex.{self._name}.record_created',
@@ -28,7 +30,7 @@ class RefreshMixin(models.AbstractModel):
              'model': self._name,
              }
         )
-        _logger.info('Model Refresh on write on channel %s', f'polimex.{self._name}')
+        # _logger.info('Model Refresh on write on channel %s', f'polimex.{self._name}')
 
     def write(self, vals):
         res = super().write(vals)

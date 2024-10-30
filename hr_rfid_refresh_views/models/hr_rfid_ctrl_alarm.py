@@ -9,3 +9,6 @@ class HrRfidCtrlAlarm(models.Model):
 
     _refresh_on_create = False
     _refresh_on_write = True
+
+    def get_company_id(self):
+        return self.controller_id.webstack_id.company_id.id
