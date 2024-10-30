@@ -17,7 +17,6 @@ class HRRFIDEvent(models.AbstractModel):
         # if 'contact_id' in self._fields:
         #     return self.contact_id.company_id.id
         if 'card_id' in self._fields:
-            return self.card_id.company_id.id
+            return self.card_id.company_id
         if 'webstack_id' in self._fields:
-            return self.webstack_id.company_id.id
-        return self.env.company.id or 0
+            return self.webstack_id.company_id

@@ -11,4 +11,4 @@ class HrRfidCommands(models.Model):
     _refresh_on_write = True
 
     def get_company_id(self):
-        return self.webstack_id.company_id.id
+        return self.webstack_id.company_id
