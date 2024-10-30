@@ -25,6 +25,7 @@
     'data': [
         # 'security/ir.model.access.csv',
         'views/hr_rfid_ctrl_alarm.xml',
+        'views/hr_rfid_door.xml',
         'views/hr_rfid_command.xml',
         'views/hr_rfid_event_system.xml',
         'views/hr_rfid_event_user.xml',
