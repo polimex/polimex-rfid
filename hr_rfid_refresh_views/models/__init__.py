@@ -3,4 +3,5 @@
 from . import hr_rfid_ctrl_alarm
 from . import hr_rfid_command
 from . import hr_rfid_event
+from . import hr_rfid_webstack
 from . import res_company

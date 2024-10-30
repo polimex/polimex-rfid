@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <record id="hr_rfid_ctrl_alarm_tree_view_refresh" model="ir.ui.view">
+            <field name="name">hr.rfid.ctrl.alarm.tree.view.refresh</field>
+            <field name="model">hr.rfid.ctrl.alarm</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_ctrl_alarm_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="js_class">list_refresh_view</attribute>
+                </xpath>
+            </field>
+        </record>
         <record id="hr_rfid_ctrl_alarm_view_kanban_refresh" model="ir.ui.view">
             <field name="name">hr.rfid.ctrl.alarm.view.kanban.refresh</field>
             <field name="model">hr.rfid.ctrl.alarm</field>

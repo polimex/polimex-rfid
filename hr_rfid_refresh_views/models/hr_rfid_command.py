@@ -1,6 +1,7 @@
 from odoo import fields, models, api, _, SUPERUSER_ID
 import logging
 _logger = logging.getLogger(__name__)
+
 class HrRfidCommands(models.Model):
     # Commands we have queued up to send to the controllers
     _name = 'hr.rfid.command'
