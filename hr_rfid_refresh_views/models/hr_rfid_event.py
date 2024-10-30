@@ -11,4 +11,11 @@ class HRRFIDEvent(models.AbstractModel):
     _refresh_on_write = False
 
     def get_company_id(self):
-        return self.empolyee_id and self.empolyee_id.company_id.id or self.contact_id and self.contact_id.company_id.id or self.webstack_id and self.webstack_id.company_id.id or 0
+        # check if model have field employee_id, contact_id, webstack_id
+        if 'employee_id' in self._fields:
+            return self.employee_id.company_id.id
+        if 'contact_id' in self._fields:
+            return self.contact_id.company_id.id
+        if 'webstack_id' in self._fields:
+            return self.webstack_id.company_id.id
+        return self.env.company.id or 0
