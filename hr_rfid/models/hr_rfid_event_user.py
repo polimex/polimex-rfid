@@ -3,6 +3,9 @@ from datetime import timedelta
 from odoo import fields, models, api, _
 
 import logging
+
+from odoo.tools.populate import compute
+
 _logger = logging.getLogger(__name__)
 
 
@@ -97,6 +100,19 @@ class HrRfidUserEvent(models.Model):
         ondelete='set null',
     )
 
+    card_number = fields.Char(
+        related='card_id.number',
+        string='Card Number'
+    )
+
+    site_id = fields.Many2one(
+        'hr.rfid.site',
+        string='Site',
+        help='Event happened on this site',
+        compute='_compute_site_id',
+        store=True,
+    )
+
     command_id = fields.Many2one(
         'hr.rfid.command',
         string='Response',
@@ -145,6 +161,11 @@ class HrRfidUserEvent(models.Model):
             _logger.info("GC'd %d old rfid user event entries", self._cr.rowcount)
 
         return True
+
+    @api.depends('door_id')
+    def _compute_site_id(self):
+        for record in self:
+            record.site_id = record.door_id.site_id or record.command_id.controller_id.site_id or record.command_id.webstack_id.site_id
 
     @api.depends('employee_id.name', 'contact_id.name', 'door_id.name', 'event_action')
     def _compute_user_ev_name(self):
