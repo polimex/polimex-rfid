@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "HR RFID Refresh Views",
+    'name': "RFID Refresh Views",
 
     'summary': """
         Refresh RFID views
