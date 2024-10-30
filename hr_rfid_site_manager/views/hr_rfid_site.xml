@@ -46,7 +46,13 @@
             <field name="arch" type="xml">
                 <form string="Site manager">
                     <sheet>
-                        <div name="button_box" class="oe_button_box"/>
+                        <div name="button_box" class="oe_button_box">
+                            <button name="create_child" type="object" class="oe_stat_button text-primary oe_read_only"
+                                    icon="fa-plus"
+                                    help="Create a new child site">
+                                Create Child
+                            </button>
+                        </div>
                         <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
                         <field name="active" invisible="1"/>
 
@@ -140,9 +146,9 @@
                                 <field name="name"/>
                                 <field name="make_access_group" invisible="1"/>
                                 <button class="btn btn-link" name="open_access_group_list_action" type="object">
-                                <i class="fa fa-circle text-success ms-auto"
-                                   t-if="record.make_access_group.raw_value"
-                                   title="Available Access Group"/>
+                                    <i class="fa fa-circle text-success ms-auto"
+                                       t-if="record.make_access_group.raw_value"
+                                       title="Available Access Group"/>
                                 </button>
                             </div>
                             <div class="o_hierarchy_node_body d-flex flex-column">

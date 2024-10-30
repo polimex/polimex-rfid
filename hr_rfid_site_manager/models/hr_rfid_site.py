@@ -42,6 +42,17 @@ class HrRFIDSite(models.Model):
             else:
                 record.display_name = record.name
 
+    def create_child(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Create Site',
+            'res_model': 'hr.rfid.site',
+            'view_mode': 'form',
+            'context': {'default_parent_id': self.id},
+        }
+
+
     def get_child_access_groups(self):
         result =  self.env['hr.rfid.access.group']
         for site in self:
