@@ -5,7 +5,7 @@
             <field name="name">hr.rfid.ctrl.alarm.tree.view</field>
             <field name="model">hr.rfid.ctrl.alarm</field>
             <field name="arch" type="xml">
-                <tree string="Alarm line list" create="0" delete="0"
+                <tree string="Alarm line list" create="0" delete="0" sample="1"
                       decoration-success="state == 'normal'"
                       decoration-warning="state in ['short','open']"
                       decoration-info="state == 'disabled'"

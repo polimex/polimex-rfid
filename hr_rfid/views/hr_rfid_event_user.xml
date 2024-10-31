@@ -106,7 +106,7 @@
             <field name="arch" type="xml">
                 <tree create="0" delete="0" decoration-success="event_action in ['1','10','11']"
                       decoration-danger="event_action in ['2','3','4','5','15']"
-                      decoration-warning="event_action == '64'" >
+                      decoration-warning="event_action == '64'" sample="1">
                     <field name="event_time"/>
                     <field name="employee_id" widget="many2one_avatar_employee" optional="show"/>
                     <field name="contact_id" widget="many2one_avatar" optional="show"/>
@@ -181,7 +181,7 @@
             <field name="name">hr.rfid.user.ev.pivot</field>
             <field name="model">hr.rfid.event.user</field>
             <field name="arch" type="xml">
-                <pivot string="Event">
+                <pivot string="Event" sample="1">
                     <field name="event_time" type="row"/>
                     <field name="event_action" type="col"/>
                 </pivot>

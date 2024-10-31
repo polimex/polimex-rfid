@@ -5,7 +5,7 @@
             <field name="name">hr.rfid.ctrl.alarm.group.tree.view</field>
             <field name="model">hr.rfid.ctrl.alarm.group</field>
             <field name="arch" type="xml">
-                <tree string="Alarm line list"
+                <tree string="Alarm line list" sample="1"
                       decoration-success="state == 'disarm'"
                       decoration-warning="state == 'mixed'"
                       decoration-info="state == 'no_alarm'"

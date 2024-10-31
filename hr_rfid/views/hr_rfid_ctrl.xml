@@ -399,7 +399,7 @@
             <field name="name">hr.rfid.ctrl.tree</field>
             <field name="model">hr.rfid.ctrl</field>
             <field name="arch" type="xml">
-                <tree string="RFID Controllers" create="false">
+                <tree string="RFID Controllers" create="false" sample="1">
                     <field name="name"/>
                     <field name="webstack_id" invisible="1"/>
                     <field name="serial_number"/>

@@ -65,7 +65,7 @@
             <field name="name">emergency.group.tree.view</field>
             <field name="model">hr.rfid.ctrl.emergency.group</field>
             <field name="arch" type="xml">
-                <tree string="">
+                <tree string="" sample="1">
                     <field name="name"/>
                     <field name="controller_ids" widget="many2many_tags"/>
                 </tree>

@@ -99,7 +99,7 @@
             <field name="name">hr.rfid.webstack.tree</field>
             <field name="model">hr.rfid.webstack</field>
             <field name="arch" type="xml">
-                <tree create="0" delete="0" string="RFID Modules"
+                <tree create="0" delete="0" string="RFID Modules" sample="1"
                       decoration-danger="active==False"
                       decoration-success="active==True and last_update"
                       decoration-warning="active==True and not last_update"

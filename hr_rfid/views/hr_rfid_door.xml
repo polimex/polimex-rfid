@@ -158,7 +158,7 @@
             <field name="name">hr.rfid.door.tree</field>
             <field name="model">hr.rfid.door</field>
             <field name="arch" type="xml">
-                <tree create="false" delete="false">
+                <tree create="false" delete="false" sample="1">
                     <field name="name"/>
                     <field name="controller_id"/>
                     <field name="webstack_id" optional="show"/>
