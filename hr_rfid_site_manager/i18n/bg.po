@@ -6,11 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-30 15:55+0000\n"
-"PO-Revision-Date: 2024-10-30 18:21+0200\n"
+"POT-Creation-Date: 2024-10-31 18:57+0000\n"
+"PO-Revision-Date: 2024-10-31 21:00+0200\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: \n"
-"Language: bg_BG\n"
+"Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -25,15 +25,34 @@ msgid "%s group"
 msgstr "%s група"
 
 #. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_hierarchy_view
+msgid "<i class=\"fa fa-shield text-danger ms-auto\" title=\"Arm the Group\"/>"
+msgstr ""
+"<i class=\"fa fa-shield text-danger ms-auto\" title=\"Охрана на група\"/>"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_hierarchy_view
+msgid ""
+"<i class=\"fa fa-universal-access text-success ms-auto\" title=\"Disarm the "
+"Group\"/>"
+msgstr ""
+"<i class=\"fa fa-universal-access text-success ms-auto\" title=\"Изкл Охрана "
+"на група\"/>"
+
+#. module: hr_rfid_site_manager
 #: model_terms:ir.actions.act_window,help:hr_rfid_site_manager.hr_rfid_site_action
 msgid ""
-"A site is a physical location where you can install doors, controllers and modules. This can be a\n"
-"                    building, a floor, a room, etc. You can create a hierarchy of sites to represent your company's\n"
+"A site is a physical location where you can install doors, controllers and "
+"modules. This can be a\n"
+"                    building, a floor, a room, etc. You can create a "
+"hierarchy of sites to represent your company's\n"
 "                    physical\n"
 "                    organization."
 msgstr ""
-"Обект е физическо място, където можете да инсталирате врати, контролери и модули. Това може да бъде\n"
-"                    сграда, етаж, стая и т.н. Можете да създадете йерархия от сайтове, за да представите компанията си\n"
+"Обект е физическо място, където можете да инсталирате врати, контролери и "
+"модули. Това може да бъде\n"
+"                    сграда, етаж, стая и т.н. Можете да създадете йерархия "
+"от сайтове, за да представите компанията си\n"
 "                    физически\n"
 "                    организация."
 
@@ -41,6 +60,21 @@ msgstr ""
 #: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_access_group
 msgid "Access Group"
 msgstr "Група за достъп"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__access_group_count
+msgid "Access Group Count"
+msgstr "Брой групи за достъп"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Access Group records"
+msgstr "Записи за Групи за достъп"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Access Groups"
+msgstr "Групи за достъп"
 
 #. module: hr_rfid_site_manager
 #: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__access_group_ids
@@ -61,6 +95,36 @@ msgstr "Активен"
 #: model_terms:ir.actions.act_window,help:hr_rfid_site_manager.hr_rfid_site_action
 msgid "Add your first sites here."
 msgstr "Добавете първите си обекти тук."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__state
+msgid "Alarm Group State"
+msgstr "Състояние на алармената група"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__alarm_line_group_ids
+msgid "Alarm Groups"
+msgstr "Групи аларми"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__alarm_line_group_count
+msgid "Alarm Line Group Count"
+msgstr "Брой на групите алармени линии"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Alarm Line Group records"
+msgstr "Записи на групата алармени линии"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Alarm Line Groups"
+msgstr "Групи алармени линии"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_ctrl_alarm_group
+msgid "Alarm system groups"
+msgstr "Групи алармени системи"
 
 #. module: hr_rfid_site_manager
 #: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
@@ -109,9 +173,19 @@ msgid "Building manager site classification"
 msgstr "Управление на класификация на обекта"
 
 #. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__child_count
+msgid "Child Count"
+msgstr "Брой на подчинени"
+
+#. module: hr_rfid_site_manager
 #: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__child_door_ids
 msgid "Child doors"
 msgstr "Подчинени врати"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Child records"
+msgstr "Подчинени записи"
 
 #. module: hr_rfid_site_manager
 #: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__child_ids
@@ -132,6 +206,16 @@ msgstr "Компания"
 #: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_ctrl
 msgid "Controller"
 msgstr "Контролер"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__controller_count
+msgid "Controller Count"
+msgstr "Брой контролери"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Controller records"
+msgstr "Записи с Контролери"
 
 #. module: hr_rfid_site_manager
 #: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__controller_ids
@@ -170,10 +254,25 @@ msgid "Door"
 msgstr "Врата"
 
 #. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__door_count
+msgid "Door Count"
+msgstr "Брой врати"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Door records"
+msgstr "Записи за врати"
+
+#. module: hr_rfid_site_manager
 #: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__door_ids
 #: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
 msgid "Doors"
 msgstr "Врати"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_event_user__site_id
+msgid "Event happened on this site"
+msgstr "Събитието се е случило на този сайт"
 
 #. module: hr_rfid_site_manager
 #: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_follower_ids
@@ -266,6 +365,16 @@ msgid "Module"
 msgstr "Модул"
 
 #. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__webstack_count
+msgid "Module Count"
+msgstr "Брой на модулите"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Module records"
+msgstr "Записи за модули"
+
+#. module: hr_rfid_site_manager
 #: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__webstack_ids
 #: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
 msgid "Modules"
@@ -307,6 +416,11 @@ msgid "RFID Site Manager"
 msgstr "RFID Управление на обекти"
 
 #. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_event_user
+msgid "RFID User Event"
+msgstr "RFID потребителско събитие"
+
+#. module: hr_rfid_site_manager
 #: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
 msgid "Root Sites"
 msgstr "Начален обект"
@@ -322,7 +436,9 @@ msgstr "Показване на врати"
 #: model:ir.actions.act_window,name:hr_rfid_site_manager.act_site_from_sites
 #: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_access_group__site_id
 #: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl_alarm_group__site_id
 #: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_door__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_event_user__site_id
 #: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_webstack__site_id
 #: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
 msgid "Site"

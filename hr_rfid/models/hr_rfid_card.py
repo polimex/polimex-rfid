@@ -110,7 +110,7 @@ class HrRfidCard(models.Model):
     door_rel_ids = fields.One2many(
         'hr.rfid.card.door.rel',
         'card_id',
-        string='Doors',
+        string='Door list',
         help='Doors this card has access to',
     )
 
