@@ -5,6 +5,7 @@
         <record id="siteA" model="hr.rfid.site">
             <field name="name">Site A</field>
             <field name="webstack_ids" eval="[Command.set([ref('hr_rfid.demo_module')])]"/>
+            <field name="alarm_line_group_ids" eval="[Command.set([ref('hr_rfid.demo_alarm_group')])]"/>
         </record>
        <record id="siteA_building1" model="hr.rfid.site">
             <field name="name">Building 1</field>

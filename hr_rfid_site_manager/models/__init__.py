@@ -6,3 +6,4 @@ from . import hr_rfid_access_group
 from . import hr_rfid_webstack
 from . import hr_rfid_ctrl
 from . import hr_rfid_event_user
+from . import hr_rfid_ctrl_alarm_group
