@@ -352,7 +352,7 @@ class WebRfidController(http.Controller):
                 controller_id.alarm_line_states = ''.join(new_states)
 
             event_dict = {
-                'door_id': line_id and line_id.door_id and line_id.is_alarm_ctrl.enableAC and line_id.door_id.id or None,
+                'door_id': line_id and line_id.door_id and line_id.enableAC and line_id.door_id.id or None,
                 'alarm_line_id': line_id and line_id.id or None,
                 'ctrl_addr': controller_id.ctrl_id,
             }
