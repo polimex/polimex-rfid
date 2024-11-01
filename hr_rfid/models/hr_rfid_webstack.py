@@ -951,14 +951,12 @@ class HrRfidWebstack(models.Model):
                 controller.write({
                     'io_table': response['d']
                 })
-
         if response['c'] == 'FB':
             input_masks = 0
             byte_data = bytes.fromhex(response['d'])
             for i in range(4):
                 input_masks += byte_data[i] & 0x7F << (i * 8)
             controller.process_input_masks(input_masks)
-
         if response['c'] == 'FC':
             apb_mode = response['d']
             for door in controller.door_ids:
@@ -972,11 +970,11 @@ class HrRfidWebstack(models.Model):
                     'alarm_lines_setup': '%02x%02x%02x' % (
                         int(response['d'][2:4], 16),
                         int(response['d'][4:6], 16),
-                        int(response['d'][6:8], 16))
+                        int(response['d'][6:8], 16)),
+                    'alarm_sensor_events': bool(1 if (int(response['d'][6:8], 16) & (1 << 4)) == 1 else 0)
                 })
             else: # Write
                 pass
-
         if response['c'] == 'B1':
             if response['d'] != '00':
                 # '01 0400 0050 0010'
@@ -988,7 +986,6 @@ class HrRfidWebstack(models.Model):
                     'low_temperature': low_temp,
                     'hysteresis': hyst
                 })
-
         if response['c'] == 'B3':
             data = response['d']
             # 0000 0100 0711 0000 0000 0000 000000000000000000000000
@@ -1048,7 +1045,6 @@ class HrRfidWebstack(models.Model):
                     't': temperature,
                     'h': humidity,
                 })
-
         if response['c'] == 'D1':
             # 00 00 00 00 01
             if not controller.is_temperature_ctrl:

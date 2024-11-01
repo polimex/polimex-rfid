@@ -194,11 +194,23 @@ class HrRfidController(models.Model):
         string='Alarm Line States',
         help='Status of the Alarm lines',
     )
+
     alarm_lines_setup = fields.Char(
         help='Alarm lines setup in (bytes)',
         default='000000'
     )
 
+    alarm_sensor_events = fields.Boolean(
+        string='Alarm Sensor Events',
+        help='If the controller uses the "Alarm Sensor Events" feature, the controller will send event on every alarm line state change even in disarm mode.',
+        default=False,
+        tracking=True,
+    )
+
+    # ignore_alarm_line_states_event_on_disarm = fields.Boolean(
+    #     string='Ignore Alarm Line States Event on Disarm',
+    #     help='If the controller uses the "Alarm Sensor Events" feature, the system will not store event on every alarm line state change when the line is disarmed.',
+    #
     siren_state = fields.Boolean(
         help='Alarm Siren state',
         compute='_compute_siren_state',
@@ -698,7 +710,8 @@ class HrRfidController(models.Model):
             old_alarm_lines_setup = ctrl.alarm_lines_setup
             super(HrRfidController, ctrl).write(vals)
             new_ext_db = ctrl.external_db
-
+            if 'alarm_sensor_events' in vals.keys():
+                ctrl.write_alarm_line_setup()
             if 'alarm_lines_setup' in vals.keys() and vals['alarm_lines_setup'] != old_alarm_lines_setup:
                 ctrl.update_alarm_lines_setup()
             if 'alarm_line_states' in vals.keys():
@@ -882,6 +895,7 @@ class HrRfidController(models.Model):
             ctrlB0 = []
             data = new_data or c.alarm_lines_setup
             if len(data) == 6:
+                c.alarm_sensor_events = bool(1 if (int(data[4:6], 16) & (1 << 4)) == 1 else 0)
                 for number in range(self.alarm_lines):
                     ctrlB0.append({
                         'enableAC': not bool(1 if (int(data[0:2], 16) & (1 << number)) == (1 << number) else 0),
@@ -1006,6 +1020,7 @@ class HrRfidController(models.Model):
                     enableAC += int(not ctrl.alarm_line_ids[line].enableAC) << line
                     enableDC += int(not ctrl.alarm_line_ids[line].enableDC) << line
                     enabled += int(ctrl.alarm_line_ids[line].enabled) << line
+            enabled += int(ctrl.alarm_sensor_events) << 4
             cmd_data = '00%02X%02X%02X' % (enableAC, enableDC, enabled)
             result += ctrl._base_command('B0', cmd_data)
             result += ctrl.read_status()
