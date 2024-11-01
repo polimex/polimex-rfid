@@ -28,6 +28,7 @@ class HrRFIDSite(models.Model):
         comodel_name='hr.rfid.door', compute='_compute_child_door_ids', string='Child doors')
     access_group_ids = fields.One2many(
         comodel_name='hr.rfid.access.group', inverse_name='site_id', string='Access groups')
+    # time_schedule = None, alarm_rights = False
     alarm_line_group_ids = fields.One2many(
         comodel_name='hr.rfid.ctrl.alarm.group', inverse_name='site_id', string='Alarm Groups')
     state = fields.Selection(related='alarm_line_group_ids.state', string='Alarm Group State')
@@ -123,6 +124,7 @@ class HrRFIDSite(models.Model):
                     site.access_group_ids.unlink()
                 if site.make_access_group and 'door_ids' in vals:
                     site.access_group_ids.update_door_list(site.door_ids + site.child_door_ids)
+                    # site.access_group_ids.update_door_list(site.door_ids + site.child_door_ids, site.time_schedule, site.alarm_rights)
                     site.partner_access_group().update_door_list(site.door_ids + site.child_door_ids)
 
         return res
