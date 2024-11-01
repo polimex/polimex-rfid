@@ -354,10 +354,10 @@ class WebRfidController(http.Controller):
             event_dict = {
                 'door_id': line_id and line_id.door_id and line_id.enableAC and line_id.door_id.id or None,
                 'alarm_line_id': line_id and line_id.id or None,
-                'ctrl_addr': controller_id.ctrl_id,
             }
             if is_card_event:  # User event only for event 35
                 event_dict.update({
+                    'ctrl_addr': controller_id.ctrl_id,
                     'card_id': card_id and card_id.id or None,
                     'reader_id': reader_id and reader_id.id or None,
                     'event_time': webstack.get_ws_time_str(post_data['event']),
@@ -367,6 +367,7 @@ class WebRfidController(http.Controller):
                 event = ev_env.create(event_dict)
             else:  # System Event for event 20 and 34
                 event_dict.update({
+                    'controller_id': controller_id.id,
                     'timestamp': webstack.get_ws_time_str(post_data['event']),
                     'event_action': str(event_action),
                     'siren': siren,
