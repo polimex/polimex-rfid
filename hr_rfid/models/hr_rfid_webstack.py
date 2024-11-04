@@ -954,9 +954,9 @@ class HrRfidWebstack(models.Model):
         if response['c'] == 'FB':
             input_masks = 0
             byte_data = bytes.fromhex(response['d'])
-            for i in range(4):
+            for i in range(2):
                 input_masks += byte_data[i] & 0x7F << (i * 8)
-            controller.process_input_masks(input_masks)
+            controller.process_input_masks(input_masks, output_relay_mask = byte_data[2:])
         if response['c'] == 'FC':
             apb_mode = response['d']
             for door in controller.door_ids:

@@ -70,7 +70,7 @@
     ],
     'assets': {
         'web.assets_backend': [
-            # 'hr_rfid/static/src/js/*',
+            # 'hr_rfid/static/src/bitmask_widget/*',
             # 'hr_rfid/static/src/**/*.xml',
         ],
         # 'web.assets_common': [

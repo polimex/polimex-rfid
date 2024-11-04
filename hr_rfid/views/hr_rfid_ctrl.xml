@@ -169,6 +169,8 @@
                                     <group>
                                         <field name="alarm_sensor_events" invisible="hw_version not in ['10','11']"
                                                widget="boolean_toggle"/>
+                                        <field name="relay_output_mask" invisible="hw_version not in ['30','31', '32']"
+                                               widget="boolean_toggle"/>
                                         <field name="read_b3_cmd" widget="boolean_toggle"/>
                                         <field name="emergency_group_id"/>
                                         <field name="webstack_id" readonly="1"/>

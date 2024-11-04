@@ -93,8 +93,9 @@ class HrRfidCtrlInputMask(models.Model):
 
     def write(self, vals):
         res = super().write(vals)
-        for i in self:
-            i.controller_id.write_input_masks_cmd()
+        if not self.env.context.get('from_controller', False):
+            for i in self:
+                i.controller_id.write_input_masks_cmd()
 
 class HrRfidController(models.Model):
     _name = 'hr.rfid.ctrl'
@@ -168,6 +169,10 @@ class HrRfidController(models.Model):
              "You can add PLC-like logic for all controller's outputs.\n"
              "Choose the output number and the Time Schedule code.\n"
              "The relay will open working hours and closed in non-working hours",
+    )
+    relay_output_mask = fields.Boolean(
+        help='Mask for the relay outputs of the relay controller. If True, the relay outputs on the relay extension boards are inverted (NC) else normally (NO).',
+        default=False,
     )
     readers = fields.Integer(
         string='Readers',
@@ -705,6 +710,7 @@ class HrRfidController(models.Model):
         )
 
     def write(self, vals):
+        from_controller = self.env.context.get('from_controller', False)
         for ctrl in self:
             old_ext_db = ctrl.external_db
             old_alarm_lines_setup = ctrl.alarm_lines_setup
@@ -729,7 +735,7 @@ class HrRfidController(models.Model):
                 )
         if 'output_ts_ids' in vals.keys():
             self.write_output_ts()
-        if "input_mask_ids" in vals.keys():
+        if not from_controller and ("input_mask_ids" in vals.keys() or "relay_output_mask" in vals.keys()):
             new_mask = sum((1 << i) for i, bit in enumerate(self.input_mask_ids) if bit.i_mask)
             self.write_input_masks_cmd(new_mask)
 
@@ -1004,7 +1010,9 @@ class HrRfidController(models.Model):
             return result
         for c in self:
             m = masks or c.inputs_mask or 0
-            cmd_masks = [int(m >> (i * 7)) & 0x7F for i in range(5)]
+            cmd_masks = [int(m >> (i * 7)) & 0x7F for i in range(4)]
+            if c.is_relay_ctrl():
+                cmd_masks[2] = cmd_masks[3] = 0x7F if c.relay_output_mask else 0
             cmd_data = ''.join(['%02X' % d for d in cmd_masks])
             result += self._base_command('DD', cmd_data)
             c.inputs_mask = m
@@ -1027,10 +1035,12 @@ class HrRfidController(models.Model):
             ctrl.read_b3_cmd = False
         return result
 
-    def process_input_masks(self, masks):
+    def process_input_masks(self, masks, output_relay_mask):
         for c in self:
-            self.env['hr.rfid.ctrl.input.mask']._generate_input_masks(c, masks)
-            c.inputs_mask = masks
+            self.env['hr.rfid.ctrl.input.mask'].with_context({'from_controller':True})._generate_input_masks(c, masks)
+            c.with_context({'from_controller':True}).write(
+                {'inputs_mask': masks, 'relay_output_mask': 0x7F in output_relay_mask}
+            )
 
     def read_outputs_ts_cmd(self):
         return self._base_command('FF')
