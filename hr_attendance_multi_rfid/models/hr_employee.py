@@ -83,13 +83,17 @@ class HrEmployee(models.Model):
             auto_close_reason = False
             if self.env.company._fields.get('hr_attendance_autoclose_reason', False):
                 auto_close_reason = self.env.company.hr_attendance_autoclose_reason and self.env.company.hr_attendance_autoclose_reason.id or False
-            self.env['hr.attendance'].search([
+            search_domain = [
                 ('check_in', '>=', from_date),
                 ('employee_id', '=', employee_id.id),
-                ('|'),
-                ('attendance_reason_ids', '=', False),
-                ('attendance_reason_ids', '=', auto_close_reason),
-            ]).unlink()
+            ]
+            if auto_close_reason:
+                search_domain.append('|')
+                search_domain.append(('attendance_reason_ids', '=', False))
+                search_domain.append(('attendance_reason_ids', '=', auto_close_reason))
+            else:
+                _logger.warning('No Attendance reason module found')
+            self.env['hr.attendance'].search(search_domain).unlink()
             manual_att_ids = self.env['hr.attendance'].search([
                 ('check_in', '>=', from_date),
                 ('employee_id', '=', employee_id.id),
