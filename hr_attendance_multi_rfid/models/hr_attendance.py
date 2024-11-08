@@ -1,5 +1,6 @@
 from odoo import api, fields, models, _
 from datetime import datetime, timedelta
+from odoo.tools.float_utils import float_round, float_is_zero
 import base64
 
 
@@ -65,20 +66,44 @@ class HrAttendance(models.Model):
         self.ensure_one()
         max_time, autoclose = self._get_zone_settings()
         # TODO multiple zone not proccessed!!!
-        max_hours = max_time or self.employee_id.company_id.attendance_maximum_hours_per_day
-        close = not self.employee_id.no_autoclose
-        return close and max_hours and self.open_worked_hours > max_hours
+        if hasattr(super(), 'needs_autoclose'):
+            max_hours = max_time or self.employee_id.company_id.attendance_maximum_hours_per_day
+            close = not self.employee_id.no_autoclose
+            return close and max_hours and self.open_worked_hours > max_hours
+        else:
+            max_hours = max_time
+            close = not float_is_zero(max_time, precision_rounding=0)
+            open_worked_hours = (fields.Datetime.now() - self.check_in).total_seconds() / 3600
+            return close and max_hours and open_worked_hours > max_hours
+
 
     # inherited from hr_attendance_autoclose
     def autoclose_attendance(self, reason):
         self.ensure_one()
         max_time, autoclose = self._get_zone_settings()
-        max_hours = autoclose or self.employee_id.company_id.attendance_maximum_hours_per_day
-        leave_time = self.check_in + timedelta(hours=max_hours)
-        vals = {"check_out": leave_time}
-        if reason:
-            vals["attendance_reason_ids"] = [(4, reason.id)]
+        if hasattr(super(), 'autoclose_attendance'):
+            max_hours = autoclose or self.employee_id.company_id.attendance_maximum_hours_per_day
+            leave_time = self.check_in + timedelta(hours=max_hours)
+            vals = {"check_out": leave_time}
+            if reason:
+                vals["attendance_reason_ids"] = [(4, reason.id)]
+        else:
+            max_hours = max_time
+            leave_time = self.check_in + timedelta(hours=max_hours)
+            vals = {"check_out": leave_time}
         self.write(vals)
+
+    # inherited from hr_attendance_autoclose
+    @api.model
+    def check_for_incomplete_attendances(self):
+        # Проверка дали функцията съществува в суперкласа
+        if not hasattr(super(), 'check_for_incomplete_attendances'):
+            # super().check_for_incomplete_attendances()
+        # else:
+            stale_attendances = self.search([("check_out", "=", False)])
+            # reason = self.env.company.hr_attendance_autoclose_reason
+            for att in stale_attendances.filtered(lambda a: a.needs_autoclose()):
+                att.autoclose_attendance('')
 
     # bypass validity if old events processed
     def _check_validity(self):
