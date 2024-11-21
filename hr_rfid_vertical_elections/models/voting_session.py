@@ -89,7 +89,6 @@ class VotingSession(models.Model):
         comodel_name='voting.vote',
         inverse_name='voting_session_id',
         string='Votes',
-        on_delete='cascade',
     )
     vote_yes = fields.Integer(
         string='Yes',

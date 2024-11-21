@@ -15,7 +15,8 @@ class Vote(models.Model):
         comodel_name='voting.session',
         string='Voting Session',
         domain="[('state', '=', 'open')]",
-        required=True
+        required=True,
+        ondelete='cascade',
     )
     voter_id = fields.Many2one(
         comodel_name='res.partner',
