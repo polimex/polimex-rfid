@@ -23,6 +23,7 @@
         'data/attendance_autoclose_cron.xml',
         'views/hr_attendance.xml',
         'views/hr_rfid_webstack_views.xml',
+        'views/hr_employee.xml',
         'wizards/hr_recalc_attendance_wizard.xml',
     ],
 
