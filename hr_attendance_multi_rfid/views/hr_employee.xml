@@ -10,8 +10,10 @@
         <field name="arch" type="xml">
             <xpath expr="//filter[@name='inactive']" position="after">
                     <separator/>
-                    <filter name="present" string="Present Employees" domain="[('attendance_ids.check_out', '=', False)]"/>
-                    <filter name="absent" string="Absent Employees" domain="['|',('attendance_ids', '=', False), ('attendance_ids.check_out', '!=', False)]"/>
+                    <filter name="present" string="Present Employees" domain="[('last_attendance_id.check_out', '=', False)]"/>
+                    <filter name="absent"
+                            string="Absent Employees"
+                            domain="['|',('attendance_ids', '=', False), ('last_attendance_id.check_out', '!=', False)]"/>
             </xpath>
         </field>
     </record>
