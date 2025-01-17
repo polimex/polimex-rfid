@@ -17,8 +17,8 @@
                         </div>
                         <br/>
 <!--                        <field name="io_row_ids" widget="one2many_list">-->
-                        <field name="io_row_ids" >
-                            <tree create="false" delete="false" editable="false">
+                        <field name="io_row_ids" options="{'no_create': True, 'no_open': True, 'no_edit':True}">
+                            <tree>
                                 <field name="event_number"/>
                                 <field name="out1" column_invisible="parent.outs &lt; 1"/>
                                 <field name="out2" column_invisible="parent.outs &lt; 2"/>

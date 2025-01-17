@@ -1,11 +1,6 @@
 from datetime import timedelta
-
 from odoo import fields, models, api, _
-
 import logging
-
-from odoo.tools.populate import compute
-
 _logger = logging.getLogger(__name__)
 
 

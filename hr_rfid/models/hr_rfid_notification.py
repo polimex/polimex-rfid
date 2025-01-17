@@ -38,8 +38,8 @@ class RFIDNotification(models.Model):
     )
     notification_type = fields.Selection(
         [
-            ('discuss', _('System Chat')),
-            ('email', _('Email')),
+            ('discuss', 'System Chat'),
+            ('email', 'Email'),
             # ('sms', _('SMS Message')),
         ], default='discuss',
     )
