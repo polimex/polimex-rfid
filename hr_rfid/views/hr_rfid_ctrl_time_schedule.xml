@@ -17,7 +17,7 @@
                             <field name="ts_id" readonly="1" options="{'clickable': '0'}" class="oe_inline"/>
                         </h1>
                         <br/>
-                        <field name="interval_ids">
+                        <field name="interval_ids" options="{'no_create': True, 'no_open': True, 'no_edit':True}">
                             <list create="false" delete="false" editable="bottom" multi_edit="1"
                                   default_order="day asc">
                                 <field name="day"/>

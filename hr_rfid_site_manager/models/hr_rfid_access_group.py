@@ -8,14 +8,14 @@ class HrRFIDAccessGroup(models.Model):
 
     site_id = fields.Many2one('hr.rfid.site', string='Site', ondelete='cascade')
 
-    def update_door_list(self, door_ids):
+    def update_door_list(self, door_ids, time_schedule=None, alarm_rights=False):
         for ag in self:
             # extract doors not already in the access group
             new_door_ids = door_ids - ag.door_ids.mapped('door_id')
             # extract doors that are not in the new list
             removed_door_ids = ag.door_ids.mapped('door_id') - door_ids
             if new_door_ids:
-                ag.add_doors(new_door_ids)
+                ag.add_doors(new_door_ids, time_schedule, alarm_rights)
             if removed_door_ids:
                 ag.del_doors(removed_door_ids)
         pass

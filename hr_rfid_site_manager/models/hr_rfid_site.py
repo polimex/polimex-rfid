@@ -28,11 +28,32 @@ class HrRFIDSite(models.Model):
         comodel_name='hr.rfid.door', compute='_compute_child_door_ids', string='Child doors')
     access_group_ids = fields.One2many(
         comodel_name='hr.rfid.access.group', inverse_name='site_id', string='Access groups')
+    # time_schedule = None, alarm_rights = False
+    alarm_line_group_ids = fields.One2many(
+        comodel_name='hr.rfid.ctrl.alarm.group', inverse_name='site_id', string='Alarm Groups')
+    state = fields.Selection(related='alarm_line_group_ids.state', string='Alarm Group State')
+
+    child_count = fields.Integer(compute='_compute_count', string="Child Count")
+    webstack_count = fields.Integer(compute='_compute_count', string="Module Count")
+    controller_count = fields.Integer(compute='_compute_count', string="Controller Count")
+    door_count = fields.Integer(compute='_compute_count', string="Door Count")
+    access_group_count = fields.Integer(compute='_compute_count', string="Access Group Count")
+    alarm_line_group_count = fields.Integer(compute='_compute_count', string="Alarm Line Group Count")
 
     _sql_constraints = [
-        ('no_loop', 'check(id != parent_id)', _('You cannot create a loop in the site hierarchy.')),
-        ('unique_name', 'unique(name, company_id)', _('The site name must be unique.')),
+        ('no_loop', 'check(id != parent_id)', 'You cannot create a loop in the site hierarchy.'),
+        ('unique_name', 'unique(name, parent_id, company_id)', 'The site name must be unique.'),
     ]
+
+    @api.depends('child_ids', 'webstack_ids', 'controller_ids', 'door_ids', 'access_group_ids', 'alarm_line_group_ids')
+    def _compute_count(self):
+        for site in self:
+            site.child_count = len(site.child_ids)
+            site.webstack_count = len(site.webstack_ids)
+            site.controller_count = len(site.controller_ids)
+            site.door_count = len(site.door_ids)
+            site.access_group_count = len(site.access_group_ids)
+            site.alarm_line_group_count = len(site.alarm_line_group_ids)
 
     @api.depends('parent_id', 'name')
     def _compute_display_name(self):
@@ -41,6 +62,29 @@ class HrRFIDSite(models.Model):
                 record.display_name = f"{record.parent_id.display_name} / {record.name}"
             else:
                 record.display_name = record.name
+
+    @api.depends('child_ids', 'door_ids', 'make_access_group')
+    def _compute_child_door_ids(self):
+        for site in self:
+            if site.child_ids:
+                site.child_door_ids = site.child_ids.mapped('door_ids') + site.child_ids.mapped('child_door_ids')
+            else:
+                site.child_door_ids = self.env['hr.rfid.door']
+            # if site.parent_id:
+            #     site.parent_id._compute_child_door_ids()
+            # if site.make_access_group:
+            #     site.access_group_ids.update_door_list(site.door_ids + site.child_door_ids)
+
+    def create_child(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Create Site',
+            'res_model': 'hr.rfid.site',
+            'view_mode': 'form',
+            'context': {'default_parent_id': self.id},
+        }
+
 
     def get_child_access_groups(self):
         result =  self.env['hr.rfid.access.group']
@@ -57,23 +101,18 @@ class HrRFIDSite(models.Model):
         self.access_group_ids = [(0, 0, {'name': _('%s group', self.display_name)})]
         return self.access_group_ids
 
-    @api.depends('child_ids', 'door_ids', 'make_access_group')
-    def _compute_child_door_ids(self):
-        for site in self:
-            if site.child_ids:
-                site.child_door_ids = site.child_ids.mapped('door_ids') + site.child_ids.mapped('child_door_ids')
-            else:
-                site.child_door_ids = self.env['hr.rfid.door']
-            # if site.parent_id:
-            #     site.parent_id._compute_child_door_ids()
-            # if site.make_access_group:
-            #     site.access_group_ids.update_door_list(site.door_ids + site.child_door_ids)
-
     def create(self, vals_list):
         site = super(HrRFIDSite, self).create(vals_list)
         if site.make_access_group:
             site._make_access_group().update_door_list(site.door_ids + site.child_door_ids)
         return site
+
+    def partner_access_group(self):
+        self.ensure_one()
+        if not self.parent_id:
+            return self.env['hr.rfid.access.group']
+        else:
+            return self.parent_id.partner_access_group() + self.parent_id.access_group_ids
 
     def write(self, vals):
         res = super(HrRFIDSite, self).write(vals)
@@ -83,8 +122,11 @@ class HrRFIDSite(models.Model):
                     site._make_access_group()
                 elif not site.make_access_group and site.access_group_ids:
                     site.access_group_ids.unlink()
-                if site.make_access_group:
+                if site.make_access_group and 'door_ids' in vals:
                     site.access_group_ids.update_door_list(site.door_ids + site.child_door_ids)
+                    # site.access_group_ids.update_door_list(site.door_ids + site.child_door_ids, site.time_schedule, site.alarm_rights)
+                    site.partner_access_group().update_door_list(site.door_ids + site.child_door_ids)
+
         return res
 
     def get_children_site_ids(self):
@@ -116,6 +158,12 @@ class HrRFIDSite(models.Model):
 
         return hierarchy
 
+    def open_child_site_list_action(self):
+        self.ensure_one()
+        action = self.env['ir.actions.act_window']._for_xml_id('hr_rfid_site_manager.hr_rfid_site_action')
+        action['domain'] = [('parent_id', '=', self.id)]
+        return action
+
     def open_door_list_action(self):
         self.ensure_one()
         action = self.env['ir.actions.act_window']._for_xml_id('hr_rfid.hr_rfid_door_action')
@@ -139,3 +187,15 @@ class HrRFIDSite(models.Model):
         action = self.env['ir.actions.act_window']._for_xml_id('hr_rfid.hr_rfid_access_group_action')
         action['domain'] = [('site_id', 'child_of', self.id)]
         return action
+
+    def open_alarm_line_group_list_action(self):
+        self.ensure_one()
+        action = self.env['ir.actions.act_window']._for_xml_id('hr_rfid.hr_rfid_ctrl_alarm_group_action')
+        action['domain'] = [('site_id', 'child_of', self.id)]
+        return action
+
+    def arm(self):
+        return self.alarm_line_group_ids.arm()
+
+    def disarm(self):
+        return self.alarm_line_group_ids.disarm()

@@ -7,56 +7,56 @@ import logging
 _logger = logging.getLogger(__name__)
 
 action_selection = [
-        ('0', _('Unknown Event?')),
-        ('1', _('DuressOK')),
-        ('2', _('DuressError')),
-        ('3', _('R1 Card OK')),  # User Event
-        ('4', _('R1 Card Error')),  # User Event
-        ('5', _('R1 T/S Error')),  # User Event
-        ('6', _('R1 APB Error')),  # User Event
-        ('7', _('R2 Card OK')),  # User Event
-        ('8', _('R2 Card Error')),  # User Event
-        ('9', _('R2 T/S Error')),  # User Event
-        ('10', _('R2 APB Error')),  # User Event
-        ('11', _('R3 Card OK')),  # User Event
-        ('12', _('R3 Card Error')),  # User Event
-        ('13', _('R3 T/S Error')),  # User Event
-        ('14', _('R3 APB Error')),  # User Event
-        ('15', _('R4 Card Ok')),  # User Event
-        ('16', _('R4 Card Error')),  # User Event
-        ('17', _('R4 T/S Error')),  # User Event
-        ('18', _('R4 APB Error')),  # User Event
-        ('19', _('Fire/Emergency')),
-        ('20', _('Siren ON/OFF')),
-        ('21', _('Exit button')),
-        ('22', _('OpenDoor2 from In2')),  # deprecated
-        ('23', _('OpenDoor3 from In3')),  # deprecated
-        ('24', _('OpenDoor4 from In4')),  # deprecated
-        ('25', _('Door Overtime')),
-        ('26', _('Forced Door Open')),
-        ('27', _('DELAY ZONE ON (if out) Z4,Z3,Z2,Z1')),
-        ('28', _('DELAY ZONE OFF (if in) Z4,Z3,Z2,Z1')),
-        ('29', _('External Control')),
-        ('30', _('Power On event')),
-        ('31', _('Open/Close Door From PC')),
-        ('32', _('reserved')),
-        ('33', _('Zone Arm/Disarm Denied')),  # User Event
-        ('34', _('Zone Status')),
-        ('35', _('Zone Arm/Disarm')),  # User Event
-        ('36', _('Inserted Card')),  # User Event
-        ('37', _('Ejected Card')),  # User Event
-        ('38', _('Hotel Button Pressed')),  # User Event
-        ('45', _('1-W ERROR (wiring problems)')),
-        ('47', _('Vending Purchase Complete')),
-        ('48', _('Vending Error1')),
-        ('49', _('Vending Error2')),
-        ('50', _('Vending collect to card')),
-        ('51', _('Temperature High')),
-        ('52', _('Temperature Normal')),
-        ('53', _('Temperature Low')),
-        ('54', _('Temperature Error')),
-        ('64', _('Cloud Card Request')),  # User Event
-        ('99', _('System Event')),
+        ('0', 'Unknown Event?'),
+        ('1', 'DuressOK'),
+        ('2', 'DuressError'),
+        ('3', 'R1 Card OK'),  # User Event
+        ('4', 'R1 Card Error'),  # User Event
+        ('5', 'R1 T/S Error'),  # User Event
+        ('6', 'R1 APB Error'),  # User Event
+        ('7', 'R2 Card OK'),  # User Event
+        ('8', 'R2 Card Error'),  # User Event
+        ('9', 'R2 T/S Error'),  # User Event
+        ('10', 'R2 APB Error'),  # User Event
+        ('11', 'R3 Card OK'),  # User Event
+        ('12', 'R3 Card Error'),  # User Event
+        ('13', 'R3 T/S Error'),  # User Event
+        ('14', 'R3 APB Error'),  # User Event
+        ('15', 'R4 Card Ok'),  # User Event
+        ('16', 'R4 Card Error'),  # User Event
+        ('17', 'R4 T/S Error'),  # User Event
+        ('18', 'R4 APB Error'),  # User Event
+        ('19', 'Fire/Emergency'),
+        ('20', 'Siren ON/OFF'),
+        ('21', 'Exit button'),
+        ('22', 'OpenDoor2 from In2'),  # deprecated
+        ('23', 'OpenDoor3 from In3'),  # deprecated
+        ('24', 'OpenDoor4 from In4'),  # deprecated
+        ('25', 'Door Overtime'),
+        ('26', 'Forced Door Open'),
+        ('27', 'DELAY ZONE ON (if out) Z4,Z3,Z2,Z1'),
+        ('28', 'DELAY ZONE OFF (if in) Z4,Z3,Z2,Z1'),
+        ('29', 'External Control'),
+        ('30', 'Power On event'),
+        ('31', 'Open/Close Door From PC'),
+        ('32', 'reserved'),
+        ('33', 'Zone Arm/Disarm Denied'),  # User Event
+        ('34', 'Zone Status'),
+        ('35', 'Zone Arm/Disarm'),  # User Event
+        ('36', 'Inserted Card'),  # User Event
+        ('37', 'Ejected Card'),  # User Event
+        ('38', 'Hotel Button Pressed'),  # User Event
+        ('45', '1-W ERROR (wiring problems)'),
+        ('47', 'Vending Purchase Complete'),
+        ('48', 'Vending Error1'),
+        ('49', 'Vending Error2'),
+        ('50', 'Vending collect to card'),
+        ('51', 'Temperature High'),
+        ('52', 'Temperature Normal'),
+        ('53', 'Temperature Low'),
+        ('54', 'Temperature Error'),
+        ('64', 'Cloud Card Request'),  # User Event
+        ('99', 'System Event'),
     ]
 
 class HrRfidSystemEvent(models.Model):

@@ -6,7 +6,8 @@ class HrRfidCtrlAlarmGroup(models.Model):
     _description = 'Alarm system groups'
     _inherit = ['mail.thread', 'balloon.mixin']
 
-    name = fields.Char()
+    name = fields.Char(required=True)
+    color = fields.Integer('Color Index', default=0)
     company_id = fields.Many2one('res.company',
                                  string='Company',
                                  default=lambda self: self.env.company)
@@ -24,9 +25,29 @@ class HrRfidCtrlAlarmGroup(models.Model):
     )
     alarm_line_ids = fields.One2many(
         comodel_name='hr.rfid.ctrl.alarm',
-        inverse_name='alarm_group_id'
+        inverse_name='alarm_group_id',
+        required=True,
     )
 
+    def create_child(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Create Alarm Group',
+            'res_model': 'hr.rfid.ctrl.alarm.group',
+            'view_mode': 'form',
+            'context': {'default_parent_id': self.id},
+        }
+
+    def open_alarm_line_list_action(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Alarm Lines',
+            'res_model': 'hr.rfid.ctrl.alarm',
+            'view_mode': 'list,form',
+            'domain': [('alarm_group_id', 'in', self.ids)],
+            'context': {'create': False},
+        }
     # # @api.depends()
     # def _compute_children(self):
     #     for g in self:

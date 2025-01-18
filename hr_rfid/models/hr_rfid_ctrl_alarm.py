@@ -1,7 +1,5 @@
-import logging
-
 from odoo import fields, models, api, _, SUPERUSER_ID
-
+import logging
 _logger = logging.getLogger(__name__)
 
 
@@ -36,6 +34,24 @@ class HrRfidCtrlAlarm(models.Model):
         ('arm', 'Armed'),  # 64 ON
         ('disarm', 'Disarmed'),  # 64 OFF
         ], compute='_compute_armed', compute_sudo=True, store=True)
+
+    enableAC = fields.Boolean(
+        string="Integrate with Access control",
+        help='Enable the integration between access control system and alarm functionality of the line in the controller',
+        default=False,
+        tracking = True
+    )
+    enableDC = fields.Boolean(
+        string="Include Door contact",
+        help="Include the door contact in the alarm functionality of the line in the controller",
+        default=False,
+        tracking = True
+    )
+    enabled = fields.Boolean(
+        default=False,
+        help='Enable the alarm line in the controller',
+        tracking=True
+    )
 
     siren_state = fields.Boolean(
         help='Alarm Siren state',
@@ -153,3 +169,13 @@ class HrRfidCtrlAlarm(models.Model):
             title=_('Siren Control'),
             message=_('Siren turned On successful')
         )
+
+    def write(self, vals):
+        res = super(HrRfidCtrlAlarm, self).write(vals)
+        if not self.env.context.get('from_controller', False) and set(vals).intersection({'enableAC', 'enableDC', 'enabled'}):
+            self.controller_id.write_alarm_line_setup()
+        for l in self:
+            if set(vals).intersection({'enableAC', 'enableDC', 'enabled', 'state', 'armed'}):
+                tmp = l.door_id and l.door_id._compute_alarm_state()
+                tmp = l.alarm_group_id and l.alarm_group_id._compute_states()
+        return res

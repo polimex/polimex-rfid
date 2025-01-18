@@ -155,20 +155,20 @@
             <field name="name">hr.rfid.door.list</field>
             <field name="model">hr.rfid.door</field>
             <field name="arch" type="xml">
-                <list create="false" delete="false">
+                <list create="false" delete="false" sample="1">
                     <field name="name"/>
                     <field name="controller_id"/>
                     <field name="webstack_id" optional="show"/>
                     <field name="card_type" optional="show"/>
                     <field name="apb_mode" optional="show"/>
-                    <button name="open_door" string="Open"
+                    <button name="open_door" string="Open" invisible="1"
                             groups="hr_rfid.hr_rfid_view_door_open_close"
                             class="oe_stat_button" icon="fa-1x fa-unlock" type="object"/>
-                    <button name="arm_door" string="Arm"
+                    <button name="arm_door" string="Arm" invisible="1"
                             groups="hr_rfid.hr_rfid_view_door_arm_disarm"
                             class="oe_stat_button text-danger"
                             icon="fa-1x fa-shield" type="object"/>
-                    <button name="disarm_door" string="Disarm"
+                    <button name="disarm_door" string="Disarm" invisible="1"
                             groups="hr_rfid.hr_rfid_view_door_arm_disarm"
                             class="oe_stat_button text-success" icon="fa-1x fa-shield" type="object"/>
 

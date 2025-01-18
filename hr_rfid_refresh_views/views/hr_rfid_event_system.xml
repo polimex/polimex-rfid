@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_rfid_sys_ev_view_tree_refresh" model="ir.ui.view">
+            <field name="name">hr.rfid.sys.ev.view.tree.refresh</field>
+            <field name="model">hr.rfid.event.system</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_sys_ev_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list" position="attributes">
+                    <attribute name="js_class">list_refresh_view</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

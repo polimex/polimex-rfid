@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record id="rfid_hr_employee_view_search" model="ir.ui.view">
+        <field name="name">hr.employee.search.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='inactive']" position="after">
+                    <separator/>
+                    <filter name="present" string="Present Employees" domain="[('last_attendance_id.check_out', '=', False)]"/>
+                    <filter name="absent"
+                            string="Absent Employees"
+                            domain="['|',('attendance_ids', '=', False), ('last_attendance_id.check_out', '!=', False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+
+    </data>
+</odoo>

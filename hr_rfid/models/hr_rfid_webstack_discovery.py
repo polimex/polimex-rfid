@@ -56,7 +56,7 @@ class HrRfidWebstackDiscovery(models.TransientModel):
             udp_sock.settimeout(0.5)
             try:
                 data, addr = udp_sock.recvfrom(1024)
-                data = data.decode().split('\n')[:-1]
+                data = data.decode(errors='ignore').split('\n')[:-1]
                 data = list(map(str.strip, data))
                 if (len(data) == 0) or (len(data) > 100) or (data[4] in added_sn):
                     continue
@@ -120,7 +120,7 @@ class HrRfidWebstackDiscovery(models.TransientModel):
                 'version': ws.version,
                 'hw_version': ws.hw_version,
                 'serial': ws.serial,
-                'behind_nat': False,
+                'behind_nat': True,
                 'available': 'a',
                 'active': True,
                 'last_ip': ws.last_ip,
@@ -179,7 +179,8 @@ class HrRfidWebstackManualCreate(models.TransientModel):
             ws_id = self.env['hr.rfid.webstack'].create({
                 'name': self.webstack_name,
                 'active': True,
-                'behind_nat': self.behind_nat,
+                'behind_nat': True,
+                # 'behind_nat': self.behind_nat,
                 'last_ip': self.local_ip_address
             })
             if not self.behind_nat and ws_id:

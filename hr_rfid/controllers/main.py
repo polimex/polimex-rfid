@@ -352,7 +352,7 @@ class WebRfidController(http.Controller):
                 controller_id.alarm_line_states = ''.join(new_states)
 
             event_dict = {
-                'door_id': line_id and line_id.door_id and line_id.door_id.id or None,
+                'door_id': line_id and line_id.door_id and line_id.enableAC and line_id.door_id.id or None,
                 'alarm_line_id': line_id and line_id.id or None,
             }
             if is_card_event:  # User event only for event 35
@@ -371,7 +371,7 @@ class WebRfidController(http.Controller):
                     'timestamp': webstack.get_ws_time_str(post_data['event']),
                     'event_action': str(event_action),
                     'siren': siren,
-                    'error_description': line_id and f"{line_id.name} - {line_id.state} / {line_id.armed}" or ''
+                    'error_description': line_id and f"{line_id.state} / {line_id.armed}" or ''
                 })
                 event = controller_id.report_sys_ev(_('Hardware Event'), post_data=post_data, sys_ev_dict=event_dict)
                 controller_id.siren_state = siren

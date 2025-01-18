@@ -157,12 +157,16 @@
                                                invisible="hw_version not in ['10','17']"/>
                                         <field name="mode_selection_31"
                                                invisible="hw_version not in ['31']"/>
-                                        <field name="external_db"/>
+                                        <field name="external_db" widget="boolean_toggle"/>
+                                        <field name="relay_time_factor"/>
+                                        <field name="dual_person_mode" widget="boolean_toggle"/>
                                     </group>
                                     <group>
-                                        <field name="read_b3_cmd"/>
-                                        <field name="relay_time_factor" readonly="1"/>
-                                        <field name="dual_person_mode" readonly="1"/>
+                                        <field name="alarm_sensor_events" invisible="hw_version not in ['10','11']"
+                                               widget="boolean_toggle"/>
+                                        <field name="relay_output_mask" invisible="hw_version not in ['30','31', '32']"
+                                               widget="boolean_toggle"/>
+                                        <field name="read_b3_cmd" widget="boolean_toggle"/>
                                         <field name="emergency_group_id"/>
                                         <field name="webstack_id" readonly="1"/>
                                     </group>
@@ -171,7 +175,8 @@
                                     <button name="read_input_masks_cmd" type="object" string="Read Input Masks"
                                             class="oe_highlight" help="Read Input statuses. The command will be executed till a minute. Come back later to see the result."/>
                                 </group>
-                                <group col="4" invisible="not input_mask_ids">
+                                <group>
+                                <group invisible="not input_mask_ids">
                                     <field name="input_mask_ids"
                                            options="{'no_open': True, 'no_create': True, 'no_delete':True}"
                                     >
@@ -181,13 +186,14 @@
                                         </list>
                                     </field>
                                 </group>
-                                <group col="4">
+                                <group>
                                     <field name="output_ts_ids">
                                         <list editable="bottom">
                                             <field name="output_number"/>
                                             <field name="time_schedule_id"/>
                                         </list>
                                     </field>
+                                </group>
                                 </group>
                             </page>
                             <page string="Debug Information" name="debug" groups="base.group_no_one">
@@ -202,6 +208,7 @@
                                     <group>
                                         <field name="alarm_lines" readonly="1"/>
                                         <field name="alarm_line_states" readonly="1"/>
+                                        <field name="alarm_lines_setup" readonly="1"/>
                                         <field name="siren_state" widget="boolean_toggle"/>
                                         <field name="io_table_lines" readonly="1"/>
                                     </group>
@@ -262,22 +269,25 @@
                                         <!--                                        <field name="is_favorite" widget="boolean_favorite" nolabel="1"/>-->
                                         <div class="o_kanban_card_header_title mb16">
                                             <div class="o_primary">
-                                                <a type="edit"><field name="name"/></a>
+                                                <a type="edit">
+                                                    <field name="name"/>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-4">
-                                                <div t-if="record.hw_version.raw_value">
-                                                    <field name="hw_version"/>
-                                                </div>
-                                                <div t-if="record.hw_version.raw_value">
-                                                    <field name="serial_number" help="Controller Serial Number"/>
-                                                    <span class="ms-2 me-1">ID</span>
-                                                    <field name="ctrl_id" help="Controller ID on Serial line (behind IP Module)"/>
-                                                </div>
+                                        <div class="col-4" name="first_col">
+                                            <div t-if="record.hw_version.raw_value">
+                                                <field name="hw_version"/>
+                                            </div>
+                                            <div t-if="record.hw_version.raw_value">
+                                                <field name="serial_number" help="Controller Serial Number"/>
+                                                <span class="ms-2 me-1">ID</span>
+                                                <field name="ctrl_id"
+                                                       help="Controller ID on Serial line (behind IP Module)"/>
+                                            </div>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-4" name="second_col">
                                             <div t-if="record.temperature.raw_value">
                                                 <i class="fa fa-fw fa-thermometer-full text-info" role="img"
                                                    title="Temperature"/>
@@ -286,7 +296,7 @@
                                                 ℃
                                             </div>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-4" name="third_col">
                                             <div t-if="record.temperature.raw_value">
                                                 <i class="fa fa-fw fa-tint text-info" role="img" title="Humidity"/>
                                                 <field name="humidity" title="External humidity sensor value"/>
@@ -384,7 +394,7 @@
             <field name="name">hr.rfid.ctrl.list</field>
             <field name="model">hr.rfid.ctrl</field>
             <field name="arch" type="xml">
-                <list string="RFID Controllers" create="false">
+                <list string="RFID Controllers" create="false" sample="1">
                     <field name="name"/>
                     <field name="webstack_id" invisible="1"/>
                     <field name="serial_number"/>

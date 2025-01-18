@@ -17,17 +17,7 @@ class VoteController(http.Controller):
         display_sudo = request.env["voting.display"].sudo().search([("short_code", "=", short_code)])
         if not display_sudo:
             raise exceptions.NotFound()
-        return request.render("hr_rfid_vertical_elections.voting_display_layout",
-                              {"display_info": {
-                                  'id': display_sudo.id,
-                                  'description': display_sudo.description,
-                                  'name': display_sudo.name,
-                                  'company_name': display_sudo.company_id.display_name,
-                                  'accessToken': display_sudo.access_token,
-                                  'noVotingBgColor': display_sudo.no_voting_background_color,
-                                  'votingBgColor': display_sudo.voting_background_color,
-                                  'lang': display_sudo.create_uid.lang,
-                              }})
+        return request.render("hr_rfid_vertical_elections.voting_display", {"display": display_sudo})
 
     @http.route("/voting_display/<string:access_token>/background", type="http", auth="public")
     def display_background_image(self, access_token):

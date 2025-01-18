@@ -17,8 +17,8 @@
                         </div>
                         <br/>
 <!--                        <field name="io_row_ids" widget="one2many_list">-->
-                        <field name="io_row_ids" options="{'no_create': True, 'no_open': True, 'no_edit':True}">
-                            <list>
+                        <field name="io_row_ids" options="{'no_create': True, 'no_open': True, 'no_delete':True}">
+                            <list create="false" delete="false" editable="top" open_form_view="false">
                                 <field name="event_number"/>
                                 <field name="out1" column_invisible="parent.outs &lt; 1"/>
                                 <field name="out2" column_invisible="parent.outs &lt; 2"/>

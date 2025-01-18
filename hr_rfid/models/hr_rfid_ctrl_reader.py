@@ -7,16 +7,16 @@ class HrRfidReader(models.Model):
     _description = 'Reader'
 
     reader_types = [
-        ('0', _('In')),
-        ('1', _('Out')),
+        ('0', 'In'),
+        ('1', 'Out'),
     ]
 
     reader_modes = [
-        ('00', _('Unknown')),
-        ('01', _('Card Only')),
-        ('02', _('Card and Pin')),
-        ('03', _('Card and Workcode')),
-        ('04', _('Card or Pin')),
+        ('00', 'Unknown'),
+        ('01', 'Card Only'),
+        ('02', 'Card and Pin'),
+        ('03', 'Card and Workcode'),
+        ('04', 'Card or Pin'),
     ]
 
     name = fields.Char(

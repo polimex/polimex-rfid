@@ -4,7 +4,7 @@
         <record id="hr_rfid_command_action" model="ir.actions.act_window">
             <field name="name">Commands to Modules</field>
             <field name="res_model">hr.rfid.command</field>
-            <field name="view_mode">list,form,search,calendar</field>
+            <field name="view_mode">list,form,search,calendar,pivot</field>
             <field name="context">{"search_default_this_day": 1}</field>
         </record>
 
@@ -66,7 +66,7 @@
             <field name="name">hr.rfid.command.list</field>
             <field name="model">hr.rfid.command</field>
             <field name="arch" type="xml">
-                <list create="false">
+                <list create="false" sample="1">
                     <field name="webstack_id" optional="show"/>
                     <field name="controller_id"/>
                     <field name="cmd"/>
@@ -75,7 +75,7 @@
                            decoration-warning="status == 'Wait'"
                            decoration-info="status == 'Process'"
                            decoration-danger="status == 'Failure'"
-                           />
+                    />
 
                     <field name="create_date" optional="show"/>
                     <field name="ex_timestamp" optional="show"/>
@@ -143,13 +143,24 @@
             <field name="name">hr.rfid.command.calendar</field>
             <field name="model">hr.rfid.command</field>
             <field name="arch" type="xml">
-                <calendar date_start="create_date" date_stop="ex_timestamp" color="webstack_id">
+                <calendar date_start="create_date" date_stop="ex_timestamp" color="webstack_id" mode="month">
                     <field name="webstack_id"/>
                     <field name="controller_id"/>
                     <field name="cmd"/>
                     <field name="status"/>
                     <field name="error"/>
                 </calendar>
+            </field>
+        </record>
+
+        <record id="hr_rfid_command_view_pivot" model="ir.ui.view">
+            <field name="name">hr.rfid.command.pivot</field>
+            <field name="model">hr.rfid.command</field>
+            <field name="arch" type="xml">
+                <pivot sample="1">
+                    <field name="cmd" type="row"/>
+                    <field name="webstack_id" type="col"/>
+                </pivot>
             </field>
         </record>
 

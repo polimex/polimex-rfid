@@ -951,19 +951,30 @@ class HrRfidWebstack(models.Model):
                 controller.write({
                     'io_table': response['d']
                 })
-
         if response['c'] == 'FB':
             input_masks = 0
             byte_data = bytes.fromhex(response['d'])
-            for i in range(4):
+            for i in range(2):
                 input_masks += byte_data[i] & 0x7F << (i * 8)
-            controller.process_input_masks(input_masks)
-
+            controller.process_input_masks(input_masks, output_relay_mask = byte_data[2:])
         if response['c'] == 'FC':
             apb_mode = response['d']
             for door in controller.door_ids:
                 door.apb_mode = (door.number == '1' and (apb_mode & 1)) \
                                 or (door.number == '2' and (apb_mode & 2))
+        if response['c'] == 'B0':
+            # Read "cmd":{"id":31,"c":"B0","d":"01"}} - {"c":"B0","d":"01000000","e":0,"id":31}
+            # Write "cmd":{"id":5,"c":"B0","d":"00010100"}} - {"c":"B0","d":"00","e":0,"id":5}
+            if int(response['d'][0:2]) == 1: # Read
+                controller.with_context(readed=True).write({
+                    'alarm_lines_setup': '%02x%02x%02x' % (
+                        int(response['d'][2:4], 16),
+                        int(response['d'][4:6], 16),
+                        int(response['d'][6:8], 16)),
+                    'alarm_sensor_events': bool(1 if (int(response['d'][6:8], 16) & (1 << 4)) == 1 else 0)
+                })
+            else: # Write
+                pass
         if response['c'] == 'B1':
             if response['d'] != '00':
                 # '01 0400 0050 0010'
@@ -975,7 +986,6 @@ class HrRfidWebstack(models.Model):
                     'low_temperature': low_temp,
                     'hysteresis': hyst
                 })
-
         if response['c'] == 'B3':
             data = response['d']
             # 0000 0100 0711 0000 0000 0000 000000000000000000000000
@@ -1028,14 +1038,13 @@ class HrRfidWebstack(models.Model):
                 'hotel_readers': hotel[0],
                 'hotel_readers_card_presence': hotel[1],
                 'hotel_readers_buttons_pressed': hotel[2],
-                'read_b3_cmd': controller.read_b3_cmd or temperature != 0 or humidity != 0 or controller.alarm_lines > 0
+                'read_b3_cmd': controller.read_b3_cmd or temperature != 0 or humidity != 0 or controller.enabled_alarm_lines()
             })
             if temperature != 0 or humidity != 0:
                 controller.update_th(sensor_number=0, data_dict={
                     't': temperature,
                     'h': humidity,
                 })
-
         if response['c'] == 'D1':
             # 00 00 00 00 01
             if not controller.is_temperature_ctrl:

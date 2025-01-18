@@ -110,7 +110,7 @@ class HrRfidCard(models.Model):
     door_rel_ids = fields.One2many(
         'hr.rfid.card.door.rel',
         'card_id',
-        string='Doors',
+        string='Door list',
         help='Doors this card has access to',
     )
 
@@ -128,8 +128,8 @@ class HrRfidCard(models.Model):
     is_barcode = fields.Boolean(compute='_compute_barcode_number')
 
     _sql_constraints = [
-        ('card_uniq', 'unique (number, company_id)', _("Card number already exists!")),
-        ('card_int_uniq', 'unique (internal_number, company_id)', _("Card internal number already exists!")),
+        ('card_uniq', 'unique (number, company_id)', "Card number already exists!"),
+        ('card_int_uniq', 'unique (internal_number, company_id)', "Card internal number already exists!"),
         ('check_card_owner',
          'check((contact_id is null and employee_id is not null) or (contact_id is not null and employee_id is null))',
          'Card user and contact cannot both be set in the same time, and cannot both be empty.')

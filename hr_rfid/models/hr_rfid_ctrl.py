@@ -93,8 +93,9 @@ class HrRfidCtrlInputMask(models.Model):
 
     def write(self, vals):
         res = super().write(vals)
-        for i in self:
-            i.controller_id.write_input_masks_cmd()
+        if not self.env.context.get('from_controller', False):
+            for i in self:
+                i.controller_id.write_input_masks_cmd()
 
 class HrRfidController(models.Model):
     _name = 'hr.rfid.ctrl'
@@ -169,6 +170,10 @@ class HrRfidController(models.Model):
              "Choose the output number and the Time Schedule code.\n"
              "The relay will open working hours and closed in non-working hours",
     )
+    relay_output_mask = fields.Boolean(
+        help='Mask for the relay outputs of the relay controller. If True, the relay outputs on the relay extension boards are inverted (NC) else normally (NO).',
+        default=False,
+    )
     readers = fields.Integer(
         string='Readers',
         help='Number of readers on the controller'
@@ -195,6 +200,22 @@ class HrRfidController(models.Model):
         help='Status of the Alarm lines',
     )
 
+    alarm_lines_setup = fields.Char(
+        help='Alarm lines setup in (bytes)',
+        default='000000'
+    )
+
+    alarm_sensor_events = fields.Boolean(
+        string='Alarm Sensor Events',
+        help='If the controller uses the "Alarm Sensor Events" feature, the controller will send event on every alarm line state change even in disarm mode.',
+        default=False,
+        tracking=True,
+    )
+
+    # ignore_alarm_line_states_event_on_disarm = fields.Boolean(
+    #     string='Ignore Alarm Line States Event on Disarm',
+    #     help='If the controller uses the "Alarm Sensor Events" feature, the system will not store event on every alarm line state change when the line is disarmed.',
+    #
     siren_state = fields.Boolean(
         help='Alarm Siren state',
         compute='_compute_siren_state',
@@ -542,6 +563,7 @@ class HrRfidController(models.Model):
     def update_ctrl_alarm_lines(self):
         ctrl_ids = self.env['hr.rfid.ctrl'].sudo().search([('alarm_lines', '>', 0), ('alarm_line_ids', '=', False)])
         ctrl_ids._setup_alarm_lines()
+        ctrl_ids.read_alarm_lines_setup()
         return True
 
     def button_reload_cards(self):
@@ -688,13 +710,22 @@ class HrRfidController(models.Model):
         )
 
     def write(self, vals):
+        from_controller = self.env.context.get('from_controller', False)
         for ctrl in self:
             old_ext_db = ctrl.external_db
+            old_alarm_lines_setup = ctrl.alarm_lines_setup
             super(HrRfidController, ctrl).write(vals)
             new_ext_db = ctrl.external_db
+            if 'alarm_sensor_events' in vals.keys():
+                ctrl.write_alarm_line_setup()
+            if 'alarm_lines_setup' in vals.keys() and vals['alarm_lines_setup'] != old_alarm_lines_setup:
+                ctrl.update_alarm_lines_setup()
+            if 'alarm_line_states' in vals.keys():
+                ctrl.alarm_line_ids._compute_states()
 
-            if old_ext_db != new_ext_db:
-                ctrl.write_controller_mode(new_ext_db=new_ext_db)
+            # if old_ext_db != new_ext_db or 'dual_person_mode' in vals.keys() or 'relay_time_factor' in vals.keys():
+            if not from_controller and ('external_db' in vals.keys() or 'dual_person_mode' in vals.keys() or 'relay_time_factor' in vals.keys()):
+                ctrl.write_controller_mode()
             if (
                     'high_temperature' in vals or 'low_temperature' in vals or 'hysteresis' in vals) and not self.env.context.get(
                 'readed', False):
@@ -705,7 +736,7 @@ class HrRfidController(models.Model):
                 )
         if 'output_ts_ids' in vals.keys():
             self.write_output_ts()
-        if "input_mask_ids" in vals.keys():
+        if not from_controller and ("input_mask_ids" in vals.keys() or "relay_output_mask" in vals.keys()):
             new_mask = sum((1 << i) for i, bit in enumerate(self.input_mask_ids) if bit.i_mask)
             self.write_input_masks_cmd(new_mask)
 
@@ -719,6 +750,9 @@ class HrRfidController(models.Model):
                 'error_description': error_description,
                 'input_js': input_json,
             })
+
+    def enabled_alarm_lines(self):
+        return self.alarm_line_ids.filtered(lambda l: l.state != 'disabled')
 
     #  Helper functionality
 
@@ -863,6 +897,21 @@ class HrRfidController(models.Model):
             pcs_int.append(int(''.join(str(int(pcs[i * 2: i * 2 + 2])) for i in range(3))))
         return int(''.join([str(p) for p in pcs_int]))
 
+    def update_alarm_lines_setup(self, new_data=None):
+        for c in self.filtered(lambda ctrl: ctrl.alarm_lines_setup != '').with_context({'from_controller':True}):
+            ctrlB0 = []
+            data = new_data or c.alarm_lines_setup
+            if len(data) == 6:
+                c.alarm_sensor_events = bool(1 if (int(data[4:6], 16) & (1 << 4)) == 1 else 0)
+                for number in range(self.alarm_lines):
+                    ctrlB0.append({
+                        'enableAC': not bool(1 if (int(data[0:2], 16) & (1 << number)) == (1 << number) else 0),
+                        'enableDC': not bool(1 if (int(data[2:4], 16) & (1 << number)) == (1 << number) else 0),
+                        'enabled': bool(1 if (int(data[4:6], 16) & (1 << number)) == (1 << number) else 0),
+                    })
+                    if number < len(c.alarm_line_ids):
+                        c.alarm_line_ids[number].write(ctrlB0[number])
+
     # Commands to controllers
     def _base_command(self, cmd: str, cmd_data: str = None, cmd_dict: dict = None):
         commands = self.env['hr.rfid.command']
@@ -919,6 +968,9 @@ class HrRfidController(models.Model):
     def read_status(self):
         return self._base_command('B3')
 
+    def read_alarm_lines_setup(self):
+        return self._base_command('B0', '01')
+
     def synchronize_clock_cmd(self):
         return self._base_command('D7')
 
@@ -959,16 +1011,37 @@ class HrRfidController(models.Model):
             return result
         for c in self:
             m = masks or c.inputs_mask or 0
-            cmd_masks = [int(m >> (i * 7)) & 0x7F for i in range(5)]
+            cmd_masks = [int(m >> (i * 7)) & 0x7F for i in range(4)]
+            if c.is_relay_ctrl():
+                cmd_masks[2] = cmd_masks[3] = 0x7F if c.relay_output_mask else 0
             cmd_data = ''.join(['%02X' % d for d in cmd_masks])
             result += self._base_command('DD', cmd_data)
             c.inputs_mask = m
         return result
 
-    def process_input_masks(self, masks):
+    def write_alarm_line_setup(self):
+        # _logger.info('Write Alarm Line Setup')
+        result = self.env['hr.rfid.command']
+        for ctrl in self:
+            enableAC = enableDC = enabled = 0
+            for line in range(4):
+                if len(ctrl.alarm_line_ids)>=(line+1):
+                    enableAC += int(not ctrl.alarm_line_ids[line].enableAC) << line
+                    enableDC += int(not ctrl.alarm_line_ids[line].enableDC) << line
+                    enabled += int(ctrl.alarm_line_ids[line].enabled) << line
+            enabled += int(ctrl.alarm_sensor_events) << 4
+            cmd_data = '00%02X%02X%02X' % (enableAC, enableDC, enabled)
+            result += ctrl._base_command('B0', cmd_data)
+            result += ctrl.read_status()
+            ctrl.read_b3_cmd = False
+        return result
+
+    def process_input_masks(self, masks, output_relay_mask):
         for c in self:
-            self.env['hr.rfid.ctrl.input.mask']._generate_input_masks(c, masks)
-            c.inputs_mask = masks
+            self.env['hr.rfid.ctrl.input.mask'].with_context({'from_controller':True})._generate_input_masks(c, masks)
+            c.with_context({'from_controller':True}).write(
+                {'inputs_mask': masks, 'relay_output_mask': 0x7F in output_relay_mask}
+            )
 
     def read_outputs_ts_cmd(self):
         return self._base_command('FF')
@@ -1126,13 +1199,17 @@ class HrRfidController(models.Model):
         else:
             return commands
 
-    def write_controller_mode(self, new_mode: int = None, new_ext_db: bool = None):
+    def write_controller_mode(self, new_mode: int = None, new_ext_db: bool = None, new_dual_person_mode: bool = None, new_relay_factor: int = None):
         if new_mode is None:
             new_mode = self.mode
         if new_ext_db is None:
             new_ext_db = self.external_db
+        if new_relay_factor is None:
+            new_relay_factor = self.relay_time_factor
+        if new_dual_person_mode is None:
+            new_dual_person_mode = self.dual_person_mode
 
-        cmd_data = '%02X' % (int(new_ext_db) * 0x20 + int(new_mode))
+        cmd_data = '%02X' % (int(new_relay_factor) * 0x40 + int(new_ext_db) * 0x20 + int(new_dual_person_mode) * 0x08 + int(new_mode))
         cmd = self._base_command('D5', cmd_data)
         self.read_controller_information_cmd()
         return cmd

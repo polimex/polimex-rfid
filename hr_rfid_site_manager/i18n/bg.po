@@ -1,0 +1,531 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* hr_rfid_site_manager
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-10-31 18:57+0000\n"
+"PO-Revision-Date: 2024-10-31 21:00+0200\n"
+"Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
+"Language-Team: \n"
+"Language: bg\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.5\n"
+
+#. module: hr_rfid_site_manager
+#. odoo-python
+#: code:addons/hr_rfid_site_manager/models/hr_rfid_site.py:0
+#, python-format
+msgid "%s group"
+msgstr "%s група"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_hierarchy_view
+msgid "<i class=\"fa fa-shield text-danger ms-auto\" title=\"Arm the Group\"/>"
+msgstr ""
+"<i class=\"fa fa-shield text-danger ms-auto\" title=\"Охрана на група\"/>"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_hierarchy_view
+msgid ""
+"<i class=\"fa fa-universal-access text-success ms-auto\" title=\"Disarm the "
+"Group\"/>"
+msgstr ""
+"<i class=\"fa fa-universal-access text-success ms-auto\" title=\"Изкл Охрана "
+"на група\"/>"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.actions.act_window,help:hr_rfid_site_manager.hr_rfid_site_action
+msgid ""
+"A site is a physical location where you can install doors, controllers and "
+"modules. This can be a\n"
+"                    building, a floor, a room, etc. You can create a "
+"hierarchy of sites to represent your company's\n"
+"                    physical\n"
+"                    organization."
+msgstr ""
+"Обект е физическо място, където можете да инсталирате врати, контролери и "
+"модули. Това може да бъде\n"
+"                    сграда, етаж, стая и т.н. Можете да създадете йерархия "
+"от сайтове, за да представите компанията си\n"
+"                    физически\n"
+"                    организация."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_access_group
+msgid "Access Group"
+msgstr "Група за достъп"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__access_group_count
+msgid "Access Group Count"
+msgstr "Брой групи за достъп"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Access Group records"
+msgstr "Записи за Групи за достъп"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Access Groups"
+msgstr "Групи за достъп"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__access_group_ids
+msgid "Access groups"
+msgstr "Групи за достъп"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_needaction
+msgid "Action Needed"
+msgstr "Необходимо действие"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__active
+msgid "Active"
+msgstr "Активен"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.actions.act_window,help:hr_rfid_site_manager.hr_rfid_site_action
+msgid "Add your first sites here."
+msgstr "Добавете първите си обекти тук."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__state
+msgid "Alarm Group State"
+msgstr "Състояние на алармената група"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__alarm_line_group_ids
+msgid "Alarm Groups"
+msgstr "Групи аларми"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__alarm_line_group_count
+msgid "Alarm Line Group Count"
+msgstr "Брой на групите алармени линии"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Alarm Line Group records"
+msgstr "Записи на групата алармени линии"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Alarm Line Groups"
+msgstr "Групи алармени линии"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_ctrl_alarm_group
+msgid "Alarm system groups"
+msgstr "Групи алармени системи"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Archived"
+msgstr "Архивирано"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_attachment_count
+msgid "Attachment Count"
+msgstr "Брой прикачени файлове"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_hierarchy_view
+msgid "Available Access Group"
+msgstr "Налична група за достъп"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__avatar_1920
+msgid "Avatar"
+msgstr "Аватар"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__avatar_1024
+msgid "Avatar 1024"
+msgstr "Аватар 1024"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__avatar_128
+msgid "Avatar 128"
+msgstr "Аватар 128"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__avatar_256
+msgid "Avatar 256"
+msgstr "Аватар 256"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__avatar_512
+msgid "Avatar 512"
+msgstr "Аватар 512"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_site
+msgid "Building manager site classification"
+msgstr "Управление на класификация на обекта"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__child_count
+msgid "Child Count"
+msgstr "Брой на подчинени"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__child_door_ids
+msgid "Child doors"
+msgstr "Подчинени врати"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Child records"
+msgstr "Подчинени записи"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__child_ids
+msgid "Child sites"
+msgstr "Подчинени обекти"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__color
+msgid "Color Index"
+msgstr "Индекс на Цветовете"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__company_id
+msgid "Company"
+msgstr "Компания"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_ctrl
+msgid "Controller"
+msgstr "Контролер"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__controller_count
+msgid "Controller Count"
+msgstr "Брой контролери"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Controller records"
+msgstr "Записи с Контролери"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__controller_ids
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Controllers"
+msgstr "Контролери"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Create Child"
+msgstr "Създай подчинен"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Create a new child site"
+msgstr "Създаване на нов подчинен обект"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__create_uid
+msgid "Created by"
+msgstr "Създаден от"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__create_date
+msgid "Created on"
+msgstr "Създаден на"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__display_name
+msgid "Display Name"
+msgstr "Име за показване"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_door
+msgid "Door"
+msgstr "Врата"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__door_count
+msgid "Door Count"
+msgstr "Брой врати"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Door records"
+msgstr "Записи за врати"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__door_ids
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Doors"
+msgstr "Врати"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_event_user__site_id
+msgid "Event happened on this site"
+msgstr "Събитието се е случило на този сайт"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_follower_ids
+msgid "Followers"
+msgstr "Последователи"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Последователи (Партньори)"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__has_message
+msgid "Has Message"
+msgstr "Има съобщение"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__id
+msgid "ID"
+msgstr ""
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Ако е избрано новите съобщения ще изискват Вашето внимание."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Ако е избрано някой съобщения имат грешка при доставка."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__image_1920
+msgid "Image"
+msgstr "Изображение"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__image_1024
+msgid "Image 1024"
+msgstr "Изображение 1024"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__image_128
+msgid "Image 128"
+msgstr "Изображение 128"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__image_256
+msgid "Image 256"
+msgstr "Изображение 256"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__image_512
+msgid "Image 512"
+msgstr "Изображение 512"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_is_follower
+msgid "Is Follower"
+msgstr "Е последовател"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__write_uid
+msgid "Last Updated by"
+msgstr "Последно актуализиран от"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__write_date
+msgid "Last Updated on"
+msgstr "Последно актуализиран на"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__make_access_group
+msgid "Make access group"
+msgstr "Направи група за достъп"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_has_error
+msgid "Message Delivery error"
+msgstr "Грешка при предаване на съобщението"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_ids
+msgid "Messages"
+msgstr "Съобщения"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_webstack
+msgid "Module"
+msgstr "Модул"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__webstack_count
+msgid "Module Count"
+msgstr "Брой на модулите"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Module records"
+msgstr "Записи за модули"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__webstack_ids
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Modules"
+msgstr "Модули"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__name
+msgid "Name"
+msgstr "Име"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Брой действия"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_has_error_counter
+msgid "Number of errors"
+msgstr "Брой грешки"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Брой съобщения, изискващи действие"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Брой съобщения с грешка при предаване"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__parent_id
+msgid "Parent site"
+msgstr "Родителски обект"
+
+#. module: hr_rfid_site_manager
+#: model:res.groups,name:hr_rfid_site_manager.hr_rfid_site_manager
+msgid "RFID Site Manager"
+msgstr "RFID Управление на обекти"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_event_user
+msgid "RFID User Event"
+msgstr "RFID потребителско събитие"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Root Sites"
+msgstr "Начален обект"
+
+#. module: hr_rfid_site_manager
+#. odoo-javascript
+#: code:addons/hr_rfid_site_manager/static/src/components/site_chart/site_chart.xml:0
+#, python-format
+msgid "Show doors"
+msgstr "Показване на врати"
+
+#. module: hr_rfid_site_manager
+#: model:ir.actions.act_window,name:hr_rfid_site_manager.act_site_from_sites
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_access_group__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl_alarm_group__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_door__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_event_user__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_webstack__site_id
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Site"
+msgstr "Обект"
+
+#. module: hr_rfid_site_manager
+#: model:ir.actions.act_window,name:hr_rfid_site_manager.hr_rfid_site_action
+#: model:ir.ui.menu,name:hr_rfid_site_manager.hr_rfid_menu_site_manager
+msgid "Site Manager"
+msgstr "Управление на обект"
+
+#. module: hr_rfid_site_manager
+#. odoo-javascript
+#: code:addons/hr_rfid_site_manager/static/src/components/site_chart/site_chart.xml:0
+#, python-format
+msgid "Site Organization"
+msgstr "Обектова организация"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Site manager"
+msgstr "Управление на обект"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Sites"
+msgstr "Обекти"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Sites with controllers"
+msgstr "Обекти с контролери"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Sites with doors"
+msgstr "Обекти с врати"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Sites with modules"
+msgstr "Обекти с модули"
+
+#. module: hr_rfid_site_manager
+#. odoo-python
+#: code:addons/hr_rfid_site_manager/models/hr_rfid_site.py:0
+#: model:ir.model.constraint,message:hr_rfid_site_manager.constraint_hr_rfid_site_unique_name
+#, python-format
+msgid "The site name must be unique."
+msgstr "Името на сайта трябва да е уникално."
+
+#. module: hr_rfid_site_manager
+#: model:res.groups,comment:hr_rfid_site_manager.hr_rfid_site_manager
+msgid "The user will be able to access and manage RFID sites"
+msgstr "Потребителят ще има достъп и ще може да управлява RFID обекти"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__website_message_ids
+msgid "Website Messages"
+msgstr "Съобщения в уебсайт"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__website_message_ids
+msgid "Website communication history"
+msgstr "История на комуникацията на уебсайт"
+
+#. module: hr_rfid_site_manager
+#. odoo-python
+#: code:addons/hr_rfid_site_manager/models/hr_rfid_site.py:0
+#: model:ir.model.constraint,message:hr_rfid_site_manager.constraint_hr_rfid_site_no_loop
+#, python-format
+msgid "You cannot create a loop in the site hierarchy."
+msgstr "Не можете да създавате цикъл в йерархията на обекта."
+
+#. module: hr_rfid_site_manager
+#. odoo-python
+#: code:addons/hr_rfid_site_manager/models/hr_rfid_access_group.py:0
+#, python-format
+msgid "You cannot delete an access group that is linked to a site."
+msgstr "Не можете да изтриете група за достъп, която е свързана с даден обект."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Your site Name"
+msgstr "Името на вашия обект"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_tree
+msgid "hr_rfid_site_tree"
+msgstr ""

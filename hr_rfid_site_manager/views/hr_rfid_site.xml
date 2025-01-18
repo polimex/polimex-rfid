@@ -36,6 +36,8 @@
                     <field name="door_ids" widget="many2many_tags"/>
                     <field name="webstack_ids" widget="many2many_tags"/>
                     <field name="controller_ids" widget="many2many_tags"/>
+                    <field name="access_group_ids" widget="many2many_tags"/>
+                    <field name="alarm_line_group_ids" widget="many2many_tags"/>
                 </list>
             </field>
         </record>
@@ -46,7 +48,56 @@
             <field name="arch" type="xml">
                 <form string="Site manager">
                     <sheet>
-                        <div name="button_box" class="oe_button_box"/>
+                        <div name="button_box" class="oe_button_box">
+                            <button name="open_door_list_action"
+                                    type="object"
+                                    class="oe_stat_button"
+                                    invisible="door_count == 0"
+                                    icon="fa-search-plus">
+                                <field name="door_count" widget="statinfo" string="Door records"/>
+                            </button>
+                            <button name="open_controller_list_action"
+                                    type="object"
+                                    class="oe_stat_button"
+                                    invisible="controller_count == 0"
+                                    icon="fa-search-plus">
+                                <field name="controller_count" widget="statinfo" string="Controller records"/>
+                            </button>
+                            <button name="open_webstack_list_action"
+                                    type="object"
+                                    class="oe_stat_button"
+                                    invisible="webstack_count == 0"
+                                    icon="fa-search-plus">
+                                <field name="webstack_count" widget="statinfo" string="Module records"/>
+                            </button>
+                            <button name="open_access_group_list_action"
+                                    type="object"
+                                    class="oe_stat_button"
+                                    invisible="access_group_count == 0"
+                                    icon="fa-search-plus">
+                                <field name="access_group_count" widget="statinfo" string="Access Group records"/>
+                            </button>
+                            <button name="open_alarm_line_group_list_action"
+                                    type="object"
+                                    class="oe_stat_button"
+                                    invisible="alarm_line_group_count == 0"
+                                    icon="fa-search-plus">
+                                <field name="alarm_line_group_count" widget="statinfo" string="Alarm Line Group records"/>
+                            </button>
+                            <button name="open_child_site_list_action"
+                                    type="object"
+                                    class="oe_stat_button"
+                                    invisible="child_count == 0"
+                                    icon="fa-search-plus">
+                                <field name="child_count" widget="statinfo" string="Child records"/>
+                            </button>
+
+                            <button name="create_child" type="object" class="oe_stat_button text-primary oe_read_only"
+                                    icon="fa-plus"
+                                    help="Create a new child site">
+                                Create Child
+                            </button>
+                        </div>
                         <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
                         <field name="active" invisible="1"/>
 
@@ -69,23 +120,25 @@
                             </div>
                         </group>
                         <notebook>
-                            <page name="door_list" string="Doors" invisible="not door_ids">
-                                <group>
-                                    <field name="door_ids" no_label="1" widget="many2many_tags"
+                            <page name="access_group_list" string="Access Groups" invisible="not access_group_ids">
+                                    <field name="access_group_ids" nolabel="1"
                                            domain="[('site_id','=',False)]"/>
-                                </group>
+                            </page>
+                            <page name="door_list" string="Doors" invisible="not door_ids">
+                                    <field name="door_ids" nolabel="1" widget="many2many_tags"
+                                           domain="[('site_id','=',False)]"/>
                             </page>
                             <page name="ctrl_list" string="Controllers" invisible="not controller_ids">
-                                <group>
-                                    <field name="controller_ids" no_label="1" widget="many2many_tags"
+                                    <field name="controller_ids" nolabel="1"
                                            domain="[('site_id','=',False)]"/>
-                                </group>
                             </page>
                             <page name="module_list" string="Modules" invisible="not webstack_ids">
-                                <group>
-                                    <field name="webstack_ids" no_label="1" widget="many2many_tags"
+                                    <field name="webstack_ids" nolabel="1"
                                            domain="[('site_id','=',False)]"/>
-                                </group>
+                            </page>
+                            <page name="alarm_group_list" string="Alarm Line Groups" invisible="not alarm_line_group_ids">
+                                    <field name="alarm_line_group_ids" nolabel="1"
+                                           domain="[('site_id','=',False)]"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -130,15 +183,26 @@
                 <hierarchy child_field="child_ids" draggable="1">
                     <field name="name"/>
                     <field name="color"/>
+                    <field name="make_access_group"/>
+                    <field name="state"/>
                     <templates>
                         <t t-name="hierarchy-box">
                             <div t-attf-class="o_hierarchy_node_header d-flex justify-content-center align-items-center o_hierarchy_node_color_{{ record.color.raw_value }}">
+                                <button class="btn btn-link" name="disarm" type="object"
+                                        t-if="record.state.raw_value == 'arm'">
+                                    <i class="fa fa-universal-access text-success ms-auto"
+                                       title="Disarm the Group"/>
+                                </button>
+                                <button class="btn btn-link" name="arm" type="object"
+                                        t-if="record.state.raw_value == 'disarm'">
+                                    <i class="fa fa-shield text-danger ms-auto"
+                                       title="Arm the Group"/>
+                                </button>
                                 <field name="name"/>
-                                <field name="make_access_group" invisible="1"/>
                                 <button class="btn btn-link" name="open_access_group_list_action" type="object">
-                                <i class="fa fa-circle text-success ms-auto"
-                                   t-if="record.make_access_group.raw_value"
-                                   title="Available Access Group"/>
+                                    <i class="fa fa-circle text-success ms-auto"
+                                       t-if="record.make_access_group.raw_value"
+                                       title="Available Access Group"/>
                                 </button>
                             </div>
                             <div class="o_hierarchy_node_body d-flex flex-column">

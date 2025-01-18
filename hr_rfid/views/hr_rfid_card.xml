@@ -79,7 +79,7 @@
             <field name="model">hr.rfid.card</field>
             <field name="arch" type="xml">
                 <list string="RFID Card" decoration-success="active"
-                      decoration-danger="not active">
+                      decoration-danger="not active" sample="1">
                     <field name="active" invisible="1"/>
                     <field name="name"/>
                     <field name="number" optional="hide"/>

@@ -180,7 +180,7 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         for rel in access_group_contact_rel:
             if not rel.expiration:
                 raise UserError(_('The partner have valid service for unlimited period!'))
-            if self.start_date < rel.expiration < self.end_date:
+            if (self.start_date < rel.expiration < self.end_date) and rel.state:
                 raise UserError(_('The partner have valid service for this period!'))
 
         access_group_contact_rel = self.env['hr.rfid.access.group.contact.rel'].sudo().create({

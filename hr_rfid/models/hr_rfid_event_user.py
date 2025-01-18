@@ -1,26 +1,24 @@
 from datetime import timedelta
-
 from odoo import fields, models, api, _
-
 import logging
 _logger = logging.getLogger(__name__)
 
 
 action_selection = [
-        ('1', _('Card Granted')),
-        ('2', _('Card Denied')),
-        ('3', _('Card Denied T/S')),
-        ('4', _('Card Denied APB')),
-        ('5', _('Zone Arm Denied')),
-        ('6', _('Card Granted (no entry)')),
-        ('7', _('Card Granted Insert')),
-        ('8', _('Card Denied Insert')),
-        ('9', _('Card Ejected')),
-        ('10', _('Zone Arm')),
-        ('11', _('Zone Disarm')),
-        ('12', _('Hotel Button Pressed')),
-        ('15', _('Zone Disarm Denied')),
-        ('64', _('Request Instructions')),
+        ('1', 'Card Granted'),
+        ('2', 'Card Denied'),
+        ('3', 'Card Denied T/S'),
+        ('4', 'Card Denied APB'),
+        ('5', 'Zone Arm Denied'),
+        ('6', 'Card Granted (no entry)'),
+        ('7', 'Card Granted Insert'),
+        ('8', 'Card Denied Insert'),
+        ('9', 'Card Ejected'),
+        ('10', 'Zone Arm'),
+        ('11', 'Zone Disarm'),
+        ('12', 'Hotel Button Pressed'),
+        ('15', 'Zone Disarm Denied'),
+        ('64', 'Request Instructions'),
     ]
 
 class HrRfidUserEvent(models.Model):
@@ -95,6 +93,11 @@ class HrRfidUserEvent(models.Model):
         string='Card',
         help='Card affected by this event',
         ondelete='set null',
+    )
+
+    card_number = fields.Char(
+        related='card_id.number',
+        string='Card Number'
     )
 
     command_id = fields.Many2one(

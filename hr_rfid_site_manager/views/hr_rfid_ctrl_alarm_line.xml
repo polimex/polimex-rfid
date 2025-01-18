@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_rfid_ctrl_alarm_group_form_view_inherit" model="ir.ui.view">
+            <field name="name">hr.rfid.ctrl.alarm.group.form.view.inherit</field>
+            <field name="model">hr.rfid.ctrl.alarm.group</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_ctrl_alarm_group_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group" position="inside">
+                    <group>
+                        <field name="site_id" groups="hr_rfid_site_manager.hr_rfid_site_manager"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

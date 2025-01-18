@@ -296,7 +296,7 @@
             <field name="name">hr.rfid.access.group.list</field>
             <field name="model">hr.rfid.access.group</field>
             <field name="arch" type="xml">
-                <list string="Access Groups">
+                <list string="Access Groups" sample="1">
                     <field name="name"/>
                     <field name="default_department_ids" widget="many2many_tags"/>
                     <field name="department_ids" widget="many2many_tags"/>

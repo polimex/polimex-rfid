@@ -57,7 +57,7 @@
             <field name="name">hr.rfid.reader.list</field>
             <field name="model">hr.rfid.reader</field>
             <field name="arch" type="xml">
-                <list create="false" delete="false">
+                <list create="false" delete="false" sample="1">
                     <field name="name"/>
                     <field name="mode"/>
                     <field name="reader_type"/>
