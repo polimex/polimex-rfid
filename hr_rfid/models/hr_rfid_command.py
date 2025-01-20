@@ -616,7 +616,8 @@ class HrRfidCommands(models.Model):
 
             records += super(HrRfidCommands, self).create([vals])
 
-            if records and len(records) == 1 and not records.webstack_id.is_limit_executed_cmd_reached() and records.webstack_id.active:
+            if records and len(
+                    records) == 1 and not records.webstack_id.is_limit_executed_cmd_reached() and records.webstack_id.active:
                 records.webstack_id.direct_execute(command_id=records)
 
         return records
@@ -698,7 +699,7 @@ class HrRfidCommands(models.Model):
         max_events_count = f0_parse[F0Parse.max_events_count]
         serial_num = f0_parse[F0Parse.serial_num]
 
-        old_ctrl = ctrl_env.search([
+        old_ctrl = ctrl_env.sudo().search([
             ('serial_number', '=', serial_num)
         ], limit=1)
 
@@ -707,7 +708,13 @@ class HrRfidCommands(models.Model):
             if old_ctrl.webstack_id == self.controller_id.webstack_id:
                 ctrl_already_existed = True
             else:
-                old_ctrl.webstack_id = self.controller_id.webstack_id
+                # old_ctrl.webstack_id = self.controller_id.webstack_id
+                self.controller_id.webstack_id.sys_log(
+                    _('A controller with serial number %s is already registered in the system. '
+                      'It is no possible to have 2 controllers wit same serial numbers.') % serial_num
+                )
+                self.controller_id.unlink()
+                return
 
         old_reader_count = len(self.controller_id.reader_ids)
         old_door_count = len(self.controller_id.door_ids)
@@ -795,7 +802,7 @@ class HrRfidCommands(models.Model):
                     #     door = create_door(gen_d_name(i + 1, self.controller_id), i + 1) # !!!!!!!!!!!!!!!!!!
                     #     add_door_to_reader(reader2, door)
                     for i in range(io_size):
-                        door = create_door(gen_d_name(io_size+i + 1, self.controller_id), 16 + i + 1)
+                        door = create_door(gen_d_name(io_size + i + 1, self.controller_id), 16 + i + 1)
                         add_door_to_reader(reader2, door)
                 elif io_count == 3:
                     for i in range(min(io_size * 2, 16)):
@@ -808,7 +815,7 @@ class HrRfidCommands(models.Model):
                     for i in range(min(io_size * 2, 16)):
                         door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
                         add_door_to_reader(reader1, door)
-                    for i in range(min(io_size * 2, 16), min(io_size*io_count, 32)):
+                    for i in range(min(io_size * 2, 16), min(io_size * io_count, 32)):
                         door = create_door(gen_d_name(i + 1, self.controller_id), i + 1)
                         add_door_to_reader(reader2, door)
 
@@ -899,7 +906,7 @@ class HrRfidCommands(models.Model):
             if new_io:
                 self.controller_id.change_io_table(new_io)
         else:
-            self.controller_id.with_context({'from_controller':True}).write(ctrl_dict)
+            self.controller_id.with_context({'from_controller': True}).write(ctrl_dict)
 
         cmd_env = self.env['hr.rfid.command'].sudo()
 
@@ -947,7 +954,7 @@ class HrRfidCommands(models.Model):
         # Commands addons
         if command.cmd == 'D1':
             if command.controller_id.is_temperature_ctrl():
-                sensor_uid = ''.join(["0"+c for c in command.card_number])
+                sensor_uid = ''.join(["0" + c for c in command.card_number])
                 json_cmd['cmd']['d'] = sensor_uid + "%.2d" % int(command.pin_code) + "%.2d" % int(command.ts_code)
                 pass
             elif command.controller_id.is_relay_ctrl():

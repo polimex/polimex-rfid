@@ -551,7 +551,7 @@ class HrRfidWebstack(models.Model):
             ws.controllers.synchronize_clock_cmd()
 
     # Log system event for this webstack/s
-    def sys_log(self, error_description, input_json):
+    def sys_log(self, error_description, input_json=None):
         """
         :param error_description: (str) Description of the error that occurred.
         :param input_json: (str) JSON input for the logs.
