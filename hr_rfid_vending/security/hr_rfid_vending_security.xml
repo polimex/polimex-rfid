@@ -6,7 +6,8 @@
     <record id="hr_rfid_vending_management" model="ir.module.category">
       <field name="name">Vending Access</field>
       <field name="description">User rights for the Vending module</field>
-      <field name="sequence">4</field>
+      <field name="sequence">15</field>
+      <field name="parent_id" ref="hr_rfid.hr_rfid_root"/>
     </record>
 
 <!--    <record id="view_own_department_data" model="res.groups">-->

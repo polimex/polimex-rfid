@@ -1,12 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <record id="hr_rfid_site_manager" model="res.groups">
-            <field name="name">RFID Site Manager</field>
-            <field name="category_id" ref="hr_rfid.module_rfid_settings"/>
-            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
-            <field name="comment">The user will be able to access and manage RFID sites</field>
+        <!--Main module rights-->
+        <record id="hr_rfid_site_category" model="ir.module.category">
+            <field name="name">RFID Site</field>
+            <field name="description">User rights for the RFID Site module</field>
+            <field name="sequence">40</field>
+        </record>
+        <!--Main module rights-->
+        <record id="hr_rfid_site_category" model="ir.module.category">
+            <field name="name">RFID Site</field>
+            <field name="description">User rights for the RFID Site module</field>
+            <field name="sequence">5</field>
+            <field name="parent_id" ref="hr_rfid.hr_rfid_root"/>
         </record>
 
+        <record id="group_guard" model="res.groups">
+            <field name="name">Guard</field>
+            <field name="category_id" ref="hr_rfid_site_category"/>
+            <field name="comment">The user will be able to see User Events.</field>
+        </record>
+
+        <record id="group_own_sites" model="res.groups">
+            <field name="name">Own Sites</field>
+            <field name="implied_ids" eval="[(4, ref('hr_rfid_site_manager.group_guard'))]"/>
+            <field name="category_id" ref="hr_rfid_site_category"/>
+            <field name="comment">The user will be able to manage cards without hardware setup</field>
+        </record>
+
+        <record id="group_" model="res.groups">
+            <field name="name">Manager</field>
+            <field name="implied_ids" eval="[(4, ref('hr_rfid_site_manager.group_own_sites'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+            <field name="category_id" ref="hr_rfid_site_category"/>
+            <field name="comment">The user have full rights for Site Managment</field>
+        </record>
     </data>
+
 </odoo>
