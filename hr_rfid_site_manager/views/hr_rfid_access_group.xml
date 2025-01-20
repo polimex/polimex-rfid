@@ -9,7 +9,7 @@
             <field name="arch" type="xml">
 
                 <xpath expr="//form/sheet/group" position="inside">
-                    <group groups="hr_rfid_site_manager.hr_rfid_site_manager">
+                    <group groups="hr_rfid_site_manager.group_guard">
                         <field name="site_id"/>
                     </group>
                 </xpath>
@@ -25,7 +25,7 @@
 
                 <xpath expr="//field[@name='company_id']" position="before">
                     <field name="site_id" optional='hide' widget="many2one"/>
-<!--                           groups="hr_rfid_site_manager.hr_rfid_site_manager"/>-->
+<!--                           groups="hr_rfid_site_manager.group_guard"/>-->
                 </xpath>
 
                 <xpath expr="//list" position="attributes">

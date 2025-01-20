@@ -22,8 +22,8 @@
                   name="Site Manager"
                   parent="hr_rfid.hr_rfid_root_menu_hardware_manager"
                   action="hr_rfid_site_action"
-                  groups="hr_rfid_site_manager.hr_rfid_site_manager"
-                  sequence="30"/>
+                  groups="hr_rfid_site_manager.group_guard"
+                  sequence="40"/>
 
 
         <record id="hr_rfid_site_view_tree" model="ir.ui.view">

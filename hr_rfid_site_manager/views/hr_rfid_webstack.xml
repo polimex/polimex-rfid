@@ -8,7 +8,7 @@
             <field name="arch" type="xml">
 
                 <xpath expr="//field[@name='company_id']" position="before">
-                        <field name="site_id" groups="hr_rfid_site_manager.hr_rfid_site_manager"/>
+                        <field name="site_id" groups="hr_rfid_site_manager.group_guard"/>
                 </xpath>
 
             </field>

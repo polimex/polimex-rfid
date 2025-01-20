@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="hr_rfid.hr_rfid_controller_view_form"/>
             <field name="arch" type="xml">
                 <field name="sw_version" position="after">
-                    <field name="site_id" groups="hr_rfid_site_manager.hr_rfid_site_manager"/>
+                    <field name="site_id" groups="hr_rfid_site_manager.group_guard"/>
                 </field>
             </field>
         </record>
@@ -19,7 +19,7 @@
 <!--            <field name="arch" type="xml">-->
 <!--                <xpath expr="//div[@name='second_col']" position="inside">-->
 <!--                    <div t-if="record.site_id.raw_value">-->
-<!--                        <field name="site_id" groups="hr_rfid_site_manager.hr_rfid_site_manager"/>-->
+<!--                        <field name="site_id" groups="hr_rfid_site_manager.group_guard"/>-->
 <!--                    </div>-->
 <!--                </xpath>-->
 <!--            </field>-->
