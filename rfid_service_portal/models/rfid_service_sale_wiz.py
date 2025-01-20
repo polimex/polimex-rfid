@@ -16,13 +16,16 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
     _description = 'Base RFID Service Sale Wizard'
     _inherit = ['rfid.service.sale.wiz']
 
+    invite_in_portal = fields.Boolean('Invite in Portal', default=False
+                                      )
+
     def share_card(self):
         if not self.email and not self.mobile:
             raise UserError(_('Please fill the e-mail or mobile in the form'))
         sale_id, partner_id, access_group_contact_rel, card_id = self._write_card()
         act = card_id.action_share()
         act['name'] = _('Share web card %s to %s' % (sale_id.name, partner_id.name))
-        act['company_dependent']= True
+        act['company_dependent'] = True
         act['context'] = {
             'active_id': card_id.id,
             'force_website': True,
@@ -31,3 +34,13 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
             'default_partner_ids': partner_id.ids,
         }
         return act
+
+    def _write_card(self):
+        sale_id, partner_id, access_group_contact_rel, card_id = super()._write_card()
+        if self.invite_in_portal:
+            self.env['portal.wizard.user'].create([{
+                'partner_id': partner_id.id,
+                'email': partner_id.email,
+                'wizard_id': self.env['portal.wizard'].create([{}]).id,
+            }]).action_grant_access()
+        return sale_id, partner_id, access_group_contact_rel, card_id
