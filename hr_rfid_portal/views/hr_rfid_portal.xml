@@ -29,13 +29,6 @@
                     <t t-set="url" t-value="'/my/webcards'"/>
                     <t t-set="placeholder_count" t-value="'barcode_count'"/>
                 </t>
-                <!--                <t t-call="portal.portal_docs_entry">-->
-                <!--                    <t t-set="icon" t-value="'/hr_rfid_portal/static/img/rfid.svg'"/>-->
-                <!--                    <t t-set="title">Cards</t>-->
-                <!--                    <t t-set="url" t-value="'/my/cards'"/>-->
-                <!--                    <t t-set="text">Review all Cards related to you</t>-->
-                <!--                    <t t-set="placeholder_count" t-value="'card_count'"/>-->
-                <!--                </t>-->
                 <t t-call="portal.portal_docs_entry">
                     <t t-set="icon" t-value="'/hr_rfid_portal/static/img/events.svg'"/>
                     <t t-set="title">Events</t>
@@ -91,76 +84,54 @@
         <template id="portal_my_barcode" name="My Barcode">
             <t t-call="web.basic_layout">
                 <t t-set="title" t-value="owner.name or 'Access QR Code by Polimex'"/>
-                <div class="container">
-                    <div class="o_logo text-center">
-                        <img t-attf-src="/web/binary/company_logo?company={{ company.id }}" alt="Logo"/>
-                    </div>
-                    <div class="card testimonial-card mt-2 mb-3">
-                        <div class="card-up aqua-gradient">
-                            <h5 t-if="card.card_reference"
-                                class="o_card_barcode_foldable__foldable_badge_event_name font-weight-bold text-center"
-                                t-field="card.card_reference"/>
+                <div class="container-fluid d-flex justify-content-center align-items-center vh-100"
+                     style="background-color: #f3f4f6;">
+                    <div class="card shadow-lg" style="width: 100%; max-width: 400px; border-radius: 20px;">
+                        <div class="card-header text-white text-center"
+                             style="background: linear-gradient(45deg, #007bff, #0056b3); border-radius: 20px 20px 0 0;">
+                            <img t-attf-src="/web/binary/company_logo?company={{ company.id }}" alt="Company Logo"
+                                 class="img-fluid mb-2" style="max-height: 50px;"/>
+                            <h5 t-if="card.card_reference" class="mb-0" t-field="card.card_reference"/>
                         </div>
-                        <div t-if="owner.image_1920" class="avatar mx-auto white">
-                            <img t-att-src="image_data_uri(owner.avatar_1920)"
-                                 style="max-height:85pt;max-width:90%" alt="Image" class="rounded-circle img-fluid"/>
+                        <div class="text-center my-3">
+                            <img t-if="owner.image_1920" t-att-src="image_data_uri(owner.avatar_1920)" alt="Owner Image"
+                                 class="rounded-circle img-fluid border border-2 border-primary"
+                                 style="width: 120px; height: 120px; object-fit: cover;"/>
                         </div>
                         <div class="card-body text-center">
-                            <h4 class="card-title font-weight-bold" t-field="owner.name"/>
-                            <hr/>
-                            <div class="text-center o_card_barcode_foldable_badge_font_small">
-                                <span itemprop="startDate" t-esc="card.activate_on.date()"
-                                      class="font-weight-bold"/>
-                                <span itemprop="startDateTime" t-esc="card.activate_on"
-                                      class="font-weight-bold"
-                                      t-options='{"widget": "datetime", "time_only": True, "hide_seconds": True}'/>
-                                <span class="fa fa-arrow-right o_card_barcode_foldable_badge_font_faded"/>
-                                <span t-if="card.deactivate_on"
-                                      itemprop="endDate" t-esc="card.deactivate_on.date()"
-                                      class="font-weight-bold"/>
-                                <span t-else="" class="font-weight-bold">Not defined</span>
-                                <span itemprop="endDateTime" t-esc="card.deactivate_on"
-                                      class="font-weight-bold"
-                                      t-options='{"widget": "datetime", "time_only": True, "hide_seconds": True}'/>
+                            <h4 class="card-title font-weight-bold mb-1" t-field="owner.name"/>
+                            <p class="text-muted mb-3">Access Badge</p>
+                            <div class="d-flex justify-content-center align-items-center mb-4">
+                                <span class="font-weight-bold text-primary" itemprop="startDate"
+                                      t-esc="card.activate_on.date()"/>
+                                <span class="mx-2 text-muted">&#8594;</span>
+                                <span t-if="card.deactivate_on" class="font-weight-bold text-primary" itemprop="endDate"
+                                      t-esc="card.deactivate_on.date()"/>
+                                <span t-else="" class="font-weight-bold text-danger">Not defined</span>
                             </div>
-                            <hr/>
-                            <img alt="barcode"
-                                 t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s&amp;humanreadable=1&amp;quiet=0' % ('QR', card.barcode_number, 200, 200)"
-
-                                 style="width:200px;height:200px"/>
-                            <hr/>
-                            <div class="d-flex justify-content-between">
-                                Barcode instruction information
+                            <div class="text-center mb-3">
+                                <img alt="QR Code"
+                                     t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s&amp;humanreadable=1&amp;quiet=0' % ('QR', card.barcode_number, 200, 200)"
+                                     class="img-fluid border border-secondary rounded" style="max-width: 180px;"/>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-between card-footer">
-                            <address class="mb-0" style="width:100%">
+                        <div class="card-footer text-center text-muted" style="border-radius: 0 0 20px 20px;">
+                            <address class="mb-0">
                                 <t t-if="company.phone">
-                                    <a target="_blank" t-attf-href="'tel:%s' % {{ company.phone }}"
-                                       style="text-decoration:none; color: #454748;"
-                                       t-out="company.phone or ''">+1 650-123-4567
-                                    </a>
-                                </t>
-                                <t t-if="company.phone and (company.email or company.website)">
-                                    |
+                                    <a t-attf-href="'tel:%s' % {{ company.phone }}"
+                                       class="text-dark text-decoration-none" t-out="company.phone or ''"/>|
                                 </t>
                                 <t t-if="company.email">
-                                    <a target="_blank" t-attf-href="'mailto:%s' % {{ company.email }}"
-                                       style="text-decoration:none; color: #454748;"
-                                       t-out="company.email or ''">info@yourcompany.com
-                                    </a>
+                                    <a t-attf-href="'mailto:%s' % {{ company.email }}"
+                                       class="text-dark text-decoration-none" t-out="company.email or ''"/>|
                                 </t>
-                                <t t-if="company.email and company.website">|</t>
                                 <t t-if="company.website">
-                                    <a t-attf-href="'%s' % {{ company.website }}" target="_blank"
-                                       style="text-decoration:none; color: #454748;"
-                                       t-out="company.website or ''">http://www.example.com
-                                    </a>
+                                    <a t-attf-href="'http://%s' % {{ company.website }}" target="_blank"
+                                       class="text-dark text-decoration-none" t-out="company.website or ''"/>
                                 </t>
                             </address>
                         </div>
                     </div>
-
                 </div>
             </t>
         </template>
@@ -198,7 +169,6 @@
                 </t>
             </t>
         </template>
-
 
     </data>
 </odoo>

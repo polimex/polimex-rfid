@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 17.0\n"
+"Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-23 15:35+0000\n"
-"PO-Revision-Date: 2023-12-23 17:37+0200\n"
+"POT-Creation-Date: 2025-01-19 13:52+0000\n"
+"PO-Revision-Date: 2025-01-19 15:53+0200\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.1\n"
+"X-Generator: Poedit 3.5\n"
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_my_barcode
@@ -23,23 +23,18 @@ msgid "+1 650-123-4567"
 msgstr ""
 
 #. module: hr_rfid_portal
+#: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_barcode_table
+msgid ""
+"<i class=\"fa fa-download\"/>\n"
+"                                Download"
+msgstr ""
+"<i class=\"fa fa-download\"/>\n"
+"                                Изтегли"
+
+#. module: hr_rfid_portal
 #: model:ir.model.fields,field_description:hr_rfid_portal.field_hr_rfid_card__access_warning
 msgid "Access warning"
 msgstr "Предупреждение за достъп"
-
-#. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "All"
-msgstr "Всички"
-
-#. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "Assignees"
-msgstr "Получатели"
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_my_barcode
@@ -52,28 +47,19 @@ msgid "Card"
 msgstr "Карта"
 
 #. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "Customer"
-msgstr "Клиент"
-
-#. module: hr_rfid_portal
 #: model:ir.model.fields,help:hr_rfid_portal.field_hr_rfid_card__access_url
 msgid "Customer Portal URL"
 msgstr "URL адрес на портала за клиенти"
 
 #. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "Deadline"
-msgstr "Краен срок"
-
-#. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_user_event_table
 msgid "Door"
 msgstr "Врата"
+
+#. module: hr_rfid_portal
+#: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_barcode_table
+msgid "Download"
+msgstr "Изтегли"
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_my_home_hr_rfid
@@ -86,13 +72,6 @@ msgid "Image"
 msgstr "Изображение"
 
 #. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "Last Stage Update"
-msgstr "Актуализация на последния етап"
-
-#. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_barcode_table
 msgid "Link"
 msgstr "Връзка"
@@ -103,30 +82,14 @@ msgid "Logo"
 msgstr "Лого"
 
 #. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "Newest"
-msgstr "Най-нови"
-
-#. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "None"
-msgstr "Без"
-
-#. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_my_barcode
 msgid "Not defined"
 msgstr "Не е дефинирано"
 
 #. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "Others"
-msgstr "Други"
+#: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_barcode_table
+msgid "Paper Card"
+msgstr "Хартиена карта"
 
 #. module: hr_rfid_portal
 #: model:ir.model.fields,field_description:hr_rfid_portal.field_hr_rfid_card__access_url
@@ -137,20 +100,6 @@ msgstr "URL адрес за достъп до портала"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.hr_rfid_card_form_inherit
 msgid "Portal preview"
 msgstr "Предварителен преглед на портала"
-
-#. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "Priority"
-msgstr "Приоритет"
-
-#. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "Project"
-msgstr "Проект"
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_user_event_table
@@ -173,69 +122,6 @@ msgid "Review all WebCards related to you"
 msgstr "Преглед на всички уебкарти, свързани с вас"
 
 #. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "Search <span class=\"nolabel\"> (in Content)</span>"
-msgstr "Търси <span class=\"nolabel\"> (в Съдържанието)</span>"
-
-#. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "Search in All"
-msgstr "Търсене в Всички"
-
-#. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "Search in Assignees"
-msgstr "Търсене в Получателите"
-
-#. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "Search in Messages"
-msgstr "Търсене в съобщенията"
-
-#. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "Search in Priority"
-msgstr "Търсене по приоритет"
-
-#. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "Search in Project"
-msgstr "Търсене в проекта"
-
-#. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "Search in Ref"
-msgstr "Търсене в Ref"
-
-#. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "Search in Stages"
-msgstr "Търсене в етапи"
-
-#. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "Search in Status"
-msgstr "Търсене в статус"
-
-#. module: hr_rfid_portal
 #: model:ir.model.fields,field_description:hr_rfid_portal.field_hr_rfid_card__access_token
 msgid "Security Token"
 msgstr "Токен за сигурност"
@@ -247,22 +133,7 @@ msgstr "Сподели"
 
 #. module: hr_rfid_portal
 #. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "Stage"
-msgstr "Етап"
-
-#. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "Status"
-msgstr "Статус"
-
-#. module: hr_rfid_portal
-#. odoo-python
 #: code:addons/hr_rfid_portal/models/hr_rfid_card.py:0
-#, python-format
 msgid ""
 "The card cannot be shared with the recipient(s) because the type is not "
 "Barcode."
@@ -279,13 +150,6 @@ msgstr "В акаунта ви няма уеб карти."
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_user_event_table
 msgid "There haven't events generated from you."
 msgstr "От вас не са генерирани събития."
-
-#. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal___.py:0
-#, python-format
-msgid "Title"
-msgstr "Обръщение"
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_layout
@@ -315,7 +179,6 @@ msgstr "Уеб карти"
 #. module: hr_rfid_portal
 #. odoo-python
 #: code:addons/hr_rfid_portal/controllers/portal.py:0
-#, python-format
 msgid "Web card for %s"
 msgstr "Уеб карта за %s"
 
@@ -337,14 +200,12 @@ msgstr "Кога"
 #. module: hr_rfid_portal
 #. odoo-python
 #: code:addons/hr_rfid_portal/models/hr_rfid_card.py:0
-#, python-format
 msgid "You cannot %s %s fields in card."
 msgstr "Не можете да използвате %s %s полета в картата."
 
 #. module: hr_rfid_portal
 #. odoo-python
 #: code:addons/hr_rfid_portal/models/hr_rfid_card.py:0
-#, python-format
 msgid "You have not write access of %s field."
 msgstr "Нямате достъп за запис на полето %s."
 

@@ -58,7 +58,7 @@
 <!--                                       options="{'no_open': True, 'no_create': [('extend_sale_id', '!=', False)]}"-->
                                 <field name="parent_id" invisible="1"/>
                                 <field name="partner_id"
-                                       readonly="not extend_sale_id"
+                                       readonly="extend_sale_id"
                                        options="{'no_open': True}"
                                        domain="[('is_company', '=', False), ('type', '=', 'contact')]"
                                        context="{'default_company_type': 'person', 'default_parent_id': parent_id}"

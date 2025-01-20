@@ -1,18 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <template id="portal_layout" name="Portal layout: RFID Information menu entry"
+                  inherit_id="portal.portal_breadcrumbs"
+                  priority="35">
+            <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+                <li t-if="page_name == 'rfidservices' or rfidservices"
+                    t-attf-class="breadcrumb-item #{'active' if not rfidservices else ''}">
+                    <t>RFID Services</t>
+                </li>
+            </xpath>
+        </template>
 
         <template id="portal_my_home" name="Show RFID Service Information" customize_show="True"
                   inherit_id="portal.portal_my_home" priority="60">
+            <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+                <t t-set="portal_service_category_enable" t-value="True"/>
+            </xpath>
            <div id="portal_service_category" position="inside">
                 <t t-call="portal.portal_docs_entry">
                     <t t-set="icon" t-value="'/rfid_service_portal/static/img/rfid_service.svg'"/>
                     <t t-set="title">RFID Services</t>
                     <t t-set="text">Review your RFID services</t>
-                    <t t-set="url" t-value="'/my/rfid_service'"/>
+                    <t t-set="url" t-value="'/my/rfid_services'"/>
                     <t t-set="placeholder_count" t-value="'service_count'"/>
                 </t>
             </div>
+        </template>
+
+        <template id="portal_rfid_service_sale_table" name="Portal RFID Services Table">
+            <t t-call="portal.portal_layout">
+                <t t-if="not services">
+                    <div class="alert alert-warning" role="alert">
+                        No RFID services found.
+                    </div>
+                </t>
+                <t t-if="services" t-call="portal.portal_table">
+                    <thead>
+                        <tr>
+                            <th>Reference</th>
+                            <th>Service</th>
+                            <th>Valid From</th>
+                            <th>Valid To</th>
+                            <th>Visits</th>
+                            <th>State</th>
+                        </tr>
+                    </thead>
+                    <tr t-foreach="services" t-as="service">
+                        <td><t t-out="service.name"/></td>
+                        <td><t t-out="service.service_id.name"/></td>
+                        <td><t t-out="service.start_date"/></td>
+                        <td><t t-out="service.end_date"/></td>
+                        <td><t t-out="service.visits"/></td>
+                        <td><t t-out="service.state"/></td>
+                    </tr>
+                </t>
+            </t>
         </template>
 
     </data>
