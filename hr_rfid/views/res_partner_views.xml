@@ -33,12 +33,13 @@
                     <field name="is_employee" invisible="1"/>
                     <page string="RFID Info"
                           groups="hr_rfid.hr_rfid_group_officer"
-                          invisible="is_company or is_employee">
-                        <group string="Settings" groups="hr_rfid.hr_rfid_view_rfid_pin_code_data">
+                          invisible="is_company or is_employee"
+                          name="rfid_main_page">
+                        <group string="Settings" groups="hr_rfid.hr_rfid_view_rfid_pin_code_data" name="rfid_settings">
                             <field name="hr_rfid_pin_code"/>
                         </group>
-                        <notebook>
-                            <page string="Cards">
+                        <notebook name="rfid_notebook">
+                            <page string="Cards" name="rfid_cards_page">
                                 <field name="hr_rfid_card_ids" context="{'active_test': False,'default_contact_id': id}" edit="0">
                                     <list string="Cards belonging this Contact" editable="bottom"
                                           decoration-success="active"
@@ -60,7 +61,7 @@
 
                             </page>
 
-                            <page string="Access Groups">
+                            <page string="Access Groups" name="rfid_ag_page">
                                 <field name="hr_rfid_access_group_ids" widget="one2many_list">
                                     <list editable="bottom">
                                         <field name="access_group_id"/>

@@ -734,7 +734,7 @@ class HrRfidController(models.Model):
                     ctrl.low_temperature,
                     ctrl.hysteresis
                 )
-        if 'output_ts_ids' in vals.keys():
+        if not from_controller and 'output_ts_ids' in vals.keys():
             self.write_output_ts()
         if not from_controller and ("input_mask_ids" in vals.keys() or "relay_output_mask" in vals.keys()):
             new_mask = sum((1 << i) for i, bit in enumerate(self.input_mask_ids) if bit.i_mask)

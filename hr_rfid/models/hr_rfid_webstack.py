@@ -3,7 +3,7 @@ from dateutil.relativedelta import relativedelta
 from requests import ConnectTimeout
 
 from odoo.addons.hr_rfid.controllers import polimex
-from odoo import api, fields, models, exceptions, _, SUPERUSER_ID, tools
+from odoo import api, fields, models, exceptions, _, SUPERUSER_ID, tools, Command
 from datetime import datetime, timedelta
 import socket
 import http.client
@@ -962,6 +962,26 @@ class HrRfidWebstack(models.Model):
             for door in controller.door_ids:
                 door.apb_mode = (door.number == '1' and (apb_mode & 1)) \
                                 or (door.number == '2' and (apb_mode & 2))
+        if response['c'] == 'FF': # Read time schedules for outputs
+            byte_data = bytes.fromhex(response['d'])
+            ts_for_read = set()
+            for out in range(controller.outputs if controller.outputs <= 8 else 8):
+                if (byte_data[out] & 0x0F) > 0:
+                    ts_for_read.add(byte_data[out] & 0x0F)
+                    ts_id = self.env['hr.rfid.time.schedule'].with_company(controller.company_id).search(
+                        [('number', '=', byte_data[out] & 0x0F)]
+                    )
+                    if not ts_id:
+                        _logger.error(f'Time schedule with number {byte_data[out] & 0x0F} not found for company {controller.company_id.name}')
+                        continue
+                    controller.with_context({'from_controller':True}).write({
+                        'output_ts_ids': [Command.create({
+                            'output_number': out + 1,
+                            'time_schedule_id': ts_id.id,
+                            'controller_id': controller.id,
+                        })]
+                    })
+
         if response['c'] == 'B0':
             # Read "cmd":{"id":31,"c":"B0","d":"01"}} - {"c":"B0","d":"01000000","e":0,"id":31}
             # Write "cmd":{"id":5,"c":"B0","d":"00010100"}} - {"c":"B0","d":"00","e":0,"id":5}
