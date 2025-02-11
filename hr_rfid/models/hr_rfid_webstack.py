@@ -1014,8 +1014,8 @@ class HrRfidWebstack(models.Model):
             output_states = (int(data[4:6], 16) & 0x7f) + ((int(data[6:8], 16) & 0x7f) << 7)
             usys = [int(data[8:10], 16), int(data[10:12], 16)]
             uin = [int(data[12:14], 16), int(data[14:16], 16)]
-            temperature = int(data[16:20], 10)
-            humidity = int(data[20:24], 10)
+            temperature = (lambda x: int(x, 10) if x.isdigit() else 0)(data[16:20])
+            humidity = (lambda x: int(x, 10) if x.isdigit() else 0)(data[20:24])
             Z1 = int(data[24:26], 16)
             Z2 = int(data[26:28], 16)
             Z3 = int(data[28:30], 16)
