@@ -7,16 +7,16 @@ class Department(models.Model):
 
     ignore_early_come_time = fields.Float(
         help='Times smaller than this will be ignored in the calculations on a daily basis.', digits=(2, 2),
-        default=lambda s: 10 / 60)
+        default=lambda s: 10 / 60, groups='hr_attendance.group_hr_attendance_user')
     ignore_late_time = fields.Float(
         help='Times smaller than this will be ignored in the calculations on a daily basis.', digits=(2, 2),
-        default=lambda s: 5 / 60)
+        default=lambda s: 5 / 60, groups='hr_attendance.group_hr_attendance_user')
     ignore_early_leave_time = fields.Float(
         help='Times smaller than this will be ignored in the calculations on a daily basis.', digits=(2, 2),
-        default=lambda s: 0 / 60)
+        default=lambda s: 0 / 60, groups='hr_attendance.group_hr_attendance_user')
     ignore_overtime = fields.Float(
         help='Times smaller than this will be ignored in the calculations on a daily basis.', digits=(2, 2),
-        default=lambda s: 15 / 60)
+        default=lambda s: 15 / 60, groups='hr_attendance.group_hr_attendance_user')
     ignore_extra_time = fields.Float(
         help='Times smaller than this will be ignored in the calculations on a daily basis.', digits=(2, 2),
-        default=lambda s: 10 / 60)
+        default=lambda s: 10 / 60, groups='hr_attendance.group_hr_attendance_user')

@@ -16,7 +16,8 @@ class HrEmployee(models.Model):
 
     attendance_extra_ids = fields.One2many(
         comodel_name='hr.attendance.extra',
-        inverse_name='employee_id'
+        inverse_name='employee_id',
+        groups='hr_attendance.group_hr_attendance_user'
     )
 
     @api.model
@@ -75,15 +76,19 @@ class HrEmployee(models.Model):
                     current_date += timedelta(days=1)
                     continue
 
-                attendance_ranges = self.env['hr.attendance'].search(
-                    [('employee_id', '=', e.id),
-                     ('check_in', '>=', current_date),
-                     ('check_in', '<', current_date + timedelta(days=1)),
-                     '|',
-                     ('check_out', '<', current_date + timedelta(days=1)),
-                     ('check_out', '=', False),
-                     ], order='check_in').mapped(
-                    lambda r: (r.check_in, r.check_out))
+                attendance_ranges = self.env['hr.attendance'].search([
+                        ('employee_id', '=', e.id),
+                        ('check_in', '>=', datetime.combine(current_date, datetime.min.time())),
+                        ('check_in', '<', datetime.combine(current_date, datetime.max.time()))
+                    ],order='check_in').mapped(lambda r: (r.check_in, r.check_out))
+                # [('employee_id', '=', e.id),
+                #  ('check_in', '>=', datetime.combine(current_date, datetime.min.time())),
+                #  ('check_in', '<', datetime.combine(current_date, datetime.min.time()) + timedelta(days=1)),
+                #  '|',
+                #  ('check_out', '<', datetime.combine(current_date, datetime.min.time()) + timedelta(days=1)),
+                #  ('check_out', '=', False),
+                #  ], order='check_in').mapped(
+                # lambda r: (r.check_in, r.check_out))
 
                 if not attendance_ranges:
                     if overwrite_existing and attendance_extra_id:
@@ -91,25 +96,33 @@ class HrEmployee(models.Model):
                     current_date += timedelta(days=1)
                     continue
 
+                line_ids = e.resource_calendar_id.attendance_ids.filtered(
+                    lambda r: r.dayofweek == str(current_date.weekday()))
                 work_time_ranges = [line_to_tz_datetime(current_date, line, tz) for line in
-                                    e.resource_calendar_id.attendance_ids if
-                                    line.dayofweek == str(current_date.weekday())]
+                                    line_ids]
                 shift_number = None
                 if e.resource_calendar_id.daily_ranges_are_shifts:
                     shift_intersections = [self._total_time(self._intersection_time([wr], attendance_ranges)) for
                                            wr in work_time_ranges]
-                    max_shift_time = max(shift_intersections)
-                    shift_number = shift_intersections.index(max_shift_time)
-                    work_time_ranges = [work_time_ranges[shift_number]]
+                    if shift_intersections:
+                        max_shift_time = max(shift_intersections)
+                        shift_number = shift_intersections.index(max_shift_time)
+                        work_time_ranges = [work_time_ranges[shift_number]]
+                try:
+                    att_extra_vals = self.get_work_time_details(
+                        for_date=current_date,
+                        work_time_ranges=work_time_ranges,
+                        attendance_ranges=attendance_ranges,
+                        day_period=convert_day_period_to_utc((time(6, 0), time(22, 0)), tz)
+                    )
+                except:
+                    _logger.info('ERROR in Attendance extra calculation for %s' % e.name)
+                    continue
 
-                att_extra_vals = self.get_work_time_details(
-                    for_date=current_date,
-                    work_time_ranges=work_time_ranges,
-                    attendance_ranges=attendance_ranges,
-                    day_period=convert_day_period_to_utc((time(6, 0), time(22, 0)), tz)
-                )
                 if shift_number is not None:
                     att_extra_vals['shift_number'] = shift_number + 1
+                if att_extra_vals.get('theoretical_work_time', None) is not None and att_extra_vals['theoretical_work_time']>20:
+                    att_extra_vals['theoretical_work_time'] = min(att_extra_vals['theoretical_work_time'],e.resource_calendar_id.hours_per_day)
                 # if att_extra_vals and (att_extra_vals.get('theoretical_work_time',0.0) > 0 or att_extra_vals.get('extra_time',0.0) > 0):
                 if att_extra_vals and (
                         sum(att_extra_vals.values()) - att_extra_vals.get('theoretical_work_time', 0.0)) > 0:
