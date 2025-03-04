@@ -54,6 +54,8 @@ class WebRfidController(http.Controller):
                 ('number', '=', post_data['event']['card']),
                 ('company_id', '=', webstack.company_id.id)
             ])
+            if len(card_id) > 1:
+                _logger.error(f'More than one card with the same number {card_num}')
         else:
             card_id = None
 
@@ -214,10 +216,9 @@ class WebRfidController(http.Controller):
                 'door_id': door and door.id or False,
                 'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
                 'event_action': '21',
-                # 'input_js': card_num,
             }
             event = controller_id.report_sys_ev(
-                description=_('Exit button pressed'),
+                description=_('Exit button %d pressed ', event_action-20),
                 post_data=post_data,
                 sys_ev_dict=sys_event_dict
             )
@@ -391,9 +392,24 @@ class WebRfidController(http.Controller):
             #     event_dict['more_json'] = json.dumps({"eject": reader.id})
             # if event_action in [36] and event_dict['event_action'] == 7:  # Insert
             #     event_dict['more_json'] = json.dumps({"insert": reader.id})
-            card_id.get_owner(event_dict)
-            event = ev_env.create(event_dict)
-            door.proccess_event(event)
+            if card_id:
+                card_id.get_owner(event_dict)
+                event = ev_env.create(event_dict)
+            else:  # Card event with unknown card
+                sys_event_dict = {
+                    'door_id': door and door.id or False,
+                    'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
+                    'event_action': str(event_action),
+                    'card_number': card_num or None,
+                    'input_js': card_num,
+                }
+
+                event = controller_id.report_sys_ev(
+                    description=_('Could not find the card'),
+                    post_data=post_data,
+                    sys_ev_dict=sys_event_dict
+                )
+            door.process_event(event)
             return webstack.check_for_unsent_cmd(200)
         # Temperature Control
         elif event_action in [51, 52, 53, 54]:
@@ -457,6 +473,15 @@ class WebRfidController(http.Controller):
                 return webstack.check_for_unsent_cmd(200)
 
     def _respond_to_ev_64(self, open_door, controller, reader, card, post_data):
+        """
+        :param open_door: True if door should be opened, False otherwise
+        :param controller: The RFID controller object
+        :param reader: The RFID reader object
+        :param card: The RFID card object
+        :param post_data: The data received from the POST request
+
+        :return: Response code from sending the command
+        """
         cmd_env = request.env['hr.rfid.command'].sudo()
         ev_env = request.env['hr.rfid.event.user'].sudo()
         open_door = 3 if open_door is True else 4
@@ -469,9 +494,9 @@ class WebRfidController(http.Controller):
         }
         if controller.is_relay_ctrl():
             data = 0
-            user_doors = card.get_owner().get_doors()
-            for door in reader.door_ids:
-                if door in user_doors:
+            if open_door == 3:
+                user_doors = card.get_owner().get_doors()
+                for door in reader.door_ids.filtered(lambda d: d in user_doors):
                     data |= 1 << (door.number - 1)
             cmd['cmd_data'] = '4000' + controller.convert_int_to_cmd_data_for_output_control(data)
         else:
@@ -493,9 +518,39 @@ class WebRfidController(http.Controller):
     @http.route(['/hr/rfid/barcode'], type='json', auth='none', methods=['POST'], cors='*', csrf=False,
                 save_session=False, sitemap=False)
     def post_barcode(self, **post):
+        """
+        :param post: Dictionary of parameters sent in the POST request.
+        :return: List of dictionaries with barcode data.
+
+        This method is used to handle barcode data sent in a POST request. It receives a dictionary of parameters in the `post` parameter. The method processes the barcode data and returns a list of dictionaries with barcode information.
+
+        The barcode data is expected to be sent in the following format:
+        {
+            "cmd": {
+                "reader": <reader_id>,
+                "type": <barcode_type>
+            }
+        }
+
+        The method logs the received barcode data and returns a response with barcode information for further processing.
+
+        Example usage:
+        ```
+        import requests
+
+        url = 'http://example.com/hr/rfid/barcode'
+        barcode_data = {
+            "cmd": {
+                "reader": 1,
+                "type": 0
+            }
+        }
+        response = requests.post(url, json=barcode_data)
+        barcode_info = response.json()
+        ```
+        """
         # request.session.should_save = False
         return
-        t0 = time.time()
         _logger.info(request.jsonrequest)
         return [{
             "id": 1,
@@ -503,20 +558,27 @@ class WebRfidController(http.Controller):
             "body": {"cmd": {"reader": 1, "type": 0}}
         }]
 
+    def _decode_post(self, post):
+        if not post:
+            # Controllers with no odoo functionality use the dd/mm/yyyy format
+            # Decode a to get a string
+            decoded_string = request.httprequest.data.decode('utf-8')
+            # Parse the string into a JSON object
+            return json.loads(decoded_string)
+        else:
+            return post
+
     @http.route(['/hr/rfid/event'], type='json', auth='none', methods=['POST'], cors='*', csrf=False,
                 save_session=False, sitemap=False)
     def post_event(self, **post):
         """
-        Process events from equipment
+        This method handles the POST request to the '/hr/rfid/event' route. It processes the received data from the request and performs necessary actions based on the data.
+
+        :param post: A dictionary containing the data from the request. If empty, it retrieves the data from the jsonrequest in the request object.
+        :return: A dictionary containing the result of the processing.
 
         """
-        t0 = time.time()
-        if not post:
-            # Controllers with no odoo functionality use the dd/mm/yyyy format
-            post_data = request.jsonrequest
-        else:
-            post_data = post
-        _logger.info('Received=' + str(post_data))
+        post_data = self._decode_post(post)
 
         if 'convertor' not in post_data:
             return self._parse_raw_data(post_data)
@@ -536,11 +598,12 @@ class WebRfidController(http.Controller):
                         'last_ip': request.httprequest.environ['REMOTE_ADDR'],
                         'updated_at': fields.Datetime.now(),
                         'available': 'a',
-                        'company_id': request.env['res.company'].search([])[0].id,
+                        'company_id': request.env['res.company'].sudo().search([])[0].id,
                     }
                     webstack_id = request.env['hr.rfid.webstack'].sudo().with_context(
                         tz=request.env['res.users'].sudo().browse(2).tz).create(new_webstack_dict)
                 else:
+                    _logger.info('Unknown Module. Received=' + str(post_data))
                     return {'status': 400}
 
             if not webstack_id.key:
@@ -552,6 +615,8 @@ class WebRfidController(http.Controller):
 
             elif webstack_id.key != post_data['key']:
                 webstack_id.report_sys_ev('Webstack key and key in json did not match', post_data=post_data)
+                _logger.info(f'Wrong Module key for {webstack_id.name}/{webstack_id.company_id.name}! Received=' + str(
+                    post_data))
                 return {'status': 400}
 
             if not webstack_id.active:
@@ -564,7 +629,7 @@ class WebRfidController(http.Controller):
             }
 
             if 'heartbeat' in post_data:
-                _logger.info('Heartbeat from {}'.format(webstack_id.name))
+                _logger.info(f'Heartbeat from {webstack_id.name}/{webstack_id.company_id.name}!')
                 result = webstack_id.parse_heartbeat(post_data=post_data)
             elif 'event' in post_data:
                 _logger.info('Event (%s) from %s' % (
@@ -574,19 +639,23 @@ class WebRfidController(http.Controller):
                              )
                 result = self._parse_event(post_data=post_data, webstack=webstack_id)
             elif 'response' in post_data:
-                _logger.info('Command response from {}'.format(webstack_id.name))
+                _logger.info(f'Command response from {webstack_id.name}/{webstack_id.company_id.name}')
                 result = webstack_id.parse_response(post_data=post_data)
             if not post and 'cmd' in result:
                 result = {'cmd': result['cmd']}
             webstack_id.write(self._ws_db_update_dict())
-            t1 = time.time()
-            _logger.debug('Took %2.03f time to form response=%s' % ((t1 - t0), str(result)))
             return result
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
                 exceptions.MissingError, exceptions.ValidationError,
                 psycopg2.DataError, ValueError) as e:
             # commented DeferredException ^
-            _logger.error('Caught an exception, returning status=500 and creating a system event (%s)' % str(e))
+            _logger.error(
+                f'Caught an exception from {webstack_id.name}/{webstack_id.company_id.name}, returning status=500 and '
+                f'creating a system event: %s\n%s',
+                str(e),
+                traceback.format_exc())
+
+            # _logger.error('Caught an exception, returning status=500 and creating a system event (%s)' % str(e))
             request.env['hr.rfid.event.system'].sudo().create({
                 'webstack_id': webstack_id and webstack_id.id,
                 'timestamp': fields.Datetime.now(),
@@ -596,6 +665,8 @@ class WebRfidController(http.Controller):
             # print('Caught an exception, returning status=500 and creating a system event')
             return {'status': 500}
         except BadTimeException:
+            _logger.error(f'Caught a time error from {webstack_id.name}/{webstack_id.company_id.name}, returning '
+                          f'status=200 and creating a system event')
             t = post_data['event']['date'] + ' ' + post_data['event']['time']
             ev_num = str(post_data['event']['event_n'])
             controller_id = webstack_id.controllers.filtered(lambda r: r.ctrl_id == post_data['event']['id'])
@@ -608,31 +679,46 @@ class WebRfidController(http.Controller):
                 'input_js': json.dumps(post_data),
             }
             request.env['hr.rfid.event.system'].sudo().create(sys_ev_dict)
-            _logger.error('Caught a time error, returning status=200 and creating a system event')
-            # print('Caught a time error, returning status=200 and creating a system event')
-            if not post:
-                # return werkzeug.exceptions.NotFound(description)
-                pass
             return {'status': 200}
         except Exception as e:
-            # commented DeferredException ^
+            _logger.error(f'Caught an exception from {webstack_id.name}/{webstack_id.company_id.name}, returning '
+                          f'status=500 and creating a system event: %s\n%s', str(e),
+                          traceback.format_exc())
             request.env['hr.rfid.event.system'].sudo().create([{
                 'webstack_id': webstack_id and webstack_id.id,
                 'timestamp': fields.Datetime.now(),
                 'error_description': str(e),
                 'input_js': json.dumps(post_data),
             }])
-            _logger.error(
-                'Caught an unexpected exception, returning status=500 and creating a system event - ' + str(e))
             return {'status': 500}
 
     def _parse_raw_data(self, post_data: dict):
+        """
+        Parses the raw data received from the RFID webstack.
+
+        :param post_data: The raw data received from the RFID webstack.
+        :return: If the 'serial', 'security', and 'events' keys are present in the post_data dictionary, it calls the _parse_barcode_device method with the post_data. Otherwise, it returns a dictionary with a 'status' key set to 200.
+
+        :rtype: dict
+        """
         if 'serial' in post_data and 'security' in post_data and 'events' in post_data:
             return self._parse_barcode_device(post_data)
 
         return {'status': 200}
 
     def _parse_barcode_device(self, post_data: dict):
+        """
+        :param post_data: A dictionary containing the post data received from the barcode device. It should have the following keys:
+            - 'serial': The serial number of the barcode device.
+            - 'security': The security key of the barcode device.
+        :return: A dictionary containing the parsed data from the barcode device.
+
+        The method creates a new record in the 'hr.rfid.raw.data' table with the provided post data. It sets the 'do_not_save' field to True, the 'identification' field with the serial number, and the 'data' field with the serialized post data.
+
+        After creating the record, it retrieves the 'return_data' field value from the created record. If the 'do_not_save' field was set to True, the record is unlinked, meaning it gets deleted from the database.
+
+        Finally, the method returns the parsed data from the barcode device as a dictionary. The 'return_data' field value is deserialized from JSON to a dictionary using the 'json.loads()' method.
+        """
         ret = request.env['hr.rfid.raw.data'].create([{
             'do_not_save': True,
             'identification': post_data['serial'],
