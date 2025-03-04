@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Inherit Form View to Modify it -->
+        <record id="hr_view_partner_form_inherit_rfid_site" model="ir.ui.view">
+            <field name="name">hr.view.partner.form.inherit.rfid.site</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="hr_rfid.hr_view_partner_form_inherit_hr_rfid"/>
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                    <page string="Sites"
+                          name="rfid_site_page"
+                          invisible="is_company or is_employee"
+                          groups="hr_rfid_site_manager.group_guard">
+                        <label for="site_ids"/>
+                        <field name="site_ids" widget="many2many_tags"/>
+                    </page>
+                </notebook>
+                <xpath expr="//page[@name='rfid_main_page']" position="attributes">
+                    <attribute name="groups">hr_rfid.hr_rfid_group_officer,hr_rfid_site_manager.group_own_sites</attribute>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

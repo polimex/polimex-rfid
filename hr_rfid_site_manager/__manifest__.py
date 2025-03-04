@@ -33,6 +33,7 @@
         'views/hr_rfid_webstack.xml',
         'views/hr_rfid_event_user.xml',
         'views/hr_rfid_site.xml',
+        'views/res_partner_views.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

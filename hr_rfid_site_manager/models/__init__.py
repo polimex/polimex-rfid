@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from . import res_partner
 from . import hr_rfid_site
 from . import hr_rfid_door
 from . import hr_rfid_access_group

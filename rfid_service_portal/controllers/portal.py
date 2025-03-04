@@ -13,7 +13,7 @@ class ProjectCustomerPortal(CustomerPortal):
                 [('partner_id', '=', request.env.user.partner_id.id)])
         return values
 
-    @http.route(['/my/rfid_services'], type='http', auth="public", website=True)
+    @http.route(['/my/rfid_services'], type='http', auth="public", website=True, sitemap=False)
     def portal_my_services(self, access_token=None, p=1, **kw):
         user_id = request.env.user
         if not user_id:
@@ -26,7 +26,7 @@ class ProjectCustomerPortal(CustomerPortal):
         }
         return request.render("rfid_service_portal.portal_rfid_service_sale_table", values)
 
-    @http.route(['/my/rfid_service<int:card_id>'], type='http', auth="public", website=True)
+    @http.route(['/my/rfid_service<int:card_id>'], type='http', auth="public", website=True, sitemap=False)
     def portal_my_service(self, card_id, access_token=None, **kw):
         try:
             card_sudo = self._document_check_access('hr.rfid.card', card_id, access_token)

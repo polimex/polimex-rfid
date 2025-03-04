@@ -12,14 +12,14 @@ class VoteController(http.Controller):
     # ROUTES
     # ------
 
-    @http.route("/voting_display/<string:short_code>/voting", type="http", auth="public", website=True)
+    @http.route("/voting_display/<string:short_code>/voting", type="http", auth="public", website=True, sitemap=False)
     def voting_main(self, short_code):
         display_sudo = request.env["voting.display"].sudo().search([("short_code", "=", short_code)])
         if not display_sudo:
             raise exceptions.NotFound()
         return request.render("hr_rfid_vertical_elections.voting_display", {"display": display_sudo})
 
-    @http.route("/voting_display/<string:access_token>/background", type="http", auth="public")
+    @http.route("/voting_display/<string:access_token>/background", type="http", auth="public", sitemap=False)
     def display_background_image(self, access_token):
         display_sudo = self._fetch_display_from_access_token(access_token)
         if not display_sudo.display_background_image:
@@ -27,7 +27,7 @@ class VoteController(http.Controller):
         return request.env['ir.binary']._get_image_stream_from(display_sudo, "display_background_image").get_response()
 
 
-    @http.route("/voting_display/<string:access_token>/get_existing_sessions", type="json", auth="public")
+    @http.route("/voting_display/<string:access_token>/get_existing_sessions", type="json", auth="public", sitemap=False)
     def get_existing_sessions(self, access_token):
         display_sudo = self._fetch_display_from_access_token(access_token)
         return request.env["voting.session"].sudo().with_context({'lang':'bg_BG'}).search_read(
@@ -37,7 +37,7 @@ class VoteController(http.Controller):
             order="start_datetime asc",
         )
 
-    @http.route("/voting_display/<string:access_token>/session/<int:session_id>/close", type="json", auth="public")
+    @http.route("/voting_display/<string:access_token>/session/<int:session_id>/close", type="json", auth="public", sitemap=False)
     def session_close(self, access_token, session_id, **kwargs):
         fields_allowlist = {"state", "end_datetime"}
         session_id =  self._fetch_sessions(session_id, access_token)

@@ -525,7 +525,7 @@ class WebRfidController(http.Controller):
         return cmd.send_command(200)
 
     @http.route(['/hr/rfid/barcode'], type='json', auth='none', methods=['POST'], cors='*', csrf=False,
-                save_session=False)
+                save_session=False, sitemap=False)
     def post_barcode(self, **post):
         # request.session.should_save = False
         return
@@ -547,7 +547,7 @@ class WebRfidController(http.Controller):
             return post
 
     @http.route(['/hr/rfid/event'], type='json', auth='none', methods=['POST'], cors='*', csrf=False,
-                save_session=False)
+                save_session=False, sitemap=False)
     def post_event(self, **post):
         """
         Process events from equipment
