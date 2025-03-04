@@ -11,18 +11,21 @@ class HrEmployee(models.Model):
         string='Vending Balance',
         help='Amount of money an employee can spend on the vending machine',
         default=0.0,
+        groups="hr_rfid_vending.group_customer",
     )
 
     hr_rfid_vending_recharge_balance = fields.Float(
         string='Self Recharge Balance',
         help='Amount of self charged money the employee can spend on the vending machine',
         default=0.0,
+        groups="hr_rfid_vending.group_customer",
     )
 
     hr_rfid_vending_negative_balance = fields.Boolean(
         string='Negative Balance',
         help='Whether the user is allowed to have a negative balance or not',
         tracking=True,
+        groups="hr_rfid_vending.group_customer",
     )
 
     # Only displayed if negative_balance is true
@@ -31,18 +34,21 @@ class HrEmployee(models.Model):
         help='User cannot go in more debt than this value',
         default=0.0,
         tracking=True,
+        groups="hr_rfid_vending.group_customer",
     )
 
     hr_rfid_vending_in_attendance = fields.Boolean(
         string='Only while attending',
         help='Only allow the user to perform vending transactions while attending',
         tracking=True,
+        groups="hr_rfid_vending.group_customer",
     )
 
     hr_rfid_vending_daily_limit = fields.Float(
         string='Daily Limit',
         help='Maximum amount of funds allowed for the employee to spend each day. No limit if set to 0.',
         default=0.0,
+        groups="hr_rfid_vending.group_customer",
     )
 
     daily_limit_type = fields.Selection(
@@ -51,14 +57,18 @@ class HrEmployee(models.Model):
             ('day', 'Current Calendar day'),
         ],
         default='day',
+        groups="hr_rfid_vending.group_customer",
     )
     hr_rfid_vending_spent_today = fields.Monetary(
         string='Spend Today',
-        compute='_compute_spend_today'
+        compute='_compute_spend_today',
+        groups = "hr_rfid_vending.group_customer",
     )
     hr_rfid_vending_current_balance = fields.Monetary(
         string='Current balance',
-        compute='_compute_current_balance'
+        compute='_compute_current_balance',
+        groups="hr_rfid_vending.group_customer",
+
     )
     currency_id = fields.Many2one(string='Company Currency', readonly=True,
                                   related='company_id.currency_id')
@@ -68,6 +78,7 @@ class HrEmployee(models.Model):
         help='Automatically refill balance monthly',
         default=False,
         tracking=True,
+        groups="hr_rfid_vending.group_customer",
     )
 
     hr_rfid_vending_refill_amount = fields.Monetary(
@@ -75,6 +86,7 @@ class HrEmployee(models.Model):
         help="How much money to be added to the person's balance",
         default=0.0,
         tracking=True,
+        groups="hr_rfid_vending.group_customer",
     )
 
     hr_rfid_vending_refill_type = fields.Selection(
@@ -83,18 +95,21 @@ class HrEmployee(models.Model):
         help="Fixed type just adds the refill amount to the user's balance every month. Up To type adds to the user's balance every month with a maximum the auto refill will never go over.",
         default='fixed',
         tracking=True,
+        groups="hr_rfid_vending.group_customer",
     )
 
     hr_rfid_vending_refill_max = fields.Monetary(
         string='Refill Max',
         help='The limit of cash the auto refill should never go over',
         default=0.0,
+        groups="hr_rfid_vending.group_customer",
     )
 
     hr_rfid_vending_balance_history = fields.One2many(
         'hr.rfid.vending.balance.history',
         'employee_id',
         string='Balance History',
+        groups="hr_rfid_vending.group_customer",
     )
 
     def employee_vending_balance_history_action(self):

@@ -45,7 +45,7 @@ class ProjectCustomerPortal(CustomerPortal):
         }
         return values
 
-    @http.route(['/my/webcard/<int:card_id>'], type='http', auth="public", website=True)
+    @http.route(['/my/webcard/<int:card_id>'], type='http', auth="public", website=True, sitemap=False)
     def portal_my_webcard(self, card_id, access_token=None, **kw):
         try:
             card_sudo = self._document_check_access('hr.rfid.card', card_id, access_token)
