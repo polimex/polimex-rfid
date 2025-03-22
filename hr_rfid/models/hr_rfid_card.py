@@ -141,7 +141,7 @@ class HrRfidCard(models.Model):
         for c in self:
             if c.number and c.card_input_type:
                 c._check_len_number()
-                if c.card_input_type == 'w34s':
+                if c.card_input_type == 'w34s' and c.card_type != self.env.ref('hr_rfid.hr_rfid_card_type_8'):
                     h4 = '{:08X}'.format(int(c.number))
                     # Split the 8-character hex string into two parts
                     part1, part2 = h4[:4], h4[4:]
@@ -235,11 +235,7 @@ class HrRfidCard(models.Model):
     def _check_len_number(self):
         for card in self:
             if card.number:
-                if len(card.number) < 10:
-                    zeroes = 10 - len(card.number)
-                    card.number = (zeroes * '0') + card.number
-                elif len(card.number) > 10:
-                    raise exceptions.UserError(_('Card number must be exactly 10 digits'))
+                card.number = card.card_type.check_and_fix_card_numer(card.number)
 
     @api.constrains('number')
     def _check_number(self):
@@ -253,7 +249,7 @@ class HrRfidCard(models.Model):
             if len(card.number) > 10:
                 raise exceptions.ValidationError(_('Card number must be exactly 10 digits'))
 
-            if not card.number.isdigit():
+            if not card.number.isdigit() and card.card_type != self.env.ref('hr_rfid.hr_rfid_card_type_8'):
                 raise exceptions.ValidationError('Card number digits must be from 0 to 9')
 
 
@@ -463,6 +459,17 @@ class HrRfidCardType(models.Model):
         string='Doors',
         help='Doors that will open to this card type',
     )
+
+    def check_and_fix_card_numer(self, number):
+        self.ensure_one()
+        if self.id == self.env.ref('hr_rfid.hr_rfid_card_type_8').id:
+            return number
+        else:
+            if len(number) < 10:
+                zeroes = 10 - len(number)
+                return (zeroes * '0') + number
+            elif len(number) > 10:
+                raise exceptions.UserError(_('Card number must be exactly 10 digits'))
 
     def unlink(self):
         default_card_type_id = self.env.ref('hr_rfid.hr_rfid_card_type_def').id
