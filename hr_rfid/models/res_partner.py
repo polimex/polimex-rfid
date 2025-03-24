@@ -336,8 +336,8 @@ class ResPartner(models.Model):
             default_model='res.partner',
             default_res_ids=self.ids,
             default_partner_ids=self.mapped('id'),
-            # default_use_template=bool(template),
-            default_template_id=template and template.id,
+            default_use_template=bool(template),
+            # default_template_id=template and template.id,
             default_composition_mode='comment',
             custom_layout="mail.mail_notification_light",
         )
