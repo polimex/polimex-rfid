@@ -17,7 +17,8 @@
             <field name="inherit_id" ref="hr_rfid.hr_rfid_card_view_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//div[@name='button_box']" position="inside">
-                    <button name="preview_card" string="Portal preview" type="object"
+                    <button name="preview_card" string="Portal preview"
+                            type="object"
                             class="oe_stat_button" icon="fa-globe"/>
 
                 </xpath>

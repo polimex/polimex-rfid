@@ -53,7 +53,6 @@ class HrRfidReader(models.Model):
         'hr.rfid.ctrl',
         string='Controller',
         help='Controller that manages the reader',
-        required=True,
         ondelete='cascade',
     )
     webstack_id = fields.Many2one(

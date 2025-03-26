@@ -334,7 +334,8 @@ class HrRfidCommands(models.Model):
     def add_remove_card(self, card_number, ctrl_id, pin_code, ts_code, rights_data, rights_mask, alarm_right):
         ctrl = self.env['hr.rfid.ctrl'].browse(ctrl_id)
         commands_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
-
+        if not ctrl:
+            return
         old_cmd = commands_env.search([
             ('cmd', '=', 'D1'),
             ('status', '=', 'Wait'),
@@ -416,7 +417,8 @@ class HrRfidCommands(models.Model):
         time_schedule = self.env['hr.rfid.time.schedule'].browse(ts_id)
         card = self.env['hr.rfid.card'].browse(card_id)
         card_number = card.internal_number
-
+        if not door.controller_id:
+            return
         if door.controller_id.is_relay_ctrl():
             return self._add_card_to_relay(door_id, card_id)
 
@@ -461,7 +463,8 @@ class HrRfidCommands(models.Model):
     @api.model
     def remove_card(self, door_id, pin_code, card_number=None, card_id=None):
         door = self.env['hr.rfid.door'].browse(door_id)
-
+        if not door.controller_id:
+            return
         if card_id is not None:
             card = self.env['hr.rfid.card'].browse(card_id)
             card_number = card.internal_number

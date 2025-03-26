@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
+<odoo >
     <data noupdate="True">
         <record id="base.user_demo" model="res.users">
             <field name="groups_id" eval="[(4, ref('hr_rfid.hr_rfid_group_manager'))]"/>

@@ -25,7 +25,12 @@ class HrRfidDoor(models.Model):
         index=True,
         tracking=True,
     )
-
+    company_id = fields.Many2one(
+        comodel_name="res.company",
+        string="Company",
+        compute='compute_company_id',
+        store=True,
+    )
     number = fields.Integer(
         string='Number',
         help='Number of the door in the controller',
@@ -53,7 +58,6 @@ class HrRfidDoor(models.Model):
         comodel_name='hr.rfid.ctrl',
         string='Controller',
         help='Controller that manages the door',
-        required=True,
         readonly=True,
         ondelete='cascade',
         tracking=True
@@ -174,6 +178,10 @@ class HrRfidDoor(models.Model):
     #     for door in self:
     #         if door.apb_mode is True and len(door.reader_ids) < 2:
     #             raise exceptions.ValidationError('Cannot activate APB Mode for a door if it has less than 2 readers')
+    @api.depends('webstack_id')
+    def compute_company_id(self):
+        for door in self:
+            door.company_id = door.webstack_id.company_id if door.webstack_id else False
 
     @api.depends('access_group_ids', 'reader_ids', 'card_rel_ids', 'zone_ids', 'alarm_line_ids')
     def _compute_counts(self):
@@ -214,7 +222,7 @@ class HrRfidDoor(models.Model):
     @api.depends('alarm_line_ids.armed', 'alarm_line_ids.enableAC', 'alarm_line_ids.enabled')
     def _compute_alarm_state(self):
         for d in self:
-            if d.alarm_line_ids and d.alarm_line_ids[0].enableAC and d.alarm_line_ids[0].enabled:
+            if d.alarm_line_ids and d.alarm_line_ids[0].enableAC and d.alarm_line_ids[0].enabled and d.controller_id:
                 d.alarm_state = d.alarm_line_ids[0].armed
             else:
                 d.alarm_state = 'no_alarm'
@@ -223,9 +231,9 @@ class HrRfidDoor(models.Model):
     def _compute_lock_time(self):
         for d in self:
             io_line = None
-            if d.reader_ids:
+            if d.reader_ids and d.controller_id:
                 io_line = d._get_io_line(1, d.reader_ids[0].number)
-            if io_line:
+            if io_line and d.controller_id:
                 d.lock_time = io_line[0][1]
             else:
                 d.lock_time = 0
@@ -240,28 +248,31 @@ class HrRfidDoor(models.Model):
     @api.depends('reader_ids')
     def _compute_lock_output(self):
         for d in self:
-            if d.controller_id.is_relay_ctrl():
-                d.lock_output = d.number
-            else:
-                io_line = None
-                if d.reader_ids:
-                    io_line = d._get_io_line(1, d.reader_ids[0].number)
-                if io_line:
-                    d.lock_output = io_line[0][0]
+            if d.controller_id:
+                if d.controller_id.is_relay_ctrl():
+                    d.lock_output = d.number
                 else:
-                    d.lock_output = 0
+                    io_line = None
+                    if d.reader_ids:
+                        io_line = d._get_io_line(1, d.reader_ids[0].number)
+                    if io_line:
+                        d.lock_output = io_line[0][0]
+                    else:
+                        d.lock_output = 0
+            else:
+                d.lock_output = 0
 
     @api.depends('controller_id.outputs')
     def _compute_lock_status(self):
         for d in self:
-            if d.lock_output > 0:
+            if d.lock_output > 0 and d.controller_id:
                 d.lock_state = (d.controller_id.output_states & 2 ** (d.lock_output - 1)) == 2 ** (d.lock_output - 1)
             else:
                 d.lock_state = False
 
     def _set_lock_state(self):
         for d in self:
-            d.controller_id.change_output_state(self.lock_output, int(d.lock_state), 99)
+            d.controller_id and d.controller_id.change_output_state(self.lock_output, int(d.lock_state), 99)
 
     def _get_io_line(self, event: int, reader_number: int):
         '''
@@ -270,6 +281,8 @@ class HrRfidDoor(models.Model):
             Array of tuple (out number, time)
         '''
         self.ensure_one()
+        if not self.controller_id:
+            return []
         line_number = 3 + (reader_number - 1) * 4 + (event - 1)
         line = self.controller_id._get_io_line(line_number)
         out_time = []
@@ -283,6 +296,8 @@ class HrRfidDoor(models.Model):
         Write IO Line based on reader event and array of tuple (out number, time)
         '''
         self.ensure_one()
+        if not self.controller_id:
+            return
         line_number = 3 + (reader_number - 1) * 4 + (event - 1)
         line = self.controller_id._get_io_line(line_number)
         for o in outs:
@@ -335,6 +350,11 @@ class HrRfidDoor(models.Model):
 
     def open_door(self):
         self.ensure_one()
+        if not self.controller_id:
+            return self.balloon_danger(
+                title=_('Door open'),
+                message=_('Door is controller from camera. THis function is not supported yet.')
+            )
         cmd_id = self.controller_id.change_output_state(self.lock_output, 1, self.lock_time)
         self.log_door_change(1, self.lock_time, cmd_id)
         if self.controller_id.webstack_id.behind_nat:
@@ -357,6 +377,11 @@ class HrRfidDoor(models.Model):
 
     def close_door(self):
         self.ensure_one()
+        if not self.controller_id:
+            return self.balloon_danger(
+                title=_('Door close'),
+                message=_('Door is controller from camera. THis function is not supported yet.')
+            )
         cmd_id = self.controller_id.change_output_state(self.lock_output, 0, self.lock_time)
         self.log_door_change(0, self.lock_time, cmd_id)
         if self.controller_id.webstack_id.behind_nat:
@@ -378,13 +403,25 @@ class HrRfidDoor(models.Model):
             )
 
     def arm_door(self):
+        if not self.controller_id:
+            return self.balloon_danger(
+                title=_('Door Arm'),
+                message=_('Door is controller from camera. THis function is not supported yet.')
+            )
         return self.with_user(SUPERUSER_ID).alarm_line_ids.arm()
 
     def disarm_door(self):
+        if not self.controller_id:
+            return self.balloon_danger(
+                title=_('Door Disarm'),
+                message=_('Door is controller from camera. THis function is not supported yet.')
+            )
         return self.with_user(SUPERUSER_ID).alarm_line_ids.disarm()
 
     def siren_off(self):
         for s in self.with_user(SUPERUSER_ID):
+            if not s.controller_id:
+                continue
             s.controller_id.siren_state = False
         return self.balloon_success(
             title=_('Siren Control'),
@@ -393,6 +430,8 @@ class HrRfidDoor(models.Model):
 
     def siren_on(self):
         for s in self.with_user(SUPERUSER_ID):
+            if not s.controller_id:
+                continue
             s.controller_id.siren_state = True
         return self.balloon_success(
             title=_('Siren Control'),
@@ -564,6 +603,8 @@ class HrRfidDoor(models.Model):
 
     def change_apb_flag(self, card, can_exit=True):
         for door in self:
+            if not door.controller_id:
+                continue
             if door.number == 1:
                 rights = 0x40  # Bit 7
             else:
@@ -824,7 +865,7 @@ class HrRfidCardDoorRel(models.Model):
         records = self.env['hr.rfid.card.door.rel']
 
         for vals in vals_list:
-            rel = super(HrRfidCardDoorRel, self).create([vals])
+            rel = super().create([vals])
             records += rel
             rel.with_user(SUPERUSER_ID)._create_add_card_command()
 
@@ -836,21 +877,22 @@ class HrRfidCardDoorRel(models.Model):
             old_card = rel.card_id
             old_ts_id = rel.time_schedule_id
 
-            super(HrRfidCardDoorRel, rel).write(vals)
+            super().write(vals)
 
             new_door = rel.door_id
             new_card = rel.card_id
             new_ts_id = rel.time_schedule_id
 
-            if old_door != new_door or old_card != new_card:
-                rel._create_remove_card_command(number=old_card.number, door_id=old_door.id)
-                rel._create_add_card_command()
-            elif old_ts_id != new_ts_id:
-                rel._create_add_card_command()
+            if old_door.controller_id or new_door.controller_id:
+                if (old_door != new_door or old_card != new_card):
+                    rel._create_remove_card_command(number=old_card.number, door_id=old_door.id)
+                    rel._create_add_card_command()
+                elif old_ts_id != new_ts_id:
+                    rel._create_add_card_command()
 
     def unlink(self, create_cmd=True):
         if create_cmd:
             for rel in self:
-                rel.with_user(SUPERUSER_ID)._create_remove_card_command()
-
-        return super(HrRfidCardDoorRel, self).unlink()
+                if rel.door_id.controller_id:
+                    rel._create_remove_card_command()
+        return super().unlink()

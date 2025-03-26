@@ -33,7 +33,6 @@ class HrRfidUserEvent(models.Model):
 
     ctrl_addr = fields.Integer(
         string='Controller ID',
-        required=True,
         help='ID the controller differentiates itself from the others with on the same webstack'
     )
 
@@ -180,6 +179,9 @@ class HrRfidUserEvent(models.Model):
             if not rec.employee_id and not rec.contact_id and rec.card_id:
                 rec.employee_id = rec.card_id.employee_id
                 rec.contact_id = rec.card_id.contact_id
+
+            if not rec.door_id and rec.reader_id:
+                rec.door_id = rec.reader_id.door_id
 
             # Vending sale with money no user
             if not rec.employee_id and not rec.contact_id and rec.event_action != '47':

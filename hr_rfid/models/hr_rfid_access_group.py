@@ -262,52 +262,52 @@ class HrRfidAccessGroup(models.Model):
     def _compute_all_doors(self):
         for acc_gr in self:
             door_ids = set()
-            HrRfidAccessGroup._check_all_doors_rec(door_ids, [], acc_gr)
+            self.env['hr.rfid.access.group']._check_all_doors_rec(door_ids, [], acc_gr)
             acc_gr.all_door_ids = self.env['hr.rfid.access.group.door.rel'].browse(list(door_ids))
 
     @api.depends('employee_ids', 'inheritor_ids')
     def _compute_all_employees(self):
         for acc_gr in self:
             employee_ids = set()
-            HrRfidAccessGroup._check_all_employees_rec(employee_ids, [], acc_gr)
+            self.env['hr.rfid.access.group']._check_all_employees_rec(employee_ids, [], acc_gr)
             acc_gr.all_employee_ids = self.env['hr.rfid.access.group.employee.rel'].browse(list(employee_ids))
 
     @api.depends('contact_ids', 'inheritor_ids')
     def _compute_all_contacts(self):
         for acc_gr in self:
             contact_ids = set()
-            HrRfidAccessGroup._check_all_contacts_rec(contact_ids, [], acc_gr)
+            self.env['hr.rfid.access.group']._check_all_contacts_rec(contact_ids, [], acc_gr)
             acc_gr.all_contact_ids = self.env['hr.rfid.access.group.contact.rel'].browse(list(contact_ids))
 
-    @staticmethod
-    def _check_all_doors_rec(door_ids: set, checked_ids: list, acc_gr):
+    @api.model
+    def _check_all_doors_rec(self,door_ids: set, checked_ids: list, acc_gr):
         if acc_gr.id in checked_ids:
             return
         checked_ids.append(acc_gr.id)
         for door in acc_gr.door_ids:
             door_ids.add(door.id)
         for rec_gr in acc_gr.inherited_ids:
-            HrRfidAccessGroup._check_all_doors_rec(door_ids, checked_ids, rec_gr)
+            self.env['hr.rfid.access.group']._check_all_doors_rec(door_ids, checked_ids, rec_gr)
 
-    @staticmethod
-    def _check_all_employees_rec(emp_ids: set, checked_ids: list, acc_gr):
+    @api.model
+    def _check_all_employees_rec(self, emp_ids: set, checked_ids: list, acc_gr):
         if acc_gr.id in checked_ids:
             return
         checked_ids.append(acc_gr.id)
         for employee in acc_gr.employee_ids:
             emp_ids.add(employee.id)
         for rec_gr in acc_gr.inheritor_ids:
-            HrRfidAccessGroup._check_all_employees_rec(emp_ids, checked_ids, rec_gr)
+            self.env['hr.rfid.access.group']._check_all_employees_rec(emp_ids, checked_ids, rec_gr)
 
-    @staticmethod
-    def _check_all_contacts_rec(contact_ids: set, checked_ids: list, acc_gr):
+    @api.model
+    def _check_all_contacts_rec(self, contact_ids: set, checked_ids: list, acc_gr):
         if acc_gr.id in checked_ids:
             return
         checked_ids.append(acc_gr.id)
         for contact in acc_gr.contact_ids:
             contact_ids.add(contact.id)
         for rec_gr in acc_gr.inheritor_ids:
-            HrRfidAccessGroup._check_all_contacts_rec(contact_ids, checked_ids, rec_gr)
+            self.env['hr.rfid.access.group']._check_all_contacts_rec(contact_ids, checked_ids, rec_gr)
 
     def check_for_ts_inconsistencies(self):
         def get_highest_acc_grs(_gr):
@@ -349,7 +349,7 @@ class HrRfidAccessGroup(models.Model):
         env = self.env['hr.rfid.access.group']
         for acc_gr in self:
             group_order = []
-            ret = HrRfidAccessGroup._check_inherited_ids_rec(acc_gr, [], group_order)
+            ret = self.env['hr.rfid.access.group']._check_inherited_ids_rec(acc_gr, [], group_order)
             if ret is True:
                 err2 = ''
                 for acc_gr_id in group_order:
@@ -361,7 +361,7 @@ class HrRfidAccessGroup(models.Model):
 
             acc_gr.check_for_ts_inconsistencies()
 
-    @staticmethod
+    @api.model
     def _check_inherited_ids_rec(acc_gr, visited_groups: list, group_order: list, orig_id=None):
         group_order.append(acc_gr.id)
         if acc_gr.id == orig_id:
@@ -375,7 +375,7 @@ class HrRfidAccessGroup(models.Model):
         visited_groups.append(acc_gr.id)
 
         for inh_gr in acc_gr.inherited_ids:
-            res = HrRfidAccessGroup._check_inherited_ids_rec(inh_gr, visited_groups,
+            res = self.env['hr.rfid.access.group']._check_inherited_ids_rec(inh_gr, visited_groups,
                                                              group_order, orig_id)
             if res is True:
                 return True
@@ -405,7 +405,7 @@ class HrRfidAccessGroup(models.Model):
         for acc_gr in self:
             old_doors = self.all_door_ids.mapped('door_id')
 
-            super(HrRfidAccessGroup, acc_gr).write(vals)
+            super().write(vals)
 
             new_doors = self.all_door_ids.mapped('door_id')
 
@@ -423,8 +423,8 @@ class HrRfidAccessGroup(models.Model):
                     continue
                 completed_groups.append(inh_id)
                 inh = env.browse(inh_id)
-                HrRfidAccessGroup._create_add_door_commands(inh, added_doors)
-                HrRfidAccessGroup._create_remove_door_commands(inh, removed_doors)
+                env._create_add_door_commands(inh, added_doors)
+                env._create_remove_door_commands(inh, removed_doors)
 
                 for upper_inh in inh.inheritor_ids:
                     acc_gr_to_complete.put(upper_inh.id)
@@ -437,7 +437,7 @@ class HrRfidAccessGroup(models.Model):
             acc_gr.door_ids.unlink()  # Unlinks the relations
             acc_gr.employee_ids.unlink()  # Unlinks the relations
             acc_gr.contact_ids.unlink()  # Unlinks the relations
-        return super(HrRfidAccessGroup, self).unlink()
+        return super().unlink()
 
 
 class HrRfidAccessGroupDoorRel(models.Model):
@@ -500,15 +500,11 @@ class HrRfidAccessGroupDoorRel(models.Model):
     @api.returns('self', lambda value: value.id)
     def create(self, vals):
         card_door_rel_env = self.env['hr.rfid.card.door.rel']
-
-        records = super(HrRfidAccessGroupDoorRel, self).create(vals)
-
+        records = super().create(vals)
         records.mapped('access_group_id').door_ids_constrains()
-
         for rel in records:
             card_door_rel_env.update_door_rels(rel.door_id, rel.access_group_id)
             rel.door_id.controller_id.write_ts_id(rel.time_schedule_id)
-
         return records
 
     def write(self, vals):
@@ -738,7 +734,7 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
     def create(self, vals_list):
         # card_door_rel_env = self.env['hr.rfid.card.door.rel']
 
-        records = super(HrRfidAccessGroupEmployeeRel, self).create(vals_list)
+        records = super().create(vals_list)
         records.mapped('employee_id').check_access_group()
         records.mapped('state')  # recalc new states
 
@@ -770,7 +766,7 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
 
     def unlink(self):
         self._deactivate()
-        super(HrRfidAccessGroupEmployeeRel, self).unlink()
+        super().unlink()
 
 
 class HrRfidAccessGroupContactRel(models.Model):
@@ -813,7 +809,7 @@ class HrRfidAccessGroupContactRel(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        records = super(HrRfidAccessGroupContactRel, self).create(vals_list)
+        records = super().create(vals_list)
         records.mapped('contact_id').check_access_group()
         records._compute_state()
         # records.mapped('state') # recalc new states
@@ -847,7 +843,7 @@ class HrRfidAccessGroupContactRel(models.Model):
 
     def unlink(self):
         self._deactivate()
-        super(HrRfidAccessGroupContactRel, self).unlink()
+        super().unlink()
 
 
 class HrRfidAccessGroupWizard(models.TransientModel):

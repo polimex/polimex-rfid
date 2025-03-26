@@ -3,6 +3,7 @@ from odoo import api, fields, models, exceptions, _
 from datetime import timedelta, datetime
 from enum import Enum
 import secrets
+import re
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -185,12 +186,13 @@ class HrRfidCard(models.Model):
             valid_access_groups = owner.hr_rfid_access_group_ids._filter_active().mapped('access_group_id')
             if access_groups not in valid_access_groups:
                 return []
-        door_rel_ids = access_groups.mapped('all_door_ids')
+        door_rel_ids = access_groups.sudo().mapped('all_door_ids')
         return [(rel.door_id, rel.time_schedule_id, rel.alarm_rights) for rel in door_rel_ids]
 
     def door_compatible(self, door_id):
+        # door_id = self.env['hr.rfid.door'].sudo().browse(door_id.id)
         return self.card_type == door_id.card_type \
-            and not (self.cloud_card is True and door_id.controller_id.external_db is True)
+            and not (self.cloud_card and door_id.controller_id and door_id.controller_id.external_db)
 
     def card_ready(self):
         res = []
@@ -301,7 +303,7 @@ class HrRfidCard(models.Model):
             old_card_type_id = card.card_type
             old_cloud = card.cloud_card
 
-            super(HrRfidCard, card).write(vals)
+            super().write(vals)
 
             if len(card.employee_id) > 0 and len(card.contact_id) > 0:
                 raise exceptions.ValidationError(invalid_user_and_contact_msg)
@@ -324,7 +326,9 @@ class HrRfidCard(models.Model):
 
             if old_active != card.active:
                 if card.active is False:
-                    card.door_rel_ids.unlink()
+                    door_ids = card.get_owner().get_doors()
+                    rel_env._remove_cards(card, door_ids)
+                    # card.door_rel_ids.unlink()
                 else:
                     rel_env.update_card_rels(card)
 
@@ -465,6 +469,11 @@ class HrRfidCardType(models.Model):
         if self.id == self.env.ref('hr_rfid.hr_rfid_card_type_8').id:
             return number
         else:
+            if len(number) == 10:
+                if re.fullmatch(r'[A-Za-z0-9]+', number):
+                    return number.upper()
+                else:
+                    raise exceptions.UserError(_('Card number must contain only letters and digits in Latin'))
             if len(number) < 10:
                 zeroes = 10 - len(number)
                 return (zeroes * '0') + number
