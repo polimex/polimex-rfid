@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="hr_rfid_door_view_form_camera" model="ir.ui.view">
+            <field name="name">hr.rfid.door.form.camera</field>
+            <field name="model">hr.rfid.door</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_door_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='controller_id']" position="after">
+                    <field name="camera_id" readonly="1"/>
+                </xpath>
+                <xpath expr="//field[@name='card_type']" position="attributes">
+                    <attribute name="readonly">camera_id</attribute>
+                </xpath>
+                <xpath expr="//field[@name='controller_id']" position="attributes">
+                    <attribute name="invisible">camera_id</attribute>
+                </xpath>
+                <xpath expr="//field[@name='apb_mode']" position="attributes">
+                    <attribute name="invisible">camera_id</attribute>
+                </xpath>
+                <xpath expr="//field[@name='lock_time']" position="attributes">
+                    <attribute name="invisible">camera_id</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

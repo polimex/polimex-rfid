@@ -1,0 +1,27 @@
+<odoo>
+<!--    <data noupdate="0">-->
+    <data >
+        <!-- Пример за демо камера (Hikvision) -->
+        <record id="demo_camera_1" model="cctv.camera">
+            <field name="name">Camera 1 HV</field>
+            <field name="ip_address">192.168.10.64</field>
+            <field name="port">80</field>
+            <field name="username">admin</field>
+            <field name="password">Polimex1</field>
+            <field name="brand">hikvision</field>
+            <field name="model"></field>
+            <field name="serial_number"></field>
+            <field name="firmware"></field>
+            <field name="integration_type">anpr</field>
+            <field name="description">Demo camera for testing ANPR integration.</field>
+        </record>
+
+        <record id="demo_plate_1" model="hr.rfid.card">
+            <field name="contact_id" ref="base.res_partner_address_15"/>
+            <field name="number">CA8605CB</field>
+            <field name="card_reference">Tesla S</field>
+            <field name="card_type" ref="hr_rfid.hr_rfid_card_type_8"/>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+    </data>
+</odoo>

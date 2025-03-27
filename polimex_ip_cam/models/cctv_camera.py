@@ -1,0 +1,665 @@
+from datetime import datetime, timezone
+
+import pytz
+
+from odoo import models, fields, api, _, Command, SUPERUSER_ID
+import logging
+from odoo.addons.polimex_ip_cam.helpers.camera_api import HikvisionCamera  # import our Hikvision-specific class
+from odoo.addons.hr_rfid.models.hr_rfid_webstack import get_local_ip
+
+_logger = logging.getLogger(__name__)
+
+# put POSIX 'Etc/*' entries at the end to avoid confusing users - see bug 1086728
+_tzs = [(tz, tz) for tz in sorted(pytz.all_timezones, key=lambda tz: tz if not tz.startswith('Etc/') else '_')]
+def _tz_get(self):
+    return _tzs
+
+
+class CctvCamera(models.Model):
+    _name = 'cctv.camera'
+    _description = 'CCTV Camera Management'
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'balloon.mixin']
+
+    # Original fields (unchanged)
+    name = fields.Char(string='Name', required=True, tracking=True,
+                       help="Camera name for easy identification")
+    active = fields.Boolean(string='Active', default=True)
+    company_id = fields.Many2one(
+        comodel_name='res.company',
+        string='Company',
+        default=lambda self: self.env.company,
+    )
+    tz = fields.Selection(
+        selection=_tzs, string='Timezone',
+        default=lambda self: self._context.get('tz'),
+        help="The timezone of the camera. Used to display dates and times in the correct timezone.\n"
+             "The plates are sent to camera with data and time in this timezone."
+    )
+
+    tz_offset = fields.Char(compute='_compute_tz_offset', string='Timezone offset')
+
+    behind_nat = fields.Boolean(
+        string='Behind NAT',
+        help="Camera is behind a NAT (Network Address Translation) router",
+        default=False,
+    )
+    ip_address = fields.Char(string='IP Address', required=True, tracking=True,
+                             help="Camera IP address")
+    port = fields.Integer(string='Port', default=80, tracking=True,
+                          help="Camera port (usually 80 or 8000)")
+    username = fields.Char(string='Username', default='admin', tracking=True,
+                           help="Camera access username")
+    password = fields.Char(string='Password', help="Camera access password")
+    brand = fields.Selection([
+        ('hikvision', 'Hikvision'),
+        ('dahua', 'Dahua'),
+    ], string='Brand', required=True, default='hikvision', tracking=True,
+        help="Camera brand")
+    model = fields.Char(string='Model', tracking=True,
+                        help="Camera model (obtained via ISAPI)", readonly=True)
+    serial_number = fields.Char(string='Serial Number', tracking=True,
+                                help="Camera serial number", readonly=True)
+    firmware = fields.Char(string='Firmware', tracking=True,
+                           help="Camera firmware version", readonly=True)
+    description = fields.Text(string='Description',
+                              help="Additional camera information")
+    server_setup = fields.Text(string="Server Setup",
+                               help="Camera server setup configuration (param=value per line)")
+    snapshot = fields.Image(
+        string="Snapshot",
+        help="Camera snapshot image (base64 encoded)",
+        # default=''   # TODO - set a default image
+    )
+
+    # Integration type to separate logic (discovery, configuration, event processing)
+    integration_type = fields.Selection(
+        selection=[
+            ('anpr', 'ANPR IP Camera'),
+            ('cctv_cam', 'IP CCTV Camera'),
+            ('cctv_nvr', 'IP CCTV Network Video Recorder'),
+        ], string='Integration Type',
+        default='anpr',
+        help="Type of integration logic used for this camera")
+
+    connection_status = fields.Selection(
+        selection=[
+        ('unknown', 'Unknown'),
+        ('connected', 'Connected'),
+        ('failed', 'Failed'),
+    ],
+        string='Connection Status',
+        default='unknown',
+        tracking=True,
+        help="Latest connection check result")
+    last_heart_beat = fields.Datetime(
+        string='Last Heartbeat',
+        help="Last successful received HeartBeat from the camera",
+        readonly=True)
+    reader_id = fields.Many2one(
+        comodel_name='hr.rfid.reader',
+        string='Reader',
+        help="RFID reader linked to this camera",
+        ondelete='cascade',
+    )
+    # Intermediate relations to link RFID cards with a list category
+    rfid_rel_ids = fields.One2many(
+        comodel_name='cctv.camera.rfid.rel',
+        inverse_name='camera_id',
+        string='RFID Card Relations',
+        help="Relations linking this camera with RFID cards and their list types"
+    )
+    # Computed Many2many field for easy access to all linked RFID cards
+    rfid_card_ids = fields.Many2many(
+        comodel_name='hr.rfid.card',
+        compute='_compute_rfid_card_ids',
+        string='RFID Cards'
+    )
+    # Computed counts per list type
+    rfid_whitelist_count = fields.Integer(string='Whitelist Count', compute='_compute_list_counts', store=True)
+    rfid_blacklist_count = fields.Integer(string='Blacklist Count', compute='_compute_list_counts', store=True)
+    rfid_graylist_count = fields.Integer(string='Graylist Count', compute='_compute_list_counts', store=True)
+    rfid_yellolist_count = fields.Integer(string='Yellolist Count', compute='_compute_list_counts', store=True)
+    rfid_otherlist_count = fields.Integer(string='Otherlist Count', compute='_compute_list_counts', store=True)
+
+    @api.depends('tz')
+    def _compute_tz_offset(self):
+        for cam in self:
+            cam.tz_offset = datetime.now(pytz.timezone(cam.tz or 'GMT')).strftime('%z')
+
+    @api.depends('rfid_rel_ids.card_id')
+    def _compute_rfid_card_ids(self):
+        for rec in self:
+            rec.rfid_card_ids = rec.rfid_rel_ids.mapped('card_id')
+
+    @api.depends('rfid_rel_ids.list_category')
+    def _compute_list_counts(self):
+        for rec in self:
+            rec.rfid_whitelist_count = len(rec.rfid_rel_ids.filtered(lambda r: r.list_category == 'whitelist'))
+            rec.rfid_blacklist_count = len(rec.rfid_rel_ids.filtered(lambda r: r.list_category == 'blacklist'))
+            rec.rfid_graylist_count = len(rec.rfid_rel_ids.filtered(lambda r: r.list_category == 'graylist'))
+            rec.rfid_yellolist_count = len(rec.rfid_rel_ids.filtered(lambda r: r.list_category == 'yellolist'))
+            rec.rfid_otherlist_count = len(rec.rfid_rel_ids.filtered(lambda r: r.list_category == 'otherlist'))
+
+    @api.depends('model', 'name', 'brand')
+    def _compute_display_name(self):
+        for record in self:
+            brand_dict = dict(record._fields['brand'].selection)
+            brand_label = brand_dict.get(record.brand, record.brand)
+            record.display_name = f"{record.name} ({brand_label}/ {record.model})"
+
+    def action_show_reader(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': self.reader_id.name,
+            'view_mode': 'form',
+            'res_model': 'hr.rfid.reader',
+            'res_id': self.reader_id.id,
+            'target': 'current',
+        }
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        new_records = self.env['cctv.camera']
+        for vals in vals_list:
+            new_record = super().create(vals_list)
+            reader_id = self.env['hr.rfid.reader'].sudo().create([{
+                'name': _('Reader %s', new_record.name),
+                'reader_type': '0', # In reader
+                'mode': '01',
+                'number': 1,
+                'camera_id': new_record.id,
+            }])
+            door_id = self.env['hr.rfid.door'].sudo().create([{  # Create a door for the reader
+                'name': _('Door %s', new_record.name),
+                'reader_ids': [Command.link(reader_id.id)],
+                'card_type': self.env.ref('hr_rfid.hr_rfid_card_type_8').id,
+                'number': 1,
+            }])
+            new_record.reader_id = reader_id
+            new_records += new_record
+        return new_records
+
+    def get_api(self):
+        return HikvisionCamera(self.ip_address, self.port, self.username, self.password)
+
+    def _time_setup(self, cam_api):
+        self.ensure_one()
+        # Получаване на време от камерата
+        t_result = cam_api.get_time_config()
+        update_info = ""
+        if t_result.get("status") == "success":
+            time_data = t_result
+
+            # Използваме директно rec.tz_offset (например "+0200") като очаквана стойност
+            expected_offset = self.tz_offset or "+0000"
+            if expected_offset not in time_data.get("timeZone", ""):
+                update_info += _(
+                    "TimeZone mismatch: Camera reports %(cam_tz)s, expected %(exp_tz)s. "
+                ) % {"cam_tz": time_data.get("timeZone"), "exp_tz": expected_offset}
+
+            # Изчисляваме очакваното локално време на базата на self.tz
+            # Използваме текущото време от Odoo (наивно) и го локализираме в self.tz
+            expected_local = fields.Datetime.now()
+            expected_local = pytz.utc.localize(expected_local).astimezone(pytz.timezone(self.tz))
+            expected_local_str = expected_local.replace(microsecond=0).isoformat()
+
+            try:
+                camera_local_time = datetime.datetime.fromisoformat(time_data.get("localTime"))
+                # Преобразуваме и двете времена към UTC за коректно сравнение
+                camera_local_utc = camera_local_time.astimezone(pytz.utc)
+                expected_local_utc = expected_local.astimezone(pytz.utc)
+                diff = abs((camera_local_utc - expected_local_utc).total_seconds())
+                if diff > 300:  # ако разликата е над 5 минути
+                    update_info += _(
+                        "LocalTime difference: Camera shows %(cam_time)s, expected %(exp_time)s. "
+                    ) % {"cam_time": time_data.get("localTime"), "exp_time": expected_local_str}
+            except Exception as e:
+                update_info += _("Error parsing camera localTime: %s. ") % str(e)
+
+            if update_info:
+                # Ако има разлики, създаваме команда за актуализация на времето
+                new_time_config = {
+                    "timeMode": "NTP",  # или "manual", според нуждите
+                    "timeZone": expected_offset,  # използваме само offset-а, напр. "+0200"
+                    "localTime": expected_local_str,
+                }
+                self.env['cctv.camera.command'].sudo().create([{
+                    'camera_id': self.id,
+                    'command_type': 'set_time',
+                    'request_data': "\n".join([f"{k}={v}" for k, v in new_time_config.items()]),
+                }])
+                update_info += _("A command has been created to update the camera time configuration.")
+            else:
+                update_info += _("Camera time configuration is correct.")
+        else:
+            update_info = _("Failed to read camera time configuration.")
+        return update_info or ''
+
+    def action_check_connection(self):
+        """
+        When the camera brand is hikvision, instantiate the HikvisionCamera API class and use it.
+        Update the record's connection_status and, if available, update the camera's model and serial number.
+        Also, check the HTTP host configuration and time configuration.
+        """
+        import datetime, pytz
+        for rec in self:
+            if rec.brand == 'hikvision':
+                _logger.info("Using Hikvision API for camera %s at %s", rec.name, rec.ip_address)
+                with HikvisionCamera(rec.ip_address, rec.port, rec.username, rec.password) as cam_api:
+                    result = cam_api.check_connection()
+                    rec.connection_status = result.get("status", "failed")
+                    if result.get("status") == "connected":
+                        rec.model = result.get("model")
+                        rec.serial_number = result.get("serial")
+                        rec.firmware = result.get("firmware")
+                        rec.action_set_http_host()
+                        rec.action_get_http_host()
+                        rec.action_get_snapshot()
+                        # update_info = rec._time_setup(cam_api) or ""
+                        update_info = ""
+
+                        # Създаваме общо съобщение
+                        message = _(
+                            "Camera Info: Name: %(name)s, Type: %(type)s, ID: %(devid)s, Model: %(model)s, "
+                            "Serial: %(serial)s, Firmware: %(firmware)s (Date: %(firmwaredate)s), "
+                            "Hardware: %(hardware)s, Beep: %(supportBeep)s, Video Loss: %(supportVideoLoss)s"
+                        ) % result
+                        message += " • " + update_info if update_info else ""
+                        rec.message_post(body=message)
+                    elif result.get("status") == "failed":
+                        return self.balloon_warning_sticky(
+                            title=_("Connection check failed"),
+                            message=str(result.get("error")),
+                        )
+            else:
+                _logger.warning("Camera %s: No API implementation for brand '%s'", rec.name, rec.brand)
+                rec.connection_status = 'unknown'
+        return True
+
+    def action_get_http_host(self):
+        """
+        Retrieve the camera's HTTP host configuration, store it in server_setup as param=value lines,
+        and display a user-friendly balloon message with bullet points.
+        """
+        for rec in self:
+            if rec.brand == 'hikvision':
+                with HikvisionCamera(rec.ip_address, rec.port, rec.username, rec.password) as cam_api:
+                    result = cam_api.get_http_host()
+                    if result.get("status") == "success":
+                        config_dict = result.get("response", {})
+
+                        # 1) Flatten nested dict keys: ANPR.detectionUpLoadPicturesType -> 'all'
+                        def flatten_dict(d, parent_key='', sep='.'):
+                            items = []
+                            for k, v in d.items():
+                                new_key = f"{parent_key}{sep}{k}" if parent_key else k
+                                if isinstance(v, dict):
+                                    items.extend(flatten_dict(v, new_key, sep=sep).items())
+                                else:
+                                    items.append((new_key, v))
+                            return dict(items)
+
+                        flattened = flatten_dict(config_dict)
+
+                        # 2) Convert flattened dict to param=value lines for server_setup
+                        param_value_lines = []
+                        for k, v in flattened.items():
+                            param_value_lines.append(f"{k}={v}")
+                        rec.server_setup = "\n".join(param_value_lines)
+
+                        # 3) Build a user-friendly balloon message (bullet‐point style)
+                        #    e.g. "• ipAddress: 192.168.48.2"
+                        lines = [_("HTTP Host Configuration:")]
+                        for k, v in flattened.items():
+                            lines.append(f"• {k}: {v}")
+                        balloon_msg = "\n".join(lines)
+
+                        # 4) Return a success balloon with the formatted message
+                        # return self.balloon_success_sticky(
+                        #     title=_("HTTP Host Configuration Read"),
+                        #     message=balloon_msg
+                        # )
+                    else:
+                        # On failure, return a danger balloon with the error
+                        error_msg = _("Failed to read HTTP host configuration: %s") % result.get("error")
+                        return self.baloon_danger_sticky(
+                            title=_("HTTP Host Configuration Read Failed"),
+                            message=error_msg
+                        )
+            else:
+                rec.message_post(body="HTTP host configuration read not implemented for brand " + rec.brand)
+        return True
+
+
+    def action_set_http_host(self):
+        """
+        Задава HTTP host конфигурация на камерата, като използва стойностите от server_setup.
+        server_setup трябва да бъде във формат "param=value" на отделни редове.
+        Ключовете с точкова нотация се преобразуват в вложени структури.
+        """
+
+        def parse_server_setup(setup_text):
+            """
+            Преобразува конфигурационния текст от server_setup във вложен речников формат.
+            Ако ключът съдържа точка ('.'), той се разбива и създава вложена структура.
+            """
+            config = {}
+            for line in setup_text.splitlines():
+                if '=' in line:
+                    key, value = line.split('=', 1)
+                    key = key.strip()
+                    value = value.strip()
+                    if '.' in key:
+                        parts = key.split('.')
+                        d = config
+                        for part in parts[:-1]:
+                            if part not in d:
+                                d[part] = {}
+                            d = d[part]
+                        d[parts[-1]] = value
+                    else:
+                        config[key] = value
+            return config
+
+        for rec in self:
+            if rec.brand == 'hikvision':
+                # Парсиране на rec.server_setup във вложен речников формат.
+                config = {}
+                if rec.server_setup:
+                    config = parse_server_setup(rec.server_setup)
+
+                # Приложете дефолтни стойности за липсващи ключове.
+                config.setdefault('id', '1')
+                config.setdefault('url', '/ipcam/anpr/event')
+                config.setdefault('protocolType', 'HTTP')
+                config.setdefault('parameterFormatType', 'XML')
+                config.setdefault('addressingFormatType', 'ipaddress')
+                config.setdefault('ipAddress', get_local_ip())
+                config.setdefault('portNo', '80')
+                config.setdefault('userName', '')
+                config.setdefault('httpAuthenticationMethod', 'none')
+
+                # Process nested ANPR block.
+                if not isinstance(config.get('ANPR'), dict):
+                    config['ANPR'] = {}
+                config['ANPR'].setdefault('detectionUpLoadPicturesType', 'all')
+
+                # Process nested SubscribeEvent block.
+                if not isinstance(config.get('SubscribeEvent'), dict):
+                    config['SubscribeEvent'] = {}
+                config['SubscribeEvent'].setdefault('heartbeat', '60')
+                config['SubscribeEvent'].setdefault('eventMode', 'all')
+
+                config.setdefault('enabled', 'true' if rec.active else 'false')
+
+                with HikvisionCamera(rec.ip_address, rec.port, rec.username, rec.password) as cam_api:
+                    result = cam_api.set_http_host(config)
+                    if result.get("status") == "success":
+                        return self.balloon_success(
+                            title=_("HTTP Host Configuration Set"),
+                            message=_("HTTP host configuration set successfully.")
+                        )
+                    else:
+                        return self.balloon_danger_sticky(
+                            title=_("HTTP Host Configuration Set Failed"),
+                            message=_("Failed to set HTTP host configuration: %s") % result.get("error")
+                        )
+            else:
+                rec.message_post(body="HTTP host configuration not implemented for brand " + rec.brand)
+        return True
+
+    def action_get_snapshot(self):
+        """
+        Get a snapshot from the camera (base64 encoded) and store it in the snapshot field.
+        """
+        for rec in self:
+            if rec.brand == 'hikvision':
+                with HikvisionCamera(rec.ip_address, rec.port, rec.username, rec.password) as cam_api:
+                    result = cam_api.get_snapshot()
+                    if result.get("status") == "success":
+                        rec.snapshot = result.get("snapshot_b64")
+                        rec.balloon_success(
+                            title=_("Snapshot Retrieved"),
+                            message=_("Snapshot retrieved and stored successfully.")
+                        )
+                    else:
+                        rec.balloon_danger(
+                            title=_("Snapshot Retrieval Failed"),
+                            message=_("Snapshot retrieval failed: %s") % result.get("error")
+                        )
+            else:
+                rec.message_post(body="Snapshot retrieval not implemented for brand " + rec.brand)
+        return True
+
+    def action_control_barrier(self, operation, gate_num):
+        """
+        Control the camera's barrier gate by sending an open/close command.
+        :param
+        operation: Стрингово описание на операцията(напр.'on', 'off', 'stop', 'locked')
+        :param
+        gate_num: Номер на бариерата
+        """
+        for rec in self:
+            if rec.brand == 'hikvision':
+                with HikvisionCamera(rec.ip_address, rec.port, rec.username, rec.password) as cam_api:
+                    result = cam_api.barrier_gate_control(operation, gate_num)
+                    rec.message_post(body="Barrier control result: " + str(result))
+            else:
+                rec.message_post(body="Barrier control не е имплементиран за марката " + rec.brand)
+        return True
+
+    def update_plate_in_list(self, plate_number, new_list_type):
+        """
+        Change the type in the list for a given registration number.
+        """
+        delete_result = self.delete_plate_from_list(plate_number)
+        if delete_result.get("status") == "success":
+            add_result = self.add_plate_to_list(plate_number, new_list_type)
+            return add_result
+        else:
+            return {"status": "failed", "error": "Failed to delete plate before updating."}
+
+    def notify_by_discuss(self, recipients, msg, attachments=None):
+        odoobot_id = self.env.ref("base.partner_root").id
+        for recipient in recipients:
+            partners_to = [recipient.id]
+            channel = self.env["discuss.channel"].with_user(SUPERUSER_ID).channel_get(partners_to)
+            channel.message_post(
+                body=msg,
+                author_id=odoobot_id,
+                message_type="comment",
+                subtype_xmlid="mail.mt_comment",
+                attachments=attachments or []
+            )
+
+    def parse_event(self, files_data):
+        """
+        Parse the event data received from the camera.
+        {'ANPR': {'ADRNo': 'unknown', 'CRIndex': '26', 'alarmDataType': '0', 'barrierGateCtrlType': '0',
+                  'confidenceLevel': '100', 'country': '26', 'dangmark': 'unknown', 'decoration': 'unknown',
+                  'detectDir': '8', 'detectType': '2', 'direction': 'forward', 'dwIllegalTime': '0',
+                  'envprosign': 'unknown', 'featurePicFileName': '1', 'frontChild': 'unknown', 'helmet': 'unknown',
+                  'illegalInfo': {'illegalCode': '0', 'illegalDescription': None, 'illegalName': 'Normal'},
+                  'label': 'unknown', 'licenseBright': '104', 'licensePlate': 'CA8605CB', 'line': '1', 'listType': None,
+                  'nonMotorManned': 'unknown', 'nonMotorShedUmbrella': 'unknown', 'originalLicensePlate': 'CA8605CB',
+                  'pdvs': 'unknown', 'pendant': 'unknown', 'perfumeBox': 'unknown', 'pictureInfoList': {
+                'pictureInfo': {'PilotRect': {'height': '0', 'width': '0', 'x': '0', 'y': '0'},
+                                'VehicelWindowRect': {'height': '0', 'width': '0', 'x': '0', 'y': '0'},
+                                'VicepilotRect': {'height': '0', 'width': '0', 'x': '0', 'y': '0'},
+                                'absTime': '20250321131430417', 'capturePicSecurityCode': None, 'dataType': '0',
+                                'fileName': 'detectionPicture.jpg', 'pId': 'FA99518774373121944546',
+                                'plateRect': {'X': '426', 'Y': '560', 'height': '184', 'width': '252'},
+                                'type': 'detectionPicture',
+                                'vehicelRect': {'X': '48', 'Y': '0', 'height': '138', 'width': '950'}}},
+                  'pilotmask': 'unknown', 'pilotsafebelt': 'unknown', 'pilotsunvisor': 'unknown',
+                  'plateCharBelieve': '99,99,99,99,99,99,99,99', 'plateColor': 'unknown', 'plateType': 'unknown',
+                  'playMobilePhone': 'unknown', 'relaLaneDirectionType': '0', 'smoking': 'unknown', 'speedLimit': '0',
+                  'tissueBox': 'unknown', 'uphone': 'unknown', 'vehicleInfo': {
+                'CarBodyFeature': {'rack': 'unknown', 'reflectiveStripe': 'unknown', 'sparetire': 'unknown',
+                                   'sunRoof': 'unknown', 'words': 'unknown'},
+                'CarWindowFeature': {'carCard': 'unknown', 'passCard': 'unknown', 'tempPlate': 'unknown'},
+                'color': 'unknown', 'colorDepth': '0', 'index': '43', 'length': '0', 'speed': '0',
+                'vehicleLogoRecog': '0', 'vehicleType': '0', 'vehicleUseType': 'unknown', 'vehileModel': '0',
+                'vehileSubLogoRecog': '0'}, 'vehicleType': 'unknown', 'vicepilotMask': 'unknown',
+                  'vicepilotsafebelt': 'unknown', 'vicepilotsunvisor': 'unknown'},
+         'DeviceGPSInfo': {'Latitude': {'degree': '0', 'minute': '0', 'sec': '0.000000'},
+                           'Longitude': {'degree': '0', 'minute': '0', 'sec': '0.000000'}, 'latitudeType': 'S',
+                           'longitudeType': 'E'}, 'UUID': '6caa1332-1dd2-11b2-8bae-d3def3c1e05a',
+         'VehicleGATInfo': {'colorByGAT': 'K', 'palteTypeByGAT': '42', 'plateColorByGAT': '5',
+                            'vehicleTypeByGAT': 'X99'}, 'activePostCount': '12', 'carDirectionType': '0',
+         'channelID': '1', 'channelName': 'IP CAPTURE CAMERA', 'dateTime': '2025-03-21T13:14:30.417+01:00',
+         'detectionBackgroundImageResolution': {'height': '1552', 'width': '2688'}, 'deviceID': None,
+         'deviceUUID': 'DS-TCG406-E 20240308AIFA9951877', 'dynChannelID': '1', 'eventDescription': 'ANPR',
+         'eventState': 'active', 'eventType': 'ANPR', 'ipAddress': '192.168.10.64', 'ipv6Address': '::',
+         'macAddress': 'bc:5e:33:4e:a4:10', 'monitorDescription': None, 'monitoringSiteID': None, 'picNum': '2',
+         'protocol': 'HTTP'}
+        """
+
+        self.ensure_one()
+        anpr_data = files_data.get('anpr', {})
+        if anpr_data:
+            event_info = anpr_data.get('ANPR', {})
+            event_type = files_data.get('eventType', 'ANPR')
+
+            date_str = anpr_data.get('dateTime')
+            if date_str:
+                dt_with_tz = datetime.fromisoformat(date_str)
+                dt_utc = dt_with_tz.astimezone(timezone.utc)
+                event_datetime = dt_utc.replace(tzinfo=None)
+            else:
+                event_datetime = False
+
+            if event_type == 'ANPR':
+                plate_number = event_info.get('licensePlate', '')
+                confidenceLevel = event_info.get('confidenceLevel', 0)
+                country = event_info.get('country', '')
+                detectType = event_info.get('detectType', '')
+
+                file_name = event_info.get('pictureInfoList', {}) \
+                    .get('pictureInfo', {}) \
+                    .get('fileName', '')
+
+                activePostCount = anpr_data.get('activePostCount', 0)
+                event_state = anpr_data.get('eventState', '')
+                ipaddress = anpr_data.get('ipAddress', '')
+                macAddress = anpr_data.get('macAddress', '')
+                barrierGateCtrlType = anpr_data.get('barrierGateCtrlType', '0') #granted/denied
+                direction = anpr_data.get('direction', 'forward') # for use in R1 In or R2 Out
+
+                # търсене на собственик на регистрационния номер
+                card_id = self.env['hr.rfid.card'].with_context(active_test=False).sudo().search([
+                    ('number', '=', plate_number),
+                    ('company_id', '=', self.company_id.id)
+                ])
+                snapshot_b64 = files_data.get('detectionPicture.jpg', False)
+                if snapshot_b64 and snapshot_b64.startswith('data:'):
+                    snapshot_b64 = snapshot_b64.split(',', 1)[1]
+
+                if not card_id: # Make system event
+                    # msg = _('Plate number not found in database (%s)', plate_number)
+                    # attachments = [('detectionPicture.jpg', snapshot_b64)] if snapshot_b64 else []
+                    # self.notify_by_discuss(self.message_partner_ids, msg, attachments)
+                    ed = _('Plate number not found in database (%s), ', plate_number)
+                    ed+= _('but exist in the camera memory. ') if barrierGateCtrlType == '1' else 'nor in camera memory. '
+                    ed+= _("Direction: %s, DetectType: %s, ActivePostCount: %s, EventState: %s, IPAddress: %s, MACAddress: %s, BarrierGateCtrlType: %s, Direction: %s.") % (direction, detectType, activePostCount, event_state, ipaddress, macAddress, barrierGateCtrlType, direction)
+                    sys_event_vals= {
+                        'timestamp': event_datetime,
+                        'event_action': '39',
+                        'license_plate': plate_number,
+                        'card_number': plate_number,
+                        'error_description': ed,
+                        'camera_id': self.id,
+                        'door_id': self.reader_id.door_id.id,
+                        'anpr_confidence': confidenceLevel,
+                        'snapshot': snapshot_b64
+                    }
+                    new_sys_event = self.env['hr.rfid.event.system'].sudo().create([sys_event_vals])
+                else: # Make User event
+                    # създаване на събитие
+                    event_vals = {
+                        'event_time': event_datetime,
+                        'event_action': '1' if barrierGateCtrlType == '1' else '2',
+                        'license_plate': plate_number,
+                        'more_json': str(event_info),
+                        'camera_id': self.id,
+                        'reader_id': self.reader_id.id,
+                        'card_id': card_id.id if card_id else False,
+                        'anpr_confidence': confidenceLevel,
+                        'snapshot': snapshot_b64
+                    }
+                    new_event = self.env['hr.rfid.event.user'].sudo().create([event_vals])
+
+                self.behind_nat = not (ipaddress and ipaddress == self.ip_address or False)
+
+            elif event_type == 'illaccess':
+                _logger.warning(f"Illegal access detected for camera {self.name}")
+            else:
+                _logger.warning(f"Unknown event type: {event_type} for camera {self.name}")
+        return True
+
+    def add_plate_to_cam(self, plate_number, list_type):
+        """
+        Add a plate number to the camera's list.
+        """
+        for rec in self:
+            if rec.brand == 'hikvision':
+                with HikvisionCamera(rec.ip_address, rec.port, rec.username, rec.password) as cam_api:
+                    result = cam_api.add_plate_to_list(plate_number, list_type)
+                    if result.get("status") == "success":
+                        return self.balloon_success_sticky(
+                            title=_("Plate Added to List"),
+                            message=_("Plate number added to list successfully.")
+                        )
+                    else:
+                        return self.balloon_danger_sticky(
+                            title=_("Plate Add to List Failed"),
+                            message=_("Failed to add plate number to list: %s") % result.get("error")
+                        )
+            else:
+                rec.message_post(body="Plate add to list not implemented for brand " + rec.brand)
+        return True
+
+    def remove_plate_from_cam(self, plate_number):
+        """
+        Remove a plate number from the camera's list.
+        """
+        for rec in self:
+            if rec.brand == 'hikvision':
+                with HikvisionCamera(rec.ip_address, rec.port, rec.username, rec.password) as cam_api:
+                    result = cam_api.remove_plate_from_list(plate_number)
+                    if result.get("status") == "success":
+                        return self.balloon_success_sticky(
+                            title=_("Plate Removed from List"),
+                            message=_("Plate number removed from list successfully.")
+                        )
+                    else:
+                        return self.balloon_danger_sticky(
+                            title=_("Plate Removal from List Failed"),
+                            message=_("Failed to remove plate number from list: %s") % result.get("error")
+                        )
+            else:
+                rec.message_post(body="Plate removal from list not implemented for brand " + rec.brand)
+        return True
+
+    def add_card_id_to_list(self, card_id=None):
+        """
+        Add a card id to the camera's list.
+        """
+        card_id = card_id if isinstance(card_id, int) else card_id.id
+        for cam in self:
+            if card_id not in cam.rfid_card_ids.ids:
+                cam.rfid_rel_ids = [Command.create({
+                    'card_id': card_id,
+                    'list_category': 'whitelist'
+                })]
+    def remove_card_id_from_list(self, card_id=None):
+        """
+        Remove a card id from the camera's list.
+        """
+        card_id = card_id if isinstance(card_id, int) else card_id.id
+        for cam in self:
+            if card_id in cam.rfid_card_ids.ids:
+                cam.rfid_rel_ids.filtered(lambda r: r.card_id.id == card_id).unlink()
+
+
+

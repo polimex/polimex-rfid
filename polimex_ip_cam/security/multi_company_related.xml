@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_rfid.ir_rule_hr_rfid_reader_multi_company" model="ir.rule">
+            <field name="name">HR RFID Readers Camera: Multi Company</field>
+            <field name="model_id" ref="model_hr_rfid_reader"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', ('camera_id.company_id', 'in', company_ids), ('webstack_id.company_id',
+                'in', company_ids)]
+            </field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="hr_rfid.ir_rule_hr_rfid_event_system_multi_company" model="ir.rule">
+            <field name="name">HR RFID System Events Camera: Multi Company</field>
+            <field name="model_id" ref="model_hr_rfid_event_system"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', ('camera_id.company_id', 'in', company_ids), ('controller_id.webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+    </data>
+</odoo>

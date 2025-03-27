@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Category for module rights -->
+    <record id="cctv_camera_management" model="ir.module.category">
+        <field name="name">CCTV Camera</field>
+        <field name="description">User rights for the CCTV Camera Management module</field>
+        <field name="sequence">15</field>
+        <field name="parent_id" ref="hr_rfid.hr_rfid_root"/>
+    </record>
+
+    <!-- Group for RFID Card User (Operator) -->
+    <record id="group_cctv_user" model="res.groups">
+        <field name="name">User</field>
+        <field eval="[(4, ref('base.group_user')), (4, ref('hr.group_hr_user'))]" name="implied_ids"/>
+        <field name="category_id" ref="cctv_camera_management"/>
+    </record>
+
+    <!-- Group for RFID Card Manager (Encoder Manager) -->
+    <record id="group_cctv_manager" model="res.groups">
+        <field name="name">Manager</field>
+        <field eval="[(4, ref('polimex_ip_cam.group_cctv_user'))]" name="implied_ids"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        <field name="category_id" ref="cctv_camera_management"/>
+    </record>
+</odoo>

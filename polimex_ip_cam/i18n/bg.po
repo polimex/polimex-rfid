@@ -1,0 +1,4196 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* polimex_ip_cam
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-27 13:25+0000\n"
+"PO-Revision-Date: 2025-03-27 18:10+0200\n"
+"Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
+"Language-Team: Polimex Team\n"
+"Language: bg\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.5\n"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "A command has been created to update the camera time configuration."
+msgstr ""
+"Създадена е команда за актуализиране на конфигурацията на времето на "
+"камерата."
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_hr_rfid_user_ev_form_anpr_ext
+msgid "ANPR Details"
+msgstr "Подробности за ANPR"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__message_needaction
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__message_needaction
+msgid "Action Needed"
+msgstr "Необходимо е действие"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__active
+msgid "Active"
+msgstr "Активен"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__activity_ids
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__activity_ids
+msgid "Activities"
+msgstr "Действия"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__activity_exception_decoration
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "Декорация за изключение на действие"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__activity_state
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__activity_state
+msgid "Activity State"
+msgstr "Състояние на действие"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__activity_type_icon
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "Икона за типа действие"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__command_type__add_plate
+msgid "Add Plate"
+msgstr "Добавяне на Номер"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__description
+msgid "Additional camera information"
+msgstr "Допълнителна информация за камерата"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/abidjan
+msgid "Africa/Abidjan"
+msgstr "Африка/Абиджан"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/accra
+msgid "Africa/Accra"
+msgstr "Африка/Акра"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/addis_ababa
+msgid "Africa/Addis_Ababa"
+msgstr "Африка/Адис Абеба"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/algiers
+msgid "Africa/Algiers"
+msgstr "Африка/Алжир"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/asmara
+msgid "Africa/Asmara"
+msgstr "Африка/Асмара"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/asmera
+msgid "Africa/Asmera"
+msgstr "Африка/Асмера"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/bamako
+msgid "Africa/Bamako"
+msgstr "Африка/Бамако"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/bangui
+msgid "Africa/Bangui"
+msgstr "Африка/Банги"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/banjul
+msgid "Africa/Banjul"
+msgstr "Африка/Банджул"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/bissau
+msgid "Africa/Bissau"
+msgstr "Африка/Бисау"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/blantyre
+msgid "Africa/Blantyre"
+msgstr "Африка/Блантайр"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/brazzaville
+msgid "Africa/Brazzaville"
+msgstr "Африка/Бразавил"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/bujumbura
+msgid "Africa/Bujumbura"
+msgstr "Африка/Бужумбура"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/cairo
+msgid "Africa/Cairo"
+msgstr "Африка/Кайро"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/casablanca
+msgid "Africa/Casablanca"
+msgstr "Африка/Казабланка"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/ceuta
+msgid "Africa/Ceuta"
+msgstr "Африка/Сеута"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/conakry
+msgid "Africa/Conakry"
+msgstr "Африка/Конакри"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/dakar
+msgid "Africa/Dakar"
+msgstr "Африка/Дакар"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/dar_es_salaam
+msgid "Africa/Dar_es_Salaam"
+msgstr "Африка/Дар ес Салаам"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/djibouti
+msgid "Africa/Djibouti"
+msgstr "Африка/Джибути"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/douala
+msgid "Africa/Douala"
+msgstr "Африка/Дуала"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/el_aaiun
+msgid "Africa/El_Aaiun"
+msgstr "Африка/Ел Аюн"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/freetown
+msgid "Africa/Freetown"
+msgstr "Африка/Фрийтаун"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/gaborone
+msgid "Africa/Gaborone"
+msgstr "Африка/Габороне"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/harare
+msgid "Africa/Harare"
+msgstr "Африка/Хараре"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/johannesburg
+msgid "Africa/Johannesburg"
+msgstr "Африка/Йоханесбург"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/juba
+msgid "Africa/Juba"
+msgstr "Африка/Джуба"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/kampala
+msgid "Africa/Kampala"
+msgstr "Африка/Кампала"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/khartoum
+msgid "Africa/Khartoum"
+msgstr "Африка/Хартум"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/kigali
+msgid "Africa/Kigali"
+msgstr "Африка/Кигали"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/kinshasa
+msgid "Africa/Kinshasa"
+msgstr "Африка/Киншаса"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/lagos
+msgid "Africa/Lagos"
+msgstr "Африка/Лагос"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/libreville
+msgid "Africa/Libreville"
+msgstr "Африка/Либревил"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/lome
+msgid "Africa/Lome"
+msgstr "Африка/Ломе"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/luanda
+msgid "Africa/Luanda"
+msgstr "Африка/Луанда"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/lubumbashi
+msgid "Africa/Lubumbashi"
+msgstr "Африка/Лубумбаши"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/lusaka
+msgid "Africa/Lusaka"
+msgstr "Африка/Лусака"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/malabo
+msgid "Africa/Malabo"
+msgstr "Африка/Малабо"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/maputo
+msgid "Africa/Maputo"
+msgstr "Африка/Мапуто"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/maseru
+msgid "Africa/Maseru"
+msgstr "Африка/Масеру"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/mbabane
+msgid "Africa/Mbabane"
+msgstr "Африка/Мбабане"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/mogadishu
+msgid "Africa/Mogadishu"
+msgstr "Африка/Могадишу"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/monrovia
+msgid "Africa/Monrovia"
+msgstr "Африка/Монровия"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/nairobi
+msgid "Africa/Nairobi"
+msgstr "Африка/Найроби"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/ndjamena
+msgid "Africa/Ndjamena"
+msgstr "Африка/Нджамена"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/niamey
+msgid "Africa/Niamey"
+msgstr "Африка/Ниамей"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/nouakchott
+msgid "Africa/Nouakchott"
+msgstr "Африка/Нуакшот"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/ouagadougou
+msgid "Africa/Ouagadougou"
+msgstr "Африка/Уагадугу"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/porto-novo
+msgid "Africa/Porto-Novo"
+msgstr "Африка/Порто-Ново"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/sao_tome
+msgid "Africa/Sao_Tome"
+msgstr "Африка/Сао Томе"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/timbuktu
+msgid "Africa/Timbuktu"
+msgstr "Африка/Тимбукту"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/tripoli
+msgid "Africa/Tripoli"
+msgstr "Африка/Триполи"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/tunis
+msgid "Africa/Tunis"
+msgstr "Африка/Тунис"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/windhoek
+msgid "Africa/Windhoek"
+msgstr "Африка/Виндхук"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/adak
+msgid "America/Adak"
+msgstr "Америка/Адак"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/anchorage
+msgid "America/Anchorage"
+msgstr "Америка/Анкъридж"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/anguilla
+msgid "America/Anguilla"
+msgstr "Америка/Ангила"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/antigua
+msgid "America/Antigua"
+msgstr "Америка/Антигуа"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/araguaina
+msgid "America/Araguaina"
+msgstr "Америка/Арагуайна"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/argentina/buenos_aires
+msgid "America/Argentina/Buenos_Aires"
+msgstr "Америка/Аржентина/Буенос Айрес"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/argentina/catamarca
+msgid "America/Argentina/Catamarca"
+msgstr "Америка/Аржентина/Катамарка"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/argentina/comodrivadavia
+msgid "America/Argentina/ComodRivadavia"
+msgstr "Америка/Аржентина/КомодРивадавия"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/argentina/cordoba
+msgid "America/Argentina/Cordoba"
+msgstr "Америка/Аржентина/Кордоба"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/argentina/jujuy
+msgid "America/Argentina/Jujuy"
+msgstr "Америка/Аржентина/Хухуй"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/argentina/la_rioja
+msgid "America/Argentina/La_Rioja"
+msgstr "Америка/Аржентина/Ла Риоха"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/argentina/mendoza
+msgid "America/Argentina/Mendoza"
+msgstr "Америка/Аржентина/Мендоса"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/argentina/rio_gallegos
+msgid "America/Argentina/Rio_Gallegos"
+msgstr "Америка/Аржентина/Рио Галегос"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/argentina/salta
+msgid "America/Argentina/Salta"
+msgstr "Америка/Аржентина/Салта"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/argentina/san_juan
+msgid "America/Argentina/San_Juan"
+msgstr "Америка/Аржентина/Сан Хуан"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/argentina/san_luis
+msgid "America/Argentina/San_Luis"
+msgstr "Америка/Аржентина/Сан Луис"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/argentina/tucuman
+msgid "America/Argentina/Tucuman"
+msgstr "Америка/Аржентина/Тукуман"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/argentina/ushuaia
+msgid "America/Argentina/Ushuaia"
+msgstr "Америка/Аржентина/Ушуая"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/aruba
+msgid "America/Aruba"
+msgstr "Америка/Аруба"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/asuncion
+msgid "America/Asuncion"
+msgstr "Америка/Асунсион"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/atikokan
+msgid "America/Atikokan"
+msgstr "Америка/Атикоан"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/atka
+msgid "America/Atka"
+msgstr "Америка/Атка"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/bahia
+msgid "America/Bahia"
+msgstr "Америка/Байя"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/bahia_banderas
+msgid "America/Bahia_Banderas"
+msgstr "Америка/Байя Бандерас"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/barbados
+msgid "America/Barbados"
+msgstr "Америка/Барбадос"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/belem
+msgid "America/Belem"
+msgstr "Америка/Белем"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/belize
+msgid "America/Belize"
+msgstr "Америка/Белиз"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/blanc-sablon
+msgid "America/Blanc-Sablon"
+msgstr "Америка/Бланк-Саблон"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/boa_vista
+msgid "America/Boa_Vista"
+msgstr "Америка/Боа Виста"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/bogota
+msgid "America/Bogota"
+msgstr "Америка/Богота"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/boise
+msgid "America/Boise"
+msgstr "Америка/Бойзи"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/buenos_aires
+msgid "America/Buenos_Aires"
+msgstr "Америка/Буенос Айрес"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/cambridge_bay
+msgid "America/Cambridge_Bay"
+msgstr "Америка/Кеймбридж Бей"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/campo_grande
+msgid "America/Campo_Grande"
+msgstr "Америка/Кампо Гранде"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/cancun
+msgid "America/Cancun"
+msgstr "Америка/Канкун"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/caracas
+msgid "America/Caracas"
+msgstr "Америка/Каракас"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/catamarca
+msgid "America/Catamarca"
+msgstr "Америка/Катамарка"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/cayenne
+msgid "America/Cayenne"
+msgstr "Америка/Кайен"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/cayman
+msgid "America/Cayman"
+msgstr "Америка/Кайман"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/chicago
+msgid "America/Chicago"
+msgstr "Америка/Чикаго"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/chihuahua
+msgid "America/Chihuahua"
+msgstr "Америка/Чихуахуа"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/ciudad_juarez
+msgid "America/Ciudad_Juarez"
+msgstr "Америка/Сиудад Хуарес"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/coral_harbour
+msgid "America/Coral_Harbour"
+msgstr "Америка/Корал Харбър"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/cordoba
+msgid "America/Cordoba"
+msgstr "Америка/Кордоба"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/costa_rica
+msgid "America/Costa_Rica"
+msgstr "Америка/Коста Рика"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/creston
+msgid "America/Creston"
+msgstr "Америка/Крестън"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/cuiaba
+msgid "America/Cuiaba"
+msgstr "Америка/Куяба"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/curacao
+msgid "America/Curacao"
+msgstr "Америка/Кюрасао"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/danmarkshavn
+msgid "America/Danmarkshavn"
+msgstr "Америка/Данмарксхавн"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/dawson
+msgid "America/Dawson"
+msgstr "Америка/Доусън"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/dawson_creek
+msgid "America/Dawson_Creek"
+msgstr "Америка/Доусън Крийк"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/denver
+msgid "America/Denver"
+msgstr "Америка/Денвър"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/detroit
+msgid "America/Detroit"
+msgstr "Америка/Детройт"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/dominica
+msgid "America/Dominica"
+msgstr "Америка/Доминика"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/edmonton
+msgid "America/Edmonton"
+msgstr "Америка/Едмънтън"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/eirunepe
+msgid "America/Eirunepe"
+msgstr "Америка/Ейрунепе"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/el_salvador
+msgid "America/El_Salvador"
+msgstr "Америка/Ел Салвадор"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/ensenada
+msgid "America/Ensenada"
+msgstr "Америка/Енсенда"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/fort_nelson
+msgid "America/Fort_Nelson"
+msgstr "Америка/Форт Нелсън"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/fort_wayne
+msgid "America/Fort_Wayne"
+msgstr "Америка/Форт Уейн"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/fortaleza
+msgid "America/Fortaleza"
+msgstr "Америка/Форталеза"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/glace_bay
+msgid "America/Glace_Bay"
+msgstr "Америка/Глейс Бей"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/godthab
+msgid "America/Godthab"
+msgstr "Америка/Готхоб"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/goose_bay
+msgid "America/Goose_Bay"
+msgstr "Америка/Гус Бей"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/grand_turk
+msgid "America/Grand_Turk"
+msgstr "Америка/Гранд Търк"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/grenada
+msgid "America/Grenada"
+msgstr "Америка/Гренада"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/guadeloupe
+msgid "America/Guadeloupe"
+msgstr "Америка/Гваделупа"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/guatemala
+msgid "America/Guatemala"
+msgstr "Америка/Гватемала"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/guayaquil
+msgid "America/Guayaquil"
+msgstr "Америка/Гуаякил"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/guyana
+msgid "America/Guyana"
+msgstr "Америка/Гайана"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/halifax
+msgid "America/Halifax"
+msgstr "Америка/Халифакс"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/havana
+msgid "America/Havana"
+msgstr "Америка/Хавана"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/hermosillo
+msgid "America/Hermosillo"
+msgstr "Америка/Хермосийо"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/indiana/indianapolis
+msgid "America/Indiana/Indianapolis"
+msgstr "Америка/Индиана/Индианаполис"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/indiana/knox
+msgid "America/Indiana/Knox"
+msgstr "Америка/Индиана/Нокс"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/indiana/marengo
+msgid "America/Indiana/Marengo"
+msgstr "Америка/Индиана/Маренго"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/indiana/petersburg
+msgid "America/Indiana/Petersburg"
+msgstr "Америка/Индиана/Питърсбърг"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/indiana/tell_city
+msgid "America/Indiana/Tell_City"
+msgstr "Америка/Индиана/Тел Сити"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/indiana/vevay
+msgid "America/Indiana/Vevay"
+msgstr "Америка/Индиана/Вевей"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/indiana/vincennes
+msgid "America/Indiana/Vincennes"
+msgstr "Америка/Индиана/Винсенес"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/indiana/winamac
+msgid "America/Indiana/Winamac"
+msgstr "Америка/Индиана/Уинамак"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/indianapolis
+msgid "America/Indianapolis"
+msgstr "Америка/Индианаполис"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/inuvik
+msgid "America/Inuvik"
+msgstr "Америка/Инувик"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/iqaluit
+msgid "America/Iqaluit"
+msgstr "Америка/Икалуит"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/jamaica
+msgid "America/Jamaica"
+msgstr "Америка/Ямайка"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/jujuy
+msgid "America/Jujuy"
+msgstr "Америка/Хухуй"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/juneau
+msgid "America/Juneau"
+msgstr "Америка/Джуно"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/kentucky/louisville
+msgid "America/Kentucky/Louisville"
+msgstr "Америка/Кентъки/Луисвил"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/kentucky/monticello
+msgid "America/Kentucky/Monticello"
+msgstr "Америка/Кентъки/Монтисело"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/knox_in
+msgid "America/Knox_IN"
+msgstr "Америка/Нокс_IN"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/kralendijk
+msgid "America/Kralendijk"
+msgstr "Америка/Кралендейк"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/la_paz
+msgid "America/La_Paz"
+msgstr "Америка/Ла Пас"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/lima
+msgid "America/Lima"
+msgstr "Америка/Лима"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/los_angeles
+msgid "America/Los_Angeles"
+msgstr "Америка/Лос Анджелис"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/louisville
+msgid "America/Louisville"
+msgstr "Америка/Луисвил"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/lower_princes
+msgid "America/Lower_Princes"
+msgstr "Америка/Лоуър Принсес"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/maceio
+msgid "America/Maceio"
+msgstr "Америка/Масейо"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/managua
+msgid "America/Managua"
+msgstr "Америка/Манагуа"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/manaus
+msgid "America/Manaus"
+msgstr "Америка/Манаус"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/marigot
+msgid "America/Marigot"
+msgstr "Америка/Мариго"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/martinique
+msgid "America/Martinique"
+msgstr "Америка/Мартиника"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/matamoros
+msgid "America/Matamoros"
+msgstr "Америка/Матаморос"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/mazatlan
+msgid "America/Mazatlan"
+msgstr "Америка/Масатлан"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/mendoza
+msgid "America/Mendoza"
+msgstr "Америка/Мендоса"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/menominee
+msgid "America/Menominee"
+msgstr "Америка/Меномини"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/merida
+msgid "America/Merida"
+msgstr "Америка/Мерида"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/metlakatla
+msgid "America/Metlakatla"
+msgstr "Америка/Метлакатла"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/mexico_city
+msgid "America/Mexico_City"
+msgstr "Америка/Мексико Сити"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/miquelon
+msgid "America/Miquelon"
+msgstr "Америка/Микелон"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/moncton
+msgid "America/Moncton"
+msgstr "Америка/Монктон"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/monterrey
+msgid "America/Monterrey"
+msgstr "Америка/Монтерей"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/montevideo
+msgid "America/Montevideo"
+msgstr "Америка/Монтевидео"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/montreal
+msgid "America/Montreal"
+msgstr "Америка/Монреал"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/montserrat
+msgid "America/Montserrat"
+msgstr "Америка/Монсерат"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/nassau
+msgid "America/Nassau"
+msgstr "Америка/Насау"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/new_york
+msgid "America/New_York"
+msgstr "Америка/Ню Йорк"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/nipigon
+msgid "America/Nipigon"
+msgstr "Америка/Нипигон"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/nome
+msgid "America/Nome"
+msgstr "Америка/Ном"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/noronha
+msgid "America/Noronha"
+msgstr "Америка/Нороня"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/north_dakota/beulah
+msgid "America/North_Dakota/Beulah"
+msgstr "Америка/Северна Дакота/Бюла"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/north_dakota/center
+msgid "America/North_Dakota/Center"
+msgstr "Америка/Северна Дакота/Център"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/north_dakota/new_salem
+msgid "America/North_Dakota/New_Salem"
+msgstr "Америка/Северна Дакота/Ню Салем"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/nuuk
+msgid "America/Nuuk"
+msgstr "Америка/Нуук"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/ojinaga
+msgid "America/Ojinaga"
+msgstr "Америка/Охинага"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/panama
+msgid "America/Panama"
+msgstr "Америка/Панама"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/pangnirtung
+msgid "America/Pangnirtung"
+msgstr "Америка/Пангниртунг"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/paramaribo
+msgid "America/Paramaribo"
+msgstr "Америка/Парамарибо"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/phoenix
+msgid "America/Phoenix"
+msgstr "Америка/Финикс"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/port-au-prince
+msgid "America/Port-au-Prince"
+msgstr "Америка/Порт-о-Пренс"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/port_of_spain
+msgid "America/Port_of_Spain"
+msgstr "Америка/Порт ъф Спейн"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/porto_acre
+msgid "America/Porto_Acre"
+msgstr "Америка/Порто Акре"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/porto_velho
+msgid "America/Porto_Velho"
+msgstr "Америка/Порто Вельо"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/puerto_rico
+msgid "America/Puerto_Rico"
+msgstr "Америка/Пуерто Рико"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/punta_arenas
+msgid "America/Punta_Arenas"
+msgstr "Америка/Пунта Аренас"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/rainy_river
+msgid "America/Rainy_River"
+msgstr "Америка/Рейни Ривър"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/rankin_inlet
+msgid "America/Rankin_Inlet"
+msgstr "Америка/Ранкин Инлет"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/recife
+msgid "America/Recife"
+msgstr "Америка/Ресифи"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/regina
+msgid "America/Regina"
+msgstr "Америка/Реджина"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/resolute
+msgid "America/Resolute"
+msgstr "Америка/Резолют"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/rio_branco
+msgid "America/Rio_Branco"
+msgstr "Америка/Рио Бранко"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/rosario
+msgid "America/Rosario"
+msgstr "Америка/Росарио"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/santa_isabel
+msgid "America/Santa_Isabel"
+msgstr "Америка/Санта Изабел"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/santarem
+msgid "America/Santarem"
+msgstr "Америка/Сантарем"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/santiago
+msgid "America/Santiago"
+msgstr "Америка/Сантяго"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/santo_domingo
+msgid "America/Santo_Domingo"
+msgstr "Америка/Санто Доминго"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/sao_paulo
+msgid "America/Sao_Paulo"
+msgstr "Америка/Сао Пауло"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/scoresbysund
+msgid "America/Scoresbysund"
+msgstr "Америка/Скоресбисунд"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/shiprock
+msgid "America/Shiprock"
+msgstr "Америка/Шипрок"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/sitka
+msgid "America/Sitka"
+msgstr "Америка/Ситка"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/st_barthelemy
+msgid "America/St_Barthelemy"
+msgstr "Америка/Сен Бартелеми"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/st_johns
+msgid "America/St_Johns"
+msgstr "Америка/Сейнт Джонс"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/st_kitts
+msgid "America/St_Kitts"
+msgstr "Америка/Сейнт Китс"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/st_lucia
+msgid "America/St_Lucia"
+msgstr "Америка/Сейнт Лусия"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/st_thomas
+msgid "America/St_Thomas"
+msgstr "Америка/Сейнт Томас"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/st_vincent
+msgid "America/St_Vincent"
+msgstr "Америка/Сейнт Винсент"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/swift_current
+msgid "America/Swift_Current"
+msgstr "Америка/Суифт Кърънт"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/tegucigalpa
+msgid "America/Tegucigalpa"
+msgstr "Америка/Тегусигалпа"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/thule
+msgid "America/Thule"
+msgstr "Америка/Туле"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/thunder_bay
+msgid "America/Thunder_Bay"
+msgstr "Америка/Тъндър Бей"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/tijuana
+msgid "America/Tijuana"
+msgstr "Америка/Тихуана"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/toronto
+msgid "America/Toronto"
+msgstr "Америка/Торонто"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/tortola
+msgid "America/Tortola"
+msgstr "Америка/Тортола"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/vancouver
+msgid "America/Vancouver"
+msgstr "Америка/Ванкувър"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/virgin
+msgid "America/Virgin"
+msgstr "Америка/Върджин"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/whitehorse
+msgid "America/Whitehorse"
+msgstr "Америка/Уайтхорс"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/winnipeg
+msgid "America/Winnipeg"
+msgstr "Америка/Уинипег"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/yakutat
+msgid "America/Yakutat"
+msgstr "Америка/Якутат"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/yellowknife
+msgid "America/Yellowknife"
+msgstr "Америка/Йелоунайф"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__antarctica/casey
+msgid "Antarctica/Casey"
+msgstr "Антарктика/Кейси"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__antarctica/davis
+msgid "Antarctica/Davis"
+msgstr "Антарктика/Дейвис"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__antarctica/dumontdurville
+msgid "Antarctica/DumontDUrville"
+msgstr "Антарктика/Дюмон Дюрвил"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__antarctica/macquarie
+msgid "Antarctica/Macquarie"
+msgstr "Антарктика/Макуори"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__antarctica/mawson
+msgid "Antarctica/Mawson"
+msgstr "Антарктика/Моусън"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__antarctica/mcmurdo
+msgid "Antarctica/McMurdo"
+msgstr "Антарктика/МакМърдо"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__antarctica/palmer
+msgid "Antarctica/Palmer"
+msgstr "Антарктика/Палмер"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__antarctica/rothera
+msgid "Antarctica/Rothera"
+msgstr "Антарктика/Ротера"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__antarctica/south_pole
+msgid "Antarctica/South_Pole"
+msgstr "Антарктика/Южен полюс"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__antarctica/syowa
+msgid "Antarctica/Syowa"
+msgstr "Антарктика/Сьова"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__antarctica/troll
+msgid "Antarctica/Troll"
+msgstr "Антарктика/Трол"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__antarctica/vostok
+msgid "Antarctica/Vostok"
+msgstr "Антарктика/Восток"
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_filter
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "Archived"
+msgstr "Архивиран"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__arctic/longyearbyen
+msgid "Arctic/Longyearbyen"
+msgstr "Арктика/Лонгйир"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/aden
+msgid "Asia/Aden"
+msgstr "Азия/Аден"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/almaty
+msgid "Asia/Almaty"
+msgstr "Азия/Алмати"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/amman
+msgid "Asia/Amman"
+msgstr "Азия/Аман"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/anadyr
+msgid "Asia/Anadyr"
+msgstr "Азия/Анадир"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/aqtau
+msgid "Asia/Aqtau"
+msgstr "Азия/Актау"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/aqtobe
+msgid "Asia/Aqtobe"
+msgstr "Азия/Актобе"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/ashgabat
+msgid "Asia/Ashgabat"
+msgstr "Азия/Ашхабад"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/ashkhabad
+msgid "Asia/Ashkhabad"
+msgstr "Азия/Ашхабат"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/atyrau
+msgid "Asia/Atyrau"
+msgstr "Азия/Атирау"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/baghdad
+msgid "Asia/Baghdad"
+msgstr "Азия/Багдад"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/bahrain
+msgid "Asia/Bahrain"
+msgstr "Азия/Бахрейн"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/baku
+msgid "Asia/Baku"
+msgstr "Азия/Баку"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/bangkok
+msgid "Asia/Bangkok"
+msgstr "Азия/Банкок"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/barnaul
+msgid "Asia/Barnaul"
+msgstr "Азия/Барнаул"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/beirut
+msgid "Asia/Beirut"
+msgstr "Азия/Бейрут"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/bishkek
+msgid "Asia/Bishkek"
+msgstr "Азия/Бишкек"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/brunei
+msgid "Asia/Brunei"
+msgstr "Азия/Бруней"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/calcutta
+msgid "Asia/Calcutta"
+msgstr "Азия/Калкута"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/chita
+msgid "Asia/Chita"
+msgstr "Азия/Чита"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/choibalsan
+msgid "Asia/Choibalsan"
+msgstr "Азия/Чойбалсан"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/chongqing
+msgid "Asia/Chongqing"
+msgstr "Азия/Чунцин"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/chungking
+msgid "Asia/Chungking"
+msgstr "Азия/Чункинг"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/colombo
+msgid "Asia/Colombo"
+msgstr "Азия/Коломбо"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/dacca
+msgid "Asia/Dacca"
+msgstr "Азия/Дака"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/damascus
+msgid "Asia/Damascus"
+msgstr "Азия/Дамаск"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/dhaka
+msgid "Asia/Dhaka"
+msgstr "Азия/Дхака"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/dili
+msgid "Asia/Dili"
+msgstr "Азия/Дили"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/dubai
+msgid "Asia/Dubai"
+msgstr "Азия/Дубай"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/dushanbe
+msgid "Asia/Dushanbe"
+msgstr "Азия/Душанбе"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/famagusta
+msgid "Asia/Famagusta"
+msgstr "Азия/Фамагуста"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/gaza
+msgid "Asia/Gaza"
+msgstr "Азия/Газа"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/harbin
+msgid "Asia/Harbin"
+msgstr "Азия/Харбин"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/hebron
+msgid "Asia/Hebron"
+msgstr "Азия/Хеброн"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/ho_chi_minh
+msgid "Asia/Ho_Chi_Minh"
+msgstr "Азия/Хо Ши Мин"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/hong_kong
+msgid "Asia/Hong_Kong"
+msgstr "Азия/Хонг Конг"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/hovd
+msgid "Asia/Hovd"
+msgstr "Азия/Ховд"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/irkutsk
+msgid "Asia/Irkutsk"
+msgstr "Азия/Иркутск"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/istanbul
+msgid "Asia/Istanbul"
+msgstr "Азия/Истанбул"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/jakarta
+msgid "Asia/Jakarta"
+msgstr "Азия/Джакарта"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/jayapura
+msgid "Asia/Jayapura"
+msgstr "Азия/Джаяпура"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/jerusalem
+msgid "Asia/Jerusalem"
+msgstr "Азия/Йерусалим"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/kabul
+msgid "Asia/Kabul"
+msgstr "Азия/Кабул"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/kamchatka
+msgid "Asia/Kamchatka"
+msgstr "Азия/Камчатка"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/karachi
+msgid "Asia/Karachi"
+msgstr "Азия/Карачи"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/kashgar
+msgid "Asia/Kashgar"
+msgstr "Азия/Кашгар"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/kathmandu
+msgid "Asia/Kathmandu"
+msgstr "Азия/Катманду"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/katmandu
+msgid "Asia/Katmandu"
+msgstr "Азия/Катманду"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/khandyga
+msgid "Asia/Khandyga"
+msgstr "Азия/Хандига"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/kolkata
+msgid "Asia/Kolkata"
+msgstr "Азия/Колката"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/krasnoyarsk
+msgid "Asia/Krasnoyarsk"
+msgstr "Азия/Красноярск"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/kuala_lumpur
+msgid "Asia/Kuala_Lumpur"
+msgstr "Азия/Куала Лумпур"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/kuching
+msgid "Asia/Kuching"
+msgstr "Азия/Кучинг"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/kuwait
+msgid "Asia/Kuwait"
+msgstr "Азия/Кувейт"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/macao
+msgid "Asia/Macao"
+msgstr "Азия/Макао"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/macau
+msgid "Asia/Macau"
+msgstr "Азия/Макау"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/magadan
+msgid "Asia/Magadan"
+msgstr "Азия/Магадан"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/makassar
+msgid "Asia/Makassar"
+msgstr "Азия/Макасар"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/manila
+msgid "Asia/Manila"
+msgstr "Азия/Манила"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/muscat
+msgid "Asia/Muscat"
+msgstr "Азия/Мускат"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/nicosia
+msgid "Asia/Nicosia"
+msgstr "Азия/Никозия"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/novokuznetsk
+msgid "Asia/Novokuznetsk"
+msgstr "Азия/Новокузнецк"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/novosibirsk
+msgid "Asia/Novosibirsk"
+msgstr "Азия/Новосибирск"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/omsk
+msgid "Asia/Omsk"
+msgstr "Азия/Омск"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/oral
+msgid "Asia/Oral"
+msgstr "Азия/Орал"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/phnom_penh
+msgid "Asia/Phnom_Penh"
+msgstr "Азия/Пном Пен"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/pontianak
+msgid "Asia/Pontianak"
+msgstr "Азия/Понтианак"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/pyongyang
+msgid "Asia/Pyongyang"
+msgstr "Азия/Пхенян"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/qatar
+msgid "Asia/Qatar"
+msgstr "Азия/Катар"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/qostanay
+msgid "Asia/Qostanay"
+msgstr "Азия/Костанай"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/qyzylorda
+msgid "Asia/Qyzylorda"
+msgstr "Азия/Кизилорда"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/rangoon
+msgid "Asia/Rangoon"
+msgstr "Азия/Рангун"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/riyadh
+msgid "Asia/Riyadh"
+msgstr "Азия/Рияд"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/saigon
+msgid "Asia/Saigon"
+msgstr "Азия/Сайгон"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/sakhalin
+msgid "Asia/Sakhalin"
+msgstr "Азия/Сахалин"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/samarkand
+msgid "Asia/Samarkand"
+msgstr "Азия/Самарканд"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/seoul
+msgid "Asia/Seoul"
+msgstr "Азия/Сеул"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/shanghai
+msgid "Asia/Shanghai"
+msgstr "Азия/Шанхай"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/singapore
+msgid "Asia/Singapore"
+msgstr "Азия/Сингапур"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/srednekolymsk
+msgid "Asia/Srednekolymsk"
+msgstr "Азия/Среднеколимск"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/taipei
+msgid "Asia/Taipei"
+msgstr "Азия/Тайпей"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/tashkent
+msgid "Asia/Tashkent"
+msgstr "Азия/Ташкент"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/tbilisi
+msgid "Asia/Tbilisi"
+msgstr "Азия/Тбилиси"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/tehran
+msgid "Asia/Tehran"
+msgstr "Азия/Техеран"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/tel_aviv
+msgid "Asia/Tel_Aviv"
+msgstr "Азия/Тел Авив"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/thimbu
+msgid "Asia/Thimbu"
+msgstr "Азия/Тимбу"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/thimphu
+msgid "Asia/Thimphu"
+msgstr "Азия/Тимпху"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/tokyo
+msgid "Asia/Tokyo"
+msgstr "Азия/Токио"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/tomsk
+msgid "Asia/Tomsk"
+msgstr "Азия/Томск"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/ujung_pandang
+msgid "Asia/Ujung_Pandang"
+msgstr "Азия/Уджунг Пандан"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/ulaanbaatar
+msgid "Asia/Ulaanbaatar"
+msgstr "Азия/Уланбатар"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/ulan_bator
+msgid "Asia/Ulan_Bator"
+msgstr "Азия/Улан Батор"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/urumqi
+msgid "Asia/Urumqi"
+msgstr "Азия/Урумчи"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/ust-nera
+msgid "Asia/Ust-Nera"
+msgstr "Азия/Уст-Нера"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/vientiane
+msgid "Asia/Vientiane"
+msgstr "Азия/Виентян"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/vladivostok
+msgid "Asia/Vladivostok"
+msgstr "Азия/Владивосток"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/yakutsk
+msgid "Asia/Yakutsk"
+msgstr "Азия/Якутск"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/yangon
+msgid "Asia/Yangon"
+msgstr "Азия/Янгон"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/yekaterinburg
+msgid "Asia/Yekaterinburg"
+msgstr "Азия/Екатеринбург"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__asia/yerevan
+msgid "Asia/Yerevan"
+msgstr "Азия/Ереван"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__atlantic/azores
+msgid "Atlantic/Azores"
+msgstr "Атлантик/Азорски острови"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__atlantic/bermuda
+msgid "Atlantic/Bermuda"
+msgstr "Атлантик/Бермуди"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__atlantic/canary
+msgid "Atlantic/Canary"
+msgstr "Атлантик/Канарски острови"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__atlantic/cape_verde
+msgid "Atlantic/Cape_Verde"
+msgstr "Атлантик/Кабо Верде"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__atlantic/faeroe
+msgid "Atlantic/Faeroe"
+msgstr "Атлантик/Фарьорски острови"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__atlantic/faroe
+msgid "Atlantic/Faroe"
+msgstr "Атлантик/Фаро"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__atlantic/jan_mayen
+msgid "Atlantic/Jan_Mayen"
+msgstr "Атлантик/Ян Майен"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__atlantic/madeira
+msgid "Atlantic/Madeira"
+msgstr "Атлантик/Мадейра"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__atlantic/reykjavik
+msgid "Atlantic/Reykjavik"
+msgstr "Атлантик/Рейкявик"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__atlantic/south_georgia
+msgid "Atlantic/South_Georgia"
+msgstr "Атлантик/Южна Джорджия"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__atlantic/st_helena
+msgid "Atlantic/St_Helena"
+msgstr "Атлантик/Света Елена"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__atlantic/stanley
+msgid "Atlantic/Stanley"
+msgstr "Атлантик/Стантли"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__message_attachment_count
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__message_attachment_count
+msgid "Attachment Count"
+msgstr "Брой прикачени файлове"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/act
+msgid "Australia/ACT"
+msgstr "Австралия/ACT"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/adelaide
+msgid "Australia/Adelaide"
+msgstr "Австралия/Аделаида"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/brisbane
+msgid "Australia/Brisbane"
+msgstr "Австралия/Бризбейн"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/broken_hill
+msgid "Australia/Broken_Hill"
+msgstr "Австралия/Брокън Хил"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/canberra
+msgid "Australia/Canberra"
+msgstr "Австралия/Канбера"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/currie
+msgid "Australia/Currie"
+msgstr "Австралия/Къри"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/darwin
+msgid "Australia/Darwin"
+msgstr "Австралия/Дарвин"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/eucla
+msgid "Australia/Eucla"
+msgstr "Австралия/Еукла"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/hobart
+msgid "Australia/Hobart"
+msgstr "Австралия/Хобарт"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/lhi
+msgid "Australia/LHI"
+msgstr "Австралия/LHI"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/lindeman
+msgid "Australia/Lindeman"
+msgstr "Австралия/Линдеман"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/lord_howe
+msgid "Australia/Lord_Howe"
+msgstr "Австралия/Лорд Хау"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/melbourne
+msgid "Australia/Melbourne"
+msgstr "Австралия/Мелбърн"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/nsw
+msgid "Australia/NSW"
+msgstr "Австралия/Нов Южен Уелс"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/north
+msgid "Australia/North"
+msgstr "Австралия/Север"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/perth
+msgid "Australia/Perth"
+msgstr "Австралия/Пърт"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/queensland
+msgid "Australia/Queensland"
+msgstr "Австралия/Куинсланд"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/south
+msgid "Australia/South"
+msgstr "Австралия/Юг"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/sydney
+msgid "Australia/Sydney"
+msgstr "Австралия/Сидни"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/tasmania
+msgid "Australia/Tasmania"
+msgstr "Австралия/Тасмания"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/victoria
+msgid "Australia/Victoria"
+msgstr "Австралия/Виктория"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/west
+msgid "Australia/West"
+msgstr "Австралия/Запад"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/yancowinna
+msgid "Australia/Yancowinna"
+msgstr "Австралия/Янковина"
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "Authentication"
+msgstr "Идентификация"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__command_type__barrier_control
+msgid "Barrier Control"
+msgstr "Бариерен контрол"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__behind_nat
+msgid "Behind NAT"
+msgstr "Зад NAT"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_rfid_rel__list_category__blacklist
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "Blacklist"
+msgstr "Черен списък"
+
+#. module: polimex_ip_cam
+#: model:ir.actions.act_window,name:polimex_ip_cam.action_cctv_camera_blacklist
+msgid "Blacklist Cards"
+msgstr "Карти от черния списък"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__rfid_blacklist_count
+msgid "Blacklist Count"
+msgstr "Брояч в черните списъци"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__brand
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_filter
+msgid "Brand"
+msgstr "Марка"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__brazil/acre
+msgid "Brazil/Acre"
+msgstr "Бразилия/акра"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__brazil/denoronha
+msgid "Brazil/DeNoronha"
+msgstr "Бразилия/DeNoronha"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__brazil/east
+msgid "Brazil/East"
+msgstr "Бразилия/Изток"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__brazil/west
+msgid "Brazil/West"
+msgstr "Бразилия/Запад"
+
+#. module: polimex_ip_cam
+#: model:ir.module.category,name:polimex_ip_cam.cctv_camera_management
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "CCTV Camera"
+msgstr "Камера за видеонаблюдение"
+
+#. module: polimex_ip_cam
+#: model:ir.model,name:polimex_ip_cam.model_cctv_camera_rfid_rel
+msgid "CCTV Camera - RFID Card Relation"
+msgstr "Камера за видеонаблюдение - RFID карта Relation"
+
+#. module: polimex_ip_cam
+#: model:ir.model,name:polimex_ip_cam.model_cctv_camera
+msgid "CCTV Camera Management"
+msgstr "Управление на камерите за видеонаблюдение"
+
+#. module: polimex_ip_cam
+#: model:ir.actions.act_window,name:polimex_ip_cam.action_cctv_camera
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_filter
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_list
+msgid "CCTV Cameras"
+msgstr "Камери за видеонаблюдение"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__cet
+msgid "CET"
+msgstr "CET"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__cst6cdt
+msgid "CST6CDT"
+msgstr "CST6CDT"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__camera_id
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__camera_id
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_door__camera_id
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_event_system__camera_id
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_event_user__camera_id
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_reader__camera_id
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_filter
+msgid "Camera"
+msgstr "Камера"
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_command_form
+msgid "Camera Command"
+msgstr "Команда към камера"
+
+#. module: polimex_ip_cam
+#: model:ir.model,name:polimex_ip_cam.model_cctv_camera_command
+msgid "Camera Command for Execution"
+msgstr "Команда за изпълнение от камерата"
+
+#. module: polimex_ip_cam
+#: model:ir.actions.act_window,name:polimex_ip_cam.action_cctv_camera_command
+#: model:ir.ui.menu,name:polimex_ip_cam.menu_cctv_camera_command
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_command_list
+msgid "Camera Commands"
+msgstr "Команди към камера"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_card__camera_count
+msgid "Camera Count"
+msgstr "Брой на камерите"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__ip_address
+msgid "Camera IP address"
+msgstr "IP адрес на камерата"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"Camera Info: Name: %(name)s, Type: %(type)s, ID: %(devid)s, Model: "
+"%(model)s, Serial: %(serial)s, Firmware: %(firmware)s (Date: "
+"%(firmwaredate)s), Hardware: %(hardware)s, Beep: %(supportBeep)s, Video "
+"Loss: %(supportVideoLoss)s"
+msgstr ""
+"Информация за камерата: Име: %(name)s, Тип: %(type)s, ID: %(devid)s, Модел: "
+"%(model)s, Сериен: %(serial)s, фърмуер: %(firmware)s (дата: "
+"%(firmwaredate)s), хардуер: %(hardware)s, звуков сигнал: %(supportBeep)s, "
+"загуба на видео: %(supportVideoLoss)s"
+
+#. module: polimex_ip_cam
+#: model:ir.ui.menu,name:polimex_ip_cam.menu_cctv_camera_action
+msgid "Camera Manager"
+msgstr "Мениджър за камери"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_card__camera_rel_ids
+msgid "Camera Relations"
+msgstr "Връзки с камерата"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__password
+msgid "Camera access password"
+msgstr "Парола за достъп до камерата"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__username
+msgid "Camera access username"
+msgstr "Потребителско име за достъп до камерата"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__brand
+msgid "Camera brand"
+msgstr "Марка на камерата"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__firmware
+msgid "Camera firmware version"
+msgstr "Версия на фърмуера на камерата"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__behind_nat
+msgid "Camera is behind a NAT (Network Address Translation) router"
+msgstr "Камерата е зад маршрутизатор NAT (превод на мрежови адреси)"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__model
+msgid "Camera model (obtained via ISAPI)"
+msgstr "Модел на камерата (получен чрез ISAPI)"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__name
+msgid "Camera name for easy identification"
+msgstr "Име на камерата за лесно идентифициране"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__port
+msgid "Camera port (usually 80 or 8000)"
+msgstr "Порт на камерата (обикновено 80 или 8000)"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__serial_number
+msgid "Camera serial number"
+msgstr "Сериен номер на камерата"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__server_setup
+msgid "Camera server setup configuration (param=value per line)"
+msgstr ""
+"Конфигурация на настройките на сървъра на камерата (param=стойност на ред)"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__snapshot
+msgid "Camera snapshot image (base64 encoded)"
+msgstr "Снимка от камерата (кодирана в base64)"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Camera time configuration is correct."
+msgstr "Конфигурацията на часовника на камерата е правилна."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_system__camera_id
+#: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_user__camera_id
+msgid "Camera to use"
+msgstr "Камера за използване"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_rfid_rel__camera_id
+msgid "Camera to which this card relation belongs"
+msgstr "Камера, към която принадлежи тази връзка на картата"
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.inherited_hr_rfid_card_view_form_cctv
+msgid "Cameras"
+msgstr "Камери"
+
+#. module: polimex_ip_cam
+#: model:ir.actions.act_window,name:polimex_ip_cam.action_hr_rfid_card_cameras
+msgid "Cameras for Card"
+msgstr "Камери за карта"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__canada/atlantic
+msgid "Canada/Atlantic"
+msgstr "Канада/Атлантически океан"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__canada/central
+msgid "Canada/Central"
+msgstr "Канада/Централен"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__canada/eastern
+msgid "Canada/Eastern"
+msgstr "Канада/Източен"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__canada/mountain
+msgid "Canada/Mountain"
+msgstr "Канада/Планински"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__canada/newfoundland
+msgid "Canada/Newfoundland"
+msgstr "Канада/Нюфаундленд"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__canada/pacific
+msgid "Canada/Pacific"
+msgstr "Канада/Тихоокеански"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__canada/saskatchewan
+msgid "Canada/Saskatchewan"
+msgstr "Канада/Саскачеван"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__canada/yukon
+msgid "Canada/Yukon"
+msgstr "Канада/Юкон"
+
+#. module: polimex_ip_cam
+#: model:ir.model,name:polimex_ip_cam.model_hr_rfid_card
+msgid "Card"
+msgstr "Карта"
+
+#. module: polimex_ip_cam
+#: model:ir.model,name:polimex_ip_cam.model_hr_rfid_card_door_rel
+msgid "Card and door relation model"
+msgstr "Модел за връзка с карти и врати"
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "Check Connection"
+msgstr "Проверка на връзката"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__chile/continental
+msgid "Chile/Continental"
+msgstr "Чили/Континентален"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__chile/easterisland
+msgid "Chile/EasterIsland"
+msgstr "Чили/Великденски остров"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__name
+msgid "Command Reference"
+msgstr "Препратка към команди"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__command_type
+msgid "Command Type"
+msgstr "Тип на командата"
+
+#. module: polimex_ip_cam
+#: model:ir.model,name:polimex_ip_cam.model_hr_rfid_command
+msgid "Command to controller"
+msgstr "Команда към контролера"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__company_id
+msgid "Company"
+msgstr "Компания"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_event_system__anpr_confidence
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_event_user__anpr_confidence
+msgid "Confidence Level"
+msgstr "Ниво на достоверност"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__integration_type__configuration
+msgid "Configuration"
+msgstr "Конфигурация"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__connection_status__connected
+msgid "Connected"
+msgstr "Свързан"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__connection_status
+msgid "Connection Status"
+msgstr "Състояние на връзката"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Connection check failed"
+msgstr "Проверката на връзката е неуспешна"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__create_uid
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__create_uid
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__create_uid
+msgid "Created by"
+msgstr "Създаден от"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__create_date
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__create_date
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__create_date
+msgid "Created on"
+msgstr "Създаден на"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__cuba
+msgid "Cuba"
+msgstr "Куба"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__brand__dahua
+msgid "Dahua"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_command__request_data
+msgid ""
+"Data sent to the camera as part of the command, e.g. in param=value per "
+"line format."
+msgstr ""
+"Данни, изпратени на камерата като част от командата, например във формат "
+"param=стойност на ред."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__description
+msgid "Description"
+msgstr "Описание"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"Direction: %s, DetectType: %s, ActivePostCount: %s, EventState: %s, "
+"IPAddress: %s, MACAddress: %s, BarrierGateCtrlType: %s, Direction: %s."
+msgstr ""
+"Посока: %s, DetectType: %s, ActivePostCount: %s, EventState: %s, IPAddress: "
+"%s, MACAddress: %s, BarrierGateCtrlType: %s, Direction: %s."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__integration_type__discovery
+msgid "Discovery"
+msgstr "Откриване"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__display_name
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__display_name
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__display_name
+msgid "Display Name"
+msgstr "Име за показване"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__state__done
+msgid "Done"
+msgstr "Завършен"
+
+#. module: polimex_ip_cam
+#: model:ir.model,name:polimex_ip_cam.model_hr_rfid_door
+msgid "Door"
+msgstr "Врата"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Door %s"
+msgstr "Врата %s"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__eet
+msgid "EET"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__est
+msgid "EST"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__est5edt
+msgid "EST5EDT"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__egypt
+msgid "Egypt"
+msgstr "Египет"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__eire
+msgid "Eire"
+msgstr "Ейре"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__state__error
+msgid "Error"
+msgstr "Грешка"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Error parsing camera localTime: %s. "
+msgstr "Грешка при анализа от камерата localTime: %s."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt
+msgid "Etc/GMT"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt+0
+msgid "Etc/GMT+0"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt+1
+msgid "Etc/GMT+1"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt+10
+msgid "Etc/GMT+10"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt+11
+msgid "Etc/GMT+11"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt+12
+msgid "Etc/GMT+12"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt+2
+msgid "Etc/GMT+2"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt+3
+msgid "Etc/GMT+3"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt+4
+msgid "Etc/GMT+4"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt+5
+msgid "Etc/GMT+5"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt+6
+msgid "Etc/GMT+6"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt+7
+msgid "Etc/GMT+7"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt+8
+msgid "Etc/GMT+8"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt+9
+msgid "Etc/GMT+9"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt-0
+msgid "Etc/GMT-0"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt-1
+msgid "Etc/GMT-1"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt-10
+msgid "Etc/GMT-10"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt-11
+msgid "Etc/GMT-11"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt-12
+msgid "Etc/GMT-12"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt-13
+msgid "Etc/GMT-13"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt-14
+msgid "Etc/GMT-14"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt-2
+msgid "Etc/GMT-2"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt-3
+msgid "Etc/GMT-3"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt-4
+msgid "Etc/GMT-4"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt-5
+msgid "Etc/GMT-5"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt-6
+msgid "Etc/GMT-6"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt-7
+msgid "Etc/GMT-7"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt-8
+msgid "Etc/GMT-8"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt-9
+msgid "Etc/GMT-9"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/gmt0
+msgid "Etc/GMT0"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/greenwich
+msgid "Etc/Greenwich"
+msgstr "Etc/Гринуич"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/uct
+msgid "Etc/UCT"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/utc
+msgid "Etc/UTC"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/universal
+msgid "Etc/Universal"
+msgstr "Etc/Универсално"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__etc/zulu
+msgid "Etc/Zulu"
+msgstr "Etc/Зулу"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/amsterdam
+msgid "Europe/Amsterdam"
+msgstr "Европа/Амстердам"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/andorra
+msgid "Europe/Andorra"
+msgstr "Европа/Андора"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/astrakhan
+msgid "Europe/Astrakhan"
+msgstr "Европа/Астрахан"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/athens
+msgid "Europe/Athens"
+msgstr "Европа/Атина"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/belfast
+msgid "Europe/Belfast"
+msgstr "Европа/Белфаст"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/belgrade
+msgid "Europe/Belgrade"
+msgstr "Европа/Белград"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/berlin
+msgid "Europe/Berlin"
+msgstr "Европа/Берлин"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/bratislava
+msgid "Europe/Bratislava"
+msgstr "Европа/Братислава"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/brussels
+msgid "Europe/Brussels"
+msgstr "Европа/Брюксел"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/bucharest
+msgid "Europe/Bucharest"
+msgstr "Европа/Букурещ"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/budapest
+msgid "Europe/Budapest"
+msgstr "Европа/Будапеща"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/busingen
+msgid "Europe/Busingen"
+msgstr "Европа/Бюзинген"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/chisinau
+msgid "Europe/Chisinau"
+msgstr "Европа/Кишинев"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/copenhagen
+msgid "Europe/Copenhagen"
+msgstr "Европа/Копенхаген"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/dublin
+msgid "Europe/Dublin"
+msgstr "Европа/Дъблин"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/gibraltar
+msgid "Europe/Gibraltar"
+msgstr "Европа/Гибралтар"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/guernsey
+msgid "Europe/Guernsey"
+msgstr "Европа/Гърнзи"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/helsinki
+msgid "Europe/Helsinki"
+msgstr "Европа/Хелзинки"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/isle_of_man
+msgid "Europe/Isle_of_Man"
+msgstr "Европа/Остров Ман"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/istanbul
+msgid "Europe/Istanbul"
+msgstr "Европа/Истанбул"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/jersey
+msgid "Europe/Jersey"
+msgstr "Европа/Джърси"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/kaliningrad
+msgid "Europe/Kaliningrad"
+msgstr "Европа/Калининград"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/kiev
+msgid "Europe/Kiev"
+msgstr "Европа/Киев"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/kirov
+msgid "Europe/Kirov"
+msgstr "Европа/Киров"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/kyiv
+msgid "Europe/Kyiv"
+msgstr "Европа/Киев (Киев)"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/lisbon
+msgid "Europe/Lisbon"
+msgstr "Европа/Лисабон"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/ljubljana
+msgid "Europe/Ljubljana"
+msgstr "Европа/Любляна"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/london
+msgid "Europe/London"
+msgstr "Европа/Лондон"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/luxembourg
+msgid "Europe/Luxembourg"
+msgstr "Европа/Люксембург"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/madrid
+msgid "Europe/Madrid"
+msgstr "Европа/Мадрид"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/malta
+msgid "Europe/Malta"
+msgstr "Европа/Малта"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/mariehamn
+msgid "Europe/Mariehamn"
+msgstr "Европа/Мариехамн"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/minsk
+msgid "Europe/Minsk"
+msgstr "Европа/Минск"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/monaco
+msgid "Europe/Monaco"
+msgstr "Европа/Монако"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/moscow
+msgid "Europe/Moscow"
+msgstr "Европа/Москва"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/nicosia
+msgid "Europe/Nicosia"
+msgstr "Европа/Никозия"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/oslo
+msgid "Europe/Oslo"
+msgstr "Европа/Осло"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/paris
+msgid "Europe/Paris"
+msgstr "Европа/Париж"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/podgorica
+msgid "Europe/Podgorica"
+msgstr "Европа/Подгорица"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/prague
+msgid "Europe/Prague"
+msgstr "Европа/Прага"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/riga
+msgid "Europe/Riga"
+msgstr "Европа/Рига"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/rome
+msgid "Europe/Rome"
+msgstr "Европа/Рим"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/samara
+msgid "Europe/Samara"
+msgstr "Европа/Самара"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/san_marino
+msgid "Europe/San_Marino"
+msgstr "Европа/Сан Марино"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/sarajevo
+msgid "Europe/Sarajevo"
+msgstr "Европа/Сараево"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/saratov
+msgid "Europe/Saratov"
+msgstr "Европа/Саратов"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/simferopol
+msgid "Europe/Simferopol"
+msgstr "Европа/Симферопол"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/skopje
+msgid "Europe/Skopje"
+msgstr "Европа/Скопие"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/sofia
+msgid "Europe/Sofia"
+msgstr "Европа/София"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/stockholm
+msgid "Europe/Stockholm"
+msgstr "Европа/Стокхолм"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/tallinn
+msgid "Europe/Tallinn"
+msgstr "Европа/Талин"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/tirane
+msgid "Europe/Tirane"
+msgstr "Европа/Тирана"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/tiraspol
+msgid "Europe/Tiraspol"
+msgstr "Европа/Тираспол"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/ulyanovsk
+msgid "Europe/Ulyanovsk"
+msgstr "Европа/Уляновск"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/uzhgorod
+msgid "Europe/Uzhgorod"
+msgstr "Европа/Ужгород"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/vaduz
+msgid "Europe/Vaduz"
+msgstr "Европа/Вадуц"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/vatican
+msgid "Europe/Vatican"
+msgstr "Европа/Ватикан"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/vienna
+msgid "Europe/Vienna"
+msgstr "Европа/Виена"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/vilnius
+msgid "Europe/Vilnius"
+msgstr "Европа/Вилнюс"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/volgograd
+msgid "Europe/Volgograd"
+msgstr "Европа/Волгоград"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/warsaw
+msgid "Europe/Warsaw"
+msgstr "Европа/Варшава"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/zagreb
+msgid "Europe/Zagreb"
+msgstr "Европа/Загреб"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/zaporozhye
+msgid "Europe/Zaporozhye"
+msgstr "Европа/Запорожие"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__europe/zurich
+msgid "Europe/Zurich"
+msgstr "Европа/Цюрих"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__integration_type__event_processing
+msgid "Event Processing"
+msgstr "Обработка на събития"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__execution_time
+msgid "Execution Time"
+msgstr "Време на изпълнение"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__connection_status__failed
+msgid "Failed"
+msgstr "Неуспешен"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Failed to add plate number to list: %s"
+msgstr "Неуспешно добавяне на номера в списъка: %s"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Failed to read HTTP host configuration: %s"
+msgstr "Неуспешно прочитане на конфигурацията за HTTP хоста: %s"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Failed to read camera time configuration."
+msgstr "Неуспешно прочитане на конфигурацията за времето на камерата."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Failed to remove plate number from list: %s"
+msgstr "Неуспешно премахване на номер от списъка: %s"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Failed to set HTTP host configuration: %s"
+msgstr "Неуспешно задаване на конфигурацията за HTTP хоста: %s"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__firmware
+msgid "Firmware"
+msgstr "Фърмуер"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__message_follower_ids
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__message_follower_ids
+msgid "Followers"
+msgstr "Последователи"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__message_partner_ids
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Последователи (Партньори)"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__activity_type_icon
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_command__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Икона от Font Awesome, напр. fa-tasks"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__gb
+msgid "GB"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__gb-eire
+msgid "GB-Eire"
+msgstr "GB-Ейре"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__gmt
+msgid "GMT"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__gmt+0
+msgid "GMT+0"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__gmt-0
+msgid "GMT-0"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__gmt0
+msgid "GMT0"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "Get Push Server Information"
+msgstr "Вземи информация за Push сървъра"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__command_type__get_snapshot
+msgid "Get Snapshot"
+msgstr "Вземи снимка"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_rfid_rel__list_category__graylist
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "Graylist"
+msgstr "Сив списък"
+
+#. module: polimex_ip_cam
+#: model:ir.actions.act_window,name:polimex_ip_cam.action_cctv_camera_graylist
+msgid "Graylist Cards"
+msgstr "Карти от сивия списък"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__rfid_graylist_count
+msgid "Graylist Count"
+msgstr "Брояч на сивия списък"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__greenwich
+msgid "Greenwich"
+msgstr "Гринуич"
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_filter
+msgid "Group By"
+msgstr "Групирай по"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__hst
+msgid "HST"
+msgstr ""
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "HTTP Host Configuration Read Failed"
+msgstr "Неуспешно четене на конфигурацията за HTTP хоста"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "HTTP Host Configuration Set"
+msgstr "Запис на Конфигурация на HTTP хост"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "HTTP Host Configuration Set Failed"
+msgstr "Неуспешно задаване на конфигурация на HTTP хост"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "HTTP Host Configuration:"
+msgstr "Конфигурация на HTTP хост:"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "HTTP host configuration set successfully."
+msgstr "Конфигурацията на HTTP хоста е зададена успешно."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__has_message
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__has_message
+msgid "Has Message"
+msgstr "Има съобщение"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__brand__hikvision
+msgid "Hikvision"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__hongkong
+msgid "Hongkong"
+msgstr "Хонконг"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__id
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__id
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__id
+msgid "ID"
+msgstr "ИН"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__ip_address
+msgid "IP Address"
+msgstr "IP адрес"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__iceland
+msgid "Iceland"
+msgstr "Исландия"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__activity_exception_icon
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__activity_exception_icon
+msgid "Icon"
+msgstr "Икона"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__activity_exception_icon
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_command__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Икона за обозначаване на изключение в действие."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__message_needaction
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_command__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Ако е маркирано, новите съобщения изискват Вашето внимание."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__message_has_error
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__message_has_sms_error
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_command__message_has_error
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_command__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Ако е маркирано, някои съобщения имат грешка при доставянето."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__state__in_progress
+msgid "In Progress"
+msgstr "В ход"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__indian/antananarivo
+msgid "Indian/Antananarivo"
+msgstr "Индийски/Антананариво"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__indian/chagos
+msgid "Indian/Chagos"
+msgstr "Индийски/Чагос"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__indian/christmas
+msgid "Indian/Christmas"
+msgstr "Индийски/Коледа"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__indian/cocos
+msgid "Indian/Cocos"
+msgstr "Индийски/Кокосови острови"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__indian/comoro
+msgid "Indian/Comoro"
+msgstr "Индийски/Коморо"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__indian/kerguelen
+msgid "Indian/Kerguelen"
+msgstr "Индийски/Кергуелен"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__indian/mahe
+msgid "Indian/Mahe"
+msgstr "Индийски/Махе"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__indian/maldives
+msgid "Indian/Maldives"
+msgstr "Индийски/Малдиви"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__indian/mauritius
+msgid "Indian/Mauritius"
+msgstr "Индийски/Мавриций"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__indian/mayotte
+msgid "Indian/Mayotte"
+msgstr "Индийски/Майот"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__indian/reunion
+msgid "Indian/Reunion"
+msgstr "Индийски/Реюнион"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__integration_type
+msgid "Integration Type"
+msgstr "Вид интеграция"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__iran
+msgid "Iran"
+msgstr "Иран"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__message_is_follower
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__message_is_follower
+msgid "Is Follower"
+msgstr "Е последовател"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__israel
+msgid "Israel"
+msgstr "Израел"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__jamaica
+msgid "Jamaica"
+msgstr "Ямайка"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__japan
+msgid "Japan"
+msgstr "Япония"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__kwajalein
+msgid "Kwajalein"
+msgstr "Куаджалейн"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__last_heart_beat
+msgid "Last Heartbeat"
+msgstr "Последен контакт"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__write_uid
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__write_uid
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__write_uid
+msgid "Last Updated by"
+msgstr "Последно актуализирано от"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__write_date
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__write_date
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__write_date
+msgid "Last Updated on"
+msgstr "Последно актуализиран на"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__last_heart_beat
+msgid "Last successful received HeartBeat from the camera"
+msgstr "Последно успешно получен HeartBeat от камерата"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__connection_status
+msgid "Latest connection check result"
+msgstr "Последен резултат от проверката на връзката"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__libya
+msgid "Libya"
+msgstr "Либия"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_event_system__license_plate
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_event_user__license_plate
+msgid "License Plate"
+msgstr "Регистрационен номер"
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "License Plate and Lists"
+msgstr "Номера и списъци"
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "License Plate to Lists"
+msgstr "Номер към списъци"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_rfid_rel__card_id
+msgid "Linked license plate or other vehicle identifier"
+msgstr ""
+"Свързан регистрационен номер или друг идентификатор на превозното средство"
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.inherited_hr_rfid_card_view_form_cctv
+msgid "List Cameras in which this card is included"
+msgstr "Списък на камерите в които е активирана тази карта"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__list_category
+msgid "List Category"
+msgstr "Списък Категория"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_card__camera_rel_ids
+msgid "List of cameras in which this card is included"
+msgstr "Списък на камерите, в които е включена тази карта"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"LocalTime difference: Camera shows %(cam_time)s, expected %(exp_time)s. "
+msgstr ""
+"Разлика в часовника: Камера показва %(cam_time)s, очаквано %(exp_time)s."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__met
+msgid "MET"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__mst
+msgid "MST"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__mst7mdt
+msgid "MST7MDT"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:res.groups,name:polimex_ip_cam.group_cctv_manager
+msgid "Manager"
+msgstr "Ръководител"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__message_has_error
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__message_has_error
+msgid "Message Delivery error"
+msgstr "Грешка при доставяне на съобщението"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__message_ids
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__message_ids
+msgid "Messages"
+msgstr "Съобщения"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__mexico/bajanorte
+msgid "Mexico/BajaNorte"
+msgstr "Мексико/Бая Норте"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__mexico/bajasur
+msgid "Mexico/BajaSur"
+msgstr "Мексико/Бая Сур"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__mexico/general
+msgid "Mexico/General"
+msgstr "Мексико/Общ"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera_command.py:0
+msgid "Missing required parameter 'plateNum' for add_plate command."
+msgstr "Липсва задължителен параметър 'plateNum' за командата add_plate."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera_command.py:0
+msgid "Missing required parameter 'plateNum' for remove_plate command."
+msgstr "Липсва задължителен параметър 'plateNum' за командата remove_plate."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__model
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_filter
+msgid "Model"
+msgstr "Модел"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__my_activity_date_deadline
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "Краен срок за действието ми"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__nz
+msgid "NZ"
+msgstr "Нова Зеландия"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__nz-chat
+msgid "NZ-CHAT"
+msgstr "Нова Зеландия-Чатам"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__name
+msgid "Name"
+msgstr "Име"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__navajo
+msgid "Navajo"
+msgstr "Навахо"
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "Network Settings"
+msgstr "Настройки на мрежата"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera_command.py:0
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__state__new
+msgid "New"
+msgstr "Нов"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__activity_date_deadline
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "Краен срок за следващо действие"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__activity_summary
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__activity_summary
+msgid "Next Activity Summary"
+msgstr "Обобщение на следващо действие"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__activity_type_id
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__activity_type_id
+msgid "Next Activity Type"
+msgstr "Тип на следващо действие"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__message_needaction_counter
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Брой действия"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__message_has_error_counter
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__message_has_error_counter
+msgid "Number of errors"
+msgstr "Брой грешки"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__message_needaction_counter
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_command__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Брой съобщения изискващи действие"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__message_has_error_counter
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_command__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Брой съобщения с грешка при доставка"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__command_type__other
+msgid "Other"
+msgstr "Друг"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_rfid_rel__list_category__otherlist
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "Otherlist"
+msgstr "Друг списък"
+
+#. module: polimex_ip_cam
+#: model:ir.actions.act_window,name:polimex_ip_cam.action_cctv_camera_otherlist
+msgid "Otherlist Cards"
+msgstr "Карти в списък Други"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__rfid_otherlist_count
+msgid "Otherlist Count"
+msgstr "Брояч на списък Други"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__prc
+msgid "PRC"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pst8pdt
+msgid "PST8PDT"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/apia
+msgid "Pacific/Apia"
+msgstr "Тихоокеански/Апия"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/auckland
+msgid "Pacific/Auckland"
+msgstr "Тихоокеански/Окланд"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/bougainville
+msgid "Pacific/Bougainville"
+msgstr "Тихоокеански/Бугенвил"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/chatham
+msgid "Pacific/Chatham"
+msgstr "Тихоокеански/Чатам"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/chuuk
+msgid "Pacific/Chuuk"
+msgstr "Тихоокеански/Чуук"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/easter
+msgid "Pacific/Easter"
+msgstr "Тихоокеански/Великден"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/efate
+msgid "Pacific/Efate"
+msgstr "Тихоокеански/Ефате"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/enderbury
+msgid "Pacific/Enderbury"
+msgstr "Тихоокеански/Ендербъри"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/fakaofo
+msgid "Pacific/Fakaofo"
+msgstr "Тихоокеански/Факаофо"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/fiji
+msgid "Pacific/Fiji"
+msgstr "Тихоокеански/Фиджи"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/funafuti
+msgid "Pacific/Funafuti"
+msgstr "Тихоокеански/Фунафути"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/galapagos
+msgid "Pacific/Galapagos"
+msgstr "Тихоокеански/Галапагос"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/gambier
+msgid "Pacific/Gambier"
+msgstr "Тихоокеански/Гамбиер"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/guadalcanal
+msgid "Pacific/Guadalcanal"
+msgstr "Тихоокеански/Гуадалканал"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/guam
+msgid "Pacific/Guam"
+msgstr "Тихоокеански/Гуам"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/honolulu
+msgid "Pacific/Honolulu"
+msgstr "Тихоокеански/Хонолулу"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/johnston
+msgid "Pacific/Johnston"
+msgstr "Тихоокеански/Джонстън"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/kanton
+msgid "Pacific/Kanton"
+msgstr "Тихоокеански/Кантон"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/kiritimati
+msgid "Pacific/Kiritimati"
+msgstr "Тихоокеански/Киритимати"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/kosrae
+msgid "Pacific/Kosrae"
+msgstr "Тихоокеански/Косрае"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/kwajalein
+msgid "Pacific/Kwajalein"
+msgstr "Тихоокеански/Куаджалейн"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/majuro
+msgid "Pacific/Majuro"
+msgstr "Тихоокеански/Мажуро"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/marquesas
+msgid "Pacific/Marquesas"
+msgstr "Тихоокеански/Маркизи"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/midway
+msgid "Pacific/Midway"
+msgstr "Тихоокеански/Мидуей"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/nauru
+msgid "Pacific/Nauru"
+msgstr "Тихоокеански/Науру"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/niue
+msgid "Pacific/Niue"
+msgstr "Тихоокеански/Ниуе"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/norfolk
+msgid "Pacific/Norfolk"
+msgstr "Тихоокеански/Норфолк"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/noumea
+msgid "Pacific/Noumea"
+msgstr "Тихоокеански/Нумеа"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/pago_pago
+msgid "Pacific/Pago_Pago"
+msgstr "Тихоокеански/Пейго Пейго"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/palau
+msgid "Pacific/Palau"
+msgstr "Тихоокеански/Палау"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/pitcairn
+msgid "Pacific/Pitcairn"
+msgstr "Тихоокеански/Питкерн"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/pohnpei
+msgid "Pacific/Pohnpei"
+msgstr "Тихоокеански/Понпей"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/ponape
+msgid "Pacific/Ponape"
+msgstr "Тихоокеански/Понпе"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/port_moresby
+msgid "Pacific/Port_Moresby"
+msgstr "Тихоокеански/Порт Морсби"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/rarotonga
+msgid "Pacific/Rarotonga"
+msgstr "Тихоокеански/Раротонга"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/saipan
+msgid "Pacific/Saipan"
+msgstr "Тихоокеански/Сайпан"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/samoa
+msgid "Pacific/Samoa"
+msgstr "Тихоокеански/Самоа"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/tahiti
+msgid "Pacific/Tahiti"
+msgstr "Тихоокеански/Таити"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/tarawa
+msgid "Pacific/Tarawa"
+msgstr "Тихоокеански/Тарава"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/tongatapu
+msgid "Pacific/Tongatapu"
+msgstr "Тихоокеански/Тонгатапу"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/truk
+msgid "Pacific/Truk"
+msgstr "Тихоокеански/Трук"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/wake
+msgid "Pacific/Wake"
+msgstr "Тихоокеански/Уейк"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/wallis
+msgid "Pacific/Wallis"
+msgstr "Тихоокеански/Уолис"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pacific/yap
+msgid "Pacific/Yap"
+msgstr "Тихоокеански/Яп"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__password
+msgid "Password"
+msgstr "Парола"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Plate Add to List Failed"
+msgstr "Добавяне на номер в списъка Неуспешно"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Plate Added to List"
+msgstr "Добавяне на номер към списъка"
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "Plate Lists"
+msgstr "Списъци с Номера"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Plate Removal from List Failed"
+msgstr "Отстраняване на номера от списъка е неуспешно"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Plate Removed from List"
+msgstr "Премахнат е номера от списъка"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Plate number added to list successfully."
+msgstr "Номерът е добавен успешно в списъка."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Plate number not found in database (%s), "
+msgstr "Номерът не е намерен в базата данни (%s),"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Plate number removed from list successfully."
+msgstr "Номерът е премахнат успешно от списъка."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__poland
+msgid "Poland"
+msgstr "Полша"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__port
+msgid "Port"
+msgstr "Порт"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__portugal
+msgid "Portugal"
+msgstr "Португалия"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__card_id
+msgid "RFID Card"
+msgstr "RFID карта"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__rfid_rel_ids
+msgid "RFID Card Relations"
+msgstr "Връзки с картите RFID"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__rfid_card_ids
+msgid "RFID Cards"
+msgstr "Карти RFID"
+
+#. module: polimex_ip_cam
+#: model:ir.model,name:polimex_ip_cam.model_hr_rfid_event_system
+msgid "RFID System Event"
+msgstr "RFID Системно събитие"
+
+#. module: polimex_ip_cam
+#: model:ir.model,name:polimex_ip_cam.model_hr_rfid_event_user
+msgid "RFID User Event"
+msgstr "RFID потребителско събитие"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__reader_id
+msgid "RFID reader linked to this camera"
+msgstr "RFID четец, свързан с тази камера"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__roc
+msgid "ROC"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__rok
+msgid "ROK"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model,name:polimex_ip_cam.model_hr_rfid_reader
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__reader_id
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "Reader"
+msgstr "Четец"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Reader %s"
+msgstr "Четец %s"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__rfid_rel_ids
+msgid "Relations linking this camera with RFID cards and their list types"
+msgstr ""
+"Връзки за свързване на тази камера с RFID карти и техните типове списъци"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__command_type__remove_plate
+msgid "Remove Plate"
+msgstr "Премахване на номер"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__request_data
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_command_form
+msgid "Request Data"
+msgstr "Заявка за данни"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__response_data
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_command_form
+msgid "Response Data"
+msgstr "Данни в отговор"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__activity_user_id
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__activity_user_id
+msgid "Responsible User"
+msgstr "Отговорен потребител"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__retry_count
+msgid "Retry Count"
+msgstr "Брой повторения"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera_command.py:0
+msgid "Retry count cannot exceed 5."
+msgstr "Броят на повторенията не може да надвишава 5."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__message_has_sms_error
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Грешка при доставяне на SMS"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__serial_number
+msgid "Serial Number"
+msgstr "Сериен номер"
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "Server Settings"
+msgstr "Настройки на сървъра"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__server_setup
+msgid "Server Setup"
+msgstr "Настройка на сървъра"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__command_type__set_http_host
+msgid "Set HTTP Host"
+msgstr "Задаване на HTTP хост"
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "Set Push Server Information"
+msgstr "Задаване на информация за Push сървъра"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__command_type__set_time
+msgid "Set Time"
+msgstr "Настрой времето"
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "Settings"
+msgstr "Настройки"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__singapore
+msgid "Singapore"
+msgstr "Сингапур"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__snapshot
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_event_system__snapshot
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_event_user__snapshot
+msgid "Snapshot"
+msgstr "Снимка"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Snapshot Retrieval Failed"
+msgstr "Неуспешно извличане на снимки"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Snapshot Retrieved"
+msgstr "Снимка е извлечена"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Snapshot retrieval failed: %s"
+msgstr "Извличането на снимки е неуспешно: %s"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Snapshot retrieved and stored successfully."
+msgstr "Снимката е извлечена и съхранена успешно."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__state
+msgid "State"
+msgstr "Статус"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__activity_state
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_command__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"Статус, базиран на дейности:\n"
+" Просрочен: Крайният срок вече е минал\n"
+" Днес: Датата на дейността е днес\n"
+" Планиран: Бъдещи дейности."
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "Take Snapshot"
+msgstr "Направи снимка"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_system__anpr_confidence
+#: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_user__anpr_confidence
+msgid "The confidence level of the event"
+msgstr "Ниво на доверие на събитието"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_system__license_plate
+#: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_user__license_plate
+msgid "The license plate recognized by the camera"
+msgstr "Разпознатият от камерата регистрационен номер"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_system__snapshot
+#: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_user__snapshot
+msgid "The snapshot of the camera"
+msgstr "Снимката от камерата"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__tz
+msgid ""
+"The timezone of the camera. Used to display dates and times in the correct "
+"timezone.\n"
+"The plates are sent to camera with data and time in this timezone."
+msgstr ""
+"Часовата зона на камерата. Използва се за показване на дати и часове в "
+"правилния часови пояс.\n"
+"Номерата се изпращат към камерата с данни и време в този часови пояс."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_rfid_rel__list_category
+msgid "The type of list this relation represents"
+msgstr "Видът на списъка, който представлява тази връзка"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera_command.py:0
+msgid ""
+"There is already a command in progress or waiting to be executed for this "
+"camera."
+msgstr ""
+"За тази камера вече има текуща команда или команда, която чака да бъде "
+"изпълнена."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "TimeZone mismatch: Camera reports %(cam_tz)s, expected %(exp_tz)s. "
+msgstr ""
+"Несъответствие на часовите зони: Камера съобщава %(cam_tz)s, очаквано "
+"%(exp_tz)s."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__tz
+msgid "Timezone"
+msgstr "Часова зона"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__tz_offset
+msgid "Timezone offset"
+msgstr "Отместване на часовата зона"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__turkey
+msgid "Turkey"
+msgstr "Турция"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__integration_type
+msgid "Type of integration logic used for this camera"
+msgstr "Вид логика на интегриране, използвана за тази камера"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__activity_exception_decoration
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_command__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "Тип на неочаквана активност в записа."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__uct
+msgid "UCT"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__us/alaska
+msgid "US/Alaska"
+msgstr "САЩ/Аляска"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__us/aleutian
+msgid "US/Aleutian"
+msgstr "САЩ/Алеутски острови"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__us/arizona
+msgid "US/Arizona"
+msgstr "САЩ/Аризона"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__us/central
+msgid "US/Central"
+msgstr "САЩ/Централен"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__us/east-indiana
+msgid "US/East-Indiana"
+msgstr "САЩ/Изток-Индиана"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__us/eastern
+msgid "US/Eastern"
+msgstr "САЩ/Източен"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__us/hawaii
+msgid "US/Hawaii"
+msgstr "САЩ/Хавай"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__us/indiana-starke
+msgid "US/Indiana-Starke"
+msgstr "САЩ/Индиана-Старке"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__us/michigan
+msgid "US/Michigan"
+msgstr "САЩ/Мичиган"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__us/mountain
+msgid "US/Mountain"
+msgstr "САЩ/Планински"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__us/pacific
+msgid "US/Pacific"
+msgstr "САЩ/Тихоокеански"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__us/samoa
+msgid "US/Samoa"
+msgstr "САЩ/Самоа"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__utc
+msgid "UTC"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__universal
+msgid "Universal"
+msgstr "Универсално"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__connection_status__unknown
+msgid "Unknown"
+msgstr "Неизвестен"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__command_type__update_list
+msgid "Update List"
+msgstr "Обнови списък"
+
+#. module: polimex_ip_cam
+#: model:res.groups,name:polimex_ip_cam.group_cctv_user
+msgid "User"
+msgstr "Потребител"
+
+#. module: polimex_ip_cam
+#: model:ir.module.category,description:polimex_ip_cam.cctv_camera_management
+msgid "User rights for the CCTV Camera Management module"
+msgstr ""
+"Потребителски права за модула за управление на камерите за видеонаблюдение"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__username
+msgid "Username"
+msgstr "Потребителско име"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__w-su
+msgid "W-SU"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__wet
+msgid "WET"
+msgstr ""
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__website_message_ids
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__website_message_ids
+msgid "Website Messages"
+msgstr "Съобщения в уебсайт"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__website_message_ids
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_command__website_message_ids
+msgid "Website communication history"
+msgstr "История на комуникацията на уебсайт"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_rfid_rel__list_category__whitelist
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "Whitelist"
+msgstr "Бял списък"
+
+#. module: polimex_ip_cam
+#: model:ir.actions.act_window,name:polimex_ip_cam.action_cctv_camera_whitelist
+msgid "Whitelist Cards"
+msgstr "Карти за бял списък"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__rfid_whitelist_count
+msgid "Whitelist Count"
+msgstr "Брояч в белите списъци"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_rfid_rel__list_category__yellolist
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "Yellolist"
+msgstr "Жълт списък"
+
+#. module: polimex_ip_cam
+#: model:ir.actions.act_window,name:polimex_ip_cam.action_cctv_camera_yellolist
+msgid "Yellolist Cards"
+msgstr "Карти в Жълт списък"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__rfid_yellolist_count
+msgid "Yellolist Count"
+msgstr "Брояч в Жълтия списък"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__zulu
+msgid "Zulu"
+msgstr "Зулу"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "but exist in the camera memory. "
+msgstr "но съществуват в паметта на камерата."
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "e.g. Camera 1"
+msgstr "напр. Камера 1"

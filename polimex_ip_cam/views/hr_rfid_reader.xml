@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_rfid_reader_view_tree" model="ir.ui.view">
+            <field name="name">hr.rfid.reader.view.list.camera</field>
+            <field name="model">hr.rfid.reader</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_reader_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='door_ids']" position="after">
+                    <field name="camera_id" optional="hide"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="hr_rfid_reader_view_form_camera" model="ir.ui.view">
+            <field name="name">hr.rfid.reader.view.form.camera</field>
+            <field name="model">hr.rfid.reader</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_reader_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='controller_id']" position="after">
+                    <field name="camera_id" readonly="1"/>
+                </xpath>
+                <xpath expr="//field[@name='mode']" position="attributes">
+                    <attribute name="invisible">camera_id</attribute>
+                </xpath>
+                <xpath expr="//field[@name='controller_id']" position="attributes">
+                    <attribute name="invisible">camera_id</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

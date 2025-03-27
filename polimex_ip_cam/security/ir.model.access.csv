@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cctv_camera_user,cctv.camera user,model_cctv_camera,polimex_ip_cam.group_cctv_user,1,0,0,0
+access_cctv_camera_manager,cctv.camera manager,model_cctv_camera,polimex_ip_cam.group_cctv_manager,1,1,1,1
+access_cctv_camera_rfid_rel_user,cctv.camera.rfid.rel user,model_cctv_camera_rfid_rel,polimex_ip_cam.group_cctv_user,1,0,0,0
+access_cctv_camera_rfid_rel_manager,cctv.camera.rfid.rel manager,model_cctv_camera_rfid_rel,polimex_ip_cam.group_cctv_manager,1,1,1,1
+access_cctv_camera_command,access.cctv.camera.command user,model_cctv_camera_command,polimex_ip_cam.group_cctv_user,1,0,0,0
