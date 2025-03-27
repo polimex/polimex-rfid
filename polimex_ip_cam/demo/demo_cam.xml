@@ -3,7 +3,7 @@
     <data >
         <!-- Пример за демо камера (Hikvision) -->
         <record id="demo_camera_1" model="cctv.camera">
-            <field name="name">Camera 1 HV</field>
+            <field name="name">ANPR Camera 1</field>
             <field name="ip_address">192.168.10.64</field>
             <field name="port">80</field>
             <field name="username">admin</field>
@@ -14,6 +14,8 @@
             <field name="firmware"></field>
             <field name="integration_type">anpr</field>
             <field name="description">Demo camera for testing ANPR integration.</field>
+            <field name="tz">Europe/Sofia</field>
+            <field name="company_id" ref="base.main_company"/>
         </record>
 
         <record id="demo_plate_1" model="hr.rfid.card">

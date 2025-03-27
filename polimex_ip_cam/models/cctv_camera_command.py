@@ -26,7 +26,11 @@ class CctvCameraCommand(models.Model):
     request_data = fields.Text(string="Request Data", tracking=True,
                                help="Data sent to the camera as part of the command, e.g. in param=value per line format.")
     response_data = fields.Text(string="Response Data", tracking=True)
-    camera_id = fields.Many2one('cctv.camera', string="Camera", required=True, tracking=True)
+    camera_id = fields.Many2one(
+        comodel_name='cctv.camera',
+        required=True,
+        ondelete='cascade',
+    )
     retry_count = fields.Integer(string="Retry Count", default=0, tracking=True)
     state = fields.Selection([
         ('new', "New"),

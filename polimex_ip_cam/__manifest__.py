@@ -22,6 +22,7 @@
         'security/multi_company_related.xml',
         'views/cctv_camera_command_views.xml',
         'views/cctv_camera_views.xml',
+        'views/cctv_camera_rfid_rel.xml',
         'views/hr_rfid_card_views.xml',
         'views/hr_rfid_door.xml',
         'views/hr_rfid_event_user.xml',

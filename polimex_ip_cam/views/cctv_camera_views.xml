@@ -3,7 +3,7 @@
     <record id="action_cctv_camera_whitelist" model="ir.actions.act_window">
         <field name="name">Whitelist Cards</field>
         <field name="res_model">cctv.camera.rfid.rel</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">list</field>
         <field name="domain">[('camera_id','=',active_id), ('list_category','=','whitelist')]</field>
         <field name="context">{'default_camera_id': active_id, 'default_list_category': 'whitelist'}</field>
     </record>
@@ -12,7 +12,7 @@
     <record id="action_cctv_camera_blacklist" model="ir.actions.act_window">
         <field name="name">Blacklist Cards</field>
         <field name="res_model">cctv.camera.rfid.rel</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">list</field>
         <field name="domain">[('camera_id','=',active_id), ('list_category','=','blacklist')]</field>
         <field name="context">{'default_camera_id': active_id, 'default_list_category': 'blacklist'}</field>
     </record>
@@ -21,7 +21,7 @@
     <record id="action_cctv_camera_graylist" model="ir.actions.act_window">
         <field name="name">Graylist Cards</field>
         <field name="res_model">cctv.camera.rfid.rel</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">list</field>
         <field name="domain">[('camera_id','=',active_id), ('list_category','=','graylist')]</field>
         <field name="context">{'default_camera_id': active_id, 'default_list_category': 'graylist'}</field>
     </record>
@@ -30,7 +30,7 @@
     <record id="action_cctv_camera_yellolist" model="ir.actions.act_window">
         <field name="name">Yellolist Cards</field>
         <field name="res_model">cctv.camera.rfid.rel</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">list</field>
         <field name="domain">[('camera_id','=',active_id), ('list_category','=','yellolist')]</field>
         <field name="context">{'default_camera_id': active_id, 'default_list_category': 'yellolist'}</field>
     </record>
@@ -39,7 +39,7 @@
     <record id="action_cctv_camera_otherlist" model="ir.actions.act_window">
         <field name="name">Otherlist Cards</field>
         <field name="res_model">cctv.camera.rfid.rel</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">list</field>
         <field name="domain">[('camera_id','=',active_id), ('list_category','=','otherlist')]</field>
         <field name="context">{'default_camera_id': active_id, 'default_list_category': 'otherlist'}</field>
     </record>
@@ -105,7 +105,7 @@
                             <field string="Otherlist" name="rfid_otherlist_count" widget="statinfo"/>
                         </button>
                         <button class="oe_stat_button" name="action_show_reader" type="object"
-                                icon="fa-users" string="Reader" invisible="not reader_id"/>
+                                icon="fa-users" string="Readers" invisible="not reader_ids"/>
                     </div>
                     <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
                     <div class="oe_avatar">
@@ -135,8 +135,8 @@
                         <field name="description"/>
                     </group>
                     <notebook>
-                        <page string="Plate Lists">
-                            <div class="oe_button_box" name="button_box">
+                        <page string="Plate Lists" groups="base.group_no_one">
+                            <div class="oe_button_box" name="button_box" groups="base.group_no_one">
                                 <!--                                <button name="action_get_whitelist" type="object"-->
                                 <!--                                        string="Get Whitelist"-->
                                 <!--                                        invisible="connection_status != 'connected'"-->
@@ -171,7 +171,7 @@
                                 </group>
                             </group>
                         </page>
-                        <page string="Server Settings">
+                        <page string="Server Settings" groups="base.group_no_one">
                             <div class="oe_button_box" name="button_box">
                                 <button name="action_get_http_host" type="object"
                                         string="Get Push Server Information"

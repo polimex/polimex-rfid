@@ -95,10 +95,15 @@ class CctvCamera(models.Model):
         string='Last Heartbeat',
         help="Last successful received HeartBeat from the camera",
         readonly=True)
-    reader_id = fields.Many2one(
+    reader_ids = fields.Many2many(
         comodel_name='hr.rfid.reader',
         string='Reader',
         help="RFID reader linked to this camera",
+        ondelete='cascade',
+    )
+    door_id = fields.One2many(
+        comodel_name='hr.rfid.door',
+        inverse_name='camera_id',
         ondelete='cascade',
     )
     # Intermediate relations to link RFID cards with a list category
@@ -150,10 +155,10 @@ class CctvCamera(models.Model):
     def action_show_reader(self):
         return {
             'type': 'ir.actions.act_window',
-            'name': self.reader_id.name,
+            'name': _('%s Readers', self.name),
             'view_mode': 'form',
             'res_model': 'hr.rfid.reader',
-            'res_id': self.reader_id.id,
+            'res_id': self.reader_ids.ids,
             'target': 'current',
         }
 
@@ -162,20 +167,27 @@ class CctvCamera(models.Model):
         new_records = self.env['cctv.camera']
         for vals in vals_list:
             new_record = super().create(vals_list)
-            reader_id = self.env['hr.rfid.reader'].sudo().create([{
-                'name': _('Reader %s', new_record.name),
+            reader_in_id = self.env['hr.rfid.reader'].sudo().create([{
+                'name': _('In Reader %s', new_record.name),
                 'reader_type': '0', # In reader
                 'mode': '01',
                 'number': 1,
                 'camera_id': new_record.id,
             }])
+            reader_out_id = self.env['hr.rfid.reader'].sudo().create([{
+                'name': _('Out Reader %s', new_record.name),
+                'reader_type': '1', # Out reader
+                'mode': '01',
+                'number': 2,
+                'camera_id': new_record.id,
+            }])
             door_id = self.env['hr.rfid.door'].sudo().create([{  # Create a door for the reader
                 'name': _('Door %s', new_record.name),
-                'reader_ids': [Command.link(reader_id.id)],
+                'reader_ids': [Command.link(reader_in_id.id),Command.link(reader_out_id.id)],
                 'card_type': self.env.ref('hr_rfid.hr_rfid_card_type_8').id,
                 'number': 1,
             }])
-            new_record.reader_id = reader_id
+            new_record.reader_ids = [Command.link(reader_in_id.id),Command.link(reader_out_id.id)]
             new_records += new_record
         return new_records
 
@@ -387,7 +399,7 @@ class CctvCamera(models.Model):
                 # Process nested SubscribeEvent block.
                 if not isinstance(config.get('SubscribeEvent'), dict):
                     config['SubscribeEvent'] = {}
-                config['SubscribeEvent'].setdefault('heartbeat', '60')
+                config['SubscribeEvent'].setdefault('heartbeat', '3600')
                 config['SubscribeEvent'].setdefault('eventMode', 'all')
 
                 config.setdefault('enabled', 'true' if rec.active else 'false')
@@ -569,7 +581,7 @@ class CctvCamera(models.Model):
                         'card_number': plate_number,
                         'error_description': ed,
                         'camera_id': self.id,
-                        'door_id': self.reader_id.door_id.id,
+                        'door_id': self.reader_ids[0].door_id.id,
                         'anpr_confidence': confidenceLevel,
                         'snapshot': snapshot_b64
                     }
@@ -582,7 +594,7 @@ class CctvCamera(models.Model):
                         'license_plate': plate_number,
                         'more_json': str(event_info),
                         'camera_id': self.id,
-                        'reader_id': self.reader_id.id,
+                        'reader_id': self.reader_ids[0].id if direction == 'forward' else self.reader_ids[1].id,
                         'card_id': card_id.id if card_id else False,
                         'anpr_confidence': confidenceLevel,
                         'snapshot': snapshot_b64

@@ -8,6 +8,7 @@ class HrRfidDoor(models.Model):
         comodel_name="cctv.camera",
         string="Camera",
         related="reader_ids.camera_id",
+        ondelete="cascade",
     )
 
     @api.depends('webstack_id', 'camera_id')
