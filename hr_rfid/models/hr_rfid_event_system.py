@@ -46,6 +46,7 @@ action_selection = [
         ('36', 'Inserted Card'),  # User Event
         ('37', 'Ejected Card'),  # User Event
         ('38', 'Hotel Button Pressed'),  # User Event
+        ('39', 'Unknown Plate'),  # System Event
         ('45', '1-W ERROR (wiring problems)'),
         ('47', 'Vending Purchase Complete'),
         ('48', 'Vending Error1'),
@@ -190,7 +191,7 @@ class HrRfidSystemEvent(models.Model):
                 vals.pop('input_js')
 
     def _check_duplicate_sys_ev(self, vals):
-        if not vals['webstack_id']:
+        if not 'webstack_id' in vals:
             return False
         dupe = self.env['hr.rfid.event.system'].search([
             ('webstack_id', '=', vals['webstack_id']),
@@ -280,14 +281,13 @@ class HrRfidSystemEventWizard(models.TransientModel):
         if type(sys_ev.card_number) != type(''):
             raise exceptions.ValidationError(_('System event does not have a card number in it'))
 
-        if len(sys_ev.card_number) == 10:
+        if sys_ev.card_number:
             return sys_ev.card_number
-
-        js = json.loads(sys_ev.input_js)
         try:
+            js = json.loads(sys_ev.input_js)
             card_number = js['event']['card']
             return card_number
-        except KeyError as e:
+        except :
             raise exceptions.ValidationError(_('System event does not have a card number in it'))
 
     sys_ev_id = fields.Many2one(
