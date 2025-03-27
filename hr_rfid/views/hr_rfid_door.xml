@@ -118,7 +118,7 @@
                         </div>
                         <field name="emergency_state" invisible="1"/>
                         <widget name="web_ribbon" title="Emergency Opened" bg_color="bg-danger"
-                                invisible="emergency_state=='off'"/>
+                                invisible="emergency_state not in ['soft', 'hard']"/>
                         <group>
                             <group name="setup">
                                 <field name="card_type"/>
@@ -233,7 +233,7 @@
                                                        role="img"
                                                        t-att-aria-label="record.lock_state.raw_value ? 'Unlocked' : 'Locked'"/>
                                                 </span>
-                                                <span t-if="record.emergency_state.raw_value != 'off'">
+                                                <span t-if="record.emergency_state.raw_value != 'off' and record.emergency_state.raw_value in ['soft','hard']">
                                                     <i
                                                             role="img"
                                                             t-att-class="record.emergency_state.raw_value == 'soft' ? 'fa fa-fw fa-free-code-camp text-danger' : 'fa fa-fw fa-fire text-danger'"
