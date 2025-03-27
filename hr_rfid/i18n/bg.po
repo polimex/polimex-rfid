@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 17.0\n"
+"Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-19 11:37+0000\n"
-"PO-Revision-Date: 2024-07-19 14:38+0300\n"
+"POT-Creation-Date: 2025-03-27 13:15+0000\n"
+"PO-Revision-Date: 2025-03-27 15:21+0200\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -15,19 +15,17 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.3\n"
+"X-Generator: Poedit 3.5\n"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
-#, python-format
 msgid "%d is not a valid number for the io table. Valid values range from 0 to 99"
 msgstr "%d не е валидно число за IO таблицата. Валидните стойности са от 0 до 99"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_card.py:0
-#, python-format
 msgid "%s list"
 msgstr "%s списък"
 
@@ -64,19 +62,13 @@ msgid "1 x 512 Relays"
 msgstr "1 x 512 Релета"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__45
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__45
-#, python-format
 msgid "1-W ERROR (wiring problems)"
 msgstr "1-W ГРЕШКА (проблеми с кабелите)"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__13
-#, python-format
 msgid "1-Wire Error"
 msgstr "1-Wire грешка"
 
@@ -90,18 +82,19 @@ msgstr "2 x 16 Релета"
 msgid ""
 "<div style=\"margin: 0px; padding: 0px;\">\n"
 "                    Dear <t t-out=\"object.name or ''\">Oscar Morgan</t>,\n"
-"                    <br>\n"
+"                    <br/>\n"
 "                    In our system is generated barcode badge for access control.\n"
-"                    <br>\n"
+"                    <br/>\n"
 "                    Please find the attached PDF file.\n"
-"                    <br>\n"
+"                    <br/>\n"
 "                    If you have any questions, please let us know.\n"
-"                    <br>\n"
-"                    <br>\n"
+"                    <br/>\n"
+"                    <br/>\n"
 "                    Thank you,\n"
-"                    <t t-if=\"user.signature\">\n"
-"                        <br>\n"
-"                        <t t-out=\"user.signature or ''\">--<br>Mitchell Admin\n"
+"                    <t t-if=\"user.signature\" data-o-mail-quote-container=\"1\">\n"
+"                        <br/>\n"
+"                        <t t-out=\"user.signature or ''\" data-o-mail-quote=\"1\">--<br data-o-mail-quote=\"1\"/>Mitchell "
+"Admin\n"
 "                        </t>\n"
 "                    </t>\n"
 "                </div>\n"
@@ -264,14 +257,23 @@ msgid "<i class=\"fa fa-fw fa-user\" role=\"img\" aria-label=\"User Events\"/>"
 msgstr "<i class=\"fa fa-fw fa-user\" role=\"img\" aria-label=\"Потребителски събития\"/>"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_hierarchy_view
+msgid "<i class=\"fa fa-shield text-danger ms-auto\" title=\"Arm the Group\"/>"
+msgstr "<i class=\"fa fa-shield text-danger ms-auto\" title=\"Охрана на група\"/>"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.webstack_onboarding_panel
 msgid "<i class=\"fa fa-times\" title=\"Close the onboarding panel\"/>"
 msgstr "<i class=\"fa fa-times\" title=\"Затвори панела за назначаване\"/>"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_hierarchy_view
+msgid "<i class=\"fa fa-universal-access text-success ms-auto\" title=\"Disarm the Group\"/>"
+msgstr "<i class=\"fa fa-universal-access text-success ms-auto\" title=\"Изкл Охрана на група\"/>"
+
+#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_employee.py:0
-#, python-format
 msgid ""
 "<p class=\"o_view_nocontent\">\n"
 "                    No accessible doors for this employee.\n"
@@ -281,7 +283,6 @@ msgstr "<p class=\"o_view_nocontent\">Няма достъпни врати за 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/res_partner.py:0
-#, python-format
 msgid ""
 "<p class=\"o_view_nocontent\">\n"
 "                    No accessible doors for this partner.\n"
@@ -291,7 +292,6 @@ msgstr "<p class=\"o_view_nocontent\">Няма достъпни врати за 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_employee.py:0
-#, python-format
 msgid ""
 "<p class=\"o_view_nocontent\">\n"
 "                    No events for this employee.\n"
@@ -304,7 +304,6 @@ msgstr ""
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/res_partner.py:0
-#, python-format
 msgid ""
 "<p class=\"o_view_nocontent\">\n"
 "                    No events for this partner.\n"
@@ -367,6 +366,15 @@ msgstr "<span class=\"oe_inline ml8\">°C</span>"
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_sys_wiz__cloud_card
 msgid "A cloud card will not be added to controllers that are in the \"externalDB\" mode."
 msgstr "Облачните карти няма да бъдат добавени към контролери, които са в режим \"externalDB\"."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_command.py:0
+msgid ""
+"A controller with serial number %s is already registered in the system. It is no possible to have 2 controllers wit same "
+"serial numbers."
+msgstr ""
+"Контролер със сериен номер %s вече е регистриран в системата. Не е възможно да има 2 контролера с еднакви серийни номера."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__name
@@ -434,14 +442,12 @@ msgstr "Група за достъп"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
-#, python-format
 msgid "Access Group "
 msgstr "Група за достъп "
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
-#, python-format
 msgid "Access Group 1"
 msgstr "Достъп за група 1"
 
@@ -475,6 +481,7 @@ msgstr "Комбинации от група/служители"
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_access_group_action
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_mass_wiz__acc_gr_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_employee__hr_rfid_access_group_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__acc_gr_ids
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_access_groups
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_search
@@ -511,14 +518,12 @@ msgstr "Достъп за групи, наследили тази"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "Access groups with {}"
 msgstr "Групи за достъп с {}"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
-#, python-format
 msgid "Access {}"
 msgstr "Достъп {}"
 
@@ -572,7 +577,6 @@ msgstr "Активиране на"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
-#, python-format
 msgid "Activated"
 msgstr "Активиран"
 
@@ -646,6 +650,11 @@ msgid "Add To Employees"
 msgstr "Добавяне към служителите"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_partner_mass_acc_grs_wiz
+msgid "Add To Partners"
+msgstr "Добавяне към партньори"
+
+#. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_department_add_def_acc_grs
 msgid "Add access group and change to default"
 msgstr "Добавяне на група и задаване по подразбиране"
@@ -696,12 +705,14 @@ msgid "Add this unknown card to"
 msgstr "Добавете тази неизвестна карта към"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__d1
-#, python-format
 msgid "Add/Delete Card"
 msgstr "Добавяне/изтриване на карта"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_partner_mass_acc_grs_wiz
+msgid "Add/Remove Access Groups for Partners"
+msgstr "Добавяне/премахване на групи за достъп за партньори"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_department_mass_acc_grs_wiz
@@ -714,6 +725,11 @@ msgstr "Управление на групи за достъп за служит
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_zone_doors_wiz model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_zone_view_form
 msgid "Add/Remove Doors"
 msgstr "Добавяне/премахване на врати"
+
+#. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_res_partner_mass_wiz
+msgid "Add/remove multiple access groups from partners"
+msgstr "Добавяне/премахване на няколко групи за достъп от партньори"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_department_mass_wiz
@@ -780,7 +796,6 @@ msgstr "Състояния на Алармени линии"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
-#, python-format
 msgid "Alarm Line {} on {}"
 msgstr "Алармена линия {} на {}"
 
@@ -799,6 +814,11 @@ msgid "Alarm Lines Count"
 msgstr "Брой алармени линии"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__alarm_lines_setup
+msgid "Alarm Lines Setup"
+msgstr "Настройка на алармените линии"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_door_rel__alarm_right
 msgid "Alarm Right"
 msgstr "Права за аларма"
@@ -808,6 +828,11 @@ msgstr "Права за аларма"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_wizard__alarm_rights
 msgid "Alarm Rights"
 msgstr "Алармени права"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__alarm_sensor_events
+msgid "Alarm Sensor Events"
+msgstr "Събития на сензора за аларма"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__siren_state
@@ -877,7 +902,6 @@ msgstr "Алармени линии свързани с тази врата"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "Alarm lines for {}"
 msgstr "Алармени линии към  {}"
 
@@ -885,6 +909,11 @@ msgstr "Алармени линии към  {}"
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_alarm_groups
 msgid "Alarm lines group"
 msgstr "Група алармени линии"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__alarm_lines_setup
+msgid "Alarm lines setup in (bytes)"
+msgstr "Настройка на алармените линии в (байтове)"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__alarm_line_ids
@@ -968,6 +997,11 @@ msgid "All employees that use this access group, including the ones from the inh
 msgstr "Всички служители, които използват тази група за достъп, включително тези от наследниците"
 
 #. module: hr_rfid
+#: model:ir.module.category,description:hr_rfid.hr_rfid_root
+msgid "All setups for all installed modules"
+msgstr "Всички настройки за всички инсталирани модули"
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__cards_count
 msgid "Amount of cards in the controller."
 msgstr "Брой карти в контролера."
@@ -1027,10 +1061,7 @@ msgid "Arm"
 msgstr "Охрана"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__20
-#, python-format
 msgid "Arm On Siren"
 msgstr "Охранителна сирена Включена"
 
@@ -1048,7 +1079,6 @@ msgstr "Вземане под охрана на всички алармени л
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0
-#, python-format
 msgid "Arm command success"
 msgstr "Успешна команда за включване на охрана"
 
@@ -1112,18 +1142,12 @@ msgid "Available?"
 msgstr "На разположение?"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__22
-#, python-format
 msgid "Bad CRC from Controller (WebSDK)"
 msgstr "Грешен CRC от контролер (WebSDK)"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__21
-#, python-format
 msgid "Bad JSON Structure (WebSDK)"
 msgstr "Грешна структура на JSON (WebSDK)"
 
@@ -1145,7 +1169,6 @@ msgstr "Номер на баркода"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid ""
 "Because the webstack is behind NAT, we have to wait for the webstack to call us, so we created a command. The door will open/"
 "close as soon as possible."
@@ -1161,7 +1184,6 @@ msgstr "Начало"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
-#, python-format
 msgid "Begin is not in range"
 msgstr "Началото не е в обхвата"
 
@@ -1177,18 +1199,12 @@ msgid "Behind Nat"
 msgstr "Зад NAT"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__23
-#, python-format
 msgid "Bridge is Currently in Use (WebSDK)"
 msgstr "В момента Bridge се използва (WebSDK)"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__5
-#, python-format
 msgid "CRC Error"
 msgstr "CRC Грешка"
 
@@ -1204,13 +1220,13 @@ msgstr "CRC Грешка"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_manual_create_wiz
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_replace_wiz_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_zone_doors_wiz
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_partner_mass_acc_grs_wiz
 msgid "Cancel"
 msgstr "Отказ"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
-#, python-format
 msgid "Cannot delete time schedules!"
 msgstr "Не може да се изтрие времеви график!!"
 
@@ -1228,74 +1244,50 @@ msgid "Card Count"
 msgstr "Брой карти"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__2
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__2
-#, python-format
 msgid "Card Denied"
 msgstr "Отказана карта"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__4
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__4
-#, python-format
 msgid "Card Denied APB"
 msgstr "Отказ APB на карта"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__8
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__8
-#, python-format
 msgid "Card Denied Insert"
 msgstr "Отказана карта (Хотел)"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__3
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__3
-#, python-format
 msgid "Card Denied T/S"
 msgstr "Отказ T/S на карта"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__9
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__9
-#, python-format
 msgid "Card Ejected"
 msgstr "Извадена карта"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__1
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__1
-#, python-format
 msgid "Card Granted"
 msgstr "Разрешена карта"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__6
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__6
-#, python-format
 msgid "Card Granted (no entry)"
 msgstr "Разрешена карта (без вход)"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__7
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__7
-#, python-format
 msgid "Card Granted Insert"
 msgstr "Разрешено поставяне на карта"
 
@@ -1311,24 +1303,19 @@ msgid "Card Management"
 msgstr "Управление на карти"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__9
-#, python-format
 msgid "Card Not Found"
 msgstr "Картата не е намерена"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__number
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz__card_number
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__card_number
 msgid "Card Number"
 msgstr "Номер на Картата"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_reader.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_reader__mode__01
-#, python-format
 msgid "Card Only"
 msgstr "Само карта"
 
@@ -1358,18 +1345,12 @@ msgid "Card affected by this event"
 msgstr "Карта, засегната от това събитие"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_reader.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_reader__mode__02
-#, python-format
 msgid "Card and Pin"
 msgstr "Карта и пин"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_reader.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_reader__mode__03
-#, python-format
 msgid "Card and Workcode"
 msgstr "Карта и работен код"
 
@@ -1381,7 +1362,6 @@ msgstr "Модел за връзка с карти и врати"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid "Card count in controller and DB are different. Reload cards to solve the problem"
 msgstr "Броят на картите в контролера и DB е различен. Презаредете картите, за да разрешите проблема"
 
@@ -1391,9 +1371,7 @@ msgid "Card inserted in Hotel readers connected to controller"
 msgstr "Карта поставена в хотелският четец свързани към контролера"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_card.py:0 model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_card_card_int_uniq
-#, python-format
+#: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_card_card_int_uniq
 msgid "Card internal number already exists!"
 msgstr "Вътрешният номер на картата вече съществува!"
 
@@ -1404,9 +1382,7 @@ msgid "Card list"
 msgstr "Списък с карти"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_card.py:0 model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_card_card_uniq
-#, python-format
+#: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_card_card_uniq
 msgid "Card number already exists!"
 msgstr "Номерът на картата вече съществува!"
 
@@ -1418,22 +1394,23 @@ msgstr "Номер на картата от това събитие"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_card.py:0
-#, python-format
 msgid "Card number must be exactly 10 digits"
 msgstr "Номерът на картата трябва да е 10 цифри"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_card.py:0
-#, python-format
 msgid "Card number must be unique for every card type!"
 msgstr "Номерът на картата трябва да е уникален за всеки тип карта!"
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_reader.py:0
+#: code:addons/hr_rfid/models/hr_rfid_card.py:0
+msgid "Card number must contain only letters and digits in Latin"
+msgstr "Номерът на картата трябва да съдържа само букви и цифри на латиница"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_reader__mode__04
-#, python-format
 msgid "Card or Pin"
 msgstr "Карта или пин"
 
@@ -1479,7 +1456,6 @@ msgstr "Тип на карта"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_card.py:0
 #: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_card_check_card_owner
-#, python-format
 msgid "Card user and contact cannot both be set in the same time, and cannot both be empty."
 msgstr "Потребителят и контактът на картата не могат да бъдат зададени едновременно и двете не могат да бъдат празни."
 
@@ -1514,10 +1490,7 @@ msgid "Cards Count"
 msgstr "Брой карти"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__7
-#, python-format
 msgid "Cards Overflow"
 msgstr "Препълване на паметта за карти"
 
@@ -1534,7 +1507,6 @@ msgstr "Карти, принадлежащи на този служител"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "Cards for {}"
 msgstr "Карти за {}"
 
@@ -1592,7 +1564,6 @@ msgstr "Проверка на вратите"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid "Check connection to the Module"
 msgstr "Проверка на връзката с модула"
 
@@ -1602,9 +1573,13 @@ msgid "Child"
 msgstr "Подчинени"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_form_view
+msgid "Child alarm groups"
+msgstr "Подчинени алармени групи"
+
+#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
-#, python-format
 msgid "Circular reference found in the inherited access groups: %s"
 msgstr "Намерена циркулярна връзка със наследените групи: %s"
 
@@ -1637,7 +1612,6 @@ msgstr "Затворете врата"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "Close door command success"
 msgstr "Успешна команда за затваряне на вратата"
 
@@ -1649,14 +1623,12 @@ msgstr "Затворете врати"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "Closed the door for %d seconds."
 msgstr "Затвори вратата за %d секунди."
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "Closing success"
 msgstr "Успешно затваряне"
 
@@ -1667,11 +1639,8 @@ msgid "Cloud Card"
 msgstr "Облачна карта"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__64
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__64
-#, python-format
 msgid "Cloud Card Request"
 msgstr "Заявка от облачна карта"
 
@@ -1679,6 +1648,11 @@ msgstr "Заявка от облачна карта"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_search
 msgid "Cloud Cards"
 msgstr "Облачни карта"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__color
+msgid "Color Index"
+msgstr "Индекс на Цветовете"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_workcode__user_action__start
@@ -1697,26 +1671,17 @@ msgid "Command Errors"
 msgstr "Грешки при команди"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__status__success
-#, python-format
 msgid "Command Execution Successful"
 msgstr "Изпълнението на команда е успешно"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__status__failure
-#, python-format
 msgid "Command Execution Unsuccessful"
 msgstr "Изпълнението на команда е неуспешно"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__status__process
-#, python-format
 msgid "Command Processing"
 msgstr "Обработка на команда"
 
@@ -1731,10 +1696,7 @@ msgid "Command Type"
 msgstr "Тип на командата"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__status__wait
-#, python-format
 msgid "Command Waiting for Webstack Communication"
 msgstr "Командата изчаква комуникация с модула"
 
@@ -1746,7 +1708,6 @@ msgstr "Командни данни"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
-#, python-format
 msgid "Command resend"
 msgstr "Повторно изпрашане"
 
@@ -1812,14 +1773,11 @@ msgstr "Команди към модули"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_res_company
-msgid "Companies"
-msgstr "Фирми"
-
-#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__company_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__company_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__company_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__company_id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__company_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_notification__company_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__company_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__company_id
@@ -1827,12 +1785,12 @@ msgstr "Фирми"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__company_id
 #: model:ir.model.fields,field_description:hr_rfid.field_res_partner__company_id
 msgid "Company"
-msgstr "Фирма"
+msgstr "Компании"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_res_config_settings
 msgid "Config Settings"
-msgstr "Настройки"
+msgstr "Конфигурационни настройки"
 
 #. module: hr_rfid
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_settings_menu
@@ -1898,7 +1856,6 @@ msgstr "Контакти в момента в тази зона"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_zone.py:0
-#, python-format
 msgid "Contacts in {}"
 msgstr "Контакти в {}"
 
@@ -1966,7 +1923,6 @@ msgstr "Контролер"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0 code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
-#, python-format
 msgid "Controller %s has mode=%d, which is not supported!"
 msgstr "Контролер %s е в режим %d, който не се поддържа!"
 
@@ -1976,10 +1932,7 @@ msgid "Controller Alarm Lines"
 msgstr "Алармени линии на контролера"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__12
-#, python-format
 msgid "Controller Busy, Local Menu Active or Master Card Mode in Use"
 msgstr "Контролерът е зает, Локалното меню е активно или Master Card режима се използва"
 
@@ -2021,7 +1974,6 @@ msgstr "Контролер за който се отнася това събит
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
-#, python-format
 msgid "Controller cards reload"
 msgstr "Презареждане картите в контролера"
 
@@ -2033,14 +1985,12 @@ msgstr "Режим на Контролера"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack_replace_wiz.py:0
-#, python-format
 msgid "Controller moved from <a href='%s'>Module %s</a>"
 msgstr "Контролерът е преместен от <a href='%s'>Модул %s</a>"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid "Controller sent us a response to a command we never sent"
 msgstr "Контролерът ни изпрати отговор на команда, която никога не сме изпращали"
 
@@ -2081,14 +2031,12 @@ msgstr "Брой Контролери"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack_replace_wiz.py:0
-#, python-format
 msgid "Controllers moved from <a href='%s'>Module %s</a>"
 msgstr "Контролерите са преместени от <a href='%s'>модул %s</a>"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack_replace_wiz.py:0
-#, python-format
 msgid "Controllers moved to <a href='%s'>Module %s</a>"
 msgstr "Контролерите са преместени в <a href='%s'>модул %s</a>"
 
@@ -2101,7 +2049,6 @@ msgstr "Контролерите управлявани от този Модул
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid ""
 "Could not connect to the module. \n"
 "Check if it is turned on or if it's on a different ip.\n"
@@ -2112,7 +2059,6 @@ msgstr ""
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid ""
 "Could not connect to the module. \n"
 "Check if it is turned on or if it's on a different ip:\n"
@@ -2123,9 +2069,13 @@ msgstr ""
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
-#, python-format
 msgid "Could not find the card"
 msgstr "Картата не можа да бъде намерена"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_form_view
+msgid "Create Child"
+msgstr "Създай подчинен"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__create_date
@@ -2133,16 +2083,19 @@ msgid "Create Date"
 msgstr "Дата на създаване"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_form_view
+msgid "Create a new child group"
+msgstr "Създаване на нова подчинена група"
+
+#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "Created a command to close the door for %d seconds."
 msgstr "Създадена команда за затваряне на вратата за %d секунди."
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "Created a command to open the door for %d seconds."
 msgstr "Създадена команда за отваряне на вратата за %d секунди."
 
@@ -2188,6 +2141,7 @@ msgstr "Създадена команда за отваряне на врата�
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__create_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__create_uid
 msgid "Created by"
 msgstr "Създаден от"
 
@@ -2232,6 +2186,7 @@ msgstr "Създаден от"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__create_date
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__create_date
 msgid "Created on"
 msgstr "Създаден на"
 
@@ -2265,20 +2220,14 @@ msgid "Current status of the command"
 msgstr "Текущ статус на командата"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__28
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__28
-#, python-format
 msgid "DELAY ZONE OFF (if in) Z4,Z3,Z2,Z1"
 msgstr ""
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__27
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__27
-#, python-format
 msgid "DELAY ZONE ON (if out) Z4,Z3,Z2,Z1"
 msgstr ""
 
@@ -2318,7 +2267,6 @@ msgstr "Деактивиране на"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
-#, python-format
 msgid "Deactivated"
 msgstr "Деактивиран"
 
@@ -2370,18 +2318,12 @@ msgid "Delete"
 msgstr "Изтрий"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__d2
-#, python-format
 msgid "Delete Card"
 msgstr "Изтриване на карта"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__da
-#, python-format
 msgid "Delete Last Event"
 msgstr "Изтриване на последното събитие"
 
@@ -2460,10 +2402,12 @@ msgstr "Получаващ модул"
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_digest_digest
 msgid "Digest"
-msgstr "Публикация"
+msgstr "Обзорен бюлетин"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__state__disabled
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_form_view
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_form_view
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "Disabled"
@@ -2489,7 +2433,6 @@ msgstr "Сваляне от охрана на всички линии в гру�
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0
-#, python-format
 msgid "Disarm command success"
 msgstr "Успешна команда за деактивация на охрана"
 
@@ -2558,6 +2501,7 @@ msgstr "Откриване"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__display_name
 msgid "Display Name"
 msgstr "Име за показване"
 
@@ -2569,7 +2513,6 @@ msgstr "Направи трансфер"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/digest.py:0
-#, python-format
 msgid "Do not have access, skip this data for user's digest email"
 msgstr "Нямате достъп. пропусни тези данни за потребителският доклад"
 
@@ -2588,14 +2531,12 @@ msgstr "Врата"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
-#, python-format
 msgid "Door %d of ctrl id %d (%s)"
 msgstr "Врата %d на ctrl id %d (%s)"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
-#, python-format
 msgid "Door %s can only use the first 3 time schedules"
 msgstr "Вратата %s може да използва само първите три времеви графика"
 
@@ -2605,6 +2546,12 @@ msgid "Door Access Groups"
 msgstr "Групи за достъп на врата"
 
 #. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_door.py:0
+msgid "Door Arm"
+msgstr "Охрана на Врата"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__door_count
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__door_count
 msgid "Door Count"
@@ -2612,9 +2559,12 @@ msgstr "Брой врати"
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
+#: code:addons/hr_rfid/models/hr_rfid_door.py:0
+msgid "Door Disarm"
+msgstr "Изкл. Охрана на Врата"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__26
-#, python-format
 msgid "Door Forced Open"
 msgstr "Принудително отворена врата"
 
@@ -2624,12 +2574,9 @@ msgid "Door Name"
 msgstr "Име на врата"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0 code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__25
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__25
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__25
-#, python-format
 msgid "Door Overtime"
 msgstr "Вратата е задържана"
 
@@ -2643,6 +2590,29 @@ msgstr "Достъп до врата"
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__door_id
 msgid "Door affected by this event"
 msgstr "Вратата за която се отнася събитието"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_door.py:0
+msgid "Door close"
+msgstr "Затворена врата"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_door.py:0
+msgid "Door is controller from camera. THis function is not supported yet."
+msgstr "Вратата е контролер от камерата. Тази функция все още не се поддържа."
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__door_rel_ids
+msgid "Door list"
+msgstr "Врати"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_door.py:0
+msgid "Door open"
+msgstr "Отворена врата"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__door_id
@@ -2659,7 +2629,6 @@ msgstr "Събития от вратата"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__door_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_wizard__door_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__door_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__door_rel_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__door_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__door_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__door_ids
@@ -2678,7 +2647,6 @@ msgstr "Врати"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_employee.py:0 code:addons/hr_rfid/models/hr_rfid_access_group.py:0
 #: code:addons/hr_rfid/models/res_partner.py:0
-#, python-format
 msgid ""
 "Doors \"%s\" and \"%s\" both belong to a controller that cannot give access to multiple doors with same card type in a group."
 msgstr ""
@@ -2688,14 +2656,12 @@ msgstr ""
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_employee.py:0 code:addons/hr_rfid/models/res_partner.py:0
-#, python-format
 msgid "Doors accessible from {}"
 msgstr "Врати, достъпни от {}"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "Doors closed"
 msgstr "Вратите са затворени"
 
@@ -2727,21 +2693,18 @@ msgstr "Режим на Контролера"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "Doors opened"
 msgstr "Вратите са отворени"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "Doors successfully closed"
 msgstr "Вратите успешно са затворени"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "Doors successfully opened"
 msgstr "Вратите успешно са отворени"
 
@@ -2773,7 +2736,6 @@ msgstr "Управление на врати"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_reader.py:0
-#, python-format
 msgid "Doors using {}"
 msgstr "Врати използващи {}"
 
@@ -2783,41 +2745,28 @@ msgid "Dual Person Mode"
 msgstr "Режим Dual Person"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__1
-#, python-format
 msgid "Duress"
 msgstr "Принуда"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__2
-#, python-format
 msgid "Duress Error"
 msgstr "Грешен код принуда"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
-#, python-format
 msgid "Duress mode"
 msgstr "Режим на принуда"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__2
-#, python-format
 msgid "DuressError"
 msgstr ""
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__1
-#, python-format
 msgid "DuressOK"
 msgstr ""
 
@@ -2838,19 +2787,13 @@ msgstr ""
 "                                            да се добавят към всички съществуващи или бъдещи добавени служители в отдела"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__37
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__37
-#, python-format
 msgid "Ejected Card"
 msgstr "Извадена карта"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_notification.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__notification_type__email
-#, python-format
 msgid "Email"
 msgstr "Имейл"
 
@@ -2870,10 +2813,7 @@ msgid "Emergency Group"
 msgstr "Групи за аварийни ситуации"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__19
-#, python-format
 msgid "Emergency Input"
 msgstr "Авариен вход"
 
@@ -2924,7 +2864,6 @@ msgstr "Авариен статус на врата"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
-#, python-format
 msgid "Emergency from %s %s"
 msgstr "ПИС сигнал от %s %s"
 
@@ -2953,7 +2892,6 @@ msgstr "Служител"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
-#, python-format
 msgid "Employee %s have the %s door twice via different access groups. This is not allowed."
 msgstr "Служител %s има два пъти вратата %s чрез различни групи за достъп. Това не е позволено."
 
@@ -2997,7 +2935,6 @@ msgstr "Служители в момента в тази зона"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_zone.py:0
-#, python-format
 msgid "Employees in {}"
 msgstr "Служители в {}"
 
@@ -3012,6 +2949,17 @@ msgid "Employees to Exclude"
 msgstr "Изключи служителите"
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__enabled
+msgid "Enable the alarm line in the controller"
+msgstr "Активиране на алармената линия в контролера"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__enableAC
+msgid "Enable the integration between access control system and alarm functionality of the line in the controller"
+msgstr "Разрешаване на интеграцията на системата за контрол на достъпа и алармената функционалност на линията в контролера"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__enabled
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_form_view
 msgid "Enabled"
 msgstr "Разрешен"
@@ -3029,7 +2977,6 @@ msgstr "Крайна дата"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
-#, python-format
 msgid "End is not in range"
 msgstr "Края не е в обхват"
 
@@ -3068,7 +3015,6 @@ msgstr "Грешка"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid ""
 "Error received while trying to reboot the module!\n"
 " \n"
@@ -3081,7 +3027,6 @@ msgstr ""
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid ""
 "Error received while trying to setup the module!\n"
 " \n"
@@ -3094,14 +3039,12 @@ msgstr ""
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid "Error response from Webstack. {} ({})"
 msgstr "Отговор за грешка от Webstack. {} ({})"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid "Error while trying to connect to the module. Information:\n"
 msgstr "Грешка при опит за свързване с модула. Информация:\n"
 
@@ -3130,7 +3073,6 @@ msgstr "Тип събитие"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
-#, python-format
 msgid "Event from Temperature Sensor"
 msgstr "Събитие от температурния сензор"
 
@@ -3174,7 +3116,6 @@ msgstr "Събития свързани с този четец"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_employee.py:0 code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: code:addons/hr_rfid/models/res_partner.py:0
-#, python-format
 msgid "Events for {}"
 msgstr "Събития за {}"
 
@@ -3199,14 +3140,12 @@ msgstr "Събития от днес"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_reader.py:0
-#, python-format
 msgid "Events from {}"
 msgstr "Събития от {}"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
-#, python-format
 msgid "Events on {}"
 msgstr "Събития на {}"
 
@@ -3218,7 +3157,6 @@ msgstr "Всеки потребител, добавен към този отде
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid "Everything looks just great!"
 msgstr "Всичко изглежда добре!"
 
@@ -3229,55 +3167,40 @@ msgid "Execution Time"
 msgstr "Време за изпълнение"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__21
-#, python-format
 msgid "Exit Button 1"
 msgstr "Бутон за излизане 1"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__22
-#, python-format
 msgid "Exit Button 2"
 msgstr "Бутон за излизане 2"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__23
-#, python-format
 msgid "Exit Button 3"
 msgstr "Бутон за излизане 3"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__24
-#, python-format
 msgid "Exit Button 4"
 msgstr "Бутон за излизане 4"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__21
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__21
-#, python-format
 msgid "Exit button"
 msgstr "Бутон за изход"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
-#, python-format
 msgid "Exit button %d pressed "
-msgstr "Натиснат %d бутон за изход"
+msgstr "Натиснат %d бутон за изход "
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_mass_wiz__expiration
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__expiration
 msgid "Expiration"
 msgstr "Изтичане"
 
@@ -3294,11 +3217,8 @@ msgid "Expired"
 msgstr "Изтекла"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__29
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__29
-#, python-format
 msgid "External Control"
 msgstr "Външно управление"
 
@@ -3310,7 +3230,6 @@ msgstr "Външна DB"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid "External Sensor %s connected to %s"
 msgstr "Външен сензор %s, свързан към %s"
 
@@ -3332,11 +3251,8 @@ msgid "Find the \"RFID information\" tab and add a group with expiration time"
 msgstr "Намерете раздела \"RFID информация\" и добавете групата с време на изтичане"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__19
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__19
-#, python-format
 msgid "Fire/Emergency"
 msgstr "Спешен случай"
 
@@ -3409,11 +3325,8 @@ msgid "Font awesome icon e.g. fa-tasks"
 msgstr "Шрифт awesome икони напр. fa-tasks"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__26
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__26
-#, python-format
 msgid "Forced Door Open"
 msgstr "Принудително отворена врата"
 
@@ -3521,7 +3434,6 @@ msgstr "Излиза в почивка"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
-#, python-format
 msgid "Got controller mode=%d for hw_ver=%s???"
 msgstr "Получих режим на контролера %d за хардуерна версия %s ???"
 
@@ -3570,7 +3482,6 @@ msgstr "HR RFID: Синхронизиране на часовниците на �
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
-#, python-format
 msgid "Hardware"
 msgstr "Хардуер"
 
@@ -3582,7 +3493,6 @@ msgstr "Хардуерен ПИС"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
-#, python-format
 msgid "Hardware Event"
 msgstr "Събития от хардуера"
 
@@ -3646,7 +3556,7 @@ msgstr "Има съобщение"
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_event
 msgid "Helper for RFID Events"
-msgstr ""
+msgstr "Помощник за събития RFID"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__high_temperature
@@ -3659,13 +3569,10 @@ msgid "Holiday"
 msgstr "Празник"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0 code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__38
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__12
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__38
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__12
-#, python-format
 msgid "Hotel Button Pressed"
 msgstr "Натиснат Хотелски бутон"
 
@@ -3699,7 +3606,6 @@ msgstr "Хотелски четци свързани с контролер"
 #. module: hr_rfid
 #. odoo-javascript
 #: code:addons/hr_rfid/static/src/xml/pivot_view_field_selection.xml:0
-#, python-format
 msgid "Hour"
 msgstr "Час"
 
@@ -3762,11 +3668,8 @@ msgid "Hysteresis for event triggering. Range 0.5..9 ℃"
 msgstr "Хистерезис за задействане на събития. Обхват 0,5..9 ℃"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__1
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__2
-#, python-format
 msgid "I2C Error"
 msgstr "Грешка в I2C"
 
@@ -3812,6 +3715,7 @@ msgstr "Грешка в I2C"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__id
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__id
 msgid "ID"
 msgstr "Номер (ID)"
 
@@ -3841,7 +3745,6 @@ msgstr "Редове на IO таблица"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
-#, python-format
 msgid "IO table lengths are different, this should never happen????"
 msgstr "Дължините на таблиците IO са различни, това никога не трябва да се случва"
 
@@ -3901,21 +3804,37 @@ msgstr "Ако е избрано новите съобщения ще изиск
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card_type__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card_type__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_system__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_system__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__message_has_sms_error
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Ако е избрано някой съобщения имат грешка при доставка."
 
@@ -3935,6 +3854,15 @@ msgid "If status is \"Command Unsuccessful\" this field is updated to the reason
 msgstr "Ако статусът е \"Неуспешно командата\", това поле се актуализира с причината за неуспешното изпълнение"
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__alarm_sensor_events
+msgid ""
+"If the controller uses the \"Alarm Sensor Events\" feature, the controller will send event on every alarm line state change "
+"even in disarm mode."
+msgstr ""
+"Ако контролерът използва функцията \"Събития на алармените сензори\", контролерът ще изпраща събитие при всяка промяна на "
+"състоянието на алармената линия, дори и извън режим на охрана."
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__external_db
 msgid "If the controller uses the \"ExternalDB\" feature."
 msgstr "Ако контролерът използва функцията \"ExternalDB\"."
@@ -3947,15 +3875,13 @@ msgstr "Изображение"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_card.py:0
-#, python-format
 msgid "Import Template for Cards"
 msgstr "Шаблон за импортиране на Клиенти"
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0 code:addons/hr_rfid/models/hr_rfid_ctrl_reader.py:0
+#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_reader__reader_type__0
-#, python-format
 msgid "In"
 msgstr "Вход"
 
@@ -3999,15 +3925,27 @@ msgid "In group:"
 msgstr "В група:"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__enableDC
+msgid "Include Door contact"
+msgstr "Включете контакт с вратата"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__enableDC
+msgid "Include the door contact in the alarm functionality of the line in the controller"
+msgstr "Включване на контакта на вратата във функционалността на алармената линия в контролера"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_form_view
+msgid "Included alarm lines"
+msgstr "Включени алармени линии"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_zone_view_form
 msgid "Included doors"
 msgstr "Включени врати"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__31
-#, python-format
 msgid "Incorrect Data Response"
 msgstr "Неправилен отговор на данни"
 
@@ -4020,21 +3958,18 @@ msgstr "Информация"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid "Information returned by the webstack at {} is invalid"
 msgstr "Информацията, върната от webstack в {}, е невалидна"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid "Information returned by the webstack invalid: \n"
 msgstr "Информацията, върната от webstack, е невалидна:\n"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid ""
 "Information sent to the Module. If everything is fine, the Module have to start communication with this instance. The URL in "
 "use is http://%s on port %d."
@@ -4114,11 +4049,8 @@ msgid "Inputs Mask"
 msgstr "Маска на входовете"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__36
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__36
-#, python-format
 msgid "Inserted Card"
 msgstr "Поставена карта"
 
@@ -4128,10 +4060,12 @@ msgid "Instruction for use this barcode"
 msgstr "Инструкция за използване на този баркод"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__enableAC
+msgid "Integrate with Access control"
+msgstr "Интегриране с контрол на достъпа"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__24
-#, python-format
 msgid "Internal Error, Try Again (WebSDK)"
 msgstr "Вътрешна грешка, опитайте отново (WebSDK)"
 
@@ -4316,6 +4250,7 @@ msgstr "Последна актуализация:"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__write_uid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__write_uid
 msgid "Last Updated by"
 msgstr "Последно актуализиран от"
 
@@ -4361,6 +4296,7 @@ msgstr "Последно актуализиран от"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__write_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__write_date
 msgid "Last Updated on"
 msgstr "Последно актуализиран на"
 
@@ -4520,6 +4456,15 @@ msgid "Mask for the inputs of the controller"
 msgstr "Маска за входовете на контролера"
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__relay_output_mask
+msgid ""
+"Mask for the relay outputs of the relay controller. If True, the relay outputs on the relay extension boards are inverted "
+"(NC) else normally (NO)."
+msgstr ""
+"Маска за релейните изходи на релейния контролер. Ако е True (Вярно), релейните изходи на разширителните платки за релета са "
+"инвертирани (NC), в противен случай са нормални (NO)."
+
+#. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_department_mass_remove_access_group_action
 msgid "Mass Add/Remove"
 msgstr "Масово добавяне/премахване"
@@ -4565,10 +4510,7 @@ msgid "Measures from today"
 msgstr "Измервания от днес"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__6
-#, python-format
 msgid "Memory Error"
 msgstr "Грешка в паметта"
 
@@ -4672,14 +4614,12 @@ msgstr "Модул, засегнат от това събитие"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid "Module connection error:\n"
 msgstr "Грешка при свързването на модула:\n"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid "Module sent us a response from a controller that does not exist"
 msgstr "Модулът ни изпрати отговор от контролер, който не съществува"
 
@@ -4799,10 +4739,7 @@ msgid "No Alarm functionality"
 msgstr "Няма алармена функционалност"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__10
-#, python-format
 msgid "No Cards"
 msgstr "Без карти"
 
@@ -4812,47 +4749,35 @@ msgid "No Emergency"
 msgstr "Няма ПИС сигнал"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__0
-#, python-format
 msgid "No Error"
 msgstr "Без грешка"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__20
-#, python-format
 msgid "No Response from controller (WebSDK)"
 msgstr "Няма отговор от контролера (WebSDK)"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid "No controllers detected in the Module or the Module is Archived"
 msgstr "В модула не са открити контролери или модулът е архивиран"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
-#, python-format
 msgid "No found any door duplicates in the access groups."
 msgstr "Не са открити дублиране на врати в групите за достъп."
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_notification.py:0
-#, python-format
 msgid "No recipients for %s notification!"
 msgstr "Няма получатели за %s известие!"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__30
-#, python-format
 msgid "No response from the Module"
 msgstr "Няма отговор от модула"
 
@@ -4868,18 +4793,14 @@ msgid "Normal"
 msgstr "Нормално"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__11
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__8
-#, python-format
 msgid "Not Use"
 msgstr "Не използвай"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
-#, python-format
 msgid "Not using TS"
 msgstr "Не се използва ВГ"
 
@@ -4892,11 +4813,6 @@ msgstr "Тип на известието"
 #: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_notification_no_notification_event
 msgid "Notification must have at least one checked event!"
 msgstr "Уведомлението трябва да има поне едно отбелязано събитие!"
-
-#. module: hr_rfid
-#: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_notification_no_notification_recipients
-msgid "Notification must have at least one recipient!"
-msgstr "Уведомлението трябва да има поне един получател!"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__notification_ids
@@ -5033,10 +4949,7 @@ msgid "Occurrences"
 msgstr "Повторения"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__28
-#, python-format
 msgid "Off Delay"
 msgstr "Забавяне изключване"
 
@@ -5046,10 +4959,7 @@ msgid "Officer"
 msgstr "Отговорник"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__27
-#, python-format
 msgid "On Delay"
 msgstr "Забавяне при включване"
 
@@ -5087,10 +4997,7 @@ msgid "Open"
 msgstr "Отворен"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__db
-#, python-format
 msgid "Open Output"
 msgstr "Отворете изхода"
 
@@ -5102,7 +5009,6 @@ msgstr "Отворете врата"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "Open door command success"
 msgstr "Успешна команда за отваряне на врата"
 
@@ -5117,11 +5023,8 @@ msgid "Open or close door"
 msgstr "Отворете или затворете вратата"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__31
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__31
-#, python-format
 msgid "Open/Close Door From PC"
 msgstr "Отваряне/затваряне на врата от компютър"
 
@@ -5134,36 +5037,26 @@ msgid "Open/close door"
 msgstr "Отваряне/затваряне на врата"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__22
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__22
-#, python-format
 msgid "OpenDoor2 from In2"
 msgstr "Отворена врата 2 от Вход 2"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__23
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__23
-#, python-format
 msgid "OpenDoor3 from In3"
 msgstr "Отворена врата 3 от Вход 3"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__24
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__24
-#, python-format
 msgid "OpenDoor4 from In4"
 msgstr "Отворена врата 4 от Вход 4"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "Opened the door for %d seconds."
 msgstr "Отвори вратата за %d секунди."
 
@@ -5180,9 +5073,8 @@ msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0 code:addons/hr_rfid/models/hr_rfid_ctrl_reader.py:0
+#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_reader__reader_type__1
-#, python-format
 msgid "Out"
 msgstr "Изход"
 
@@ -5229,7 +5121,6 @@ msgstr "Изход 8"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
-#, python-format
 msgid "Output %d working with TS %s"
 msgstr "Изход %d, работещ с ВГ %s"
 
@@ -5246,7 +5137,6 @@ msgstr "ВГ за Изход на контролери"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
-#, python-format
 msgid "Output control from Software"
 msgstr "Управление на изхода от софтуера"
 
@@ -5263,7 +5153,6 @@ msgstr "Номер на изход"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
-#, python-format
 msgid "Output number %(out)d not in range from 1 to %(to)d"
 msgstr "Номера на Изход %(out)d не е в диапазона от 1 до %(to)d"
 
@@ -5286,7 +5175,6 @@ msgstr "Изходи"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
-#, python-format
 msgid "Overlap found between access group(%s) active period ranges for (%s)"
 msgstr "Установено е припокриване между диапазоните на активния период на групата за достъп (%s) за (%s)"
 
@@ -5318,7 +5206,6 @@ msgstr "Частично под охрана"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
-#, python-format
 msgid "Partner %s have the %s door twice via different access groups. This is not allowed."
 msgstr "Партньор %s има врата %s два пъти чрез различни групи за достъп. Това не е позволено."
 
@@ -5335,6 +5222,7 @@ msgid "Partner Event Count"
 msgstr "Брой събития на партньора"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__partner_ids
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_partners
 msgid "Partners"
 msgstr "Контрагенти"
@@ -5427,7 +5315,6 @@ msgstr "Моля създайте нова ггрупа от бутонът в �
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack_discovery.py:0
-#, python-format
 msgid "Please provide module serial number!"
 msgstr "Моля посочете серийният номер на модула!"
 
@@ -5441,16 +5328,12 @@ msgstr ""
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack_replace_wiz.py:0
-#, python-format
 msgid "Please select source and destination Module"
 msgstr "Моля, изберете източник и получаващ Модул"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__30
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__30
-#, python-format
 msgid "Power On event"
 msgstr "Събитие за включване"
 
@@ -5476,130 +5359,82 @@ msgid "Process Event in Zone"
 msgstr "Събитие за обработка в зоната"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__6
-#, python-format
 msgid "R1 APB Error"
 msgstr "R1 Грешка при APB"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__4
-#, python-format
 msgid "R1 Card Error"
 msgstr "Грешка в R1 картата"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__3
-#, python-format
 msgid "R1 Card OK"
 msgstr "R1 Карта OK"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__5
-#, python-format
 msgid "R1 T/S Error"
 msgstr "Грешка R1 T/S"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__10
-#, python-format
 msgid "R2 APB Error"
 msgstr "R2 Грешка при APB"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__8
-#, python-format
 msgid "R2 Card Error"
 msgstr "Грешка в R2 картата"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__7
-#, python-format
 msgid "R2 Card OK"
 msgstr "R2 Карта OK"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__9
-#, python-format
 msgid "R2 T/S Error"
 msgstr "Грешка R2 T/S"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__14
-#, python-format
 msgid "R3 APB Error"
 msgstr "R3 Грешка при APB"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__12
-#, python-format
 msgid "R3 Card Error"
 msgstr "Грешка в R3 картата"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__11
-#, python-format
 msgid "R3 Card OK"
 msgstr "R3 Карта OK"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__13
-#, python-format
 msgid "R3 T/S Error"
 msgstr "Грешка R3 T/S"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__18
-#, python-format
 msgid "R4 APB Error"
 msgstr "R4 Грешка при APB"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__16
-#, python-format
 msgid "R4 Card Error"
 msgstr "Грешка в R4 картата"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__15
-#, python-format
 msgid "R4 Card Ok"
 msgstr "R4 Карта ОК"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__17
-#, python-format
 msgid "R4 T/S Error"
 msgstr "Грешка R4 T/S"
 
@@ -5612,6 +5447,11 @@ msgstr ""
 #: model:ir.module.category,name:hr_rfid.hr_rfid_management
 msgid "RFID Access"
 msgstr "Достъп с RFID"
+
+#. module: hr_rfid
+#: model:ir.actions.act_window,name:hr_rfid.res_partner_mass_remove_access_group_action
+msgid "RFID Add/Remove Access Groups"
+msgstr "RFID Добавяне/премахване на групи за достъп"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_employee__hr_rfid_card_ids
@@ -5667,7 +5507,6 @@ msgstr "Уведомления за RFID"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_notification.py:0
-#, python-format
 msgid "RFID Notification for %s"
 msgstr "Уведомление RFID за %s"
 
@@ -5677,7 +5516,8 @@ msgid "RFID Settings"
 msgstr "RFID Настройки"
 
 #. module: hr_rfid
-#: model:ir.ui.menu,name:hr_rfid.hr_rfid_root_menu model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
+#: model:ir.module.category,name:hr_rfid.hr_rfid_root model:ir.ui.menu,name:hr_rfid.hr_rfid_root_menu
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
 msgid "RFID System"
 msgstr "RFID Система"
 
@@ -5703,75 +5543,48 @@ msgid "RFID settings"
 msgstr "RFID настройки"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__3
-#, python-format
 msgid "RS485 Error"
 msgstr "RS485 грешка"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__fc
-#, python-format
 msgid "Read Anti-Passback Mode"
 msgstr "Четене на APB"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__f5
-#, python-format
 msgid "Read Controller Mode"
 msgstr "Четене режим на контролер"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__read_b3_cmd
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__b3
-#, python-format
 msgid "Read Controller Status"
 msgstr "Четене статус на контролер"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__f8
-#, python-format
 msgid "Read Duress Mode"
 msgstr "Четене режим принуда"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__fd
-#, python-format
 msgid "Read Fire & Security Status"
 msgstr "Прочети Пожарни и Алармени статуси"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__fe
-#, python-format
 msgid "Read FireTime, Sound_Time"
 msgstr "Прочети Пожарно време, Време на сирена"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__f2
-#, python-format
 msgid "Read Group of Cards"
 msgstr "Прочети група от карти"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__f4
-#, python-format
 msgid "Read Holiday List"
 msgstr "Прочети списък на празниците"
 
@@ -5792,58 +5605,37 @@ msgstr ""
 "Прочитане на входните състояния. Командата ще се изпълнява до една минута. Върнете се по-късно, за да видите резултата."
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__f9
-#, python-format
 msgid "Read Input/Output Table"
 msgstr "Прочети входно-изходна таблица"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__fb
-#, python-format
 msgid "Read Inputs Flags"
 msgstr "Прочети флагове на входовете"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__ff
-#, python-format
 msgid "Read Output T/S Table"
 msgstr "Прочети на таблицата за график на изходите"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__f6
-#, python-format
 msgid "Read Readers Mode"
 msgstr "Прочети режим на Четците"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__f7
-#, python-format
 msgid "Read System Clock"
 msgstr "Преглед на системния часовник"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__f0
-#, python-format
 msgid "Read System Information"
 msgstr "Системна информация"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__f3
-#, python-format
 msgid "Read Time Schedules"
 msgstr "Преглед на графици"
 
@@ -5858,26 +5650,22 @@ msgid "Read controllers detected in Module"
 msgstr "Прочети контролерите открити в Модула"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__f1
-#, python-format
 msgid "Read/Search Card And Info"
 msgstr "Четене/Търсене на карта"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__b0
+msgid "Read/Write Alarm Lines"
+msgstr "Четене/запис на алармени линии"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__b4
-#, python-format
 msgid "Read/Write Hotel buttons sense"
 msgstr "Четене/Запис чувствителност хотелски бутони"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__b1
-#, python-format
 msgid "Read/Write temperature range"
 msgstr "Четене/запис на температурен диапазон"
 
@@ -5888,130 +5676,82 @@ msgid "Reader"
 msgstr "Четец"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__6
-#, python-format
 msgid "Reader #1 APB Error"
 msgstr "R1 Грешка при APB"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__4
-#, python-format
 msgid "Reader #1 Card Error"
 msgstr "Грешка в R1 картата"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__3
-#, python-format
 msgid "Reader #1 Card OK"
 msgstr "R1 Карта OK"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__5
-#, python-format
 msgid "Reader #1 TS Error"
 msgstr "R1 Греша в график"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__10
-#, python-format
 msgid "Reader #2 APB Error"
 msgstr "R2 Грешка при APB"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__8
-#, python-format
 msgid "Reader #2 Card Error"
 msgstr "Грешка в R2 картата"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__7
-#, python-format
 msgid "Reader #2 Card OK"
 msgstr "R2 Карта OK"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__9
-#, python-format
 msgid "Reader #2 TS Error"
 msgstr "R2 Греша в график"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__14
-#, python-format
 msgid "Reader #3 APB Error"
 msgstr "R3 Грешка при APB"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__12
-#, python-format
 msgid "Reader #3 Card Error"
 msgstr "Грешка в R3 картата"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__11
-#, python-format
 msgid "Reader #3 Card OK"
 msgstr "R3 Карта OK"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__13
-#, python-format
 msgid "Reader #3 TS Error"
 msgstr "R3 Греша в график"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__18
-#, python-format
 msgid "Reader #4 APB Error"
 msgstr "R4 Грешка при APB"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__16
-#, python-format
 msgid "Reader #4 Card Error"
 msgstr "Грешка в R4 картата"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__15
-#, python-format
 msgid "Reader #4 Card OK"
 msgstr "R4 Карта ОК"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_iotable.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__17
-#, python-format
 msgid "Reader #4 TS Error"
 msgstr "R4 Греша в график"
 
@@ -6063,7 +5803,6 @@ msgstr "Брой четци"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "Readers for {}"
 msgstr "Четци за {}"
 
@@ -6080,7 +5819,6 @@ msgstr "Четци, които отварят тази врата"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid "Reading controllers from the Module"
 msgstr "Прочети контролерите от Модула"
 
@@ -6105,7 +5843,6 @@ msgstr "Рестартиране"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid "Reboot the Module"
 msgstr "Рестартиране на модула"
 
@@ -6117,21 +5854,18 @@ msgstr "Дата на получаване"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_notification.py:0
-#, python-format
 msgid "Recipient %s has no email address in %s!"
 msgstr "Получателят %s няма имейл адрес в %s!"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_notification.py:0
-#, python-format
 msgid "Recipient %s has no user account in %s!"
 msgstr "Получателят %s няма потребителски акаунт в %s!"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
-#, python-format
 msgid "Refresh Controller information"
 msgstr "Опресни Информация за контролера"
 
@@ -6165,6 +5899,11 @@ msgstr "Връзка между групите за достъп и вратит
 #: model:ir.model,name:hr_rfid.model_hr_rfid_access_group_rel
 msgid "Relation between access groups and employees"
 msgstr "Връзка между групи за достъп и служители"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__relay_output_mask
+msgid "Relay Output Mask"
+msgstr "Маска на релеен изход"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__relay_time_factor
@@ -6228,6 +5967,16 @@ msgid "Remove From Employees"
 msgstr "Премахване от служителите"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_partner_mass_acc_grs_wiz
+msgid "Remove From Partners"
+msgstr "Премахване от партньорите"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__remove_existing
+msgid "Remove existing access groups"
+msgstr "Премахване на съществуващи групи за достъп"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__replace_existing
 msgid "Replace Existing"
 msgstr "Замяна на съществуващи"
@@ -6256,7 +6005,6 @@ msgstr "Заявка"
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__64
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__64
-#, python-format
 msgid "Request Instructions"
 msgstr "Заявете инструкции"
 
@@ -6317,6 +6065,26 @@ msgid "SDK"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_ts_line__day__5
 msgid "Saturday"
 msgstr "Събота"
@@ -6355,15 +6123,11 @@ msgstr "Изпрати баркод пропуск"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/res_partner.py:0
-#, python-format
 msgid "Send Barcode card - Compose Email"
 msgstr "Изпращане на карта баркод - Съставяне на имейл"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__db2
-#, python-format
 msgid "Sending Balance To Vending Machine"
 msgstr "Изпращане на баланс към автомата"
 
@@ -6435,7 +6199,7 @@ msgstr "Сериен номер"
 
 #. module: hr_rfid
 #: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_webstack_rfid_webstack_serial_unique
-msgid "Serial number for webstacks must be unique!"
+msgid "Serial number for Module must be unique!"
 msgstr "Серийният номер за webstacks трябва да е уникален!"
 
 #. module: hr_rfid
@@ -6504,7 +6268,6 @@ msgstr "Настрой модула за работа с този сървър"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid "Setup the Module"
 msgstr "Настрой Модула"
 
@@ -6531,16 +6294,12 @@ msgstr "Сирена"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0 code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "Siren Control"
 msgstr "Управление на сирена"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__20
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__20
-#, python-format
 msgid "Siren ON/OFF"
 msgstr "Сирена Вкл/Изкл"
 
@@ -6566,14 +6325,12 @@ msgstr "Статус сирена"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0 code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "Siren turned Off successful"
 msgstr "Сирената е изключена успешно"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0 code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "Siren turned On successful"
 msgstr "Сирената в Включена успешно"
 
@@ -6585,7 +6342,6 @@ msgstr "Размер на входно/изходната таблица"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
-#, python-format
 msgid "Software"
 msgstr "Софтуер"
 
@@ -6668,21 +6424,18 @@ msgstr "Резултат: Разрешен"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0
-#, python-format
 msgid "Success Line(s) Arm"
 msgstr "Успешно активиране охраната на линия/и"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0
-#, python-format
 msgid "Success Line(s) Disarm"
 msgstr "Успешно деактивиране охраната на линия/и"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "Success opening"
 msgstr "Успешно отваряне"
 
@@ -6692,20 +6445,14 @@ msgid "Sunday"
 msgstr "Неделя"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_notification.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__notification_type__discuss
-#, python-format
 msgid "System Chat"
 msgstr "Чат на системата"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_notification__system_event
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__99
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__99
-#, python-format
 msgid "System Event"
 msgstr "Системно събитие"
 
@@ -6738,15 +6485,11 @@ msgstr "Брой системни събития"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "System Events on {}"
 msgstr "Системни събития за {}"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__dc
-#, python-format
 msgid "System Initialization"
 msgstr "Инициализация на системата"
 
@@ -6763,7 +6506,6 @@ msgstr "Системно събитие"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
-#, python-format
 msgid "System event does not have a card number in it"
 msgstr "Системното събитие няма номер на картата в него"
 
@@ -6776,7 +6518,6 @@ msgstr "Системна информация"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
-#, python-format
 msgid "T&H Sensor {} on {}"
 msgstr "Сензор за Т&В {} на {}"
 
@@ -6831,38 +6572,26 @@ msgid "Temperature"
 msgstr "Температура"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__54
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__54
-#, python-format
 msgid "Temperature Error"
 msgstr "Температурна грешка"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__51
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__51
-#, python-format
 msgid "Temperature High"
 msgstr "Висока Температурата"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__53
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__53
-#, python-format
 msgid "Temperature Low"
 msgstr "Ниска температура"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__52
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__52
-#, python-format
 msgid "Temperature Normal"
 msgstr "Нормална Температура"
 
@@ -6893,7 +6622,6 @@ msgstr "Регистър Температура и Влажност"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_th.py:0 code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "Temperature and Humidity Log for {}"
 msgstr "Регистър Температура и Влажност за {}"
 
@@ -6950,7 +6678,6 @@ msgstr "Изхода управляващ заключването на врат
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
-#, python-format
 msgid "The Module contacted us and activated."
 msgstr "Модулът се свърза с нас и е активиран."
 
@@ -6967,7 +6694,6 @@ msgstr "Действителният работен код "
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
-#, python-format
 msgid "The begin time have to be before end time"
 msgstr "Началното време трябва да е преди крайното"
 
@@ -6984,14 +6710,12 @@ msgstr "Картата е готова за употреба. Всичко е г
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
-#, python-format
 msgid "The command is marked for execution again."
 msgstr "Командата е маркирана за повторно изпълнение."
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
-#, python-format
 msgid "The controller mode value is invalid. Please check it!"
 msgstr "Режимът на контролера не е валиден. Моля проверете го!"
 
@@ -7003,14 +6727,12 @@ msgstr "Денят за този интервал"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
-#, python-format
 msgid "The door is opened by force/key"
 msgstr "Вратата е отворена със сила/ключ"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
-#, python-format
 msgid "The door is still opened"
 msgstr "Вратата все още е отворена"
 
@@ -7022,21 +6744,18 @@ msgstr "Краен час на интервала"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_emergency_group.py:0
-#, python-format
 msgid "The group turn off Emergency Mode Manually"
 msgstr "Групата изключи ПИС сигнал"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_emergency_group.py:0
-#, python-format
 msgid "The group turn on Emergency Mode Manually"
 msgstr "Групата включи ПИС сигнал"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
-#, python-format
 msgid "The intervals for day %d are overlapping"
 msgstr "Интервалите за ден %d се застъпват"
 
@@ -7063,21 +6782,23 @@ msgstr "Модулът не трябва да е зад NAT!"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid "The module was rebooted. It takes up to 10 sec to restore the work conditions"
 msgstr "Модулът е рестартиран. Възстановяването на работните условия отнема до 10 сек"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_form_view
+msgid "The name of the alarm lines group"
+msgstr "Името на групата алармени линии"
+
+#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
-#, python-format
 msgid "The number is not in range"
 msgstr "Номерът не е в обхвата"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
-#, python-format
 msgid "The requested day is not in the range!"
 msgstr "Търсеният ден не е в диапазона!"
 
@@ -7122,7 +6843,10 @@ msgstr "Потребителят ще може да търси хардуер в
 
 #. module: hr_rfid
 #: model:res.groups,comment:hr_rfid.hr_rfid_view_own_department model:res.groups,comment:hr_rfid.hr_view_own_department
-msgid "The user will be able to control ONLY the employees from his Department. Usefully for Head of Department"
+msgid ""
+"The user will be able to control ONLY the employees from his Department. Usefully for\n"
+"                Head of Department\n"
+"            "
 msgstr "Потребителят ще може да контролира САМО служителите от своя отдел. Полезно за ръководител на отдел"
 
 #. module: hr_rfid
@@ -7161,6 +6885,16 @@ msgid "The version of the software on the controller"
 msgstr "Версията на софтуера на контролера"
 
 #. module: hr_rfid
+#: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_event_system_action
+msgid "There are no events for today, which is a good sign!"
+msgstr "За днес няма събития, което е добър знак!"
+
+#. module: hr_rfid
+#: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_event_user_action
+msgid "There aren't any events form today. Have you already set up the system?"
+msgstr "Няма събития от днешния ден. Настроили ли ли сте системата вече?"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_replace_wiz_view_form
 msgid ""
 "This function will move controllers from one module to another. The source module will be\n"
@@ -7172,21 +6906,18 @@ msgstr ""
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid "This is a automatic Todo activity based on communication statistics with the module."
 msgstr "Това е автоматична дейност \"Да Направя\" въз основа на статистиката за комуникацията с модула."
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack_discovery.py:0
-#, python-format
 msgid "This serial number already exist in the system!"
 msgstr "Този сериен номер вече съществува в системата!"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0 code:addons/hr_rfid/models/hr_rfid_ctrl_emergency_group.py:0
-#, python-format
 msgid "This will take time. For more information check controller's commands"
 msgstr "Това ще отнеме малко време. Проверете командите на контролера за повече информация"
 
@@ -7248,7 +6979,6 @@ msgstr "Съветник за времеви график"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
-#, python-format
 msgid "Time Schedule number  %(ts)d not in range from 1 to %(to)d"
 msgstr "Номер на времевия график %(ts)d не е в диапазона от 1 до %(to)d"
 
@@ -7283,7 +7013,6 @@ msgstr "Данни на времеви график"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
-#, python-format
 msgid "Time schedule does not match for door \"%s\" in access groups \"%s\" and \"%s\""
 msgstr "Графикът не съвпада за врата \"%s\" в групи за достъп \"%s\" и \"%s\""
 
@@ -7329,7 +7058,6 @@ msgstr "За да настроите модул, изпълнете следни
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid "Todo Check communication or contact with support team"
 msgstr "Проверете комуникацията или се свържете с екипа за поддръжка"
 
@@ -7387,7 +7115,6 @@ msgstr "Недостъпен"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid "Unexpected communication error:\n"
 msgstr "Неочаквана комуникационна грешка:\n"
 
@@ -7398,44 +7125,39 @@ msgstr "Уникален номер за разграничаване на вс�
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0 code:addons/hr_rfid/models/hr_rfid_ctrl_reader.py:0
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__mode_selection_31__0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__mode_selection_4__0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__mode_selection__0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__state__unknown
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_reader__mode__00
-#, python-format
 msgid "Unknown"
 msgstr "Неизвестно"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__14
-#, python-format
 msgid "Unknown Command"
 msgstr "Непозната команда"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__-1
-#, python-format
 msgid "Unknown Error"
 msgstr "Неизвестна грешка"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__0
-#, python-format
 msgid "Unknown Event?"
 msgstr "Неизвестно събитие?"
 
 #. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__39
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__39
+msgid "Unknown Plate"
+msgstr "Непознат номер"
+
+#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
-#, python-format
 msgid "Unknown event. Please contact with your support!"
 msgstr "Непознато събитие. Моля свържете се с поддръжка!"
 
@@ -7457,7 +7179,6 @@ msgstr "До 10 цифри номер на картата"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack_replace_wiz.py:0
-#, python-format
 msgid "Use different modules for this operation!"
 msgstr "Използвайте различни модули за тази операция!"
 
@@ -7493,7 +7214,6 @@ msgstr "Потребителски събития"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "User Events on {}"
 msgstr "Потребителски събития на {}"
 
@@ -7535,28 +7255,24 @@ msgstr "Потребители част от тази група за достъ
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
-#, python-format
 msgid "Valid High Temperature range is -55 .. 125 ℃"
 msgstr "Валидният диапазон на висока температура е -55 ... 125 ℃"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
-#, python-format
 msgid "Valid Low Temperature range is -55 .. 125 ℃"
 msgstr "Валиден диапазон на ниска температура е -55 ... 125 ℃"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
-#, python-format
 msgid "Valid Low Temperature range is 0.5 .. 9 ℃"
 msgstr "Валиден диапазон на ниска температура е 0,5 ... 9 ℃"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
-#, python-format
 msgid "Valid interval range is 0-99 min."
 msgstr "Валидният интервал е 0-99 мин."
 
@@ -7576,38 +7292,26 @@ msgid "Vending Control"
 msgstr "Управление на Вендинг"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__48
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__48
-#, python-format
 msgid "Vending Error1"
 msgstr "Грешка в продажба 1"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__49
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__49
-#, python-format
 msgid "Vending Error2"
 msgstr "Грешка в продажба 2"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__47
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__47
-#, python-format
 msgid "Vending Purchase Complete"
 msgstr "Успешна продажба"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__50
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__50
-#, python-format
 msgid "Vending collect to card"
 msgstr "Вендинг прибери в карта"
 
@@ -7740,19 +7444,17 @@ msgstr "Откриване на Webstack"
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_webstack_discovery_row
 msgid "Webstack discovery rows"
-msgstr ""
+msgstr "Редове за откриване на Webstack"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid "Webstack gave us bad data when requesting /config.json"
 msgstr "Webstack ни даде лоши данни при заявка на /config.json"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid ""
 "Webstack sent us error {}({}) \n"
 " while requesting device list"
@@ -7763,7 +7465,6 @@ msgstr ""
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid ""
 "Webstack sent us error {}({}) \n"
 " while requesting information for controller {}"
@@ -7811,7 +7512,6 @@ msgstr "Кога"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_notification.py:0
-#, python-format
 msgid "When: %s"
 msgstr "Кога: %s"
 
@@ -7825,7 +7525,6 @@ msgstr "Къде"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_notification.py:0
-#, python-format
 msgid "Where: %s"
 msgstr "Къде: %s"
 
@@ -7875,7 +7574,6 @@ msgstr "Кои врати използват този времеви графи�
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid ""
 "While trying to reboot the module \n"
 "\n"
@@ -7889,7 +7587,6 @@ msgstr ""
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid ""
 "While trying to reboot the module \n"
 "\n"
@@ -7902,14 +7599,12 @@ msgstr ""
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid "While trying to send the command to the module, it returned code {} with body:\n"
 msgstr "При опит за изпращане на командата към модула той върна код {} с тяло:\n"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid ""
 "While trying to setup /protect/config.htm the module\n"
 "\n"
@@ -7927,7 +7622,6 @@ msgstr "Кой"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_notification.py:0
-#, python-format
 msgid "Who: %s"
 msgstr "Кой: %s"
 
@@ -7952,6 +7646,11 @@ msgstr "Ще приеме събития от модул, ако е true"
 #: model:ir.model,name:hr_rfid.model_hr_rfid_webstack_replace_wiz
 msgid "Wizard for replacing one webstack with another"
 msgstr "Съветник за замяна на един Модул с друг"
+
+#. module: hr_rfid
+#: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_workcode_rfid_workcode_unique
+msgid "Work code must be unique!"
+msgstr "Работните кодове трябва да бъдат уникални!"
 
 #. module: hr_rfid
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_workcodes
@@ -7990,110 +7689,68 @@ msgid "Workcodes"
 msgstr "Работни кодове"
 
 #. module: hr_rfid
-#: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_workcode_rfid_workcode_unique
-msgid "Workcodes must be unique!"
-msgstr "Работните кодове трябва да бъдат уникални!"
-
-#. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__de
-#, python-format
 msgid "Write Anti-Passback Mode"
 msgstr "Запис на APB"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__d0
-#, python-format
 msgid "Write Controller ID"
 msgstr "Запис на вътрешно ID"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__d5
-#, python-format
 msgid "Write Controller Mode"
 msgstr "Запис на режима"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__d7
-#, python-format
 msgid "Write Controller System Clock"
 msgstr "Синхронизиране на системния часовник"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__d8
-#, python-format
 msgid "Write Duress Mode"
 msgstr "Запис режим принуда"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__d4
-#, python-format
 msgid "Write Holiday List"
 msgstr "Запис на списък с празници"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__dd
-#, python-format
 msgid "Write Input Flags"
 msgstr "Запис на флаговете на входовете"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__d9
-#, python-format
 msgid "Write Input/Output Table"
 msgstr "Запис на таблица с входове/изходи"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__df
-#, python-format
 msgid "Write Outputs T/S Table"
 msgstr "Запис графици на изходите"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__d6
-#, python-format
 msgid "Write Readers Mode"
 msgstr "Режим на писане на четци"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__d3
-#, python-format
 msgid "Write Time Schedules"
 msgstr "Запис на Времеви графици"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__4
-#, python-format
 msgid "Wrong Value/Parameter"
 msgstr "Грешна стойност/параметър"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_reader.py:0
-#, python-format
 msgid "You can not change the reader mode to this value!"
 msgstr "Не можете да променяте режима на четене на тази стойност!"
 
@@ -8105,7 +7762,6 @@ msgstr "Вашият баркод за контрол на достъпа"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
-#, python-format
 msgid ""
 "Your current setup not permit this operation. You need to do it manually.\n"
 " Please call your support team for more information!"
@@ -8121,38 +7777,26 @@ msgid "Zone"
 msgstr "Зона"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__10
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__10
-#, python-format
 msgid "Zone Arm"
 msgstr "Зона под охрана"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__5
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__5
-#, python-format
 msgid "Zone Arm Denied"
 msgstr "Зона под охрана Отказана"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__35
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__35
-#, python-format
 msgid "Zone Arm/Disarm"
 msgstr "Зона под Охрана/Неохраняема"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__33
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__33
-#, python-format
 msgid "Zone Arm/Disarm Denied"
 msgstr "Зона под Охрана/Неохраняема Отказана"
 
@@ -8162,20 +7806,14 @@ msgid "Zone Count"
 msgstr "Брой зони"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__11
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__11
-#, python-format
 msgid "Zone Disarm"
 msgstr "Деактивирана Зона"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__15
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__15
-#, python-format
 msgid "Zone Disarm Denied"
 msgstr "Деактивирана Зона Отказ"
 
@@ -8185,11 +7823,8 @@ msgid "Zone Name"
 msgstr "Име на зона"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__34
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__34
-#, python-format
 msgid "Zone Status"
 msgstr "Статус на зона"
 
@@ -8362,25 +7997,20 @@ msgid "or"
 msgstr "или"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__32
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__32
-#, python-format
 msgid "reserved"
 msgstr "резервиран"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
-#, python-format
 msgid "{hw_type} SN:{serial} ID:{id}"
 msgstr "{hw_type} Сериен Номер:{serial} ID:{id}"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
-#, python-format
 msgid "{} in zones"
 msgstr "{} в зони"
 
