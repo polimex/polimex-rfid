@@ -153,14 +153,11 @@ class CctvCamera(models.Model):
             record.display_name = f"{record.name} ({brand_label}/ {record.model})"
 
     def action_show_reader(self):
-        return {
-            'type': 'ir.actions.act_window',
-            'name': _('%s Readers', self.name),
-            'view_mode': 'form',
-            'res_model': 'hr.rfid.reader',
-            'res_id': self.reader_ids.ids,
-            'target': 'current',
-        }
+        reader_action = self.env.ref('hr_rfid.hr_rfid_reader_action').read()[0]
+        reader_action['domain'] = [('camera_id', 'in', self.ids)]
+        reader_action['context'] = {'create': False}
+        reader_action['name'] = _('%s Readers', self.name)
+        return reader_action
 
     @api.model_create_multi
     def create(self, vals_list):
