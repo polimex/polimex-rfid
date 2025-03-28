@@ -9,6 +9,7 @@ class HrRfidDoor(models.Model):
         string="Camera",
         related="reader_ids.camera_id",
         ondelete="cascade",
+        store=True,
     )
 
     @api.depends('webstack_id', 'camera_id')

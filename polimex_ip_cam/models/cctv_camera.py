@@ -104,7 +104,6 @@ class CctvCamera(models.Model):
     door_id = fields.One2many(
         comodel_name='hr.rfid.door',
         inverse_name='camera_id',
-        ondelete='cascade',
     )
     # Intermediate relations to link RFID cards with a list category
     rfid_rel_ids = fields.One2many(
