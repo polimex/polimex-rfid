@@ -330,7 +330,7 @@ class CctvCamera(models.Model):
                     else:
                         # On failure, return a danger balloon with the error
                         error_msg = _("Failed to read HTTP host configuration: %s") % result.get("error")
-                        return self.baloon_danger_sticky(
+                        return self.balloon_danger_sticky(
                             title=_("HTTP Host Configuration Read Failed"),
                             message=error_msg
                         )
