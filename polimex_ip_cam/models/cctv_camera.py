@@ -563,6 +563,10 @@ class CctvCamera(models.Model):
                 if snapshot_b64 and snapshot_b64.startswith('data:'):
                     snapshot_b64 = snapshot_b64.split(',', 1)[1]
 
+                ed = _('Plate number not found in database (%s), ', plate_number)
+                ed+= _('but exist in the camera memory. ') if barrierGateCtrlType == '1' else 'nor in camera memory. '
+                ed+= _("Direction: %s, DetectType: %s, ActivePostCount: %s, EventState: %s, IPAddress: %s, MACAddress: %s, BarrierGateCtrlType: %s, Direction: %s.") % (direction, detectType, activePostCount, event_state, ipaddress, macAddress, barrierGateCtrlType, direction)
+                _logger.info(ed)
                 if not card_id: # Make system event
                     # msg = _('Plate number not found in database (%s)', plate_number)
                     # attachments = [('detectionPicture.jpg', snapshot_b64)] if snapshot_b64 else []
