@@ -362,7 +362,7 @@ class HrRfidAccessGroup(models.Model):
             acc_gr.check_for_ts_inconsistencies()
 
     @api.model
-    def _check_inherited_ids_rec(acc_gr, visited_groups: list, group_order: list, orig_id=None):
+    def _check_inherited_ids_rec(self, acc_gr, visited_groups: list, group_order: list, orig_id=None):
         group_order.append(acc_gr.id)
         if acc_gr.id == orig_id:
             return True
