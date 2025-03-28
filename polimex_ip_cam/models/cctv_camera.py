@@ -548,10 +548,11 @@ class CctvCamera(models.Model):
                     .get('fileName', '')
 
                 activePostCount = anpr_data.get('activePostCount', 0)
+                event_type = anpr_data.get('event_type', '')
                 event_state = anpr_data.get('eventState', '')
                 ipaddress = anpr_data.get('ipAddress', '')
                 macAddress = anpr_data.get('macAddress', '')
-                barrierGateCtrlType = anpr_data.get('barrierGateCtrlType', '0') #granted/denied
+                barrierGateCtrlType = event_info.get('barrierGateCtrlType', '9') #granted/denied
                 direction = anpr_data.get('direction', 'forward') # for use in R1 In or R2 Out
 
                 # търсене на собственик на регистрационния номер
@@ -563,10 +564,6 @@ class CctvCamera(models.Model):
                 if snapshot_b64 and snapshot_b64.startswith('data:'):
                     snapshot_b64 = snapshot_b64.split(',', 1)[1]
 
-                ed = _('Plate number not found in database (%s), ', plate_number)
-                ed+= _('but exist in the camera memory. ') if barrierGateCtrlType == '1' else 'nor in camera memory. '
-                ed+= _("Direction: %s, DetectType: %s, ActivePostCount: %s, EventState: %s, IPAddress: %s, MACAddress: %s, BarrierGateCtrlType: %s, Direction: %s.") % (direction, detectType, activePostCount, event_state, ipaddress, macAddress, barrierGateCtrlType, direction)
-                _logger.info(ed)
                 if not card_id: # Make system event
                     # msg = _('Plate number not found in database (%s)', plate_number)
                     # attachments = [('detectionPicture.jpg', snapshot_b64)] if snapshot_b64 else []
