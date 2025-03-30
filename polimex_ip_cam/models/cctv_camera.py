@@ -65,6 +65,8 @@ class CctvCamera(models.Model):
                               help="Additional camera information")
     server_setup = fields.Text(string="Server Setup",
                                help="Camera server setup configuration (param=value per line)")
+    entrance_setup = fields.Text(string="Entrance Setup",
+                               help="Camera entrance setup configuration (param=value per line)")
     snapshot = fields.Image(
         string="Snapshot",
         help="Camera snapshot image (base64 encoded)",
@@ -261,7 +263,7 @@ class CctvCamera(models.Model):
                         rec.serial_number = result.get("serial")
                         rec.firmware = result.get("firmware")
                         rec.action_set_http_host()
-                        rec.action_get_http_host()
+                        rec.action_set_entrance_param()
                         rec.action_get_snapshot()
                         # update_info = rec._time_setup(cam_api) or ""
                         update_info = ""
@@ -338,7 +340,6 @@ class CctvCamera(models.Model):
                 rec.message_post(body="HTTP host configuration read not implemented for brand " + rec.brand)
         return True
 
-
     def action_set_http_host(self):
         """
         Задава HTTP host конфигурация на камерата, като използва стойностите от server_setup.
@@ -414,6 +415,231 @@ class CctvCamera(models.Model):
                         )
             else:
                 rec.message_post(body="HTTP host configuration not implemented for brand " + rec.brand)
+        return True
+
+    def action_get_entrance_param(self):
+        """
+        Извлича entrance параметрите от камерата и ги записва във rec.entrance_setup във формат 'param=value'.
+        При това вложената структура се представя с точкова нотация.
+        """
+
+        def flatten_dict(d, parent_key='', sep='.'):
+            """
+            Преобразува вложен речник/списък в плосък речник с ключове във формат 'a.b.0.c'
+            """
+            items = []
+            if isinstance(d, list):
+                for index, item in enumerate(d):
+                    new_key = f"{parent_key}{sep}{index}" if parent_key else str(index)
+                    if isinstance(item, (dict, list)):
+                        items.extend(flatten_dict(item, new_key, sep=sep).items())
+                    else:
+                        items.append((new_key, item))
+            elif isinstance(d, dict):
+                for k, v in d.items():
+                    new_key = f"{parent_key}{sep}{k}" if parent_key else k
+                    if isinstance(v, (dict, list)):
+                        items.extend(flatten_dict(v, new_key, sep=sep).items())
+                    else:
+                        items.append((new_key, v))
+            else:
+                items.append((parent_key, d))
+            return dict(items)
+        for rec in self:
+            if rec.brand == 'hikvision':
+                with HikvisionCamera(rec.ip_address, rec.port, rec.username, rec.password) as cam_api:
+                    result = cam_api.get_entrance_param()
+                    if result.get("status") == "success":
+                        # Плоско представяне на получената вложена структура
+                        flattened = flatten_dict(result.get("response", {}))
+                        # Преобразуване във формат "ключ=стойност" на отделни редове
+                        param_value_lines = [f"{k}={v}" for k, v in flattened.items()]
+                        rec.entrance_setup = "\n".join(param_value_lines)
+
+                        # Показване на конфигурацията със bullet points
+                        lines = [_("Entrance Configuration:")]
+                        for k, v in flattened.items():
+                            lines.append(f"• {k}: {v}")
+                        rec.message_post(body="\n".join(lines))
+                    else:
+                        return self.balloon_danger_sticky(
+                            title=_("Entrance Configuration Retrieval Failed"),
+                            message=_("Failed to retrieve entrance configuration: %s") % result.get("error")
+                        )
+            else:
+                rec.message_post(body="Entrance configuration retrieval not implemented for brand " + rec.brand)
+        return True
+
+    def action_set_entrance_param(self):
+        """
+        Задава entrance параметрите на камерата чрез API, като прочита конфигурацията от
+        rec.entrance_setup (форматирана като "param=value" на редове), възстановява вложената структура
+        с unflatten_dict и задава дефолтни стойности, ако липсват данни.
+        """
+
+        def unflatten_dict(flat_dict, sep='.'):
+            """
+            Възстановява вложена структура от плосък речник с ключове във формат 'a.b.0.c'
+            """
+            output = {}
+            for composite_key, value in flat_dict.items():
+                keys = composite_key.split(sep)
+                current = output
+                for i, key in enumerate(keys):
+                    if key.isdigit():
+                        key = int(key)
+                    if i == len(keys) - 1:
+                        if isinstance(current, list):
+                            while len(current) <= key:
+                                current.append(None)
+                            current[key] = value
+                        else:
+                            current[key] = value
+                    else:
+                        next_key = keys[i + 1]
+                        if isinstance(current, list):
+                            # Ако текущият контейнер е списък, гарантираме че има елемент на позиция key
+                            while len(current) <= key:
+                                current.append({} if not next_key.isdigit() else [])
+                            if not ((next_key.isdigit() and isinstance(current[key], list)) or
+                                    (not next_key.isdigit() and isinstance(current[key], dict))):
+                                current[key] = {} if not next_key.isdigit() else []
+                            current = current[key]
+                        else:
+                            # Текущият контейнер е речник
+                            if next_key.isdigit():
+                                if key not in current or not isinstance(current.get(key), list):
+                                    current[key] = []
+                            else:
+                                if key not in current or not isinstance(current.get(key), dict):
+                                    current[key] = {}
+                            current = current[key]
+            return output
+
+        def parse_entrance_setup(setup_text):
+            """
+            Преобразува текста от rec.entrance_setup във flat речник (ключ=стойност на редове)
+            """
+            flat_config = {}
+            for line in setup_text.splitlines():
+                if '=' in line:
+                    key, value = line.split('=', 1)
+                    flat_config[key.strip()] = value.strip()
+            return flat_config
+
+        for rec in self:
+            if rec.brand == 'hikvision':
+                # Прочитаме flat конфигурацията от rec.entrance_setup, ако има такава
+                flat_config = {}
+                if rec.entrance_setup:
+                    flat_config = parse_entrance_setup(rec.entrance_setup)
+                nested_config = unflatten_dict(flat_config)
+
+                # Основни параметри
+                nested_config.setdefault('laneNum', '1')
+                nested_config.setdefault('bEnable', 'true')
+                nested_config.setdefault('ctrlMode', '2')
+                nested_config.setdefault('relateTriggerMode', '0')
+
+                # vehControlMeasure
+                if not isinstance(nested_config.get('vehControlMeasure'), dict):
+                    nested_config['vehControlMeasure'] = {}
+                nested_config['vehControlMeasure'].setdefault('plateNumFuzzyEnabled', 'false')
+                nested_config['vehControlMeasure'].setdefault('plateNumOnlyEnable', 'true')
+                nested_config['vehControlMeasure'].setdefault('plateNumColorEnable', 'false')
+                nested_config['vehControlMeasure'].setdefault('personVerificationType', 'plateAssociatedFace')
+
+                # vehInfoManagList – очакваме списък с 4 елемента
+                default_info = [
+                    {'vehInfoManagNum': '0', 'barrierGateOper': '0', 'relayOutAlarmEnable': 'false',
+                     'upAlarmEnable': 'false', 'hostUpAlarmEnable': 'false', 'emailAlarmEnable': 'false'},
+                    {'vehInfoManagNum': '1', 'barrierGateOper': '0', 'relayOutAlarmEnable': 'false',
+                     'upAlarmEnable': 'false', 'hostUpAlarmEnable': 'false', 'emailAlarmEnable': 'false'},
+                    {'vehInfoManagNum': '2', 'barrierGateOper': '1', 'relayOutAlarmEnable': 'false',
+                     'upAlarmEnable': 'false', 'hostUpAlarmEnable': 'false', 'emailAlarmEnable': 'false'},
+                    {'vehInfoManagNum': '3', 'barrierGateOper': '0', 'relayOutAlarmEnable': 'false',
+                     'upAlarmEnable': 'false', 'hostUpAlarmEnable': 'false', 'emailAlarmEnable': 'false'}
+                ]
+                if 'vehInfoManagList' not in nested_config or not isinstance(nested_config['vehInfoManagList'], list):
+                    nested_config['vehInfoManagList'] = default_info
+                else:
+                    for i, default_entry in enumerate(default_info):
+                        if i < len(nested_config['vehInfoManagList']):
+                            for key, val in default_entry.items():
+                                nested_config['vehInfoManagList'][i].setdefault(key, val)
+                        else:
+                            nested_config['vehInfoManagList'].append(default_entry)
+
+                # relayList – очакваме списък с 2 елемента
+                default_relay = [
+                    {'relayNum': '1', 'relayFunction': '1', 'relayOutTime': '350'},
+                    {'relayNum': '2', 'relayFunction': '2', 'relayOutTime': '350'}
+                ]
+                if 'relayList' not in nested_config or not isinstance(nested_config['relayList'], list):
+                    nested_config['relayList'] = default_relay
+                else:
+                    for i, default_entry in enumerate(default_relay):
+                        if i < len(nested_config['relayList']):
+                            for key, val in default_entry.items():
+                                nested_config['relayList'][i].setdefault(key, val)
+                        else:
+                            nested_config['relayList'].append(default_entry)
+
+                # IOAlarmList – очакваме списък с 3 елемента
+                default_io = [
+                    {'IOAlarmNum': '1', 'IOAlarmType': '0'},
+                    {'IOAlarmNum': '2', 'IOAlarmType': '0'},
+                    {'IOAlarmNum': '3', 'IOAlarmType': '0'}
+                ]
+                if 'IOAlarmList' not in nested_config or not isinstance(nested_config['IOAlarmList'], list):
+                    nested_config['IOAlarmList'] = default_io
+                else:
+                    for i, default_entry in enumerate(default_io):
+                        if i < len(nested_config['IOAlarmList']):
+                            for key, val in default_entry.items():
+                                nested_config['IOAlarmList'][i].setdefault(key, val)
+                        else:
+                            nested_config['IOAlarmList'].append(default_entry)
+
+                # Останали параметри
+                nested_config.setdefault('notCloseCarFollow', 'true')
+
+                if not isinstance(nested_config.get('bigCarKeepOpen'), dict):
+                    nested_config['bigCarKeepOpen'] = {}
+                nested_config['bigCarKeepOpen'].setdefault('enabled', 'false')
+                nested_config['bigCarKeepOpen'].setdefault('duration', '3')
+
+                if not isinstance(nested_config.get('ParkingDetection'), dict):
+                    nested_config['ParkingDetection'] = {}
+                nested_config['ParkingDetection'].setdefault('enabled', 'false')
+                nested_config['ParkingDetection'].setdefault('judgeTime', '5')
+
+                if not isinstance(nested_config.get('MasterSlaveMode'), dict):
+                    nested_config['MasterSlaveMode'] = {}
+                nested_config['MasterSlaveMode'].setdefault('enabled', 'false')
+                nested_config['MasterSlaveMode'].setdefault('Ipv4Address', '0.0.0.0')
+                nested_config['MasterSlaveMode'].setdefault('portNo', '80')
+                nested_config['MasterSlaveMode'].setdefault('username', 'admin')
+                nested_config['MasterSlaveMode'].setdefault('uploadMode', 'mutilUpload')
+                nested_config['MasterSlaveMode'].setdefault('uploadWaitTime', '500')
+                nested_config['MasterSlaveMode'].setdefault('plateNumTolerantEnabled', 'false')
+                nested_config['MasterSlaveMode'].setdefault('triggerSnapEnabled', 'false')
+                nested_config['MasterSlaveMode'].setdefault('password', 'None')
+
+                with HikvisionCamera(rec.ip_address, rec.port, rec.username, rec.password) as cam_api:
+                    result = cam_api.set_entrance_param(nested_config)
+                    if result.get("status") == "success":
+                        return self.balloon_success(
+                            title=_("Entrance Configuration Set"),
+                            message=_("Entrance configuration set successfully.")
+                        )
+                    else:
+                        return self.balloon_danger_sticky(
+                            title=_("Entrance Configuration Set Failed"),
+                            message=_("Failed to set entrance configuration: %s") % result.get("error")
+                        )
+            else:
+                rec.message_post(body="Entrance configuration setting not implemented for brand " + rec.brand)
         return True
 
     def action_get_snapshot(self):
@@ -542,6 +768,7 @@ class CctvCamera(models.Model):
                 confidenceLevel = event_info.get('confidenceLevel', 0)
                 country = event_info.get('country', '')
                 detectType = event_info.get('detectType', '')
+                vehicleLogoRecog = event_info.get('vehicleLogoRecog', '')
 
                 file_name = event_info.get('pictureInfoList', {}) \
                     .get('pictureInfo', {}) \

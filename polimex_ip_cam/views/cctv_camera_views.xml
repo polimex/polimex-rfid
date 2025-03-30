@@ -79,7 +79,6 @@
                     <button name="action_get_snapshot" type="object" string="Take Snapshot"
                             class="oe_highlight"
                             invisible="not ip_address or not port or not username or not password"/>
-
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
@@ -184,6 +183,21 @@
                             </div>
                             <group>
                                 <field name="server_setup"/>
+                            </group>
+                        </page>
+                        <page string="Entrance Settings" groups="base.group_no_one">
+                            <div class="oe_button_box" name="button_box">
+                                <button name="action_get_entrance_param" type="object"
+                                        string="Get Entrance settings"
+                                        invisible="connection_status != 'connected'"
+                                        class="oe_highlight"/>
+                                <button name="action_set_entrance_param" type="object"
+                                        string="Set Entrance settings"
+                                        invisible="connection_status != 'connected' and not server_setup"
+                                        class="oe_highlight"/>
+                            </div>
+                            <group>
+                                <field name="entrance_setup"/>
                             </group>
                         </page>
                     </notebook>

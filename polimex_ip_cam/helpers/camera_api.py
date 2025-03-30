@@ -6,6 +6,232 @@ import base64
 
 _logger = logging.getLogger(__name__)
 
+VEHICLE_LOGO_MAP = {
+    1026: "ALFAROMEO",
+    1027: "ASTONMARTIN",
+    1028: "AUDI",
+    1030: "PORSCHE",
+    1031: "BUICK",
+    1032: "BJQICHE",
+    1033: "BQZHIDAO",
+    1034: "BQWEIWANG",
+    1035: "BQYINXIANG",
+    1036: "BENZ",
+    1037: "BMW",
+    1038: "BAOJUN",
+    1039: "BAOLONG",
+    1040: "BENTLEY",
+    1041: "BRABUS",
+    1043: "HONDA",
+    1044: "PEUGEOT",
+    1045: "BYD",
+    1046: "CHANGHE",
+    1048: "GREATWALL",
+    1049: "CHANGAN",
+    1050: "DS",
+    1051: "SOUEAST",
+    1053: "VOLKSWAGEN",
+    1054: "DADI",
+    1056: "DODGE",
+    1059: "DAIHATSU",
+    1060: "TOYOTA",
+    1063: "FEREARI",
+    1064: "FORD",
+    1066: "FUDI",
+    1067: "FIAT",
+    1069: "MITSUOKA",
+    1070: "GZYUNBAO",
+    1071: "GQCHUANQI",
+    1074: "QOROS",
+    1076: "HUAPU",
+    1077: "HUATAI",
+    1078: "HAFEI",
+    1079: "HUMMER",
+    1080: "HAIMA",
+    1081: "HONGQI",
+    1083: "GEELYAUTO",
+    1084: "JEEP",
+    1085: "JAGUAR",
+    1086: "JIANGNAN",
+    1088: "CHRYSLER",
+    1089: "CADILLAC",
+    1091: "KANDIONE",
+    1093: "LAMBORGHINI",
+    1094: "LIFAN",
+    1095: "ROLLSROYCE",
+    1096: "LINCOLN",
+    1097: "EVERUS",
+    1098: "LIANHUA",
+    1100: "LOTUS",
+    1101: "LANDROVER",
+    1102: "SUZUKI",
+    1103: "LUFENG",
+    1104: "LEXUS",
+    1105: "RENAULT",
+    1107: "MINI",
+    1108: "MASERATI",
+    1109: "MEIYA",
+    1110: "MCLAREN",
+    1111: "MAYBACH",
+    1112: "MAZDA",
+    1114: "LUXGEN",
+    1115: "NJJINLONG",
+    1116: "OPEL",
+    1117: "ACURA",
+    1119: "VENUCIA",
+    1120: "CHERY",
+    1121: "KIA",
+    1123: "NISSAN",
+    1124: "RUIQI",
+    1125: "ROEWE",
+    1127: "SMART",
+    1128: "MITSUBISHI",
+    1129: "SQDATONG",
+    1131: "SHUANGHUAN",
+    1132: "SHUANGLONG",
+    1133: "SUBARU",
+    1134: "SKODA",
+    1135: "SAAB",
+    1138: "TIANMA",
+    1139: "TEALA",
+    1141: "DENZA",
+    1143: "WEILIN",
+    1144: "VOLVO",
+    1145: "WCYINGZHI",
+    1146: "XINKAI",
+    1147: "XINDADI",
+    1148: "XINYATU",
+    1149: "HYUNDAI",
+    1150: "SEAT",
+    1151: "CHEVROLET",
+    1152: "CITROEN",
+    1154: "YONGYUAN",
+    1156: "INFINITI",
+    1157: "MUSTANG",
+    1159: "YUJIE",
+    1160: "ZXAUTO",
+    1161: "ZHONGHUA",
+    1163: "ZOTYE",
+    1164: "KNOWBEANS",
+    1165: "KAIYI",
+    1166: "HUASONG",
+    1167: "JXWUSHILING",
+    1168: "BORGWARD",
+    1169: "SQTONGJIA",
+    1170: "HANJIANG",
+    1171: "ZINORO",
+    1172: "LUDIFANGZHOU",
+    1173: "HANTENG",
+    1175: "CHANGJIANG",
+    1176: "SWM",
+    1177: "KEYTON",
+    1180: "BISU",
+    1181: "CAKUAYUE",
+    1537: "ANKAI",
+    1538: "ANYUAN",
+    1540: "BBZHONGQI",
+    1546: "CHENGGONG",
+    1547: "CHANGLONG",
+    1549: "CASHANGYONG",
+    1552: "DONGFENG",
+    1554: "DAEWOO",
+    1555: "DAYUN",
+    1556: "DIMA",
+    1557: "DONGWO",
+    1559: "FUTIAN",
+    1561: "GMC",
+    1562: "GQJIAO",
+    1566: "HUALING",
+    1570: "HUIZHONG",
+    1571: "HIGER",
+    1574: "HTYUANTONG",
+    1575: "HANGTIAN",
+    1576: "HUANGHAI",
+    1577: "HEIBAO",
+    1578: "JIULONG",
+    1579: "JIANGHUAI",
+    1580: "JIANGHUAN",
+    1581: "JIANGLING",
+    1584: "JINBEI",
+    1585: "JINLONG",
+    1586: "KAIMA",
+    1587: "KAWEI",
+    1588: "KAIRUI",
+    1590: "LIANHE",
+    1592: "MAN",
+    1594: "NONGYONGCHE",
+    1596: "NANJUN",
+    1597: "QINGLING",
+    1598: "YOUNGMANONE",
+    1599: "SYZHONGGONG",
+    1600: "SHSHITONG",
+    1602: "TRICYCLE",
+    1603: "SQYWKHY",
+    1606: "SHAOLIN",
+    1608: "SHIFENG",
+    1609: "SUNWIN",
+    1611: "SHENYE",
+    1612: "SHUCHI",
+    1613: "SHANQI",
+    1614: "SCANIA",
+    1615: "TANGJUN",
+    1619: "WANFENG",
+    1620: "WUZHENG",
+    1621: "WULING",
+    1626: "XUGONG",
+    1629: "FAW",
+    1630: "YAXING",
+    1631: "IVECO",
+    1633: "YUTONG",
+    1634: "YANGZI",
+    1635: "YANTAI",
+    1636: "YUEJIN",
+    1637: "YINTIAN",
+    1639: "ZGZHONGQI",
+    1641: "ZHONGTONGONE",
+    1642: "ZHONGSHUN",
+    1644: "ZHONGDA",
+    1646: "JGZHONGKA",
+    1647: "WUZHOULONG",
+    1648: "COACH",
+    1651: "PICKUP",
+    1654: "JIJIANG",
+    1674: "DONGFANGHONG",
+    1676: "QINGQI",
+    1677: "TRUCK",
+    1678: "SPYCAR",
+    1679: "TRAILCAR",
+    1683: "GUILIN",
+    1684: "SCHYUNDAI",
+    1688: "WANXIANG",
+    1690: "LFSHIJUN",
+    1691: "CHANGAN",
+    1692: "ZLZHONGGONG",
+    1693: "YINLONG",
+    1695: "YIXING",
+    1696: "XIWO",
+    1697: "YANGZIJIANG",
+    1698: "SUITONG",
+    1702: "ZHONGTIANFC",
+    1703: "WANDA",
+    1704: "SHANGRAO",
+    1705: "ZHONGZHI",
+    1706: "ZCSDDIANDONG",
+    1707: "ZHONGTONGTWO",
+    1708: "GLCOACH",
+    1709: "BEIJING",
+    1710: "BEIFANG",
+    1711: "BFNAPULAN",
+    1712: "HUACHUAN",
+    1713: "YOUYI",
+    1714: "TONGXIN",
+    1715: "MG",
+    1716: "JIACHUAN",
+    1717: "NVSHEN",
+    1718: "SHILI",
+    1719: "SHAOLINTWO"
+}
+
 
 class BaseCamera:
     """
@@ -712,3 +938,189 @@ class HikvisionCamera(BaseCamera):
         except Exception as e:
             _logger.error("Hikvision set_dst_config: Request error: %s", e)
             return {"status": "failed", "error": str(e)}
+
+    def get_entrance_param(self):
+        """
+        Извлича конфигурацията на Entrance параметрите.
+        Използва GET заявка към: /ISAPI/ITC/Entrance/entranceParam
+        Връща речник с парсирана информация.
+        """
+        url = f"http://{self.ip_address}:{self.port}/ISAPI/ITC/Entrance/entranceParam"
+        try:
+            response = requests.get(url, auth=HTTPDigestAuth(self.username, self.password), timeout=self.timeout)
+            if response.status_code == 200:
+                ns = {'ns': 'http://www.hikvision.com/ver10/XMLSchema'}
+                root = ET.fromstring(response.content)
+                entrance = root.find('ns:EntranceParam', namespaces=ns)
+                if entrance is None:
+                    return {"status": "failed", "error": "Не е намерен елемент EntranceParam"}
+                result = {
+                    "laneNum": entrance.findtext("ns:laneNum", namespaces=ns),
+                    "bEnable": entrance.findtext("ns:bEnable", namespaces=ns),
+                    "ctrlMode": entrance.findtext("ns:ctrlMode", namespaces=ns),
+                    "relateTriggerMode": entrance.findtext("ns:relateTriggerMode", namespaces=ns)
+                }
+                # vehControlMeasure
+                vcm = entrance.find("ns:vehControlMeasure", namespaces=ns)
+                if vcm is not None:
+                    result["vehControlMeasure"] = {
+                        "plateNumFuzzyEnabled": vcm.findtext("ns:plateNumFuzzyEnabled", namespaces=ns),
+                        "plateNumOnlyEnable": vcm.findtext("ns:plateNumOnlyEnable", namespaces=ns),
+                        "plateNumColorEnable": vcm.findtext("ns:plateNumColorEnable", namespaces=ns),
+                        "personVerificationType": vcm.findtext("ns:personVerificationType", namespaces=ns)
+                    }
+                # vehInfoManagList
+                vim_list = []
+                vim_elem = entrance.find("ns:vehInfoManagList", namespaces=ns)
+                if vim_elem is not None:
+                    for veh in vim_elem.findall("ns:vehInfoManag", namespaces=ns):
+                        vim_list.append({
+                            "vehInfoManagNum": veh.findtext("ns:vehInfoManagNum", namespaces=ns),
+                            "barrierGateOper": veh.findtext("ns:barrierGateOper", namespaces=ns),
+                            "relayOutAlarmEnable": veh.findtext("ns:relayOutAlarmEnable", namespaces=ns),
+                            "upAlarmEnable": veh.findtext("ns:upAlarmEnable", namespaces=ns),
+                            "hostUpAlarmEnable": veh.findtext("ns:hostUpAlarmEnable", namespaces=ns),
+                            "emailAlarmEnable": veh.findtext("ns:emailAlarmEnable", namespaces=ns)
+                        })
+                    result["vehInfoManagList"] = vim_list
+                # relayList
+                relay_list = []
+                rl_elem = entrance.find("ns:relayList", namespaces=ns)
+                if rl_elem is not None:
+                    for relay in rl_elem.findall("ns:relay", namespaces=ns):
+                        relay_list.append({
+                            "relayNum": relay.findtext("ns:relayNum", namespaces=ns),
+                            "relayFunction": relay.findtext("ns:relayFunction", namespaces=ns),
+                            "relayOutTime": relay.findtext("ns:relayOutTime", namespaces=ns)
+                        })
+                    result["relayList"] = relay_list
+                # IOAlarmList
+                io_list = []
+                io_elem = entrance.find("ns:IOAlarmList", namespaces=ns)
+                if io_elem is not None:
+                    for io in io_elem.findall("ns:IOAlarm", namespaces=ns):
+                        io_list.append({
+                            "IOAlarmNum": io.findtext("ns:IOAlarmNum", namespaces=ns),
+                            "IOAlarmType": io.findtext("ns:IOAlarmType", namespaces=ns)
+                        })
+                    result["IOAlarmList"] = io_list
+                # останали елементи
+                result["notCloseCarFollow"] = entrance.findtext("ns:notCloseCarFollow", namespaces=ns)
+                bck_elem = entrance.find("ns:bigCarKeepOpen", namespaces=ns)
+                if bck_elem is not None:
+                    result["bigCarKeepOpen"] = {
+                        "enabled": bck_elem.findtext("ns:enabled", namespaces=ns),
+                        "duration": bck_elem.findtext("ns:duration", namespaces=ns)
+                    }
+                pd_elem = entrance.find("ns:ParkingDetection", namespaces=ns)
+                if pd_elem is not None:
+                    result["ParkingDetection"] = {
+                        "enabled": pd_elem.findtext("ns:enabled", namespaces=ns),
+                        "judgeTime": pd_elem.findtext("ns:judgeTime", namespaces=ns)
+                    }
+                msm_elem = entrance.find("ns:MasterSlaveMode", namespaces=ns)
+                if msm_elem is not None:
+                    result["MasterSlaveMode"] = {
+                        "enabled": msm_elem.findtext("ns:enabled", namespaces=ns),
+                        "Ipv4Address": msm_elem.findtext("ns:Ipv4Address", namespaces=ns),
+                        "portNo": msm_elem.findtext("ns:portNo", namespaces=ns),
+                        "username": msm_elem.findtext("ns:username", namespaces=ns),
+                        "uploadMode": msm_elem.findtext("ns:uploadMode", namespaces=ns),
+                        "uploadWaitTime": msm_elem.findtext("ns:uploadWaitTime", namespaces=ns),
+                        "plateNumTolerantEnabled": msm_elem.findtext("ns:plateNumTolerantEnabled", namespaces=ns),
+                        "triggerSnapEnabled": msm_elem.findtext("ns:triggerSnapEnabled", namespaces=ns),
+                        "password": msm_elem.findtext("ns:password", namespaces=ns)
+                    }
+                return {"status": "success", "response": result}
+            else:
+                error_detail = self._extract_error(response.text)
+                return {"status": "failed", "error": error_detail}
+        except Exception as e:
+            return {"status": "failed", "error": str(e)}
+
+    def set_entrance_param(self, config):
+        """
+        Задава Entrance параметрите.
+        Параметър config трябва да е речник със структура, съответстваща на EntranceParamList.
+        Използва PUT заявка към: /ISAPI/ITC/Entrance/entranceParam
+        """
+        # Създаваме основния XML елемент
+        root = ET.Element("EntranceParamList", xmlns="http://www.hikvision.com/ver10/XMLSchema", version="1.0")
+        entrance = ET.SubElement(root, "EntranceParam")
+        # Основни полета
+        for field in ["laneNum", "bEnable", "ctrlMode", "relateTriggerMode"]:
+            if field in config:
+                ET.SubElement(entrance, field).text = str(config[field])
+        # vehControlMeasure
+        vcm = config.get("vehControlMeasure", {})
+        if vcm:
+            vcm_elem = ET.SubElement(entrance, "vehControlMeasure")
+            for field in ["plateNumFuzzyEnabled", "plateNumOnlyEnable", "plateNumColorEnable",
+                          "personVerificationType"]:
+                if field in vcm:
+                    ET.SubElement(vcm_elem, field).text = str(vcm[field])
+        # vehInfoManagList
+        vim_list = config.get("vehInfoManagList", [])
+        if vim_list:
+            vim_elem = ET.SubElement(entrance, "vehInfoManagList")
+            for veh in vim_list:
+                veh_elem = ET.SubElement(vim_elem, "vehInfoManag")
+                for field in ["vehInfoManagNum", "barrierGateOper", "relayOutAlarmEnable", "upAlarmEnable",
+                              "hostUpAlarmEnable", "emailAlarmEnable"]:
+                    if field in veh:
+                        ET.SubElement(veh_elem, field).text = str(veh[field])
+        # relayList
+        relays = config.get("relayList", [])
+        if relays:
+            relay_list_elem = ET.SubElement(entrance, "relayList")
+            for relay in relays:
+                relay_elem = ET.SubElement(relay_list_elem, "relay")
+                for field in ["relayNum", "relayFunction", "relayOutTime"]:
+                    if field in relay:
+                        ET.SubElement(relay_elem, field).text = str(relay[field])
+        # IOAlarmList
+        ioalarms = config.get("IOAlarmList", [])
+        if ioalarms:
+            io_elem = ET.SubElement(entrance, "IOAlarmList")
+            for io in ioalarms:
+                io_alarm = ET.SubElement(io_elem, "IOAlarm")
+                for field in ["IOAlarmNum", "IOAlarmType"]:
+                    if field in io:
+                        ET.SubElement(io_alarm, field).text = str(io[field])
+        # Останали полета
+        if "notCloseCarFollow" in config:
+            ET.SubElement(entrance, "notCloseCarFollow").text = str(config["notCloseCarFollow"]).lower()
+        if "bigCarKeepOpen" in config:
+            bcko = ET.SubElement(entrance, "bigCarKeepOpen")
+            for field in ["enabled", "duration"]:
+                if field in config["bigCarKeepOpen"]:
+                    value = config["bigCarKeepOpen"][field]
+                    bcko.text = ""  # placeholder
+                    ET.SubElement(bcko, field).text = str(value).lower() if isinstance(value, bool) else str(value)
+        if "ParkingDetection" in config:
+            pd = ET.SubElement(entrance, "ParkingDetection")
+            for field in ["enabled", "judgeTime"]:
+                if field in config["ParkingDetection"]:
+                    value = config["ParkingDetection"][field]
+                    ET.SubElement(pd, field).text = str(value).lower() if isinstance(value, bool) else str(value)
+        if "MasterSlaveMode" in config:
+            msm = ET.SubElement(entrance, "MasterSlaveMode")
+            for field in ["enabled", "Ipv4Address", "portNo", "username", "uploadMode", "uploadWaitTime",
+                          "plateNumTolerantEnabled", "triggerSnapEnabled", "password"]:
+                if field in config["MasterSlaveMode"]:
+                    value = config["MasterSlaveMode"][field]
+                    ET.SubElement(msm, field).text = str(value).lower() if isinstance(value, bool) else str(value)
+
+        xml_body = ET.tostring(root, encoding="utf-8", method="xml")
+        url = f"http://{self.ip_address}:{self.port}/ISAPI/ITC/Entrance/entranceParam"
+        try:
+            response = requests.put(url, auth=HTTPDigestAuth(self.username, self.password),
+                                    data=xml_body, timeout=self.timeout)
+            if response.status_code == 200:
+                return {"status": "success", "response": response.text}
+            else:
+                error_detail = self._extract_error(response.text)
+                return {"status": "failed", "error": error_detail}
+        except Exception as e:
+            return {"status": "failed", "error": str(e)}
+
