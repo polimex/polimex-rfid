@@ -184,10 +184,30 @@
             <field name="model">rfid.service</field>
             <field name="arch" type="xml">
                 <tree string="RFID Services List" decoration-success="active==True" decoration-danger="active!=True">
-                    <field name="active" invisible="1"/>
                     <field name="name"/>
                     <field name="service_type"/>
+                    <field name="access_group_id" optional="hide"/>
+                    <field name="card_type" options='{"no_open": True, "no_create": True}' optional="hide"/>
+                    <field name="time_interval_start" widget="float_time" optional="show"/>
+                    <field name="time_interval_end" widget="float_time" optional="show"/>
+                    <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="show"/>
+                    <field name="parent_id" optional="hide"/>
                 </tree>
+            </field>
+        </record>
+
+        <record id="hr_rfid_service_search" model="ir.ui.view">
+            <field name="name">hrrfid.service.search</field>
+            <field name="model">rfid.service</field>
+            <field name="arch" type="xml">
+                <search string="">
+                    <field name="name"/>
+                    <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                    <searchpanel>
+                        <field name="service_type" icon="fa-building" enable_counters="1"/>
+                        <field name="card_type" icon="fa-users" enable_counters="1"/>
+                    </searchpanel>
+                </search>
             </field>
         </record>
 
