@@ -59,11 +59,11 @@ class RFIDController(RFIDAppCase):
         response = self._hearbeat(self.c_vending.webstack_id)
         self.assertEqual(response, {'cmd': {'id': id, 'c': 'F0', 'd': ''}}, '(%s)' % self.c_vending.name)
         response = self._send_cmd_response(response, self.default_F0[16])
-        self.assertTrue(
-            response['cmd']['c'] == 'D5' and response['cmd']['d'] == '22', '(%s)' % self.c_vending.name)  # {'cmd': {'id': 7, 'c': 'D5', 'd': '22'}}
-        response = self._send_cmd_response(response)
-        self.assertTrue(response['cmd']['c'] == 'F0', '(%s)' % self.c_vending.name)
-        response = self._send_cmd_response(response, self.default_F0[16])
+        # self.assertTrue(
+        #     response['cmd']['c'] == 'D5' and response['cmd']['d'] == '22', '(%s)' % self.c_vending.name)  # {'cmd': {'id': 7, 'c': 'D5', 'd': '22'}}
+        # response = self._send_cmd_response(response)
+        # self.assertTrue(response['cmd']['c'] == 'F0', '(%s)' % self.c_vending.name)
+        # response = self._send_cmd_response(response, self.default_F0[16])
         self.assertTrue(response['cmd']['c'] == 'D7', '(%s)' % self.c_vending.name)  #
         response = self._send_cmd_response(response)
         self.assertTrue(response['cmd']['c'] == 'DC', '(%s)' % self.c_vending.name)
@@ -74,10 +74,12 @@ class RFIDController(RFIDAppCase):
         response = self._send_cmd_response(response, '010100010100010100010100')
         self.assertTrue(response['cmd']['c'] == 'F9' and response['cmd']['d'] == '01', '(%s)' % self.c_vending.name)
         response = self._process_io_table(response, self.c_vending)
-        self.assertTrue(response['cmd']['c'] == 'B3', '(%s)' % self.c_vending.name)
-        response = self._send_cmd_response(response, self.default_B3[16])
         self.assertTrue(response['cmd']['c'] == 'FB')
         response = self._send_cmd_response(response, '0f000000')
+        self.assertTrue(response['cmd']['c'] == 'FF')
+        response = self._send_cmd_response(response, '0000000000000000')
+        self.assertTrue(response['cmd']['c'] == 'B3', '(%s)' % self.c_vending.name)
+        response = self._send_cmd_response(response, self.default_B3[16])
         self.assertTrue(response == {}, '(%s)' % self.c_vending.name)
 
     def _add_Turnstile(self, module=234567, key='0000', id=None):
@@ -102,15 +104,18 @@ class RFIDController(RFIDAppCase):
         self.assertTrue(response['cmd']['c'] == 'F6', '(%s)' % self.c_turnstile.name)
         response = self._send_cmd_response(response, '010100010100010100010100')
         response = self._process_io_table(response, self.c_turnstile, module, key)
-        self.assertTrue(response['cmd']['c'] == 'B3', '(%s)' % self.c_turnstile.name)
-        response = self._send_cmd_response(response, self.default_B3[9])
         self.assertTrue(response['cmd']['c'] == 'FB')
         response = self._send_cmd_response(response, '0f000000')
+        self.assertTrue(response['cmd']['c'] == 'FF')
+        response = self._send_cmd_response(response, '0000000000000000')
+        self.assertTrue(response['cmd']['c'] == 'B3', '(%s)' % self.c_turnstile.name)
+        response = self._send_cmd_response(response, self.default_B3[9])
         self.assertTrue(response['cmd']['c'] == 'FC')
         response = self._send_cmd_response(response, '00')
         self.assertTrue(response == {}, '(%s)' % self.c_turnstile.name)
 
     def _add_iCon180(self, module=234567, key='0000', id=5):
+        id = id or self._get_id_num()
         self.c_180 = self.env['hr.rfid.ctrl'].create({
             'name': 'Controller iCON180',
             'ctrl_id': id,
@@ -119,8 +124,8 @@ class RFIDController(RFIDAppCase):
         self.c_180.read_controller_information_cmd()
 
         response = self._hearbeat(self.c_180.webstack_id)
-        self.assertEqual(response, {'cmd': {'id': id, 'c': 'F0', 'd': ''}}, )
-
+        self.assertEqual(response, {'cmd': {'id': id, 'c': 'F0', 'd': ''}}, '(%s)' % self.c_180.name)
+        # response = self._send_cmd_response(response, self.default_F0[17])
         response = self._send_cmd_response(response, '0107000601000703090000090000080401050208000401050807000008010900')
         self.assertTrue(response['cmd']['c'] == 'D7')
         response = self._send_cmd_response(response)
@@ -131,10 +136,12 @@ class RFIDController(RFIDAppCase):
         self.assertTrue(response['cmd']['c'] == 'F6')
         response = self._send_cmd_response(response, '010100010100010100010100')
         response = self._process_io_table(response, self.c_180, module, key)
-        self.assertTrue(response['cmd']['c'] == 'B3')
-        response = self._send_cmd_response(response, '00006E010752079200000000000000000000000000000000')
         self.assertTrue(response['cmd']['c'] == 'FB')
         response = self._send_cmd_response(response, '7f7f0000')
+        self.assertTrue(response['cmd']['c'] == 'FF')
+        response = self._send_cmd_response(response, '0000000000000000')
+        self.assertTrue(response['cmd']['c'] == 'B3')
+        response = self._send_cmd_response(response, '00006E010752079200000000000000000000000000000000')
         self.assertTrue(response == {})
 
     def _add_iCon130(self, module=234567, key='0000', id=None):
@@ -159,10 +166,12 @@ class RFIDController(RFIDAppCase):
         self.assertTrue(response['cmd']['c'] == 'F6', '(%s)' % self.c_130.name)
         response = self._send_cmd_response(response, '010100010100010100010100')
         response = self._process_io_table(response, self.c_130, module, key)
+        self.assertTrue(response['cmd']['c'] == 'FB')
+        response = self._send_cmd_response(response, '7f010000')
+        self.assertTrue(response['cmd']['c'] == 'FF')
+        response = self._send_cmd_response(response, '0000000000000000')
         self.assertTrue(response['cmd']['c'] == 'B3', '(%s)' % self.c_130.name)
         response = self._send_cmd_response(response, self.default_B3[17])
-        self.assertTrue(response['cmd']['c'] == 'FB')
-        response = self._send_cmd_response(response, '0f000000')
         self.assertTrue(response == {}, '(%s)' % self.c_130.name)
 
     def _add_RelayController(self, module=234567, key='0000', id=None):
@@ -187,10 +196,12 @@ class RFIDController(RFIDAppCase):
         self.assertTrue(response['cmd']['c'] == 'F6', '(%s)' % self.c_Relay.name)
         response = self._send_cmd_response(response, '010402010100000000000000')
         response = self._process_io_table(response, self.c_Relay, module, key)
-        self.assertTrue(response['cmd']['c'] == 'B3', '(%s)' % self.c_Relay.name)
-        response = self._send_cmd_response(response, self.default_B3[30])
         self.assertTrue(response['cmd']['c'] == 'FB')
         response = self._send_cmd_response(response, '07000000')
+        self.assertTrue(response['cmd']['c'] == 'FF')
+        response = self._send_cmd_response(response, '0000000000000000')
+        self.assertTrue(response['cmd']['c'] == 'B3', '(%s)' % self.c_Relay.name)
+        response = self._send_cmd_response(response, self.default_B3[30])
         self.assertTrue(response == {}, '(%s)' % self.c_Relay.name)
 
     def _add_iCon115(self, module=234567, key='0000', id=None):
@@ -206,6 +217,8 @@ class RFIDController(RFIDAppCase):
         self.assertEqual(response, {'cmd': {'id': id, 'c': 'F0', 'd': ''}}, '(%s)' % self.c_115.name)
 
         response = self._send_cmd_response(response, self.default_F0[11])
+        self.assertTrue(response['cmd']['c'] == 'B0', '(%s)' % self.c_115.name)
+        response = self._send_cmd_response(response, data='00')
         self.assertTrue(response['cmd']['c'] == 'D7', '(%s)' % self.c_115.name)
         response = self._send_cmd_response(response)
         self.assertTrue(response['cmd']['c'] == 'DC', '(%s)' % self.c_115.name)
@@ -215,10 +228,12 @@ class RFIDController(RFIDAppCase):
         self.assertTrue(response['cmd']['c'] == 'F6', '(%s)' % self.c_115.name)
         response = self._send_cmd_response(response, '010402010100000000000000')
         response = self._process_io_table(response, self.c_115, module, key)
+        self.assertTrue(response['cmd']['c'] == 'FB')
+        response = self._send_cmd_response(response, '1f000000')
+        self.assertTrue(response['cmd']['c'] == 'FF')
+        response = self._send_cmd_response(response, '0000000000000000')
         self.assertTrue(response['cmd']['c'] == 'B3', '(%s)' % self.c_115.name)
         response = self._send_cmd_response(response, self.default_B3[11])
-        self.assertTrue(response['cmd']['c'] == 'FB')
-        response = self._send_cmd_response(response, '07000000')
         self.assertTrue(response == {}, '(%s)' % self.c_115.name)
 
     def _add_iCon110(self, module=234567, key='0000', id=None):
@@ -243,10 +258,12 @@ class RFIDController(RFIDAppCase):
         self.assertTrue(response['cmd']['c'] == 'F6', '(%s)' % self.c_110.name)
         response = self._send_cmd_response(response, '010402010100000000000000')
         response = self._process_io_table(response, self.c_110, module, key)
-        self.assertTrue(response['cmd']['c'] == 'B3', '(%s)' % self.c_110.name)
-        response = self._send_cmd_response(response, self.default_B3[6])
         self.assertTrue(response['cmd']['c'] == 'FB')
         response = self._send_cmd_response(response, '07000000')
+        self.assertTrue(response['cmd']['c'] == 'FF')
+        response = self._send_cmd_response(response, '00000000')
+        self.assertTrue(response['cmd']['c'] == 'B3', '(%s)' % self.c_110.name)
+        response = self._send_cmd_response(response, self.default_B3[6])
         self.assertTrue(response == {}, '(%s)' % self.c_110.name)
 
     def _add_iCon50(self, module=234567, key='0000', id=None):
@@ -271,10 +288,12 @@ class RFIDController(RFIDAppCase):
         self.assertTrue(response['cmd']['c'] == 'F6', '(%s)' % self.c_50.name)
         response = self._send_cmd_response(response, '010000000000000000000000')
         response = self._process_io_table(response, self.c_50, module, key)
-        self.assertTrue(response['cmd']['c'] == 'B3')
-        response = self._send_cmd_response(response, self.default_B3[12])
         self.assertTrue(response['cmd']['c'] == 'FB')
         response = self._send_cmd_response(response, '01000000')
+        self.assertTrue(response['cmd']['c'] == 'FF')
+        response = self._send_cmd_response(response, '00000000')
+        self.assertTrue(response['cmd']['c'] == 'B3')
+        response = self._send_cmd_response(response, self.default_B3[12])
         self.assertTrue(response == {}, '(%s)' % self.c_50.name)
 
     def _add_Temperature(self, module=234567, key='0000', id=None):
@@ -297,10 +316,12 @@ class RFIDController(RFIDAppCase):
         self.assertTrue(response['cmd']['c'] == 'DC', '(%s)' % self.c_temperature.name)
         response = self._send_cmd_response(response)
         response = self._process_io_table(response, self.c_temperature, module, key)
-        self.assertTrue(response['cmd']['c'] == 'B3', '(%s)' % self.c_temperature.name)
-        response = self._send_cmd_response(response, self.default_B3[22])
         self.assertTrue(response['cmd']['c'] == 'FB')
         response = self._send_cmd_response(response, '0f000000')
+        self.assertTrue(response['cmd']['c'] == 'FF')
+        response = self._send_cmd_response(response, '0000000000000000')
+        self.assertTrue(response['cmd']['c'] == 'B3', '(%s)' % self.c_temperature.name)
+        response = self._send_cmd_response(response, self.default_B3[22])
         self.assertEqual(response['cmd']['c'],'F2', '(%s)' % self.c_temperature.name)
         response = self._send_cmd_response(response, '0000000004')
         self.assertEqual(self.c_temperature.cards_count, 4, '(%s)' % self.c_temperature.name)

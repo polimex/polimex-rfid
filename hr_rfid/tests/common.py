@@ -592,6 +592,7 @@ class RFIDAppCase(common.TransactionCase):
             # Grand access to doors in controller
             cmd_count = self._count_ctrl_waiting_cmd(ctrl)
             self.test_ag_employee_1.add_doors(ctrl.door_ids)
+            self.test_ag_employee_1._flush()
             # Not expecting command for add card
             new_cmd_count = self._count_ctrl_waiting_cmd(ctrl)
             self.assertEqual(new_cmd_count, cmd_count)
@@ -608,6 +609,7 @@ class RFIDAppCase(common.TransactionCase):
             self.assertEqual(response, {})
             # Set delay on access group
             self.test_ag_employee_1.delay_between_events = 60
+            self.test_ag_employee_1._flush()
             # Try access in delay previous (expected Denied)
             last_event_id = self.test_ag_employee_1._calc_last_user_event_in_ag(employee_id=self.test_employee_id)
             _logger.info(

@@ -14,6 +14,7 @@ _logger = logging.getLogger(__name__)
 # @tagged('post_install', '-at_install', 'migration')
 @tagged('standard', 'at_install', 'migration')
 class RFIDTests(RFIDController, HttpCase):
+    readonly_enabled = False
     def setUp(self):
         super(RFIDTests, self).setUp()
 
@@ -46,14 +47,6 @@ class RFIDTests(RFIDController, HttpCase):
         self._ev64(self.c_115)
         self._check_no_commands()
 
-        _logger.info('Start tests for Relay Controller ')
-        self._add_RelayController()
-        self._test_R1R2(self.c_Relay)
-        self._test_add_remove_card_partner(self.c_Relay)
-        self._test_add_remove_card_employee(self.c_Relay)
-        # self._ev64(self.c_Relay) # TODO Check details
-        self._check_no_commands()
-
         _logger.info('Start tests for iCON130 ')
         self._add_iCon130()
         self._test_R1R2R3R4(self.c_130)
@@ -62,12 +55,26 @@ class RFIDTests(RFIDController, HttpCase):
         self._ev64(self.c_130)
         self._check_no_commands()
 
-        # _logger.info('Start tests for iCON180 ')
-        # self._add_iCon180()
+        _logger.info('Start tests for iCON180 ')
+        self._add_iCon180()
+        self._test_R1R2R3R4(self.c_180)
+        self._test_add_remove_card_partner(self.c_180)
+        self._test_add_remove_card_employee(self.c_180)
+        self._ev64(self.c_180)
+        self._check_no_commands()
+
+
+        _logger.info('Start tests for Relay Controller ')
+        self._add_RelayController()
+        self._test_R1R2(self.c_Relay)
+        self._test_add_remove_card_partner(self.c_Relay)
+        self._test_add_remove_card_employee(self.c_Relay)
+        # self._ev64(self.c_Relay) # TODO Check details
+        self._check_no_commands()
 
         # Check for not processed responses
-        # response = self._hearbeat(self.test_webstack_10_3_id)
-        # self.assertEqual(response, {})
+        response = self._hearbeat(self.test_webstack_10_3_id)
+        self.assertEqual(response, {})
 
         _logger.info('Start tests for Turnstile ')
         self._add_Turnstile()
