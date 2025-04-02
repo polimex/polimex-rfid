@@ -968,7 +968,7 @@ class HrRfidWebstack(models.Model):
             for out in range(controller.outputs if controller.outputs <= 8 else 8):
                 if (byte_data[out] & 0x0F) > 0:
                     ts_for_read.add(byte_data[out] & 0x0F)
-                    ts_id = self.env['hr.rfid.time.schedule'].with_company(controller.company_id).search(
+                    ts_id = self.env['hr.rfid.time.schedule'].with_company(controller.webstack_id.company_id).search(
                         [('number', '=', byte_data[out] & 0x0F)]
                     )
                     if not ts_id:

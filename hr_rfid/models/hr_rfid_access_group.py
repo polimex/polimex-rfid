@@ -405,7 +405,7 @@ class HrRfidAccessGroup(models.Model):
         for acc_gr in self:
             old_doors = self.all_door_ids.mapped('door_id')
 
-            super().write(vals)
+            super(HrRfidAccessGroup, acc_gr).write(vals)
 
             new_doors = self.all_door_ids.mapped('door_id')
 
@@ -423,8 +423,8 @@ class HrRfidAccessGroup(models.Model):
                     continue
                 completed_groups.append(inh_id)
                 inh = env.browse(inh_id)
-                env._create_add_door_commands(inh, added_doors)
-                env._create_remove_door_commands(inh, removed_doors)
+                inh._create_add_door_commands(added_doors)
+                inh._create_remove_door_commands(removed_doors)
 
                 for upper_inh in inh.inheritor_ids:
                     acc_gr_to_complete.put(upper_inh.id)
