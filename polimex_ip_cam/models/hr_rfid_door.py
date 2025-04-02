@@ -18,7 +18,7 @@ class HrRfidDoor(models.Model):
             if door.camera_id:
                 door.company_id = door.camera_id.company_id.id
             else:
-                door.company_id = super(HrRfidDoor, door).company_id
+                door.company_id = door.webstack_id.company_id if door.webstack_id else False
 
 class HrRfidCardDoorRel(models.Model):
     _inherit = 'hr.rfid.card.door.rel'
