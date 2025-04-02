@@ -26,6 +26,7 @@ class HrRfidControllerOutputTS(models.Model):
     controller_id = fields.Many2one(
         comodel_name='hr.rfid.ctrl',
         required=True,
+        ondelete='cascade',
     )
     output_count = fields.Integer(
         related='controller_id.outputs'
