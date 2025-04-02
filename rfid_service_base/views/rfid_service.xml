@@ -184,6 +184,7 @@
             <field name="model">rfid.service</field>
             <field name="arch" type="xml">
                 <tree string="RFID Services List" decoration-success="active==True" decoration-danger="active!=True">
+                    <field name="active" invisible="1"/>
                     <field name="name"/>
                     <field name="service_type"/>
                     <field name="access_group_id" optional="hide"/>
@@ -197,7 +198,7 @@
         </record>
 
         <record id="hr_rfid_service_search" model="ir.ui.view">
-            <field name="name">hrrfid.service.search</field>
+            <field name="name">hr.rfid.service.search</field>
             <field name="model">rfid.service</field>
             <field name="arch" type="xml">
                 <search string="">
