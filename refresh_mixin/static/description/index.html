@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>refresh_mixin - Odoo Module Documentation</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 20px; }
+        h1, h2, h3 { color: #333; }
+        p, li { font-size: 14px; }
+        code { background-color: #f4f4f4; padding: 2px 4px; }
+    </style>
+</head>
+<body>
+    <h1>refresh_mixin</h1>
+    <p>The <code>refresh_mixin</code> module is part of the Polimex RFID project. It provides automatic state
+    refresh and client view update capabilities, improving the responsiveness of Odoo web interfaces.</p>
+
+    <h2>Overview</h2>
+    <p>This module integrates refresh functionality into Odoo views and controllers. It is designed to seamlessly work with the
+    existing modules in the Polimex RFID suite, enabling real-time updates without requiring a full page reload. The implementation
+    uses a combination of Python for backend logic and JavaScript/TypeScript for front‐end interactions.</p>
+
+    <h2>Features</h2>
+    <ul>
+        <li>Automatic refresh of data views in real time.</li>
+        <li>Enhanced user interface responsiveness.</li>
+        <li>Seamless integration with the core Polimex RFID modules.</li>
+        <li>Optimized for performance using modern web technologies.</li>
+    </ul>
+
+    <h2>Module Manifest & Dependencies</h2>
+    <p>The module manifest includes the following details:</p>
+    <ul>
+        <li><strong>Module Name:</strong> refresh_mixin</li>
+        <li><strong>Version:</strong> 18.0</li>
+        <li><strong>Author:</strong> Polimex</li>
+        <li><strong>Dependencies:</strong>
+            <ul>
+                <li>base</li>
+                <li>web</li>
+                <li>hr_rfid</li>
+            </ul>
+        </li>
+        <li><strong>License:</strong> (as specified in the manifest)</li>
+    </ul>
+
+    <h2>Installation</h2>
+    <ol>
+        <li>Copy the <code>refresh_mixin</code> module folder into your Odoo addons directory.</li>
+        <li>Update the Odoo module list.</li>
+        <li>Install the module from the Odoo interface ensuring that all its dependencies are met.</li>
+    </ol>
+
+    <h2>Technical Details</h2>
+    <p>The module leverages Odoo\'s mixin architecture to inject refresh functionality into client widgets.
+    Back-end controllers and model methods are extended to handle refresh events. Front-end JavaScript and TypeScript code operates
+    in conjunction with Odoo\'s web client to provide dynamic, asynchronous updates within the interface.</p>
+
+    <h2>License & Credits</h2>
+    <p>For license details and credits, please refer to the module manifest and accompanying documentation within the Polimex RFID project.</p>
+</body>
+</html>
