@@ -98,7 +98,7 @@ class BaseRFIDService(models.Model):
     def action_new_sale(self):
         ctx = {'default_service_id': self.id}
         if self.generate_barcode_card:
-            hex_num, num = self.env['hr.rfid.card'].create_bc_card()
+            hex_num, num = self.env['hr.rfid.card'].sudo().create_bc_card()
             ctx['default_card_number'] = num
         return {
             'name': _('New Sale - %s', self.name),

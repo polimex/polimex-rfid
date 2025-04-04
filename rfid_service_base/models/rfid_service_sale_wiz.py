@@ -24,8 +24,11 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
 
     def _calc_start(self):
         def _calc_start(start_date=fields.Date.today()):
-            dt = datetime.combine(start_date,
-                                  float_to_time(service_id.time_interval_start))
+            if self.fixed_time:
+                dt = datetime.combine(start_date,
+                                      float_to_time(service_id.time_interval_start))
+            else:
+                return fields.Datetime.now()
             return pytz.timezone(self.env.user.tz).localize(dt).astimezone(pytz.UTC).replace(tzinfo=None)
 
         service_id = self.service_id
