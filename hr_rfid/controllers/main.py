@@ -202,7 +202,7 @@ class WebRfidController(http.Controller):
                 }
 
                 event = controller_id.report_sys_ev(
-                    description=_('Card event witout card number'),
+                    description=_('Card event without card number'),
                     post_data=post_data,
                     sys_ev_dict=sys_event_dict
                 )
