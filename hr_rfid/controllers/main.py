@@ -193,7 +193,19 @@ class WebRfidController(http.Controller):
                     sys_ev_dict=sys_event_dict
                 )
             else:
-                _logger.error(f'IGNORING EVENT: No card number in card event. {str(post_data)}')
+                sys_event_dict = {
+                    'door_id': door and door.id or False,
+                    'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
+                    'event_action': str(event_action),
+                    'card_number': card_num or None,
+                    'input_js': card_num,
+                }
+
+                event = controller_id.report_sys_ev(
+                    description=_('Card event witout card number'),
+                    post_data=post_data,
+                    sys_ev_dict=sys_event_dict
+                )
             return webstack.check_for_unsent_cmd(200)
         # Emergency open
         elif event_action in [19]:
