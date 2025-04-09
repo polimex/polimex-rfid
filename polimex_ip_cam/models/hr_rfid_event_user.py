@@ -19,7 +19,6 @@ class HrRfidEventUser(models.Model):
         string='Snapshot',
         help="The snapshot of the camera"
     )
-    # Може да добавите и други специфични полета, например:
     anpr_confidence = fields.Integer(
         string='Confidence Level',
         help="The confidence level of the event"
