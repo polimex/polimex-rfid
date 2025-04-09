@@ -17,6 +17,7 @@ class OwnerType(Enum):
 class HrRfidCard(models.Model):
     _name = 'hr.rfid.card'
     _description = 'Card'
+    _rec_names_search = ['number', 'card_reference', 'employee_id', 'contact_id']
     _inherit = ['mail.thread']
 
     name = fields.Char(

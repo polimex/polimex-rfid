@@ -25,6 +25,7 @@ class HrRfidUserEvent(models.Model):
     _name = 'hr.rfid.event.user'
     _inherit = ['hr.rfid.event', 'mail.thread']
     _description = "RFID User Event"
+    _rec_names_search = ['name', 'event_time', 'employee_id', 'contact_id', 'door_id', 'reader_id', 'event_action']
     _order = 'event_time desc'
 
     name = fields.Char(
