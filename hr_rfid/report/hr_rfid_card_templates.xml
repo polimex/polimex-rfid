@@ -114,7 +114,7 @@
     <template id="res_partner_report_template_foldable_badge">
         <t t-call="web.basic_layout">
             <t t-foreach="docs" t-as="partner">
-                <t t-foreach="partner.hr_rfid_card_ids" t-as="card">
+                <t t-foreach="partner.sudo().hr_rfid_card_ids" t-as="card">
                     <t t-if="card.is_barcode" t-call="hr_rfid.card_barcode_report_template_foldable_badge"/>
                 </t>
             </t>
@@ -124,7 +124,7 @@
     <template id="hr_employee_report_template_foldable_badge">
         <t t-call="web.basic_layout">
             <t t-foreach="docs" t-as="partner">
-                <t t-foreach="partner.hr_rfid_card_ids" t-as="card">
+                <t t-foreach="partner.sudo().hr_rfid_card_ids" t-as="card">
                     <t t-if="card.is_barcode" t-call="hr_rfid.card_barcode_report_template_foldable_badge"/>
                 </t>
             </t>
