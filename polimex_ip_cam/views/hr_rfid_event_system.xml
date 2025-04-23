@@ -8,9 +8,9 @@
             <field name="arch" type="xml">
                 <!-- Например, след групата "Where" добавяме нова група за ANPR данни -->
                 <xpath expr="//field[@name='webstack_id']" position="after">
-                        <field name="camera_id" invisibe="controller_id"/>
-                        <field name="license_plate" invisibe="controller_id"/>
-                        <field name="anpr_confidence" invisibe="controller_id"/>
+                        <field name="camera_id" invisible="controller_id"/>
+                        <field name="license_plate" invisible="controller_id"/>
+                        <field name="anpr_confidence" invisible="controller_id"/>
                 </xpath>
                 <xpath expr="//div[@name='button_box']" position="after">
                      <div class="oe_avatar" invisible="not camera_id">

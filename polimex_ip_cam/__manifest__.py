@@ -14,7 +14,7 @@
     'website': "https://polimex.co",
     'license': 'AGPL-3',
     'category': 'Hidden/Tools',
-    'depends': ['mail', 'hr_rfid'],
+    'depends': ['hr_rfid'],
 
     'data': [
         'security/security.xml',
