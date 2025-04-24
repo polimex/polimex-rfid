@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="hr_rfid.hr_rfid_webstack_view_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='company_id']" position="before">
-                        <field name="site_id" groups="hr_rfid_site_manager.group_guard"/>
+                    <field name="site_id" groups="hr_rfid_site_manager.group_guard"/>
                 </xpath>
             </field>
         </record>
@@ -19,6 +19,23 @@
             <field name="arch" type="xml">
                 <xpath expr="//filter[@name='showall']" position="after">
                     <filter string="by Site" name="groupby_site" context="{'group_by':'site_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="hr_rfid_webstack_view_kanban" model="ir.ui.view">
+            <field name="name">hr.rfid.webstack.kanban</field>
+            <field name="model">hr.rfid.webstack</field>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_webstack_view_kanban"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='controllers']" position="after">
+                    <field name="site_id" groups="hr_rfid_site_manager.group_guard"/>
+                </xpath>
+                <xpath expr="//ul[@name='webstack_status']" position="inside">
+                    <li >
+                        <field name="site_id" groups="hr_rfid_site_manager.group_guard"/>
+                    </li>
+
                 </xpath>
             </field>
         </record>
