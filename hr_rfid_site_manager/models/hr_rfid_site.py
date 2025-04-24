@@ -8,12 +8,16 @@ class HrRFIDSite(models.Model):
     _description = 'Building manager site classification'
     _inherit = ['mail.thread', 'avatar.mixin']
     _rec_names_search=['name', 'parent_id']
+    _parent_store = True
+
+
 
     name = fields.Char(required=True)
     active = fields.Boolean("Active", default=True)
     color = fields.Integer('Color Index', default=0)
     company_id = fields.Many2one('res.company', 'Company', default=lambda self: self.env.company)
     make_access_group = fields.Boolean('Make access group', default=False)
+    parent_path = fields.Char(index=True)
     parent_id = fields.Many2one(
         comodel_name='hr.rfid.site', string='Parent site' , ondelete='restrict')
     child_ids = fields.One2many(
@@ -101,10 +105,30 @@ class HrRFIDSite(models.Model):
         self.access_group_ids = [(0, 0, {'name': _('%s group', self.display_name)})]
         return self.access_group_ids
 
+    def _update_access_groups(self):
+        for site in self:
+            # 1) Създай или премахни собствената група
+            if site.make_access_group and not site.access_group_ids:
+                site._make_access_group()
+            elif not site.make_access_group and site.access_group_ids:
+                site.access_group_ids.unlink()
+            # 2) Събери всички врати (директни + от дъщери)
+            doors = site.door_ids + site.child_door_ids
+            # 3) Обнови собствената група, ако е активирана
+            if site.make_access_group:
+                site.access_group_ids.update_door_list(doors)
+            # 4) Рекурсивно обнови групата на родителя
+            if site.parent_id:
+                site.parent_id._update_access_groups()
+
     def create(self, vals_list):
         site = super(HrRFIDSite, self).create(vals_list)
+        # Създаваме и собствената група, ако е нужно
         if site.make_access_group:
-            site._make_access_group().update_door_list(site.door_ids + site.child_door_ids)
+            site._make_access_group()
+        # Обновяваме вратите и в групата на всички предци
+        site.access_group_ids.update_door_list(site.door_ids + site.child_door_ids)
+        site.partner_access_group().update_door_list(site.door_ids + site.child_door_ids)
         return site
 
     def partner_access_group(self):
@@ -116,17 +140,19 @@ class HrRFIDSite(models.Model):
 
     def write(self, vals):
         res = super(HrRFIDSite, self).write(vals)
-        if 'make_access_group' in vals or 'door_ids' in vals or 'child_ids' in vals:
+        # Ако сменяме опцията за групи, вратите или йерархията:
+        if any(f in vals for f in ('make_access_group', 'door_ids', 'child_ids')):
             for site in self:
+                # Създаваме/премахваме собствената група
                 if site.make_access_group and not site.access_group_ids:
                     site._make_access_group()
                 elif not site.make_access_group and site.access_group_ids:
                     site.access_group_ids.unlink()
-                if site.make_access_group and 'door_ids' in vals:
+                # Обновяваме вратите в собствената група (ако има такава)
+                if site.make_access_group:
                     site.access_group_ids.update_door_list(site.door_ids + site.child_door_ids)
-                    # site.access_group_ids.update_door_list(site.door_ids + site.child_door_ids, site.time_schedule, site.alarm_rights)
-                    site.partner_access_group().update_door_list(site.door_ids + site.child_door_ids)
-
+                # И задължително обновяваме групите на всички предци
+                site.partner_access_group().update_door_list(site.door_ids + site.child_door_ids)
         return res
 
     def get_children_site_ids(self):

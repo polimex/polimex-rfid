@@ -6,11 +6,20 @@
             <field name="model">hr.rfid.webstack</field>
             <field name="inherit_id" ref="hr_rfid.hr_rfid_webstack_view_form"/>
             <field name="arch" type="xml">
-
                 <xpath expr="//field[@name='company_id']" position="before">
                         <field name="site_id" groups="hr_rfid_site_manager.group_guard"/>
                 </xpath>
+            </field>
+        </record>
 
+        <record id="webstack_view_search_inherit" model="ir.ui.view">
+            <field name="name">hr.rfid.webstack.search</field>
+            <field name="model">hr.rfid.webstack</field>
+            <field name="inherit_id" ref="hr_rfid.webstack_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='showall']" position="after">
+                    <filter string="by Site" name="groupby_site" context="{'group_by':'site_id'}"/>
+                </xpath>
             </field>
         </record>
     </data>
