@@ -135,7 +135,7 @@
             <field name="name">hr.rfid.webstack.kanban</field>
             <field name="model">hr.rfid.webstack</field>
             <field name="arch" type="xml">
-                <kanban no_create="1" no_create_edit="1" default_order='active desc' sample="1">
+                <kanban create="0" group_create="false" default_order='active desc' sample="1">
                     <field name="id"/>
                     <field name="active"/>
                     <field name="last_update"/>
@@ -215,7 +215,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-12">
-                                            <ul>
+                                            <ul name="webstack_status">
                                                 <li class="o_text_overflow">
                                                     Last Update:
                                                     <field name="updated_at"/>
