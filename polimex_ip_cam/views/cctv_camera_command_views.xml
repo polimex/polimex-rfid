@@ -46,10 +46,46 @@
             </field>
         </record>
 
+        <record id="view_cctv_camera_command_search" model="ir.ui.view">
+            <field name="name">view.cctv.camera.command.search</field>
+            <field name="model">cctv.camera.command</field>
+            <field name="arch" type="xml">
+                <search string="">
+                    <field name="name"
+                           string="string"
+                           filter_domain="['|','|',('request_data','ilike',self),('response_data','ilike',self),('camera_id','ilike',self)]"/>
+                    <filter string="Command time" name="filter_command_time" date="create_date"
+                            default_period="month-1"/>
+
+                    <filter name="filter_this_day" string="Commands from today" domain="[
+                            ('create_date', '&gt;=', (datetime.datetime.combine(context_today(), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+
+                    <searchpanel>
+                        <field name="state" select="multi" enable_counters="1" icon="fa-list-alt"/>
+                    </searchpanel>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_server_restart_commands" model="ir.actions.server">
+            <field name="name">Restart sending</field>
+            <field name="model_id" ref="model_cctv_camera_command"/>
+            <field name="binding_model_id" ref="model_cctv_camera_command"/>
+            <field name="binding_type">action</field>
+            <field name="binding_view_types">form,list</field>
+            <field name="state">code</field>
+            <field name="code">
+# Author: Polimex Dev Team
+records.queue_send()
+action = {'type': 'ir.actions.client', 'tag': 'reload'}
+            </field>
+        </record>
+
         <!-- Action for Camera Commands -->
         <record id="action_cctv_camera_command" model="ir.actions.act_window">
             <field name="name">Camera Commands</field>
             <field name="res_model">cctv.camera.command</field>
+            <field name="context">{"search_default_filter_this_day": 1}</field>
             <field name="view_mode">list,form</field>
         </record>
 

@@ -82,11 +82,11 @@ class CctvCameraRfidRel(models.Model):
                 if plate_number:
                     request_data = "plateNum={}".format(plate_number)
                     try:
-                        cmd_env.create({
+                        cmd_env.create([{
                             'camera_id': rec.camera_id.id,
                             'command_type': 'remove_plate',
                             'request_data': request_data,
-                        })
+                        }])
                     except Exception as e:
                         _logger.error("Error creating remove_plate command for relation ID %s: %s", rec.id, e)
         return super().unlink()

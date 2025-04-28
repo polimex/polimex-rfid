@@ -6,6 +6,7 @@ from odoo import models, fields, api, _, Command, SUPERUSER_ID
 import logging
 from odoo.addons.polimex_ip_cam.helpers.camera_api import HikvisionCamera  # import our Hikvision-specific class
 from odoo.addons.hr_rfid.models.hr_rfid_webstack import get_local_ip
+import json
 
 _logger = logging.getLogger(__name__)
 
@@ -896,6 +897,45 @@ class CctvCamera(models.Model):
         for cam in self:
             if card_id in cam.rfid_card_ids.ids:
                 cam.rfid_rel_ids.filtered(lambda r: r.card_id.id == card_id).unlink()
+
+    def action_reload_whitelist(self):
+        """
+        Reload each whitelist plate as a separate add_plate command.
+        """
+        cmd_env = self.env['cctv.camera.command'].sudo()
+        for cam in self:
+            if cam.brand != 'hikvision':
+                continue
+            # Филтрираме само whitelist записи
+            whitelist_rels = cam.rfid_rel_ids.filtered(
+                lambda r: r.list_category == 'whitelist'
+            )
+            for rel in whitelist_rels:
+                plate = rel.card_id.number
+                if not plate:
+                    continue
+                # Опционален вторичен номер (cardNo)
+                other = rel.card_id.get_owner().hr_rfid_card_ids.filtered(
+                    lambda c: c.card_type != self.env.ref('hr_rfid.hr_rfid_card_type_8')
+                )
+                card_no = other and other[0].number or ''
+                # Сглобяваме текста за request_data
+                lines = [f"plateNum={plate}"]
+                if card_no:
+                    lines.append(f"cardNo={card_no}")
+                if rel.card_id.activate_on:
+                    lines.append(f"startTime={rel.card_id.activate_on.isoformat()}Z")
+                if rel.card_id.deactivate_on:
+                    lines.append(f"endTime={rel.card_id.deactivate_on.isoformat()}Z")
+                # Създаваме отделна команда за всяка плочка
+                cmd_env.create([{
+                    'camera_id': cam.id,
+                    'command_type': 'add_plate',
+                    'request_data': "\n".join(lines),
+                }])
+        return True
+
+
 
 
 

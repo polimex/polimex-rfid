@@ -3,6 +3,7 @@ import threading
 from odoo import models, fields, api, _, SUPERUSER_ID
 from odoo.exceptions import UserError
 import logging
+import json
 
 from odoo.modules.registry import Registry
 
@@ -51,18 +52,18 @@ class CctvCameraCommand(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        records = super().create(vals_list)
         # Ensure that no other command is in progress for the same camera.
         for vals in vals_list:
             camera_id = vals.get('camera_id')
+            existing = False
             if camera_id:
                 existing = self.search([
                     ('camera_id', '=', camera_id),
-                    ('state', 'in', ['new', 'in_progress'])
+                    ('state', 'in', ['in_progress'])
                 ])
-                if existing:
-                    raise UserError(_("There is already a command in progress or waiting to be executed for this camera."))
-        records = super().create(vals_list)
-        records.queue_send()
+            if camera_id and not existing:
+                records.filtered(lambda r: r.camera_id.id == camera_id).queue_send()
         return records
 
     def queue_send(self):
@@ -75,11 +76,11 @@ class CctvCameraCommand(models.Model):
         _context = self.env.context
 
         @self.env.cr.postcommit.add
-        def send_emails_with_new_cursor():
+        def send_commands_with_new_cursor():
             db_registry = Registry(dbname)
             with db_registry.cursor() as cr:
                 env = api.Environment(cr, SUPERUSER_ID, _context)
-                env['cctv.camera.command'].browse(cmd_ids).action_execute()
+                env['cctv.camera.command'].sudo().browse(cmd_ids).action_execute()
 
     def _parse_request_data(self, request_data):
         """Парсира request_data, съдържащ редове във формат 'param=value', и връща речник."""

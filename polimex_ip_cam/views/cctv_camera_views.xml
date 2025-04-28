@@ -229,6 +229,21 @@
         </field>
     </record>
 
+    <record id="action_server_reload_whitelist" model="ir.actions.server">
+        <field name="name">Reload Whitelist</field>
+        <field name="model_id" ref="model_cctv_camera"/>
+        <!-- вграждаме я в Action менюто на form & list -->
+        <field name="binding_model_id" ref="model_cctv_camera"/>
+        <field name="binding_type">action</field>
+        <field name="binding_view_types">form,list</field>
+        <field name="state">code</field>
+        <field name="code">
+# Author: Polimex Dev Team
+records.action_reload_whitelist()
+action = {'type': 'ir.actions.client', 'tag': 'reload'}
+        </field>
+    </record>
+
     <!-- Menu and Action for CCTV Camera Management -->
     <record id="action_cctv_camera" model="ir.actions.act_window">
         <field name="name">CCTV Cameras</field>
