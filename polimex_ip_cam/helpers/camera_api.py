@@ -522,65 +522,55 @@ class HikvisionCamera(BaseCamera):
 
     def add_plate_to_list(self, plate_entries):
         """
-        Добавя един или повече регистрационни номера към списъка на камерата.
-
-        Параметър:
-          plate_entries: Списък от речници. Всеки речник трябва да съдържа:
-            - 'plateNum': (str) Регистрационният номер.
-            - 'listType': (str/int) Тип на списъка (например 0 за whitelist).
-            - Опционално: 'startTime' и 'endTime' във формат ISO 8601 (дефолт "0000-00-00T00:00:00Z").
-            - Опционално: 'cardNo': Допълнителен идентификатор (дефолт празен низ).
-
-        Изпраща PUT заявка към: /ISAPI/ITC/Entrance/VCL
-
-        XML структурата:
-          <SetVCLData>
-            <VCLDataList>
-              <singleVCLData>
-                <id>0</id>
-                <runNum>0</runNum>
-                <listType>...</listType>
-                <plateNum>...</plateNum>
-                <cardNo>...</cardNo>
-                <startTime>...</startTime>
-                <endTime>...</endTime>
-              </singleVCLData>
-              ...
-            </VCLDataList>
-          </SetVCLData>
+        Добавя един или повече регистрационни номера към списъка на камерата
+        (ISAPI/ITC/Entrance/VCL), според Fast Guide for TCG camera via ISAPI.
         """
         url = f"http://{self.ip_address}:{self.port}/ISAPI/ITC/Entrance/VCL"
+
+        # 1) Създаваме корен и вложен VCLDataList
         set_vcl_data = ET.Element("SetVCLData")
         vcl_data_list = ET.SubElement(set_vcl_data, "VCLDataList")
+
         for entry in plate_entries:
             plate = entry.get('plateNum', '')
             list_type = str(entry.get('listType', '0'))
-            startTime = entry.get('startTime', "0000-00-00T00:00:00Z")
-            endTime = entry.get('endTime', "0000-00-00T00:00:00Z")
-            cardNo = entry.get('cardNo', '')
-            single_entry = ET.Element("singleVCLData")
-            ET.SubElement(single_entry, "id").text = "0"
-            ET.SubElement(single_entry, "runNum").text = "0"
-            ET.SubElement(single_entry, "listType").text = list_type
-            ET.SubElement(single_entry, "plateNum").text = plate
-            ET.SubElement(single_entry, "cardNo").text = cardNo
-            ET.SubElement(single_entry, "startTime").text = startTime
-            ET.SubElement(single_entry, "endTime").text = endTime
-            vcl_data_list.append(single_entry)
-        xml_body = ET.tostring(set_vcl_data, encoding="utf-8", method="xml")
+            start_time = entry.get('startTime', "0000-00-00T00:00:00Z")
+            end_time = entry.get('endTime', "0000-00-00T00:00:00Z")
+
+            single = ET.SubElement(vcl_data_list, "singleVCLData")
+            ET.SubElement(single, "id").text = "0"
+            ET.SubElement(single, "runNum").text = "0"
+            ET.SubElement(single, "listType").text = list_type
+            ET.SubElement(single, "plateNum").text = plate
+            # винаги празен cardNo, за да получим <cardNo/>
+            ET.SubElement(single, "cardNo").text = ""
+            ET.SubElement(single, "startTime").text = start_time
+            ET.SubElement(single, "endTime").text = end_time
+
+        # 2) Конвертираме в байтов низ с XML декларация
+        xml_body = ET.tostring(
+            set_vcl_data,
+            encoding="utf-8",
+            xml_declaration=True
+        )
+
         try:
-            response = requests.put(url, auth=HTTPDigestAuth(self.username, self.password), data=xml_body,
-                                    timeout=self.timeout)
-            if response.status_code == 200:
-                _logger.debug("Hikvision add_plate_to_list: Plates added successfully: %s", plate_entries)
-                return {"status": "success", "response": response.text}
+            resp = requests.put(
+                url,
+                auth=HTTPDigestAuth(self.username, self.password),
+                data=xml_body,
+                timeout=self.timeout,
+                headers={"Content-Type": "application/xml; charset=utf-8"}
+            )
+            if resp.status_code == 200:
+                _logger.debug("add_plate_to_list: Plates added: %s", plate_entries)
+                return {"status": "success", "response": resp.text}
             else:
-                error_detail = self._extract_error(response.text)
-                _logger.error("Hikvision add_plate_to_list: FAILED with status %s. Error: %s", response.status_code,
-                              error_detail)
-                return {"status": "failed", "error": error_detail}
+                err = self._extract_error(resp.text)
+                _logger.error("add_plate_to_list: Failed %s → %s", resp.status_code, err)
+                return {"status": "failed", "error": err}
         except Exception as e:
-            _logger.error("Hikvision add_plate_to_list: Request error: %s", e)
+            _logger.error("add_plate_to_list: Request error: %s", e)
             return {"status": "failed", "error": str(e)}
 
     def delete_plate_from_list(self, plate_entries):
