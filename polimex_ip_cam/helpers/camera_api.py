@@ -522,56 +522,57 @@ class HikvisionCamera(BaseCamera):
 
     def add_plate_to_list(self, plate_entries):
         """
-        Добавя един или повече регистрационни номера към списъка на камерата
-        (ISAPI/ITC/Entrance/VCL), според Fast Guide for TCG camera via ISAPI.
+        Add one or more plates to the camera’s whitelist/blacklist via ISAPI.
+
+        plate_entries: list of dicts, each with keys:
+          - plateNum (str): license plate
+          - listType (int|str): 0=whitelist,1=blacklist,… default 0
+          - startTime (ISO8601 str): e.g. "2025-04-23T08:03:34Z"
+          - endTime   (ISO8601 str): e.g. "0000-00-00T00:00:00Z"
+          - cardNo    (str, optional): secondary ID
         """
+        import xml.etree.ElementTree as ET
+        from requests.auth import HTTPDigestAuth
+        import requests
+
         url = f"http://{self.ip_address}:{self.port}/ISAPI/ITC/Entrance/VCL"
 
-        # 1) Създаваме корен и вложен VCLDataList
-        set_vcl_data = ET.Element("SetVCLData")
-        vcl_data_list = ET.SubElement(set_vcl_data, "VCLDataList")
+        # 1) Build XML
+        ns = "http://www.isapi.org/ver20/XMLSchema"
+        root = ET.Element("SetVCLData", {"version": "2.0", "xmlns": ns})
+        vcl_list = ET.SubElement(root, "VCLDataList")
 
         for entry in plate_entries:
-            plate = entry.get('plateNum', '')
-            list_type = str(entry.get('listType', '0'))
-            start_time = entry.get('startTime', "0000-00-00T00:00:00Z")
-            end_time = entry.get('endTime', "0000-00-00T00:00:00Z")
-
-            single = ET.SubElement(vcl_data_list, "singleVCLData")
+            single = ET.SubElement(vcl_list, "singleVCLData")
             ET.SubElement(single, "id").text = "0"
             ET.SubElement(single, "runNum").text = "0"
-            ET.SubElement(single, "listType").text = list_type
-            ET.SubElement(single, "plateNum").text = plate
-            # винаги празен cardNo, за да получим <cardNo/>
-            ET.SubElement(single, "cardNo").text = ""
-            ET.SubElement(single, "startTime").text = start_time
-            ET.SubElement(single, "endTime").text = end_time
+            ET.SubElement(single, "listType").text = str(entry.get("listType", 0))
+            ET.SubElement(single, "plateNum").text = entry["plateNum"]
+            # Emit an explicit empty element rather than self-closing
+            card_elem = ET.SubElement(single, "cardNo")
+            card_elem.text = entry.get("cardNo", "") or ""
+            ET.SubElement(single, "startTime").text = entry.get("startTime", "0000-00-00T00:00:00Z")
+            ET.SubElement(single, "endTime").text = entry.get("endTime", "0000-00-00T00:00:00Z")
 
-        # 2) Конвертираме в байтов низ с XML декларация
-        xml_body = ET.tostring(
-            set_vcl_data,
-            encoding="utf-8",
-            xml_declaration=True
+        xml_body = ET.tostring(root, encoding="utf-8", method="xml")
+
+        # 2) Send with proper Content-Type
+        headers = {"Content-Type": "application/xml"}
+        resp = requests.put(
+            url,
+            auth=HTTPDigestAuth(self.username, self.password),
+            data=xml_body,
+            headers=headers,
+            timeout=self.timeout,
         )
 
-        try:
-            resp = requests.put(
-                url,
-                auth=HTTPDigestAuth(self.username, self.password),
-                data=xml_body,
-                timeout=self.timeout,
-                headers={"Content-Type": "application/xml; charset=utf-8"}
-            )
-            if resp.status_code == 200:
-                _logger.debug("add_plate_to_list: Plates added: %s", plate_entries)
-                return {"status": "success", "response": resp.text}
-            else:
-                err = self._extract_error(resp.text)
-                _logger.error("add_plate_to_list: Failed %s → %s", resp.status_code, err)
-                return {"status": "failed", "error": err}
-        except Exception as e:
-            _logger.error("add_plate_to_list: Request error: %s", e)
-            return {"status": "failed", "error": str(e)}
+        # 3) Parse result
+        if resp.status_code == 200:
+            return {"status": "success", "response": resp.text}
+        else:
+            # extract error details as before
+            err = self._extract_error(resp.text)
+            return {"status": "failed", "error": err}
 
     def delete_plate_from_list(self, plate_entries):
         """
