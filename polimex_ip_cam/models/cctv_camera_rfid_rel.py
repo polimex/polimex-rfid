@@ -24,9 +24,9 @@ class CctvCameraRfidRel(models.Model):
     ], string='List Category', required=True,
        help="The type of list this relation represents")
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        records = super().create(vals_list)
+    def _hv_get_request_data(self):
+        # This method is used to generate the request data for the Hikvision camera.
+        # It should be overridden in subclasses if needed.
         # Mapping from list_category to numeric value expected by camera API.
         list_map = {
             'whitelist': 0,
@@ -35,42 +35,50 @@ class CctvCameraRfidRel(models.Model):
             'yellolist': 3,
             'otherlist': 4,
         }
+        self.ensure_one()
+        rec = self
+        if rec.camera_id and rec.camera_id.brand == 'hikvision' and rec.card_id.card_type == self.env.ref(
+                'hr_rfid.hr_rfid_card_type_8'):
+            plate_number = rec.card_id.number or ''
+            if plate_number:
+                list_type = list_map.get(rec.list_category, 0)
+                # Използваме новите опционални полета:
+                other_card_ids = rec.card_id.get_owner().hr_rfid_card_ids.filtered(
+                    lambda c: c.card_type != self.env.ref('hr_rfid.hr_rfid_card_type_8'))
+                card_no = other_card_ids[0].number if other_card_ids else ''
+                # Полетата validity_start и validity_end са винаги в UTC в Odoo.
+                validity_start = rec.card_id.activate_on and (
+                        rec.card_id.activate_on.isoformat() + "Z") or "0000-00-00T00:00:00Z"
+                validity_end = rec.card_id.deactivate_on and (
+                            rec.card_id.deactivate_on.isoformat() + "Z") or "0000-00-00T00:00:00Z"
+                # Изграждаме request_data като редове с формат param=value
+                lines = [
+                    "plateNum=" + plate_number,
+                    # "listType=" + str(list_type)
+                ]
+                if card_no:
+                    lines.append("cardNo=" + card_no)
+                if rec.card_id.activate_on and rec.card_id.deactivate_on:
+                    lines.append("startTime=" + rec.card_id.activate_on.isoformat() + "Z")
+                    lines.append("endTime=" + rec.card_id.deactivate_on.isoformat() + "Z")
+                return "\n".join(lines)
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
         # For each created relation, create an "add_plate" command
         cmd_env = self.env['cctv.camera.command'].sudo()
         for rec in records:
-            if rec.camera_id and rec.camera_id.brand == 'hikvision' and rec.card_id.card_type==self.env.ref('hr_rfid.hr_rfid_card_type_8'):
-                plate_number = rec.card_id.number or ''
-                if plate_number:
-                    list_type = list_map.get(rec.list_category, 0)
-                    # Използваме новите опционални полета:
-                    other_card_ids =rec.card_id.get_owner().hr_rfid_card_ids.filtered(lambda c: c.card_type != self.env.ref('hr_rfid.hr_rfid_card_type_8'))
-                    card_no = other_card_ids[0].number if other_card_ids else ''
-                    # Полетата validity_start и validity_end са винаги в UTC в Odoo.
-                    validity_start = rec.card_id.activate_on and (
-                                rec.card_id.activate_on.isoformat() + "Z") or "0000-00-00T00:00:00Z"
-                    validity_end = rec.card_id.deactivate_on and (rec.card_id.deactivate_on.isoformat() + "Z") or "0000-00-00T00:00:00Z"
-                    # Изграждаме request_data като редове с формат param=value
-                    lines = [
-                        "plateNum=" + plate_number,
-                        # "listType=" + str(list_type)
-                    ]
-                    if card_no:
-                        lines.append("cardNo=" + card_no)
-                    if rec.card_id.activate_on and rec.card_id.deactivate_on:
-                        lines.append("startTime=" + rec.card_id.activate_on.isoformat() + "Z")
-                        lines.append("endTime=" + rec.card_id.deactivate_on.isoformat() + "Z")
-                    else:
-                        # Ако няма валидност, може да не подавате дати изобщо
-                        pass
-                    request_data = "\n".join(lines)
-                    try:
-                        cmd_env.create([{
-                            'camera_id': rec.camera_id.id,
-                            'command_type': 'add_plate',
-                            'request_data': request_data,
-                        }])
-                    except Exception as e:
-                        _logger.error("Error creating add_plate command for relation ID %s: %s", rec.id, e)
+            request_data = rec._hv_get_request_data()
+            if request_data:
+                try:
+                    cmd_env.create([{
+                        'camera_id': rec.camera_id.id,
+                        'command_type': 'add_plate',
+                        'request_data': request_data,
+                    }])
+                except Exception as e:
+                    _logger.error("Error creating add_plate command for relation ID %s: %s", rec.id, e)
         return records
 
     def unlink(self):

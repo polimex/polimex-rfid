@@ -911,28 +911,16 @@ class CctvCamera(models.Model):
                 lambda r: r.list_category == 'whitelist'
             )
             for rel in whitelist_rels:
-                plate = rel.card_id.number
-                if not plate:
-                    continue
-                # Опционален вторичен номер (cardNo)
-                other = rel.card_id.get_owner().hr_rfid_card_ids.filtered(
-                    lambda c: c.card_type != self.env.ref('hr_rfid.hr_rfid_card_type_8')
-                )
-                card_no = other and other[0].number or ''
-                # Сглобяваме текста за request_data
-                lines = [f"plateNum={plate}"]
-                if card_no:
-                    lines.append(f"cardNo={card_no}")
-                if rel.card_id.activate_on:
-                    lines.append(f"startTime={rel.card_id.activate_on.isoformat()}Z")
-                if rel.card_id.deactivate_on:
-                    lines.append(f"endTime={rel.card_id.deactivate_on.isoformat()}Z")
-                # Създаваме отделна команда за всяка плочка
-                cmd_env.create([{
-                    'camera_id': cam.id,
-                    'command_type': 'add_plate',
-                    'request_data': "\n".join(lines),
-                }])
+                request_data = rel._hv_get_request_data()
+                if request_data:
+                    try:
+                        cmd_env.create([{
+                            'camera_id': rel.camera_id.id,
+                            'command_type': 'add_plate',
+                            'request_data': request_data,
+                        }])
+                    except Exception as e:
+                        _logger.error("Error creating add_plate command for relation ID %s: %s", rel.id, e)
         return True
 
 
