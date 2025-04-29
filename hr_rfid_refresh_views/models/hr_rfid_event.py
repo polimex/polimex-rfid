@@ -20,3 +20,5 @@ class HRRFIDEvent(models.AbstractModel):
             return self.card_id.company_id
         if 'webstack_id' in self._fields:
             return self.webstack_id.company_id
+        if 'door_id' in self._fields:
+            return self.door_id.company_id
