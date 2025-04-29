@@ -44,7 +44,7 @@
                                     <list string="Cards belonging this Contact" editable="bottom"
                                           decoration-success="active"
                                           decoration-danger="not active">
-                                        <field name="active" invisible="1"/>
+                                        <field name="active" widget="boolean_toggle"/>
                                         <field name="number"/>
                                         <field name="card_reference"/>
                                         <field name="activate_on"/>
