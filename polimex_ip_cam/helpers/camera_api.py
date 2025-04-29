@@ -522,57 +522,66 @@ class HikvisionCamera(BaseCamera):
 
     def add_plate_to_list(self, plate_entries):
         """
-        Add one or more plates to the camera’s whitelist/blacklist via ISAPI.
+        Добавя един или повече регистрационни номера към списъка на камерата.
 
-        plate_entries: list of dicts, each with keys:
-          - plateNum (str): license plate
-          - listType (int|str): 0=whitelist,1=blacklist,… default 0
-          - startTime (ISO8601 str): e.g. "2025-04-23T08:03:34Z"
-          - endTime   (ISO8601 str): e.g. "0000-00-00T00:00:00Z"
-          - cardNo    (str, optional): secondary ID
+        Параметър:
+          plate_entries: Списък от речници. Всеки речник трябва да съдържа:
+            - 'plateNum': (str) Регистрационният номер.
+            - 'listType': (str/int) Тип на списъка (например 0 за whitelist).
+            - Опционално: 'startTime' и 'endTime' във формат ISO 8601 (дефолт "0000-00-00T00:00:00Z").
+            - Опционално: 'cardNo': Допълнителен идентификатор (дефолт празен низ).
+
+        Изпраща PUT заявка към: /ISAPI/ITC/Entrance/VCL
+
+        XML структурата:
+          <SetVCLData>
+            <VCLDataList>
+              <singleVCLData>
+                <id>0</id>
+                <runNum>0</runNum>
+                <listType>...</listType>
+                <plateNum>...</plateNum>
+                <cardNo>...</cardNo>
+                <startTime>...</startTime>
+                <endTime>...</endTime>
+              </singleVCLData>
+              ...
+            </VCLDataList>
+          </SetVCLData>
         """
-        import xml.etree.ElementTree as ET
-        from requests.auth import HTTPDigestAuth
-        import requests
-
         url = f"http://{self.ip_address}:{self.port}/ISAPI/ITC/Entrance/VCL"
-
-        # 1) Build XML
-        ns = "http://www.isapi.org/ver20/XMLSchema"
-        root = ET.Element("SetVCLData", {"version": "2.0", "xmlns": ns})
-        vcl_list = ET.SubElement(root, "VCLDataList")
-
+        set_vcl_data = ET.Element("SetVCLData")
+        vcl_data_list = ET.SubElement(set_vcl_data, "VCLDataList")
         for entry in plate_entries:
-            single = ET.SubElement(vcl_list, "singleVCLData")
-            ET.SubElement(single, "id").text = "0"
-            ET.SubElement(single, "runNum").text = "0"
-            ET.SubElement(single, "listType").text = str(entry.get("listType", 0))
-            ET.SubElement(single, "plateNum").text = entry["plateNum"]
-            # Emit an explicit empty element rather than self-closing
-            card_elem = ET.SubElement(single, "cardNo")
-            card_elem.text = entry.get("cardNo", "") or ""
-            ET.SubElement(single, "startTime").text = entry.get("startTime", "0000-00-00T00:00:00Z")
-            ET.SubElement(single, "endTime").text = entry.get("endTime", "0000-00-00T00:00:00Z")
-
-        xml_body = ET.tostring(root, encoding="utf-8", method="xml")
-
-        # 2) Send with proper Content-Type
-        headers = {"Content-Type": "application/xml"}
-        resp = requests.put(
-            url,
-            auth=HTTPDigestAuth(self.username, self.password),
-            data=xml_body,
-            headers=headers,
-            timeout=self.timeout,
-        )
-
-        # 3) Parse result
-        if resp.status_code == 200:
-            return {"status": "success", "response": resp.text}
-        else:
-            # extract error details as before
-            err = self._extract_error(resp.text)
-            return {"status": "failed", "error": err}
+            plate = entry.get('plateNum', '')
+            list_type = str(entry.get('listType', '0'))
+            startTime = entry.get('startTime', "0000-00-00T00:00:00Z")
+            endTime = entry.get('endTime', "0000-00-00T00:00:00Z")
+            cardNo = entry.get('cardNo', '')
+            single_entry = ET.Element("singleVCLData")
+            ET.SubElement(single_entry, "id").text = "0"
+            ET.SubElement(single_entry, "runNum").text = "0"
+            ET.SubElement(single_entry, "listType").text = list_type
+            ET.SubElement(single_entry, "plateNum").text = plate
+            ET.SubElement(single_entry, "cardNo").text = cardNo
+            ET.SubElement(single_entry, "startTime").text = startTime
+            ET.SubElement(single_entry, "endTime").text = endTime
+            vcl_data_list.append(single_entry)
+        xml_body = ET.tostring(set_vcl_data, encoding="utf-8", method="xml")
+        try:
+            response = requests.put(url, auth=HTTPDigestAuth(self.username, self.password), data=xml_body,
+                                    timeout=self.timeout)
+            if response.status_code == 200:
+                _logger.debug("Hikvision add_plate_to_list: Plates added successfully: %s", plate_entries)
+                return {"status": "success", "response": response.text}
+            else:
+                error_detail = self._extract_error(response.text)
+                _logger.error("Hikvision add_plate_to_list: FAILED with status %s. Error: %s", response.status_code,
+                              error_detail)
+                return {"status": "failed", "error": error_detail}
+        except Exception as e:
+            _logger.error("Hikvision add_plate_to_list: Request error: %s", e)
+            return {"status": "failed", "error": str(e)}
 
     def delete_plate_from_list(self, plate_entries):
         """
