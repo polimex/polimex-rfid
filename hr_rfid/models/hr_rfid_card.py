@@ -466,15 +466,29 @@ class HrRfidCardType(models.Model):
     )
 
     def check_and_fix_card_numer(self, number):
+        def normalize_plate(plate: str) -> str:
+            mapping = {
+                'А': 'A', 'В': 'B', 'Е': 'E', 'К': 'K', 'М': 'M',
+                'Н': 'H', 'О': 'O', 'Р': 'P', 'С': 'C', 'Т': 'T', 'Х': 'X',
+                'У': 'Y',
+                'а': 'A', 'в': 'B', 'е': 'E', 'к': 'K', 'м': 'M',
+                'н': 'H', 'о': 'O', 'р': 'P', 'с': 'C', 'т': 'T', 'х': 'X',
+                'у': 'Y',
+            }
+            result = []
+            for ch in plate:
+                if ch.isdigit():
+                    result.append(ch)
+                elif ch in mapping:
+                    result.append(mapping[ch])
+                elif 'A' <= ch <= 'Z' or 'a' <= ch <= 'z':
+                    result.append(ch.upper())
+            return ''.join(result)
+
         self.ensure_one()
         if self.id == self.env.ref('hr_rfid.hr_rfid_card_type_8').id:
-            return number
+            return normalize_plate(number)
         else:
-            if len(number) == 10:
-                if re.fullmatch(r'[A-Za-z0-9]+', number):
-                    return number.upper()
-                else:
-                    raise exceptions.UserError(_('Card number must contain only letters and digits in Latin'))
             if len(number) < 10:
                 zeroes = 10 - len(number)
                 return (zeroes * '0') + number
