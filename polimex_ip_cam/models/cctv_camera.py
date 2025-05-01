@@ -792,7 +792,9 @@ class CctvCamera(models.Model):
                 if snapshot_b64 and snapshot_b64.startswith('data:'):
                     snapshot_b64 = snapshot_b64.split(',', 1)[1]
 
-                if not card_id: # Make system event
+                if plate_number == 'unknown': # fix camera bug
+                    _logger.warning('Plate number is unknown for camera %s', self.name)
+                elif not card_id: # Make system event
                     # msg = _('Plate number not found in database (%s)', plate_number)
                     # attachments = [('detectionPicture.jpg', snapshot_b64)] if snapshot_b64 else []
                     # self.notify_by_discuss(self.message_partner_ids, msg, attachments)
