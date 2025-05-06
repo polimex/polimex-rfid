@@ -102,11 +102,14 @@ class WebRfidController(http.Controller):
         if reader_id and reader_id.door_id:  # regular door
             door = reader_id.door_id
         elif controller_id.is_relay_ctrl():  # relay door
-            try:
-                door_number = controller_id.decode_door_number_for_relay(dt)
-                door = controller_id.door_ids.filtered(lambda d: d.number == door_number)
-            except:
-                door_number = None
+            door_number = None
+            door = None
+            if controller_id.mode == 3:
+                try:
+                    door_number = controller_id.decode_door_number_for_relay(dt)
+                    door = controller_id.door_ids.filtered(lambda d: d.number == door_number)
+                except:
+                    door_number = None
             if not door and card_id:  # relay door
                 door = reader_id.door_ids.filtered(lambda d: d.id in card_id.door_ids.mapped('id'))
                 # door = set(card_id.door_ids) & set(reader_id.door_ids)
