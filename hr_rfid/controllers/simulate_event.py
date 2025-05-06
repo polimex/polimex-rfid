@@ -21,7 +21,7 @@ def simulate_event():
             "event_n": 3,
             "id": 40,
             "reader": 1,
-            "time": "15:40:54",
+            "time": "15:40:55",
             "tos": 1
         },
         "key": "7411"
