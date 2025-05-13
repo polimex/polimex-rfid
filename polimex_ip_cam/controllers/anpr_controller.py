@@ -110,6 +110,8 @@ class IpcamController(Controller):
                     _logger.error(f"Camera with serial number {anpr_data['deviceUUID']} not found.")
                     # TODO Log System Event
                     return request.not_found()
+                if 'ipAddress' in anpr_data:
+                    camera_id.ip_address = anpr_data['ipAddress']
                 camera_id.parse_event(files_data)
                 _logger.info(f'Camera ID detected: {camera_id}')
         if 'heartBeat' in files_data:
