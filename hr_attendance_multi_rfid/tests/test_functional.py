@@ -1,5 +1,5 @@
 # Copyright 2022 Polimex Holding Ltd..
-# License APL-3.0 or later (http://www.gnu.org/licenses/agpl).
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 from dateutil.relativedelta import relativedelta
 
 from odoo.addons.hr_rfid.tests.test_functional import RFIDTests
