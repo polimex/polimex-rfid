@@ -1,5 +1,5 @@
 # Copyright 2022 Polimex Holding Ltd..
-# License APL-3.0 or later (http://www.gnu.org/licenses/agpl).
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 from datetime import timedelta, datetime, time
 
 from odoo import fields
