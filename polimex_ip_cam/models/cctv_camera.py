@@ -165,7 +165,7 @@ class CctvCamera(models.Model):
     def create(self, vals_list):
         new_records = self.env['cctv.camera']
         for vals in vals_list:
-            new_record = super().create(vals_list)
+            new_record = super().create(vals)
             reader_in_id = self.env['hr.rfid.reader'].sudo().create([{
                 'name': _('In Reader %s', new_record.name),
                 'reader_type': '0', # In reader
