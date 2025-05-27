@@ -1,0 +1,68 @@
+<!-- ZPL II Wristband Report for `rfid.service.sale`Author: Polimex Dev Team -->
+<odoo>
+    <!-- 1 × 11 inch wristband @203 dpi  -->
+    <record id="paperformat_wristband_1x11" model="report.paperformat">
+        <field name="name">Wristband 1×11 in</field>
+        <field name="format">custom</field>
+        <field name="page_width">25</field>     <!-- mm -->
+        <field name="page_height">279</field>   <!-- mm -->
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">0</field>
+        <field name="margin_bottom">0</field>
+        <field name="margin_left">0</field>
+        <field name="margin_right">0</field>
+    </record>
+
+    <!-- QWeb template : renders ONE ^XA…^XZ block per record -->
+    <template id="wristband_template_view">
+<t t-raw="env.company._logo_as_grf()"/>  <!-- изпращаме ~DG ... -->
+        <t t-foreach="docs" t-as="sale" t-translation="off">
+^XA^CI28                                      ; ------ START
+^PW812 ^LL203 ^LH0,0                          ; 1" wristband canvas (812 dots @203 dpi)
+
+^FO20,20
+^A0N,36,36^FD<t t-out="sale.company_id.name"/>^FS      ; Company name
+
+^FO20,60
+^A0N,28,28^FD<t t-out="sale.service_id.name"/>^FS
+^FO160,60
+^A0N,28,28^FD<t t-out="sale.partner_id.name"/>^FS      ; Patient name
+
+^FO20,95
+^A0N,28,28^FDValid:^FS
+^FO160,95
+^A0N,28,28^FD
+    <t t-out="sale.start_date.strftime('%d.%m.%Y')"/> -
+    <t t-out="sale.end_date.strftime('%d.%m.%Y')"/>
+^FS
+
+; -- 1 px separator line
+^FO20,130^GB770,2,2^FS
+
+; -- CODE-128 barcode, exactly 10 digits
+^FO20,140^BY2,2,80
+^BCN,80,Y,N,N
+^FD<t t-out="('%010d' % int(sale.card_number or 0))"/>^FS
+
+; -- Optional logo (pre-load GRF once under name COMPLOGO.GRF)
+^FO680,10^XGR:COMPLOGO.GRF,1,1^FS
+
+^XZ                                           ; ------ END
+
+        </t>
+    </template>
+
+    <record id="action_report_rfid_wristband" model="ir.actions.report">
+        <field name="name">Patient Wristband (ZPL)</field>
+        <field name="model">rfid.service.sale</field>
+        <field name="report_type">qweb-text</field>
+        <field name="report_name">rfid_service_zpl_labels.wristband_template_view</field>
+        <field name="report_file">rfid_service_zpl_labels.wristband_template_view</field>
+        <field name="binding_model_id" ref="rfid_service_base.model_rfid_service_sale"/>
+        <field name="binding_type">report</field>
+        <!-- optional: force “raw” mode if you use a CUPS queue -->
+         <field name="print_report_name">'wristband_' + (object.name or 'by_polimex')</field>
+        <field name="paperformat_id" ref="rfid_service_zpl_labels.paperformat_wristband_1x11"/>
+    </record>
+
+</odoo>

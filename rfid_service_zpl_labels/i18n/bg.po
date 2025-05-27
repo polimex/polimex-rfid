@@ -1,0 +1,33 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* rfid_service_zpl_labels
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 09:26+0000\n"
+"PO-Revision-Date: 2025-05-27 12:27+0300\n"
+"Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
+"Language-Team: \n"
+"Language: bg_BG\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.6\n"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.actions.report,print_report_name:rfid_service_zpl_labels.action_report_rfid_wristband
+msgid "'wristband_' + (object.name or 'by_polimex')"
+msgstr "'гривна_' + (object.name or 'Полимекс')"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model,name:rfid_service_zpl_labels.model_res_company
+msgid "Company"
+msgstr "Компания"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.actions.report,name:rfid_service_zpl_labels.action_report_rfid_wristband
+msgid "Patient Wristband (ZPL)"
+msgstr "Гривна за пациент (ZPL)"
