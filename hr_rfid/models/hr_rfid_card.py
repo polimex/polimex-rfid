@@ -268,7 +268,6 @@ class HrRfidCard(models.Model):
             card.door_count = len(card.door_ids)
 
     @api.model_create_multi
-    @api.returns('self', lambda value: value.id)
     def create(self, vals):
         card_door_rel_env = self.env['hr.rfid.card.door.rel']
         invalid_user_and_contact_msg = _('Card user and contact cannot both be set' \
@@ -494,6 +493,7 @@ class HrRfidCardType(models.Model):
                 return (zeroes * '0') + number
             elif len(number) > 10:
                 raise exceptions.UserError(_('Card number must be exactly 10 digits'))
+            return number
 
     def unlink(self):
         default_card_type_id = self.env.ref('hr_rfid.hr_rfid_card_type_def').id
