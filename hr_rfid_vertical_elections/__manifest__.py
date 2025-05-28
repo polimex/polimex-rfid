@@ -2,13 +2,13 @@
 # Part of Polimex RFID Pack. See LICENSE file for full copyright and licensing details.
 
 {
-    'name': 'HR RFID Vertical Elections',
+    'name': 'RFID Elections',
     'summary': 'HR RFID Vertical Elections',
     'description': 'Organize your elections with RFID',
     'author': "Polimex Dev Team",
     'website': "https://polimex.co",
     'category': 'Human Resources',
-    'version': '1.0',
+    'version': '18.0.1.0.0',
     'license': 'AGPL-3',
     'depends': ['hr_rfid', 'bus'],
     'data': [
@@ -24,6 +24,7 @@
         # 'security/ir_rule.xml',
         'security/ir.model.access.csv',
     ],
+    # 'images': ['static/images/main_screenshot.png'],
     'installable': True,
     'application': True,
     'assets': {

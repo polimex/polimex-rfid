@@ -1,5 +1,5 @@
 {
-    'name': "RFID attendance hourly cost plugin",
+    'name': "RFID Hourly Cost",
 
     'summary': """
         RFID attendance hourly cost plugin
@@ -14,13 +14,14 @@
     'license': 'AGPL-3',
 
     'category': "Human Resources",
-    'version': '1.0',
+    'version': '18.0.1.0.0',
 
     'depends': ['hr_hourly_cost', 'hr_attendance_late'],
 
     'data': [
         'views/hr_attendance_extra.xml',
     ],
+    # 'images': ['static/images/main_screenshot.png'],
     'application': False,
     'auto_install': True,
 }

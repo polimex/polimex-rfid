@@ -1,5 +1,5 @@
 {
-    'name': "RFID Service System Portal plugin",
+    'name': "RFID Services Portal",
 
     'summary': """
         RFID Service System Portal plugin
@@ -14,7 +14,7 @@
     'license': 'AGPL-3',
 
     'category': "Generic Modules/Property Management System",
-    'version': '0.1',
+    'version': '18.0.0.1.0',
 
     'depends': ['rfid_service_base', 'hr_rfid_portal'],
 
@@ -22,6 +22,7 @@
         'views/hr_rfid_portal.xml',
         'views/rfid_service_sale_wiz.xml',
     ],
+    # 'images': ['static/images/main_screenshot.png'],
     'application': False,
     'auto_install': True,
 }

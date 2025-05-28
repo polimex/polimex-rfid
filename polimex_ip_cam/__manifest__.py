@@ -1,6 +1,6 @@
 {
     'name': "IP Camera Management",
-    'version': "1.0",
+    'version': '18.0.1.0.0',
     'summary': "Module for managing IP cameras via manufacturers integration integration",
     'description': """
         This module is designed for managing cameras (e.g. Hikvision, Dahua) with automatic
@@ -29,6 +29,7 @@
         'views/hr_rfid_event_system.xml',
         'views/hr_rfid_reader.xml',
     ],
+    # 'images': ['static/images/main_screenshot.png'],
 
     'demo': [
         'demo/demo_cam.xml',

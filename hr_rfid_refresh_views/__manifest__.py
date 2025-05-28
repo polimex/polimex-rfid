@@ -15,7 +15,7 @@
 
     # for the full list
     'category': 'Administration',
-    'version': '1.0',
+    'version': '18.0.1.0.0',
     'license': 'AGPL-3',
 
     # any module necessary for this one to work correctly
@@ -34,6 +34,7 @@
         'views/hr_rfid_ctrl.xml',
         'views/res_company.xml',
     ],
+    # 'images': ['static/images/main_screenshot.png'],
     # only loaded in demonstration mode
     'assets': {
         # 'web.assets_backend': [

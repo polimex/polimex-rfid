@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # noinspection PyStatementEffect
 {
-    'name': 'RFID Attendance calculations',
-    'version': '1.0',
+    'name': 'Late Attendance',
+    'version': '18.0.1.0.0',
     'category': 'Human Resources',
     'summary': 'Enhances employee attendance tracking with additional work time calculations',
     'author': 'Polimex',

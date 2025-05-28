@@ -1,5 +1,5 @@
 {
-    'name': "RFID System Portal plugin",
+    'name': "RFID Portal Access",
 
     'summary': """
         RFID System Portal plugin
@@ -14,7 +14,7 @@
     'license': 'AGPL-3',
 
     'category': "Generic Modules/Property Management System",
-    'version': '0.1',
+    'version': '18.0.0.1.0',
 
     'depends': ['hr_rfid', 'portal'],
 
@@ -22,6 +22,7 @@
         'views/hr_rfid_card.xml',
         'views/hr_rfid_portal.xml',
     ],
+    # 'images': ['static/images/main_screenshot.png'],
     'assets': {
         'web.report_assets_common': [
             '/hr_rfid_portal/static/src/scss/barcode_card_web.scss',

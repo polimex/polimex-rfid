@@ -1,5 +1,5 @@
 {
-    'name': "RFID Service system ZPL labels",
+    'name': "RFID Services ZPL Labels",
 
     'summary': """
         RFID Service system ZPL labels
@@ -13,19 +13,18 @@
     'website': "https://polimex.co",
     'license': 'AGPL-3',
 
-    # Categories can be used to filter modules in modules listing
-    # Check https://github.com/odoo/odoo/blob/14.0/odoo/addons/base/data/ir_module_category_data.xml
-    # for the full list
     'category': "Generic Modules/Property Management System",
-    'version': '0.1',
+    'version': '18.0.0.1.0',
 
     # any module necessary for this one to work correctly
     'depends': ['rfid_service_base','base_report_to_label_printer'],
 
     # always loaded
     'data': [
+        'views/rfid_service.xml',
+        'views/rfid_service_sale_wiz.xml',
         'reports/report_wristband.xml',
     ],
+    # 'images': ['static/images/main_screenshot.png'],
     "application": False,
 }
-# -*- coding: utf-8 -*-
