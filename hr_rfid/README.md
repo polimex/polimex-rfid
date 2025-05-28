@@ -104,7 +104,7 @@ cp -r hr_rfid /path/to/odoo/addons/
 
 #### Network Configuration
 ```
-Webstack Default Port: 9001
+Webstack Default Port: 80
 Controller Communication: HTTP
 Event Endpoint: /hr/rfid/event
 ```
@@ -112,9 +112,9 @@ Event Endpoint: /hr/rfid/event
 #### Controller Types
 - **iCON50**: 1 door, 2 readers
 - **iCON110**: 1 door, 2 readers, IO support
-- **iCON115**: 1 door, 2 readers, extended IO
-- **iCON130**: 2 doors, 4 readers
-- **iCON180**: 4 doors, 8 readers
+- **iCON115**: 1 door, 2 readers, IO support, alarm support
+- **iCON130**: 2 doors, 4 readers, IO support
+- **iCON180**: 4 doors, 8 readers, IO support, alarm support
 
 ## 📖 Usage
 
