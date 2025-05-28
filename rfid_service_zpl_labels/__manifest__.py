@@ -7,6 +7,15 @@
 
     'description': """
         RFID Service system ZPL labels
+        
+        This module generates ZPL (Zebra Programming Language) formatted wristband labels
+        for RFID services. The output can be sent to Zebra printers through:
+        - Odoo IoT Box
+        - Direct file printing
+        - Third-party printing modules (OCA printer_zpl2, etc.)
+        
+        Note: For Odoo 18.0, direct printer integration requires additional modules
+        or IoT Box connectivity.
     """,
 
     'author': "Polimex Dev Team",
@@ -17,7 +26,7 @@
     'version': '18.0.0.1.0',
 
     # any module necessary for this one to work correctly
-    'depends': ['rfid_service_base','base_report_to_label_printer'],
+    'depends': ['rfid_service_base'],
 
     # always loaded
     'data': [
