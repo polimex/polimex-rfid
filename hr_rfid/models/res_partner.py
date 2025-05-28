@@ -330,7 +330,7 @@ class ResPartner(models.Model):
             message loaded by default
         """
         self.ensure_one()
-        template = self.env.ref(template_xml_id or 'hr_rfid.card_barcode_mail_template_badge', raise_if_not_found=False)
+        template = template_xml_id or self.env.ref('hr_rfid.card_barcode_mail_template_badge', raise_if_not_found=False)
         compose_form = self.env.ref('mail.email_compose_message_wizard_form')
         ctx = dict(
             default_model='res.partner',
