@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Polimex RFID Professional Access Control System</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Polimex RFID - Enterprise Access Control Suite for Odoo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style type="text/css">
         * {
@@ -14,268 +13,688 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
-            background-color: #f4f4f4;
             color: #333;
+            background-color: #f8f9fa;
         }
 
         .container {
-            width: 80%;
-            margin: auto;
-            overflow: hidden;
-        }
-
-        header {
-            background: #333;
-            color: #fff;
-            padding-top: 30px;
-            min-height: 70px;
-            border-bottom: #77aaff 3px solid;
-        }
-
-        header a {
-            color: #fff;
-            text-decoration: none;
-            text-transform: uppercase;
-            font-size: 16px;
-        }
-
-        header ul {
-            padding: 0;
-            list-style: none;
-        }
-
-        header li {
-            display: inline;
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 0 20px;
         }
 
-        header nav {
-            float: right;
-            margin-top: 10px;
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
         }
 
-        header h1 {
-            float: left;
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CiAgICAgICAgPGNpcmNsZSBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS1vcGFjaXR5PSIwLjEiIGN4PSIyMCIgY3k9IjIwIiByPSIxNSIvPgogICAgPC9nPgo8L3N2Zz4=') repeat;
+            opacity: 0.1;
         }
 
-        main {
-            padding: 20px 0;
+        .hero-content {
+            position: relative;
+            z-index: 1;
         }
 
-        section {
+        .hero h1 {
+            font-size: 3em;
             margin-bottom: 20px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
 
-        section h2 {
-            margin-bottom: 10px;
+        .hero p {
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            opacity: 0.95;
         }
 
-        .features-grid {
+        .badges {
             display: flex;
-            gap: 20px;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
             flex-wrap: wrap;
         }
 
-        .feature-card {
-            background: #fff;
-            border: 1px solid #ddd;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            flex: 1;
-            min-width: 300px;
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
         }
 
-        .feature-card h3 {
-            margin-bottom: 10px;
+        .badge:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
         }
 
-        .feature-card ul {
-            list-style: none;
+        /* Section Styles */
+        .section {
+            padding: 60px 0;
         }
 
-        .feature-card ul li {
-            margin-bottom: 10px;
-        }
-
-        footer {
-            background: #333;
-            color: #fff;
+        .section-title {
             text-align: center;
-            padding: 10px 0;
-            margin-top: 20px;
-        }
-
-        .feature-card ul {
-            list-style: none;
-            padding-left: 0;
-        }
-
-        .feature-card ul li {
-            margin-bottom: 10px;
+            font-size: 2.5em;
+            margin-bottom: 50px;
+            color: #2c3e50;
             position: relative;
-            padding-left: 20px;
         }
 
-        .feature-card ul li::before {
-            content: '★';
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: #3498db;
+            margin: 20px auto;
+            border-radius: 2px;
+        }
+
+        /* Module Grid */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .module-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .module-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .module-card p {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .module-features {
+            list-style: none;
+        }
+
+        .module-features li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #555;
+        }
+
+        .module-features li::before {
+            content: '✓';
             position: absolute;
             left: 0;
-            color: #ffcc00; /* You can change the color of the star here */
+            color: #2ecc71;
+            font-weight: bold;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .feature-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .feature-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+        }
+
+        .feature-box i {
+            font-size: 2.5em;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+
+        .feature-box h4 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        /* Hardware Section */
+        .hardware-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .hardware-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .hardware-item:hover {
+            border-color: #3498db;
+            background: white;
+        }
+
+        .hardware-item h5 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .hardware-item p {
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+
+        /* Statistics */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #27ae60;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* About Section */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .certifications {
+            display: flex;
+            gap: 30px;
+            margin-top: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cert-badge {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        /* Footer */
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-<header>
-    <div class="container">
-        <h1>Polimex RFID Professional Access Control System</h1>
-        <nav>
-            <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#about">About</a></li>
-            </ul>
-        </nav>
-    </div>
-</header>
-<main>
-    <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
-        <a href="https://demo.polimex.co" target="_blank">
-            <img src="https://img.shields.io/badge/Demo%20(15.0)-demo.polimex.co-green?style=plastic&logo=server"
-                 alt="Demo Server (15.0)">
-        </a>
-        <a href="https://github.com/polimex/polimex-rfid/tree/18.0" target="_blank">
-            <img src="https://img.shields.io/badge/GitHub-polimex%2Fpolimex--rfid%20(18.0)-blue?style=plastic&logo=github"
-                 alt="GitHub Repo (Branch: 18.0)">
-        </a>
-    </div>
-    <section id="home">
-        <div class="container">
-            <h2>Fully Functional Professional RFID Access Control System</h2>
-            <p>Enhance your Odoo experience with our professional RFID system. Gain information about the entrance of
-                the company’s building/rooms or specific places</p>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-content">
+            <h1>Polimex RFID Access Control Suite</h1>
+            <p>Enterprise-Grade Access Control, Attendance, and Facility Management for Odoo</p>
+            
+            <div class="badges">
+                <div class="badge">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Enterprise Security</span>
+                </div>
+                <div class="badge">
+                    <i class="fas fa-globe"></i>
+                    <span>Multi-Company Ready</span>
+                </div>
+                <div class="badge">
+                    <i class="fas fa-clock"></i>
+                    <span>Real-Time Monitoring</span>
+                </div>
+                <div class="badge">
+                    <i class="fas fa-code-branch"></i>
+                    <span>Open Source</span>
+                </div>
+            </div>
         </div>
     </section>
-    <section id="features">
+
+    <!-- Main Modules Section -->
+    <section class="section">
         <div class="container">
-            <h2>Features</h2>
+            <h2 class="section-title">Complete Suite of RFID Modules</h2>
+            
+            <div class="modules-grid">
+                <!-- Core RFID Module -->
+                <div class="module-card">
+                    <i class="fas fa-id-card module-icon"></i>
+                    <h3>Core Access Control</h3>
+                    <p>Professional RFID access control with advanced hardware integration</p>
+                    <ul class="module-features">
+                        <li>Multi-controller support (iCON50-180)</li>
+                        <li>Real-time event processing</li>
+                        <li>Advanced access rules & schedules</li>
+                        <li>Emergency & alarm management</li>
+                        <li>Anti-passback & duress PIN</li>
+                        <li>Zone-based access control</li>
+                    </ul>
+                </div>
+
+                <!-- Attendance Module -->
+                <div class="module-card">
+                    <i class="fas fa-user-clock module-icon"></i>
+                    <h3>Attendance Integration</h3>
+                    <p>Seamless time tracking from access events</p>
+                    <ul class="module-features">
+                        <li>Automatic check-in/out</li>
+                        <li>Zone-based attendance</li>
+                        <li>Multi-location support</li>
+                        <li>Overtime calculation</li>
+                        <li>Late attendance tracking</li>
+                        <li>Hourly cost integration</li>
+                    </ul>
+                </div>
+
+                <!-- Visitor Management -->
+                <div class="module-card">
+                    <i class="fas fa-users module-icon"></i>
+                    <h3>Visitor & Services</h3>
+                    <p>Complete visitor and temporary access management</p>
+                    <ul class="module-features">
+                        <li>Time & visit-based services</li>
+                        <li>Visitor badge printing</li>
+                        <li>Barcode card generation</li>
+                        <li>Email badge delivery</li>
+                        <li>Portal self-service</li>
+                        <li>ZPL wristband printing</li>
+                    </ul>
+                </div>
+
+                <!-- Vending Integration -->
+                <div class="module-card">
+                    <i class="fas fa-candy-cane module-icon"></i>
+                    <h3>Vending Machines</h3>
+                    <p>Cashless vending with RFID cards</p>
+                    <ul class="module-features">
+                        <li>EXECUTIVE protocol support</li>
+                        <li>Balance management</li>
+                        <li>Auto-refill system</li>
+                        <li>Payroll deduction</li>
+                        <li>Product subsidy</li>
+                        <li>Sales analytics</li>
+                    </ul>
+                </div>
+
+                <!-- Special Applications -->
+                <div class="module-card">
+                    <i class="fas fa-puzzle-piece module-icon"></i>
+                    <h3>Specialized Solutions</h3>
+                    <p>Industry-specific applications</p>
+                    <ul class="module-features">
+                        <li>Voting system integration</li>
+                        <li>IP camera & ANPR</li>
+                        <li>Property management (PMS)</li>
+                        <li>Site hierarchy management</li>
+                        <li>Temperature monitoring</li>
+                        <li>Fire alarm integration</li>
+                    </ul>
+                </div>
+
+                <!-- Integration Tools -->
+                <div class="module-card">
+                    <i class="fas fa-sync module-icon"></i>
+                    <h3>Integration & Tools</h3>
+                    <p>Seamless data migration and integration</p>
+                    <ul class="module-features">
+                        <li>Andromeda system import</li>
+                        <li>Legacy cloud migration</li>
+                        <li>Excel/CSV import</li>
+                        <li>REST API access</li>
+                        <li>Webhook notifications</li>
+                        <li>Auto-refresh views</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hardware Support Section -->
+    <section class="section" style="background: #f8f9fa;">
+        <div class="container">
+            <h2 class="section-title">Supported Hardware</h2>
+            
+            <div class="hardware-grid">
+                <div class="hardware-item">
+                    <h5>iCON50</h5>
+                    <p>1 door, 1 reader<br>Basic access control</p>
+                </div>
+                <div class="hardware-item">
+                    <h5>iCON110</h5>
+                    <p>1-2 doors, 2 readers<br>IO support</p>
+                </div>
+                <div class="hardware-item">
+                    <h5>iCON115</h5>
+                    <p>1-2 doors, 2 readers<br>IO + Alarm support</p>
+                </div>
+                <div class="hardware-item">
+                    <h5>iCON130</h5>
+                    <p>2-4 doors, 4 readers<br>Advanced IO</p>
+                </div>
+                <div class="hardware-item">
+                    <h5>iCON180</h5>
+                    <p>4 doors, 8 readers<br>Full features</p>
+                </div>
+                <div class="hardware-item">
+                    <h5>Turnstile</h5>
+                    <p>1 door, 4 readers<br>Turnstile features</p>
+                </div>
+                <div class="hardware-item">
+                    <h5>Relay</h5>
+                    <p>Up to 512 doors<br>Elevator control</p>
+                </div>
+                <div class="hardware-item">
+                    <h5>iTemp</h5>
+                    <p>90 temp sensors<br>Environmental monitoring</p>
+                </div>
+                <div class="hardware-item">
+                    <h5>Fire</h5>
+                    <p>4 fire lines<br>Fire alarm integration</p>
+                </div>
+                <div class="hardware-item">
+                    <h5>Vending</h5>
+                    <p>EXECUTIVE protocol<br>Cashless payment</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Features Section -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Why Choose Polimex RFID?</h2>
+            
             <div class="features-grid">
-                <div class="feature-card">
-                    <h3>General</h3>
-                    <ul>
-                        <li>Gain information about the entrance of the company’s building/rooms or specific places</li>
-                        <li>Multi site and multi company support</li>
-                        <li>Fully integrated in Odoo models</li>
-                        <li>Easy to install and support</li>
-                        <li>Full remote support of the installed equipment on the customer site</li>
-                        <li>Cloud based installation for Installing companies</li>
-                        <li>Part of a existing Odoo installations</li>
-                        <li>Local installation on VM (polimex.cloud)</li>
-                        <li>Demo installation (demo.polimex.co)</li>
-                        <li>Code available in Github (github.com/polimex)</li>
-                    </ul>
+                <div class="feature-box">
+                    <i class="fas fa-lock"></i>
+                    <h4>Enterprise Security</h4>
+                    <p>Multi-level security with audit trails and compliance features</p>
                 </div>
-                <div class="feature-card">
-                    <h3>Equipment</h3>
-                    <ul>
-                        <li>Multi technology readers support Wiegand 26/32/34 bit</li>
-                        <li>Reader modes: Card Only, Card and PIN, Card or Work code</li>
-                        <li>Local and Global Anti Pass Back</li>
-                        <li>Duress mode</li>
-                        <li>Setting Time schedules</li>
-                        <li>Global and Local emergency/Fire distribution</li>
-                        <li>Dual person mode</li>
-                        <li>Interlock management</li>
-                        <li>Turnstile ready</li>
-                        <li>IP Camera Plate recognition integration</li>
-                        <li>Vending Machine support with Executive protocol</li>
-                        <li>Fully open equipment SDK/API</li>
-                        <li>Full support of all Polimex manufactured controllers</li>
-                    </ul>
+                <div class="feature-box">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <h4>Real-Time Processing</h4>
+                    <p>Instant event processing and live monitoring dashboards</p>
                 </div>
-                <div class="feature-card">
-                    <h3>Module Features</h3>
-                    <ul>
-                        <li>Fully integrated in core Employee module</li>
-                        <li>Unlimited Access groups with inheritance</li>
-                        <li>Real-time user events</li>
-                        <li>Temperature and Humidity history</li>
-                        <li>Cards for Employee and for Partners</li>
-                        <li>Control the access of each department in the company</li>
-                        <li>Department manager role</li>
-                        <li>Give expiration date of a given access group</li>
-                        <li>Import cards and their owners using excel, or csv files, or create them manually</li>
-                        <li>Emergency Zone management</li>
-                        <li>Attendance Zone management on door, department, etc.</li>
-                    </ul>
+                <div class="feature-box">
+                    <i class="fas fa-network-wired"></i>
+                    <h4>Scalable Architecture</h4>
+                    <p>From 1 to 1000+ doors across multiple locations</p>
                 </div>
-                <div class="feature-card">
-                    <h3>Sub-module Addons</h3>
-                    <ul>
-                        <li>Base PMS module vertical</li>
-                        <li>Attendance calculation</li>
-                        <li>Hourly cost & work time</li>
-                        <li>Portal integration</li>
-                        <li>Building manager addons for easy management</li>
-                        <li>Barcode Generation and partner share</li>
-                        <li>Vending product sales with Inventory option</li>
-                        <li>RFID Voting module vertical</li>
-                        <li>RFID Services sales and management</li>
-                    </ul>
+                <div class="feature-box">
+                    <i class="fas fa-plug"></i>
+                    <h4>Easy Integration</h4>
+                    <p>Seamless Odoo integration with HR, attendance, and more</p>
                 </div>
-                <div class="feature-card">
-                    <h3>We Offer</h3>
-                    <ul>
-                        <li>Free and fast bugfix</li>
-                        <li>Open source project</li>
-                        <li>Multi-language module support</li>
-                        <li>Additional development on request</li>
-                        <li>Integration with other modules for different Odoo verticals</li>
-                    </ul>
+                <div class="feature-box">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h4>Multi-Platform</h4>
+                    <p>Web, mobile, and portal access for all users</p>
+                </div>
+                <div class="feature-box">
+                    <i class="fas fa-headset"></i>
+                    <h4>Professional Support</h4>
+                    <p>Expert support and custom development available</p>
                 </div>
             </div>
         </div>
     </section>
-    <section id="about">
+
+    <!-- Statistics Section -->
+    <section class="section" style="background: #f8f9fa;">
         <div class="container">
-            <h2>About Us</h2>
-            <div class="logo-container" style="display: flex; justify-content: space-around; align-items: center;">
-                <div>
-                    <img src="https://odoocdn.com/openerp_website/static/src/img/assets/png/odoo_ready_partners_rgb.png" alt="Odoo Ready Partners Logo" width="200">
+            <h2 class="section-title">Trusted by Companies Worldwide</h2>
+            
+            <div class="stats-container">
+                <div class="stat-box">
+                    <div class="stat-number">30+</div>
+                    <div class="stat-label">Years Experience</div>
                 </div>
-                <div>
-                    <img src="https://raw.githubusercontent.com/polimex/logos/5c5af675ad5d6ef12bb29664c250196c51ac2bc8/company_logo.png" alt="Polimex Holding Ltd. Logo" width="200">
+                <div class="stat-box">
+                    <div class="stat-number">15+</div>
+                    <div class="stat-label">Countries</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">1000+</div>
+                    <div class="stat-label">Installations</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Support</div>
                 </div>
             </div>
-            <p>Polimex Holding Ltd. has been a leader in the security and control systems industry since 1994. Our
-                extensive experience and innovative approach have made us a trusted partner for businesses
-                worldwide.</p>
-            <p>We are ISO 9001:2015 and ISO 27001:2017 certified, ensuring the highest quality standards in our products
-                and services. As a proud member of the Bulgarian Chamber of Commerce and Industry (BCCI), we are
-                committed to excellence and customer satisfaction.</p>
-            <p>Our expertise spans the design, production, construction, and maintenance of advanced security systems.
-                We have successfully completed numerous projects in Bulgaria, Macedonia, Serbia, Kosovo, and Romania,
-                and our products are available through trusted partners in Italy, Spain, England, Germany, the
-                Netherlands, Belgium, France, Hungary, the Czech Republic, and Greece.</p>
-            <p>We invite companies in the security and control systems sector to partner with us. Together, we can
-                achieve greater success and provide top-notch solutions to our clients. Contact us to explore
-                partnership opportunities and join forces with a strong and reliable company.</p>
         </div>
     </section>
-    <section id="contact">
+
+    <!-- About Section -->
+    <section class="section">
         <div class="container">
-            <h2>Contact Us</h2>
-            <p>For bug reports, please visit <a href="https://github.com/polimex/polimex-rfid/issues">github.com&#47;polimex&#47;polimex-rfid&#47;issues</a>.<br/>
-               For sales inquiries, email <a href="mailto:sales@polimex.co">sales&#64;polimex&#46;co</a>.</p>
+            <h2 class="section-title">About Polimex</h2>
+            
+            <div class="about-content">
+                <div>
+                    <p>Since 1994, Polimex Holding Ltd. has been a leader in security and control systems. Our innovative RFID solutions are trusted by businesses across Europe and beyond.</p>
+                    <p>We combine decades of hardware expertise with modern software development to deliver comprehensive access control solutions that scale with your business.</p>
+                    <p>As an official Odoo Ready Partner, we ensure seamless integration with your existing Odoo ecosystem while maintaining the highest standards of quality and security.</p>
+                </div>
+                <div>
+                    <div class="certifications">
+                        <div class="cert-badge">
+                            <i class="fas fa-certificate" style="font-size: 2em; color: #3498db;"></i>
+                            <h5>ISO 9001:2015</h5>
+                            <p>Quality Management</p>
+                        </div>
+                        <div class="cert-badge">
+                            <i class="fas fa-shield-alt" style="font-size: 2em; color: #2ecc71;"></i>
+                            <h5>ISO 27001:2017</h5>
+                            <p>Information Security</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
-</main>
-<footer>
-    <div class="container">
-        <p>&copy; 1994 - 2023 Polimex RFID Module. All rights reserved.</p>
-    </div>
-</footer>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to Secure Your Facility?</h2>
+            <p>Join hundreds of companies using Polimex RFID for their access control needs</p>
+            
+            <div class="cta-buttons">
+                <a href="https://demo.polimex.co" target="_blank" class="btn btn-primary">
+                    <i class="fas fa-desktop"></i> Try Demo
+                </a>
+                <a href="mailto:sales@polimex.co" class="btn btn-secondary">
+                    <i class="fas fa-envelope"></i> Contact Sales
+                </a>
+                <a href="https://github.com/polimex/odoo-apps" target="_blank" class="btn btn-secondary">
+                    <i class="fab fa-github"></i> View on GitHub
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://polimex.co" target="_blank">Website</a>
+                <a href="https://github.com/polimex/odoo-apps/issues" target="_blank">Report Issues</a>
+                <a href="https://polimex.co/docs" target="_blank">Documentation</a>
+                <a href="mailto:support@polimex.co">Support</a>
+            </div>
+            <p>&copy; 1994 - 2024 Polimex Holding Ltd. All rights reserved.</p>
+            <p>AGPL-3.0 Licensed | Odoo 18.0 Compatible</p>
+        </div>
+    </footer>
 </body>
 </html>
