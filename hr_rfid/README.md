@@ -110,11 +110,15 @@ Event Endpoint: /hr/rfid/event
 ```
 
 #### Controller Types
-- **iCON50**: 1 door, 2 readers
-- **iCON110**: 1 door, 2 readers, IO support
-- **iCON115**: 1 door, 2 readers, IO support, alarm support
-- **iCON130**: 2 doors, 4 readers, IO support
+- **iCON50**: 1 door, 1 readers
+- **iCON110**: 1-2 door, 2 readers, IO support
+- **iCON115**: 1-2 door, 2 readers, IO support, alarm support
+- **iCON130**: 2-4 doors, 4 readers, IO support
+- **turnstile**: 1 doors, 4 readers, IO support with specific turnstile features
 - **iCON180**: 4 doors, 8 readers, IO support, alarm support
+- **Relay**: up to 512 door, 2 readers, IO support with relays for elevator control and etc.
+- **Fire**: IO support with fire alarm control panel with 4 analog fire line inputs
+- **iTemp**: up to 90 temperature sensors, IO support with temperature monitoring
 
 ## 📖 Usage
 
