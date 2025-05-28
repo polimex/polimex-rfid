@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RFID PMS Base - Property Management System Integration</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            background: white;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #e74c3c;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .feature {
+            background: #ecf0f1;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #e74c3c;
+            border-radius: 5px;
+        }
+
+        .feature h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        ul li {
+            margin-bottom: 10px;
+        }
+
+        .highlight {
+            background-color: #fffacd;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .icon-item {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .icon-item i {
+            font-size: 48px;
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>RFID PMS Base</h1>
+        
+        <p>Integrate your Property Management System with RFID access control. This module provides the foundation for managing rooms, guests, and access cards in hotels, residential complexes, and other property management scenarios.</p>
+
+        <h2>Key Features</h2>
+        
+        <div class="feature">
+            <h3>🏨 Room Management</h3>
+            <p>Complete room management system with status tracking, cleaning schedules, and guest assignments.</p>
+        </div>
+
+        <div class="feature">
+            <h3>🔑 Card Encoding</h3>
+            <p>Encode RFID cards directly from room assignments with automatic access rights configuration.</p>
+        </div>
+
+        <div class="feature">
+            <h3>👥 Guest Management</h3>
+            <p>Track guest information, check-in/check-out times, and manage multiple cards per room.</p>
+        </div>
+
+        <div class="feature">
+            <h3>🔄 Room Moves</h3>
+            <p>Easy room transfer wizard to move guests between rooms while maintaining access control.</p>
+        </div>
+
+        <h2>Room Status Icons</h2>
+        <div class="icon-grid">
+            <div class="icon-item">
+                <i class="fas fa-broom"></i>
+                <p>Cleaning Status</p>
+            </div>
+            <div class="icon-item">
+                <i class="fas fa-moon"></i>
+                <p>Do Not Disturb</p>
+            </div>
+            <div class="icon-item">
+                <i class="fas fa-users"></i>
+                <p>Guest Occupancy</p>
+            </div>
+        </div>
+
+        <h2>Functionality Includes</h2>
+        <ul>
+            <li><strong>Room States:</strong> Available, Occupied, Cleaning, Maintenance, etc.</li>
+            <li><strong>Card Management:</strong> Issue, revoke, and track RFID cards per room</li>
+            <li><strong>Access Control:</strong> Automatic door access configuration based on room assignments</li>
+            <li><strong>Reporting:</strong> Guest history, room utilization, and card usage reports</li>
+            <li><strong>Multi-property:</strong> Support for multiple buildings or properties</li>
+        </ul>
+
+        <h2>Perfect For</h2>
+        <ul>
+            <li>Hotels and hospitality businesses</li>
+            <li>Student accommodation and dormitories</li>
+            <li>Serviced apartments and extended stay facilities</li>
+            <li>Corporate housing and residential complexes</li>
+            <li>Any property requiring room-based access control</li>
+        </ul>
+
+        <h2>Integration Benefits</h2>
+        <ul>
+            <li>Seamless integration with <span class="highlight">hr_rfid</span> access control system</li>
+            <li>Real-time synchronization between PMS and access control</li>
+            <li>Automated card programming based on room assignments</li>
+            <li>Comprehensive audit trail for all room and card activities</li>
+        </ul>
+
+        <h2>Wizard Tools</h2>
+        <div class="feature">
+            <h3>🎯 Card from Room Wizard</h3>
+            <p>Quick card generation for room guests with pre-configured access rights.</p>
+        </div>
+        
+        <div class="feature">
+            <h3>📦 Room Move Wizard</h3>
+            <p>Streamlined process for moving guests between rooms with automatic access updates.</p>
+        </div>
+    </div>
+</body>
+</html>
