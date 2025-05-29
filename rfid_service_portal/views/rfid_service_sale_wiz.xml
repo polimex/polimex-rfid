@@ -8,13 +8,20 @@
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='email_card']" position="after">
                     <button name="share_card" type="object"
-                            string="Share" icon="fa-share-alt"
-                            invisible="not generate_barcode_card"/>
+                            string="Share" icon="fa-share-alt" data-hotkey="s"
+                            invisible="not generate_barcode_card or (not email and not mobile)"/>
                 </xpath>
-                <xpath expr="//field[@name='email']" position="after">
-                    <field name="invite_in_portal" invisible="not email"/>
+                <xpath expr="//field[@name='email']" position="replace">
+                    <div class="oe_inline">
+                        <label for="email" class="oe_edit_only" />
+                        <field name="email" class="oe_inline"/>
+                        <label for="invite_in_portal" invisible="not email" class="oe_edit_only" />
+                        <field name="invite_in_portal"
+                               nolabel="1"
+                               class="oe_inline"
+                               invisible="not email"/>
+                    </div>
                 </xpath>
-
             </field>
         </record>
 

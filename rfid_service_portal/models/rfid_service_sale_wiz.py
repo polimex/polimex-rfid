@@ -22,7 +22,17 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
     def share_card(self):
         if not self.email and not self.mobile:
             raise UserError(_('Please fill the e-mail or mobile in the form'))
+        
+        # Portal share requires email, so check if we have one
+        if not self.email:
+            raise UserError(_('Email is required to share the card. Please fill the email address.'))
+            
         sale_id, partner_id, access_group_contact_rel, card_id = self._write_card()
+        
+        # Ensure partner has email for portal sharing
+        if not partner_id.email:
+            raise UserError(_('The partner must have an email address to share the card.'))
+        
         act = card_id.action_share()
         act['name'] = _('Share web card %s to %s' % (sale_id.name, partner_id.name))
         act['company_dependent'] = True
