@@ -239,11 +239,48 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         if not self.email and not self.partner_id:
             raise UserError(_('Please fill the e-mail in the form'))
         sale_id, partner_id, access_group_contact_rel, card_id = self._write_card()
-        return self.partner_id.action_send_badge_email()
+        
+        # Get the email compose action
+        template = self.service_id.mail_template_id
+        compose_form = self.env.ref('mail.email_compose_message_wizard_form')
+        ctx = dict(
+            default_model='res.partner',
+            default_res_ids=self.partner_id.ids,
+            default_partner_ids=[self.partner_id.id],
+            default_use_template=bool(template),
+            default_template_id=template and template.id,
+            default_composition_mode='comment',
+            custom_layout="mail.mail_notification_light",
+        )
+        
+        email_action = {
+            'name': _('Send Badge - Compose Email'),
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'mail.compose.message',
+            'views': [(compose_form.id, 'form')],
+            'view_id': compose_form.id,
+            'target': 'new',
+            'context': ctx,
+        }
+        
+        # Add close on report download behavior
+        email_action.update({'close_on_report_download': True})
+        
+        return email_action
 
     def print_card(self):
         sale_id, partner_id, access_group_contact_rel, card_id = self._write_card()
-        return self.env.ref('hr_rfid.action_report_res_partner_foldable_badge').report_action(self.partner_id)
+        # Use the print template from the service if configured, otherwise use default
+        if self.service_id.print_template_id:
+            report_action = self.service_id.print_template_id.report_action(self.partner_id)
+        else:
+            report_action = self.env.ref('hr_rfid.action_report_res_partner_foldable_badge').report_action(self.partner_id)
+        
+        # Update the action to close the wizard after download
+        report_action.update({'close_on_report_download': True})
+        
+        return report_action
 
     def write_card(self):
         sale_id, partner_id, access_group_contact_rel, card_id = self._write_card()

@@ -32,7 +32,6 @@
                         <div class="oe_title">
                             <label for="card_number"/>
                             <h1>
-                                <!--                                <field name="card_number" placeholder="Scan card on reader . . ."/>-->
                                 <field name="card_number"
                                        placeholder="Scan card on reader . . ."
                                        readonly="generate_barcode_card or extend_sale_id != False"
@@ -44,18 +43,13 @@
 
                         </div>
                         <group>
-                            <group>
+                            <group id="time_group">
                                 <field name="start_date" readonly="0"/>
-                            </group>
-                            <group>
                                 <field name="fixed_time" invisible="1"/>
                                 <field name="end_date" readonly="fixed_time"/>
-                            </group>
-                            <group>
                                 <field name="visits"/>
                             </group>
-                            <group>
-<!--                                       options="{'no_open': True, 'no_create': [('extend_sale_id', '!=', False)]}"-->
+                            <group id="partner_group">
                                 <field name="parent_id" invisible="1"/>
                                 <field name="partner_id"
                                        readonly="extend_sale_id"
@@ -67,23 +61,23 @@
                                 <field name="mobile" placeholder="If you want to send mobile link"/>
                             </group>
                             <separator/>
-                            <group invisible="not extend_sale_id">
+                            <group invisible="not extend_sale_id" id="extend_group1">
                                 <field name="ext_start_date" readonly="1"
                                        options='{"no_open": True, "no_create": True}'/>
                             </group>
-                            <group invisible="not extend_sale_id">
+                            <group invisible="not extend_sale_id" id="extend_group2">
                                 <field name="ext_end_date" readonly="1" options='{"no_open": True, "no_create": True}'/>
                             </group>
                         </group>
                         <footer>
                             <button name="write_card" type="object"
-                                    string="Register" class="oe_highlight" icon="fa-check"/>
+                                    string="Register" class="oe_highlight" icon="fa-check" data-hotkey="r"/>
                             <button name="print_card" type="object"
                                     string="Print" icon="fa-print"
-                                    invisible="not generate_barcode_card"/>
+                                    invisible="not generate_barcode_card or not service_id.mail_template_id" data-hotkey="p"/>
                             <button name="email_card" type="object"
                                     string="E-mail" icon="fa-envelope-o"
-                                    invisible="not generate_barcode_card"/>
+                                    invisible="not generate_barcode_card or not email" data-hotkey="e"/>
                             <button string="Cancel" special="cancel" icon="fa-times"/>
                         </footer>
                     </sheet>

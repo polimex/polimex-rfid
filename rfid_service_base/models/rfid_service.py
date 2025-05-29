@@ -89,6 +89,21 @@ class BaseRFIDService(models.Model):
         default=True,
         help='If the time is not fixed, the operator can change the start and end time of the service.'
     )
+    mail_template_id = fields.Many2one(
+        comodel_name="mail.template",
+        string="Email Template",
+        domain=[("model", "=", "res.partner")],
+        default=lambda self: self.env.ref('hr_rfid.card_barcode_mail_template_badge'),
+        help="A email template will be sent to the "
+             "customer when the sale is sent to the customer. ",
+    )
+    print_template_id = fields.Many2one(
+        comodel_name="ir.actions.report",
+        string="Print Template",
+        domain=[("model", "=", "res.partner")],
+        default=lambda self: self.env.ref('hr_rfid.action_report_res_partner_foldable_badge'),
+        help="Report template to use when printing badges for this service."
+    )
 
     @api.onchange('generate_barcode_card')
     def _onchange_barcode(self):

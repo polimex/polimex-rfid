@@ -171,11 +171,18 @@
                             <group string="Visit based" invisible="service_type == time">
                                 <field name="visits"/>
                             </group>
-                            <group>
-                                <field name="generate_barcode_card" widget="generate_barcode_card"/>
-                                <field name="parent_id"/>
-                                <field name="card_type" options='{"no_open": True, "no_create": True}'/>
+                            <group id="rfid_service_form_group">
                                 <field name="fixed_time"/>
+                                <field name="generate_barcode_card" widget="generate_barcode_card"/>
+                            </group>
+                            <group id="rfid_service_form_group2">
+                                <field name="card_type" options='{"no_open": True, "no_create": True}'/>
+                                <field name="parent_id"/>
+                            </group>
+                            <group string="Templates" id="rfid_service_form_printing_templates"
+                                   groups="base.group_no_one">
+                                <field name="mail_template_id"/>
+                                <field name="print_template_id"/>
                             </group>
                         </group>
                         <notebook>
