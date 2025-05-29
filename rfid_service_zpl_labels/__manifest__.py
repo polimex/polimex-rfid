@@ -30,9 +30,9 @@
 
     # always loaded
     'data': [
+        'reports/report_wristband.xml',
         'views/rfid_service.xml',
         'views/rfid_service_sale_wiz.xml',
-        'reports/report_wristband.xml',
     ],
     # 'images': ['static/images/main_screenshot.png'],
     "application": False,

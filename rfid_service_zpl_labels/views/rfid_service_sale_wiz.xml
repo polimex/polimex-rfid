@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="sale_wiz_form_inherit_label_button" model="ir.ui.view">
+            <field name="name">Sale RFID Service - New Button</field>
+            <field name="model">rfid.service.sale.wiz</field>
+            <field name="inherit_id" ref="rfid_service_base.sale_wiz_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@special='cancel']" position="before">
+                    <button name="print_label"
+                            type="object" invisible="not generate_barcode_card"
+                            string="Label" icon="fa-print" data-hotkey="l"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
