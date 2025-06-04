@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Action to open settings with correct module context -->
+        <record id="action_rfid_label_printer_config" model="ir.actions.act_window">
+            <field name="name">Label Printer Settings</field>
+            <field name="res_model">res.config.settings</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="context">{'module': 'rfid_service_zpl_labels', 'bin_size': False}</field>
+        </record>
+        
+        <!-- Add menu item under hr_rfid Configuration -->
+        <menuitem id="menu_rfid_label_printer_config_hr_rfid"
+                  name="Service Label Printer"
+                  parent="hr_rfid.hr_rfid_settings_menu"
+                  action="action_rfid_label_printer_config"
+                  sequence="50"
+                  groups="hr_rfid.hr_rfid_group_officer"/>
+                  
+        <!-- Add menu item under rfid_service_base -->
+        <menuitem id="menu_rfid_label_printer_config_service"
+                  name="Label Printer Settings"
+                  parent="rfid_service_base.menu_root"
+                  action="action_rfid_label_printer_config"
+                  sequence="99"
+                  groups="rfid_service_base.group_card_manager"/>
+    </data>
+</odoo>

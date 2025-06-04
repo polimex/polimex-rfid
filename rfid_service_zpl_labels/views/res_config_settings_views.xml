@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_inherit_rfid_labels" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.rfid.labels</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app string="Labels" name="rfid_service_zpl_labels" groups="rfid_service_base.group_card_manager">
+                    <block title="Label Printer Settings" name="rfid_label_printer_settings">
+                        <setting help="Configure the network printer for wristband labels">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="rfid_label_printer_ip" class="col-lg-3 o_light_label"/>
+                                    <field name="rfid_label_printer_ip" placeholder="192.168.1.100"/>
+                                </div>
+                                <div class="row">
+                                    <label for="rfid_label_printer_port" class="col-lg-3 o_light_label"/>
+                                    <field name="rfid_label_printer_port"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>
