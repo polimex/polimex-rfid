@@ -43,10 +43,10 @@
             ; -- 1 px separator line
             ^FO20,130^GB770,2,2^FS
 
-            ; -- CODE-128 barcode, exactly 10 digits
+            ; -- CODE-128 barcode, hexadecimal card number
             ^FO20,140^BY2,2,80
             ^BCN,80,Y,N,N
-            ^FD<t t-out="('%010d' % int(sale.card_number or 0))"/>^FS
+            ^FD<t t-out="sale.card_id.barcode_number or sale.card_number or '0000000000'"/>^FS
 
             ; -- Optional logo (pre-load GRF once under name COMPLOGO.GRF)
             ^FO680,10^XGR:COMPLOGO.GRF,1,1^FS
