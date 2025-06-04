@@ -90,10 +90,11 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         printer_ip = company.rfid_label_printer_ip or '192.168.1.100'
         printer_port = company.rfid_label_printer_port or 9100
         
-        # Simple test ZPL that prints "TEST" and a small barcode
+        # Simple test ZPL that prints along the wristband length
         test_zpl = b"""^XA
-^FO50,50^ADN,36,20^FDPRINTER TEST^FS
-^FO50,150^BY3^BCN,100,Y,N,N^FD123456^FS
+^PW203^LL2233^LH0,0
+^FO180,50^ADR,36,20^FDPRINTER TEST^FS
+^FO100,50^BY3^BCR,100,Y,N,N^FD123456^FS
 ^XZ"""
         
         try:

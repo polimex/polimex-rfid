@@ -47,12 +47,13 @@ class BaseRFIDService(models.Model):
         printer_ip = company.rfid_label_printer_ip or '192.168.1.100'
         printer_port = company.rfid_label_printer_port or 9100
         
-        # Simple test ZPL that prints service name and test message
+        # Simple test ZPL that prints along the wristband length
         test_zpl = f"""^XA
-^FO50,50^ADN,36,20^FDPRINTER TEST - {self.name}^FS
-^FO50,100^ADN,24,16^FDService: {self.name}^FS
-^FO50,150^BY3^BCN,100,Y,N,N^FD{self.id:06d}^FS
-^FO50,270^ADN,24,16^FDPrinter IP: {printer_ip}:{printer_port}^FS
+^PW203^LL2233^LH0,0
+^FO180,50^ADR,36,20^FDPRINTER TEST^FS
+^FO140,50^ADR,24,16^FDService: {self.name}^FS
+^FO100,50^BY3^BCR,100,Y,N,N^FD{self.id:06d}^FS
+^FO60,50^ADR,24,16^FDPrinter: {printer_ip}:{printer_port}^FS
 ^XZ""".encode('utf-8')
         
         try:

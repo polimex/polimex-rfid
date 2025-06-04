@@ -18,20 +18,24 @@
         <t t-out="env.company._logo_as_grf()"/>  <!-- изпращаме ~DG ... -->
         <t t-foreach="docs" t-as="sale" t-translation="off">
             ^XA^CI28 ; ------ START
-            ^PW812 ^LL203 ^LH0,0 ; 1" wristband canvas (812 dots @203 dpi)
+            ^PW203 ^LL2233 ^LH0,0 ; 1" x 11" wristband canvas (203 x 2233 dots @203 dpi)
+            
+            ; -- All text is rotated 90 degrees to print along the wristband length
+            ; -- Company name at top
+            ^FO180,20
+            ^A0R,36,36^FD<t t-out="sale.service_id.company_id.name if sale.service_id else env.company.name"/>^FS ; Company name
 
-            ^FO20,20
-            ^A0N,36,36^FD<t t-out="sale.service_id.company_id.name if sale.service_id else env.company.name"/>^FS ; Company name
+            ; -- Service and Patient name
+            ^FO140,20
+            ^A0R,28,28^FD<t t-out="sale.service_id.name if sale.service_id else 'N/A'"/>^FS
+            ^FO140,400
+            ^A0R,28,28^FD<t t-out="sale.partner_id.name if sale.partner_id else 'Guest'"/>^FS ; Patient name
 
-            ^FO20,60
-            ^A0N,28,28^FD<t t-out="sale.service_id.name if sale.service_id else 'N/A'"/>^FS
-            ^FO160,60
-            ^A0N,28,28^FD<t t-out="sale.partner_id.name if sale.partner_id else 'Guest'"/>^FS ; Patient name
-
-            ^FO20,95
-            ^A0N,28,28^FDValid:^FS
-            ^FO160,95
-            ^A0N,28,28^FD
+            ; -- Valid dates
+            ^FO105,20
+            ^A0R,28,28^FDValid:^FS
+            ^FO105,160
+            ^A0R,28,28^FD
             <t t-if="sale.start_date and sale.end_date">
                 <t t-out="sale.start_date.strftime('%d.%m.%Y')"/>
                 -
@@ -40,16 +44,16 @@
             <t t-else="">N/A</t>
             ^FS
 
-            ; -- 1 px separator line
-            ^FO20,130^GB770,2,2^FS
+            ; -- 1 px separator line (now horizontal along wristband)
+            ^FO70,20^GB2,2190,2^FS
 
-            ; -- CODE-128 barcode, hexadecimal card number
-            ^FO20,140^BY2,2,80
-            ^BCN,80,Y,N,N
+            ; -- CODE-128 barcode, rotated to print along wristband
+            ^FO60,20^BY2,2,80
+            ^BCR,80,Y,N,N
             ^FD<t t-out="sale.card_id.barcode_number or sale.card_number or '0000000000'"/>^FS
 
-            ; -- Optional logo (pre-load GRF once under name COMPLOGO.GRF)
-            ^FO680,10^XGR:COMPLOGO.GRF,1,1^FS
+            ; -- Optional logo (if needed)
+            ; ^FO10,2100^XGR:COMPLOGO.GRF,1,1^FS
 
             ^XZ ; ------ END
 
