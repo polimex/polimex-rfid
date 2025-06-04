@@ -60,7 +60,7 @@ class HrRfidWebstackReplaceWiz(models.TransientModel):
             raise ValidationError(_('Use different modules for this operation!'))
         if self.replace_existing:
             self.destination_webstack_id.controllers.unlink()
-        self.source_controller_ids.webstack_id = self.destination_webstack_id.id
+        self.source_controller_ids.write({'webstack_id': self.destination_webstack_id.id})
         self.source_webstack_id.active = False
         self.destination_webstack_id.active = self.destination_active_state
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
