@@ -140,9 +140,15 @@
             <field name="model">rfid.service</field>
             <field name="arch" type="xml">
                 <form string="">
+                    <header>
+                        <!-- Header for action buttons - currently empty, can be extended by other modules -->
+                    </header>
                     <sheet>
                         <field name="active" invisible="1"/>
                         <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active"/>
+                        <div name="button_box" class="oe_button_box">
+                            <!-- Smart buttons can be added here by other modules -->
+                        </div>
                         <div class="oe_title">
                             <label for="name" class="oe_edit_only"/>
                             <h2>
