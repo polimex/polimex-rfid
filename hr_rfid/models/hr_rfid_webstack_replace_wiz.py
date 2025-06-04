@@ -73,5 +73,6 @@ class HrRfidWebstackReplaceWiz(models.TransientModel):
         message = _("Controllers moved from <a href='%s'>Module %s</a>", link, self.source_webstack_id.display_name)
         self.destination_webstack_id.message_post(body=message, message_type='comment')
         message = _("Controller moved from <a href='%s'>Module %s</a>", link, self.source_webstack_id.display_name)
-        self.source_controller_ids.message_post(body=message, message_type='comment')
+        for controller in self.source_controller_ids:
+            controller.message_post(body=message, message_type='comment')
         pass
