@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Server Action for testing CUPS printer from list view -->
+        <record id="action_test_cups_label_printer" model="ir.actions.server">
+            <field name="name">Test CUPS Label Printer</field>
+            <field name="model_id" ref="rfid_service_base.model_rfid_service"/>
+            <field name="binding_model_id" ref="rfid_service_base.model_rfid_service"/>
+            <field name="binding_view_types">list,form</field>
+            <field name="state">code</field>
+            <field name="code">
+if records:
+    # Test CUPS printer for the first selected service
+    action = records[0].test_label_printer_cups()
+else:
+    action = {
+        'type': 'ir.actions.client',
+        'tag': 'display_notification',
+        'params': {
+            'title': 'No Service Selected',
+            'message': 'Please select a service to test the CUPS printer.',
+            'type': 'warning',
+            'sticky': False,
+        }
+    }
+            </field>
+        </record>
+    </data>
+</odoo>
