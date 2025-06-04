@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-27 09:26+0000\n"
-"PO-Revision-Date: 2025-05-27 12:27+0300\n"
+"POT-Creation-Date: 2025-06-04 07:33+0000\n"
+"PO-Revision-Date: 2025-06-04 10:34+0300\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -23,11 +23,196 @@ msgid "'wristband_' + (object.name or 'by_polimex')"
 msgstr "'гривна_' + (object.name or 'Полимекс')"
 
 #. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.res_config_settings_view_form_inherit_rfid_labels
+msgid "192.168.1.100"
+msgstr ""
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model,name:rfid_service_zpl_labels.model_rfid_service_sale_wiz
+msgid "Base RFID Service Sale Wizard"
+msgstr "Съветник за продажба на базова услуга RFID"
+
+#. module: rfid_service_zpl_labels
 #: model:ir.model,name:rfid_service_zpl_labels.model_res_company
 msgid "Company"
-msgstr "Компания"
+msgstr "Компании"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model,name:rfid_service_zpl_labels.model_res_config_settings
+msgid "Config Settings"
+msgstr "Конфигурационни настройки"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.res_config_settings_view_form_inherit_rfid_labels
+msgid "Configure the network printer for wristband labels"
+msgstr "Конфигуриране на мрежовия принтер за етикети за гривни"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service.py:0
+#: code:addons/rfid_service_zpl_labels/models/rfid_service_sale_wiz.py:0
+msgid "Connection Failed"
+msgstr "Връзката е неуспешна"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service_sale_wiz.py:0
+msgid "Connection Successful"
+msgstr "Връзката е успешна"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service.py:0
+msgid "Connection Timeout"
+msgstr "Изтекло време на връзката"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service.py:0
+msgid ""
+"Could not connect to printer at %s:%s - Connection timed out after 5 seconds"
+msgstr ""
+"Не може да се свърже с принтера на %s:%s - Изтече времето за връзка след 5 секунди"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service_sale_wiz.py:0
+msgid "Could not connect to printer: %s"
+msgstr "Не може да се свърже с принтера: %s"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model.fields,help:rfid_service_zpl_labels.field_res_company__rfid_label_printer_ip
+msgid "IP address of the Zebra label printer for this company"
+msgstr "IP адрес на Zebra етикетния принтер за тази компания"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model.fields,help:rfid_service_zpl_labels.field_res_config_settings__rfid_label_printer_ip
+msgid "IP address of the Zebra label printer for wristband printing"
+msgstr "IP адрес на Zebra етикетния принтер за печатане на гривни"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model.fields,field_description:rfid_service_zpl_labels.field_res_company__rfid_label_printer_ip
+#: model:ir.model.fields,field_description:rfid_service_zpl_labels.field_res_config_settings__rfid_label_printer_ip
+msgid "Label Printer IP"
+msgstr "IP на етикетен принтер"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model.fields,field_description:rfid_service_zpl_labels.field_res_company__rfid_label_printer_port
+#: model:ir.model.fields,field_description:rfid_service_zpl_labels.field_res_config_settings__rfid_label_printer_port
+msgid "Label Printer Port"
+msgstr "Порт на етикетен принтер"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.actions.act_window,name:rfid_service_zpl_labels.action_rfid_label_printer_config
+#: model:ir.ui.menu,name:rfid_service_zpl_labels.menu_rfid_label_printer_config_service
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.res_config_settings_view_form_inherit_rfid_labels
+msgid "Label Printer Settings"
+msgstr "Настройки на етикетен принтер"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model.fields,field_description:rfid_service_zpl_labels.field_rfid_service__label_template_id
+msgid "Label Template"
+msgstr "Шаблон за етикет"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.res_config_settings_view_form_inherit_rfid_labels
+msgid "Labels"
+msgstr "Етикети"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service.py:0
+msgid ""
+"Network error: %s\n"
+"Please check printer IP and port in system parameters."
+msgstr ""
+"Мрежова грешка: %s\n"
+"Моля, проверете IP и порт на принтера в системните параметри."
 
 #. module: rfid_service_zpl_labels
 #: model:ir.actions.report,name:rfid_service_zpl_labels.action_report_rfid_wristband
 msgid "Patient Wristband (ZPL)"
 msgstr "Гривна за пациент (ZPL)"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.sale_wiz_form_inherit_label_button
+msgid "Print Label"
+msgstr "Печат на етикет"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service.py:0
+msgid "Printer Test Successful"
+msgstr "Тестът на принтера е успешен"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model,name:rfid_service_zpl_labels.model_rfid_service
+msgid "RFID Service"
+msgstr "RFID Услуга"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model.fields,help:rfid_service_zpl_labels.field_rfid_service__label_template_id
+msgid "Select the label template to use for printing labels/wristbands. "
+msgstr "Изберете шаблона за етикет, който да се използва за печатане на етикети/гривни. "
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.view_rfid_service_form_inherit_new_group
+msgid ""
+"Send a test label to the configured printer to verify connectivity. Note: "
+"System parameters 'rfid.label.printer.ip' and 'rfid.label.printer.port' "
+"must be configured first in Settings → Technical → Parameters → System "
+"Parameters"
+msgstr ""
+"Изпратете тестов етикет до конфигурирания принтер за проверка на връзката. Забележка: "
+"Системните параметри 'rfid.label.printer.ip' и 'rfid.label.printer.port' "
+"трябва първо да бъдат конфигурирани в Настройки → Техническо → Параметри → Системни "
+"Параметри"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.ui.menu,name:rfid_service_zpl_labels.menu_rfid_label_printer_config_hr_rfid
+msgid "Service Label Printer"
+msgstr "Сервизен етикетен принтер"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model.fields,help:rfid_service_zpl_labels.field_res_company__rfid_label_printer_port
+msgid "TCP port for the Zebra label printer connection"
+msgstr "TCP порт за връзка с Zebra етикетния принтер"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model.fields,help:rfid_service_zpl_labels.field_res_config_settings__rfid_label_printer_port
+msgid "TCP port for the Zebra label printer connection (default: 9100)"
+msgstr "TCP порт за връзка с Zebra етикетния принтер (по подразбиране: 9100)"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service.py:0
+msgid "Test Failed"
+msgstr "Тестът е неуспешен"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.actions.server,name:rfid_service_zpl_labels.action_test_label_printer
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.view_rfid_service_form_inherit_new_group
+msgid "Test Label Printer"
+msgstr "Тест на етикетен принтер"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service.py:0
+msgid ""
+"Test label sent successfully to %s:%s\n"
+"A test label with service \"%s\" should print now."
+msgstr ""
+"Тестовият етикет е изпратен успешно на %s:%s\n"
+"Тестов етикет с услуга \"%s\" трябва да се отпечата сега."
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service_sale_wiz.py:0
+msgid "Test label sent to printer at %s:%s"
+msgstr "Тестовият етикет е изпратен на принтера на %s:%s"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service.py:0
+msgid "Unexpected error: %s"
+msgstr "Неочаквана грешка: %s"

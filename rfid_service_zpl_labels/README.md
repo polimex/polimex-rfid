@@ -9,6 +9,16 @@ ZPL (Zebra Programming Language) wristband printing extension for RFID Services.
 
 RFID Services ZPL Labels extends the RFID service system with professional wristband printing capabilities. It generates ZPL-formatted output for Zebra label printers, enabling high-quality wristband printing for visitors, patients, event attendees, and temporary access cards.
 
+### ⚠️ IMPORTANT: Multi-User Environment
+
+**If this module will be used from multiple workstations simultaneously**, you MUST install the `rfid_service_zpl_labels_cups` module to:
+- Organize print queue properly
+- Prevent print job conflicts  
+- Allow each user to have their own label printer
+- Provide proper print job management
+
+For single-user installations, the base module with direct socket printing is sufficient.
+
 ## ✨ Key Features
 
 ### Wristband Generation

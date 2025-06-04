@@ -9,6 +9,15 @@
                 <xpath expr="//group[@id='rfid_service_form_printing_templates']" position="inside">
                     <field name="label_template_id"/>
                 </xpath>
+                <xpath expr="//header" position="inside">
+                    <button name="test_label_printer_connection" 
+                            string="Test Label Printer" 
+                            type="object" 
+                            class="oe_highlight"
+                            icon="fa-print"
+                            help="Send a test label to the configured printer to verify connectivity. Note: System parameters 'rfid.label.printer.ip' and 'rfid.label.printer.port' must be configured first in Settings → Technical → Parameters → System Parameters"
+                            groups="rfid_service_base.group_card_manager"/>
+                </xpath>
             </field>
         </record>
     </data>

@@ -3,3 +3,4 @@
 from . import res_company
 from . import rfid_service
 from . import rfid_service_sale_wiz
+from . import res_config_settings

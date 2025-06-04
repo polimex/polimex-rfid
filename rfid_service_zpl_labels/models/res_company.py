@@ -3,10 +3,22 @@ import base64
 import io
 import textwrap
 from PIL import Image
-from odoo import models, api
+from odoo import models, api, fields
 
 class Company(models.Model):
     _inherit = "res.company"
+    
+    # Company-specific label printer settings
+    rfid_label_printer_ip = fields.Char(
+        string='Label Printer IP',
+        help='IP address of the Zebra label printer for this company'
+    )
+    
+    rfid_label_printer_port = fields.Integer(
+        string='Label Printer Port',
+        default=9100,
+        help='TCP port for the Zebra label printer connection'
+    )
 
     @api.model
     def _logo_as_grf(self, grf_name="COMPLOGO.GRF"):
