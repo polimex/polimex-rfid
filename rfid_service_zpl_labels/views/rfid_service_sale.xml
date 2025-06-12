@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Inherit the rfid.service.sale form view to add label preview button -->
+        <record id="hr_rfid_service_sale_form_inherit_zpl_labels" model="ir.ui.view">
+            <field name="name">rfid.service.sale.form.inherit.zpl.labels</field>
+            <field name="model">rfid.service.sale</field>
+            <field name="inherit_id" ref="rfid_service_base.hr_rfid_service_sale_form"/>
+            <field name="arch" type="xml">
+                <!-- Add preview button after the print button in header -->
+                <xpath expr="//header/button[@name='print_card']" position="after">
+                    <button string="Preview Label"
+                            name="preview_label"
+                            type="object"
+                            class="btn-secondary"
+                            icon="fa-eye"
+                            groups="rfid_service_base.group_card_user"
+                            help="Preview the wristband label in your browser before printing"/>
+                    <button string="Print Label Direct"
+                            name="print_label_direct"
+                            type="object"
+                            icon="fa-print"
+                            groups="rfid_service_base.group_card_user"
+                            help="Send the wristband label directly to the configured ZPL printer"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
