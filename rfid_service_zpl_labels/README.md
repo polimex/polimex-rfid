@@ -29,7 +29,7 @@ For single-user installations, the base module with direct socket printing is su
 
 ### Print Capabilities
 - **Direct ZPL Output**: Raw ZPL code for Zebra printers
-- **Company Branding**: Logo and company name on wristbands
+- **Company Branding**: Company name on wristbands
 - **Service Information**: Service type and validity dates
 - **Visitor Details**: Name and access information
 
@@ -85,13 +85,6 @@ The module includes a standard wristband template:
 - **Format**: Portrait orientation
 - **Content**: Company, service, visitor, dates, barcode
 
-### Company Logo Setup
-
-To add your company logo to wristbands:
-
-1. Convert logo to ZPL GRF format
-2. Upload to printer memory as `COMPLOGO.GRF`
-3. Logo will appear on all wristbands
 
 ## 📖 Usage
 
@@ -137,22 +130,30 @@ sock.close()
 ### Sample Output
 ```zpl
 ^XA^CI28
-^PW812 ^LL203 ^LH0,0
-^FO20,20
-^A0N,36,36^FDPolimex Company^FS
-^FO20,60
-^A0N,28,28^FDVisitor Pass^FS
-^FO160,60
-^A0N,28,28^FDJohn Doe^FS
-^FO20,95
-^A0N,28,28^FDValid:^FS
-^FO160,95
-^A0N,28,28^FD01.01.2024 - 31.01.2024^FS
-^FO20,130^GB770,2,2^FS
-^FO20,140^BY2,2,80
-^BCN,80,Y,N,N
+^PW203 ^LL2233 ^LH0,0
+
+; COLUMN 1: Company + Service
+^FO90,150
+^A0R,24,24^FDPolimex Company^FS
+^FO60,150
+^A0R,22,22^FDVisitor Pass^FS
+
+; COLUMN 2: Partner Name
+^FO85,750
+^A0R,30,30^FDJohn Doe^FS
+
+; COLUMN 3: Barcode (centered)
+^FO60,1250
+^BY2,2,80
+^BCR,80,N,N,N
 ^FD0123456789^FS
-^FO680,10^XGR:COMPLOGO.GRF,1,1^FS
+
+; COLUMN 4: Dates/Times
+^FO85,1800
+^A0R,18,18^FD01-JAN-24 08:00^FS
+^FO55,1800
+^A0R,18,18^FD31-JAN-24 18:00^FS
+
 ^XZ
 ```
 

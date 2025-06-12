@@ -47,13 +47,33 @@ class BaseRFIDService(models.Model):
         printer_ip = company.rfid_label_printer_ip or '192.168.1.100'
         printer_port = company.rfid_label_printer_port or 9100
         
-        # Simple test ZPL that prints along the wristband length
-        test_zpl = f"""^XA
-^PW203^LL2233^LH0,0
-^FO180,50^ADR,36,20^FDPRINTER TEST^FS
-^FO140,50^ADR,24,16^FDService: {self.name}^FS
-^FO100,50^BY3^BCR,100,Y,N,N^FD{self.id:06d}^FS
-^FO60,50^ADR,24,16^FDPrinter: {printer_ip}:{printer_port}^FS
+        # Test ZPL with column layout matching production design
+        from datetime import datetime
+        test_zpl = f"""^XA^CI28
+^PW203 ^LL2233 ^LH0,0
+
+; COLUMN 1: Test info
+^FO90,150
+^A0R,24,24^FDTEST PRINT^FS
+^FO60,150
+^A0R,22,22^FD{company.name[:15]}^FS
+
+; COLUMN 2: Service info
+^FO85,750
+^A0R,30,30^FD{self.name[:20]}^FS
+
+; COLUMN 3: Test barcode with service ID
+^FO60,1250
+^BY2,2,80
+^BCR,80,N,N,N
+^FD{self.id:010d}^FS
+
+; COLUMN 4: Printer info and time
+^FO85,1800
+^A0R,18,18^FD{printer_ip}:{printer_port}^FS
+^FO55,1800
+^A0R,18,18^FD{datetime.now().strftime('%d-%b-%y %H:%M').upper()}^FS
+
 ^XZ""".encode('utf-8')
         
         try:

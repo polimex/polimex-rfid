@@ -31,8 +31,7 @@
         Features:
         ---------
         - Direct socket printing to Zebra printers
-        - QR code with service information
-        - Company logo support (converted to ZPL graphics)
+        - Barcode with service information
         - Customizable label dimensions
         - Test printing functionality
         
@@ -44,7 +43,7 @@
     'license': 'AGPL-3',
 
     'category': "Generic Modules/Property Management System",
-    'version': '18.0.0.2.0',
+    'version': '18.0.1.0.0',
 
     # any module necessary for this one to work correctly
     'depends': ['rfid_service_base', 'hr_rfid'],
@@ -55,8 +54,10 @@
         'data/server_actions.xml',
         'reports/report_wristband.xml',
         'views/rfid_service.xml',
+        'views/rfid_service_sale.xml',
         'views/rfid_service_sale_wiz.xml',
         'views/res_config_settings_views.xml',
+        'views/label_preview_template.xml',
         'views/menu.xml',
     ],
     # 'images': ['static/images/main_screenshot.png'],

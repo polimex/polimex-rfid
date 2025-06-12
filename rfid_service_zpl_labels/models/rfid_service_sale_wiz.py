@@ -1,6 +1,7 @@
 from odoo import models, _
 from odoo.exceptions import UserError
 import socket
+from datetime import datetime
 
 import logging
 
@@ -90,12 +91,31 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         printer_ip = company.rfid_label_printer_ip or '192.168.1.100'
         printer_port = company.rfid_label_printer_port or 9100
         
-        # Simple test ZPL that prints along the wristband length
-        test_zpl = b"""^XA
-^PW203^LL2233^LH0,0
-^FO180,50^ADR,36,20^FDPRINTER TEST^FS
-^FO100,50^BY3^BCR,100,Y,N,N^FD123456^FS
-^XZ"""
+        # Test ZPL with column layout matching production design
+        test_zpl = f"""^XA^CI28
+^PW203 ^LL2233 ^LH0,0
+
+; COLUMN 1: Test info
+^FO90,150
+^A0R,24,24^FDTEST PRINT^FS
+^FO60,150
+^A0R,22,22^FD{company.name[:15]}^FS
+
+; COLUMN 2: Printer info
+^FO85,750
+^A0R,30,30^FD{printer_ip}:{printer_port}^FS
+
+; COLUMN 3: Test barcode
+^FO60,1250
+^BY2,2,80
+^BCR,80,N,N,N
+^FD1234567890^FS
+
+; COLUMN 4: Timestamp
+^FO85,1800
+^A0R,18,18^FD{datetime.now().strftime('%d-%b-%y %H:%M').upper()}^FS
+
+^XZ""".encode('utf-8')
         
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

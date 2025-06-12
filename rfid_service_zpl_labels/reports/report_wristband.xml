@@ -15,48 +15,43 @@
 
     <!-- QWeb template : renders ONE ^XA…^XZ block per record -->
     <template id="wristband_template_view">
-        <t t-out="env.company._logo_as_grf()"/>  <!-- изпращаме ~DG ... -->
         <t t-foreach="docs" t-as="sale" t-translation="off">
-            ^XA^CI28 ; ------ START
-            ^PW203 ^LL2233 ^LH0,0 ; 1" x 11" wristband canvas (203 x 2233 dots @203 dpi)
+            ^XA^CI28
+            ^PW203 ^LL2233 ^LH0,0
             
-            ; -- All text is rotated 90 degrees to print along the wristband length
-            ; -- Company name at top
-            ^FO180,20
-            ^A0R,36,36^FD<t t-out="sale.service_id.company_id.name if sale.service_id else env.company.name"/>^FS ; Company name
-
-            ; -- Service and Patient name
-            ^FO140,20
-            ^A0R,28,28^FD<t t-out="sale.service_id.name if sale.service_id else 'N/A'"/>^FS
-            ^FO140,400
-            ^A0R,28,28^FD<t t-out="sale.partner_id.name if sale.partner_id else 'Guest'"/>^FS ; Patient name
-
-            ; -- Valid dates
-            ^FO105,20
-            ^A0R,28,28^FDValid:^FS
-            ^FO105,160
-            ^A0R,28,28^FD
-            <t t-if="sale.start_date and sale.end_date">
-                <t t-out="sale.start_date.strftime('%d.%m.%Y')"/>
-                -
-                <t t-out="sale.end_date.strftime('%d.%m.%Y')"/>
+            ; COLUMN LAYOUT - No lines, centered elements
+            
+            ; COLUMN 1: Company + Service (Y: 50-400)
+            ^FO90,150
+            ^A0R,24,24^FD<t t-out="(sale.service_id.company_id.name if sale.service_id else env.company.name)[:15]"/>^FS
+            ^FO60,150
+            ^A0R,22,22^FD<t t-out="(sale.service_id.name if sale.service_id else 'Service')[:15]"/>^FS
+            
+            ; COLUMN 2: Partner Name (Y: 600-1000)
+            <t t-set="partner_name" t-value="sale.partner_id.name if sale.partner_id else 'GUEST'"/>
+            ^FO85,750
+            ^A0R,30,30^FD<t t-out="partner_name[:20]"/>^FS
+            
+            ; COLUMN 3: Barcode centered (Y: 1100-1500)
+            <t t-set="card_number" t-value="sale.card_id.barcode_number or sale.card_number or '0000000000'"/>
+            ^FO60,1250
+            ^BY2,2,80
+            ^BCR,80,N,N,N
+            ^FD<t t-out="card_number"/>^FS
+            
+            ; COLUMN 4: Dates/Times (Y: 1700-2100)
+            <t t-if="sale.start_date">
+                <t t-set="start_datetime" t-value="sale.start_date.strftime('%d-%b-%y %H:%M').upper()"/>
+                ^FO85,1800
+                ^A0R,18,18^FD<t t-out="start_datetime"/>^FS
             </t>
-            <t t-else="">N/A</t>
-            ^FS
-
-            ; -- 1 px separator line (now horizontal along wristband)
-            ^FO70,20^GB2,2190,2^FS
-
-            ; -- CODE-128 barcode, rotated to print along wristband
-            ^FO60,20^BY2,2,80
-            ^BCR,80,Y,N,N
-            ^FD<t t-out="sale.card_id.barcode_number or sale.card_number or '0000000000'"/>^FS
-
-            ; -- Optional logo (if needed)
-            ; ^FO10,2100^XGR:COMPLOGO.GRF,1,1^FS
-
-            ^XZ ; ------ END
-
+            <t t-if="sale.end_date">
+                <t t-set="end_datetime" t-value="sale.end_date.strftime('%d-%b-%y %H:%M').upper()"/>
+                ^FO55,1800
+                ^A0R,18,18^FD<t t-out="end_datetime"/>^FS
+            </t>
+            
+            ^XZ
         </t>
     </template>
 

@@ -162,10 +162,6 @@ rfid.label.export.path = /tmp/rfid_labels
    - Check firewall rules
    - Verify printer accepts RAW socket connections
 
-### Logo Not Displaying
-
-1. Upload company logo to printer memory as `COMPLOGO.GRF`
-2. Or remove logo line from the ZPL template if not needed
 
 ### Barcode Issues
 
