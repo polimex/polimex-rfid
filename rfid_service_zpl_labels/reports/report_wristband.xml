@@ -41,12 +41,12 @@
             
             ; COLUMN 4: Dates/Times (Y: 1700-2100)
             <t t-if="sale.start_date">
-                <t t-set="start_datetime" t-value="format_datetime(sale.start_date, 'dd-MMM-yy HH:mm', dt_format='short').upper()"/>
+                <t t-set="start_datetime" t-value="sale.with_context(tz=(user.tz if user and user.tz else 'UTC')).start_date.strftime('%d-%b-%y %H:%M').upper()"/>
                 ^FO100,1800
                 ^A0R,36,36^FD<t t-out="start_datetime"/>^FS
             </t>
             <t t-if="sale.end_date">
-                <t t-set="end_datetime" t-value="format_datetime(sale.end_date, 'dd-MMM-yy HH:mm', dt_format='short').upper()"/>
+                <t t-set="end_datetime" t-value="sale.with_context(tz=(user.tz if user and user.tz else 'UTC')).end_date.strftime('%d-%b-%y %H:%M').upper()"/>
                 ^FO40,1800
                 ^A0R,36,36^FD<t t-out="end_datetime"/>^FS
             </t>

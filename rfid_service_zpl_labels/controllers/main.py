@@ -19,25 +19,16 @@ class RfidLabelPreviewController(http.Controller):
         except Exception:
             return request.not_found()
         
-        # Generate ZPL content using the report but with sudo to avoid print triggers
-        # We'll render the template directly through the template engine
-        IrQweb = request.env['ir.qweb'].sudo()
+        # Generate ZPL content using the report action but without printing
+        # We use the report's render method which includes all necessary context
+        report = request.env.ref('rfid_service_zpl_labels.action_report_rfid_wristband')
         
-        # Import the format_datetime function from Odoo tools
-        from odoo.tools import format_datetime
-        
-        # Prepare the values for the template
-        values = {
-            'docs': sale,
-            'doc_ids': [sale.id],
-            'doc_model': 'rfid.service.sale',
-            'user': request.env.user,
-            'format_datetime': lambda dt, pattern='dd-MMM-yy HH:mm', dt_format='short': 
-                format_datetime(request.env, dt, dt_format=pattern) if dt else '',
-        }
-        
-        # Render the template
-        zpl_content = IrQweb._render('rfid_service_zpl_labels.wristband_template_view', values)
+        # Use the report's rendering method with all proper context
+        zpl_content, _ = report.sudo().with_context(disable_print=True)._render_qweb_text(
+            report.report_name, 
+            [sale.id],
+            data={'disable_print': True}
+        )
         
         # Ensure content is string
         if isinstance(zpl_content, bytes):
