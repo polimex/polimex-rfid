@@ -22,31 +22,74 @@ class BaseRFIDService(models.Model):
     ]
 
     name = fields.Char(
-        string='Reference',
+        string='Sale Reference',
         default=lambda self: self.env['ir.sequence'].next_by_code('rfid.service'),
+        help="""Unique identifier for this service sale transaction.
+        
+• Purpose: Track and reference individual service sales
+• Generation: Automatically generated using system sequence
+• Usage: Used in customer communications, reports, and internal tracking
+• Format: Follows company's configured numbering sequence
+        
+This reference number identifies the specific sale in the system."""
     )
     service_id = fields.Many2one(
         comodel_name='rfid.service',
-        required=True
+        string="Service",
+        required=True,
+        help="""RFID service that was sold to the customer.
+        
+• Purpose: Links this sale to the specific service offering
+• Configuration: Inherits all service settings (duration, access rights, etc.)
+• Pricing: Service determines access permissions and time limits
+• Required: Every sale must be linked to a service
+        
+The service defines what access and duration the customer receives."""
     )
     start_date = fields.Datetime(
-        string="Service start",
-        required=True
+        string="Access Start Date",
+        required=True,
+        help="""Date and time when customer access begins.
+        
+• Activation: Customer's card becomes active at this date/time
+• Scheduling: Can be set for future activation (advance bookings)
+• Timezone: Interpreted according to user's timezone settings
+• Calculation: Combined with service duration to determine end date
+        
+Customer will be able to access designated areas starting from this date/time."""
     )
     end_date = fields.Datetime(
-        string="Service end",
-        required=True
+        string="Access End Date",
+        required=True,
+        help="""Date and time when customer access expires.
+        
+• Expiration: Customer's card becomes inactive at this date/time
+• Calculation: Usually computed from start date + service duration
+• Manual override: Can be manually adjusted for custom service periods
+• Security: Access is automatically revoked after this date/time
+        
+Customer will lose access to designated areas after this date/time."""
     )
 
     state = fields.Selection(
         selection=[
             ('registered', 'Registered'),
-            ('progress', 'Progress'),
+            ('progress', 'Active'),
             ('finished', 'Finished'),
             ('canceled', 'Canceled')
-        ], compute='_compute_state',
+        ], 
+        string="Status",
+        compute='_compute_state',
         store=True,
         tracking=True,
+        help="""Current status of this service sale.
+        
+• Registered: Sale created but service period hasn't started yet
+• Active: Service is currently active and customer has access
+• Finished: Service period has ended or all visits have been used
+• Canceled: Service was manually canceled before completion
+        
+Status is automatically calculated based on dates, visits, and access permissions."""
     )
     company_id = fields.Many2one(
         comodel_name='res.company',
@@ -54,21 +97,62 @@ class BaseRFIDService(models.Model):
         related='service_id.company_id'
     )
     partner_id = fields.Many2one(
-        comodel_name='res.partner', string='Customer', check_company=True, index=True,
+        comodel_name='res.partner', 
+        string='Customer', 
+        check_company=True, 
+        index=True,
         domain=["&", ("is_company", "=", False), ("type", "=", "contact")],
-        # domain="[('company_id', '=', company_id)]",
-        help="Linked partner to this service sale")
-    card_id = fields.Many2one(
-        comodel_name='hr.rfid.card', check_company=True,
-        # required=True
+        help="""Customer who purchased this service.
+        
+• Individual: Must be a person, not a company contact
+• Creation: Can be created automatically during service sale process
+• Communication: Used for sending emails and printing badges
+• Tracking: Links all service sales to the same customer for history
+        
+This is the person who will receive access and communications about the service."""
     )
-    card_number = fields.Char(related='card_id.number')
+    card_id = fields.Many2one(
+        comodel_name='hr.rfid.card', 
+        string="RFID Card",
+        check_company=True,
+        help="""Physical or digital card assigned to the customer for access.
+        
+• Access method: Card that customer uses to gain physical access
+• Card types: Can be RFID card, barcode card, or mobile badge
+• Creation: Automatically created during service sale process
+• Security: Activated/deactivated according to service period
+        
+This is the physical/digital token the customer uses to access areas."""
+    )
+    card_number = fields.Char(
+        related='card_id.number',
+        string="Card Number",
+        help="Unique identifier/number of the card assigned to this service sale."
+    )
     access_group_contact_rel = fields.Many2one(
-        comodel_name='hr.rfid.access.group.contact.rel', check_company=True
+        comodel_name='hr.rfid.access.group.contact.rel', 
+        string="Access Permission",
+        check_company=True,
+        help="""Technical link between customer and access group that grants permissions.
+        
+• Purpose: System record that actually grants access to doors/areas
+• Timing: Controls when access starts and ends
+• Visits: Tracks remaining visits for visit-based services
+• Automatic: Created and managed automatically by the system
+        
+This is the technical record that enables physical access for the customer."""
     )
     visits = fields.Integer(
-        string='Visits',
+        string='Remaining Visits',
         related='access_group_contact_rel.visits_counter',
+        help="""Number of visits remaining for this service (for visit-based services).
+
+• Purpose: Shows how many times customer can still access with this service
+• Countdown: Automatically decreases each time customer uses their card
+• Zero means: No more visits remaining (service access blocked)
+• Unlimited: Visit-based services show actual count, time-based services may show 0
+
+Only relevant for 'Visits based' and 'Time and Visits based' service types."""
     )
 
     # @api.depends('partner_id.hr_rfid_card_ids', 'partner_id.hr_rfid_access_group_ids')
