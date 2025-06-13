@@ -54,25 +54,25 @@ class BaseRFIDService(models.Model):
 
 ; COLUMN 1: Test info
 ^FO90,150
-^A0R,24,24^FDTEST PRINT^FS
+^A0R,48,48^FDTEST PRINT^FS
 ^FO60,150
-^A0R,22,22^FD{company.name[:15]}^FS
+^A0R,44,44^FD{company.name[:15]}^FS
 
 ; COLUMN 2: Service info
 ^FO85,750
-^A0R,30,30^FD{self.name[:20]}^FS
+^A0R,60,60^FD{self.name[:20]}^FS
 
 ; COLUMN 3: Test barcode with service ID
 ^FO60,1250
-^BY2,2,80
-^BCR,80,N,N,N
+^BY4,4,160
+^BCR,160,N,N,N
 ^FD{self.id:010d}^FS
 
 ; COLUMN 4: Printer info and time
 ^FO85,1800
-^A0R,18,18^FD{printer_ip}:{printer_port}^FS
+^A0R,36,36^FD{printer_ip}:{printer_port}^FS
 ^FO55,1800
-^A0R,18,18^FD{datetime.now().strftime('%d-%b-%y %H:%M').upper()}^FS
+^A0R,36,36^FD{datetime.now().strftime('%d-%b-%y %H:%M').upper()}^FS
 
 ^XZ""".encode('utf-8')
         

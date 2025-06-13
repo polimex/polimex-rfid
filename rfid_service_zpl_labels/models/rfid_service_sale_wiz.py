@@ -44,7 +44,7 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         try:
             # Generate the ZPL content using the report
             report = self.env.ref('rfid_service_zpl_labels.action_report_rfid_wristband')
-            zpl_content, _ = report._render_qweb_text(report.report_name, [sale_id.id])
+            zpl_content, _format = report._render_qweb_text(report.report_name, [sale_id.id])
             
             # Ensure content is bytes
             if isinstance(zpl_content, str):
@@ -97,23 +97,23 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
 
 ; COLUMN 1: Test info
 ^FO90,150
-^A0R,24,24^FDTEST PRINT^FS
+^A0R,48,48^FDTEST PRINT^FS
 ^FO60,150
-^A0R,22,22^FD{company.name[:15]}^FS
+^A0R,44,44^FD{company.name[:15]}^FS
 
 ; COLUMN 2: Printer info
 ^FO85,750
-^A0R,30,30^FD{printer_ip}:{printer_port}^FS
+^A0R,60,60^FD{printer_ip}:{printer_port}^FS
 
 ; COLUMN 3: Test barcode
 ^FO60,1250
-^BY2,2,80
-^BCR,80,N,N,N
+^BY4,4,160
+^BCR,160,N,N,N
 ^FD1234567890^FS
 
 ; COLUMN 4: Timestamp
 ^FO85,1800
-^A0R,18,18^FD{datetime.now().strftime('%d-%b-%y %H:%M').upper()}^FS
+^A0R,36,36^FD{datetime.now().strftime('%d-%b-%y %H:%M').upper()}^FS
 
 ^XZ""".encode('utf-8')
         
