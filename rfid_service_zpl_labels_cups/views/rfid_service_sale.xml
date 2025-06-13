@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Update the button label to remove "Direct" -->
+        <record id="hr_rfid_service_sale_form_inherit_cups" model="ir.ui.view">
+            <field name="name">rfid.service.sale.form.inherit.cups</field>
+            <field name="model">rfid.service.sale</field>
+            <field name="inherit_id" ref="rfid_service_zpl_labels.hr_rfid_service_sale_form_inherit_zpl_labels"/>
+            <field name="arch" type="xml">
+                <!-- Change "Print Label Direct" to just "Print Label" -->
+                <xpath expr="//button[@name='print_label_direct']" position="attributes">
+                    <attribute name="string">Print Label</attribute>
+                    <attribute name="help">Send the wristband label to the configured CUPS printer</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

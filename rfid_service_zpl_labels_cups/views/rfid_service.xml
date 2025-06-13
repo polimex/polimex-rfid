@@ -1,23 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-        <!-- Add CUPS test button next to the direct test button -->
-        <record id="view_rfid_service_form_cups_test" model="ir.ui.view">
-            <field name="name">rfid.service.form.cups.test</field>
-            <field name="model">rfid.service</field>
-            <field name="inherit_id" ref="rfid_service_zpl_labels.view_rfid_service_form_inherit_new_group"/>
-            <field name="arch" type="xml">
-                <!-- Add CUPS test button after the direct test button -->
-                <xpath expr="//button[@name='test_label_printer_connection']" position="after">
-                    <button name="test_label_printer_cups" 
-                            string="Test CUPS Printer" 
-                            type="object" 
-                            class="oe_highlight"
-                            icon="fa-print"
-                            help="Send a test label through CUPS print queue to verify label printer configuration"
-                            groups="rfid_service_base.group_card_manager"/>
-                </xpath>
-            </field>
-        </record>
-    </data>
+    <!-- Empty file - methods are overridden in Python code -->
+    <!-- No view changes needed as buttons use the same method names -->
 </odoo>
