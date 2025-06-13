@@ -1,193 +1,257 @@
 # RFID Services ZPL Labels
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![Version](https://img.shields.io/badge/Version-18.0.0.1.0-green.svg)](https://apps.odoo.com)
+[![Odoo Version](https://img.shields.io/badge/Odoo-18.0-875A7B.svg)](https://www.odoo.com/)
+[![Module Version](https://img.shields.io/badge/Module_Version-18.0.1.0.0-success.svg)](https://github.com/polimex)
 
-ZPL (Zebra Programming Language) wristband printing extension for RFID Services.
+Professional ZPL wristband printing for RFID access control and visitor management systems.
 
-## 🎯 Overview
+## Overview
 
-RFID Services ZPL Labels extends the RFID service system with professional wristband printing capabilities. It generates ZPL-formatted output for Zebra label printers, enabling high-quality wristband printing for visitors, patients, event attendees, and temporary access cards.
+The RFID Services ZPL Labels module extends Odoo's RFID service capabilities with enterprise-grade wristband printing functionality. Generate and print professional-quality wristbands directly to Zebra printers using native ZPL (Zebra Programming Language), perfect for visitor management, event registration, healthcare identification, and temporary access control.
 
-### ⚠️ IMPORTANT: Multi-User Environment
+### ⚠️ Multi-User Environment Notice
 
-**If this module will be used from multiple workstations simultaneously**, you MUST install the `rfid_service_zpl_labels_cups` module to:
-- Organize print queue properly
-- Prevent print job conflicts  
-- Allow each user to have their own label printer
-- Provide proper print job management
+For deployments with **multiple concurrent users**, install the companion module `rfid_service_zpl_labels_cups` to ensure:
+- Proper print queue management
+- Prevention of print job conflicts
+- User-specific printer assignments
+- Centralized print job tracking
 
-For single-user installations, the base module with direct socket printing is sufficient.
+Single-user installations can utilize the base module's direct socket printing capabilities.
 
-## ✨ Key Features
+## Key Features
 
-### Wristband Generation
-- **ZPL II Format**: Native Zebra Programming Language output
-- **Barcode Integration**: Automatic CODE-128 barcode generation
-- **Custom Layouts**: Configurable wristband templates
-- **Multi-format Support**: Various wristband sizes (1×11 inch standard)
+### 🏷️ Wristband Generation
+- **Native ZPL II Format** - Direct Zebra Programming Language output
+- **Automatic Barcode Generation** - CODE-128 barcodes with service information
+- **Flexible Templates** - Customizable wristband layouts via QWeb
+- **Multiple Size Support** - Standard 1×11 inch and custom dimensions
 
-### Print Capabilities
-- **Direct ZPL Output**: Raw ZPL code for Zebra printers
-- **Company Branding**: Company name on wristbands
-- **Service Information**: Service type and validity dates
-- **Visitor Details**: Name and access information
+### 🖨️ Printing Capabilities
+- **Direct Network Printing** - TCP/IP socket communication to Zebra printers
+- **Company Branding** - Automatic inclusion of company logos and information
+- **Dynamic Content** - Service type, validity dates, and access permissions
+- **Visitor Information** - Name, ID, and custom fields support
 
-### Integration Features
-- **Service Integration**: Seamless with rfid_service_base
-- **Batch Printing**: Print multiple wristbands at once
-- **Email Support**: Send wristband data electronically
-- **Portal Compatible**: Works with service portal
+### 🔗 System Integration
+- **RFID Service Integration** - Seamless operation with rfid_service_base
+- **Batch Processing** - Print multiple wristbands in a single operation
+- **Multi-Company Support** - Company-specific settings and branding
+- **Portal Compatibility** - Full integration with service portal features
 
-## 📋 Requirements
+## Requirements
 
-- Odoo 18.0+
-- rfid_service_base module
-- Zebra ZPL-compatible printer
-- Python 3.8+
+### System Requirements
+- **Odoo**: Version 18.0 or higher
+- **Python**: 3.8+
+- **Dependencies**: `rfid_service_base`, `hr_rfid`
+- **Hardware**: Zebra ZPL-compatible printer
 
-### Printing Options
-- **Odoo IoT Box**: For direct network printing
-- **File Export**: Save ZPL and send to printer
-- **Third-party Modules**: OCA printer_zpl2 or similar
-- **CUPS Integration**: Direct printing on Linux
+### Printing Infrastructure Options
+| Method | Description | Best For |
+|--------|-------------|----------|
+| **Direct Socket** | TCP/IP communication | Single workstation |
+| **CUPS Integration** | Linux print server | Multi-user environments |
+| **Odoo IoT Box** | Official hardware solution | Cloud deployments |
+| **File Export** | Save ZPL for manual printing | Testing/debugging |
+| **OCA Modules** | Community printing solutions | Advanced setups |
 
-## 🛠️ Installation
+## Installation
 
-1. Install rfid_service_base module first
+### Standard Installation
 
-2. Install this module:
-```bash
-./odoo-bin -d your_database -i rfid_service_zpl_labels
-```
+1. **Prerequisites**
+   ```bash
+   # Ensure rfid_service_base is installed
+   ./odoo-bin -d your_database --init=rfid_service_base
+   ```
 
-3. Configure your Zebra printer connection method
+2. **Module Installation**
+   ```bash
+   # Install the ZPL labels module
+   ./odoo-bin -d your_database --init=rfid_service_zpl_labels
+   ```
 
-## 🔧 Configuration
+3. **Multi-User Setup** (if applicable)
+   ```bash
+   # Install CUPS integration for multi-user environments
+   ./odoo-bin -d your_database --init=rfid_service_zpl_labels_cups
+   ```
+
+## Configuration
 
 ### Printer Setup
 
-1. **Zebra Printer Configuration**
-   - Set printer to accept ZPL commands
-   - Configure network settings if using network printer
-   - Test with sample ZPL code
+#### 1. Zebra Printer Configuration
+- Enable ZPL command processing on your printer
+- Configure network settings for TCP/IP printers
+- Set appropriate DPI (203 or 300)
+- Test connectivity with sample ZPL commands
 
-2. **Odoo Configuration**
-   - No special configuration needed in module
-   - Report outputs raw ZPL text
-   - Configure printing method separately
+#### 2. System Parameters (Odoo)
+Navigate to **Settings → Technical → Parameters → System Parameters**:
 
-### Wristband Template
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `rfid_service.label_width` | 100 | Label width in mm |
+| `rfid_service.label_height` | 50 | Label height in mm |
+| `rfid_service.printer_dpi` | 203 | Printer resolution |
+| `rfid_service.printer_ip` | - | Printer IP address |
+| `rfid_service.printer_port` | 9100 | Printer port |
 
-The module includes a standard wristband template:
-- **Size**: 1×11 inches (25×279mm)
-- **DPI**: 203 dpi standard
-- **Format**: Portrait orientation
-- **Content**: Company, service, visitor, dates, barcode
+### Wristband Specifications
+
+**Standard Template**:
+- **Dimensions**: 1×11 inches (25×279mm)
+- **Resolution**: 203 DPI (8 dots/mm)
+- **Orientation**: Portrait
+- **Layout**: 4-column design with company branding
 
 
-## 📖 Usage
+## Usage
 
 ### Printing Wristbands
 
-1. **From Service Sale**
-   - Complete service sale
-   - Click "Print Wristband"
-   - ZPL code is generated
+#### Single Wristband Printing
+1. Navigate to **RFID Services → Service Sales**
+2. Open the desired service sale record
+3. Click **"Print Label"** button
+4. The wristband is sent directly to the configured printer
 
-2. **Batch Printing**
-   - Select multiple sales
-   - Action → Print Wristbands
-   - One ZPL block per wristband
+#### Batch Printing
+1. Go to **RFID Services → Service Sales**
+2. Select multiple service sale records
+3. Choose **Action → Print Wristbands**
+4. All selected wristbands print sequentially
 
-3. **Sending ZPL to Printer**
+### Printing Methods
 
-#### Via File:
+#### Method 1: Direct Socket Printing (Built-in)
+The module includes direct socket printing functionality:
+```python
+# Automatic when clicking "Print Label"
+# Sends ZPL directly to printer_ip:printer_port
+```
+
+#### Method 2: File Export
 ```bash
-# Save ZPL output to file
-# Send to printer using lpr (Linux)
+# Linux - Using lpr
 lpr -P zebra_printer wristband.zpl
 
-# Or copy to printer share (Windows)
+# Windows - Copy to printer share
 copy wristband.zpl \\computer\zebra_printer
+
+# macOS - Using lp
+lp -d zebra_printer wristband.zpl
 ```
 
-#### Via Network:
+#### Method 3: Python Script
 ```python
-# Send directly to network printer
 import socket
-printer_ip = "192.168.1.100"
-printer_port = 9100
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect((printer_ip, printer_port))
-sock.send(zpl_data.encode())
-sock.close()
+def send_zpl_to_printer(zpl_content, printer_ip="192.168.1.100", printer_port=9100):
+    """Send ZPL data to network printer"""
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        sock.connect((printer_ip, printer_port))
+        sock.send(zpl_content.encode('utf-8'))
+    finally:
+        sock.close()
 ```
 
-## 🏷️ ZPL Format
+## ZPL Format Details
 
-### Sample Output
+### Sample ZPL Output
 ```zpl
 ^XA^CI28
 ^PW203 ^LL2233 ^LH0,0
 
-; COLUMN 1: Company + Service
+; COLUMN 1: Company + Service Information
 ^FO90,150
-^A0R,24,24^FDPolimex Company^FS
+^A0R,24,24^FDYour Company Name^FS
 ^FO60,150
-^A0R,22,22^FDVisitor Pass^FS
+^A0R,22,22^FDService Type^FS
 
-; COLUMN 2: Partner Name
+; COLUMN 2: Visitor Name
 ^FO85,750
-^A0R,30,30^FDJohn Doe^FS
+^A0R,30,30^FDVisitor Name^FS
 
-; COLUMN 3: Barcode (centered)
+; COLUMN 3: Barcode with Service ID
 ^FO60,1250
 ^BY2,2,80
 ^BCR,80,N,N,N
-^FD0123456789^FS
+^FDService-ID-Here^FS
 
-; COLUMN 4: Dates/Times
+; COLUMN 4: Validity Period
 ^FO85,1800
-^A0R,18,18^FD01-JAN-24 08:00^FS
+^A0R,18,18^FDFrom: Date Time^FS
 ^FO55,1800
-^A0R,18,18^FD31-JAN-24 18:00^FS
+^A0R,18,18^FDTo: Date Time^FS
 
 ^XZ
 ```
 
-### Template Customization
+### Customizing the Template
 
-Edit the QWeb template in `reports/report_wristband.xml`:
-- Adjust positions with `^FO` commands
-- Change fonts with `^A` commands
-- Modify barcode with `^BC` parameters
+The wristband layout is defined in `reports/report_wristband.xml` using QWeb syntax:
 
-## 🔌 API Reference
+1. **Position Adjustment**: Modify `^FO` (Field Origin) coordinates
+2. **Font Changes**: Adjust `^A` (Font) parameters
+3. **Barcode Settings**: Configure `^BC` (Code 128) parameters
+4. **Add Custom Fields**: Extend the template with additional data
 
-### Report Generation
+## API Reference
+
+### Programmatic Label Generation
+
 ```python
-# Generate wristband for a service sale
-sale = self.env['rfid.service.sale'].browse(sale_id)
-report = self.env.ref('rfid_service_zpl_labels.action_report_rfid_wristband')
-zpl_data = report._render_qweb_text(sale.ids)
-```
+from odoo import models
 
-### Custom Fields
-```python
-# Add custom fields to wristband
 class RfidServiceSale(models.Model):
     _inherit = 'rfid.service.sale'
     
-    wristband_color = fields.Selection([
-        ('red', 'Red'),
-        ('blue', 'Blue'),
-        ('green', 'Green'),
-    ])
+    def generate_wristband_zpl(self):
+        """Generate ZPL data for wristband"""
+        self.ensure_one()
+        report = self.env.ref('rfid_service_zpl_labels.action_report_rfid_wristband')
+        zpl_data, _ = report.render_qweb_text(self.ids)
+        return zpl_data  # Returns ZPL string
 ```
 
-## 🐛 Troubleshooting
+### Extending Wristband Data
+
+```python
+from odoo import fields, models
+
+class RfidServiceSaleCustom(models.Model):
+    _inherit = 'rfid.service.sale'
+    
+    # Add custom fields that will appear on wristband
+    wristband_color = fields.Selection([
+        ('red', 'Red - VIP'),
+        ('blue', 'Blue - Standard'),
+        ('green', 'Green - Staff'),
+    ], string='Wristband Color')
+    
+    emergency_contact = fields.Char('Emergency Contact')
+    medical_info = fields.Text('Medical Information')
+```
+
+### Direct Printing Method
+
+```python
+def print_label_direct(self):
+    """Send label directly to configured printer"""
+    for rec in self:
+        zpl_data = rec.generate_wristband_zpl()
+        # Send to printer using the service's print method
+        rec.service_id.print_label_direct()
+        # Log the printing action
+        rec.message_post(body="Wristband printed successfully")
+```
+
+## Troubleshooting
 
 ### Common Issues
 
@@ -213,7 +277,7 @@ Test ZPL output:
 2. Use Labelary.com ZPL viewer
 3. Check raw ZPL syntax
 
-## ⚙️ Advanced Features
+## Advanced Features
 
 ### Multiple Wristband Sizes
 
@@ -239,18 +303,22 @@ Add conditions in template:
 
 Template supports translations:
 ```xml
-^FO20,95
-^A0N,28,28^FD<t t-esc="'Valid:' if lang == 'en_US' else 'Валидно:'"/>^FS
+<t t-if="lang == 'en_US'">
+    ^FO20,95^A0N,28,28^FDValid:^FS
+</t>
+<t t-else="">
+    ^FO20,95^A0N,28,28^FDВалидно:^FS
+</t>
 ```
 
-## 📊 Reports
+## Reports
 
 The module provides:
 - Wristband print history
 - Service usage by wristband
 - Failed print attempts log
 
-## 🤝 Contributing
+## Contributing
 
 Contributions welcome:
 1. Fork repository
@@ -258,11 +326,11 @@ Contributions welcome:
 3. Test with real Zebra printer
 4. Submit pull request
 
-## 📄 License
+## License
 
 This module is licensed under AGPL-3.0. See [LICENSE](../LICENSE) for details.
 
-## 👥 Credits
+## Credits
 
 ### Authors
 - Polimex Dev Team
@@ -273,7 +341,7 @@ This module is licensed under AGPL-3.0. See [LICENSE](../LICENSE) for details.
 ### Maintainer
 - [Polimex](https://polimex.co)
 
-## 🌐 Links
+## Links
 
 - [ZPL Programming Guide](https://www.zebra.com/content/dam/zebra/manuals/printers/common/programming/zpl-zbi2-pm-en.pdf)
 - [Labelary Online ZPL Viewer](http://labelary.com/viewer.html)

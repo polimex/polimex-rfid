@@ -1,127 +1,191 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RFID Services ZPL Labels - Wristband Printing for RFID Services</title>
-    <style type="text/css">
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-
-        .container {
-            width: 80%;
-            margin: auto;
-            overflow: hidden;
-            background: white;
-            padding: 20px;
-            margin-top: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-            border-bottom: 3px solid #3498db;
-            padding-bottom: 10px;
-        }
-
-        h2 {
-            color: #34495e;
-            margin-top: 30px;
-            margin-bottom: 15px;
-        }
-
-        .feature {
-            background: #ecf0f1;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-left: 4px solid #3498db;
-            border-radius: 5px;
-        }
-
-        .feature h3 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-
-        ul {
-            margin-left: 20px;
-            margin-bottom: 20px;
-        }
-
-        ul li {
-            margin-bottom: 10px;
-        }
-
-        .highlight {
-            background-color: #fffacd;
-            padding: 2px 5px;
-            border-radius: 3px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>RFID Services ZPL Labels</h1>
-        
-        <p>Extend your RFID Service system with professional ZPL label printing capabilities. This module adds support for printing wristbands and labels directly to Zebra printers using ZPL (Zebra Programming Language).</p>
-
-        <h2>Key Features</h2>
-        
-        <div class="feature">
-            <h3>🏷️ Wristband Printing</h3>
-            <p>Generate and print professional wristbands for visitors and temporary access cards with customizable layouts.</p>
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan">RFID Services ZPL Labels</h2>
+        <h3 class="oe_slogan">Professional Wristband Printing for RFID Access Control</h3>
+        <div class="oe_span12">
+            <p class="oe_mt32">
+                Transform your visitor management with professional ZPL wristband printing. This module seamlessly integrates 
+                with the RFID Service system to generate high-quality wristbands for temporary access control, featuring 
+                barcodes, visitor information, and company branding - all printed directly to Zebra printers.
+            </p>
         </div>
-
-        <div class="feature">
-            <h3>🖨️ Zebra Printer Support</h3>
-            <p>Native ZPL output for Zebra label printers. Print via Odoo IoT Box, save as file, or use third-party printing modules.</p>
-        </div>
-
-        <div class="feature">
-            <h3>📊 Barcode Integration</h3>
-            <p>Automatically generate and print barcodes on wristbands for easy scanning and tracking.</p>
-        </div>
-
-        <div class="feature">
-            <h3>🎨 Customizable Templates</h3>
-            <p>Flexible template system allows customization of wristband layouts to match your branding requirements.</p>
-        </div>
-
-        <h2>Requirements</h2>
-        <ul>
-            <li>Requires <span class="highlight">rfid_service_base</span> module</li>
-            <li>Compatible with Zebra ZPL-enabled printers</li>
-            <li>For direct printing: Odoo IoT Box or third-party printing module</li>
-        </ul>
-
-        <h2>Perfect For</h2>
-        <ul>
-            <li>Event management with temporary access control</li>
-            <li>Visitor management systems</li>
-            <li>Hotels and hospitality venues</li>
-            <li>Healthcare facilities requiring patient wristbands</li>
-            <li>Any facility needing professional wristband printing</li>
-        </ul>
-
-        <h2>Technical Details</h2>
-        <ul>
-            <li>Seamless integration with RFID Service system</li>
-            <li>Support for multiple printer configurations</li>
-            <li>Batch printing capabilities</li>
-            <li>Print preview functionality</li>
-        </ul>
     </div>
-</body>
-</html>
+</section>
+
+<section class="oe_container oe_dark">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan">Direct Zebra Printer Integration</h2>
+        <div class="oe_span6">
+            <p class="oe_mt32">
+                <strong>Native ZPL Support</strong>
+            </p>
+            <p>
+                Connect directly to Zebra printers through network sockets for instant wristband printing:
+            </p>
+            <ul>
+                <li>Direct TCP/IP communication with printers</li>
+                <li>Support for all ZPL-compatible Zebra models</li>
+                <li>Configurable DPI settings (203/300)</li>
+                <li>Built-in printer connection testing</li>
+                <li>No additional print servers required</li>
+            </ul>
+        </div>
+        <div class="oe_span6">
+            <div class="oe_demo oe_picture oe_screenshot">
+                <img src="printer_integration.png" alt="Zebra Printer Integration">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan">Smart Wristband Design</h2>
+        <div class="oe_span6">
+            <div class="oe_demo oe_picture oe_screenshot">
+                <img src="wristband_preview.png" alt="Wristband Preview">
+            </div>
+        </div>
+        <div class="oe_span6">
+            <p class="oe_mt32">
+                <strong>Information-Rich Labels</strong>
+            </p>
+            <p>
+                Each wristband contains all essential visitor information:
+            </p>
+            <ul>
+                <li>CODE-128 barcode for quick scanning</li>
+                <li>Service type and validity period</li>
+                <li>Visitor name and identification</li>
+                <li>Access permissions and zones</li>
+                <li>Company logo and branding</li>
+                <li>Emergency contact information</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container oe_dark">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan">Flexible Configuration</h2>
+        <div class="oe_span6">
+            <p class="oe_mt32">
+                <strong>Customizable to Your Needs</strong>
+            </p>
+            <p>
+                Adapt the wristband printing system to match your requirements:
+            </p>
+            <ul>
+                <li>Adjustable label dimensions (width/height)</li>
+                <li>Multiple printer configurations per company</li>
+                <li>Custom field mapping for visitor data</li>
+                <li>Template-based layout system</li>
+                <li>Multi-language support</li>
+            </ul>
+        </div>
+        <div class="oe_span6">
+            <div class="oe_demo oe_picture oe_screenshot">
+                <img src="configuration_screen.png" alt="Configuration Options">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan">Seamless Workflow Integration</h2>
+        <div class="oe_span6">
+            <div class="oe_demo oe_picture oe_screenshot">
+                <img src="workflow_integration.png" alt="Workflow Integration">
+            </div>
+        </div>
+        <div class="oe_span6">
+            <p class="oe_mt32">
+                <strong>Streamlined Operations</strong>
+            </p>
+            <p>
+                Integrate wristband printing into your existing workflows:
+            </p>
+            <ul>
+                <li>One-click printing from service records</li>
+                <li>Batch printing for group visitors</li>
+                <li>Automatic data population from RFID services</li>
+                <li>Print preview before sending to printer</li>
+                <li>Reprint functionality for lost wristbands</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container oe_dark">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan">Multi-Environment Support</h2>
+        <div class="oe_span6">
+            <p class="oe_mt32">
+                <strong>Deployment Flexibility</strong>
+            </p>
+            <p>
+                Choose the printing method that suits your environment:
+            </p>
+            <ul>
+                <li><strong>Direct Socket Printing</strong>: For single-user setups</li>
+                <li><strong>CUPS Integration</strong>: Multi-user environments (with cups module)</li>
+                <li><strong>File Export</strong>: Save ZPL for manual printing</li>
+                <li><strong>IoT Box</strong>: Odoo's hardware integration</li>
+                <li><strong>Third-Party Integration</strong>: Via OCA printing modules</li>
+            </ul>
+        </div>
+        <div class="oe_span6">
+            <div class="oe_demo oe_picture oe_screenshot">
+                <img src="deployment_options.png" alt="Deployment Options">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan">Perfect For Your Industry</h2>
+        <div class="oe_span12">
+            <div class="oe_row">
+                <div class="oe_span3">
+                    <div class="oe_mt32" style="text-align: center;">
+                        <h4>Events & Conferences</h4>
+                        <p>Quick visitor registration with access control</p>
+                    </div>
+                </div>
+                <div class="oe_span3">
+                    <div class="oe_mt32" style="text-align: center;">
+                        <h4>Healthcare</h4>
+                        <p>Patient identification and tracking</p>
+                    </div>
+                </div>
+                <div class="oe_span3">
+                    <div class="oe_mt32" style="text-align: center;">
+                        <h4>Hotels & Resorts</h4>
+                        <p>Guest wristbands for amenity access</p>
+                    </div>
+                </div>
+                <div class="oe_span3">
+                    <div class="oe_mt32" style="text-align: center;">
+                        <h4>Corporate Security</h4>
+                        <p>Temporary contractor access management</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container oe_dark">
+    <div class="oe_row">
+        <div class="oe_span12">
+            <h2 class="oe_slogan">Technical Excellence</h2>
+            <p class="oe_mt32" style="text-align: center;">
+                Built on Odoo's robust framework with enterprise-grade reliability, security, and performance.
+                Fully compatible with the complete RFID ecosystem including access control, attendance tracking,
+                and visitor management modules.
+            </p>
+        </div>
+    </div>
+</section>

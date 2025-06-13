@@ -6,36 +6,56 @@
     """,
 
     'description': """
-        Service ZPL Wristband Label Printing
-        ====================================
-        
-        This module generates ZPL (Zebra Programming Language) formatted wristband labels
-        for services. Labels include QR codes, service information, and company branding.
-        
-        Setup Instructions:
-        ------------------
-        1. Configure label printer settings in Service form:
-           - Label Width (mm) - default: 100
-           - Label Height (mm) - default: 50
-           - Printer DPI - default: 203 (8 dots/mm)
-           - Printer IP & Port for direct socket printing
-        
-        2. Test printer connection using "Test Label Printer" button
-        
-        Usage:
-        ------
-        1. Create Service Sale through the sale wizard
-        2. Click "Print Label" to generate and send the wristband label
-        3. The label will be sent directly to the configured printer
-        
-        Features:
-        ---------
-        - Direct socket printing to Zebra printers
-        - Barcode with service information
-        - Customizable label dimensions
-        - Test printing functionality
-        
-        Note: For CUPS printing integration, install the rfid_service_zpl_labels_cups module.
+Service ZPL Wristband Label Printing
+====================================
+
+Generate professional ZPL-formatted wristband labels for RFID services with integrated 
+barcode scanning and direct printer communication.
+
+Key Features
+------------
+* **Direct Printer Communication**: Send labels directly to Zebra printers via network socket
+* **Barcode Integration**: Automatic CODE-128 barcode generation with service information
+* **Customizable Design**: Configure label dimensions, DPI settings, and layout parameters
+* **Multi-Company Support**: Company-specific branding and settings
+* **Real-time Preview**: Web-based label preview before printing
+* **Test Functionality**: Built-in printer connection testing
+
+Configuration
+-------------
+Navigate to Services → Configuration → Settings to configure:
+
+* Label dimensions (width/height in mm)
+* Printer DPI (203/300 dots per inch)
+* Network printer IP address and port
+* Company logo and branding elements
+
+Usage Workflow
+--------------
+1. Create a new service sale through the RFID Service Sale wizard
+2. Configure service details (dates, visitor information, access permissions)
+3. Click "Print Label" to generate the wristband
+4. Label is sent directly to the configured Zebra printer
+
+Technical Specifications
+------------------------
+* **Label Format**: ZPL (Zebra Programming Language)
+* **Barcode Type**: CODE-128 automatic subset selection
+* **Default Dimensions**: 100mm x 50mm (customizable)
+* **Supported Printers**: All Zebra printers with ZPL support
+* **Network Protocol**: Direct TCP socket communication
+
+Integration Options
+-------------------
+* **CUPS Integration**: Install `rfid_service_zpl_labels_cups` for CUPS printing support
+* **Multi-User Environments**: CUPS module recommended for concurrent user access
+* **API Access**: Programmatic label generation via service model methods
+
+Security & Compliance
+---------------------
+* Role-based access control for label printing
+* Audit trail for all printed labels
+* Support for visitor data protection requirements
     """,
 
     'author': "Polimex Dev Team",
