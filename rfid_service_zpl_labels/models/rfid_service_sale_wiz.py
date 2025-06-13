@@ -13,13 +13,16 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
 
 
     def print_label(self):
-        """Print label using direct socket printing"""
+        """Print label using the configured method (socket or CUPS if overridden)"""
         # Call the direct print method
         return self.print_label_direct()
 
     def print_label_direct(self):
-        """Print ZPL wristband label directly to printer and close wizard"""
-        # Get printer settings from company FIRST
+        """
+        Print ZPL wristband label directly to printer.
+        Creates the sale record and uses centralized printing methods.
+        """
+        # Get printer settings for connection test
         company = self.env.company
         printer_ip = company.rfid_label_printer_ip or '192.168.1.100'
         printer_port = company.rfid_label_printer_port or 9100
@@ -32,51 +35,26 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
             test_sock.close()
             _logger.info("Printer connection test successful")
         except (socket.timeout, TimeoutError):
-            raise UserError('Connection timeout: Unable to connect to printer at %s:%s\n\nCompany: %s\nPlease check printer settings in Settings - Labels - Label Printer Settings' % (
-                printer_ip, printer_port, company.name))
+            raise UserError(_('Connection timeout: Unable to connect to printer at %s:%s\n\nPlease check printer settings.') % (printer_ip, printer_port))
         except socket.error as e:
-            raise UserError('Network error: %s\n\nPrinter IP: %s:%s\nCompany: %s\nPlease check printer settings in Settings → Labels → Label Printer Settings' % (
-                str(e), printer_ip, printer_port, company.name))
+            raise UserError(_('Network error: %s\n\nPrinter: %s:%s') % (str(e), printer_ip, printer_port))
         
-        # NOW create the sale record after confirming printer is available
-        sale_id, partner_id, access_group_contact_rel, card_id = self._write_card()
+        # Create the sale record after confirming printer is available
+        sale_record, partner_id, access_group_contact_rel, card_id = self._write_card()
         
         try:
-            # Generate the ZPL content using the report
-            report = self.env.ref('rfid_service_zpl_labels.action_report_rfid_wristband')
-            zpl_content, _format = report._render_qweb_text(report.report_name, [sale_id.id])
-            
-            # Ensure content is bytes
-            if isinstance(zpl_content, str):
-                zpl_content = zpl_content.encode('utf-8')
-            
-            # Send to printer via socket
-            _logger.info(f"Sending wristband ZPL to printer at {printer_ip}:{printer_port}")
-            
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(10)  # 10 second timeout
-            
-            try:
-                sock.connect((printer_ip, printer_port))
-                sock.send(zpl_content)
-                _logger.info("Wristband ZPL sent successfully to printer")
-            finally:
-                sock.close()
+            # Use the sale record's centralized methods
+            zpl_content, _ = sale_record._generate_zpl_content()
+            sale_record._send_zpl_to_printer(zpl_content)
             
             # Close the wizard
             return {'type': 'ir.actions.act_window_close'}
             
-        except (socket.timeout, TimeoutError):
-            # raise UserError(_('Connection timeout: Unable to connect to printer at %s:%s\n\nCompany: %s\nPlease check printer settings in Settings → Labels → Label Printer Settings',
-            #     printer_ip, printer_port, company.name))
-            raise UserError('Connection timeout: Unable to connect to printer at %s:%s\n\nCompany: %s\nPlease check printer settings in Settings - Labels - Label Printer Settings' % (
-                printer_ip, printer_port, company.name))
-        except socket.error as e:
-            raise UserError('Network error: %s\n\nPrinter IP: %s:%s\nCompany: %s\nPlease check printer settings in Settings → Labels → Label Printer Settings' % (
-                str(e), printer_ip, printer_port, company.name))
         except Exception as e:
-            _logger.exception("Error printing wristband label directly")
-            raise UserError('Printing error: %s' % str(e))
+            _logger.exception("Error printing wristband label")
+            if isinstance(e, UserError):
+                raise
+            raise UserError(_('Printing error: %s') % str(e))
 
 
     def test_printer_connection(self):
@@ -95,21 +73,20 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         test_zpl = f"""^XA^CI28
 ^PW203 ^LL2233 ^LH0,0
 
-; COLUMN 1: Test info
-^FO100,150
-^A0R,48,48^FDTEST PRINT^FS
-^FO40,150
+; COLUMN 1: Now empty
+
+; COLUMN 2: Company, Test info, Printer info in 3 rows with more spacing
+^FO110,500
 ^A0R,44,44^FD{company.name[:25]}^FS
+^FO70,500
+^A0R,40,40^FDTEST PRINT^FS
+^FO30,500
+^A0R,48,48^FD{printer_ip}:{printer_port}^FS
 
-; COLUMN 2: Printer info
-^FO85,750
-^A0R,60,60^FD{printer_ip}:{printer_port}^FS
-
-; COLUMN 3: Test barcode
-^FO60,1250
-^BY4,4,160
-^BCR,160,N,N,N
-^FD1234567890^FS
+; COLUMN 3: QR Code properly centered
+^FO35,1250
+^BQR,2,8
+^FDMA,1234567890^FS
 
 ; COLUMN 4: Timestamp
 ^FO100,1800

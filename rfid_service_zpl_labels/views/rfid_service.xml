@@ -10,6 +10,13 @@
                     <field name="label_template_id"/>
                 </xpath>
                 <xpath expr="//header" position="inside">
+                    <button name="preview_label" 
+                            string="Preview Label" 
+                            type="object" 
+                            class="btn-secondary"
+                            icon="fa-eye"
+                            help="Preview the configured label template with test data"
+                            groups="rfid_service_base.group_card_user"/>
                     <button name="test_label_printer_connection" 
                             string="Test Label Printer" 
                             type="object" 

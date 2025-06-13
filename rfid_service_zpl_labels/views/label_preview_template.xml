@@ -3,7 +3,7 @@
     <template id="label_preview_template" name="RFID Label Preview">
         <html>
             <head>
-                <title>ZPL Label Preview - <t t-esc="sale.name"/></title>
+                <title>ZPL Label Preview - <t t-esc="sale.name if sale else ('Service: ' + service.name)"/></title>
                 <meta charset="UTF-8"/>
                 <style>
                     body {
@@ -144,40 +144,60 @@
                     
                     <div class="info-section">
                         <div class="info-grid">
-                            <div class="info-item">
-                                <span class="info-label">Service Sale:</span>
-                                <span class="info-value"><t t-esc="sale.name"/></span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Customer:</span>
-                                <span class="info-value"><t t-esc="sale.partner_id.name or 'N/A'"/></span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Service:</span>
-                                <span class="info-value"><t t-esc="sale.service_id.name or 'N/A'"/></span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Card Number:</span>
-                                <span class="info-value"><t t-esc="sale.card_number or 'N/A'"/></span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Valid From:</span>
-                                <span class="info-value">
-                                    <t t-if="sale.start_date">
-                                        <t t-esc="sale.start_date.strftime('%d.%m.%Y')"/>
-                                    </t>
-                                    <t t-else="">N/A</t>
-                                </span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Valid To:</span>
-                                <span class="info-value">
-                                    <t t-if="sale.end_date">
-                                        <t t-esc="sale.end_date.strftime('%d.%m.%Y')"/>
-                                    </t>
-                                    <t t-else="">N/A</t>
-                                </span>
-                            </div>
+                            <t t-if="sale">
+                                <div class="info-item">
+                                    <span class="info-label">Service Sale:</span>
+                                    <span class="info-value"><t t-esc="sale.name"/></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Customer:</span>
+                                    <span class="info-value"><t t-esc="sale.partner_id.name or 'N/A'"/></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Service:</span>
+                                    <span class="info-value"><t t-esc="sale.service_id.name or 'N/A'"/></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Card Number:</span>
+                                    <span class="info-value"><t t-esc="sale.card_number or 'N/A'"/></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Valid From:</span>
+                                    <span class="info-value">
+                                        <t t-if="sale.start_date">
+                                            <t t-esc="sale.start_date.strftime('%d.%m.%Y')"/>
+                                        </t>
+                                        <t t-else="">N/A</t>
+                                    </span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Valid To:</span>
+                                    <span class="info-value">
+                                        <t t-if="sale.end_date">
+                                            <t t-esc="sale.end_date.strftime('%d.%m.%Y')"/>
+                                        </t>
+                                        <t t-else="">N/A</t>
+                                    </span>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <div class="info-item">
+                                    <span class="info-label">Service:</span>
+                                    <span class="info-value"><t t-esc="service.name"/></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Company:</span>
+                                    <span class="info-value"><t t-esc="service.company_id.name or 'N/A'"/></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Template:</span>
+                                    <span class="info-value"><t t-esc="service.label_template_id.name if service.label_template_id else 'Default (QR Code)'"/></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Preview Type:</span>
+                                    <span class="info-value">Template Test (No Sale Data)</span>
+                                </div>
+                            </t>
                         </div>
                     </div>
                     

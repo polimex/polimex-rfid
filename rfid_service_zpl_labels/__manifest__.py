@@ -2,60 +2,64 @@
     'name': "Services ZPL Labels",
 
     'summary': """
-        Service system ZPL labels
+        ZPL wristband printing for RFID services with direct network printing
     """,
 
     'description': """
-Service ZPL Wristband Label Printing
-====================================
+RFID Service ZPL Label Printing
+===============================
 
-Generate professional ZPL-formatted wristband labels for RFID services with integrated 
-barcode scanning and direct printer communication.
+Extends the RFID Service Base module with professional ZPL wristband printing capabilities,
+enabling direct network printing to Zebra label printers.
 
 Key Features
 ------------
-* **Direct Printer Communication**: Send labels directly to Zebra printers via network socket
-* **Barcode Integration**: Automatic CODE-128 barcode generation with service information
-* **Customizable Design**: Configure label dimensions, DPI settings, and layout parameters
-* **Multi-Company Support**: Company-specific branding and settings
-* **Real-time Preview**: Web-based label preview before printing
-* **Test Functionality**: Built-in printer connection testing
+* **Dual Template System**: Choose between QR Code or traditional CODE-128 barcode formats
+* **Direct Network Printing**: Send ZPL commands directly to printer via TCP socket
+* **Web-Based Preview**: Preview labels in browser before printing
+* **Multi-Company Support**: Company-specific printer settings
+* **Test Printing**: Verify printer connectivity with test labels
+* **Customizable Templates**: Modify label layout and content
 
-Configuration
--------------
-Navigate to Services → Configuration → Settings to configure:
+Quick Start Guide
+-----------------
+1. **Configure Printer** (Settings → Technical → System Parameters):
+   - `rfid.label.printer.ip`: Your Zebra printer IP address
+   - `rfid.label.printer.port`: Printer port (default: 9100)
 
-* Label dimensions (width/height in mm)
-* Printer DPI (203/300 dots per inch)
-* Network printer IP address and port
-* Company logo and branding elements
+2. **Select Label Template** (RFID Services → Services → Your Service):
+   - Choose between "Customer Wristband - QR Code (ZPL)" for 2D QR codes
+   - Or "Customer Wristband - CODE-128 (ZPL)" for 1D barcodes
 
-Usage Workflow
---------------
-1. Create a new service sale through the RFID Service Sale wizard
-2. Configure service details (dates, visitor information, access permissions)
-3. Click "Print Label" to generate the wristband
-4. Label is sent directly to the configured Zebra printer
+3. **Print Labels**:
+   - From Service Sale: Click "Print Label Direct" or "Preview Label"
+   - From Wizard: Click "Print Label" after creating service sale
+   - Test connection: Use "Test Label Printer" in service form
 
-Technical Specifications
-------------------------
-* **Label Format**: ZPL (Zebra Programming Language)
-* **Barcode Type**: CODE-128 automatic subset selection
-* **Default Dimensions**: 100mm x 50mm (customizable)
-* **Supported Printers**: All Zebra printers with ZPL support
-* **Network Protocol**: Direct TCP socket communication
+Label Information
+-----------------
+Wristbands include:
+* Company name
+* Service name  
+* Customer/visitor name
+* QR code or barcode with card number
+* Service validity dates
 
-Integration Options
--------------------
-* **CUPS Integration**: Install `rfid_service_zpl_labels_cups` for CUPS printing support
-* **Multi-User Environments**: CUPS module recommended for concurrent user access
-* **API Access**: Programmatic label generation via service model methods
+Technical Details
+-----------------
+* **Label Size**: 1×11 inch (25×279mm) wristband format
+* **Resolution**: 203 DPI (8 dots/mm)
+* **Protocols**: Raw TCP socket on port 9100
+* **Templates**: QWeb-based ZPL generation
+* **Barcode Types**: QR Code (2D) or CODE-128 (1D)
 
-Security & Compliance
----------------------
-* Role-based access control for label printing
-* Audit trail for all printed labels
-* Support for visitor data protection requirements
+Troubleshooting
+---------------
+* **Connection Timeout**: Check printer IP and network connectivity
+* **Blank Labels**: Verify ZPL template syntax and printer compatibility
+* **Wrong Size**: Ensure printer is configured for 1×11 inch labels
+
+For CUPS printing support, install `rfid_service_zpl_labels_cups` module.
     """,
 
     'author': "Polimex Dev Team",
