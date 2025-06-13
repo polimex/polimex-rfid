@@ -1,4 +1,4 @@
-from odoo import models, _
+from odoo import models, _, fields
 from odoo.exceptions import UserError
 import socket
 from datetime import datetime
@@ -96,10 +96,10 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
 ^PW203 ^LL2233 ^LH0,0
 
 ; COLUMN 1: Test info
-^FO90,150
+^FO100,150
 ^A0R,48,48^FDTEST PRINT^FS
-^FO60,150
-^A0R,44,44^FD{company.name[:15]}^FS
+^FO40,150
+^A0R,44,44^FD{company.name[:25]}^FS
 
 ; COLUMN 2: Printer info
 ^FO85,750
@@ -112,8 +112,8 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
 ^FD1234567890^FS
 
 ; COLUMN 4: Timestamp
-^FO85,1800
-^A0R,36,36^FD{datetime.now().strftime('%d-%b-%y %H:%M').upper()}^FS
+^FO100,1800
+^A0R,36,36^FD{fields.Datetime.context_timestamp(self, datetime.now()).strftime('%d-%b-%y %H:%M').upper()}^FS
 
 ^XZ""".encode('utf-8')
         
