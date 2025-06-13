@@ -41,7 +41,7 @@ class RfidServiceSale(models.Model):
         try:
             # Generate the ZPL content using the report
             report = self.env.ref('rfid_service_zpl_labels.action_report_rfid_wristband')
-            zpl_content, _ = report._render_qweb_text(report.report_name, [self.id])
+            zpl_content, _format = report._render_qweb_text(report.report_name, [self.id])
             
             # Ensure content is bytes
             if isinstance(zpl_content, str):
