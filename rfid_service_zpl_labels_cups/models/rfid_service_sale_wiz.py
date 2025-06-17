@@ -32,15 +32,15 @@ class RfidServiceSaleWizCups(models.TransientModel):
             result = report.print_document_client_action([sale_id])
             _logger.info(f"Wristband for sale ID {sale_id} sent to CUPS printer")
             
-            # Return a notification instead of closing the wizard
+            # Show notification and close the wizard
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
                 'params': {
-                    'title': _('Success'),
-                    'message': _('Wristband sent to printer: %s') % self.env.user.default_label_printer_id.name,
                     'type': 'success',
+                    'message': _('Wristband sent to printer: %s') % self.env.user.default_label_printer_id.name,
                     'sticky': False,
+                    'next': {'type': 'ir.actions.act_window_close'},
                 }
             }
         except Exception as e:
