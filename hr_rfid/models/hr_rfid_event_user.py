@@ -171,7 +171,50 @@ class HrRfidUserEvent(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        records = super(HrRfidUserEvent, self).create(vals_list)
+        """
+        Create RFID events with duplicate prevention.
+        Duplicate events can occur when:
+        1. Multiple controllers send the same event
+        2. Network issues cause retransmissions
+        3. Out-of-order event processing
+        """
+        cleaned_vals_list = []
+        
+        for vals in vals_list:
+            # Only check for duplicates if we have the minimum required fields
+            if all(key in vals for key in ['card_id', 'reader_id', 'event_time', 'event_action']):
+                # Check for duplicate events within a 2-second window
+                event_time = vals.get('event_time')
+                if isinstance(event_time, str):
+                    event_time = fields.Datetime.from_string(event_time)
+                
+                time_window_start = event_time - timedelta(seconds=2)
+                time_window_end = event_time + timedelta(seconds=2)
+                
+                # Search for existing events with same characteristics
+                existing_event = self.search([
+                    ('card_id', '=', vals.get('card_id')),
+                    ('reader_id', '=', vals.get('reader_id')),
+                    ('event_action', '=', vals.get('event_action')),
+                    ('event_time', '>=', time_window_start),
+                    ('event_time', '<=', time_window_end),
+                ], limit=1)
+                
+                if existing_event:
+                    _logger.warning(
+                        'Duplicate event detected for card_id=%s, reader_id=%s, action=%s at %s. Skipping creation.',
+                        vals.get('card_id'), vals.get('reader_id'), vals.get('event_action'), event_time
+                    )
+                    continue
+            
+            cleaned_vals_list.append(vals)
+        
+        # Create only non-duplicate events
+        if not cleaned_vals_list:
+            # Return empty recordset if all events were duplicates
+            return self.browse()
+            
+        records = super(HrRfidUserEvent, self).create(cleaned_vals_list)
 
         for rec in records:
             if not rec.employee_id and not rec.contact_id and rec.card_id:
