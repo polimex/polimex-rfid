@@ -76,21 +76,64 @@ class HrEmployee(models.Model):
                     current_date += timedelta(days=1)
                     continue
 
-                attendance_ranges = self.env['hr.attendance'].search([
-                        ('employee_id', '=', e.id),
-                        ('check_in', '>=', datetime.combine(current_date, datetime.min.time())),
-                        ('check_in', '<', datetime.combine(current_date, datetime.max.time()))
-                    ],order='check_in').mapped(lambda r: (r.check_in, r.check_out))
-                # [('employee_id', '=', e.id),
-                #  ('check_in', '>=', datetime.combine(current_date, datetime.min.time())),
-                #  ('check_in', '<', datetime.combine(current_date, datetime.min.time()) + timedelta(days=1)),
-                #  '|',
-                #  ('check_out', '<', datetime.combine(current_date, datetime.min.time()) + timedelta(days=1)),
-                #  ('check_out', '=', False),
-                #  ], order='check_in').mapped(
-                # lambda r: (r.check_in, r.check_out))
-
+                # Get attendance records that affect the current date
+                # Include records that:
+                # 1. Start on current date, OR
+                # 2. Start before current date but end on/after current date
+                current_date_start = datetime.combine(current_date, datetime.min.time())
+                current_date_end = datetime.combine(current_date, datetime.max.time())
+                
+                attendances = self.env['hr.attendance'].search([
+                    ('employee_id', '=', e.id),
+                    '|',
+                    # Records starting on current date
+                    '&',
+                    ('check_in', '>=', current_date_start),
+                    ('check_in', '<', current_date_end),
+                    # Records from previous days that extend into current date
+                    '&',
+                    ('check_in', '<', current_date_start),
+                    '|',
+                    ('check_out', '>=', current_date_start),
+                    ('check_out', '=', False)
+                ], order='check_in')
+                
+                # Process attendances, including those without check_out
+                attendance_ranges = []
+                now = datetime.now()
+                
+                for att in attendances:
+                    check_in = att.check_in
+                    if att.check_out:
+                        # Normal case - has check_out
+                        check_out = att.check_out
+                    else:
+                        # Missing check_out - apply zone rules
+                        zone = att.in_zone_id if hasattr(att, 'in_zone_id') else None
+                        if zone and zone.max_time_in_zone > 0:
+                            max_duration = timedelta(hours=zone.max_time_in_zone)
+                            time_in_zone = now - check_in
+                            if time_in_zone > max_duration:
+                                # Auto-close with configured duration
+                                check_out = check_in + timedelta(hours=zone.auto_close_time_for_zone)
+                                _logger.info('Auto-closing attendance for %s on %s after %.1f hours (zone: %s)',
+                                            e.name, current_date.strftime('%Y-%m-%d'), 
+                                            zone.auto_close_time_for_zone, zone.name)
+                            else:
+                                # Still within max time - use current time
+                                check_out = now
+                        else:
+                            # No zone or no max time configured - use current time
+                            check_out = now
+                            if (now - check_in) > timedelta(hours=24):
+                                _logger.warning('Attendance without check_out for %s exceeds 24 hours on %s',
+                                               e.name, current_date.strftime('%Y-%m-%d'))
+                    
+                    attendance_ranges.append((check_in, check_out))
+                
+                # Check if we have any attendance data to process
                 if not attendance_ranges:
+                    # No attendance records for this day
                     if overwrite_existing and attendance_extra_id:
                         attendance_extra_id.unlink()
                     current_date += timedelta(days=1)
@@ -115,14 +158,13 @@ class HrEmployee(models.Model):
                         attendance_ranges=attendance_ranges,
                         day_period=convert_day_period_to_utc((time(6, 0), time(22, 0)), tz)
                     )
-                except:
-                    _logger.info('ERROR in Attendance extra calculation for %s' % e.name)
+                except Exception as ex:
+                    _logger.error('ERROR in Attendance extra calculation for %s on %s: %s', 
+                                  e.name, current_date.strftime('%Y-%m-%d'), str(ex), exc_info=True)
                     continue
 
                 if shift_number is not None:
                     att_extra_vals['shift_number'] = shift_number + 1
-                if att_extra_vals.get('theoretical_work_time', None) is not None and att_extra_vals['theoretical_work_time']>20:
-                    att_extra_vals['theoretical_work_time'] = min(att_extra_vals['theoretical_work_time'],e.resource_calendar_id.hours_per_day)
                 # if att_extra_vals and (att_extra_vals.get('theoretical_work_time',0.0) > 0 or att_extra_vals.get('extra_time',0.0) > 0):
                 if att_extra_vals and (
                         sum(att_extra_vals.values()) - att_extra_vals.get('theoretical_work_time', 0.0)) > 0:
@@ -281,13 +323,54 @@ class HrEmployee(models.Model):
         _logger.debug(debug_msg)
         # print(debug_msg)
 
-        assert all(time >= 0 for time in
-                   [theoretical_work_time, actual_work_time, actual_work_time_day, actual_work_time_night,
-                    early_come_time, late_time_value, early_leave_time_value, overtime_value,
-                    extra_time_value]), "Negative time found"
-        assert actual_work_time == actual_work_time_day + actual_work_time_night, "Total actual work time doesn't match with day and night work time"
-        if extra_time_value > 0:
-            assert all(time == 0 for time in [early_come_time, late_time_value, early_leave_time_value,
-                                              overtime_value]), "Extra time found but other times are not zero"
+        # Validate calculated times before returning
+        self._validate_time_calculations(
+            theoretical_work_time, actual_work_time, actual_work_time_day, 
+            actual_work_time_night, early_come_time, late_time_value,
+            early_leave_time_value, overtime_value, extra_time_value
+        )
 
         return data
+    
+    def _validate_time_calculations(self, theoretical_work_time, actual_work_time, 
+                                   actual_work_time_day, actual_work_time_night,
+                                   early_come_time, late_time_value, early_leave_time_value,
+                                   overtime_value, extra_time_value):
+        """Validate calculated time values for consistency"""
+        time_values = {
+            'theoretical_work_time': theoretical_work_time,
+            'actual_work_time': actual_work_time,
+            'actual_work_time_day': actual_work_time_day,
+            'actual_work_time_night': actual_work_time_night,
+            'early_come_time': early_come_time,
+            'late_time': late_time_value,
+            'early_leave_time': early_leave_time_value,
+            'overtime': overtime_value,
+            'extra_time': extra_time_value
+        }
+        
+        # Check for negative times
+        negative_times = [(k, v) for k, v in time_values.items() if v < 0]
+        if negative_times:
+            error_msg = "Negative time values found: " + ", ".join([f"{k}={v/3600:.2f}h" for k, v in negative_times])
+            _logger.error(error_msg)
+            raise ValueError(error_msg)
+        
+        # Check total work time consistency
+        time_diff = abs(actual_work_time - (actual_work_time_day + actual_work_time_night))
+        if time_diff > 1:  # Allow 1 second tolerance for floating point errors
+            error_msg = f"Total actual work time ({actual_work_time/3600:.2f}h) doesn't match day ({actual_work_time_day/3600:.2f}h) + night ({actual_work_time_night/3600:.2f}h) work time"
+            _logger.error(error_msg)
+            raise ValueError(error_msg)
+        
+        # Check extra time consistency
+        if extra_time_value > 0:
+            non_zero_times = [(k, v) for k, v in {
+                'early_come_time': early_come_time,
+                'late_time': late_time_value,
+                'early_leave_time': early_leave_time_value,
+                'overtime': overtime_value
+            }.items() if v > 0]
+            if non_zero_times:
+                warning_msg = f"Extra time found ({extra_time_value/3600:.2f}h) but other times are not zero: " + ", ".join([f"{k}={v/3600:.2f}h" for k, v in non_zero_times])
+                _logger.warning(warning_msg)
