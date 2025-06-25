@@ -107,6 +107,12 @@ class HrEmployee(models.Model):
                     if att.check_out:
                         # Normal case - has check_out
                         check_out = att.check_out
+                        # Validate check_out is after check_in
+                        if check_out < check_in:
+                            _logger.warning('Invalid attendance found: check_out (%s) before check_in (%s) for %s on %s. Skipping.',
+                                          check_out.strftime('%H:%M'), check_in.strftime('%H:%M'), 
+                                          e.name, current_date.strftime('%Y-%m-%d'))
+                            continue  # Skip this invalid record
                     else:
                         # Missing check_out - apply zone rules
                         zone = att.in_zone_id if hasattr(att, 'in_zone_id') else None
