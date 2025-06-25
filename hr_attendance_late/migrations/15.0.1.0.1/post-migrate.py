@@ -19,14 +19,17 @@ def migrate(cr, version):
     # Step 1: Remove duplicate hr_rfid_event_user records
     _logger.info("Step 1: Cleaning duplicate user events...")
     cr.execute("""
-        DELETE FROM hr_rfid_event_user 
-        WHERE id NOT IN (
-            SELECT MIN(id) 
-            FROM hr_rfid_event_user 
-            WHERE employee_id IS NOT NULL
-            GROUP BY employee_id, event_time, door_id, event_action
+        DELETE FROM hr_rfid_event_user t1
+        WHERE employee_id IS NOT NULL
+        AND EXISTS (
+            SELECT 1 
+            FROM hr_rfid_event_user t2
+            WHERE t2.employee_id = t1.employee_id
+            AND t2.event_time = t1.event_time
+            AND COALESCE(t2.door_id, -1) = COALESCE(t1.door_id, -1)
+            AND t2.event_action = t1.event_action
+            AND t2.id < t1.id
         )
-        AND employee_id IS NOT NULL
     """)
     deleted_events = cr.rowcount
     _logger.info(f"Deleted {deleted_events} duplicate user events")
@@ -78,41 +81,58 @@ def migrate(cr, version):
     
     # Step 4: Get list of affected employees for recalculation
     _logger.info("Step 4: Getting affected employees for recalculation...")
+    # Optimized query using JOINs instead of nested subqueries
     cr.execute("""
-        SELECT DISTINCT employee_id 
-        FROM hr_attendance 
-        WHERE check_in >= NOW() - INTERVAL '30 days'
-        AND employee_id IN (
-            SELECT id FROM hr_employee 
-            WHERE id IN (
-                SELECT DISTINCT employee_id 
-                FROM hr_rfid_card 
-                WHERE employee_id IS NOT NULL
-            )
+        SELECT DISTINCT a.employee_id 
+        FROM hr_attendance a
+        INNER JOIN hr_employee e ON e.id = a.employee_id
+        WHERE a.check_in >= NOW() - INTERVAL '7 days'  -- Reduced from 30 to 7 days for performance
+        AND EXISTS (
+            SELECT 1 FROM hr_rfid_card c 
+            WHERE c.employee_id = e.id 
+            LIMIT 1
         )
+        ORDER BY a.employee_id
     """)
     affected_employee_ids = [row[0] for row in cr.fetchall()]
     
     if affected_employee_ids:
         _logger.info(f"Found {len(affected_employee_ids)} employees to recalculate")
         
-        # Recalculate attendance for affected employees
+        # Recalculate attendance for affected employees with batch processing
         from datetime import timedelta
         from odoo import fields
         
-        employees = env['hr.employee'].browse(affected_employee_ids)
-        from_date = fields.Date.today() - timedelta(days=30)
+        from_date = fields.Date.today() - timedelta(days=7)  # Reduced from 30 to 7 days
         to_date = fields.Date.today()
         
-        for employee in employees.exists():
-            try:
-                _logger.info(f"Recalculating attendance for {employee.name}")
-                if hasattr(employee, 'recalc_attendance'):
-                    employee.recalc_attendance(from_date, to_date)
-                # Also update attendance extra data
-                employee.update_extra_attendance_data(from_date, to_date, overwrite_existing=True)
-            except Exception as e:
-                _logger.error(f"Error recalculating attendance for {employee.name}: {str(e)}")
+        # Process in batches to avoid memory issues and provide progress feedback
+        batch_size = 10
+        total_employees = len(affected_employee_ids)
+        
+        for i in range(0, total_employees, batch_size):
+            batch_ids = affected_employee_ids[i:i + batch_size]
+            employees = env['hr.employee'].browse(batch_ids)
+            
+            _logger.info(f"Processing batch {i//batch_size + 1}/{(total_employees + batch_size - 1)//batch_size}")
+            
+            for employee in employees.exists():
+                try:
+                    # Only recalculate if the methods exist
+                    if hasattr(employee, 'recalc_attendance'):
+                        employee.with_context(migration_mode=True).recalc_attendance(from_date, to_date)
+                    
+                    # Update attendance extra data with lighter processing
+                    employee.with_context(migration_mode=True).update_extra_attendance_data(
+                        from_date, to_date, overwrite_existing=True
+                    )
+                except Exception as e:
+                    _logger.error(f"Error recalculating attendance for {employee.name} (ID: {employee.id}): {str(e)}")
+                    continue  # Continue with next employee even if one fails
+            
+            # Commit after each batch to avoid long transactions
+            env.cr.commit()
+            _logger.info(f"Completed {min(i + batch_size, total_employees)}/{total_employees} employees")
     
     _logger.info("Migration 15.0.1.0.1 completed successfully")
     _logger.info(f"Summary: {deleted_events} duplicate events, "
