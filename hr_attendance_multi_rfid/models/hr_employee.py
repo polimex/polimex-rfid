@@ -36,27 +36,58 @@ class HrEmployee(models.Model):
         """ Check In/Check Out action
             Check In: create a new attendance record
             Check Out: modify check_out field of appropriate attendance record
+            
+            For out-of-order events:
+            - Check In: Always creates new attendance
+            - Check Out: Finds the correct attendance based on event time
         """
         self.ensure_one()
 
-        if self.attendance_state != 'checked_in':
+        # Determine if this is a check-in or check-out based on context or current state
+        # For out-of-order events, we need to look at the specific time
+        
+        # First, check if there's an open attendance that could be closed by this event
+        open_attendance = self.env['hr.attendance'].search([
+            ('employee_id', '=', self.id),
+            ('check_out', '=', False),
+            ('check_in', '<', action_date)  # Check-in must be before this event
+        ], order='check_in desc', limit=1)
+        
+        # If we have an open attendance and this could be a check-out
+        if open_attendance and self.attendance_state == 'checked_in':
+            # Validate that check_out is after check_in
+            if action_date < open_attendance.check_in:
+                _logger.warning(
+                    'Attempted to set check_out (%s) before check_in (%s) for employee %s. '
+                    'Setting check_out to check_in + 1 minute.',
+                    action_date, open_attendance.check_in, self.name
+                )
+                # Set check_out to check_in + 1 minute to maintain valid record
+                action_date = open_attendance.check_in + timedelta(minutes=1)
+            open_attendance.check_out = action_date
+            return open_attendance
+        
+        # For check-in or when no suitable open attendance found
+        if self.attendance_state != 'checked_in' or not open_attendance:
+            # Check if this might be an out-of-order check-in that should be inserted
+            # between existing attendances
             vals = {
                 'employee_id': self.id,
                 'check_in': action_date,
                 'in_zone_id': zone_id
             }
-            return self.env['hr.attendance'].create(vals)
-
-        attendance = self.env['hr.attendance'].search([('employee_id', '=', self.id),
-                                                       ('check_out', '=', False)], limit=1)
-        if attendance:
-            attendance.check_out = action_date
-        else:
-            raise exceptions.UserError(_('Cannot perform check out on %(empl_name)s, '
-                                         'could not find corresponding check in. Your '
-                                         'attendances have probably been modified manually'
-                                         ' by human resources.') % {'empl_name': self.name, })
-        return attendance
+            
+            # Use no_validity_check context if we're processing historical events
+            if self.env.context.get('no_validity_check'):
+                return self.env['hr.attendance'].with_context(no_validity_check=True).create(vals)
+            else:
+                return self.env['hr.attendance'].create(vals)
+        
+        # If we get here, something went wrong
+        raise exceptions.UserError(_('Cannot perform check out on %(empl_name)s, '
+                                     'could not find corresponding check in. Your '
+                                     'attendances have probably been modified manually'
+                                     ' by human resources.') % {'empl_name': self.name, })
 
     def recalc_attendance(self, from_date=None, to_date=None):
         if from_date is None:
