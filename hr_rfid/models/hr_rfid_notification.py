@@ -29,12 +29,15 @@ class RFIDNotification(models.Model):
         string='Zone',
         required=True,
         readonly=True,
+        help="The zone or area where this notification rule applies. When events occur "
+             "in this zone, the notification will be triggered."
     )
     company_id = fields.Many2one(
         comodel_name='res.company',
         string='Company',
         required=True,
         related='zone_id.company_id',
+        help="Company that owns this notification. Automatically set based on the selected zone."
     )
     notification_type = fields.Selection(
         [
@@ -42,25 +45,38 @@ class RFIDNotification(models.Model):
             ('email', 'Email'),
             # ('sms', _('SMS Message')),
         ], default='discuss',
+        help="How to send the notification:\n"
+             "• System Chat: Send instant message through Odoo's internal chat\n"
+             "• Email: Send notification via email\n"
+             "• SMS: Send text message (if available)"
     )
     user_event = fields.Selection(
         selection=user_action_selection,
         string='User Event',
+        help="Select a user-related event that will trigger this notification. "
+             "Examples: Access granted, Access denied, Card not found, etc. "
+             "Leave empty if you want to trigger on system events instead."
     )
     system_event = fields.Selection(
         selection=system_action_selection[19:],
         string='System Event',
+        help="Select a system-related event that will trigger this notification. "
+             "Examples: Controller offline, Door forced open, Emergency activated, etc. "
+             "Leave empty if you want to trigger on user events instead."
     )
     notify_followers = fields.Boolean(
         string='Notify Followers',
         default=True,
+        help="Send notifications to all users who follow this zone. This is useful "
+             "for security teams or managers who need to monitor all activity in an area."
     )
     notify_partner_ids = fields.Many2many(
         comodel_name='res.partner',
-        help='''Partners to notify:
-                * Only Partners with a user account can receive "System Chat" notifications.
-                * Only Partners with an email address can receive "Email" notifications.
-                * Only Partners with a mobile phone number can receive "SMS Message" notifications.''',
+        help="Specific people to notify when this event occurs. You can add multiple recipients.\n"
+             "Important:\n"
+             "• For System Chat: Recipients must have an Odoo user account\n"
+             "• For Email: Recipients must have an email address\n"
+             "• For SMS: Recipients must have a mobile phone number",
         default=lambda self: self.env.context.get('default_contact_id', None),
         check_company=True,
         domain=[('is_company', '=', False)],

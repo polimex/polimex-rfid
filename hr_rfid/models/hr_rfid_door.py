@@ -20,7 +20,7 @@ class HrRfidDoor(models.Model):
 
     name = fields.Char(
         string='Name',
-        help='A label to easily differentiate doors',
+        help='Enter a descriptive name for this door (e.g. "Main Entrance", "Server Room", "Warehouse Gate"). This name will be used throughout the system to identify this door.',
         required=True,
         index=True,
         tracking=True,
@@ -28,12 +28,13 @@ class HrRfidDoor(models.Model):
     company_id = fields.Many2one(
         comodel_name="res.company",
         string="Company",
+        help='The company that owns or manages this door. This is automatically determined from the webstack module.',
         compute='compute_company_id',
         store=True,
     )
     number = fields.Integer(
         string='Number',
-        help='Number of the door in the controller',
+        help='The door number as configured in the physical controller (1-4). This must match the door number set on the controller hardware.',
         required=True,
         index=True,
         tracking=True
@@ -42,7 +43,7 @@ class HrRfidDoor(models.Model):
     card_type = fields.Many2one(
         comodel_name='hr.rfid.card.type',
         string='Card type',
-        help='Only cards of this type this door will open to',
+        help='Select which type of RFID cards can open this door (e.g. Employee cards, Visitor badges). Only cards matching this type will be granted access, even if they are in an access group.',
         default=lambda self: self.env.ref('hr_rfid.hr_rfid_card_type_def').id,
         ondelete='set null',
         tracking=True,
@@ -50,6 +51,7 @@ class HrRfidDoor(models.Model):
 
     apb_mode = fields.Boolean(
         string='APB Mode',
+        help='Enable Anti-Passback (APB) mode to prevent card sharing. When active, a person must exit through the same door before they can enter again. This helps prevent unauthorized access by sharing cards.',
         default=False,
         tracking=True,
     )
@@ -57,19 +59,22 @@ class HrRfidDoor(models.Model):
     controller_id = fields.Many2one(
         comodel_name='hr.rfid.ctrl',
         string='Controller',
-        help='Controller that manages the door',
+        help='The physical RFID controller device that manages this door. This is set automatically when the door is created by the controller.',
         readonly=True,
         ondelete='cascade',
         tracking=True
     )
 
-    hotel_readers = fields.Integer(related='controller_id.hotel_readers')
+    hotel_readers = fields.Integer(
+        related='controller_id.hotel_readers',
+        help='Number of hotel-mode readers connected to the controller. Used for hotel room management features.'
+    )
 
     access_group_ids = fields.One2many(
         comodel_name='hr.rfid.access.group.door.rel',
         inverse_name='door_id',
         string='Door Access Groups',
-        help='The access groups this door is a part of',
+        help='Access groups that include this door. Members of these groups will have access to this door according to their time schedules. You can add this door to multiple access groups.',
     )
 
     reader_ids = fields.Many2many(
@@ -78,14 +83,14 @@ class HrRfidDoor(models.Model):
         column1='door_id',
         column2='reader_id',
         string='Readers',
-        help='Readers that open this door',
+        help='RFID card readers that control this door. Typically includes one reader on each side of the door (entry/exit). Cards presented to these readers will unlock this door if authorized.',
     )
 
     card_rel_ids = fields.One2many(
         comodel_name='hr.rfid.card.door.rel',
         inverse_name='door_id',
         string='Cards',
-        help='Cards that have access to this door',
+        help='All RFID cards that currently have access to this door. This list is automatically managed based on access groups and shows which cards can unlock this door.',
     )
 
     zone_ids = fields.Many2many(
@@ -94,83 +99,132 @@ class HrRfidDoor(models.Model):
         column1='door_id',
         column2='zone_id',
         string='Zones',
-        help='Zones containing this door',
+        help='Security zones that include this door. Zones are used to group doors by area (e.g. "Production Floor", "Office Area") for reporting and access control purposes.',
     )
 
     webstack_id = fields.Many2one(
         comodel_name='hr.rfid.webstack',
         string='Module',
         related='controller_id.webstack_id',
+        help='The webstack module that connects this door\'s controller to the system. This manages the network communication with the physical hardware.',
     )
 
     lock_time = fields.Integer(
-        help='The unlock time in seconds.',
+        string='Lock Time',
+        help='How long the door stays unlocked after a valid card is presented (in seconds). Common values: 3-5 seconds for normal doors, 10-15 seconds for disabled access. Set to 0 for permanent unlock (not recommended).',
         compute='_compute_lock_time',
         inverse='_set_lock_time',
         tracking = True
     )
     lock_state = fields.Boolean(
-        help='If in the controller check box for read state is True, the status is present.',
+        string='Lock State',
+        help='Current state of the door lock. When checked, the door is unlocked. When unchecked, the door is locked. You can manually change this to remotely lock/unlock the door.',
         compute='_compute_lock_status',
         inverse='_set_lock_state',
         tracking = True
     )
     lock_output = fields.Integer(
-        help='The Lock Output on controller for this door',
+        string='Lock Output',
+        help='The physical output number on the controller that controls this door\'s lock mechanism. This is configured automatically based on the door and reader setup.',
         compute='_compute_lock_output'
     )
     alarm_line_ids = fields.One2many(
         comodel_name='hr.rfid.ctrl.alarm',
         inverse_name='door_id',
+        string='Alarm Lines',
         # auto_join=True,
-        help='Alarm lines connected to this door'
+        help='Alarm sensors connected to this door (e.g. door forced open sensor, door held open sensor). These trigger security alerts when activated.'
     )
     alarm_state = fields.Selection(
+        string='Alarm State',
         selection=[
             ('no_alarm', 'No Alarm functionality'),
             ('arm', 'Armed'),
             ('disarm', 'Disarmed'),
-        ], compute='_compute_alarm_state',
+        ], 
+        compute='_compute_alarm_state',
+        help='Current alarm status of this door. Armed: alarms are active and will trigger alerts. Disarmed: alarms are disabled. No Alarm: this door has no alarm sensors installed.',
     )
     siren_state = fields.Boolean(
-        related='controller_id.siren_state'
+        string='Siren State',
+        related='controller_id.siren_state',
+        help='Indicates if the alarm siren is currently active. When checked, the siren is sounding. This is controlled at the controller level.'
     )
     emergency_state = fields.Selection(
-        related='controller_id.emergency_state'
+        string='Emergency State',
+        related='controller_id.emergency_state',
+        help='Emergency unlock status. Off: normal operation. Soft: doors unlocked via software command. Hard: doors unlocked by physical emergency button. In emergency state, all doors remain open for evacuation.'
     )
     th_id = fields.One2many(
         comodel_name='hr.rfid.ctrl.th',
-        inverse_name='door_id'
+        inverse_name='door_id',
+        string='Temperature/Humidity Sensor',
+        help='Temperature and humidity sensor associated with this door. Used for environmental monitoring of sensitive areas.'
     )
     temperature = fields.Float(
-        related='th_id.temperature'
+        string='Temperature',
+        related='th_id.temperature',
+        help='Current temperature reading from the door\'s environmental sensor (in Celsius). Useful for monitoring server rooms or storage areas.'
     )
     humidity = fields.Float(
-        related='th_id.humidity'
+        string='Humidity',
+        related='th_id.humidity',
+        help='Current humidity reading from the door\'s environmental sensor (percentage). Important for climate-controlled areas.'
     )
 
     hb_dnd = fields.Boolean(
         string='DND button pressed',
         compute='_compute_hotel_buttons',
-        inverse='_set_hb_dnd'
+        inverse='_set_hb_dnd',
+        help='Do Not Disturb status for hotel mode. When checked, indicates the room occupant does not want to be disturbed. Staff cards may override this setting.'
     )
     hb_clean = fields.Boolean(
         string='Clean button pressed',
         compute='_compute_hotel_buttons',
-        inverse='_set_hb_clean'
+        inverse='_set_hb_clean',
+        help='Room cleaning request for hotel mode. When checked, indicates the room occupant has requested cleaning service.'
     )
     hb_card_present = fields.Boolean(
         string='Present card in reader',
-        compute='_compute_hotel_buttons'
+        compute='_compute_hotel_buttons',
+        help='Hotel mode indicator showing if a card is currently inserted in the room\'s energy-saving card reader. Often used to control room electricity.'
     )
 
-    access_group_count = fields.Char(compute='_compute_counts')
-    reader_count = fields.Char(compute='_compute_counts')
-    card_count = fields.Char(compute='_compute_counts')
-    zone_count = fields.Char(compute='_compute_counts')
-    alarm_lines_count = fields.Char(compute='_compute_counts')
-    user_event_count = fields.Char(compute='_compute_counts')
-    system_event_count = fields.Char(compute='_compute_counts')
+    access_group_count = fields.Char(
+        compute='_compute_counts',
+        string='Access Group Count',
+        help='Number of access groups that include this door. Click to see all access groups.'
+    )
+    reader_count = fields.Char(
+        compute='_compute_counts',
+        string='Reader Count', 
+        help='Number of card readers connected to this door. Typically 2 (one for entry, one for exit).'
+    )
+    card_count = fields.Char(
+        compute='_compute_counts',
+        string='Card Count',
+        help='Total number of RFID cards that have access to this door. Click to see all authorized cards.'
+    )
+    zone_count = fields.Char(
+        compute='_compute_counts',
+        string='Zone Count',
+        help='Number of security zones this door belongs to. Click to see all zones.'
+    )
+    alarm_lines_count = fields.Char(
+        compute='_compute_counts',
+        string='Alarm Lines Count',
+        help='Number of alarm sensors connected to this door. Click to view alarm configuration.'
+    )
+    user_event_count = fields.Char(
+        compute='_compute_counts',
+        string='User Event Count',
+        help='Total number of user access events (card swipes, entries, exits) for this door. Click to view event history.'
+    )
+    system_event_count = fields.Char(
+        compute='_compute_counts',
+        string='System Event Count',
+        help='Total number of system events (alarms, errors, configuration changes) for this door. Click to view system logs.'
+    )
 
     # TODO Make doors with one reader to work in GAPB
     # @api.constrains('apb_mode')
@@ -638,13 +692,14 @@ class HrRfidDoorOpenCloseWiz(models.TransientModel):
     doors = fields.Many2many(
         'hr.rfid.door',
         string='Doors to open/close',
+        help='The doors that will be opened or closed. You can select multiple doors to control them simultaneously.',
         required=True,
         default=_default_doors,
     )
 
     time = fields.Integer(
         string='Time',
-        help='Amount of time (in seconds) the doors will stay open or closed. 0 for infinity.',
+        help='Duration in seconds for the door action. For opening: how long the door stays unlocked before automatically locking again. Common values are 3-5 seconds for normal access, 10-15 seconds for disabled access. Set to 0 to keep the door permanently open/closed (use with caution).',
         default=3,
         required=True,
     )
@@ -672,12 +727,14 @@ class HrRfidCardDoorRel(models.Model):
     card_id = fields.Many2one(
         'hr.rfid.card',
         string='Card',
+        help='The RFID card that has access to this door. This relationship is automatically managed by the system.',
         required=True,
     )
 
     door_id = fields.Many2one(
         'hr.rfid.door',
         string='Door',
+        help='The door that this card can access. When the card is presented to this door\'s readers, access will be granted according to the time schedule.',
         required=True,
         ondelete='cascade',
     )
@@ -685,10 +742,13 @@ class HrRfidCardDoorRel(models.Model):
     time_schedule_id = fields.Many2one(
         'hr.rfid.time.schedule',
         string='Time Schedule',
+        help='Defines when this card can access this door. For example, "Business Hours" might allow access Monday-Friday 8AM-6PM, while "24/7" allows access at all times.',
         required=True,
         ondelete='cascade',
     )
     alarm_right = fields.Boolean(
+        string='Alarm Rights',
+        help='When enabled, this card can arm/disarm the alarm system for this door. Typically given to security personnel or managers who need to control the alarm system.',
         required=True,
         default=False
     )

@@ -21,14 +21,16 @@ class HrRfidReader(models.Model):
 
     name = fields.Char(
         string='Reader name',
-        help='Label to differentiate readers',
+        help='Give this reader a descriptive name to easily identify it. '
+             'For example: "Main Entrance Reader" or "Server Room Exit".',
         default='Reader',
         tracking=True,
     )
 
     number = fields.Integer(
         string='Number',
-        help='Number of the reader on the controller',
+        help='The physical reader number on the controller device (1-4). '
+             'This corresponds to the terminal connection on the controller hardware.',
         index=True,
     )
 
@@ -36,7 +38,10 @@ class HrRfidReader(models.Model):
     reader_type = fields.Selection(
         selection=reader_types,
         string='Reader type',
-        help='Type of the reader',
+        help='Defines the direction of access:\n'
+             '• In: Entry reader - used when entering an area\n'
+             '• Out: Exit reader - used when leaving an area\n'
+             'This affects access logs and presence tracking.',
         required=True,
         default='00',
     )
@@ -44,7 +49,12 @@ class HrRfidReader(models.Model):
     mode = fields.Selection(
         selection=reader_modes,
         string='Reader mode',
-        help='Mode of the reader',
+        help='Defines the authentication method required:\n'
+             '• Card Only: Just scan your RFID card\n'
+             '• Card and Pin: Scan card then enter PIN code\n'
+             '• Card and Workcode: Scan card then enter work/project code\n'
+             '• Card or Pin: Either scan card OR enter PIN (flexible)\n'
+             'Note: Once set, Unknown mode cannot be selected again.',
         default='01',
         required=True,
     )
@@ -52,19 +62,23 @@ class HrRfidReader(models.Model):
     controller_id = fields.Many2one(
         'hr.rfid.ctrl',
         string='Controller',
-        help='Controller that manages the reader',
+        help='The access control device that manages this reader. '
+             'Controllers handle communication between readers and the system.',
         ondelete='cascade',
     )
     webstack_id = fields.Many2one(
         comodel_name='hr.rfid.webstack',
         string='Module',
         related='controller_id.webstack_id',
+        help='The network module (webstack) that connects this reader\'s controller to the system. '
+             'This is automatically determined by the controller.',
     )
     user_event_ids = fields.One2many(
         'hr.rfid.event.user',
         'reader_id',
         string='Events',
-        help='Events concerning this reader',
+        help='History of all access events (card scans, entries, exits) '
+             'that occurred at this reader. Useful for auditing and troubleshooting.',
     )
 
     door_ids = fields.Many2many(
@@ -73,7 +87,9 @@ class HrRfidReader(models.Model):
         'reader_id',
         'door_id',
         string='Doors',
-        help='Doors the reader opens',
+        help='Select which doors this reader can control. '
+             'When access is granted, these doors will be unlocked. '
+             'A reader can control multiple doors (e.g., main door + emergency exit).',
         ondelete='cascade',
     )
 
@@ -82,10 +98,20 @@ class HrRfidReader(models.Model):
         string='Door',
         compute='_compute_reader_door',
         inverse='_inverse_reader_door',
+        help='The primary door controlled by this reader. '
+             'This field is shown when the reader controls exactly one door.',
     )
 
-    door_count = fields.Char(compute='_compute_counts')
-    user_event_count = fields.Char(compute='_compute_counts')
+    door_count = fields.Char(
+        compute='_compute_counts',
+        string='Door Count',
+        help='Number of doors controlled by this reader.',
+    )
+    user_event_count = fields.Char(
+        compute='_compute_counts',
+        string='Event Count',
+        help='Total number of access events recorded by this reader.',
+    )
 
     @api.depends('door_ids', 'user_event_ids')
     def _compute_counts(self):

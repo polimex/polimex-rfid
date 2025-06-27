@@ -6,6 +6,31 @@
             <field name="name">Readers</field>
             <field name="res_model">hr.rfid.reader</field>
             <field name="view_mode">list,form,search</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No readers configured yet
+                </p>
+                <p>
+                    RFID readers are physical devices that scan access cards at entry/exit points.
+                    Each reader is connected to a controller and can manage one or more doors.
+                </p>
+                <p>
+                    <b>Reader Types:</b><br/>
+                    • <b>In (Entry)</b> - Records when someone enters an area<br/>
+                    • <b>Out (Exit)</b> - Records when someone leaves an area
+                </p>
+                <p>
+                    <b>Reader Modes:</b><br/>
+                    • <b>Card Only</b> - Simple card scan for access<br/>
+                    • <b>Card + PIN</b> - Enhanced security with PIN verification<br/>
+                    • <b>Card + Workcode</b> - For tracking time on specific projects<br/>
+                    • <b>Card or PIN</b> - Flexible access with either method
+                </p>
+                <p class="text-muted">
+                    <i>Note: Readers are automatically created when controllers are configured. 
+                    You typically don't need to create them manually.</i>
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_reader_view_form" model="ir.ui.view">
@@ -53,7 +78,7 @@
             </field>
         </record>
 
-        <record id="hr_rfid_reader_view_tree" model="ir.ui.view">
+        <record id="hr_rfid_reader_view_list" model="ir.ui.view">
             <field name="name">hr.rfid.reader.list</field>
             <field name="model">hr.rfid.reader</field>
             <field name="arch" type="xml">

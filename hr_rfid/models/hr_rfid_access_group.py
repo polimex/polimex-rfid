@@ -27,19 +27,18 @@ class HrRfidAccessGroup(models.Model):
 
     name = fields.Char(
         string='Name',
-        help='A label to help differentiate between access groups',
+        help='A descriptive name for this access group. This helps you identify and organize different access permissions across your organization. For example: "Office Hours Access", "24/7 Security Access", or "Warehouse Weekend Access".',
         default=access_group_generate_name,
         size=32,
         tracking=True,
     )
     company_id = fields.Many2one('res.company',
                                  string='Company',
+                                 help='The company this access group belongs to. In multi-company environments, access groups are separated by company for security. Users from one company cannot use access groups from another company.',
                                  default=lambda self: self.env.company)
 
     delay_between_events = fields.Integer(
-        help="Minimum time in seconds between events on listed doors."
-             "The card will be rejected if this time is not pass since last event. "
-             "0 means disabled. IMPORTANT: The function works ONLY with controllers(doors) with enabled External DB.",
+        help="Anti-passback feature: Sets the minimum time (in seconds) that must pass between card uses on any door in this group. This prevents rapid re-entry and card sharing. For example, setting 60 means users must wait at least 1 minute before using their card again. Set to 0 to disable this feature. Note: This only works with controllers that have External DB enabled.",
         default=0
     )
 
@@ -47,34 +46,34 @@ class HrRfidAccessGroup(models.Model):
         'hr.rfid.access.group.employee.rel',
         'access_group_id',
         string='Users',
-        help='Users part of this access group',
+        help='Employees who are directly assigned to this access group. Each employee can have multiple access groups with different activation dates and expiration times. Access rights are automatically synchronized with the employee\'s RFID cards.',
     )
 
     contact_ids = fields.One2many(
         'hr.rfid.access.group.contact.rel',
         'access_group_id',
         string='Contacts',
-        help='Contacts part of this access group'
+        help='External contacts (visitors, contractors, service providers) who are assigned to this access group. Like employees, contacts can have time-limited access with specific activation and expiration dates. Perfect for managing temporary access for non-employees.'
     )
 
     door_ids = fields.One2many(
         'hr.rfid.access.group.door.rel',
         'access_group_id',
         string='Doors',
-        help='Doors included in this access group',
+        help='The physical doors that members of this access group can open. Each door can have its own time schedule (e.g., business hours only) and alarm rights. Use the "Add Doors" button to assign doors to this group.',
     )
 
     default_department_ids = fields.One2many(
         'hr.department',
         'hr_rfid_default_access_group',
         string='Department (Default)',
-        help='Departments that have this access group as default',
+        help='Departments where this access group is automatically assigned to all employees. When a new employee joins these departments, they automatically receive this access group. This is useful for standard access rights like "All employees can access main entrance during office hours".',
     )
 
     department_ids = fields.Many2many(
         'hr.department',
         string='Departments',
-        help='Departments assigned to this access group',
+        help='Departments that can optionally use this access group. While not automatically assigned, employees in these departments can be manually given this access group. Useful for special permissions like "IT department can optionally have server room access".',
     )
 
     inherited_ids = fields.Many2many(
@@ -83,6 +82,7 @@ class HrRfidAccessGroup(models.Model):
         column1='inheritor',
         column2='inherited',
         string='Inherited access groups',
+        help='Other access groups whose permissions are included in this group. This creates a hierarchy where this group automatically includes all doors from inherited groups. For example, "Manager Access" might inherit from "Employee Access" to include all employee doors plus additional manager-only doors.',
     )
 
     inheritor_ids = fields.Many2many(
@@ -91,27 +91,27 @@ class HrRfidAccessGroup(models.Model):
         column1='inherited',
         column2='inheritor',
         string='Inheritors',
-        help='Access groups that have inherited this one',
+        help='Access groups that inherit permissions from this group. Changes to this group\'s doors will automatically affect all inheritor groups. This shows which higher-level groups depend on this one.',
     )
 
     all_door_ids = fields.Many2many(
         'hr.rfid.access.group.door.rel',
         string='All doors',
-        help='All doors, including inherited ones',
+        help='Complete list of doors accessible with this group, including both directly assigned doors and doors inherited from other access groups. This gives you a full overview of what areas users in this group can access.',
         compute='_compute_all_doors',
     )
 
     all_employee_ids = fields.Many2many(
         'hr.rfid.access.group.employee.rel',
         string='All employees',
-        help='All employees that use this access group, including the ones from the inheritors',
+        help='Complete list of employees who have access to this group\'s doors, including both directly assigned employees and those who have this access through inheritor groups. This helps you see everyone who would be affected by changes to this group.',
         compute='_compute_all_employees',
     )
 
     all_contact_ids = fields.Many2many(
         'hr.rfid.access.group.contact.rel',
         string='All contacts',
-        help='All contacts that use this access group, including the ones from the inheritors',
+        help='Complete list of external contacts who have access to this group\'s doors, including both directly assigned contacts and those who have this access through inheritor groups. Useful for auditing who has access to specific areas.',
         compute='_compute_all_contacts',
     )
 
@@ -453,6 +453,7 @@ class HrRfidAccessGroupDoorRel(models.Model):
     access_group_id = fields.Many2one(
         'hr.rfid.access.group',
         string='Access Group',
+        help='The access group that defines which doors can be accessed. This links doors to users through a flexible permission system.',
         default=_get_cur_access_group_id,
         ondelete='cascade',
         required=True,
@@ -461,25 +462,27 @@ class HrRfidAccessGroupDoorRel(models.Model):
     door_id = fields.Many2one(
         'hr.rfid.door',
         string='Door',
+        help='The physical door or access point that members of this access group can open. Each door is connected to an RFID controller.',
         default=_get_cur_door_id,
         required=True,
         ondelete='cascade',
     )
     card_type = fields.Many2one(
         comodel_name='hr.rfid.card.type',
+        help='The type of RFID card required for this door (automatically determined by the door configuration). Different doors may require different card technologies.',
         related='door_id.card_type'
     )
 
     time_schedule_id = fields.Many2one(
         'hr.rfid.time.schedule',
         string='Time schedule',
-        help='Time schedule for the door/access group combination',
+        help='Defines when this door can be accessed by this group. For example: "Monday-Friday 8AM-6PM" or "24/7 Access". Different doors in the same group can have different schedules.',
         default=lambda self: self.env['hr.rfid.time.schedule'].search([], limit=1, order='number')[0].id,
         required=True,
         ondelete='cascade',
     )
     alarm_rights = fields.Boolean(
-        help='Give alarm rights for this door. The user can Arm/Disarm door.',
+        help='Allow users in this group to arm/disarm the door\'s alarm system. This is typically given to security personnel or managers who need to activate/deactivate security systems.',
         default=False,
         required=True
     )
@@ -541,46 +544,51 @@ class HrRfidAccessGroupRelations(models.AbstractModel):
     _description = 'Relation between access groups and employees'
 
     state = fields.Boolean(
+        string='Active',
+        help='Indicates if this access group assignment is currently active. Automatically calculated based on activation date, expiration date, and visit limits.',
         default=False,
         compute='_compute_state',
         store=True,
     )
-    internal_state = fields.Boolean(default=False)
+    internal_state = fields.Boolean(
+        help='Internal field used to track state changes and trigger card updates. This is managed automatically by the system.',
+        default=False
+    )
 
     access_group_id = fields.Many2one(
         'hr.rfid.access.group',
         string='Access Group',
+        help='The access group that provides door permissions to the employee or contact. Multiple groups can be assigned with different time periods.',
         ondelete='cascade',
         required=True,
     )
     # TODO New field. Need to implemented in cron job tasks!!!
     activate_on = fields.Datetime(
         string='Activation Date',
-        help='Access group will activate itself from the contact '
-             'on the  date. ',
+        help='The date and time when this access group becomes active for the user. Access will not be granted before this date. Useful for scheduling future access or managing new employee start dates.',
         default=lambda self: fields.Datetime.now(),
         index=True,
     )
 
     expiration = fields.Datetime(
         string='Expiration Date',
-        help='Access group will remove itself from the contact '
-             'on the expiration date. Will never expire if blank.',
+        help='The date and time when this access group expires and access is revoked. Leave empty for permanent access. Perfect for temporary employees, contractors, or time-limited projects.',
         index=True,
     )
 
     visits_counting = fields.Boolean(
-        help='If True, the access group will counting visits. \n'
-             'The feature is used for RFID services in general.',
+        string='Enable Visit Counting',
+        help='Enable visit counting to limit the number of times this access can be used. Useful for single-use passes, limited service visits, or pay-per-entry scenarios.',
         default=False
     )
     permitted_visits = fields.Integer(
-        help='After reaching the allowed visits for this group, the group will be deactivated.\n'
-             'Zero visits exclude the function for automatic deactivation.',
+        string='Permitted Visits',
+        help='Maximum number of visits allowed with this access group. After reaching this limit, access is automatically revoked. Set to 0 to allow unlimited visits. Example: Set to 10 for a 10-visit gym pass.',
         default=0
     )
     visits_counter = fields.Integer(
-        help='Real visits this group will be deactivated. 0 mean',
+        string='Visit Counter',
+        help='Current number of visits used. When this reaches the permitted visits limit, access is automatically disabled. This counter increases each time the user enters through any door in this group.',
         default=0
     )
 
@@ -700,6 +708,7 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
     employee_id = fields.Many2one(
         'hr.employee',
         string='Employee',
+        help='The employee who is assigned to this access group. Access rights are synchronized with all active RFID cards belonging to this employee.',
         required=True,
     )
 
@@ -777,6 +786,7 @@ class HrRfidAccessGroupContactRel(models.Model):
     contact_id = fields.Many2one(
         'res.partner',
         string='Contact',
+        help='The external contact (visitor, contractor, service provider) who is assigned to this access group. Access rights are synchronized with all active RFID cards belonging to this contact.',
         required=True,
     )
 
@@ -860,6 +870,7 @@ class HrRfidAccessGroupWizard(models.TransientModel):
     acc_gr_id = fields.Many2one(
         'hr.rfid.access.group',
         string='Access Group',
+        help='The access group you are currently configuring. This field is automatically set based on the group you are editing.',
         required=True,
         default=_default_acc_gr,
     )
@@ -870,7 +881,7 @@ class HrRfidAccessGroupWizard(models.TransientModel):
         'wiz',
         'door',
         string='Doors',
-        help='Which doors to add to the access group',
+        help='Select the doors you want to add to this access group. You can select multiple doors at once. Each door will be assigned with the time schedule and alarm rights specified below.',
         required=True,
     )
 
@@ -880,19 +891,21 @@ class HrRfidAccessGroupWizard(models.TransientModel):
         'wiz',
         'door',
         string='All access group doors',
+        help='This field stores the current doors in the access group, used internally to filter available doors.',
         default=_default_acc_gr_doors,
     )
 
     time_schedule_id = fields.Many2one(
         'hr.rfid.time.schedule',
         string='Time Schedule',
-        help='Time schedule for the door/access group combination',
+        help='Select when these doors can be accessed. This schedule will apply to all selected doors. Common schedules include "Business Hours", "24/7 Access", or custom schedules for specific needs.',
         required=True,
         default=lambda self: self.env['hr.rfid.time.schedule'].search([], limit=1, order='number')[0].id,
     )
 
     alarm_rights = fields.Boolean(
-        help='Give alarm rights for this door. The user can Arm/Disarm door.',
+        string='Grant Alarm Rights',
+        help='Enable this to allow users to arm/disarm the alarm system on these doors. Typically given to security staff, managers, or the last person leaving the building.',
         default=False,
         required=True
     )

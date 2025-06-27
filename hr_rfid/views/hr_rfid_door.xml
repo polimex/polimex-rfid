@@ -31,12 +31,32 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_rfid_door_open_close_wiz_form"/>
             <field name="target">new</field>
+            <field name="help" type="html">
+                <p>
+                    Remotely control door locks. You can temporarily unlock doors for a specified
+                    duration or lock them immediately. This sends commands directly to the door controllers.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_door_action" model="ir.actions.act_window">
             <field name="name">Doors</field>
             <field name="res_model">hr.rfid.door</field>
             <field name="view_mode">kanban,list,form,search</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No doors configured yet
+                </p>
+                <p>
+                    Doors are physical access points controlled by RFID readers. Each door is managed by a controller
+                    and can be part of multiple access groups. You can configure unlock times, alarm settings, and
+                    monitor access events for each door.
+                </p>
+                <p>
+                    Doors are automatically created when controllers are configured. To add new doors, configure them
+                    on the physical controller first, then sync with the system.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_door_view_form" model="ir.ui.view">
@@ -151,7 +171,7 @@
             </field>
         </record>
 
-        <record id="hr_rfid_door_view_tree" model="ir.ui.view">
+        <record id="hr_rfid_door_view_list" model="ir.ui.view">
             <field name="name">hr.rfid.door.list</field>
             <field name="model">hr.rfid.door</field>
             <field name="arch" type="xml">
@@ -199,198 +219,150 @@
                     <field name="siren_state"/>
                     <field name="emergency_state"/>
                     <templates>
-                        <t t-name="kanban-menu">
-                            <a role="menuitem" class="dropdown-item" name="hr_rfid.hr_rfid_door_open_close_wiz_action"
-                               type="action">Open/close door
-                            </a>
-                            <a role="menuitem" type="edit" class="dropdown-item">Edit</a>
-                        </t>
-                        <t t-name="kanban-box">
-                            <div>
+                        <!-- Main card template (required) -->
+                        <t t-name="card">
+                            <div class="oe_kanban_global_click position-relative">
                                 <div class="oe_kanban_details">
-                                    <div class="o_kanban_record_top">
+                                    <div class="position-absolute top-0 end-0 mt-2 me-2">
+                                        <span t-if="record.siren_state.raw_value and record.alarm_state.raw_value != 'no_alarm'"
+                                              class="fa fa-bell text-danger me-1" title="Siren On"/>
+                                        <span t-if="record.alarm_state.raw_value == 'arm'"
+                                              class="fa fa-shield text-danger me-1" title="Armed"/>
+                                        <span t-if="record.alarm_state.raw_value == 'disarm'"
+                                              class="fa fa-shield text-success me-1" title="Disarmed"/>
+                                        <span t-if="record.alarm_state.raw_value == 'no-alarm'"
+                                              class="fa fa-shield text-warning me-1" title="No Alarm"/>
+                                        <span t-if="record.lock_state.raw_value"
+                                              class="fa fa-unlock text-success" title="Unlocked"/>
+                                        <span t-if="!record.lock_state.raw_value"
+                                              class="fa fa-lock text-danger" title="Locked"/>
+                                        <span t-if="record.emergency_state.raw_value == 'soft'"
+                                              class="fa fa-free-code-camp text-danger ms-1" title="Software Emergency"/>
+                                        <span t-if="record.emergency_state.raw_value == 'hard'"
+                                              class="fa fa-fire text-danger ms-1" title="Hardware Emergency"/>
+                                    </div>
+                                    <div class="o_kanban_record_top mb-2">
                                         <div class="o_kanban_record_headings">
                                             <strong class="o_kanban_record_title">
-                                                <a type="open">
-                                                    <field name="name" title="Door Name"/>
-                                                </a>
+                                                <field name="name"/>
                                             </strong>
-                                            <div class="float-end me-1">
-                                                <span t-if="record.alarm_state.raw_value"
-                                                      t-att-title="record.alarm_state.value">
-                                                    <i t-if="record.alarm_state.raw_value == 'arm'"
-                                                       class="fa fa-fw fa-shield text-danger"
-                                                       role="img" t-att-aria-label="record.alarm_state.value"/>
-                                                    <i t-if="record.alarm_state.raw_value == 'disarm'"
-                                                       class="fa fa-fw fa-shield text-success"
-                                                       role="img" t-att-aria-label="record.alarm_state.value"/>
-                                                    <i t-if="record.alarm_state.raw_value == 'no-alarm'"
-                                                       class="fa fa-fw fa-shield text-warning"
-                                                       role="img" t-att-aria-label="record.alarm_state.value"/>
-                                                </span>
-                                                <span t-att-title="record.lock_state.raw_value ? 'Unlocked' : 'Locked'">
-                                                    <i t-att-class="record.lock_state.raw_value ? 'fa fa-fw fa-unlock text-success' : 'fa fa-fw fa-lock text-danger'"
-                                                       role="img"
-                                                       t-att-aria-label="record.lock_state.raw_value ? 'Unlocked' : 'Locked'"/>
-                                                </span>
-                                                <span t-if="record.emergency_state.raw_value != 'off' and record.emergency_state.raw_value in ['soft','hard']">
-                                                    <i
-                                                            role="img"
-                                                            t-att-class="record.emergency_state.raw_value == 'soft' ? 'fa fa-fw fa-free-code-camp text-danger' : 'fa fa-fw fa-fire text-danger'"
-                                                            t-att-title="record.emergency_state.raw_value == 'soft' ? 'Software Emergency' : 'Hardware Emergency'"
-                                                            t-att-aria-label="record.emergency_state.raw_value == 'soft' ? 'Software Emergency' : 'Hardware Emergency'"/>
-                                                </span>
-                                            </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <ul>
-                                                <li t-if="record.card_type.raw_value">
-                                                    <field name="card_type"/>
-                                                </li>
-                                                <li t-if="record.emergency_state.raw_value">
-                                                    <i
-                                                            role="img"
-                                                            t-att-class="record.emergency_state.raw_value == 'off' ? 'fa fa-fw fa-free-code-camp text-success' : 'fa fa-fw fa-fire text-danger'"
-                                                            title="Emergency State"/>
-                                                    <field name="emergency_state"
-                                                           t-att-class="record.emergency_state.raw_value == 'off' ? 'bg-success' : 'bg-danger'"
-                                                           title="Emergency door state"/>
-                                                </li>
-                                            </ul>
-
-                                        </div>
-                                        <div class="col-6 text-end">
-                                            <ul>
-                                                <li name="action_icons">
-                                                    <div class="float-right">
-                                                        <span title="Siren Off"
-                                                              groups="hr_rfid.hr_rfid_view_door_arm_disarm"
-                                                              t-if="record.siren_state.raw_value and record.alarm_state.raw_value != 'no_alarm'">
-                                                            <a name="siren_off" type="object">
-                                                                <i class="fa fa-fw fa-bell-slash-o text-success"
-                                                                   role="img"
-                                                                   aria-label="Siren Off"/>
-                                                            </a>
-                                                        </span>
-                                                        <span title="Siren On"
-                                                              groups="hr_rfid.hr_rfid_view_door_arm_disarm"
-                                                              t-if="!record.siren_state.raw_value and record.alarm_state.raw_value != 'no_alarm'">
-                                                            <a name="siren_on" type="object">
-                                                                <i class="fa fa-fw fa-bell text-danger" role="img"
-                                                                   aria-label="Siren On"/>
-                                                            </a>
-                                                        </span>
-                                                        <span title="Disarm the Door"
-                                                              groups="hr_rfid.hr_rfid_view_door_arm_disarm"
-                                                              t-if="record.alarm_state.raw_value == 'arm'">
-                                                            <a name="disarm_door" type="object">
-                                                                <i class="fa fa-fw fa-universal-access text-success"
-                                                                   role="img"
-                                                                   aria-label="Disarm the Door"/>
-                                                            </a>
-                                                        </span>
-                                                        <span title="Arm the Door"
-                                                              groups="hr_rfid.hr_rfid_view_door_arm_disarm"
-                                                              t-if="record.alarm_state.raw_value == 'disarm'">
-                                                            <a name="arm_door" type="object">
-                                                                <i class="fa fa-fw fa-shield text-danger" role="img"
-                                                                   aria-label="Arm the Door"/>
-                                                            </a>
-                                                        </span>
-                                                        <span title="Unlock the Door"
-                                                              groups="hr_rfid.hr_rfid_view_door_open_close">
-                                                            <a name="open_door" type="object">
-                                                                <i class="fa fa-fw fa-unlock text-success" role="img"
-                                                                   aria-label="Unlock the Door"/>
-                                                            </a>
-                                                        </span>
-                                                        <span title="Lock the Door"
-                                                              groups="hr_rfid.hr_rfid_view_door_open_close">
-                                                            <a name="close_door" type="object">
-                                                                <i class="fa fa-fw fa-lock text-danger" role="img"
-                                                                   aria-label="Lock the Door"/>
-                                                            </a>
-                                                        </span>
-                                                    </div>
-                                                </li>
-                                                <li t-if="record.temperature.raw_value">
-                                                    <i class="fa fa-fw fa-thermometer-full text-info" role="img"
-                                                       title="Temperature"/>
-                                                    <field name="temperature"
-                                                           title="External temperature sensor value"/>
-                                                    ℃
-                                                    <i class="fa fa-fw fa-tint text-info" role="img" title="Humidity"/>
-                                                    <field name="humidity" title="External humidity sensor value"/>
-                                                    %
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
+                                    <ul class="list-unstyled text-muted small">
+                                        <li t-if="record.card_type.raw_value">
+                                            <span class="text-muted">Type:</span> <field name="card_type"/>
+                                        </li>
+                                        <li t-if="record.emergency_state.raw_value">
+                                            <i t-att-class="record.emergency_state.raw_value == 'off' ? 'fa fa-free-code-camp text-success me-1' : 'fa fa-fire text-danger me-1'" title="Emergency State"/>
+                                            <field name="emergency_state" t-att-class="record.emergency_state.raw_value == 'off' ? 'text-success' : 'text-danger'"/>
+                                        </li>
+                                        <li t-if="record.temperature.raw_value">
+                                            <i class="fa fa-thermometer-full text-info me-1" title="Temperature"/>
+                                            <field name="temperature"/>℃
+                                            <span class="ms-2">
+                                                <i class="fa fa-tint text-info me-1" title="Humidity"/>
+                                                <field name="humidity"/>%
+                                            </span>
+                                        </li>
+                                    </ul>
                                 </div>
                                 <div class="oe_kanban_footer">
-                                    <div class="o_kanban_record_bottom mt-3">
+                                    <div class="o_kanban_record_bottom d-flex justify-content-between align-items-center">
                                         <div class="oe_kanban_bottom_left">
-                                            <span t-if="record.user_event_count.value>0"
-                                                  class="badge badge-pill" >
-                                                <a name="button_act_window" type="object" title="User Events"
-                                                   context="{'res_model':'hr.rfid.event.user'}">
-                                                    <i class="fa fa-fw fa-list" role="img"
-                                                       aria-label="User Events"/>
+                                            <button name="siren_off" type="object" title="Turn off the siren"
+                                                    groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                                                    t-if="record.siren_state.raw_value and record.alarm_state.raw_value != 'no_alarm'"
+                                                    class="btn btn-link btn-sm ps-0 pe-1">
+                                                <i class="fa fa-bell-slash-o text-success"/>
+                                            </button>
+                                            <button name="siren_on" type="object" title="Turn on the siren"
+                                                    groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                                                    t-if="!record.siren_state.raw_value and record.alarm_state.raw_value != 'no_alarm'"
+                                                    class="btn btn-link btn-sm ps-0 pe-1">
+                                                <i class="fa fa-bell text-danger"/>
+                                            </button>
+                                            <button name="disarm_door" type="object" title="Disarm the door alarm"
+                                                    groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                                                    t-if="record.alarm_state.raw_value == 'arm'"
+                                                    class="btn btn-link btn-sm ps-0 pe-1">
+                                                <i class="fa fa-universal-access text-success"/>
+                                            </button>
+                                            <button name="arm_door" type="object" title="Arm the door alarm"
+                                                    groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                                                    t-if="record.alarm_state.raw_value == 'disarm'"
+                                                    class="btn btn-link btn-sm ps-0 pe-1">
+                                                <i class="fa fa-shield text-danger"/>
+                                            </button>
+                                            <button name="open_door" type="object" title="Unlock the door"
+                                                    groups="hr_rfid.hr_rfid_view_door_open_close"
+                                                    class="btn btn-link btn-sm ps-0 pe-1">
+                                                <i class="fa fa-unlock text-success"/>
+                                            </button>
+                                            <button name="close_door" type="object" title="Lock the door"
+                                                    groups="hr_rfid.hr_rfid_view_door_open_close"
+                                                    class="btn btn-link btn-sm ps-0 pe-1">
+                                                <i class="fa fa-lock text-danger"/>
+                                            </button>
+                                            <span t-if="record.user_event_count.value > 0" class="badge rounded-pill me-1">
+                                                <a name="button_act_window" type="object"
+                                                   context="{'res_model':'hr.rfid.event.user'}" class="text-reset text-decoration-none">
+                                                    <i class="fa fa-list" title="User Events"/>
                                                     <t t-esc="record.user_event_count.value"/>
                                                 </a>
                                             </span>
-                                            <span t-if="record.system_event_count.value>0"
-                                                  class="badge badge-pill" title="System Events">
+                                            <span t-if="record.system_event_count.value > 0" class="badge rounded-pill me-1">
                                                 <a name="button_act_window" type="object"
-                                                   context="{'res_model':'hr.rfid.event.system'}">
-                                                    <i class="fa fa-fw fa-list" role="img"
-                                                       aria-label="System Events"/>
+                                                   context="{'res_model':'hr.rfid.event.system'}" class="text-reset text-decoration-none">
+                                                    <i class="fa fa-list" title="System Events"/>
                                                     <t t-esc="record.system_event_count.value"/>
                                                 </a>
                                             </span>
-                                            <span t-if="record.access_group_count.value>0"
-                                                  class="badge badge-pill" title="in Access Groups">
+                                            <span t-if="record.access_group_count.value > 0" class="badge rounded-pill me-1">
                                                 <a name="button_act_window" type="object"
-                                                   context="{'res_model':'hr.rfid.access.group'}">
-                                                    <i class="fa fa-fw fa-list" role="img"
-                                                       aria-label="in Access Groups"/>
+                                                   context="{'res_model':'hr.rfid.access.group'}" class="text-reset text-decoration-none">
+                                                    <i class="fa fa-users" title="Access Groups"/>
                                                     <t t-esc="record.access_group_count.value"/>
                                                 </a>
                                             </span>
-                                            <span t-if="record.card_count.value>0"
-                                                  class="badge badge-pill" title="Cards">
+                                            <span t-if="record.card_count.value > 0" class="badge rounded-pill me-1">
                                                 <a name="button_act_window" type="object"
-                                                   context="{'res_model':'hr.rfid.card'}">
-                                                    <i class="fa fa-fw fa-list" role="img"
-                                                       aria-label="Cards"/>
+                                                   context="{'res_model':'hr.rfid.card'}" class="text-reset text-decoration-none">
+                                                    <i class="fa fa-id-card" title="Cards"/>
                                                     <t t-esc="record.card_count.value"/>
                                                 </a>
                                             </span>
-                                            <span t-if="record.zone_count.value>0"
-                                                  class="badge badge-pill" title="in Zones">
+                                            <span t-if="record.zone_count.value > 0" class="badge rounded-pill me-1">
                                                 <a name="button_act_window" type="object"
-                                                   context="{'res_model':'hr.rfid.zone'}">
-                                                    <i class="fa fa-fw fa-list" role="img"
-                                                       aria-label="in Zones"/>
+                                                   context="{'res_model':'hr.rfid.zone'}" class="text-reset text-decoration-none">
+                                                    <i class="fa fa-map-marker" title="Zones"/>
                                                     <t t-esc="record.zone_count.value"/>
                                                 </a>
                                             </span>
                                         </div>
-                                        <div class="oe_kanban_bottom_right">
-                                            <div class="hr_activity_container mb-1 ms-2 me-n1">
-                                                <span t-att-title="record.siren_state.raw_value ? 'Siren On' : 'Siren Off'"
-                                                      t-if="record.alarm_state.raw_value != 'no_alarm'">
-                                                    <i t-att-class="record.siren_state.raw_value ? 'fa fa-fw fa-bell text-danger' : 'fa fa-fw fa-bell-slash-o'"
-                                                       role="img"
-                                                       t-att-aria-label="record.siren_state.raw_value ? 'Siren On' : 'Siren Off'"/>
-                                                </span>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
-
+                            </div>
+                        </t>
+                        
+                        <!-- Menu template (optional) -->
+                        <t t-name="menu" t-if="!selection_mode" groups="base.group_user">
+                            <a role="menuitem" class="dropdown-item" name="hr_rfid.hr_rfid_door_open_close_wiz_action"
+                               type="action">Open/close door
+                            </a>
+                            <div role="separator" class="dropdown-divider"/>
+                            <a role="menuitem" type="edit" class="dropdown-item">Edit</a>
+                        </t>
+                        
+                        <!-- Tooltip template (optional) -->
+                        <t t-name="tooltip">
+                            <div>
+                                <field name="name" class="fw-bold"/>
+                                <div class="text-muted">
+                                    <span>Type: </span><field name="card_type"/>
+                                    <div t-if="record.alarm_state.raw_value">
+                                        <span>Alarm: </span><field name="alarm_state"/>
+                                    </div>
+                                </div>
                             </div>
                         </t>
                     </templates>
@@ -446,6 +418,12 @@
             <field name="res_model">hr.rfid.door.open.close.wiz</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
+            <field name="help" type="html">
+                <p>
+                    Remotely control door locks. You can temporarily unlock doors for a specified
+                    duration or lock them immediately. This sends commands directly to the door controllers.
+                </p>
+            </field>
         </record>
     </data>
 </odoo>

@@ -12,56 +12,62 @@
                             type="object"
                             invisible="employee_event_count == 0"
                             groups="hr_rfid.hr_rfid_group_officer"
-                            class="oe_stat_button" icon="fa-list-alt">
+                            class="oe_stat_button" icon="fa-list-alt"
+                            help="View all RFID access events for this employee including entries, exits, and denials">
                         <field name="employee_event_count" widget="statinfo" string="Events"/>
                     </button>
                     <button name="button_doors_list" title="Accessible doors"
                             type="object" class="oe_stat_button" icon="fa-list-alt"
                             groups="hr_rfid.hr_rfid_group_officer"
-                            invisible="employee_doors_count == 0">
+                            invisible="employee_doors_count == 0"
+                            help="View all doors this employee can access based on their access groups">
                         <field name="employee_doors_count" widget="statinfo" string="Doors"/>
                     </button>
                 </xpath>
                 <notebook position="inside">
                     <page string="RFID Info"
                           groups="hr_rfid.hr_rfid_group_officer"
-                          invisible="not id">
+                          invisible="not id"
+                          help="Manage RFID access control settings for this employee including cards, PIN codes, and access groups">
                         <group>
                             <field name="hr_rfid_pin_code" groups="hr_rfid.hr_rfid_view_rfid_pin_code_data"/>
                         </group>
                         <notebook>
-                            <page string="Cards">
+                            <page string="Cards" help="Manage RFID cards assigned to this employee">
                                 <field name="hr_rfid_card_ids"
                                        context="{'active_test': False, 'default_employee_id': id}"
                                        edit="0" groups="hr_rfid.hr_rfid_group_officer">
                                     <list string="Cards belonging this employee" editable="bottom"
                                           decoration-success="active"
-                                          decoration-danger="not active">
+                                          decoration-danger="not active"
+                                          help="List of all RFID/Barcode cards assigned to this employee. Active cards are shown in green, inactive in red.">
                                         <field name="active" invisible="1"/>
-                                        <field name="number"/>
-                                        <field name="card_reference"/>
-                                        <field name="activate_on"/>
-                                        <field name="deactivate_on"/>
-                                        <field name="card_type"/>
-                                        <field name="cloud_card"/>
+                                        <field name="number" help="Unique card identifier (hexadecimal format for RFID, numeric for Barcode)"/>
+                                        <field name="card_reference" help="Optional reference label for easy identification"/>
+                                        <field name="activate_on" help="Date when this card becomes active (leave empty for immediate activation)"/>
+                                        <field name="deactivate_on" help="Date when this card expires (leave empty for no expiration)"/>
+                                        <field name="card_type" help="Type of card: RFID for proximity cards, Barcode for printed badges"/>
+                                        <field name="cloud_card" help="Enable for virtual/mobile cards that work through cloud services"/>
                                     </list>
                                 </field>
                                 <label for="hr_rfid_card_ids" string="New Barcode card"/>
                                 <div class="o_row">
                                     <button string="Generate" class="btn btn-link" type="object"
-                                            name="generate_random_barcode_card"/>
+                                            name="generate_random_barcode_card"
+                                            help="Generate a new random barcode card for printing employee badges"/>
                                 </div>
 
                             </page>
 
-                            <page string="Access Groups">
+                            <page string="Access Groups" help="Define which access groups this employee belongs to for door permissions">
                                 <field name="hr_rfid_access_group_ids" widget="one2many_list">
-                                    <list editable="bottom">
+                                    <list editable="bottom" help="Access groups control door permissions and time schedules. Groups are filtered by department.">
                                         <field name="access_group_id"
-                                               domain="[('department_ids','in',[parent.department_id])]"/>
-                                        <field name="activate_on"/>
-                                        <field name="expiration"/>
-                                        <field name="state" widget="boolean_toggle"/>
+                                               domain="[('department_ids','in',[parent.department_id])]"
+                                               help="Select an access group available for the employee's department"/>
+                                        <field name="activate_on" help="Date when this access group membership becomes active"/>
+                                        <field name="expiration" help="Date when this access group membership expires (leave empty for permanent access)"/>
+                                        <field name="state" widget="boolean_toggle" help="Enable/disable this access group membership temporarily"/>
                                     </list>
                                 </field>
                             </page>

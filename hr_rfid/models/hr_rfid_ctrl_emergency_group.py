@@ -8,26 +8,35 @@ class EmergencyGroup(models.Model):
 
     name = fields.Char(
         default='Emergency Floor 1',
-        tracking=True
+        tracking=True,
+        help="Name of the emergency group (e.g., 'Emergency Floor 1', 'Building A Emergency'). "
+             "This helps identify which area or set of controllers this group manages."
     )
     company_id = fields.Many2one(
         comodel_name='res.company',
         string='Company',
         groups='base.group_multi_company',
-        default=lambda self: self.env.company
+        default=lambda self: self.env.company,
+        help="Company that owns this emergency group. Used to separate emergency groups "
+             "between different companies in a multi-company setup."
     )
 
     controller_ids = fields.One2many(
         comodel_name='hr.rfid.ctrl',
         inverse_name='emergency_group_id',
-        tracking=True
+        tracking=True,
+        help="List of controllers that belong to this emergency group. When emergency mode "
+             "is activated, all controllers in this group will switch to emergency state together."
     )
     state = fields.Selection([
         ('normal', 'Normal'),
         ('emergency', 'Emergency')
     ],  compute='_compute_state',
         inverse='_inverse_state',
-        tracking=True
+        tracking=True,
+        help="Current state of the emergency group:\n"
+             "• Normal: All controllers operating normally\n"
+             "• Emergency: Emergency mode activated - doors may unlock or follow special rules"
     )
 
     @api.depends('controller_ids.emergency_state', 'controller_ids.input_states')

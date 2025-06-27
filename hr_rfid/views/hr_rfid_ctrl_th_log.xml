@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <record id="hr_rfid_ctrl_th_log_tree_view" model="ir.ui.view">
+        <record id="hr_rfid_ctrl_th_log_list_view" model="ir.ui.view">
             <field name="name">hr.rfid.ctrl.th.log.list.view</field>
             <field name="model">hr.rfid.ctrl.th.log</field>
             <field name="arch" type="xml">
@@ -72,6 +72,16 @@
             <field name="name">Temperature and Humidity Log</field>
             <field name="res_model">hr.rfid.ctrl.th.log</field>
             <field name="view_mode">graph,pivot,list</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No temperature and humidity logs available
+                </p>
+                <p>
+                    This view shows historical temperature and humidity readings from your sensors.
+                    Use the graph view to visualize trends over time, or the pivot view for detailed analysis.
+                    Logs are created automatically when sensors have logging enabled.
+                </p>
+            </field>
         </record>
 
     </data>

@@ -22,12 +22,14 @@ class HrRfidCard(models.Model):
 
     name = fields.Char(
         compute='_compute_card_name',
+        help='Display name of the card - shows either the card reference or card number',
     )
 
     internal_number = fields.Char(
         index=True,
         store=True,
-        compute='_compute_internal_number'
+        compute='_compute_internal_number',
+        help='Internal representation of the card number used by the system. This is automatically calculated based on the card input type.'
     )
     number = fields.Char(
         string='Card Number',
@@ -35,6 +37,7 @@ class HrRfidCard(models.Model):
         size=10,
         index=True,
         tracking=True,
+        help='The unique 10-digit number printed on or associated with the RFID card. This is what the card readers recognize. Example: 0012345678',
     )
 
     card_input_type = fields.Selection(
@@ -42,24 +45,26 @@ class HrRfidCard(models.Model):
             ('w34','Wiegand 34 bit (5d+5d)'),
             ('w34s','Wiegand 34 bit (10d)'),
         ],
-        default=lambda self: self.env.company.card_input_type or 'w34'
+        default=lambda self: self.env.company.card_input_type or 'w34',
+        help='Technical format of how the card number is encoded. Wiegand 34 bit (5d+5d) splits the number into two 5-digit parts, while Wiegand 34 bit (10d) uses a single 10-digit format. This must match your card reader configuration.'
     )
 
     card_reference = fields.Char(
         string='Card reference',
-        help='Card reference provide human recognizable label or any other text. It can be used for Badge Printed ID, or other identification',
+        help='A friendly name or ID for this card, such as a badge number printed on the physical card (e.g., "Badge #37" or "Visitor Pass 5"). This makes it easier to identify cards without using the technical card number.',
         index=True,
 
     )
 
     company_id = fields.Many2one('res.company',
                                  string='Company',
-                                 default=lambda self: self.env.company)
+                                 default=lambda self: self.env.company,
+                                 help='The company this card belongs to. Cards are isolated between companies for security.')
 
     card_type = fields.Many2one(
         'hr.rfid.card.type',
         string='Card type',
-        help='Only doors that support this type will be able to open this card',
+        help='Defines what kind of card this is (e.g., Employee Card, Visitor Card, Service Card). Doors must be configured to accept this card type for the card to work. Different card types can have different access privileges.',
         default=lambda self: self.env.ref('hr_rfid.hr_rfid_card_type_def').id,
         tracking=True,
     )
@@ -69,6 +74,7 @@ class HrRfidCard(models.Model):
         string='Card Owner (Employee)',
         default=lambda self: self.env.context.get('default_employee_id', None),
         tracking=True,
+        help='The employee who owns this card. Each card must have either an employee or a contact as owner, but not both. The card will inherit access rights from the employee\'s access groups.',
     )
 
     contact_id = fields.Many2one(
@@ -77,11 +83,12 @@ class HrRfidCard(models.Model):
         default=lambda self: self.env.context.get('default_contact_id', None),
         tracking=True,
         domain=[('is_company', '=', False)],
+        help='The external contact (visitor, contractor, supplier) who owns this card. Each card must have either an employee or a contact as owner, but not both. The card will inherit access rights from the contact\'s access groups.',
     )
 
     activate_on = fields.Datetime(
         string='Activate on',
-        help='Date and time the card will be activated on',
+        help='The date and time when this card becomes active and can be used. Perfect for temporary access or scheduled start dates. For example, set this to Monday 8:00 AM for a new employee starting that day.',
         tracking=True,
         default=lambda self: fields.Datetime.now(),
         index=True,
@@ -89,21 +96,21 @@ class HrRfidCard(models.Model):
 
     deactivate_on = fields.Datetime(
         string='Deactivate on',
-        help='Date and time the card will be deactivated on',
+        help='The date and time when this card will automatically expire and stop working. Useful for temporary visitors, contractors with end dates, or trial periods. Leave empty for cards that should not expire.',
         tracking=True,
         index=True,
     )
 
     active = fields.Boolean(
         string='Active',
-        help='Whether the card is active or not',
+        help='Controls whether this card is currently enabled. Inactive cards will not open any doors, even if they have access rights. Use this to temporarily disable a card without deleting it (e.g., during employee leave).',
         tracking=True,
         default=True,
     )
 
     cloud_card = fields.Boolean(
         string='Cloud Card',
-        help='A cloud card will not be added to controllers that are in the "externalDB" mode.',
+        help='Cloud cards are managed centrally by the system and work with online controllers. Non-cloud cards are for offline/standalone controllers with their own database. Most cards should be cloud cards unless you have specific offline requirements.',
         tracking=True,
         default=True,
         required=True,
@@ -113,21 +120,22 @@ class HrRfidCard(models.Model):
         'hr.rfid.card.door.rel',
         'card_id',
         string='Door list',
-        help='Doors this card has access to',
+        help='Technical field linking this card to doors. The actual door access is determined by the card owner\'s access groups, not by direct card-to-door relationships.',
     )
 
     door_ids = fields.Many2many(
         'hr.rfid.door',
         string='Doors',
         compute='_compute_door_ids',
+        help='List of all doors this card currently has access to, based on the owner\'s access groups and the card\'s active status. This is automatically calculated.',
     )
 
-    door_count = fields.Char('Door Count', compute='_compute_door_ids')
+    door_count = fields.Char('Door Count', compute='_compute_door_ids', help='Total number of doors this card can open. Shown as a statistic on the card form.')
 
-    pin_code = fields.Char(compute='_compute_pin_code')
+    pin_code = fields.Char(compute='_compute_pin_code', help='The PIN code associated with this card\'s owner. Used for doors that require both card and PIN for extra security.')
 
-    barcode_number = fields.Char(compute='_compute_barcode_number')
-    is_barcode = fields.Boolean(compute='_compute_barcode_number')
+    barcode_number = fields.Char(compute='_compute_barcode_number', help='Hexadecimal representation of the card number, used for barcode printing and scanning.')
+    is_barcode = fields.Boolean(compute='_compute_barcode_number', help='Indicates if this card is configured as a barcode card type.')
 
     _sql_constraints = [
         ('card_uniq', 'unique (number, company_id)', "Card number already exists!"),
@@ -445,7 +453,7 @@ class HrRfidCardType(models.Model):
 
     name = fields.Char(
         string='Type Name',
-        help='Label to differentiate types with',
+        help='Name for this card type (e.g., "Employee Card", "Visitor Pass", "Contractor Badge"). This helps categorize cards and control which doors they can access.',
         required=True,
         tracking=True,
     )
@@ -453,7 +461,7 @@ class HrRfidCardType(models.Model):
         'hr.rfid.card',
         'card_type',
         string='Cards',
-        help='Cards of this card type',
+        help='All RFID cards that belong to this card type. You can see which cards are using this type and manage them from here.',
         context={'active_test': False},
     )
 
@@ -461,7 +469,7 @@ class HrRfidCardType(models.Model):
         'hr.rfid.door',
         'card_type',
         string='Doors',
-        help='Doors that will open to this card type',
+        help='Doors that are configured to accept this card type. Only cards of this type will be able to open these doors (assuming the card owner has proper access rights).',
     )
 
     def check_and_fix_card_numer(self, number):

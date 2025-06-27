@@ -10,8 +10,10 @@ class ResPartner(models.Model):
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
 
     hr_rfid_pin_code = fields.Char(
-        string='Contact pin code',
-        help="Pin code for this contact, four zeroes means that the contact has no pin code.",
+        string='RFID PIN Code',
+        help='4-digit PIN code for secure door access. Use this along with an RFID card for '
+             'high-security areas. Default "0000" means no PIN required - the card alone grants access. '
+             'Change this to add an extra security layer.',
         size=4,
         default='0000',
         tracking=True,
@@ -20,39 +22,43 @@ class ResPartner(models.Model):
     hr_rfid_access_group_ids = fields.One2many(
         'hr.rfid.access.group.contact.rel',
         'contact_id',
-        string='Access Group',
-        help='Which access group the contact is a part of',
+        string='Access Groups',
+        help='Door access permissions for this contact. Each group defines which doors they can open '
+             'and when (time schedules). Contacts can have multiple groups for different areas.',
         tracking=True,
         groups="hr_rfid.hr_rfid_group_officer"
-
     )
 
     hr_rfid_card_ids = fields.One2many(
         'hr.rfid.card',
         'contact_id',
-        string='RFID Card',
+        string='RFID Cards',
         context={'active_test': False},
-        help='Cards owned by the contact',
+        help='All RFID cards assigned to this contact. A person can have multiple cards '
+             '(e.g., main card, backup card, temporary card). Inactive cards are also shown for history.',
         groups="hr_rfid.hr_rfid_group_officer"
-
     )
 
     hr_rfid_event_ids = fields.One2many(
         'hr.rfid.event.user',
         'contact_id',
-        string='RFID Events',
-        help='Events concerning this contact',
+        string='Access History',
+        help='Complete history of door access attempts by this contact. '
+             'Includes successful entries, denied access, and the reasons why.',
         groups="hr_rfid.hr_rfid_group_officer"
-
     )
 
     is_employee = fields.Boolean(compute='_compute_is_employee')
 
     partner_event_count = fields.Char(
+        string='Total Events',
+        help='Total number of access events recorded for this contact.',
         compute='_compute_partner_event_count',
         groups="hr_rfid.hr_rfid_group_officer"
     )
     partner_doors_count = fields.Char(
+        string='Accessible Doors',
+        help='Number of doors this contact can currently access based on their access groups.',
         compute='_compute_partner_event_count',
         groups="hr_rfid.hr_rfid_group_officer"
     )
@@ -121,7 +127,6 @@ class ResPartner(models.Model):
             ('access_group_id', 'in', access_groups.ids)
         ]).unlink()
 
-    @api.returns('hr.rfid.door')
     def get_doors(self, excluding_acc_grs=None, including_acc_grs=None):
         if excluding_acc_grs is None:
             excluding_acc_grs = self.env['hr.rfid.access.group']
@@ -453,29 +458,37 @@ class ResPartner(models.Model):
 
 class HrPartnerMassAccGrsWiz(models.TransientModel):
     _name = 'res.partner.mass.wiz'
-    _description = 'Add/remove multiple access groups from partners'
+    _description = 'Bulk Access Group Management for Contacts'
 
     def _get_partner_ids(self):
         return self.env['res.partner'].browse(self._context.get('active_ids'))
 
     partner_ids = fields.Many2many(
         comodel_name='res.partner',
-        string='Partners',
+        string='Selected Contacts',
+        help='The contacts whose access permissions you want to modify.',
         required=True,
         default=_get_partner_ids,
     )
     remove_existing = fields.Boolean(
-        string='Remove existing access groups',
+        string='Remove Existing Groups First',
+        help='Check this to remove all current access groups before adding the new ones. '
+             'Use with caution - this will revoke all existing access permissions.',
         default=False,
     )
 
     acc_gr_ids = fields.Many2many(
         'hr.rfid.access.group',
-        string='Access Groups',
+        string='Access Groups to Add',
+        help='Select the access groups to grant to the selected contacts. '
+             'Each group defines specific doors and time schedules.',
     )
 
     expiration = fields.Datetime(
-        string='Expiration',
+        string='Access Expiration',
+        help='Optional expiration date for these access rights. '
+             'Perfect for temporary access, visitors, or contractors. '
+             'Leave empty for permanent access.',
     )
 
     def add_acc_grs(self):

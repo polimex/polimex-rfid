@@ -11,7 +11,8 @@ class HrDepartment(models.Model):
     hr_rfid_default_access_group = fields.Many2one(
         'hr.rfid.access.group',
         string='Default Access Group',
-        help='Every user added to this department gets this access group by default',
+        help='New employees in this department will automatically receive this access group. '
+             'This ensures they have the basic door access needed for their work area from day one.',
         ondelete='set null',
         tracking=True,
         groups="hr_rfid.hr_rfid_group_officer"
@@ -20,7 +21,9 @@ class HrDepartment(models.Model):
     hr_rfid_allowed_access_groups = fields.Many2many(
         'hr.rfid.access.group',
         string='Available Access Groups',
-        help='Available access groups for employees in this department',
+        help='Define which access groups can be assigned to employees in this department. '
+             'This helps maintain security by limiting access options to relevant areas only. '
+             'For example, IT department can access server rooms, while HR can access personnel files.',
         ondelete='cascade',
         groups="hr_rfid.hr_rfid_group_officer"
     )
@@ -75,7 +78,7 @@ class HrDepartment(models.Model):
 
 class HrDepartmentAccGrWizard(models.TransientModel):
     _name = 'hr.department.acc.grs'
-    _description = 'Add or remove access groups to the department'
+    _description = 'Department Access Group Configuration'
 
     def _default_dep(self):
         return self.env['hr.department'].browse(self._context.get('active_ids'))
@@ -92,7 +95,9 @@ class HrDepartmentAccGrWizard(models.TransientModel):
 
     acc_grs = fields.Many2many(
         'hr.rfid.access.group',
-        string='Department groups',
+        string='Department Access Groups',
+        help='Select all access groups that should be available for employees in this department. '
+             'Only these groups can be assigned to department members.',
         default=_get_current_access_group,
     )
 
@@ -111,7 +116,7 @@ class HrDepartmentAccGrWizard(models.TransientModel):
 
 class HrDepartmentDefAccGrWizard(models.TransientModel):
     _name = 'hr.department.def.acc.gr'
-    _description = "Set up the the department's default access group"
+    _description = 'Set Department Default Access Group'
 
     def _default_dep(self):
         return self.env['hr.department'].browse(self._context.get('active_ids'))
@@ -125,7 +130,9 @@ class HrDepartmentDefAccGrWizard(models.TransientModel):
 
     def_acc_gr = fields.Many2one(
         'hr.rfid.access.group',
-        string='New default access group',
+        string='New Default Access Group',
+        help='Choose the access group that new employees will automatically receive. '
+             'This should include the basic areas they need to access for their daily work.',
         required=True,
     )
 
@@ -147,7 +154,7 @@ class HrDepartmentDefAccGrWizard(models.TransientModel):
 
 class HrDepartmentMassAccGrsWiz(models.TransientModel):
     _name = 'hr.department.mass.wiz'
-    _description = 'Add/remove multiple access groups from users in a department'
+    _description = 'Bulk Access Group Management for Department'
 
     def _default_dep(self):
         return self.env['hr.department'].browse(self._context.get('active_ids'))
@@ -162,15 +169,22 @@ class HrDepartmentMassAccGrsWiz(models.TransientModel):
     acc_gr_ids = fields.Many2many(
         'hr.rfid.access.group',
         string='Access Groups',
+        help='Select one or more access groups to add or remove from department employees. '
+             'This is useful for granting temporary access or updating permissions in bulk.',
     )
 
     expiration = fields.Datetime(
-        string='Expiration',
+        string='Access Expiration',
+        help='Set an expiration date for these access rights (optional). '
+             'Perfect for temporary projects, visitor access, or time-limited assignments. '
+             'Leave empty for permanent access.',
     )
 
     exclude_ids = fields.Many2many(
         'hr.employee',
-        string='Employees to Exclude',
+        string='Exclude Employees',
+        help='Select specific employees who should NOT receive these access changes. '
+             'Useful when updating an entire department except for a few individuals.',
     )
 
     def add_acc_grs(self):
@@ -199,7 +213,7 @@ class HrDepartmentMassAccGrsWiz(models.TransientModel):
 
 class HrDepartmentAddDefAccGrWizard(models.TransientModel):
     _name = 'hr.department.add.def.acc.grs'
-    _description = 'Add access group and change to default'
+    _description = 'Add and Set Default Access Group'
 
     def _default_dep(self):
         return self.env['hr.department'].browse(self._context.get('active_ids'))
@@ -213,7 +227,10 @@ class HrDepartmentAddDefAccGrWizard(models.TransientModel):
 
     acc_gr = fields.Many2one(
         'hr.rfid.access.group',
-        string='Access group to add and set to default',
+        string='New Access Group',
+        help='This access group will be added to the department\'s available groups '
+             'AND set as the default for new employees. Existing employees without '
+             'access groups will also receive this group.',
         required=True,
     )
 

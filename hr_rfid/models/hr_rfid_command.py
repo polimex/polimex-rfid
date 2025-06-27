@@ -110,12 +110,14 @@ class HrRfidCommands(models.Model):
 
     name = fields.Char(
         compute='_compute_cmd_name',
+        help='User-friendly name combining command code and description',
     )
 
     webstack_id = fields.Many2one(
         'hr.rfid.webstack',
         string='Module',
-        help='Module the command is/was intended for',
+        help='The communication module (webstack) that connects to the physical controller. '
+             'This module acts as a bridge between the system and the RFID hardware.',
         required=True,
         readonly=True,
         ondelete='cascade',
@@ -124,7 +126,8 @@ class HrRfidCommands(models.Model):
     controller_id = fields.Many2one(
         'hr.rfid.ctrl',
         string='Controller',
-        help='Controller the command is/was intended for',
+        help='The physical RFID controller device that manages card readers and access control. '
+             'This is the hardware unit installed at doors or access points.',
         required=True,
         readonly=True,
         ondelete='cascade',
@@ -134,7 +137,9 @@ class HrRfidCommands(models.Model):
     cmd = fields.Selection(
         selection=commands,
         string='Command',
-        help='Command to send/have sent to the module',
+        help='The type of operation to perform on the controller. Commands starting with "F" read data '
+             'from the controller, "D" commands write/modify data, and "B" commands handle special operations '
+             'like alarms or status checks.',
         required=True,
         readonly=True,
         index=True,
@@ -142,7 +147,8 @@ class HrRfidCommands(models.Model):
 
     cmd_data = fields.Char(
         string='Command data',
-        help='Additional data sent to the controller',
+        help='Additional parameters or values sent with the command. This might include card numbers, '
+             'time settings, or configuration values depending on the command type.',
         default='',
         readonly=True,
     )
@@ -150,7 +156,11 @@ class HrRfidCommands(models.Model):
     status = fields.Selection(
         selection=statuses,
         string='Status',
-        help='Current status of the command',
+        help='Current execution state of the command:\n'
+             '• Wait: Command is queued and waiting to be sent\n'
+             '• Process: Command is being executed by the controller\n'
+             '• Success: Command completed successfully\n'
+             '• Failure: Command failed (check Error field for details)',
         default='Wait',
         index=True,
     )
@@ -158,47 +168,72 @@ class HrRfidCommands(models.Model):
     error = fields.Selection(
         selection=errors,
         string='Error',
-        help='If status is "Command Unsuccessful" this field is updated '
-             'to the reason for why it was unsuccessful',
+        help='Detailed error information when a command fails. Common errors include:\n'
+             '• Communication errors (module not responding)\n'
+             '• Hardware errors (card reader issues)\n'
+             '• Configuration errors (invalid parameters)\n'
+             '• Controller busy (another operation in progress)',
         default='0'
     )
     create_date = fields.Datetime(index=True)
 
     ex_timestamp = fields.Datetime(
         string='Execution Time',
-        help='Time at which the module returned a response from the command',
+        help='The exact date and time when the controller completed processing this command '
+             'and sent back a response. Empty if the command hasn\'t been executed yet.',
     )
 
     request = fields.Char(
         string='Request',
-        help='Request json sent to the module'
+        help='Technical details: The raw JSON data sent to the module. This is mainly used '
+             'for troubleshooting communication issues.',
     )
 
     response = fields.Char(
         string='Response',
-        help='Response json sent from the module',
+        help='Technical details: The raw JSON response received from the module. '
+             'Contains the result data or error information from the controller.',
     )
 
     card_number = fields.Char(
         string='Card',
-        help='Card the command will do an operation for',
+        help='The RFID card number this command is related to. For example, when adding '
+             'or removing access rights for a specific card.',
         # size=10,
         index=True,
     )
 
     retries = fields.Integer(
         string='Command retries',
-        help='How many times the command failed to run and has been retried',
+        help='Number of times the system has attempted to resend this command after failures. '
+             'Commands are automatically retried when communication issues occur.',
         default=0,
     )
 
-    pin_code = fields.Char(string='Pin Code (debug info)')
-    ts_code = fields.Char(string='TS Code (debug info)', size=8)
+    pin_code = fields.Char(
+        string='Pin Code (debug info)',
+        help='PIN code associated with the card for this command. Used for debugging purposes.',
+    )
+    ts_code = fields.Char(
+        string='TS Code (debug info)', 
+        size=8,
+        help='Time Schedule code that defines when the card has access. Used for debugging purposes.',
+    )
 
-    rights_data = fields.Char(string='Rights Data (debug info)')
-    rights_mask = fields.Char(string='Rights Mask (debug info)')
+    rights_data = fields.Char(
+        string='Rights Data (debug info)',
+        help='Binary representation of access rights being granted. Used for debugging purposes.',
+    )
+    rights_mask = fields.Char(
+        string='Rights Mask (debug info)',
+        help='Binary mask indicating which access rights are being modified. Used for debugging purposes.',
+    )
 
-    alarm_right = fields.Boolean(string='Alarm Data (debug info)', default=False)
+    alarm_right = fields.Boolean(
+        string='Alarm Data (debug info)', 
+        default=False,
+        help='Indicates if this command includes alarm-related access rights. Used for debugging purposes.',
+    )
 
     @api.depends('cmd')
     def _compute_cmd_name(self):

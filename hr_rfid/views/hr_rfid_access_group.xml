@@ -5,18 +5,70 @@
             <field name="name">Access Group/Employee Relations</field>
             <field name="res_model">hr.rfid.access.group.employee.rel</field>
             <field name="view_mode">list,form,search</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No access group assignments found
+                </p>
+                <p>
+                    This view shows all employee assignments to RFID access groups.
+                    Access groups control which doors employees can access and when.
+                    Assignments can have activation dates and expiration dates for temporary access.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_acc_gr_contact_rel_action" model="ir.actions.act_window">
             <field name="name">Access Group/Contact Relations</field>
             <field name="res_model">hr.rfid.access.group.contact.rel</field>
             <field name="view_mode">list,form,search</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No access group assignments found
+                </p>
+                <p>
+                    This view shows all contact (visitor/contractor) assignments to RFID access groups.
+                    Access groups control which doors contacts can access and when.
+                    Assignments can have activation dates, expiration dates, and visit counters for limited access.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_access_group_action" model="ir.actions.act_window">
             <field name="name">Access Groups</field>
             <field name="res_model">hr.rfid.access.group</field>
             <field name="view_mode">list,form,search</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first Access Group
+                </p>
+                <p>
+                    Access Groups are the foundation of your RFID security system. They define:
+                </p>
+                <ul>
+                    <li><strong>Who</strong> can access (employees and/or external contacts)</li>
+                    <li><strong>What</strong> doors they can open</li>
+                    <li><strong>When</strong> they have access (time schedules)</li>
+                    <li><strong>How long</strong> the access is valid (activation and expiration dates)</li>
+                </ul>
+                <p>
+                    <strong>Getting Started:</strong>
+                </p>
+                <ol>
+                    <li>Create an Access Group with a descriptive name</li>
+                    <li>Add doors to the group using the "Add Doors" button</li>
+                    <li>Assign the group to departments (for automatic assignment) or individual employees/contacts</li>
+                    <li>Configure time limits if needed (activation date, expiration, visit limits)</li>
+                </ol>
+                <p>
+                    <strong>Pro Tips:</strong>
+                </p>
+                <ul>
+                    <li>Use inheritance to build hierarchical access (e.g., "Manager Access" inherits "Employee Access")</li>
+                    <li>Set up department defaults for automatic access assignment to new employees</li>
+                    <li>Use visit counting for temporary passes or pay-per-use scenarios</li>
+                    <li>Enable anti-passback to prevent card sharing between users</li>
+                </ul>
+            </field>
         </record>
 
 
@@ -68,6 +120,12 @@
             <field name="view_id" ref="hr_rfid_access_group_add_doors_wiz"/>
             <field name="target">new</field>
             <field name="context">{'default_acc_gr_id': active_id}</field>
+            <field name="help" type="html">
+                <p>
+                    Add doors to this access group. Members of the group will gain access to these doors
+                    according to the specified time schedules and card type requirements.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_access_group_del_doors_wiz_action" model="ir.actions.act_window">
@@ -77,6 +135,12 @@
             <field name="view_id" ref="hr_rfid_access_group_del_doors_wiz"/>
             <field name="target">new</field>
             <field name="context">{'default_acc_gr_id': active_id}</field>
+            <field name="help" type="html">
+                <p>
+                    Remove doors from this access group. Members will lose access to the selected doors
+                    immediately after confirmation.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_access_group_view_form" model="ir.ui.view">
@@ -278,6 +342,12 @@
             <field name="binding_view_types">form</field>
             <field name="target">new</field>
             <field name="context">{'default_acc_gr_id': active_id}</field>
+            <field name="help" type="html">
+                <p>
+                    Add doors to this access group. Members of the group will gain access to these doors
+                    according to the specified time schedules and card type requirements.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_access_group_del_doors_action" model="ir.actions.act_window">
@@ -290,9 +360,15 @@
             <field name="binding_view_types">form</field>
             <field name="target">new</field>
             <field name="context">{'default_acc_gr_id': active_id}</field>
+            <field name="help" type="html">
+                <p>
+                    Remove doors from this access group. Members will lose access to the selected doors
+                    immediately after confirmation.
+                </p>
+            </field>
         </record>
 
-        <record id="hr_rfid_access_group_view_tree" model="ir.ui.view">
+        <record id="hr_rfid_access_group_view_list" model="ir.ui.view">
             <field name="name">hr.rfid.access.group.list</field>
             <field name="model">hr.rfid.access.group</field>
             <field name="arch" type="xml">
@@ -362,7 +438,7 @@
             </field>
         </record>
 
-        <record id="hr_rfid_acc_gr_employee_rel_view_tree" model="ir.ui.view">
+        <record id="hr_rfid_acc_gr_employee_rel_view_list" model="ir.ui.view">
             <field name="name">hr.rfid.acc.gr.employee.rel.list</field>
             <field name="model">hr.rfid.access.group.employee.rel</field>
             <field name="arch" type="xml">
@@ -405,7 +481,7 @@
             </field>
         </record>
 
-        <record id="hr_rfid_acc_gr_contact_rel_view_tree" model="ir.ui.view">
+        <record id="hr_rfid_acc_gr_contact_rel_view_list" model="ir.ui.view">
             <field name="name">hr.rfid.acc.gr.contact.rel.list</field>
             <field name="model">hr.rfid.access.group.contact.rel</field>
             <field name="arch" type="xml">

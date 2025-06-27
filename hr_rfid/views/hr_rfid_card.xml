@@ -7,12 +7,42 @@
             <field name="res_model">hr.rfid.card</field>
             <field name="view_mode">list,form,search</field>
             <field name="context">{"search_default_filter_showall": 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first RFID Card
+                </p>
+                <p>
+                    RFID cards are used to grant access to doors and track employee/visitor movements.
+                    Each card must be assigned to either an employee or a contact (visitor/contractor).
+                </p>
+                <p>
+                    <b>Quick tips:</b><br/>
+                    • Card numbers must be exactly 10 digits<br/>
+                    • Assign cards to employees or contacts, not both<br/>
+                    • Use activation/deactivation dates for temporary access<br/>
+                    • Card types determine which doors can be opened<br/>
+                    • Access rights come from the owner's access groups
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_card_type_action" model="ir.actions.act_window">
             <field name="name">Card Types</field>
             <field name="res_model">hr.rfid.card.type</field>
             <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first Card Type
+                </p>
+                <p>
+                    Card types help you categorize RFID cards by their purpose and control access at the door level.
+                    Common examples include Employee Cards, Visitor Passes, Contractor Badges, or Service Cards.
+                </p>
+                <p>
+                    <b>Important:</b> Doors must be configured to accept specific card types. 
+                    A card will only open doors that accept its type AND when the card owner has proper access rights.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_card_view_form" model="ir.ui.view">
@@ -74,7 +104,7 @@
             </field>
         </record>
 
-        <record id="hr_rfid_card_view_tree" model="ir.ui.view">
+        <record id="hr_rfid_card_view_list" model="ir.ui.view">
             <field name="name">hr.rfid.card.list</field>
             <field name="model">hr.rfid.card</field>
             <field name="arch" type="xml">
@@ -177,7 +207,7 @@
         </record>
 
 
-        <record id="hr_rfid_card_type_view_tree" model="ir.ui.view">
+        <record id="hr_rfid_card_type_view_list" model="ir.ui.view">
             <field name="name">hr.rfid.card.type.list</field>
             <field name="model">hr.rfid.card.type</field>
             <field name="arch" type="xml">

@@ -17,6 +17,16 @@
                             <field name="ts_id" readonly="1" options="{'clickable': '0'}" class="oe_inline"/>
                         </h1>
                         <br/>
+                        <div class="alert alert-info" role="alert">
+                            <p class="mb-0">
+                                <strong>How to configure access times:</strong><br/>
+                                • Each day can have up to 4 separate access periods<br/>
+                                • Enter times in 24-hour format (e.g., 8:30 = 8:30, 17:45 = 17:45)<br/>
+                                • Leave begin and end at 0:00 to skip an interval<br/>
+                                • Holiday settings override the regular weekday schedule<br/>
+                                • Changes are synchronized to all controllers using this schedule
+                            </p>
+                        </div>
                         <field name="interval_ids" options="{'no_create': True, 'no_open': True, 'no_edit':True}">
                             <list create="false" delete="false" editable="bottom" multi_edit="1"
                                   default_order="day asc">
@@ -44,6 +54,12 @@
             <field name="target">new</field>
             <field name="binding_model_id" ref="model_hr_rfid_time_schedule"/>
             <field name="binding_view_types">form</field>
+            <field name="help" type="html">
+                <p>
+                    Configure access hours for each day of the week.
+                    You can define up to 4 time periods per day when access is allowed.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_time_schedule_view_form" model="ir.ui.view">
@@ -104,22 +120,35 @@
                     <field name="number"/>
                     <field name="is_empty"/>
                     <templates>
-                        <t t-name="kanban-box">
-                            <div class="oe_product_vignette oe_kanban_global_click">
-                                <ul style="list-style:none;margin:0;padding0;">
-                                    <li>
-                                        <field name="name"/>
-                                    </li>
-                                    <li>TS Number:
-                                        <field name="number"/>
-                                    </li>
-                                    <t t-if="((record.is_empty.raw_value == true) &amp;&amp; (record.number.raw_value &gt; 0))">
-                                        <li class="text-danger">TS is empty</li>
-                                    </t>
-                                    <t t-elif="(record.is_empty.raw_value == false)">
-                                        <li class="text-success">TS is not empty</li>
-                                    </t>
-                                </ul>
+                        <!-- Main card template (required) -->
+                        <t t-name="card">
+                            <main>
+                                <field name="name" class="fw-bold fs-5 mb-1"/>
+                                <div class="text-muted">
+                                    <span>TS Number: </span>
+                                    <field name="number" class="fw-bold"/>
+                                </div>
+                                <div t-if="record.is_empty.raw_value and record.number.raw_value > 0" class="text-danger mt-2">
+                                    <i class="fa fa-warning me-1"/>TS is empty
+                                </div>
+                                <div t-elif="!record.is_empty.raw_value" class="text-success mt-2">
+                                    <i class="fa fa-check-circle me-1"/>TS is not empty
+                                </div>
+                            </main>
+                        </t>
+                        
+                        <!-- Menu template (optional) -->
+                        <t t-name="menu" t-if="!selection_mode" groups="base.group_user">
+                            <a role="menuitem" type="open" class="dropdown-item">Edit</a>
+                        </t>
+                        
+                        <!-- Tooltip template (optional) -->
+                        <t t-name="tooltip">
+                            <div>
+                                <field name="name" class="fw-bold"/>
+                                <div class="text-muted">
+                                    <span>TS #</span><field name="number"/>
+                                </div>
                             </div>
                         </t>
                     </templates>
@@ -127,7 +156,7 @@
             </field>
         </record>
 
-        <record id="hr_rfid_time_schedule_view_tree" model="ir.ui.view">
+        <record id="hr_rfid_time_schedule_view_list" model="ir.ui.view">
             <field name="name">hr.rfid.time.schedule.list</field>
             <field name="model">hr.rfid.time.schedule</field>
             <field name="arch" type="xml">
@@ -141,6 +170,37 @@
             <field name="name">Time Schedules</field>
             <field name="res_model">hr.rfid.time.schedule</field>
             <field name="view_mode">kanban,list,form,search</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Time Schedules control when access is allowed
+                </p>
+                <p>
+                    Time schedules define when doors can be accessed throughout the week. 
+                    Each schedule contains up to 4 time periods per day for all 7 days of 
+                    the week, plus special settings for holidays.
+                </p>
+                <p>
+                    <b>Key concepts:</b><br/>
+                    • <b>TS 0</b> = "Not using TS" - Always allows access (no time restrictions)<br/>
+                    • <b>TS 1-15</b> = Custom schedules with specific access hours<br/>
+                    • <b>Empty schedule</b> = Blocks all access when assigned to a door<br/>
+                    • <b>Holiday settings</b> = Override normal weekday schedules on holidays
+                </p>
+                <p>
+                    <b>How to use:</b><br/>
+                    1. Click on a time schedule to open it<br/>
+                    2. Click the "Details" button to edit access hours<br/>
+                    3. Set up to 4 time periods per day (e.g., 8:00-12:00 and 13:00-17:00)<br/>
+                    4. Save your changes - they sync automatically to controllers
+                </p>
+                <p>
+                    <b>Common examples:</b><br/>
+                    • Regular hours: Mon-Fri 8:00-17:00<br/>
+                    • 24/7 access: All days 0:00-24:00<br/>
+                    • Weekend only: Sat-Sun 8:00-20:00<br/>
+                    • Night shift: All days 22:00-6:00
+                </p>
+            </field>
         </record>
     </data>
 </odoo>

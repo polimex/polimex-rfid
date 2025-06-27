@@ -58,7 +58,7 @@
             </field>
         </record>
 
-        <record id="emergency_group_tree_view" model="ir.ui.view">
+        <record id="emergency_group_list_view" model="ir.ui.view">
             <field name="name">emergency.group.list.view</field>
             <field name="model">hr.rfid.ctrl.emergency.group</field>
             <field name="arch" type="xml">
@@ -80,61 +80,72 @@
                     <field name="state"/>
                     <field name="controller_ids"/>
                     <templates>
-                        <t t-name="kanban-box">
-                            <div>
+                        <!-- Main card template (required) -->
+                        <t t-name="card">
+                            <div class="oe_kanban_global_click position-relative">
                                 <div class="oe_kanban_details">
-                                    <div class="o_kanban_record_top">
+                                    <div class="position-absolute top-0 end-0 mt-2 me-2">
+                                        <span t-if="record.state.raw_value == 'emergency'"
+                                              class="fa fa-fire text-danger" title="Emergency"/>
+                                        <span t-if="record.state.raw_value == 'normal'"
+                                              class="fa fa-free-code-camp text-success" title="Normal"/>
+                                    </div>
+                                    <div class="o_kanban_record_top mb-2">
                                         <div class="o_kanban_record_headings">
                                             <strong class="o_kanban_record_title">
-                                                <div class="float-right">
-                                                    <span t-att-title="record.state.raw_value == 'normal' ? 'Normal' : 'Emergency'">
-                                                        <i t-att-class="record.state.raw_value == 'emergency' ? 'fa fa-fw fa-fire text-danger' : 'fa fa-fw fa-free-code-camp text-success'"
-                                                           role="img"
-                                                           aria-label="Emergency State"/>
-                                                    </span>
-                                                </div>
-                                                <h2>
-                                                    <a type="open">
-                                                        <field name="name" title="Emergency group"/>
-                                                    </a>
-                                                </h2>
+                                                <field name="name"/>
                                             </strong>
-                                            <ul>
-                                                <li name="action_icons">
-                                                    <div class="float-right">
-                                                        <span title="Emergency On"
-                                                              groups="hr_rfid.hr_rfid_view_emergency_on_off">
-                                                            <a name="emergency_on" type="object">
-                                                                <i class="fa fa-fw fa-fire text-danger"
-                                                                   role="img"
-                                                                   aria-label="Turn on Emergency for this Group manually"/>
-                                                            </a>
-                                                        </span>
-                                                        <span title="Emergency Off"
-                                                              groups="hr_rfid.hr_rfid_view_emergency_on_off">
-                                                            <a name="emergency_off" type="object">
-                                                                <i class="fa fa-fw fa-free-code-camp text-success" role="img"
-                                                                   aria-label="Turn off Emergency for this Group manually"/>
-                                                            </a>
-                                                        </span>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <t t-esc="record.state.string"/>:
-                                                    <strong>
-                                                        <field name="state"
-                                                               decoration-success="state == 'normal'"
-                                                               decoration-danger="state == 'emergency'"/>
-                                                    </strong>
-                                                </li>
-                                            </ul>
                                         </div>
                                     </div>
-                                    <ul>
+                                    <ul class="list-unstyled text-muted small">
+                                        <li>
+                                            <span class="text-muted">State:</span>
+                                            <field name="state"
+                                                   decoration-success="state == 'normal'"
+                                                   decoration-danger="state == 'emergency'"/>
+                                        </li>
+                                        <li t-if="record.controller_ids.raw_value.length > 0">
+                                            <i class="fa fa-microchip me-1"/>
+                                            <t t-esc="record.controller_ids.raw_value.length"/> controller(s)
+                                        </li>
                                     </ul>
-                                    <div class="o_row">
-                                        <span class="oe_kanban_partner_links">
-                                        </span>
+                                </div>
+                                <div class="oe_kanban_footer">
+                                    <div class="o_kanban_record_bottom">
+                                        <div class="oe_kanban_bottom_left">
+                                            <button name="emergency_on" type="object" title="Activate emergency mode"
+                                                    groups="hr_rfid.hr_rfid_view_emergency_on_off"
+                                                    class="btn btn-link btn-sm ps-0 pe-1">
+                                                <i class="fa fa-fire text-danger"/>
+                                            </button>
+                                            <button name="emergency_off" type="object" title="Deactivate emergency mode"
+                                                    groups="hr_rfid.hr_rfid_view_emergency_on_off"
+                                                    class="btn btn-link btn-sm ps-0 pe-1">
+                                                <i class="fa fa-free-code-camp text-success"/>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                        
+                        <!-- Menu template (optional) -->
+                        <t t-name="menu" t-if="!selection_mode" groups="base.group_user">
+                            <a role="menuitem" type="object" name="emergency_on" class="dropdown-item">Emergency On</a>
+                            <a role="menuitem" type="object" name="emergency_off" class="dropdown-item">Emergency Off</a>
+                            <div role="separator" class="dropdown-divider"/>
+                            <a role="menuitem" type="edit" class="dropdown-item">Edit</a>
+                            <a role="menuitem" type="delete" class="dropdown-item">Delete</a>
+                        </t>
+                        
+                        <!-- Tooltip template (optional) -->
+                        <t t-name="tooltip">
+                            <div>
+                                <field name="name" class="fw-bold"/>
+                                <div class="text-muted">
+                                    <span>State: </span><field name="state"/>
+                                    <div t-if="record.controller_ids.raw_value.length > 0">
+                                        <span>Controllers: </span><t t-esc="record.controller_ids.raw_value.length"/>
                                     </div>
                                 </div>
                             </div>

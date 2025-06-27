@@ -6,27 +6,57 @@ class HrRfidCtrlAlarmGroup(models.Model):
     _description = 'Alarm system groups'
     _inherit = ['mail.thread', 'balloon.mixin']
 
-    name = fields.Char(required=True)
-    color = fields.Integer('Color Index', default=0)
-    company_id = fields.Many2one('res.company',
-                                 string='Company',
-                                 default=lambda self: self.env.company)
+    name = fields.Char(
+        required=True,
+        help="Enter a descriptive name for this alarm group (e.g., 'First Floor Alarms', 'Warehouse Security', 'Office Area'). Groups help you manage multiple alarms together."
+    )
+    color = fields.Integer(
+        'Color Index', 
+        default=0,
+        help="Choose a color to visually distinguish this group in the hierarchy view. This helps you quickly identify different security zones or areas."
+    )
+    company_id = fields.Many2one(
+        'res.company',
+        string='Company',
+        default=lambda self: self.env.company,
+        help="The company that owns this alarm group. Used in multi-company setups to separate alarm management by organization."
+    )
     state = fields.Selection([
         ('no_alarm', 'No Alarm functionality'),  # 64 ON
         ('arm', 'Armed'),  # 64 ON
         ('disarm', 'Disarmed'),  # 64 OFF
         ('mixed', 'Partially armed'),  # 64 OFF
-    ], compute='_compute_states', tracking=True, store=True)
-    parent_id = fields.Many2one(comodel_name='hr.rfid.ctrl.alarm.group')
+    ], 
+        compute='_compute_states', 
+        tracking=True, 
+        store=True,
+        help="Overall security status of all alarms in this group:\n"
+             "• No Alarm functionality - No active alarms in this group\n"
+             "• Armed - All alarms are armed and monitoring\n"
+             "• Disarmed - All alarms are disarmed\n"
+             "• Partially armed - Some alarms are armed, others are disarmed"
+    )
+    parent_id = fields.Many2one(
+        comodel_name='hr.rfid.ctrl.alarm.group',
+        help="Parent group for creating hierarchical alarm structures. For example:\n"
+             "• Building → Floor → Room\n"
+             "• Campus → Building → Department\n"
+             "This allows you to arm/disarm entire areas at once."
+    )
     child_ids = fields.One2many(
         comodel_name='hr.rfid.ctrl.alarm.group',
         inverse_name='parent_id',
-        # compute='_compute_children'
+        help="Sub-groups under this group. When you arm/disarm this group, all child groups will also be armed/disarmed. Useful for managing large facilities with multiple security zones."
     )
     alarm_line_ids = fields.One2many(
         comodel_name='hr.rfid.ctrl.alarm',
         inverse_name='alarm_group_id',
         required=True,
+        help="Individual alarm sensors that belong to this group. You can:\n"
+             "• Add multiple sensors from different controllers\n"
+             "• Arm/disarm all sensors at once\n"
+             "• Monitor the combined status of all sensors\n"
+             "Example: Group all window sensors in 'Perimeter Security'"
     )
 
     def create_child(self):

@@ -7,8 +7,22 @@
             <field name="view_mode">list,form,search,calendar,pivot</field>
             <field name="context">{"search_default_filter_this_day": 1}</field>
             <field name="help" type="html">
-                <p class="oe_view_nocontent_create">
-                    There are no events for today, which is a good sign!
+                <p class="o_view_nocontent_smiling_face">
+                    No system events for today - your access control system is running smoothly!
+                </p>
+                <p>
+                    System events monitor the health and security of your RFID infrastructure:
+                </p>
+                <ul>
+                    <li><b>Security Alerts</b> - Forced doors, overtime, tamper attempts</li>
+                    <li><b>Hardware Status</b> - Power cycles, wiring errors, communication issues</li>
+                    <li><b>Emergency Events</b> - Fire alarms, emergency buttons, evacuations</li>
+                    <li><b>Unknown Cards</b> - Unregistered card presentations for easy enrollment</li>
+                    <li><b>Environmental</b> - Temperature monitoring and alerts</li>
+                </ul>
+                <p>
+                    Regular monitoring of system events helps maintain security and prevent issues.
+                    Critical events trigger immediate notifications to administrators.
                 </p>
             </field>
         </record>
@@ -45,6 +59,12 @@
             <field name="view_id" ref="hr_rfid.hr_rfid_sys_ev_wiz_form"/>
             <field name="binding_model_id" ref="hr_rfid.model_hr_rfid_event_system"/>
             <field name="target">new</field>
+            <field name="help" type="html">
+                <p>
+                    Register an unknown card that was presented to the system.
+                    You can assign it to an employee or contact and set its access permissions.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_sys_ev_wiz_action" model="ir.actions.act_window">
@@ -53,6 +73,12 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_rfid_sys_ev_wiz_form"/>
             <field name="target">new</field>
+            <field name="help" type="html">
+                <p>
+                    Register an unknown card that was presented to the system.
+                    You can assign it to an employee or contact and set its access permissions.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_sys_ev_view_form" model="ir.ui.view">
@@ -108,7 +134,7 @@
             </field>
         </record>
 
-        <record id="hr_rfid_sys_ev_view_tree" model="ir.ui.view">
+        <record id="hr_rfid_sys_ev_view_list" model="ir.ui.view">
             <field name="name">hr.rfid.sys.ev.list</field>
             <field name="model">hr.rfid.event.system</field>
             <field name="arch" type="xml">

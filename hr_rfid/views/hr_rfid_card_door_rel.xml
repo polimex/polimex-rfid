@@ -6,6 +6,16 @@
             <field name="name">Card/Door Relations</field>
             <field name="res_model">hr.rfid.card.door.rel</field>
             <field name="view_mode">list,form,search</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No card/door relations found
+                </p>
+                <p>
+                    This view shows the direct relationships between RFID cards and doors.
+                    These relations are automatically created when cards are assigned access to doors
+                    through access groups. You cannot manually create or edit these relations.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_card_door_rel_view_form" model="ir.ui.view">
@@ -24,7 +34,7 @@
             </field>
         </record>
 
-        <record id="hr_rfid_card_door_rel_view_tree" model="ir.ui.view">
+        <record id="hr_rfid_card_door_rel_view_list" model="ir.ui.view">
             <field name="name">hr.rfid.card.door.rel.list</field>
             <field name="model">hr.rfid.card.door.rel</field>
             <field name="arch" type="xml">

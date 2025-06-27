@@ -33,6 +33,12 @@
             <field name="binding_view_types">form</field>
             <field name="target">new</field>
             <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_group_officer'))]"/>
+            <field name="help" type="html">
+                <p>
+                    Manage RFID access groups for this department.
+                    Access groups assigned here will be available for employees in this department.
+                </p>
+            </field>
         </record>
 
         <record id="hr_department_def_acc_gr_wiz" model="ir.ui.view">
@@ -132,6 +138,12 @@
             <field name="binding_view_types">form</field>
             <field name="target">new</field>
             <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_group_officer'))]"/>
+            <field name="help" type="html">
+                <p>
+                    Set the default RFID access group for new employees in this department.
+                    You can also apply this access group to existing employees.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_department_mass_remove_access_group_action" model="ir.actions.act_window">
@@ -144,6 +156,12 @@
             <field name="binding_view_types">form</field>
             <field name="target">new</field>
             <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_group_officer'))]"/>
+            <field name="help" type="html">
+                <p>
+                    Add or remove RFID access groups for all employees in this department at once.
+                    You can exclude specific employees and set expiration dates for temporary access.
+                </p>
+            </field>
         </record>
 
     </data>

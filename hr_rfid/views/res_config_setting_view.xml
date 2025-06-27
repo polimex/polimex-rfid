@@ -45,6 +45,12 @@
             <field name="view_mode">form</field>
             <field name="target">inline</field>
             <field name="context">{'module' : 'hr_rfid'}</field>
+            <field name="help" type="html">
+                <p>
+                    Configure global settings for the RFID system.
+                    Set event retention policies and automatic module discovery options.
+                </p>
+            </field>
         </record>
 
     </data>

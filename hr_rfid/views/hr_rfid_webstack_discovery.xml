@@ -39,6 +39,12 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_rfid_webstack_discovery_wiz"/>
             <field name="target">new</field>
+            <field name="help" type="html">
+                <p>
+                    Automatically discover RFID modules on your network.
+                    Found modules can be added to the system or have their configuration updated.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_webstack_manual_create_wiz" model="ir.ui.view">
@@ -92,6 +98,12 @@
             <field name="target">new</field>
             <field name="binding_model_id" ref="model_hr_rfid_webstack"/>
             <field name="binding_view_types">list</field>
+            <field name="help" type="html">
+                <p>
+                    Manually add an RFID module to the system.
+                    You'll need the module's serial number and network configuration details.
+                </p>
+            </field>
         </record>
 
     </data>

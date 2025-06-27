@@ -7,10 +7,24 @@
             <field name="view_mode">list,form,search,calendar,pivot</field>
             <field name="context">{'search_default_filter_this_day': 1}</field>
             <field name="help" type="html">
-            <p class="oe_view_nocontent_create">
-                There aren't any events form today. Have you already set up the system?
-            </p>
-        </field>
+                <p class="o_view_nocontent_smiling_face">
+                    No user access events found for today
+                </p>
+                <p>
+                    User events track all access attempts by employees and contacts:
+                </p>
+                <ul>
+                    <li><b>Access Granted</b> - Successful entry/exit through doors</li>
+                    <li><b>Access Denied</b> - Failed attempts due to invalid permissions</li>
+                    <li><b>Time Schedule Errors</b> - Access outside allowed hours</li>
+                    <li><b>Anti-Passback Violations</b> - Improper entry/exit sequences</li>
+                    <li><b>Zone Controls</b> - Security zone arming/disarming</li>
+                </ul>
+                <p>
+                    Events are automatically logged when users present their RFID cards to readers.
+                    Use filters to analyze access patterns, security violations, and attendance data.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_user_ev_view_form" model="ir.ui.view">
@@ -97,7 +111,7 @@
             </field>
         </record>
 
-        <record id="hr_rfid_user_ev_view_tree" model="ir.ui.view">
+        <record id="hr_rfid_user_ev_view_list" model="ir.ui.view">
             <field name="name">hr.rfid.user.ev.list</field>
             <field name="model">hr.rfid.event.user</field>
             <field name="arch" type="xml">

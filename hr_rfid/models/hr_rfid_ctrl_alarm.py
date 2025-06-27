@@ -9,9 +9,14 @@ class HrRfidCtrlAlarm(models.Model):
     _description = 'Controller Alarm Lines'
     _order = 'controller_id, line_number'
 
-    name = fields.Char(required=True, help="Friendly name for this line")
+    name = fields.Char(
+        required=True, 
+        help="Enter a descriptive name for this alarm sensor (e.g., 'Main Entrance Motion Detector', 'Window Sensor - Office 1'). This name helps you quickly identify which sensor triggered an alarm."
+    )
 
-    line_number = fields.Integer(help="Line number in the controller")
+    line_number = fields.Integer(
+        help="The physical input number on the controller where this sensor is connected (1-16). Each controller has numbered terminals for connecting alarm sensors."
+    )
 
     state = fields.Selection([
         ('unknown', 'Unknown'),
@@ -26,63 +31,100 @@ class HrRfidCtrlAlarm(models.Model):
         compute='_compute_states',
         tracking=True,
         compute_sudo=True,
-        help="Alarm line state",
+        help="Current status of the alarm sensor:\n"
+             "• Unknown - Communication lost with sensor\n"
+             "• Disabled - Sensor is turned off\n"
+             "• Short - Wiring problem detected (short circuit)\n"
+             "• Normal - Everything is OK, no alarm\n"
+             "• Sensor 1/2 - Motion or contact detected\n"
+             "• Open - Wiring problem detected (open circuit)",
     )
 
     armed = fields.Selection([
         ('no_alarm', 'No Alarm functionality'),  # 64 ON
         ('arm', 'Armed'),  # 64 ON
         ('disarm', 'Disarmed'),  # 64 OFF
-        ], compute='_compute_armed', compute_sudo=True, store=True)
+        ], 
+        compute='_compute_armed', 
+        compute_sudo=True, 
+        store=True,
+        help="Security status of this alarm line:\n"
+             "• No Alarm functionality - This line is not configured for alarm monitoring\n"
+             "• Armed - Actively monitoring for intrusions (any sensor trigger will raise an alarm)\n"
+             "• Disarmed - Temporarily disabled (sensor triggers will be ignored)"
+    )
 
     enableAC = fields.Boolean(
         string="Integrate with Access control",
-        help='Enable the integration between access control system and alarm functionality of the line in the controller',
+        help="When enabled, this alarm line will work together with door access control:\n"
+             "• Automatically disarms when authorized person enters\n"
+             "• Re-arms after the door is closed\n"
+             "• Useful for motion detectors near controlled doors",
         default=False,
         tracking = True
     )
     enableDC = fields.Boolean(
         string="Include Door contact",
-        help="Include the door contact in the alarm functionality of the line in the controller",
+        help="Monitor the door's open/closed status as part of this alarm:\n"
+             "• When armed, an open door will trigger the alarm\n"
+             "• Useful for securing doors outside business hours\n"
+             "• Works with magnetic door contacts",
         default=False,
         tracking = True
     )
     enabled = fields.Boolean(
         default=False,
-        help='Enable the alarm line in the controller',
+        help="Master switch for this alarm line:\n"
+             "• ON - The sensor is active and can trigger alarms\n"
+             "• OFF - The sensor is completely disabled\n"
+             "Note: Even when enabled, you still need to ARM the line for it to trigger alarms",
         tracking=True
     )
 
     siren_state = fields.Boolean(
-        help='Alarm Siren state',
+        help="Shows whether the alarm siren is currently sounding:\n"
+             "• ON - Siren is active (loud alarm sound)\n"
+             "• OFF - Siren is silent\n"
+             "The siren automatically activates when an armed sensor is triggered",
         related='controller_id.siren_state'
     )
 
     controller_id = fields.Many2one(
         comodel_name='hr.rfid.ctrl',
         string='Controller',
-        help='Controller that manages the alarm line',
+        help="The RFID controller device that monitors this alarm sensor. Each controller can manage multiple alarm lines and is usually installed in a secure location.",
         required=True,
         readonly=True,
         ondelete='cascade',
     )
 
-    control_output = fields.Integer()
+    control_output = fields.Integer(
+        help="Technical field: The output number used to arm/disarm this line remotely"
+    )
 
     door_id = fields.Many2one(
         comodel_name='hr.rfid.door',
-        help='Door related to this alarm line'
+        help="Link this alarm to a specific door for integrated security:\n"
+             "• The alarm can automatically arm/disarm based on door access\n"
+             "• Door events and alarm events will be connected\n"
+             "• Useful for motion sensors protecting door areas"
     )
 
     user_event_count = fields.Integer(
-        compute='_compute_counters'
+        compute='_compute_counters',
+        help="Number of alarm events triggered by user actions (e.g., motion detected, door opened while armed)"
     )
     system_event_count = fields.Integer(
-        compute='_compute_counters'
+        compute='_compute_counters',
+        help="Number of technical events for this alarm line (e.g., sensor faults, communication errors, arm/disarm actions)"
     )
 
     alarm_group_id = fields.Many2one(
-        comodel_name='hr.rfid.ctrl.alarm.group'
+        comodel_name='hr.rfid.ctrl.alarm.group',
+        help="Assign this alarm to a group for easier management:\n"
+             "• Arm/disarm multiple alarms at once\n"
+             "• Organize alarms by building area or security zone\n"
+             "• Create hierarchical alarm structures (e.g., Floor > Room > Sensor)"
     )
 
     def _compute_counters(self):

@@ -67,57 +67,59 @@ class HrRfidSystemEvent(models.Model):
     _order = 'timestamp desc'
 
     name = fields.Char(
-        compute='_compute_sys_ev_name'
+        compute='_compute_sys_ev_name',
+        help="Auto-generated system event description combining event type and location"
     )
 
     webstack_id = fields.Many2one(
         'hr.rfid.webstack',
         string='Module',
-        help='Module affected by this event',
+        help="The RFID webstack module (network interface) where this system event occurred. Webstacks manage communication between controllers and the server.",
         ondelete='cascade',
     )
 
     controller_id = fields.Many2one(
         'hr.rfid.ctrl',
         string='Controller',
-        help='Controller affected by this event',
+        help="The RFID controller device that generated this system event. Controllers manage doors, readers, and alarms.",
         ondelete='cascade',
     )
 
     door_id = fields.Many2one(
         'hr.rfid.door',
         string='Door',
-        help='Door affected by this event',
+        help="The specific door involved in this system event (e.g., forced open, overtime). May be empty for controller-wide events.",
         ondelete='cascade',
     )
 
     alarm_line_id = fields.Many2one(
         'hr.rfid.ctrl.alarm',
         string='Alarm line',
-        help='Alarm line affected by this event',
+        help="The alarm input/output line that triggered this event. Used for security sensors, fire alarms, and emergency systems.",
         ondelete='cascade',
     )
 
     siren = fields.Boolean(
-        help='Alarm detected and Siren is ON',
+        help="Indicates whether the siren/alarm is currently active. True = Siren ON (alarm condition), False = Siren OFF (normal state).",
         default=False
     )
 
     timestamp = fields.Datetime(
         string='Timestamp',
-        help='Time the event occurred',
+        help="Exact date and time when this system event was detected. Critical for security audits and troubleshooting.",
         required=True,
         index=True,
     )
 
     occurrences = fields.Integer(
         string='Occurrences',
-        help='Number of times the event has happened',
+        help="Count of how many times this identical event has occurred. System groups repeated events to reduce log clutter.",
         default=1,
     )
 
     last_occurrence = fields.Datetime(
         string='Last occurrence',
+        help="Date and time of the most recent occurrence when the same event happened multiple times."
     )
 
     event_nums = list(map(lambda a: a[0], action_selection))
@@ -125,24 +127,30 @@ class HrRfidSystemEvent(models.Model):
     event_action = fields.Selection(
         selection=action_selection,
         string='Event Type',
-        default='99'
+        default='99',
+        help="Type of system event:\n• Power On: Controller started\n• Door Overtime: Door held open too long\n• Forced Door: Door opened without authorization\n• Fire/Emergency: Emergency alarm triggered\n• Exit Button: Manual door release\n• Temperature: Environmental monitoring\n• Wiring Error: Hardware malfunction\n• Unknown Card/Plate: Unregistered access attempt"
     )
 
     error_description = fields.Char(
         string='Description',
-        help='Description on why the error happened',
+        help="Detailed explanation of the error or event condition. Provides context for troubleshooting system issues.",
     )
 
     card_number = fields.Char(
         string='Card number from this event',
-        readonly=True
+        readonly=True,
+        help="RFID card number that triggered this system event. Only populated for card-related errors (unknown card, etc.)."
     )
 
     input_js = fields.Char(
         string='Input JSON',
+        help="Raw JSON data received from the controller. Contains technical details for debugging. Only stored when system debugging is enabled."
     )
 
-    is_card_event = fields.Boolean(compute='_compute_is_card_event')
+    is_card_event = fields.Boolean(
+        compute='_compute_is_card_event',
+        help="Indicates if this system event is related to an unknown/denied card, allowing card registration from the event."
+    )
 
     @api.depends('event_action')
     def _compute_is_card_event(self):
@@ -296,50 +304,54 @@ class HrRfidSystemEventWizard(models.TransientModel):
         required=True,
         default=_default_sys_ev,
         ondelete='cascade',
+        help="The system event containing the unknown card information to be registered."
     )
 
     employee_id = fields.Many2one(
         'hr.employee',
         string='Card owner (employee)',
+        help="Select the employee who will own this card. Choose either an employee OR a contact, not both."
     )
 
     contact_id = fields.Many2one(
         'res.partner',
         string='Card owner (contact)',
+        help="Select the external contact (visitor/contractor) who will own this card. Choose either a contact OR an employee, not both."
     )
 
     card_number = fields.Char(
         string='Card Number',
         default=_default_card_number,
+        help="The RFID card number extracted from the system event. This will be registered in the system."
     )
 
     card_type = fields.Many2one(
         'hr.rfid.card.type',
         string='Card type',
-        help='Only doors that support this type will be able to open this card',
+        help="Select the card technology type (e.g., Mifare, EM, HID). Only doors configured for this card type will accept it.",
         default=lambda self: self.env.ref('hr_rfid.hr_rfid_card_type_def').id,
     )
 
     activate_on = fields.Datetime(
         string='Activate on',
-        help='Date and time the card will be activated on',
+        help="Date and time when the card becomes active. Set to a future date for scheduled activation.",
         default=lambda self: fields.Datetime.now(),
     )
 
     deactivate_on = fields.Datetime(
         string='Deactivate on',
-        help='Date and time the card will be deactivated on',
+        help="Optional expiration date for the card. Leave empty for permanent cards. Useful for temporary visitors or contractors.",
     )
 
     active = fields.Boolean(
         string='Active',
-        help='Whether the card is active or not',
+        help="Enable this card immediately. Uncheck to create an inactive card that can be activated later.",
         default=True,
     )
 
     cloud_card = fields.Boolean(
         string='Cloud Card',
-        help='A cloud card will not be added to controllers that are in the "externalDB" mode.',
+        help="Cloud cards are managed centrally by the server. They work with online controllers but not with standalone/external database controllers.",
         default=True,
         required=True,
     )

@@ -9,7 +9,8 @@ class HrEmployee(models.Model):
 
     hr_rfid_pin_code = fields.Char(
         string='User pin code',
-        help="Pin code for this user, four zeroes means that the user has no pin code.",
+        help="4-digit PIN code for secure door access. Used in combination with RFID cards for two-factor authentication. "
+             "Default '0000' means no PIN required. The PIN must be entered on door readers when accessing restricted areas.",
         size=4,
         default='0000',
         tracking=True,
@@ -20,7 +21,9 @@ class HrEmployee(models.Model):
         'hr.rfid.access.group.employee.rel',
         'employee_id',
         string='Access Groups',
-        help='Which access groups the user is a part of',
+        help="RFID access groups determine which doors and areas this employee can access. "
+             "Access groups define time schedules, door permissions, and security policies. "
+             "Groups can have expiration dates and are automatically synchronized with the employee's department.",
         tracking=True,
         groups="hr_rfid.hr_rfid_group_officer"
     )
@@ -29,7 +32,10 @@ class HrEmployee(models.Model):
         'hr.rfid.card',
         'employee_id',
         string='RFID Card',
-        help='Cards owned by the employee',
+        help="RFID cards assigned to this employee for access control. "
+             "Multiple cards can be assigned (e.g., main card, backup card, temporary card). "
+             "Cards can be activated/deactivated, have expiration dates, and support different card types (RFID, Barcode). "
+             "Inactive cards are shown but won't grant access.",
         context={'active_test': False},
         groups="hr_rfid.hr_rfid_group_officer"
     )
@@ -38,23 +44,34 @@ class HrEmployee(models.Model):
         'hr.rfid.event.user',
         'employee_id',
         string='RFID Events',
-        help='Events concerning this employee',
+        help="Access events log for this employee including door entries/exits, access denials, and system events. "
+             "Shows complete history of RFID card usage with timestamps, door information, and event status. "
+             "Useful for security auditing and troubleshooting access issues.",
         groups="hr_rfid.hr_rfid_group_officer"
     )
 
     in_zone_ids = fields.Many2many(
         'hr.rfid.zone',
         compute='_compute_zones_for_employee',
+        string='Current Zones',
+        help="Security zones where this employee is currently present. "
+             "Automatically updated based on entry/exit events through RFID controlled doors. "
+             "Used for tracking employee location and zone-based access control.",
         groups="hr_rfid.hr_rfid_group_officer"
-
     )
 
     employee_event_count = fields.Char(
         compute='_compute_employee_event_count',
+        string='Event Count',
+        help="Total number of RFID events recorded for this employee. "
+             "Click to view detailed event history.",
         groups="hr_rfid.hr_rfid_group_officer"
     )
     employee_doors_count = fields.Char(
         compute='_compute_employee_event_count',
+        string='Accessible Doors Count',
+        help="Number of doors this employee can access based on their assigned access groups. "
+             "Click to view the complete list of accessible doors.",
         groups="hr_rfid.hr_rfid_group_officer"
     )
 
@@ -94,6 +111,16 @@ class HrEmployee(models.Model):
             e.in_zone_ids = self.env['hr.rfid.zone'].search([]).filtered(lambda z: e in z.employee_ids)
 
     def add_acc_gr(self, access_groups, expiration=None):
+        """
+        Add access groups to employees with optional expiration date.
+        
+        This method assigns RFID access groups to employees, allowing them to access
+        specific doors according to the group's permissions and time schedules.
+        If the employee already has the access group, it updates the expiration date.
+        
+        :param access_groups: hr.rfid.access.group recordset to assign
+        :param expiration: Optional expiration date for the access group membership
+        """
         rel_env = self.env['hr.rfid.access.group.employee.rel']
         for emp in self:
             for acc_gr in access_groups:
@@ -114,6 +141,14 @@ class HrEmployee(models.Model):
                 rel_env.create(creation_dict)
 
     def remove_acc_gr(self, access_groups):
+        """
+        Remove access groups from employees.
+        
+        This method removes RFID access group assignments from employees,
+        revoking their access to doors controlled by those groups.
+        
+        :param access_groups: hr.rfid.access.group recordset to remove
+        """
         rel_env = self.env['hr.rfid.access.group.employee.rel']
         rel_env.search([
             ('employee_id', 'in', self.ids),
@@ -122,6 +157,16 @@ class HrEmployee(models.Model):
 
     @api.returns('hr.rfid.door')
     def get_doors(self, excluding_acc_grs=None, including_acc_grs=None):
+        """
+        Get all doors accessible by the employee based on their access groups.
+        
+        This method returns all doors the employee can access through their
+        assigned access groups, with options to exclude or include specific groups.
+        
+        :param excluding_acc_grs: Access groups to exclude from calculation
+        :param including_acc_grs: Additional access groups to include in calculation
+        :return: hr.rfid.door recordset of accessible doors
+        """
         if excluding_acc_grs is None:
             excluding_acc_grs = self.env['hr.rfid.access.group']
         if including_acc_grs is None:
@@ -199,6 +244,13 @@ class HrEmployee(models.Model):
                 raise exceptions.ValidationError('Invalid pin code, digits must be from 0 to 9')
 
     def generate_random_barcode_card(self):
+        """
+        Generate a new random barcode card for the employee.
+        
+        This method creates a new barcode-type RFID card with a randomly generated
+        number. Useful for creating printable badge cards for employees.
+        The generated card is automatically assigned to the employee.
+        """
         self.ensure_one()
         new_card_hex, card_number = self.env['hr.rfid.card'].create_bc_card()
         self.write({

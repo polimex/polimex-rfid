@@ -18,10 +18,12 @@ class HrRfidControllerOutputTS(models.Model):
         string="Output number",
         default=1,
         required=True,
+        help="Physical output number on the controller (1, 2, 3, etc.). Each output can control different devices like door locks, alarms, or lights."
     )
     time_schedule_id = fields.Many2one(
         comodel_name='hr.rfid.time.schedule',
-        required=True
+        required=True,
+        help="Time schedule that controls when this output will be active. The output will automatically turn on/off based on the schedule."
     )
     controller_id = fields.Many2one(
         comodel_name='hr.rfid.ctrl',
@@ -65,8 +67,17 @@ class HrRfidCtrlInputMask(models.Model):
         ('controller_input_mask_unique', 'unique(controller_id,i_number)', 'Input must be unique!'),
     ]
 
-    i_number = fields.Integer(string='Number', required=True, readonly=True)
-    i_mask = fields.Boolean(string='Mask (NC/NO)', required=True)
+    i_number = fields.Integer(
+        string='Number', 
+        required=True, 
+        readonly=True,
+        help="Physical input number on the controller. Each input can monitor different sensors or switches."
+    )
+    i_mask = fields.Boolean(
+        string='Mask (NC/NO)', 
+        required=True,
+        help="Input type configuration: Checked = Normally Closed (NC), Unchecked = Normally Open (NO). NC means the circuit is closed when inactive, NO means the circuit is open when inactive."
+    )
     controller_id = fields.Many2one(
         comodel_name='hr.rfid.ctrl',
         required=True,
@@ -108,7 +119,7 @@ class HrRfidController(models.Model):
 
     name = fields.Char(
         string='Name',
-        help='Label to easily distinguish the controller',
+        help='A descriptive name for this controller (e.g., "Main Entrance Controller", "2nd Floor Access Control"). This helps identify the controller quickly in lists and reports.',
         required=True,
         index=True,
         tracking=True,
@@ -116,36 +127,36 @@ class HrRfidController(models.Model):
 
     ctrl_id = fields.Integer(
         string='ID behind IP Module',
-        help='A number to distinguish the controller from others on the same module',
+        help='Unique identifier for this controller when multiple controllers are connected to the same IP module. Usually 0-7 for RS485 connections. This allows up to 8 controllers per IP module.',
         index=True,
     )
 
     hw_version = fields.Selection(
         selection=polimex.HW_TYPES,
         string='Hardware Type',
-        help='Type of the controller',
+        help='Hardware model of the controller. Different models support different features: door access control, alarm systems, relay control, temperature monitoring, turnstiles, or vending machines.',
     )
 
     serial_number = fields.Char(
         string='Serial',
-        help='Serial number of the controller',
+        help='Factory-assigned unique serial number. This 4-character code is used for hardware identification and warranty tracking.',
         size=4,
         tracking=True,
     )
 
     sw_version = fields.Char(
         string='Version',
-        help='The version of the software on the controller',
+        help='Firmware version running on the controller. Format: X.YZ where X is major version, Y is minor version, Z is patch. Higher versions may support additional features.',
         size=3,
         tracking=True,
     )
 
     inputs = fields.Integer(
         string='Inputs',
-        help='Hardware Inputs of the controller',
+        help='Number of physical input connections available on this controller. Inputs are used to connect sensors, buttons, switches, or alarm detectors.',
     )
     inputs_mask = fields.Integer(
-        help='Mask for the inputs of the controller',
+        help='Binary mask that defines the type of each input (NC/NO). Each bit represents one input: 1 = Normally Closed, 0 = Normally Open.',
     )
     input_mask_ids = fields.One2many(
         comodel_name='hr.rfid.ctrl.input.mask',
@@ -153,14 +164,14 @@ class HrRfidController(models.Model):
         string='Input Masks',
     )
     input_states = fields.Integer(
-        help='State of the inputs of the controller',
+        help='Current state of all inputs as a binary value. Each bit represents one input: 1 = Active/Triggered, 0 = Inactive. Used to monitor real-time sensor states.',
     )
     outputs = fields.Integer(
         string='Outputs',
-        help='Hardware Outputs of the controller',
+        help='Number of physical output connections (relays) available on this controller. Outputs control devices like door locks, alarms, lights, or other equipment.',
     )
     output_states = fields.Integer(
-        help='States the outputs of the controller',
+        help='Current state of all outputs as a binary value. Each bit represents one output: 1 = On/Active, 0 = Off/Inactive. Shows which devices are currently activated.',
     )
     output_ts_ids = fields.One2many(
         comodel_name='hr.rfid.ctrl.output.ts',
@@ -172,43 +183,43 @@ class HrRfidController(models.Model):
              "The relay will open working hours and closed in non-working hours",
     )
     relay_output_mask = fields.Boolean(
-        help='Mask for the relay outputs of the relay controller. If True, the relay outputs on the relay extension boards are inverted (NC) else normally (NO).',
+        help='Relay output configuration for relay controllers. When enabled, relay outputs operate in Normally Closed (NC) mode - they are closed when inactive. When disabled, they operate in Normally Open (NO) mode - they are open when inactive.',
         default=False,
     )
     readers = fields.Integer(
         string='Readers',
-        help='Number of readers on the controller'
+        help='Number of RFID card readers that can be connected to this controller. Each reader can scan access cards at different locations (e.g., entry/exit points).'
     )
 
     time_schedules = fields.Integer(
         string='Time Schedules',
-        help='',
+        help='Maximum number of time schedules this controller can store. Time schedules define when access is allowed, when outputs activate, or when certain rules apply.',
     )
 
     io_table_lines = fields.Integer(
         string='IO Table Lines',
-        help='Size of the input/output table',
+        help='Number of programmable logic lines in the I/O table. Each line can contain rules that link inputs to outputs, creating automated responses (e.g., "if door sensor triggered, activate alarm").',
     )
 
     alarm_lines = fields.Integer(
         string='Alarm Lines',
-        help='How many alarm inputs there are',
+        help='Number of dedicated alarm zone inputs on this controller. Each zone can monitor different areas or sensors for security purposes.',
         default=0
     )
 
     alarm_line_states = fields.Char(
         string='Alarm Line States',
-        help='Status of the Alarm lines',
+        help='Real-time status of each alarm zone as hexadecimal values. Shows if zones are armed/disarmed, triggered, normal, or in fault condition.',
     )
 
     alarm_lines_setup = fields.Char(
-        help='Alarm lines setup in (bytes)',
+        help='Configuration data for alarm zones in hexadecimal format. Defines which zones are enabled, their AC/DC monitoring settings, and sensor event reporting.',
         default='000000'
     )
 
     alarm_sensor_events = fields.Boolean(
         string='Alarm Sensor Events',
-        help='If the controller uses the "Alarm Sensor Events" feature, the controller will send event on every alarm line state change even in disarm mode.',
+        help='When enabled, the controller reports all sensor state changes as events, even when the alarm is disarmed. Useful for monitoring sensor activity for maintenance or security analysis.',
         default=False,
         tracking=True,
     )
@@ -218,7 +229,7 @@ class HrRfidController(models.Model):
     #     help='If the controller uses the "Alarm Sensor Events" feature, the system will not store event on every alarm line state change when the line is disarmed.',
     #
     siren_state = fields.Boolean(
-        help='Alarm Siren state',
+        help='Current state of the alarm siren. True = Siren is active/sounding, False = Siren is silent. Automatically controlled by alarm triggers.',
         compute='_compute_siren_state',
         inverse='_set_siren_state',
         tracking=True
@@ -226,7 +237,8 @@ class HrRfidController(models.Model):
 
     emergency_group_id = fields.Many2one(
         comodel_name='hr.rfid.ctrl.emergency.group',
-        tracking=True
+        tracking=True,
+        help='Emergency group this controller belongs to. When any controller in the group enters emergency mode, all controllers in the group will also activate emergency mode.'
     )
 
     emergency_state = fields.Selection([
@@ -235,11 +247,12 @@ class HrRfidController(models.Model):
         ('hard', 'Hardware Emergency'),
     ], compute='_compute_emergency_state',
         tracking=True,
-        inverse='_inverse_emergency_state')
+        inverse='_inverse_emergency_state',
+        help='Emergency mode status:\n- No Emergency: Normal operation\n- Group Emergency: Activated by software/group trigger, all doors unlock\n- Hardware Emergency: Activated by physical emergency button, cannot be overridden remotely')
 
     mode = fields.Integer(
         string='Controller Mode',
-        help='The mode of the controller',
+        help='Operating mode that defines how many doors/devices this controller manages and how they are configured. Different hardware models support different modes.',
         tracking=True
     )
 
@@ -249,6 +262,7 @@ class HrRfidController(models.Model):
         required=True,
         compute='_compute_controller_mode',
         inverse='_inverse_controller_mode',
+        help='Door control mode for standard access controllers. One door mode uses all resources for a single door, two door mode splits resources between two doors.'
     )
 
     mode_selection_4 = fields.Selection(
@@ -257,6 +271,7 @@ class HrRfidController(models.Model):
         required=True,
         compute='_compute_controller_mode',
         inverse='_inverse_controller_mode_4',
+        help='Door control mode for advanced access controllers that support up to 4 doors. Each door can have independent access rules and schedules.'
     )
 
     mode_selection_31 = fields.Selection(
@@ -266,11 +281,12 @@ class HrRfidController(models.Model):
         required=True,
         compute='_compute_controller_mode_31',
         inverse='_inverse_controller_mode_31',
+        help='Relay configuration mode:\n- 1 x 32: Single bank of 32 relays\n- 2 x 16: Two independent banks of 16 relays each\n- 1 x 512: Extended mode supporting up to 512 relay addresses'
     )
 
     external_db = fields.Boolean(
         string='External DB',
-        help='If the controller uses the "ExternalDB" feature.',
+        help='Enable external database mode. When active, the controller can receive card data from an external system instead of storing cards in its internal memory. Useful for large installations.',
         default=False,
         tracking=True
     )
@@ -279,43 +295,45 @@ class HrRfidController(models.Model):
         [('0', '1 second'), ('1', '0.1 seconds')],
         string='Relay Time Factor',
         default='0',
-        tracking=True
+        tracking=True,
+        help='Time unit for relay activation duration. When set to "1 second", relay timers count in seconds. When set to "0.1 seconds", timers count in deciseconds for more precise control.'
     )
 
     dual_person_mode = fields.Boolean(
         string='Dual Person Mode',
         default=False,
-        tracking=True
+        tracking=True,
+        help='Security feature requiring two authorized persons to badge within a time window to grant access. Commonly used for high-security areas like server rooms or vaults.'
     )
 
     max_cards_count = fields.Integer(
         string='Maximum Cards',
-        help='Maximum amount of cards the controller can hold in memory',
+        help='Maximum number of access cards this controller can store in its internal memory. Depends on the controller model and memory capacity. External DB mode bypasses this limit.',
     )
 
     cards_count = fields.Integer(
-        help='Amount of cards in the controller.',
+        help='Current number of access cards stored in the controller\'s memory. When this approaches the maximum, consider enabling external DB mode or removing unused cards.',
         default=0
     )
 
     max_events_count = fields.Integer(
         string='Maximum Events',
-        help='Maximum amount of events the controller can hold in memory',
+        help='Maximum number of access events (card swipes, door openings, alarms) the controller can store before overwriting old events. Events should be regularly downloaded to prevent data loss.',
     )
 
     hotel_readers = fields.Integer(
         string='Hotel readers',
-        help='Hotel readers connected to controller',
+        help='Number of hotel-style card readers connected. These readers support card insertion detection and guest service buttons (e.g., "Do Not Disturb", "Make Up Room").',
         default=0
     )
     hotel_readers_card_presence = fields.Integer(
         string='Hotel readers card presence',
-        help='Card inserted in Hotel readers connected to controller',
+        help='Binary representation of which hotel readers currently have a card inserted. Each bit represents one reader: 1 = card present, 0 = no card. Used for energy saving systems.',
         default=0
     )
     hotel_readers_buttons_pressed = fields.Integer(
         string='Hotel readers buttons pressed',
-        help='Pressed button on Hotel readers connected to controller',
+        help='Binary representation of which service buttons are currently pressed on hotel readers. Each bit represents a button state. Typically used for guest service requests.',
         default=0
     )
 
@@ -324,13 +342,13 @@ class HrRfidController(models.Model):
     # You can use the change_io_table method to automatically create a command
     io_table = fields.Char(
         string='Input/Output Table',
-        help='Input and output table for the controller.',
+        help='Programmable logic table in hexadecimal format. Defines automated responses linking inputs to outputs (e.g., "when input 1 triggers, activate output 3 for 5 seconds"). Advanced feature for custom automation.',
     )
 
     webstack_id = fields.Many2one(
         'hr.rfid.webstack',
         string='Module',
-        help='Module the controller serves',
+        help='IP communication module (webstack) this controller is connected to. The webstack provides network connectivity and manages communication between the server and controllers.',
         required=True,
         readonly=True,
         ondelete='cascade',
@@ -340,47 +358,50 @@ class HrRfidController(models.Model):
         comodel_name='hr.rfid.door',
         inverse_name='controller_id',
         string='Controlled Doors',
-        help='Doors that belong to this controller'
+        help='Doors managed by this controller. Each door has its own reader, lock, and access rules. The number of doors depends on the controller mode.'
     )
 
     reader_ids = fields.One2many(
         comodel_name='hr.rfid.reader',
         inverse_name='controller_id',
         string='Controlled Readers',
-        help='Readers that belong to this controller',
+        help='RFID card readers connected to this controller. Readers scan access cards and send the data to the controller for access decisions. Usually 1-2 readers per door (entry/exit).',
     )
 
     alarm_line_ids = fields.One2many(
         comodel_name='hr.rfid.ctrl.alarm',
         inverse_name='controller_id',
         string='Controlled Alarm Lines',
-        help='Alarm lines that belong to this controller',
+        help='Security alarm zones monitored by this controller. Each line can connect to different sensors (motion, door contact, glass break, etc.) and trigger appropriate responses.',
     )
     read_b3_cmd = fields.Boolean(
         string='Read Controller Status',
         default=False,
         index=True,
+        help='When enabled, the system will periodically read the controller status (inputs, outputs, alarms). Useful for real-time monitoring but increases network traffic.'
     )
     sensor_ids = fields.One2many(
         comodel_name='hr.rfid.ctrl.th',
         inverse_name='controller_id',
         string='Sensors',
-        help='Sensors that belong to this controller',
+        help='Temperature and humidity sensors connected to this controller. Used for environmental monitoring in server rooms, warehouses, or other climate-sensitive areas.',
     )
 
     temperature = fields.Float(
         string='Temperature',
         default=0,
+        help='Current temperature reading from the controller\'s internal or primary external sensor in Celsius. Updated when status is read.'
     )
 
     humidity = fields.Float(
         string='Humidity',
         default=0,
+        help='Current relative humidity percentage from the controller\'s internal or primary external sensor. Updated when status is read.'
     )
 
     # Temperature Controller
     event_interval = fields.Integer(
-        help="Time in minutes. 0 means disable function. Range 0..99 min",
+        help="Interval in minutes for automatic temperature/humidity event reporting. Set to 0 to disable automatic reporting. Valid range: 0-99 minutes. The controller will send readings at this interval.",
         compute="_compute_event_interval",
         inverse="_inverse_event_interval"
     )
@@ -403,7 +424,7 @@ class HrRfidController(models.Model):
             raise ValidationError(_('Valid interval range is 0-99 min.'))
 
     high_temperature = fields.Float(
-        help="Temperature above the controller will trigger High temperature event. Range -55..125 ℃"
+        help="Upper temperature threshold in Celsius. When exceeded, the controller triggers a high temperature alarm event. Valid range: -55 to 125°C. Use for overheating protection."
     )
 
     @api.constrains('high_temperature')
@@ -412,7 +433,7 @@ class HrRfidController(models.Model):
             raise ValidationError(_('Valid High Temperature range is -55 .. 125 ℃'))
 
     low_temperature = fields.Float(
-        help="Temperature below the controller will trigger Low temperature event. Range -55..125 ℃"
+        help="Lower temperature threshold in Celsius. When temperature drops below this value, the controller triggers a low temperature alarm event. Valid range: -55 to 125°C. Use for freeze protection."
     )
 
     @api.constrains('low_temperature')
@@ -421,7 +442,7 @@ class HrRfidController(models.Model):
             raise ValidationError(_('Valid Low Temperature range is -55 .. 125 ℃'))
 
     hysteresis = fields.Float(
-        help="Hysteresis for event triggering. Range 0.5..9 ℃"
+        help="Temperature hysteresis (dead band) in Celsius to prevent alarm flickering. The temperature must change by this amount before the alarm state changes. Valid range: 0.5 to 9°C. Example: If high temp is 30°C with 2°C hysteresis, alarm triggers at 30°C but clears only when temp drops below 28°C."
     )
 
     @api.constrains('hysteresis')
@@ -432,25 +453,55 @@ class HrRfidController(models.Model):
     system_voltage = fields.Float(
         string='System Voltage',
         default=0,
+        help='Current voltage level of the controller\'s internal power supply in VDC. Normal range is typically 11-14V for 12V systems. Low voltage may indicate power supply issues.'
     )
 
     input_voltage = fields.Float(
         string='Input Voltage',
         default=0,
+        help='Voltage level supplied to the controller from the external power source in VDC. Should match the controller\'s specifications (usually 12-24V). Monitor for power stability.'
     )
 
     last_f0_read = fields.Datetime(
         string='Last System Information Update',
+        help='Date and time when the controller\'s system information (hardware details, capabilities, firmware version) was last retrieved. Updates when F0 command is executed.'
     )
 
-    commands_count = fields.Char(string='Commands count', compute='_compute_counts')
-    system_event_count = fields.Char(string='System Events count', compute='_compute_counts')
-    user_event_count = fields.Char(string='User events count', compute='_compute_counts')
-    readers_count = fields.Char(string='Readers count', compute='_compute_counts')
-    doors_count = fields.Char(string='Doors count', compute='_compute_counts')
-    alarm_line_count = fields.Char(string='Alarm line count', compute='_compute_counts')
+    commands_count = fields.Char(
+        string='Commands count', 
+        compute='_compute_counts',
+        help='Total number of commands (pending and executed) for this controller. High numbers may indicate communication issues if commands are not being processed.'
+    )
+    system_event_count = fields.Char(
+        string='System Events count', 
+        compute='_compute_counts',
+        help='Number of system events (errors, status changes, communication issues) logged by this controller. Review these events to monitor controller health.'
+    )
+    user_event_count = fields.Char(
+        string='User events count', 
+        compute='_compute_counts',
+        help='Number of user access events (card swipes, access granted/denied, door forced) recorded by this controller\'s readers. Shows access activity level.'
+    )
+    readers_count = fields.Char(
+        string='Readers count', 
+        compute='_compute_counts',
+        help='Number of card readers configured for this controller. Typically matches the number of doors multiplied by 2 (one reader per side of each door).'
+    )
+    doors_count = fields.Char(
+        string='Doors count', 
+        compute='_compute_counts',
+        help='Number of doors managed by this controller. Depends on the controller mode: single door, two doors, or up to four doors for advanced models.'
+    )
+    alarm_line_count = fields.Char(
+        string='Alarm line count', 
+        compute='_compute_counts',
+        help='Number of alarm zones configured for this controller. Each zone can monitor different security sensors and trigger specific responses.'
+    )
 
-    default_io_table = fields.Char(compute='_compute_default_io_table')
+    default_io_table = fields.Char(
+        compute='_compute_default_io_table',
+        help='Factory default I/O table configuration for this controller model and mode. Used as a template when resetting or initializing the I/O logic table.'
+    )
 
     @api.constrains('mode')
     def _check_mode(self):

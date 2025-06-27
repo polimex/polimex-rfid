@@ -13,6 +13,12 @@
             </field>
             <field name="binding_model_id" ref="model_hr_rfid_webstack"/>
             <field name="binding_view_types">form</field>
+            <field name="help" type="html">
+                <p>
+                    Move controllers from this module to another module.
+                    This is useful when replacing hardware or reorganizing your RFID infrastructure.
+                </p>
+            </field>
         </record>
         <record id="hr_rfid_webstack_replace_destination_wiz_action" model="ir.actions.act_window">
             <field name="name">Get controllers from ...</field>
@@ -26,6 +32,12 @@
             </field>
             <field name="binding_model_id" ref="model_hr_rfid_webstack"/>
             <field name="binding_view_types">form</field>
+            <field name="help" type="html">
+                <p>
+                    Receive controllers from another module into this module.
+                    The source module will be disabled after the transfer.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_webstack_replace_wiz_view_form" model="ir.ui.view">

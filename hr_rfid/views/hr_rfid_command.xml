@@ -6,6 +6,28 @@
             <field name="res_model">hr.rfid.command</field>
             <field name="view_mode">list,form,search,calendar,pivot</field>
             <field name="context">{"search_default_this_day": 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No commands found
+                </p>
+                <p>
+                    Commands are automatically created when the system needs to communicate with RFID controllers.
+                    They represent instructions sent to the hardware devices to perform actions like:
+                </p>
+                <ul>
+                    <li>Adding or removing card access rights</li>
+                    <li>Reading controller information and status</li>
+                    <li>Synchronizing time settings</li>
+                    <li>Managing door configurations</li>
+                </ul>
+                <p>
+                    Commands go through these stages:
+                    <br/><b>Wait</b> → <b>Process</b> → <b>Success</b> or <b>Failure</b>
+                </p>
+                <p class="text-muted">
+                    <i class="fa fa-info-circle"/> Commands are automatically cleaned up after 14 days to maintain system performance.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_command_view_form" model="ir.ui.view">
@@ -62,7 +84,7 @@
             </field>
         </record>
 
-        <record id="hr_rfid_command_view_tree" model="ir.ui.view">
+        <record id="hr_rfid_command_view_list" model="ir.ui.view">
             <field name="name">hr.rfid.command.list</field>
             <field name="model">hr.rfid.command</field>
             <field name="arch" type="xml">

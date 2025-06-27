@@ -25,6 +25,26 @@
             <field name="name">Zones</field>
             <field name="res_model">hr.rfid.zone</field>
             <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first zone
+                </p>
+                <p>
+                    Zones help you organize your facility into logical areas for access control and tracking.
+                    Each zone represents a physical area (like "Main Building" or "Warehouse") with specific doors
+                    as entry/exit points.
+                </p>
+                <p>
+                    Key features:
+                    <ul>
+                        <li><b>Real-time occupancy:</b> See who is currently in each zone</li>
+                        <li><b>Anti-pass back:</b> Prevent tailgating and ensure accurate tracking</li>
+                        <li><b>Attendance tracking:</b> Automatically track work hours based on zone entry/exit</li>
+                        <li><b>Access restrictions:</b> Limit zones to specific departments or employee groups</li>
+                        <li><b>Safety compliance:</b> Monitor zone capacity for emergency evacuations</li>
+                    </ul>
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_zone_doors_wiz" model="ir.ui.view">
@@ -53,6 +73,12 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_rfid_zone_doors_wiz"/>
             <field name="target">new</field>
+            <field name="help" type="html">
+                <p>
+                    Manage which doors belong to this zone.
+                    Doors marked as entrance or exit points will track movement in and out of the zone.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_zone_view_form" model="ir.ui.view">
@@ -133,9 +159,15 @@
             <field name="binding_model_id" ref="hr_rfid.model_hr_rfid_zone"/>
             <field name="binding_view_types">form</field>
             <field name="target">new</field>
+            <field name="help" type="html">
+                <p>
+                    Manage which doors belong to this zone.
+                    Doors marked as entrance or exit points will track movement in and out of the zone.
+                </p>
+            </field>
         </record>
 
-        <record id="hr_rfid_zone_view_tree" model="ir.ui.view">
+        <record id="hr_rfid_zone_view_list" model="ir.ui.view">
             <field name="name">hr.rfid.zone.list</field>
             <field name="model">hr.rfid.zone</field>
             <field name="arch" type="xml">

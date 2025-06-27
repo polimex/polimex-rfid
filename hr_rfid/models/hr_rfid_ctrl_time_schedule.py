@@ -21,38 +21,51 @@ class HrRfidTimeSchedule(models.Model):
 
     name = fields.Char(
         string='Name',
-        help='Label for the time schedule',
+        help='Give this time schedule a descriptive name that helps identify when it\'s used. '
+             'For example: "Regular Working Hours", "Night Shift", "Weekend Access", etc.',
         required=True,
         tracking=True,
     )
 
     number = fields.Integer(
         string='TS Number',
+        help='System-assigned time schedule number (0-15). TS 0 is reserved for "Not using TS" '
+             'which means no time restrictions. Each controller can store up to 16 time schedules.',
         required=True,
         readonly=True,
     )
 
     company_id = fields.Many2one('res.company',
                                  string='Company',
+                                 help='The company this time schedule belongs to. Time schedules are '
+                                      'company-specific and cannot be shared between companies.',
                                  default=lambda self: self.env.company)
 
     is_empty = fields.Boolean(
-        compute='_compute_is_empty'
+        compute='_compute_is_empty',
+        help='Indicates whether this time schedule has any active time periods defined. '
+             'Empty time schedules block all access when assigned to doors.'
     )
 
     ts_data = fields.Char(
-        default=DEFAULT_TS_LINE
+        default=DEFAULT_TS_LINE,
+        help='Internal representation of the time schedule data in hexadecimal format. '
+             'Contains a 7x24 grid plus holiday settings. Do not modify directly - use the '
+             'Details button to edit time periods through the wizard.'
     )
 
     access_group_door_ids = fields.One2many(
         'hr.rfid.access.group.door.rel',
         'time_schedule_id',
         string='Access Group/Door Combinations',
-        help='Which doors use this time schedule in which access group',
+        help='Shows all doors and access groups that use this time schedule. This helps you '
+             'understand which areas and employee groups are affected by changes to this schedule.',
     )
 
     controller_ids = fields.Many2many(
         comodel_name='hr.rfid.ctrl',
+        help='RFID controllers that have this time schedule programmed. The schedule is '
+             'automatically synchronized to controllers when doors using this schedule are configured.',
         # compute='_compute_controllers_ids'
     )
 
@@ -116,18 +129,27 @@ class HrRfidTimeScheduleWizDayLine(models.TransientModel):
     _order = 'day'
     _rec_name = 'display_name'
 
-    display_name = fields.Char(compute='_compute_display_name')
+    display_name = fields.Char(
+        compute='_compute_display_name',
+        help='Display name showing the day and interval number for easy identification.'
+    )
     begin = fields.Float(
-        help='The begin time of the interval'
+        help='Start time for this access period. Enter in 24-hour format (e.g., 8.5 for 8:30 AM, '
+             '17.25 for 5:15 PM). Leave at 0:00 if this interval is not used.'
     )
     end = fields.Float(
-        help='The end time of the interval'
+        help='End time for this access period. Enter in 24-hour format (e.g., 17.5 for 5:30 PM, '
+             '23.75 for 11:45 PM). Must be after the begin time. Set to 0:00 to disable this interval.'
     )
     number = fields.Integer(
         readonly=True,
-        help='Number of the interval in the day'
+        help='Interval number (1-4). Each day can have up to 4 separate access periods. '
+             'For example: Interval 1 for morning (8:00-12:00), Interval 2 for afternoon (13:00-17:00).'
     )
-    day_number = fields.Integer(readonly=True)
+    day_number = fields.Integer(
+        readonly=True,
+        help='Internal day number (0-7) used for data processing.'
+    )
     day = fields.Selection(
         selection=[
             ('0', 'Monday'),
@@ -140,11 +162,13 @@ class HrRfidTimeScheduleWizDayLine(models.TransientModel):
             ('7', 'Holiday')
         ],
         string="Day",
-        help="The day for this interval",
+        help="Day of the week or Holiday. The Holiday setting applies to all dates marked as holidays "
+             "in the system, overriding the regular weekday schedule.",
         readonly=True
     )
     week_id = fields.Many2one(
-        comodel_name='hr.rfid.ctrl.ts.week.wiz'
+        comodel_name='hr.rfid.ctrl.ts.week.wiz',
+        help='Reference to the parent time schedule week wizard.'
     )
 
     @api.constrains('begin', 'end', 'number')
@@ -204,13 +228,18 @@ class HrRfidTimeScheduleWizWeek(models.TransientModel):
     ts_id = fields.Many2one(
         string='Time Schedule',
         comodel_name='hr.rfid.time.schedule',
-        default=lambda self: self.env.context.get('active_id', None)
+        default=lambda self: self.env.context.get('active_id', None),
+        help='The time schedule being edited. This wizard allows you to configure when access is '
+             'allowed for each day of the week and holidays.'
     )
 
     interval_ids = fields.One2many(
         comodel_name='hr.rfid.ctrl.ts.line',
         inverse_name='week_id',
         default=_default_interval_ids,
+        help='Define up to 4 time periods per day when access is allowed. The schedule works as a '
+             '7x24 grid: 7 days plus holidays, with up to 4 intervals each day. Outside these '
+             'periods, access will be denied. Leave intervals at 0:00 - 0:00 to skip them.'
     )
 
     @api.constrains('interval_ids')

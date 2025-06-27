@@ -4,23 +4,28 @@ from odoo import api, fields, models, exceptions
 
 class HrRfidWorkcode(models.Model):
     _name = 'hr.rfid.workcode'
-    _description = 'Workcode'
+    _description = 'RFID Workcode for Time Tracking'
     _inherit = ['mail.thread']
 
     _sql_constraints = [ ('rfid_workcode_unique', 'unique(workcode)',
                           'Work code must be unique!') ]
     name = fields.Char(
         string='Name',
-        help='A label to remind what the workcode represents.',
+        help='A descriptive name for this workcode that helps employees understand its purpose. '
+             'For example: "Start Work", "Lunch Break", "End of Day", etc.',
         tracking=True,
         required=True,
     )
     company_id = fields.Many2one('res.company',
                                  string='Company',
+                                 help='The company this workcode belongs to. In multi-company setups, '
+                                      'each company can have its own set of workcodes.',
                                  default=lambda self: self.env.company)
     workcode = fields.Char(
         string='Workcode',
-        help="The actual workcode ",
+        help='A 4-digit numerical code that employees will enter on RFID terminals to record '
+             'their time tracking actions. Must be exactly 4 digits (0000-9999). '
+             'Common examples: 0001 for start work, 0002 for break, 0003 for end work.',
         size=4,
         required=True,
     )
@@ -32,7 +37,10 @@ class HrRfidWorkcode(models.Model):
             ('break', 'Going to a break'),
         ],
         string='User action',
-        help='What the user does when he submits this workcode',
+        help='Defines what type of time tracking action this workcode represents:\n'
+             '• Start: Records the beginning of a work shift (clock in)\n'
+             '• Break: Records when an employee goes on break (lunch, rest, etc.)\n'
+             '• Stop: Records the end of an action (returning from break, leaving work, etc.)',
         default='stop',
         tracking=True,
         required=True,

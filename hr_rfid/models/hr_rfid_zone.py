@@ -18,20 +18,29 @@ class HrRfidZone(models.Model):
         string='Zone Name',
         tracking=True,
         required=True,
+        help="A descriptive name for this zone (e.g., 'Main Building', 'Production Area', 'Warehouse'). "
+             "This helps organize your facility into logical areas for access control and tracking."
     )
     company_id = fields.Many2one('res.company',
                                  string='Company',
-                                 default=lambda self: self.env.company)
+                                 default=lambda self: self.env.company,
+                                 help="The company this zone belongs to. Zones are company-specific for multi-company setups.")
 
     anti_pass_back = fields.Boolean(
         string='Anti-Pass Back',
-        help="Disallow people in the zone to enter again, or leave if they're not in it",
+        help="Security feature that prevents tailgating and ensures accurate tracking. When enabled:\n"
+             "• People can only enter if they're currently outside the zone\n"
+             "• People can only exit if they're currently inside the zone\n"
+             "• Prevents using the same card twice to enter without exiting first\n"
+             "This helps maintain accurate occupancy counts and prevents unauthorized access.",
         tracking=True,
     )
 
     log_out_on_exit = fields.Boolean(
         string='Logout on Exit',
-        help='Whether to log people out on exit',
+        help="Automatically log out employees from the system when they exit this zone. "
+             "Useful for high-security areas where you want to ensure users are logged out "
+             "when they physically leave the zone.",
         tracking=True,
     )
 
@@ -41,33 +50,43 @@ class HrRfidZone(models.Model):
         'zone_id',
         'door_id',
         string='Doors',
-        help='Doors in this zone',
+        help="Select all doors that define the boundaries of this zone. These are the entry/exit points "
+             "that will track when people enter or leave the zone. The zone will monitor access events "
+             "from all selected doors to maintain accurate occupancy.",
         tracking=True,
     )
 
     permitted_department_ids = fields.Many2many(
         'hr.department',
         string='Departments',
-        help='Permitted departments for this zone. If empty, it applies to all departments.',
+        help="Restrict zone access to specific departments. Only employees from selected departments "
+             "will be tracked in this zone. Leave empty to allow all departments. This is useful for "
+             "creating department-specific areas like 'IT Server Room' or 'HR Records Room'.",
         tracking=True,
     )
     permitted_employee_category_ids = fields.Many2many(
         'hr.employee.category',
         string='Tags',
-        help='Permitted employee tags for this zone. If empty, it applies to all employees.',
+        help="Restrict zone access to employees with specific tags/categories. Only employees with at least "
+             "one of the selected tags will be tracked. Leave empty to allow all employees. Useful for "
+             "access control based on roles (e.g., 'Manager', 'Contractor', 'Visitor').",
         tracking=True,
     )
 
     employee_ids = fields.Many2many(
         'hr.employee',
         string='Employees',
-        help='Employees currently in this zone',
+        help="Real-time list of employees currently present in this zone. This field is automatically "
+             "updated when employees enter or exit through the zone's doors. Use this to monitor "
+             "current occupancy and locate employees.",
     )
 
     contact_ids = fields.Many2many(
         'res.partner',
         string='Contacts',
-        help='Contacts currently in this zone',
+        help="Real-time list of external contacts (visitors, contractors, vendors) currently in this zone. "
+             "Automatically updated as contacts enter/exit. Useful for visitor tracking and emergency "
+             "evacuation lists.",
     )
 
     notification_ids = fields.One2many(
@@ -75,10 +94,21 @@ class HrRfidZone(models.Model):
         inverse_name='zone_id',
         string='Notifications',
         tracking=True,
+        help="Configure automatic notifications for zone events. You can set up alerts for:\n"
+             "• When specific people enter/exit\n"
+             "• When capacity thresholds are reached\n"
+             "• Security breaches or unauthorized access attempts\n"
+             "Notifications can be sent via email, SMS, or system messages."
     )
 
-    employee_count = fields.Char(compute='_compute_counts')
-    contact_count = fields.Char(compute='_compute_counts')
+    employee_count = fields.Char(
+        compute='_compute_counts',
+        help="Current number of employees in this zone. Automatically calculated based on entry/exit events."
+    )
+    contact_count = fields.Char(
+        compute='_compute_counts',
+        help="Current number of external contacts (visitors) in this zone. Automatically calculated."
+    )
 
     def _check_employee_permit(self, employee_id):
         res = []
@@ -302,12 +332,15 @@ class HrRfidZoneDoorsWizard(models.TransientModel):
         string='Zone',
         required=True,
         default=_default_zone,
+        help="The zone you are modifying. This field is read-only as you're working with the currently selected zone."
     )
 
     door_ids = fields.Many2many(
         'hr.rfid.door',
         string='Doors',
-        help='Which doors to add to the access group',
+        help="Select doors to add or remove from this zone. These doors will serve as entry/exit points "
+             "that track when people move in and out of the zone. Choose all doors that provide access "
+             "to this physical area.",
         required=True,
     )
 

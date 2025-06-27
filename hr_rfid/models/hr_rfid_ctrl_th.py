@@ -4,59 +4,84 @@ from odoo import fields, models, api, _, SUPERUSER_ID
 class CtrlTemperatureAndHumidity(models.Model):
     _name = 'hr.rfid.ctrl.th'
     _inherit = ['mail.thread']
-    _description = 'Temperature and Humidity log'
+    _description = 'Temperature and Humidity Sensor'
 
     active = fields.Boolean(
         default=True,
-        tracking=True
+        tracking=True,
+        help='When unchecked, this sensor will be hidden and stop recording data. '
+             'You can reactivate it later without losing historical data.'
     )
     name = fields.Char(
-        help='Sensor friendly name',
+        string='Sensor Name',
+        help='Give this sensor a descriptive name (e.g., "Server Room Temperature", "Warehouse Humidity"). '
+             'This name will appear in reports and alerts.',
         required=True,
         default='T&H Sensor'
     )
     uid = fields.Char(
-        help='Sensor unique/serial number',
+        string='Serial Number',
+        help='The unique serial number of this temperature/humidity sensor. '
+             'This is set by the manufacturer and cannot be changed.',
     )
     internal_number = fields.Char(
-        help='Sensor internal number in the controller',
+        string='Internal ID',
+        help='The internal identification number assigned by the controller. '
+             'This is used for communication between the sensor and controller.',
         tracking=True
     )
     temperature = fields.Float(
-        help='Current Temperature value',
+        string='Current Temperature',
+        help='The most recent temperature reading from this sensor (in Celsius). '
+             'This value updates automatically when the sensor sends new data.',
         aggregator='avg',
         readonly=True,
     )
     humidity = fields.Float(
-        help='Current Humidity value',
+        string='Current Humidity',
+        help='The most recent humidity reading from this sensor (as a percentage). '
+             'This value updates automatically when the sensor sends new data.',
         aggregator='avg',
         readonly=True,
     )
     sensor_number = fields.Integer(
+        string='Sensor Number',
+        help='The position number of this sensor in the controller\'s sensor list. '
+             'This is automatically assigned and cannot be changed.',
         required=True,
         readonly=True,
     )
     controller_id = fields.Many2one(
+        string='Controller',
         comodel_name='hr.rfid.ctrl',
+        help='The RFID controller that manages this temperature/humidity sensor. '
+             'Each sensor must be connected to a controller to function.',
         required=True,
         readonly=True,
         ondelete='cascade',
     )
     door_id = fields.Many2one(
+        string='Associated Door',
         comodel_name='hr.rfid.door',
+        help='Link this sensor to a specific door to monitor its environmental conditions. '
+             'This is useful for server rooms or sensitive areas.',
         ondelete='cascade',
         tracking=True
     )
     th_log_ids = fields.One2many(
+        string='Sensor Logs',
         comodel_name='hr.rfid.ctrl.th.log',
-        inverse_name='th_id'
-
+        inverse_name='th_id',
+        help='Historical temperature and humidity readings from this sensor. '
+             'Use the "View Logs" button to see detailed history and trends.'
     )
     log_every_read = fields.Boolean(
+        string='Log All Readings',
         tracking=True,
-        default=0,
-        help='If True, the value will be logged every time. If False, the value will be logged'
-             ' only if value has changed from previous read'
+        default=False,
+        help='Check this box to save every reading from the sensor, even if values haven\'t changed. '
+             'Leave unchecked to save storage space by only recording when temperature or humidity changes. '
+             'Enable this for critical areas requiring complete audit trails.'
     )
 
     def button_log(self):

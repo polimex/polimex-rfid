@@ -57,32 +57,35 @@ class HrRfidWebstack(models.Model):
 
     name = fields.Char(
         string='Name',
-        help='A label to easily differentiate modules',
+        help='Enter a descriptive name to identify this module (e.g., "Main Building Module" or "Warehouse Gate Module"). This helps you manage multiple modules in your system.',
         required=True,
         index=True,
         tracking=True,
     )
     company_id = fields.Many2one('res.company',
                                  string='Company',
+                                 help='Select which company this module belongs to. Controllers and access rights will be managed within this company context.',
                                  default=lambda self: self.env.company)
     tz = fields.Selection(
         _tz_get,
         string='Timezone',
         default=lambda self: self._context.get('tz'),
-        help='If not set, will assume GMT',
+        help='Select the timezone where this module is physically located. This ensures accurate time synchronization between the module and Odoo for access logs and schedules.',
     )
 
     tz_offset = fields.Char(
         string='Timezone offset',
         compute='_compute_tz_offset',
+        help='Automatically calculated timezone offset from UTC (e.g., +0200 for UTC+2). Used internally for time synchronization.',
     )
     time_format = fields.Char(
-        compute='_compute_time_format'
+        compute='_compute_time_format',
+        help='Time format used by this module based on its hardware version. Automatically determined.',
     )
 
     serial = fields.Char(
         string='Serial number',
-        help='Unique number to differentiate all modules',
+        help='Unique 6-digit serial number printed on the module hardware. This is automatically detected when the module connects to Odoo. Contact support if you need to register a new module.',
         size=6,
         index=True,
         readonly=True,
@@ -93,67 +96,69 @@ class HrRfidWebstack(models.Model):
         size=4,
         index=True,
         default='0000',
+        help='4-digit security key for module authentication. Change this from the default "0000" to secure your module. The module must have the same key configured.',
         tracking=True,
     )
 
     active = fields.Boolean(
         string='Active',
-        help='Will accept events from module if true',
+        help='Enable this to allow the module to communicate with Odoo. When disabled, the module will not be able to send events or receive commands. Useful for maintenance or troubleshooting.',
         default=False,
         tracking=True,
     )
 
     version = fields.Char(
         string='Version',
-        help='Software version of the module',
+        help='Firmware version running on the module. This is automatically detected. Contact support if an update is needed.',
         size=6,
     )
 
     hw_version = fields.Char(
         string='Hardware Version',
-        help='Hardware version of the module',
+        help='Hardware model/version of the module (e.g., 10.3, 50.1, 100.1). This determines the module\'s capabilities and supported features.',
         size=6,
     )
 
     behind_nat = fields.Boolean(
         string='Behind NAT',
-        help='Whether we can create a direct connection to the module or not',
+        help='Enable if the module is behind a firewall/router (most common). When enabled, the module initiates connection to Odoo. When disabled, Odoo can directly connect to the module\'s IP address.',
         required=True,
         default=True,
     )
 
     last_ip = fields.Char(
         string='Last IP',
-        help='Last IP the module connected from',
+        help='The IP address the module last connected from. For modules behind NAT, this is the public IP. For direct connection modules, this is used to send commands.',
         size=26,
     )
 
     updated_at = fields.Datetime(
         string='Last Update',
-        help='The last date we received an event from the module',
+        help='Last time this module communicated with Odoo. If this is more than 10 minutes ago, the module may be offline or experiencing connection issues.',
     )
 
     controllers = fields.One2many(
         'hr.rfid.ctrl',
         'webstack_id',
         string='Controllers',
-        help='Controllers that this WebStack manages'
+        help='List of access control devices connected to this module. Each controller manages doors, readers, and access permissions. Click "Read controllers" to auto-detect connected devices.'
     )
 
     http_link = fields.Char(
-        compute='_compute_http_link'
+        compute='_compute_http_link',
+        help='Direct web interface link to the module. Only available when "Behind NAT" is disabled. Click to access the module\'s configuration page.',
     )
 
     module_username = fields.Selection(
         selection=[('admin', 'admin'), ('sdk', 'SDK')],
         string='Module Username',
-        help='Username for the admin account for the module',
+        help='Username for accessing the module\'s web interface. Use "admin" for full access or "SDK" for API access only. Must match the username configured in the module.',
         default='admin',
     )
 
     module_password = fields.Char(
         string='Module Password',
-        help='Password for the admin account for the module',
+        help='Password for the module\'s web interface. Must match the password configured in the module. Required for direct connection and module configuration.',
         default='',
     )
 
@@ -163,19 +168,32 @@ class HrRfidWebstack(models.Model):
             ('a', 'Available')
         ],
         string='Available?',
-        help='Whether the module was available the last time Odoo tried to connect to it.',
+        help='Connection status indicator:\n• Available (green): Module is online and responding\n• Unavailable (red): Module is offline or not responding\nUpdated when using "Test module connection" button.',
         default='u',
     )
 
     last_update = fields.Boolean(
         string='Contacted in last 10 min',
         compute='_compute_last_update',
-        store=True
+        store=True,
+        help='Indicates if the module has communicated with Odoo in the last 10 minutes. Used to determine if the module is currently online and functioning.',
     )
 
-    commands_count = fields.Char(string='Commands count', compute='_compute_counts')
-    system_event_count = fields.Char(string='System Events count', compute='_compute_counts')
-    controllers_count = fields.Char(string='Controllers count', compute='_compute_counts')
+    commands_count = fields.Char(
+        string='Commands count',
+        compute='_compute_counts',
+        help='Total number of commands sent to this module. Includes pending, successful, and failed commands.',
+    )
+    system_event_count = fields.Char(
+        string='System Events count',
+        compute='_compute_counts',
+        help='Total number of system events logged by this module. Includes errors, warnings, and diagnostic information.',
+    )
+    controllers_count = fields.Char(
+        string='Controllers count',
+        compute='_compute_counts',
+        help='Number of controllers currently connected to this module. Each controller manages doors and readers.',
+    )
 
     _sql_constraints = [('rfid_webstack_serial_unique', 'unique(serial)',
                          'Serial number for Module must be unique!')]
