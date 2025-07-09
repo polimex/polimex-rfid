@@ -72,7 +72,7 @@ class HrAttendance(models.Model):
             return close and max_hours and self.open_worked_hours > max_hours
         else:
             max_hours = max_time
-            close = not float_is_zero(max_time, precision_rounding=0)
+            close = not float_is_zero(max_time or 0.0, precision_digits=2)
             open_worked_hours = (fields.Datetime.now() - self.check_in).total_seconds() / 3600
             return close and max_hours and open_worked_hours > max_hours
 
