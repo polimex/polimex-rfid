@@ -97,7 +97,7 @@ class ResPartner(models.Model):
         for i in range(len(acc_grs)):
             for j in range(i + 1, len(acc_grs)):
                 door_rels1 = acc_grs[i].all_door_ids
-                door_rels2 = acc_grs[i].all_door_ids
+                door_rels2 = acc_grs[j].all_door_ids
                 acc_gr_door_rel_env.check_for_ts_inconsistencies(door_rels1, door_rels2)
 
     @api.constrains('hr_rfid_access_group_ids')

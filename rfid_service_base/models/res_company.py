@@ -8,5 +8,6 @@ class ResCompany(models.Model):
     @api.model_create_multi
     def create(self, values_list):
         res = super(ResCompany, self).create(values_list)
-        self.env.ref('rfid_service_base.seq_base_service_reservation').copy({'company_id': res.id})
+        for company in res:
+            self.env.ref('rfid_service_base.seq_base_service_reservation').copy({'company_id': company.id})
         return res

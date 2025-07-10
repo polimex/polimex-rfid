@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-07 15:33+0000\n"
-"PO-Revision-Date: 2024-07-07 18:34+0300\n"
+"POT-Creation-Date: 2025-07-10 10:21+0000\n"
+"PO-Revision-Date: 2025-07-10 13:21+0300\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -15,14 +15,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.3\n"
+"X-Generator: Poedit 3.6\n"
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
 msgid "<i class=\"fa fa-ellipsis-v\" role=\"img\" aria-label=\"Manage\" title=\"Manage\"/>"
 msgstr ""
-"<i class=\"fa fa-ellipsis-v\" role=\"img\" aria-label=\"Управление\" title=\"Управление"
-"\"/>"
+"<i class=\"fa fa-ellipsis-v\" role=\"img\" aria-label=\"Управление\" "
+"title=\"Управление\"/>"
 
 #. module: rfid_service_base
 #: code:addons/rfid_service_base/models/res_partner.py:0
@@ -126,6 +126,7 @@ msgstr "Икона за тип действие"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__parent_id
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__parent_id
 msgid ""
 "All partners created from this service will be attached to this partner. It is optional."
 msgstr ""
@@ -336,7 +337,7 @@ msgstr "Завършен"
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
 msgid "Fix Partner"
-msgstr "Fix Partner"
+msgstr ""
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__fixed_time
@@ -416,9 +417,7 @@ msgstr "Ако е избрано новите съобщения ще изиск
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__message_has_error
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__message_has_sms_error
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__message_has_error
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Ако е избрано някой съобщения имат грешка при доставка."
 
@@ -616,6 +615,7 @@ msgstr "Само една услуга за същия период за дад�
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__parent_id
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__parent_id
 msgid "Parent"
 msgstr "Основен"
 
@@ -734,6 +734,11 @@ msgid "Related company"
 msgstr "Свързана компания"
 
 #. module: rfid_service_base
+#: model:ir.model,name:rfid_service_base.model_hr_rfid_access_group_contact_rel
+msgid "Relation between access groups and contacts"
+msgstr "Връзка между групи за достъп и контакти"
+
+#. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__time_interval_number
 msgid "Repeat every x."
 msgstr "Повтаряйте на всеки x."
@@ -744,10 +749,9 @@ msgid "Responsible User"
 msgstr "Отговорен потребител"
 
 #. module: rfid_service_base
-#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__message_has_sms_error
-#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__message_has_sms_error
-msgid "SMS Delivery error"
-msgstr "SMS при грешка на доставка"
+#: model:ir.model.fields,field_description:rfid_service_base.field_hr_rfid_access_group_contact_rel__rfid_service_sale_id
+msgid "Rfid Service Sale"
+msgstr ""
 
 #. module: rfid_service_base
 #: model:ir.actions.act_window,name:rfid_service_base.hr_rfid_service_sale_action
@@ -839,6 +843,18 @@ msgstr "Тип услуга"
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__end_date
 msgid "Service end"
 msgstr "Услугата изтича"
+
+#. module: rfid_service_base
+#: code:addons/rfid_service_base/models/rfid_service_sale.py:0
+#, python-format
+msgid ""
+"Service periods overlap for partner %s!\n"
+"Service 1: %s (%s - %s)\n"
+"Service 2: %s (%s - %s)"
+msgstr ""
+"Периодите на обслужване се припокриват за партньор %s!\n"
+"Услуга 1: %s (%s - %s)\n"
+"Услуга 2: %s (%s - %s)"
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_calendar
@@ -949,8 +965,14 @@ msgstr "Картата ще бъде генерирана автоматично
 #. module: rfid_service_base
 #: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0
 #, python-format
-msgid "The partner have valid service for this period!"
-msgstr "Партньорът има валидна услуга за този период!"
+msgid ""
+"The partner already has an active service for this period!\n"
+"Existing service: %s - %s\n"
+"New service: %s - %s"
+msgstr ""
+"Партньорът вече има активна услуга за този период!\n"
+"Съществуваща услуга: %s - %s\n"
+"Нова услуга: %s - %s"
 
 #. module: rfid_service_base
 #: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0

@@ -70,6 +70,42 @@ class BaseRFIDService(models.Model):
         string='Visits',
         related='access_group_contact_rel.visits_counter',
     )
+    
+    @api.constrains('partner_id', 'start_date', 'end_date', 'state')
+    def _check_overlap_services(self):
+        """Check for overlapping service periods for the same partner"""
+        for sale in self:
+            if not sale.partner_id or sale.state == 'canceled':
+                continue
+                
+            # Search for other active sales for the same partner
+            domain = [
+                ('partner_id', '=', sale.partner_id.id),
+                ('id', '!=', sale.id),
+                ('state', 'not in', ['canceled', 'finished'])
+            ]
+            
+            other_sales = self.search(domain)
+            
+            for other_sale in other_sales:
+                # Check all overlap cases
+                if (other_sale.start_date <= sale.start_date < other_sale.end_date or
+                    other_sale.start_date < sale.end_date <= other_sale.end_date or
+                    (sale.start_date <= other_sale.start_date and sale.end_date >= other_sale.end_date) or
+                    (other_sale.start_date <= sale.start_date and other_sale.end_date >= sale.end_date)):
+                    raise ValidationError(_(
+                        'Service periods overlap for partner %s!\n'
+                        'Service 1: %s (%s - %s)\n'
+                        'Service 2: %s (%s - %s)'
+                    ) % (
+                        sale.partner_id.name,
+                        sale.name,
+                        sale.start_date.strftime('%Y-%m-%d %H:%M'),
+                        sale.end_date.strftime('%Y-%m-%d %H:%M'),
+                        other_sale.name,
+                        other_sale.start_date.strftime('%Y-%m-%d %H:%M'),
+                        other_sale.end_date.strftime('%Y-%m-%d %H:%M')
+                    ))
 
     # @api.depends('partner_id.hr_rfid_card_ids', 'partner_id.hr_rfid_access_group_ids')
     @api.depends('access_group_contact_rel', 'start_date', 'end_date')
