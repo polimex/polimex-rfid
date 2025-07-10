@@ -591,7 +591,7 @@ class HrRfidAccessGroupRelations(models.AbstractModel):
     def active_for_visits(self):
         res = []
         for agr in self:
-            if (agr.visits_counting and agr.permitted_visits < agr.visits_counter) or not agr.visits_counting:
+            if not agr.visits_counting or (agr.visits_counting and agr.visits_counter < agr.permitted_visits):
                 res.append(True)
         return res and all(res) or False
 
