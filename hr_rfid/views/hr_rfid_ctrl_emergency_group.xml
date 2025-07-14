@@ -105,8 +105,7 @@
                                                    decoration-danger="state == 'emergency'"/>
                                         </li>
                                         <li t-if="record.controller_ids.raw_value.length > 0">
-                                            <i class="fa fa-microchip me-1"/>
-                                            <t t-esc="record.controller_ids.raw_value.length"/> controller(s)
+                                            <i class="fa fa-microchip me-1"/> <t t-esc="record.controller_ids.raw_value.length"/> controller(s)
                                         </li>
                                     </ul>
                                 </div>

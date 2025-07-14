@@ -292,45 +292,39 @@
                                                 <a name="return_action_to_open" type="object"
                                                    context="{'xml_id':'hr_rfid_door_action'}"
                                                    invisible="not door_ids" class="text-reset text-decoration-none">
-                                                    <i class="fa fa-sign-in" title="Doors"/>
-                                                    <t t-esc="record.doors_count.value"/>
+                                                    <i class="fa fa-sign-in" title="Doors"/> <t t-esc="record.doors_count.value"/>
                                                 </a>
                                             </span>
                                             <span t-if="record.readers_count.value > 0" class="badge rounded-pill me-1">
                                                 <a name="return_action_to_open" type="object"
                                                    context="{'xml_id':'hr_rfid_reader_action'}"
                                                    invisible="not reader_ids" class="text-reset text-decoration-none">
-                                                    <i class="fa fa-rss" title="Readers"/>
-                                                    <t t-esc="record.readers_count.value"/>
+                                                    <i class="fa fa-rss" title="Readers"/> <t t-esc="record.readers_count.value"/>
                                                 </a>
                                             </span>
                                             <span t-if="record.alarm_line_count.value > 0" class="badge rounded-pill me-1">
                                                 <a name="return_action_to_open" type="object"
                                                    context="{'xml_id':'hr_rfid_ctrl_alarm_action'}"
                                                    invisible="not alarm_line_ids" class="text-reset text-decoration-none">
-                                                    <i class="fa fa-shield" title="Alarm Lines"/>
-                                                    <t t-esc="record.alarm_line_count.value"/>
+                                                    <i class="fa fa-shield" title="Alarm Lines"/> <t t-esc="record.alarm_line_count.value"/>
                                                 </a>
                                             </span>
                                             <span t-if="record.user_event_count.value > 0" class="badge rounded-pill me-1">
                                                 <a name="return_action_to_open" type="object"
                                                    context="{'xml_id':'hr_rfid_event_user_action'}" class="text-reset text-decoration-none">
-                                                    <i class="fa fa-list" title="User Events"/>
-                                                    <t t-esc="record.user_event_count.value"/>
+                                                    <i class="fa fa-list" title="User Events"/> <t t-esc="record.user_event_count.value"/>
                                                 </a>
                                             </span>
                                             <span t-if="record.system_event_count.value > 0" class="badge rounded-pill me-1">
                                                 <a name="return_action_to_open" type="object"
                                                    context="{'xml_id':'hr_rfid_event_system_action'}" class="text-reset text-decoration-none">
-                                                    <i class="fa fa-list" title="System Events"/>
-                                                    <t t-esc="record.system_event_count.value"/>
+                                                    <i class="fa fa-list" title="System Events"/> <t t-esc="record.system_event_count.value"/>
                                                 </a>
                                             </span>
                                             <span t-if="record.commands_count.value > 0" class="badge rounded-pill me-1">
                                                 <a name="return_action_to_open" type="object"
                                                    context="{'xml_id':'hr_rfid_command_action'}" class="text-reset text-decoration-none">
-                                                    <i class="fa fa-list" title="Commands"/>
-                                                    <t t-esc="record.commands_count.value"/>
+                                                    <i class="fa fa-list" title="Commands"/> <t t-esc="record.commands_count.value"/>
                                                 </a>
                                             </span>
                                         </div>

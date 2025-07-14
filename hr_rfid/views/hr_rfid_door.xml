@@ -306,36 +306,31 @@
                                             <span t-if="record.user_event_count.value > 0" class="badge rounded-pill me-1">
                                                 <a name="button_act_window" type="object"
                                                    context="{'res_model':'hr.rfid.event.user'}" class="text-reset text-decoration-none">
-                                                    <i class="fa fa-list" title="User Events"/>
-                                                    <t t-esc="record.user_event_count.value"/>
+                                                    <i class="fa fa-list" title="User Events"/> <t t-esc="record.user_event_count.value"/>
                                                 </a>
                                             </span>
                                             <span t-if="record.system_event_count.value > 0" class="badge rounded-pill me-1">
                                                 <a name="button_act_window" type="object"
                                                    context="{'res_model':'hr.rfid.event.system'}" class="text-reset text-decoration-none">
-                                                    <i class="fa fa-list" title="System Events"/>
-                                                    <t t-esc="record.system_event_count.value"/>
+                                                    <i class="fa fa-list" title="System Events"/> <t t-esc="record.system_event_count.value"/>
                                                 </a>
                                             </span>
                                             <span t-if="record.access_group_count.value > 0" class="badge rounded-pill me-1">
                                                 <a name="button_act_window" type="object"
                                                    context="{'res_model':'hr.rfid.access.group'}" class="text-reset text-decoration-none">
-                                                    <i class="fa fa-users" title="Access Groups"/>
-                                                    <t t-esc="record.access_group_count.value"/>
+                                                    <i class="fa fa-users" title="Access Groups"/> <t t-esc="record.access_group_count.value"/>
                                                 </a>
                                             </span>
                                             <span t-if="record.card_count.value > 0" class="badge rounded-pill me-1">
                                                 <a name="button_act_window" type="object"
                                                    context="{'res_model':'hr.rfid.card'}" class="text-reset text-decoration-none">
-                                                    <i class="fa fa-id-card" title="Cards"/>
-                                                    <t t-esc="record.card_count.value"/>
+                                                    <i class="fa fa-id-card" title="Cards"/> <t t-esc="record.card_count.value"/>
                                                 </a>
                                             </span>
                                             <span t-if="record.zone_count.value > 0" class="badge rounded-pill me-1">
                                                 <a name="button_act_window" type="object"
                                                    context="{'res_model':'hr.rfid.zone'}" class="text-reset text-decoration-none">
-                                                    <i class="fa fa-map-marker" title="Zones"/>
-                                                    <t t-esc="record.zone_count.value"/>
+                                                    <i class="fa fa-map-marker" title="Zones"/> <t t-esc="record.zone_count.value"/>
                                                 </a>
                                             </span>
                                         </div>

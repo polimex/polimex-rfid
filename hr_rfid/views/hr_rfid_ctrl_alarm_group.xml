@@ -160,12 +160,10 @@
                                                    decoration-danger="state == 'arm'"/>
                                         </li>
                                         <li t-if="record.alarm_line_ids.raw_value.length > 0">
-                                            <i class="fa fa-list me-1"/>
-                                            <t t-esc="record.alarm_line_ids.raw_value.length"/> alarm line(s)
+                                            <i class="fa fa-list me-1"/> <t t-esc="record.alarm_line_ids.raw_value.length"/> alarm line(s)
                                         </li>
                                         <li t-if="record.child_ids.raw_value.length > 0">
-                                            <i class="fa fa-sitemap me-1"/>
-                                            <t t-esc="record.child_ids.raw_value.length"/> sub-group(s)
+                                            <i class="fa fa-sitemap me-1"/> <t t-esc="record.child_ids.raw_value.length"/> sub-group(s)
                                         </li>
                                     </ul>
                                 </div>
