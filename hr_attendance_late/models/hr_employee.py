@@ -165,12 +165,16 @@ class HrEmployee(models.Model):
                         day_period=convert_day_period_to_utc((time(6, 0), time(22, 0)), tz)
                     )
                 except Exception as ex:
-                    _logger.error('ERROR in Attendance extra calculation for %s on %s: %s', 
-                                  e.name, current_date.strftime('%Y-%m-%d'), str(ex), exc_info=True)
+                    _logger.error('ERROR in Attendance extra calculation for %s on date %s: %s' % (e.name, current_date, str(ex)))
+                    _logger.error('Work ranges: %s' % work_time_ranges)
+                    _logger.error('Attendance ranges: %s' % attendance_ranges)
+                    current_date += timedelta(days=1)
                     continue
 
                 if shift_number is not None:
                     att_extra_vals['shift_number'] = shift_number + 1
+                if att_extra_vals.get('theoretical_work_time', None) is not None and att_extra_vals['theoretical_work_time']>20:
+                    att_extra_vals['theoretical_work_time'] = min(att_extra_vals['theoretical_work_time'],e.resource_calendar_id.hours_per_day)
                 # if att_extra_vals and (att_extra_vals.get('theoretical_work_time',0.0) > 0 or att_extra_vals.get('extra_time',0.0) > 0):
                 if att_extra_vals and (
                         sum(att_extra_vals.values()) - att_extra_vals.get('theoretical_work_time', 0.0)) > 0:
@@ -329,54 +333,48 @@ class HrEmployee(models.Model):
         _logger.debug(debug_msg)
         # print(debug_msg)
 
-        # Validate calculated times before returning
-        self._validate_time_calculations(
-            theoretical_work_time, actual_work_time, actual_work_time_day, 
-            actual_work_time_night, early_come_time, late_time_value,
-            early_leave_time_value, overtime_value, extra_time_value
-        )
+        # Improved assertion handling with more detailed error messages
+        try:
+            # Check for negative times
+            for key, value in [
+                ('theoretical_work_time', theoretical_work_time),
+                ('actual_work_time', actual_work_time),
+                ('actual_work_time_day', actual_work_time_day),
+                ('actual_work_time_night', actual_work_time_night),
+                ('early_come_time', early_come_time),
+                ('late_time', late_time_value),
+                ('early_leave_time', early_leave_time_value),
+                ('overtime', overtime_value),
+                ('extra_time', extra_time_value)
+            ]:
+                if value < 0:
+                    raise ValueError(f"Negative time found for {key}: {value/3600:.2f} hours")
+
+            # Check work time consistency with tolerance for floating point errors
+            time_diff = abs(actual_work_time - (actual_work_time_day + actual_work_time_night))
+            if time_diff > 0.01:  # Allow 0.01 second difference for floating point errors
+                raise ValueError(f"Total actual work time ({actual_work_time/3600:.2f}h) doesn't match "
+                               f"day ({actual_work_time_day/3600:.2f}h) + night ({actual_work_time_night/3600:.2f}h) work time. "
+                               f"Difference: {time_diff} seconds")
+
+            # Check extra time consistency
+            if extra_time_value > 0:
+                non_zero_times = []
+                if early_come_time > 0:
+                    non_zero_times.append(f'early_come_time={early_come_time/3600:.2f}h')
+                if late_time_value > 0:
+                    non_zero_times.append(f'late_time={late_time_value/3600:.2f}h')
+                if early_leave_time_value > 0:
+                    non_zero_times.append(f'early_leave_time={early_leave_time_value/3600:.2f}h')
+                if overtime_value > 0:
+                    non_zero_times.append(f'overtime={overtime_value/3600:.2f}h')
+
+                if non_zero_times:
+                    raise ValueError(f"Extra time found ({extra_time_value/3600:.2f}h) but other times are not zero: {', '.join(non_zero_times)}")
+
+        except ValueError as e:
+            _logger.error(f"Attendance calculation validation error: {str(e)}")
+            _logger.error(f"For date: {for_date}, Data: {data}")
+            raise
 
         return data
-    
-    def _validate_time_calculations(self, theoretical_work_time, actual_work_time, 
-                                   actual_work_time_day, actual_work_time_night,
-                                   early_come_time, late_time_value, early_leave_time_value,
-                                   overtime_value, extra_time_value):
-        """Validate calculated time values for consistency"""
-        time_values = {
-            'theoretical_work_time': theoretical_work_time,
-            'actual_work_time': actual_work_time,
-            'actual_work_time_day': actual_work_time_day,
-            'actual_work_time_night': actual_work_time_night,
-            'early_come_time': early_come_time,
-            'late_time': late_time_value,
-            'early_leave_time': early_leave_time_value,
-            'overtime': overtime_value,
-            'extra_time': extra_time_value
-        }
-        
-        # Check for negative times
-        negative_times = [(k, v) for k, v in time_values.items() if v < 0]
-        if negative_times:
-            error_msg = "Negative time values found: " + ", ".join([f"{k}={v/3600:.2f}h" for k, v in negative_times])
-            _logger.error(error_msg)
-            raise ValueError(error_msg)
-        
-        # Check total work time consistency
-        time_diff = abs(actual_work_time - (actual_work_time_day + actual_work_time_night))
-        if time_diff > 1:  # Allow 1 second tolerance for floating point errors
-            error_msg = f"Total actual work time ({actual_work_time/3600:.2f}h) doesn't match day ({actual_work_time_day/3600:.2f}h) + night ({actual_work_time_night/3600:.2f}h) work time"
-            _logger.error(error_msg)
-            raise ValueError(error_msg)
-        
-        # Check extra time consistency
-        if extra_time_value > 0:
-            non_zero_times = [(k, v) for k, v in {
-                'early_come_time': early_come_time,
-                'late_time': late_time_value,
-                'early_leave_time': early_leave_time_value,
-                'overtime': overtime_value
-            }.items() if v > 0]
-            if non_zero_times:
-                warning_msg = f"Extra time found ({extra_time_value/3600:.2f}h) but other times are not zero: " + ", ".join([f"{k}={v/3600:.2f}h" for k, v in non_zero_times])
-                _logger.warning(warning_msg)
