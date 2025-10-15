@@ -180,10 +180,10 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         for rel in access_group_contact_rel:
             if not rel.expiration:
                 raise UserError(_('The partner have valid service for unlimited period!'))
-            # Check all overlap cases for active relations
-            if rel.state and rel.activate_on and rel.expiration:
+            # Check all overlap cases - validate ALL periods regardless of state
+            if rel.activate_on and rel.expiration:
                 # Case 1: New period starts within existing period
-                # Case 2: New period ends within existing period  
+                # Case 2: New period ends within existing period
                 # Case 3: New period completely covers existing period
                 # Case 4: Existing period completely covers new period
                 if (rel.activate_on <= self.start_date < rel.expiration or
@@ -191,26 +191,19 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
                     (self.start_date <= rel.activate_on and self.end_date >= rel.expiration) or
                     (rel.activate_on <= self.start_date and rel.expiration >= self.end_date)):
                     raise UserError(_(
-                        'The partner already has an active service for this period!\n'
-                        'Existing service: %s - %s\n'
+                        'The partner already has a service for this period!\n'
+                        'Existing service: %s - %s (State: %s)\n'
                         'New service: %s - %s'
                     ) % (
                         rel.activate_on.strftime('%Y-%m-%d %H:%M'),
                         rel.expiration.strftime('%Y-%m-%d %H:%M'),
+                        _('Active') if rel.state else _('Inactive'),
                         self.start_date.strftime('%Y-%m-%d %H:%M'),
                         self.end_date.strftime('%Y-%m-%d %H:%M')
                     ))
 
-        access_group_contact_rel = self.env['hr.rfid.access.group.contact.rel'].sudo().create({
-            'access_group_id': self.service_id.access_group_id.id,
-            'contact_id': partner_id.id,
-            'activate_on': self.start_date,
-            'expiration': self.end_date,
-            'permitted_visits': self.visits,
-            'visits_counting': self.visits > 0,
-            'create_uid': self.env.user.id,
-            'write_uid': self.env.user.id,
-        })
+        # CRITICAL: Create/update card BEFORE creating access_group_contact_rel
+        # This prevents NULL card_id constraint violations when _activate() is triggered
         existing_card_id = self.env['hr.rfid.card'].sudo().with_context(active_test=False).search([
             ('number', '=', self.card_number),
         ])
@@ -247,6 +240,19 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
             })
             card_id = existing_card_id
             # card_id.active = True
+
+        # NOW create access_group_contact_rel AFTER card exists
+        # This ensures _activate() can find the card when creating card-door relations
+        access_group_contact_rel = self.env['hr.rfid.access.group.contact.rel'].sudo().create({
+            'access_group_id': self.service_id.access_group_id.id,
+            'contact_id': partner_id.id,
+            'activate_on': self.start_date,
+            'expiration': self.end_date,
+            'permitted_visits': self.visits,
+            'visits_counting': self.visits > 0,
+            'create_uid': self.env.user.id,
+            'write_uid': self.env.user.id,
+        })
 
         return partner_id, access_group_contact_rel, card_id, transaction_name
 
