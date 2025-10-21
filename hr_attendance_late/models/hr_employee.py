@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from collections import defaultdict
 from dateutil.rrule import rrule, DAILY
 
 from odoo import api, fields, models
@@ -34,74 +35,104 @@ class HrEmployee(models.Model):
                         if end1 and end2 and start1 <= end2 and start2 <= end1]
         return intersection
 
+    def _line_to_tz_datetime(self, for_date, line, tz):
+        """Convert resource calendar line to UTC datetime range."""
+        ht = line.hour_to
+        dt = for_date
+        if float_compare(ht, 24.00, 2) == 0:
+            ht = 0.0
+            dt = for_date + timedelta(days=1)
+        return (
+            tz.localize(
+                datetime.combine(for_date,
+                                 time(hour=int(line.hour_from),
+                                      minute=int((line.hour_from % 1) * 60)))).astimezone(UTC).replace(tzinfo=None),
+            tz.localize(
+                datetime.combine(dt,
+                                 time(hour=int(ht),
+                                      minute=int((ht % 1) * 60)))).astimezone(UTC).replace(tzinfo=None)
+        )
+
+    def _convert_day_period_to_utc(self, day_period, tz):
+        """Convert day period tuple to UTC time tuple."""
+        start_time_local = datetime.combine(date.today(), day_period[0])
+        end_time_local = datetime.combine(date.today(), day_period[1])
+
+        start_time_utc = tz.localize(start_time_local).astimezone(UTC)
+        end_time_utc = tz.localize(end_time_local).astimezone(UTC)
+
+        day_period_utc = (start_time_utc.time(), end_time_utc.time())
+        return day_period_utc
+
     def update_extra_attendance_data(self, from_datetime, to_datetime=None, overwrite_existing=False):
-        def line_to_tz_datetime(for_date, line, tz):
-            ht = line.hour_to
-            dt = for_date
-            if float_compare(ht, 24.00, 2) == 0:
-                ht = 0.0
-                dt = for_date + timedelta(days=1)
-            return (
-                tz.localize(
-                    datetime.combine(for_date,
-                                     time(hour=int(line.hour_from),
-                                          minute=int((line.hour_from % 1) * 60)))).astimezone(UTC).replace(tzinfo=None),
-                tz.localize(
-                    datetime.combine(dt,
-                                     time(hour=int(ht),
-                                          minute=int((ht % 1) * 60)))).astimezone(UTC).replace(tzinfo=None)
-            )
-
-        def convert_day_period_to_utc(day_period, tz):
-            start_time_local = datetime.combine(date.today(), day_period[0])
-            end_time_local = datetime.combine(date.today(), day_period[1])
-
-            start_time_utc = tz.localize(start_time_local).astimezone(UTC)
-            end_time_utc = tz.localize(end_time_local).astimezone(UTC)
-
-            day_period_utc = (start_time_utc.time(), end_time_utc.time())
-            return day_period_utc
+        # Validate input dates
+        if not from_datetime:
+            _logger.warning('update_extra_attendance_data called without from_datetime')
+            return
 
         to_datetime = to_datetime or from_datetime
+
         for e in self:
             _logger.info('Attendance extra calculation for %s' % e.name)
-            current_date = from_datetime
             tz = timezone(e.resource_calendar_id.tz) if e.resource_calendar_id.tz else UTC
+
+            # Batch prefetch - ONE query for all attendance_extra records in period
+            period_start = datetime.combine(from_datetime, datetime.min.time())
+            period_end = datetime.combine(to_datetime, datetime.max.time())
+
+            existing_extras = self.env['hr.attendance.extra'].sudo().search([
+                ('employee_id', '=', e.id),
+                ('for_date', '>=', from_datetime),
+                ('for_date', '<=', to_datetime),
+            ])
+            # Group by date for O(1) lookup
+            extras_by_date = {extra.for_date: extra for extra in existing_extras}
+
+            # Batch prefetch - ONE query for all attendances in period
+            all_attendances = self.env['hr.attendance'].search([
+                ('employee_id', '=', e.id),
+                '|',
+                '&',
+                ('check_in', '>=', period_start),
+                ('check_in', '<=', period_end),
+                '&',
+                ('check_in', '<', period_start),
+                '|',
+                ('check_out', '>=', period_start),
+                ('check_out', '=', False)
+            ], order='check_in')
+
+            # Pre-group calendar lines by weekday (cache)
+            calendar_lines_by_weekday = defaultdict(list)
+            for line in e.resource_calendar_id.attendance_ids:
+                calendar_lines_by_weekday[line.dayofweek].append(line)
+
+            # Prepare bulk operations
+            extras_to_create = []
+            extras_to_update = []
+            extras_to_unlink = self.env['hr.attendance.extra']
+
+            current_date = from_datetime
             while current_date <= to_datetime:
-                attendance_extra_id = self.env['hr.attendance.extra'].sudo().search([
-                    ('employee_id', '=', e.id),
-                    ('for_date', '=', current_date),
-                ])
+                # Use O(1) dict lookup instead of search
+                attendance_extra_id = extras_by_date.get(current_date)
                 if not overwrite_existing and attendance_extra_id:
                     current_date += timedelta(days=1)
                     continue
 
-                # Get attendance records that affect the current date
-                # Include records that:
-                # 1. Start on current date, OR
-                # 2. Start before current date but end on/after current date
+                # Filter attendances for current date from pre-fetched recordset
                 current_date_start = datetime.combine(current_date, datetime.min.time())
                 current_date_end = datetime.combine(current_date, datetime.max.time())
-                
-                attendances = self.env['hr.attendance'].search([
-                    ('employee_id', '=', e.id),
-                    '|',
-                    # Records starting on current date
-                    '&',
-                    ('check_in', '>=', current_date_start),
-                    ('check_in', '<', current_date_end),
-                    # Records from previous days that extend into current date
-                    '&',
-                    ('check_in', '<', current_date_start),
-                    '|',
-                    ('check_out', '>=', current_date_start),
-                    ('check_out', '=', False)
-                ], order='check_in')
-                
+
+                attendances = all_attendances.filtered(
+                    lambda a: (a.check_in >= current_date_start and a.check_in < current_date_end) or
+                             (a.check_in < current_date_start and (not a.check_out or a.check_out >= current_date_start))
+                )
+
                 # Process attendances, including those without check_out
                 attendance_ranges = []
                 now = datetime.now()
-                
+
                 for att in attendances:
                     check_in = att.check_in
                     if att.check_out:
@@ -120,11 +151,12 @@ class HrEmployee(models.Model):
                             max_duration = timedelta(hours=zone.max_time_in_zone)
                             time_in_zone = now - check_in
                             if time_in_zone > max_duration:
-                                # Auto-close with configured duration
-                                check_out = check_in + timedelta(hours=zone.auto_close_time_for_zone)
-                                _logger.info('Auto-closing attendance for %s on %s after %.1f hours (zone: %s)',
-                                            e.name, current_date.strftime('%Y-%m-%d'), 
-                                            zone.auto_close_time_for_zone, zone.name)
+                                # Auto-close with actual time worked, capped at max_time_in_zone
+                                # This uses real worked hours instead of fixed auto_close_time_for_zone
+                                check_out = check_in + max_duration
+                                _logger.info('Auto-closing attendance for %s on %s at max duration %.1f hours (zone: %s, actual: %.1f)',
+                                            e.name, current_date.strftime('%Y-%m-%d'),
+                                            zone.max_time_in_zone, zone.name, time_in_zone.total_seconds() / 3600)
                             else:
                                 # Still within max time - use current time
                                 check_out = now
@@ -141,28 +173,30 @@ class HrEmployee(models.Model):
                 if not attendance_ranges:
                     # No attendance records for this day
                     if overwrite_existing and attendance_extra_id:
-                        attendance_extra_id.unlink()
+                        extras_to_unlink |= attendance_extra_id
                     current_date += timedelta(days=1)
                     continue
 
-                line_ids = e.resource_calendar_id.attendance_ids.filtered(
-                    lambda r: r.dayofweek == str(current_date.weekday()))
-                work_time_ranges = [line_to_tz_datetime(current_date, line, tz) for line in
-                                    line_ids]
+                # Use pre-grouped calendar lines
+                weekday = str(current_date.weekday())
+                line_ids = calendar_lines_by_weekday.get(weekday, [])
+                work_time_ranges = [self._line_to_tz_datetime(current_date, line, tz) for line in line_ids]
+
                 shift_number = None
                 if e.resource_calendar_id.daily_ranges_are_shifts:
-                    shift_intersections = [self._total_time(self._intersection_time([wr], attendance_ranges)) for
-                                           wr in work_time_ranges]
+                    shift_intersections = [self._total_time(self._intersection_time([wr], attendance_ranges))
+                                           for wr in work_time_ranges]
                     if shift_intersections:
                         max_shift_time = max(shift_intersections)
                         shift_number = shift_intersections.index(max_shift_time)
                         work_time_ranges = [work_time_ranges[shift_number]]
+
                 try:
                     att_extra_vals = self.get_work_time_details(
                         for_date=current_date,
                         work_time_ranges=work_time_ranges,
                         attendance_ranges=attendance_ranges,
-                        day_period=convert_day_period_to_utc((time(6, 0), time(22, 0)), tz)
+                        day_period=self._convert_day_period_to_utc((time(6, 0), time(22, 0)), tz)
                     )
                 except Exception as ex:
                     _logger.error('ERROR in Attendance extra calculation for %s on date %s: %s' % (e.name, current_date, str(ex)))
@@ -173,11 +207,10 @@ class HrEmployee(models.Model):
 
                 if shift_number is not None:
                     att_extra_vals['shift_number'] = shift_number + 1
-                if att_extra_vals.get('theoretical_work_time', None) is not None and att_extra_vals['theoretical_work_time']>20:
-                    att_extra_vals['theoretical_work_time'] = min(att_extra_vals['theoretical_work_time'],e.resource_calendar_id.hours_per_day)
-                # if att_extra_vals and (att_extra_vals.get('theoretical_work_time',0.0) > 0 or att_extra_vals.get('extra_time',0.0) > 0):
-                if att_extra_vals and (
-                        sum(att_extra_vals.values()) - att_extra_vals.get('theoretical_work_time', 0.0)) > 0:
+                if att_extra_vals.get('theoretical_work_time', None) is not None and att_extra_vals['theoretical_work_time'] > 20:
+                    att_extra_vals['theoretical_work_time'] = min(att_extra_vals['theoretical_work_time'], e.resource_calendar_id.hours_per_day)
+
+                if att_extra_vals and (sum(att_extra_vals.values()) - att_extra_vals.get('theoretical_work_time', 0.0)) > 0:
                     if e.department_id.ignore_early_come_time >= att_extra_vals['early_come_time']:
                         att_extra_vals['early_come_time'] = 0
                     if e.department_id.ignore_late_time >= att_extra_vals['late_time']:
@@ -193,15 +226,25 @@ class HrEmployee(models.Model):
                     if e.department_id.ignore_extra_time >= att_extra_vals['extra_time']:
                         att_extra_vals['extra_time'] = 0
 
+                    # Collect for batch operations
                     if attendance_extra_id:
-                        attendance_extra_id.sudo().write(att_extra_vals)
+                        extras_to_update.append((attendance_extra_id, att_extra_vals))
                     else:
                         att_extra_vals.update({
                             'employee_id': e.id,
                             'for_date': current_date
                         })
-                        self.env['hr.attendance.extra'].sudo().create(att_extra_vals)
+                        extras_to_create.append(att_extra_vals)
+
                 current_date += timedelta(days=1)
+
+            # Batch operations - execute once at the end
+            if extras_to_create:
+                self.env['hr.attendance.extra'].sudo().create(extras_to_create)
+            for extra, vals in extras_to_update:
+                extra.sudo().write(vals)
+            if extras_to_unlink:
+                extras_to_unlink.sudo().unlink()
 
     @api.model
     def get_work_time_details(self, for_date, work_time_ranges, attendance_ranges,
@@ -273,21 +316,20 @@ class HrEmployee(models.Model):
             else:
                 return 0
 
-        debug_msg = ''
-        debug_msg += 'Work Ranges:\n'
-        for start_time, end_time in work_time_ranges:
-            formatted_start_time = start_time.strftime('%Y-%m-%d %H:%M')
-            formatted_end_time = end_time.strftime('%Y-%m-%d %H:%M') if end_time else "-"
-            debug_msg += f'{formatted_start_time} - {formatted_end_time}' + '\n'
-        debug_msg += 'Attendance Ranges:\n'
-        for start_time, end_time in attendance_ranges:
-            formatted_start_time = start_time.strftime('%Y-%m-%d %H:%M')
-            formatted_end_time = end_time.strftime('%Y-%m-%d %H:%M') if end_time else "-"
-            debug_msg += f'{formatted_start_time} - {formatted_end_time}' + '\n'
-        debug_msg += 'Daly period:\n'
-        debug_msg += f"{day_period[0].strftime('%H:%M')} - {day_period[1].strftime('%H:%M')}" + '\n'
-        _logger.debug(debug_msg)
-        # print(debug_msg)
+        # Only build debug strings if debug logging is enabled
+        if _logger.isEnabledFor(logging.DEBUG):
+            debug_msg = 'Work Ranges:\n'
+            for start_time, end_time in work_time_ranges:
+                formatted_start_time = start_time.strftime('%Y-%m-%d %H:%M')
+                formatted_end_time = end_time.strftime('%Y-%m-%d %H:%M') if end_time else "-"
+                debug_msg += f'{formatted_start_time} - {formatted_end_time}\n'
+            debug_msg += 'Attendance Ranges:\n'
+            for start_time, end_time in attendance_ranges:
+                formatted_start_time = start_time.strftime('%Y-%m-%d %H:%M')
+                formatted_end_time = end_time.strftime('%Y-%m-%d %H:%M') if end_time else "-"
+                debug_msg += f'{formatted_start_time} - {formatted_end_time}\n'
+            debug_msg += f"Daily period:\n{day_period[0].strftime('%H:%M')} - {day_period[1].strftime('%H:%M')}\n"
+            _logger.debug(debug_msg)
 
         theoretical_work_time = self._total_time(work_time_ranges)
         extra_time_value = extra_time(work_time_ranges, attendance_ranges)
@@ -326,12 +368,13 @@ class HrEmployee(models.Model):
             "extra_night": extra_night_time / 3600
         }
 
-        debug_msg = ''
-        for key, value in data.items():
-            debug_msg += f"{key.replace('_', ' ').title()}: {value:.2f} hours" + '\n'
-        debug_msg += '-----------------------------------------------------------\n'
-        _logger.debug(debug_msg)
-        # print(debug_msg)
+        # Only build result debug strings if debug logging is enabled
+        if _logger.isEnabledFor(logging.DEBUG):
+            debug_msg = ''
+            for key, value in data.items():
+                debug_msg += f"{key.replace('_', ' ').title()}: {value:.2f} hours\n"
+            debug_msg += '-----------------------------------------------------------\n'
+            _logger.debug(debug_msg)
 
         # Improved assertion handling with more detailed error messages
         try:
