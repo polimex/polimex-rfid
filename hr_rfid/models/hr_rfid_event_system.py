@@ -150,18 +150,119 @@ class HrRfidSystemEvent(models.Model):
 
     @api.autovacuum
     def _gc_events_life(self):
-        for c in self.env['res.company'].search([]):
-            if c.event_lifetime is None:
-                return False
-            # self._cr.execute("""
-            #                        DELETE FROM hr_rfid_event_system
-            #                        WHERE timestamp < NOW() - INTERVAL '%s days'
-            #                    """, [c.event_lifetime])
-            # _logger.info("GC'd %d old rfid system event entries", self._cr.rowcount)
-            res = self.with_company(c).search([
-                ('timestamp', '<', fields.Datetime.now() - timedelta(days=int(c.event_lifetime)))
-            ], limit=1000)
-            res.unlink()
+        """
+        Clean up old system event records per company based on event_lifetime setting.
+
+        Follows Odoo core patterns:
+        - Direct SQL for performance (similar to res.users._gc_user_logs)
+        - Batching with commits (similar to ir.autovacuum pattern)
+        - Per-company processing with error isolation
+        """
+        batch_size = 1000
+        max_batches_per_company = 20
+
+        companies = self.env['res.company'].search([])
+        total_deleted = 0
+
+        _logger.info(
+            "[SYSTEM EVENTS] Starting GC across %d companies",
+            len(companies)
+        )
+
+        for company in companies:
+            if company.event_lifetime is None:
+                _logger.debug(
+                    "[SYSTEM EVENTS] Company %s has no event_lifetime set, skipping",
+                    company.name
+                )
+                continue
+
+            try:
+                cutoff_date = fields.Datetime.now() - timedelta(days=int(company.event_lifetime))
+                company_deleted = 0
+                batch_num = 0
+
+                _logger.info(
+                    "[SYSTEM EVENTS] Company %s (ID: %d) - deleting events older than %s (%d days)",
+                    company.name,
+                    company.id,
+                    cutoff_date,
+                    company.event_lifetime
+                )
+
+                while batch_num < max_batches_per_company:
+                    batch_num += 1
+
+                    try:
+                        # Company comes from: event.webstack_id -> webstack.company_id
+                        self._cr.execute("""
+                            DELETE FROM hr_rfid_event_system
+                            WHERE id IN (
+                                SELECT e.id
+                                FROM hr_rfid_event_system e
+                                INNER JOIN hr_rfid_webstack w ON e.webstack_id = w.id
+                                WHERE e.timestamp < %s
+                                  AND w.company_id = %s
+                                ORDER BY e.id
+                                LIMIT %s
+                            )
+                        """, (cutoff_date, company.id, batch_size))
+
+                        deleted_count = self._cr.rowcount
+
+                        if deleted_count == 0:
+                            break
+
+                        # Commit after each batch (ir.autovacuum pattern)
+                        self._cr.commit()
+
+                        company_deleted += deleted_count
+                        total_deleted += deleted_count
+
+                        _logger.info(
+                            "[SYSTEM EVENTS] Company %s batch %d: Deleted %d events (company total: %d)",
+                            company.name,
+                            batch_num,
+                            deleted_count,
+                            company_deleted
+                        )
+
+                        if deleted_count < batch_size:
+                            break
+
+                    except Exception as batch_error:
+                        _logger.error(
+                            "[SYSTEM EVENTS] Company %s batch %d error: %s",
+                            company.name,
+                            batch_num,
+                            str(batch_error),
+                            exc_info=True
+                        )
+                        self._cr.rollback()
+                        break
+
+                if company_deleted > 0:
+                    _logger.info(
+                        "[SYSTEM EVENTS] Company %s completed: %d events deleted in %d batches",
+                        company.name,
+                        company_deleted,
+                        batch_num
+                    )
+
+            except Exception as company_error:
+                _logger.error(
+                    "[SYSTEM EVENTS] Company %s fatal error: %s",
+                    company.name,
+                    str(company_error),
+                    exc_info=True
+                )
+                self._cr.rollback()
+
+        _logger.info(
+            "[SYSTEM EVENTS] GC completed: %d total events deleted across %d companies",
+            total_deleted,
+            len(companies)
+        )
 
         return True
 
