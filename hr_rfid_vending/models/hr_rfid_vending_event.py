@@ -72,6 +72,7 @@ class VendingEvents(models.Model):
         string='Response',
         readonly=True,
         ondelete='set null',
+        index=True,
     )
 
     item_sold_id = fields.Many2one(
