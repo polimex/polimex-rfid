@@ -149,7 +149,7 @@ class HrEmployee(models.Model):
                 if e.reader_id in out_readers_ids and not presence[
                     0] and previous_attendance_id:  # update last att record
                     in_zone = att_zone_ids.filtered(lambda z: e.door_id in z.door_ids)
-                    if in_zone.overwrite_check_out and (
+                    if in_zone.overwrite_check_out and previous_attendance_id.check_out and (
                             e.event_time - previous_attendance_id.check_out) < timedelta(hours=8):
                             # e.event_time - previous_attendance_id.check_out) < relativedelta(hours=8):
                         previous_attendance_id.check_out = e.event_time
