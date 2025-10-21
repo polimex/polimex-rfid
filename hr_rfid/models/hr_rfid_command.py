@@ -211,15 +211,105 @@ class HrRfidCommands(models.Model):
 
     @api.autovacuum
     def _gc_clean_old_commands(self):
-        res = self.env['hr.rfid.command'].search([
-            ('create_date', '<', fields.Datetime.now() - timedelta(days=14))
-        ], limit=5000)
-        res.unlink()
-        # self._cr.execute("""
-        #             DELETE FROM hr_rfid_command
-        #             WHERE create_date < NOW() - INTERVAL '14 days'
-        #         """)
-        _logger.info("GC'd %d old rfid cmd entries", self._cr.rowcount)
+        """
+        Clean up old command records in batches to prevent timeout.
+
+        This method follows Odoo core patterns from:
+        - ir.autovacuum: commit after each cleanup function
+        - ir.property: use SQL when ORM overhead not needed
+        - Standard batching pattern for large datasets
+
+        Performance optimized to work with foreign key triggers on:
+        - hr_rfid_event_user.command_id (with index=True)
+        - hr_rfid_vending_event.command_id (with index=True)
+        """
+        batch_size = 2000
+        max_batches = 50
+        retention_days = 14
+
+        cutoff_date = fields.Datetime.now() - timedelta(days=retention_days)
+
+        total_deleted = 0
+        batch_num = 0
+        consecutive_errors = 0
+        max_consecutive_errors = 3
+
+        _logger.info(
+            "Starting GC for hr.rfid.command records older than %s",
+            cutoff_date
+        )
+
+        try:
+            while batch_num < max_batches:
+                batch_num += 1
+
+                try:
+                    # Use SQL for better performance (similar to ir.property pattern)
+                    # Avoids ORM overhead and cache clearing
+                    self._cr.execute("""
+                        DELETE FROM hr_rfid_command
+                        WHERE id IN (
+                            SELECT id FROM hr_rfid_command
+                            WHERE create_date < %s
+                            ORDER BY id
+                            LIMIT %s
+                        )
+                    """, (cutoff_date, batch_size))
+
+                    deleted_count = self._cr.rowcount
+
+                    if deleted_count == 0:
+                        _logger.info("Batch %d: No more old commands to delete", batch_num)
+                        break
+
+                    # Commit after each batch (ir.autovacuum pattern)
+                    self._cr.commit()
+
+                    total_deleted += deleted_count
+                    consecutive_errors = 0
+
+                    _logger.info(
+                        "Batch %d: Deleted %d command records (total: %d)",
+                        batch_num,
+                        deleted_count,
+                        total_deleted
+                    )
+
+                    # Stop if batch was not full (no more records)
+                    if deleted_count < batch_size:
+                        break
+
+                except Exception as batch_error:
+                    consecutive_errors += 1
+                    _logger.error(
+                        "Batch %d: Error deleting commands: %s",
+                        batch_num,
+                        str(batch_error),
+                        exc_info=True
+                    )
+                    # Rollback this batch (ir.autovacuum pattern)
+                    self._cr.rollback()
+
+                    if consecutive_errors >= max_consecutive_errors:
+                        _logger.error(
+                            "Stopping GC after %d consecutive errors",
+                            consecutive_errors
+                        )
+                        break
+
+            _logger.info(
+                "GC completed: deleted %d command records in %d batches",
+                total_deleted,
+                batch_num
+            )
+
+        except Exception as e:
+            _logger.error(
+                "Fatal error in GC: %s (deleted %d records before error)",
+                str(e),
+                total_deleted,
+                exc_info=True
+            )
 
     def resend_action(self):
         for c in self.filtered(lambda cmd: cmd.status in ['Failure', 'Process']):
