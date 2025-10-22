@@ -180,7 +180,12 @@ class WebRfidController(http.Controller):
                     # lambda agr: event.door_id in agr.access_group_id.door_ids.mapped('door_id') and state)
                     # if ag_rel and ag_rel.visits_counting:
                     if ag_rel and reader_id and reader_id.reader_type == '0':
-                        ag_rel.visits_counter += 1
+                        # Handle multiple access group relations for the same door
+                        if len(ag_rel) > 1:
+                            _logger.warning('Multiple active access group relations (%s) found for contact %s and door %s. Incrementing visits for all relations.',
+                                          ag_rel.ids, event.contact_id.name, event.door_id.name)
+                        for rel in ag_rel:
+                            rel.visits_counter += 1
             elif is_card_event and not card_id:  # Card event with unknown card
                 sys_event_dict = {
                     'door_id': door and door.id or False,

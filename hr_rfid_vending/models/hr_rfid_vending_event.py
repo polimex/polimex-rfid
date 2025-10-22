@@ -30,8 +30,15 @@ class VendingEvents(models.Model):
                   '48': 'cascade',
                   '49': 'cascade',
                   '50': 'cascade'},
-        string='Action',
-        help='What happened to trigger the event',
+        string='Event Type',
+        help="""Type of vending machine event that occurred.
+        
+• Purchase Complete (47): Successful product purchase transaction
+• Collect cash (50): Cash collection or management event
+• Error (48/49): Various machine error conditions
+• Bad Data Error (-1): Communication or data parsing error
+        
+Most common events are successful purchases (47).""",
     )
 
     # event_time = fields.Datetime(
@@ -42,13 +49,29 @@ class VendingEvents(models.Model):
     # )
 
     transaction_price = fields.Float(
-        string='Transaction Price',
+        string='Transaction Amount',
         default=-1,
+        help="""Amount charged for this vending transaction.
+        
+• Currency: Uses machine's configured currency/pricelist
+• Source: Price determined by product configuration and machine pricelist
+• Balance impact: This amount is deducted from employee's vending balance
+• Value -1: Indicates no transaction amount (for non-purchase events)
+        
+Shows the actual cost of the purchased item."""
     )
 
     item_sold = fields.Integer(
-        string='Item Sold Number',
-        aggregator='count_distinct'
+        string='Item Slot Number',
+        aggregator='count_distinct',
+        help="""Physical slot/position number in the vending machine where the item was located.
+        
+• Hardware reference: Corresponds to machine's physical product slots
+• Configuration: Used to map physical slots to products
+• Maintenance: Helps identify which machine sections are most used
+• Restocking: Useful for inventory management and restocking planning
+        
+This is the machine's internal slot identifier, not the product ID."""
     )
 
     # employee_id = fields.Many2one(
@@ -65,24 +88,56 @@ class VendingEvents(models.Model):
     controller_id = fields.Many2one(
         'hr.rfid.ctrl',
         string='Vending Machine',
+        help="""RFID controller/vending machine where this event occurred.
+        
+• Location tracking: Identifies which machine was used
+• Machine management: Links events to specific hardware units
+• Reporting: Enables machine-specific sales and usage analysis
+• Maintenance: Helps track machine performance and issues
+        
+Useful for multi-machine installations and location-based reporting."""
     )
 
     command_id = fields.Many2one(
         'hr.rfid.command',
-        string='Response',
+        string='System Response',
         readonly=True,
         ondelete='set null',
+        index=True,
+        help="""System command sent to the vending machine in response to this event.
+
+• Communication: Links events to system responses and commands
+• Debugging: Useful for troubleshooting communication issues
+• Audit trail: Shows system's response to vending events
+• Technical: Primarily used for system administration and debugging
+
+Mostly relevant for technical users and system troubleshooting."""
     )
 
     item_sold_id = fields.Many2one(
         'product.template',
-        string='Item Sold',
-        help='The item that was sold in the transaction',
+        string='Product Purchased',
+        help="""Product that was purchased in this vending transaction.
+        
+• Product tracking: Links sales events to specific products
+• Inventory: Helps track which products are selling well
+• Reporting: Enables product-specific sales analysis
+• Pricing: Connected to product price and pricelist settings
+        
+Empty for non-purchase events (errors, cash collection, etc.).""",
         ondelete='set null',
     )
 
     input_js = fields.Char(
-        string='Input JSON',
+        string='Raw Event Data',
+        help="""Original JSON data received from the vending machine hardware.
+        
+• Debugging: Raw communication data for technical troubleshooting
+• Audit: Complete record of machine communication
+• Privacy: Only saved if 'Save Webstack Communications' is enabled
+• Technical: Primarily for system administrators and developers
+        
+Contains technical details about the hardware communication."""
     )
 
     @api.autovacuum
