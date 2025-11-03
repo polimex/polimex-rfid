@@ -31,11 +31,10 @@
                 <xpath expr="//field[@name='emergency_state']" position="after">
                     <field name="site_id" groups="hr_rfid_site_manager.group_guard"/>
                 </xpath>
-                <xpath expr="//div[@name='third_col']" position="after">
-                    <div t-if="record.site_id.raw_value">
-                        <field name="site_id" groups="hr_rfid_site_manager.group_guard"/>
-                    </div>
-
+                <xpath expr="//ul[hasclass('list-unstyled', 'text-muted', 'small')]" position="inside">
+                    <li t-if="record.site_id.raw_value" groups="hr_rfid_site_manager.group_guard">
+                        <span class="text-muted">Site:</span> <field name="site_id"/>
+                    </li>
                 </xpath>
             </field>
         </record>

@@ -12,37 +12,132 @@ class HrRFIDSite(models.Model):
 
 
 
-    name = fields.Char(required=True)
-    active = fields.Boolean("Active", default=True)
-    color = fields.Integer('Color Index', default=0)
-    company_id = fields.Many2one('res.company', 'Company', default=lambda self: self.env.company)
-    make_access_group = fields.Boolean('Make access group', default=False)
+    name = fields.Char(
+        required=True,
+        help="Name of the site (building, floor, room, etc.). Must be unique within the parent site."
+    )
+    active = fields.Boolean(
+        "Active", 
+        default=True,
+        help="Uncheck to archive this site. Archived sites are hidden from most views but preserve historical data."
+    )
+    color = fields.Integer(
+        'Color Index', 
+        default=0,
+        help="Color coding for visual identification in hierarchy view. Choose different colors to distinguish site types or importance levels."
+    )
+    company_id = fields.Many2one(
+        'res.company', 
+        'Company', 
+        default=lambda self: self.env.company,
+        help="Company that owns this site. Used for multi-company access control and data separation."
+    )
+    make_access_group = fields.Boolean(
+        'Make access group', 
+        default=False,
+        help="""Automatically create and maintain an access group for this site.
+        
+• When enabled: Creates an access group containing all doors in this site and child sites
+• Access control: Assign people to this group to grant access to all site doors
+• Automatic updates: Door changes automatically update the access group
+
+Useful for: Building access, department access, or hierarchical permissions."""
+    )
     parent_path = fields.Char(index=True)
     parent_id = fields.Many2one(
-        comodel_name='hr.rfid.site', string='Parent site' , ondelete='restrict')
+        comodel_name='hr.rfid.site', 
+        string='Parent site', 
+        ondelete='restrict',
+        help="Parent site in the hierarchy. For example: Building > Floor > Room. "
+             "Leave empty for top-level sites. Prevents deletion if child sites exist."
+    )
     child_ids = fields.One2many(
-        comodel_name='hr.rfid.site', inverse_name='parent_id', string='Child sites')
+        comodel_name='hr.rfid.site', 
+        inverse_name='parent_id', 
+        string='Child sites',
+        help="Sites that are hierarchically below this site. For example: floors within a building, "
+             "or rooms within a floor. Child sites inherit access permissions when using access groups."
+    )
     webstack_ids = fields.One2many(
-        comodel_name='hr.rfid.webstack', inverse_name='site_id', string='Modules')
+        comodel_name='hr.rfid.webstack', 
+        inverse_name='site_id', 
+        string='Modules',
+        help="RFID communication modules (webstacks) installed at this site. "
+             "Each module can manage multiple controllers and provides network connectivity."
+    )
     controller_ids = fields.One2many(
-        comodel_name='hr.rfid.ctrl', inverse_name='site_id', string='Controllers')
+        comodel_name='hr.rfid.ctrl', 
+        inverse_name='site_id', 
+        string='Controllers',
+        help="RFID controllers located at this site. Controllers manage individual doors "
+             "and readers, handling access control decisions and event logging."
+    )
     door_ids = fields.One2many(
-        comodel_name='hr.rfid.door', inverse_name='site_id', string='Doors')
+        comodel_name='hr.rfid.door', 
+        inverse_name='site_id', 
+        string='Doors',
+        help="Physical doors and access points at this site. Each door can have "
+             "entry and exit readers for tracking person movement and access control."
+    )
     child_door_ids = fields.One2many(
-        comodel_name='hr.rfid.door', compute='_compute_child_door_ids', string='Child doors')
+        comodel_name='hr.rfid.door', 
+        compute='_compute_child_door_ids', 
+        string='Child doors',
+        help="All doors from child sites, computed automatically. Used for hierarchical access "
+             "control - when creating access groups, doors from child sites are included."
+    )
     access_group_ids = fields.One2many(
-        comodel_name='hr.rfid.access.group', inverse_name='site_id', string='Access groups')
+        comodel_name='hr.rfid.access.group', 
+        inverse_name='site_id', 
+        string='Access groups',
+        help="Access control groups automatically created for this site. Groups contain all doors "
+             "from this site and child sites. Assign people to these groups to grant site access."
+    )
     # time_schedule = None, alarm_rights = False
     alarm_line_group_ids = fields.One2many(
-        comodel_name='hr.rfid.ctrl.alarm.group', inverse_name='site_id', string='Alarm Groups')
-    state = fields.Selection(related='alarm_line_group_ids.state', string='Alarm Group State')
+        comodel_name='hr.rfid.ctrl.alarm.group', 
+        inverse_name='site_id', 
+        string='Alarm Groups',
+        help="Security alarm groups configured for this site. Used for arming/disarming "
+             "security systems and managing intrusion detection across the site."
+    )
+    state = fields.Selection(
+        related='alarm_line_group_ids.state', 
+        string='Alarm Group State',
+        help="Current security state of alarm groups at this site. Shows whether security "
+             "systems are armed or disarmed. Changes automatically when alarm state changes."
+    )
 
-    child_count = fields.Integer(compute='_compute_count', string="Child Count")
-    webstack_count = fields.Integer(compute='_compute_count', string="Module Count")
-    controller_count = fields.Integer(compute='_compute_count', string="Controller Count")
-    door_count = fields.Integer(compute='_compute_count', string="Door Count")
-    access_group_count = fields.Integer(compute='_compute_count', string="Access Group Count")
-    alarm_line_group_count = fields.Integer(compute='_compute_count', string="Alarm Line Group Count")
+    child_count = fields.Integer(
+        compute='_compute_count', 
+        string="Child Count",
+        help="Number of child sites under this site in the hierarchy."
+    )
+    webstack_count = fields.Integer(
+        compute='_compute_count', 
+        string="Module Count",
+        help="Number of RFID communication modules (webstacks) at this site."
+    )
+    controller_count = fields.Integer(
+        compute='_compute_count', 
+        string="Controller Count",
+        help="Number of RFID controllers at this site."
+    )
+    door_count = fields.Integer(
+        compute='_compute_count', 
+        string="Door Count",
+        help="Number of doors and access points at this site."
+    )
+    access_group_count = fields.Integer(
+        compute='_compute_count', 
+        string="Access Group Count",
+        help="Number of access control groups created for this site."
+    )
+    alarm_line_group_count = fields.Integer(
+        compute='_compute_count', 
+        string="Alarm Line Group Count",
+        help="Number of security alarm groups configured for this site."
+    )
 
     _sql_constraints = [
         ('no_loop', 'check(id != parent_id)', 'You cannot create a loop in the site hierarchy.'),

@@ -8,13 +8,18 @@
             <field name="view_mode">hierarchy,list,form</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
-                    Add your first sites here.
+                    Create your first site to organize your RFID infrastructure
                 </p>
                 <p>
-                    A site is a physical location where you can install doors, controllers and modules. This can be a
-                    building, a floor, a room, etc. You can create a hierarchy of sites to represent your company's
-                    physical
-                    organization.
+                    Sites represent physical locations in your organization's hierarchy.
+                    <br/><br/>
+                    Key features:
+                    • <b>Hierarchy:</b> Create building > floor > room structures
+                    • <b>Auto Access Groups:</b> Generate access groups containing all site doors
+                    • <b>Equipment Organization:</b> Group doors, controllers, and modules by location
+                    • <b>Centralized Control:</b> Manage alarms and access permissions per site
+                    <br/><br/>
+                    <b>Examples:</b> "Main Building", "Parking Garage", "Research Lab", "Executive Floor"
                 </p>
             </field>
         </record>
@@ -240,6 +245,20 @@
                 <!--                "default_parent_id": active_id,-->
                 "search_default_site_id": active_id,
                 "expand": 1}
+            </field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No sites found for this context
+                </p>
+                <p>
+                    This view shows sites filtered by the selected context.
+                    <br/><br/>
+                    Use the search panel and filters to:
+                    • Find sites by parent location
+                    • Filter by equipment type (doors, controllers, modules)
+                    • View hierarchical organization
+                    • Access site-specific management tools
+                </p>
             </field>
         </record>
     </data>

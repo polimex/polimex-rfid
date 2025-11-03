@@ -9,7 +9,13 @@ class HrRfidUserEvent(models.Model):
     site_id = fields.Many2one(
         'hr.rfid.site',
         string='Site',
-        help='Event happened on this site',
+        help="""Site where this RFID event occurred, computed automatically from the door, controller, or webstack location.
+
+• Source: Determined from door location, controller site, or webstack site
+• Purpose: Enables site-based filtering and reporting of access events
+• Usage: Track activity by location, generate site-specific reports
+
+This field helps analyze access patterns and security events by physical location.""",
         compute='_compute_site_id',
         store=True,
     )

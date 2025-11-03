@@ -31,11 +31,10 @@
                 <xpath expr="//field[@name='controllers']" position="after">
                     <field name="site_id" groups="hr_rfid_site_manager.group_guard"/>
                 </xpath>
-                <xpath expr="//ul[@name='webstack_status']" position="inside">
-                    <li >
-                        <field name="site_id" groups="hr_rfid_site_manager.group_guard"/>
+                <xpath expr="//ul[hasclass('list-unstyled')]" position="inside">
+                    <li t-if="record.site_id.raw_value" groups="hr_rfid_site_manager.group_guard">
+                        <span class="text-muted">Site:</span> <field name="site_id"/>
                     </li>
-
                 </xpath>
             </field>
         </record>

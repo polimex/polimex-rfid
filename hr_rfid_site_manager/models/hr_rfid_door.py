@@ -3,7 +3,13 @@ from odoo import fields, models, api
 class HrRFIDDoor(models.Model):
     _inherit = 'hr.rfid.door'
 
-    site_id = fields.Many2one('hr.rfid.site', string='Site', ondelete='set null')
+    site_id = fields.Many2one(
+        'hr.rfid.site', 
+        string='Site', 
+        ondelete='set null',
+        help="Physical site where this door is located. Doors are automatically included "
+             "in site access groups and used for hierarchical access control."
+    )
 
     @api.model_create_multi
     def create(self, vals_list):

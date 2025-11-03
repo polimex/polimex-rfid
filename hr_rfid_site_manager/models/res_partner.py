@@ -11,7 +11,14 @@ class ResPartner(models.Model):
     site_ids = fields.Many2many(
         comodel_name='hr.rfid.site',
         string='Sites',
-        default=_get_default_sites
+        default=_get_default_sites,
+        help="""Sites where this person has access or is responsible for.
+        
+• For employees: Sites where they work or have access
+• For visitors: Sites they are permitted to visit
+• For companies: Sites they manage or have contracts with
+
+This affects which access groups are available for assignment."""
     )
     # all_site_ids = fields.Many2many(
     #     comodel_name='hr.rfid.site',
