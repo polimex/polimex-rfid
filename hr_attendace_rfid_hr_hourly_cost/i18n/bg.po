@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 17.0\n"
+"Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-21 15:47+0000\n"
-"PO-Revision-Date: 2024-08-21 18:49+0300\n"
+"POT-Creation-Date: 2025-06-04 16:18+0000\n"
+"PO-Revision-Date: 2025-06-04 19:19+0300\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.3\n"
+"X-Generator: Poedit 3.6\n"
 
 #. module: hr_attendace_rfid_hr_hourly_cost
 #: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__actual_work_time_cost
@@ -28,11 +28,68 @@ msgid "Currency"
 msgstr "Валута"
 
 #. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,help:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__currency_id
+msgid ""
+"Currency for cost calculations (derived from employee).\n"
+"        \n"
+"        • Source: Automatically inherited from employee's currency\n"
+"        • Purpose: Ensures consistent currency for all cost calculations\n"
+"        • Read-only: Cannot be changed directly\n"
+"        \n"
+"        Note: All monetary fields use this currency for proper formatting and calculations."
+msgstr ""
+"Валута за изчисляване на разходите (получена от служителя).\n"
+"        \n"
+"        - Източник: Автоматично се наследява от валутата на служителя\n"
+"        - Цел: Осигурява последователна валута за всички изчисления на разходите\n"
+"        - Само за четене: Не може да се променя директно\n"
+"        \n"
+"        Забележка: Всички парични полета използват тази валута за правилно форматиране и изчисления."
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,help:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__hourly_cost
+msgid ""
+"Employee's hourly cost rate (derived from employee record).\n"
+"        \n"
+"        • Source: Copied from employee's hourly cost setting\n"
+"        • Access: Visible to HR users only\n"
+"        • Usage: Base rate for calculating actual work time costs\n"
+"        \n"
+"        Note: Update the employee's hourly cost to change this value."
+msgstr ""
+"Почасовата ставка на служителя (получена от записа на служителя).\n"
+"        \n"
+"        - Източник: Копирано от настройката на почасовите разходи на служителя\n"
+"        - Достъп: Видими само за потребителите на HR\n"
+"        - Използване: Базова ставка за изчисляване на действителните разходи за работно време\n"
+"        \n"
+"        Забележка: Актуализирайте почасовите разходи на служителя, за да промените тази стойност."
+
+#. module: hr_attendace_rfid_hr_hourly_cost
 #: model:ir.model,name:hr_attendace_rfid_hr_hourly_cost.model_hr_attendance_extra
 msgid "Extra work time calculations"
-msgstr ""
+msgstr "Изчисляване на допълнителното работно време"
 
 #. module: hr_attendace_rfid_hr_hourly_cost
 #: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__hourly_cost
 msgid "Hourly Cost"
 msgstr "Почасово заплащане"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,help:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__actual_work_time_cost
+msgid ""
+"Total cost of actual work time (automatically calculated).\n"
+"        \n"
+"        • Calculation: Hourly cost × Actual work time hours\n"
+"        • Access: Visible to HR managers only\n"
+"        • Auto-update: Recalculated when hourly cost or work time changes\n"
+"        \n"
+"        Note: Provides financial overview of actual labor costs per day."
+msgstr ""
+"Обща стойност на действителното работно време (изчислява се автоматично).\n"
+"        \n"
+"        - Изчисляване: Почасова цена × часове реално работно време\n"
+"        - Достъп: Видими само за мениджърите по човешки ресурси\n"
+"        - Автоматично актуализиране: Преизчислява се при промяна на почасовата цена или работното време\n"
+"        \n"
+"        Забележка: Осигурява финансов преглед на действителните разходи за труд на ден."
