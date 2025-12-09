@@ -33,6 +33,53 @@ msgid "Actual Work Time"
 msgstr "Действително работно време"
 
 #. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__worked_hours
+msgid "Worked Hours"
+msgstr "Отработени часове"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__worked_hours
+msgid ""
+"Total physical presence time on this date (sum of all attendance records).\n"
+"\n"
+"        • Format: Hours in decimal format (e.g., 8.5 = 8 hours 30 minutes)\n"
+"        • Calculation: Sum of worked_hours from all hr.attendance records for this date\n"
+"        • Includes: All time between check-in and check-out, regardless of schedule\n"
+"\n"
+"        Note: This is the raw attendance time. Compare with 'Actual Work Time' which\n"
+"        only counts time within the scheduled work periods."
+msgstr ""
+"Общо физическо присъствие за тази дата (сума от всички записи за присъствие).\n"
+"\n"
+"        • Формат: Часове в десетичен формат (напр. 8,5 = 8 часа и 30 минути)\n"
+"        • Изчисление: Сума от worked_hours от всички hr.attendance записи за тази дата\n"
+"        • Включва: Цялото време между влизане и излизане, независимо от графика\n"
+"\n"
+"        Забележка: Това е суровото време на присъствие. Сравнете с 'Действително работно време',\n"
+"        което брои само времето в рамките на планираните работни периоди."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__actual_work_time
+msgid ""
+"Hours worked within scheduled work periods on this date.\n"
+"\n"
+"        • Format: Hours in decimal format (e.g., 8.5 = 8 hours 30 minutes)\n"
+"        • Calculation: Intersection of attendance time with scheduled work periods\n"
+"        • Excludes: Time outside scheduled hours (breaks, early arrivals before shift)\n"
+"\n"
+"        Note: This differs from 'Worked Hours' which counts total physical presence.\n"
+"        Use this for payroll calculations based on scheduled time."
+msgstr ""
+"Часове, отработени в рамките на планираните работни периоди за тази дата.\n"
+"\n"
+"        • Формат: Часове в десетичен формат (напр. 8,5 = 8 часа и 30 минути)\n"
+"        • Изчисление: Пресечна точка на времето за присъствие с планираните работни периоди\n"
+"        • Изключва: Време извън планираните часове (почивки, ранно пристигане преди смяната)\n"
+"\n"
+"        Забележка: Това се различава от 'Отработени часове', което брои общото физическо присъствие.\n"
+"        Използвайте това за изчисления на заплати, базирани на планираното време."
+
+#. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__overtime
 msgid ""
 "Additional hours worked beyond the scheduled work time.\n"

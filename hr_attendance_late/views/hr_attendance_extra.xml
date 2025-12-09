@@ -30,6 +30,7 @@
                         <group>
                             <group>
                                 <field name="theoretical_work_time" widget="float_time"/>
+                                <field name="worked_hours" widget="float_time"/>
                                 <field name="actual_work_time" widget="float_time"/>
                                 <field name="actual_work_time_day" widget="float_time"/>
                                 <field name="actual_work_time_night" widget="float_time"/>
@@ -61,6 +62,7 @@
                     <field name="department_id" type="row"/>
                     <field name="employee_id" type="row"/>
                     <field name="theoretical_work_time" type="measure"/>
+                    <field name="worked_hours" type="measure"/>
                     <field name="actual_work_time" type="measure"/>
                     <field name="late_time" type="measure"/>
                     <field name="overtime" type="measure"/>
@@ -80,6 +82,7 @@
                     <field name="for_date"/>
                     <field name="employee_id"/>
                     <field name="theoretical_work_time" widget="float_time" optional="show"/>
+                    <field name="worked_hours" widget="float_time" optional="show"/>
                     <field name="actual_work_time" widget="float_time" optional="show"/>
                     <field name="actual_work_time_day" widget="float_time" optional="hide"/>
                     <field name="actual_work_time_night" widget="float_time" optional="hide"/>

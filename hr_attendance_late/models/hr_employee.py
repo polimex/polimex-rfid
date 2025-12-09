@@ -199,6 +199,12 @@ class HrEmployee(models.Model):
                 if shift_number is not None:
                     att_extra_vals['shift_number'] = shift_number + 1
 
+                # Calculate worked_hours as sum of all attendance worked_hours for this date
+                # This is the total physical presence time, regardless of schedule
+                att_extra_vals['worked_hours'] = sum(
+                    att.worked_hours for att in attendances if att.worked_hours
+                )
+
                 # Cap theoretical_work_time at calendar hours_per_day if exceeds 20 hours
                 # This prevents errors from misconfigured calendars or overlapping attendance periods
                 if att_extra_vals.get('theoretical_work_time', None) is not None and att_extra_vals['theoretical_work_time'] > 20:

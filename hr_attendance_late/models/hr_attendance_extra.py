@@ -43,16 +43,28 @@ class HrAttendanceExtra(models.Model):
         
         Note: Stored for faster reporting and filtering by department.""")
 
+    worked_hours = fields.Float(
+        digits=(2, 2),
+        string="Worked Hours",
+        help="""Total physical presence time on this date (sum of all attendance records).
+
+        • Format: Hours in decimal format (e.g., 8.5 = 8 hours 30 minutes)
+        • Calculation: Sum of worked_hours from all hr.attendance records for this date
+        • Includes: All time between check-in and check-out, regardless of schedule
+
+        Note: This is the raw attendance time. Compare with 'Actual Work Time' which
+        only counts time within the scheduled work periods.""")
     actual_work_time = fields.Float(
         digits=(2, 2),
         string="Actual Work Time",
-        help="""Total hours actually worked on this date (including day and night time).
-        
+        help="""Hours worked within scheduled work periods on this date.
+
         • Format: Hours in decimal format (e.g., 8.5 = 8 hours 30 minutes)
-        • Calculation: Sum of all work periods between check-in and check-out
-        • Includes: Both regular hours and overtime periods
-        
-        Note: This is the total productive time, excluding breaks and non-work periods.""")
+        • Calculation: Intersection of attendance time with scheduled work periods
+        • Excludes: Time outside scheduled hours (breaks, early arrivals before shift)
+
+        Note: This differs from 'Worked Hours' which counts total physical presence.
+        Use this for payroll calculations based on scheduled time.""")
     actual_work_time_day = fields.Float(
         digits=(2, 2),
         string="Actual Day Time",
