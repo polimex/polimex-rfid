@@ -643,7 +643,7 @@ class WebRfidController(http.Controller):
                         tz=request.env['res.users'].sudo().browse(2).tz).create(new_webstack_dict)
                 else:
                     _logger.info('Unknown Module. Received=' + str(post_data))
-                    return {'status': 400}
+                    return http.Response('Unknown Module', status=400)
 
             if not webstack_id.key:
                 webstack_id.key = post_data['key']
@@ -656,12 +656,12 @@ class WebRfidController(http.Controller):
                 webstack_id.report_sys_ev('Webstack key and key in json did not match', post_data=post_data)
                 _logger.info(f'Wrong Module key for {webstack_id.name}/{webstack_id.company_id.name}! Received=' + str(
                     post_data))
-                return {'status': 400}
+                return http.Response('Wrong key', status=400)
 
             if not webstack_id.active:
                 webstack_id.write(_ws_db_update_dict())
                 webstack_id.report_sys_ev('Webstack is not active', post_data=post_data)
-                return {'status': 400}
+                return http.Response('Module not active', status=400)
 
             result = {
                 'status': 400
