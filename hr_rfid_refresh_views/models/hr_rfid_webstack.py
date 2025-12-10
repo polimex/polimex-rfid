@@ -7,5 +7,6 @@ class HrRfidWebstack(models.Model):
     _inherit = ['hr.rfid.webstack', 'refresh.mixin']
     _description = 'Module'
 
-    _refresh_on_create = True
-    _refresh_on_write = True
+    # Real-time refresh settings: Update views when webstacks are created or modified
+    _refresh_on_create = True  # Refresh when new modules are connected
+    _refresh_on_write = True   # Refresh when module status/settings change

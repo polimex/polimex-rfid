@@ -7,5 +7,6 @@ class HrRfidCtrlAlarmGroup(models.Model):
     _description = 'Alarm system groups'
     _inherit = ['hr.rfid.ctrl.alarm.group', 'refresh.mixin']
 
-    _refresh_on_create = True
-    _refresh_on_write = True
+    # Real-time refresh settings: Update views when alarm groups are created or modified
+    _refresh_on_create = True  # Refresh when new alarm groups are created
+    _refresh_on_write = True   # Refresh when alarm group status/settings change
