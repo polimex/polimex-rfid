@@ -8,7 +8,13 @@ class HrRfidUserEvent(models.Model):
 
     in_or_out = fields.Selection(
         selection=[ ('in', 'Check In'), ('out', 'Check Out'), ('no_info', 'No Info') ],
-        help='Whether the user came in or out',
+        help="""Indicates whether this RFID event was processed as attendance check-in or check-out.
+
+• Check In: Employee entered an attendance zone
+• Check Out: Employee left an attendance zone  
+• No Info: Event not processed for attendance (may be non-attendance zone or error)
+
+This field is automatically set when recalculating attendance from RFID events.""",
         string='Attendance',
         default='no_info',
     )

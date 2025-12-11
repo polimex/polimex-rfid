@@ -10,34 +10,49 @@ class HrRfidZone(models.Model):
 
     attendance = fields.Boolean(
         string='Attendance',
-        help='Zone will track attendance if ticked.',
+        help="Enable automatic attendance tracking for this zone. When employees enter this zone, "
+             "they will be automatically checked in for attendance. When they leave, they will be "
+             "checked out. Perfect for main entrances or work areas.",
         default=False,
     )
 
     overwrite_check_in = fields.Boolean(
         string='Overwrite check-in',
-        help='If a the user has already checked in and also enters this zone then overwrite the time of the check in',
+        help="When enabled, if an employee who is already checked in enters this zone, their check-in "
+             "time will be updated to the current time. Useful when you want the most recent zone entry "
+             "to be considered as the actual work start time.",
         default=False,
     )
 
     overwrite_check_out = fields.Boolean(
         string='Overwrite check-out',
-        help='If a the user has already checked out and also leaves this zone then overwrite the time of the check out',
+        help="When enabled, if an employee who has already checked out leaves this zone, their check-out "
+             "time will be updated to the current time. Useful for ensuring the last zone exit is recorded "
+             "as the actual work end time.",
         default=False,
     )
 
     max_time_in_zone = fields.Float(
-        help='Maximum attendance time in zone. Used for auto-close attendance. Zero means not use.',
+        string="Maximum Hours in Zone",
+        help="Maximum hours an employee can stay in the zone before attendance is automatically closed. "
+             "This prevents forgotten check-outs from creating excessively long attendance records. "
+             "Set to 0 to disable automatic closure. Example: 12 hours for a standard work day.",
         default=12,
         digits=(2, 2)
     )
     auto_close_time_for_zone = fields.Float(
-        help='Attendance time in zone if autoclosed. Used for auto-close attendance',
+        string="Auto-close Worked Hours",
+        help="When attendance is automatically closed (due to max_time_in_zone), this value will be "
+             "recorded as the actual worked hours. For example, if max is 12 hours but this is set to 7, "
+             "the system will record 7 hours of work when auto-closing.",
         default=7,
         digits=(2, 2)
     )
     delete_attendance_if_late_more_than = fields.Float(
-        help='Remove attendance for employee if late is more than this time. Set zeo to disable function.',
+        string="Delete if Late More Than (Hours)",
+        help="Automatically delete attendance records if the employee is late by more than this many hours. "
+             "This helps maintain data quality by removing likely erroneous entries. Set to 0 to disable "
+             "this feature. Example: Set to 4 to delete attendance if someone is more than 4 hours late.",
         default=0,
         digits=(2, 2)
     )
@@ -75,6 +90,17 @@ class HrRfidZone(models.Model):
         return super(HrRfidZone, self).person_entered(person, event)
 
     def person_left(self, person, event=None):
+        """Handle person leaving a zone with improved out-of-order event support.
+        
+        This method processes exit events and updates attendance records accordingly.
+        It handles various scenarios:
+        - Normal check-out (open attendance exists)
+        - Out-of-order check-out (finding the correct attendance to close)
+        - Overwrite check-out (updating recently closed attendances)
+        
+        :param person: hr.employee or res.partner
+        :param event: Optional RFID event that triggered this action
+        """
         is_employee = isinstance(person, type(self.env['hr.employee']))
         if not is_employee:
             return super(HrRfidZone, self).person_left(person, event)
@@ -82,33 +108,73 @@ class HrRfidZone(models.Model):
         for zone in self.filtered(lambda z: z.attendance):
             if is_employee and not zone._check_employee_permit(person):
                 continue
-            checkin = person._last_open_checkin(zone.id, before_dt=event and event.event_time or None)
-            if not checkin and zone.overwrite_check_out:
-                if event:
+            
+            # For out-of-order events, we need more sophisticated attendance matching
+            if event:
+                # First, try to find an open attendance that should be closed by this event
+                # The attendance must have started BEFORE this event time
+                attendance_to_close = self.env['hr.attendance'].search([
+                    ('employee_id', '=', person.id),
+                    ('check_in', '<', event.event_time),
+                    ('check_out', '=', False),
+                    ('in_zone_id', '=', zone.id),
+                ], order='check_in desc', limit=1)
+                
+                if attendance_to_close:
+                    # Found an open attendance to close
                     event.in_or_out = 'out'
+                    
+                    # Validate check_out time is after check_in
+                    check_out_time = event.event_time
+                    if check_out_time < attendance_to_close.check_in:
+                        _logger.warning(
+                            'Check-out time %s is before check-in time %s for employee %s. '
+                            'Setting check-out to check-in + 1 minute.',
+                            check_out_time, attendance_to_close.check_in, person.name
+                        )
+                        check_out_time = attendance_to_close.check_in + timedelta(minutes=1)
+                    
+                    attendance_to_close.with_context(from_event=True, no_validity_check=True).write({
+                        'check_out': check_out_time
+                    })
+                elif zone.overwrite_check_out:
+                    # No open attendance found, but zone allows overwriting recent check-outs
+                    event.in_or_out = 'out'
+                    
+                    # Find the most recent closed attendance
                     last_att_id = self.env['hr.attendance'].search([
                         ('check_out', '<', event.event_time),
                         ('employee_id', '=', person.id),
                         ('in_zone_id', '=', zone.id),
                     ], order='check_out desc', limit=1)
-                    # If event older than last checkout ignor it (6+ hours)
+                    
+                    # Only update if the event is within 8 hours of the last check-out
+                    # This prevents updating very old records with out-of-order events
                     if last_att_id and (event.event_time - last_att_id.check_out) < timedelta(hours=8):
-                        last_att_id.with_context(from_event=True).write({'check_out': event.event_time})
-                    # if last_att_id and (event.event_time - last_att_id.check_out) < relativedelta(hours=8):
-                    #     last_att_id.with_context(from_event=True).write({'check_out': event.event_time})
-                else:
+                        # Ensure the new check_out is still after check_in
+                        if event.event_time > last_att_id.check_in:
+                            last_att_id.with_context(from_event=True, no_validity_check=True).write({
+                                'check_out': event.event_time
+                            })
+                        else:
+                            _logger.warning(
+                                'Cannot update check-out to %s as it would be before check-in %s',
+                                event.event_time, last_att_id.check_in
+                            )
+            else:
+                # Real-time event (no specific event time)
+                # Use the standard logic for finding open attendance
+                checkin = person._last_open_checkin(zone.id)
+                if checkin:
+                    checkin.with_context(from_event=True).write({
+                        'check_out': fields.Datetime.now()
+                    })
+                elif zone.overwrite_check_out and person.last_attendance_id:
+                    # Update the last attendance if zone allows it
                     person.last_attendance_id.with_context(from_event=True).write({
                         'check_out': fields.Datetime.now()
                     })
-            elif checkin and event:
-                event.in_or_out = 'out'
-                checkin.with_context(from_event=True).write({
-                    'check_out': event.event_time
-                })
-            elif checkin:
-                checkin.with_context(from_event=True).write({
-                    'check_out': fields.Datetime.now()
-                })
+                    
         return super(HrRfidZone, self).person_left(person, event)
 
     def attendance_for_current_zone(self):
