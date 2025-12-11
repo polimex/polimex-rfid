@@ -5,25 +5,55 @@ class HrRfidControllerVending(models.Model):
     _inherit = 'hr.rfid.ctrl'
 
     show_price_timeout = fields.Integer(
-        string='Vending "Show Price" Timeout',
-        help='After how long the vending machine will stop showing the product price on the screen',
+        string='Price Display Timeout',
+        help="""Duration (in seconds) that product prices remain visible on the vending machine screen.
+        
+• Purpose: Control how long prices are displayed after selection
+• Hardware: Automatically computed from controller's IO table configuration
+• User experience: Longer timeouts give users more time to see prices
+• Power saving: Shorter timeouts save screen power and reduce wear
+        
+This value is read from the vending machine's hardware settings.""",
         compute='_compute_show_price_timeout',
     )
 
     scale_factor = fields.Integer(
-        string='Vending Scale Factor',
+        string='Price Scale Factor',
+        help="""Multiplier used to convert currency amounts to vending machine units.
+        
+• Purpose: Convert monetary values to hardware-compatible format
+• Hardware: Automatically computed from controller's IO table configuration
+• Calculation: Used internally for balance and price conversions
+• Example: Scale factor of 100 means 1.50 currency = 150 machine units
+        
+This value is read from the vending machine's hardware settings.""",
         compute='_compute_scale_factor',
     )
 
     cash_contained = fields.Float(
-        string='Cash Contained',
-        help='The amount of cash the vending machine currently contains',
+        string='Cash in Machine',
+        help="""Current amount of physical cash stored in the vending machine.
+        
+• Purpose: Track cash accumulation from sales for collection purposes
+• Updates: Automatically increased with each cash purchase
+• Collection: Reduced when cash is physically collected from machine
+• Management: Use cash collection wizard to record cash removal
+        
+Helps manage cash flow and collection schedules for vending operations.""",
         default=0
     )
 
     pricelist_id = fields.Many2one(
         'product.pricelist',
-        string='Pricelist',
+        string='Product Pricelist',
+        help="""Pricelist used to determine product prices for this vending machine.
+        
+• Purpose: Set custom pricing for different vending machine locations
+• Flexibility: Different machines can have different pricing strategies
+• Integration: Works with Odoo's standard pricelist functionality
+• Examples: Discounted prices for staff areas, premium pricing for visitor areas
+        
+Leave empty to use default product prices."""
     )
 
     @api.model

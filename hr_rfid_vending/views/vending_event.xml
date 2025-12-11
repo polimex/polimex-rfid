@@ -8,6 +8,22 @@
             <field name="context">
                 {"graph_default_sale_events":1,"search_default_this_day":1,"search_default_sale_events":1}
             </field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No vending machine events recorded yet
+                </p>
+                <p>
+                    This view shows all interactions with your vending machines.
+                    <br/><br/>
+                    Monitor and analyze:
+                    • <b>Purchase transactions:</b> Successful product sales and payments
+                    • <b>Machine errors:</b> Technical issues and error conditions
+                    • <b>Cash collections:</b> Money removal and management events
+                    • <b>Usage patterns:</b> Peak times, popular products, and user behavior
+                    <br/><br/>
+                    Use the pivot and graph views for detailed sales analysis and reporting.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_vending_event_form" model="ir.ui.view">

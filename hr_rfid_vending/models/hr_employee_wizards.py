@@ -24,12 +24,29 @@ class VendingBalanceWiz(models.TransientModel):
         'hr.employee',
         required=True,
         default=_default_employee,
+        string="Employees",
+        help="""Select employees whose vending balances will be modified.
+        
+• Multiple selection: Can adjust balances for multiple employees at once
+• Bulk operations: Efficient for company-wide balance adjustments
+• Default selection: Pre-filled based on current context
+• Required: At least one employee must be selected
+        
+Use for mass balance updates, corrections, or special allowances."""
     )
 
     value = fields.Float(
-        string='Value',
+        string='Amount',
         required=True,
         default=_default_value,
+        help="""Amount to add, subtract, or set for the selected employees' vending balances.
+        
+• Add: Positive amount increases balance (e.g., bonus allowance)
+• Subtract: Amount to deduct from balance (e.g., corrections)
+• Set: Target balance amount (e.g., standardize all balances)
+• Currency: Uses company's default currency
+        
+Action depends on which button you click: Add, Subtract, or Set Value."""
     )
 
     def add_value(self):
