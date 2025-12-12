@@ -253,7 +253,6 @@ class OldCloudImportWiz(models.TransientModel):
             )
         return employee
 
-    @api.returns('hr.rfid.card')
     def create_tags(self, user_id, employee_id=None, partner_id=None):
         tags = json.loads(user_id.json_data)['tags']
         for tag in tags:
