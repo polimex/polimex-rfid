@@ -96,11 +96,7 @@
             <field name="name">hr.rfid.ctrl.alarm.kanban</field>
             <field name="model">hr.rfid.ctrl.alarm</field>
             <field name="arch" type="xml">
-                <kanban disable_drag_drop_record="true">
-<!--                        group_create="false"-->
-<!--                        group_edit="false"-->
-<!--                        quick_create="false"-->
-<!--                        create="false">-->
+                <kanban records_draggable="false" sample="1">
                     <field name="state"/>
                     <field name="armed"/>
                     <field name="door_id"/>
@@ -110,104 +106,90 @@
                     <field name="siren_state"/>
                     <field name="enabled"/>
                     <templates>
-                        <!-- Main card template (required) -->
                         <t t-name="card">
-                            <div class="oe_kanban_global_click position-relative">
-                                <widget name="web_ribbon" title="Disabled" bg_color="text-bg-danger"
-                                        invisible="enabled" class="position-absolute"/>
-                                <div class="oe_kanban_details">
-                                    <div class="position-absolute top-0 end-0 mt-2 me-2">
-                                        <span t-if="record.siren_state.raw_value and record.armed.raw_value != 'no_alarm'"
-                                              class="fa fa-bell text-danger me-1" title="Siren On"/>
-                                        <span t-if="record.armed.raw_value == 'arm'"
-                                              class="fa fa-shield text-danger" title="Armed"/>
-                                        <span t-if="record.armed.raw_value == 'disarm'"
-                                              class="fa fa-shield text-success" title="Disarmed"/>
-                                    </div>
-                                    <div class="o_kanban_record_top mb-2">
-                                        <div class="o_kanban_record_headings">
-                                            <strong class="o_kanban_record_title">
-                                                <field name="name"/>
-                                            </strong>
-                                        </div>
-                                    </div>
-                                    <ul class="list-unstyled text-muted small">
-                                        <li>
-                                            <span class="text-muted">State:</span>
-                                            <field name="state"
-                                                   decoration-success="state == 'normal'"
-                                                   decoration-warning="state in ['short','open']"
-                                                   decoration-info="state == 'disabled'"
-                                                   decoration-danger="state in ['s1','s2','s12']"/>
-                                        </li>
-                                        <li t-if="record.door_id.raw_value">
-                                            <i class="fa fa-door-open me-1" title="Door"/>
-                                            <field name="door_id"/>
-                                        </li>
-                                        <li t-if="record.alarm_group_id.raw_value">
-                                            <i class="fa fa-users me-1" title="Group"/>
-                                            <field name="alarm_group_id"/>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="oe_kanban_footer">
-                                    <div class="o_kanban_record_bottom">
-                                        <div class="oe_kanban_bottom_left">
-                                            <button name="arm" type="object" title="Arm the alarm line"
-                                                    t-if="record.armed.raw_value == 'disarm'"
-                                                    groups="hr_rfid.hr_rfid_view_door_arm_disarm"
-                                                    class="btn btn-link btn-sm ps-0 pe-1">
-                                                <i class="fa fa-shield text-danger"/>
-                                            </button>
-                                            <button name="disarm" type="object" title="Disarm the alarm line"
-                                                    t-if="record.armed.raw_value == 'arm'"
-                                                    groups="hr_rfid.hr_rfid_view_door_arm_disarm"
-                                                    class="btn btn-link btn-sm ps-0 pe-1">
-                                                <i class="fa fa-universal-access text-success"/>
-                                            </button>
-                                            <span t-if="record.user_event_count.value > 0"
-                                                  class="badge rounded-pill me-1">
-                                                <a name="return_action_to_open" type="object"
-                                                   context="{'xml_id':'hr_rfid_event_user'}" class="text-reset text-decoration-none">
-                                                    <i class="fa fa-user" title="User Events"/>
-                                                    <t t-esc="record.user_event_count.value"/>
-                                                </a>
-                                            </span>
-                                            <span t-if="record.system_event_count.value > 0"
-                                                  class="badge rounded-pill me-1">
-                                                <a name="return_action_to_open" type="object"
-                                                   context="{'xml_id':'hr_rfid_event_system'}" class="text-reset text-decoration-none">
-                                                    <i class="fa fa-microchip" title="System Events"/>
-                                                    <t t-esc="record.system_event_count.value"/>
-                                                </a>
-                                            </span>
-                                        </div>
-                                    </div>
+                            <!-- Ribbon for disabled alarms -->
+                            <widget name="web_ribbon" title="Disabled" bg_color="text-bg-danger" invisible="enabled"/>
+                            <!-- Title with status icons -->
+                            <div class="d-flex justify-content-between align-items-start">
+                                <field name="name" class="fw-bold fs-5 text-truncate"/>
+                                <div class="ms-2 text-nowrap">
+                                    <span t-if="record.siren_state.raw_value and record.armed.raw_value != 'no_alarm'"
+                                          class="fa fa-bell text-danger me-1" title="Siren Active"/>
+                                    <span t-if="record.armed.raw_value == 'arm'"
+                                          class="fa fa-shield text-danger" title="Armed"/>
+                                    <span t-if="record.armed.raw_value == 'disarm'"
+                                          class="fa fa-shield text-success" title="Disarmed"/>
                                 </div>
                             </div>
-                        </t>
-                        
-                        <!-- Menu template (optional) -->
-                        <t t-name="menu" t-if="!selection_mode" groups="base.group_user">
-                            <a role="menuitem" type="object" name="arm" class="dropdown-item"
-                               t-if="record.armed.raw_value == 'disarm'">Arm</a>
-                            <a role="menuitem" type="object" name="disarm" class="dropdown-item" 
-                               t-if="record.armed.raw_value == 'arm'">Disarm</a>
-                            <div role="separator" class="dropdown-divider"/>
-                            <a role="menuitem" type="edit" class="dropdown-item">Edit</a>
-                        </t>
-                        
-                        <!-- Tooltip template (optional) -->
-                        <t t-name="tooltip">
-                            <div>
-                                <field name="name" class="fw-bold"/>
-                                <div class="text-muted">
-                                    <span>State: </span><field name="state"/>
-                                    <div t-if="record.door_id.raw_value">
-                                        <span>Door: </span><field name="door_id"/>
+                            <!-- State badge -->
+                            <div class="mt-1">
+                                <field name="state" widget="badge"
+                                       decoration-success="state == 'normal'"
+                                       decoration-warning="state in ['short','open']"
+                                       decoration-info="state == 'disabled'"
+                                       decoration-danger="state in ['s1','s2','s12']"/>
+                            </div>
+                            <!-- Door and Group info -->
+                            <div t-if="record.door_id.raw_value" class="text-muted small mt-1">
+                                <i class="fa fa-door-open me-1"/>
+                                <field name="door_id"/>
+                            </div>
+                            <div t-if="record.alarm_group_id.raw_value" class="text-muted small">
+                                <i class="fa fa-users me-1"/>
+                                <field name="alarm_group_id"/>
+                            </div>
+                            <!-- Footer with actions and counters -->
+                            <footer class="pt-2">
+                                <div class="d-flex align-items-center">
+                                    <!-- Arm/Disarm buttons -->
+                                    <button t-if="record.armed.raw_value == 'disarm'"
+                                            name="arm" type="object" title="Arm this alarm"
+                                            groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                                            class="btn btn-sm btn-outline-danger me-1 px-2 py-0">
+                                        <i class="fa fa-shield"/> Arm
+                                    </button>
+                                    <button t-if="record.armed.raw_value == 'arm'"
+                                            name="disarm" type="object" title="Disarm this alarm"
+                                            groups="hr_rfid.hr_rfid_view_door_arm_disarm"
+                                            class="btn btn-sm btn-outline-success me-1 px-2 py-0">
+                                        <i class="fa fa-unlock"/> Disarm
+                                    </button>
+                                    <!-- Event counters -->
+                                    <div class="ms-auto d-flex gap-1">
+                                        <a t-if="record.user_event_count.raw_value > 0"
+                                           name="return_action_to_open" type="object"
+                                           context="{'xml_id':'hr_rfid_event_user'}"
+                                           class="badge text-bg-secondary text-decoration-none"
+                                           title="User Events">
+                                            <i class="fa fa-user me-1"/>
+                                            <t t-out="record.user_event_count.value"/>
+                                        </a>
+                                        <a t-if="record.system_event_count.raw_value > 0"
+                                           name="return_action_to_open" type="object"
+                                           context="{'xml_id':'hr_rfid_event_system'}"
+                                           class="badge text-bg-info text-decoration-none"
+                                           title="System Events">
+                                            <i class="fa fa-microchip me-1"/>
+                                            <t t-out="record.system_event_count.value"/>
+                                        </a>
                                     </div>
                                 </div>
-                            </div>
+                            </footer>
+                        </t>
+                        <!-- Dropdown menu -->
+                        <t t-name="menu" groups="base.group_user">
+                            <a t-if="record.armed.raw_value == 'disarm'" role="menuitem"
+                               type="object" name="arm" class="dropdown-item">
+                                <i class="fa fa-shield me-2"/>Arm
+                            </a>
+                            <a t-if="record.armed.raw_value == 'arm'" role="menuitem"
+                               type="object" name="disarm" class="dropdown-item">
+                                <i class="fa fa-unlock me-2"/>Disarm
+                            </a>
+                            <div t-if="record.armed.raw_value != 'no_alarm'" role="separator" class="dropdown-divider"/>
+                            <a role="menuitem" type="edit" class="dropdown-item">
+                                <i class="fa fa-pencil me-2"/>Edit
+                            </a>
                         </t>
                     </templates>
                 </kanban>
