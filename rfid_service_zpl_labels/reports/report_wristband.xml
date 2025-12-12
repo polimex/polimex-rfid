@@ -1,147 +1,147 @@
-<!-- ZPL II Wristband Report for `rfid.service.sale`Author: Polimex Dev Team -->
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- 1 × 11 inch wristband @203 dpi  -->
-    <record id="paperformat_wristband_1x11" model="report.paperformat">
-        <field name="name">Wristband 1×11 in</field>
-        <field name="format">custom</field>
-        <field name="page_width">25</field>     <!-- mm -->
-        <field name="page_height">279</field>   <!-- mm -->
-        <field name="orientation">Portrait</field>
-        <field name="margin_top">0</field>
-        <field name="margin_bottom">0</field>
-        <field name="margin_left">0</field>
-        <field name="margin_right">0</field>
-    </record>
-
-    <!-- QWeb template : renders ONE ^XA…^XZ block per record -->
-    <template id="wristband_template_view">
-        <t t-set="docs_to_print" t-value="docs if docs else [None]"/>
-        <t t-foreach="docs_to_print" t-as="sale" t-translation="off">
+    <data>
+        <record id="paperformat_wristband_1x11" model="report.paperformat">
+            <field name="name">Wristband 1×11 in</field>
+            <field name="format">custom</field>
+            <field name="page_width">25</field>
+            <field name="page_height">279</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">0</field>
+            <field name="margin_bottom">0</field>
+            <field name="margin_left">0</field>
+            <field name="margin_right">0</field>
+        </record>
+        <template id="wristband_template_view">
+            <t t-set="docs_to_print" t-value="docs if docs else [None]"/>
+            <t t-foreach="docs_to_print" t-as="sale" t-translation="off">
             ^XA^CI28
             ^PW203 ^LL2233 ^LH0,0
-            
             ; COLUMN LAYOUT - No lines, centered elements
-            
             ; COLUMN 1: Now empty (reserved for future use)
-            
             ; COLUMN 2: Company, Service, and Partner Name in 3 rows with moderate spacing (Y: 400-700)
-            <t t-set="company_name" t-value="(sale and sale.service_id and sale.service_id.company_id and sale.service_id.company_id.name or (sale and sale.company_id and sale.company_id.name) or env.company.name or 'TEST COMPANY')[:33]"/>
-            <t t-set="service_name" t-value="(sale and sale.service_id and sale.service_id.name or 'TEST SERVICE')[:26]"/>
-            <t t-set="partner_name" t-value="(sale and sale.partner_id and sale.partner_id.name or 'TEST CUSTOMER')[:39]"/>
-            
+                <t t-set="company_name" t-value="(sale and sale.service_id and sale.service_id.company_id and sale.service_id.company_id.name or (sale and sale.company_id and sale.company_id.name) or env.company.name or 'TEST COMPANY')[:33]"/>
+                <t t-set="service_name" t-value="(sale and sale.service_id and sale.service_id.name or 'TEST SERVICE')[:26]"/>
+                <t t-set="partner_name" t-value="(sale and sale.partner_id and sale.partner_id.name or 'TEST CUSTOMER')[:39]"/>
             ^FO130,400
-            ^A0R,53,53^FD<t t-out="company_name"/>^FS
+            ^A0R,53,53^FD
+                <t t-out="company_name"/>
+                ^FS
             ^FO75,400
-            ^A0R,48,48^FD<t t-out="service_name"/>^FS
+            ^A0R,48,48^FD
+                <t t-out="service_name"/>
+                ^FS
             ^FO10,400
-            ^A0R,58,58^FD<t t-out="partner_name"/>^FS
-            
+            ^A0R,58,58^FD
+                <t t-out="partner_name"/>
+                ^FS
             ; COLUMN 3: QR Code centered (Y: 1100-1500)
-            <t t-set="card_number" t-value="(sale and sale.card_id and sale.card_id.barcode_number) or '1234567890'"/>
+                <t t-set="card_number" t-value="(sale and sale.card_id and sale.card_id.barcode_number) or '1234567890'"/>
             ^FO20,1250
             ^BQR,2,8
-            ^FDMA,<t t-out="card_number"/>^FS
-            
+            ^FDMA,
+                <t t-out="card_number"/>
+                ^FS
             ; COLUMN 4: Dates/Times (Y: 1700-2100)
-            <t t-if="sale and sale.start_date">
-                <t t-set="start_datetime" t-value="context_timestamp(sale.start_date).strftime('%d-%b-%y %H:%M').upper()"/>
-            </t>
-            <t t-else="">
-                <t t-set="start_datetime" t-value="'13-JUN-25 10:00'"/>
-            </t>
+                <t t-if="sale and sale.start_date">
+                    <t t-set="start_datetime" t-value="context_timestamp(sale.start_date).strftime('%d-%b-%y %H:%M').upper()"/>
+                </t>
+                <t t-else="">
+                    <t t-set="start_datetime" t-value="'13-JUN-25 10:00'"/>
+                </t>
             ^FO100,1800
-            ^A0R,36,36^FD<t t-out="start_datetime"/>^FS
-            
-            <t t-if="sale and sale.end_date">
-                <t t-set="end_datetime" t-value="context_timestamp(sale.end_date).strftime('%d-%b-%y %H:%M').upper()"/>
-            </t>
-            <t t-else="">
-                <t t-set="end_datetime" t-value="'14-JUN-25 10:00'"/>
-            </t>
+            ^A0R,36,36^FD
+                <t t-out="start_datetime"/>
+                ^FS
+                <t t-if="sale and sale.end_date">
+                    <t t-set="end_datetime" t-value="context_timestamp(sale.end_date).strftime('%d-%b-%y %H:%M').upper()"/>
+                </t>
+                <t t-else="">
+                    <t t-set="end_datetime" t-value="'14-JUN-25 10:00'"/>
+                </t>
             ^FO40,1800
-            ^A0R,36,36^FD<t t-out="end_datetime"/>^FS
-            
+            ^A0R,36,36^FD
+                <t t-out="end_datetime"/>
+                ^FS
             ^XZ
-        </t>
-    </template>
-
-    <!-- Template with traditional CODE-128 barcode -->
-    <template id="wristband_template_barcode_view">
-        <t t-set="docs_to_print" t-value="docs if docs else [None]"/>
-        <t t-foreach="docs_to_print" t-as="sale" t-translation="off">
+            </t>
+        </template>
+        <template id="wristband_template_barcode_view">
+            <t t-set="docs_to_print" t-value="docs if docs else [None]"/>
+            <t t-foreach="docs_to_print" t-as="sale" t-translation="off">
             ^XA^CI28
             ^PW203 ^LL2233 ^LH0,0
-            
             ; COLUMN LAYOUT - No lines, centered elements
-            
             ; COLUMN 1: Now empty (reserved for future use)
-            
             ; COLUMN 2: Company, Service, and Partner Name in 3 rows with moderate spacing (Y: 400-700)
-            <t t-set="company_name" t-value="(sale and sale.service_id and sale.service_id.company_id and sale.service_id.company_id.name or (sale and sale.company_id and sale.company_id.name) or env.company.name or 'TEST COMPANY')[:33]"/>
-            <t t-set="service_name" t-value="(sale and sale.service_id and sale.service_id.name or 'TEST SERVICE')[:26]"/>
-            <t t-set="partner_name" t-value="(sale and sale.partner_id and sale.partner_id.name or 'TEST CUSTOMER')[:39]"/>
-            
+                <t t-set="company_name" t-value="(sale and sale.service_id and sale.service_id.company_id and sale.service_id.company_id.name or (sale and sale.company_id and sale.company_id.name) or env.company.name or 'TEST COMPANY')[:33]"/>
+                <t t-set="service_name" t-value="(sale and sale.service_id and sale.service_id.name or 'TEST SERVICE')[:26]"/>
+                <t t-set="partner_name" t-value="(sale and sale.partner_id and sale.partner_id.name or 'TEST CUSTOMER')[:39]"/>
             ^FO130,400
-            ^A0R,53,53^FD<t t-out="company_name"/>^FS
+            ^A0R,53,53^FD
+                <t t-out="company_name"/>
+                ^FS
             ^FO75,400
-            ^A0R,48,48^FD<t t-out="service_name"/>^FS
+            ^A0R,48,48^FD
+                <t t-out="service_name"/>
+                ^FS
             ^FO10,400
-            ^A0R,58,58^FD<t t-out="partner_name"/>^FS
-            
+            ^A0R,58,58^FD
+                <t t-out="partner_name"/>
+                ^FS
             ; COLUMN 3: Traditional Barcode centered (Y: 1100-1500)
-            <t t-set="card_number" t-value="(sale and sale.card_id and sale.card_id.barcode_number) or '1234567890'"/>
+                <t t-set="card_number" t-value="(sale and sale.card_id and sale.card_id.barcode_number) or '1234567890'"/>
             ^FO60,1250
             ^BY4,4,160
             ^BCR,160,N,N,N
-            ^FD<t t-out="card_number"/>^FS
-            
+            ^FD
+                <t t-out="card_number"/>
+                ^FS
             ; COLUMN 4: Dates/Times (Y: 1700-2100)
-            <t t-if="sale and sale.start_date">
-                <t t-set="start_datetime" t-value="context_timestamp(sale.start_date).strftime('%d-%b-%y %H:%M').upper()"/>
-            </t>
-            <t t-else="">
-                <t t-set="start_datetime" t-value="'13-JUN-25 10:00'"/>
-            </t>
+                <t t-if="sale and sale.start_date">
+                    <t t-set="start_datetime" t-value="context_timestamp(sale.start_date).strftime('%d-%b-%y %H:%M').upper()"/>
+                </t>
+                <t t-else="">
+                    <t t-set="start_datetime" t-value="'13-JUN-25 10:00'"/>
+                </t>
             ^FO100,1800
-            ^A0R,36,36^FD<t t-out="start_datetime"/>^FS
-            
-            <t t-if="sale and sale.end_date">
-                <t t-set="end_datetime" t-value="context_timestamp(sale.end_date).strftime('%d-%b-%y %H:%M').upper()"/>
-            </t>
-            <t t-else="">
-                <t t-set="end_datetime" t-value="'14-JUN-25 10:00'"/>
-            </t>
+            ^A0R,36,36^FD
+                <t t-out="start_datetime"/>
+                ^FS
+                <t t-if="sale and sale.end_date">
+                    <t t-set="end_datetime" t-value="context_timestamp(sale.end_date).strftime('%d-%b-%y %H:%M').upper()"/>
+                </t>
+                <t t-else="">
+                    <t t-set="end_datetime" t-value="'14-JUN-25 10:00'"/>
+                </t>
             ^FO40,1800
-            ^A0R,36,36^FD<t t-out="end_datetime"/>^FS
-            
+            ^A0R,36,36^FD
+                <t t-out="end_datetime"/>
+                ^FS
             ^XZ
-        </t>
-    </template>
-
-    <record id="action_report_rfid_wristband" model="ir.actions.report">
-        <field name="name">Customer Wristband - QR Code (ZPL)</field>
-        <field name="model">rfid.service.sale</field>
-        <field name="report_type">qweb-text</field>
-        <field name="report_name">rfid_service_zpl_labels.wristband_template_view</field>
-        <field name="report_file">rfid_service_zpl_labels.wristband_template_view</field>
-        <field name="binding_model_id" ref="rfid_service_base.model_rfid_service_sale"/>
-        <field name="binding_type">report</field>
-        <!-- optional: force "raw" mode if you use a CUPS queue -->
-        <field name="print_report_name">'wristband_qr_' + (object.name or 'by_polimex')</field>
-        <field name="paperformat_id" ref="rfid_service_zpl_labels.paperformat_wristband_1x11"/>
-    </record>
-
-    <!-- Report action for barcode version -->
-    <record id="action_report_rfid_wristband_barcode" model="ir.actions.report">
-        <field name="name">Customer Wristband - CODE-128 (ZPL)</field>
-        <field name="model">rfid.service.sale</field>
-        <field name="report_type">qweb-text</field>
-        <field name="report_name">rfid_service_zpl_labels.wristband_template_barcode_view</field>
-        <field name="report_file">rfid_service_zpl_labels.wristband_template_barcode_view</field>
-        <field name="binding_model_id" ref="rfid_service_base.model_rfid_service_sale"/>
-        <field name="binding_type">report</field>
-        <field name="print_report_name">'wristband_code128_' + (object.name or 'by_polimex')</field>
-        <field name="paperformat_id" ref="rfid_service_zpl_labels.paperformat_wristband_1x11"/>
-    </record>
-
+            </t>
+        </template>
+        <record id="action_report_rfid_wristband" model="ir.actions.report">
+            <field name="name">Customer Wristband - QR Code (ZPL)</field>
+            <field name="model">rfid.service.sale</field>
+            <field name="report_type">qweb-text</field>
+            <field name="report_name">rfid_service_zpl_labels.wristband_template_view</field>
+            <field name="report_file">rfid_service_zpl_labels.wristband_template_view</field>
+            <field name="binding_model_id" ref="rfid_service_base.model_rfid_service_sale"/>
+            <field name="binding_type">report</field>
+            <field name="print_report_name">'wristband_qr_' + (object.name or 'by_polimex')</field>
+            <field name="paperformat_id" ref="rfid_service_zpl_labels.paperformat_wristband_1x11"/>
+        </record>
+        <record id="action_report_rfid_wristband_barcode" model="ir.actions.report">
+            <field name="name">Customer Wristband - CODE-128 (ZPL)</field>
+            <field name="model">rfid.service.sale</field>
+            <field name="report_type">qweb-text</field>
+            <field name="report_name">rfid_service_zpl_labels.wristband_template_barcode_view</field>
+            <field name="report_file">rfid_service_zpl_labels.wristband_template_barcode_view</field>
+            <field name="binding_model_id" ref="rfid_service_base.model_rfid_service_sale"/>
+            <field name="binding_type">report</field>
+            <field name="print_report_name">'wristband_code128_' + (object.name or 'by_polimex')</field>
+            <field name="paperformat_id" ref="rfid_service_zpl_labels.paperformat_wristband_1x11"/>
+        </record>
+    </data>
 </odoo>
