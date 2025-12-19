@@ -5,19 +5,30 @@ import base64
 
 
 class HrAttendance(models.Model):
+    _name = 'hr.attendance'
     _inherit = 'hr.attendance'
 
-    department_id = fields.Many2one(store=True)
+    department_id = fields.Many2one(
+        store=True,
+        help="Employee's department at the time of this attendance record. This field is stored "
+             "to maintain historical accuracy even if the employee later changes departments."
+    )
 
     check_in = fields.Datetime(
         index=True,
+        help="Date and time when the employee checked in to work. This is automatically recorded "
+             "when entering an RFID attendance zone or can be manually set by HR managers."
     )
 
     check_out = fields.Datetime(
         index=True,
+        help="Date and time when the employee checked out from work. This is automatically recorded "
+             "when leaving an RFID attendance zone or can be manually set by HR managers."
     )
     in_zone_id = fields.Many2one(
         'hr.rfid.zone',
+        help="The RFID zone where this attendance session is taking place. Set when checking in "
+             "and cleared when checking out. Used to track which area the employee is working in.",
         # compute='_compute_checkin_zone',
         # store=True
     )
@@ -72,7 +83,7 @@ class HrAttendance(models.Model):
             return close and max_hours and self.open_worked_hours > max_hours
         else:
             max_hours = max_time
-            close = not float_is_zero(max_time, precision_rounding=0)
+            close = not float_is_zero(max_time or 0.0, precision_digits=2)
             open_worked_hours = (fields.Datetime.now() - self.check_in).total_seconds() / 3600
             return close and max_hours and open_worked_hours > max_hours
 

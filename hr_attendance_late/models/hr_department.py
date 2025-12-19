@@ -3,6 +3,7 @@ from odoo.exceptions import ValidationError
 
 
 class Department(models.Model):
+    _name = "hr.department"
     _inherit = "hr.department"
 
     ignore_early_come_time = fields.Float(

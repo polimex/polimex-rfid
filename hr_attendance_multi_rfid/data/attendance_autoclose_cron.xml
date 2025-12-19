@@ -1,15 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo noupdate="1">
-    <data>
-    <record id="hr_attendance_multi_rfid_autoclose_cron" model="ir.cron">
-      <field name="name">HR RFID Multi Attendance: Check for auto close presence</field>
-      <field name="active" eval="True" />
-      <field name="user_id" ref="base.user_root" />
-      <field name="model_id" ref="model_hr_attendance" />
-      <field name="state">code</field>
-      <field name="code">model.check_for_incomplete_attendances()</field>
-      <field name="interval_type">minutes</field>
-      <field name="interval_number">1</field>
-    </record>
+<odoo>
+    <!-- Cron job for HR Attendance Multi RFID module
+         Automatically closes incomplete attendance records based on zone configuration.
+
+         Odoo 19 cron features used:
+         - noupdate="1" allows users to customize the interval
+         - priority field controls execution order (lower = higher priority)
+         - state defaults to 'code' (omitted for cleaner XML)
+    -->
+    <data noupdate="1">
+
+        <!-- High priority: Auto-close incomplete attendances
+             Runs every minute to check and close incomplete attendance records -->
+        <record id="hr_attendance_multi_rfid_autoclose_cron" model="ir.cron">
+            <field name="name">HR RFID Multi Attendance: Auto-close incomplete attendances</field>
+            <field name="model_id" ref="model_hr_attendance"/>
+            <field name="code">model.check_for_incomplete_attendances()</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="priority">5</field>
+        </record>
+
     </data>
 </odoo>

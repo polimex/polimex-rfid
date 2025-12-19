@@ -4,6 +4,7 @@ from odoo import api, fields, models
 
 
 class HrAttendance(models.Model):
+    _name = 'hr.attendance'
     _inherit = 'hr.attendance'
 
     @api.model_create_multi

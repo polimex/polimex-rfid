@@ -172,6 +172,7 @@ class HrRfidSystemEvent(models.Model):
 
         companies = self.env['res.company'].search([])
         total_deleted = 0
+        has_more = False  # Track if any company hit max batch limit (for re-queue)
 
         _logger.info(
             "[SYSTEM EVENTS] Starting GC across %d companies",
@@ -250,6 +251,15 @@ class HrRfidSystemEvent(models.Model):
                         self._cr.rollback()
                         break
 
+                # Check if we hit max batches (may have more records to delete)
+                if batch_num >= max_batches_per_company:
+                    has_more = True
+                    _logger.info(
+                        "[SYSTEM EVENTS] Company %s hit max batch limit (%d), may have more events",
+                        company.name,
+                        max_batches_per_company
+                    )
+
                 if company_deleted > 0:
                     _logger.info(
                         "[SYSTEM EVENTS] Company %s completed: %d events deleted in %d batches",
@@ -268,12 +278,15 @@ class HrRfidSystemEvent(models.Model):
                 self._cr.rollback()
 
         _logger.info(
-            "[SYSTEM EVENTS] GC completed: %d total events deleted across %d companies",
+            "[SYSTEM EVENTS] GC completed: %d total events deleted across %d companies (has_more=%s)",
             total_deleted,
-            len(companies)
+            len(companies),
+            has_more
         )
 
-        return True
+        # Return tuple for Odoo 19 autovacuum re-queue support
+        # If has_more is True, this method will be re-queued for another run
+        return total_deleted, has_more
 
     @api.depends('webstack_id.name', 'controller_id.name', 'timestamp')
     def _compute_sys_ev_name(self):

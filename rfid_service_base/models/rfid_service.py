@@ -330,6 +330,7 @@ Colors improve visual organization when managing multiple service categories."""
         default=lambda self: self.env.company
     )
 
-    _sql_constraints = [
-        ('name_uniq', 'unique (name)', "Tag name already exists!"),
-    ]
+    _name_uniq = models.Constraint(
+        'unique (name)',
+        "Tag name already exists!",
+    )

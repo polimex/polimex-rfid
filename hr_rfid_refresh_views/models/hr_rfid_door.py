@@ -8,8 +8,9 @@ class HrRfidDoor(models.Model):
     _description = 'Door'
     _inherit = ['hr.rfid.door', 'refresh.mixin']
 
-    _refresh_on_create = False
-    _refresh_on_write = True
+    # Real-time refresh settings: Update views when door settings change (not on creation)
+    _refresh_on_create = False  # Don't refresh on door creation (less frequent)
+    _refresh_on_write = True    # Refresh when door status/settings change
 
     def get_company_id(self):
         return self.webstack_id.company_id

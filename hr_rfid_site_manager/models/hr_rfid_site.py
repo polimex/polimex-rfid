@@ -139,10 +139,14 @@ Useful for: Building access, department access, or hierarchical permissions."""
         help="Number of security alarm groups configured for this site."
     )
 
-    _sql_constraints = [
-        ('no_loop', 'check(id != parent_id)', 'You cannot create a loop in the site hierarchy.'),
-        ('unique_name', 'unique(name, parent_id, company_id)', 'The site name must be unique.'),
-    ]
+    _no_loop = models.Constraint(
+        'check(id != parent_id)',
+        'You cannot create a loop in the site hierarchy.',
+    )
+    _unique_name = models.Constraint(
+        'unique(name, parent_id, company_id)',
+        'The site name must be unique.',
+    )
 
     @api.depends('child_ids', 'webstack_ids', 'controller_ids', 'door_ids', 'access_group_ids', 'alarm_line_group_ids')
     def _compute_count(self):

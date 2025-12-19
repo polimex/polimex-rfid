@@ -6,6 +6,7 @@ from odoo.exceptions import AccessError
 
 
 class Digest(models.Model):
+    _name = 'digest.digest'
     _inherit = 'digest.digest'
 
     kpi_hr_rfid_att_early_come = fields.Boolean('Early come')

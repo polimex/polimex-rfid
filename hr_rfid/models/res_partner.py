@@ -5,6 +5,7 @@ from datetime import datetime
 
 
 class ResPartner(models.Model):
+    _name = 'res.partner'
     _inherit = ['res.partner']
 
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company)

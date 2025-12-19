@@ -155,7 +155,6 @@ class HrEmployee(models.Model):
             ('access_group_id', 'in', access_groups.ids)
         ]).unlink()
 
-    @api.returns('hr.rfid.door')
     def get_doors(self, excluding_acc_grs=None, including_acc_grs=None):
         """
         Get all doors accessible by the employee based on their access groups.

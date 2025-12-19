@@ -1,7 +1,7 @@
 # HR RFID Access Control
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![Version](https://img.shields.io/badge/Version-18.0.2.2.0-green.svg)](https://apps.odoo.com)
+[![Version](https://img.shields.io/badge/Version-19.0.2.2.1-green.svg)](https://apps.odoo.com)
 
 The main RFID Access Control module for Odoo, providing comprehensive hardware integration and access management capabilities.
 

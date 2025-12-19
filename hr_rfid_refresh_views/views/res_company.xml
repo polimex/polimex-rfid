@@ -1,17 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-        <record id="rfid_form_inherit_res_company" model="ir.ui.view">
-            <field name="name">res.company</field>
-            <field name="model">res.company</field>
-            <field name="inherit_id" ref="hr_rfid.rfid_form_inherit_res_company"/>
-            <field name="priority" eval="8"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='card_input_type']" position="after">
-                    <field name="realtime_refresh" widget="boolean_toggle"/>
-                </xpath>
-            </field>
-        </record>
+    <!-- Hide realtime_refresh from generic location (added by refresh_mixin) -->
+    <record id="view_company_form_hide_realtime_refresh" model="ir.ui.view">
+        <field name="name">res.company.form.hide.realtime.refresh</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="refresh_mixin.view_company_form_realtime_refresh"/>
+        <field name="priority" eval="10"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='realtime_refresh']" position="replace"/>
+        </field>
+    </record>
 
-    </data>
+    <!-- Show realtime_refresh in RFID section instead -->
+    <record id="rfid_form_inherit_res_company_refresh" model="ir.ui.view">
+        <field name="name">res.company.rfid.refresh</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="hr_rfid.rfid_form_inherit_res_company"/>
+        <field name="priority" eval="8"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='card_input_type']" position="after">
+                <field name="realtime_refresh" widget="boolean_toggle"/>
+            </xpath>
+        </field>
+    </record>
 </odoo>

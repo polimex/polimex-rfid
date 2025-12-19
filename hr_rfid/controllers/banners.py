@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 
 class MyController(http.Controller):
     # model('crm.lead', "[('type','=', 'lead')]"):model
-    @http.route(["/hr_rfid/banner/<string:model>/<string:view_type>"], auth='user', type='json')
+    @http.route(["/hr_rfid/banner/<string:model>/<string:view_type>"], auth='user', type='jsonrpc')
     def banner_modules(self, model, view_type: str):
         """ Returns the `banner` for the sale onboarding panel.
                     It can be empty if the user has closed it or if he doesn't have

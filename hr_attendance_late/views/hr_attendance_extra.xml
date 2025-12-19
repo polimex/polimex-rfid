@@ -143,7 +143,7 @@
                             domain="[('extra_night','>',0.0)]"
                             help="Night Extra time Employees Records"
                     />
-                    <group expand="1" string="Group By">
+                    <group>
                         <filter name="groupby_for_date" context="{'group_by' : 'for_date'}" string="Date"/>
                         <filter name="groupby_employee" context="{'group_by' : 'employee_id'}" string="Employee"/>
                         <filter name="groupby_department" context="{'group_by' : 'department_id'}" string="Department"/>

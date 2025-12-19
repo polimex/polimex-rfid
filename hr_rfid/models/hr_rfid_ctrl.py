@@ -11,9 +11,10 @@ _logger = logging.getLogger(__name__)
 class HrRfidControllerOutputTS(models.Model):
     _name = 'hr.rfid.ctrl.output.ts'
     _description = 'Output TS for Controllers'
-    _sql_constraints = [
-        ('controller_output_unique', 'unique(controller_id,output_number)', 'Output must be unique!'),
-    ]
+    _controller_output_unique = models.Constraint(
+        'UNIQUE(controller_id, output_number)',
+        'Output must be unique!'
+    )
     output_number = fields.Integer(
         string="Output number",
         default=1,
@@ -63,9 +64,10 @@ class HrRfidCtrlInputMask(models.Model):
     _name = 'hr.rfid.ctrl.input.mask'
     _description = 'Input Mask for Controllers'
     _order = 'i_number'
-    _sql_constraints = [
-        ('controller_input_mask_unique', 'unique(controller_id,i_number)', 'Input must be unique!'),
-    ]
+    _controller_input_mask_unique = models.Constraint(
+        'UNIQUE(controller_id, i_number)',
+        'Input must be unique!'
+    )
 
     i_number = fields.Integer(
         string='Number', 
@@ -113,8 +115,10 @@ class HrRfidController(models.Model):
     _name = 'hr.rfid.ctrl'
     _inherit = ['mail.thread', 'balloon.mixin']
     _description = 'Controller'
-    _sql_constraints = [('rfid_controller_unique', 'unique(serial_number,hw_version)',
-                         'Serial numbers must be unique!')]
+    _rfid_controller_unique = models.Constraint(
+        'UNIQUE(serial_number, hw_version)',
+        'Serial numbers must be unique!'
+    )
     _order = 'webstack_id, ctrl_id'
 
     name = fields.Char(

@@ -374,7 +374,7 @@
             <field name="code">record.open_door()</field>
             <field name="binding_model_id" ref="hr_rfid.model_hr_rfid_door"/>
             <field name="binding_view_types">form</field>
-            <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_view_door_open_close'))]"/>
+            <field name="group_ids" eval="[(4,ref('hr_rfid.hr_rfid_view_door_open_close'))]"/>
         </record>
 
         <record id="action_close_door" model="ir.actions.server">
@@ -385,7 +385,7 @@
             <field name="code">record.close_door()</field>
             <field name="binding_model_id" ref="hr_rfid.model_hr_rfid_door"/>
             <field name="binding_view_types">form</field>
-            <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_view_door_open_close'))]"/>
+            <field name="group_ids" eval="[(4,ref('hr_rfid.hr_rfid_view_door_open_close'))]"/>
         </record>
 
         <record id="hr_rfid_door_view_search" model="ir.ui.view">

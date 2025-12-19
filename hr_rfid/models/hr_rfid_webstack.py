@@ -195,8 +195,10 @@ class HrRfidWebstack(models.Model):
         help='Number of controllers currently connected to this module. Each controller manages doors and readers.',
     )
 
-    _sql_constraints = [('rfid_webstack_serial_unique', 'unique(serial)',
-                         'Serial number for Module must be unique!')]
+    _rfid_webstack_serial_unique = models.Constraint(
+        'UNIQUE(serial)',
+        'Serial number for Module must be unique!'
+    )
 
     @api.model
     def _notify_inactive(self):

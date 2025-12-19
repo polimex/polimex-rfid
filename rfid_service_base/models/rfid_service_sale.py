@@ -16,10 +16,10 @@ class BaseRFIDService(models.Model):
     _order = 'create_date desc'
     _inherit = "mail.thread"
 
-    _sql_constraints = [
-        ('check_duplicates', 'unique (service_id, start_date, end_date, partner_id)',
-         "Only one service for same period for given Customer!"),
-    ]
+    _check_duplicates = models.Constraint(
+        'unique (service_id, start_date, end_date, partner_id)',
+        "Only one service for same period for given Customer!",
+    )
 
     name = fields.Char(
         string='Sale Reference',

@@ -7,8 +7,10 @@ class HrRfidWorkcode(models.Model):
     _description = 'RFID Workcode for Time Tracking'
     _inherit = ['mail.thread']
 
-    _sql_constraints = [ ('rfid_workcode_unique', 'unique(workcode)',
-                          'Work code must be unique!') ]
+    _rfid_workcode_unique = models.Constraint(
+        'UNIQUE(workcode)',
+        'Work code must be unique!'
+    )
     name = fields.Char(
         string='Name',
         help='A descriptive name for this workcode that helps employees understand its purpose. '

@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 
 
 class HrEmployee(models.Model):
+    _name = 'hr.employee'
     _inherit = 'hr.employee'
 
     attendance_extra_ids = fields.One2many(

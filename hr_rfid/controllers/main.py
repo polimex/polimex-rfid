@@ -553,7 +553,7 @@ class WebRfidController(http.Controller):
         ev_env.create(event)
         return cmd.send_command(200)
 
-    @http.route(['/hr/rfid/barcode'], type='json', auth='none', methods=['POST'], cors='*', csrf=False,
+    @http.route(['/hr/rfid/barcode'], type='jsonrpc', auth='none', methods=['POST'], cors='*', csrf=False,
                 save_session=False, sitemap=False)
     def post_barcode(self, **post):
         """
@@ -606,7 +606,7 @@ class WebRfidController(http.Controller):
         else:
             return post
 
-    @http.route(['/hr/rfid/event'], type='json', auth='none', methods=['POST'], cors='*', csrf=False,
+    @http.route(['/hr/rfid/event'], type='jsonrpc', auth='none', methods=['POST'], cors='*', csrf=False,
                 save_session=False, sitemap=False)
     def post_event(self, **post):
         """

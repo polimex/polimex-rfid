@@ -269,6 +269,7 @@ class HrRfidCommands(models.Model):
         batch_num = 0
         consecutive_errors = 0
         max_consecutive_errors = 3
+        has_more = False  # Track if we hit max batch limit (for re-queue)
 
         _logger.info(
             "Starting GC for hr.rfid.command records older than %s",
@@ -333,10 +334,19 @@ class HrRfidCommands(models.Model):
                         )
                         break
 
+            # Check if we hit max batches (may have more records to delete)
+            if batch_num >= max_batches:
+                has_more = True
+                _logger.info(
+                    "Hit max batch limit (%d), may have more old commands",
+                    max_batches
+                )
+
             _logger.info(
-                "GC completed: deleted %d command records in %d batches",
+                "GC completed: deleted %d command records in %d batches (has_more=%s)",
                 total_deleted,
-                batch_num
+                batch_num,
+                has_more
             )
 
         except Exception as e:
@@ -346,6 +356,10 @@ class HrRfidCommands(models.Model):
                 total_deleted,
                 exc_info=True
             )
+
+        # Return tuple for Odoo 19 autovacuum re-queue support
+        # If has_more is True, this method will be re-queued for another run
+        return total_deleted, has_more
 
     def resend_action(self):
         for c in self.filtered(lambda cmd: cmd.status in ['Failure', 'Process']):
@@ -650,7 +664,7 @@ class HrRfidCommands(models.Model):
     def _update_commands(self):
         failed_commands = self.search([
             ('status', '=', 'Process'),
-            ('create_date', '<', str(fields.datetime.now() - timedelta(minutes=1)))
+            ('create_date', '<', str(fields.Datetime.now() - timedelta(minutes=1)))
         ])
 
         for it in failed_commands:
@@ -661,7 +675,7 @@ class HrRfidCommands(models.Model):
 
         failed_commands = self.search([
             ('status', '=', 'Wait'),
-            ('create_date', '<', str(fields.datetime.now() - timedelta(minutes=1)))
+            ('create_date', '<', str(fields.Datetime.now() - timedelta(minutes=1)))
         ])
 
         for it in failed_commands:
@@ -1025,7 +1039,7 @@ class HrRfidCommands(models.Model):
             'dual_person_mode': dual_person_mode,
             'max_cards_count': max_cards_count,
             'max_events_count': max_events_count,
-            'last_f0_read': fields.datetime.now(),
+            'last_f0_read': fields.Datetime.now(),
         }
         if ctrl_mode != self.controller_id.mode and self.controller_id.mode is not None and ctrl_already_existed:
             # ctrl_dict['io_table'] = polimex.get_default_io_table(hw_ver, sw_ver, ctrl_mode)

@@ -124,7 +124,7 @@
             <field name="binding_model_id" ref="model_res_partner"/>
             <field name="binding_view_types">list</field>
             <field name="target">new</field>
-            <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_group_officer'))]"/>
+            <field name="group_ids" eval="[(4,ref('hr_rfid.hr_rfid_group_officer'))]"/>
             <field name="context">{}</field>
             <field name="help" type="html">
                 <p>

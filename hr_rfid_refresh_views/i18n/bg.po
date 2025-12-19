@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 17.0\n"
+"Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-30 15:53+0000\n"
-"PO-Revision-Date: 2024-10-30 17:54+0200\n"
+"POT-Creation-Date: 2025-06-04 16:39+0000\n"
+"PO-Revision-Date: 2025-06-04 19:39+0300\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.6\n"
 
 #. module: hr_rfid_refresh_views
 #: model:ir.model,name:hr_rfid_refresh_views.model_hr_rfid_ctrl_alarm_group
@@ -30,7 +30,12 @@ msgstr "Команда към контролера"
 #. module: hr_rfid_refresh_views
 #: model:ir.model,name:hr_rfid_refresh_views.model_res_company
 msgid "Company"
-msgstr "Фирми"
+msgstr "Компании"
+
+#. module: hr_rfid_refresh_views
+#: model:ir.model,name:hr_rfid_refresh_views.model_hr_rfid_ctrl
+msgid "Controller"
+msgstr "Контролер"
 
 #. module: hr_rfid_refresh_views
 #: model:ir.model,name:hr_rfid_refresh_views.model_hr_rfid_ctrl_alarm
@@ -41,6 +46,27 @@ msgstr "Алармени линии на контролера"
 #: model:ir.model,name:hr_rfid_refresh_views.model_hr_rfid_door
 msgid "Door"
 msgstr "Врата"
+
+#. module: hr_rfid_refresh_views
+#: model:ir.model.fields,help:hr_rfid_refresh_views.field_res_company__realtime_refresh
+msgid ""
+"Enable automatic refresh of RFID views when hardware events occur.\n"
+"\n"
+"• When enabled: Views automatically update when controllers, doors, webstacks, commands, alarms, or events change\n"
+"• Live updates: Users see changes immediately without manual page refresh\n"
+"• Performance: Uses browser notifications to update only when necessary\n"
+"• Use cases: Control rooms, security monitoring, real-time dashboards\n"
+"\n"
+"Note: Requires modern browser with WebSocket support. Disable if experiencing performance issues."
+msgstr ""
+"Активирайте автоматичното опресняване на изгледите за RFID при възникване на хардуерни събития.\n"
+"\n"
+"- Когато е разрешено: Изгледите се обновяват автоматично при промяна на контролери, врати, уеб стекове, команди, аларми или събития\n"
+"- Актуализации в реално време: Потребителите виждат промените незабавно, без да е необходимо ръчно опресняване на страницата\n"
+"- Производителност: Използва известия от браузъра, за да се актуализира само когато е необходимо\n"
+"- Случаи на употреба: Контролни зали, наблюдение на сигурността, табла за управление в реално време\n"
+"\n"
+"Забележка: Изисква модерен браузър с поддръжка на WebSocket. Деактивирайте, ако имате проблеми с производителността."
 
 #. module: hr_rfid_refresh_views
 #: model:ir.model,name:hr_rfid_refresh_views.model_hr_rfid_event
@@ -54,10 +80,5 @@ msgstr "Модул"
 
 #. module: hr_rfid_refresh_views
 #: model:ir.model.fields,field_description:hr_rfid_refresh_views.field_res_company__realtime_refresh
-msgid "Realtime Refresh"
+msgid "Real-time View Refresh"
 msgstr "Опресняване в реално време"
-
-#. module: hr_rfid_refresh_views
-#: model:ir.model.fields,help:hr_rfid_refresh_views.field_res_company__realtime_refresh
-msgid "Realtime Refresh of views based on hardware events"
-msgstr "Опресняване на изгледи в реално време въз основа на хардуерни събития"

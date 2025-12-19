@@ -2,38 +2,43 @@
 {
     'name': "Polimex Refresh Mixin",
 
-    'summary': """
-        Refresh Mixin for Odoo models
-    """,
+    'summary': "Refresh Mixin for Odoo models",
 
     'description': """
-         The module refreshes the views of the models that inherit from it. Current supported views are Kanban, List.
-         Require js_class=hr_rfid_list_refresh_view for List view and js_class=hr_rfid_kanban_refresh_view for Kanban view.
+The module refreshes the views of models that inherit from it.
+Supported views: List, Kanban, Hierarchy.
+
+Usage:
+- Inherit from 'refresh.mixin' in your model
+- Use js_class="list_refresh_view" for List views
+- Use js_class="kanban_refresh_view" for Kanban views
+- Use js_class="hierarchy_refresh_view" for Hierarchy views
+- Enable "Real-time View Refresh" in Company settings
     """,
 
     'author': "Polimex Team <software@polimex.co>",
     'website': "https://polimex.co",
 
-    # for the full list
-    'category': 'Administration',
-    'version': '18.0.1.0.0',
+    'category': 'Technical',
+    'version': '19.0.1.1.0',
     'license': 'AGPL-3',
 
-    # any module necessary for this one to work correctly
-    'depends': ['web','bus','web_hierarchy'],
+    'depends': ['web', 'bus', 'web_hierarchy'],
 
-    # always loaded
     'data': [
+        'views/res_company_views.xml',
     ],
-    # 'images': ['static/images/main_screenshot.png'],
-    # only loaded in demonstration mode
+
     'assets': {
         'web.assets_backend': [
-            'refresh_mixin/static/src/js/*',
-            'web_hierarchy/static/src/*',
+            'refresh_mixin/static/src/js/list_refresh_view.js',
+            'refresh_mixin/static/src/js/kanban_refresh_view.js',
+        ],
+        'web.assets_backend_lazy': [
+            'refresh_mixin/static/src/js/hierarchy_refresh_view.js',
         ],
     },
 
     'application': False,
-    'auto_install': False
+    'auto_install': False,
 }

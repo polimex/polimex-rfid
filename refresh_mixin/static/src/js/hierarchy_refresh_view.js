@@ -2,28 +2,44 @@
 
 import { hierarchyView } from "@web_hierarchy/hierarchy_view";
 import { registry } from "@web/core/registry";
+import { status, useComponent, onWillDestroy } from "@odoo/owl";
+import { useService } from "@web/core/utils/hooks";
 
 class HierarchyRefreshController extends hierarchyView.Controller {
     setup() {
         super.setup();
-        this.busService = this.env.services.bus_service;
+
+        const component = useComponent();
+        const busService = useService("bus_service");
         const channelName = `polimex.${this.props.resModel}`;
         this.isLoading = false;
-        // console.log("HierarchyRefreshController channelName", channelName);
-        this.busService.addChannel(channelName);
-        this.busService.subscribe(channelName+'.record_changed', this._onRecordUpdate.bind(this));
-        this.busService.subscribe(channelName+'.record_created', this._onRecordCreate.bind(this));
-        this.env.services.bus_service.start();
+
+        // Bind callbacks
+        this.onRecordUpdate = this._onRecordUpdate.bind(this);
+        this.onRecordCreate = this._onRecordCreate.bind(this);
+
+        // Subscribe to bus
+        busService.addChannel(channelName);
+        busService.subscribe(channelName + '.record_changed', this.onRecordUpdate);
+        busService.subscribe(channelName + '.record_created', this.onRecordCreate);
+
+        // Cleanup on destroy
+        onWillDestroy(() => {
+            busService.unsubscribe(channelName + '.record_changed', this.onRecordUpdate);
+            busService.unsubscribe(channelName + '.record_created', this.onRecordCreate);
+            busService.deleteChannel(channelName);
+        });
+
+        // Store component reference for status checks
+        this.component = component;
     }
 
     async _onRecordCreate(payload) {
-        // console.log("HierarchyRefreshController Create payload", payload);
         const isHierarchyView = true;
-        // const isHierarchyView = this.model.action.currentController.view.type == 'hierarchy';
         const isSameCompany = this.model.env.searchModel.env.services.company.activeCompanyIds.includes(payload.company_id);
-        const isViewVisible = [0,1].includes(this.__owl__.status);
+        const isViewVisible = status(this.component) !== "destroyed";
+
         if (isHierarchyView && isSameCompany && isViewVisible && !this.isLoading) {
-            // console.log("HierarchyRefreshController doing Create with payload", payload, this.model);
             this.isLoading = true;
             await this.model.load();
             this.isLoading = false;
@@ -31,13 +47,11 @@ class HierarchyRefreshController extends hierarchyView.Controller {
     }
 
     async _onRecordUpdate(payload) {
-        console.log("HierarchyRefreshController Update payload", payload, this);
         const isHierarchyView = true;
-        // const isHierarchyView = this.model.action.currentController.view.type == 'hierarchy';
         const isIdVisible = this.model.root.trees.flatMap(tree => tree.forest.resIds).includes(payload.record_ids[0]);
-        const isViewVisible = [0,1].includes(this.__owl__.status);
+        const isViewVisible = status(this.component) !== "destroyed";
+
         if (isHierarchyView && isIdVisible && isViewVisible && !this.isLoading) {
-            // console.log("HierarchyRefreshController Doing Update with payload", payload, this.model);
             this.isLoading = true;
             await this.model.load();
             this.isLoading = false;

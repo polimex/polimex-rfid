@@ -29,15 +29,25 @@ class WizardHrRecalcAttendanceEmployee(models.TransientModel):
         required=True,
         string="Employees",
         # default=lambda self: self._get_default_employees(),
-        help="Re-Create Attendance records for employee",
+        help="""Select employees whose attendance records will be recalculated from RFID events.
+        
+• Process: Existing auto-generated attendance will be deleted and recreated
+• Manual attendance: Records created manually by HR will be preserved
+• RFID events: System will analyze all RFID door events to rebuild attendance
+
+Use this when attendance data seems incorrect or after changing zone settings.""",
     )
     start_date = fields.Date(
         string='Start Date',
         default=lambda self: self._get_default_from(),
+        help="Starting date for attendance recalculation. Only attendance records from this "
+             "date forward will be processed. Default is 30 days ago to cover recent period."
     )
     end_date = fields.Date(
         string='End Date',
         default=lambda self: self._get_default_to(),
+        help="Ending date for attendance recalculation. Attendance records will be processed "
+             "up to and including this date. Default is today."
     )
 
     def execute(self):

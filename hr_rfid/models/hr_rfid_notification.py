@@ -11,14 +11,14 @@ from odoo.exceptions import UserError
 class RFIDNotification(models.Model):
     _name = 'hr.rfid.notification'
     _description = 'RFID Notification'
-    _sql_constraints = [
-        ('no_notification_event',
-         'CHECK (user_event IS NOT NULL or system_event IS NOT NULL)',
-         'Notification must have at least one checked event!'),
-        # ('no_notification_recipients',
-        #  'CHECK (notify_followers or notify_user_ids IS NOT NULL)',
-        #  'Notification must have at least one recipient!'),
-    ]
+    _no_notification_event = models.Constraint(
+        'CHECK (user_event IS NOT NULL OR system_event IS NOT NULL)',
+        'Notification must have at least one checked event!'
+    )
+    # _no_notification_recipients = Constraint(
+    #     'CHECK (notify_followers OR notify_user_ids IS NOT NULL)',
+    #     'Notification must have at least one recipient!'
+    # )
 
     name = fields.Char(
         compute='_default_name'

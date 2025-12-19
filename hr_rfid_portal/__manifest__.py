@@ -14,7 +14,7 @@
     'license': 'AGPL-3',
 
     'category': "Generic Modules/Property Management System",
-    'version': '18.0.0.1.0',
+    'version': '19.0.0.1.0',
 
     'depends': ['hr_rfid', 'portal'],
 

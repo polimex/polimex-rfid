@@ -2,6 +2,7 @@ from odoo import api, fields, models
 from datetime import datetime, timedelta, time
 
 class HrAttendanceExtraCost(models.Model):
+    _name = 'hr.attendance.extra'
     _inherit = ['hr.attendance.extra']
 
     currency_id = fields.Many2one(

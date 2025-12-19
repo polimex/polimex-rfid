@@ -9,6 +9,7 @@ _logger = logging.getLogger(__name__)
 
 
 class HrEmployee(models.Model):
+    _name = "hr.employee"
     _inherit = "hr.employee"
 
     def _last_open_checkin(self, zone_id=None, before_dt=None):

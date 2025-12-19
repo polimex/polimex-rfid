@@ -4,7 +4,7 @@
         <record id="hr_rfid_webstack_view_tree_refresh" model="ir.ui.view">
             <field name="name">hr.rfid.webstack.view.tree.refresh</field>
             <field name="model">hr.rfid.webstack</field>
-            <field name="inherit_id" ref="hr_rfid.hr_rfid_webstack_view_tree"/>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_webstack_view_list"/>
             <field name="arch" type="xml">
                 <xpath expr="//list" position="attributes">
                     <attribute name="js_class">list_refresh_view</attribute>

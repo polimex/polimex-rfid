@@ -5,6 +5,7 @@ from datetime import datetime
 
 
 class ResPartner(models.Model):
+    _name = 'res.partner'
     _inherit = ['res.partner']
 
     partner_rfid_sales_count = fields.Char(

@@ -137,14 +137,18 @@ class HrRfidCard(models.Model):
     barcode_number = fields.Char(compute='_compute_barcode_number', help='Hexadecimal representation of the card number, used for barcode printing and scanning.')
     is_barcode = fields.Boolean(compute='_compute_barcode_number', help='Indicates if this card is configured as a barcode card type.')
 
-    _sql_constraints = [
-        ('card_uniq', 'unique (number, company_id)', "Card number already exists!"),
-        ('card_int_uniq', 'unique (internal_number, company_id)', "Card internal number already exists!"),
-        ('check_card_owner',
-         'check((contact_id is null and employee_id is not null) or (contact_id is not null and employee_id is null))',
-         'Card user and contact cannot both be set in the same time, and cannot both be empty.')
-
-    ]
+    _card_uniq = models.Constraint(
+        'UNIQUE (number, company_id)',
+        "Card number already exists!"
+    )
+    _card_int_uniq = models.Constraint(
+        'UNIQUE (internal_number, company_id)',
+        "Card internal number already exists!"
+    )
+    _check_card_owner = models.Constraint(
+        'CHECK((contact_id IS NULL AND employee_id IS NOT NULL) OR (contact_id IS NOT NULL AND employee_id IS NULL))',
+        'Card user and contact cannot both be set in the same time, and cannot both be empty.'
+    )
 
     @api.depends('number','card_input_type')
     def _compute_internal_number(self):
@@ -384,7 +388,7 @@ class HrRfidCard(models.Model):
 
     @api.model
     def _update_cards(self):
-        now = fields.datetime.now()
+        now = fields.Datetime.now()
         str_before = str(now - timedelta(seconds=31))
         str_after = str(now + timedelta(seconds=31))
         # cards_to_activate = self.env['hr.rfid.card'].search(['|', ('active', '=', True), ('active', '=', False),

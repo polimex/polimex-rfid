@@ -4,7 +4,7 @@ from operator import itemgetter
 from markupsafe import Markup
 from werkzeug.exceptions import NotFound
 
-from odoo import conf, http, _
+from odoo import http, _
 from odoo.exceptions import AccessError, MissingError
 from odoo.http import request, content_disposition
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager

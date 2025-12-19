@@ -3,7 +3,7 @@
 
 {
     'name': 'RFID Access Control',
-    'version': '18.0.2.2.1',
+    'version': '19.0.2.2.1',
     'category': 'Human Resources',
     'summary': 'Manage employee access control',
     'description': """
@@ -109,10 +109,6 @@ For detailed documentation, visit: https://polimex.co/
         'report/hr_rfid_card_templates.xml',
         'report/hr_rfid_card_reports.xml',
         'data/mail_template_data.xml',
-    ],
-
-    'qweb': [
-        'static/src/xml/pivot_view_field_selection.xml',
     ],
 
     'demo': [

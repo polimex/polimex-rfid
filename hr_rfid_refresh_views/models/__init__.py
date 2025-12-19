@@ -7,4 +7,3 @@ from . import hr_rfid_event
 from . import hr_rfid_webstack
 from . import hr_rfid_door
 from . import hr_rfid_ctrl
-from . import res_company

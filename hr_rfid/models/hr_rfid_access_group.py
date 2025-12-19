@@ -218,15 +218,12 @@ class HrRfidAccessGroup(models.Model):
                 ('door_id', '=', door.id)
             ]).unlink()
 
-    @api.returns('hr.rfid.door')
     def get_all_doors(self):
         return self.mapped('all_door_ids').mapped('door_id')
 
-    @api.returns('hr.employee')
     def get_all_employees(self):
         return self.mapped('all_employee_ids').mapped('employee_id')
 
-    @api.returns('res.partner')
     def get_all_contacts(self):
         return self.mapped('all_contact_ids').mapped('contact_id')
 
@@ -500,7 +497,6 @@ class HrRfidAccessGroupDoorRel(models.Model):
                     rels2 -= door_rel2
 
     @api.model_create_multi
-    @api.returns('self', lambda value: value.id)
     def create(self, vals):
         card_door_rel_env = self.env['hr.rfid.card.door.rel']
         records = super().create(vals)

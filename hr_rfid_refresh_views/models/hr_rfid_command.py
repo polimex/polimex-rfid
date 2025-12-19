@@ -8,8 +8,9 @@ class HrRfidCommands(models.Model):
     _description = 'Command to controller'
     _inherit = ['hr.rfid.command', 'refresh.mixin']
 
-    _refresh_on_create = True
-    _refresh_on_write = True
+    # Real-time refresh settings: Update views when commands are queued or processed
+    _refresh_on_create = True  # Refresh when new commands are queued
+    _refresh_on_write = True   # Refresh when command status changes (sent, executed, failed)
 
     def get_company_id(self):
         return self.webstack_id.company_id

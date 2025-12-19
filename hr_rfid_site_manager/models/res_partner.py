@@ -2,7 +2,8 @@ from odoo import fields, models, api
 
 
 class ResPartner(models.Model):
-    _inherit = ['res.partner']
+    _name = 'res.partner'
+    _inherit = 'res.partner'
 
     def _get_default_sites(self):
         if not(self.is_company or self.is_employee):

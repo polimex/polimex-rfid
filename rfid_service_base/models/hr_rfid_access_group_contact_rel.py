@@ -2,6 +2,7 @@ from odoo import fields, models, api
 
 
 class HrRfidAccessGroupContactRel(models.Model):
+    _name = 'hr.rfid.access.group.contact.rel'
     _inherit = ['hr.rfid.access.group.contact.rel']
 
     rfid_service_sale_id = fields.One2many(
