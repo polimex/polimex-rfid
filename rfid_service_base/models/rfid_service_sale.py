@@ -5,8 +5,6 @@ from odoo.exceptions import UserError, ValidationError
 
 import logging
 
-from odoo.osv import expression
-
 _logger = logging.getLogger(__name__)
 
 
