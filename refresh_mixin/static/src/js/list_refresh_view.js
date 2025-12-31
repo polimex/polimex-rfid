@@ -4,6 +4,7 @@ import { listView } from "@web/views/list/list_view";
 import { registry } from "@web/core/registry";
 import { status, useComponent, onWillDestroy } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
+import { user } from "@web/core/user";
 
 class ListRefreshController extends listView.Controller {
     setup() {
@@ -35,11 +36,11 @@ class ListRefreshController extends listView.Controller {
     }
 
     async _onRecordUpdate(payload) {
-        const isListView = this.model.action.currentController.view.type == 'list';
+        // Check if the updated record is visible in current list
         const isIdVisible = this.model.root.records.map(obj => obj.resId).includes(payload.record_ids[0]);
         const isViewVisible = status(this.component) !== "destroyed";
 
-        if (isListView && isIdVisible && isViewVisible && !this.isLoading) {
+        if (isIdVisible && isViewVisible && !this.isLoading) {
             this.isLoading = true;
             await this.model.load();
             this.isLoading = false;
@@ -47,11 +48,12 @@ class ListRefreshController extends listView.Controller {
     }
 
     async _onRecordCreate(payload) {
-        const isListView = this.model.action.currentController.view.type == 'list';
-        const isSameCompany = this.model.config.currentCompanyId == payload.company_id;
+        // Check if notification is for the same company (companies have refresh restrictions)
+        const currentCompanyId = user.activeCompany?.id;
+        const isSameCompany = !payload.company_id || currentCompanyId == payload.company_id;
         const isViewVisible = status(this.component) !== "destroyed";
 
-        if (isListView && isSameCompany && isViewVisible && !this.isLoading) {
+        if (isSameCompany && isViewVisible && !this.isLoading) {
             this.isLoading = true;
             await this.model.load();
             this.isLoading = false;

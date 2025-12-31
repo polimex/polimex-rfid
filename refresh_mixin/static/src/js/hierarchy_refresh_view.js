@@ -4,6 +4,7 @@ import { hierarchyView } from "@web_hierarchy/hierarchy_view";
 import { registry } from "@web/core/registry";
 import { status, useComponent, onWillDestroy } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
+import { user } from "@web/core/user";
 
 class HierarchyRefreshController extends hierarchyView.Controller {
     setup() {
@@ -35,11 +36,12 @@ class HierarchyRefreshController extends hierarchyView.Controller {
     }
 
     async _onRecordCreate(payload) {
-        const isHierarchyView = true;
-        const isSameCompany = this.model.env.searchModel.env.services.company.activeCompanyIds.includes(payload.company_id);
+        // Check if notification is for the same company (companies have refresh restrictions)
+        const currentCompanyId = user.activeCompany?.id;
+        const isSameCompany = !payload.company_id || currentCompanyId == payload.company_id;
         const isViewVisible = status(this.component) !== "destroyed";
 
-        if (isHierarchyView && isSameCompany && isViewVisible && !this.isLoading) {
+        if (isSameCompany && isViewVisible && !this.isLoading) {
             this.isLoading = true;
             await this.model.load();
             this.isLoading = false;
@@ -47,11 +49,11 @@ class HierarchyRefreshController extends hierarchyView.Controller {
     }
 
     async _onRecordUpdate(payload) {
-        const isHierarchyView = true;
-        const isIdVisible = this.model.root.trees.flatMap(tree => tree.forest.resIds).includes(payload.record_ids[0]);
+        // For hierarchy view, always reload on update if view is visible
+        // (checking specific record visibility in tree structure is complex and error-prone)
         const isViewVisible = status(this.component) !== "destroyed";
 
-        if (isHierarchyView && isIdVisible && isViewVisible && !this.isLoading) {
+        if (isViewVisible && !this.isLoading) {
             this.isLoading = true;
             await this.model.load();
             this.isLoading = false;

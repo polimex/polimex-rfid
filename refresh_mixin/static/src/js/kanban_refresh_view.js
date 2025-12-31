@@ -4,6 +4,7 @@ import { kanbanView } from "@web/views/kanban/kanban_view";
 import { registry } from "@web/core/registry";
 import { status, useComponent, onWillDestroy } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
+import { user } from "@web/core/user";
 
 class KanbanRefreshController extends kanbanView.Controller {
     setup() {
@@ -35,11 +36,12 @@ class KanbanRefreshController extends kanbanView.Controller {
     }
 
     async _onRecordCreate(payload) {
-        const isKanbanView = this.model.action.currentController.view.type == 'kanban';
-        const isSameCompany = this.model.config.currentCompanyId == payload.company_id;
+        // Check if notification is for the same company (companies have refresh restrictions)
+        const currentCompanyId = user.activeCompany?.id;
+        const isSameCompany = !payload.company_id || currentCompanyId == payload.company_id;
         const isViewVisible = status(this.component) !== "destroyed";
 
-        if (isKanbanView && isSameCompany && isViewVisible && !this.isLoading) {
+        if (isSameCompany && isViewVisible && !this.isLoading) {
             this.isLoading = true;
             await this.model.load();
             this.isLoading = false;
@@ -47,11 +49,11 @@ class KanbanRefreshController extends kanbanView.Controller {
     }
 
     async _onRecordUpdate(payload) {
-        const isKanbanView = this.model.action.currentController.view.type == 'kanban';
+        // Check if the updated record is visible in current kanban
         const isIdVisible = this.model.root.records.map(obj => obj.resId).includes(payload.record_ids[0]);
         const isViewVisible = status(this.component) !== "destroyed";
 
-        if (isKanbanView && isIdVisible && isViewVisible && !this.isLoading) {
+        if (isIdVisible && isViewVisible && !this.isLoading) {
             this.isLoading = true;
             await this.model.load();
             this.isLoading = false;
