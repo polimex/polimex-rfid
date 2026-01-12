@@ -10,6 +10,7 @@ _logger = logging.getLogger(__name__)
 
 
 class BaseRFIDService(models.Model):
+    _name = 'rfid.service'
     _inherit = 'rfid.service'
     
     label_template_id = fields.Many2one(

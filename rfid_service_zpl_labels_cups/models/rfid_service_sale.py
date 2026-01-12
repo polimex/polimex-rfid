@@ -6,6 +6,7 @@ _logger = logging.getLogger(__name__)
 
 
 class RfidServiceSaleCups(models.Model):
+    _name = 'rfid.service.sale'
     _inherit = 'rfid.service.sale'
 
     def print_label_direct(self):

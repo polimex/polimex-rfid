@@ -10,6 +10,7 @@ _logger = logging.getLogger(__name__)
 
 
 class RfidServiceSale(models.Model):
+    _name = 'rfid.service.sale'
     _inherit = 'rfid.service.sale'
     
     def _generate_zpl_content(self):

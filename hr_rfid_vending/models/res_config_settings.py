@@ -2,6 +2,7 @@ from odoo import fields, models, api
 
 
 class ResConfigSettings(models.TransientModel):
+    _name = 'res.config.settings'
     _inherit = 'res.config.settings'
 
     refill_interval_number = fields.Integer(

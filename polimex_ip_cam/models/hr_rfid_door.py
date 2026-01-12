@@ -2,6 +2,7 @@ from odoo import fields, models, api, SUPERUSER_ID
 
 
 class HrRfidDoor(models.Model):
+    _name = 'hr.rfid.door'
     _inherit = 'hr.rfid.door'
 
     camera_id = fields.Many2one(
@@ -21,6 +22,7 @@ class HrRfidDoor(models.Model):
                 door.company_id = door.webstack_id.company_id if door.webstack_id else False
 
 class HrRfidCardDoorRel(models.Model):
+    _name = 'hr.rfid.card.door.rel'
     _inherit = 'hr.rfid.card.door.rel'
 
     @api.model_create_multi

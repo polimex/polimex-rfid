@@ -39,9 +39,7 @@ class Vote(models.Model):
         related='vote_event_id.event_time',
     )
 
-    _sql_constraints = [
-        ("uniq_vote", "unique(voting_session_id, voter_id)", "Vote must be unique"),
-    ]
+    _uniq_vote = models.Constraint('unique(voting_session_id, voter_id)', "Vote must be unique")
 
     @api.model_create_multi
     def create(self, vals_list):

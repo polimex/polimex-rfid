@@ -7,7 +7,22 @@
             <field name="res_model">hr.rfid.vending.balance.history</field>
             <field name="view_mode">list,form,pivot,graph</field>
             <field name="context">{'search_default_this_day': 1}</field>
-
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No balance changes found
+                </p>
+                <p>
+                    This view tracks all vending balance transactions for employees.
+                    <br/><br/>
+                    Track and analyze:
+                    • <b>Employee purchases:</b> See what employees buy and when
+                    • <b>Balance refills:</b> Both automatic and manual balance additions
+                    • <b>Spending patterns:</b> Analyze purchasing behavior and trends
+                    • <b>Budget monitoring:</b> Track vending expenses and allowances
+                    <br/><br/>
+                    Use filters to view specific time periods, employees, or transaction types.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_vending_balance_history_form" model="ir.ui.view">
@@ -71,7 +86,7 @@
                     <separator/>
 
                     <newline/>
-                    <group expand="0" string="Group By">
+                    <group>
                         <filter string="Month" name="create_date" domain="[]" context="{'group_by':'create_date'}"/>
                         <filter string="Person Responsible" name="person_responsible"
                                 domain="[]" context="{'group_by':'person_responsible'}"/>

@@ -7,6 +7,22 @@
             <field name="res_model">hr.rfid.vending.auto.refill</field>
             <field name="view_mode">list,form,search</field>
             <field name="context">{'search_default_this_day': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No automatic refill events found
+                </p>
+                <p>
+                    This view tracks automatic balance refill events for employee vending accounts.
+                    <br/><br/>
+                    Monitor and manage:
+                    • <b>Refill scheduling:</b> See when automatic refills were processed
+                    • <b>Cost tracking:</b> Monitor total company spending on employee allowances
+                    • <b>Employee coverage:</b> See which employees received automatic refills
+                    • <b>Budget analysis:</b> Track refill costs over time for financial planning
+                    <br/><br/>
+                    Auto-refills run according to your company's configured schedule and employee settings.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_vending_auto_refill_form" model="ir.ui.view">
@@ -58,7 +74,7 @@
                     <separator/>
 
                     <newline/>
-                    <group expand="0" string="Group By">
+                    <group>
                         <filter string="Date" name="date" domain="[]" context="{'group_by':'create_date'}"/>
                     </group>
                 </search>

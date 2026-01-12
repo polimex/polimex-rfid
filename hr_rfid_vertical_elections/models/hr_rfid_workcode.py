@@ -4,6 +4,7 @@ from odoo.api import ondelete
 
 
 class HrRfidWorkcode(models.Model):
+    _name = 'hr.rfid.workcode'
     _inherit = ['hr.rfid.workcode']
 
     user_action = fields.Selection(

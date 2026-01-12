@@ -221,7 +221,7 @@
                     <field name="brand" icon="fa-users" enable_counters="1"/>
                 </searchpanel>
                 <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
-                <group expand="0" string="Group By">
+                <group>
                     <filter name="group_brand" string="Brand" domain="[]" context="{'group_by': 'brand'}"/>
                     <filter name="group_model" string="Model" domain="[]" context="{'group_by': 'model'}"/>
                 </group>

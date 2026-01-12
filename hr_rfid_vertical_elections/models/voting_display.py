@@ -38,10 +38,8 @@ class VotingDisplay(models.Model):
 
     voting_sessions_count = fields.Integer("Voting Sessions Count", compute="_compute_voting_sessions_count")
 
-    _sql_constraints = [
-        ("uniq_access_token", "unique(access_token)", "The access token must be unique"),
-        ("uniq_short_code", "unique(short_code)", "The short code must be unique."),
-    ]
+    _uniq_access_token = models.Constraint('unique(access_token)', "The access token must be unique")
+    _uniq_short_code = models.Constraint('unique(short_code)', "The short code must be unique.")
 
     def regenerate_display_key(self):
         self.ensure_one()

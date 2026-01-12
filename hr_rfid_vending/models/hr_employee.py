@@ -5,44 +5,94 @@ from decimal import Decimal
 
 
 class HrEmployee(models.Model):
+    _name = 'hr.employee'
     _inherit = 'hr.employee'
 
     hr_rfid_vending_balance = fields.Float(
         string='Vending Balance',
-        help='Amount of money an employee can spend on the vending machine',
+        help="""Company-provided balance for vending machine purchases.
+        
+• Purpose: Budget allocated by employer for employee refreshments
+• Usage: Automatically deducted when purchasing items from vending machines
+• Refills: Can be topped up manually or automatically via monthly refill settings
+• Limits: Combined with personal balance and daily limits for spending control
+        
+This balance represents company funds available to the employee for vending purchases.""",
         default=0.0,
+        groups="hr_rfid_vending.group_customer",
     )
 
     hr_rfid_vending_recharge_balance = fields.Float(
         string='Self Recharge Balance',
-        help='Amount of self charged money the employee can spend on the vending machine',
+        help="""Personal balance loaded by the employee using their own money.
+        
+• Source: Employee's personal funds added to their vending account
+• Independence: Separate from company-provided vending balance
+• Usage: Combined with company balance for total available spending power
+• Control: Employee manages this balance independently
+        
+This represents the employee's personal money available for vending purchases.""",
         default=0.0,
+        groups="hr_rfid_vending.group_customer",
     )
 
     hr_rfid_vending_negative_balance = fields.Boolean(
-        string='Negative Balance',
-        help='Whether the user is allowed to have a negative balance or not',
+        string='Allow Negative Balance',
+        help="""Allow employee to spend more than their current balance (credit system).
+        
+• When enabled: Employee can make purchases even with insufficient balance
+• Credit limit: Set maximum debt amount in the 'Limit' field below
+• Use cases: Trust-based system, salary deduction arrangements
+• When disabled: Purchases blocked when balance reaches zero
+        
+Useful for employees with payment arrangements or trusted staff members.""",
         tracking=True,
+        groups="hr_rfid_vending.group_customer",
     )
 
     # Only displayed if negative_balance is true
     hr_rfid_vending_limit = fields.Float(
-        string='Limit',
-        help='User cannot go in more debt than this value',
+        string='Credit Limit',
+        help="""Maximum debt amount when negative balance is allowed.
+        
+• Purpose: Set maximum amount employee can owe when using credit system
+• Example: If set to 50, employee can spend up to 50 units below zero balance
+• Control: Prevents unlimited debt accumulation
+• Only active: When 'Allow Negative Balance' is enabled above
+        
+Set to 0 for unlimited credit (not recommended).""",
         default=0.0,
         tracking=True,
+        groups="hr_rfid_vending.group_customer",
     )
 
     hr_rfid_vending_in_attendance = fields.Boolean(
-        string='Only while attending',
-        help='Only allow the user to perform vending transactions while attending',
+        string='Require Active Attendance',
+        help="""Restrict vending purchases to work hours only.
+        
+• When enabled: Employee can only buy items while checked in for attendance
+• When disabled: Purchases allowed regardless of attendance status
+• Use cases: Ensure refreshments are work-related, control after-hours access
+• Integration: Works with RFID attendance tracking system
+        
+Useful for companies that want to limit vending access to working hours.""",
         tracking=True,
+        groups="hr_rfid_vending.group_customer",
     )
 
     hr_rfid_vending_daily_limit = fields.Float(
-        string='Daily Limit',
-        help='Maximum amount of funds allowed for the employee to spend each day. No limit if set to 0.',
+        string='Daily Spending Limit',
+        help="""Maximum amount employee can spend per day on vending purchases.
+        
+• Purpose: Control daily expenditure and prevent excessive spending
+• Calculation: Based on 'Daily Limit Type' setting (24h or calendar day)
+• Enforcement: Purchases blocked when daily limit is reached
+• Reset: Automatically resets according to the selected time period
+• No limit: Set to 0 to disable daily spending restrictions
+        
+Helps manage employee spending habits and company vending costs.""",
         default=0.0,
+        groups="hr_rfid_vending.group_customer",
     )
 
     daily_limit_type = fields.Selection(
@@ -50,51 +100,100 @@ class HrEmployee(models.Model):
             ('last_24', 'Last 24 hours'),
             ('day', 'Current Calendar day'),
         ],
+        string='Daily Limit Type',
+        help="""How to calculate the daily spending period.
+        
+• Last 24 hours: Rolling 24-hour window from current time
+• Current Calendar day: From midnight to midnight (calendar day)
+        
+Choose based on your organization's preferred spending control method.""",
         default='day',
+        groups="hr_rfid_vending.group_customer",
     )
     hr_rfid_vending_spent_today = fields.Monetary(
-        string='Spend Today',
-        compute='_compute_spend_today'
+        string='Spent Today',
+        compute='_compute_spend_today',
+        help="Amount already spent today based on the daily limit type setting. "
+             "Used to calculate remaining daily allowance.",
+        groups="hr_rfid_vending.group_customer",
     )
     hr_rfid_vending_current_balance = fields.Monetary(
-        string='Current balance',
-        compute='_compute_current_balance'
+        string='Available Balance',
+        compute='_compute_current_balance',
+        help="Total amount currently available for vending purchases. Combines company balance, "
+             "personal balance, credit limits, and daily spending restrictions.",
+        groups="hr_rfid_vending.group_customer",
     )
     currency_id = fields.Many2one(string='Company Currency', readonly=True,
                                   related='company_id.currency_id')
 
     hr_rfid_vending_auto_refill = fields.Boolean(
-        string='Auto Refill',
-        help='Automatically refill balance monthly',
+        string='Enable Auto Refill',
+        help="""Automatically add money to employee's vending balance on a monthly schedule.
+        
+• Frequency: Runs according to company's auto-refill schedule settings
+• Amount: Controlled by 'Refill Amount' and 'Refill Type' settings below
+• Automation: No manual intervention required once configured
+• Tracking: All auto-refills are logged in balance history
+        
+Useful for providing regular employee refreshment allowances.""",
         default=False,
         tracking=True,
+        groups="hr_rfid_vending.group_customer",
     )
 
     hr_rfid_vending_refill_amount = fields.Monetary(
         string='Refill Amount',
-        help="How much money to be added to the person's balance",
+        help="""Amount to add during each auto-refill cycle.
+        
+• Fixed type: Exact amount added each month regardless of current balance
+• Up To type: Amount added to reach the maximum, never exceeding refill max
+• Currency: Uses company's default currency
+• Frequency: Applied according to company auto-refill schedule
+        
+Set the monthly allowance amount for this employee.""",
         default=0.0,
         tracking=True,
+        groups="hr_rfid_vending.group_customer",
     )
 
     hr_rfid_vending_refill_type = fields.Selection(
         selection=[('fixed', 'Fixed'), ('up_to', 'Up To')],
         string='Refill Type',
-        help="Fixed type just adds the refill amount to the user's balance every month. Up To type adds to the user's balance every month with a maximum the auto refill will never go over.",
+        help="""How the auto-refill amount is applied to the employee's balance.
+        
+• Fixed: Always adds the refill amount, regardless of current balance
+  - Example: If refill amount is 50, always adds 50 each month
+• Up To: Adds money only to reach the maximum, never exceeding refill max
+  - Example: If refill max is 100 and current balance is 30, adds 50 (not full refill amount)
+        
+Choose based on whether you want fixed allowances or balance limits.""",
         default='fixed',
         tracking=True,
+        groups="hr_rfid_vending.group_customer",
     )
 
     hr_rfid_vending_refill_max = fields.Monetary(
-        string='Refill Max',
-        help='The limit of cash the auto refill should never go over',
+        string='Refill Maximum',
+        help="""Maximum balance that auto-refill will maintain (only for 'Up To' refill type).
+        
+• Purpose: Set ceiling for automatic balance refills
+• Function: Auto-refill stops when balance reaches this amount
+• Example: If max is 100 and balance is 90, only 10 will be added (not full refill amount)
+• Only used: When refill type is set to 'Up To'
+        
+Prevents over-funding employee vending accounts.""",
         default=0.0,
+        groups="hr_rfid_vending.group_customer",
     )
 
     hr_rfid_vending_balance_history = fields.One2many(
         'hr.rfid.vending.balance.history',
         'employee_id',
         string='Balance History',
+        help="Complete history of all balance changes including purchases, refills, "
+             "manual adjustments, and auto-refills for this employee.",
+        groups="hr_rfid_vending.group_customer",
     )
 
     def employee_vending_balance_history_action(self):
@@ -172,7 +271,6 @@ class HrEmployee(models.Model):
 
         return controller._convert_balance_to_ctrl(balance)
 
-    @api.returns('hr.rfid.vending.balance.history')
     def hr_rfid_vending_add_to_balance(self, value: float, ev: int = 0):
         """
         Add to the balance of an employee
@@ -211,7 +309,6 @@ class HrEmployee(models.Model):
             bh_ids += self.env['hr.rfid.vending.balance.history'].create(bh_dict)
         return bh_ids
 
-    @api.returns('hr.rfid.vending.balance.history')
     def hr_rfid_vending_set_balance(self, value: float, max_add: float = 0, min_add: float = 0, ev: int = 0):
         """
         Set an employee's balance to a specific number, with the option of max_add
@@ -231,7 +328,6 @@ class HrEmployee(models.Model):
             bh_ids += c.hr_rfid_vending_add_to_balance(val, ev)
         return bh_ids
 
-    @api.returns('hr.rfid.vending.balance.history')
     def hr_rfid_vending_purchase(self, cost: float, ev: int = 0):
         """
         Purchase a product. Subtracts the parameter "cost" from the employee's balance

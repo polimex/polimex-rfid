@@ -10,16 +10,23 @@
       <field name="parent_id" ref="hr_rfid.hr_rfid_root"/>
     </record>
 
+    <!-- Odoo 19: Two-tier privilege system -->
+    <record id="res_groups_privilege_voting" model="res.groups.privilege">
+      <field name="name">Voting Access</field>
+      <field name="sequence">10</field>
+      <field name="category_id" ref="hr_rfid_voting_category"/>
+    </record>
+
     <record id="group_operator" model="res.groups">
       <field name="name">Voting System Operator</field>
-      <field name="category_id" ref="hr_rfid_voting_category" />
+      <field name="privilege_id" ref="res_groups_privilege_voting"/>
     </record>
 
     <record id="group_manager" model="res.groups">
       <field name="name">Voting System Manager</field>
       <field name="implied_ids" eval="[(4, ref('hr_rfid_vertical_elections.group_operator'))]" />
-      <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
-      <field name="category_id" ref="hr_rfid_voting_category" />
+      <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+      <field name="privilege_id" ref="res_groups_privilege_voting"/>
     </record>
 
 <!--    <record id="hr_rfid_vending_operator_department_vending_events_rule" model="ir.rule">-->

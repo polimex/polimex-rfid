@@ -6,6 +6,7 @@ _logger = logging.getLogger(__name__)
 
 
 class RfidServiceCups(models.Model):
+    _name = 'rfid.service'
     _inherit = 'rfid.service'
 
     def test_label_printer_connection(self):

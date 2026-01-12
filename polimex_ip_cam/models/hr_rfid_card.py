@@ -1,6 +1,7 @@
 from odoo import models, fields, api
 
 class HrRfidCard(models.Model):
+    _name = 'hr.rfid.card'
     _inherit = 'hr.rfid.card'
 
     # New One2many field to store camera relations for this card

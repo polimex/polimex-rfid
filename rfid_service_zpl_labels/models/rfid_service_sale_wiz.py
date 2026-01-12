@@ -9,6 +9,7 @@ _logger = logging.getLogger(__name__)
 
 
 class RfidServiceBaseSaleWiz(models.TransientModel):
+    _name = 'rfid.service.sale.wiz'
     _inherit = 'rfid.service.sale.wiz'
 
 

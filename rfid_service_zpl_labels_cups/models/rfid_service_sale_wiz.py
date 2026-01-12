@@ -6,6 +6,7 @@ _logger = logging.getLogger(__name__)
 
 
 class RfidServiceSaleWizCups(models.TransientModel):
+    _name = 'rfid.service.sale.wiz'
     _inherit = 'rfid.service.sale.wiz'
 
     def print_label(self):

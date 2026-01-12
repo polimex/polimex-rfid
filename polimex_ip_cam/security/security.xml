@@ -8,18 +8,25 @@
         <field name="parent_id" ref="hr_rfid.hr_rfid_root"/>
     </record>
 
+    <!-- Odoo 19: Two-tier privilege system -->
+    <record id="res_groups_privilege_cctv" model="res.groups.privilege">
+        <field name="name">CCTV Access</field>
+        <field name="sequence">10</field>
+        <field name="category_id" ref="cctv_camera_management"/>
+    </record>
+
     <!-- Group for RFID Card User (Operator) -->
     <record id="group_cctv_user" model="res.groups">
         <field name="name">User</field>
         <field eval="[(4, ref('base.group_user')), (4, ref('hr.group_hr_user'))]" name="implied_ids"/>
-        <field name="category_id" ref="cctv_camera_management"/>
+        <field name="privilege_id" ref="res_groups_privilege_cctv"/>
     </record>
 
     <!-- Group for RFID Card Manager (Encoder Manager) -->
     <record id="group_cctv_manager" model="res.groups">
         <field name="name">Manager</field>
         <field eval="[(4, ref('polimex_ip_cam.group_cctv_user'))]" name="implied_ids"/>
-        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
-        <field name="category_id" ref="cctv_camera_management"/>
+        <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        <field name="privilege_id" ref="res_groups_privilege_cctv"/>
     </record>
 </odoo>

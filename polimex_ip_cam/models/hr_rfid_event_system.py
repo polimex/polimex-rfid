@@ -8,6 +8,7 @@ _logger = logging.getLogger(__name__)
 
 
 class HrRfidSystemEvent(models.Model):
+    _name = 'hr.rfid.event.system'
     _inherit = 'hr.rfid.event.system'
 
     camera_id = fields.Many2one(

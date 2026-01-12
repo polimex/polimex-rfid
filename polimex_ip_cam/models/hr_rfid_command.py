@@ -4,6 +4,7 @@ from odoo.addons.hr_rfid.models.hr_rfid_door import HrRfidDoor
 
 class HrRfidCommands(models.Model):
     # Commands we have queued up to send to the controllers
+    _name = 'hr.rfid.command'
     _inherit = 'hr.rfid.command'
 
     @api.model

@@ -20,7 +20,7 @@ class AndromedaWelcomeWiz(models.TransientModel):
     database_path = fields.Char(
         string='Database Path',
         required=True,
-        default='C:\Program Files (x86)\Polimex\Andromeda\Database\Andromeda.fdb'
+        default=r'C:\Program Files (x86)\Polimex\Andromeda\Database\Andromeda.fdb'
     )
 
     users_count = fields.Integer(

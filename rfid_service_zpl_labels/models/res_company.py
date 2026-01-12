@@ -6,6 +6,7 @@ from PIL import Image
 from odoo import models, api, fields
 
 class Company(models.Model):
+    _name = "res.company"
     _inherit = "res.company"
     
     # Company-specific label printer settings

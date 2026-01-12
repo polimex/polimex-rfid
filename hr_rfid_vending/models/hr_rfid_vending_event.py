@@ -1,6 +1,9 @@
 from odoo import fields, models, api
 from datetime import timedelta, datetime
 
+import logging
+_logger = logging.getLogger(__name__)
+
 
 class VendingEvents(models.Model):
     _name = 'hr.rfid.vending.event'
@@ -142,16 +145,139 @@ Contains technical details about the hardware communication."""
 
     @api.autovacuum
     def _gc_delete_old_vending_events(self):
-        for c in self.env['res.company'].search([]):
-            if c.event_lifetime is None:
-                return False
-            lifetime = timedelta(days=int(c.event_lifetime))
-            today = fields.Date.today()
-            res = self.with_company(c).search([
-                ('event_time', '<', today - lifetime)
-            ])
-            res.unlink()
-        return True
+        """
+        Clean up old vending event records per company based on event_lifetime setting.
+
+        Follows Odoo 19 core patterns:
+        - Direct SQL for performance (similar to res.users._gc_user_logs)
+        - Batching with commits (similar to ir.autovacuum pattern)
+        - Per-company processing with error isolation
+        - Returns (done, remaining) tuple for re-queue support
+
+        Returns:
+            tuple: (total_deleted, has_more) - if has_more is True, method will be re-queued
+        """
+        batch_size = 1000
+        max_batches_per_company = 20
+
+        companies = self.env['res.company'].search([])
+        total_deleted = 0
+        has_more = False  # Track if any company hit max batch limit (for re-queue)
+
+        _logger.info(
+            "[VENDING EVENTS] Starting GC across %d companies",
+            len(companies)
+        )
+
+        for company in companies:
+            if company.event_lifetime is None:
+                _logger.debug(
+                    "[VENDING EVENTS] Company %s has no event_lifetime set, skipping",
+                    company.name
+                )
+                continue
+
+            try:
+                cutoff_date = fields.Datetime.now() - timedelta(days=int(company.event_lifetime))
+                company_deleted = 0
+                batch_num = 0
+
+                _logger.info(
+                    "[VENDING EVENTS] Company %s (ID: %d) - deleting events older than %s (%d days)",
+                    company.name,
+                    company.id,
+                    cutoff_date,
+                    company.event_lifetime
+                )
+
+                while batch_num < max_batches_per_company:
+                    batch_num += 1
+
+                    try:
+                        # Company comes from: event.controller_id -> controller.webstack_id -> webstack.company_id
+                        self._cr.execute("""
+                            DELETE FROM hr_rfid_vending_event
+                            WHERE id IN (
+                                SELECT e.id
+                                FROM hr_rfid_vending_event e
+                                INNER JOIN hr_rfid_ctrl c ON e.controller_id = c.id
+                                INNER JOIN hr_rfid_webstack w ON c.webstack_id = w.id
+                                WHERE e.event_time < %s
+                                  AND w.company_id = %s
+                                ORDER BY e.id
+                                LIMIT %s
+                            )
+                        """, (cutoff_date, company.id, batch_size))
+
+                        deleted_count = self._cr.rowcount
+
+                        if deleted_count == 0:
+                            break
+
+                        # Commit after each batch (ir.autovacuum pattern)
+                        self._cr.commit()
+
+                        company_deleted += deleted_count
+                        total_deleted += deleted_count
+
+                        _logger.info(
+                            "[VENDING EVENTS] Company %s batch %d: Deleted %d events (company total: %d)",
+                            company.name,
+                            batch_num,
+                            deleted_count,
+                            company_deleted
+                        )
+
+                        if deleted_count < batch_size:
+                            break
+
+                    except Exception as batch_error:
+                        _logger.error(
+                            "[VENDING EVENTS] Company %s batch %d error: %s",
+                            company.name,
+                            batch_num,
+                            str(batch_error),
+                            exc_info=True
+                        )
+                        self._cr.rollback()
+                        break
+
+                # Check if we hit max batches (may have more records to delete)
+                if batch_num >= max_batches_per_company:
+                    has_more = True
+                    _logger.info(
+                        "[VENDING EVENTS] Company %s hit max batch limit (%d), may have more events",
+                        company.name,
+                        max_batches_per_company
+                    )
+
+                if company_deleted > 0:
+                    _logger.info(
+                        "[VENDING EVENTS] Company %s completed: %d events deleted in %d batches",
+                        company.name,
+                        company_deleted,
+                        batch_num
+                    )
+
+            except Exception as company_error:
+                _logger.error(
+                    "[VENDING EVENTS] Company %s fatal error: %s",
+                    company.name,
+                    str(company_error),
+                    exc_info=True
+                )
+                self._cr.rollback()
+
+        _logger.info(
+            "[VENDING EVENTS] GC completed: %d total events deleted across %d companies (has_more=%s)",
+            total_deleted,
+            len(companies),
+            has_more
+        )
+
+        # Return tuple for Odoo 19 autovacuum re-queue support
+        # If has_more is True, this method will be re-queued for another run
+        return total_deleted, has_more
 
     def _check_save_comms(self, vals):
         save_comms = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.save_webstack_communications') in ['true', 'True']
@@ -170,11 +296,6 @@ Contains technical details about the hardware communication."""
         return super(VendingEvents, self).write(vals)
 
     @api.model
-    @api.returns('self',
-                 upgrade=lambda self, value, args, offset=0, limit=None, order=None, count=False:
-                 value if count else self.browse(value),
-                 downgrade=lambda self, value, args, offset=0, limit=None, order=None, count=False:
-                 value if count else value.ids)
     def search(self, *args, **kwargs):
         ret = super(VendingEvents, self).search(*args, **kwargs)
 

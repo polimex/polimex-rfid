@@ -2,6 +2,7 @@ from odoo import models, api
 
 
 class IrActionsReport(models.Model):
+    _name = "ir.actions.report"
     _inherit = "ir.actions.report"
     
     def _get_user_default_print_behaviour(self):

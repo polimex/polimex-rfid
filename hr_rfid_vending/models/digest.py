@@ -7,6 +7,7 @@ from odoo.tools import float_round
 
 
 class Digest(models.Model):
+    _name = 'digest.digest'
     _inherit = 'digest.digest'
 
     kpi_hr_rfid_vending_refill = fields.Boolean('Auto refill amount')

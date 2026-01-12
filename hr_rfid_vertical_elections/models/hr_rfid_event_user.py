@@ -4,6 +4,7 @@ import logging
 _logger = logging.getLogger(__name__)
 
 class HrRfidUserEvent(models.Model):
+    _name = 'hr.rfid.event.user'
     _inherit = 'hr.rfid.event.user'
 
     @api.model_create_multi

@@ -10,22 +10,23 @@
       <field name="parent_id" ref="hr_rfid.hr_rfid_root"/>
     </record>
 
-<!--    <record id="view_own_department_data" model="res.groups">-->
-<!--      <field name="name">Vending: Only view data for own department</field>-->
-<!--      <field name="category_id" ref="hr_rfid_vending_management" />-->
-<!--    </record>-->
+    <!-- Odoo 19: Two-tier privilege system -->
+    <record id="res_groups_privilege_vending" model="res.groups.privilege">
+      <field name="name">Vending Access</field>
+      <field name="sequence">10</field>
+      <field name="category_id" ref="hr_rfid_vending_management"/>
+    </record>
 
     <record id="group_customer" model="res.groups">
       <field name="name">Vending Customer</field>
-<!--      <field name="implied_ids" eval="[(4, ref('hr_rfid_vending.view_own_department_data'))]" />-->
-      <field name="category_id" ref="hr_rfid_vending_management" />
+      <field name="privilege_id" ref="res_groups_privilege_vending"/>
     </record>
 
     <record id="group_operator" model="res.groups">
       <field name="name">Vending Operator</field>
       <field name="implied_ids" eval="[(4, ref('hr_rfid_vending.group_customer'))]" />
-      <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
-      <field name="category_id" ref="hr_rfid_vending_management" />
+      <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+      <field name="privilege_id" ref="res_groups_privilege_vending"/>
     </record>
 
     <record id="hr_rfid_vending_operator_department_vending_events_rule" model="ir.rule">
