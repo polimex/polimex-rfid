@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'RFID Andromeda Data Import',
-    'version': '18.0.1.1.0',
+    'version': '19.0.1.1.0',
     'category': 'HR',
     'summary': 'Import access control data from Polimex Andromeda Database',
     'author': 'Polimex',

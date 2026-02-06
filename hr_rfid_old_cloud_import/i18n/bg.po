@@ -4,18 +4,18 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 15.0\n"
+"Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 13:50+0000\n"
-"PO-Revision-Date: 2023-01-12 16:00+0200\n"
+"POT-Creation-Date: 2025-06-04 16:27+0000\n"
+"PO-Revision-Date: 2025-06-04 19:27+0300\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
-"Language-Team: Polimex Dev Team\n"
+"Language-Team: \n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.6\n"
 
 #. module: hr_rfid_old_cloud_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
@@ -32,12 +32,12 @@ msgstr "Токен за достъп"
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__ag_dict
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__ag_dict
 msgid "Ag Dict"
-msgstr ""
+msgstr "Речник на групи за достъп"
 
 #. module: hr_rfid_old_cloud_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
 msgid "Are you sure to start import of ALL EXISTING RECORDS?"
-msgstr "Сугурни ли сте, че искате да направите импорт на ВСИЧКИ НАЛИЧНИ ЗАПИСИ?"
+msgstr "Сигурни ли сте, че искате да направите импорт на ВСИЧКИ НАЛИЧНИ ЗАПИСИ?"
 
 #. module: hr_rfid_old_cloud_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
@@ -54,7 +54,7 @@ msgstr "Провери връзката и продължи"
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__company_dict
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__company_dict
 msgid "Company Dict"
-msgstr ""
+msgstr "Речник на компании"
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__c_id
@@ -112,7 +112,7 @@ msgstr "Отдел по подразбиране"
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__default_import_as
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__default_import_as
 msgid "Default Import As"
-msgstr "Импортирай като"
+msgstr "Импортирай като по подразбиране"
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__d_id
@@ -134,12 +134,12 @@ msgstr "Име за показване"
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__do_import
 msgid "Do Import"
-msgstr "Стартирай Импорта"
+msgstr "Импортирай"
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields.selection,name:hr_rfid_old_cloud_import.selection__hr_rfid_old_cloud_import_users__import_as__employee
 msgid "Employee"
-msgstr "Слуцител"
+msgstr "Служител"
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields.selection,name:hr_rfid_old_cloud_import.selection__hr_rfid_old_cloud_import_wiz__default_import_as__employee
@@ -149,16 +149,16 @@ msgid "Employees"
 msgstr "Служители"
 
 #. module: hr_rfid_old_cloud_import
+#. odoo-python
 #: code:addons/hr_rfid_old_cloud_import/models/welcome_wizard.py:0
-#, python-format
 msgid "Error response from %s. %s (%s)"
-msgstr "Отговор за грешка от %s. %s (%s)"
+msgstr "Грешка от отговора от %s. %s (%s)"
 
 #. module: hr_rfid_old_cloud_import
+#. odoo-python
 #: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
-#, python-format
 msgid "Existing doors in Old Cloud: %s"
-msgstr "Съществуващи врати в Old Cloud: %s"
+msgstr "Съществуващи врати в стария облак: %s"
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_fname
@@ -202,8 +202,8 @@ msgid ""
 "                                    system.\n"
 "                                    To do it you have to provide your access token to system. More information"
 msgstr ""
-"Оттук можете да импортирате всички важни данни от съществуващия Old Cloud \n"
-"                                    система.\n"
+"Оттук можете да импортирате всички важни данни от съществуващата стара облачна \n"
+"                                    система за контрол на достъпа.\n"
 "                                    За да го направите, трябва да предоставите своя токен за достъп в системата. Повече информация"
 
 #. module: hr_rfid_old_cloud_import
@@ -240,7 +240,7 @@ msgstr "Импортирай като"
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__import_events
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__import_events
 msgid "Import Events"
-msgstr "Импортиране на събития"
+msgstr "Импорт на събития"
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__import_hardware
@@ -260,34 +260,28 @@ msgid "Import Users"
 msgstr "Импорт на потребители"
 
 #. module: hr_rfid_old_cloud_import
+#. odoo-python
 #: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
-#, python-format
-msgid "Import success"
-msgstr "Успешен импорт"
-
-#. module: hr_rfid_old_cloud_import
-#: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
-#, python-format
 msgid "Imported %d Access groups from %s "
-msgstr "Импортирани %d Групи за достъп от %s"
+msgstr "Импортирани %d групи за достъп от %s "
 
 #. module: hr_rfid_old_cloud_import
+#. odoo-python
 #: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
-#, python-format
 msgid "Imported %d from %d users from %s. "
-msgstr "Импортирани %d от %d потребители от %s."
+msgstr "Импортирани %d от %d потребители от %s. "
 
 #. module: hr_rfid_old_cloud_import
+#. odoo-python
 #: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
-#, python-format
 msgid "Imported from %s Access Control System"
-msgstr "Импортирани от %s Система за контрол на достъпа"
+msgstr "Импортирано от %s система за контрол на достъпа"
 
 #. module: hr_rfid_old_cloud_import
+#. odoo-python
 #: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
-#, python-format
 msgid "Imported from Old Cloud Access Control System"
-msgstr "Импортирани от старата система за контрол на достъпа в облака"
+msgstr "Импортирано от стара облачна система за контрол на достъпа"
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_id
@@ -298,13 +292,6 @@ msgstr "Вътрешен номер"
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__json_data
 msgid "Json Data"
 msgstr "Json данни"
-
-#. module: hr_rfid_old_cloud_import
-#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users____last_update
-#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz____last_update
-#: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz____last_update
-msgid "Last Modified on"
-msgstr "Последно променен на"
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_lname
@@ -326,31 +313,31 @@ msgid "Last Updated on"
 msgstr "Последно обновено на"
 
 #. module: hr_rfid_old_cloud_import
+#. odoo-python
 #: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
-#, python-format
 msgid "Missing data: Partner AND Employee"
-msgstr "Липсващи данни: Партньор И служител"
+msgstr "Липсващи данни: Партньор И Служител"
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.actions.act_window,name:hr_rfid_old_cloud_import.old_cloud_import_wizard_action
 #: model:ir.actions.act_window,name:hr_rfid_old_cloud_import.old_cloud_welcome_wizard_action
 msgid "Old Cloud Data Import"
-msgstr "Импортиране на данни от стара облачна услуга"
+msgstr "Импорт на данни от стара облачна система"
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.ui.menu,name:hr_rfid_old_cloud_import.old_cloud_welcome_wizard_menu
 msgid "Old Cloud Import"
-msgstr "Импорт от стария облак"
+msgstr "Импорт от стара облачна система"
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model,name:hr_rfid_old_cloud_import.model_hr_rfid_old_cloud_import_users
 msgid "Old Cloud Import Users"
-msgstr "Потребители на стария облак за импортиране"
+msgstr "Потребители за импорт от стара облачна система"
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model,name:hr_rfid_old_cloud_import.model_hr_rfid_old_cloud_welcome_wiz
 msgid "Old Polimex Cloud Import Welcome"
-msgstr "Стар Полимекс Облак Импорт Добре дошли"
+msgstr "Добре дошли в импорта от стара Polimex облачна система"
 
 #. module: hr_rfid_old_cloud_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
@@ -373,16 +360,16 @@ msgid "Start Full Import"
 msgstr "Стартирай пълен импорт"
 
 #. module: hr_rfid_old_cloud_import
+#. odoo-python
 #: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
-#, python-format
 msgid "Tag have no employee or contact. Something is wrong with data. Check the log"
-msgstr "Картата няма нито служител нито контакт. Нещо е грешно в данните. Проверете лога"
+msgstr "Тагът няма служител или контакт. Нещо не е наред с данните. Проверете логовете"
 
 #. module: hr_rfid_old_cloud_import
+#. odoo-python
 #: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
-#, python-format
 msgid "The process finish successful! "
-msgstr "Процесът завърши успешно!"
+msgstr "Процесът завърши успешно! "
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__url_domain
@@ -430,26 +417,26 @@ msgstr "Брояч потребители"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_welcome_wizard_form
 msgid "Welcome to Old Cloud Import"
-msgstr "Добре дошли в Old Cloud Импорт"
+msgstr "Добре дошли в импорта от стара облачна система"
 
 #. module: hr_rfid_old_cloud_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_welcome_wizard_form
 msgid "Welcome to Old Cloud Import Wizard"
-msgstr "Добре дошли в съветника за импортиране от Old Cloud"
+msgstr "Добре дошли в помощника за импорт от стара облачна система"
 
 #. module: hr_rfid_old_cloud_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
 msgid "Welcome to Old Cloud platform Import Wizard"
-msgstr "Добре дошли в съветника за импортиране от платформата Old Cloud"
+msgstr "Добре дошли в помощника за импорт от стара облачна платформа"
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields.selection,name:hr_rfid_old_cloud_import.selection__hr_rfid_old_cloud_import_wiz__url_domain__pc
 #: model:ir.model.fields.selection,name:hr_rfid_old_cloud_import.selection__hr_rfid_old_cloud_welcome_wiz__url_domain__pc
 msgid "my.polimex.online"
-msgstr ""
+msgstr "my.polimex.online"
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields.selection,name:hr_rfid_old_cloud_import.selection__hr_rfid_old_cloud_import_wiz__url_domain__ss
 #: model:ir.model.fields.selection,name:hr_rfid_old_cloud_import.selection__hr_rfid_old_cloud_welcome_wiz__url_domain__ss
 msgid "schoolsafety.online"
-msgstr ""
+msgstr "schoolsafety.online"

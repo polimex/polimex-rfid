@@ -1,6 +1,6 @@
 {
     'name': "IP Camera Management",
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'summary': "Module for managing IP cameras via manufacturers integration integration",
     'description': """
         This module is designed for managing cameras (e.g. Hikvision, Dahua) with automatic
