@@ -507,10 +507,12 @@ class HrRfidUserEvent(models.Model):
         }
 
     @api.model
-    def last_event(self, door_ids=None, partner_id=None, employee_id=None, event_action=None, domain=[], limit=1):
+    def last_event(self, door_ids=None, partner_id=None, employee_id=None, event_action=None, domain=None, limit=1):
         """ Get last event for user
 
             """
+        if domain is None:
+            domain = []
         if door_ids is not None:
             domain.append(
                 ('door_id', 'in', door_ids.mapped('id'))

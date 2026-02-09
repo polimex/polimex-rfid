@@ -1043,7 +1043,7 @@ class HrRfidCommands(models.Model):
         }
         if ctrl_mode != self.controller_id.mode and self.controller_id.mode is not None and ctrl_already_existed:
             # ctrl_dict['io_table'] = polimex.get_default_io_table(hw_ver, sw_ver, ctrl_mode)
-            self.controller_id.write(ctrl_dict)
+            self.controller_id.with_context({'from_controller': True}).write(ctrl_dict)
             new_io = polimex.get_default_io_table(int(hw_ver), ctrl_mode)
             if new_io:
                 self.controller_id.change_io_table(new_io)

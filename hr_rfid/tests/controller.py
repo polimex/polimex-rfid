@@ -10,18 +10,11 @@ _logger = logging.getLogger(__name__)
 
 
 class RFIDController(RFIDAppCase):
-    def setUp(self):
-        super(RFIDController, self).setUp()
-        self.c_50 = None
-        self.c_110 = None
-        self.c_115 = None
-        self.c_Relay = None
-        self.c_130 = None
-        self.c_180 = None
-        self.c_turnstile = None
-        self.c_vending = None
-        self.c_temperature = None
-        self.default_F0 = {
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.default_F0 = {
             6: '0006000400000704000000030000030201050208000200010502060003000506',  # iCON110
             9: '0009050006030704010000090000080201050208000101050807000008010900',  # Turnstile
             11: '0101000202000704000000050000040201050208010200090702070003000506',  # iCON115
@@ -33,7 +26,7 @@ class RFIDController(RFIDAppCase):
             31: '0301070004060704010000050001000200080206000200090702070003000506',  # Relay controller 31
             32: '0302070004060704010000050001000200080206000200090702070003000506',  # Relay controller 32
         }
-        self.default_B3 = {
+        cls.default_B3 = {
             6: '000000000771000002060422000000000000000000000000',  # iCON110
             9: '00006E010752079200000000000000000000000000000000',  # Turnstile
             11: '000001000335000000000000000000000000050204000000',  # iCON115
@@ -45,6 +38,20 @@ class RFIDController(RFIDAppCase):
             31: '000001000335000000000000000000000000050204000000',  # Relay controller 31
             32: '000001000335000000000000000000000000050204000000',  # Relay controller 32
         }
+
+    def setUp(self):
+        super().setUp()
+        # Controller instances are per-test (mutable)
+        self.c_50 = None
+        self.c_110 = None
+        self.c_115 = None
+        self.c_Relay = None
+        self.c_130 = None
+        self.c_180 = None
+        self.c_turnstile = None
+        self.c_vending = None
+        self.c_temperature = None
+
     # Create controllers
 
     def _add_Vending(self, module=234567, key='0000', id=None):
@@ -59,11 +66,6 @@ class RFIDController(RFIDAppCase):
         response = self._hearbeat(self.c_vending.webstack_id)
         self.assertEqual(response, {'cmd': {'id': id, 'c': 'F0', 'd': ''}}, '(%s)' % self.c_vending.name)
         response = self._send_cmd_response(response, self.default_F0[16])
-        # self.assertTrue(
-        #     response['cmd']['c'] == 'D5' and response['cmd']['d'] == '22', '(%s)' % self.c_vending.name)  # {'cmd': {'id': 7, 'c': 'D5', 'd': '22'}}
-        # response = self._send_cmd_response(response)
-        # self.assertTrue(response['cmd']['c'] == 'F0', '(%s)' % self.c_vending.name)
-        # response = self._send_cmd_response(response, self.default_F0[16])
         self.assertTrue(response['cmd']['c'] == 'D7', '(%s)' % self.c_vending.name)  #
         response = self._send_cmd_response(response)
         self.assertTrue(response['cmd']['c'] == 'DC', '(%s)' % self.c_vending.name)
@@ -125,7 +127,6 @@ class RFIDController(RFIDAppCase):
 
         response = self._hearbeat(self.c_180.webstack_id)
         self.assertEqual(response, {'cmd': {'id': id, 'c': 'F0', 'd': ''}}, '(%s)' % self.c_180.name)
-        # response = self._send_cmd_response(response, self.default_F0[17])
         response = self._send_cmd_response(response, '0107000601000703090000090000080401050208000401050807000008010900')
         self.assertTrue(response['cmd']['c'] == 'D7')
         response = self._send_cmd_response(response)
@@ -276,7 +277,6 @@ class RFIDController(RFIDAppCase):
         self.c_50.read_controller_information_cmd()
         response = self._hearbeat(self.c_50.webstack_id)
         self.assertEqual(response, {'cmd': {'id': id, 'c': 'F0', 'd': ''}}, '(%s)' % self.c_50.name)
-        # tmp = self._make_F0(12, 1, 739, 1, 1, 3, 4, 28, 0, 3500, 1500)
         response = self._send_cmd_response(response, self.default_F0[12])
         self._check_added_controller(self.c_50)
         self.assertTrue(response['cmd']['c'] == 'D7', '(%s)' % self.c_50.name)
@@ -306,7 +306,6 @@ class RFIDController(RFIDAppCase):
         self.c_temperature.read_controller_information_cmd()
         response = self._hearbeat(self.c_temperature.webstack_id)
         self.assertEqual(response, {'cmd': {'id': id, 'c': 'F0', 'd': ''}}, '(%s)' % self.c_temperature.name)
-        # tmp = self._make_F0(12, 1, 739, 1, 1, 3, 4, 28, 0, 3500, 1500 )
         response = self._send_cmd_response(response, self.default_F0[22])
         self._check_added_controller(self.c_temperature)
         self.assertTrue(response['cmd']['c'] == 'D7', '(%s)' % self.c_temperature.name)
@@ -334,18 +333,11 @@ class RFIDController(RFIDAppCase):
         self.assertTrue(response == {}, '(%s)' % self.c_temperature.name)
         self.assertTrue(len(self.c_temperature.sensor_ids) == 4, '(%s)' % self.c_temperature.name)
         self.c_temperature.sensor_ids[2].active = False
-        # self.assertTrue(response['cmd']['c'] == 'B4')
-        # response = self._send_cmd_response(response, '01900000018500000195000001900000')
         response = self._hearbeat(self.c_temperature.webstack_id)
         self.assertTrue(
             response['cmd']['c'] == 'D1' and response['cmd']['d'].upper() == '0208000D070907050D000001030C02030100',
             '(%s)' % self.c_temperature.name)
         self._send_cmd_response(response)
-        # {'convertor': 428030,
-        #  'event': {'bos': 1, 'card': '0000000000', 'cmd': 'FA', 'date': '11.07.22', 'day': 1, 'dt': '01900000',
-        #            'err': 0, 'event_n': 52, 'id': 29, 'reader': 2, 'time': '11:41:39', 'tos': 282},
-        #  'key': '1764'}
-        # {"c": "FA", "d": "0000000002 0000000001 34363922050411220000000002000000040002000000", "e": 0, "id": 29}
         self._send_cmd({
             "convertor": self.c_temperature.webstack_id.serial,
             "event": {"bos": 1,
@@ -396,5 +388,3 @@ class RFIDController(RFIDAppCase):
                       "reader": 2},
             "key": self.c_temperature.webstack_id.key
         }, system_event=True)
-
-        pass

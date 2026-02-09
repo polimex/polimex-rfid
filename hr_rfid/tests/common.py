@@ -1,8 +1,10 @@
+# Copyright 2022 Polimex Holding Ltd..
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 from dateutil.relativedelta import relativedelta
 
 from odoo.api import Environment
 from odoo import models, fields
-from odoo.tests import common
+from odoo.tests import common, HttpCase
 import json
 from odoo.addons.hr_rfid.controllers.polimex import get_default_io_table
 import logging
@@ -14,28 +16,123 @@ _TIMEOUT = 500
 
 
 class RFIDAppCase(common.TransactionCase):
-    def setUp(self):
-        super(RFIDAppCase, self).setUp()
-        self.env.ref('hr_rfid.hr_rfid_read_ctrl_status_cron').active = False
-        self.env.ref('hr_rfid.hr_rfid_sync_ctrl_clock_cron').active = False
-        self.env.ref('hr_rfid.hr_rfid_set_card_active_inactive_status').active = False
-        self.env.user.tz = 'Europe/Sofia'
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.env.ref('hr_rfid.hr_rfid_read_ctrl_status_cron').active = False
+        cls.env.ref('hr_rfid.hr_rfid_sync_ctrl_clock_cron').active = False
+        cls.env.ref('hr_rfid.hr_rfid_set_card_active_inactive_status').active = False
+        cls.env.user.tz = 'Europe/Sofia'
         # Create an mobile app
-        self.app_url = "/hr/rfid/event"
-        self.test_company_id = self.env['res.company'].create({'name': 'Test Company 1'}).id
-        self.test_company2_id = self.env['res.company'].create({'name': 'Test Company 2'}).id
-        self.env.ref('base.user_admin').company_ids = [
-            (4, self.test_company2_id, 0),
-            (4, self.test_company_id, 0)
-        ]
-        self.test_webstack_10_3_id = self.env['hr.rfid.webstack'].create({
+        cls.app_url = "/hr/rfid/event"
+        # Use existing main company to avoid stock/payment warehouse creation issues
+        cls.test_company_id = cls.env.company.id
+        # Find or reuse an existing second company for multi-company tests
+        existing_company2 = cls.env['res.company'].sudo().search(
+            [('id', '!=', cls.test_company_id)], limit=1)
+        if existing_company2:
+            cls.test_company2_id = existing_company2.id
+        else:
+            cls.test_company2_id = cls.test_company_id
+        admin_user = cls.env.ref('base.user_admin')
+        admin_user.sudo().write({'company_ids': [(4, cls.test_company2_id)]})
+        cls.test_webstack_10_3_id = cls.env['hr.rfid.webstack'].create({
             'name': 'Test Stack',
             'serial': '234567',
-            'company_id': self.test_company_id,
+            'company_id': cls.test_company_id,
             'available': 'a',
             'tz': 'Europe/Sofia',
             'active': True,
         })
+
+        cls.test_ag_employee_1 = cls.env['hr.rfid.access.group'].create({
+            'name': 'Test Access Group 1',
+            'company_id': cls.test_company_id,
+        })
+
+        cls.test_department_id = cls.env['hr.department'].create({
+            'name': 'Test Department',
+            'company_id': cls.test_company_id,
+            'hr_rfid_default_access_group': cls.test_ag_employee_1.id,
+            'hr_rfid_allowed_access_groups': [(4, cls.test_ag_employee_1.id, 0)],
+
+        })
+        cls.test_employee_tag1_id = cls.env['hr.employee.category'].create({'name': 'Tag1'})
+        cls.test_employee_tag2_id = cls.env['hr.employee.category'].create({'name': 'Tag2'})
+
+        cls.test_employee_id = cls.env['hr.employee'].create({
+            'name': 'Pesho Employee',
+            'company_id': cls.test_company_id,
+            'department_id': cls.test_department_id.id,
+            'category_ids': [(4, cls.test_employee_tag1_id.id)],
+        })
+
+        cls.test_card_employee = cls.env['hr.rfid.card'].create({
+            'number': '1234512345',
+            'card_input_type': 'w34',
+            'card_reference': 'Badge 77',
+            'employee_id': cls.test_employee_id.id,
+            'company_id': cls.test_company_id,
+        })
+
+        cls.test_employee_2_id = cls.env['hr.employee'].create({
+            'name': 'Ivan Employee',
+            'company_id': cls.test_company_id,
+            'department_id': cls.test_department_id.id,
+            'category_ids': [(4, cls.test_employee_tag2_id.id)],
+        })
+
+        cls.test_card_employee_2 = cls.env['hr.rfid.card'].create({
+            'number': '1234612346',
+            'card_input_type': 'w34',
+            'card_reference': 'Badge 78',
+            'employee_id': cls.test_employee_2_id.id,
+            'company_id': cls.test_company_id,
+        })
+
+        cls.test_ag_partner_1 = cls.env['hr.rfid.access.group'].create({
+            'name': 'Test Access Group 2',
+            'company_id': cls.test_company_id,
+        })
+
+        cls.test_partner = cls.env['res.partner'].create({
+            'name': 'Test Partner',
+            'company_type': 'person',
+            'is_company': False,
+            'type': 'contact',
+            'company_id': cls.test_company_id,
+        })
+        cls.test_partner_ag_rel = cls.env['hr.rfid.access.group.contact.rel'].create({
+            'access_group_id': cls.test_ag_partner_1.id,
+            'contact_id': cls.test_partner.id,
+        })
+
+        cls.test_card_partner = cls.env['hr.rfid.card'].create({
+            'number': '0012312345',
+            'card_input_type': 'w34',
+            'card_reference': 'Badge 33',
+            'contact_id': cls.test_partner.id,
+            'company_id': cls.test_company_id,
+        })
+
+        # Validate w34s format conversion
+        test_card2_partner = cls.env['hr.rfid.card'].create({
+            'number': '2760500060',
+            'card_input_type': 'w34s',
+            'card_reference': 'Badge 34',
+            'contact_id': cls.test_partner.id,
+            'company_id': cls.test_company_id,
+        })
+        assert test_card2_partner.internal_number == '4212158204', 'Check card number w34s'
+        test_card2_partner.unlink()
+
+    def setUp(self):
+        super().setUp()
+        # Per-test mutable state
+        self.heartbeat = 1
+        self.id_num = 1
+        # Recompute time values per test
         self.test_now = fields.Datetime.context_timestamp(
             self.test_webstack_10_3_id, fields.Datetime.now()
         )
@@ -50,92 +147,6 @@ class RFIDAppCase(common.TransactionCase):
             self.test_now.minute,
             self.test_now.second,
         )
-
-        self.test_ag_employee_1 = self.env['hr.rfid.access.group'].create({
-            'name': 'Test Access Group 1',
-            'company_id': self.test_company_id,
-            # 'door_ids': "[(0, 0, {'door_id':ref('hr_rfid.demo_ctrl_icon110_D1')}), (0, 0, {'door_id': ref('hr_rfid.demo_ctrl_icon110_D2')})]"
-        })
-
-        self.test_department_id = self.env['hr.department'].create({
-            'name': 'Test Department',
-            'company_id': self.test_company_id,
-            'hr_rfid_default_access_group': self.test_ag_employee_1.id,
-            'hr_rfid_allowed_access_groups': [(4, self.test_ag_employee_1.id, 0)],
-
-        })
-        self.test_employee_tag1_id = self.env['hr.employee.category'].create({'name': 'Tag1'})
-        self.test_employee_tag2_id = self.env['hr.employee.category'].create({'name': 'Tag2'})
-
-        self.test_employee_id = self.env['hr.employee'].create({
-            'name': 'Pesho Employee',
-            'company_id': self.test_company_id,
-            'department_id': self.test_department_id.id,
-            'category_ids': [(4, self.test_employee_tag1_id.id)],
-        })
-
-        self.test_card_employee = self.env['hr.rfid.card'].create({
-            'number': '1234512345',
-            'card_input_type': 'w34',
-            'card_reference': 'Badge 77',
-            'employee_id': self.test_employee_id.id,
-            'company_id': self.test_company_id,
-        })
-
-        self.test_employee_2_id = self.env['hr.employee'].create({
-            'name': 'Ivan Employee',
-            'company_id': self.test_company_id,
-            'department_id': self.test_department_id.id,
-            'category_ids': [(4, self.test_employee_tag2_id.id)],
-        })
-
-        self.test_card_employee_2 = self.env['hr.rfid.card'].create({
-            'number': '1234612346',
-            'card_input_type': 'w34',
-            'card_reference': 'Badge 78',
-            'employee_id': self.test_employee_2_id.id,
-            'company_id': self.test_company_id,
-        })
-
-        self.test_ag_partner_1 = self.env['hr.rfid.access.group'].create({
-            'name': 'Test Access Group 2',
-            'company_id': self.test_company_id,
-            # 'door_ids': "[(0, 0, {'door_id':ref('hr_rfid.demo_ctrl_icon110_D1')}), (0, 0, {'door_id': ref('hr_rfid.demo_ctrl_icon110_D2')})]"
-        })
-
-        self.test_partner = self.env['res.partner'].create({
-            'name': 'Test Partner',
-            'company_type': 'person',
-            'is_company': False,
-            'type': 'contact',
-            'company_id': self.test_company_id,
-        })
-        self.test_partner_ag_rel = self.env['hr.rfid.access.group.contact.rel'].create({
-            'access_group_id': self.test_ag_partner_1.id,
-            'contact_id': self.test_partner.id,
-        })
-
-        self.test_card_partner = self.env['hr.rfid.card'].create({
-            'number': '0012312345',
-            'card_input_type': 'w34',
-            'card_reference': 'Badge 33',
-            'contact_id': self.test_partner.id,
-            'company_id': self.test_company_id,
-        })
-        self.assertTrue(self.test_card_partner.internal_number == '0012312345', 'Check cad number w34')
-        self.test_card2_partner = self.env['hr.rfid.card'].create({
-            'number': '2760500060',
-            'card_input_type': 'w34s',
-            'card_reference': 'Badge 34',
-            'contact_id': self.test_partner.id,
-            'company_id': self.test_company_id,
-        })
-        self.assertTrue(self.test_card2_partner.internal_number == '4212158204', 'Check cad number w34s')
-        self.test_card2_partner.unlink()
-
-
-        self.heartbeat = 1
-        self.id_num = 1
 
     def _get_id_num(self):
         self.id_num += 1
@@ -168,21 +179,6 @@ class RFIDAppCase(common.TransactionCase):
         max_cards_count = ctrl and ctrl.max_cards_count or max_cards_count
         max_events_count = ctrl and ctrl.max_events_count or max_events_count
 
-        # f0 = '%02d%04d%03d%03d%03d%d%02d%d%d%d%05d%05d' % (
-        #     int(hw_version),
-        #     int(serial_number),
-        #     int(sw_version),
-        #     inputs,
-        #     outputs,
-        #     readers,
-        #     time_schedules,
-        #     io_table_lines,
-        #     alarm_lines,
-        #     mode,
-        #     max_cards_count,
-        #     max_events_count
-        # )
-        # f0 = ''.join(['%02d' % int(i) for i in f0])
         f0 = '%s%s%s%s%s%s%s%s%s%s%s%s' % (
             ''.join(['%02d' % int(i) for i in ('%02d' % int(hw_version))]),
             ''.join(['%02d' % int(i) for i in ('%04d' % int(serial_number))]),
@@ -231,8 +227,6 @@ class RFIDAppCase(common.TransactionCase):
         self.assertEqual(response.status_code, 200)
         if response.text != '':
             self.assertTrue(isinstance(response.json(), dict), 'Response is not JSON (%s)' % response.text)
-            # if 'error' in response.json().keys():
-            #     self.assertTrue(False, 'Response contain error' + response.json()['error']['data']['message'])
             return response.json()
         else:
             return {}
@@ -408,7 +402,6 @@ class RFIDAppCase(common.TransactionCase):
                     event_code=None,
                     system_event=False,
                     relay_num=1):
-        # ctrl.read()
         if ctrl.is_relay_ctrl():
             if event_code != 3:
                 relay_num = 0
@@ -422,9 +415,8 @@ class RFIDAppCase(common.TransactionCase):
                           "date": date or self.test_date_10_3,
                           "day": day or self.test_dow_10_3,
                           "dt": (pin or '0000') + "000000000000000000%02d" % relay_num,
-                          # "dt": (pin or '0000') + "0000000000",
                           "err": 0,
-                          "event_n": event_code or 4,  # Int(action_selection[X]
+                          "event_n": event_code or 4,
                           "id": ctrl.ctrl_id,
                           "reader": reader or 1},
                 "key": ctrl.webstack_id.key
@@ -441,7 +433,7 @@ class RFIDAppCase(common.TransactionCase):
                           "day": day or self.test_dow_10_3,
                           "dt": (pin or '0000') + "0000000000",
                           "err": 0,
-                          "event_n": event_code or 4,  # Int(action_selection[X]
+                          "event_n": event_code or 4,
                           "id": ctrl.ctrl_id,
                           "reader": reader or 1},
                 "key": ctrl.webstack_id.key
@@ -468,21 +460,15 @@ class RFIDAppCase(common.TransactionCase):
         self.assertEqual(response, {}, '(%s)' % ctrl.name)
         self.assertEqual(system_events_count + 1, self._count_system_events(), '(%s)' % ctrl.name)
 
-        # response = self._make_event(self.ctrl, reader=reader+1, event_code=3, system_event=True)
-        # self.assertEqual(response, {})
-        pass
-
     def _test_R1R2(self, ctrl):
         self._test_R_event(ctrl, 1)
         self._test_R_event(ctrl, 2)
-        pass
 
     def _test_R1R2R3R4(self, ctrl):
         self._test_R_event(ctrl, 1)
         self._test_R_event(ctrl, 2)
         self._test_R_event(ctrl, 3)
         self._test_R_event(ctrl, 4)
-        pass
 
     def _test_Duress(self, ctrl):
         res = [self._make_event(ctrl, reader=r, event_code=1) for r in range(1, ctrl.readers + 1)]
@@ -521,28 +507,6 @@ class RFIDAppCase(common.TransactionCase):
         self._clear_ctrl_cmd(ctrl)  # Ignore new time sync
         return res
 
-    # ('20', True, 'Siren ON/OFF'),
-    # ('27', False, 'DELAY ZONE ON (if out) Z4,Z3,Z2,Z1'),
-    # ('28', False, 'DELAY ZONE OFF (if in) Z4,Z3,Z2,Z1'),
-    # ('30', False, 'Power On event'),
-    # ('31', False, 'Open/Close Door From PC'),
-    # ('33', False, 'Zone Arm/Disarm Denied'),  # User Event
-    # ('34', False, 'Zone Status'),
-    # ('35', False, 'Zone Arm/Disarm'),  # User Event
-    # ('36', False, 'Inserted Card'),  # User Event
-    # ('37', False, 'Ejected Card'),  # User Event
-    # ('38', False, 'Hotel Button Pressed'),  # User Event
-    # ('45', False, '1-W ERROR (wiring problems)'),
-    # ('47', False, 'Vending Purchase Complete'),
-    # ('48', False, 'Vending Error1'),
-    # ('49', False, 'Vending Error2'),
-    # ('51', False, 'Temperature High'),
-    # ('52', False, 'Temperature Normal'),
-    # ('53', False, 'Temperature Low'),
-    # ('54', False, 'Temperature Error'),
-    # ('64', False, 'Cloud Card Request'),  # User Event
-    # ('99', False, 'System Event')
-
     def _change_mode(self, ctrl, mode):
         if mode < 3:
             ctrl.mode_selection = str(mode)
@@ -552,21 +516,12 @@ class RFIDAppCase(common.TransactionCase):
         self.assertNotEqual(response, {})
         mode = response['cmd']['d']
         response = self._send_cmd_response(response)  # To D5 change mode
-        # F0 Mode 2: 0006000400000704000000030000030201050208002200010502060003000506
-        # F0 Mode 1: 0006000400000704000000030000030201050208002100010502060003000506
-        #             '0006000400000704000000030000030201050208000200010502060003000506'
-        #             '0006000400000704000000030000030201050208002100010502060003000506'
-        #'0107000601000703090000090000080401050208000401050807000008010900'
-        #'0107000601000703090000090000080401050208000201050807000008010900'
         original_F0 = self.default_F0[int(ctrl.hw_version)]
         new_F0 = original_F0[:42] + mode + original_F0[44:]
 
         response = self._send_cmd_response(response, new_F0)
         while response != {} and response['cmd']['c'] == 'D9':
-            response = self._send_cmd_response(response)  # To F0 to confirm the mode
-
-        response = self._send_cmd_response(response, '00')  # To FC read APB
-        pass
+            response = self._send_cmd_response(response)  # IO table update commands
 
     def _ev64(self, ctrl):
         if not ctrl.external_db:
@@ -607,6 +562,9 @@ class RFIDAppCase(common.TransactionCase):
                 self.assertEqual(response, {'cmd': {'id': ctrl.ctrl_id, 'c': 'DB', 'd': '400300'}}, '(%s)' % ctrl.name)
             response = self._send_cmd_response(response, '400300')
             self.assertEqual(response, {})
+            # Hardware opens door and reports Granted event
+            response = self._make_event(ctrl, card=self.test_card_employee.number, reader=1, event_code=3)
+            self.assertEqual(response, {}, 'Follow-up Granted event after ev64 should not generate commands (%s)' % ctrl.name)
             # Set delay on access group
             self.test_ag_employee_1.delay_between_events = 60
             self.test_ag_employee_1._flush()
@@ -635,4 +593,104 @@ class RFIDAppCase(common.TransactionCase):
             self.assertEqual(response, {'cmd': {'id': ctrl.ctrl_id, 'c': 'F0', 'd': ''}}, '(%s)' % ctrl.name)
             response = self._send_cmd_response(response, self._make_F0(ctrl=ctrl))
             self.assertEqual(response, {})
-            pass
+
+
+class RFIDHttpCase(HttpCase):
+    """HTTP test case sharing the same setUpClass data as RFIDAppCase."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.env.ref('hr_rfid.hr_rfid_read_ctrl_status_cron').active = False
+        cls.env.ref('hr_rfid.hr_rfid_sync_ctrl_clock_cron').active = False
+        cls.env.ref('hr_rfid.hr_rfid_set_card_active_inactive_status').active = False
+        cls.env.user.tz = 'Europe/Sofia'
+        cls.app_url = "/hr/rfid/event"
+        # Use existing main company to avoid stock/payment warehouse creation issues
+        cls.test_company_id = cls.env.company.id
+        # Find or reuse an existing second company for multi-company tests
+        existing_company2 = cls.env['res.company'].sudo().search(
+            [('id', '!=', cls.test_company_id)], limit=1)
+        if existing_company2:
+            cls.test_company2_id = existing_company2.id
+        else:
+            cls.test_company2_id = cls.test_company_id
+        admin_user = cls.env.ref('base.user_admin')
+        admin_user.sudo().write({'company_ids': [(4, cls.test_company2_id)]})
+        cls.test_webstack_10_3_id = cls.env['hr.rfid.webstack'].create({
+            'name': 'Test Stack',
+            'serial': '234567',
+            'company_id': cls.test_company_id,
+            'available': 'a',
+            'tz': 'Europe/Sofia',
+            'active': True,
+        })
+
+        cls.test_ag_employee_1 = cls.env['hr.rfid.access.group'].create({
+            'name': 'Test Access Group 1',
+            'company_id': cls.test_company_id,
+        })
+
+        cls.test_department_id = cls.env['hr.department'].create({
+            'name': 'Test Department',
+            'company_id': cls.test_company_id,
+            'hr_rfid_default_access_group': cls.test_ag_employee_1.id,
+            'hr_rfid_allowed_access_groups': [(4, cls.test_ag_employee_1.id, 0)],
+        })
+        cls.test_employee_tag1_id = cls.env['hr.employee.category'].create({'name': 'Tag1'})
+        cls.test_employee_tag2_id = cls.env['hr.employee.category'].create({'name': 'Tag2'})
+
+        cls.test_employee_id = cls.env['hr.employee'].create({
+            'name': 'Pesho Employee',
+            'company_id': cls.test_company_id,
+            'department_id': cls.test_department_id.id,
+            'category_ids': [(4, cls.test_employee_tag1_id.id)],
+        })
+
+        cls.test_card_employee = cls.env['hr.rfid.card'].create({
+            'number': '1234512345',
+            'card_input_type': 'w34',
+            'card_reference': 'Badge 77',
+            'employee_id': cls.test_employee_id.id,
+            'company_id': cls.test_company_id,
+        })
+
+        cls.test_employee_2_id = cls.env['hr.employee'].create({
+            'name': 'Ivan Employee',
+            'company_id': cls.test_company_id,
+            'department_id': cls.test_department_id.id,
+            'category_ids': [(4, cls.test_employee_tag2_id.id)],
+        })
+
+        cls.test_card_employee_2 = cls.env['hr.rfid.card'].create({
+            'number': '1234612346',
+            'card_input_type': 'w34',
+            'card_reference': 'Badge 78',
+            'employee_id': cls.test_employee_2_id.id,
+            'company_id': cls.test_company_id,
+        })
+
+        cls.test_ag_partner_1 = cls.env['hr.rfid.access.group'].create({
+            'name': 'Test Access Group 2',
+            'company_id': cls.test_company_id,
+        })
+
+        cls.test_partner = cls.env['res.partner'].create({
+            'name': 'Test Partner',
+            'company_type': 'person',
+            'is_company': False,
+            'type': 'contact',
+            'company_id': cls.test_company_id,
+        })
+        cls.test_partner_ag_rel = cls.env['hr.rfid.access.group.contact.rel'].create({
+            'access_group_id': cls.test_ag_partner_1.id,
+            'contact_id': cls.test_partner.id,
+        })
+
+        cls.test_card_partner = cls.env['hr.rfid.card'].create({
+            'number': '0012312345',
+            'card_input_type': 'w34',
+            'card_reference': 'Badge 33',
+            'contact_id': cls.test_partner.id,
+            'company_id': cls.test_company_id,
+        })
