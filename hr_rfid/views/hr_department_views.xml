@@ -97,9 +97,9 @@
             <field name="inherit_id" ref="hr.view_department_form"/>
             <field name="arch" type="xml">
                 <field name="color" position="after">
-                    <label for="hr_rfid_default_access_group"/>
-                    <div class="o_row">
-                        <field name="hr_rfid_default_access_group" readonly="1" groups="hr_rfid.hr_rfid_group_officer"/>
+                    <label for="hr_rfid_default_access_group" groups="hr_rfid.hr_rfid_group_officer"/>
+                    <div class="o_row" groups="hr_rfid.hr_rfid_group_officer">
+                        <field name="hr_rfid_default_access_group" readonly="1"/>
                         <button name="%(hr_rfid_department_add_access_group_action)d" string="Set Default Access group"
                                 class="btn btn-link" groups="hr_rfid.hr_rfid_group_officer"
                                 type="action"
@@ -122,7 +122,9 @@
                     <field name="hr_rfid_default_access_group"/>
                 </field>
                 <xpath expr="//div[@name='kanban_primary_right']" position="inside">
-                    <div class="o_secondary"><field name="hr_rfid_default_access_group"/></div>
+                    <div class="o_secondary" groups="hr_rfid.hr_rfid_group_officer">
+                        <field name="hr_rfid_default_access_group"/>
+                    </div>
                 </xpath>
 
             </field>

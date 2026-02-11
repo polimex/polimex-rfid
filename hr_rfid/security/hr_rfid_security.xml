@@ -7,7 +7,6 @@
             <field name="name">RFID System</field>
             <field name="description">All setups for all installed modules</field>
             <field name="sequence">101</field>
-            <field name="exclusive">True</field>
         </record>
         <!--Main module rights-->
         <record id="hr_rfid_management" model="ir.module.category">
@@ -17,7 +16,7 @@
             <field name="parent_id" ref="hr_rfid_root"/>
         </record>
 
-        <!-- Privilege for main RFID Access groups -->
+        <!-- Privilege for main RFID Access groups (hierarchical: Guard < Officer < Manager) -->
         <record id="res_groups_privilege_rfid_access" model="res.groups.privilege">
             <field name="name">RFID Access</field>
             <field name="sequence">10</field>
@@ -26,12 +25,14 @@
 
         <record id="hr_rfid_group_viewer" model="res.groups">
             <field name="name">Guard</field>
+            <field name="sequence">10</field>
             <field name="privilege_id" ref="res_groups_privilege_rfid_access"/>
             <field name="comment">The user will be able to see User Events.</field>
         </record>
 
         <record id="hr_rfid_group_officer" model="res.groups">
             <field name="name">Officer</field>
+            <field name="sequence">20</field>
             <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_group_viewer')),(4, ref('hr.group_hr_user'))]"/>
             <field name="privilege_id" ref="res_groups_privilege_rfid_access"/>
             <field name="comment">The user will be able to manage cards without hardware setup</field>
@@ -39,38 +40,28 @@
 
         <record id="hr_rfid_group_manager" model="res.groups">
             <field name="name">Manager</field>
+            <field name="sequence">30</field>
             <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_group_officer'))]"/>
             <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
             <field name="privilege_id" ref="res_groups_privilege_rfid_access"/>
             <field name="comment">The user have full rights for access control management</field>
         </record>
 
-        <!--Additional technical rights-->
-        <record id="module_rfid_settings" model="ir.module.category">
-            <field name="name">RFID Settings</field>
-            <field name="visible" eval="0"/>
-            <field name="description">RFID settings</field>
-            <field name="parent_id" ref="hr_rfid_root"/>
-        </record>
-
-        <!-- Privilege for RFID Settings groups -->
-        <record id="res_groups_privilege_rfid_settings" model="res.groups.privilege">
-            <field name="name">RFID Settings</field>
-            <field name="sequence">20</field>
-            <field name="category_id" ref="module_rfid_settings"/>
-        </record>
+        <!--
+            Additional technical rights (standalone checkboxes)
+            These are independent toggle groups - no privilege_id.
+            In Odoo 19, groups without privilege_id appear as individual
+            checkboxes in the user form, not as a hierarchical dropdown.
+        -->
 
         <record id="hr_rfid_view_module_discovery" model="res.groups">
             <field name="name">View Module Discovery</field>
-            <field name="privilege_id" ref="res_groups_privilege_rfid_settings"/>
             <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
             <field name="comment">The user will be able to Search Hardware in local network.</field>
         </record>
 
         <record id="hr_rfid_view_rfid_data" model="res.groups">
             <field name="name">View data in users</field>
-            <field name="privilege_id" ref="res_groups_privilege_rfid_settings"/>
-            <!--      <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_group_manager'))]" />-->
             <field name="user_ids" eval="[
             (4, ref('base.user_root')),
             (4, ref('base.user_admin'))
@@ -81,34 +72,29 @@
         <record id="hr_rfid_view_rfid_pin_code_data" model="res.groups">
             <field name="name">View pin code data in users</field>
             <field name="implied_ids" eval="[(4, ref('hr_rfid.hr_rfid_view_rfid_data'))]"/>
-            <field name="privilege_id" ref="res_groups_privilege_rfid_settings"/>
             <field name="comment">The user will be able to see Users PIN codes for system</field>
         </record>
 
         <record id="hr_rfid_view_door_open_close" model="res.groups">
             <field name="name">View the door open/close buttons</field>
-            <field name="privilege_id" ref="res_groups_privilege_rfid_settings"/>
             <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
             <field name="comment">The user will be able to control the doors from interface</field>
         </record>
 
         <record id="hr_rfid_view_door_arm_disarm" model="res.groups">
             <field name="name">View the door arm/disarm buttons</field>
-            <field name="privilege_id" ref="res_groups_privilege_rfid_settings"/>
             <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
             <field name="comment">The user will be able to control the alarm lines from interface</field>
         </record>
 
         <record id="hr_rfid_view_emergency_on_off" model="res.groups">
             <field name="name">View the Emergency On/Off buttons</field>
-            <field name="privilege_id" ref="res_groups_privilege_rfid_settings"/>
             <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
             <field name="comment">The user will be able to control the Emergency lines from interface</field>
         </record>
 
         <record id="hr_view_own_department" model="res.groups">
             <field name="name">Only show employees from own department</field>
-            <field name="privilege_id" ref="res_groups_privilege_rfid_settings"/>
             <field name="comment">The user will be able to control ONLY the employees from his Department. Usefully for
                 Head of Department
             </field>
@@ -116,7 +102,6 @@
 
         <record id="hr_rfid_view_own_department" model="res.groups">
             <field name="name">Only show data from own department</field>
-            <field name="privilege_id" ref="res_groups_privilege_rfid_settings"/>
             <field name="comment">The user will be able to control ONLY the employees from his Department. Usefully for
                 Head of Department
             </field>
