@@ -577,7 +577,12 @@ class HrRfidCommands(models.Model):
             rmask = 1 << (door.number - 1)
         elif ctrl.mode == 2:
             rmask = 1 << (door.number - 1)
-            if door.reader_ids.number == 2:
+            # FIX: door.reader_ids can contain multiple readers causing Expected singleton.
+            # For mode=2 relay, each door should have only 1 reader, but repeated F0 parsing
+            # could accumulate links. Check if any reader has number==2 (high 16-bit relay bank).
+            # TODO: Same code was commented out in _add_card_to_relay - verify if this shift
+            #  is actually needed for mode=2 relay controllers.
+            if any(r.number == 2 for r in door.reader_ids):
                 rmask *= 0x10000
         elif ctrl.mode == 3:
             rmask = -1
@@ -844,6 +849,10 @@ class HrRfidCommands(models.Model):
                 _reader = self.controller_id.reader_ids[new_reader_count - 1]
                 create_dict.pop('name')
                 _reader.write(create_dict)
+                # For relay controllers (door_id is None), clear old door associations
+                # to prevent accumulation of reader-door links on repeated F0 parsing
+                if door_id is None:
+                    _reader.door_ids = self.env['hr.rfid.door']
                 return _reader
 
             return reader_env.create(create_dict)
