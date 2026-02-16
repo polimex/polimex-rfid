@@ -31,14 +31,14 @@ class RfidPmsBaseCardEncodeWiz(models.TransientModel):
             return 'read'
 
     def _get_room_id(self):
-        # return self._context.get("active_id")
+        # return self.env.context.get("active_id")
         if not self.env.context.get('stuff', False):
-            return self.env['rfid_pms_base.room'].browse(self._context.get("active_id", []))
+            return self.env['rfid_pms_base.room'].browse(self.env.context.get("active_id", []))
 
     def _get_employee_id(self):
-        # return self._context.get("active_id")
+        # return self.env.context.get("active_id")
         if self.env.context.get('stuff', False):
-            return self.env['hr.employee'].browse(self._context.get("active_id", []))
+            return self.env['hr.employee'].browse(self.env.context.get("active_id", []))
 
     def _get_reservation_seq(self):
         if self.env.context.get('new', False):

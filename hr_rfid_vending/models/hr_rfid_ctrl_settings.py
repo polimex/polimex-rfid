@@ -7,7 +7,7 @@ class HrRfidVendingSettingsWiz(models.TransientModel):
     _description = 'Vending Machine Settings'
 
     def _default_ctrl(self):
-        return self.env['hr.rfid.ctrl'].browse(self._context.get('active_ids'))
+        return self.env['hr.rfid.ctrl'].browse(self.env.context.get('active_ids'))
 
     def _default_io_rows(self):
         ctrl = self._default_ctrl()

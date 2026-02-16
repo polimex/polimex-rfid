@@ -32,7 +32,7 @@ class CctvCamera(models.Model):
     )
     tz = fields.Selection(
         selection=_tzs, string='Timezone',
-        default=lambda self: self._context.get('tz'),
+        default=lambda self: self.env.context.get('tz'),
         help="The timezone of the camera. Used to display dates and times in the correct timezone.\n"
              "The plates are sent to camera with data and time in this timezone."
     )

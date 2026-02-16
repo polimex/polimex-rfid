@@ -442,7 +442,7 @@ class HrRfidAccessGroupDoorRel(models.Model):
     _description = 'Relation between access groups and doors'
 
     def _get_cur_access_group_id(self):
-        return self.env['hr.rfid.access.group'].browse(self._context.get('active_id'))
+        return self.env['hr.rfid.access.group'].browse(self.env.context.get('active_id'))
 
     def _get_cur_door_id(self):
         return self.env.context.get('door_id', None)
@@ -857,7 +857,7 @@ class HrRfidAccessGroupWizard(models.TransientModel):
     _description = 'Add or remove doors to the access group'
 
     def _default_acc_gr(self):
-        return self.env['hr.rfid.access.group'].browse(self._context.get('active_ids'))
+        return self.env['hr.rfid.access.group'].browse(self.env.context.get('active_ids'))
 
     def _default_acc_gr_doors(self):
         acc_gr = self._default_acc_gr()

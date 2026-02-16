@@ -81,7 +81,7 @@ class HrDepartmentAccGrWizard(models.TransientModel):
     _description = 'Department Access Group Configuration'
 
     def _default_dep(self):
-        return self.env['hr.department'].browse(self._context.get('active_ids'))
+        return self.env['hr.department'].browse(self.env.context.get('active_ids'))
 
     def _get_current_access_group(self):
         return self._default_dep().hr_rfid_allowed_access_groups
@@ -119,7 +119,7 @@ class HrDepartmentDefAccGrWizard(models.TransientModel):
     _description = 'Set Department Default Access Group'
 
     def _default_dep(self):
-        return self.env['hr.department'].browse(self._context.get('active_ids'))
+        return self.env['hr.department'].browse(self.env.context.get('active_ids'))
 
     dep_id = fields.Many2one(
         'hr.department',
@@ -157,7 +157,7 @@ class HrDepartmentMassAccGrsWiz(models.TransientModel):
     _description = 'Bulk Access Group Management for Department'
 
     def _default_dep(self):
-        return self.env['hr.department'].browse(self._context.get('active_ids'))
+        return self.env['hr.department'].browse(self.env.context.get('active_ids'))
 
     dep_id = fields.Many2one(
         'hr.department',
@@ -216,7 +216,7 @@ class HrDepartmentAddDefAccGrWizard(models.TransientModel):
     _description = 'Add and Set Default Access Group'
 
     def _default_dep(self):
-        return self.env['hr.department'].browse(self._context.get('active_ids'))
+        return self.env['hr.department'].browse(self.env.context.get('active_ids'))
 
     dep_id = fields.Many2one(
         'hr.department',

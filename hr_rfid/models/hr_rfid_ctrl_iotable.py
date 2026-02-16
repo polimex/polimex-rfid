@@ -61,7 +61,7 @@ class HrRfidCtrlIoTableWiz(models.TransientModel):
     _description = 'Controller IO Table Wizard'
 
     def _default_ctrl(self):
-        return self.env['hr.rfid.ctrl'].browse(self._context.get('active_ids'))
+        return self.env['hr.rfid.ctrl'].browse(self.env.context.get('active_ids'))
 
     def _generate_io_table(self, default=False):
         rows_env = self.env['hr.rfid.ctrl.io.table.row'].sudo()

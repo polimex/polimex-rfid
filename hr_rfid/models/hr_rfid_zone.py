@@ -325,7 +325,7 @@ class HrRfidZoneDoorsWizard(models.TransientModel):
     _description = 'Add or remove doors to the zone'
 
     def _default_zone(self):
-        return self.env['hr.rfid.zone'].browse(self._context.get('active_ids'))
+        return self.env['hr.rfid.zone'].browse(self.env.context.get('active_ids'))
 
     zone_id = fields.Many2one(
         'hr.rfid.zone',

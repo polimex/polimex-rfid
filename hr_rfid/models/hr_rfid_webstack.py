@@ -69,7 +69,7 @@ class HrRfidWebstack(models.Model):
     tz = fields.Selection(
         _tz_get,
         string='Timezone',
-        default=lambda self: self._context.get('tz'),
+        default=lambda self: self.env.context.get('tz'),
         help='Select the timezone where this module is physically located. This ensures accurate time synchronization between the module and Odoo for access logs and schedules.',
     )
 

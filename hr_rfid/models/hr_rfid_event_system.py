@@ -395,7 +395,7 @@ class HrRfidSystemEventWizard(models.TransientModel):
     _description = 'Add card to employee/contact'
 
     def _default_sys_ev(self):
-        return self.env['hr.rfid.event.system'].browse(self._context.get('active_ids'))
+        return self.env['hr.rfid.event.system'].browse(self.env.context.get('active_ids'))
 
     def _default_card_number(self):
         sys_ev = self._default_sys_ev()

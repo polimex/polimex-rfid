@@ -137,7 +137,7 @@ class HrEmployee(models.Model):
                     else:
                         # Missing check_out - apply zone rules or use context time
                         # Context 'attendance_calc_time' can be used for testing
-                        calc_time = self._context.get('attendance_calc_time', now)
+                        calc_time = self.env.context.get('attendance_calc_time', now)
                         
                         # Check if we have zone configuration (from hr_rfid module)
                         zone = getattr(att, 'in_zone_id', None) if hasattr(att, 'in_zone_id') else None

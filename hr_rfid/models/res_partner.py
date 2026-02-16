@@ -462,7 +462,7 @@ class HrPartnerMassAccGrsWiz(models.TransientModel):
     _description = 'Bulk Access Group Management for Contacts'
 
     def _get_partner_ids(self):
-        return self.env['res.partner'].browse(self._context.get('active_ids'))
+        return self.env['res.partner'].browse(self.env.context.get('active_ids'))
 
     partner_ids = fields.Many2many(
         comodel_name='res.partner',

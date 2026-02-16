@@ -687,7 +687,7 @@ class HrRfidDoorOpenCloseWiz(models.TransientModel):
     _description = 'Open or close door'
 
     def _default_doors(self):
-        return self.env['hr.rfid.door'].browse(self._context.get('active_ids'))
+        return self.env['hr.rfid.door'].browse(self.env.context.get('active_ids'))
 
     doors = fields.Many2many(
         'hr.rfid.door',
