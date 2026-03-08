@@ -1,0 +1,507 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* hr_rfid_andromeda_import
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-06-04 16:25+0000\n"
+"PO-Revision-Date: 2026-03-06 19:23\n"
+"Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
+"Language-Team: \n"
+"Language: ro\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
+"X-Generator: Poedit 3.6\n"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_welcome_wizard_form
+msgid "192.168.10.10"
+msgstr ""
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
+msgid "< Go Back"
+msgstr "< Înapoi"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__ag_dict
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__ag_dict
+msgid "Ag Dict"
+msgstr "Dict. Ag"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.actions.act_window,name:hr_rfid_andromeda_import.andromeda_import_wizard_action
+#: model:ir.actions.act_window,name:hr_rfid_andromeda_import.andromeda_welcome_wizard_action
+msgid "Andromeda Data Import"
+msgstr "Import date Andromeda"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.ui.menu,name:hr_rfid_andromeda_import.andromeda_welcome_wizard_menu
+msgid "Andromeda Import"
+msgstr "Import Andromeda"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model,name:hr_rfid_andromeda_import.model_hr_rfid_andromeda_import_users
+msgid "Andromeda Import Users"
+msgstr "Import utilizatori Andromeda"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model,name:hr_rfid_andromeda_import.model_hr_rfid_andromeda_welcome_wiz
+msgid "Andromeda Import Welcome"
+msgstr "Bun venit - Import Andromeda"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
+msgid "Are you sure to start import of ALL EXISTING RECORDS?"
+msgstr "Sigur doriți să începeți importul TUTUROR ÎNREGISTRĂRILOR EXISTENTE?"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_welcome_wizard_form
+msgid "C:\\Program Files (x86)\\Polimex\\Andromeda\\Database\\Andromeda.fdb"
+msgstr ""
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_welcome_wizard_form
+msgid "Cancel"
+msgstr "Anulare"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_welcome_wizard_form
+msgid "Check Connection & continue"
+msgstr "Verificare conexiune și continuare"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__import_as
+msgid ""
+"Choose how to import this user into Odoo.\n"
+"        \n"
+"        • Contact: Creates a contact/partner record\n"
+"        • Employee: Creates an employee record with HR functionality\n"
+"        • Default: Set by the wizard's global import type\n"
+"        \n"
+"        Note: Employee import includes HR features like attendance and access groups."
+msgstr ""
+"Alegeți modul de import al acestui utilizator în Odoo.\n"
+"        \n"
+"        • Contact: Creează o înregistrare de contact/partener\n"
+"        • Employee: Creează o înregistrare de angajat cu funcționalitate HR\n"
+"        • Default: Setat de tipul de import global al expertului\n"
+"        \n"
+"        Notă: Importul ca Employee include funcții HR precum prezența și grupurile de acces."
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__company_dict
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__company_dict
+msgid "Company Dict"
+msgstr "Dicționar companie"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__c_id
+msgid "Company ID"
+msgstr "ID companie"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__company_list
+msgid "Company List"
+msgstr "Listă companii"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__c_name
+msgid "Company Name"
+msgstr "Denumire companie"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__connection_checked
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__connection_checked
+msgid "Connection Checked"
+msgstr "Conexiune verificată"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields.selection,name:hr_rfid_andromeda_import.selection__hr_rfid_andromeda_import_users__import_as__contact
+msgid "Contact"
+msgstr "Contact"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields.selection,name:hr_rfid_andromeda_import.selection__hr_rfid_andromeda_import_wiz__default_import_as__contact
+#: model:ir.model.fields.selection,name:hr_rfid_andromeda_import.selection__hr_rfid_andromeda_import_wiz__import_as__contact
+#: model:ir.model.fields.selection,name:hr_rfid_andromeda_import.selection__hr_rfid_andromeda_welcome_wiz__default_import_as__contact
+msgid "Contacts"
+msgstr "Contacte"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__create_uid
+msgid "Created by"
+msgstr "Creat de"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__create_date
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__create_date
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__create_date
+msgid "Created on"
+msgstr "Creat la"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__database_path
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__database_path
+msgid "Database Path"
+msgstr "Cale bază de date"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__default_company
+msgid "Default Company"
+msgstr "Companie implicită"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__default_department
+msgid "Default Department"
+msgstr "Departament implicit"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__default_import_as
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__default_import_as
+msgid "Default Import As"
+msgstr "Import implicit ca"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__d_id
+msgid "Department ID"
+msgstr "ID departament"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__d_name
+msgid "Department Name"
+msgstr "Denumire departament"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__display_name
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__display_name
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__display_name
+msgid "Display Name"
+msgstr "Nume afișat"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields.selection,name:hr_rfid_andromeda_import.selection__hr_rfid_andromeda_import_users__import_as__employee
+msgid "Employee"
+msgstr "Employee"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields.selection,name:hr_rfid_andromeda_import.selection__hr_rfid_andromeda_import_wiz__default_import_as__employee
+#: model:ir.model.fields.selection,name:hr_rfid_andromeda_import.selection__hr_rfid_andromeda_import_wiz__import_as__employee
+#: model:ir.model.fields.selection,name:hr_rfid_andromeda_import.selection__hr_rfid_andromeda_welcome_wiz__default_import_as__employee
+msgid "Employees"
+msgstr "Angajați"
+
+#. module: hr_rfid_andromeda_import
+#. odoo-python
+#: code:addons/hr_rfid_andromeda_import/models/import_wizard.py:0
+msgid "Existing doors in Andromeda: %s"
+msgstr "Uși existente în Andromeda: %s"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_fname
+msgid "First Name"
+msgstr "Prenume"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
+msgid "For Contacts only"
+msgstr "Numai pentru Contacte"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
+msgid "For Employees only"
+msgstr "Numai pentru Angajați"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__force_default_company
+msgid "Force Default Company"
+msgstr "Impune compania implicită"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__force_default_department
+msgid "Force Default Department"
+msgstr "Impune departamentul implicit"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__force_default_company
+msgid "Force use only this company for selected import"
+msgstr ""
+"Impune utilizarea exclusivă a acestei companii pentru importul selectat"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__force_default_department
+msgid "Force use only this department for selected import"
+msgstr ""
+"Impune utilizarea exclusivă a acestui departament pentru importul selectat"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_welcome_wizard_form
+msgid ""
+"From here you can import all important data from existing Andromeda Access control\n"
+"                                    system.\n"
+"                                    To do it you have to provide the IP address and Database path of the system"
+msgstr ""
+"De aici puteți importa toate datele importante din sistemul existent Andromeda de control acces.\n"
+"                                    Pentru aceasta trebuie să furnizați adresa IP și calea către baza de date a sistemului"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__id
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__id
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__id
+msgid "ID"
+msgstr "ID"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__ip_address
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__ip_address
+msgid "IP address"
+msgstr "Adresă IP"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model,name:hr_rfid_andromeda_import.model_hr_rfid_andromeda_import_wiz
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__import_id
+msgid "Import"
+msgstr "Import"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__import_access_groups
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__import_access_groups
+msgid "Import Access Groups"
+msgstr "Import grupuri de acces"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__import_as
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__import_as
+msgid "Import As"
+msgstr "Import ca"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
+msgid "Import Selected"
+msgstr "Import selecție"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__do_import
+msgid "Import This User"
+msgstr "Importare utilizator"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__import_users
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__import_users
+msgid "Import Users"
+msgstr "Import utilizatori"
+
+#. module: hr_rfid_andromeda_import
+#. odoo-python
+#: code:addons/hr_rfid_andromeda_import/models/import_wizard.py:0
+msgid "Imported %d Access groups from Andromeda. "
+msgstr "Au fost importate %d grupuri de acces din Andromeda. "
+
+#. module: hr_rfid_andromeda_import
+#. odoo-python
+#: code:addons/hr_rfid_andromeda_import/models/import_wizard.py:0
+msgid "Imported %d from %d users from Andromeda. "
+msgstr "Au fost importați %d din %d utilizatori din Andromeda. "
+
+#. module: hr_rfid_andromeda_import
+#. odoo-python
+#: code:addons/hr_rfid_andromeda_import/models/import_wizard.py:0
+msgid "Imported from Andromeda Access Control System"
+msgstr "Importat din sistemul Andromeda de control acces"
+
+#. module: hr_rfid_andromeda_import
+#. odoo-python
+#: code:addons/hr_rfid_andromeda_import/models/import_wizard.py:0
+msgid ""
+"Imported from Andromeda Access Control System \n"
+"Data from Andromeda: ToDo"
+msgstr ""
+"Importat din sistemul Andromeda de control acces \n"
+"Date din Andromeda: De făcut"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_id
+msgid "Internal ID"
+msgstr "ID intern"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_lname
+msgid "Last Name"
+msgstr "Nume de familie"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__write_uid
+msgid "Last Updated by"
+msgstr "Ultima actualizare de"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__write_date
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__write_date
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__write_date
+msgid "Last Updated on"
+msgstr "Ultima actualizare la"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
+msgid "Operations"
+msgstr "Operațiuni"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_sname
+msgid "Second Name"
+msgstr "Al doilea prenume"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__select_all
+msgid "Select All"
+msgstr "Selectare totală"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__do_import
+msgid ""
+"Select whether to import this specific user.\n"
+"        \n"
+"        • When enabled: User will be included in the import process\n"
+"        • When disabled: User will be skipped during import\n"
+"        • Bulk control: Use 'Select All' to toggle all users at once\n"
+"        \n"
+"        Note: Only selected users will be imported from the Andromeda database."
+msgstr ""
+"Selectați dacă doriți să importați acest utilizator specific.\n"
+"        \n"
+"        • Activat: Utilizatorul va fi inclus în procesul de import\n"
+"        • Dezactivat: Utilizatorul va fi omis în timpul importului\n"
+"        • Control în masă: Utilizați 'Selectare totală' pentru a comuta toți utilizatorii simultan\n"
+"        \n"
+"        Notă: Vor fi importați din baza de date Andromeda numai utilizatorii selectați."
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
+msgid "Start Full Import"
+msgstr "Pornire import complet"
+
+#. module: hr_rfid_andromeda_import
+#. odoo-python
+#: code:addons/hr_rfid_andromeda_import/models/import_wizard.py:0
+msgid ""
+"Tag have no employee or contact. Something is wrong with data. Check the log"
+msgstr ""
+"Eticheta nu are angajat sau contact asociat. Ceva nu este în regulă cu "
+"datele. Verificați jurnalul"
+
+#. module: hr_rfid_andromeda_import
+#. odoo-python
+#: code:addons/hr_rfid_andromeda_import/models/import_wizard.py:0
+msgid "The process finish successful! "
+msgstr "Procesul s-a finalizat cu succes! "
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_id
+msgid ""
+"Unique user identifier from Andromeda system.\n"
+"        \n"
+"        • Source: Andromeda database user ID\n"
+"        • Purpose: Links imported records back to original system\n"
+"        • Reference: Used for avoiding duplicate imports\n"
+"        \n"
+"        Note: This ID is used to track which users have already been imported."
+msgstr ""
+"Identificator unic al utilizatorului din sistemul Andromeda.\n"
+"        \n"
+"        • Sursă: ID utilizator din baza de date Andromeda\n"
+"        • Scop: Leagă înregistrările importate de sistemul original\n"
+"        • Referință: Utilizat pentru evitarea importurilor duplicate\n"
+"        \n"
+"        Notă: Acest ID este folosit pentru a urmări ce utilizatori au fost deja importați."
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__default_company
+msgid "Use this company if Contact have no Company and Department"
+msgstr ""
+"Utilizați această companie dacă Contact nu are companie și departament"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__default_department
+msgid "Use this department if Employee have no Company and Department"
+msgstr ""
+"Utilizați acest departament dacă Employee nu are companie și departament"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_code
+msgid "User Code"
+msgstr "Cod utilizator"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_code
+msgid ""
+"User identification code from Andromeda system.\n"
+"        \n"
+"        • Usage: Employee badge number or identification code\n"
+"        • Import: Becomes employee identification_id or card reference\n"
+"        • Format: Alphanumeric code unique per user\n"
+"        \n"
+"        Note: This code often matches physical RFID card numbers."
+msgstr ""
+"Cod de identificare a utilizatorului din sistemul Andromeda.\n"
+"        \n"
+"        • Utilizare: Numărul de ecuson sau codul de identificare al angajatului\n"
+"        • Import: Devine identification_id al angajatului sau referința cardului\n"
+"        • Format: Cod alfanumeric unic per utilizator\n"
+"        \n"
+"        Notă: Acest cod corespunde adesea numerelor fizice ale cardurilor RFID."
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_name
+msgid "Username"
+msgstr "Nume de utilizator"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_name
+msgid ""
+"Username from Andromeda access control system.\n"
+"        \n"
+"        • Login: Original login name in Andromeda\n"
+"        • Reference: Used for cross-system identification\n"
+"        • Display: Shown for administrator reference\n"
+"        \n"
+"        Note: May differ from the person's actual name - often a login identifier."
+msgstr ""
+"Nume de utilizator din sistemul Andromeda de control acces.\n"
+"        \n"
+"        • Autentificare: Numele original de autentificare în Andromeda\n"
+"        • Referință: Utilizat pentru identificarea între sisteme\n"
+"        • Afișare: Vizibil pentru referința administratorului\n"
+"        \n"
+"        Notă: Poate diferi de numele real al persoanei - adesea un identificator de autentificare."
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__users_ids
+msgid "Users"
+msgstr "Utilizatori"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__users_count
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__users_count
+msgid "Users Count"
+msgstr "Număr utilizatori"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_welcome_wizard_form
+msgid "Welcome to Andromeda Import"
+msgstr "Bun venit la importul Andromeda"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_welcome_wizard_form
+msgid "Welcome to Andromeda Import Wizard"
+msgstr "Bun venit la expertul de import Andromeda"

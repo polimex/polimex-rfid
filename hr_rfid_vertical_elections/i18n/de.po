@@ -1,0 +1,1118 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* hr_rfid_vertical_elections
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-05 16:23+0000\n"
+"PO-Revision-Date: 2026-03-08 12:12\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.actions.report,print_report_name:hr_rfid_vertical_elections.action_report_voting_session
+msgid "('Vote Protocol - %s' % (object.name))"
+msgstr "('Abstimmungsprotokoll - %s' % (object.name))"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid ""
+"/\n"
+"                        Abstain:"
+msgstr ""
+"/\n"
+"                        Enthaltung:"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid ""
+"/\n"
+"                        No:"
+msgstr ""
+"/\n"
+"                        Nein:"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid ""
+"/\n"
+"                        Total Votes:"
+msgstr ""
+"/\n"
+"                        Gesamtstimmen:"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid ""
+"/ \n"
+"                                                Abstain:"
+msgstr ""
+"/ \n"
+"                                                Enthaltung:"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid ""
+"/ \n"
+"                                                No:"
+msgstr ""
+"/ \n"
+"                                                Nein:"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid ""
+"<i class=\"fa fa-hand-o-up me-1\"/>\n"
+"                                                Yes:"
+msgstr ""
+"<i class=\"fa fa-hand-o-up me-1\"/>\n"
+"                                                Ja:"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "<i class=\"fa fa-long-arrow-right mx-1\" title=\"Until\"/>"
+msgstr "<i class=\"fa fa-long-arrow-right mx-1\" title=\"Bis\"/>"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "<span class=\"text-muted\">Display:</span>"
+msgstr "<span class=\"text-muted\">Anzeige:</span>"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "<span class=\"text-muted\">Planned for:</span>"
+msgstr "<span class=\"text-muted\">Geplant für:</span>"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "<span>Final Vote: </span>"
+msgstr "<span>Endergebnis: </span>"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "<span>State: </span>"
+msgstr "<span>Status: </span>"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__vote_abstain
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_vote__vote__abstain
+msgid "Abstain"
+msgstr "Enthaltung"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__access_token
+msgid "Access Token"
+msgstr "Zugriffstoken"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__message_needaction
+msgid "Action Needed"
+msgstr "Handlungsbedarf"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_ids
+msgid "Activities"
+msgstr "Aktivitäten"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_exception_decoration
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "Aktivitätsausnahme-Dekoration"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_state
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_state
+msgid "Activity State"
+msgstr "Aktivitätsstatus"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_type_icon
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "Aktivitätstyp-Symbol"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__vote_total
+msgid "All Votes"
+msgstr "Alle Stimmen"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__description
+msgid "Announcements"
+msgstr "Bekanntmachungen"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_form
+msgid "Are you sure you want to generate a new URL?"
+msgstr "Möchten Sie wirklich eine neue URL generieren?"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__message_attachment_count
+msgid "Attachment Count"
+msgstr "Anzahl Anhänge"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__display_background_image
+msgid "Background Image"
+msgstr "Hintergrundbild"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "Close Voting"
+msgstr "Abstimmung schließen"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_session__state__closed
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_search
+msgid "Closed"
+msgstr "Abgeschlossen"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__company_id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__company_id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__company_id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__company_id
+msgid "Company"
+msgstr "Unternehmen"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__create_uid
+msgid "Created by"
+msgstr "Erstellt von"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__create_date
+msgid "Created on"
+msgstr "Erstellt am"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_hr_rfid_workcode__user_action
+msgid ""
+"Defines what type of time tracking action this workcode represents:\n"
+"• Start: Records the beginning of a work shift (clock in)\n"
+"• Break: Records when an employee goes on break (lunch, rest, etc.)\n"
+"• Stop: Records the end of an action (returning from break, leaving work, etc.)"
+msgstr ""
+"Legt fest, welche Art von Zeiterfassungsvorgang dieser Arbeitscode repräsentiert:\n"
+"• Start: Erfasst den Beginn einer Arbeitsschicht (Einstempeln)\n"
+"• Pause: Erfasst, wenn ein Mitarbeiter eine Pause macht (Mittagspause, Erholung usw.)\n"
+"• Stop: Erfasst das Ende eines Vorgangs (Rückkehr von der Pause, Verlassen des Arbeitsplatzes usw.)"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "Delete"
+msgstr "Löschen"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__description
+msgid "Description"
+msgstr "Beschreibung"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__description
+msgid "Description of the voting Group"
+msgstr "Beschreibung der Abstimmungsgruppe"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__description
+msgid "Description of the voting Session"
+msgstr "Beschreibung der Abstimmungssitzung"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid "Description:"
+msgstr "Beschreibung:"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__display_id
+msgid "Display"
+msgstr "Anzeige"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_hr_rfid_event_user__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_hr_rfid_workcode__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__display_name
+msgid "Display Name"
+msgstr "Anzeigename"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.ui.menu,name:hr_rfid_vertical_elections.voting_display_menu
+msgid "Displays"
+msgstr "Anzeigen"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__document
+msgid "Document"
+msgstr "Dokument"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_session__state__draft
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_search
+msgid "Draft"
+msgstr "Entwurf"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_item_view_form
+msgid "E.g. Decision of gardens"
+msgstr "Z.B. Entscheidung über Gartenanlagen"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_participants_view_form
+msgid "E.g. Elected group of people"
+msgstr "Z.B. Gewählte Personengruppe"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_form
+msgid "E.g. Friendly Display name"
+msgstr "Z.B. Benutzerfreundlicher Anzeigename"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_form
+msgid "E.g. Rules, notes and etc."
+msgstr "Z.B. Regeln, Notizen usw."
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+msgid "E.g. Vote for new rules"
+msgstr "Z.B. Abstimmung über neue Regeln"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__end_datetime
+msgid "End Datetime"
+msgstr "Endzeitpunkt"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_vote__vote_time
+msgid ""
+"Exact date and time when the access event occurred at the reader. Used for "
+"attendance tracking and security logs."
+msgstr ""
+"Genaues Datum und Uhrzeit, zu dem das Zutrittsereignis am Leser "
+"stattgefunden hat. Wird für die Anwesenheitsverfolgung und "
+"Sicherheitsprotokolle verwendet."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__final_vote
+msgid "Final Vote"
+msgstr "Endergebnis"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "Final Vote:"
+msgstr "Endergebnis:"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "Final Vote: <i class=\"fa fa-frown-o\"/>"
+msgstr "Endergebnis: <i class=\"fa fa-frown-o\"/>"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "Final Vote: <i class=\"fa fa-smile-o\"/>"
+msgstr "Endergebnis: <i class=\"fa fa-smile-o\"/>"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid "Final vote:"
+msgstr "Endergebnis:"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_follower_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_follower_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_follower_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__message_follower_ids
+msgid "Followers"
+msgstr "Abonnenten"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Abonnenten (Partner)"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__activity_type_icon
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Font-Awesome-Symbol, z.B. fa-tasks"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_form
+msgid "Generate a new URL"
+msgstr "Neue URL generieren"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.ui.menu,name:hr_rfid_vertical_elections.voting_participants_menu
+msgid "Groups"
+msgstr "Gruppen"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__has_message
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__has_message
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__has_message
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__has_message
+msgid "Has Message"
+msgstr "Hat Nachricht"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_hr_rfid_event_user__id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_hr_rfid_workcode__id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__id
+msgid "ID"
+msgstr "ID"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_exception_icon
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_exception_icon
+msgid "Icon"
+msgstr "Symbol"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__activity_exception_icon
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Symbol zur Kennzeichnung einer Ausnahmeaktivität."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__message_needaction
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__message_needaction
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_participants__message_needaction
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Wenn aktiviert, erfordern neue Nachrichten Ihre Aufmerksamkeit."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__message_has_error
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__message_has_sms_error
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__message_has_error
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__message_has_sms_error
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_participants__message_has_error
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_participants__message_has_sms_error
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__message_has_error
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+"Wenn aktiviert, weisen einige Nachrichten einen Zustellungsfehler auf."
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_form
+msgid ""
+"If your address is compromised, you can refresh it to generate a new one."
+msgstr ""
+"Wenn Ihre Adresse kompromittiert wurde, können Sie diese aktualisieren, um "
+"eine neue zu generieren."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__message_is_follower
+msgid "Is Follower"
+msgstr "Ist Abonnent"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.ui.menu,name:hr_rfid_vertical_elections.voting_item_menu
+msgid "Items"
+msgstr "Abstimmungspunkte"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__write_uid
+msgid "Last Updated by"
+msgstr "Zuletzt aktualisiert von"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__write_date
+msgid "Last Updated on"
+msgstr "Zuletzt aktualisiert am"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__message_has_error
+msgid "Message Delivery error"
+msgstr "Nachrichtenzustellungsfehler"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__message_ids
+msgid "Messages"
+msgstr "Nachrichten"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__my_activity_date_deadline
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "Meine Aktivitätsfrist"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_search
+msgid "My Sessions"
+msgstr "Meine Sitzungen"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_list
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_list
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_item_view_list
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_participants_view_list
+msgid "Name"
+msgstr "Name"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__name
+msgid "Name of the voting Display"
+msgstr "Name der Abstimmungsanzeige"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__name
+msgid "Name of the voting Group"
+msgstr "Name der Abstimmungsgruppe"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__name
+msgid "Name of the voting Item"
+msgstr "Name des Abstimmungspunkts"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__name
+msgid "Name of the voting Session"
+msgstr "Name der Abstimmungssitzung"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__new_session_id
+msgid "New Session"
+msgstr "Neue Sitzung"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_date_deadline
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "Frist der nächsten Aktivität"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_summary
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_summary
+msgid "Next Activity Summary"
+msgstr "Zusammenfassung der nächsten Aktivität"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_type_id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_type_id
+msgid "Next Activity Type"
+msgstr "Typ der nächsten Aktivität"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__vote_no
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_session__final_vote__no
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_vote__vote__no
+msgid "No"
+msgstr "Nein"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_session__final_vote__no_vote
+msgid "No Vote"
+msgstr "Nein-Stimme"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__no_voting_background_color
+msgid "No Voting Background Color"
+msgstr "Hintergrundfarbe für Nein-Stimme"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Anzahl der Aktionen"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__message_has_error_counter
+msgid "Number of errors"
+msgstr "Anzahl der Fehler"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_participants__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Anzahl der Nachrichten, die eine Aktion erfordern"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_participants__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Anzahl der Nachrichten mit Zustellungsfehler"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__old_session_id
+msgid "Old Session"
+msgstr "Alte Sitzung"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_session__state__open
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_search
+msgid "Open"
+msgstr "Offen"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "Open Voting"
+msgstr "Abstimmung öffnen"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_form
+msgid "Open display"
+msgstr "Anzeige öffnen"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+msgid "Organizer"
+msgstr "Organisator"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__participant_group_id
+msgid "Participant Group"
+msgstr "Teilnehmergruppe"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__participant_ids
+msgid "Participants"
+msgstr "Teilnehmer"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__planned_date
+msgid "Planned Vote Date"
+msgstr "Geplantes Abstimmungsdatum"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model,name:hr_rfid_vertical_elections.model_hr_rfid_event_user
+msgid "RFID User Event"
+msgstr "RFID-Benutzerereignis"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.ui.menu,name:hr_rfid_vertical_elections.vote_menu_root
+msgid "RFID Voting"
+msgstr "RFID-Abstimmung"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model,name:hr_rfid_vertical_elections.model_hr_rfid_workcode
+msgid "RFID Workcode for Time Tracking"
+msgstr "RFID-Arbeitscode für Zeiterfassung"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+msgid "Re Voting"
+msgstr "Erneute Abstimmung"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "Re-Voting"
+msgstr "Erneute Abstimmung"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_user_id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_user_id
+msgid "Responsible User"
+msgstr "Verantwortlicher Benutzer"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+msgid "Results"
+msgstr "Ergebnisse"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+msgid "Results details"
+msgstr "Ergebnisdetails"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_search
+msgid "Revoted"
+msgstr "Erneut abgestimmt"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "SMS-Zustellungsfehler"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_search
+msgid "Session name"
+msgstr "Sitzungsname"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.ui.menu,name:hr_rfid_vertical_elections.vote_session_menu
+msgid "Sessions"
+msgstr "Sitzungen"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-python
+#: code:addons/hr_rfid_vertical_elections/models/voting_display.py:0
+msgid "Sessions for %s"
+msgstr "Sitzungen für %s"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+msgid "Settings"
+msgstr "Einstellungen"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__short_code
+msgid "Short Code"
+msgstr "Kurzcode"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__short_description
+msgid "Short Description"
+msgstr "Kurzbeschreibung"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__start_datetime
+msgid "Start Datetime"
+msgstr "Startzeitpunkt"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__state
+msgid "State"
+msgstr "Status"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__activity_state
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"Status basierend auf Aktivitäten\n"
+"Überfällig: Fälligkeitsdatum ist bereits abgelaufen\n"
+"Heute: Aktivitätsdatum ist heute\n"
+"Geplant: Zukünftige Aktivitäten."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__terminal_ids
+msgid "Terminals"
+msgstr "Terminals"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.constraint,message:hr_rfid_vertical_elections.constraint_voting_display_uniq_access_token
+msgid "The access token must be unique"
+msgstr "Der Zugriffstoken muss eindeutig sein"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+msgid ""
+"The final vote for this voting is \n"
+"                                <strong>NO</strong>\n"
+"                                . The item is rejected."
+msgstr ""
+"Das Endergebnis dieser Abstimmung lautet \n"
+"                                <strong>NEIN</strong>\n"
+"                                . Der Abstimmungspunkt wurde abgelehnt."
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+msgid ""
+"The final vote for this voting is \n"
+"                                <strong>YES</strong>\n"
+"                                . The item is accepted."
+msgstr ""
+"Das Endergebnis dieser Abstimmung lautet \n"
+"                                <strong>JA</strong>\n"
+"                                . Der Abstimmungspunkt wurde angenommen."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.constraint,message:hr_rfid_vertical_elections.constraint_voting_display_uniq_short_code
+msgid "The short code must be unique."
+msgstr "Der Kurzcode muss eindeutig sein."
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid "Time"
+msgstr "Zeit"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__vote_results_time
+msgid "Time in seconds for showing the vote results"
+msgstr "Zeit in Sekunden für die Anzeige der Abstimmungsergebnisse"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__voting_time
+msgid "Time in seconds for voting"
+msgstr "Zeit in Sekunden für die Abstimmung"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_search
+msgid "Today Sessions"
+msgstr "Heutige Sitzungen"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_vote_view_search
+msgid "Today Votes"
+msgstr "Heutige Stimmen"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__activity_exception_decoration
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "Typ der Ausnahmeaktivität im Datensatz."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_hr_rfid_workcode__user_action
+msgid "User action"
+msgstr "Benutzeraktion"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.module.category,description:hr_rfid_vertical_elections.hr_rfid_voting_category
+msgid "User rights for the Voting System"
+msgstr "Benutzerrechte für das Abstimmungssystem"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__vote
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid "Vote"
+msgstr "Stimme"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__hr_rfid_workcode__user_action__abstain
+msgid "Vote Abstain"
+msgstr "Enthaltung"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__vote_event_id
+msgid "Vote Event"
+msgstr "Abstimmungsereignis"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+msgid "Vote Finished"
+msgstr "Abstimmung beendet"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__hr_rfid_workcode__user_action__no
+msgid "Vote No"
+msgstr "Nein-Stimme"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid "Vote Result"
+msgstr "Abstimmungsergebnis"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__vote_results_time
+msgid "Vote Results Time"
+msgstr "Anzeigezeit für Abstimmungsergebnisse"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.actions.act_window,name:hr_rfid_vertical_elections.vote_session_action
+msgid "Vote Session"
+msgstr "Abstimmungssitzung"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__vote_time
+msgid "Vote Time"
+msgstr "Abstimmungszeit"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__hr_rfid_workcode__user_action__yes
+msgid "Vote Yes"
+msgstr "Ja-Stimme"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+msgid "Vote in Progress"
+msgstr "Abstimmung läuft"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.constraint,message:hr_rfid_vertical_elections.constraint_voting_vote_uniq_vote
+msgid "Vote must be unique"
+msgstr "Stimme muss eindeutig sein"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid "Voted:"
+msgstr "Abgestimmt:"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__voter_id
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid "Voter"
+msgstr "Wähler"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.actions.act_window,name:hr_rfid_vertical_elections.voting_vote_action
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__vote_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__vote_ids
+#: model:ir.ui.menu,name:hr_rfid_vertical_elections.voting_vote_menu
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_vote_view_search
+msgid "Votes"
+msgstr "Stimmen"
+
+#. module: hr_rfid_vertical_elections
+#: model:res.groups.privilege,name:hr_rfid_vertical_elections.res_groups_privilege_voting
+msgid "Voting Access"
+msgstr "Abstimmungszugang"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__voting_background_color
+msgid "Voting Background Color"
+msgstr "Abstimmungs-Hintergrundfarbe"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.actions.act_window,name:hr_rfid_vertical_elections.voting_display_action
+#: model:ir.model,name:hr_rfid_vertical_elections.model_voting_display
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__voting_session_ids
+msgid "Voting Display"
+msgstr "Abstimmungsanzeige"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__display_url
+msgid "Voting Display URL"
+msgstr "URL der Abstimmungsanzeige"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.actions.act_window,name:hr_rfid_vertical_elections.voting_item_action
+#: model:ir.model,name:hr_rfid_vertical_elections.model_voting_item
+msgid "Voting Item"
+msgstr "Abstimmungspunkt"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__item_ids
+msgid "Voting Items"
+msgstr "Abstimmungspunkte"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model,name:hr_rfid_vertical_elections.model_voting_participants
+msgid "Voting Participants"
+msgstr "Abstimmungsteilnehmer"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model,name:hr_rfid_vertical_elections.model_voting_session
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__voting_session_id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__voting_session_id
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_search
+msgid "Voting Session"
+msgstr "Abstimmungssitzung"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__voting_sessions_count
+msgid "Voting Sessions Count"
+msgstr "Anzahl der Abstimmungssitzungen"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.module.category,name:hr_rfid_vertical_elections.hr_rfid_voting_category
+msgid "Voting System"
+msgstr "Abstimmungssystem"
+
+#. module: hr_rfid_vertical_elections
+#: model:res.groups,name:hr_rfid_vertical_elections.group_manager
+msgid "Voting System Manager"
+msgstr "Abstimmungssystem-Manager"
+
+#. module: hr_rfid_vertical_elections
+#: model:res.groups,name:hr_rfid_vertical_elections.group_operator
+msgid "Voting System Operator"
+msgstr "Abstimmungssystem-Operator"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__voting_time
+msgid "Voting Time"
+msgstr "Abstimmungszeit"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model,name:hr_rfid_vertical_elections.model_voting_vote
+msgid "Voting Vote"
+msgstr "Abstimmungs-Stimme"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__voting_item_id
+msgid "Voting for"
+msgstr "Abstimmung für"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.actions.act_window,name:hr_rfid_vertical_elections.voting_participants_action
+msgid "Voting groups"
+msgstr "Abstimmungsgruppen"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.actions.report,name:hr_rfid_vertical_elections.action_report_voting_session
+msgid "Voting session protocol"
+msgstr "Protokoll der Abstimmungssitzung"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid "Voting state:"
+msgstr "Abstimmungsstatus:"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__website_message_ids
+msgid "Website Messages"
+msgstr "Website-Nachrichten"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__website_message_ids
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__website_message_ids
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_participants__website_message_ids
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__website_message_ids
+msgid "Website communication history"
+msgstr "Website-Kommunikationsverlauf"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__vote_yes
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_session__final_vote__yes
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_vote__vote__yes
+msgid "Yes"
+msgstr "Ja"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid "Yes:"
+msgstr "Ja:"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_session__state__revoted
+msgid "re-Voted"
+msgstr "Erneut abgestimmt"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "В момента няма планирани сесии за гласуване."
+msgstr "Derzeit sind keine Abstimmungssitzungen geplant."
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Въздържал се:"
+msgstr "Enthaltung:"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Въздържали се:"
+msgstr "Enthaltungen:"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Да:"
+msgstr "Ja:"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Дискусии"
+msgstr "Diskussionen"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Завърши гласуването за"
+msgstr "Abstimmung beendet für"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Моля гласувайте за"
+msgstr "Bitte abstimmen für"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Не:"
+msgstr "Nein:"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Няма открито гласуване в момента"
+msgstr "Derzeit ist keine Abstimmung geöffnet"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Няма планирани гласувания"
+msgstr "Keine geplanten Abstimmungen"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Общо гласували:"
+msgstr "Gesamtstimmen:"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Резултат:"
+msgstr "Ergebnis:"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Тече гласуване ..."
+msgstr "Abstimmung läuft ..."

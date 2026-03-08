@@ -1,0 +1,70 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* refresh_mixin
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-06 13:24+0000\n"
+"PO-Revision-Date: 2026-03-06 15:25\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: refresh_mixin
+#: model:ir.model,name:refresh_mixin.model_res_company
+msgid "Companies"
+msgstr "Compañías"
+
+#. module: refresh_mixin
+#: model:ir.model.fields,field_description:refresh_mixin.field_refresh_mixin__display_name
+#: model:ir.model.fields,field_description:refresh_mixin.field_res_company__display_name
+msgid "Display Name"
+msgstr "Nombre para mostrar"
+
+#. module: refresh_mixin
+#: model:ir.model.fields,help:refresh_mixin.field_res_company__realtime_refresh
+msgid ""
+"Enable automatic refresh of views when data changes.\n"
+"\n"
+"• When enabled: Views automatically update when records change\n"
+"• Live updates: Users see changes immediately without manual page refresh\n"
+"• Performance: Uses browser notifications to update only when necessary\n"
+"• Use cases: Control rooms, monitoring, real-time dashboards\n"
+"\n"
+"Note: Requires modern browser with WebSocket support."
+msgstr ""
+"Activar la actualización automática de vistas cuando se producen cambios en los datos.\n"
+"\n"
+"• Al activar: Las vistas se actualizan automáticamente cuando cambian los registros\n"
+"• Actualizaciones en vivo: Los usuarios ven los cambios de inmediato sin necesidad de actualizar manualmente la página\n"
+"• Rendimiento: Utiliza notificaciones del navegador para actualizar solo cuando es necesario\n"
+"• Casos de uso: Salas de control, supervisión, paneles en tiempo real\n"
+"\n"
+"Nota: Requiere un navegador moderno compatible con WebSocket."
+
+#. module: refresh_mixin
+#: model:ir.model.fields,field_description:refresh_mixin.field_refresh_mixin__id
+#: model:ir.model.fields,field_description:refresh_mixin.field_res_company__id
+msgid "ID"
+msgstr "ID"
+
+#. module: refresh_mixin
+#: model:ir.model,name:refresh_mixin.model_refresh_mixin
+msgid "Model Refresh Mixin"
+msgstr "Modelo Refresh Mixin"
+
+#. module: refresh_mixin
+#: model_terms:ir.ui.view,arch_db:refresh_mixin.view_company_form_realtime_refresh
+msgid "Real-time Updates"
+msgstr "Actualizaciones en tiempo real"
+
+#. module: refresh_mixin
+#: model:ir.model.fields,field_description:refresh_mixin.field_res_company__realtime_refresh
+msgid "Real-time View Refresh"
+msgstr "Actualización de Vista en tiempo real"

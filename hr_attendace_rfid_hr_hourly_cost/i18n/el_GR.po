@@ -1,0 +1,104 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* hr_attendace_rfid_hr_hourly_cost
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-05 16:53+0000\n"
+"PO-Revision-Date: 2026-03-06 15:58\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: el_GR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__actual_work_time_cost
+msgid "Actual Work Time Cost"
+msgstr "Κόστος Πραγματικού Χρόνου Εργασίας"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__currency_id
+msgid "Currency"
+msgstr "Νόμισμα"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,help:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__currency_id
+msgid ""
+"Currency for cost calculations (derived from employee).\n"
+"        \n"
+"        • Source: Automatically inherited from employee's currency\n"
+"        • Purpose: Ensures consistent currency for all cost calculations\n"
+"        • Read-only: Cannot be changed directly\n"
+"        \n"
+"        Note: All monetary fields use this currency for proper formatting and calculations."
+msgstr ""
+"Νόμισμα για υπολογισμούς κόστους (προέρχεται από τον εργαζόμενο).\n"
+"        \n"
+"        • Πηγή: Κληρονομείται αυτόματα από το νόμισμα του εργαζόμενου\n"
+"        • Σκοπός: Διασφαλίζει συνεπές νόμισμα για όλους τους υπολογισμούς κόστους\n"
+"        • Μόνο ανάγνωση: Δεν μπορεί να τροποποιηθεί απευθείας\n"
+"        \n"
+"        Σημείωση: Όλα τα χρηματικά πεδία χρησιμοποιούν αυτό το νόμισμα για τη σωστή μορφοποίηση και τους υπολογισμούς."
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__display_name
+msgid "Display Name"
+msgstr "Εμφανιζόμενο Όνομα"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,help:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__hourly_cost
+msgid ""
+"Employee's hourly cost rate (derived from employee record).\n"
+"        \n"
+"        • Source: Copied from employee's hourly cost setting\n"
+"        • Access: Visible to HR users only\n"
+"        • Usage: Base rate for calculating actual work time costs\n"
+"        \n"
+"        Note: Update the employee's hourly cost to change this value."
+msgstr ""
+"Ωριαίος συντελεστής κόστους εργαζόμενου (προέρχεται από την εγγραφή του εργαζόμενου).\n"
+"        \n"
+"        • Πηγή: Αντιγράφεται από τη ρύθμιση ωριαίου κόστους του εργαζόμενου\n"
+"        • Πρόσβαση: Ορατό μόνο σε χρήστες HR\n"
+"        • Χρήση: Βασικός συντελεστής για τον υπολογισμό κόστους πραγματικού χρόνου εργασίας\n"
+"        \n"
+"        Σημείωση: Ενημερώστε το ωριαίο κόστος του εργαζόμενου για να αλλάξετε αυτή την τιμή."
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model,name:hr_attendace_rfid_hr_hourly_cost.model_hr_attendance_extra
+msgid "Extra work time calculations"
+msgstr "Υπολογισμοί Επιπλέον Χρόνου Εργασίας"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__hourly_cost
+msgid "Hourly Cost"
+msgstr "Ωριαίο Κόστος"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__id
+msgid "ID"
+msgstr "ID"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,help:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__actual_work_time_cost
+msgid ""
+"Total cost of actual work time (automatically calculated).\n"
+"        \n"
+"        • Calculation: Hourly cost × Actual work time hours\n"
+"        • Access: Visible to HR managers only\n"
+"        • Auto-update: Recalculated when hourly cost or work time changes\n"
+"        \n"
+"        Note: Provides financial overview of actual labor costs per day."
+msgstr ""
+"Συνολικό κόστος πραγματικού χρόνου εργασίας (υπολογίζεται αυτόματα).\n"
+"        \n"
+"        • Υπολογισμός: Ωριαίο κόστος × Ώρες πραγματικού χρόνου εργασίας\n"
+"        • Πρόσβαση: Ορατό μόνο σε διαχειριστές HR\n"
+"        • Αυτόματη ενημέρωση: Επανυπολογίζεται όταν αλλάζει το ωριαίο κόστος ή ο χρόνος εργασίας\n"
+"        \n"
+"        Σημείωση: Παρέχει οικονομική επισκόπηση του πραγματικού κόστους εργασίας ανά ημέρα."

@@ -1,0 +1,900 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* hr_rfid_site_manager
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-05 16:24+0000\n"
+"PO-Revision-Date: 2026-03-08 12:11\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ro\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: hr_rfid_site_manager
+#. odoo-python
+#: code:addons/hr_rfid_site_manager/models/hr_rfid_site.py:0
+msgid "%s group"
+msgstr "grupul %s"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_hierarchy_view
+msgid "<i class=\"fa fa-shield text-danger ms-auto\" title=\"Arm the Group\"/>"
+msgstr "<i class=\"fa fa-shield text-danger ms-auto\" title=\"Armează grupul\"/>"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_hierarchy_view
+msgid ""
+"<i class=\"fa fa-universal-access text-success ms-auto\" title=\"Disarm the "
+"Group\"/>"
+msgstr ""
+"<i class=\"fa fa-universal-access text-success ms-auto\" title=\"Dezarmează "
+"grupul\"/>"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_controller_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_webstack_view_kanban
+msgid "<span class=\"text-muted\">Site:</span>"
+msgstr "<span class=\"text-muted\">Amplasament:</span>"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_access_group
+msgid "Access Group"
+msgstr "Grup de acces"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__access_group_count
+msgid "Access Group Count"
+msgstr "Număr grupuri de acces"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Access Group records"
+msgstr "înregistrări grup de acces"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Access Groups"
+msgstr "Grupuri de acces"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__access_group_ids
+msgid ""
+"Access control groups automatically created for this site. Groups contain "
+"all doors from this site and child sites. Assign people to these groups to "
+"grant site access."
+msgstr ""
+"Grupuri de control al accesului create automat pentru acest amplasament. "
+"Grupurile conțin toate ușile din acest amplasament și amplasamentele "
+"secundare. Atribuiți persoane acestor grupuri pentru a acorda acces la "
+"amplasament."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__access_group_ids
+msgid "Access groups"
+msgstr "Grupuri de acces"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_needaction
+msgid "Action Needed"
+msgstr "Acțiune necesară"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__active
+msgid "Active"
+msgstr "Activ"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__state
+msgid "Alarm Group State"
+msgstr "Stare grup de alarmă"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__alarm_line_group_ids
+msgid "Alarm Groups"
+msgstr "Grupuri de alarmă"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__alarm_line_group_count
+msgid "Alarm Line Group Count"
+msgstr "Număr grupuri de linie de alarmă"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Alarm Line Group records"
+msgstr "înregistrări grup de linie de alarmă"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Alarm Line Groups"
+msgstr "Grupuri de linie de alarmă"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_ctrl_alarm_group
+msgid "Alarm system groups"
+msgstr "Grupuri de sistem de alarmă"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__child_door_ids
+msgid ""
+"All doors from child sites, computed automatically. Used for hierarchical "
+"access control - when creating access groups, doors from child sites are "
+"included."
+msgstr ""
+"Toate ușile din amplasamentele secundare, calculate automat. Utilizat pentru"
+" controlul accesului ierarhic - la crearea grupurilor de acces, ușile din "
+"amplasamentele secundare sunt incluse."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Archived"
+msgstr "Arhivat"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_attachment_count
+msgid "Attachment Count"
+msgstr "Număr de atașamente"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__make_access_group
+msgid ""
+"Automatically create and maintain an access group for this site.\n"
+"        \n"
+"• When enabled: Creates an access group containing all doors in this site and child sites\n"
+"• Access control: Assign people to this group to grant access to all site doors\n"
+"• Automatic updates: Door changes automatically update the access group\n"
+"\n"
+"Useful for: Building access, department access, or hierarchical permissions."
+msgstr ""
+"Creați și mențineți automat un grup de acces pentru acest amplasament.\n"
+"        \n"
+"• Când este activat: Creează un grup de acces care conține toate ușile din acest amplasament și amplasamentele secundare\n"
+"• Control acces: Atribuiți persoane acestui grup pentru a acorda acces la toate ușile amplasamentului\n"
+"• Actualizări automate: Modificările ușilor actualizează automat grupul de acces\n"
+"\n"
+"Util pentru: Acces la clădiri, acces departamental sau permisiuni ierarhice."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_hierarchy_view
+msgid "Available Access Group"
+msgstr "Grup de acces disponibil"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__avatar_1920
+msgid "Avatar"
+msgstr "Avatar"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__avatar_1024
+msgid "Avatar 1024"
+msgstr "Avatar 1024"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__avatar_128
+msgid "Avatar 128"
+msgstr "Avatar 128"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__avatar_256
+msgid "Avatar 256"
+msgstr "Avatar 256"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__avatar_512
+msgid "Avatar 512"
+msgstr "Avatar 512"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_site
+msgid "Building manager site classification"
+msgstr "Clasificare amplasament administrator clădire"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__child_count
+msgid "Child Count"
+msgstr "Număr elemente secundare"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__child_door_ids
+msgid "Child doors"
+msgstr "Uși amplasamente secundare"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Child records"
+msgstr "înregistrări secundare"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__child_ids
+msgid "Child sites"
+msgstr "Amplasamente secundare"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__color
+msgid "Color Index"
+msgstr "Indice de culoare"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__color
+msgid ""
+"Color coding for visual identification in hierarchy view. Choose different "
+"colors to distinguish site types or importance levels."
+msgstr ""
+"Codificare prin culori pentru identificare vizuală în vizualizarea "
+"ierarhică. Alegeți culori diferite pentru a distinge tipurile de "
+"amplasamente sau nivelurile de importanță."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__company_id
+msgid "Company"
+msgstr "Companie"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__company_id
+msgid ""
+"Company that owns this site. Used for multi-company access control and data "
+"separation."
+msgstr ""
+"Compania care deține acest amplasament. Utilizată pentru controlul accesului"
+" multi-companie și separarea datelor."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_res_partner
+msgid "Contact"
+msgstr "Contact"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_ctrl
+msgid "Controller"
+msgstr "Controler"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__controller_count
+msgid "Controller Count"
+msgstr "Număr controlere"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Controller records"
+msgstr "înregistrări controlere"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__controller_ids
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Controllers"
+msgstr "Controlere"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Create Child"
+msgstr "Creează subelement"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Create a new child site"
+msgstr "Creați un nou amplasament secundar"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.actions.act_window,help:hr_rfid_site_manager.hr_rfid_site_action
+msgid "Create your first site to organize your RFID infrastructure"
+msgstr "Creați primul amplasament pentru a vă organiza infrastructura RFID"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__create_uid
+msgid "Created by"
+msgstr "Creat de"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__create_date
+msgid "Created on"
+msgstr "Creat la"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__state
+msgid ""
+"Current security state of alarm groups at this site. Shows whether security "
+"systems are armed or disarmed. Changes automatically when alarm state "
+"changes."
+msgstr ""
+"Starea curentă de securitate a grupurilor de alarmă de la acest amplasament."
+" Arată dacă sistemele de securitate sunt armate sau dezarmate. Se modifică "
+"automat când starea de alarmă se schimbă."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_access_group__display_name
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl__display_name
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl_alarm_group__display_name
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_door__display_name
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_event_user__display_name
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__display_name
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_webstack__display_name
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_res_partner__display_name
+msgid "Display Name"
+msgstr "Nume afișat"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_door
+msgid "Door"
+msgstr "Ușă"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__door_count
+msgid "Door Count"
+msgstr "Număr uși"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Door records"
+msgstr "înregistrări uși"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__door_ids
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Doors"
+msgstr "Uși"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_follower_ids
+msgid "Followers"
+msgstr "Urmăritori"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Urmăritori (parteneri)"
+
+#. module: hr_rfid_site_manager
+#: model:res.groups,name:hr_rfid_site_manager.group_guard
+msgid "Guard"
+msgstr "Gardă"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__has_message
+msgid "Has Message"
+msgstr "Are mesaj"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_access_group__id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl__id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl_alarm_group__id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_door__id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_event_user__id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_webstack__id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_res_partner__id
+msgid "ID"
+msgstr "ID"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Dacă este bifat, mesajele noi necesită atenția dvs."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__message_has_error
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Dacă este bifat, unele mesaje au o eroare de livrare."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__image_1920
+msgid "Image"
+msgstr "Imagine"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__image_1024
+msgid "Image 1024"
+msgstr "Imagine 1024"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__image_128
+msgid "Image 128"
+msgstr "Imagine 128"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__image_256
+msgid "Image 256"
+msgstr "Imagine 256"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__image_512
+msgid "Image 512"
+msgstr "Imagine 512"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_is_follower
+msgid "Is Follower"
+msgstr "Este urmăritor"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__write_uid
+msgid "Last Updated by"
+msgstr "Ultima actualizare de"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__write_date
+msgid "Last Updated on"
+msgstr "Ultima actualizare la"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__make_access_group
+msgid "Make access group"
+msgstr "Creează grup de acces"
+
+#. module: hr_rfid_site_manager
+#: model:res.groups,name:hr_rfid_site_manager.group_
+msgid "Manager"
+msgstr "Manager"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_has_error
+msgid "Message Delivery error"
+msgstr "Eroare de livrare mesaj"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_ids
+msgid "Messages"
+msgstr "Mesaje"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_webstack
+msgid "Module"
+msgstr "Modul"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__webstack_count
+msgid "Module Count"
+msgstr "Număr module"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Module records"
+msgstr "înregistrări module"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__webstack_ids
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Modules"
+msgstr "Module"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__name
+msgid "Name"
+msgstr "Nume"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__name
+msgid ""
+"Name of the site (building, floor, room, etc.). Must be unique within the "
+"parent site."
+msgstr ""
+"Numele amplasamentului (clădire, etaj, cameră, etc.). Trebuie să fie unic în"
+" cadrul amplasamentului părinte."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.actions.act_window,help:hr_rfid_site_manager.act_site_from_sites
+msgid "No sites found for this context"
+msgstr "Nu s-au găsit amplasamente pentru acest context"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Număr de acțiuni"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__webstack_count
+msgid "Number of RFID communication modules (webstacks) at this site."
+msgstr ""
+"Numărul de module de comunicare RFID (webstack-uri) de la acest amplasament."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__controller_count
+msgid "Number of RFID controllers at this site."
+msgstr "Numărul de controlere RFID de la acest amplasament."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__access_group_count
+msgid "Number of access control groups created for this site."
+msgstr ""
+"Numărul de grupuri de control al accesului create pentru acest amplasament."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__child_count
+msgid "Number of child sites under this site in the hierarchy."
+msgstr ""
+"Numărul de amplasamente secundare din subordinea acestui amplasament în "
+"ierarhie."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__door_count
+msgid "Number of doors and access points at this site."
+msgstr "Numărul de uși și puncte de acces de la acest amplasament."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_has_error_counter
+msgid "Number of errors"
+msgstr "Număr de erori"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Număr de mesaje care necesită acțiune"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Număr de mesaje cu eroare de livrare"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__alarm_line_group_count
+msgid "Number of security alarm groups configured for this site."
+msgstr ""
+"Numărul de grupuri de alarmă de securitate configurate pentru acest "
+"amplasament."
+
+#. module: hr_rfid_site_manager
+#: model:res.groups,name:hr_rfid_site_manager.group_own_sites
+msgid "Own Sites"
+msgstr "Amplasamente proprii"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__parent_path
+msgid "Parent Path"
+msgstr "Cale părinte"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__parent_id
+msgid "Parent site"
+msgstr "Amplasament părinte"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__parent_id
+msgid ""
+"Parent site in the hierarchy. For example: Building > Floor > Room. Leave "
+"empty for top-level sites. Prevents deletion if child sites exist."
+msgstr ""
+"Amplasamentul părinte în ierarhie. De exemplu: Clădire > Etaj > Cameră. "
+"Lăsați gol pentru amplasamentele de nivel superior. Împiedică ștergerea dacă"
+" există amplasamente secundare."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__door_ids
+msgid ""
+"Physical doors and access points at this site. Each door can have entry and "
+"exit readers for tracking person movement and access control."
+msgstr ""
+"Uși fizice și puncte de acces de la acest amplasament. Fiecare ușă poate "
+"avea cititoare de intrare și ieșire pentru urmărirea mișcării persoanelor și"
+" controlul accesului."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_webstack__site_id
+msgid ""
+"Physical site where this communication module (webstack) is installed. Used "
+"for organizing network infrastructure and site-based management."
+msgstr ""
+"Amplasamentul fizic unde este instalat acest modul de comunicare (webstack)."
+" Utilizat pentru organizarea infrastructurii de rețea și gestionarea bazată "
+"pe amplasament."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_ctrl__site_id
+msgid ""
+"Physical site where this controller is installed. Used for organizing "
+"controllers by location and for site-based access control and reporting."
+msgstr ""
+"Amplasamentul fizic unde este instalat acest controler. Utilizat pentru "
+"organizarea controlerelor după locație și pentru controlul accesului și "
+"raportarea bazate pe amplasament."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_door__site_id
+msgid ""
+"Physical site where this door is located. Doors are automatically included "
+"in site access groups and used for hierarchical access control."
+msgstr ""
+"Amplasamentul fizic unde se află această ușă. Ușile sunt incluse automat în "
+"grupurile de acces ale amplasamentului și utilizate pentru controlul "
+"accesului ierarhic."
+
+#. module: hr_rfid_site_manager
+#: model:ir.module.category,name:hr_rfid_site_manager.hr_rfid_site_category
+msgid "RFID Site"
+msgstr "Amplasament RFID"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_event_user
+msgid "RFID User Event"
+msgstr "Eveniment utilizator RFID"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__webstack_ids
+msgid ""
+"RFID communication modules (webstacks) installed at this site. Each module "
+"can manage multiple controllers and provides network connectivity."
+msgstr ""
+"Module de comunicare RFID (webstack-uri) instalate la acest amplasament. "
+"Fiecare modul poate gestiona mai multe controlere și asigură conectivitate "
+"de rețea."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__controller_ids
+msgid ""
+"RFID controllers located at this site. Controllers manage individual doors "
+"and readers, handling access control decisions and event logging."
+msgstr ""
+"Controlere RFID situate la acest amplasament. Controlerele gestionează uși "
+"și cititoare individuale, tratând deciziile de control al accesului și "
+"jurnalizarea evenimentelor."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Root Sites"
+msgstr "Amplasamente rădăcină"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Eroare de livrare SMS"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__alarm_line_group_ids
+msgid ""
+"Security alarm groups configured for this site. Used for arming/disarming "
+"security systems and managing intrusion detection across the site."
+msgstr ""
+"Grupuri de alarmă de securitate configurate pentru acest amplasament. "
+"Utilizate pentru armarea/dezarmarea sistemelor de securitate și gestionarea "
+"detectării intruziunilor la nivelul amplasamentului."
+
+#. module: hr_rfid_site_manager
+#. odoo-javascript
+#: code:addons/hr_rfid_site_manager/static/src/components/site_chart/site_chart.xml:0
+msgid "Show doors"
+msgstr "Afișează uși"
+
+#. module: hr_rfid_site_manager
+#: model:ir.actions.act_window,name:hr_rfid_site_manager.act_site_from_sites
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_access_group__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl_alarm_group__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_door__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_event_user__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_webstack__site_id
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Site"
+msgstr "Amplasament"
+
+#. module: hr_rfid_site_manager
+#: model:res.groups.privilege,name:hr_rfid_site_manager.res_groups_privilege_site
+msgid "Site Management"
+msgstr "Gestionare amplasament"
+
+#. module: hr_rfid_site_manager
+#: model:ir.actions.act_window,name:hr_rfid_site_manager.hr_rfid_site_action
+#: model:ir.ui.menu,name:hr_rfid_site_manager.hr_rfid_menu_site_manager
+msgid "Site Manager"
+msgstr "Manager amplasament"
+
+#. module: hr_rfid_site_manager
+#. odoo-javascript
+#: code:addons/hr_rfid_site_manager/static/src/components/site_chart/site_chart.xml:0
+msgid "Site Organization"
+msgstr "Organizare amplasament"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Site manager"
+msgstr "Manager amplasament"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_access_group__site_id
+msgid ""
+"Site that owns this access group. The group automatically includes all doors"
+" from this site and its child sites. Deleted when the site is deleted."
+msgstr ""
+"Amplasamentul care deține acest grup de acces. Grupul include automat toate "
+"ușile din acest amplasament și amplasamentele sale secundare. Se șterge când"
+" amplasamentul este șters."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_event_user__site_id
+msgid ""
+"Site where this RFID event occurred, computed automatically from the door, controller, or webstack location.\n"
+"\n"
+"• Source: Determined from door location, controller site, or webstack site\n"
+"• Purpose: Enables site-based filtering and reporting of access events\n"
+"• Usage: Track activity by location, generate site-specific reports\n"
+"\n"
+"This field helps analyze access patterns and security events by physical location."
+msgstr ""
+"Amplasamentul unde a avut loc acest eveniment RFID, calculat automat din locația ușii, controlerului sau webstack-ului.\n"
+"\n"
+"• Sursă: Determinată din locația ușii, amplasamentul controlerului sau amplasamentul webstack-ului\n"
+"• Scop: Permite filtrarea și raportarea evenimentelor de acces bazate pe amplasament\n"
+"• Utilizare: Urmăriți activitatea după locație, generați rapoarte specifice amplasamentului\n"
+"\n"
+"Acest câmp ajută la analizarea tiparelor de acces și a evenimentelor de securitate după locația fizică."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_ctrl_alarm_group__site_id
+msgid ""
+"Site where this alarm group is active. Used for organizing security systems "
+"by location and enabling site-wide alarm control operations."
+msgstr ""
+"Amplasamentul unde este activ acest grup de alarmă. Utilizat pentru "
+"organizarea sistemelor de securitate după locație și activarea operațiunilor"
+" de control al alarmei la nivel de amplasament."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_res_partner__site_ids
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_res_users__site_ids
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_view_partner_form_inherit_rfid_site
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Sites"
+msgstr "Amplasamente"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.actions.act_window,help:hr_rfid_site_manager.hr_rfid_site_action
+msgid ""
+"Sites represent physical locations in your organization's hierarchy.\n"
+"                    <br><br>\n"
+"                    Key features:\n"
+"                    • <b>Hierarchy:</b> Create building &gt; floor &gt; room structures\n"
+"                    • <b>Auto Access Groups:</b> Generate access groups containing all site doors\n"
+"                    • <b>Equipment Organization:</b> Group doors, controllers, and modules by location\n"
+"                    • <b>Centralized Control:</b> Manage alarms and access permissions per site\n"
+"                    <br><br>\n"
+"                    <b>Examples:</b> \"Main Building\", \"Parking Garage\", \"Research Lab\", \"Executive Floor\""
+msgstr ""
+"Amplasamentele reprezintă locații fizice în ierarhia organizației dvs.\n"
+"                    <br><br>\n"
+"                    Caracteristici principale:\n"
+"                    • <b>Ierarhie:</b> Creați structuri clădire &gt; etaj &gt; cameră\n"
+"                    • <b>Grupuri de acces automate:</b> Generați grupuri de acces care conțin toate ușile amplasamentului\n"
+"                    • <b>Organizare echipamente:</b> Grupați uși, controlere și module după locație\n"
+"                    • <b>Control centralizat:</b> Gestionați alarme și permisiuni de acces per amplasament\n"
+"                    <br><br>\n"
+"                    <b>Exemple:</b> \"Clădire principală\", \"Parcare\", \"Laborator de cercetare\", \"Etaj executiv\""
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__child_ids
+msgid ""
+"Sites that are hierarchically below this site. For example: floors within a "
+"building, or rooms within a floor. Child sites inherit access permissions "
+"when using access groups."
+msgstr ""
+"Amplasamentele situate ierarhic sub acest amplasament. De exemplu: etaje în "
+"cadrul unei clădiri sau camere în cadrul unui etaj. Amplasamentele secundare"
+" moștenesc permisiunile de acces atunci când se utilizează grupuri de acces."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_res_partner__site_ids
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_res_users__site_ids
+msgid ""
+"Sites where this person has access or is responsible for.\n"
+"        \n"
+"• For employees: Sites where they work or have access\n"
+"• For visitors: Sites they are permitted to visit\n"
+"• For companies: Sites they manage or have contracts with\n"
+"\n"
+"This affects which access groups are available for assignment."
+msgstr ""
+"Amplasamentele la care această persoană are acces sau de care este responsabilă.\n"
+"        \n"
+"• Pentru angajați: Amplasamentele unde lucrează sau au acces\n"
+"• Pentru vizitatori: Amplasamentele pe care le pot vizita\n"
+"• Pentru companii: Amplasamentele pe care le gestionează sau cu care au contracte\n"
+"\n"
+"Acest lucru afectează grupurile de acces disponibile pentru atribuire."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Sites with controllers"
+msgstr "Amplasamente cu controlere"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Sites with doors"
+msgstr "Amplasamente cu uși"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Sites with modules"
+msgstr "Amplasamente cu module"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.constraint,message:hr_rfid_site_manager.constraint_hr_rfid_site_unique_name
+msgid "The site name must be unique."
+msgstr "Numele amplasamentului trebuie să fie unic."
+
+#. module: hr_rfid_site_manager
+#: model:res.groups,comment:hr_rfid_site_manager.group_
+msgid "The user have full rights for Site Managment"
+msgstr "Utilizatorul are drepturi depline pentru gestionarea amplasamentului"
+
+#. module: hr_rfid_site_manager
+#: model:res.groups,comment:hr_rfid_site_manager.group_own_sites
+msgid "The user will be able to manage cards without hardware setup"
+msgstr "Utilizatorul va putea gestiona carduri fără configurarea hardware"
+
+#. module: hr_rfid_site_manager
+#: model:res.groups,comment:hr_rfid_site_manager.group_guard
+msgid "The user will be able to see User Events."
+msgstr "Utilizatorul va putea vizualiza evenimentele utilizatorilor."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.actions.act_window,help:hr_rfid_site_manager.act_site_from_sites
+msgid ""
+"This view shows sites filtered by the selected context.\n"
+"                    <br><br>\n"
+"                    Use the search panel and filters to:\n"
+"                    • Find sites by parent location\n"
+"                    • Filter by equipment type (doors, controllers, modules)\n"
+"                    • View hierarchical organization\n"
+"                    • Access site-specific management tools"
+msgstr ""
+"Această vizualizare afișează amplasamentele filtrate după contextul selectat.\n"
+"                    <br><br>\n"
+"                    Utilizați panoul de căutare și filtrele pentru a:\n"
+"                    • Găsi amplasamente după locația părintelui\n"
+"                    • Filtra după tipul de echipament (uși, controlere, module)\n"
+"                    • Vizualiza organizarea ierarhică\n"
+"                    • Accesa instrumentele de gestionare specifice amplasamentului"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__active
+msgid ""
+"Uncheck to archive this site. Archived sites are hidden from most views but "
+"preserve historical data."
+msgstr ""
+"Debifați pentru a arhiva acest amplasament. Amplasamentele arhivate sunt "
+"ascunse din majoritatea vizualizărilor, dar păstrează datele istorice."
+
+#. module: hr_rfid_site_manager
+#: model:ir.module.category,description:hr_rfid_site_manager.hr_rfid_site_category
+msgid "User rights for the RFID Site module"
+msgstr "Drepturi utilizator pentru modulul RFID Amplasament"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__website_message_ids
+msgid "Website Messages"
+msgstr "Mesaje website"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__website_message_ids
+msgid "Website communication history"
+msgstr "Istoric comunicări website"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.constraint,message:hr_rfid_site_manager.constraint_hr_rfid_site_no_loop
+msgid "You cannot create a loop in the site hierarchy."
+msgstr "Nu puteți crea o buclă în ierarhia amplasamentelor."
+
+#. module: hr_rfid_site_manager
+#. odoo-python
+#: code:addons/hr_rfid_site_manager/models/hr_rfid_access_group.py:0
+msgid "You cannot delete an access group that is linked to a site."
+msgstr "Nu puteți șterge un grup de acces care este asociat unui amplasament."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Your site Name"
+msgstr "Numele amplasamentului dvs."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_controller_view_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.webstack_view_search_inherit
+msgid "by Site"
+msgstr "după amplasament"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_tree
+msgid "hr_rfid_site_tree"
+msgstr "hr_rfid_site_tree"

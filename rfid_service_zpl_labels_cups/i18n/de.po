@@ -1,0 +1,151 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* rfid_service_zpl_labels_cups
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-06-13 16:44+0000\n"
+"PO-Revision-Date: 2026-03-06 19:42\n"
+"Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.6\n"
+
+#. module: rfid_service_zpl_labels_cups
+#: model:ir.model,name:rfid_service_zpl_labels_cups.model_rfid_service_sale_wiz
+msgid "Base RFID Service Sale Wizard"
+msgstr "Basis-RFID-Service-Verkaufsassistent"
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service.py:0
+msgid "CUPS Test Failed"
+msgstr "CUPS-Test fehlgeschlagen"
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service_sale.py:0
+msgid "CUPS printing error: %s"
+msgstr "CUPS-Druckfehler: %s"
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service.py:0
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service_sale_wiz.py:0
+msgid "Error sending to printer: %s"
+msgstr "Fehler beim Senden an den Drucker: %s"
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service.py:0
+msgid ""
+"Error: %s\n"
+"Make sure base_report_to_label_printer is properly configured."
+msgstr ""
+"Fehler: %s\n"
+"Stellen Sie sicher, dass base_report_to_label_printer ordnungsgemäß konfiguriert ist."
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service_sale.py:0
+msgid "Label Sent to Printer"
+msgstr "Etikett an Drucker gesendet"
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service.py:0
+msgid ""
+"No label printer configured for your user. Please configure a label printer "
+"in your user preferences."
+msgstr ""
+"Für Ihren Benutzer ist kein Etikettendrucker konfiguriert. Bitte "
+"konfigurieren Sie einen Etikettendrucker in Ihren Benutzereinstellungen."
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service_sale.py:0
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service_sale_wiz.py:0
+msgid ""
+"No label printer configured. Please configure a label printer in your user "
+"preferences."
+msgstr ""
+"Kein Etikettendrucker konfiguriert. Bitte konfigurieren Sie einen "
+"Etikettendrucker in Ihren Benutzereinstellungen."
+
+#. module: rfid_service_zpl_labels_cups
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels_cups.hr_rfid_service_sale_form_inherit_cups
+msgid "Print Label"
+msgstr "Etikett drucken"
+
+#. module: rfid_service_zpl_labels_cups
+#: model:ir.model,name:rfid_service_zpl_labels_cups.model_rfid_service
+msgid "RFID Service"
+msgstr "RFID Service"
+
+#. module: rfid_service_zpl_labels_cups
+#: model:ir.model,name:rfid_service_zpl_labels_cups.model_rfid_service_sale
+msgid "RFID Service Sales"
+msgstr "RFID Service Verkauf"
+
+#. module: rfid_service_zpl_labels_cups
+#: model:ir.model,name:rfid_service_zpl_labels_cups.model_ir_actions_report
+msgid "Report Action"
+msgstr "Berichtsaktion"
+
+#. module: rfid_service_zpl_labels_cups
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels_cups.hr_rfid_service_sale_form_inherit_cups
+msgid "Send the wristband label to the configured CUPS printer"
+msgstr "Das Armbandetikett an den konfigurierten CUPS-Drucker senden"
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service.py:0
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service_sale_wiz.py:0
+msgid "Success"
+msgstr "Erfolgreich"
+
+#. module: rfid_service_zpl_labels_cups
+#: model:ir.actions.server,name:rfid_service_zpl_labels_cups.action_test_cups_label_printer
+msgid "Test CUPS Label Printer"
+msgstr "CUPS-Etikettendrucker testen"
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service.py:0
+msgid ""
+"Test label sent to printer: %s\n"
+"Using template: %s"
+msgstr ""
+"Testetikett an Drucker gesendet: %s\n"
+"Verwendete Vorlage: %s"
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service_sale.py:0
+msgid "Wristband label sent to %s successfully."
+msgstr "Armbandetikett erfolgreich an %s gesendet."
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service_sale_wiz.py:0
+msgid "Wristband sent to printer: %s"
+msgstr "Armband an Drucker gesendet: %s"
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service.py:0
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service_sale.py:0
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service_sale_wiz.py:0
+msgid ""
+"Your printing action is not set to \"Send to Printer\". Please go to your "
+"user preferences and set the printing action to \"Send to Printer\"."
+msgstr ""
+"Ihre Druckaktion ist nicht auf \"An Drucker senden\" eingestellt. Bitte "
+"gehen Sie zu Ihren Benutzereinstellungen und setzen Sie die Druckaktion auf "
+"\"An Drucker senden\"."

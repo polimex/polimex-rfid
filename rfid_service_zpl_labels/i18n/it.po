@@ -1,0 +1,408 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* rfid_service_zpl_labels
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-06-13 16:35+0000\n"
+"PO-Revision-Date: 2026-03-06 19:37\n"
+"Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
+"Language-Team: \n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.6\n"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.actions.report,print_report_name:rfid_service_zpl_labels.action_report_rfid_wristband_barcode
+msgid "'wristband_code128_' + (object.name or 'by_polimex')"
+msgstr ""
+
+#. module: rfid_service_zpl_labels
+#: model:ir.actions.report,print_report_name:rfid_service_zpl_labels.action_report_rfid_wristband
+msgid "'wristband_qr_' + (object.name or 'by_polimex')"
+msgstr ""
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.res_config_settings_view_form_inherit_rfid_labels
+msgid "192.168.1.100"
+msgstr ""
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.label_preview_template
+msgid "<span class=\"info-label\">Card Number:</span>"
+msgstr "<span class=\"info-label\">Numero tessera:</span>"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.label_preview_template
+msgid "<span class=\"info-label\">Company:</span>"
+msgstr "<span class=\"info-label\">Azienda:</span>"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.label_preview_template
+msgid "<span class=\"info-label\">Customer:</span>"
+msgstr "<span class=\"info-label\">Cliente:</span>"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.label_preview_template
+msgid ""
+"<span class=\"info-label\">Preview Type:</span>\n"
+"                                    <span class=\"info-value\">Template Test (No Sale Data)</span>"
+msgstr ""
+"<span class=\"info-label\">Tipo anteprima:</span>\n"
+"                                    <span class=\"info-value\">Test modello (Nessun dato di vendita)</span>"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.label_preview_template
+msgid "<span class=\"info-label\">Service Sale:</span>"
+msgstr "<span class=\"info-label\">Vendita servizio:</span>"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.label_preview_template
+msgid "<span class=\"info-label\">Service:</span>"
+msgstr "<span class=\"info-label\">Servizio:</span>"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.label_preview_template
+msgid "<span class=\"info-label\">Template:</span>"
+msgstr "<span class=\"info-label\">Modello:</span>"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.label_preview_template
+msgid "<span class=\"info-label\">Valid From:</span>"
+msgstr "<span class=\"info-label\">Valido dal:</span>"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.label_preview_template
+msgid "<span class=\"info-label\">Valid To:</span>"
+msgstr "<span class=\"info-label\">Valido al:</span>"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model,name:rfid_service_zpl_labels.model_rfid_service_sale_wiz
+msgid "Base RFID Service Sale Wizard"
+msgstr "Procedura guidata base vendita servizio RFID"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.label_preview_template
+msgid "Close Preview"
+msgstr "Chiudi anteprima"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model,name:rfid_service_zpl_labels.model_res_company
+msgid "Companies"
+msgstr "Aziende"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.label_preview_template
+msgid "Company Logo"
+msgstr "Logo azienda"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model,name:rfid_service_zpl_labels.model_res_config_settings
+msgid "Config Settings"
+msgstr "Impostazioni di configurazione"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.res_config_settings_view_form_inherit_rfid_labels
+msgid "Configure the network printer for wristband labels"
+msgstr "Configura la stampante di rete per le etichette braccialetto"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service.py:0
+#: code:addons/rfid_service_zpl_labels/models/rfid_service_sale_wiz.py:0
+msgid "Connection Failed"
+msgstr "Connessione non riuscita"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service_sale_wiz.py:0
+msgid "Connection Successful"
+msgstr "Connessione riuscita"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service.py:0
+msgid "Connection Timeout"
+msgstr "Timeout connessione"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service_sale.py:0
+#: code:addons/rfid_service_zpl_labels/models/rfid_service_sale_wiz.py:0
+msgid ""
+"Connection timeout: Unable to connect to printer at %s:%s\n"
+"\n"
+"Please check printer settings."
+msgstr ""
+"Timeout connessione: impossibile connettersi alla stampante su %s:%s\n"
+"\n"
+"Verificare le impostazioni della stampante."
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service.py:0
+msgid ""
+"Could not connect to printer at %s:%s - Connection timed out after 5 seconds"
+msgstr ""
+"Impossibile connettersi alla stampante su %s:%s - Connessione scaduta dopo 5"
+" secondi"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service_sale_wiz.py:0
+msgid "Could not connect to printer: %s"
+msgstr "Impossibile connettersi alla stampante: %s"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.actions.report,name:rfid_service_zpl_labels.action_report_rfid_wristband_barcode
+msgid "Customer Wristband - CODE-128 (ZPL)"
+msgstr "Braccialetto cliente - CODE-128 (ZPL)"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.actions.report,name:rfid_service_zpl_labels.action_report_rfid_wristband
+msgid "Customer Wristband - QR Code (ZPL)"
+msgstr "Braccialetto cliente - QR Code (ZPL)"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model.fields,help:rfid_service_zpl_labels.field_res_company__rfid_label_printer_ip
+msgid "IP address of the Zebra label printer for this company"
+msgstr "Indirizzo IP della stampante etichette Zebra per questa azienda"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model.fields,help:rfid_service_zpl_labels.field_res_config_settings__rfid_label_printer_ip
+msgid "IP address of the Zebra label printer for wristband printing"
+msgstr ""
+"Indirizzo IP della stampante etichette Zebra per la stampa di braccialetti"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.label_preview_template
+msgid "Label Preview"
+msgstr "Anteprima etichetta"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.label_preview_template
+msgid "Label Preview (1\" x 11\" Wristband)"
+msgstr "Anteprima etichetta (braccialetto 1\" x 11\")"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service_sale.py:0
+msgid "Label Printed"
+msgstr "Etichetta stampata"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model.fields,field_description:rfid_service_zpl_labels.field_res_company__rfid_label_printer_ip
+#: model:ir.model.fields,field_description:rfid_service_zpl_labels.field_res_config_settings__rfid_label_printer_ip
+msgid "Label Printer IP"
+msgstr "IP stampante etichette"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model.fields,field_description:rfid_service_zpl_labels.field_res_company__rfid_label_printer_port
+#: model:ir.model.fields,field_description:rfid_service_zpl_labels.field_res_config_settings__rfid_label_printer_port
+msgid "Label Printer Port"
+msgstr "Porta stampante etichette"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.actions.act_window,name:rfid_service_zpl_labels.action_rfid_label_printer_config
+#: model:ir.ui.menu,name:rfid_service_zpl_labels.menu_rfid_label_printer_config_service
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.res_config_settings_view_form_inherit_rfid_labels
+msgid "Label Printer Settings"
+msgstr "Impostazioni stampante etichette"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model.fields,field_description:rfid_service_zpl_labels.field_rfid_service__label_template_id
+msgid "Label Template"
+msgstr "Modello etichetta"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.res_config_settings_view_form_inherit_rfid_labels
+msgid "Labels"
+msgstr "Etichette"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.label_preview_template
+msgid "Loading preview..."
+msgstr "Caricamento anteprima..."
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.label_preview_template
+msgid "N/A"
+msgstr "N/D"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service_sale.py:0
+#: code:addons/rfid_service_zpl_labels/models/rfid_service_sale_wiz.py:0
+msgid ""
+"Network error: %s\n"
+"\n"
+"Printer: %s:%s"
+msgstr ""
+"Errore di rete: %s\n"
+"\n"
+"Stampante: %s:%s"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service.py:0
+msgid ""
+"Network error: %s\n"
+"Please check printer IP and port in system parameters."
+msgstr ""
+"Errore di rete: %s\n"
+"Verificare l'IP e la porta della stampante nei parametri di sistema."
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.hr_rfid_service_sale_form_inherit_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.view_rfid_service_form_inherit_new_group
+msgid "Preview Label"
+msgstr "Anteprima etichetta"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.view_rfid_service_form_inherit_new_group
+msgid "Preview the configured label template with test data"
+msgstr ""
+"Visualizza in anteprima il modello di etichetta configurato con dati di test"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.hr_rfid_service_sale_form_inherit_zpl_labels
+msgid "Preview the wristband label in your browser before printing"
+msgstr ""
+"Visualizza in anteprima l'etichetta braccialetto nel browser prima della "
+"stampa"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.sale_wiz_form_inherit_label_button
+msgid "Print Label"
+msgstr "Stampa etichetta"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.hr_rfid_service_sale_form_inherit_zpl_labels
+msgid "Print Label Direct"
+msgstr "Stampa etichetta diretta"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.label_preview_template
+msgid "Print Page"
+msgstr "Stampa pagina"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service.py:0
+msgid "Printer Test Successful"
+msgstr "Test stampante riuscito"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service_sale.py:0
+#: code:addons/rfid_service_zpl_labels/models/rfid_service_sale_wiz.py:0
+msgid "Printing error: %s"
+msgstr "Errore di stampa: %s"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model,name:rfid_service_zpl_labels.model_rfid_service
+msgid "RFID Service"
+msgstr "Servizio RFID"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model,name:rfid_service_zpl_labels.model_rfid_service_sale
+msgid "RFID Service Sales"
+msgstr "Vendite servizio RFID"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model.fields,help:rfid_service_zpl_labels.field_rfid_service__label_template_id
+msgid "Select the label template to use for printing labels/wristbands."
+msgstr ""
+"Selezionare il modello di etichetta da utilizzare per la stampa di "
+"etichette/braccialetti."
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.view_rfid_service_form_inherit_new_group
+msgid ""
+"Send a test label to the configured printer to verify connectivity. Note: "
+"System parameters 'rfid.label.printer.ip' and 'rfid.label.printer.port' must"
+" be configured first in Settings → Technical → Parameters → System "
+"Parameters"
+msgstr ""
+"Invia un'etichetta di test alla stampante configurata per verificare la "
+"connettività. Nota: i parametri di sistema 'rfid.label.printer.ip' e "
+"'rfid.label.printer.port' devono essere configurati prima in Impostazioni → "
+"Tecnico → Parametri → Parametri di sistema"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.hr_rfid_service_sale_form_inherit_zpl_labels
+msgid "Send the wristband label directly to the configured ZPL printer"
+msgstr ""
+"Invia l'etichetta braccialetto direttamente alla stampante ZPL configurata"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.ui.menu,name:rfid_service_zpl_labels.menu_rfid_label_printer_config_hr_rfid
+msgid "Service Label Printer"
+msgstr "Stampante etichette servizio"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model.fields,help:rfid_service_zpl_labels.field_res_company__rfid_label_printer_port
+msgid "TCP port for the Zebra label printer connection"
+msgstr "Porta TCP per la connessione alla stampante etichette Zebra"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.model.fields,help:rfid_service_zpl_labels.field_res_config_settings__rfid_label_printer_port
+msgid "TCP port for the Zebra label printer connection (default: 9100)"
+msgstr ""
+"Porta TCP per la connessione alla stampante etichette Zebra (predefinita: "
+"9100)"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service.py:0
+msgid "Test Failed"
+msgstr "Test non riuscito"
+
+#. module: rfid_service_zpl_labels
+#: model:ir.actions.server,name:rfid_service_zpl_labels.action_test_label_printer
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.view_rfid_service_form_inherit_new_group
+msgid "Test Label Printer"
+msgstr "Testa stampante etichette"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service.py:0
+msgid ""
+"Test label sent successfully to %s:%s\n"
+"Using template: %s"
+msgstr ""
+"Etichetta di test inviata correttamente a %s:%s\n"
+"Modello utilizzato: %s"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service_sale_wiz.py:0
+msgid "Test label sent to printer at %s:%s"
+msgstr "Etichetta di test inviata alla stampante su %s:%s"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service.py:0
+msgid "Unexpected error: %s"
+msgstr "Errore imprevisto: %s"
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.label_preview_template
+msgid "Wristband Label Preview"
+msgstr "Anteprima etichetta braccialetto"
+
+#. module: rfid_service_zpl_labels
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels/models/rfid_service_sale.py:0
+msgid "Wristband label sent to printer successfully."
+msgstr "Etichetta braccialetto inviata correttamente alla stampante."
+
+#. module: rfid_service_zpl_labels
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels.label_preview_template
+msgid "ZPL Code"
+msgstr "Codice ZPL"

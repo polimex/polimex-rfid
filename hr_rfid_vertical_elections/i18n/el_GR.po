@@ -1,0 +1,1116 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* hr_rfid_vertical_elections
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-05 16:53+0000\n"
+"PO-Revision-Date: 2026-03-08 12:13\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: el\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.actions.report,print_report_name:hr_rfid_vertical_elections.action_report_voting_session
+msgid "('Vote Protocol - %s' % (object.name))"
+msgstr "('Πρωτόκολλο Ψηφοφορίας - %s' % (object.name))"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid ""
+"/\n"
+"                        Abstain:"
+msgstr ""
+"/\n"
+"                        Αποχή:"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid ""
+"/\n"
+"                        No:"
+msgstr ""
+"/\n"
+"                        Όχι:"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid ""
+"/\n"
+"                        Total Votes:"
+msgstr ""
+"/\n"
+"                        Σύνολο Ψήφων:"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid ""
+"/ \n"
+"                                                Abstain:"
+msgstr ""
+"/ \n"
+"                                                Αποχή:"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid ""
+"/ \n"
+"                                                No:"
+msgstr ""
+"/ \n"
+"                                                Όχι:"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid ""
+"<i class=\"fa fa-hand-o-up me-1\"/>\n"
+"                                                Yes:"
+msgstr ""
+"<i class=\"fa fa-hand-o-up me-1\"/>\n"
+"                                                Ναι:"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "<i class=\"fa fa-long-arrow-right mx-1\" title=\"Until\"/>"
+msgstr "<i class=\"fa fa-long-arrow-right mx-1\" title=\"Έως\"/>"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "<span class=\"text-muted\">Display:</span>"
+msgstr "<span class=\"text-muted\">Εμφάνιση:</span>"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "<span class=\"text-muted\">Planned for:</span>"
+msgstr "<span class=\"text-muted\">Προγραμματισμένο για:</span>"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "<span>Final Vote: </span>"
+msgstr "<span>Τελική Ψήφος: </span>"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "<span>State: </span>"
+msgstr "<span>Κατάσταση: </span>"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__vote_abstain
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_vote__vote__abstain
+msgid "Abstain"
+msgstr "Αποχή"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__access_token
+msgid "Access Token"
+msgstr "Κωδικός Πρόσβασης"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__message_needaction
+msgid "Action Needed"
+msgstr "Απαιτείται Ενέργεια"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_ids
+msgid "Activities"
+msgstr "Δραστηριότητες"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_exception_decoration
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "Διακόσμηση Εξαίρεσης Δραστηριότητας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_state
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_state
+msgid "Activity State"
+msgstr "Κατάσταση Δραστηριότητας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_type_icon
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "Εικονίδιο Τύπου Δραστηριότητας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__vote_total
+msgid "All Votes"
+msgstr "Όλες οι Ψήφοι"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__description
+msgid "Announcements"
+msgstr "Ανακοινώσεις"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_form
+msgid "Are you sure you want to generate a new URL?"
+msgstr "Είστε σίγουροι ότι θέλετε να δημιουργήσετε νέο URL;"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__message_attachment_count
+msgid "Attachment Count"
+msgstr "Αριθμός Συνημμένων"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__display_background_image
+msgid "Background Image"
+msgstr "Εικόνα Φόντου"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "Close Voting"
+msgstr "Κλείσιμο Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_session__state__closed
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_search
+msgid "Closed"
+msgstr "Κλειστή"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__company_id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__company_id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__company_id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__company_id
+msgid "Company"
+msgstr "Εταιρεία"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__create_uid
+msgid "Created by"
+msgstr "Δημιουργήθηκε από"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__create_date
+msgid "Created on"
+msgstr "Δημιουργήθηκε στις"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_hr_rfid_workcode__user_action
+msgid ""
+"Defines what type of time tracking action this workcode represents:\n"
+"• Start: Records the beginning of a work shift (clock in)\n"
+"• Break: Records when an employee goes on break (lunch, rest, etc.)\n"
+"• Stop: Records the end of an action (returning from break, leaving work, etc.)"
+msgstr ""
+"Καθορίζει τον τύπο ενέργειας παρακολούθησης χρόνου που αντιπροσωπεύει αυτός ο κωδικός εργασίας:\n"
+"• Έναρξη: Καταγράφει την αρχή μιας βάρδιας εργασίας (είσοδος)\n"
+"• Διάλειμμα: Καταγράφει πότε ένας υπάλληλος παίρνει διάλειμμα (μεσημεριανό, ανάπαυση κ.λπ.)\n"
+"• Διακοπή: Καταγράφει το τέλος μιας ενέργειας (επιστροφή από διάλειμμα, αποχώρηση από την εργασία κ.λπ.)"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "Delete"
+msgstr "Διαγραφή"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__description
+msgid "Description"
+msgstr "Περιγραφή"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__description
+msgid "Description of the voting Group"
+msgstr "Περιγραφή της Ομάδας Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__description
+msgid "Description of the voting Session"
+msgstr "Περιγραφή της Συνεδρίας Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid "Description:"
+msgstr "Περιγραφή:"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__display_id
+msgid "Display"
+msgstr "Εμφάνιση"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_hr_rfid_event_user__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_hr_rfid_workcode__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__display_name
+msgid "Display Name"
+msgstr "Εμφανιζόμενο Όνομα"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.ui.menu,name:hr_rfid_vertical_elections.voting_display_menu
+msgid "Displays"
+msgstr "Εμφανίσεις"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__document
+msgid "Document"
+msgstr "Έγγραφο"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_session__state__draft
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_search
+msgid "Draft"
+msgstr "Πρόχειρο"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_item_view_form
+msgid "E.g. Decision of gardens"
+msgstr "π.χ. Απόφαση κήπων"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_participants_view_form
+msgid "E.g. Elected group of people"
+msgstr "π.χ. Εκλεγμένη ομάδα ατόμων"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_form
+msgid "E.g. Friendly Display name"
+msgstr "π.χ. Φιλικό εμφανιζόμενο όνομα"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_form
+msgid "E.g. Rules, notes and etc."
+msgstr "π.χ. Κανόνες, σημειώσεις κ.λπ."
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+msgid "E.g. Vote for new rules"
+msgstr "π.χ. Ψηφοφορία για νέους κανόνες"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "Edit"
+msgstr "Επεξεργασία"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__end_datetime
+msgid "End Datetime"
+msgstr "Ημερομηνία/Ώρα Λήξης"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_vote__vote_time
+msgid ""
+"Exact date and time when the access event occurred at the reader. Used for "
+"attendance tracking and security logs."
+msgstr ""
+"Ακριβής ημερομηνία και ώρα κατά την οποία συνέβη το συμβάν πρόσβασης στον "
+"αναγνώστη. Χρησιμοποιείται για παρακολούθηση παρουσίας και αρχεία ασφαλείας."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__final_vote
+msgid "Final Vote"
+msgstr "Τελική Ψήφος"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "Final Vote:"
+msgstr "Τελική Ψήφος:"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "Final Vote: <i class=\"fa fa-frown-o\"/>"
+msgstr "Τελική Ψήφος: <i class=\"fa fa-frown-o\"/>"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "Final Vote: <i class=\"fa fa-smile-o\"/>"
+msgstr "Τελική Ψήφος: <i class=\"fa fa-smile-o\"/>"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid "Final vote:"
+msgstr "Τελική ψήφος:"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_follower_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_follower_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_follower_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__message_follower_ids
+msgid "Followers"
+msgstr "Ακόλουθοι"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Ακόλουθοι (Συνεργάτες)"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__activity_type_icon
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Εικονίδιο Font Awesome π.χ. fa-tasks"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_form
+msgid "Generate a new URL"
+msgstr "Δημιουργία νέου URL"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.ui.menu,name:hr_rfid_vertical_elections.voting_participants_menu
+msgid "Groups"
+msgstr "Ομάδες"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__has_message
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__has_message
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__has_message
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__has_message
+msgid "Has Message"
+msgstr "Έχει Μήνυμα"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_hr_rfid_event_user__id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_hr_rfid_workcode__id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__id
+msgid "ID"
+msgstr "ID"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_exception_icon
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_exception_icon
+msgid "Icon"
+msgstr "Εικονίδιο"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__activity_exception_icon
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Εικονίδιο για την ένδειξη δραστηριότητας εξαίρεσης."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__message_needaction
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__message_needaction
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_participants__message_needaction
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Εάν είναι επιλεγμένο, νέα μηνύματα απαιτούν την προσοχή σας."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__message_has_error
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__message_has_sms_error
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__message_has_error
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__message_has_sms_error
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_participants__message_has_error
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_participants__message_has_sms_error
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__message_has_error
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Εάν είναι επιλεγμένο, ορισμένα μηνύματα έχουν σφάλμα παράδοσης."
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_form
+msgid ""
+"If your address is compromised, you can refresh it to generate a new one."
+msgstr ""
+"Εάν η διεύθυνσή σας έχει παραβιαστεί, μπορείτε να την ανανεώσετε για να "
+"δημιουργήσετε μια νέα."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__message_is_follower
+msgid "Is Follower"
+msgstr "Είναι Ακόλουθος"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.ui.menu,name:hr_rfid_vertical_elections.voting_item_menu
+msgid "Items"
+msgstr "Θέματα"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__write_uid
+msgid "Last Updated by"
+msgstr "Τελευταία Ενημέρωση από"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__write_date
+msgid "Last Updated on"
+msgstr "Τελευταία Ενημέρωση στις"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__message_has_error
+msgid "Message Delivery error"
+msgstr "Σφάλμα Παράδοσης Μηνύματος"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__message_ids
+msgid "Messages"
+msgstr "Μηνύματα"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__my_activity_date_deadline
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "Προθεσμία Δραστηριότητάς μου"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_search
+msgid "My Sessions"
+msgstr "Οι Συνεδρίες μου"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_list
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_list
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_item_view_list
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_participants_view_list
+msgid "Name"
+msgstr "Όνομα"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__name
+msgid "Name of the voting Display"
+msgstr "Όνομα της Εμφάνισης Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__name
+msgid "Name of the voting Group"
+msgstr "Όνομα της Ομάδας Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__name
+msgid "Name of the voting Item"
+msgstr "Όνομα του Θέματος Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__name
+msgid "Name of the voting Session"
+msgstr "Όνομα της Συνεδρίας Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__new_session_id
+msgid "New Session"
+msgstr "Νέα Συνεδρία"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_date_deadline
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "Προθεσμία Επόμενης Δραστηριότητας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_summary
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_summary
+msgid "Next Activity Summary"
+msgstr "Σύνοψη Επόμενης Δραστηριότητας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_type_id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_type_id
+msgid "Next Activity Type"
+msgstr "Τύπος Επόμενης Δραστηριότητας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__vote_no
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_session__final_vote__no
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_vote__vote__no
+msgid "No"
+msgstr "Όχι"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_session__final_vote__no_vote
+msgid "No Vote"
+msgstr "Ψήφος Όχι"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__no_voting_background_color
+msgid "No Voting Background Color"
+msgstr "Χρώμα Φόντου Ψήφου Όχι"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Αριθμός Ενεργειών"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__message_has_error_counter
+msgid "Number of errors"
+msgstr "Αριθμός σφαλμάτων"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_participants__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Αριθμός μηνυμάτων που απαιτούν ενέργεια"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_participants__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Αριθμός μηνυμάτων με σφάλμα παράδοσης"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__old_session_id
+msgid "Old Session"
+msgstr "Παλιά Συνεδρία"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_session__state__open
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_search
+msgid "Open"
+msgstr "Ανοιχτή"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "Open Voting"
+msgstr "Άνοιγμα Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_form
+msgid "Open display"
+msgstr "Άνοιγμα εμφάνισης"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+msgid "Organizer"
+msgstr "Διοργανωτής"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__participant_group_id
+msgid "Participant Group"
+msgstr "Ομάδα Συμμετεχόντων"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__participant_ids
+msgid "Participants"
+msgstr "Συμμετέχοντες"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__planned_date
+msgid "Planned Vote Date"
+msgstr "Προγραμματισμένη Ημερομηνία Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model,name:hr_rfid_vertical_elections.model_hr_rfid_event_user
+msgid "RFID User Event"
+msgstr "Συμβάν Χρήστη RFID"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.ui.menu,name:hr_rfid_vertical_elections.vote_menu_root
+msgid "RFID Voting"
+msgstr "Ψηφοφορία RFID"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model,name:hr_rfid_vertical_elections.model_hr_rfid_workcode
+msgid "RFID Workcode for Time Tracking"
+msgstr "Κωδικός Εργασίας RFID για Παρακολούθηση Χρόνου"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+msgid "Re Voting"
+msgstr "Επαναψηφοφορία"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "Re-Voting"
+msgstr "Επαναψηφοφορία"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_user_id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_user_id
+msgid "Responsible User"
+msgstr "Υπεύθυνος Χρήστης"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+msgid "Results"
+msgstr "Αποτελέσματα"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+msgid "Results details"
+msgstr "Λεπτομέρειες Αποτελεσμάτων"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_search
+msgid "Revoted"
+msgstr "Επαναψηφίστηκε"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_has_sms_error
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Σφάλμα Παράδοσης SMS"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_search
+msgid "Session name"
+msgstr "Όνομα Συνεδρίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.ui.menu,name:hr_rfid_vertical_elections.vote_session_menu
+msgid "Sessions"
+msgstr "Συνεδρίες"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-python
+#: code:addons/hr_rfid_vertical_elections/models/voting_display.py:0
+msgid "Sessions for %s"
+msgstr "Συνεδρίες για %s"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+msgid "Settings"
+msgstr "Ρυθμίσεις"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__short_code
+msgid "Short Code"
+msgstr "Σύντομος Κωδικός"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__short_description
+msgid "Short Description"
+msgstr "Σύντομη Περιγραφή"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__start_datetime
+msgid "Start Datetime"
+msgstr "Ημερομηνία/Ώρα Έναρξης"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__state
+msgid "State"
+msgstr "Κατάσταση"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__activity_state
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"Κατάσταση βάσει δραστηριοτήτων\n"
+"Εκπρόθεσμη: Η ημερομηνία λήξης έχει παρέλθει\n"
+"Σήμερα: Η ημερομηνία δραστηριότητας είναι σήμερα\n"
+"Προγραμματισμένη: Μελλοντικές δραστηριότητες."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__terminal_ids
+msgid "Terminals"
+msgstr "Τερματικά"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.constraint,message:hr_rfid_vertical_elections.constraint_voting_display_uniq_access_token
+msgid "The access token must be unique"
+msgstr "Ο κωδικός πρόσβασης πρέπει να είναι μοναδικός"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+msgid ""
+"The final vote for this voting is \n"
+"                                <strong>NO</strong>\n"
+"                                . The item is rejected."
+msgstr ""
+"Η τελική ψήφος για αυτή την ψηφοφορία είναι \n"
+"                                <strong>ΌΧΙ</strong>\n"
+"                                . Το θέμα απορρίφθηκε."
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+msgid ""
+"The final vote for this voting is \n"
+"                                <strong>YES</strong>\n"
+"                                . The item is accepted."
+msgstr ""
+"Η τελική ψήφος για αυτή την ψηφοφορία είναι \n"
+"                                <strong>ΝΑΙ</strong>\n"
+"                                . Το θέμα εγκρίθηκε."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.constraint,message:hr_rfid_vertical_elections.constraint_voting_display_uniq_short_code
+msgid "The short code must be unique."
+msgstr "Ο σύντομος κωδικός πρέπει να είναι μοναδικός."
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid "Time"
+msgstr "Χρόνος"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__vote_results_time
+msgid "Time in seconds for showing the vote results"
+msgstr "Χρόνος σε δευτερόλεπτα για εμφάνιση των αποτελεσμάτων ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__voting_time
+msgid "Time in seconds for voting"
+msgstr "Χρόνος σε δευτερόλεπτα για ψηφοφορία"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_search
+msgid "Today Sessions"
+msgstr "Σημερινές Συνεδρίες"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_vote_view_search
+msgid "Today Votes"
+msgstr "Σημερινές Ψήφοι"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__activity_exception_decoration
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "Τύπος της δραστηριότητας εξαίρεσης στο αρχείο."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_hr_rfid_workcode__user_action
+msgid "User action"
+msgstr "Ενέργεια Χρήστη"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.module.category,description:hr_rfid_vertical_elections.hr_rfid_voting_category
+msgid "User rights for the Voting System"
+msgstr "Δικαιώματα Χρήστη για το Σύστημα Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__vote
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid "Vote"
+msgstr "Ψήφος"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__hr_rfid_workcode__user_action__abstain
+msgid "Vote Abstain"
+msgstr "Ψήφος Αποχής"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__vote_event_id
+msgid "Vote Event"
+msgstr "Συμβάν Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+msgid "Vote Finished"
+msgstr "Ψηφοφορία Ολοκληρωμένη"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__hr_rfid_workcode__user_action__no
+msgid "Vote No"
+msgstr "Ψήφος Όχι"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid "Vote Result"
+msgstr "Αποτέλεσμα Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__vote_results_time
+msgid "Vote Results Time"
+msgstr "Χρόνος Αποτελεσμάτων Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.actions.act_window,name:hr_rfid_vertical_elections.vote_session_action
+msgid "Vote Session"
+msgstr "Συνεδρία Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__vote_time
+msgid "Vote Time"
+msgstr "Χρόνος Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__hr_rfid_workcode__user_action__yes
+msgid "Vote Yes"
+msgstr "Ψήφος Ναι"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+msgid "Vote in Progress"
+msgstr "Ψηφοφορία σε Εξέλιξη"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.constraint,message:hr_rfid_vertical_elections.constraint_voting_vote_uniq_vote
+msgid "Vote must be unique"
+msgstr "Η ψήφος πρέπει να είναι μοναδική"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid "Voted:"
+msgstr "Ψήφισε:"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__voter_id
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid "Voter"
+msgstr "Ψηφοφόρος"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.actions.act_window,name:hr_rfid_vertical_elections.voting_vote_action
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__vote_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__vote_ids
+#: model:ir.ui.menu,name:hr_rfid_vertical_elections.voting_vote_menu
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_vote_view_search
+msgid "Votes"
+msgstr "Ψήφοι"
+
+#. module: hr_rfid_vertical_elections
+#: model:res.groups.privilege,name:hr_rfid_vertical_elections.res_groups_privilege_voting
+msgid "Voting Access"
+msgstr "Πρόσβαση Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__voting_background_color
+msgid "Voting Background Color"
+msgstr "Χρώμα Φόντου Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.actions.act_window,name:hr_rfid_vertical_elections.voting_display_action
+#: model:ir.model,name:hr_rfid_vertical_elections.model_voting_display
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__voting_session_ids
+msgid "Voting Display"
+msgstr "Εμφάνιση Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__display_url
+msgid "Voting Display URL"
+msgstr "URL Εμφάνισης Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.actions.act_window,name:hr_rfid_vertical_elections.voting_item_action
+#: model:ir.model,name:hr_rfid_vertical_elections.model_voting_item
+msgid "Voting Item"
+msgstr "Θέμα Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__item_ids
+msgid "Voting Items"
+msgstr "Θέματα Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model,name:hr_rfid_vertical_elections.model_voting_participants
+msgid "Voting Participants"
+msgstr "Συμμετέχοντες Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model,name:hr_rfid_vertical_elections.model_voting_session
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__voting_session_id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__voting_session_id
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_search
+msgid "Voting Session"
+msgstr "Συνεδρία Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__voting_sessions_count
+msgid "Voting Sessions Count"
+msgstr "Αριθμός Συνεδριών Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.module.category,name:hr_rfid_vertical_elections.hr_rfid_voting_category
+msgid "Voting System"
+msgstr "Σύστημα Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:res.groups,name:hr_rfid_vertical_elections.group_manager
+msgid "Voting System Manager"
+msgstr "Διαχειριστής Συστήματος Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:res.groups,name:hr_rfid_vertical_elections.group_operator
+msgid "Voting System Operator"
+msgstr "Χειριστής Συστήματος Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__voting_time
+msgid "Voting Time"
+msgstr "Χρόνος Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model,name:hr_rfid_vertical_elections.model_voting_vote
+msgid "Voting Vote"
+msgstr "Ψήφος Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__voting_item_id
+msgid "Voting for"
+msgstr "Ψηφοφορία για"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.actions.act_window,name:hr_rfid_vertical_elections.voting_participants_action
+msgid "Voting groups"
+msgstr "Ομάδες Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.actions.report,name:hr_rfid_vertical_elections.action_report_voting_session
+msgid "Voting session protocol"
+msgstr "Πρωτόκολλο Συνεδρίας Ψηφοφορίας"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid "Voting state:"
+msgstr "Κατάσταση Ψηφοφορίας:"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__website_message_ids
+msgid "Website Messages"
+msgstr "Μηνύματα Ιστότοπου"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__website_message_ids
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__website_message_ids
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_participants__website_message_ids
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__website_message_ids
+msgid "Website communication history"
+msgstr "Ιστορικό Επικοινωνίας Ιστότοπου"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__vote_yes
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_session__final_vote__yes
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_vote__vote__yes
+msgid "Yes"
+msgstr "Ναι"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+msgid "Yes:"
+msgstr "Ναι:"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_session__state__revoted
+msgid "re-Voted"
+msgstr "Επαναψηφίστηκε"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "В момента няма планирани сесии за гласуване."
+msgstr "Δεν υπάρχουν προγραμματισμένες συνεδρίες ψηφοφορίας αυτή τη στιγμή."
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Въздържал се:"
+msgstr "Αποχή:"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Въздържали се:"
+msgstr "Αποχές:"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Да:"
+msgstr "Ναι:"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Дискусии"
+msgstr "Συζητήσεις"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Завърши гласуването за"
+msgstr "Η ψηφοφορία ολοκληρώθηκε για"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Моля гласувайте за"
+msgstr "Παρακαλώ ψηφίστε για"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Не:"
+msgstr "Όχι:"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Няма открито гласуване в момента"
+msgstr "Δεν υπάρχει ανοιχτή ψηφοφορία αυτή τη στιγμή"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Няма планирани гласувания"
+msgstr "Δεν υπάρχουν προγραμματισμένες ψηφοφορίες"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Общо гласували:"
+msgstr "Σύνολο Ψηφισάντων:"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Резултат:"
+msgstr "Αποτέλεσμα:"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Тече гласуване ..."
+msgstr "Ψηφοφορία σε εξέλιξη ..."

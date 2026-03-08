@@ -1,0 +1,1696 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* rfid_service_base
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-05 16:23+0000\n"
+"PO-Revision-Date: 2026-03-06 17:35\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: rfid_service_base
+#. odoo-python
+#: code:addons/rfid_service_base/models/res_partner.py:0
+msgid ""
+"<p class=\"o_view_nocontent\">\n"
+"                    No Sales for this partner.\n"
+"                </p>"
+msgstr ""
+"<p class=\"o_view_nocontent\">\n"
+"                    Nessuna vendita per questo partner.\n"
+"                </p>"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
+msgid "<span class=\"fa fa-clock-o mr-2\" title=\"Start\"/>"
+msgstr "<span class=\"fa fa-clock-o mr-2\" title=\"Start\"/>"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
+msgid "<span class=\"fa fa-envelope-o mr-2\" aria-label=\"Group\" title=\"Group\"/>"
+msgstr "<span class=\"fa fa-envelope-o mr-2\" aria-label=\"Group\" title=\"Group\"/>"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
+msgid "<span class=\"fa fa-user mr-2\" aria-label=\"Type\" title=\"Type\"/>"
+msgstr "<span class=\"fa fa-user mr-2\" aria-label=\"Type\" title=\"Type\"/>"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
+msgid "<span class=\"o_label\">New sale</span>"
+msgstr "<span class=\"o_label\">Nuova vendita</span>"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
+msgid "<span class=\"oe_inline oe_read_only\">-</span>"
+msgstr "<span class=\"oe_inline oe_read_only\">-</span>"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
+msgid "<span>Setup</span>"
+msgstr "<span>Configurazione</span>"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
+msgid "<span>View</span>"
+msgstr "<span>Visualizza</span>"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__end_date
+msgid "Access End Date"
+msgstr "Data di fine accesso"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__time_interval_end
+msgid "Access End Time"
+msgstr "Orario di fine accesso"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__access_group_id
+msgid "Access Group"
+msgstr "Gruppo di accesso"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__access_group_contact_rel
+msgid "Access Permission"
+msgstr "Permesso di accesso"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__start_date
+msgid "Access Start Date"
+msgstr "Data di inizio accesso"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__time_interval_start
+msgid "Access Start Time"
+msgstr "Orario di inizio accesso"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__message_needaction
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__message_needaction
+msgid "Action Needed"
+msgstr "Azione richiesta"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__active
+#: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service_sale__state__progress
+msgid "Active"
+msgstr "Attivo"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_ids
+msgid "Activities"
+msgstr "Attività"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "Decorazione eccezione attività"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_state
+msgid "Activity State"
+msgstr "Stato attività"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "Icona tipo attività"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
+msgid "Archive"
+msgstr "Archivia"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_search
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
+msgid "Archived"
+msgstr "Archiviato"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
+msgid "Are you sure? This will stop the execution of the current service."
+msgstr ""
+"Sei sicuro? Questa operazione interromperà l'esecuzione del servizio "
+"corrente."
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
+msgid "Arrow"
+msgstr "Freccia"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
+msgid "Arrow icon"
+msgstr "Icona freccia"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__message_attachment_count
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__message_attachment_count
+msgid "Attachment Count"
+msgstr "Conteggio allegati"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__generate_barcode_card
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__generate_barcode_card
+msgid ""
+"Automatically create barcode-based cards instead of RFID cards.\n"
+"        \n"
+"• When enabled: System generates QR/barcode cards for mobile scanning\n"
+"• When disabled: Traditional RFID cards are used\n"
+"• Use cases: Mobile-first access, temporary visitors, events\n"
+"• Card type: Automatically changes to barcode card type when enabled\n"
+"        \n"
+"Barcode cards can be scanned with mobile devices and don't require physical RFID cards."
+msgstr ""
+"Crea automaticamente tessere basate su codice a barre al posto delle tessere RFID.\n"
+"        \n"
+"• Se abilitato: Il sistema genera tessere QR/codice a barre per la scansione da dispositivi mobili\n"
+"• Se disabilitato: Vengono utilizzate le tradizionali tessere RFID\n"
+"• Casi d'uso: Accesso mobile-first, visitatori temporanei, eventi\n"
+"• Tipo tessera: Cambia automaticamente al tipo tessera con codice a barre quando abilitato\n"
+"        \n"
+"Le tessere con codice a barre possono essere scansionate con dispositivi mobili e non richiedono tessere RFID fisiche."
+
+#. module: rfid_service_base
+#: model:ir.model,name:rfid_service_base.model_rfid_service_sale_wiz
+msgid "Base RFID Service Sale Wizard"
+msgstr "Procedura guidata vendita servizio RFID base"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form
+msgid "Cancel"
+msgstr "Annulla"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
+msgid "Cancel Service"
+msgstr "Annulla servizio"
+
+#. module: rfid_service_base
+#: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service_sale__state__canceled
+msgid "Canceled"
+msgstr "Annullato"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__card_number
+msgid "Card Number"
+msgstr "Numero tessera"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__card_type
+msgid "Card Type"
+msgstr "Tipo tessera"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__tag_ids
+msgid ""
+"Categorization tags for organizing and filtering services.\n"
+"        \n"
+"• Organization: Group related services together (e.g., 'VIP', 'Visitor', 'Staff')\n"
+"• Filtering: Use in search panels and reports to find specific service types\n"
+"• Color coding: Tags have colors for visual identification\n"
+"• Multiple tags: Services can have multiple tags for flexible categorization\n"
+"        \n"
+"Use tags to create logical groupings that match your business needs."
+msgstr ""
+"Tag di categorizzazione per organizzare e filtrare i servizi.\n"
+"        \n"
+"• Organizzazione: Raggruppa i servizi correlati (es. 'VIP', 'Visitatore', 'Staff')\n"
+"• Filtro: Da utilizzare nei pannelli di ricerca e nei report per trovare tipi di servizio specifici\n"
+"• Codifica colori: I tag hanno colori per l'identificazione visiva\n"
+"• Tag multipli: I servizi possono avere più tag per una categorizzazione flessibile\n"
+"        \n"
+"Utilizza i tag per creare raggruppamenti logici adatti alle esigenze aziendali."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__color
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_tags__color
+msgid "Color"
+msgstr "Colore"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__color
+msgid ""
+"Color coding for visual identification in kanban and other views.\n"
+"        \n"
+"• Visual organization: Helps distinguish different service types\n"
+"• User interface: Used in kanban cards and service displays\n"
+"• Customization: Choose colors that match your organization's branding\n"
+"• Default: System assigns random colors if not specified\n"
+"        \n"
+"Colors improve visual organization when managing multiple services."
+msgstr ""
+"Codifica colori per l'identificazione visiva nelle viste kanban e in altre viste.\n"
+"        \n"
+"• Organizzazione visiva: Aiuta a distinguere i diversi tipi di servizio\n"
+"• Interfaccia utente: Utilizzata nelle schede kanban e nelle visualizzazioni dei servizi\n"
+"• Personalizzazione: Scegliere colori che corrispondano all'identità visiva dell'organizzazione\n"
+"• Predefinito: Il sistema assegna colori casuali se non specificato\n"
+"        \n"
+"I colori migliorano l'organizzazione visiva nella gestione di più servizi."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_tags__color
+msgid ""
+"Color for visual identification of this tag in lists and kanban views.\n"
+"        \n"
+"• Visual organization: Helps quickly identify different tag categories\n"
+"• User interface: Displayed in tag widgets and service cards\n"
+"• Random default: System assigns random colors to new tags\n"
+"• Customization: Choose colors that match your organization's color scheme\n"
+"        \n"
+"Colors improve visual organization when managing multiple service categories."
+msgstr ""
+"Colore per l'identificazione visiva di questo tag nelle viste a elenco e kanban.\n"
+"        \n"
+"• Organizzazione visiva: Aiuta a identificare rapidamente le diverse categorie di tag\n"
+"• Interfaccia utente: Visualizzato nei widget dei tag e nelle schede dei servizi\n"
+"• Predefinito casuale: Il sistema assegna colori casuali ai nuovi tag\n"
+"• Personalizzazione: Scegliere colori che corrispondano alla combinazione cromatica dell'organizzazione\n"
+"        \n"
+"I colori migliorano l'organizzazione visiva nella gestione di più categorie di servizio."
+
+#. module: rfid_service_base
+#: model:ir.model,name:rfid_service_base.model_res_company
+msgid "Companies"
+msgstr "Aziende"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__company_id
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__company_id
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_tags__company_id
+msgid "Company"
+msgstr "Azienda"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
+msgid "Configuration"
+msgstr "Configurazione"
+
+#. module: rfid_service_base
+#: model:ir.model,name:rfid_service_base.model_res_partner
+msgid "Contact"
+msgstr "Contatto"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__displayed_image_id
+msgid "Cover Image"
+msgstr "Immagine di copertina"
+
+#. module: rfid_service_base
+#: model_terms:ir.actions.act_window,help:rfid_service_base.hr_rfid_service_action
+msgid "Create your first RFID service offering"
+msgstr "Crea la tua prima offerta di servizio RFID"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__create_uid
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__create_uid
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__create_uid
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_tags__create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__create_date
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__create_date
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__create_date
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_tags__create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__state
+msgid ""
+"Current status of this service sale.\n"
+"        \n"
+"• Registered: Sale created but service period hasn't started yet\n"
+"• Active: Service is currently active and customer has access\n"
+"• Finished: Service period has ended or all visits have been used\n"
+"• Canceled: Service was manually canceled before completion\n"
+"        \n"
+"Status is automatically calculated based on dates, visits, and access permissions."
+msgstr ""
+"Stato attuale di questa vendita di servizio.\n"
+"        \n"
+"• Registrato: Vendita creata ma il periodo di servizio non è ancora iniziato\n"
+"• Attivo: Il servizio è attualmente attivo e il cliente ha accesso\n"
+"• Terminato: Il periodo di servizio è scaduto o tutte le visite sono state utilizzate\n"
+"• Annullato: Il servizio è stato annullato manualmente prima del completamento\n"
+"        \n"
+"Lo stato viene calcolato automaticamente in base a date, visite e permessi di accesso."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__partner_id
+msgid "Customer"
+msgstr "Cliente"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__partner_id
+msgid ""
+"Customer who purchased this service.\n"
+"        \n"
+"• Individual: Must be a person, not a company contact\n"
+"• Creation: Can be created automatically during service sale process\n"
+"• Communication: Used for sending emails and printing badges\n"
+"• Tracking: Links all service sales to the same customer for history\n"
+"        \n"
+"This is the person who will receive access and communications about the service."
+msgstr ""
+"Cliente che ha acquistato questo servizio.\n"
+"        \n"
+"• Individuale: Deve essere una persona, non un contatto aziendale\n"
+"• Creazione: Può essere creato automaticamente durante il processo di vendita del servizio\n"
+"• Comunicazione: Utilizzato per l'invio di e-mail e la stampa di badge\n"
+"• Tracciamento: Collega tutte le vendite di servizi allo stesso cliente per la cronologia\n"
+"        \n"
+"È la persona che riceverà l'accesso e le comunicazioni relative al servizio."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__time_interval_end
+msgid ""
+"Daily end time when access is no longer allowed (24-hour format).\n"
+"        \n"
+"• Format: Hours and minutes (e.g., 17.0 = 5:00 PM, 23.5 = 11:30 PM)\n"
+"• Purpose: Automatically restrict access after business hours\n"
+"• 00:00 means: No time restriction (access allowed all day)\n"
+"• Security: Prevents after-hours access even with valid cards\n"
+"        \n"
+"Must be later than Access Start Time to create a valid time window."
+msgstr ""
+"Orario giornaliero di fine accesso (formato 24 ore).\n"
+"        \n"
+"• Formato: Ore e minuti (es. 17.0 = 17:00, 23.5 = 23:30)\n"
+"• Scopo: Limitare automaticamente l'accesso al di fuori dell'orario lavorativo\n"
+"• 00:00 significa: Nessuna restrizione oraria (accesso consentito tutto il giorno)\n"
+"• Sicurezza: Impedisce l'accesso fuori orario anche con tessere valide\n"
+"        \n"
+"Deve essere successivo all'Orario di inizio accesso per creare una finestra temporale valida."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__time_interval_start
+msgid ""
+"Daily start time when access is allowed (24-hour format).\n"
+"        \n"
+"• Format: Hours and minutes (e.g., 9.0 = 9:00 AM, 14.5 = 2:30 PM)\n"
+"• Purpose: Restrict access to specific hours of the day\n"
+"• 00:00 means: No time restriction (access allowed all day)\n"
+"• Use cases: Office hours, gym hours, restricted access periods\n"
+"        \n"
+"Combine with Access End Time to create daily access windows."
+msgstr ""
+"Orario giornaliero di inizio accesso (formato 24 ore).\n"
+"        \n"
+"• Formato: Ore e minuti (es. 9.0 = 9:00, 14.5 = 14:30)\n"
+"• Scopo: Limitare l'accesso a ore specifiche della giornata\n"
+"• 00:00 significa: Nessuna restrizione oraria (accesso consentito tutto il giorno)\n"
+"• Casi d'uso: Orario ufficio, orario palestra, periodi di accesso limitato\n"
+"        \n"
+"Combinare con l'Orario di fine accesso per creare finestre di accesso giornaliere."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__start_date
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__ext_start_date
+msgid ""
+"Date and time when customer access begins.\n"
+"        \n"
+"• Activation: Customer's card becomes active at this date/time\n"
+"• Scheduling: Can be set for future activation (advance bookings)\n"
+"• Timezone: Interpreted according to user's timezone settings\n"
+"• Calculation: Combined with service duration to determine end date\n"
+"        \n"
+"Customer will be able to access designated areas starting from this date/time."
+msgstr ""
+"Data e ora di inizio dell'accesso del cliente.\n"
+"        \n"
+"• Attivazione: La tessera del cliente diventa attiva a questa data/ora\n"
+"• Pianificazione: Può essere impostata per un'attivazione futura (prenotazioni anticipate)\n"
+"• Fuso orario: Interpretato in base alle impostazioni del fuso orario dell'utente\n"
+"• Calcolo: Combinato con la durata del servizio per determinare la data di fine\n"
+"        \n"
+"Il cliente potrà accedere alle aree designate a partire da questa data/ora."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__end_date
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__ext_end_date
+msgid ""
+"Date and time when customer access expires.\n"
+"        \n"
+"• Expiration: Customer's card becomes inactive at this date/time\n"
+"• Calculation: Usually computed from start date + service duration\n"
+"• Manual override: Can be manually adjusted for custom service periods\n"
+"• Security: Access is automatically revoked after this date/time\n"
+"        \n"
+"Customer will lose access to designated areas after this date/time."
+msgstr ""
+"Data e ora in cui l'accesso del cliente scade.\n"
+"        \n"
+"• Scadenza: La tessera del cliente diventa inattiva a questa data/ora\n"
+"• Calcolo: Di solito calcolata dalla data di inizio + durata del servizio\n"
+"• Sostituzione manuale: Può essere regolata manualmente per periodi di servizio personalizzati\n"
+"• Sicurezza: L'accesso viene revocato automaticamente dopo questa data/ora\n"
+"        \n"
+"Il cliente perderà l'accesso alle aree designate dopo questa data/ora."
+
+#. module: rfid_service_base
+#: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service__time_interval_type__days
+msgid "Days"
+msgstr "Giorni"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
+msgid "Default Access Rights"
+msgstr "Diritti di accesso predefiniti"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_hr_rfid_access_group_contact_rel__display_name
+#: model:ir.model.fields,field_description:rfid_service_base.field_res_company__display_name
+#: model:ir.model.fields,field_description:rfid_service_base.field_res_partner__display_name
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__display_name
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__display_name
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__display_name
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_tags__display_name
+msgid "Display Name"
+msgstr "Nome visualizzato"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__time_interval_number
+msgid "Duration Number"
+msgstr "Numero di durata"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__time_interval_type
+msgid "Duration Unit"
+msgstr "Unità di durata"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form
+msgid "E-mail"
+msgstr "E-mail"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__email
+msgid "Email"
+msgstr "Email"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__mail_template_id
+msgid "Email Template"
+msgstr "Modello e-mail"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__mail_template_id
+msgid ""
+"Email template used when sending badges/cards to customers.\n"
+"        \n"
+"• Purpose: Customize the email content and appearance sent to customers\n"
+"• Content: Can include card details, access instructions, and company branding\n"
+"• Automation: Template is used when clicking 'Email Card' in sales process\n"
+"• Default: Uses system default badge email template if not specified\n"
+"        \n"
+"Customize the template to match your organization's communication style."
+msgstr ""
+"Modello e-mail utilizzato per l'invio di badge/tessere ai clienti.\n"
+"        \n"
+"• Scopo: Personalizzare il contenuto e l'aspetto dell'e-mail inviata ai clienti\n"
+"• Contenuto: Può includere dettagli della tessera, istruzioni di accesso e branding aziendale\n"
+"• Automazione: Il modello viene utilizzato facendo clic su 'Invia tessera via e-mail' nel processo di vendita\n"
+"• Predefinito: Utilizza il modello e-mail predefinito del sistema per i badge, se non specificato\n"
+"        \n"
+"Personalizzare il modello per adattarlo allo stile di comunicazione dell'organizzazione."
+
+#. module: rfid_service_base
+#. odoo-python
+#: code:addons/rfid_service_base/models/rfid_service_sale.py:0
+msgid "Extend RFID Service for %s"
+msgstr "Estendi servizio RFID per %s"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__extend_sale_id
+msgid "Extend Sale"
+msgstr "Estendi vendita"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
+msgid "Extend Service"
+msgstr "Estendi servizio"
+
+#. module: rfid_service_base
+#: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service_sale__state__finished
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
+msgid "Finished"
+msgstr "Terminato"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__fixed_time
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__fixed_time
+msgid "Fixed Time Schedule"
+msgstr "Pianificazione oraria fissa"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__message_follower_ids
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__message_follower_ids
+msgid "Followers"
+msgstr "Follower"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__message_partner_ids
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Follower (Partner)"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Icona Font Awesome es. fa-tasks"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
+msgid "Friendly name of the domain"
+msgstr "Nome descrittivo del dominio"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__generate_barcode_card
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__generate_barcode_card
+msgid "Generate Barcode Cards"
+msgstr "Genera tessere con codice a barre"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__has_message
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__has_message
+msgid "Has Message"
+msgstr "Ha un messaggio"
+
+#. module: rfid_service_base
+#: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service__time_interval_type__hours
+msgid "Hours"
+msgstr "Ore"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__service_type
+msgid ""
+"How this service controls customer access duration and usage.\n"
+"    \n"
+"• Time based: Access valid for a specific time period (days, weeks, months)\n"
+"• Visits based: Access limited by number of entries (e.g., 5 visits)\n"
+"• Time and Visits: Both time period AND visit count restrictions apply\n"
+"    \n"
+"Choose based on how you want to limit and charge for the service."
+msgstr ""
+"Come questo servizio controlla la durata dell'accesso e l'utilizzo del cliente.\n"
+"    \n"
+"• Basato sul tempo: Accesso valido per un periodo di tempo specifico (giorni, settimane, mesi)\n"
+"• Basato sulle visite: Accesso limitato dal numero di ingressi (es. 5 visite)\n"
+"• Tempo e visite: Si applicano sia il periodo di tempo che le limitazioni sul numero di visite\n"
+"    \n"
+"Scegliere in base alle modalità di limitazione e tariffazione del servizio."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_hr_rfid_access_group_contact_rel__id
+#: model:ir.model.fields,field_description:rfid_service_base.field_res_company__id
+#: model:ir.model.fields,field_description:rfid_service_base.field_res_partner__id
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__id
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__id
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__id
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_tags__id
+msgid "ID"
+msgstr "ID"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_exception_icon
+msgid "Icon"
+msgstr "Icona"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Icona per indicare un'attività con eccezione."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__message_needaction
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Se selezionato, i nuovi messaggi richiedono la tua attenzione."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__message_has_error
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__message_has_sms_error
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__message_has_error
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Se selezionato, alcuni messaggi presentano un errore di recapito."
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form
+msgid "If you want to send mobile link"
+msgstr "Se si desidera inviare un link mobile"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form
+msgid "If you want to send pdf"
+msgstr "Se si desidera inviare un PDF"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__message_is_follower
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__message_is_follower
+msgid "Is Follower"
+msgstr "È follower"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__write_uid
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__write_uid
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__write_uid
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_tags__write_uid
+msgid "Last Updated by"
+msgstr "Ultimo aggiornamento di"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__write_date
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__write_date
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__write_date
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_tags__write_date
+msgid "Last Updated on"
+msgstr "Ultimo aggiornamento il"
+
+#. module: rfid_service_base
+#: model:res.groups,name:rfid_service_base.group_card_manager
+msgid "Manager"
+msgstr "Responsabile"
+
+#. module: rfid_service_base
+#. odoo-python
+#: code:addons/rfid_service_base/models/rfid_service_sale.py:0
+msgid "Manually canceled service"
+msgstr "Servizio annullato manualmente"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__visits
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__visits
+msgid ""
+"Maximum number of times a customer can access with this service.\n"
+"        \n"
+"• Purpose: Limit usage for visit-based or combined service types\n"
+"• Tracking: System automatically counts and decreases available visits\n"
+"• Zero means: Unlimited visits (only for time-based services)\n"
+"• Examples: 5 visits for \"Weekly Gym Pass\", 1 visit for \"Single Day Access\"\n"
+"        \n"
+"Only applies to 'Visits based' and 'Time and Visits based' service types."
+msgstr ""
+"Numero massimo di volte in cui un cliente può accedere con questo servizio.\n"
+"        \n"
+"• Scopo: Limitare l'utilizzo per i tipi di servizio basati sulle visite o combinati\n"
+"• Tracciamento: Il sistema conta e decrementa automaticamente le visite disponibili\n"
+"• Zero significa: Visite illimitate (solo per i servizi basati sul tempo)\n"
+"• Esempi: 5 visite per \"Abbonamento settimanale palestra\", 1 visita per \"Accesso giornaliero singolo\"\n"
+"        \n"
+"Si applica solo ai tipi di servizio 'Basato sulle visite' e 'Basato su tempo e visite'."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__message_has_error
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__message_has_error
+msgid "Message Delivery error"
+msgstr "Errore di recapito messaggio"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__message_ids
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__message_ids
+msgid "Messages"
+msgstr "Messaggi"
+
+#. module: rfid_service_base
+#: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service__time_interval_type__minutes
+msgid "Minutes"
+msgstr "Minuti"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__mobile
+msgid "Mobile"
+msgstr "Mobile"
+
+#. module: rfid_service_base
+#: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service__time_interval_type__months
+msgid "Months"
+msgstr "Mesi"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "Scadenza attività personale"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_tags__name
+msgid ""
+"Name of the service tag for categorization and filtering.\n"
+"        \n"
+"• Purpose: Create logical groupings of related services\n"
+"• Examples: 'VIP', 'Visitor', 'Staff', 'Premium', 'Basic', 'Event'\n"
+"• Usage: Used in search filters and service organization\n"
+"• Uniqueness: Tag names must be unique across the system\n"
+"        \n"
+"Use clear, descriptive names that help organize your service offerings."
+msgstr ""
+"Nome del tag di servizio per la categorizzazione e il filtraggio.\n"
+"        \n"
+"• Scopo: Creare raggruppamenti logici di servizi correlati\n"
+"• Esempi: 'VIP', 'Visitatore', 'Staff', 'Premium', 'Base', 'Evento'\n"
+"• Utilizzo: Utilizzato nei filtri di ricerca e nell'organizzazione dei servizi\n"
+"• Unicità: I nomi dei tag devono essere univoci nel sistema\n"
+"        \n"
+"Utilizzare nomi chiari e descrittivi che aiutino a organizzare le offerte di servizio."
+
+#. module: rfid_service_base
+#. odoo-python
+#: code:addons/rfid_service_base/models/rfid_service.py:0
+msgid "New Sale - %s"
+msgstr "Nuova vendita - %s"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "Scadenza prossima attività"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_summary
+msgid "Next Activity Summary"
+msgstr "Riepilogo prossima attività"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_type_id
+msgid "Next Activity Type"
+msgstr "Tipo prossima attività"
+
+#. module: rfid_service_base
+#: model_terms:ir.actions.act_window,help:rfid_service_base.hr_rfid_service_sale_action
+msgid "No service sales recorded yet"
+msgstr "Nessuna vendita di servizi registrata"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__message_needaction_counter
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Numero di azioni"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__visits
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__visits
+msgid "Number of Visits"
+msgstr "Numero di visite"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__message_has_error_counter
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__message_has_error_counter
+msgid "Number of errors"
+msgstr "Numero di errori"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__message_needaction_counter
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Numero di messaggi che richiedono un'azione"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__message_has_error_counter
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Numero di messaggi con errore di recapito"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__visits
+msgid ""
+"Number of visits remaining for this service (for visit-based services).\n"
+"\n"
+"• Purpose: Shows how many times customer can still access with this service\n"
+"• Countdown: Automatically decreases each time customer uses their card\n"
+"• Zero means: No more visits remaining (service access blocked)\n"
+"• Unlimited: Visit-based services show actual count, time-based services may show 0\n"
+"\n"
+"Only relevant for 'Visits based' and 'Time and Visits based' service types."
+msgstr ""
+"Numero di visite rimanenti per questo servizio (per i servizi basati sulle visite).\n"
+"\n"
+"• Scopo: Mostra quante volte il cliente può ancora accedere con questo servizio\n"
+"• Conto alla rovescia: Diminuisce automaticamente ogni volta che il cliente utilizza la propria tessera\n"
+"• Zero significa: Nessuna visita rimanente (accesso al servizio bloccato)\n"
+"• Illimitato: I servizi basati sulle visite mostrano il conteggio effettivo, i servizi basati sul tempo possono mostrare 0\n"
+"\n"
+"Rilevante solo per i tipi di servizio 'Basato sulle visite' e 'Basato su tempo e visite'."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__time_interval_number
+msgid ""
+"Numeric part of the service duration (combined with Duration Unit).\n"
+"        \n"
+"• Purpose: Define how long the service access remains valid\n"
+"• Examples: 7 days, 1 month, 2 weeks, 30 minutes\n"
+"• Calculation: Combined with Duration Unit to create total service period\n"
+"• Pricing: Longer durations typically have higher prices\n"
+"        \n"
+"Set to 1 for single-unit periods (1 day, 1 week, etc.)."
+msgstr ""
+"Parte numerica della durata del servizio (combinata con l'Unità di durata).\n"
+"        \n"
+"• Scopo: Definire per quanto tempo l'accesso al servizio rimane valido\n"
+"• Esempi: 7 giorni, 1 mese, 2 settimane, 30 minuti\n"
+"• Calcolo: Combinata con l'Unità di durata per creare il periodo totale del servizio\n"
+"• Tariffazione: Le durate più lunghe hanno generalmente prezzi più elevati\n"
+"        \n"
+"Impostare a 1 per periodi di una sola unità (1 giorno, 1 settimana, ecc.)."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__ext_end_date
+msgid "Old end"
+msgstr "Fine precedente"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__ext_start_date
+msgid "Old start"
+msgstr "Inizio precedente"
+
+#. module: rfid_service_base
+#: model:ir.model.constraint,message:rfid_service_base.constraint_rfid_service_sale_check_duplicates
+msgid "Only one service for same period for given Customer!"
+msgstr ""
+"È consentito un solo servizio per lo stesso periodo per il cliente "
+"specificato!"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__zone_id
+msgid ""
+"Optional zone for tracking customer presence and behavior.\n"
+"        \n"
+"• Purpose: Monitor when and how long customers stay in specific areas\n"
+"• Analytics: Generate reports on zone usage and customer patterns\n"
+"• Integration: Works with attendance and presence tracking systems\n"
+"• Optional: Leave empty if zone tracking is not needed\n"
+"        \n"
+"Useful for understanding customer behavior and facility utilization."
+msgstr ""
+"Zona opzionale per il monitoraggio della presenza e del comportamento dei clienti.\n"
+"        \n"
+"• Scopo: Monitorare quando e per quanto tempo i clienti rimangono in aree specifiche\n"
+"• Analisi: Generare report sull'utilizzo delle zone e sui pattern dei clienti\n"
+"• Integrazione: Funziona con i sistemi di rilevamento presenze\n"
+"• Opzionale: Lasciare vuoto se il monitoraggio delle zone non è necessario\n"
+"        \n"
+"Utile per comprendere il comportamento dei clienti e l'utilizzo delle strutture."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__parent_id
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__parent_id
+msgid "Parent Customer"
+msgstr "Cliente principale"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__parent_id
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__parent_id
+msgid ""
+"Parent company or organization that all service customers will be linked to.\n"
+"        \n"
+"• Purpose: Group individual customers under a parent organization\n"
+"• Hierarchy: Creates customer hierarchy for reporting and management\n"
+"• Billing: Useful for corporate accounts or group bookings\n"
+"• Optional: Leave empty for individual customers without parent organization\n"
+"        \n"
+"Example: Link all conference attendees to the hosting company."
+msgstr ""
+"Azienda o organizzazione principale a cui tutti i clienti del servizio saranno collegati.\n"
+"        \n"
+"• Scopo: Raggruppare i singoli clienti sotto un'organizzazione principale\n"
+"• Gerarchia: Crea una gerarchia di clienti per la reportistica e la gestione\n"
+"• Fatturazione: Utile per conti aziendali o prenotazioni di gruppo\n"
+"• Opzionale: Lasciare vuoto per i clienti individuali senza organizzazione principale\n"
+"        \n"
+"Esempio: Collegare tutti i partecipanti a una conferenza all'azienda organizzatrice."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__partner_id
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_action_search
+msgid "Partner"
+msgstr "Partner"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_res_partner__partner_rfid_sales_count
+#: model:ir.model.fields,field_description:rfid_service_base.field_res_users__partner_rfid_sales_count
+msgid "Partner Rfid Sales Count"
+msgstr "Conteggio vendite RFID partner"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
+msgid "Partner Sales"
+msgstr "Vendite partner"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__card_id
+msgid ""
+"Physical or digital card assigned to the customer for access.\n"
+"        \n"
+"• Access method: Card that customer uses to gain physical access\n"
+"• Card types: Can be RFID card, barcode card, or mobile badge\n"
+"• Creation: Automatically created during service sale process\n"
+"• Security: Activated/deactivated according to service period\n"
+"        \n"
+"This is the physical/digital token the customer uses to access areas."
+msgstr ""
+"Tessera fisica o digitale assegnata al cliente per l'accesso.\n"
+"        \n"
+"• Metodo di accesso: Tessera che il cliente utilizza per ottenere l'accesso fisico\n"
+"• Tipi di tessera: Può essere una tessera RFID, una tessera con codice a barre o un badge mobile\n"
+"• Creazione: Creata automaticamente durante il processo di vendita del servizio\n"
+"• Sicurezza: Attivata/disattivata in base al periodo di servizio\n"
+"        \n"
+"È il token fisico/digitale che il cliente utilizza per accedere alle aree."
+
+#. module: rfid_service_base
+#. odoo-python
+#: code:addons/rfid_service_base/models/rfid_service_sale.py:0
+msgid "Please fill the Customer e-mail"
+msgstr "Inserire l'e-mail del cliente"
+
+#. module: rfid_service_base
+#. odoo-python
+#: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0
+msgid "Please fill the e-mail in the form"
+msgstr "Inserire l'e-mail nel modulo"
+
+#. module: rfid_service_base
+#. odoo-python
+#: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0
+msgid "Please scan a card"
+msgstr "Scansionare una tessera"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form
+msgid "Print"
+msgstr "Stampa"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__print_template_id
+msgid "Print Template"
+msgstr "Modello di stampa"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__card_id
+msgid "RFID Card"
+msgstr "Tessera RFID"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_view_partner_form_inherit_hr_rfid
+msgid "RFID Sales"
+msgstr "Vendite RFID"
+
+#. module: rfid_service_base
+#. odoo-python
+#: code:addons/rfid_service_base/models/res_partner.py:0
+msgid "RFID Sales for {}"
+msgstr "Vendite RFID per {}"
+
+#. module: rfid_service_base
+#: model:ir.model,name:rfid_service_base.model_rfid_service
+msgid "RFID Service"
+msgstr "Servizio RFID"
+
+#. module: rfid_service_base
+#: model:ir.model,name:rfid_service_base.model_rfid_service_sale
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_pivot
+msgid "RFID Service Sales"
+msgstr "Vendite servizio RFID"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_action_search
+msgid "RFID Service sales"
+msgstr "Vendite servizio RFID"
+
+#. module: rfid_service_base
+#: model:ir.ui.menu,name:rfid_service_base.menu_root
+msgid "RFID Services"
+msgstr "Servizi RFID"
+
+#. module: rfid_service_base
+#: model:res.groups.privilege,name:rfid_service_base.res_groups_privilege_rfid_service
+msgid "RFID Services Access"
+msgstr "Accesso servizi RFID"
+
+#. module: rfid_service_base
+#: model:ir.module.category,name:rfid_service_base.rfid_service_base_management
+msgid "RFID Services Base"
+msgstr "Base servizi RFID"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.services_tree
+msgid "RFID Services List"
+msgstr "Elenco servizi RFID"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__access_group_id
+msgid ""
+"RFID access group that defines which doors customers can access.\n"
+"        \n"
+"• Purpose: Controls physical access permissions for service customers\n"
+"• Door mapping: Determines which doors/areas this service provides access to\n"
+"• Security: Customers only get access to doors included in this group\n"
+"• Configuration: Must be set up before selling services\n"
+"        \n"
+"Choose the access group that matches the physical areas this service should provide."
+msgstr ""
+"Gruppo di accesso RFID che definisce a quali porte i clienti possono accedere.\n"
+"        \n"
+"• Scopo: Controlla i permessi di accesso fisico per i clienti del servizio\n"
+"• Mappatura porte: Determina a quali porte/aree questo servizio fornisce accesso\n"
+"• Sicurezza: I clienti accedono solo alle porte incluse in questo gruppo\n"
+"• Configurazione: Deve essere configurato prima di vendere i servizi\n"
+"        \n"
+"Scegliere il gruppo di accesso che corrisponde alle aree fisiche che questo servizio deve fornire."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__service_id
+msgid ""
+"RFID service that was sold to the customer.\n"
+"        \n"
+"• Purpose: Links this sale to the specific service offering\n"
+"• Configuration: Inherits all service settings (duration, access rights, etc.)\n"
+"• Pricing: Service determines access permissions and time limits\n"
+"• Required: Every sale must be linked to a service\n"
+"        \n"
+"The service defines what access and duration the customer receives."
+msgstr ""
+"Servizio RFID venduto al cliente.\n"
+"        \n"
+"• Scopo: Collega questa vendita all'offerta di servizio specifica\n"
+"• Configurazione: Eredita tutte le impostazioni del servizio (durata, diritti di accesso, ecc.)\n"
+"• Tariffazione: Il servizio determina i permessi di accesso e i limiti di tempo\n"
+"• Obbligatorio: Ogni vendita deve essere collegata a un servizio\n"
+"        \n"
+"Il servizio definisce l'accesso e la durata che il cliente riceve."
+
+#. module: rfid_service_base
+#: model_terms:ir.actions.act_window,help:rfid_service_base.hr_rfid_service_action
+msgid ""
+"RFID services define access packages that you can sell to customers and visitors.\n"
+"                    <br><br>\n"
+"                    Service types:\n"
+"                    • <b>Time-based:</b> Access valid for specific periods (daily, weekly, monthly)\n"
+"                    • <b>Visit-based:</b> Access limited by number of entries\n"
+"                    • <b>Combined:</b> Both time and visit restrictions apply\n"
+"                    <br><br>\n"
+"                    Each service includes access permissions, duration, pricing, and card type settings.\n"
+"                    Perfect for visitor management, membership sales, and event access control."
+msgstr ""
+"I servizi RFID definiscono pacchetti di accesso che è possibile vendere a clienti e visitatori.\n"
+"                    <br><br>\n"
+"                    Tipi di servizio:\n"
+"                    • <b>Basato sul tempo:</b> Accesso valido per periodi specifici (giornaliero, settimanale, mensile)\n"
+"                    • <b>Basato sulle visite:</b> Accesso limitato dal numero di ingressi\n"
+"                    • <b>Combinato:</b> Si applicano sia le restrizioni di tempo che di visite\n"
+"                    <br><br>\n"
+"                    Ogni servizio include impostazioni relative a permessi di accesso, durata, tariffazione e tipo di tessera.\n"
+"                    Ideale per la gestione dei visitatori, la vendita di abbonamenti e il controllo degli accessi agli eventi."
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form
+msgid "Register"
+msgstr "Registra"
+
+#. module: rfid_service_base
+#: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service_sale__state__registered
+msgid "Registered"
+msgstr "Registrato"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
+msgid "Related company"
+msgstr "Azienda correlata"
+
+#. module: rfid_service_base
+#: model:ir.model,name:rfid_service_base.model_hr_rfid_access_group_contact_rel
+msgid "Relation between access groups and contacts"
+msgstr "Relazione tra gruppi di accesso e contatti"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__visits
+msgid "Remaining Visits"
+msgstr "Visite rimanenti"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__print_template_id
+msgid ""
+"Report template used when printing physical badges/cards for customers.\n"
+"        \n"
+"• Purpose: Define the layout and content of printed badges\n"
+"• Customization: Can include logos, QR codes, access information, and design elements\n"
+"• Usage: Template is used when clicking 'Print Card' in sales process\n"
+"• Default: Uses system default foldable badge template if not specified\n"
+"        \n"
+"Customize to create professional badges that match your organization's branding."
+msgstr ""
+"Modello di report utilizzato per la stampa di badge/tessere fisiche per i clienti.\n"
+"        \n"
+"• Scopo: Definire il layout e il contenuto dei badge stampati\n"
+"• Personalizzazione: Può includere loghi, codici QR, informazioni di accesso ed elementi grafici\n"
+"• Utilizzo: Il modello viene utilizzato facendo clic su 'Stampa tessera' nel processo di vendita\n"
+"• Predefinito: Utilizza il modello di badge pieghevole predefinito del sistema, se non specificato\n"
+"        \n"
+"Personalizzare per creare badge professionali che corrispondano all'identità visiva dell'organizzazione."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_user_id
+msgid "Responsible User"
+msgstr "Utente responsabile"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_hr_rfid_access_group_contact_rel__rfid_service_sale_id
+msgid "Rfid Service Sale"
+msgstr "Vendita servizio RFID"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__message_has_sms_error
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Errore di recapito SMS"
+
+#. module: rfid_service_base
+#: model:ir.actions.act_window,name:rfid_service_base.sale_wiz_action
+msgid "Sale RFID Service"
+msgstr "Vendita servizio RFID"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__name
+msgid "Sale Reference"
+msgstr "Riferimento vendita"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
+msgid "Sale Service"
+msgstr "Servizio di vendita"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_action_search
+msgid "Sales from last week (service created)"
+msgstr "Vendite della settimana scorsa (servizio creato)"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_action_search
+msgid "Sales from last week (service start)"
+msgstr "Vendite della settimana scorsa (inizio servizio)"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_action_search
+msgid "Sales from this week (service created)"
+msgstr "Vendite di questa settimana (servizio creato)"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_action_search
+msgid "Sales from this week (service start)"
+msgstr "Vendite di questa settimana (inizio servizio)"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_action_search
+msgid "Sales from today (service created)"
+msgstr "Vendite di oggi (servizio creato)"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_action_search
+msgid "Sales from today (service start)"
+msgstr "Vendite di oggi (inizio servizio)"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
+msgid "Sales history"
+msgstr "Storico vendite"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form
+msgid "Scan card on reader . . ."
+msgstr "Scansionare la tessera sul lettore . . ."
+
+#. module: rfid_service_base
+#. odoo-python
+#: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0
+msgid "Send Badge - Compose Email"
+msgstr "Invia badge - Componi e-mail"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__service_id
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__service_id
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_action_search
+msgid "Service"
+msgstr "Servizio"
+
+#. module: rfid_service_base
+#. odoo-python
+#: code:addons/rfid_service_base/models/rfid_service_sale.py:0
+msgid "Service Calendar for %s"
+msgstr "Calendario servizio per %s"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__name
+msgid "Service Name"
+msgstr "Nome servizio"
+
+#. module: rfid_service_base
+#: model:ir.actions.act_window,name:rfid_service_base.hr_rfid_service_sale_action
+#: model:ir.ui.menu,name:rfid_service_base.service_sale_menu
+msgid "Service Sales"
+msgstr "Vendite servizio"
+
+#. module: rfid_service_base
+#: model:ir.model,name:rfid_service_base.model_rfid_service_tags
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__tag_ids
+msgid "Service Tags"
+msgstr "Tag servizio"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__service_type
+msgid "Service Type"
+msgstr "Tipo servizio"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__end_date
+msgid "Service end"
+msgstr "Fine servizio"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_calendar
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_graph
+msgid "Service sales on time"
+msgstr "Vendite servizio nel tempo"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__start_date
+msgid "Service start"
+msgstr "Inizio servizio"
+
+#. module: rfid_service_base
+#: model:ir.actions.act_window,name:rfid_service_base.hr_rfid_service_action
+#: model:ir.ui.menu,name:rfid_service_base.service_menu
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_action_search
+msgid "Services"
+msgstr "Servizi"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
+msgid "Set Cover Image"
+msgstr "Imposta immagine di copertina"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
+msgid "Settings"
+msgstr "Impostazioni"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
+msgid "Start and End time"
+msgstr "Orario di inizio e fine"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__state
+msgid "Status"
+msgstr "Stato"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"Stato basato sulle attività\n"
+"In ritardo: La data di scadenza è già passata\n"
+"Oggi: La data dell'attività è oggi\n"
+"Pianificato: Attività future."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_tags__name
+msgid "Tag Name"
+msgstr "Nome tag"
+
+#. module: rfid_service_base
+#: model:ir.model.constraint,message:rfid_service_base.constraint_rfid_service_tags_name_uniq
+msgid "Tag name already exists!"
+msgstr "Il nome del tag esiste già!"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
+msgid "Technical information"
+msgstr "Informazioni tecniche"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__access_group_contact_rel
+msgid ""
+"Technical link between customer and access group that grants permissions.\n"
+"        \n"
+"• Purpose: System record that actually grants access to doors/areas\n"
+"• Timing: Controls when access starts and ends\n"
+"• Visits: Tracks remaining visits for visit-based services\n"
+"• Automatic: Created and managed automatically by the system\n"
+"        \n"
+"This is the technical record that enables physical access for the customer."
+msgstr ""
+"Collegamento tecnico tra cliente e gruppo di accesso che assegna i permessi.\n"
+"        \n"
+"• Scopo: Record di sistema che concede effettivamente l'accesso a porte/aree\n"
+"• Tempistica: Controlla quando l'accesso inizia e termina\n"
+"• Visite: Tiene traccia delle visite rimanenti per i servizi basati sulle visite\n"
+"• Automatico: Creato e gestito automaticamente dal sistema\n"
+"        \n"
+"È il record tecnico che abilita l'accesso fisico per il cliente."
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
+msgid "Templates"
+msgstr "Modelli"
+
+#. module: rfid_service_base
+#. odoo-python
+#: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0
+msgid ""
+"The access group for this service have no any doors. Please fix it and try "
+"again!"
+msgstr ""
+"Il gruppo di accesso per questo servizio non ha porte associate. Correggere "
+"il problema e riprovare!"
+
+#. module: rfid_service_base
+#. odoo-python
+#: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0
+msgid "The card %s is already used by employee %s"
+msgstr "La tessera %s è già utilizzata dal dipendente %s"
+
+#. module: rfid_service_base
+#. odoo-python
+#: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0
+msgid "The card %s is already used by partner %s"
+msgstr "La tessera %s è già utilizzata dal partner %s"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__card_number
+msgid "The card number"
+msgstr "Il numero della tessera"
+
+#. module: rfid_service_base
+#. odoo-python
+#: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0
+msgid "The partner have valid service for this period!"
+msgstr "Il partner dispone di un servizio valido per questo periodo!"
+
+#. module: rfid_service_base
+#. odoo-python
+#: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0
+msgid "The partner have valid service for unlimited period!"
+msgstr "Il partner dispone di un servizio valido per un periodo illimitato!"
+
+#. module: rfid_service_base
+#. odoo-python
+#: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0
+msgid ""
+"The period for this sale finish in the past. Please check details again!"
+msgstr ""
+"Il periodo per questa vendita è già scaduto. Verificare nuovamente i "
+"dettagli!"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__partner_id
+msgid "The value will be generated automatic if empty!"
+msgstr "Il valore verrà generato automaticamente se lasciato vuoto!"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_action_search
+msgid "This Month (service created)"
+msgstr "Questo mese (servizio creato)"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_action_search
+msgid "This Month (service start)"
+msgstr "Questo mese (inizio servizio)"
+
+#. module: rfid_service_base
+#. odoo-python
+#: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0
+msgid "This Sale extends <a href='%s'>Sale %s</a>"
+msgstr "Questa vendita estende <a href='%s'>Vendita %s</a>"
+
+#. module: rfid_service_base
+#. odoo-python
+#: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0
+msgid "This Sale is extended by <a href='%s'>Sale %s</a>"
+msgstr "Questa vendita è estesa da <a href='%s'>Vendita %s</a>"
+
+#. module: rfid_service_base
+#: model_terms:ir.actions.act_window,help:rfid_service_base.hr_rfid_service_sale_action
+msgid ""
+"This view tracks all RFID service sales and customer access grants.\n"
+"                    <br><br>\n"
+"                    Monitor and manage:\n"
+"                    • <b>Customer access:</b> Track who has access and when it expires\n"
+"                    • <b>Service usage:</b> Monitor active, expired, and upcoming services\n"
+"                    • <b>Sales analytics:</b> Analyze service performance and customer patterns\n"
+"                    • <b>Customer communication:</b> Send badges and access information\n"
+"                    <br><br>\n"
+"                    Use the calendar view to see service periods and the pivot view for sales analysis."
+msgstr ""
+"Questa vista tiene traccia di tutte le vendite di servizi RFID e delle autorizzazioni di accesso dei clienti.\n"
+"                    <br><br>\n"
+"                    Monitorare e gestire:\n"
+"                    • <b>Accesso clienti:</b> Verifica chi ha accesso e quando scade\n"
+"                    • <b>Utilizzo servizio:</b> Monitora i servizi attivi, scaduti e futuri\n"
+"                    • <b>Analisi vendite:</b> Analizza le prestazioni del servizio e i pattern dei clienti\n"
+"                    • <b>Comunicazione clienti:</b> Invia badge e informazioni di accesso\n"
+"                    <br><br>\n"
+"                    Utilizzare la vista calendario per visualizzare i periodi di servizio e la vista pivot per l'analisi delle vendite."
+
+#. module: rfid_service_base
+#: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service__service_type__time_count
+msgid "Time and Visits based"
+msgstr "Basato su tempo e visite"
+
+#. module: rfid_service_base
+#: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service__service_type__time
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
+msgid "Time based"
+msgstr "Basato sul tempo"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__time_interval_type
+msgid ""
+"Time unit for the service duration (combined with Duration Number).\n"
+"        \n"
+"• Minutes: Very short access (meeting rooms, temporary access)\n"
+"• Hours: Short-term access (day passes, events)\n"
+"• Days: Short-term services (daily visitor passes)\n"
+"• Weeks: Medium-term access (weekly memberships)\n"
+"• Months: Long-term services (monthly subscriptions)\n"
+"        \n"
+"Choose the unit that best matches your service offering period."
+msgstr ""
+"Unità di tempo per la durata del servizio (combinata con il Numero di durata).\n"
+"        \n"
+"• Minuti: Accesso molto breve (sale riunioni, accesso temporaneo)\n"
+"• Ore: Accesso a breve termine (pass giornalieri, eventi)\n"
+"• Giorni: Servizi a breve termine (pass giornalieri per visitatori)\n"
+"• Settimane: Accesso a medio termine (abbonamenti settimanali)\n"
+"• Mesi: Servizi a lungo termine (abbonamenti mensili)\n"
+"        \n"
+"Scegliere l'unità più adatta al periodo dell'offerta di servizio."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__zone_id
+msgid "Tracking Zone"
+msgstr "Zona di monitoraggio"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__card_type
+msgid ""
+"Type of RFID card issued to customers for this service.\n"
+"        \n"
+"• Purpose: Defines the physical/technical card characteristics\n"
+"• Compatibility: Must match your RFID readers and system setup\n"
+"• Automatic: Changes to barcode type when 'Generate Barcode Cards' is enabled\n"
+"• Default: Uses system default card type if not specified\n"
+"        \n"
+"Ensure the card type is compatible with your hardware and security requirements."
+msgstr ""
+"Tipo di tessera RFID emessa ai clienti per questo servizio.\n"
+"        \n"
+"• Scopo: Definisce le caratteristiche fisiche/tecniche della tessera\n"
+"• Compatibilità: Deve corrispondere ai lettori RFID e alla configurazione del sistema\n"
+"• Automatico: Cambia al tipo codice a barre quando è abilitata l'opzione 'Genera tessere con codice a barre'\n"
+"• Predefinito: Utilizza il tipo di tessera predefinito del sistema, se non specificato\n"
+"        \n"
+"Assicurarsi che il tipo di tessera sia compatibile con i requisiti hardware e di sicurezza."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "Tipo dell'attività con eccezione nel record."
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
+msgid "Unarchive"
+msgstr "Riattiva"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__name
+msgid ""
+"Unique identifier for this service sale transaction.\n"
+"        \n"
+"• Purpose: Track and reference individual service sales\n"
+"• Generation: Automatically generated using system sequence\n"
+"• Usage: Used in customer communications, reports, and internal tracking\n"
+"• Format: Follows company's configured numbering sequence\n"
+"        \n"
+"This reference number identifies the specific sale in the system."
+msgstr ""
+"Identificatore univoco per questa transazione di vendita del servizio.\n"
+"        \n"
+"• Scopo: Tracciare e fare riferimento alle singole vendite di servizi\n"
+"• Generazione: Generato automaticamente utilizzando la sequenza del sistema\n"
+"• Utilizzo: Utilizzato nelle comunicazioni con i clienti, nei report e nel monitoraggio interno\n"
+"• Formato: Segue la sequenza di numerazione configurata dall'azienda\n"
+"        \n"
+"Questo numero di riferimento identifica la specifica vendita nel sistema."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__card_number
+msgid "Unique identifier/number of the card assigned to this service sale."
+msgstr ""
+"Identificatore/numero univoco della tessera assegnata a questa vendita di "
+"servizio."
+
+#. module: rfid_service_base
+#: model:res.groups,name:rfid_service_base.group_card_user
+msgid "User"
+msgstr "Utente"
+
+#. module: rfid_service_base
+#: model:ir.module.category,description:rfid_service_base.rfid_service_base_management
+msgid "User rights for the RFID Service Base module"
+msgstr "Diritti utente per il modulo RFID Service Base"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__name
+msgid ""
+"User-friendly name for this RFID service offering.\n"
+"        \n"
+"• Purpose: Identify the service for staff and customers\n"
+"• Examples: \"Daily Visitor Pass\", \"Monthly Gym Access\", \"Conference Badge\"\n"
+"• Usage: Displayed on service cards, reports, and customer communications\n"
+"• Best practice: Use clear, descriptive names that explain the service purpose\n"
+"        \n"
+"This name appears throughout the system and on printed badges."
+msgstr ""
+"Nome descrittivo per questa offerta di servizio RFID.\n"
+"        \n"
+"• Scopo: Identificare il servizio per il personale e i clienti\n"
+"• Esempi: \"Pass giornaliero visitatori\", \"Accesso mensile palestra\", \"Badge conferenza\"\n"
+"• Utilizzo: Visualizzato sulle schede servizio, nei report e nelle comunicazioni con i clienti\n"
+"• Best practice: Utilizzare nomi chiari e descrittivi che spieghino lo scopo del servizio\n"
+"        \n"
+"Questo nome appare in tutto il sistema e sui badge stampati."
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
+msgid "Visit based"
+msgstr "Basato sulle visite"
+
+#. module: rfid_service_base
+#: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service__service_type__count
+msgid "Visits based"
+msgstr "Basato sulle visite"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__displayed_image_id
+msgid ""
+"Visual image displayed on service cards and promotional materials.\n"
+"        \n"
+"• Purpose: Visual identification and marketing appeal\n"
+"• Display: Shown in kanban view, service cards, and customer portals\n"
+"• Format: Supports common image formats (PNG, JPG, etc.)\n"
+"• Branding: Use logos, photos, or graphics that represent the service\n"
+"        \n"
+"A good cover image helps customers quickly identify the service they need."
+msgstr ""
+"Immagine visiva visualizzata sulle schede servizio e sui materiali promozionali.\n"
+"        \n"
+"• Scopo: Identificazione visiva e appeal promozionale\n"
+"• Visualizzazione: Mostrata nella vista kanban, nelle schede servizio e nei portali clienti\n"
+"• Formato: Supporta i formati immagine più comuni (PNG, JPG, ecc.)\n"
+"• Branding: Utilizzare loghi, foto o elementi grafici che rappresentano il servizio\n"
+"        \n"
+"Una buona immagine di copertina aiuta i clienti a identificare rapidamente il servizio di cui hanno bisogno."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__website_message_ids
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__website_message_ids
+msgid "Website Messages"
+msgstr "Messaggi sito web"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__website_message_ids
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__website_message_ids
+msgid "Website communication history"
+msgstr "Cronologia comunicazioni sito web"
+
+#. module: rfid_service_base
+#: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service__time_interval_type__weeks
+msgid "Weeks"
+msgstr "Settimane"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__fixed_time
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__fixed_time
+msgid ""
+"Whether service times are fixed or can be customized per sale.\n"
+"        \n"
+"• Fixed (enabled): All sales use the same start/end times defined in service\n"
+"• Flexible (disabled): Staff can customize start/end times for each individual sale\n"
+"• Use cases: Fixed for standard services, flexible for custom bookings\n"
+"• Control: Determines if operators can modify service timing during sales\n"
+"        \n"
+"Enable for standardized services, disable for custom or event-based access."
+msgstr ""
+"Indica se gli orari del servizio sono fissi o possono essere personalizzati per ogni vendita.\n"
+"        \n"
+"• Fisso (abilitato): Tutte le vendite utilizzano gli stessi orari di inizio/fine definiti nel servizio\n"
+"• Flessibile (disabilitato): Il personale può personalizzare gli orari di inizio/fine per ogni singola vendita\n"
+"• Casi d'uso: Fisso per i servizi standard, flessibile per le prenotazioni personalizzate\n"
+"• Controllo: Determina se gli operatori possono modificare gli orari del servizio durante le vendite\n"
+"        \n"
+"Abilitare per i servizi standardizzati, disabilitare per l'accesso personalizzato o basato su eventi."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__active
+msgid ""
+"Whether this service is currently available for new sales.\n"
+"        \n"
+"• Active: Service can be sold and new customers can register\n"
+"• Inactive: Service is archived and unavailable for new sales\n"
+"• Existing sales: Continues to work for already registered customers\n"
+"• Use case: Temporarily disable services or archive old offerings\n"
+"        \n"
+"Deactivate to stop new sales while preserving existing customer access."
+msgstr ""
+"Indica se questo servizio è attualmente disponibile per nuove vendite.\n"
+"        \n"
+"• Attivo: Il servizio può essere venduto e i nuovi clienti possono registrarsi\n"
+"• Inattivo: Il servizio è archiviato e non disponibile per nuove vendite\n"
+"• Vendite esistenti: Continua a funzionare per i clienti già registrati\n"
+"• Caso d'uso: Disabilitare temporaneamente i servizi o archiviare le offerte obsolete\n"
+"        \n"
+"Disattivare per interrompere le nuove vendite preservando l'accesso dei clienti esistenti."
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form
+msgid "Will be generated"
+msgstr "Verrà generato"

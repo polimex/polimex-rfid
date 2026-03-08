@@ -1,0 +1,906 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* hr_rfid_site_manager
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-05 16:23+0000\n"
+"PO-Revision-Date: 2026-03-06 17:00\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: hr_rfid_site_manager
+#. odoo-python
+#: code:addons/hr_rfid_site_manager/models/hr_rfid_site.py:0
+msgid "%s group"
+msgstr "%s-Gruppe"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_hierarchy_view
+msgid "<i class=\"fa fa-shield text-danger ms-auto\" title=\"Arm the Group\"/>"
+msgstr ""
+"<i class=\"fa fa-shield text-danger ms-auto\" title=\"Gruppe scharf "
+"schalten\"/>"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_hierarchy_view
+msgid ""
+"<i class=\"fa fa-universal-access text-success ms-auto\" title=\"Disarm the "
+"Group\"/>"
+msgstr ""
+"<i class=\"fa fa-universal-access text-success ms-auto\" title=\"Gruppe "
+"unscharf schalten\"/>"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_controller_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_webstack_view_kanban
+msgid "<span class=\"text-muted\">Site:</span>"
+msgstr "<span class=\"text-muted\">Standort:</span>"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_access_group
+msgid "Access Group"
+msgstr "Zugangsgruppe"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__access_group_count
+msgid "Access Group Count"
+msgstr "Anzahl der Zugangsgruppen"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Access Group records"
+msgstr "Zugangsgruppen-Datensätze"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Access Groups"
+msgstr "Zugangsgruppen"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__access_group_ids
+msgid ""
+"Access control groups automatically created for this site. Groups contain "
+"all doors from this site and child sites. Assign people to these groups to "
+"grant site access."
+msgstr ""
+"Automatisch erstellte Zugangskontrollgruppen für diesen Standort. Die "
+"Gruppen enthalten alle Türen dieses Standorts und der untergeordneten "
+"Standorte. Weisen Sie diesen Gruppen Personen zu, um den Standortzugang zu "
+"gewähren."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__access_group_ids
+msgid "Access groups"
+msgstr "Zugangsgruppen"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_needaction
+msgid "Action Needed"
+msgstr "Aktion erforderlich"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__active
+msgid "Active"
+msgstr "Aktiv"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__state
+msgid "Alarm Group State"
+msgstr "Alarmgruppenstatus"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__alarm_line_group_ids
+msgid "Alarm Groups"
+msgstr "Alarmgruppen"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__alarm_line_group_count
+msgid "Alarm Line Group Count"
+msgstr "Anzahl der Alarmliniengruppen"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Alarm Line Group records"
+msgstr "Alarmliniengruppen-Datensätze"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Alarm Line Groups"
+msgstr "Alarmliniengruppen"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_ctrl_alarm_group
+msgid "Alarm system groups"
+msgstr "Alarmsystemgruppen"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__child_door_ids
+msgid ""
+"All doors from child sites, computed automatically. Used for hierarchical "
+"access control - when creating access groups, doors from child sites are "
+"included."
+msgstr ""
+"Alle Türen der untergeordneten Standorte, automatisch berechnet. Wird für "
+"die hierarchische Zugangskontrolle verwendet – bei der Erstellung von "
+"Zugangsgruppen werden Türen der untergeordneten Standorte einbezogen."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Archived"
+msgstr "Archiviert"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_attachment_count
+msgid "Attachment Count"
+msgstr "Anzahl der Anhänge"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__make_access_group
+msgid ""
+"Automatically create and maintain an access group for this site.\n"
+"        \n"
+"• When enabled: Creates an access group containing all doors in this site and child sites\n"
+"• Access control: Assign people to this group to grant access to all site doors\n"
+"• Automatic updates: Door changes automatically update the access group\n"
+"\n"
+"Useful for: Building access, department access, or hierarchical permissions."
+msgstr ""
+"Automatisch eine Zugangsgruppe für diesen Standort erstellen und pflegen.\n"
+"        \n"
+"• Bei Aktivierung: Erstellt eine Zugangsgruppe mit allen Türen dieses Standorts und der untergeordneten Standorte\n"
+"• Zugangskontrolle: Weisen Sie dieser Gruppe Personen zu, um den Zugang zu allen Standorttüren zu gewähren\n"
+"• Automatische Aktualisierungen: Türänderungen aktualisieren die Zugangsgruppe automatisch\n"
+"\n"
+"Nützlich für: Gebäudezugang, Abteilungszugang oder hierarchische Berechtigungen."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_hierarchy_view
+msgid "Available Access Group"
+msgstr "Verfügbare Zugangsgruppe"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__avatar_1920
+msgid "Avatar"
+msgstr "Avatar"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__avatar_1024
+msgid "Avatar 1024"
+msgstr "Avatar 1024"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__avatar_128
+msgid "Avatar 128"
+msgstr "Avatar 128"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__avatar_256
+msgid "Avatar 256"
+msgstr "Avatar 256"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__avatar_512
+msgid "Avatar 512"
+msgstr "Avatar 512"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_site
+msgid "Building manager site classification"
+msgstr "Standortklassifizierung für Gebäudemanager"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__child_count
+msgid "Child Count"
+msgstr "Anzahl untergeordneter Elemente"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__child_door_ids
+msgid "Child doors"
+msgstr "Untergeordnete Türen"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Child records"
+msgstr "Untergeordnete Datensätze"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__child_ids
+msgid "Child sites"
+msgstr "Untergeordnete Standorte"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__color
+msgid "Color Index"
+msgstr "Farbindex"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__color
+msgid ""
+"Color coding for visual identification in hierarchy view. Choose different "
+"colors to distinguish site types or importance levels."
+msgstr ""
+"Farbkodierung zur visuellen Identifikation in der Hierarchieansicht. Wählen "
+"Sie verschiedene Farben, um Standorttypen oder Wichtigkeitsstufen zu "
+"unterscheiden."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__company_id
+msgid "Company"
+msgstr "Unternehmen"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__company_id
+msgid ""
+"Company that owns this site. Used for multi-company access control and data "
+"separation."
+msgstr ""
+"Das Unternehmen, dem dieser Standort gehört. Wird für die "
+"mandantenübergreifende Zugangskontrolle und Datentrennung verwendet."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_res_partner
+msgid "Contact"
+msgstr "Kontakt"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_ctrl
+msgid "Controller"
+msgstr "Controller"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__controller_count
+msgid "Controller Count"
+msgstr "Anzahl der Controller"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Controller records"
+msgstr "Controller-Datensätze"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__controller_ids
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Controllers"
+msgstr "Controller"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Create Child"
+msgstr "Untergeordneten erstellen"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Create a new child site"
+msgstr "Einen neuen untergeordneten Standort anlegen"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.actions.act_window,help:hr_rfid_site_manager.hr_rfid_site_action
+msgid "Create your first site to organize your RFID infrastructure"
+msgstr ""
+"Erstellen Sie Ihren ersten Standort, um Ihre RFID-Infrastruktur zu "
+"organisieren"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__create_uid
+msgid "Created by"
+msgstr "Erstellt von"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__create_date
+msgid "Created on"
+msgstr "Erstellt am"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__state
+msgid ""
+"Current security state of alarm groups at this site. Shows whether security "
+"systems are armed or disarmed. Changes automatically when alarm state "
+"changes."
+msgstr ""
+"Aktueller Sicherheitsstatus der Alarmgruppen an diesem Standort. Zeigt an, "
+"ob die Sicherheitssysteme scharf oder unscharf geschaltet sind. Ändert sich "
+"automatisch, wenn sich der Alarmstatus ändert."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_access_group__display_name
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl__display_name
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl_alarm_group__display_name
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_door__display_name
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_event_user__display_name
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__display_name
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_webstack__display_name
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_res_partner__display_name
+msgid "Display Name"
+msgstr "Anzeigename"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_door
+msgid "Door"
+msgstr "Tür"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__door_count
+msgid "Door Count"
+msgstr "Anzahl der Türen"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Door records"
+msgstr "Tür-Datensätze"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__door_ids
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Doors"
+msgstr "Türen"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_follower_ids
+msgid "Followers"
+msgstr "Abonnenten"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Abonnenten (Partner)"
+
+#. module: hr_rfid_site_manager
+#: model:res.groups,name:hr_rfid_site_manager.group_guard
+msgid "Guard"
+msgstr "Wächter"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__has_message
+msgid "Has Message"
+msgstr "Hat Nachricht"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_access_group__id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl__id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl_alarm_group__id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_door__id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_event_user__id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_webstack__id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_res_partner__id
+msgid "ID"
+msgstr "ID"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Wenn aktiviert, erfordern neue Nachrichten Ihre Aufmerksamkeit."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__message_has_error
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+"Wenn aktiviert, weisen einige Nachrichten einen Zustellungsfehler auf."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__image_1920
+msgid "Image"
+msgstr "Bild"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__image_1024
+msgid "Image 1024"
+msgstr "Bild 1024"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__image_128
+msgid "Image 128"
+msgstr "Bild 128"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__image_256
+msgid "Image 256"
+msgstr "Bild 256"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__image_512
+msgid "Image 512"
+msgstr "Bild 512"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_is_follower
+msgid "Is Follower"
+msgstr "Ist Abonnent"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__write_uid
+msgid "Last Updated by"
+msgstr "Zuletzt aktualisiert von"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__write_date
+msgid "Last Updated on"
+msgstr "Zuletzt aktualisiert am"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__make_access_group
+msgid "Make access group"
+msgstr "Zugangsgruppe erstellen"
+
+#. module: hr_rfid_site_manager
+#: model:res.groups,name:hr_rfid_site_manager.group_
+msgid "Manager"
+msgstr "Manager"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_has_error
+msgid "Message Delivery error"
+msgstr "Nachrichtenzustellfehler"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_ids
+msgid "Messages"
+msgstr "Nachrichten"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_webstack
+msgid "Module"
+msgstr "Modul"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__webstack_count
+msgid "Module Count"
+msgstr "Anzahl der Module"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Module records"
+msgstr "Modul-Datensätze"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__webstack_ids
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Modules"
+msgstr "Module"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__name
+msgid "Name"
+msgstr "Name"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__name
+msgid ""
+"Name of the site (building, floor, room, etc.). Must be unique within the "
+"parent site."
+msgstr ""
+"Name des Standorts (Gebäude, Etage, Raum usw.). Muss innerhalb des "
+"übergeordneten Standorts eindeutig sein."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.actions.act_window,help:hr_rfid_site_manager.act_site_from_sites
+msgid "No sites found for this context"
+msgstr "Keine Standorte für diesen Kontext gefunden"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Anzahl der Aktionen"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__webstack_count
+msgid "Number of RFID communication modules (webstacks) at this site."
+msgstr "Anzahl der RFID-Kommunikationsmodule (Webstacks) an diesem Standort."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__controller_count
+msgid "Number of RFID controllers at this site."
+msgstr "Anzahl der RFID-Controller an diesem Standort."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__access_group_count
+msgid "Number of access control groups created for this site."
+msgstr "Anzahl der für diesen Standort erstellten Zugangskontrollgruppen."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__child_count
+msgid "Number of child sites under this site in the hierarchy."
+msgstr ""
+"Anzahl der diesem Standort in der Hierarchie untergeordneten Standorte."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__door_count
+msgid "Number of doors and access points at this site."
+msgstr "Anzahl der Türen und Zugangspunkte an diesem Standort."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_has_error_counter
+msgid "Number of errors"
+msgstr "Anzahl der Fehler"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Anzahl der Nachrichten, die eine Aktion erfordern"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Anzahl der Nachrichten mit Zustellungsfehler"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__alarm_line_group_count
+msgid "Number of security alarm groups configured for this site."
+msgstr ""
+"Anzahl der für diesen Standort konfigurierten Sicherheitsalarmgruppen."
+
+#. module: hr_rfid_site_manager
+#: model:res.groups,name:hr_rfid_site_manager.group_own_sites
+msgid "Own Sites"
+msgstr "Eigene Standorte"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__parent_path
+msgid "Parent Path"
+msgstr "Übergeordneter Pfad"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__parent_id
+msgid "Parent site"
+msgstr "Übergeordneter Standort"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__parent_id
+msgid ""
+"Parent site in the hierarchy. For example: Building > Floor > Room. Leave "
+"empty for top-level sites. Prevents deletion if child sites exist."
+msgstr ""
+"Übergeordneter Standort in der Hierarchie. Beispiel: Gebäude > Etage > Raum."
+" Für Standorte der obersten Ebene leer lassen. Verhindert das Löschen, wenn "
+"untergeordnete Standorte vorhanden sind."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__door_ids
+msgid ""
+"Physical doors and access points at this site. Each door can have entry and "
+"exit readers for tracking person movement and access control."
+msgstr ""
+"Physische Türen und Zugangspunkte an diesem Standort. Jede Tür kann über "
+"Ein- und Ausgangsleser zur Verfolgung von Personenbewegungen und zur "
+"Zugangskontrolle verfügen."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_webstack__site_id
+msgid ""
+"Physical site where this communication module (webstack) is installed. Used "
+"for organizing network infrastructure and site-based management."
+msgstr ""
+"Physischer Standort, an dem dieses Kommunikationsmodul (Webstack) "
+"installiert ist. Wird zur Organisation der Netzwerkinfrastruktur und "
+"standortbasiertem Management verwendet."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_ctrl__site_id
+msgid ""
+"Physical site where this controller is installed. Used for organizing "
+"controllers by location and for site-based access control and reporting."
+msgstr ""
+"Physischer Standort, an dem dieser Controller installiert ist. Wird zur "
+"standortbezogenen Organisation von Controllern sowie zur standortbasierten "
+"Zugangskontrolle und Berichterstattung verwendet."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_door__site_id
+msgid ""
+"Physical site where this door is located. Doors are automatically included "
+"in site access groups and used for hierarchical access control."
+msgstr ""
+"Physischer Standort, an dem sich diese Tür befindet. Türen werden "
+"automatisch in Standort-Zugangsgruppen aufgenommen und für die hierarchische"
+" Zugangskontrolle verwendet."
+
+#. module: hr_rfid_site_manager
+#: model:ir.module.category,name:hr_rfid_site_manager.hr_rfid_site_category
+msgid "RFID Site"
+msgstr "RFID-Standort"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_event_user
+msgid "RFID User Event"
+msgstr "RFID-Benutzerereignis"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__webstack_ids
+msgid ""
+"RFID communication modules (webstacks) installed at this site. Each module "
+"can manage multiple controllers and provides network connectivity."
+msgstr ""
+"An diesem Standort installierte RFID-Kommunikationsmodule (Webstacks). Jedes"
+" Modul kann mehrere Controller verwalten und stellt Netzwerkkonnektivität "
+"bereit."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__controller_ids
+msgid ""
+"RFID controllers located at this site. Controllers manage individual doors "
+"and readers, handling access control decisions and event logging."
+msgstr ""
+"An diesem Standort befindliche RFID-Controller. Controller verwalten "
+"einzelne Türen und Leser und übernehmen Zugangskontrollentscheidungen sowie "
+"die Ereignisprotokollierung."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Root Sites"
+msgstr "Stammstandorte"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "SMS-Zustellfehler"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__alarm_line_group_ids
+msgid ""
+"Security alarm groups configured for this site. Used for arming/disarming "
+"security systems and managing intrusion detection across the site."
+msgstr ""
+"Für diesen Standort konfigurierte Sicherheitsalarmgruppen. Werden zum "
+"Scharf- und Unschärfschalten von Sicherheitssystemen sowie zur Verwaltung "
+"der Einbrucherkennung am gesamten Standort verwendet."
+
+#. module: hr_rfid_site_manager
+#. odoo-javascript
+#: code:addons/hr_rfid_site_manager/static/src/components/site_chart/site_chart.xml:0
+msgid "Show doors"
+msgstr "Türen anzeigen"
+
+#. module: hr_rfid_site_manager
+#: model:ir.actions.act_window,name:hr_rfid_site_manager.act_site_from_sites
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_access_group__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl_alarm_group__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_door__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_event_user__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_webstack__site_id
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Site"
+msgstr "Standort"
+
+#. module: hr_rfid_site_manager
+#: model:res.groups.privilege,name:hr_rfid_site_manager.res_groups_privilege_site
+msgid "Site Management"
+msgstr "Standortverwaltung"
+
+#. module: hr_rfid_site_manager
+#: model:ir.actions.act_window,name:hr_rfid_site_manager.hr_rfid_site_action
+#: model:ir.ui.menu,name:hr_rfid_site_manager.hr_rfid_menu_site_manager
+msgid "Site Manager"
+msgstr "Standortverwalter"
+
+#. module: hr_rfid_site_manager
+#. odoo-javascript
+#: code:addons/hr_rfid_site_manager/static/src/components/site_chart/site_chart.xml:0
+msgid "Site Organization"
+msgstr "Standortorganisation"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Site manager"
+msgstr "Standortverwalter"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_access_group__site_id
+msgid ""
+"Site that owns this access group. The group automatically includes all doors"
+" from this site and its child sites. Deleted when the site is deleted."
+msgstr ""
+"Standort, dem diese Zugangsgruppe zugehört. Die Gruppe enthält automatisch "
+"alle Türen dieses Standorts und seiner untergeordneten Standorte. Wird "
+"gelöscht, wenn der Standort gelöscht wird."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_event_user__site_id
+msgid ""
+"Site where this RFID event occurred, computed automatically from the door, controller, or webstack location.\n"
+"\n"
+"• Source: Determined from door location, controller site, or webstack site\n"
+"• Purpose: Enables site-based filtering and reporting of access events\n"
+"• Usage: Track activity by location, generate site-specific reports\n"
+"\n"
+"This field helps analyze access patterns and security events by physical location."
+msgstr ""
+"Standort, an dem dieses RFID-Ereignis aufgetreten ist, wird automatisch aus dem Tür-, Controller- oder Webstack-Standort berechnet.\n"
+"\n"
+"• Quelle: Wird aus dem Türstandort, dem Controller-Standort oder dem Webstack-Standort ermittelt\n"
+"• Zweck: Ermöglicht standortbasierte Filterung und Auswertung von Zugangsereignissen\n"
+"• Verwendung: Aktivitäten nach Standort verfolgen, standortspezifische Berichte erstellen\n"
+"\n"
+"Dieses Feld hilft dabei, Zugriffsmuster und Sicherheitsereignisse nach physischem Standort zu analysieren."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_ctrl_alarm_group__site_id
+msgid ""
+"Site where this alarm group is active. Used for organizing security systems "
+"by location and enabling site-wide alarm control operations."
+msgstr ""
+"Standort, an dem diese Alarmgruppe aktiv ist. Wird zur standortbezogenen "
+"Organisation von Sicherheitssystemen und zur Steuerung standortweiter "
+"Alarmfunktionen verwendet."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_res_partner__site_ids
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_res_users__site_ids
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_view_partner_form_inherit_rfid_site
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Sites"
+msgstr "Standorte"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.actions.act_window,help:hr_rfid_site_manager.hr_rfid_site_action
+msgid ""
+"Sites represent physical locations in your organization's hierarchy.\n"
+"                    <br><br>\n"
+"                    Key features:\n"
+"                    • <b>Hierarchy:</b> Create building &gt; floor &gt; room structures\n"
+"                    • <b>Auto Access Groups:</b> Generate access groups containing all site doors\n"
+"                    • <b>Equipment Organization:</b> Group doors, controllers, and modules by location\n"
+"                    • <b>Centralized Control:</b> Manage alarms and access permissions per site\n"
+"                    <br><br>\n"
+"                    <b>Examples:</b> \"Main Building\", \"Parking Garage\", \"Research Lab\", \"Executive Floor\""
+msgstr ""
+"Standorte repräsentieren physische Orte in der Hierarchie Ihrer Organisation.\n"
+"                    <br><br>\n"
+"                    Hauptfunktionen:\n"
+"                    • <b>Hierarchie:</b> Gebäude &gt; Etage &gt; Raum-Strukturen erstellen\n"
+"                    • <b>Automatische Zugangsgruppen:</b> Zugangsgruppen mit allen Standorttüren generieren\n"
+"                    • <b>Geräteverwaltung:</b> Türen, Controller und Module nach Standort gruppieren\n"
+"                    • <b>Zentrale Steuerung:</b> Alarme und Zugriffsberechtigungen je Standort verwalten\n"
+"                    <br><br>\n"
+"                    <b>Beispiele:</b> \"Hauptgebäude\", \"Parkhaus\", \"Forschungslabor\", \"Führungsetage\""
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__child_ids
+msgid ""
+"Sites that are hierarchically below this site. For example: floors within a "
+"building, or rooms within a floor. Child sites inherit access permissions "
+"when using access groups."
+msgstr ""
+"Standorte, die diesem Standort hierarchisch untergeordnet sind. Beispiel: "
+"Etagen innerhalb eines Gebäudes oder Räume innerhalb einer Etage. "
+"Untergeordnete Standorte erben Zugriffsberechtigungen bei Verwendung von "
+"Zugangsgruppen."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_res_partner__site_ids
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_res_users__site_ids
+msgid ""
+"Sites where this person has access or is responsible for.\n"
+"        \n"
+"• For employees: Sites where they work or have access\n"
+"• For visitors: Sites they are permitted to visit\n"
+"• For companies: Sites they manage or have contracts with\n"
+"\n"
+"This affects which access groups are available for assignment."
+msgstr ""
+"Standorte, auf die diese Person Zugang hat oder für die sie verantwortlich ist.\n"
+"        \n"
+"• Für Mitarbeiter: Standorte, an denen sie arbeiten oder Zugang haben\n"
+"• Für Besucher: Standorte, die sie besuchen dürfen\n"
+"• Für Unternehmen: Standorte, die sie verwalten oder mit denen sie Verträge haben\n"
+"\n"
+"Dies beeinflusst, welche Zugangsgruppen zur Zuweisung verfügbar sind."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Sites with controllers"
+msgstr "Standorte mit Controllern"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Sites with doors"
+msgstr "Standorte mit Türen"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Sites with modules"
+msgstr "Standorte mit Modulen"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.constraint,message:hr_rfid_site_manager.constraint_hr_rfid_site_unique_name
+msgid "The site name must be unique."
+msgstr "Der Standortname muss eindeutig sein."
+
+#. module: hr_rfid_site_manager
+#: model:res.groups,comment:hr_rfid_site_manager.group_
+msgid "The user have full rights for Site Managment"
+msgstr ""
+"Der Benutzer verfügt über vollständige Rechte für die Standortverwaltung."
+
+#. module: hr_rfid_site_manager
+#: model:res.groups,comment:hr_rfid_site_manager.group_own_sites
+msgid "The user will be able to manage cards without hardware setup"
+msgstr "Der Benutzer kann Karten ohne Hardware-Einrichtung verwalten."
+
+#. module: hr_rfid_site_manager
+#: model:res.groups,comment:hr_rfid_site_manager.group_guard
+msgid "The user will be able to see User Events."
+msgstr "Der Benutzer kann Benutzerereignisse einsehen."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.actions.act_window,help:hr_rfid_site_manager.act_site_from_sites
+msgid ""
+"This view shows sites filtered by the selected context.\n"
+"                    <br><br>\n"
+"                    Use the search panel and filters to:\n"
+"                    • Find sites by parent location\n"
+"                    • Filter by equipment type (doors, controllers, modules)\n"
+"                    • View hierarchical organization\n"
+"                    • Access site-specific management tools"
+msgstr ""
+"Diese Ansicht zeigt Standorte gefiltert nach dem ausgewählten Kontext.\n"
+"                    <br><br>\n"
+"                    Verwenden Sie das Suchfeld und die Filter, um:\n"
+"                    • Standorte nach übergeordnetem Ort zu finden\n"
+"                    • Nach Gerätetyp zu filtern (Türen, Controller, Module)\n"
+"                    • Die hierarchische Organisation anzuzeigen\n"
+"                    • Standortspezifische Verwaltungstools aufzurufen"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__active
+msgid ""
+"Uncheck to archive this site. Archived sites are hidden from most views but "
+"preserve historical data."
+msgstr ""
+"Deaktivieren Sie diese Option, um den Standort zu archivieren. Archivierte "
+"Standorte werden in den meisten Ansichten ausgeblendet, die historischen "
+"Daten bleiben jedoch erhalten."
+
+#. module: hr_rfid_site_manager
+#: model:ir.module.category,description:hr_rfid_site_manager.hr_rfid_site_category
+msgid "User rights for the RFID Site module"
+msgstr "Benutzerrechte für das RFID-Standortmodul"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__website_message_ids
+msgid "Website Messages"
+msgstr "Website-Nachrichten"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__website_message_ids
+msgid "Website communication history"
+msgstr "Website-Kommunikationsverlauf"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.constraint,message:hr_rfid_site_manager.constraint_hr_rfid_site_no_loop
+msgid "You cannot create a loop in the site hierarchy."
+msgstr "Sie können keine Schleife in der Standorthierarchie erstellen."
+
+#. module: hr_rfid_site_manager
+#. odoo-python
+#: code:addons/hr_rfid_site_manager/models/hr_rfid_access_group.py:0
+msgid "You cannot delete an access group that is linked to a site."
+msgstr ""
+"Sie können eine Zugangsgruppe, die mit einem Standort verknüpft ist, nicht "
+"löschen."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Your site Name"
+msgstr "Ihr Standortname"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_controller_view_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.webstack_view_search_inherit
+msgid "by Site"
+msgstr "Nach Standort"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_tree
+msgid "hr_rfid_site_tree"
+msgstr ""

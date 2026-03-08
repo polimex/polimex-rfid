@@ -1,0 +1,508 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* hr_rfid_andromeda_import
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-06-04 16:25+0000\n"
+"PO-Revision-Date: 2026-03-08 12:10\n"
+"Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
+"Language-Team: \n"
+"Language: el\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.6\n"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_welcome_wizard_form
+msgid "192.168.10.10"
+msgstr "192.168.10.10"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
+msgid "< Go Back"
+msgstr "< Πίσω"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__ag_dict
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__ag_dict
+msgid "Ag Dict"
+msgstr "Λεξικό Ag"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.actions.act_window,name:hr_rfid_andromeda_import.andromeda_import_wizard_action
+#: model:ir.actions.act_window,name:hr_rfid_andromeda_import.andromeda_welcome_wizard_action
+msgid "Andromeda Data Import"
+msgstr "Εισαγωγή Δεδομένων Andromeda"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.ui.menu,name:hr_rfid_andromeda_import.andromeda_welcome_wizard_menu
+msgid "Andromeda Import"
+msgstr "Εισαγωγή Andromeda"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model,name:hr_rfid_andromeda_import.model_hr_rfid_andromeda_import_users
+msgid "Andromeda Import Users"
+msgstr "Εισαγωγή Χρηστών Andromeda"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model,name:hr_rfid_andromeda_import.model_hr_rfid_andromeda_welcome_wiz
+msgid "Andromeda Import Welcome"
+msgstr "Καλωσόρισμα Εισαγωγής Andromeda"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
+msgid "Are you sure to start import of ALL EXISTING RECORDS?"
+msgstr ""
+"Είστε βέβαιοι ότι θέλετε να ξεκινήσετε την εισαγωγή ΟΛΩΝ ΤΩΝ ΥΠΑΡΧΟΝΤΩΝ "
+"ΕΓΓΡΑΦΩΝ;"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_welcome_wizard_form
+msgid "C:\\Program Files (x86)\\Polimex\\Andromeda\\Database\\Andromeda.fdb"
+msgstr "C:\\Program Files (x86)\\Polimex\\Andromeda\\Database\\Andromeda.fdb"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_welcome_wizard_form
+msgid "Cancel"
+msgstr "Ακύρωση"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_welcome_wizard_form
+msgid "Check Connection & continue"
+msgstr "Έλεγχος Σύνδεσης & Συνέχεια"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__import_as
+msgid ""
+"Choose how to import this user into Odoo.\n"
+"        \n"
+"        • Contact: Creates a contact/partner record\n"
+"        • Employee: Creates an employee record with HR functionality\n"
+"        • Default: Set by the wizard's global import type\n"
+"        \n"
+"        Note: Employee import includes HR features like attendance and access groups."
+msgstr ""
+"Επιλέξτε τον τρόπο εισαγωγής αυτού του χρήστη στο Odoo.\n"
+"        \n"
+"        • Επαφή: Δημιουργεί μια εγγραφή επαφής/συνεργάτη\n"
+"        • Υπάλληλος: Δημιουργεί μια εγγραφή υπαλλήλου με λειτουργικότητα HR\n"
+"        • Προεπιλογή: Ορίζεται από τον καθολικό τύπο εισαγωγής του οδηγού\n"
+"        \n"
+"        Σημείωση: Η εισαγωγή υπαλλήλου περιλαμβάνει λειτουργίες HR όπως παρουσία και ομάδες πρόσβασης."
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__company_dict
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__company_dict
+msgid "Company Dict"
+msgstr "Λεξικό Εταιρείας"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__c_id
+msgid "Company ID"
+msgstr "Αναγνωριστικό Εταιρείας"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__company_list
+msgid "Company List"
+msgstr "Λίστα Εταιρειών"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__c_name
+msgid "Company Name"
+msgstr "Επωνυμία Εταιρείας"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__connection_checked
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__connection_checked
+msgid "Connection Checked"
+msgstr "Η Σύνδεση Ελέγχθηκε"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields.selection,name:hr_rfid_andromeda_import.selection__hr_rfid_andromeda_import_users__import_as__contact
+msgid "Contact"
+msgstr "Επαφή"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields.selection,name:hr_rfid_andromeda_import.selection__hr_rfid_andromeda_import_wiz__default_import_as__contact
+#: model:ir.model.fields.selection,name:hr_rfid_andromeda_import.selection__hr_rfid_andromeda_import_wiz__import_as__contact
+#: model:ir.model.fields.selection,name:hr_rfid_andromeda_import.selection__hr_rfid_andromeda_welcome_wiz__default_import_as__contact
+msgid "Contacts"
+msgstr "Επαφές"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__create_uid
+msgid "Created by"
+msgstr "Δημιουργήθηκε από"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__create_date
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__create_date
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__create_date
+msgid "Created on"
+msgstr "Δημιουργήθηκε στις"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__database_path
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__database_path
+msgid "Database Path"
+msgstr "Διαδρομή Βάσης Δεδομένων"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__default_company
+msgid "Default Company"
+msgstr "Προεπιλεγμένη Εταιρεία"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__default_department
+msgid "Default Department"
+msgstr "Προεπιλεγμένο Τμήμα"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__default_import_as
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__default_import_as
+msgid "Default Import As"
+msgstr "Προεπιλεγμένη Εισαγωγή ως"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__d_id
+msgid "Department ID"
+msgstr "Αναγνωριστικό Τμήματος"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__d_name
+msgid "Department Name"
+msgstr "Όνομα Τμήματος"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__display_name
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__display_name
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__display_name
+msgid "Display Name"
+msgstr "Εμφανιζόμενο Όνομα"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields.selection,name:hr_rfid_andromeda_import.selection__hr_rfid_andromeda_import_users__import_as__employee
+msgid "Employee"
+msgstr "Υπάλληλος"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields.selection,name:hr_rfid_andromeda_import.selection__hr_rfid_andromeda_import_wiz__default_import_as__employee
+#: model:ir.model.fields.selection,name:hr_rfid_andromeda_import.selection__hr_rfid_andromeda_import_wiz__import_as__employee
+#: model:ir.model.fields.selection,name:hr_rfid_andromeda_import.selection__hr_rfid_andromeda_welcome_wiz__default_import_as__employee
+msgid "Employees"
+msgstr "Υπάλληλοι"
+
+#. module: hr_rfid_andromeda_import
+#. odoo-python
+#: code:addons/hr_rfid_andromeda_import/models/import_wizard.py:0
+msgid "Existing doors in Andromeda: %s"
+msgstr "Υπάρχουσες πόρτες στο Andromeda: %s"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_fname
+msgid "First Name"
+msgstr "Όνομα"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
+msgid "For Contacts only"
+msgstr "Μόνο για Επαφές"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
+msgid "For Employees only"
+msgstr "Μόνο για Υπαλλήλους"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__force_default_company
+msgid "Force Default Company"
+msgstr "Επιβολή Προεπιλεγμένης Εταιρείας"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__force_default_department
+msgid "Force Default Department"
+msgstr "Επιβολή Προεπιλεγμένου Τμήματος"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__force_default_company
+msgid "Force use only this company for selected import"
+msgstr "Επιβολή χρήσης μόνο αυτής της εταιρείας για την επιλεγμένη εισαγωγή"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__force_default_department
+msgid "Force use only this department for selected import"
+msgstr "Επιβολή χρήσης μόνο αυτού του τμήματος για την επιλεγμένη εισαγωγή"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_welcome_wizard_form
+msgid ""
+"From here you can import all important data from existing Andromeda Access control\n"
+"                                    system.\n"
+"                                    To do it you have to provide the IP address and Database path of the system"
+msgstr ""
+"Από εδώ μπορείτε να εισαγάγετε όλα τα σημαντικά δεδομένα από το υπάρχον σύστημα ελέγχου\n"
+"                                    πρόσβασης Andromeda.\n"
+"                                    Για να το πράξετε, πρέπει να παράσχετε τη διεύθυνση IP και τη διαδρομή Βάσης Δεδομένων του συστήματος"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__id
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__id
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__id
+msgid "ID"
+msgstr "ID"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__ip_address
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__ip_address
+msgid "IP address"
+msgstr "Διεύθυνση IP"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model,name:hr_rfid_andromeda_import.model_hr_rfid_andromeda_import_wiz
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__import_id
+msgid "Import"
+msgstr "Εισαγωγή"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__import_access_groups
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__import_access_groups
+msgid "Import Access Groups"
+msgstr "Εισαγωγή Ομάδων Ελέγχου Πρόσβασης"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__import_as
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__import_as
+msgid "Import As"
+msgstr "Εισαγωγή ως"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
+msgid "Import Selected"
+msgstr "Εισαγωγή Επιλεγμένων"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__do_import
+msgid "Import This User"
+msgstr "Εισαγωγή Αυτού του Χρήστη"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__import_users
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__import_users
+msgid "Import Users"
+msgstr "Εισαγωγή Χρηστών"
+
+#. module: hr_rfid_andromeda_import
+#. odoo-python
+#: code:addons/hr_rfid_andromeda_import/models/import_wizard.py:0
+msgid "Imported %d Access groups from Andromeda. "
+msgstr "Εισήχθησαν %d Ομάδες Ελέγχου Πρόσβασης από το Andromeda. "
+
+#. module: hr_rfid_andromeda_import
+#. odoo-python
+#: code:addons/hr_rfid_andromeda_import/models/import_wizard.py:0
+msgid "Imported %d from %d users from Andromeda. "
+msgstr "Εισήχθησαν %d από %d χρήστες από το Andromeda. "
+
+#. module: hr_rfid_andromeda_import
+#. odoo-python
+#: code:addons/hr_rfid_andromeda_import/models/import_wizard.py:0
+msgid "Imported from Andromeda Access Control System"
+msgstr "Εισήχθη από το Σύστημα Ελέγχου Πρόσβασης Andromeda"
+
+#. module: hr_rfid_andromeda_import
+#. odoo-python
+#: code:addons/hr_rfid_andromeda_import/models/import_wizard.py:0
+msgid ""
+"Imported from Andromeda Access Control System \n"
+"Data from Andromeda: ToDo"
+msgstr ""
+"Εισήχθη από το Σύστημα Ελέγχου Πρόσβασης Andromeda \n"
+"Δεδομένα από το Andromeda: ToDo"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_id
+msgid "Internal ID"
+msgstr "Εσωτερικό ID"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_lname
+msgid "Last Name"
+msgstr "Επώνυμο"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__write_uid
+msgid "Last Updated by"
+msgstr "Τελευταία Ενημέρωση από"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__write_date
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__write_date
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__write_date
+msgid "Last Updated on"
+msgstr "Τελευταία Ενημέρωση στις"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
+msgid "Operations"
+msgstr "Λειτουργίες"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_sname
+msgid "Second Name"
+msgstr "Δεύτερο Όνομα"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__select_all
+msgid "Select All"
+msgstr "Επιλογή Όλων"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__do_import
+msgid ""
+"Select whether to import this specific user.\n"
+"        \n"
+"        • When enabled: User will be included in the import process\n"
+"        • When disabled: User will be skipped during import\n"
+"        • Bulk control: Use 'Select All' to toggle all users at once\n"
+"        \n"
+"        Note: Only selected users will be imported from the Andromeda database."
+msgstr ""
+"Επιλέξτε εάν θα εισαχθεί αυτός ο συγκεκριμένος χρήστης.\n"
+"        \n"
+"        • Όταν είναι ενεργό: Ο χρήστης θα συμπεριληφθεί στη διαδικασία εισαγωγής\n"
+"        • Όταν είναι ανενεργό: Ο χρήστης θα παραλειφθεί κατά την εισαγωγή\n"
+"        • Μαζικός έλεγχος: Χρησιμοποιήστε το 'Επιλογή Όλων' για εναλλαγή όλων των χρηστών ταυτόχρονα\n"
+"        \n"
+"        Σημείωση: Μόνο οι επιλεγμένοι χρήστες θα εισαχθούν από τη Βάση Δεδομένων Andromeda."
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
+msgid "Start Full Import"
+msgstr "Έναρξη Πλήρους Εισαγωγής"
+
+#. module: hr_rfid_andromeda_import
+#. odoo-python
+#: code:addons/hr_rfid_andromeda_import/models/import_wizard.py:0
+msgid ""
+"Tag have no employee or contact. Something is wrong with data. Check the log"
+msgstr ""
+"Η ετικέτα δεν έχει υπάλληλο ή επαφή. Κάτι δεν πάει καλά με τα δεδομένα. "
+"Ελέγξτε το αρχείο καταγραφής"
+
+#. module: hr_rfid_andromeda_import
+#. odoo-python
+#: code:addons/hr_rfid_andromeda_import/models/import_wizard.py:0
+msgid "The process finish successful! "
+msgstr "Η διαδικασία ολοκληρώθηκε επιτυχώς! "
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_id
+msgid ""
+"Unique user identifier from Andromeda system.\n"
+"        \n"
+"        • Source: Andromeda database user ID\n"
+"        • Purpose: Links imported records back to original system\n"
+"        • Reference: Used for avoiding duplicate imports\n"
+"        \n"
+"        Note: This ID is used to track which users have already been imported."
+msgstr ""
+"Μοναδικό αναγνωριστικό χρήστη από το σύστημα Andromeda.\n"
+"        \n"
+"        • Πηγή: Αναγνωριστικό χρήστη βάσης δεδομένων Andromeda\n"
+"        • Σκοπός: Συνδέει τις εισαχθείσες εγγραφές με το αρχικό σύστημα\n"
+"        • Αναφορά: Χρησιμοποιείται για την αποφυγή διπλών εισαγωγών\n"
+"        \n"
+"        Σημείωση: Αυτό το ID χρησιμοποιείται για την παρακολούθηση των χρηστών που έχουν ήδη εισαχθεί."
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__default_company
+msgid "Use this company if Contact have no Company and Department"
+msgstr ""
+"Χρησιμοποιήστε αυτήν την εταιρεία εάν η Επαφή δεν έχει Εταιρεία και Τμήμα"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__default_department
+msgid "Use this department if Employee have no Company and Department"
+msgstr ""
+"Χρησιμοποιήστε αυτό το τμήμα εάν ο Υπάλληλος δεν έχει Εταιρεία και Τμήμα"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_code
+msgid "User Code"
+msgstr "Κωδικός Χρήστη"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_code
+msgid ""
+"User identification code from Andromeda system.\n"
+"        \n"
+"        • Usage: Employee badge number or identification code\n"
+"        • Import: Becomes employee identification_id or card reference\n"
+"        • Format: Alphanumeric code unique per user\n"
+"        \n"
+"        Note: This code often matches physical RFID card numbers."
+msgstr ""
+"Κωδικός αναγνώρισης χρήστη από το σύστημα Andromeda.\n"
+"        \n"
+"        • Χρήση: Αριθμός κάρτας ή κωδικός αναγνώρισης υπαλλήλου\n"
+"        • Εισαγωγή: Γίνεται identification_id υπαλλήλου ή αναφορά κάρτας\n"
+"        • Μορφή: Αλφαριθμητικός κωδικός μοναδικός ανά χρήστη\n"
+"        \n"
+"        Σημείωση: Αυτός ο κωδικός συχνά αντιστοιχεί σε φυσικούς αριθμούς κάρτας RFID."
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_name
+msgid "Username"
+msgstr "Όνομα Χρήστη"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_name
+msgid ""
+"Username from Andromeda access control system.\n"
+"        \n"
+"        • Login: Original login name in Andromeda\n"
+"        • Reference: Used for cross-system identification\n"
+"        • Display: Shown for administrator reference\n"
+"        \n"
+"        Note: May differ from the person's actual name - often a login identifier."
+msgstr ""
+"Όνομα χρήστη από το σύστημα ελέγχου πρόσβασης Andromeda.\n"
+"        \n"
+"        • Σύνδεση: Αρχικό όνομα σύνδεσης στο Andromeda\n"
+"        • Αναφορά: Χρησιμοποιείται για αναγνώριση μεταξύ συστημάτων\n"
+"        • Εμφάνιση: Εμφανίζεται για αναφορά διαχειριστή\n"
+"        \n"
+"        Σημείωση: Ενδέχεται να διαφέρει από το πραγματικό όνομα του ατόμου — συχνά αποτελεί αναγνωριστικό σύνδεσης."
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__users_ids
+msgid "Users"
+msgstr "Χρήστες"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__users_count
+#: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__users_count
+msgid "Users Count"
+msgstr "Αριθμός Χρηστών"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_welcome_wizard_form
+msgid "Welcome to Andromeda Import"
+msgstr "Καλωσορίσατε στην Εισαγωγή Andromeda"
+
+#. module: hr_rfid_andromeda_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_welcome_wizard_form
+msgid "Welcome to Andromeda Import Wizard"
+msgstr "Καλωσορίσατε στον Οδηγό Εισαγωγής Andromeda"

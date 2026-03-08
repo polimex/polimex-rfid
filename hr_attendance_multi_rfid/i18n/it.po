@@ -1,0 +1,482 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* hr_attendance_multi_rfid
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-05 16:23+0000\n"
+"PO-Revision-Date: 2026-03-06 17:18\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.rfid_hr_employee_view_search
+msgid "Absent Employees"
+msgstr "Dipendenti assenti"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model,name:hr_attendance_multi_rfid.model_hr_attendance
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_event_user__in_or_out
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__attendance
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_calendar_view
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_rfid_user_ev_view_search_inherit_hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_rfid_view_zone_form_inherit_hr_attendance_multi_rfid
+msgid "Attendance"
+msgstr "Presenza"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_rfid_view_user_ev_form_inherit_hr_attendance_multi_rfid
+msgid "Attendance data"
+msgstr "Dati presenze"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_view_filter_inherit
+msgid "Attendance for today"
+msgstr "Presenze di oggi"
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/hr_rfid_event_user.py:0
+msgid "Attendance for {}"
+msgstr "Presenze per {}"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_rfid_view_zone_form_inherit_hr_attendance_multi_rfid
+msgid "Attendance options"
+msgstr "Opzioni presenze"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__auto_close_time_for_zone
+msgid "Auto-close Worked Hours"
+msgstr "Chiusura automatica ore lavorate"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_zone__delete_attendance_if_late_more_than
+msgid ""
+"Automatically delete attendance records if the employee is late by more than"
+" this many hours. This helps maintain data quality by removing likely "
+"erroneous entries. Set to 0 to disable this feature. Example: Set to 4 to "
+"delete attendance if someone is more than 4 hours late."
+msgstr ""
+"Elimina automaticamente le registrazioni di presenza se il dipendente è in "
+"ritardo di più del numero di ore indicato. Questo contribuisce a mantenere "
+"la qualità dei dati rimuovendo le voci probabilmente errate. Impostare a 0 "
+"per disabilitare questa funzione. Esempio: impostare a 4 per eliminare la "
+"presenza se qualcuno è in ritardo di più di 4 ore."
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.view_hr_attendance_records_recompute_wizard
+msgid "Cancel"
+msgstr "Annulla"
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/hr_employee.py:0
+msgid ""
+"Cannot perform check out on %(empl_name)s, could not find corresponding "
+"check in. Your attendances have probably been modified manually by human "
+"resources."
+msgstr ""
+"Impossibile eseguire la timbratura uscita per %(empl_name)s: impossibile "
+"trovare la corrispondente timbratura entrata. Le presenze sono state "
+"probabilmente modificate manualmente dalle risorse umane."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__check_in
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__in_or_out__in
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_vending_event__in_or_out__in
+msgid "Check In"
+msgstr "Ingresso"
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/hr_rfid_zone.py:0
+msgid "Check In's {}"
+msgstr "Timbrature entrata {}"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__check_out
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__in_or_out__out
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_vending_event__in_or_out__out
+msgid "Check Out"
+msgstr "Uscita"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance__check_in
+msgid ""
+"Date and time when the employee checked in to work. This is automatically "
+"recorded when entering an RFID attendance zone or can be manually set by HR "
+"managers."
+msgstr ""
+"Data e ora in cui il dipendente ha effettuato la timbratura entrata. Viene "
+"registrata automaticamente all'ingresso in una zona presenze RFID oppure può"
+" essere impostata manualmente dai responsabili HR."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance__check_out
+msgid ""
+"Date and time when the employee checked out from work. This is automatically"
+" recorded when leaving an RFID attendance zone or can be manually set by HR "
+"managers."
+msgstr ""
+"Data e ora in cui il dipendente ha effettuato la timbratura uscita. Viene "
+"registrata automaticamente all'uscita da una zona presenze RFID oppure può "
+"essere impostata manualmente dai responsabili HR."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__delete_attendance_if_late_more_than
+msgid "Delete if Late More Than (Hours)"
+msgstr "Elimina se in ritardo di più di (ore)"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__department_id
+msgid "Department"
+msgstr "Ufficio"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_view_filter_inherit
+msgid "Departments"
+msgstr "Reparti"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__display_name
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__display_name
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_employee__display_name
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_event_user__display_name
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__display_name
+msgid "Display Name"
+msgstr "Nome visualizzato"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_rfid_view_user_ev_form_inherit_hr_attendance_multi_rfid
+msgid "Emlpoyee's Attendance"
+msgstr "Presenze del dipendente"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model,name:hr_attendance_multi_rfid.model_hr_employee
+msgid "Employee"
+msgstr "Dipendente"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance__department_id
+msgid ""
+"Employee's department at the time of this attendance record. This field is "
+"stored to maintain historical accuracy even if the employee later changes "
+"departments."
+msgstr ""
+"Reparto del dipendente al momento della registrazione della presenza. Questo"
+" campo viene memorizzato per garantire l'accuratezza storica anche qualora "
+"il dipendente cambi reparto in seguito."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__employee_ids
+msgid "Employees"
+msgstr "Dipendenti"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_zone__attendance
+msgid ""
+"Enable automatic attendance tracking for this zone. When employees enter "
+"this zone, they will be automatically checked in for attendance. When they "
+"leave, they will be checked out. Perfect for main entrances or work areas."
+msgstr ""
+"Attiva il rilevamento automatico delle presenze per questa zona. Quando i "
+"dipendenti entrano in questa zona, verrà registrata automaticamente la "
+"timbratura entrata. Quando escono, verrà registrata la timbratura uscita. "
+"Ideale per gli ingressi principali o le aree di lavoro."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__end_date
+msgid "End Date"
+msgstr "Data di fine"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__end_date
+msgid ""
+"Ending date for attendance recalculation. Attendance records will be "
+"processed up to and including this date. Default is today."
+msgstr ""
+"Data di fine per il ricalcolo delle presenze. Le registrazioni di presenza "
+"verranno elaborate fino a questa data inclusa. Per impostazione predefinita "
+"corrisponde alla data odierna."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.actions.server,name:hr_attendance_multi_rfid.hr_attendance_multi_rfid_autoclose_cron_ir_actions_server
+msgid "HR RFID Multi Attendance: Auto-close incomplete attendances"
+msgstr "HR RFID Multi Presenze: Chiusura automatica presenze incomplete"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__id
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__id
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_employee__id
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_event_user__id
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__id
+msgid "ID"
+msgstr "ID"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__in_zone_id
+msgid "In Zone"
+msgstr "Nella zona"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_event_user__in_or_out
+msgid ""
+"Indicates whether this RFID event was processed as attendance check-in or check-out.\n"
+"\n"
+"• Check In: Employee entered an attendance zone\n"
+"• Check Out: Employee left an attendance zone  \n"
+"• No Info: Event not processed for attendance (may be non-attendance zone or error)\n"
+"\n"
+"This field is automatically set when recalculating attendance from RFID events."
+msgstr ""
+"Indica se questo evento RFID è stato elaborato come timbratura entrata o timbratura uscita.\n"
+"\n"
+"• Check In: il dipendente è entrato in una zona presenze\n"
+"• Check Out: il dipendente ha lasciato una zona presenze\n"
+"• Nessuna informazione: evento non elaborato per le presenze (zona non presenze o errore)\n"
+"\n"
+"Questo campo viene impostato automaticamente durante il ricalcolo delle presenze dagli eventi RFID."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__write_uid
+msgid "Last Updated by"
+msgstr "Ultimo aggiornamento da"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__write_date
+msgid "Last Updated on"
+msgstr "Ultimo aggiornamento il"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__max_time_in_zone
+msgid "Maximum Hours in Zone"
+msgstr "Ore massime nella zona"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_zone__max_time_in_zone
+msgid ""
+"Maximum hours an employee can stay in the zone before attendance is "
+"automatically closed. This prevents forgotten check-outs from creating "
+"excessively long attendance records. Set to 0 to disable automatic closure. "
+"Example: 12 hours for a standard work day."
+msgstr ""
+"Numero massimo di ore che un dipendente può trascorrere nella zona prima che"
+" la presenza venga chiusa automaticamente. Questo evita che le timbrature "
+"uscita dimenticate generino registrazioni di presenza eccessivamente lunghe."
+" Impostare a 0 per disabilitare la chiusura automatica. Esempio: 12 ore per "
+"una giornata lavorativa standard."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__in_or_out__no_info
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_vending_event__in_or_out__no_info
+msgid "No Info"
+msgstr "Nessuna informazione"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__overwrite_check_in
+msgid "Overwrite check-in"
+msgstr "Sovrascrivi timbratura entrata"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__overwrite_check_out
+msgid "Overwrite check-out"
+msgstr "Sovrascrivi timbratura uscita"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.rfid_hr_employee_view_search
+msgid "Present Employees"
+msgstr "Dipendenti presenti"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model,name:hr_attendance_multi_rfid.model_hr_rfid_event_user
+msgid "RFID User Event"
+msgstr "Evento RFID utente"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.view_hr_attendance_records_recompute_wizard
+msgid "Re-Create"
+msgstr "Ricrea"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.actions.act_window,name:hr_attendance_multi_rfid.act_wizard_recompute_attendance_records
+#: model:ir.actions.act_window,name:hr_attendance_multi_rfid.recreate_attendance_records_action
+msgid "Re-create Attendance records"
+msgstr "Ricrea registrazioni di presenza"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.actions.act_window,help:hr_attendance_multi_rfid.act_wizard_recompute_attendance_records
+msgid "Rebuild attendance records from RFID events"
+msgstr "Ricostruisci le registrazioni di presenza dagli eventi RFID"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.actions.act_window,help:hr_attendance_multi_rfid.recreate_attendance_records_action
+msgid "Recalculate attendance for selected employees"
+msgstr "Ricalcola le presenze per i dipendenti selezionati"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.view_hr_attendance_records_recompute_wizard
+msgid "Select Date Range"
+msgstr "Seleziona intervallo di date"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__employee_ids
+msgid ""
+"Select employees whose attendance records will be recalculated from RFID events.\n"
+"        \n"
+"• Process: Existing auto-generated attendance will be deleted and recreated\n"
+"• Manual attendance: Records created manually by HR will be preserved\n"
+"• RFID events: System will analyze all RFID door events to rebuild attendance\n"
+"\n"
+"Use this when attendance data seems incorrect or after changing zone settings."
+msgstr ""
+"Seleziona i dipendenti le cui registrazioni di presenza verranno ricalcolate dagli eventi RFID.\n"
+"        \n"
+"• Elaborazione: le presenze generate automaticamente verranno eliminate e ricreate\n"
+"• Presenze manuali: le registrazioni create manualmente dall'HR verranno conservate\n"
+"• Eventi RFID: il sistema analizzerà tutti gli eventi RFID degli accessi per ricostruire le presenze\n"
+"\n"
+"Utilizzare questa funzione quando i dati delle presenze sembrano errati o dopo aver modificato le impostazioni della zona."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__start_date
+msgid "Start Date"
+msgstr "Data di inizio"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__start_date
+msgid ""
+"Starting date for attendance recalculation. Only attendance records from "
+"this date forward will be processed. Default is 30 days ago to cover recent "
+"period."
+msgstr ""
+"Data di inizio per il ricalcolo delle presenze. Verranno elaborate solo le "
+"registrazioni di presenza a partire da questa data. Per impostazione "
+"predefinita corrisponde a 30 giorni fa per coprire il periodo recente."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance__in_zone_id
+msgid ""
+"The RFID zone where this attendance session is taking place. Set when "
+"checking in and cleared when checking out. Used to track which area the "
+"employee is working in."
+msgstr ""
+"La zona RFID in cui si svolge questa sessione di presenza. Viene impostata "
+"alla timbratura entrata e cancellata alla timbratura uscita. Utilizzata per "
+"tracciare in quale area il dipendente sta lavorando."
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.actions.act_window,help:hr_attendance_multi_rfid.recreate_attendance_records_action
+msgid ""
+"This action allows HR managers to rebuild attendance records based on RFID events.\n"
+"                    <br>\n"
+"                    <br>\n"
+"                Use cases:\n"
+"                • After changing zone attendance settings\n"
+"                • When attendance data appears incorrect\n"
+"                • After importing historical RFID events\n"
+"                • To sync attendance with actual door access events"
+msgstr ""
+"Questa azione consente ai responsabili HR di ricostruire le registrazioni di presenza in base agli eventi RFID.\n"
+"                    <br>\n"
+"                    <br>\n"
+"                Casi d'uso:\n"
+"                • Dopo aver modificato le impostazioni di presenza della zona\n"
+"                • Quando i dati delle presenze risultano errati\n"
+"                • Dopo aver importato eventi RFID storici\n"
+"                • Per sincronizzare le presenze con gli eventi effettivi di accesso alle porte"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.actions.act_window,help:hr_attendance_multi_rfid.act_wizard_recompute_attendance_records
+msgid ""
+"This wizard recalculates attendance records by analyzing RFID door events \n"
+"                for the selected employees and date range.\n"
+"                    <br>\n"
+"                    <br>\n"
+"                Key features:\n"
+"                • Deletes auto-generated attendance records in the date range\n"
+"                • Preserves manually created attendance records\n"
+"                • Rebuilds attendance from RFID zone entry/exit events\n"
+"                • Handles zone-specific attendance settings and overrides"
+msgstr ""
+"Questa procedura guidata ricalcola le registrazioni di presenza analizzando gli eventi RFID delle porte \n"
+"                per i dipendenti e l'intervallo di date selezionati.\n"
+"                    <br>\n"
+"                    <br>\n"
+"                Funzionalità principali:\n"
+"                • Elimina le registrazioni di presenza generate automaticamente nell'intervallo di date\n"
+"                • Conserva le registrazioni di presenza create manualmente\n"
+"                • Ricostruisce le presenze dagli eventi di ingresso/uscita della zona RFID\n"
+"                • Gestisce le impostazioni di presenza specifiche della zona e le relative sostituzioni"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_zone__auto_close_time_for_zone
+msgid ""
+"When attendance is automatically closed (due to max_time_in_zone), this "
+"value will be recorded as the actual worked hours. For example, if max is 12"
+" hours but this is set to 7, the system will record 7 hours of work when "
+"auto-closing."
+msgstr ""
+"Quando la presenza viene chiusa automaticamente (a causa di "
+"max_time_in_zone), questo valore verrà registrato come ore effettive "
+"lavorate. Ad esempio, se il massimo è 12 ore ma questo campo è impostato a "
+"7, il sistema registrerà 7 ore di lavoro durante la chiusura automatica."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_zone__overwrite_check_out
+msgid ""
+"When enabled, if an employee who has already checked out leaves this zone, "
+"their check-out time will be updated to the current time. Useful for "
+"ensuring the last zone exit is recorded as the actual work end time."
+msgstr ""
+"Se attivata, quando un dipendente che ha già effettuato la timbratura uscita"
+" lascia questa zona, l'orario di uscita verrà aggiornato all'ora corrente. "
+"Utile per garantire che l'ultima uscita dalla zona sia registrata come "
+"orario effettivo di fine lavoro."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_zone__overwrite_check_in
+msgid ""
+"When enabled, if an employee who is already checked in enters this zone, "
+"their check-in time will be updated to the current time. Useful when you "
+"want the most recent zone entry to be considered as the actual work start "
+"time."
+msgstr ""
+"Se attivata, quando un dipendente già in timbratura entrata accede a questa "
+"zona, l'orario di entrata verrà aggiornato all'ora corrente. Utile quando si"
+" desidera che l'ingresso più recente nella zona sia considerato come orario "
+"effettivo di inizio lavoro."
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_view_filter_inherit
+msgid "With Check Out"
+msgstr "Con timbratura uscita"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model,name:hr_attendance_multi_rfid.model_hr_attendance_recalc_wizard
+msgid "Wizard for re-create attendance records based on RFID events"
+msgstr ""
+"Procedura guidata per la ricreazione delle registrazioni di presenza in base"
+" agli eventi RFID"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model,name:hr_attendance_multi_rfid.model_hr_rfid_zone
+msgid "Zone"
+msgstr "Zona"

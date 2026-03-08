@@ -1,0 +1,825 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* hr_attendance_late
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-05 16:23+0000\n"
+"PO-Revision-Date: 2026-03-06 17:22\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__actual_work_time_day
+msgid "Actual Day Time"
+msgstr "Ore diurne effettive"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__actual_work_time_night
+msgid "Actual Night Time"
+msgstr "Ore notturne effettive"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__actual_work_time
+msgid "Actual Work Time"
+msgstr "Tempo di lavoro effettivo"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__overtime
+msgid ""
+"Additional hours worked beyond the scheduled work time.\n"
+"        \n"
+"        • Calculation: Actual work time minus theoretical work time (when positive)\n"
+"        • Format: Hours in decimal format (e.g., 2.0 = 2 hours overtime)\n"
+"        • Compensation: Usually paid at premium rate (1.5x or 2x base rate)\n"
+"        \n"
+"        Note: Overtime calculation may vary based on daily vs. weekly limits and labor agreements."
+msgstr ""
+"Ore aggiuntive lavorate oltre l'orario di lavoro programmato.\n"
+"        \n"
+"        • Calcolo: Tempo di lavoro effettivo meno tempo di lavoro teorico (se positivo)\n"
+"        • Formato: Ore in formato decimale (es., 2.0 = 2 ore di straordinario)\n"
+"        • Compensazione: Di solito retribuito a tariffa maggiorata (1,5x o 2x la tariffa base)\n"
+"        \n"
+"        Nota: Il calcolo dello straordinario può variare in base ai limiti giornalieri o settimanali e ai contratti collettivi."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__extra_time
+msgid ""
+"Additional work time that doesn't qualify as standard overtime.\n"
+"        \n"
+"        • Difference: Extra time vs. Overtime depends on company policy\n"
+"        • Examples: Weekend work, holiday work, or special project hours\n"
+"        • Compensation: May have different pay rate than regular overtime\n"
+"        \n"
+"        Note: Classification depends on labor agreements and local regulations."
+msgstr ""
+"Tempo di lavoro aggiuntivo che non rientra nello straordinario standard.\n"
+"        \n"
+"        • Differenza: Le ore extra rispetto allo straordinario dipendono dalla policy aziendale\n"
+"        • Esempi: Lavoro nel weekend, durante le festività o per progetti speciali\n"
+"        • Compensazione: Può avere una tariffa di retribuzione diversa rispetto allo straordinario ordinario\n"
+"        \n"
+"        Nota: La classificazione dipende dai contratti collettivi e dalla normativa locale."
+
+#. module: hr_attendance_late
+#: model:ir.model,name:hr_attendance_late.model_hr_attendance
+msgid "Attendance"
+msgstr "Presenza"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_employee__attendance_extra_ids
+msgid "Attendance Extra"
+msgstr "Ore extra di presenza"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__attendance_count
+msgid "Attendance Records"
+msgstr "Registrazioni presenze"
+
+#. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.digest_digest_view_form
+msgid "Attendance analise"
+msgstr "Analisi presenze"
+
+#. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_form
+msgid "Attendance records"
+msgstr "Registrazioni presenze"
+
+#. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.view_hr_attendance_extra_wizard
+msgid "Calculate"
+msgstr "Calcola"
+
+#. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.view_hr_attendance_extra_wizard
+msgid "Cancel"
+msgstr "Annulla"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra_wizard__overwrite_existing
+msgid ""
+"Control how existing attendance calculations are handled.\n"
+"        \n"
+"        • When enabled: Recalculates and overwrites all existing attendance extra records\n"
+"        • When disabled: Only creates calculations for dates that don't have records yet\n"
+"        • Effect: Determines whether to update or skip existing data\n"
+"        \n"
+"        Note: Enable this to fix calculation errors or update after policy changes."
+msgstr ""
+"Controlla come vengono gestiti i calcoli delle presenze esistenti.\n"
+"        \n"
+"        • Se abilitato: Ricalcola e sovrascrive tutte le registrazioni ore extra di presenza esistenti\n"
+"        • Se disabilitato: Crea calcoli solo per le date che non hanno ancora registrazioni\n"
+"        • Effetto: Determina se aggiornare o ignorare i dati esistenti\n"
+"        \n"
+"        Nota: Abilitare questa opzione per correggere errori di calcolo o aggiornare dopo modifiche alle policy."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__create_uid
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra_wizard__create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__create_date
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra_wizard__create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_resource_calendar__daily_ranges_are_shifts
+msgid "Daily Ranges Are Shifts"
+msgstr "Gli intervalli giornalieri sono turni"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__for_date
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Date"
+msgstr "Data"
+
+#. module: hr_attendance_late
+#: model:ir.model,name:hr_attendance_late.model_hr_department
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__department_id
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Department"
+msgstr "Ufficio"
+
+#. module: hr_attendance_late
+#: model:ir.model,name:hr_attendance_late.model_digest_digest
+msgid "Digest"
+msgstr "Riepilogo"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__display_name
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance__display_name
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__display_name
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra_wizard__display_name
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_department__display_name
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_employee__display_name
+#: model:ir.model.fields,field_description:hr_attendance_late.field_resource_calendar__display_name
+msgid "Display Name"
+msgstr "Nome visualizzato"
+
+#. module: hr_attendance_late
+#. odoo-python
+#: code:addons/hr_attendance_late/models/digest.py:0
+msgid "Do not have access, skip this data for user's digest email"
+msgstr ""
+"Accesso non disponibile, ignora questi dati per l'email digest dell'utente"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__early_come_time
+msgid "Early Arrival Time"
+msgstr "Tempo di entrata anticipata"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__early_leave_time
+msgid "Early Departure Time"
+msgstr "Tempo di uscita anticipata"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_early_come
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Early come"
+msgstr "Entrata anticipata"
+
+#. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Early come Employees Records"
+msgstr "Registrazioni dipendenti con entrata anticipata"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_leave
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Early leave"
+msgstr "Uscita anticipata"
+
+#. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Early leave Employees Records"
+msgstr "Registrazioni dipendenti con uscita anticipata"
+
+#. module: hr_attendance_late
+#: model:ir.model,name:hr_attendance_late.model_hr_employee
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__employee_id
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Employee"
+msgstr "Dipendente"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra_wizard__employee_ids
+msgid "Employees"
+msgstr "Dipendenti"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra_wizard__end_date
+msgid "End Date"
+msgstr "Data fine"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra_wizard__end_date
+msgid ""
+"End date for the attendance calculation period.\n"
+"        \n"
+"        • Range: Final date of the calculation period\n"
+"        • Default: Today or specific date from context\n"
+"        • Effect: All attendance records up to this date will be processed\n"
+"        \n"
+"        Note: Future dates will be ignored even if selected."
+msgstr ""
+"Data di fine del periodo di calcolo delle presenze.\n"
+"        \n"
+"        • Intervallo: Data finale del periodo di calcolo\n"
+"        • Predefinito: Oggi o una data specifica dal contesto\n"
+"        • Effetto: Tutte le registrazioni presenze fino a questa data verranno elaborate\n"
+"        \n"
+"        Nota: Le date future verranno ignorate anche se selezionate."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__theoretical_work_time
+msgid ""
+"Expected work hours according to employee's work schedule.\n"
+"        \n"
+"        • Source: Based on employee's resource calendar for this date\n"
+"        • Format: Hours in decimal format (e.g., 8.0 = 8 hours)\n"
+"        • Purpose: Baseline for calculating overtime, late arrivals, and early departures\n"
+"        \n"
+"        Note: This is the scheduled work time, not necessarily what was actually worked."
+msgstr ""
+"Ore di lavoro previste secondo il calendario lavorativo del dipendente.\n"
+"        \n"
+"        • Fonte: Basato sul calendario risorse del dipendente per questa data\n"
+"        • Formato: Ore in formato decimale (es., 8.0 = 8 ore)\n"
+"        • Scopo: Riferimento per il calcolo di straordinari, ritardi e uscite anticipate\n"
+"        \n"
+"        Nota: Si tratta dell'orario di lavoro programmato, non necessariamente di quanto effettivamente lavorato."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__extra_night
+msgid "Extra Night Time"
+msgstr "Ore extra notturne"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__extra_time
+msgid "Extra Time"
+msgstr "Ore extra"
+
+#. module: hr_attendance_late
+#: model:ir.actions.act_window,name:hr_attendance_late.hr_attendance_extra_action
+#: model:ir.ui.menu,name:hr_attendance_late.menu_hr_attendance_extra
+msgid "Extra calculations"
+msgstr "Calcoli ore extra"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_extra
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Extra time"
+msgstr "Ore extra"
+
+#. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Extra time Employees Records"
+msgstr "Registrazioni dipendenti con ore extra"
+
+#. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Extra time Night"
+msgstr "Ore extra notturne"
+
+#. module: hr_attendance_late
+#: model:ir.model,name:hr_attendance_late.model_hr_attendance_extra
+msgid "Extra work time calculations"
+msgstr "Calcoli ore extra di lavoro"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__extra_night
+msgid ""
+"Extra work time performed during night shift hours.\n"
+"        \n"
+"        • Period: Night hours (typically 22:00-06:00) for special assignments\n"
+"        • Premium: May include both extra time and night shift bonuses\n"
+"        • Format: Hours in decimal format\n"
+"        \n"
+"        Note: Used for weekend night work, holiday night shifts, or emergency calls."
+msgstr ""
+"Ore extra di lavoro svolte durante il turno notturno.\n"
+"        \n"
+"        • Periodo: Ore notturne (tipicamente 22:00-06:00) per incarichi speciali\n"
+"        • Maggiorazione: Può includere sia ore extra che indennità di turno notturno\n"
+"        • Formato: Ore in formato decimale\n"
+"        \n"
+"        Nota: Utilizzato per lavoro notturno nel weekend, turni notturni festivi o chiamate di emergenza."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__early_come_time
+msgid ""
+"Hours the employee arrived before scheduled start time.\n"
+"        \n"
+"        • Calculation: Time between actual first check-in and scheduled start\n"
+"        • Format: Hours in decimal format (e.g., 0.25 = 15 minutes early)\n"
+"        • Recognition: Shows employee punctuality and dedication\n"
+"        \n"
+"        Note: Early arrivals may qualify for recognition but typically don't count as overtime."
+msgstr ""
+"Ore in cui il dipendente è arrivato prima dell'orario di inizio programmato.\n"
+"        \n"
+"        • Calcolo: Tempo tra il primo ingresso effettivo e l'orario di inizio programmato\n"
+"        • Formato: Ore in formato decimale (es., 0.25 = 15 minuti di anticipo)\n"
+"        • Riconoscimento: Indica la puntualità e la dedizione del dipendente\n"
+"        \n"
+"        Nota: Le entrate anticipate possono essere riconosciute, ma in genere non sono conteggiate come straordinario."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__late_time
+msgid ""
+"Hours the employee arrived late to work.\n"
+"        \n"
+"        • Calculation: Time between scheduled start and actual first check-in\n"
+"        • Format: Hours in decimal format (e.g., 0.25 = 15 minutes late)\n"
+"        • Threshold: Based on department's late arrival tolerance settings\n"
+"        \n"
+"        Note: May affect attendance bonuses or result in deductions depending on company policy."
+msgstr ""
+"Ore di ritardo all'ingresso del dipendente.\n"
+"        \n"
+"        • Calcolo: Tempo tra l'orario di inizio programmato e il primo ingresso effettivo\n"
+"        • Formato: Ore in formato decimale (es., 0.25 = 15 minuti di ritardo)\n"
+"        • Soglia: Basata sulle impostazioni di tolleranza per i ritardi del reparto\n"
+"        \n"
+"        Nota: Può influire sui bonus presenze o comportare detrazioni a seconda della policy aziendale."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__early_leave_time
+msgid ""
+"Hours the employee left work early.\n"
+"        \n"
+"        • Calculation: Time between actual last check-out and scheduled end time\n"
+"        • Format: Hours in decimal format (e.g., 0.5 = 30 minutes early)\n"
+"        • Impact: May result in reduced pay or attendance penalties\n"
+"        \n"
+"        Note: Early departures without approval may affect performance evaluations."
+msgstr ""
+"Ore in cui il dipendente ha lasciato il lavoro in anticipo.\n"
+"        \n"
+"        • Calcolo: Tempo tra l'ultimo check-out effettivo e l'orario di fine programmato\n"
+"        • Formato: Ore in formato decimale (es., 0.5 = 30 minuti di anticipo)\n"
+"        • Impatto: Può comportare una riduzione della retribuzione o penalità sulle presenze\n"
+"        \n"
+"        Nota: Le uscite anticipate non autorizzate possono influire sulle valutazioni delle prestazioni."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__actual_work_time_night
+msgid ""
+"Hours worked during night shift period.\n"
+"        \n"
+"        • Format: Hours in decimal format (e.g., 1.0 = 1 hour)\n"
+"        • Period: Typically 22:00-06:00 (configurable per company)\n"
+"        • Premium: Usually paid at higher rate than day hours\n"
+"        \n"
+"        Note: Night hours often qualify for additional compensation per labor agreements."
+msgstr ""
+"Ore lavorate durante il turno notturno.\n"
+"        \n"
+"        • Formato: Ore in formato decimale (es., 1.0 = 1 ora)\n"
+"        • Periodo: Tipicamente 22:00-06:00 (configurabile per azienda)\n"
+"        • Maggiorazione: Di solito retribuito a tariffa superiore rispetto alle ore diurne\n"
+"        \n"
+"        Nota: Le ore notturne danno spesso diritto a compensazioni aggiuntive ai sensi dei contratti collettivi."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__actual_work_time_day
+msgid ""
+"Hours worked during standard daytime period.\n"
+"        \n"
+"        • Format: Hours in decimal format (e.g., 7.5 = 7 hours 30 minutes)\n"
+"        • Period: Typically 06:00-22:00 (configurable per company)\n"
+"        • Purpose: Separate day hours from night hours for different pay rates\n"
+"        \n"
+"        Note: Used for calculating regular pay rates vs. night shift premiums."
+msgstr ""
+"Ore lavorate durante il periodo diurno standard.\n"
+"        \n"
+"        • Formato: Ore in formato decimale (es., 7.5 = 7 ore 30 minuti)\n"
+"        • Periodo: Tipicamente 06:00-22:00 (configurabile per azienda)\n"
+"        • Scopo: Separare le ore diurne dalle ore notturne per tariffe di retribuzione diverse\n"
+"        \n"
+"        Nota: Utilizzato per calcolare le tariffe ordinarie rispetto alle maggiorazioni del turno notturno."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__id
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance__id
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__id
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra_wizard__id
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_department__id
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_employee__id
+#: model:ir.model.fields,field_description:hr_attendance_late.field_resource_calendar__id
+msgid "ID"
+msgstr "ID"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__shift_number
+msgid ""
+"Identifier for the work shift on this date.\n"
+"        \n"
+"        • Purpose: Distinguishes between multiple shifts in a day\n"
+"        • Aggregation: Counts distinct shifts for reporting\n"
+"        • Usage: Useful for companies with multiple daily shifts\n"
+"        \n"
+"        Note: Helps track shift patterns and identify shift-specific attendance issues."
+msgstr ""
+"Identificativo del turno di lavoro per questa data.\n"
+"        \n"
+"        • Scopo: Distingue tra più turni in una giornata\n"
+"        • Aggregazione: Conteggia i turni distinti per la reportistica\n"
+"        • Utilizzo: Utile per le aziende con più turni giornalieri\n"
+"        \n"
+"        Nota: Aiuta a monitorare i modelli di turno e a identificare i problemi di presenze specifici per turno."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_department__ignore_early_come_time
+msgid "Ignore Early Come Time"
+msgstr "Ignora tempo di entrata anticipata"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_department__ignore_early_leave_time
+msgid "Ignore Early Leave Time"
+msgstr "Ignora tempo di uscita anticipata"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_department__ignore_extra_time
+msgid "Ignore Extra Time"
+msgstr "Ignora ore extra"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_department__ignore_late_time
+msgid "Ignore Late Time"
+msgstr "Ignora tempo di ritardo"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_department__ignore_overtime
+msgid "Ignore Overtime"
+msgstr "Ignora straordinario"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_early_come_value
+msgid "Kpi Hr Rfid Att Early Come Value"
+msgstr "KPI HR RFID Presenze - Valore entrata anticipata"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_extra_value
+msgid "Kpi Hr Rfid Att Extra Value"
+msgstr "KPI HR RFID Presenze - Valore ore extra"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_late_value
+msgid "Kpi Hr Rfid Att Late Value"
+msgstr "KPI HR RFID Presenze - Valore ritardo"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_leave_value
+msgid "Kpi Hr Rfid Att Leave Value"
+msgstr "KPI HR RFID Presenze - Valore uscita anticipata"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_overtime_value
+msgid "Kpi Hr Rfid Att Overtime Value"
+msgstr "KPI HR RFID Presenze - Valore straordinario"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__write_uid
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra_wizard__write_uid
+msgid "Last Updated by"
+msgstr "Ultimo aggiornamento effettuato da"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__write_date
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra_wizard__write_date
+msgid "Last Updated on"
+msgstr "Ultimo aggiornamento il"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Late"
+msgstr "Ritardo"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__late_time
+msgid "Late Arrival Time"
+msgstr "Tempo di ritardo all'arrivo"
+
+#. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Late Employees Records"
+msgstr "Registrazioni dipendenti in ritardo"
+
+#. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Night Extra time Employees Records"
+msgstr "Registrazioni dipendenti con ore extra notturne"
+
+#. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Night Overtime"
+msgstr "Straordinario notturno"
+
+#. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Night Overtime Employees Records"
+msgstr "Registrazioni dipendenti con straordinario notturno"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__overtime_night
+msgid "Night Overtime Hours"
+msgstr "Ore di straordinario notturno"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__attendance_count
+msgid ""
+"Number of check-in/check-out records for this date.\n"
+"        \n"
+"        • Computation: Automatically calculated from hr.attendance records\n"
+"        • Format: Text showing count (e.g., \"4 records\")\n"
+"        • Purpose: Quick overview of attendance activity\n"
+"        \n"
+"        Note: Multiple records indicate breaks, lunch periods, or multiple shifts."
+msgstr ""
+"Numero di registrazioni di check-in/check-out per questa data.\n"
+"        \n"
+"        • Calcolo: Calcolato automaticamente dalle registrazioni hr.attendance\n"
+"        • Formato: Testo che mostra il conteggio (es., \"4 registrazioni\")\n"
+"        • Scopo: Panoramica rapida dell'attività di presenza\n"
+"        \n"
+"        Nota: Più registrazioni indicano pause, periodi di pranzo o turni multipli."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_overtime
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Overtime"
+msgstr "Straordinario"
+
+#. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Overtime Employees Records"
+msgstr "Registrazioni dipendenti con straordinario"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__overtime
+msgid "Overtime Hours"
+msgstr "Ore di straordinario"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__overtime_night
+msgid ""
+"Overtime hours worked during night shift period.\n"
+"        \n"
+"        • Period: Night hours (typically 22:00-06:00) that exceed scheduled time\n"
+"        • Premium: Often paid at highest rate (night premium + overtime premium)\n"
+"        • Format: Hours in decimal format (e.g., 1.5 = 1 hour 30 minutes)\n"
+"        \n"
+"        Note: Double premium may apply - both overtime and night shift bonuses."
+msgstr ""
+"Ore di straordinario lavorate durante il turno notturno.\n"
+"        \n"
+"        • Periodo: Ore notturne (tipicamente 22:00-06:00) che superano l'orario programmato\n"
+"        • Maggiorazione: Spesso retribuito alla tariffa più elevata (indennità notturna + indennità straordinario)\n"
+"        • Formato: Ore in formato decimale (es., 1.5 = 1 ora 30 minuti)\n"
+"        \n"
+"        Nota: Può applicarsi una doppia maggiorazione - sia lo straordinario che l'indennità di turno notturno."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra_wizard__overwrite_existing
+msgid "Overwrite Existing"
+msgstr "Sovrascrivi esistenti"
+
+#. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.view_department_form_extend
+msgid "Per Day"
+msgstr "Per giorno"
+
+#. module: hr_attendance_late
+#: model:ir.actions.act_window,name:hr_attendance_late.recompute_employee_extra_attendance
+#: model:ir.actions.act_window,name:hr_attendance_late.recompute_extra_attendance
+#: model:ir.actions.act_window,name:hr_attendance_late.recompute_extra_attendance_menu
+msgid "Recompute Extra Attendance"
+msgstr "Ricalcola ore extra di presenza"
+
+#. module: hr_attendance_late
+#: model:ir.actions.act_window,name:hr_attendance_late.act_wizard_recompute_extra_attendance
+msgid "Recompute Extra Attendances"
+msgstr "Ricalcola ore extra presenze"
+
+#. module: hr_attendance_late
+#: model:ir.ui.menu,name:hr_attendance_late.menu_hr_attendance_report
+msgid "Reports"
+msgstr "Report"
+
+#. module: hr_attendance_late
+#: model:ir.model,name:hr_attendance_late.model_resource_calendar
+msgid "Resource Working Time"
+msgstr "Orario lavorativo risorsa"
+
+#. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.view_hr_attendance_extra_wizard
+msgid "Select Date Range"
+msgstr "Seleziona intervallo date"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra_wizard__employee_ids
+msgid ""
+"Select employees for attendance calculation recalculation.\n"
+"        \n"
+"        • Selection: Choose one or multiple employees\n"
+"        • Effect: Recalculates overtime, late arrivals, and extra time for selected employees\n"
+"        • Default: Pre-selected based on current context\n"
+"        \n"
+"        Note: Large employee selections may take longer to process."
+msgstr ""
+"Seleziona i dipendenti per il ricalcolo delle presenze.\n"
+"        \n"
+"        • Selezione: Scegliere uno o più dipendenti\n"
+"        • Effetto: Ricalcola straordinari, ritardi e ore extra per i dipendenti selezionati\n"
+"        • Predefinito: Pre-selezionato in base al contesto corrente\n"
+"        \n"
+"        Nota: La selezione di un numero elevato di dipendenti potrebbe richiedere più tempo per l'elaborazione."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__shift_number
+msgid "Shift Number"
+msgstr "Numero turno"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra_wizard__start_date
+msgid "Start Date"
+msgstr "Data inizio"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra_wizard__start_date
+msgid ""
+"Start date for the attendance calculation period.\n"
+"        \n"
+"        • Range: Beginning of the date range to recalculate\n"
+"        • Default: 30 days ago or specific date from context\n"
+"        • Effect: All attendance records from this date forward will be processed\n"
+"        \n"
+"        Note: Earlier dates will include more historical data in the calculation."
+msgstr ""
+"Data di inizio del periodo di calcolo delle presenze.\n"
+"        \n"
+"        • Intervallo: Inizio dell'intervallo di date da ricalcolare\n"
+"        • Predefinito: 30 giorni fa o una data specifica dal contesto\n"
+"        • Effetto: Tutte le registrazioni presenze da questa data in avanti verranno elaborate\n"
+"        \n"
+"        Nota: Date precedenti includeranno più dati storici nel calcolo."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__department_id
+msgid ""
+"The department of the employee (automatically filled).\n"
+"        \n"
+"        • Source: Copied from employee's department\n"
+"        • Purpose: Used for department-specific attendance reports and calculations\n"
+"        • Read-only: Updates automatically when employee's department changes\n"
+"        \n"
+"        Note: Stored for faster reporting and filtering by department."
+msgstr ""
+"Il reparto del dipendente (compilato automaticamente).\n"
+"        \n"
+"        • Fonte: Copiato dal reparto del dipendente\n"
+"        • Scopo: Utilizzato per report e calcoli delle presenze specifici per reparto\n"
+"        • Sola lettura: Si aggiorna automaticamente quando cambia il reparto del dipendente\n"
+"        \n"
+"        Nota: Archiviato per una reportistica e un filtraggio per reparto più rapidi."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__employee_id
+msgid ""
+"The employee for whom attendance calculations are performed.\n"
+"        \n"
+"        • Required: Must select an employee\n"
+"        • Effect: All time calculations are specific to this employee\n"
+"        • Cascade: Record is deleted if employee is deleted\n"
+"        \n"
+"        Note: Used to link attendance data with employee work schedules and department settings."
+msgstr ""
+"Il dipendente per cui vengono eseguiti i calcoli delle presenze.\n"
+"        \n"
+"        • Obbligatorio: È necessario selezionare un dipendente\n"
+"        • Effetto: Tutti i calcoli del tempo sono specifici per questo dipendente\n"
+"        • Cascata: Il record viene eliminato se il dipendente viene eliminato\n"
+"        \n"
+"        Nota: Utilizzato per collegare i dati di presenza ai calendari lavorativi e alle impostazioni di reparto del dipendente."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__for_date
+msgid ""
+"The specific date for which attendance calculations are performed.\n"
+"\n"
+"        • Format: YYYY-MM-DD\n"
+"        • Purpose: Groups all attendance records for a single working day\n"
+"        • Effect: All time calculations are based on this date's attendance records\n"
+"\n"
+"        Note: This is the primary date used for reporting and time calculations."
+msgstr ""
+"La data specifica per cui vengono eseguiti i calcoli delle presenze.\n"
+"\n"
+"        • Formato: YYYY-MM-DD\n"
+"        • Scopo: Raggruppa tutte le registrazioni presenze per un singolo giorno lavorativo\n"
+"        • Effetto: Tutti i calcoli del tempo si basano sulle registrazioni presenze di questa data\n"
+"\n"
+"        Nota: Questa è la data principale utilizzata per la reportistica e i calcoli del tempo."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__theoretical_work_time
+msgid "Theoretical Work Time"
+msgstr "Tempo di lavoro teorico"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_department__ignore_early_come_time
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_department__ignore_early_leave_time
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_department__ignore_extra_time
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_department__ignore_late_time
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_department__ignore_overtime
+msgid ""
+"Times smaller than this will be ignored in the calculations on a daily "
+"basis."
+msgstr ""
+"I valori inferiori a questo verranno ignorati nei calcoli su base "
+"giornaliera."
+
+#. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Today"
+msgstr "Oggi"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__actual_work_time
+msgid ""
+"Total hours actually worked on this date (including day and night time).\n"
+"        \n"
+"        • Format: Hours in decimal format (e.g., 8.5 = 8 hours 30 minutes)\n"
+"        • Calculation: Sum of all work periods between check-in and check-out\n"
+"        • Includes: Both regular hours and overtime periods\n"
+"        \n"
+"        Note: This is the total productive time, excluding breaks and non-work periods."
+msgstr ""
+"Ore totali effettivamente lavorate in questa data (incluse le ore diurne e notturne).\n"
+"        \n"
+"        • Formato: Ore in formato decimale (es., 8.5 = 8 ore 30 minuti)\n"
+"        • Calcolo: Somma di tutti i periodi di lavoro tra check-in e check-out\n"
+"        • Include: Sia le ore ordinarie che i periodi di straordinario\n"
+"        \n"
+"        Nota: Si tratta del tempo produttivo totale, escluse le pause e i periodi non lavorativi."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_resource_calendar__daily_ranges_are_shifts
+msgid ""
+"Treat each daily time range as a separate shift for attendance calculations.\n"
+"        \n"
+"        • When enabled: Each time range (e.g., 9-12, 13-17) is considered a separate shift\n"
+"        • When disabled: All time ranges for a day are treated as one continuous work period\n"
+"        • Effect: Affects overtime and break calculations\n"
+"        \n"
+"        Note: Enable this for companies with formal shift systems or split work schedules."
+msgstr ""
+"Considera ogni intervallo di tempo giornaliero come un turno separato per i calcoli delle presenze.\n"
+"        \n"
+"        • Se abilitato: Ogni intervallo di tempo (es., 9-12, 13-17) viene considerato un turno separato\n"
+"        • Se disabilitato: Tutti gli intervalli di tempo della giornata vengono trattati come un unico periodo di lavoro continuo\n"
+"        • Effetto: Influisce sui calcoli degli straordinari e delle pause\n"
+"        \n"
+"        Nota: Abilitare questa opzione per le aziende con sistemi di turni formali o orari di lavoro suddivisi."
+
+#. module: hr_attendance_late
+#: model:ir.model,name:hr_attendance_late.model_hr_attendance_extra_wizard
+msgid "Wizard for attendance extra calculations"
+msgstr "Procedura guidata per il calcolo delle ore extra di presenza"
+
+#. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "Yesterday"
+msgstr "Ieri"
+
+#. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_form
+msgid "hr_attendance_extra_form"
+msgstr "hr_attendance_extra_form"
+
+#. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_tree
+msgid "hr_attendance_extra_tree"
+msgstr "hr_attendance_extra_tree"
+
+#. module: hr_attendance_late
+#: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
+msgid "string"
+msgstr "string"

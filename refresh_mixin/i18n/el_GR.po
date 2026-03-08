@@ -1,0 +1,70 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* refresh_mixin
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-05 16:53+0000\n"
+"PO-Revision-Date: 2026-03-06 15:56\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: el_GR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: refresh_mixin
+#: model:ir.model,name:refresh_mixin.model_res_company
+msgid "Companies"
+msgstr "Εταιρίες"
+
+#. module: refresh_mixin
+#: model:ir.model.fields,field_description:refresh_mixin.field_refresh_mixin__display_name
+#: model:ir.model.fields,field_description:refresh_mixin.field_res_company__display_name
+msgid "Display Name"
+msgstr "Εμφάνιση Ονόματος"
+
+#. module: refresh_mixin
+#: model:ir.model.fields,help:refresh_mixin.field_res_company__realtime_refresh
+msgid ""
+"Enable automatic refresh of views when data changes.\n"
+"\n"
+"• When enabled: Views automatically update when records change\n"
+"• Live updates: Users see changes immediately without manual page refresh\n"
+"• Performance: Uses browser notifications to update only when necessary\n"
+"• Use cases: Control rooms, monitoring, real-time dashboards\n"
+"\n"
+"Note: Requires modern browser with WebSocket support."
+msgstr ""
+"Ενεργοποίηση αυτόματης ανανέωσης προβολών όταν αλλάζουν τα δεδομένα.\n"
+"\n"
+"• Όταν είναι ενεργοποιημένο: Οι προβολές ενημερώνονται αυτόματα όταν αλλάζουν οι εγγραφές\n"
+"• Ζωντανές ενημερώσεις: Οι χρήστες βλέπουν τις αλλαγές αμέσως χωρίς χειροκίνητη ανανέωση σελίδας\n"
+"• Απόδοση: Χρησιμοποιεί ειδοποιήσεις προγράμματος περιήγησης για ενημέρωση μόνο όταν είναι απαραίτητο\n"
+"• Περιπτώσεις χρήσης: Κέντρα ελέγχου, παρακολούθηση, πίνακες ελέγχου πραγματικού χρόνου\n"
+"\n"
+"Σημείωση: Απαιτεί σύγχρονο πρόγραμμα περιήγησης με υποστήριξη WebSocket."
+
+#. module: refresh_mixin
+#: model:ir.model.fields,field_description:refresh_mixin.field_refresh_mixin__id
+#: model:ir.model.fields,field_description:refresh_mixin.field_res_company__id
+msgid "ID"
+msgstr "Κωδικός"
+
+#. module: refresh_mixin
+#: model:ir.model,name:refresh_mixin.model_refresh_mixin
+msgid "Model Refresh Mixin"
+msgstr "Μοντέλο Ανανέωσης Mixin"
+
+#. module: refresh_mixin
+#: model_terms:ir.ui.view,arch_db:refresh_mixin.view_company_form_realtime_refresh
+msgid "Real-time Updates"
+msgstr "Ενημερώσεις Πραγματικού Χρόνου"
+
+#. module: refresh_mixin
+#: model:ir.model.fields,field_description:refresh_mixin.field_res_company__realtime_refresh
+msgid "Real-time View Refresh"
+msgstr "Ανανέωση Προβολής Πραγματικού Χρόνου"

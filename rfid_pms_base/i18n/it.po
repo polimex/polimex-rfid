@@ -6,11 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-06 16:54+0000\n"
-"PO-Revision-Date: 2026-03-06 18:57\n"
+"POT-Creation-Date: 2026-03-06 16:55+0000\n"
+"PO-Revision-Date: 2026-03-06 19:22\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: bg\n"
+"Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -24,37 +24,37 @@ msgstr "<i class=\"fa fa-home\" role=\"img\" aria-label=\"Enterprise\" title=\"E
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.rfid_pms_base_room_kanban
 msgid "<span>Add</span>"
-msgstr "<span>Добави</span>"
+msgstr "<span>Aggiungi</span>"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.rfid_pms_base_room_kanban
 msgid "<span>Events</span>"
-msgstr "<span>Събития</span>"
+msgstr "<span>Eventi</span>"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.rfid_pms_base_room_kanban
 msgid "<span>Move</span>"
-msgstr "<span>Премести</span>"
+msgstr "<span>Sposta</span>"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.rfid_pms_base_room_kanban
 msgid "<span>New</span>"
-msgstr "<span>Нов</span>"
+msgstr "<span>Nuovo</span>"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.rfid_pms_base_room_kanban
 msgid "Add more cards to current reservation"
-msgstr "Добави карти към текущата резервация"
+msgstr "Aggiungi altre tessere alla prenotazione corrente"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.rfid_pms_base_room_kanban
 msgid "Add new Reservation and issue a Guest card"
-msgstr "Добави нова Резервация и издай Карта за Гост"
+msgstr "Aggiungi nuova prenotazione ed emetti una tessera ospite"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room__all_contact_ids
 msgid "All contacts"
-msgstr "Всички контакти"
+msgstr "Tutti i contatti"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,help:rfid_pms_base.field_rfid_pms_base_room__all_contact_ids
@@ -62,13 +62,13 @@ msgid ""
 "All contacts that use this access group, including the ones from the "
 "inheritors"
 msgstr ""
-"Всички контакти, които използват тази група за достъп, включително тези, "
-"които са наследени"
+"Tutti i contatti che utilizzano questo gruppo di accesso, inclusi quelli "
+"degli ereditanti"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room__all_employee_ids
 msgid "All employees"
-msgstr "Всички Служители"
+msgstr "Tutti i dipendenti"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,help:rfid_pms_base.field_rfid_pms_base_room__all_employee_ids
@@ -76,70 +76,70 @@ msgid ""
 "All employees that use this access group, including the ones from the "
 "inheritors"
 msgstr ""
-"Всички служители, които използват тази група за достъп, включително "
-"наследените такива"
+"Tutti i dipendenti che utilizzano questo gruppo di accesso, inclusi quelli "
+"degli ereditanti"
 
 #. module: rfid_pms_base
 #: model:ir.model,name:rfid_pms_base.model_rfid_pms_base_card_encode_wiz
 msgid "Base PMS Card encoding Wizard"
-msgstr "Помощник за програмиране на карти в Базов хотел"
+msgstr "Procedura guidata di codifica tessera PMS base"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.room_move_wiz_view_form
 msgid "Cancel"
-msgstr "Отказ"
+msgstr "Annulla"
 
 #. module: rfid_pms_base
 #: model:res.groups,name:rfid_pms_base.group_card_manager
 msgid "Card Management / Manager"
-msgstr "Управление на карти / Управител"
+msgstr "Gestione tessere / Responsabile"
 
 #. module: rfid_pms_base
 #: model:res.groups,name:rfid_pms_base.group_card_user
 msgid "Card Management / User"
-msgstr "Управление на карти / Потребител"
+msgstr "Gestione tessere / Utente"
 
 #. module: rfid_pms_base
 #. odoo-python
 #: code:addons/rfid_pms_base/models/card_encode_wiz.py:0
 msgid "Card already in use for {}"
-msgstr "Картата вече се използва за {}"
+msgstr "Tessera già in uso per {}"
 
 #. module: rfid_pms_base
 #: model:ir.actions.act_window,name:rfid_pms_base.pms_base_card_action
 #: model:ir.ui.menu,name:rfid_pms_base.menu_cards
 msgid "Cards"
-msgstr "Карти"
+msgstr "Tessere"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_card_encode_wiz__checkin_date
 msgid "Check In"
-msgstr "Настаняване"
+msgstr "Check-in"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_card_encode_wiz__checkout_date
 msgid "Check Out"
-msgstr "Освобождаване"
+msgstr "Check-out"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.rfid_pms_base_room_kanban
 msgid "Clean"
-msgstr "Почистване"
+msgstr "Pulizia"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.rfid_pms_base_room_kanban
 msgid "Clean Off"
-msgstr "Почистване изкл"
+msgstr "Fine pulizia"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room__hb_clean
 msgid "Clean button pressed"
-msgstr "Бутон за почистване натиснат"
+msgstr "Pulsante di pulizia premuto"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room__company_id
 msgid "Company"
-msgstr "Компанич"
+msgstr "Azienda"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_card_encode_wiz__create_uid
@@ -147,7 +147,7 @@ msgstr "Компанич"
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room__create_uid
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room_move_wiz__create_uid
 msgid "Created by"
-msgstr "Създаден от"
+msgstr "Creato da"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_card_encode_wiz__create_date
@@ -155,37 +155,37 @@ msgstr "Създаден от"
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room__create_date
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room_move_wiz__create_date
 msgid "Created on"
-msgstr "Създаден на"
+msgstr "Creato il"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields.selection,name:rfid_pms_base.selection__rfid_pms_base_card_encode_wiz__mode__current
 msgid "Current Reservation"
-msgstr "Текуща резервация"
+msgstr "Prenotazione corrente"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.rfid_pms_base_room_kanban
 msgid "Current inserted card"
-msgstr "Текущо поставена карта"
+msgstr "Tessera attualmente inserita"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.rfid_pms_base_room_kanban
 msgid "DND"
-msgstr "НМБ"
+msgstr "DND"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.rfid_pms_base_room_kanban
 msgid "DND Off"
-msgstr "НМБ Изкл"
+msgstr "DND disattivato"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room__hb_dnd
 msgid "DND button pressed"
-msgstr "НМБ бутон натиснат"
+msgstr "Pulsante DND premuto"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.cards_encode_wiz_view_form
 msgid "Data for card encoding"
-msgstr "Данни за програмиране на карта"
+msgstr "Dati per la codifica della tessera"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_card_encode_wiz__display_name
@@ -193,7 +193,7 @@ msgstr "Данни за програмиране на карта"
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room__display_name
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room_move_wiz__display_name
 msgid "Display Name"
-msgstr "Име за показване"
+msgstr "Nome visualizzato"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,help:rfid_pms_base.field_rfid_pms_base_room__hb_dnd
@@ -202,100 +202,100 @@ msgid ""
 "occupant does not want to be disturbed. Staff cards may override this "
 "setting."
 msgstr ""
-"Статус 'Не безпокойте' за хотелски режим. Когато е отметнато, указва, че "
-"обитателят на стаята не желае да бъде безпокоен. Картите на персонала могат "
-"да отменят тази настройка."
+"Stato Non disturbare per la modalità hotel. Se attivato, indica che "
+"l'occupante della camera non desidera essere disturbato. Le tessere del "
+"personale possono ignorare questa impostazione."
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.rfid_pms_base_room_kanban
 msgid "Do not disturb"
-msgstr "Не ме безпокой"
+msgstr "Non disturbare"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.cards_encode_wiz_view_form
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.message_wiz_view_form
 msgid "Done"
-msgstr "Готово"
+msgstr "Fatto"
 
 #. module: rfid_pms_base
 #: model:ir.model.constraint,message:rfid_pms_base.constraint_rfid_pms_base_room_unique_room_number
 msgid "Duplicate room number."
-msgstr "Дублиран номер на стая."
+msgstr "Numero camera duplicato."
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_card_encode_wiz__employee_id
 msgid "Employee"
-msgstr "Слуцител"
+msgstr "Dipendente"
 
 #. module: rfid_pms_base
 #: model:ir.ui.menu,name:rfid_pms_base.employee_list_menu
 msgid "Employees"
-msgstr "Служители"
+msgstr "Dipendenti"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.cards_encode_wiz_view_form
 msgid "Encode Card"
-msgstr "Програмиране на карта"
+msgstr "Codifica tessera"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.cards_encode_wiz_view_form
 msgid "Encode card"
-msgstr "Програмирай карта"
+msgstr "Codifica tessera"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.rfid_pms_base_room_form
 msgid "Friendly Room name"
-msgstr "Удобно име за тази стая"
+msgstr "Nome descrittivo della camera"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room__group
 msgid "Group"
-msgstr "Група"
+msgstr "Gruppo"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room__access_group_id
 msgid "Guest Group"
-msgstr "Група за Гости"
+msgstr "Gruppo ospiti"
 
 #. module: rfid_pms_base
 #: model:ir.ui.menu,name:rfid_pms_base.partner_list_menu
 msgid "Guest reservations"
-msgstr "Резервации на Гости"
+msgstr "Prenotazioni ospiti"
 
 #. module: rfid_pms_base
 #: model:ir.ui.menu,name:rfid_pms_base.menu_read_card
 msgid "Guests Card"
-msgstr "Карта за гост"
+msgstr "Tessera ospiti"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.rfid_pms_base_room_kanban
 msgid "Guests present"
-msgstr "Има гости"
+msgstr "Ospiti presenti"
 
 #. module: rfid_pms_base
 #: model:ir.ui.menu,name:rfid_pms_base.menu_root
 msgid "Hotel Card Management"
-msgstr "Управление на хотелски карти"
+msgstr "Gestione tessere hotel"
 
 #. module: rfid_pms_base
 #: model:ir.actions.act_window,name:rfid_pms_base.action_window_hr
 msgid "Hotel Employees"
-msgstr "Служители на хотела"
+msgstr "Dipendenti hotel"
 
 #. module: rfid_pms_base
 #: model:ir.actions.act_window,name:rfid_pms_base.action_window_partner
 msgid "Hotel Guests"
-msgstr "Гости на хотела"
+msgstr "Ospiti hotel"
 
 #. module: rfid_pms_base
 #: model:ir.actions.act_window,name:rfid_pms_base.action_window_room
 msgid "Hotel Rooms"
-msgstr "Хотелски стаи"
+msgstr "Camere hotel"
 
 #. module: rfid_pms_base
 #: model:ir.actions.act_window,name:rfid_pms_base.cards_program_wiz_action
 msgid "Hotel card encoder"
-msgstr "Програматор на карти за хотел"
+msgstr "Codificatore di tessere hotel"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,help:rfid_pms_base.field_rfid_pms_base_room__hb_card_present
@@ -303,14 +303,14 @@ msgid ""
 "Hotel mode indicator showing if a card is currently inserted in the room's "
 "energy-saving card reader. Often used to control room electricity."
 msgstr ""
-"Индикатор за хотелски режим, показващ дали в момента е поставена карта в "
-"четеца за спестяване на енергия в стаята. Често се използва за управление на"
-" електричеството в стаята."
+"Indicatore della modalità hotel che mostra se una tessera è attualmente "
+"inserita nel lettore a risparmio energetico della camera. Spesso utilizzato "
+"per controllare l'alimentazione elettrica della camera."
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room__last_humidity
 msgid "Humidity"
-msgstr "Влажност"
+msgstr "Umidità"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_card_encode_wiz__id
@@ -323,12 +323,12 @@ msgstr "ID"
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room__number
 msgid "Internal number"
-msgstr "Вътрешен номер"
+msgstr "Numero interno"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room__last_insert_name
 msgid "Last Insert Card"
-msgstr "Последно поставена карта"
+msgstr "Ultima tessera inserita"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_card_encode_wiz__write_uid
@@ -336,7 +336,7 @@ msgstr "Последно поставена карта"
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room__write_uid
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room_move_wiz__write_uid
 msgid "Last Updated by"
-msgstr "Последно актуализиран от"
+msgstr "Ultimo aggiornamento di"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_card_encode_wiz__write_date
@@ -344,94 +344,94 @@ msgstr "Последно актуализиран от"
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room__write_date
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room_move_wiz__write_date
 msgid "Last Updated on"
-msgstr "Последно актуализиран на"
+msgstr "Ultimo aggiornamento il"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_message_wiz__message
 msgid "Message"
-msgstr "Съобщение"
+msgstr "Messaggio"
 
 #. module: rfid_pms_base
 #: model:ir.model,name:rfid_pms_base.model_rfid_pms_base_message_wiz
 msgid "Message Wizard"
-msgstr "Помощник съобщения"
+msgstr "Procedura guidata messaggi"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_card_encode_wiz__mode
 msgid "Mode"
-msgstr "Режим"
+msgstr "Modalità"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.room_move_wiz_view_form
 msgid "Move"
-msgstr "Премести"
+msgstr "Trasferimento"
 
 #. module: rfid_pms_base
 #: model:ir.actions.act_window,name:rfid_pms_base.room_move_wiz_action
 msgid "Move customers"
-msgstr "Премести клиенти"
+msgstr "Trasferisci ospiti"
 
 #. module: rfid_pms_base
 #: model:ir.model,name:rfid_pms_base.model_rfid_pms_base_room_move_wiz
 msgid "Move customers from one room to another"
-msgstr "Премести гости от една стая в друга"
+msgstr "Trasferisci gli ospiti da una camera a un'altra"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.room_move_wiz_view_form
 msgid "Move customers to another room"
-msgstr "Премести гости в друга стая"
+msgstr "Trasferisci gli ospiti in un'altra camera"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.room_move_wiz_view_form
 msgid "Moving customers from one room to another"
-msgstr "Премести гости от една стая в друга"
+msgstr "Trasferimento ospiti da una camera a un'altra"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room__name
 msgid "Name"
-msgstr "Име"
+msgstr "Nome"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields.selection,name:rfid_pms_base.selection__rfid_pms_base_card_encode_wiz__mode__new
 msgid "New Reservation"
-msgstr "Нова резервация"
+msgstr "Nuova prenotazione"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.rfid_pms_base_room_kanban
 msgid "No Guests present"
-msgstr "Няма гости"
+msgstr "Nessun ospite presente"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room__last_occupancy
 msgid "Occupancy"
-msgstr "Заетост"
+msgstr "Occupazione"
 
 #. module: rfid_pms_base
 #: model:res.groups.privilege,name:rfid_pms_base.res_groups_privilege_pms
 msgid "PMS Access"
-msgstr "PMS Достъп"
+msgstr "Accesso PMS"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.rfid_pms_base_room_kanban
 msgid "Please Clean"
-msgstr "Моля почисти"
+msgstr "Pulizia richiesta"
 
 #. module: rfid_pms_base
 #. odoo-python
 #: code:addons/rfid_pms_base/models/card_encode_wiz.py:0
 msgid "Please scan a card"
-msgstr "Моля, сканирайте карта"
+msgstr "Effettuare la scansione di una tessera"
 
 #. module: rfid_pms_base
 #. odoo-python
 #: code:addons/rfid_pms_base/models/card_encode_wiz.py:0
 msgid "Please select a room"
-msgstr "Моля, изберете стая"
+msgstr "Selezionare una camera"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room__hb_card_present
 msgid "Present card in reader"
-msgstr "Налична карта в четец"
+msgstr "Avvicinare la tessera al lettore"
 
 #. module: rfid_pms_base
 #: model:ir.module.category,name:rfid_pms_base.rfid_pms_base_management
@@ -441,38 +441,38 @@ msgstr "RFID PMS Base"
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.cards_encode_wiz_view_form
 msgid "Read Card"
-msgstr "Прочети карта"
+msgstr "Leggi tessera"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields.selection,name:rfid_pms_base.selection__rfid_pms_base_card_encode_wiz__mode__read
 msgid "Read only"
-msgstr "Само за четене"
+msgstr "Sola lettura"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_card_encode_wiz__reservation
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room__reservation
 msgid "Reservation"
-msgstr "Резервация"
+msgstr "Prenotazione"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_card_encode_wiz__room_id
 msgid "Room"
-msgstr "Стая"
+msgstr "Camera"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room_move_wiz__room_from_id
 msgid "Room From"
-msgstr "От стая"
+msgstr "Camera di partenza"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.rfid_pms_base_room_search
 msgid "Room Name"
-msgstr "Име на стая"
+msgstr "Nome camera"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room_move_wiz__room_to_id
 msgid "Room To"
-msgstr "Към стая"
+msgstr "Camera di destinazione"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,help:rfid_pms_base.field_rfid_pms_base_room__hb_clean
@@ -480,91 +480,91 @@ msgid ""
 "Room cleaning request for hotel mode. When checked, indicates the room "
 "occupant has requested cleaning service."
 msgstr ""
-"Заявка за почистване на стаята в хотелски режим. Когато е отметнато, указва,"
-" че обитателят на стаята е поискал услуга за почистване."
+"Richiesta di pulizia della camera per la modalità hotel. Se attivato, indica"
+" che l'occupante della camera ha richiesto il servizio di pulizia."
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room__door_id
 msgid "Room door"
-msgstr "Врата към стаята"
+msgstr "Porta della camera"
 
 #. module: rfid_pms_base
 #. odoo-python
 #: code:addons/rfid_pms_base/models/room.py:0
 msgid "Room number have to be between 1 and 65535"
-msgstr "Номерът на стаята трябва да бъде между 1 и 65535"
+msgstr "Il numero camera deve essere compreso tra 1 e 65535"
 
 #. module: rfid_pms_base
 #: model:ir.model,name:rfid_pms_base.model_rfid_pms_base_room
 #: model:ir.ui.menu,name:rfid_pms_base.room_list_menu
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.rfid_pms_base_room_search
 msgid "Rooms"
-msgstr "Стаи"
+msgstr "Camere"
 
 #. module: rfid_pms_base
 #: model:ir.ui.menu,name:rfid_pms_base.menu_settings
 msgid "Settings"
-msgstr "Настройки"
+msgstr "Impostazioni"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields.selection,name:rfid_pms_base.selection__rfid_pms_base_card_encode_wiz__mode__stuff
 msgid "Stuff encoding"
-msgstr "Програмиране на служители"
+msgstr "Codifica del personale"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_room__last_temperature
 msgid "Temperature"
-msgstr "Температура"
+msgstr "Temperatura"
 
 #. module: rfid_pms_base
 #: model:ir.model.fields,field_description:rfid_pms_base.field_rfid_pms_base_card_encode_wiz__card_number
 msgid "The card number"
-msgstr "Номер на картата"
+msgstr "Il numero della tessera"
 
 #. module: rfid_pms_base
 #. odoo-python
 #: code:addons/rfid_pms_base/models/card_encode_wiz.py:0
 msgid "The period for this card is more than 30 days"
-msgstr "Периодът за тази карта е повече от 30 дни"
+msgstr "Il periodo di validità di questa tessera supera i 30 giorni"
 
 #. module: rfid_pms_base
 #: model:ir.ui.menu,name:rfid_pms_base.hr_rfid_menu_user_events
 msgid "User Events"
-msgstr "Потребителски събития"
+msgstr "Eventi utente"
 
 #. module: rfid_pms_base
 #: model:ir.module.category,description:rfid_pms_base.rfid_pms_base_management
 msgid "User rights for the RFID PMS Base module"
-msgstr "Потребителски права за модула RFID PMS Base"
+msgstr "Diritti utente per il modulo RFID PMS Base"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.cards_encode_wiz_view_form
 msgid "Valid from"
-msgstr "Валиден от"
+msgstr "Valido dal"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.cards_encode_wiz_view_form
 msgid "Valid to"
-msgstr "Валиден до"
+msgstr "Valido al"
 
 #. module: rfid_pms_base
 #. odoo-python
 #: code:addons/rfid_pms_base/models/card_encode_wiz.py:0
 msgid "Wrong validity interval"
-msgstr "Грешен интервал на валидност"
+msgstr "Intervallo di validità non corretto"
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.cards_encode_wiz_view_form
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.message_wiz_view_form
 msgid "cards_encode_wiz_form"
-msgstr "cards_encode_wiz_form"
+msgstr ""
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.rfid_pms_base_room_form
 msgid "rfid_pms_base_room_form"
-msgstr "rfid_pms_base_room_form"
+msgstr ""
 
 #. module: rfid_pms_base
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.room_move_wiz_view_form
 msgid "room_move_wiz_form"
-msgstr "room_move_wiz_form"
+msgstr ""

@@ -1,0 +1,104 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* hr_attendace_rfid_hr_hourly_cost
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-05 16:23+0000\n"
+"PO-Revision-Date: 2026-03-06 16:49\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__actual_work_time_cost
+msgid "Actual Work Time Cost"
+msgstr "Tatsächliche Arbeitszeitkosten"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__currency_id
+msgid "Currency"
+msgstr "Währung"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,help:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__currency_id
+msgid ""
+"Currency for cost calculations (derived from employee).\n"
+"        \n"
+"        • Source: Automatically inherited from employee's currency\n"
+"        • Purpose: Ensures consistent currency for all cost calculations\n"
+"        • Read-only: Cannot be changed directly\n"
+"        \n"
+"        Note: All monetary fields use this currency for proper formatting and calculations."
+msgstr ""
+"Währung für Kostenberechnungen (abgeleitet aus dem Mitarbeiterdatensatz).\n"
+"        \n"
+"        • Quelle: Automatisch aus der Mitarbeiterwährung übernommen\n"
+"        • Zweck: Gewährleistet eine einheitliche Währung für alle Kostenberechnungen\n"
+"        • Schreibgeschützt: Kann nicht direkt geändert werden\n"
+"        \n"
+"        Hinweis: Alle Geldbetragsfelder verwenden diese Währung für korrekte Formatierung und Berechnungen."
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__display_name
+msgid "Display Name"
+msgstr "Anzeigename"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,help:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__hourly_cost
+msgid ""
+"Employee's hourly cost rate (derived from employee record).\n"
+"        \n"
+"        • Source: Copied from employee's hourly cost setting\n"
+"        • Access: Visible to HR users only\n"
+"        • Usage: Base rate for calculating actual work time costs\n"
+"        \n"
+"        Note: Update the employee's hourly cost to change this value."
+msgstr ""
+"Stundenlohn des Mitarbeiters (entnommen aus dem Mitarbeiterdatensatz).\n"
+"        \n"
+"        • Quelle: Aus der Stundenlohn-Einstellung des Mitarbeiters übernommen\n"
+"        • Zugriff: Nur für HR-Benutzer sichtbar\n"
+"        • Verwendung: Basissatz für die Berechnung der tatsächlichen Arbeitszeitkosten\n"
+"        \n"
+"        Hinweis: Um diesen Wert zu ändern, den Stundenlohn des Mitarbeiters aktualisieren."
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model,name:hr_attendace_rfid_hr_hourly_cost.model_hr_attendance_extra
+msgid "Extra work time calculations"
+msgstr "Berechnungen der Mehrarbeitszeit"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__hourly_cost
+msgid "Hourly Cost"
+msgstr "Stundenlohn"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__id
+msgid "ID"
+msgstr "ID"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,help:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__actual_work_time_cost
+msgid ""
+"Total cost of actual work time (automatically calculated).\n"
+"        \n"
+"        • Calculation: Hourly cost × Actual work time hours\n"
+"        • Access: Visible to HR managers only\n"
+"        • Auto-update: Recalculated when hourly cost or work time changes\n"
+"        \n"
+"        Note: Provides financial overview of actual labor costs per day."
+msgstr ""
+"Gesamtkosten der tatsächlichen Arbeitszeit (automatisch berechnet).\n"
+"        \n"
+"        • Berechnung: Stundenlohn × Tatsächliche Arbeitsstunden\n"
+"        • Zugriff: Nur für HR-Manager sichtbar\n"
+"        • Automatische Aktualisierung: Neuberechnung bei Änderung des Stundenlohns oder der Arbeitszeit\n"
+"        \n"
+"        Hinweis: Bietet eine finanzielle Übersicht der tatsächlichen Lohnkosten pro Tag."

@@ -1,0 +1,104 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* hr_attendace_rfid_hr_hourly_cost
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-05 16:23+0000\n"
+"PO-Revision-Date: 2026-03-06 16:24\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ro\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__actual_work_time_cost
+msgid "Actual Work Time Cost"
+msgstr "Costul timpului efectiv de lucru"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__currency_id
+msgid "Currency"
+msgstr "Monedă"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,help:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__currency_id
+msgid ""
+"Currency for cost calculations (derived from employee).\n"
+"        \n"
+"        • Source: Automatically inherited from employee's currency\n"
+"        • Purpose: Ensures consistent currency for all cost calculations\n"
+"        • Read-only: Cannot be changed directly\n"
+"        \n"
+"        Note: All monetary fields use this currency for proper formatting and calculations."
+msgstr ""
+"Moneda utilizată pentru calculele de cost (preluată din angajat).\n"
+"        \n"
+"        • Sursă: Moștenită automat din moneda angajatului\n"
+"        • Scop: Asigură o monedă consistentă pentru toate calculele de cost\n"
+"        • Doar citire: Nu poate fi modificată direct\n"
+"        \n"
+"        Notă: Toate câmpurile monetare utilizează această monedă pentru formatare și calcule corecte."
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__display_name
+msgid "Display Name"
+msgstr "Nume afișat"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,help:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__hourly_cost
+msgid ""
+"Employee's hourly cost rate (derived from employee record).\n"
+"        \n"
+"        • Source: Copied from employee's hourly cost setting\n"
+"        • Access: Visible to HR users only\n"
+"        • Usage: Base rate for calculating actual work time costs\n"
+"        \n"
+"        Note: Update the employee's hourly cost to change this value."
+msgstr ""
+"Tariful de cost orar al angajatului (preluat din fișa angajatului).\n"
+"        \n"
+"        • Sursă: Copiat din setarea costului orar al angajatului\n"
+"        • Acces: Vizibil doar pentru utilizatorii HR\n"
+"        • Utilizare: Tarif de bază pentru calcularea costurilor timpului efectiv de lucru\n"
+"        \n"
+"        Notă: Actualizați costul orar al angajatului pentru a modifica această valoare."
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model,name:hr_attendace_rfid_hr_hourly_cost.model_hr_attendance_extra
+msgid "Extra work time calculations"
+msgstr "Calculele timpului suplimentar de lucru"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__hourly_cost
+msgid "Hourly Cost"
+msgstr "Cost orar"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__id
+msgid "ID"
+msgstr "ID"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,help:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__actual_work_time_cost
+msgid ""
+"Total cost of actual work time (automatically calculated).\n"
+"        \n"
+"        • Calculation: Hourly cost × Actual work time hours\n"
+"        • Access: Visible to HR managers only\n"
+"        • Auto-update: Recalculated when hourly cost or work time changes\n"
+"        \n"
+"        Note: Provides financial overview of actual labor costs per day."
+msgstr ""
+"Costul total al timpului efectiv de lucru (calculat automat).\n"
+"        \n"
+"        • Calcul: Cost orar × Orele timpului efectiv de lucru\n"
+"        • Acces: Vizibil doar pentru managerii HR\n"
+"        • Actualizare automată: Recalculat la modificarea costului orar sau a timpului de lucru\n"
+"        \n"
+"        Notă: Oferă o imagine financiară de ansamblu a costurilor efective cu forța de muncă pe zi."

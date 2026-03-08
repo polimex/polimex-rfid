@@ -1,0 +1,906 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* hr_rfid_site_manager
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-05 16:53+0000\n"
+"PO-Revision-Date: 2026-03-08 16:10\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: el\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: hr_rfid_site_manager
+#. odoo-python
+#: code:addons/hr_rfid_site_manager/models/hr_rfid_site.py:0
+msgid "%s group"
+msgstr "Ομάδα %s"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_hierarchy_view
+msgid "<i class=\"fa fa-shield text-danger ms-auto\" title=\"Arm the Group\"/>"
+msgstr "<i class=\"fa fa-shield text-danger ms-auto\" title=\"Ενεργοποίηση Ομάδας\"/>"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_hierarchy_view
+msgid ""
+"<i class=\"fa fa-universal-access text-success ms-auto\" title=\"Disarm the "
+"Group\"/>"
+msgstr ""
+"<i class=\"fa fa-universal-access text-success ms-auto\" "
+"title=\"Απενεργοποίηση Ομάδας\"/>"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_controller_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_webstack_view_kanban
+msgid "<span class=\"text-muted\">Site:</span>"
+msgstr "<span class=\"text-muted\">Εγκατάσταση:</span>"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_access_group
+msgid "Access Group"
+msgstr "Ομάδα Πρόσβασης"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__access_group_count
+msgid "Access Group Count"
+msgstr "Πλήθος Ομάδων Πρόσβασης"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Access Group records"
+msgstr "Εγγραφές Ομάδων Πρόσβασης"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Access Groups"
+msgstr "Ομάδες Πρόσβασης"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__access_group_ids
+msgid ""
+"Access control groups automatically created for this site. Groups contain "
+"all doors from this site and child sites. Assign people to these groups to "
+"grant site access."
+msgstr ""
+"Ομάδες ελέγχου πρόσβασης που δημιουργούνται αυτόματα για αυτή την "
+"εγκατάσταση. Οι ομάδες περιέχουν όλες τις πόρτες αυτής της εγκατάστασης και "
+"των υποεγκαταστάσεων. Αντιστοιχίστε άτομα σε αυτές τις ομάδες για να "
+"χορηγήσετε πρόσβαση στην εγκατάσταση."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__access_group_ids
+msgid "Access groups"
+msgstr "Ομάδες πρόσβασης"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_needaction
+msgid "Action Needed"
+msgstr "Απαιτείται Ενέργεια"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__active
+msgid "Active"
+msgstr "Ενεργό"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__state
+msgid "Alarm Group State"
+msgstr "Κατάσταση Ομάδας Συναγερμού"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__alarm_line_group_ids
+msgid "Alarm Groups"
+msgstr "Ομάδες Συναγερμού"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__alarm_line_group_count
+msgid "Alarm Line Group Count"
+msgstr "Πλήθος Ομάδων Γραμμής Συναγερμού"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Alarm Line Group records"
+msgstr "Εγγραφές Ομάδων Γραμμής Συναγερμού"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Alarm Line Groups"
+msgstr "Ομάδες Γραμμής Συναγερμού"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_ctrl_alarm_group
+msgid "Alarm system groups"
+msgstr "Ομάδες συστήματος συναγερμού"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__child_door_ids
+msgid ""
+"All doors from child sites, computed automatically. Used for hierarchical "
+"access control - when creating access groups, doors from child sites are "
+"included."
+msgstr ""
+"Όλες οι πόρτες από τις υποεγκαταστάσεις, υπολογισμένες αυτόματα. "
+"Χρησιμοποιείται για ιεραρχικό έλεγχο πρόσβασης — κατά τη δημιουργία ομάδων "
+"πρόσβασης, συμπεριλαμβάνονται οι πόρτες από τις υποεγκαταστάσεις."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Archived"
+msgstr "Αρχειοθετημένο"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_attachment_count
+msgid "Attachment Count"
+msgstr "Πλήθος Συνημμένων"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__make_access_group
+msgid ""
+"Automatically create and maintain an access group for this site.\n"
+"        \n"
+"• When enabled: Creates an access group containing all doors in this site and child sites\n"
+"• Access control: Assign people to this group to grant access to all site doors\n"
+"• Automatic updates: Door changes automatically update the access group\n"
+"\n"
+"Useful for: Building access, department access, or hierarchical permissions."
+msgstr ""
+"Αυτόματη δημιουργία και διατήρηση ομάδας πρόσβασης για αυτή την εγκατάσταση.\n"
+"        \n"
+"• Όταν είναι ενεργοποιημένο: Δημιουργεί μια ομάδα πρόσβασης που περιέχει όλες τις πόρτες αυτής της εγκατάστασης και των υποεγκαταστάσεων\n"
+"• Έλεγχος πρόσβασης: Αντιστοιχίστε άτομα σε αυτή την ομάδα για να χορηγήσετε πρόσβαση σε όλες τις πόρτες της εγκατάστασης\n"
+"• Αυτόματες ενημερώσεις: Οι αλλαγές στις πόρτες ενημερώνουν αυτόματα την ομάδα πρόσβασης\n"
+"\n"
+"Χρήσιμο για: Πρόσβαση σε κτίρια, πρόσβαση ανά τμήμα ή ιεραρχικά δικαιώματα."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_hierarchy_view
+msgid "Available Access Group"
+msgstr "Διαθέσιμη Ομάδα Πρόσβασης"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__avatar_1920
+msgid "Avatar"
+msgstr "Avatar"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__avatar_1024
+msgid "Avatar 1024"
+msgstr "Avatar 1024"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__avatar_128
+msgid "Avatar 128"
+msgstr "Avatar 128"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__avatar_256
+msgid "Avatar 256"
+msgstr "Avatar 256"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__avatar_512
+msgid "Avatar 512"
+msgstr "Avatar 512"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_site
+msgid "Building manager site classification"
+msgstr "Ταξινόμηση εγκατάστασης διαχειριστή κτιρίου"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__child_count
+msgid "Child Count"
+msgstr "Πλήθος Υποεγκαταστάσεων"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__child_door_ids
+msgid "Child doors"
+msgstr "Πόρτες υποεγκαταστάσεων"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Child records"
+msgstr "Εγγραφές υποεγκαταστάσεων"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__child_ids
+msgid "Child sites"
+msgstr "Υποεγκαταστάσεις"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__color
+msgid "Color Index"
+msgstr "Δείκτης Χρώματος"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__color
+msgid ""
+"Color coding for visual identification in hierarchy view. Choose different "
+"colors to distinguish site types or importance levels."
+msgstr ""
+"Κωδικοποίηση χρώματος για οπτική αναγνώριση στην προβολή ιεραρχίας. Επιλέξτε"
+" διαφορετικά χρώματα για να διακρίνετε τύπους εγκαταστάσεων ή επίπεδα "
+"σπουδαιότητας."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__company_id
+msgid "Company"
+msgstr "Εταιρεία"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__company_id
+msgid ""
+"Company that owns this site. Used for multi-company access control and data "
+"separation."
+msgstr ""
+"Η εταιρεία στην οποία ανήκει αυτή η εγκατάσταση. Χρησιμοποιείται για έλεγχο "
+"πρόσβασης πολλαπλών εταιρειών και διαχωρισμό δεδομένων."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_res_partner
+msgid "Contact"
+msgstr "Επαφή"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_ctrl
+msgid "Controller"
+msgstr "Ελεγκτής"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__controller_count
+msgid "Controller Count"
+msgstr "Πλήθος Ελεγκτών"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Controller records"
+msgstr "Εγγραφές Ελεγκτών"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__controller_ids
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Controllers"
+msgstr "Ελεγκτές"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Create Child"
+msgstr "Δημιουργία Υποεγκατάστασης"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Create a new child site"
+msgstr "Δημιουργία νέας υποεγκατάστασης"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.actions.act_window,help:hr_rfid_site_manager.hr_rfid_site_action
+msgid "Create your first site to organize your RFID infrastructure"
+msgstr ""
+"Δημιουργήστε την πρώτη σας εγκατάσταση για να οργανώσετε την RFID υποδομή "
+"σας"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__create_uid
+msgid "Created by"
+msgstr "Δημιουργήθηκε από"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__create_date
+msgid "Created on"
+msgstr "Δημιουργήθηκε στις"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__state
+msgid ""
+"Current security state of alarm groups at this site. Shows whether security "
+"systems are armed or disarmed. Changes automatically when alarm state "
+"changes."
+msgstr ""
+"Τρέχουσα κατάσταση ασφαλείας των ομάδων συναγερμού σε αυτή την εγκατάσταση. "
+"Εμφανίζει εάν τα συστήματα ασφαλείας είναι ενεργοποιημένα ή "
+"απενεργοποιημένα. Ενημερώνεται αυτόματα όταν αλλάζει η κατάσταση του "
+"συναγερμού."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_access_group__display_name
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl__display_name
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl_alarm_group__display_name
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_door__display_name
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_event_user__display_name
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__display_name
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_webstack__display_name
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_res_partner__display_name
+msgid "Display Name"
+msgstr "Εμφάνιση Ονόματος"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_door
+msgid "Door"
+msgstr "Πόρτα"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__door_count
+msgid "Door Count"
+msgstr "Πλήθος Πορτών"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Door records"
+msgstr "Εγγραφές Πορτών"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__door_ids
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Doors"
+msgstr "Πόρτες"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_follower_ids
+msgid "Followers"
+msgstr "Ακόλουθοι"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Ακόλουθοι (Συνεργάτες)"
+
+#. module: hr_rfid_site_manager
+#: model:res.groups,name:hr_rfid_site_manager.group_guard
+msgid "Guard"
+msgstr "Φύλακας"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__has_message
+msgid "Has Message"
+msgstr "Έχει Μήνυμα"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_access_group__id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl__id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl_alarm_group__id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_door__id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_event_user__id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_webstack__id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_res_partner__id
+msgid "ID"
+msgstr "Κωδικός"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Εάν είναι επιλεγμένο, νέα μηνύματα απαιτούν την προσοχή σας."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__message_has_error
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Εάν είναι επιλεγμένο, ορισμένα μηνύματα έχουν σφάλμα παράδοσης."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__image_1920
+msgid "Image"
+msgstr "Εικόνα"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__image_1024
+msgid "Image 1024"
+msgstr "Εικόνα 1024"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__image_128
+msgid "Image 128"
+msgstr "Εικόνα 128"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__image_256
+msgid "Image 256"
+msgstr "Εικόνα 256"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__image_512
+msgid "Image 512"
+msgstr "Εικόνα 512"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_is_follower
+msgid "Is Follower"
+msgstr "Είναι Ακόλουθος"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__write_uid
+msgid "Last Updated by"
+msgstr "Τελευταία ενημέρωση από"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__write_date
+msgid "Last Updated on"
+msgstr "Τελευταία ενημέρωση στις"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__make_access_group
+msgid "Make access group"
+msgstr "Δημιουργία ομάδας πρόσβασης"
+
+#. module: hr_rfid_site_manager
+#: model:res.groups,name:hr_rfid_site_manager.group_
+msgid "Manager"
+msgstr "Διαχειριστής"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_has_error
+msgid "Message Delivery error"
+msgstr "Σφάλμα παράδοσης μηνύματος"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_ids
+msgid "Messages"
+msgstr "Μηνύματα"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_webstack
+msgid "Module"
+msgstr "Άρθρωμα"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__webstack_count
+msgid "Module Count"
+msgstr "Πλήθος Αρθρωμάτων"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Module records"
+msgstr "Εγγραφές Αρθρωμάτων"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__webstack_ids
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Modules"
+msgstr "Αρθρώματα"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__name
+msgid "Name"
+msgstr "Όνομα"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__name
+msgid ""
+"Name of the site (building, floor, room, etc.). Must be unique within the "
+"parent site."
+msgstr ""
+"Όνομα της εγκατάστασης (κτίριο, όροφος, δωμάτιο, κ.λπ.). Πρέπει να είναι "
+"μοναδικό εντός της γονικής εγκατάστασης."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.actions.act_window,help:hr_rfid_site_manager.act_site_from_sites
+msgid "No sites found for this context"
+msgstr "Δεν βρέθηκαν εγκαταστάσεις για αυτό το πλαίσιο"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Αριθμός Ενεργειών"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__webstack_count
+msgid "Number of RFID communication modules (webstacks) at this site."
+msgstr ""
+"Αριθμός αρθρωμάτων επικοινωνίας RFID (webstacks) σε αυτή την εγκατάσταση."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__controller_count
+msgid "Number of RFID controllers at this site."
+msgstr "Αριθμός ελεγκτών RFID σε αυτή την εγκατάσταση."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__access_group_count
+msgid "Number of access control groups created for this site."
+msgstr ""
+"Αριθμός ομάδων ελέγχου πρόσβασης που έχουν δημιουργηθεί για αυτή την "
+"εγκατάσταση."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__child_count
+msgid "Number of child sites under this site in the hierarchy."
+msgstr "Αριθμός υποεγκαταστάσεων κάτω από αυτή την εγκατάσταση στην ιεραρχία."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__door_count
+msgid "Number of doors and access points at this site."
+msgstr "Αριθμός πορτών και σημείων πρόσβασης σε αυτή την εγκατάσταση."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_has_error_counter
+msgid "Number of errors"
+msgstr "Αριθμός σφαλμάτων"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Αριθμός μηνυμάτων που απαιτούν ενέργεια"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Αριθμός μηνυμάτων με σφάλμα παράδοσης"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__alarm_line_group_count
+msgid "Number of security alarm groups configured for this site."
+msgstr ""
+"Αριθμός ομάδων συναγερμού ασφαλείας που έχουν διαμορφωθεί για αυτή την "
+"εγκατάσταση."
+
+#. module: hr_rfid_site_manager
+#: model:res.groups,name:hr_rfid_site_manager.group_own_sites
+msgid "Own Sites"
+msgstr "Ιδιόκτητες Εγκαταστάσεις"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__parent_path
+msgid "Parent Path"
+msgstr "Διαδρομή Γονικής Εγκατάστασης"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__parent_id
+msgid "Parent site"
+msgstr "Γονική εγκατάσταση"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__parent_id
+msgid ""
+"Parent site in the hierarchy. For example: Building > Floor > Room. Leave "
+"empty for top-level sites. Prevents deletion if child sites exist."
+msgstr ""
+"Γονική εγκατάσταση στην ιεραρχία. Για παράδειγμα: Κτίριο > Όροφος > Δωμάτιο."
+" Αφήστε κενό για εγκαταστάσεις κορυφαίου επιπέδου. Αποτρέπει τη διαγραφή εάν"
+" υπάρχουν υποεγκαταστάσεις."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__door_ids
+msgid ""
+"Physical doors and access points at this site. Each door can have entry and "
+"exit readers for tracking person movement and access control."
+msgstr ""
+"Φυσικές πόρτες και σημεία πρόσβασης σε αυτή την εγκατάσταση. Κάθε πόρτα "
+"μπορεί να διαθέτει αναγνώστες εισόδου και εξόδου για παρακολούθηση κίνησης "
+"ατόμων και έλεγχο πρόσβασης."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_webstack__site_id
+msgid ""
+"Physical site where this communication module (webstack) is installed. Used "
+"for organizing network infrastructure and site-based management."
+msgstr ""
+"Φυσική εγκατάσταση όπου είναι εγκατεστημένο αυτό το άρθρωμα επικοινωνίας "
+"(webstack). Χρησιμοποιείται για την οργάνωση της δικτυακής υποδομής και τη "
+"διαχείριση βάσει εγκατάστασης."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_ctrl__site_id
+msgid ""
+"Physical site where this controller is installed. Used for organizing "
+"controllers by location and for site-based access control and reporting."
+msgstr ""
+"Φυσική εγκατάσταση όπου είναι εγκατεστημένος αυτός ο ελεγκτής. "
+"Χρησιμοποιείται για την οργάνωση ελεγκτών ανά τοποθεσία και για έλεγχο "
+"πρόσβασης και αναφορές βάσει εγκατάστασης."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_door__site_id
+msgid ""
+"Physical site where this door is located. Doors are automatically included "
+"in site access groups and used for hierarchical access control."
+msgstr ""
+"Φυσική εγκατάσταση όπου βρίσκεται αυτή η πόρτα. Οι πόρτες συμπεριλαμβάνονται"
+" αυτόματα στις ομάδες πρόσβασης της εγκατάστασης και χρησιμοποιούνται για "
+"ιεραρχικό έλεγχο πρόσβασης."
+
+#. module: hr_rfid_site_manager
+#: model:ir.module.category,name:hr_rfid_site_manager.hr_rfid_site_category
+msgid "RFID Site"
+msgstr "Εγκατάσταση RFID"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model,name:hr_rfid_site_manager.model_hr_rfid_event_user
+msgid "RFID User Event"
+msgstr "Συμβάν Χρήστη RFID"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__webstack_ids
+msgid ""
+"RFID communication modules (webstacks) installed at this site. Each module "
+"can manage multiple controllers and provides network connectivity."
+msgstr ""
+"Αρθρώματα επικοινωνίας RFID (webstacks) εγκατεστημένα σε αυτή την "
+"εγκατάσταση. Κάθε άρθρωμα μπορεί να διαχειριστεί πολλαπλούς ελεγκτές και "
+"παρέχει δικτυακή συνδεσιμότητα."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__controller_ids
+msgid ""
+"RFID controllers located at this site. Controllers manage individual doors "
+"and readers, handling access control decisions and event logging."
+msgstr ""
+"Ελεγκτές RFID που βρίσκονται σε αυτή την εγκατάσταση. Οι ελεγκτές "
+"διαχειρίζονται μεμονωμένες πόρτες και αναγνώστες, χειριζόμενοι αποφάσεις "
+"ελέγχου πρόσβασης και καταγραφή συμβάντων."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Root Sites"
+msgstr "Εγκαταστάσεις Κορυφής"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Σφάλμα παράδοσης SMS"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__alarm_line_group_ids
+msgid ""
+"Security alarm groups configured for this site. Used for arming/disarming "
+"security systems and managing intrusion detection across the site."
+msgstr ""
+"Ομάδες συναγερμού ασφαλείας που έχουν διαμορφωθεί για αυτή την εγκατάσταση. "
+"Χρησιμοποιούνται για ενεργοποίηση/απενεργοποίηση συστημάτων ασφαλείας και "
+"διαχείριση ανίχνευσης εισβολής σε ολόκληρη την εγκατάσταση."
+
+#. module: hr_rfid_site_manager
+#. odoo-javascript
+#: code:addons/hr_rfid_site_manager/static/src/components/site_chart/site_chart.xml:0
+msgid "Show doors"
+msgstr "Εμφάνιση πορτών"
+
+#. module: hr_rfid_site_manager
+#: model:ir.actions.act_window,name:hr_rfid_site_manager.act_site_from_sites
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_access_group__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_ctrl_alarm_group__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_door__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_event_user__site_id
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_webstack__site_id
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Site"
+msgstr "Εγκατάσταση"
+
+#. module: hr_rfid_site_manager
+#: model:res.groups.privilege,name:hr_rfid_site_manager.res_groups_privilege_site
+msgid "Site Management"
+msgstr "Διαχείριση Εγκαταστάσεων"
+
+#. module: hr_rfid_site_manager
+#: model:ir.actions.act_window,name:hr_rfid_site_manager.hr_rfid_site_action
+#: model:ir.ui.menu,name:hr_rfid_site_manager.hr_rfid_menu_site_manager
+msgid "Site Manager"
+msgstr "Διαχειριστής Εγκαταστάσεων"
+
+#. module: hr_rfid_site_manager
+#. odoo-javascript
+#: code:addons/hr_rfid_site_manager/static/src/components/site_chart/site_chart.xml:0
+msgid "Site Organization"
+msgstr "Οργάνωση Εγκαταστάσεων"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Site manager"
+msgstr "Διαχειριστής εγκαταστάσεων"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_access_group__site_id
+msgid ""
+"Site that owns this access group. The group automatically includes all doors"
+" from this site and its child sites. Deleted when the site is deleted."
+msgstr ""
+"Εγκατάσταση στην οποία ανήκει αυτή η ομάδα πρόσβασης. Η ομάδα "
+"συμπεριλαμβάνει αυτόματα όλες τις πόρτες από αυτή την εγκατάσταση και τις "
+"υποεγκαταστάσεις της. Διαγράφεται όταν διαγραφεί η εγκατάσταση."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_event_user__site_id
+msgid ""
+"Site where this RFID event occurred, computed automatically from the door, controller, or webstack location.\n"
+"\n"
+"• Source: Determined from door location, controller site, or webstack site\n"
+"• Purpose: Enables site-based filtering and reporting of access events\n"
+"• Usage: Track activity by location, generate site-specific reports\n"
+"\n"
+"This field helps analyze access patterns and security events by physical location."
+msgstr ""
+"Εγκατάσταση όπου συνέβη αυτό το συμβάν RFID, υπολογισμένη αυτόματα από την τοποθεσία της πόρτας, του ελεγκτή ή του webstack.\n"
+"\n"
+"• Πηγή: Καθορίζεται από την τοποθεσία της πόρτας, της εγκατάστασης του ελεγκτή ή της εγκατάστασης του webstack\n"
+"• Σκοπός: Επιτρέπει φιλτράρισμα και αναφορές συμβάντων πρόσβασης βάσει εγκατάστασης\n"
+"• Χρήση: Παρακολούθηση δραστηριότητας ανά τοποθεσία, δημιουργία αναφορών ανά εγκατάσταση\n"
+"\n"
+"Αυτό το πεδίο βοηθά στην ανάλυση προτύπων πρόσβασης και συμβάντων ασφαλείας ανά φυσική τοποθεσία."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_ctrl_alarm_group__site_id
+msgid ""
+"Site where this alarm group is active. Used for organizing security systems "
+"by location and enabling site-wide alarm control operations."
+msgstr ""
+"Εγκατάσταση όπου είναι ενεργή αυτή η ομάδα συναγερμού. Χρησιμοποιείται για "
+"την οργάνωση συστημάτων ασφαλείας ανά τοποθεσία και την ενεργοποίηση "
+"λειτουργιών ελέγχου συναγερμού σε επίπεδο εγκατάστασης."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_res_partner__site_ids
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_res_users__site_ids
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_view_partner_form_inherit_rfid_site
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Sites"
+msgstr "Εγκαταστάσεις"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.actions.act_window,help:hr_rfid_site_manager.hr_rfid_site_action
+msgid ""
+"Sites represent physical locations in your organization's hierarchy.\n"
+"                    <br><br>\n"
+"                    Key features:\n"
+"                    • <b>Hierarchy:</b> Create building &gt; floor &gt; room structures\n"
+"                    • <b>Auto Access Groups:</b> Generate access groups containing all site doors\n"
+"                    • <b>Equipment Organization:</b> Group doors, controllers, and modules by location\n"
+"                    • <b>Centralized Control:</b> Manage alarms and access permissions per site\n"
+"                    <br><br>\n"
+"                    <b>Examples:</b> \"Main Building\", \"Parking Garage\", \"Research Lab\", \"Executive Floor\""
+msgstr ""
+"Οι εγκαταστάσεις αντιπροσωπεύουν φυσικές τοποθεσίες στην ιεραρχία του οργανισμού σας.\n"
+"                    <br><br>\n"
+"                    Βασικά χαρακτηριστικά:\n"
+"                    • <b>Ιεραρχία:</b> Δημιουργήστε δομές κτίριο &gt; όροφος &gt; δωμάτιο\n"
+"                    • <b>Αυτόματες Ομάδες Πρόσβασης:</b> Δημιουργία ομάδων πρόσβασης που περιέχουν όλες τις πόρτες της εγκατάστασης\n"
+"                    • <b>Οργάνωση Εξοπλισμού:</b> Ομαδοποίηση πορτών, ελεγκτών και αρθρωμάτων ανά τοποθεσία\n"
+"                    • <b>Κεντρικός Έλεγχος:</b> Διαχείριση συναγερμών και δικαιωμάτων πρόσβασης ανά εγκατάσταση\n"
+"                    <br><br>\n"
+"                    <b>Παραδείγματα:</b> \"Κεντρικό Κτίριο\", \"Χώρος Στάθμευσης\", \"Εργαστήριο Έρευνας\", \"Όροφος Διοίκησης\""
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__child_ids
+msgid ""
+"Sites that are hierarchically below this site. For example: floors within a "
+"building, or rooms within a floor. Child sites inherit access permissions "
+"when using access groups."
+msgstr ""
+"Εγκαταστάσεις που βρίσκονται ιεραρχικά κάτω από αυτή την εγκατάσταση. Για "
+"παράδειγμα: όροφοι εντός κτιρίου ή δωμάτια εντός ορόφου. Οι υποεγκαταστάσεις"
+" κληρονομούν δικαιώματα πρόσβασης κατά τη χρήση ομάδων πρόσβασης."
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_res_partner__site_ids
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_res_users__site_ids
+msgid ""
+"Sites where this person has access or is responsible for.\n"
+"        \n"
+"• For employees: Sites where they work or have access\n"
+"• For visitors: Sites they are permitted to visit\n"
+"• For companies: Sites they manage or have contracts with\n"
+"\n"
+"This affects which access groups are available for assignment."
+msgstr ""
+"Εγκαταστάσεις στις οποίες αυτό το άτομο έχει πρόσβαση ή για τις οποίες είναι υπεύθυνο.\n"
+"        \n"
+"• Για υπαλλήλους: Εγκαταστάσεις όπου εργάζονται ή έχουν πρόσβαση\n"
+"• Για επισκέπτες: Εγκαταστάσεις που επιτρέπεται να επισκεφτούν\n"
+"• Για εταιρείες: Εγκαταστάσεις που διαχειρίζονται ή έχουν συμβάσεις\n"
+"\n"
+"Αυτό επηρεάζει τις ομάδες πρόσβασης που είναι διαθέσιμες για ανάθεση."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Sites with controllers"
+msgstr "Εγκαταστάσεις με ελεγκτές"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Sites with doors"
+msgstr "Εγκαταστάσεις με πόρτες"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.view_site_filter
+msgid "Sites with modules"
+msgstr "Εγκαταστάσεις με αρθρώματα"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.constraint,message:hr_rfid_site_manager.constraint_hr_rfid_site_unique_name
+msgid "The site name must be unique."
+msgstr "Το όνομα της εγκατάστασης πρέπει να είναι μοναδικό."
+
+#. module: hr_rfid_site_manager
+#: model:res.groups,comment:hr_rfid_site_manager.group_
+msgid "The user have full rights for Site Managment"
+msgstr "Ο χρήστης έχει πλήρη δικαιώματα για τη Διαχείριση Εγκαταστάσεων"
+
+#. module: hr_rfid_site_manager
+#: model:res.groups,comment:hr_rfid_site_manager.group_own_sites
+msgid "The user will be able to manage cards without hardware setup"
+msgstr "Ο χρήστης θα μπορεί να διαχειρίζεται κάρτες χωρίς διαμόρφωση υλικού"
+
+#. module: hr_rfid_site_manager
+#: model:res.groups,comment:hr_rfid_site_manager.group_guard
+msgid "The user will be able to see User Events."
+msgstr "Ο χρήστης θα μπορεί να βλέπει Συμβάντα Χρηστών."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.actions.act_window,help:hr_rfid_site_manager.act_site_from_sites
+msgid ""
+"This view shows sites filtered by the selected context.\n"
+"                    <br><br>\n"
+"                    Use the search panel and filters to:\n"
+"                    • Find sites by parent location\n"
+"                    • Filter by equipment type (doors, controllers, modules)\n"
+"                    • View hierarchical organization\n"
+"                    • Access site-specific management tools"
+msgstr ""
+"Αυτή η προβολή εμφανίζει εγκαταστάσεις φιλτραρισμένες βάσει του επιλεγμένου πλαισίου.\n"
+"                    <br><br>\n"
+"                    Χρησιμοποιήστε τον πίνακα αναζήτησης και τα φίλτρα για να:\n"
+"                    • Βρείτε εγκαταστάσεις ανά γονική τοποθεσία\n"
+"                    • Φιλτράρετε ανά τύπο εξοπλισμού (πόρτες, ελεγκτές, αρθρώματα)\n"
+"                    • Προβάλετε την ιεραρχική οργάνωση\n"
+"                    • Αποκτήσετε πρόσβαση σε εργαλεία διαχείρισης ανά εγκατάσταση"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__active
+msgid ""
+"Uncheck to archive this site. Archived sites are hidden from most views but "
+"preserve historical data."
+msgstr ""
+"Αποεπιλέξτε για να αρχειοθετήσετε αυτή την εγκατάσταση. Οι αρχειοθετημένες "
+"εγκαταστάσεις αποκρύπτονται από τις περισσότερες προβολές αλλά διατηρούν τα "
+"ιστορικά δεδομένα."
+
+#. module: hr_rfid_site_manager
+#: model:ir.module.category,description:hr_rfid_site_manager.hr_rfid_site_category
+msgid "User rights for the RFID Site module"
+msgstr "Δικαιώματα χρήστη για το άρθρωμα RFID Site"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,field_description:hr_rfid_site_manager.field_hr_rfid_site__website_message_ids
+msgid "Website Messages"
+msgstr "Μηνύματα Ιστότοπου"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.fields,help:hr_rfid_site_manager.field_hr_rfid_site__website_message_ids
+msgid "Website communication history"
+msgstr "Ιστορικό επικοινωνίας ιστότοπου"
+
+#. module: hr_rfid_site_manager
+#: model:ir.model.constraint,message:hr_rfid_site_manager.constraint_hr_rfid_site_no_loop
+msgid "You cannot create a loop in the site hierarchy."
+msgstr ""
+"Δεν μπορείτε να δημιουργήσετε κυκλική αναφορά στην ιεραρχία εγκαταστάσεων."
+
+#. module: hr_rfid_site_manager
+#. odoo-python
+#: code:addons/hr_rfid_site_manager/models/hr_rfid_access_group.py:0
+msgid "You cannot delete an access group that is linked to a site."
+msgstr ""
+"Δεν μπορείτε να διαγράψετε μια ομάδα πρόσβασης που είναι συνδεδεμένη με "
+"εγκατάσταση."
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_form
+msgid "Your site Name"
+msgstr "Όνομα εγκατάστασής σας"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_controller_view_search
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.webstack_view_search_inherit
+msgid "by Site"
+msgstr "ανά Εγκατάσταση"
+
+#. module: hr_rfid_site_manager
+#: model_terms:ir.ui.view,arch_db:hr_rfid_site_manager.hr_rfid_site_view_tree
+msgid "hr_rfid_site_tree"
+msgstr "hr_rfid_site_tree"

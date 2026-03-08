@@ -1,0 +1,151 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* rfid_service_zpl_labels_cups
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-06-13 16:44+0000\n"
+"PO-Revision-Date: 2026-03-06 19:39\n"
+"Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
+"Language-Team: \n"
+"Language: el_GR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.6\n"
+
+#. module: rfid_service_zpl_labels_cups
+#: model:ir.model,name:rfid_service_zpl_labels_cups.model_rfid_service_sale_wiz
+msgid "Base RFID Service Sale Wizard"
+msgstr "Βασικός Οδηγός Πώλησης Υπηρεσίας RFID"
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service.py:0
+msgid "CUPS Test Failed"
+msgstr "Αποτυχία Δοκιμής CUPS"
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service_sale.py:0
+msgid "CUPS printing error: %s"
+msgstr "Σφάλμα εκτύπωσης CUPS: %s"
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service.py:0
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service_sale_wiz.py:0
+msgid "Error sending to printer: %s"
+msgstr "Σφάλμα αποστολής στον εκτυπωτή: %s"
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service.py:0
+msgid ""
+"Error: %s\n"
+"Make sure base_report_to_label_printer is properly configured."
+msgstr ""
+"Σφάλμα: %s\n"
+"Βεβαιωθείτε ότι το base_report_to_label_printer έχει διαμορφωθεί σωστά."
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service_sale.py:0
+msgid "Label Sent to Printer"
+msgstr "Label Εστάλη στον Εκτυπωτή"
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service.py:0
+msgid ""
+"No label printer configured for your user. Please configure a label printer "
+"in your user preferences."
+msgstr ""
+"Δεν έχει διαμορφωθεί εκτυπωτής label για τον χρήστη σας. Παρακαλώ "
+"διαμορφώστε έναν εκτυπωτή label στις προτιμήσεις χρήστη σας."
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service_sale.py:0
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service_sale_wiz.py:0
+msgid ""
+"No label printer configured. Please configure a label printer in your user "
+"preferences."
+msgstr ""
+"Δεν έχει διαμορφωθεί εκτυπωτής label. Παρακαλώ διαμορφώστε έναν εκτυπωτή "
+"label στις προτιμήσεις χρήστη σας."
+
+#. module: rfid_service_zpl_labels_cups
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels_cups.hr_rfid_service_sale_form_inherit_cups
+msgid "Print Label"
+msgstr "Εκτύπωση Label"
+
+#. module: rfid_service_zpl_labels_cups
+#: model:ir.model,name:rfid_service_zpl_labels_cups.model_rfid_service
+msgid "RFID Service"
+msgstr "Υπηρεσία RFID"
+
+#. module: rfid_service_zpl_labels_cups
+#: model:ir.model,name:rfid_service_zpl_labels_cups.model_rfid_service_sale
+msgid "RFID Service Sales"
+msgstr "Πωλήσεις Υπηρεσίας RFID"
+
+#. module: rfid_service_zpl_labels_cups
+#: model:ir.model,name:rfid_service_zpl_labels_cups.model_ir_actions_report
+msgid "Report Action"
+msgstr "Ενέργεια Αναφοράς"
+
+#. module: rfid_service_zpl_labels_cups
+#: model_terms:ir.ui.view,arch_db:rfid_service_zpl_labels_cups.hr_rfid_service_sale_form_inherit_cups
+msgid "Send the wristband label to the configured CUPS printer"
+msgstr "Αποστολή του label βραχιολιού στον διαμορφωμένο εκτυπωτή CUPS"
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service.py:0
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service_sale_wiz.py:0
+msgid "Success"
+msgstr "Επιτυχία"
+
+#. module: rfid_service_zpl_labels_cups
+#: model:ir.actions.server,name:rfid_service_zpl_labels_cups.action_test_cups_label_printer
+msgid "Test CUPS Label Printer"
+msgstr "Δοκιμή Εκτυπωτή CUPS Label"
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service.py:0
+msgid ""
+"Test label sent to printer: %s\n"
+"Using template: %s"
+msgstr ""
+"Label δοκιμής εστάλη στον εκτυπωτή: %s\n"
+"Χρησιμοποιώντας πρότυπο: %s"
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service_sale.py:0
+msgid "Wristband label sent to %s successfully."
+msgstr "Το label βραχιολιού εστάλη επιτυχώς στο %s."
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service_sale_wiz.py:0
+msgid "Wristband sent to printer: %s"
+msgstr "Βραχιόλιο εστάλη στον εκτυπωτή: %s"
+
+#. module: rfid_service_zpl_labels_cups
+#. odoo-python
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service.py:0
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service_sale.py:0
+#: code:addons/rfid_service_zpl_labels_cups/models/rfid_service_sale_wiz.py:0
+msgid ""
+"Your printing action is not set to \"Send to Printer\". Please go to your "
+"user preferences and set the printing action to \"Send to Printer\"."
+msgstr ""
+"Η ενέργεια εκτύπωσής σας δεν έχει οριστεί σε \"Αποστολή στον Εκτυπωτή\". "
+"Παρακαλώ μεταβείτε στις προτιμήσεις χρήστη σας και ορίστε την ενέργεια "
+"εκτύπωσης σε \"Αποστολή στον Εκτυπωτή\"."
