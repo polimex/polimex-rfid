@@ -1,0 +1,42 @@
+<odoo>
+    <record id="act_wizard_generate_form76" model="ir.actions.act_window">
+        <field name="name">Generate Form 76</field>
+        <field name="res_model">hr.attendance.form76.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="group_ids" eval="[(4, ref('hr_attendance.group_hr_attendance_manager'))]"/>
+    </record>
+
+
+    <record id="view_hr_attendance_extra_wizard" model="ir.ui.view">
+        <field name="name">Generate Form 76 wizard</field>
+        <field name="model">hr.attendance.form76.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Select Report Range">
+                <group>
+                    <group>
+                        <field name="department_ids" widget="many2many_tags"/>
+                    </group>
+                    <group>
+                        <field name="report_month"/>
+                        <field name="report_year"/>
+                        <field name="precision"/>
+                        <field name="set_hours_to"/>
+                    </group>
+                </group>
+                <footer>
+                    <button string="Preview" name="report_view" type="object" class="btn-primary"/>
+                    <button string="Print" name="report_print" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <menuitem
+                id="menu_wizard_generate_form76_attendance"
+                name="Generate Form 76"
+                sequence="52"
+                parent="hr_attendance_late.menu_hr_attendance_report"
+                action="l10n_bg_hr_form_76.act_wizard_generate_form76"
+                groups="hr_attendance.group_hr_attendance_manager"/>
+</odoo>

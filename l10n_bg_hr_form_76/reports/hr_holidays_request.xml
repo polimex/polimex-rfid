@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+    <data>
+
+        <template id="hr_holiday_request">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="l10n_bg_hr_form_76.hr_holidays_request_document"/>
+                </t>
+            </t>
+        </template>
+
+        <template id="hr_holidays_request_document">
+            <t t-call="web.external_layout">
+                <div class="oe_structure">
+                    <div class="d_block mt8 mb8" style="text-align: right;">
+                        <span>До Управителя на</span><br/>
+                         <span class="report-well" t-field="doc.employee_id.company_id"/>
+                    </div>
+                    <div class="container-fluid single_block mt16 mb16 report-container">
+                        <div class="row">
+                            <div class="col-12 mb0" style="text-align: center; ">
+                                <h1>МОЛБА ЗА ОТПУСК</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container-fluid single_block mt16 mb16 report-container">
+                        <div class="row">
+                            <div class="col-12 mt0" style="text-align: center; ">
+                                <div class="s_block mt8 mb8">
+                                    <div class="report-well">от
+                                        <br/>
+                                        <h2 class="report-well" t-field="doc.employee_id"/>
+                                    </div>
+                                    <div class="report-well">
+                                        <span class="report-well" t-field="doc.employee_id.job_id"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                                <p class="report-well">Уважаеми г-н Управител,</p>
+                    </div>
+                    <div class="row">
+                                <p class="report-well" >
+                                    На основание <span t-field="doc.holiday_status_id.form76_law_reason"/>, моля да ми разрешите да ползвам <span class="report-well fs-2 fw-bold" t-field="doc.holiday_status_id"/> за периода: от <span class="report-well fs-2 fw-bold" t-field="doc.request_date_from"/> до <span class="report-well fs-2 fw-bold" t-field="doc.request_date_to"/> ( <span t-esc="' %.2f '%(doc.number_of_days)"/> работни дни).
+                                </p>
+                    </div>
+                    <br/>
+                    <br/>
+                    <div class="row" style="text-align: right;">
+                        <div class="col-12">С Уважение:...............................
+                            <br/>
+                            <div class="d_block mt8 mb8">
+                                <span class="report-well o_default_snippet_text" t-field="doc.employee_id"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container-fluid single_block mt16 mb16 report-container">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="s_block mt8 mb8"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container-fluid hr_block report-container">
+                        <div class="row">
+                            <hr/>
+                        </div>
+                    </div>
+                    <div class="container-fluid single_block mt16 mb16 report-container">
+                        <div class="row">
+                            <div class="col-12">
+                                <h1 style="text-align: center; ">ЗАПОВЕД №_______</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container-fluid single_block mt16 mb16 report-container">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="mb8 mt8 s_block">
+                                    <p class="report-well">
+                                        На основание <span t-field="doc.holiday_status_id.form76_law_reason"/>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container-fluid single_block mt16 mb16 report-container">
+                        <div class="row">
+                            <div class="col-12 mb0">
+                                <h1 style="text-align: center; ">РАЗРЕШАВАМ:</h1>
+                                <div class="mb8 mt8 s_block">
+                                    <br/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container-fluid single_block mt16 mb16 report-container">
+                        <div class="row">
+                            <div class="col-12">на
+                                <span class="report-well" t-field="doc.employee_id"/>
+                                на длъжност
+                                <span class="report-well" t-field="doc.employee_id.job_id"/>
+                                в <span class="report-well" t-field="doc.employee_id.company_id"/>, да ползва
+                                <strong>
+                                    <span class="report-well" t-field="doc.holiday_status_id"/>
+                                </strong>
+                                в размер на
+                                <strong>
+                                    <span t-esc="' %.2f '%(doc.number_of_days)"/>
+                                </strong>
+                                работни дни, считано от <span class="fs-2 fw-bold" t-field="doc.request_date_from"/> до <span class="fs-2 fw-bold" t-field="doc.request_date_to"/>
+
+                                <br/>
+                                <div class="mb8 mt8 s_block"><br/>Настоящата заповед да се връчи на лицето и на
+                                    длъжностните лица за сведение и изпълнение
+                                    <br/>
+                                    <br/>Дата:.......................
+                                    <br/>
+                                    <div style="text-align: right;">
+                                        Ръководител:.........................................................................
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <record id="action_report_hr_holidays_request" model="ir.actions.report">
+            <field name="name">Employee Holiday Request</field>
+            <field name="model">hr.leave</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">l10n_bg_hr_form_76.hr_holiday_request</field>
+            <field name="print_report_name">'Молба за отпуск - %s' % (object.display_name)</field>
+            <field name="group_ids" eval="[(4, ref('hr_holidays.group_hr_holidays_responsible'))]"/>
+            <field name="binding_model_id" ref="hr_holidays.model_hr_leave"/>
+            <field name="binding_type">report</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- QWeb Reports -->
+        <record id="form_76_report" model="ir.actions.report">
+            <field name="name">Form 76</field>
+            <field name="model">report.form76_bg</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">l10n_bg_hr_form_76.report_form_76</field>
+            <field name="print_report_name">'Form 76 - %s' % (object.name)</field>
+            <field name="paperformat_id" ref="l10n_bg_hr_form_76.paperformat_form_76"/>
+            <field name="group_ids" eval="[(4, ref('hr_attendance.group_hr_attendance_manager'))]"/>
+        </record>
+
+        <template id="report_f76_header">
+           <div class="row">
+                <div class="col-2">
+                    Фирма: <strong><span t-esc="company.name"/></strong> <br/>
+                    <t t-if="len(departments) == 1">
+                        <t t-foreach="departments" t-as="department_name">
+                            Отдел: <strong><span t-esc="department_name"/></strong>
+                        </t>
+                    </t>
+                </div>
+                <div class="col-3 offset-2 text-center">
+                    <h1>Т А Б Л И Ц А</h1>
+                    <strong>за отчитане явяването/неявяването на работа през месец <t t-esc="report_month"/> / <t t-esc="report_year"/> година</strong>
+                </div>
+                <div class="col-2 offset-3">
+                    Съставил:..................
+                </div>
+            </div>
+        </template>
+
+        <template id="report_form_76">
+            <t t-set="company" t-value="env.company"/>
+            <t t-set="data_report_landscape" t-value="True"/>
+            <t t-set="full_width" t-value="True"/>
+            <t t-set="multi_department" t-value="len(departments) > 1"/>
+            <div t-call="web.html_container">
+                <t t-call="web.internal_layout">
+                    <div class="page">
+                        <t t-call="l10n_bg_hr_form_76.report_f76_header"/>
+                        <table class="table table-bordered mb64">
+                            <thead>
+                                <tr>
+                                    <th colspan="3" style="padding: 0; text-align: center; white-space: nowrap;">ДАННИ ЗА СЛУЖИТЕЛЯ</th>
+                                    <th t-att-colspan="last_day_num" style="padding: 0; text-align: center; white-space: nowrap;">ДНИ ОТ МЕСЕЦА</th>
+                                    <th colspan="2" style="padding: 0; text-align: center; white-space: nowrap;">Явяване на работа</th>
+                                    <th colspan="7" style="padding: 0; text-align: center; white-space: nowrap;">Неявяване на работа</th>
+                                    <th colspan="2" style="padding: 0; text-align: center; white-space: nowrap;">Отработени часове</th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"></th>
+                                    <th style="padding: 0; text-align: center; white-space: nowrap;"></th>
+                                    <th style="padding: 0; text-align: center; white-space: nowrap;"></th>
+                                    <th style="width: 1px; padding: 0; text-align: center; white-space: nowrap;" t-foreach="range(1, last_day_num+1)" t-as="day"></th>
+                                    <t t-if="report_type=='html'">
+                                        <th style="vertical-align: middle;width: 1px; padding: 0; writing-mode: vertical-rl; text-align: right; white-space: nowrap;">Всичко човекодни</th>
+                                        <th style="vertical-align: middle;width: 1px; padding: 0; writing-mode: vertical-rl; text-align: right; white-space: nowrap;">в т.ч. целодневен престой</th>
+                                        <th style="width: 1px; padding: 0; writing-mode: vertical-rl; text-align: right; white-space: nowrap;">Редовен отпуск</th>
+                                        <th style="width: 1px; padding: 0; writing-mode: vertical-rl; text-align: right; white-space: nowrap;">Отпуск по майчинство</th>
+                                        <th style="width: 1px; padding: 0; writing-mode: vertical-rl; text-align: right; white-space: nowrap;">Отпуск по болест</th>
+                                        <th style="width: 1px; padding: 0; writing-mode: vertical-rl; text-align: right; white-space: nowrap;">Изп. държ. задължения</th>
+                                        <th style="width: 1px; padding: 0; writing-mode: vertical-rl; text-align: right; white-space: nowrap;">С разреш. на администр.</th>
+                                        <th style="width: 1px; padding: 0; writing-mode: vertical-rl; text-align: right; white-space: nowrap;">Самоотлъчка</th>
+                                        <th style="width: 1px; padding: 0; writing-mode: vertical-rl; text-align: right; white-space: nowrap;">Празнични и почивни дни</th>
+                                        <th style="vertical-align: middle;width: 1px; padding: 0; writing-mode: vertical-rl; text-align: right; white-space: nowrap;">Всичко</th>
+                                        <th style="vertical-align: middle;width: 1px; padding: 0; writing-mode: vertical-rl; text-align: right; white-space: nowrap;">в т.ч. извънредни</th>
+                                        <th style="width: 1px; padding: 0; writing-mode: vertical-rl; text-align: right; white-space: nowrap;">Частични</th>
+                                    </t>
+                                    <t t-else="">
+                                        <th style="width: 1px; padding: 0;text-align: right; white-space: nowrap;"><t t-out="vertical_text('Всичко човекодни')"/></th>
+                                        <th style="width: 1px; padding: 0;text-align: right; white-space: nowrap;"><t t-out="vertical_text('в т.ч. целодневен престой')"/></th>
+                                        <th style="width: 1px; padding: 0;text-align: right; white-space: nowrap;"><t t-out="vertical_text('Редовен отпуск')"/></th>
+                                        <th style="width: 1px; padding: 0;text-align: right; white-space: nowrap;"><t t-out="vertical_text('Отпуск по майчинство')"/></th>
+                                        <th style="width: 1px; padding: 0;text-align: right; white-space: nowrap;"><t t-out="vertical_text('Отпуск по болест')"/></th>
+                                        <th style="width: 1px; padding: 0;text-align: right; white-space: nowrap;"><t t-out="vertical_text('Изп. държ. задължения')"/></th>
+                                        <th style="width: 1px; padding: 0;text-align: right; white-space: nowrap;"><t t-out="vertical_text('С разреш. на администр.')"/></th>
+                                        <th style="width: 1px; padding: 0;text-align: right; white-space: nowrap;"><t t-out="vertical_text('Самоотлъчка')"/></th>
+                                        <th style="width: 1px; padding: 0;text-align: right; white-space: nowrap;"><t t-out="vertical_text('Празнични и почивни дни')"/></th>
+                                        <th style="width: 1px; padding: 0;text-align: right; white-space: nowrap;"><t t-out="vertical_text('Всичко')"/></th>
+                                        <th style="width: 1px; padding: 0;text-align: right; white-space: nowrap;"><t t-out="vertical_text('в т.ч. извънредни')"/></th>
+                                        <th style="width: 1px; padding: 0;text-align: right; white-space: nowrap;"><t t-out="vertical_text('Частични')"/></th>
+                                    </t>
+                                </tr>
+                                <tr>
+                                    <th style="width: 1px; padding: 0; text-align: center; white-space: nowrap;">№</th>
+                                    <th style="padding: 0; text-align: center; white-space: nowrap;">Трите имена по документ за самоличност</th>
+                                    <th style="padding: 0; text-align: center; white-space: nowrap;">Длъжност</th>
+                                    <th style="width: 1px; padding: 0; text-align: center; white-space: nowrap;" t-foreach="range(1, last_day_num+1)" t-as="day"><span t-esc="day"/></th>
+                                    <th style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"></th>
+                                    <th style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"></th>
+                                    <th style="width: 1px; padding: 0; text-align: center; white-space: nowrap;">О</th>
+                                    <th style="width: 1px; padding: 0; text-align: center; white-space: nowrap;">М</th>
+                                    <th style="width: 1px; padding: 0; text-align: center; white-space: nowrap;">Б</th>
+                                    <th style="width: 1px; padding: 0; text-align: center; white-space: nowrap;">Д</th>
+                                    <th style="width: 1px; padding: 0; text-align: center; white-space: nowrap;">А</th>
+                                    <th style="width: 1px; padding: 0; text-align: center; white-space: nowrap;">С</th>
+                                    <th style="width: 1px; padding: 0; text-align: center; white-space: nowrap;">Н</th>
+                                    <th style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"></th>
+                                    <th style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"></th>
+                                    <th style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="departments" t-as="dept_name">
+                                    <t t-set="dept_lines" t-value="departments[dept_name]"/>
+                                    <t t-call="l10n_bg_hr_form_76.report_f76_department"/>
+                                </t>
+                            </tbody>
+                        </table>
+                        <t t-call="l10n_bg_hr_form_76.report_f76_footer"/>
+                    </div>
+                </t>
+            </div>
+        </template>
+
+        <template id="report_f76_department">
+            <t t-if="multi_department">
+                <tr>
+                    <td/>
+                    <td colspan="2" style="width: 1px; padding: 0; text-align: left; white-space: nowrap;"><strong>Отдел: <t t-esc="dept_name"/></strong></td>
+                </tr>
+            </t>
+            <t t-foreach="dept_lines" t-as="line">
+                <tr>
+                    <td style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"><t t-esc="line['corporate_id']"/></td>
+                    <td style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"><t t-esc="line['name']"/></td>
+                    <td style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"><t t-esc="line['job_title']"/></td>
+                    <td style="width: 1px; padding: 0; text-align: center; white-space: nowrap;" t-foreach="line['days']" t-as="day_val"><span t-esc="day_val"/></td>
+                    <td style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"><span t-esc="line['covekodni']"/></td>
+                    <td style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"><span t-esc="line['covekodni_celi']"/></td>
+                    <td style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"><span t-esc="line['otpusk_o']"/></td>
+                    <td style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"><span t-esc="line['otpusk_m']"/></td>
+                    <td style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"><span t-esc="line['otpusk_b']"/></td>
+                    <td style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"><span t-esc="line['otpusk_d']"/></td>
+                    <td style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"><span t-esc="line['otpusk_a']"/></td>
+                    <td style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"><span t-esc="line['samootluchka']"/></td>
+                    <td style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"><span t-esc="line['pochivni']"/></td>
+                    <td style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"><span t-esc="line['hours_summary']"/></td>
+                    <td style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"><span t-esc="line['extra_hours']"/></td>
+                    <td style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"><span t-esc="line['partial']"/></td>
+                </tr>
+            </t>
+        </template>
+        <template id="report_f76_footer">
+            <address style="text-align: center;">Генерирано от Полимекс ЕРП система за управление на персонала (https://polimex.co)</address>
+        </template>
+
+    </data>
+</odoo>

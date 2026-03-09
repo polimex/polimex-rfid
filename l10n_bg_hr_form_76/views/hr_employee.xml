@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_employee_form_inherit_form76" model="ir.ui.view">
+            <field name="name">hr.employee.form.inherit.form76</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='work_email']" position="after">
+                    <field name="corporate_internal_number"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="view_employee_filter_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.search.corporate.id</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_filter"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='job_id']" position="after">
+                    <field name="corporate_internal_number"/>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>
