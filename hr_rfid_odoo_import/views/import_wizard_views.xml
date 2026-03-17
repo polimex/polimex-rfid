@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- ════════════════════════════════════════════════════ -->
+        <!-- Wizard Form View -->
+        <!-- ════════════════════════════════════════════════════ -->
+        <record id="hr_rfid_odoo_import_wiz_form" model="ir.ui.view">
+            <field name="name">hr.rfid.odoo.import.wiz.form</field>
+            <field name="model">hr.rfid.odoo.import.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Import RFID Data from Odoo">
+                    <header>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="connection,configure,confirm,importing,done"
+                               options="{'clickable': false}"/>
+                    </header>
+                    <sheet>
+                        <!-- Warnings (step 3) -->
+                        <div invisible="state != 'confirm' or not warnings">
+                            <field name="warnings" widget="actionable_errors"/>
+                        </div>
+
+                        <!-- ══ Step 1: Connection ══════════════════ -->
+                        <div invisible="state != 'connection'">
+                            <div class="alert alert-info text-center" role="status">
+                                Connect to the source Odoo instance to import RFID access control data.
+                                The source server must be running and accessible.
+                            </div>
+                            <group string="Source Odoo Connection">
+                                <group>
+                                    <field name="source_url" placeholder="http://localhost:8069"/>
+                                    <field name="source_db" placeholder="my_database"/>
+                                </group>
+                                <group>
+                                    <field name="source_login"/>
+                                    <field name="source_password" password="True"/>
+                                </group>
+                            </group>
+                        </div>
+
+                        <!-- ══ Step 2: Configuration ═══════════════ -->
+                        <div invisible="state != 'configure'">
+                            <div class="alert alert-success" role="status">
+                                <strong>Connected!</strong>
+                                Source: <field name="source_version" class="d-inline" readonly="1"/>
+                                | UID: <field name="source_uid" class="d-inline" readonly="1"/>
+                            </div>
+
+                            <group string="Company Mapping">
+                                <field name="company_line_ids" nolabel="1">
+                                    <list editable="bottom">
+                                        <field name="source_name" readonly="1"/>
+                                        <field name="source_id" readonly="1" optional="hide"/>
+                                        <field name="do_import"/>
+                                        <field name="target_company_id"
+                                               options="{'no_create': True}"/>
+                                    </list>
+                                </field>
+                            </group>
+
+                            <group string="Core Import Options" col="4">
+                                <field name="import_hardware"/>
+                                <field name="import_people"/>
+                                <field name="import_access"/>
+                                <field name="import_cards"/>
+                            </group>
+
+                            <group string="People Options"
+                                   invisible="not import_people" col="4">
+                                <field name="import_all_partners"/>
+                                <field name="import_all_employees"/>
+                                <field name="import_images"/>
+                                <field name="import_users"/>
+                                <field name="import_user_groups"
+                                       invisible="not import_users"/>
+                            </group>
+
+                            <group string="Events &amp; History" col="4">
+                                <field name="import_user_events"/>
+                                <field name="import_system_events"/>
+                                <field name="import_th_logs"/>
+                                <field name="event_date_from"
+                                       invisible="not import_user_events and not import_system_events and not import_th_logs"/>
+                            </group>
+
+                            <group string="Optional Modules" col="4">
+                                <field name="import_vending"
+                                       invisible="not source_has_vending"/>
+                                <field name="import_attendance"
+                                       invisible="not source_has_attendance"/>
+                                <field name="import_attendance_extra"
+                                       invisible="not source_has_attendance_late"/>
+                                <field name="import_service"
+                                       invisible="not source_has_service"/>
+                            </group>
+
+                            <!-- Warnings: source module installed but not in target -->
+                            <div class="alert alert-warning"
+                                 invisible="not source_has_vending or target_has_vending">
+                                <i class="fa fa-exclamation-triangle"/> Module <strong>hr_rfid_vending</strong> is installed on source but NOT on target. Install it to import vending data.
+                            </div>
+                            <div class="alert alert-warning"
+                                 invisible="not source_has_attendance or target_has_attendance">
+                                <i class="fa fa-exclamation-triangle"/> Module <strong>hr_attendance_multi_rfid</strong> is installed on source but NOT on target. Install it to import attendance data.
+                            </div>
+                            <div class="alert alert-warning"
+                                 invisible="not source_has_attendance_late or target_has_attendance_late">
+                                <i class="fa fa-exclamation-triangle"/> Module <strong>hr_attendance_late</strong> is installed on source but NOT on target. Install it to import attendance extra data.
+                            </div>
+                            <div class="alert alert-warning"
+                                 invisible="not source_has_service or target_has_service">
+                                <i class="fa fa-exclamation-triangle"/> Module <strong>rfid_service_base</strong> is installed on source but NOT on target. Install it to import service data.
+                            </div>
+
+                            <group string="Advanced" col="4">
+                                <field name="dry_run"/>
+                            </group>
+                        </div>
+
+                        <!-- ══ Step 3: Confirm / Preview ═══════════ -->
+                        <div invisible="state != 'confirm'">
+                            <group string="Import Preview">
+                                <field name="preview_text" readonly="1"
+                                       widget="text" nolabel="1" colspan="2"/>
+                            </group>
+
+                            <group string="Conflicts Found"
+                                   invisible="not conflict_ids">
+                                <field name="conflict_ids" nolabel="1" colspan="2">
+                                    <list editable="bottom">
+                                        <field name="source_model" readonly="1"/>
+                                        <field name="source_name" readonly="1"/>
+                                        <field name="source_ref" readonly="1"/>
+                                        <field name="target_name" readonly="1"/>
+                                        <field name="conflict_field" readonly="1"
+                                               optional="hide"/>
+                                        <field name="resolution" required="1"/>
+                                    </list>
+                                </field>
+                            </group>
+                            <div invisible="conflict_ids" class="text-success text-center mb-3">
+                                <strong>No conflicts detected.</strong>
+                            </div>
+                        </div>
+
+                        <!-- ══ Step 4: Importing ═══════════════════ -->
+                        <div invisible="state != 'importing'" class="text-center">
+                            <div class="mb-3">
+                                <span class="spinner-border spinner-border-sm me-2"/>
+                                <strong>Import in progress...</strong>
+                            </div>
+                            <field name="progress_percent" widget="progressbar"
+                                   options="{'editable': false}" class="mb-3"/>
+                            <field name="progress_text" readonly="1"
+                                   widget="text" class="text-start"/>
+                        </div>
+
+                        <!-- ══ Step 5: Done ════════════════════════ -->
+                        <div invisible="state != 'done'">
+                            <div invisible="not error_message"
+                                 class="alert alert-danger" role="alert">
+                                <strong>Import Error:</strong>
+                                <field name="error_message" readonly="1" nolabel="1"/>
+                            </div>
+                            <div invisible="error_message"
+                                 class="alert alert-success text-center" role="status">
+                                <strong>Import completed successfully!</strong>
+                            </div>
+                            <group string="Import Results">
+                                <field name="log_ids" readonly="1" nolabel="1" colspan="2">
+                                    <list>
+                                        <field name="phase"/>
+                                        <field name="model"/>
+                                        <field name="source_count" sum="Total"/>
+                                        <field name="imported_count" sum="Total"/>
+                                        <field name="linked_count" sum="Total"/>
+                                        <field name="skipped_count" sum="Total"/>
+                                        <field name="status"
+                                               decoration-success="status == 'done'"
+                                               decoration-danger="status == 'error'"
+                                               decoration-muted="status == 'skipped'"
+                                               widget="badge"/>
+                                        <field name="duration" widget="float_time"/>
+                                        <field name="error_message" optional="hide"/>
+                                    </list>
+                                </field>
+                            </group>
+                        </div>
+                    </sheet>
+
+                    <footer>
+                        <!-- Step 1 buttons -->
+                        <button string="Test Connection" name="action_test_connection"
+                                type="object" class="btn-primary"
+                                invisible="state != 'connection'"/>
+
+                        <!-- Step 2 buttons -->
+                        <button string="Preview" name="action_preview"
+                                type="object" class="btn-primary"
+                                invisible="state != 'configure'"/>
+
+                        <!-- Step 3 buttons -->
+                        <button string="Start Import" name="action_import"
+                                type="object" class="btn-primary btn-lg"
+                                invisible="state != 'confirm'"
+                                confirm="This will import data from the source Odoo instance. Continue?"/>
+
+                        <!-- Step 5 buttons -->
+                        <button string="Close" special="cancel" class="btn-primary"
+                                invisible="state != 'done'"/>
+
+                        <!-- Back buttons -->
+                        <button string="Back" name="action_back" type="object"
+                                class="btn-secondary"
+                                invisible="state not in ('configure', 'confirm')"/>
+
+                        <!-- Cancel button -->
+                        <button string="Cancel" special="cancel" class="btn-secondary"
+                                invisible="state in ('importing', 'done')"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!-- ════════════════════════════════════════════════════ -->
+        <!-- Action & Menu -->
+        <!-- ════════════════════════════════════════════════════ -->
+        <record id="hr_rfid_odoo_import_wiz_action" model="ir.actions.act_window">
+            <field name="name">Import from Odoo</field>
+            <field name="res_model">hr.rfid.odoo.import.wiz</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_rfid_odoo_import_wiz_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="hr_rfid_odoo_import_menu"
+                  name="Import from Odoo"
+                  parent="hr_rfid.hr_rfid_root_menu_hardware_manager"
+                  action="hr_rfid_odoo_import_wiz_action"
+                  groups="base.group_system"
+                  sequence="8"/>
+    </data>
+</odoo>

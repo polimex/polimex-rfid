@@ -1,0 +1,837 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* hr_rfid_odoo_import
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-17 09:11+0000\n"
+"PO-Revision-Date: 2026-03-17 11:13\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: el\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid ""
+"\n"
+"--- %d Conflicts Detected ---"
+msgstr ""
+"\n"
+"--- Εντοπίστηκαν %d συγκρούσεις ---"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid ""
+"\n"
+"--- %s: %s ---"
+msgstr ""
+"\n"
+"--- %s: %s ---"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid ""
+"\n"
+"--- Events ---"
+msgstr ""
+"\n"
+"--- Συμβάντα ---"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "  ERROR: %s"
+msgstr "  ΣΦΑΛΜΑ: %s"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "%d conflicts need resolution before import can proceed."
+msgstr "%d συγκρούσεις πρέπει να επιλυθούν πριν συνεχιστεί η εισαγωγή."
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid ""
+"<i class=\"fa fa-exclamation-triangle\"/> Module "
+"<strong>hr_attendance_late</strong> is installed on source but NOT on "
+"target. Install it to import attendance extra data."
+msgstr ""
+"<i class=\"fa fa-exclamation-triangle\"/> Το άρθρωμα "
+"<strong>hr_attendance_late</strong> είναι εγκατεστημένο στην πηγή αλλά ΟΧΙ "
+"στον στόχο. Εγκαταστήστε το για πρόσθετα δεδομένα παρουσίας."
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid ""
+"<i class=\"fa fa-exclamation-triangle\"/> Module "
+"<strong>hr_attendance_multi_rfid</strong> is installed on source but NOT on "
+"target. Install it to import attendance data."
+msgstr ""
+"<i class=\"fa fa-exclamation-triangle\"/> Το άρθρωμα "
+"<strong>hr_attendance_multi_rfid</strong> είναι εγκατεστημένο στην πηγή αλλά"
+" ΟΧΙ στον στόχο. Εγκαταστήστε το για δεδομένα παρουσίας."
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid ""
+"<i class=\"fa fa-exclamation-triangle\"/> Module "
+"<strong>hr_rfid_vending</strong> is installed on source but NOT on target. "
+"Install it to import vending data."
+msgstr ""
+"<i class=\"fa fa-exclamation-triangle\"/> Το άρθρωμα "
+"<strong>hr_rfid_vending</strong> είναι εγκατεστημένο στην πηγή αλλά ΟΧΙ στον"
+" στόχο. Εγκαταστήστε το για δεδομένα πώλησης."
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid ""
+"<i class=\"fa fa-exclamation-triangle\"/> Module "
+"<strong>rfid_service_base</strong> is installed on source but NOT on target."
+" Install it to import service data."
+msgstr ""
+"<i class=\"fa fa-exclamation-triangle\"/> Το άρθρωμα "
+"<strong>rfid_service_base</strong> είναι εγκατεστημένο στην πηγή αλλά ΟΧΙ "
+"στον στόχο. Εγκαταστήστε το για δεδομένα υπηρεσίας."
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid ""
+"<span class=\"spinner-border spinner-border-sm me-2\"/>\n"
+"                                <strong>Import in progress...</strong>"
+msgstr ""
+"<span class=\"spinner-border spinner-border-sm me-2\"/>\n"
+"                                <strong>Εισαγωγή σε εξέλιξη...</strong>"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid ""
+"<strong>Connected!</strong>\n"
+"                                Source:"
+msgstr ""
+"<strong>Συνδέθηκε!</strong>\n"
+"                                Πηγή:"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "<strong>Import Error:</strong>"
+msgstr "<strong>Σφάλμα εισαγωγής:</strong>"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "<strong>Import completed successfully!</strong>"
+msgstr "<strong>Η εισαγωγή ολοκληρώθηκε επιτυχώς!</strong>"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "<strong>No conflicts detected.</strong>"
+msgstr "<strong>Δεν εντοπίστηκαν συγκρούσεις.</strong>"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "=== Import Preview ===\n"
+msgstr "=== Προεπισκόπηση εισαγωγής ===\n"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "Advanced"
+msgstr "Προχωρημένα"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Authentication failed. Check credentials."
+msgstr "Αποτυχία ελέγχου ταυτότητας. Ελέγξτε τα διαπιστευτήρια."
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "Back"
+msgstr "Πίσω"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "Cancel"
+msgstr "Ακύρωση"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Cannot connect to %s. Is the source Odoo server running?"
+msgstr "Αδυναμία σύνδεσης στο %s. Εκτελείται ο διακομιστής πηγής;"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"Cannot map %(model)s ID=%(source_id)d to target. This indicates a bug in a "
+"previous import phase. %(context)s"
+msgstr ""
+"Αδυναμία αντιστοίχισης %(model)s ID=%(source_id)d στον στόχο. Σφάλμα σε "
+"προηγούμενη φάση. %(context)s"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid ""
+"Cannot start import: there are %d blocking issues to resolve. Check the "
+"warnings above."
+msgstr ""
+"Η εισαγωγή δεν μπορεί να ξεκινήσει: %d ζητήματα. Ελέγξτε τις "
+"προειδοποιήσεις."
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "Close"
+msgstr "Κλείσιμο"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Company '%s' is selected but has no target company assigned."
+msgstr "Η εταιρεία '%s' είναι επιλεγμένη αλλά δεν έχει εταιρεία-στόχο."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__company_line_ids
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "Company Mapping"
+msgstr "Αντιστοίχιση εταιρειών"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_wiz__state__configure
+msgid "Configure"
+msgstr "Ρύθμιση"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_wiz__state__confirm
+msgid "Confirm"
+msgstr "Επιβεβαίωση"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__conflict_field
+msgid "Conflict Field"
+msgstr "Πεδίο σύγκρουσης"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__conflict_ids
+msgid "Conflicts"
+msgstr "Συγκρούσεις"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "Conflicts Found"
+msgstr "Βρέθηκαν συγκρούσεις"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid ""
+"Connect to the source Odoo instance to import RFID access control data.\n"
+"                                The source server must be running and accessible."
+msgstr ""
+"Συνδεθείτε στην πηγή Odoo για εισαγωγή δεδομένων RFID.\n"
+"                                Ο διακομιστής πρέπει να είναι προσβάσιμος."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_wiz__state__connection
+msgid "Connection"
+msgstr "Σύνδεση"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Connection error: %s"
+msgstr "Σφάλμα σύνδεσης: %s"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_user_groups
+msgid "Copy security group assignments from source users (matched by xml_id)."
+msgstr "Αντιγραφή ομάδων ασφαλείας από χρήστες πηγής (κατά xml_id)."
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "Core Import Options"
+msgstr "Βασικές επιλογές εισαγωγής"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_conflict__resolution__create
+msgid "Create new"
+msgstr "Δημιουργία νέου"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_users
+msgid ""
+"Create res.users for imported employees (matched by login or created with "
+"temp password)."
+msgstr ""
+"Δημιουργία res.users για εισαγόμενους υπαλλήλους (κατά login ή με προσωρινό "
+"κωδικό)."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_users
+msgid "Create users"
+msgstr "Δημιουργία χρηστών"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__create_uid
+msgid "Created by"
+msgstr "Δημιουργήθηκε από"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__create_date
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__create_date
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__create_date
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__create_date
+msgid "Created on"
+msgstr "Δημιουργήθηκε στις"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__display_name
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__display_name
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__display_name
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__display_name
+msgid "Display Name"
+msgstr "Εμφανιζόμενο όνομα"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_log__status__done
+#: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_wiz__state__done
+msgid "Done"
+msgstr "Ολοκληρώθηκε"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__duration
+msgid "Duration (s)"
+msgstr "Διάρκεια (δ)"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__error_message
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__error_message
+#: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_log__status__error
+msgid "Error"
+msgstr "Σφάλμα"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "Events & History"
+msgstr "Συμβάντα & Ιστορικό"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__event_date_from
+msgid "Events from date"
+msgstr "Συμβάντα από ημερομηνία"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__dry_run
+msgid "Execute full import + rollback to verify everything works."
+msgstr "Εκτέλεση πλήρους εισαγωγής + rollback για επαλήθευση."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__target_name
+msgid "Existing in Target"
+msgstr "Υπάρχον στον στόχο"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__dry_run
+msgid "Full dry-run"
+msgstr "Πλήρης δοκιμαστική εκτέλεση"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__id
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__id
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__id
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__id
+msgid "ID"
+msgstr "ID"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__do_import
+msgid "Import"
+msgstr "Εισαγωγή"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_access
+msgid "Import Access Control"
+msgstr "Εισαγωγή ελέγχου πρόσβασης"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_cards
+msgid "Import Cards"
+msgstr "Εισαγωγή καρτών"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_hardware
+msgid "Import Hardware"
+msgstr "Εισαγωγή υλικού"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__log_ids
+msgid "Import Log"
+msgstr "Αρχείο εισαγωγής"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_people
+msgid "Import People"
+msgstr "Εισαγωγή ατόμων"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "Import Preview"
+msgstr "Προεπισκόπηση εισαγωγής"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model,name:hr_rfid_odoo_import.model_hr_rfid_odoo_import_wiz
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "Import RFID Data from Odoo"
+msgstr "Εισαγωγή δεδομένων RFID από Odoo"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "Import Results"
+msgstr "Αποτελέσματα εισαγωγής"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_all_employees
+msgid "Import all employees"
+msgstr "Εισαγωγή όλων των υπαλλήλων"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_all_employees
+msgid ""
+"Import all employees from selected companies, not just RFID-linked ones."
+msgstr "Εισαγωγή όλων, όχι μόνο συνδεδεμένων με RFID."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_all_partners
+msgid "Import all partners"
+msgstr "Εισαγωγή όλων των συνεργατών"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_all_partners
+msgid ""
+"Import all partners from selected companies, not just RFID-linked ones."
+msgstr "Εισαγωγή όλων, όχι μόνο συνδεδεμένων με RFID."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_attendance
+msgid "Import attendance"
+msgstr "Εισαγωγή παρουσιών"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_attendance_extra
+msgid "Import attendance extra"
+msgstr "Εισαγωγή πρόσθετων παρουσιών"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Import completed successfully!"
+msgstr "Η εισαγωγή ολοκληρώθηκε επιτυχώς!"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_images
+msgid "Import employee and partner photos (may slow down import)."
+msgstr "Εισαγωγή φωτογραφιών (μπορεί να επιβραδύνει)."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.actions.act_window,name:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_action
+#: model:ir.ui.menu,name:hr_rfid_odoo_import.hr_rfid_odoo_import_menu
+msgid "Import from Odoo"
+msgstr "Εισαγωγή από Odoo"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_images
+msgid "Import photos"
+msgstr "Εισαγωγή φωτογραφιών"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_service
+msgid "Import service data"
+msgstr "Εισαγωγή δεδομένων υπηρεσίας"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_system_events
+msgid "Import system events"
+msgstr "Εισαγωγή συμβάντων συστήματος"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_th_logs
+msgid "Import temperature/humidity logs"
+msgstr "Εισαγωγή αρχείων θερμοκρασίας/υγρασίας"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_user_events
+msgid "Import user events"
+msgstr "Εισαγωγή συμβάντων χρήστη"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_vending
+msgid "Import vending data"
+msgstr "Εισαγωγή δεδομένων πώλησης"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__imported_count
+msgid "Imported"
+msgstr "Εισαγμένα"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_wiz__state__importing
+msgid "Importing"
+msgstr "Εισαγωγή σε εξέλιξη"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__installed_modules_json
+msgid "Installed Modules (JSON)"
+msgstr "Εγκατεστημένα αρθρώματα (JSON)"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__write_uid
+msgid "Last Updated by"
+msgstr "Τελευταία ενημέρωση από"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__write_date
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__write_date
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__write_date
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__write_date
+msgid "Last Updated on"
+msgstr "Τελευταία ενημέρωση στις"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_conflict__resolution__link
+msgid "Link to existing"
+msgstr "Σύνδεση με υπάρχον"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__linked_count
+msgid "Linked"
+msgstr "Συνδεδεμένα"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__source_model
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__model
+msgid "Model"
+msgstr "Μοντέλο"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "No companies selected for import."
+msgstr "Δεν επιλέχθηκαν εταιρείες."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__event_date_from
+msgid "Only import events newer than this date. Leave empty for all events."
+msgstr "Εισαγωγή μόνο νεότερων συμβάντων. Κενό για όλα."
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "Optional Modules"
+msgstr "Προαιρετικά αρθρώματα"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_password
+msgid "Password"
+msgstr "Κωδικός"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_log__status__pending
+msgid "Pending"
+msgstr "Εκκρεμεί"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "People Options"
+msgstr "Επιλογές ατόμων"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__phase
+msgid "Phase"
+msgstr "Φάση"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Please assign a target company for '%s'."
+msgstr "Ορίστε εταιρεία-στόχο για '%s'."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Please select at least one company to import."
+msgstr "Επιλέξτε τουλάχιστον μία εταιρεία."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__preview_text
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "Preview"
+msgstr "Προεπισκόπηση"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Preview error: %s"
+msgstr "Σφάλμα προεπισκόπησης: %s"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__progress_text
+msgid "Progress"
+msgstr "Πρόοδος"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__progress_percent
+msgid "Progress %"
+msgstr "Πρόοδος %"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model,name:hr_rfid_odoo_import.model_hr_rfid_odoo_import_company_line
+msgid "RFID Odoo Import Company Mapping"
+msgstr "RFID Odoo εισαγωγή αντιστοίχιση εταιρειών"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model,name:hr_rfid_odoo_import.model_hr_rfid_odoo_import_conflict
+msgid "RFID Odoo Import Conflict"
+msgstr "RFID Odoo εισαγωγή σύγκρουση"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model,name:hr_rfid_odoo_import.model_hr_rfid_odoo_import_log
+msgid "RFID Odoo Import Log"
+msgstr "RFID Odoo εισαγωγή αρχείο"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__resolution
+msgid "Resolution"
+msgstr "Επίλυση"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Review the conflicts table below and choose a resolution for each."
+msgstr "Ελέγξτε τις συγκρούσεις και επιλέξτε λύση."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_conflict__resolution__skip
+msgid "Skip this record"
+msgstr "Παράβλεψη εγγραφής"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__skipped_count
+#: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_log__status__skipped
+msgid "Skipped"
+msgstr "Παραλείφθηκαν"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__source_name
+msgid "Source Company"
+msgstr "Εταιρεία πηγής"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__source_id
+msgid "Source Company ID"
+msgstr "ID εταιρείας πηγής"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__source_count
+msgid "Source Count"
+msgstr "Πλήθος πηγής"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_db
+msgid "Source Database"
+msgstr "Βάση δεδομένων πηγής"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_has_attendance
+msgid "Source Has Attendance"
+msgstr "Η πηγή έχει παρουσίες"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_has_attendance_late
+msgid "Source Has Attendance Late"
+msgstr "Η πηγή έχει καθυστερήσεις"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_has_service
+msgid "Source Has Service"
+msgstr "Η πηγή έχει υπηρεσία"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_has_vending
+msgid "Source Has Vending"
+msgstr "Η πηγή έχει πώληση"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__source_id
+msgid "Source ID"
+msgstr "ID πηγής"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "Source Odoo Connection"
+msgstr "Σύνδεση Odoo πηγής"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_version
+msgid "Source Odoo Version"
+msgstr "Έκδοση Odoo πηγής"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__source_name
+msgid "Source Record"
+msgstr "Εγγραφή πηγής"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_uid
+msgid "Source UID"
+msgstr "UID πηγής"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_url
+msgid "Source URL"
+msgstr "URL πηγής"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid ""
+"Source has '%s' installed but it's not installed in target. Data for this "
+"module will not be imported."
+msgstr ""
+"Η πηγή έχει '%s' αλλά δεν είναι στον στόχο. Τα δεδομένα δεν θα εισαχθούν."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid ""
+"Source has '%s' installed but it's not installed in target. Install it first"
+" or disable this import option."
+msgstr ""
+"Η πηγή έχει '%s' αλλά δεν είναι στον στόχο. Εγκαταστήστε ή απενεργοποιήστε "
+"αυτή την επιλογή."
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "Start Import"
+msgstr "Έναρξη εισαγωγής"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Starting import...\n"
+msgstr "Έναρξη εισαγωγής...\n"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__state
+msgid "State"
+msgstr "Κατάσταση"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__status
+msgid "Status"
+msgstr "Κατάσταση"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__target_company_id
+msgid "Target Company"
+msgstr "Εταιρεία-στόχος"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__target_has_attendance
+msgid "Target Has Attendance"
+msgstr "Ο στόχος έχει παρουσίες"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__target_has_attendance_late
+msgid "Target Has Attendance Late"
+msgstr "Ο στόχος έχει καθυστερήσεις"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__target_has_service
+msgid "Target Has Service"
+msgstr "Ο στόχος έχει υπηρεσία"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__target_has_vending
+msgid "Target Has Vending"
+msgstr "Ο στόχος έχει πώληση"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__target_id
+msgid "Target ID"
+msgstr "ID στόχου"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "Test Connection"
+msgstr "Δοκιμή σύνδεσης"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "This will import data from the source Odoo instance. Continue?"
+msgstr "Θα εισαχθούν δεδομένα από την πηγή Odoo. Συνέχεια;"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "Total"
+msgstr "Σύνολο"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_user_groups
+msgid "Transfer user groups"
+msgstr "Μεταφορά ομάδων χρηστών"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__source_ref
+msgid "Unique Key"
+msgstr "Μοναδικό κλειδί"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_login
+msgid "Username"
+msgstr "Όνομα χρήστη"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__warnings
+msgid "Warnings"
+msgstr "Προειδοποιήσεις"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__wizard_id
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__wizard_id
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__wizard_id
+msgid "Wizard"
+msgstr "Οδηγός"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "XML-RPC error: %s"
+msgstr "Σφάλμα XML-RPC: %s"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "http://localhost:8069"
+msgstr "http://localhost:8069"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "my_database"
+msgstr "my_database"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "| UID:"
+msgstr "| UID:"

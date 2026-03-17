@@ -263,8 +263,9 @@ class HrEmployee(models.Model):
     def create(self, vals_list):
         records = super(HrEmployee, self).create(vals_list)
 
-        for rec in records:
-            rec.add_acc_gr(rec.department_id.hr_rfid_default_access_group)
+        if not self.env.context.get('no_hardware_commands'):
+            for rec in records:
+                rec.add_acc_gr(rec.department_id.hr_rfid_default_access_group)
 
         return records
 

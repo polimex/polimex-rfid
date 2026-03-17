@@ -896,6 +896,8 @@ class HrRfidCardDoorRel(models.Model):
         return card_id.door_compatible(door_id) and card_id.card_ready()
 
     def _create_add_card_command(self):
+        if self.env.context.get('no_hardware_commands'):
+            return
         for rel in self:
             door_id = rel.door_id.id
             ts_id = rel.time_schedule_id.id
@@ -905,6 +907,8 @@ class HrRfidCardDoorRel(models.Model):
             self.env['hr.rfid.command'].add_card(door_id, ts_id, pin_code, card_id, alarm_right)
 
     def _create_remove_card_command(self, number: str = None, door_id: int = None):
+        if self.env.context.get('no_hardware_commands'):
+            return
         for rel in self:
             if door_id is None:
                 door_id = rel.door_id.id
