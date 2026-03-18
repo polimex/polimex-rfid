@@ -195,7 +195,7 @@ Contains technical details about the hardware communication."""
 
                     try:
                         # Company comes from: event.controller_id -> controller.webstack_id -> webstack.company_id
-                        self._cr.execute("""
+                        self.env.cr.execute("""
                             DELETE FROM hr_rfid_vending_event
                             WHERE id IN (
                                 SELECT e.id
@@ -209,13 +209,13 @@ Contains technical details about the hardware communication."""
                             )
                         """, (cutoff_date, company.id, batch_size))
 
-                        deleted_count = self._cr.rowcount
+                        deleted_count = self.env.cr.rowcount
 
                         if deleted_count == 0:
                             break
 
                         # Commit after each batch (ir.autovacuum pattern)
-                        self._cr.commit()
+                        self.env.cr.commit()
 
                         company_deleted += deleted_count
                         total_deleted += deleted_count
@@ -239,7 +239,7 @@ Contains technical details about the hardware communication."""
                             str(batch_error),
                             exc_info=True
                         )
-                        self._cr.rollback()
+                        self.env.cr.rollback()
                         break
 
                 # Check if we hit max batches (may have more records to delete)
@@ -266,7 +266,7 @@ Contains technical details about the hardware communication."""
                     str(company_error),
                     exc_info=True
                 )
-                self._cr.rollback()
+                self.env.cr.rollback()
 
         _logger.info(
             "[VENDING EVENTS] GC completed: %d total events deleted across %d companies (has_more=%s)",

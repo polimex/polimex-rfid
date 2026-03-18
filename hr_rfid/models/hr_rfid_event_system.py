@@ -205,7 +205,7 @@ class HrRfidSystemEvent(models.Model):
 
                     try:
                         # Company comes from: event.webstack_id -> webstack.company_id
-                        self._cr.execute("""
+                        self.env.cr.execute("""
                             DELETE FROM hr_rfid_event_system
                             WHERE id IN (
                                 SELECT e.id
@@ -218,13 +218,13 @@ class HrRfidSystemEvent(models.Model):
                             )
                         """, (cutoff_date, company.id, batch_size))
 
-                        deleted_count = self._cr.rowcount
+                        deleted_count = self.env.cr.rowcount
 
                         if deleted_count == 0:
                             break
 
                         # Commit after each batch (ir.autovacuum pattern)
-                        self._cr.commit()
+                        self.env.cr.commit()
 
                         company_deleted += deleted_count
                         total_deleted += deleted_count
@@ -248,7 +248,7 @@ class HrRfidSystemEvent(models.Model):
                             str(batch_error),
                             exc_info=True
                         )
-                        self._cr.rollback()
+                        self.env.cr.rollback()
                         break
 
                 # Check if we hit max batches (may have more records to delete)
@@ -275,7 +275,7 @@ class HrRfidSystemEvent(models.Model):
                     str(company_error),
                     exc_info=True
                 )
-                self._cr.rollback()
+                self.env.cr.rollback()
 
         _logger.info(
             "[SYSTEM EVENTS] GC completed: %d total events deleted across %d companies (has_more=%s)",

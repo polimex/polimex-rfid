@@ -283,7 +283,7 @@ class HrRfidCommands(models.Model):
                 try:
                     # Use SQL for better performance (similar to ir.property pattern)
                     # Avoids ORM overhead and cache clearing
-                    self._cr.execute("""
+                    self.env.cr.execute("""
                         DELETE FROM hr_rfid_command
                         WHERE id IN (
                             SELECT id FROM hr_rfid_command
@@ -293,14 +293,14 @@ class HrRfidCommands(models.Model):
                         )
                     """, (cutoff_date, batch_size))
 
-                    deleted_count = self._cr.rowcount
+                    deleted_count = self.env.cr.rowcount
 
                     if deleted_count == 0:
                         _logger.info("Batch %d: No more old commands to delete", batch_num)
                         break
 
                     # Commit after each batch (ir.autovacuum pattern)
-                    self._cr.commit()
+                    self.env.cr.commit()
 
                     total_deleted += deleted_count
                     consecutive_errors = 0
@@ -325,7 +325,7 @@ class HrRfidCommands(models.Model):
                         exc_info=True
                     )
                     # Rollback this batch (ir.autovacuum pattern)
-                    self._cr.rollback()
+                    self.env.cr.rollback()
 
                     if consecutive_errors >= max_consecutive_errors:
                         _logger.error(
@@ -531,7 +531,7 @@ class HrRfidCommands(models.Model):
         ])
 
         if not old_cmd:
-            self._create_d1_cmd_relay(ctrl.webstack_id.id, ctrl_id, card_number, rights_data, rights_mask)
+            self.env.create_d1_cmd_relay(ctrl.webstack_id.id, ctrl_id, card_number, rights_data, rights_mask)
         else:
             if ctrl.mode == 3:
                 new_rights_data = rights_data
