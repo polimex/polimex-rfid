@@ -27,7 +27,7 @@ class VoteController(http.Controller):
         return request.env['ir.binary']._get_image_stream_from(display_sudo, "display_background_image").get_response()
 
 
-    @http.route("/voting_display/<string:access_token>/get_existing_sessions", type="json", auth="public", sitemap=False)
+    @http.route("/voting_display/<string:access_token>/get_existing_sessions", type="jsonrpc", auth="public", sitemap=False)
     def get_existing_sessions(self, access_token):
         display_sudo = self._fetch_display_from_access_token(access_token)
         return request.env["voting.session"].sudo().with_context({'lang':'bg_BG'}).search_read(
@@ -37,7 +37,7 @@ class VoteController(http.Controller):
             order="start_datetime asc",
         )
 
-    @http.route("/voting_display/<string:access_token>/session/<int:session_id>/close", type="json", auth="public", sitemap=False)
+    @http.route("/voting_display/<string:access_token>/session/<int:session_id>/close", type="jsonrpc", auth="public", sitemap=False)
     def session_close(self, access_token, session_id, **kwargs):
         fields_allowlist = {"state", "end_datetime"}
         session_id =  self._fetch_sessions(session_id, access_token)

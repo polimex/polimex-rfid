@@ -3,7 +3,7 @@
 
 {
     'name': 'RFID Access Control',
-    'version': '19.0.2.2.1',
+    'version': '19.0.2.2.2',
     'category': 'Human Resources',
     'summary': 'Manage employee access control',
     'description': """
