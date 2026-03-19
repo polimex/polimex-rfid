@@ -274,6 +274,14 @@ class CoreImporter:
                 ('company_id', '=', target_company_id),
             ], limit=1)
             if existing:
+                # Update ts_data and name from source for linked records
+                update_vals = {}
+                if rec.get('ts_data') and rec['ts_data'] != existing.ts_data:
+                    update_vals['ts_data'] = rec['ts_data']
+                if rec.get('name') and rec['name'] != existing.name:
+                    update_vals['name'] = rec['name']
+                if update_vals:
+                    existing.with_context(**IMPORT_CONTEXT).write(update_vals)
                 self.b._set_target_id(model, rec['id'], existing.id)
                 linked += 1
             else:
@@ -403,7 +411,8 @@ class CoreImporter:
         fields_to_read = ['name', 'serial', 'key', 'company_id', 'active',
                           'behind_nat', 'available']
         # Add optional fields that may exist
-        for f in ['last_ip', 'updated_at', 'version', 'is_sdk']:
+        for f in ['last_ip', 'updated_at', 'version', 'is_sdk',
+                  'tz', 'tz_offset', 'time_format']:
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
 
@@ -745,7 +754,8 @@ class CoreImporter:
         source_fields_info = self.b._get_source_fields(model)
         target_fields = set(self.env[model]._fields.keys())
         fields_to_read = ['controller_id']
-        for f in ['name', 'alarm_group_id', 'time_schedule_id']:
+        for f in ['name', 'alarm_group_id', 'time_schedule_id',
+                  'control_output', 'line_number', 'armed', 'door_id']:
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
         source_records = self.b._search_read(model, [], fields_to_read)
@@ -761,6 +771,14 @@ class CoreImporter:
             vals = {'controller_id': ctrl_target_id}
             if 'name' in rec and 'name' in target_fields:
                 vals['name'] = rec.get('name', '')
+            # Simple scalar fields
+            for sf in ['control_output', 'line_number', 'armed']:
+                if sf in rec and sf in target_fields and rec[sf] is not False:
+                    vals[sf] = rec[sf]
+            if rec.get('door_id') and 'door_id' in target_fields:
+                door_target = self.b._map_m2o('hr.rfid.door', rec['door_id'])
+                if door_target:
+                    vals['door_id'] = door_target
             if rec.get('alarm_group_id') and 'alarm_group_id' in target_fields:
                 ag_target = self.b._map_m2o(
                     'hr.rfid.ctrl.alarm.group', rec['alarm_group_id']
@@ -845,7 +863,11 @@ class CoreImporter:
         fields_to_read = ['name']
         for f in ['door_ids', 'permitted_department_ids',
                   'permitted_employee_category_ids', 'employee_ids',
-                  'contact_ids', 'anti_passback']:
+                  'contact_ids', 'anti_passback', 'anti_pass_back',
+                  'attendance', 'auto_close_time_for_zone',
+                  'max_time_in_zone', 'overwrite_check_in',
+                  'overwrite_check_out', 'log_out_on_exit',
+                  'delete_attendance_if_late_more_than']:
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
         source_records = self.b._search_read(model, [], fields_to_read)
@@ -864,8 +886,12 @@ class CoreImporter:
         for rec in source_records:
             vals = {'name': rec['name']}
             # Add scalar fields that are in both source and target
-            if 'anti_passback' in rec and 'anti_passback' in target_fields:
-                vals['anti_passback'] = rec.get('anti_passback', False)
+            for sf in ['anti_passback', 'anti_pass_back', 'attendance',
+                       'auto_close_time_for_zone', 'max_time_in_zone',
+                       'overwrite_check_in', 'overwrite_check_out',
+                       'log_out_on_exit', 'delete_attendance_if_late_more_than']:
+                if sf in rec and sf in target_fields and rec[sf] is not False:
+                    vals[sf] = rec[sf]
             # Map M2M fields (only if they were read and exist in target)
             for m2m_field, m2m_model in m2m_models.items():
                 if rec.get(m2m_field) and m2m_field in target_fields:

@@ -120,6 +120,12 @@ class ServiceImporter:
                 )
                 if ag_target:
                     vals['access_group_id'] = ag_target
+                else:
+                    _logger.warning(
+                        "Skipping service %s: access_group_id %s not found in target",
+                        rec['name'], rec['access_group_id'],
+                    )
+                    continue
             if rec.get('zone_id'):
                 zone_target = self.b._map_m2o('hr.rfid.zone', rec['zone_id'])
                 if zone_target:

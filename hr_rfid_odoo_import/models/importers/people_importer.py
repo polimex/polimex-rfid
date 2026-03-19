@@ -71,10 +71,11 @@ class PeopleImporter:
         target_fields = set(self.env[model]._fields.keys())
         # Required fields
         fields_to_read = ['name', 'company_id', 'active']
-        # Optional fields
+        # Optional fields (company_name needed for name fallback)
         for f in ['email', 'phone', 'mobile', 'vat', 'street', 'street2',
                   'city', 'zip', 'country_id', 'company_type', 'is_company',
-                  'parent_id']:
+                  'parent_id', 'company_name', 'comment', 'type', 'tz',
+                  'function', 'website', 'ref', 'lang', 'title']:
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
         if self.b.options.get('import_images') and 'image_1920' in source_fields_info:
@@ -86,33 +87,52 @@ class PeopleImporter:
         prefix = model.replace('.', '_')
 
         for rec in source_records:
-            # Try to match existing partner by email or vat
+            target_company_id = self.b._map_company(rec.get('company_id'))
+
+            # Try to match existing partner by email or vat (within same company)
             existing = False
+            company_domain = [('company_id', '=', target_company_id)] if target_company_id else []
             if rec.get('email'):
-                existing = self.env[model].search([
-                    ('email', '=', rec['email'])
-                ], limit=1)
-            if not existing and rec.get('vat'):
-                existing = self.env[model].search([
-                    ('vat', '=', rec['vat'])
-                ], limit=1)
+                existing = self.env[model].with_context(active_test=False).search(
+                    [('email', '=', rec['email'])] + company_domain,
+                    limit=1,
+                )
+            # VAT matching only for company-type partners (child contacts share parent VAT)
+            if not existing and rec.get('vat') and rec.get('is_company'):
+                existing = self.env[model].with_context(active_test=False).search(
+                    [('vat', '=', rec['vat']), ('is_company', '=', True)] + company_domain,
+                    limit=1,
+                )
 
             if existing:
                 self.b._set_target_id(model, rec['id'], existing.id)
                 linked += 1
                 continue
 
-            target_company_id = self.b._map_company(rec.get('company_id'))
-
+            # Name fallback: name → company_name → email → 'Partner #ID'
+            partner_name = (
+                rec.get('name')
+                or rec.get('company_name')
+                or rec.get('email')
+                or f"Partner #{rec['id']}"
+            )
             vals = {
-                'name': rec['name'],
+                'name': partner_name,
                 'active': rec.get('active', True),
             }
+            if rec.get('company_name') and 'company_name' in target_fields:
+                vals['company_name'] = rec['company_name']
             # Simple fields
             for f in ['email', 'phone', 'mobile', 'vat', 'street', 'street2',
-                       'city', 'zip', 'company_type', 'is_company']:
-                if rec.get(f):
-                    vals[f] = rec[f]
+                       'city', 'zip', 'company_type', 'is_company',
+                       'comment', 'type', 'tz', 'function', 'website',
+                       'ref', 'lang']:
+                if rec.get(f) and f in target_fields:
+                    val = rec[f]
+                    # Map deprecated selection values
+                    if f == 'type' and val == 'private':
+                        val = 'other'
+                    vals[f] = val
 
             if target_company_id:
                 vals['company_id'] = target_company_id
@@ -141,16 +161,23 @@ class PeopleImporter:
                 self.b._set_target_id(model, rec['id'], created.id)
                 imported += 1
 
-        # Pass 2: parent_id
+        # Pass 2: parent_id (each write in its own savepoint to skip cycles)
         for rec in source_records:
             if not rec.get('parent_id'):
                 continue
             target_id = self.b._get_target_id(model, rec['id'])
             parent_target = self.b._map_m2o(model, rec['parent_id'])
             if target_id and parent_target:
-                self.env[model].browse(target_id).with_context(
-                    **IMPORT_CONTEXT
-                ).write({'parent_id': parent_target})
+                try:
+                    with self.env.cr.savepoint():
+                        self.env[model].browse(target_id).with_context(
+                            **IMPORT_CONTEXT
+                        ).write({'parent_id': parent_target})
+                except Exception as e:
+                    _logger.warning(
+                        "Cannot set parent_id on partner %s → %s: %s",
+                        target_id, parent_target, e,
+                    )
 
         self.results.append(self._make_result(
             model, len(source_records), imported, linked,
@@ -285,7 +312,11 @@ class PeopleImporter:
         # Optional fields
         for f in ['department_id', 'user_id', 'job_id', 'job_title',
                   'work_phone', 'work_email', 'barcode', 'pin',
-                  'hr_rfid_pin_code', 'hr_rfid_access_group_ids']:
+                  'hr_rfid_pin_code', 'hr_rfid_access_group_ids',
+                  'mobile_phone', 'certificate', 'birthday',
+                  'emergency_contact', 'emergency_phone',
+                  'gender', 'marital', 'identification_id', 'passport_id',
+                  'country_of_birth', 'place_of_birth']:
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
         if self.b.options.get('import_images') and 'image_1920' in source_fields_info:
@@ -303,7 +334,7 @@ class PeopleImporter:
                 skipped += 1
                 continue
 
-            # Try to match by barcode or name+company
+            # Try to match by barcode (unique) or name+company (only if unique)
             existing = False
             if rec.get('barcode'):
                 existing = self.env[model].with_context(active_test=False).search([
@@ -311,10 +342,13 @@ class PeopleImporter:
                     ('company_id', '=', target_company_id),
                 ], limit=1)
             if not existing:
-                existing = self.env[model].with_context(active_test=False).search([
+                name_matches = self.env[model].with_context(active_test=False).search([
                     ('name', '=', rec['name']),
                     ('company_id', '=', target_company_id),
-                ], limit=1)
+                ])
+                # Only link if exactly one match (avoid duplicate name collisions)
+                if len(name_matches) == 1:
+                    existing = name_matches
 
             if existing:
                 self.b._set_target_id(model, rec['id'], existing.id)
@@ -340,7 +374,11 @@ class PeopleImporter:
                     vals['user_id'] = user_target
 
             # Simple fields
-            for f in ['job_title', 'work_phone', 'work_email', 'barcode', 'pin']:
+            for f in ['job_title', 'work_phone', 'work_email', 'barcode', 'pin',
+                       'mobile_phone', 'certificate', 'birthday',
+                       'emergency_contact', 'emergency_phone',
+                       'gender', 'marital', 'identification_id', 'passport_id',
+                       'place_of_birth']:
                 if rec.get(f) and f in target_fields:
                     vals[f] = rec[f]
 

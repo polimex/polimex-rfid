@@ -57,9 +57,10 @@ class AccessImporter:
         model = 'hr.rfid.access.group'
         co_domain = self.b._company_domain()
         source_fields_info = self.b._get_source_fields(model)
+        target_fields = set(self.env[model]._fields.keys())
 
         fields_to_read = ['name', 'company_id', 'inherited_ids', 'department_ids']
-        for f in ['active', 'description']:
+        for f in ['active', 'description', 'delay_between_events']:
             if f in source_fields_info:
                 fields_to_read.append(f)
 
@@ -92,6 +93,8 @@ class AccessImporter:
                 vals['description'] = rec['description']
             if 'active' in rec:
                 vals['active'] = rec['active']
+            if rec.get('delay_between_events') and 'delay_between_events' in target_fields:
+                vals['delay_between_events'] = rec['delay_between_events']
 
             data_list = [{
                 'xml_id': self.b._xml_id(prefix, rec['id']),
@@ -346,7 +349,8 @@ class AccessImporter:
         # Optional fields
         for f in ['name', 'card_type', 'employee_id', 'contact_id',
                   'card_active', 'activate_on', 'deactivate_on', 'pin_code',
-                  'card_input_type', 'cloud_card']:
+                  'card_input_type', 'cloud_card', 'card_reference',
+                  'internal_number']:
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
 
@@ -417,6 +421,11 @@ class AccessImporter:
 
             if rec.get('cloud_card') and 'cloud_card' in target_fields:
                 vals['cloud_card'] = rec['cloud_card']
+
+            # Additional card fields
+            for f in ['card_reference', 'internal_number']:
+                if rec.get(f) and f in target_fields:
+                    vals[f] = rec[f]
 
             data_list = [{
                 'xml_id': self.b._xml_id(prefix, rec['id']),

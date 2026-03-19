@@ -6,11 +6,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 09:11+0000\n"
-"PO-Revision-Date: 2026-03-17 12:03\n"
+"POT-Creation-Date: 2026-03-19 21:35+0000\n"
+"PO-Revision-Date: 2026-03-19 21:35+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -24,7 +23,7 @@ msgid ""
 "--- %d Conflicts Detected ---"
 msgstr ""
 "\n"
-"--- Открити %d конфликта ---"
+"--- %d открити конфликта ---"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -56,7 +55,7 @@ msgstr "  ГРЕШКА: %s"
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "%d conflicts need resolution before import can proceed."
-msgstr "%d конфликта трябва да бъдат разрешени преди импортирането."
+msgstr "%d конфликта трябва да бъдат разрешени преди импортът да продължи."
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
@@ -150,7 +149,7 @@ msgstr "Разширени"
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "Authentication failed. Check credentials."
-msgstr "Неуспешна автентикация. Проверете данните за вход."
+msgstr "Неуспешна автентикация. Проверете данните за достъп."
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
@@ -185,8 +184,8 @@ msgid ""
 "Cannot start import: there are %d blocking issues to resolve. Check the "
 "warnings above."
 msgstr ""
-"Не може да се започне импорт: има %d блокиращи проблема. Проверете "
-"предупрежденията по-горе."
+"Импортът не може да стартира: има %d блокиращи проблема за решаване. "
+"Проверете предупрежденията по-горе."
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
@@ -197,7 +196,7 @@ msgstr "Затвори"
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "Company '%s' is selected but has no target company assigned."
-msgstr "Фирма '%s' е избрана, но няма назначена целева фирма."
+msgstr "Фирма '%s' е избрана, но няма зададена целева фирма."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__company_line_ids
@@ -623,7 +622,8 @@ msgstr "Решение"
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "Review the conflicts table below and choose a resolution for each."
-msgstr "Прегледайте таблицата с конфликти и изберете решение за всеки."
+msgstr ""
+"Прегледайте таблицата с конфликти по-долу и изберете решение за всеки."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_conflict__resolution__skip
@@ -713,8 +713,8 @@ msgid ""
 "Source has '%s' installed but it's not installed in target. Data for this "
 "module will not be imported."
 msgstr ""
-"Източникът има '%s' инсталиран, но не е инсталиран в целевата. Данните за "
-"този модул няма да бъдат импортирани."
+"Модул '%s' е инсталиран в източника, но не е инсталиран в целевата база. "
+"Данните за този модул няма да бъдат импортирани."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -723,8 +723,8 @@ msgid ""
 "Source has '%s' installed but it's not installed in target. Install it first"
 " or disable this import option."
 msgstr ""
-"Източникът има '%s' инсталиран, но не е инсталиран в целевата. Инсталирайте "
-"го или деактивирайте тази опция."
+"Модул '%s' е инсталиран в източника, но не е инсталиран в целевата база. "
+"Инсталирайте го първо или деактивирайте тази опция за импорт."
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
@@ -735,7 +735,7 @@ msgstr "Стартирай импорта"
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "Starting import...\n"
-msgstr "Стартиране на импорт...\n"
+msgstr "Стартиране на импорта...\n"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__state

@@ -47,14 +47,26 @@ class BaseImporter:
 
     # ── Source reading (XML-RPC) ──────────────────────────────
 
-    def _search_read(self, model, domain, fields, order='id asc', limit=0):
-        """Read records from source via XML-RPC."""
+    def _search_read(self, model, domain, fields, order='id asc', limit=0,
+                     include_archived=True):
+        """Read records from source via XML-RPC.
+
+        By default includes archived records (active=False) for models
+        that have an 'active' field, to ensure complete data transfer.
+        """
+        read_domain = list(domain)
+        if include_archived and self._has_field(model, 'active'):
+            # Add explicit domain instead of context to avoid
+            # security issues in older Odoo versions
+            if not any(d[0] == 'active' for d in read_domain if isinstance(d, (list, tuple)) and len(d) >= 1):
+                read_domain.append(('active', 'in', [True, False]))
+
         kwargs = {'fields': fields, 'order': order}
         if limit:
             kwargs['limit'] = limit
         return self.rpc_models.execute_kw(
             self.source_db, self.source_uid, self.source_password,
-            model, 'search_read', [domain], kwargs
+            model, 'search_read', [read_domain], kwargs
         )
 
     def _read_all(self, model, domain, fields, batch_size=1000):
@@ -73,10 +85,14 @@ class BaseImporter:
         return all_records
 
     def _search_count(self, model, domain):
-        """Count records in source."""
+        """Count records in source (including archived)."""
+        count_domain = list(domain)
+        if self._has_field(model, 'active'):
+            if not any(d[0] == 'active' for d in count_domain if isinstance(d, (list, tuple)) and len(d) >= 1):
+                count_domain.append(('active', 'in', [True, False]))
         return self.rpc_models.execute_kw(
             self.source_db, self.source_uid, self.source_password,
-            model, 'search_count', [domain]
+            model, 'search_count', [count_domain]
         )
 
     def _has_field(self, model, field_name):
