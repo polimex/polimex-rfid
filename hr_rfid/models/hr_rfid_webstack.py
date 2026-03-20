@@ -55,6 +55,10 @@ class HrRfidWebstack(models.Model):
     _inherit = ['mail.activity.mixin', 'mail.thread', 'balloon.mixin']
     _description = 'Module'
 
+    _serial_uniq = models.Constraint(
+        "UNIQUE (serial)",
+        "A module with this serial number already exists!")
+
     name = fields.Char(
         string='Name',
         help='Enter a descriptive name to identify this module (e.g., "Main Building Module" or "Warehouse Gate Module"). This helps you manage multiple modules in your system.',
@@ -666,11 +670,17 @@ class HrRfidWebstack(models.Model):
         If no "command_id" is provided, the method will execute the command by calling the "_execute_direct_cmd" method of the current model instance, passing the command as a parameter. The method will then return the response from the command execution.
         """
         if command_id:
-            # TODO Direct execution of stored commands
-            cmd_response = command_id.webstack_id._execute_direct_cmd({'cmd': command_id.send_command(200)['cmd']})
-            if cmd_response:
-                command_id.webstack_id.parse_response(cmd_response, direct_cmd=True)
-            else:
+            cmd_response = None
+            try:
+                cmd_response = command_id.webstack_id._execute_direct_cmd(
+                    {'cmd': command_id.send_command(200)['cmd']})
+                if cmd_response:
+                    command_id.webstack_id.parse_response(cmd_response, direct_cmd=True)
+                else:
+                    command_id.status = 'Wait'
+            except Exception as e:
+                _logger.error('Direct execute failed for command %s on %s: %s',
+                              command_id.cmd, command_id.controller_id.name, e)
                 command_id.status = 'Wait'
             return cmd_response
         else:
@@ -771,21 +781,18 @@ class HrRfidWebstack(models.Model):
         processing_comm = commands_env.search([
             ('webstack_id', '=', self.id),
             ('status', '=', 'Process'),
-        ])
+        ], order='id asc', limit=1)
 
-        if len(processing_comm) > 0:
-            processing_comm = processing_comm[-1]
+        if processing_comm:
             return self._retry_command(status_code, processing_comm, event)
 
         command_id = commands_env.search([
             ('webstack_id', '=', self.id),
             ('status', '=', 'Wait'),
-        ], order='id desc')
+        ], order='id asc', limit=1)
 
-        if len(command_id) == 0:
+        if not command_id:
             return {'status': status_code}
-
-        command_id = command_id[-1]
 
         if event is not None:
             event.command_id = command_id.id

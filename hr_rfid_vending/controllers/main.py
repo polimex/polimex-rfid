@@ -240,7 +240,7 @@ class HrRfidVending(WebRfidController):
             else:
                 ret = ret_super()
 
-            return ret
+            return self._make_response(ret)
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
                 exceptions.MissingError, exceptions.ValidationError,
                 psycopg2.DataError, ValueError) as __:
@@ -249,7 +249,7 @@ class HrRfidVending(WebRfidController):
             webstack_id.report_sys_ev(description=traceback.format_exc(),
                                       post_data=json.dumps(post_data))
             _logger.debug('Vending: Caught an exception, returning status=500 and creating a system event')
-            return {'status': 500}
+            return self._make_response({'status': 500})
         except BadTimeException:
             t = post_data['event']['date'] + ' ' + post_data['event']['time']
             ev_num = str(post_data['event']['event_n'])
@@ -257,4 +257,4 @@ class HrRfidVending(WebRfidController):
             controller.report_sys_ev(description=f'Controller sent us an invalid date or time: {t}',
                                      post_data=json.dumps(post_data))
             _logger.debug('Caught a time error, returning status=200 and creating a system event')
-            return {'status': 200}
+            return self._make_response({'status': 200})

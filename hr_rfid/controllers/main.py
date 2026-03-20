@@ -7,7 +7,8 @@ import psycopg2
 from odoo.addons.hr_rfid.models.hr_rfid_webstack import BadTimeException
 from odoo.addons.hr_rfid.models.hr_rfid_event_system import HrRfidSystemEvent
 from odoo import http, fields, exceptions, _, SUPERUSER_ID
-from odoo.http import request
+from odoo.http import request, Response
+from odoo.tools import consteq
 from odoo.addons.hr_rfid.controllers import polimex
 from odoo.addons.hr_rfid.models.hr_rfid_event_system import action_selection as system_action_selection
 
@@ -597,14 +598,31 @@ class WebRfidController(http.Controller):
         }]
 
     def _decode_post(self, post):
+        if 'jsonrpc' in post:
+            # ESP32 JSON-RPC 2.0 format — unwrap params
+            self._is_jsonrpc = True
+            self._jsonrpc_id = post.get('id')
+            return post.get('params', {})
+        self._is_jsonrpc = False
         if not post:
-            # Controllers with no odoo functionality use the dd/mm/yyyy format
-            # Decode a to get a string
             decoded_string = request.httprequest.data.decode('utf-8')
-            # Parse the string into a JSON object
             return json.loads(decoded_string)
-        else:
-            return post
+        return post
+
+    def _make_response(self, result):
+        """Wrap result in JSON-RPC 2.0 for ESP32 modules, plain JSON for legacy."""
+        if isinstance(result, Response):
+            return result
+        if getattr(self, '_is_jsonrpc', False):
+            return Response(
+                json.dumps({
+                    'jsonrpc': '2.0',
+                    'id': self._jsonrpc_id,
+                    'result': result,
+                }),
+                content_type='application/json; charset=utf-8',
+            )
+        return result
 
     @http.route(['/hr/rfid/event'], type='json2', auth='none', methods=['POST'], cors='*', csrf=False,
                 save_session=False, sitemap=False)
@@ -643,7 +661,7 @@ class WebRfidController(http.Controller):
                         tz=request.env['res.users'].sudo().browse(2).tz).create(new_webstack_dict)
                 else:
                     _logger.info('Unknown Module. Received=' + str(post_data))
-                    return {'status': 400}
+                    return self._make_response({'status': 400})
 
             if not webstack_id.key:
                 webstack_id.key = post_data['key']
@@ -652,16 +670,16 @@ class WebRfidController(http.Controller):
                     body=_("The Module contacted us and activated.")
                 )
 
-            elif webstack_id.key != post_data['key']:
+            elif not consteq(webstack_id.key, str(post_data['key'])):
                 webstack_id.report_sys_ev('Webstack key and key in json did not match', post_data=post_data)
                 _logger.info(f'Wrong Module key for {webstack_id.name}/{webstack_id.company_id.name}! Received=' + str(
                     post_data))
-                return {'status': 400}
+                return self._make_response({'status': 400})
 
             if not webstack_id.active:
                 webstack_id.write(_ws_db_update_dict())
                 webstack_id.report_sys_ev('Webstack is not active', post_data=post_data)
-                return {'status': 400}
+                return self._make_response({'status': 400})
 
             result = {
                 'status': 400
@@ -683,7 +701,7 @@ class WebRfidController(http.Controller):
             if not post and 'cmd' in result:
                 result = {'cmd': result['cmd']}
             webstack_id.write(_ws_db_update_dict())
-            return result
+            return self._make_response(result)
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
                 exceptions.MissingError, exceptions.ValidationError,
                 psycopg2.DataError, ValueError) as e:
@@ -702,7 +720,7 @@ class WebRfidController(http.Controller):
                 'input_js': json.dumps(post_data),
             })
             # print('Caught an exception, returning status=500 and creating a system event')
-            return {'status': 500}
+            return self._make_response({'status': 500})
         except BadTimeException:
             _logger.error(f'Caught a time error from {webstack_id.name}/{webstack_id.company_id.name}, returning '
                           f'status=200 and creating a system event')
@@ -718,7 +736,7 @@ class WebRfidController(http.Controller):
                 'input_js': json.dumps(post_data),
             }
             request.env['hr.rfid.event.system'].sudo().create(sys_ev_dict)
-            return {'status': 200}
+            return self._make_response({'status': 200})
         except Exception as e:
             _logger.error(f'Caught an exception from {webstack_id.name}/{webstack_id.company_id.name}, returning '
                           f'status=500 and creating a system event: %s\n%s', str(e),
@@ -729,7 +747,7 @@ class WebRfidController(http.Controller):
                 'error_description': str(e),
                 'input_js': json.dumps(post_data),
             }])
-            return {'status': 500}
+            return self._make_response({'status': 500})
 
     def _parse_raw_data(self, post_data: dict):
         """

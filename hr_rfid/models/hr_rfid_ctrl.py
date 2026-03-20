@@ -987,7 +987,13 @@ class HrRfidController(models.Model):
                 try:
                     c.webstack_id.direct_execute({}, c)
                 except Exception as e:
-                    pass  # the exception have to be logged before
+                    _logger.error('Direct execute failed for %s: %s', c.controller_id.name, e)
+                    if c.status == 'Process':
+                        c.status = 'Wait'
+                        c.retries += 1
+                    if c.retries >= 3:
+                        c.status = 'Failure'
+                        c.error = str(e)[:200]
 
         return commands
 

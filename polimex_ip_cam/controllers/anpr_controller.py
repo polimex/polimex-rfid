@@ -2,7 +2,7 @@ import json
 import logging
 import base64
 import time
-import xml.etree.ElementTree as ET
+import defusedxml.ElementTree as ET
 from datetime import datetime
 
 import pytz

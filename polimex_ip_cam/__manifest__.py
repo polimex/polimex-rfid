@@ -15,6 +15,9 @@
     'license': 'AGPL-3',
     'category': 'Hidden/Tools',
     'depends': ['hr_rfid'],
+    'external_dependencies': {
+        'python': ['defusedxml'],
+    },
 
     'data': [
         'security/security.xml',

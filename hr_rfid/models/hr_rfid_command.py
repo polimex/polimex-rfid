@@ -1140,5 +1140,12 @@ class HrRfidCommands(models.Model):
             json_cmd['cmd']['d'] = '{:02}{:02}{:02}{:02}{:02}{:02}{:02}'.format(
                 dt.second, dt.minute, dt.hour, dt.weekday() + 1, dt.day, dt.month, dt.year % 100
             )
+        cmd_json_len = len(json.dumps(json_cmd))
+        if cmd_json_len > 400:
+            _logger.warning(
+                'Command %s data exceeds WebSDK 400-byte limit (%d bytes), '
+                'controller %s may reject it',
+                command.cmd, cmd_json_len, command.controller_id.name,
+            )
         command.request = json.dumps(json_cmd)
         return json_cmd
