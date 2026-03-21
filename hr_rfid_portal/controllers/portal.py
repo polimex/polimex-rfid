@@ -85,8 +85,8 @@ class RFIDCustomerPortal(CustomerPortal):
             values = self._card_get_page_view_values(card_sudo, access_token, **kw)
             return request.render("hr_rfid_portal.portal_my_barcode", values)
 
-    @http.route(['/my/events'], type='http', auth="user", website=True)
-    def portal_my_events(self, **kw):
+    @http.route(['/my/events', '/my/events/page/<int:page>'], type='http', auth="user", website=True)
+    def portal_my_events(self, page=1, **kw):
         user_id = request.env.user
         if not user_id:
             return request.redirect('/my')
@@ -95,9 +95,18 @@ class RFIDCustomerPortal(CustomerPortal):
             domain.append(('employee_id', '=', user_id.partner_id.employee_ids[0].id))
         else:
             domain.append(('contact_id', '=', user_id.partner_id.id))
-        user_events = request.env['hr.rfid.event.user'].sudo().search(domain, limit=30)
+        event_count = request.env['hr.rfid.event.user'].sudo().search_count(domain)
+        pager_values = portal_pager(
+            url='/my/events',
+            total=event_count,
+            page=page,
+            step=self._items_per_page,
+        )
+        user_events = request.env['hr.rfid.event.user'].sudo().search(
+            domain, order='event_time desc', limit=self._items_per_page, offset=pager_values['offset'])
         values = {
             'page_name': 'events',
             'events': user_events,
+            'pager': pager_values,
         }
         return request.render("hr_rfid_portal.portal_user_event_table", values)

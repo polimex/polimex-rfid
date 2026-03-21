@@ -23,11 +23,6 @@
         'views/hr_rfid_portal.xml',
     ],
     # 'images': ['static/images/main_screenshot.png'],
-    'assets': {
-        'web.report_assets_common': [
-            '/hr_rfid_portal/static/src/scss/barcode_card_web.scss',
-        ],
-    },
     'application': False,
     'auto_install': True,
 }

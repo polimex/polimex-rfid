@@ -29,7 +29,7 @@
                             </div>
                                 <div class="text-center mt-5 pt-2">
                                     <h2 t-field="partner.name"/>
-                                    <img alt="barcode" t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('QR', card.barcode_number, 150, 150)" style="width:150px;height:150px"/>
+                                    <img alt="barcode" t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s&amp;mask=polimex_logo&amp;barLevel=M' % ('QR', card.barcode_number, 150, 150)" style="width:150px;height:150px"/>
                                 </div>
                             </div>
                             <div class="o_card_barcode_foldable_badge_barcode mt-2">

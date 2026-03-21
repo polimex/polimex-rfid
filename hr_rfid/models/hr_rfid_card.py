@@ -382,8 +382,7 @@ class HrRfidCard(models.Model):
             if len(card_ids) == 0:
                 return new_card_hex, card_number
             if i > 10:
-                _logger.warning('Can not create barcode data. Random data duplicated 10 times!')
-                return None, None
+                raise exceptions.UserError(_('Could not generate a unique barcode card number after %d attempts.', i))
             i += 1
 
     @api.model
