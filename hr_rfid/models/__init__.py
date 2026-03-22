@@ -28,5 +28,7 @@ from . import hr_rfid_zone
 from . import hr_rfid_notification
 from . import res_partner
 from . import hr_rfid_settings
+from . import onboarding_onboarding
+from . import onboarding_onboarding_step
 from . import digest
 

@@ -3,7 +3,7 @@
 
 {
     'name': 'RFID Access Control',
-    'version': '19.0.2.2.2',
+    'version': '19.0.2.3.0',
     'category': 'Human Resources',
     'summary': 'Manage employee access control',
     'description': """
@@ -67,7 +67,7 @@ For detailed documentation, visit: https://polimex.co/
     'website': 'https://polimex.co/',
     'live_test_url': 'https://demo.polimex.co',
     "saas_demo_title": "Complete backend demo on Polimex servers",
-    'depends': ['hr', 'contacts', 'digest'],
+    'depends': ['hr', 'contacts', 'digest', 'onboarding'],
 
     'data': [
         'security/hr_rfid_security.xml',
@@ -104,7 +104,7 @@ For detailed documentation, visit: https://polimex.co/
         'views/hr_rfid_menus.xml',
         'views/digest_views.xml',
         'views/res_company.xml',
-        'templates/banners.xml',
+        'data/onboarding_data.xml',
         'security/hr_rfid_multi_company.xml',
         'report/hr_rfid_card_templates.xml',
         'report/hr_rfid_card_reports.xml',
@@ -120,9 +120,8 @@ For detailed documentation, visit: https://polimex.co/
     ],
     'assets': {
         'web.assets_backend': [
-            # 'board/static/src/**/*.scss',
-            # '/hr_rfid/static/src/**/*.js',
-            # 'board/static/src/**/*.xml',
+            'hr_rfid/static/src/components/**/*',
+            'hr_rfid/static/src/views/**/*',
         ],
         # 'web.assets_common': [
         #     'hr_rfid/static/src/js/tours/**/*',

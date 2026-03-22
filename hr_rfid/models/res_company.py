@@ -9,7 +9,6 @@ class ResCompany(models.Model):
         string='Event life time',
         default=365,
         help='Enter event lifetime. Older events will be deleted',
-        groups="hr_rfid.hr_rfid_group_officer"
     )
     card_input_type = fields.Selection(
         selection=[

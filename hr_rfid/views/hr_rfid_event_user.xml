@@ -117,7 +117,8 @@
             <field name="arch" type="xml">
                 <list create="0" delete="0" decoration-success="event_action in ['1','10','11']"
                       decoration-danger="event_action in ['2','3','4','5','15']"
-                      decoration-warning="event_action == '64'" sample="1">
+                      decoration-warning="event_action == '64'" sample="1"
+                      js_class="rfid_onboarding_list">
                     <field name="event_time"/>
                     <field name="employee_id" widget="many2one_avatar_employee" optional="show"/>
                     <field name="contact_id" widget="many2one_avatar" optional="show"/>
