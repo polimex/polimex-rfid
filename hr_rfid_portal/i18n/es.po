@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-06 13:24+0000\n"
-"PO-Revision-Date: 2026-03-06 15:29\n"
+"POT-Creation-Date: 2026-03-23 11:19+0000\n"
+"PO-Revision-Date: 2026-03-23 20:54\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -28,7 +28,7 @@ msgstr ""
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_my_barcode
 msgid "<span class=\"mx-2 text-muted\">→</span>"
-msgstr ""
+msgstr "<span class=\"mx-2 text-muted\">→</span>"
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_my_barcode
@@ -57,6 +57,7 @@ msgstr "URL del portal del cliente"
 
 #. module: hr_rfid_portal
 #: model:ir.model.fields,field_description:hr_rfid_portal.field_hr_rfid_card__display_name
+#: model:ir.model.fields,field_description:hr_rfid_portal.field_ir_actions_report__display_name
 msgid "Display Name"
 msgstr "Nombre mostrado"
 
@@ -77,6 +78,7 @@ msgstr "Eventos"
 
 #. module: hr_rfid_portal
 #: model:ir.model.fields,field_description:hr_rfid_portal.field_hr_rfid_card__id
+#: model:ir.model.fields,field_description:hr_rfid_portal.field_ir_actions_report__id
 msgid "ID"
 msgstr "ID"
 
@@ -126,6 +128,11 @@ msgid "Reference"
 msgstr "Referencia"
 
 #. module: hr_rfid_portal
+#: model:ir.model,name:hr_rfid_portal.model_ir_actions_report
+msgid "Report Action"
+msgstr "Acción de informe"
+
+#. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_my_home_hr_rfid
 msgid "Review all Events generated from you"
 msgstr "Ver todos los eventos generados por usted"
@@ -152,18 +159,18 @@ msgid ""
 "The card cannot be shared with the recipient(s) because the type is not "
 "Barcode."
 msgstr ""
-"La tarjeta no puede compartirse con el/los destinatario(s) porque el tipo no"
-" es Código de barras."
-
-#. module: hr_rfid_portal
-#: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_barcode_table
-msgid "There haven't Web Cards in your account."
-msgstr "No hay Web Cards en su cuenta."
+"La tarjeta no se puede compartir con el/los destinatario(s) porque el tipo "
+"no es Código de barras."
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_user_event_table
-msgid "There haven't events generated from you."
-msgstr "No hay eventos generados por usted."
+msgid "There are currently no events for your account."
+msgstr "Actualmente no hay eventos para su cuenta."
+
+#. module: hr_rfid_portal
+#: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_barcode_table
+msgid "There are currently no web cards for your account."
+msgstr "Actualmente no hay tarjetas web para su cuenta."
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_layout
@@ -183,17 +190,17 @@ msgstr "Válido hasta"
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_barcode_table
 msgid "Web Card"
-msgstr "Web Card"
+msgstr "Tarjeta Web"
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_layout
 msgid "Web Cards"
-msgstr "Web Cards"
+msgstr "Tarjetas Web"
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_my_home_hr_rfid
 msgid "WebCards"
-msgstr "WebCards"
+msgstr "Tarjetas Web"
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_user_event_table
@@ -209,7 +216,7 @@ msgstr "Cuándo"
 #. odoo-python
 #: code:addons/hr_rfid_portal/models/hr_rfid_card.py:0
 msgid "You cannot %s %s fields in card."
-msgstr "No puede %s los campos %s de la tarjeta."
+msgstr "No puede %s %s campos en la tarjeta."
 
 #. module: hr_rfid_portal
 #. odoo-python

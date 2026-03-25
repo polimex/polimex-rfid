@@ -4,18 +4,17 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 18.0\n"
+"Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-04 16:35+0000\n"
-"PO-Revision-Date: 2025-06-23 12:31\n"
-"Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
+"POT-Creation-Date: 2026-03-23 11:19+0000\n"
+"PO-Revision-Date: 2026-03-23 13:20\n"
+"Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.6\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_barcode_table
@@ -57,6 +56,12 @@ msgid "Customer Portal URL"
 msgstr "URL адрес на портала за клиенти"
 
 #. module: hr_rfid_portal
+#: model:ir.model.fields,field_description:hr_rfid_portal.field_hr_rfid_card__display_name
+#: model:ir.model.fields,field_description:hr_rfid_portal.field_ir_actions_report__display_name
+msgid "Display Name"
+msgstr "Име за показване"
+
+#. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_user_event_table
 msgid "Door"
 msgstr "Врата"
@@ -70,6 +75,12 @@ msgstr "Изтегли"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_my_home_hr_rfid
 msgid "Events"
 msgstr "Събития"
+
+#. module: hr_rfid_portal
+#: model:ir.model.fields,field_description:hr_rfid_portal.field_hr_rfid_card__id
+#: model:ir.model.fields,field_description:hr_rfid_portal.field_ir_actions_report__id
+msgid "ID"
+msgstr "ID"
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_barcode_table
@@ -117,6 +128,11 @@ msgid "Reference"
 msgstr "Референция"
 
 #. module: hr_rfid_portal
+#: model:ir.model,name:hr_rfid_portal.model_ir_actions_report
+msgid "Report Action"
+msgstr "Докладване на действие"
+
+#. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_my_home_hr_rfid
 msgid "Review all Events generated from you"
 msgstr "Преглед на всички събития, генерирани от вас"
@@ -143,18 +159,18 @@ msgid ""
 "The card cannot be shared with the recipient(s) because the type is not "
 "Barcode."
 msgstr ""
-"Картата не може да бъде споделена с получателя(ите), тъй като типът не е "
-"Баркод."
-
-#. module: hr_rfid_portal
-#: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_barcode_table
-msgid "There haven't Web Cards in your account."
-msgstr "В акаунта ви няма уеб карти."
+"Картата не може да бъде споделена с получателя/получателите, тъй като типът "
+"не е баркод."
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_user_event_table
-msgid "There haven't events generated from you."
-msgstr "Няма събития, генерирани от вас."
+msgid "There are currently no events for your account."
+msgstr "В момента няма събития за вашата сметка."
+
+#. module: hr_rfid_portal
+#: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_barcode_table
+msgid "There are currently no web cards for your account."
+msgstr "В момента няма уеб карти за вашата сметка."
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_layout
@@ -182,12 +198,6 @@ msgid "Web Cards"
 msgstr "Уеб карти"
 
 #. module: hr_rfid_portal
-#. odoo-python
-#: code:addons/hr_rfid_portal/controllers/portal.py:0
-msgid "Web card for %s"
-msgstr "Уеб карта за %s"
-
-#. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_my_home_hr_rfid
 msgid "WebCards"
 msgstr "Уебкарти"
@@ -212,4 +222,4 @@ msgstr "Не можете да %s %s полета в картата."
 #. odoo-python
 #: code:addons/hr_rfid_portal/models/hr_rfid_card.py:0
 msgid "You have not write access of %s field."
-msgstr "Нямате достъп за запис на полето %s."
+msgstr "Нямате право на запис за поле %s."

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-05 16:23+0000\n"
-"PO-Revision-Date: 2026-03-06 16:27\n"
+"POT-Creation-Date: 2026-03-23 11:19+0000\n"
+"PO-Revision-Date: 2026-03-23 20:55\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ro\n"
@@ -28,7 +28,7 @@ msgstr ""
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_my_barcode
 msgid "<span class=\"mx-2 text-muted\">→</span>"
-msgstr ""
+msgstr "<span class=\"mx-2 text-muted\">→</span>"
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_my_barcode
@@ -43,7 +43,7 @@ msgstr "Avertisment de acces"
 #. module: hr_rfid_portal
 #: model:ir.model,name:hr_rfid_portal.model_hr_rfid_card
 msgid "Card"
-msgstr "Cartelă"
+msgstr "Card"
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_my_barcode
@@ -57,6 +57,7 @@ msgstr "URL Portal Client"
 
 #. module: hr_rfid_portal
 #: model:ir.model.fields,field_description:hr_rfid_portal.field_hr_rfid_card__display_name
+#: model:ir.model.fields,field_description:hr_rfid_portal.field_ir_actions_report__display_name
 msgid "Display Name"
 msgstr "Nume afișat"
 
@@ -77,13 +78,14 @@ msgstr "Evenimente"
 
 #. module: hr_rfid_portal
 #: model:ir.model.fields,field_description:hr_rfid_portal.field_hr_rfid_card__id
+#: model:ir.model.fields,field_description:hr_rfid_portal.field_ir_actions_report__id
 msgid "ID"
 msgstr "ID"
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_barcode_table
 msgid "Link"
-msgstr "Link"
+msgstr "Legătură"
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_my_barcode
@@ -126,6 +128,11 @@ msgid "Reference"
 msgstr "Referință"
 
 #. module: hr_rfid_portal
+#: model:ir.model,name:hr_rfid_portal.model_ir_actions_report
+msgid "Report Action"
+msgstr "Acțiune raport"
+
+#. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_my_home_hr_rfid
 msgid "Review all Events generated from you"
 msgstr "Vizualizați toate evenimentele generate de dumneavoastră"
@@ -152,18 +159,18 @@ msgid ""
 "The card cannot be shared with the recipient(s) because the type is not "
 "Barcode."
 msgstr ""
-"Cartela nu poate fi partajată cu destinatar(ii) deoarece tipul nu este "
-"Barcode."
-
-#. module: hr_rfid_portal
-#: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_barcode_table
-msgid "There haven't Web Cards in your account."
-msgstr "Nu există Web Cards în contul dumneavoastră."
+"Cardul nu poate fi partajat cu destinatarul/destinatarii deoarece tipul nu "
+"este Cod de bare."
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_user_event_table
-msgid "There haven't events generated from you."
-msgstr "Nu există evenimente generate de dumneavoastră."
+msgid "There are currently no events for your account."
+msgstr "Momentan nu există evenimente pentru contul dumneavoastră."
+
+#. module: hr_rfid_portal
+#: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_barcode_table
+msgid "There are currently no web cards for your account."
+msgstr "Momentan nu există carduri web pentru contul dumneavoastră."
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_layout
@@ -183,17 +190,17 @@ msgstr "Valabil până la"
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_barcode_table
 msgid "Web Card"
-msgstr "Web Card"
+msgstr "Card Web"
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_layout
 msgid "Web Cards"
-msgstr "Web Cards"
+msgstr "Carduri Web"
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_my_home_hr_rfid
 msgid "WebCards"
-msgstr "WebCards"
+msgstr "Carduri Web"
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_user_event_table
@@ -209,10 +216,10 @@ msgstr "Când"
 #. odoo-python
 #: code:addons/hr_rfid_portal/models/hr_rfid_card.py:0
 msgid "You cannot %s %s fields in card."
-msgstr "Nu puteți %s câmpurile %s din cartelă."
+msgstr "Nu puteți %s %s câmpuri în card."
 
 #. module: hr_rfid_portal
 #. odoo-python
 #: code:addons/hr_rfid_portal/models/hr_rfid_card.py:0
 msgid "You have not write access of %s field."
-msgstr "Nu aveți acces de scriere pentru câmpul %s."
+msgstr "Nu aveți acces de scriere la câmpul %s."

@@ -6,11 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-05 16:53+0000\n"
-"PO-Revision-Date: 2026-03-08 17:47\n"
+"POT-Creation-Date: 2026-03-23 11:19+0000\n"
+"PO-Revision-Date: 2026-03-23 20:54\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: el\n"
+"Language: el_GR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -42,14 +42,14 @@ msgstr ""
 msgid ""
 "%d is not a valid number for the io table. Valid values range from 0 to 99"
 msgstr ""
-"%d δεν είναι έγκυρος αριθμός για τον πίνακα io. Οι έγκυρες τιμές κυμαίνονται"
-" από 0 έως 99"
+"%d δεν είναι έγκυρος αριθμός για τον πίνακα I/O. Οι έγκυρες τιμές "
+"κυμαίνονται από 0 έως 99"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_card.py:0
 msgid "%s list"
-msgstr "%s λίστα"
+msgstr "Λίστα %s"
 
 #. module: hr_rfid
 #: model:ir.actions.report,print_report_name:hr_rfid.action_report_hr_rfid_card_foldable_badge
@@ -545,7 +545,7 @@ msgstr ""
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_time_schedule_view_kanban
 msgid "<i class=\"fa fa-check-circle me-1\"/>TS is not empty"
-msgstr "<i class=\"fa fa-check-circle me-1\"/>Το TS δεν είναι κενό"
+msgstr "<i class=\"fa fa-check-circle me-1\"/>Το χρονοδιάγραμμα δεν είναι κενό"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
@@ -560,7 +560,7 @@ msgstr "<i class=\"fa fa-fw fa-list\" title=\"Εντολές\"/>"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
 msgid "<i class=\"fa fa-fw fa-list\" title=\"System Events\"/>"
-msgstr "<i class=\"fa fa-fw fa-list\" title=\"Συμβάντα Συστήματος\"/>"
+msgstr "<i class=\"fa fa-fw fa-list\" title=\"Συμβάντα συστήματος\"/>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
@@ -590,13 +590,13 @@ msgstr "<i class=\"fa fa-list\" title=\"Εντολές\"/>"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "<i class=\"fa fa-list\" title=\"System Events\"/>"
-msgstr "<i class=\"fa fa-list\" title=\"Συμβάντα Συστήματος\"/>"
+msgstr "<i class=\"fa fa-list\" title=\"Συμβάντα συστήματος\"/>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "<i class=\"fa fa-list\" title=\"User Events\"/>"
-msgstr "<i class=\"fa fa-list\" title=\"Συμβάντα Χρήστη\"/>"
+msgstr "<i class=\"fa fa-list\" title=\"Συμβάντα χρήστη\"/>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
@@ -606,7 +606,7 @@ msgstr "<i class=\"fa fa-map-marker\" title=\"Ζώνες\"/>"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
 msgid "<i class=\"fa fa-microchip\" title=\"System Events\"/>"
-msgstr "<i class=\"fa fa-microchip\" title=\"Συμβάντα Συστήματος\"/>"
+msgstr "<i class=\"fa fa-microchip\" title=\"Συμβάντα συστήματος\"/>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
@@ -621,7 +621,7 @@ msgstr "<i class=\"fa fa-shield text-danger ms-auto\" title=\"Ενεργοποί
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 msgid "<i class=\"fa fa-shield\" title=\"Alarm Lines\"/>"
-msgstr "<i class=\"fa fa-shield\" title=\"Γραμμές Συναγερμού\"/>"
+msgstr "<i class=\"fa fa-shield\" title=\"Γραμμές συναγερμού\"/>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
@@ -638,11 +638,6 @@ msgstr "<i class=\"fa fa-thermometer-full me-1\" title=\"Θερμοκρασία\
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "<i class=\"fa fa-thermometer-full text-info me-1\" title=\"Temperature\"/>"
 msgstr "<i class=\"fa fa-thermometer-full text-info me-1\" title=\"Θερμοκρασία\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.webstack_onboarding_panel
-msgid "<i class=\"fa fa-times\" title=\"Close the onboarding panel\"/>"
-msgstr "<i class=\"fa fa-times\" title=\"Κλείσιμο του πίνακα εισαγωγής\"/>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
@@ -662,7 +657,7 @@ msgstr ""
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
 msgid "<i class=\"fa fa-user\" title=\"User Events\"/>"
-msgstr "<i class=\"fa fa-user\" title=\"Συμβάντα Χρήστη\"/>"
+msgstr "<i class=\"fa fa-user\" title=\"Συμβάντα χρήστη\"/>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
@@ -672,12 +667,12 @@ msgstr "<i class=\"fa fa-users me-1\" title=\"Ομάδα\"/>"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "<i class=\"fa fa-users\" title=\"Access Groups\"/>"
-msgstr "<i class=\"fa fa-users\" title=\"Ομάδες Πρόσβασης\"/>"
+msgstr "<i class=\"fa fa-users\" title=\"Ομάδες πρόσβασης\"/>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_time_schedule_view_kanban
 msgid "<i class=\"fa fa-warning me-1\"/>TS is empty"
-msgstr "<i class=\"fa fa-warning me-1\"/>Το TS είναι κενό"
+msgstr "<i class=\"fa fa-warning me-1\"/>Το χρονοδιάγραμμα είναι κενό"
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_reader_action
@@ -697,7 +692,7 @@ msgid ""
 "                </p>"
 msgstr ""
 "<p class=\"o_view_nocontent\">\n"
-"                    Δεν υπάρχουν προσβάσιμες πόρτες για αυτόν τον εργαζόμενο.\n"
+"                    Δεν υπάρχουν προσβάσιμες πόρτες για αυτόν τον υπάλληλο.\n"
 "                </p>"
 
 #. module: hr_rfid
@@ -709,7 +704,7 @@ msgid ""
 "                </p>"
 msgstr ""
 "<p class=\"o_view_nocontent\">\n"
-"                    Δεν υπάρχουν προσβάσιμες πόρτες για αυτόν τον συνεργάτη.\n"
+"                    Δεν υπάρχουν προσβάσιμες πόρτες για αυτή την επαφή.\n"
 "                </p>"
 
 #. module: hr_rfid
@@ -721,7 +716,7 @@ msgid ""
 "                </p>"
 msgstr ""
 "<p class=\"o_view_nocontent\">\n"
-"                    Δεν υπάρχουν συμβάντα για αυτόν τον εργαζόμενο.\n"
+"                    Δεν υπάρχουν συμβάντα για αυτόν τον υπάλληλο.\n"
 "                </p>"
 
 #. module: hr_rfid
@@ -733,7 +728,7 @@ msgid ""
 "                </p>"
 msgstr ""
 "<p class=\"o_view_nocontent\">\n"
-"                    Δεν υπάρχουν συμβάντα για αυτόν τον συνεργάτη.\n"
+"                    Δεν υπάρχουν συμβάντα για αυτή την επαφή.\n"
 "                </p>"
 
 #. module: hr_rfid
@@ -764,7 +759,7 @@ msgstr "<span class=\"oe_grey p-2\">°C</span>"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 msgid "<span class=\"text-muted\">Serial:</span>"
-msgstr "<span class=\"text-muted\">Σειριακός:</span>"
+msgstr "<span class=\"text-muted\">Σειριακός αριθμός:</span>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
@@ -821,7 +816,7 @@ msgstr "<span>Πόρτα: </span>"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
 msgid "<span>Parent: </span>"
-msgstr "<span>Γονέας: </span>"
+msgstr "<span>Γονικό: </span>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
@@ -844,7 +839,7 @@ msgstr "<span>TS #</span>"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_time_schedule_view_kanban
 msgid "<span>TS Number: </span>"
-msgstr "<span>Αριθμός TS: </span>"
+msgstr "<span>Αριθμός χρονοδιαγράμματος: </span>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
@@ -923,8 +918,8 @@ msgid ""
 "A controller with serial number %s is already registered in the system. It "
 "is no possible to have 2 controllers wit same serial numbers."
 msgstr ""
-"Ελεγκτής με σειριακό αριθμό %s είναι ήδη καταχωρισμένος στο σύστημα. Δεν "
-"είναι δυνατή η ύπαρξη 2 ελεγκτών με τον ίδιο σειριακό αριθμό."
+"Ένας ελεγκτής με σειριακό αριθμό %s είναι ήδη καταχωρημένος στο σύστημα. Δεν"
+" είναι δυνατό να υπάρχουν 2 ελεγκτές με τον ίδιο σειριακό αριθμό."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__name
@@ -984,6 +979,11 @@ msgstr ""
 "κάρτας."
 
 #. module: hr_rfid
+#: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_webstack_serial_uniq
+msgid "A module with this serial number already exists!"
+msgstr "Υπάρχει ήδη ένα module με αυτόν τον σειριακό αριθμό!"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__apb_mode
 msgid "APB Mode"
 msgstr "Λειτουργία APB"
@@ -1039,13 +1039,13 @@ msgstr "Ομάδα Πρόσβασης"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
 msgid "Access Group "
-msgstr "Ομάδα Πρόσβασης "
+msgstr "Ομάδα πρόσβασης "
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
 msgid "Access Group 1"
-msgstr "Ομάδα Πρόσβασης 1"
+msgstr "Ομάδα πρόσβασης 1"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__access_group_count
@@ -1120,6 +1120,11 @@ msgstr ""
 "συστήματος. Εμφανίζει το πλήρες ιστορικό χρήσης κάρτας RFID με χρονικές "
 "σημάνσεις, πληροφορίες πόρτας και κατάσταση συμβάντος. Χρήσιμο για ελέγχους "
 "ασφαλείας και αντιμετώπιση προβλημάτων πρόσβασης."
+
+#. module: hr_rfid
+#: model:onboarding.onboarding.step,done_text:hr_rfid.onboarding_step_create_access_group
+msgid "Access group ready!"
+msgstr "Η ομάδα πρόσβασης είναι έτοιμη!"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_employee_form_inherit_hr_rfid
@@ -1280,6 +1285,7 @@ msgstr "Εικονίδιο Τύπου Δραστηριότητας"
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_add_card_action
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_sys_ev_wiz_action
+#: model:onboarding.onboarding.step,button_text:hr_rfid.onboarding_step_register_card
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_form
 msgid "Add Card"
 msgstr "Προσθήκη Κάρτας"
@@ -1294,8 +1300,15 @@ msgid "Add Doors"
 msgstr "Προσθήκη Πορτών"
 
 #. module: hr_rfid
+#: model:onboarding.onboarding.step,step_image_alt:hr_rfid.onboarding_step_add_webstack
+#: model:onboarding.onboarding.step,title:hr_rfid.onboarding_step_add_webstack
+msgid "Add Hardware Module"
+msgstr "Προσθήκη module υλικού"
+
+#. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_webstack_manual_create_action
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_create_module_manual
+#: model:onboarding.onboarding.step,button_text:hr_rfid.onboarding_step_add_webstack
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_manual_create_wiz
 msgid "Add Module"
 msgstr "Προσθήκη Μονάδας"
@@ -1319,6 +1332,11 @@ msgstr ""
 "Προσθέστε προηγμένους υπολογισμούς παρουσίας, όπως καθυστερημένες αφίξεις, "
 "πρόωρες αναχωρήσεις και παρακολούθηση υπερωριών, στις βασικές λειτουργίες "
 "χρόνου και παρουσίας."
+
+#. module: hr_rfid
+#: model:onboarding.onboarding.step,description:hr_rfid.onboarding_step_register_card
+msgid "Add an RFID card and assign it to an employee."
+msgstr "Προσθέστε μια κάρτα RFID και αντιστοιχίστε την σε έναν υπάλληλο."
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_department_add_def_acc_grs
@@ -1485,7 +1503,7 @@ msgstr "Καταστάσεις Γραμμών Συναγερμού"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "Alarm Line {} on {}"
-msgstr "Γραμμή Συναγερμού {} σε {}"
+msgstr "Γραμμή συναγερμού {} σε {}"
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_ctrl_alarm_action
@@ -1795,7 +1813,7 @@ msgstr "Ενεργοποίηση"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
 msgid "Arm Group"
-msgstr "Ενεργοποίηση Ομάδας"
+msgstr "Όπλιση ομάδας"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__20
@@ -1806,22 +1824,22 @@ msgstr "Ενεργοποίηση με Σειρήνα"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0
 msgid "Arm command success"
-msgstr "Επιτυχής εντολή ενεργοποίησης"
+msgstr "Επιτυχής εντολή όπλισης"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
 msgid "Arm the alarm group"
-msgstr "Ενεργοποίηση ομάδας συναγερμού"
+msgstr "Όπλιση της ομάδας συναγερμού"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
 msgid "Arm the alarm line"
-msgstr "Ενεργοποίηση γραμμής συναγερμού"
+msgstr "Όπλιση της γραμμής συναγερμού"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Arm the door alarm"
-msgstr "Ενεργοποίηση συναγερμού πόρτας"
+msgstr "Όπλιση του συναγερμού πόρτας"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__armed
@@ -1983,9 +2001,9 @@ msgid ""
 "Because the webstack is behind NAT, we have to wait for the webstack to call"
 " us, so we created a command. The door will open/close as soon as possible."
 msgstr ""
-"Επειδή η μονάδα webstack βρίσκεται πίσω από NAT, πρέπει να αναμείνουμε να "
-"επικοινωνήσει η μονάδα μαζί μας, γι' αυτό δημιουργήθηκε μια εντολή. Η πόρτα "
-"θα ανοίξει/κλείσει το συντομότερο δυνατό."
+"Επειδή το WebStack βρίσκεται πίσω από NAT, πρέπει να περιμένουμε το WebStack"
+" να μας καλέσει, γι' αυτό δημιουργήσαμε μια εντολή. Η πόρτα θα "
+"ανοίξει/κλείσει το συντομότερο δυνατό."
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_line__begin
@@ -1996,7 +2014,7 @@ msgstr "Έναρξη"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
 msgid "Begin is not in range"
-msgstr "Η έναρξη δεν είναι εντός εύρους"
+msgstr "Η αρχή δεν βρίσκεται εντός εύρους"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__behind_nat
@@ -2250,8 +2268,8 @@ msgid ""
 "Card count in controller and DB are different. Reload cards to solve the "
 "problem"
 msgstr ""
-"Ο αριθμός καρτών στον ελεγκτή και στη Βάση Δεδομένων διαφέρουν. "
-"Επαναφορτώστε τις κάρτες για να επιλύσετε το πρόβλημα"
+"Ο αριθμός καρτών στον ελεγκτή και στη βάση δεδομένων είναι διαφορετικός. "
+"Επαναφορτώστε τις κάρτες για να λύσετε το πρόβλημα"
 
 #. module: hr_rfid
 #. odoo-python
@@ -2311,6 +2329,11 @@ msgstr "Κάτοχος κάρτας (εργαζόμενος)"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__card_reference
 msgid "Card reference"
 msgstr "Αναφορά κάρτας"
+
+#. module: hr_rfid
+#: model:onboarding.onboarding.step,done_text:hr_rfid.onboarding_step_register_card
+msgid "Card registered!"
+msgstr "Η κάρτα καταχωρήθηκε!"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_door_rel__card_type
@@ -2426,7 +2449,7 @@ msgstr "Έλεγχος Πορτών"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Check connection to the Module"
-msgstr "Έλεγχος σύνδεσης με τη Μονάδα"
+msgstr "Έλεγχος σύνδεσης στο module"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th__log_every_read
@@ -2486,7 +2509,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
 msgid "Circular reference found in the inherited access groups: %s"
-msgstr "Βρέθηκε κυκλική αναφορά στις κληρονομούμενες ομάδες πρόσβασης: %s"
+msgstr "Βρέθηκε κυκλική αναφορά στις κληρονομημένες ομάδες πρόσβασης: %s"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__hb_clean
@@ -2519,6 +2542,12 @@ msgid "Close"
 msgstr "Κλείσιμο"
 
 #. module: hr_rfid
+#. odoo-javascript
+#: code:addons/hr_rfid/static/src/components/onboarding/onboarding.xml:0
+msgid "Close Panel"
+msgstr "Κλείσιμο πίνακα"
+
+#. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.action_close_door
 msgid "Close door"
 msgstr "Κλείσιμο πόρτας"
@@ -2535,10 +2564,16 @@ msgid "Close doors"
 msgstr "Κλείσιμο πορτών"
 
 #. module: hr_rfid
+#. odoo-javascript
+#: code:addons/hr_rfid/static/src/components/onboarding/onboarding.xml:0
+msgid "Close the onboarding panel"
+msgstr "Κλείσιμο του πίνακα εισαγωγής"
+
+#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Closed the door for %d seconds."
-msgstr "Η πόρτα έκλεισε για %d δευτερόλεπτα."
+msgstr "Η πόρτα κλείστηκε για %d δευτερόλεπτα."
 
 #. module: hr_rfid
 #. odoo-python
@@ -2647,7 +2682,7 @@ msgstr "Δεδομένα εντολής"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 msgid "Command resend"
-msgstr "Εκ νέου αποστολή εντολής"
+msgstr "Επαναποστολή εντολής"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__retries
@@ -2836,6 +2871,12 @@ msgstr ""
 "αναφορά συμβάντων αισθητήρα."
 
 #. module: hr_rfid
+#: model:onboarding.onboarding.step,step_image_alt:hr_rfid.onboarding_step_module_settings
+#: model:onboarding.onboarding.step,title:hr_rfid.onboarding_step_module_settings
+msgid "Configure RFID Settings"
+msgstr "Ρύθμιση παραμέτρων RFID"
+
+#. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_ctrl_ts_week_wiz_action
 msgid ""
 "Configure access hours for each day of the week.\n"
@@ -3015,7 +3056,7 @@ msgstr "Ελεγκτής"
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "Controller %s has mode=%d, which is not supported!"
-msgstr "Ο ελεγκτής %s έχει mode=%d, ο οποίος δεν υποστηρίζεται!"
+msgstr "Ο ελεγκτής %s έχει mode=%d, το οποίο δεν υποστηρίζεται!"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_ctrl_alarm
@@ -3064,13 +3105,13 @@ msgstr "Λειτουργία ελεγκτή"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack_replace_wiz.py:0
 msgid "Controller moved from <a href='%s'>Module %s</a>"
-msgstr "Ο ελεγκτής μεταφέρθηκε από <a href='%s'>Μονάδα %s</a>"
+msgstr "Ο ελεγκτής μεταφέρθηκε από <a href='%s'>Module %s</a>"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Controller sent us a response to a command we never sent"
-msgstr "Ο ελεγκτής μάς έστειλε απόκριση σε εντολή που ποτέ δεν στείλαμε"
+msgstr "Ο ελεγκτής μας έστειλε απάντηση σε εντολή που δεν στείλαμε ποτέ"
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_ctrl_action
@@ -3114,16 +3155,21 @@ msgid "Controllers count"
 msgstr "Πλήθος ελεγκτών"
 
 #. module: hr_rfid
+#: model:onboarding.onboarding.step,done_text:hr_rfid.onboarding_step_scan_controllers
+msgid "Controllers found!"
+msgstr "Βρέθηκαν ελεγκτές!"
+
+#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack_replace_wiz.py:0
 msgid "Controllers moved from <a href='%s'>Module %s</a>"
-msgstr "Οι ελεγκτές μεταφέρθηκαν από <a href='%s'>Μονάδα %s</a>"
+msgstr "Οι ελεγκτές μεταφέρθηκαν από <a href='%s'>Module %s</a>"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack_replace_wiz.py:0
 msgid "Controllers moved to <a href='%s'>Module %s</a>"
-msgstr "Οι ελεγκτές μεταφέρθηκαν σε <a href='%s'>Μονάδα %s</a>"
+msgstr "Οι ελεγκτές μεταφέρθηκαν σε <a href='%s'>Module %s</a>"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__active
@@ -3144,8 +3190,8 @@ msgid ""
 "Could not connect to the module. \n"
 "Check if it is turned on or if it's on a different ip.\n"
 msgstr ""
-"Δεν ήταν δυνατή η σύνδεση με τη μονάδα. \n"
-"Ελέγξτε εάν είναι ενεργοποιημένη ή εάν βρίσκεται σε διαφορετική IP.\n"
+"Δεν ήταν δυνατή η σύνδεση με το module. \n"
+"Ελέγξτε αν είναι ενεργοποιημένο ή αν βρίσκεται σε διαφορετική IP.\n"
 
 #. module: hr_rfid
 #. odoo-python
@@ -3154,14 +3200,22 @@ msgid ""
 "Could not connect to the module. \n"
 "Check if it is turned on or if it's on a different ip:\n"
 msgstr ""
-"Δεν ήταν δυνατή η σύνδεση με τη μονάδα. \n"
-"Ελέγξτε εάν είναι ενεργοποιημένη ή εάν βρίσκεται σε διαφορετική IP:\n"
+"Δεν ήταν δυνατή η σύνδεση με το module. \n"
+"Ελέγξτε αν είναι ενεργοποιημένο ή αν βρίσκεται σε διαφορετική IP:\n"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
 msgid "Could not find the card"
-msgstr "Η κάρτα δεν βρέθηκε"
+msgstr "Δεν ήταν δυνατή η εύρεση της κάρτας"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_card.py:0
+msgid "Could not generate a unique barcode card number after %d attempts."
+msgstr ""
+"Δεν ήταν δυνατή η δημιουργία μοναδικού αριθμού κάρτας barcode μετά από %d "
+"προσπάθειες."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_system__occurrences
@@ -3171,6 +3225,14 @@ msgid ""
 msgstr ""
 "Πλήθος εμφανίσεων αυτού του πανομοιότυπου συμβάντος. Το σύστημα ομαδοποιεί "
 "επαναλαμβανόμενα συμβάντα για μείωση του όγκου του αρχείου καταγραφής."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/onboarding_onboarding_step.py:0
+#: model:onboarding.onboarding.step,step_image_alt:hr_rfid.onboarding_step_create_access_group
+#: model:onboarding.onboarding.step,title:hr_rfid.onboarding_step_create_access_group
+msgid "Create Access Group"
+msgstr "Δημιουργία ομάδας πρόσβασης"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_form_view
@@ -3183,9 +3245,19 @@ msgid "Create Date"
 msgstr "Ημερομηνία Δημιουργίας"
 
 #. module: hr_rfid
+#: model:onboarding.onboarding.step,button_text:hr_rfid.onboarding_step_create_access_group
+msgid "Create Group"
+msgstr "Δημιουργία ομάδας"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
 msgid "Create Sub-group"
-msgstr "Δημιουργία Υποομάδας"
+msgstr "Δημιουργία υποομάδας"
+
+#. module: hr_rfid
+#: model:ir.model,website_form_label:hr_rfid.model_res_partner
+msgid "Create a Customer"
+msgstr "Δημιουργία Πελάτη"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_form_view
@@ -3240,13 +3312,13 @@ msgstr "Δημιουργήστε την πρώτη σας ζώνη"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Created a command to close the door for %d seconds."
-msgstr "Δημιουργήθηκε εντολή κλεισίματος πόρτας για %d δευτερόλεπτα."
+msgstr "Δημιουργήθηκε εντολή κλεισίματος της πόρτας για %d δευτερόλεπτα."
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Created a command to open the door for %d seconds."
-msgstr "Δημιουργήθηκε εντολή ανοίγματος πόρτας για %d δευτερόλεπτα."
+msgstr "Δημιουργήθηκε εντολή ανοίγματος της πόρτας για %d δευτερόλεπτα."
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_acc_grs__create_uid
@@ -3753,6 +3825,11 @@ msgstr ""
 "πόρτας"
 
 #. module: hr_rfid
+#: model:onboarding.onboarding.step,description:hr_rfid.onboarding_step_create_access_group
+msgid "Define which doors can be accessed and when."
+msgstr "Ορίστε ποιες πόρτες μπορούν να είναι προσβάσιμες και πότε."
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__mode
 msgid ""
 "Defines the authentication method required:\n"
@@ -4008,28 +4085,28 @@ msgstr "Απενεργοποίηση"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
 msgid "Disarm Group"
-msgstr "Απενεργοποίηση Ομάδας"
+msgstr "Αφόπλιση ομάδας"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0
 msgid "Disarm command success"
-msgstr "Επιτυχής εντολή απενεργοποίησης"
+msgstr "Επιτυχής εντολή αφόπλισης"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
 msgid "Disarm the alarm group"
-msgstr "Απενεργοποίηση ομάδας συναγερμού"
+msgstr "Αφόπλιση της ομάδας συναγερμού"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
 msgid "Disarm the alarm line"
-msgstr "Απενεργοποίηση γραμμής συναγερμού"
+msgstr "Αφόπλιση της γραμμής συναγερμού"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Disarm the door alarm"
-msgstr "Απενεργοποίηση συναγερμού πόρτας"
+msgstr "Αφόπλιση του συναγερμού πόρτας"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__armed__disarm
@@ -4040,6 +4117,12 @@ msgstr "Απενεργοποίηση συναγερμού πόρτας"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Disarmed"
 msgstr "Απενεργοποιημένος"
+
+#. module: hr_rfid
+#: model:onboarding.onboarding.step,step_image_alt:hr_rfid.onboarding_step_scan_controllers
+#: model:onboarding.onboarding.step,title:hr_rfid.onboarding_step_scan_controllers
+msgid "Discover Controllers"
+msgstr "Ανακάλυψη ελεγκτών"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__discovery_id
@@ -4094,6 +4177,8 @@ msgstr "Ανακάλυψη"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_onboarding_onboarding__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_onboarding_onboarding_step__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_res_company__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_res_config_settings__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_res_partner__display_name
@@ -4148,7 +4233,7 @@ msgstr "Εκτέλεση Μεταφοράς"
 #: code:addons/hr_rfid/models/digest.py:0
 msgid "Do not have access, skip this data for user's digest email"
 msgstr ""
-"Δεν υπάρχει πρόσβαση, παράλειψη αυτών των δεδομένων στο συνοπτικό email "
+"Χωρίς πρόσβαση, παράλειψη αυτών των δεδομένων για το email σύνοψης του "
 "χρήστη"
 
 #. module: hr_rfid
@@ -4166,13 +4251,13 @@ msgstr "Πόρτα"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 msgid "Door %d of ctrl id %d (%s)"
-msgstr "Πόρτα %d ελεγκτή id %d (%s)"
+msgstr "Πόρτα %d του ελεγκτή id %d (%s)"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
 msgid "Door %s can only use the first 3 time schedules"
-msgstr "Η πόρτα %s μπορεί να χρησιμοποιεί μόνο τα πρώτα 3 χρονοδιαγράμματα"
+msgstr "Η πόρτα %s μπορεί να χρησιμοποιήσει μόνο τα πρώτα 3 χρονοδιαγράμματα"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__access_group_ids
@@ -4183,7 +4268,7 @@ msgstr "Ομάδες Πρόσβασης Πόρτας"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Door Arm"
-msgstr "Ενεργοποίηση Συναγερμού Πόρτας"
+msgstr "Όπλιση πόρτας"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__door_count
@@ -4195,7 +4280,7 @@ msgstr "Πλήθος Πορτών"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Door Disarm"
-msgstr "Απενεργοποίηση Συναγερμού Πόρτας"
+msgstr "Αφόπλιση πόρτας"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__26
@@ -4258,7 +4343,7 @@ msgstr ""
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Door is controller from camera. THis function is not supported yet."
 msgstr ""
-"Η πόρτα ελέγχεται από κάμερα. Αυτή η λειτουργία δεν υποστηρίζεται ακόμα."
+"Η πόρτα ελέγχεται από κάμερα. Αυτή η λειτουργία δεν υποστηρίζεται ακόμη."
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__door_rel_ids
@@ -4304,8 +4389,8 @@ msgid ""
 "Doors \"%s\" and \"%s\" both belong to a controller that cannot give access "
 "to multiple doors with same card type in a group."
 msgstr ""
-"Οι πόρτες \"%s\" και \"%s\" ανήκουν αμφότερες σε ελεγκτή που δεν μπορεί να "
-"παρέχει πρόσβαση σε πολλές πόρτες με τον ίδιο τύπο κάρτας σε μια ομάδα."
+"Οι πόρτες \"%s\" και \"%s\" ανήκουν και οι δύο σε ελεγκτή που δεν μπορεί να "
+"δώσει πρόσβαση σε πολλαπλές πόρτες με τον ίδιο τύπο κάρτας σε μια ομάδα."
 
 #. module: hr_rfid
 #. odoo-python
@@ -4375,13 +4460,13 @@ msgstr "Πόρτες ανοιχτές"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Doors successfully closed"
-msgstr "Πόρτες κλείστηκαν επιτυχώς"
+msgstr "Οι πόρτες κλείστηκαν επιτυχώς"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Doors successfully opened"
-msgstr "Πόρτες ανοίχτηκαν επιτυχώς"
+msgstr "Οι πόρτες ανοίχτηκαν επιτυχώς"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card_type__door_ids
@@ -4615,7 +4700,7 @@ msgid ""
 "Employee %s have the %s door twice via different access groups. This is not "
 "allowed."
 msgstr ""
-"Ο εργαζόμενος %s έχει την πόρτα %s δύο φορές μέσω διαφορετικών ομάδων "
+"Ο υπάλληλος %s έχει την πόρτα %s δύο φορές μέσω διαφορετικών ομάδων "
 "πρόσβασης. Αυτό δεν επιτρέπεται."
 
 #. module: hr_rfid
@@ -4640,7 +4725,7 @@ msgstr "Εργαζόμενοι που έχουν ανατεθεί σε αυτή�
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_zone.py:0
 msgid "Employees in {}"
-msgstr "Εργαζόμενοι σε {}"
+msgstr "Υπάλληλοι σε {}"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
@@ -4813,7 +4898,7 @@ msgstr "Ημερομηνία λήξης"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
 msgid "End is not in range"
-msgstr "Η λήξη δεν είναι εντός εύρους"
+msgstr "Το τέλος δεν βρίσκεται εντός εύρους"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_workcode__user_action__stop
@@ -4913,9 +4998,9 @@ msgid ""
 " \n"
 "                              Return {reason}({code}) with body:\n"
 msgstr ""
-"Λήφθηκε σφάλμα κατά την προσπάθεια επανεκκίνησης της μονάδας!\n"
+"Σφάλμα κατά την προσπάθεια επανεκκίνησης του module!\n"
 " \n"
-"                              Επιστράφηκε {reason}({code}) με σώμα:\n"
+"                              Επέστρεψε {reason}({code}) με σώμα:\n"
 
 #. module: hr_rfid
 #. odoo-python
@@ -4925,7 +5010,7 @@ msgid ""
 " \n"
 "                          (/protect/uart/conf) returned {reason}({code}) with body:\n"
 msgstr ""
-"Λήφθηκε σφάλμα κατά την προσπάθεια ρύθμισης της μονάδας!\n"
+"Σφάλμα κατά την προσπάθεια ρύθμισης του module!\n"
 " \n"
 "                          (/protect/uart/conf) επέστρεψε {reason}({code}) με σώμα:\n"
 
@@ -4933,13 +5018,13 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Error response from Webstack. {} ({})"
-msgstr "Απόκριση σφάλματος από Webstack. {} ({})"
+msgstr "Απόκριση σφάλματος από το WebStack. {} ({})"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Error while trying to connect to the module. Information:\n"
-msgstr "Σφάλμα κατά την προσπάθεια σύνδεσης με τη μονάδα. Πληροφορίες:\n"
+msgstr "Σφάλμα κατά την προσπάθεια σύνδεσης με το module. Πληροφορίες:\n"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_system_ev_view_pivot
@@ -4973,7 +5058,7 @@ msgstr "Τύπος Συμβάντος"
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
 msgid "Event from Temperature Sensor"
-msgstr "Συμβάν από Αισθητήρα Θερμοκρασίας"
+msgstr "Συμβάν από αισθητήρα θερμοκρασίας"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_res_company__event_lifetime
@@ -5040,13 +5125,13 @@ msgstr "Συμβάντα από {}"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 msgid "Events on {}"
-msgstr "Συμβάντα στις {}"
+msgstr "Συμβάντα σε {}"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Everything looks just great!"
-msgstr "Όλα φαίνονται υπέροχα!"
+msgstr "Όλα φαίνονται τέλεια!"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__event_time
@@ -5137,7 +5222,7 @@ msgstr "Εξωτερική DB"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "External Sensor %s connected to %s"
-msgstr "Εξωτερικός Αισθητήρας"
+msgstr "Εξωτερικός αισθητήρας %s συνδεδεμένος σε %s"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__contact_ids
@@ -5199,17 +5284,17 @@ msgstr "Τελευταία διαθέσιμη έκδοση firmware"
 #. module: hr_rfid
 #: model:ir.actions.report,name:hr_rfid.action_report_hr_rfid_card_foldable_badge
 msgid "Foldable Barcode Badge (Card)"
-msgstr "'Αναδιπλούμενη Κάρτα Barcode - %s' % (object.number,)"
+msgstr "Αναδιπλούμενο badge barcode (Κάρτα)"
 
 #. module: hr_rfid
 #: model:ir.actions.report,name:hr_rfid.action_report_hr_employee_foldable_badge
 msgid "Foldable Barcode Badge (Employee)"
-msgstr "'Αναδιπλούμενη Κάρτα Barcode - %s' % (object.name,)"
+msgstr "Αναδιπλούμενο badge barcode (Υπάλληλος)"
 
 #. module: hr_rfid
 #: model:ir.actions.report,name:hr_rfid.action_report_res_partner_foldable_badge
 msgid "Foldable Barcode Badge (Partner)"
-msgstr "'Αναδιπλούμενη Κάρτα Barcode - %s' % (object.partner_id.name,)"
+msgstr "Αναδιπλούμενο badge barcode (Επαφή)"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__message_follower_ids
@@ -5265,7 +5350,7 @@ msgstr "Βίαιο Άνοιγμα Πόρτας"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__found_webstacks
 msgid "Found modules"
-msgstr "Βρέθηκαν %s μονάδες"
+msgstr "Βρέθηκαν modules"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__mode_selection_4__4
@@ -5398,7 +5483,7 @@ msgstr "Μετάβαση σε διάλειμμα"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 msgid "Got controller mode=%d for hw_ver=%s???"
-msgstr "Ελήφθη λειτουργία ελεγκτή mode=%d για hw_ver=%s???"
+msgstr "Λήφθηκε mode ελεγκτή=%d για hw_ver=%s???"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_wizard__alarm_rights
@@ -5457,7 +5542,7 @@ msgstr "Έκτακτη Ανάγκη Υλικού"
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
 msgid "Hardware Event"
-msgstr "Συμβάν Υλικού"
+msgstr "Συμβάν υλικού"
 
 #. module: hr_rfid
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_root_menu_hardware_manager
@@ -5728,6 +5813,8 @@ msgstr "Σφάλμα I2C"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__id
+#: model:ir.model.fields,field_description:hr_rfid.field_onboarding_onboarding__id
+#: model:ir.model.fields,field_description:hr_rfid.field_onboarding_onboarding_step__id
 #: model:ir.model.fields,field_description:hr_rfid.field_res_company__id
 #: model:ir.model.fields,field_description:hr_rfid.field_res_config_settings__id
 #: model:ir.model.fields,field_description:hr_rfid.field_res_partner__id
@@ -5758,7 +5845,8 @@ msgstr "Γραμμές Πίνακα I/O"
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "IO table lengths are different, this should never happen????"
 msgstr ""
-"Τα μήκη του πίνακα I/O διαφέρουν, αυτό δεν πρέπει να συμβαίνει ποτέ????"
+"Τα μήκη του πίνακα I/O είναι διαφορετικά, αυτό δεν θα έπρεπε να συμβεί "
+"ποτέ????"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_io_table_wiz
@@ -5851,7 +5939,7 @@ msgstr "Εικόνα"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_card.py:0
 msgid "Import Template for Cards"
-msgstr "Πρότυπο Εισαγωγής για Κάρτες"
+msgstr "Πρότυπο εισαγωγής για κάρτες"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_res_config_settings__module_hr_rfid_andromeda_import
@@ -5901,7 +5989,7 @@ msgid ""
 "In \"Setup/Services\" menu fill \"HTTP Server Push URL\" with {Odoo IP or\n"
 "                                Domain}/hr/rfid/event e.g. my.server.com/hr/rfid/event"
 msgstr ""
-"Στο μενού \"Setup/Services\" συμπληρώστε \"HTTP Server Push URL\" με {Odoo IP ή\n"
+"Στο μενού \"Setup/Services\" συμπληρώστε \"HTTP Server Push URL\" με {Odoo IP or\n"
 "                                Domain}/hr/rfid/event π.χ. my.server.com/hr/rfid/event"
 
 #. module: hr_rfid
@@ -6023,14 +6111,13 @@ msgstr "Πληροφορίες"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Information returned by the webstack at {} is invalid"
-msgstr ""
-"Οι πληροφορίες που επιστράφηκαν από το webstack στο {} δεν είναι έγκυρες"
+msgstr "Οι πληροφορίες που επέστρεψε το WebStack στο {} δεν είναι έγκυρες"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Information returned by the webstack invalid: \n"
-msgstr "Οι πληροφορίες που επιστράφηκαν από το webstack δεν είναι έγκυρες: \n"
+msgstr "Μη έγκυρες πληροφορίες από το WebStack: \n"
 
 #. module: hr_rfid
 #. odoo-python
@@ -6040,9 +6127,9 @@ msgid ""
 "start communication with this instance. The URL in use is http://%s on port "
 "%d."
 msgstr ""
-"Πληροφορίες που εστάλησαν στη Μονάδα. Εάν όλα είναι εντάξει, η Μονάδα πρέπει"
-" να ξεκινήσει επικοινωνία με αυτήν την παρουσία. Η URL που χρησιμοποιείται "
-"είναι http://%s στη θύρα %d."
+"Οι πληροφορίες στάλθηκαν στο module. Αν όλα είναι εντάξει, το module θα "
+"ξεκινήσει την επικοινωνία με αυτή την εγκατάσταση. Η URL που χρησιμοποιείται"
+" είναι http://%s στη θύρα %d."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
@@ -6574,7 +6661,7 @@ msgstr "Κλείδωμα της πόρτας"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Locked"
-msgstr "Κλειδωμένη"
+msgstr "Κλειδωμένο"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_form_view
@@ -6883,13 +6970,18 @@ msgstr "Διαχείριση Μονάδας μέσω Web"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Module connection error:\n"
-msgstr "Σφάλμα σύνδεσης μονάδας:\n"
+msgstr "Σφάλμα σύνδεσης module:\n"
+
+#. module: hr_rfid
+#: model:onboarding.onboarding.step,done_text:hr_rfid.onboarding_step_add_webstack
+msgid "Module registered!"
+msgstr "Το module καταχωρήθηκε!"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Module sent us a response from a controller that does not exist"
-msgstr "Η μονάδα μας έστειλε απόκριση από ελεγκτή που δεν υπάρχει"
+msgstr "Το module μας έστειλε απάντηση από ελεγκτή που δεν υπάρχει"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
@@ -7050,7 +7142,7 @@ msgstr "Τύπος Επόμενης Δραστηριότητας"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "No Alarm"
-msgstr "Χωρίς Συναγερμό"
+msgstr "Χωρίς συναγερμό"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__armed__no_alarm
@@ -7104,7 +7196,7 @@ msgstr "Δεν βρέθηκαν εντολές"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "No controllers detected in the Module or the Module is Archived"
-msgstr "Δεν εντοπίστηκαν ελεγκτές στη Μονάδα ή η Μονάδα είναι Αρχειοθετημένη"
+msgstr "Δεν εντοπίστηκαν ελεγκτές στο module ή το module είναι αρχειοθετημένο"
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_door_action
@@ -7115,7 +7207,7 @@ msgstr "Δεν έχουν ρυθμιστεί πόρτες ακόμα"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
 msgid "No found any door duplicates in the access groups."
-msgstr "Δεν βρέθηκαν διπλότυπες πόρτες στις ομάδες πρόσβασης."
+msgstr "Δεν βρέθηκαν διπλότυπα πορτών στις ομάδες πρόσβασης."
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_webstack_action
@@ -7183,7 +7275,7 @@ msgstr "Χωρίς Χρήση"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
 msgid "Not using TS"
-msgstr "Χωρίς Χρήση TS"
+msgstr "Δεν χρησιμοποιεί χρονοδιάγραμμα"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_notification__notification_type
@@ -7555,6 +7647,16 @@ msgid "On Delay"
 msgstr "Καθυστέρηση Ενεργοποίησης"
 
 #. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_onboarding_onboarding
+msgid "Onboarding"
+msgstr "Εισαγωγή"
+
+#. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_onboarding_onboarding_step
+msgid "Onboarding Step"
+msgstr "Βήμα Εγγραφής"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__mode_selection__1
 msgid "One door"
 msgstr "Μία πόρτα"
@@ -7581,6 +7683,11 @@ msgid "Open Output"
 msgstr "Άνοιγμα Εξόδου"
 
 #. module: hr_rfid
+#: model:onboarding.onboarding.step,button_text:hr_rfid.onboarding_step_module_settings
+msgid "Open Settings"
+msgstr "Άνοιγμα ρυθμίσεων"
+
+#. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.action_open_door
 msgid "Open door"
 msgstr "Άνοιγμα πόρτας"
@@ -7589,7 +7696,7 @@ msgstr "Άνοιγμα πόρτας"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Open door command success"
-msgstr "Η εντολή ανοίγματος πόρτας ολοκληρώθηκε επιτυχώς"
+msgstr "Επιτυχής εντολή ανοίγματος πόρτας"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_open_close_wiz_form
@@ -7637,7 +7744,7 @@ msgstr "OpenDoor4 από In4"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Opened the door for %d seconds."
-msgstr "Η πόρτα ανοίχθηκε για %d δευτερόλεπτα."
+msgstr "Η πόρτα ανοίχτηκε για %d δευτερόλεπτα."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__mode
@@ -7711,48 +7818,48 @@ msgstr "Έξοδος"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__out1
 msgid "Out1"
-msgstr "Out1"
+msgstr "Έξοδος1"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__out2
 msgid "Out2"
-msgstr "Out2"
+msgstr "Έξοδος2"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__out3
 msgid "Out3"
-msgstr "Out3"
+msgstr "Έξοδος3"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__out4
 msgid "Out4"
-msgstr "Out4"
+msgstr "Έξοδος4"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__out5
 msgid "Out5"
-msgstr "Out5"
+msgstr "Έξοδος5"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__out6
 msgid "Out6"
-msgstr "Out6"
+msgstr "Έξοδος6"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__out7
 msgid "Out7"
-msgstr "Out7"
+msgstr "Έξοδος7"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__out8
 msgid "Out8"
-msgstr "Out8"
+msgstr "Έξοδος8"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "Output %d working with TS %s"
-msgstr "Έξοδος %d λειτουργεί με TS %s"
+msgstr "Έξοδος %d λειτουργεί με χρονοδιάγραμμα %s"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__output_states
@@ -7768,7 +7875,7 @@ msgstr "TS Εξόδου για Ελεγκτές"
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
 msgid "Output control from Software"
-msgstr "Έλεγχος Εξόδου από Λογισμικό"
+msgstr "Έλεγχος εξόδου από λογισμικό"
 
 #. module: hr_rfid
 #: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_ctrl_output_ts_controller_output_unique
@@ -7784,7 +7891,7 @@ msgstr "Αριθμός Εξόδου"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "Output number %(out)d not in range from 1 to %(to)d"
-msgstr "Ο αριθμός εξόδου %(out)d δεν βρίσκεται στο εύρος 1 έως %(to)d"
+msgstr "Ο αριθμός εξόδου %(out)d δεν βρίσκεται στο εύρος από 1 έως %(to)d"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__output_ts_ids
@@ -7822,8 +7929,8 @@ msgstr ""
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
 msgid "Overlap found between access group(%s) active period ranges for (%s)"
 msgstr ""
-"Βρέθηκε επικάλυψη μεταξύ των εύρους ενεργών περιόδων της ομάδας πρόσβασης "
-"(%s) για (%s)"
+"Βρέθηκε επικάλυψη μεταξύ των εύρων ενεργής περιόδου της ομάδας πρόσβασης(%s)"
+" για (%s)"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_form
@@ -7879,8 +7986,8 @@ msgid ""
 "Partner %s have the %s door twice via different access groups. This is not "
 "allowed."
 msgstr ""
-"Ο συνεργάτης %s έχει την πόρτα %s δύο φορές μέσω διαφορετικών ομάδων "
-"πρόσβασης. Αυτό δεν επιτρέπεται."
+"Η επαφή %s έχει την πόρτα %s δύο φορές μέσω διαφορετικών ομάδων πρόσβασης. "
+"Αυτό δεν επιτρέπεται."
 
 #. module: hr_rfid
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_partners
@@ -7968,7 +8075,7 @@ msgstr "Παρακαλώ δημιουργήστε μια νέα ομάδα απ�
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack_discovery.py:0
 msgid "Please provide module serial number!"
-msgstr "Παρακαλώ εισαγάγετε τον σειριακό αριθμό της μονάδας!"
+msgstr "Παρακαλώ εισάγετε τον σειριακό αριθμό του module!"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_discovery_wiz
@@ -7983,7 +8090,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack_replace_wiz.py:0
 msgid "Please select source and destination Module"
-msgstr "Παρακαλώ επιλέξτε τη μονάδα προέλευσης και προορισμού"
+msgstr "Παρακαλώ επιλέξτε το module προέλευσης και προορισμού"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__30
@@ -8208,6 +8315,11 @@ msgid "RFID System Settings"
 msgstr "Ρυθμίσεις Συστήματος RFID"
 
 #. module: hr_rfid
+#: model:onboarding.onboarding,name:hr_rfid.onboarding_rfid_setup
+msgid "RFID System Setup"
+msgstr "Ρύθμιση συστήματος RFID"
+
+#. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_event_user
 msgid "RFID User Event"
 msgstr "Συμβάν Χρήστη RFID"
@@ -8316,6 +8428,26 @@ msgstr "Ρυθμίσεις RFID"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__3
 msgid "RS485 Error"
 msgstr "Σφάλμα RS485"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__rating_ids
+msgid "Ratings"
+msgstr "Αξιολογήσεις"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_system__input_js
@@ -8610,7 +8742,7 @@ msgstr "Ανάγνωση πληροφοριών και κατάστασης ελ
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Reading controllers from the Module"
-msgstr "Ανάγνωση ελεγκτών από τη Μονάδα"
+msgstr "Ανάγνωση ελεγκτών από το module"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone__employee_ids
@@ -8661,7 +8793,7 @@ msgstr "Επανεκκίνηση"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Reboot the Module"
-msgstr "Επανεκκίνηση της Μονάδας"
+msgstr "Επανεκκίνηση του module"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_form
@@ -8711,6 +8843,18 @@ msgid "Refresh status"
 msgstr "Ανανέωση κατάστασης"
 
 #. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/onboarding_onboarding_step.py:0
+msgid "Register Card"
+msgstr "Καταχώρηση κάρτας"
+
+#. module: hr_rfid
+#: model:onboarding.onboarding.step,step_image_alt:hr_rfid.onboarding_step_register_card
+#: model:onboarding.onboarding.step,title:hr_rfid.onboarding_step_register_card
+msgid "Register First Card"
+msgstr "Καταχώρηση πρώτης κάρτας"
+
+#. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_add_card_action
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_sys_ev_wiz_action
 msgid ""
@@ -8719,6 +8863,11 @@ msgid ""
 msgstr ""
 "Καταχωρίστε μια άγνωστη κάρτα που παρουσιάστηκε στο σύστημα.\n"
 "                    Μπορείτε να την αναθέσετε σε εργαζόμενο ή επαφή και να ορίσετε τα δικαιώματα πρόσβασής της."
+
+#. module: hr_rfid
+#: model:onboarding.onboarding.step,description:hr_rfid.onboarding_step_add_webstack
+msgid "Register your first RFID network module (WebStack)."
+msgstr "Καταχωρήστε το πρώτο σας module δικτύου RFID (WebStack)."
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_event_system_action
@@ -8992,7 +9141,7 @@ msgstr "SDK"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_has_sms_error
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__message_has_sms_error
 msgid "SMS Delivery error"
-msgstr "Σφάλμα Αποστολής SMS"
+msgstr "Σφάλμα παράδοσης SMS"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_ts_line__day__5
@@ -9029,6 +9178,11 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
 msgid "Save new Webstacks"
 msgstr "Αποθήκευση Νέων Webstacks"
+
+#. module: hr_rfid
+#: model:onboarding.onboarding.step,description:hr_rfid.onboarding_step_scan_controllers
+msgid "Scan for RFID controllers connected to your module."
+msgstr "Σάρωση για ελεγκτές RFID συνδεδεμένους στο module σας."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
@@ -9298,7 +9452,7 @@ msgstr "Αποστολή Κάρτας Barcode"
 #. odoo-python
 #: code:addons/hr_rfid/models/res_partner.py:0
 msgid "Send Barcode card - Compose Email"
-msgstr "Αποστολή Κάρτας Barcode - Σύνταξη Email"
+msgstr "Αποστολή κάρτας barcode - Σύνταξη email"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_notification__notify_followers
@@ -9430,6 +9584,12 @@ msgstr ""
 "στη σωστή διεύθυνση IP της μονάδας."
 
 #. module: hr_rfid
+#: model:onboarding.onboarding.step,description:hr_rfid.onboarding_step_module_settings
+msgid "Set timezone and module parameters for your RFID system."
+msgstr ""
+"Ορίστε τη ζώνη ώρας και τις παραμέτρους module για το σύστημα RFID σας."
+
+#. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_access_group_action
 msgid ""
 "Set up department defaults for automatic access assignment to new employees"
@@ -9442,6 +9602,11 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_partner_form_inherit_hr_rfid
 msgid "Settings"
 msgstr "Ρυθμίσεις"
+
+#. module: hr_rfid
+#: model:onboarding.onboarding.step,done_text:hr_rfid.onboarding_step_module_settings
+msgid "Settings configured!"
+msgstr "Οι ρυθμίσεις διαμορφώθηκαν!"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_form
@@ -9465,7 +9630,7 @@ msgstr "Ρύθμιση μονάδας για αυτό το Odoo"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Setup the Module"
-msgstr "Ρύθμιση της Μονάδας"
+msgstr "Ρύθμιση του module"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__state__short
@@ -9481,7 +9646,7 @@ msgstr "Εμφάνιση όλων"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_form_view
 msgid "Showroom"
-msgstr "Showroom"
+msgstr "Αίθουσα επίδειξης"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__access_group_door_ids
@@ -9517,7 +9682,7 @@ msgstr "Σειρήνα"
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Siren Control"
-msgstr "Έλεγχος Σειρήνας"
+msgstr "Έλεγχος σειρήνας"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__20
@@ -9563,7 +9728,7 @@ msgstr "Λογισμικό"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Software Emergency"
-msgstr "Έκτακτη Ανάγκη Λογισμικού"
+msgstr "Έκτακτη ανάγκη λογισμικού"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__source_controller_ids
@@ -9659,19 +9824,19 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0
 msgid "Success Line(s) Arm"
-msgstr "Επιτυχής Ενεργοποίηση Γραμμής(-ών)"
+msgstr "Επιτυχής όπλιση γραμμής/ών"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0
 msgid "Success Line(s) Disarm"
-msgstr "Επιτυχής Απενεργοποίηση Γραμμής(-ών)"
+msgstr "Επιτυχής αφόπλιση γραμμής/ών"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Success opening"
-msgstr "Επιτυχές Άνοιγμα"
+msgstr "Επιτυχές άνοιγμα"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_ts_line__day__6
@@ -9722,7 +9887,7 @@ msgstr "Πλήθος συμβάντων συστήματος"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "System Events on {}"
-msgstr "Συμβάντα Συστήματος σε {}"
+msgstr "Συμβάντα συστήματος σε {}"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__dc
@@ -9924,7 +10089,7 @@ msgstr "Αρχείο Καταγραφής Θερμοκρασίας και Υγρ
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_th.py:0
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Temperature and Humidity Log for {}"
-msgstr "Αρχείο Καταγραφής Θερμοκρασίας και Υγρασίας για {}"
+msgstr "Αρχείο καταγραφής θερμοκρασίας και υγρασίας για {}"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_ctrl_th_log
@@ -10006,7 +10171,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
 msgid "The Module contacted us and activated."
-msgstr "Η μονάδα επικοινώνησε μαζί μας και ενεργοποιήθηκε."
+msgstr "Το module επικοινώνησε μαζί μας και ενεργοποιήθηκε."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__pin_code
@@ -10183,7 +10348,7 @@ msgstr "Η κάρτα είναι έτοιμη για χρήση. Όλα ολοκ
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 msgid "The command is marked for execution again."
-msgstr "Η εντολή έχει επισημανθεί για εκτέλεση εκ νέου."
+msgstr "Η εντολή σημειώθηκε για εκ νέου εκτέλεση."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__webstack_id
@@ -10272,7 +10437,7 @@ msgstr "Οι επαφές των οποίων τα δικαιώματα πρόσ
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "The controller mode value is invalid. Please check it!"
 msgstr ""
-"Η τιμή λειτουργίας του ελεγκτή δεν είναι έγκυρη. Παρακαλώ ελέγξτε την!"
+"Η τιμή της λειτουργίας του ελεγκτή δεν είναι έγκυρη. Παρακαλώ ελέγξτε την!"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_contact_rel__activate_on
@@ -10335,7 +10500,7 @@ msgstr "Η πόρτα ανοίχτηκε με βία/κλειδί"
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
 msgid "The door is still opened"
-msgstr "Η πόρτα παραμένει ανοιχτή"
+msgstr "Η πόρτα είναι ακόμα ανοιχτή"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__number
@@ -10453,13 +10618,13 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_emergency_group.py:0
 msgid "The group turn off Emergency Mode Manually"
-msgstr "Η ομάδα απενεργοποίησε τη Λειτουργία Έκτακτης Ανάγκης χειροκίνητα"
+msgstr "Η ομάδα απενεργοποίησε χειροκίνητα τη λειτουργία έκτακτης ανάγκης"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_emergency_group.py:0
 msgid "The group turn on Emergency Mode Manually"
-msgstr "Η ομάδα ενεργοποίησε τη Λειτουργία Έκτακτης Ανάγκης χειροκίνητα"
+msgstr "Η ομάδα ενεργοποίησε χειροκίνητα τη λειτουργία έκτακτης ανάγκης"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th_log__humidity
@@ -10484,7 +10649,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
 msgid "The intervals for day %d are overlapping"
-msgstr "Τα διαστήματα για την ημέρα %d αλληλεπικαλύπτονται"
+msgstr "Τα χρονικά διαστήματα για την ημέρα %d αλληλεπικαλύπτονται"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
@@ -10498,8 +10663,8 @@ msgid ""
 "The module was rebooted. It takes up to 10 sec to restore the work "
 "conditions"
 msgstr ""
-"Η μονάδα επανεκκινήθηκε. Απαιτούνται έως 10 δευτερόλεπτα για την "
-"αποκατάσταση των συνθηκών λειτουργίας."
+"Το module επανεκκινήθηκε. Χρειάζονται έως 10 δευτερόλεπτα για την "
+"αποκατάσταση των συνθηκών λειτουργίας"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th__humidity
@@ -10537,7 +10702,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
 msgid "The number is not in range"
-msgstr "Ο αριθμός είναι εκτός εύρους"
+msgstr "Ο αριθμός δεν βρίσκεται εντός εύρους"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__controller_id
@@ -10631,7 +10796,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
 msgid "The requested day is not in the range!"
-msgstr "Η ζητούμενη ημέρα δεν είναι εντός εύρους!"
+msgstr "Η ζητούμενη ημέρα δεν βρίσκεται εντός εύρους!"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_system__door_id
@@ -10897,8 +11062,8 @@ msgid ""
 "This is a automatic Todo activity based on communication statistics with the"
 " module."
 msgstr ""
-"Αυτή είναι μια αυτόματη δραστηριότητα Todo βάσει στατιστικών επικοινωνίας με"
-" τη μονάδα."
+"Αυτή είναι μια αυτόματη δραστηριότητα εργασίας βασισμένη στα στατιστικά "
+"επικοινωνίας με το module."
 
 #. module: hr_rfid
 #. odoo-python
@@ -10967,8 +11132,8 @@ msgstr ""
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_emergency_group.py:0
 msgid "This will take time. For more information check controller's commands"
 msgstr ""
-"Αυτό θα χρειαστεί χρόνο. Για περισσότερες πληροφορίες ελέγξτε τις εντολές "
-"του ελεγκτή"
+"Αυτό θα πάρει χρόνο. Για περισσότερες πληροφορίες ελέγξτε τις εντολές του "
+"ελεγκτή"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__mode_selection_4__3
@@ -11040,7 +11205,7 @@ msgstr "Οδηγός Γραμμής Χρονοδιαγράμματος"
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "Time Schedule number  %(ts)d not in range from 1 to %(to)d"
 msgstr ""
-"Ο αριθμός Χρονοδιαγράμματος %(ts)d δεν είναι εντός εύρους από 1 έως %(to)d"
+"Ο αριθμός χρονοδιαγράμματος %(ts)d δεν βρίσκεται στο εύρος από 1 έως %(to)d"
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_time_schedule_action
@@ -11079,8 +11244,8 @@ msgstr "Δεδομένα χρονοδιαγράμματος για"
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
 msgid "Time schedule does not match for door \"%s\" in access groups \"%s\" and \"%s\""
 msgstr ""
-"Το χρονοδιάγραμμα δεν αντιστοιχεί για την πόρτα \"%s\" στις ομάδες πρόσβασης"
-" \"%s\" και \"%s\""
+"Το χρονοδιάγραμμα δεν ταιριάζει για την πόρτα \"%s\" στις ομάδες πρόσβασης "
+"\"%s\" και \"%s\""
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_output_ts__time_schedule_id
@@ -11139,8 +11304,7 @@ msgstr "Για να ρυθμίσετε μια μονάδα ακολουθήστ�
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Todo Check communication or contact with support team"
-msgstr ""
-"Todo: Ελέγξτε την επικοινωνία ή επικοινωνήστε με την ομάδα υποστήριξης"
+msgstr "Εργασία: Έλεγχος επικοινωνίας ή επικοινωνία με την ομάδα υποστήριξης"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_res_partner__partner_event_count
@@ -11251,12 +11415,12 @@ msgstr "Τρίτη"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Turn off the siren"
-msgstr "Απενεργοποίηση σειρήνας"
+msgstr "Απενεργοποίηση της σειρήνας"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Turn on the siren"
-msgstr "Ενεργοποίηση σειρήνας"
+msgstr "Ενεργοποίηση της σειρήνας"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__9
@@ -11404,7 +11568,7 @@ msgstr "Απεριόριστο"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Unlock the door"
-msgstr "Ξεκλείδωμα πόρτας"
+msgstr "Ξεκλείδωμα της πόρτας"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
@@ -11436,7 +11600,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack_replace_wiz.py:0
 msgid "Use different modules for this operation!"
-msgstr "Χρησιμοποιήστε διαφορετικές μονάδες για αυτή τη λειτουργία!"
+msgstr "Χρησιμοποιήστε διαφορετικά modules για αυτή τη λειτουργία!"
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_access_group_action
@@ -11486,7 +11650,7 @@ msgstr "Συμβάντα Χρήστη"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "User Events on {}"
-msgstr "Συμβάντα Χρήστη σε {}"
+msgstr "Συμβάντα χρήστη σε {}"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__user_action
@@ -11541,25 +11705,25 @@ msgstr "Χρήστες"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "Valid High Temperature range is -55 .. 125 ℃"
-msgstr "Έγκυρο εύρος Υψηλής Θερμοκρασίας: -55 .. 125 ℃"
+msgstr "Το έγκυρο εύρος υψηλής θερμοκρασίας είναι -55 .. 125 ℃"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "Valid Low Temperature range is -55 .. 125 ℃"
-msgstr "Έγκυρο εύρος Χαμηλής Θερμοκρασίας: -55 .. 125 ℃"
+msgstr "Το έγκυρο εύρος χαμηλής θερμοκρασίας είναι -55 .. 125 ℃"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "Valid Low Temperature range is 0.5 .. 9 ℃"
-msgstr "Έγκυρο εύρος Χαμηλής Θερμοκρασίας: 0,5 .. 9 ℃"
+msgstr "Το έγκυρο εύρος χαμηλής θερμοκρασίας είναι 0.5 .. 9 ℃"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "Valid interval range is 0-99 min."
-msgstr "Έγκυρο εύρος διαστήματος: 0-99 λεπτά."
+msgstr "Το έγκυρο εύρος χρονικού διαστήματος είναι 0-99 λεπτά."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_form_view
@@ -11611,6 +11775,11 @@ msgstr "Έκδοση"
 #: model:res.groups,name:hr_rfid.hr_rfid_view_module_discovery
 msgid "View Module Discovery"
 msgstr "Προβολή Ανακάλυψης Μονάδας"
+
+#. module: hr_rfid
+#: model:onboarding.onboarding.step,button_text:hr_rfid.onboarding_step_scan_controllers
+msgid "View Modules"
+msgstr "Προβολή modules"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_form_view
@@ -11768,7 +11937,7 @@ msgstr "Γραμμές ανακάλυψης Webstack"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Webstack gave us bad data when requesting /config.json"
-msgstr "Το Webstack επέστρεψε μη έγκυρα δεδομένα κατά την αίτηση /config.json"
+msgstr "Το WebStack επέστρεψε μη έγκυρα δεδομένα κατά την αίτηση /config.json"
 
 #. module: hr_rfid
 #. odoo-python
@@ -11777,7 +11946,7 @@ msgid ""
 "Webstack sent us error {}({}) \n"
 " while requesting device list"
 msgstr ""
-"Το Webstack απέστειλε σφάλμα {}({}) \n"
+"Το WebStack μας έστειλε σφάλμα {}({}) \n"
 " κατά την αίτηση λίστας συσκευών"
 
 #. module: hr_rfid
@@ -11787,7 +11956,7 @@ msgid ""
 "Webstack sent us error {}({}) \n"
 " while requesting information for controller {}"
 msgstr ""
-"Το Webstack απέστειλε σφάλμα {}({}) \n"
+"Το WebStack μας έστειλε σφάλμα {}({}) \n"
 " κατά την αίτηση πληροφοριών για τον ελεγκτή {}"
 
 #. module: hr_rfid
@@ -11901,7 +12070,7 @@ msgid ""
 "\n"
 "                                                           error returned {response.reason}({response.status_code}) with body:\n"
 msgstr ""
-"Κατά την προσπάθεια επανεκκίνησης της μονάδας \n"
+"Κατά την προσπάθεια επανεκκίνησης του module \n"
 "\n"
 "                                                           επεστράφη σφάλμα {response.reason}({response.status_code}) με σώμα:\n"
 
@@ -11913,7 +12082,7 @@ msgid ""
 "\n"
 "                                                       error returned {response.reason}({response.status_code}) with body:\n"
 msgstr ""
-"Κατά την προσπάθεια επανεκκίνησης της μονάδας \n"
+"Κατά την προσπάθεια επανεκκίνησης του module \n"
 "\n"
 "                                                       επεστράφη σφάλμα {response.reason}({response.status_code}) με σώμα:\n"
 
@@ -11924,7 +12093,8 @@ msgid ""
 "While trying to send the command to the module, it returned code {} with "
 "body:\n"
 msgstr ""
-"Κατά την αποστολή της εντολής στη μονάδα, επεστράφη κωδικός {} με σώμα:\n"
+"Κατά την προσπάθεια αποστολής εντολής στο module, επεστράφη κωδικός {} με "
+"σώμα:\n"
 
 #. module: hr_rfid
 #. odoo-python
@@ -11934,7 +12104,7 @@ msgid ""
 "\n"
 "                                                 error returned {reason}({code}) with body:\n"
 msgstr ""
-"Κατά την προσπάθεια ρύθμισης /protect/config.htm για τη μονάδα\n"
+"Κατά την προσπάθεια ρύθμισης /protect/config.htm του module\n"
 "\n"
 "                                                 επεστράφη σφάλμα {reason}({code}) με σώμα:\n"
 
@@ -12067,7 +12237,14 @@ msgstr "Λανθασμένη Τιμή/Παράμετρος"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_reader.py:0
 msgid "You can not change the reader mode to this value!"
-msgstr "Δεν μπορείτε να αλλάξετε τη λειτουργία αναγνώστη σε αυτή την τιμή!"
+msgstr ""
+"Δεν μπορείτε να αλλάξετε τη λειτουργία του αναγνώστη σε αυτή την τιμή!"
+
+#. module: hr_rfid
+#. odoo-javascript
+#: code:addons/hr_rfid/static/src/components/onboarding/onboarding.xml:0
+msgid "Your RFID system is ready!"
+msgstr "Το σύστημα RFID σας είναι έτοιμο!"
 
 #. module: hr_rfid
 #: model:mail.template,name:hr_rfid.card_barcode_mail_template_badge
@@ -12082,7 +12259,7 @@ msgid ""
 " Please call your support team for more information!"
 msgstr ""
 "Η τρέχουσα ρύθμισή σας δεν επιτρέπει αυτή τη λειτουργία. Πρέπει να το κάνετε χειροκίνητα.\n"
-" Παρακαλώ επικοινωνήστε με την ομάδα υποστήριξής σας για περισσότερες πληροφορίες!"
+" Παρακαλώ επικοινωνήστε με την ομάδα υποστήριξης για περισσότερες πληροφορίες!"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_zone
@@ -12178,7 +12355,7 @@ msgstr "admin"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
 msgid "alarm line(s)"
-msgstr "γραμμή(-ές) συναγερμού"
+msgstr "γραμμή/ές συναγερμού"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.card_barcode_report_template_foldable_badge
@@ -12239,9 +12416,15 @@ msgid "by Sensor"
 msgstr "κατά Αισθητήρα"
 
 #. module: hr_rfid
+#. odoo-javascript
+#: code:addons/hr_rfid/static/src/components/onboarding/onboarding.xml:0
+msgid "confetti"
+msgstr "κομφετί"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
 msgid "controller(s)"
-msgstr "ελεγκτής(-ές)"
+msgstr "ελεγκτής/ές"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__6
@@ -12338,7 +12521,7 @@ msgstr "δεσμευμένο"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
 msgid "sub-group(s)"
-msgstr "υποομάδα(-ες)"
+msgstr "υποομάδα/ες"
 
 #. module: hr_rfid
 #. odoo-python

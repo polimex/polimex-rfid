@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-05 16:23+0000\n"
-"PO-Revision-Date: 2026-03-08 17:12\n"
+"POT-Creation-Date: 2026-03-23 11:19+0000\n"
+"PO-Revision-Date: 2026-03-23 17:28+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ro\n"
@@ -42,8 +42,8 @@ msgstr ""
 msgid ""
 "%d is not a valid number for the io table. Valid values range from 0 to 99"
 msgstr ""
-"%d nu este un număr valid pentru tabelul IO. Valorile valide sunt cuprinse "
-"între 0 și 99"
+"%d nu este un număr valid pentru tabela IO. Valorile valide sunt de la 0 la "
+"99"
 
 #. module: hr_rfid
 #. odoo-python
@@ -57,8 +57,8 @@ msgid ""
 "'Foldable Badge - %s - %s' % ((object.name or 'Access "
 "Badge').replace('/',''), object.get_owner().name.replace('/',''))"
 msgstr ""
-"'Foldable Badge - %s - %s' % ((object.name or 'Access "
-"Badge').replace('/',''), object.get_owner().name.replace('/',''))"
+"'Ecuson pliabil - %s - %s' % ((object.name or 'Ecuson de "
+"acces').replace('/',''), object.get_owner().name.replace('/',''))"
 
 #. module: hr_rfid
 #: model:ir.actions.report,print_report_name:hr_rfid.action_report_hr_employee_foldable_badge
@@ -81,12 +81,12 @@ msgstr "1 secundă"
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__mode_selection_31__1
 msgid "1 x 32 Relays"
-msgstr "1 x 32 Relays"
+msgstr "1 x 32 relee"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__mode_selection_31__3
 msgid "1 x 512 Relays"
-msgstr "1 x 512 Relays"
+msgstr "1 x 512 relee"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__45
@@ -102,7 +102,7 @@ msgstr "Eroare 1-Wire"
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__mode_selection_31__2
 msgid "2 x 16 Relays"
-msgstr "2 x 16 Relays"
+msgstr "2 x 16 relee"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_res_partner__hr_rfid_pin_code
@@ -545,7 +545,7 @@ msgstr ""
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_time_schedule_view_kanban
 msgid "<i class=\"fa fa-check-circle me-1\"/>TS is not empty"
-msgstr "<i class=\"fa fa-check-circle me-1\"/>TS nu este gol"
+msgstr "<i class=\"fa fa-check-circle me-1\"/>OP nu este gol"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
@@ -560,7 +560,7 @@ msgstr "<i class=\"fa fa-fw fa-list\" title=\"Comenzi\"/>"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
 msgid "<i class=\"fa fa-fw fa-list\" title=\"System Events\"/>"
-msgstr "<i class=\"fa fa-fw fa-list\" title=\"Evenimente sistem\"/>"
+msgstr "<i class=\"fa fa-fw fa-list\" title=\"Evenimente de sistem\"/>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
@@ -590,7 +590,7 @@ msgstr "<i class=\"fa fa-list\" title=\"Comenzi\"/>"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "<i class=\"fa fa-list\" title=\"System Events\"/>"
-msgstr "<i class=\"fa fa-list\" title=\"Evenimente sistem\"/>"
+msgstr "<i class=\"fa fa-list\" title=\"Evenimente de sistem\"/>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
@@ -606,7 +606,7 @@ msgstr "<i class=\"fa fa-map-marker\" title=\"Zone\"/>"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
 msgid "<i class=\"fa fa-microchip\" title=\"System Events\"/>"
-msgstr "<i class=\"fa fa-microchip\" title=\"Evenimente sistem\"/>"
+msgstr "<i class=\"fa fa-microchip\" title=\"Evenimente de sistem\"/>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
@@ -638,11 +638,6 @@ msgstr "<i class=\"fa fa-thermometer-full me-1\" title=\"Temperatură\"/>"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "<i class=\"fa fa-thermometer-full text-info me-1\" title=\"Temperature\"/>"
 msgstr "<i class=\"fa fa-thermometer-full text-info me-1\" title=\"Temperatură\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.webstack_onboarding_panel
-msgid "<i class=\"fa fa-times\" title=\"Close the onboarding panel\"/>"
-msgstr "<i class=\"fa fa-times\" title=\"Închideți panoul de inițiere\"/>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
@@ -677,7 +672,7 @@ msgstr "<i class=\"fa fa-users\" title=\"Grupuri de acces\"/>"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_time_schedule_view_kanban
 msgid "<i class=\"fa fa-warning me-1\"/>TS is empty"
-msgstr "<i class=\"fa fa-warning me-1\"/>TS este gol"
+msgstr "<i class=\"fa fa-warning me-1\"/>OP este gol"
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_reader_action
@@ -697,7 +692,7 @@ msgid ""
 "                </p>"
 msgstr ""
 "<p class=\"o_view_nocontent\">\n"
-"                    Nicio ușă accesibilă pentru acest angajat.\n"
+"                    Nu există uși accesibile pentru acest angajat.\n"
 "                </p>"
 
 #. module: hr_rfid
@@ -709,7 +704,7 @@ msgid ""
 "                </p>"
 msgstr ""
 "<p class=\"o_view_nocontent\">\n"
-"                    Nicio ușă accesibilă pentru acest partener.\n"
+"                    Nu există uși accesibile pentru acest partener.\n"
 "                </p>"
 
 #. module: hr_rfid
@@ -721,7 +716,7 @@ msgid ""
 "                </p>"
 msgstr ""
 "<p class=\"o_view_nocontent\">\n"
-"                    Niciun eveniment pentru acest angajat.\n"
+"                    Nu există evenimente pentru acest angajat.\n"
 "                </p>"
 
 #. module: hr_rfid
@@ -733,7 +728,7 @@ msgid ""
 "                </p>"
 msgstr ""
 "<p class=\"o_view_nocontent\">\n"
-"                    Niciun eveniment pentru acest partener.\n"
+"                    Nu există evenimente pentru acest partener.\n"
 "                </p>"
 
 #. module: hr_rfid
@@ -839,12 +834,12 @@ msgstr "<span>Stare: </span>"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_time_schedule_view_kanban
 msgid "<span>TS #</span>"
-msgstr "<span>TS #</span>"
+msgstr "<span>OP #</span>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_time_schedule_view_kanban
 msgid "<span>TS Number: </span>"
-msgstr "<span>Nr. TS: </span>"
+msgstr "<span>Număr OP: </span>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
@@ -922,7 +917,7 @@ msgid ""
 "is no possible to have 2 controllers wit same serial numbers."
 msgstr ""
 "Un controler cu numărul de serie %s este deja înregistrat în sistem. Nu este"
-" posibil să existe 2 controlere cu același număr de serie."
+" posibil să aveți 2 controlere cu același număr de serie."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__name
@@ -982,6 +977,11 @@ msgstr ""
 "al cartelei."
 
 #. module: hr_rfid
+#: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_webstack_serial_uniq
+msgid "A module with this serial number already exists!"
+msgstr "Un modul cu acest număr de serie există deja!"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__apb_mode
 msgid "APB Mode"
 msgstr "Mod APB"
@@ -1003,7 +1003,7 @@ msgstr "Acceptați module noi"
 #. module: hr_rfid
 #: model:mail.template,subject:hr_rfid.card_barcode_mail_template_badge
 msgid "Access Barcode badge for {{ object.name }}"
-msgstr "Access Barcode badge for {{ object.name }}"
+msgstr "Ecuson cu cod de bare de acces pentru {{ object.name }}"
 
 #. module: hr_rfid
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_root_menu_access_control
@@ -1119,6 +1119,11 @@ msgstr ""
 "problemelor de acces."
 
 #. module: hr_rfid
+#: model:onboarding.onboarding.step,done_text:hr_rfid.onboarding_step_create_access_group
+msgid "Access group ready!"
+msgstr "Grup de acces pregătit!"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_employee_form_inherit_hr_rfid
 msgid ""
 "Access groups control door permissions and time schedules. Groups are "
@@ -1211,7 +1216,7 @@ msgstr "Șir acțiune"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
 msgid "Activate emergency mode"
-msgstr "Activați modul de urgență"
+msgstr "Activare mod de urgență"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_search
@@ -1277,6 +1282,7 @@ msgstr "Pictogramă tip activitate"
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_add_card_action
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_sys_ev_wiz_action
+#: model:onboarding.onboarding.step,button_text:hr_rfid.onboarding_step_register_card
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_view_form
 msgid "Add Card"
 msgstr "Adăugați cartelă"
@@ -1291,8 +1297,15 @@ msgid "Add Doors"
 msgstr "Adăugați uși"
 
 #. module: hr_rfid
+#: model:onboarding.onboarding.step,step_image_alt:hr_rfid.onboarding_step_add_webstack
+#: model:onboarding.onboarding.step,title:hr_rfid.onboarding_step_add_webstack
+msgid "Add Hardware Module"
+msgstr "Adăugare modul hardware"
+
+#. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_webstack_manual_create_action
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_create_module_manual
+#: model:onboarding.onboarding.step,button_text:hr_rfid.onboarding_step_add_webstack
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_manual_create_wiz
 msgid "Add Module"
 msgstr "Adăugați modul"
@@ -1316,6 +1329,11 @@ msgstr ""
 "Adăugați calcule avansate de prezență, cum ar fi întârzieri, plecări "
 "anticipate și urmărirea orelor suplimentare, la funcțiile de bază de timp și"
 " prezență."
+
+#. module: hr_rfid
+#: model:onboarding.onboarding.step,description:hr_rfid.onboarding_step_register_card
+msgid "Add an RFID card and assign it to an employee."
+msgstr "Adăugați un card RFID și atribuiți-l unui angajat."
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_department_add_def_acc_grs
@@ -1785,7 +1803,7 @@ msgstr "Activați"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
 msgid "Arm Group"
-msgstr "Activați grupul"
+msgstr "Armare grup"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__20
@@ -1796,22 +1814,22 @@ msgstr "Activare cu sirenă"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0
 msgid "Arm command success"
-msgstr "Comandă de activare reușită"
+msgstr "Comandă de armare reușită"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
 msgid "Arm the alarm group"
-msgstr "Activați grupul de alarmă"
+msgstr "Armare grup de alarmă"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
 msgid "Arm the alarm line"
-msgstr "Activați linia de alarmă"
+msgstr "Armare linie de alarmă"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Arm the door alarm"
-msgstr "Activați alarma de la ușă"
+msgstr "Armare alarmă ușă"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__armed
@@ -1973,9 +1991,9 @@ msgid ""
 "Because the webstack is behind NAT, we have to wait for the webstack to call"
 " us, so we created a command. The door will open/close as soon as possible."
 msgstr ""
-"Deoarece webstack-ul se află în spatele NAT, trebuie să așteptăm ca "
-"webstack-ul să ne contacteze, astfel că am creat o comandă. Ușa se va "
-"deschide/închide cât mai curând posibil."
+"Deoarece webstack-ul este în spatele NAT, trebuie să așteptăm ca webstack-ul"
+" să ne contacteze, așa că am creat o comandă. Ușa se va deschide/închide cât"
+" mai curând posibil."
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_line__begin
@@ -1986,7 +2004,7 @@ msgstr "Început"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
 msgid "Begin is not in range"
-msgstr "Începutul nu se află în interval"
+msgstr "Începutul nu este în intervalul valid"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__behind_nat
@@ -2097,7 +2115,7 @@ msgstr "Anulați"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
 msgid "Cannot delete time schedules!"
-msgstr "Nu se pot șterge programele de timp!"
+msgstr "Nu se pot șterge orarele!"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_card
@@ -2240,14 +2258,14 @@ msgid ""
 "Card count in controller and DB are different. Reload cards to solve the "
 "problem"
 msgstr ""
-"Numărul de cartele din controler și DB diferă. Reîncărcați cartelele pentru "
-"a rezolva problema."
+"Numărul de carduri din controler și din baza de date sunt diferite. "
+"Reîncărcați cardurile pentru a rezolva problema"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
 msgid "Card event without card number"
-msgstr "Eveniment cartelă fără număr de cartelă"
+msgstr "Eveniment card fără număr de card"
 
 #. module: hr_rfid
 #: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_card_card_int_uniq
@@ -2274,13 +2292,13 @@ msgstr "Numărul cartelei din acest eveniment"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_card.py:0
 msgid "Card number must be exactly 10 digits"
-msgstr "Numărul cartelei trebuie să aibă exact 10 cifre"
+msgstr "Numărul cardului trebuie să aibă exact 10 cifre"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_card.py:0
 msgid "Card number must be unique for every card type!"
-msgstr "Numărul cartelei trebuie să fie unic pentru fiecare tip de cartelă!"
+msgstr "Numărul cardului trebuie să fie unic pentru fiecare tip de card!"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_reader__mode__04
@@ -2301,6 +2319,11 @@ msgstr "Proprietar cartelă (angajat)"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__card_reference
 msgid "Card reference"
 msgstr "Referință cartelă"
+
+#. module: hr_rfid
+#: model:onboarding.onboarding.step,done_text:hr_rfid.onboarding_step_register_card
+msgid "Card registered!"
+msgstr "Card înregistrat!"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_door_rel__card_type
@@ -2416,7 +2439,7 @@ msgstr "Verificați ușile"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Check connection to the Module"
-msgstr "Verificați conexiunea la modul"
+msgstr "Verificare conexiune la modul"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th__log_every_read
@@ -2508,6 +2531,12 @@ msgid "Close"
 msgstr "Închideți"
 
 #. module: hr_rfid
+#. odoo-javascript
+#: code:addons/hr_rfid/static/src/components/onboarding/onboarding.xml:0
+msgid "Close Panel"
+msgstr "Închidere panou"
+
+#. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.action_close_door
 msgid "Close door"
 msgstr "Închideți ușa"
@@ -2524,10 +2553,16 @@ msgid "Close doors"
 msgstr "Închideți ușile"
 
 #. module: hr_rfid
+#. odoo-javascript
+#: code:addons/hr_rfid/static/src/components/onboarding/onboarding.xml:0
+msgid "Close the onboarding panel"
+msgstr "Închideți panoul de integrare"
+
+#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Closed the door for %d seconds."
-msgstr "Ușa a fost închisă timp de %d secunde."
+msgstr "Ușa a fost închisă pentru %d secunde."
 
 #. module: hr_rfid
 #. odoo-python
@@ -2823,6 +2858,12 @@ msgstr ""
 "evenimentelor senzorilor."
 
 #. module: hr_rfid
+#: model:onboarding.onboarding.step,step_image_alt:hr_rfid.onboarding_step_module_settings
+#: model:onboarding.onboarding.step,title:hr_rfid.onboarding_step_module_settings
+msgid "Configure RFID Settings"
+msgstr "Configurare setări RFID"
+
+#. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_ctrl_ts_week_wiz_action
 msgid ""
 "Configure access hours for each day of the week.\n"
@@ -3001,7 +3042,7 @@ msgstr "Controler"
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "Controller %s has mode=%d, which is not supported!"
-msgstr "Controlerul %s are mode=%d, care nu este suportat!"
+msgstr "Controlerul %s are modul=%d, care nu este suportat!"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_ctrl_alarm
@@ -3048,14 +3089,14 @@ msgstr "Mod controler"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack_replace_wiz.py:0
 msgid "Controller moved from <a href='%s'>Module %s</a>"
-msgstr "Controlerul a fost mutat din <a href='%s'>Modulul %s</a>"
+msgstr "Controler mutat de la <a href='%s'>Modulul %s</a>"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Controller sent us a response to a command we never sent"
 msgstr ""
-"Controlerul a trimis un răspuns la o comandă pe care nu am trimis-o "
+"Controlerul ne-a trimis un răspuns la o comandă pe care nu am trimis-o "
 "niciodată"
 
 #. module: hr_rfid
@@ -3100,16 +3141,21 @@ msgid "Controllers count"
 msgstr "Număr controlere"
 
 #. module: hr_rfid
+#: model:onboarding.onboarding.step,done_text:hr_rfid.onboarding_step_scan_controllers
+msgid "Controllers found!"
+msgstr "Controlere găsite!"
+
+#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack_replace_wiz.py:0
 msgid "Controllers moved from <a href='%s'>Module %s</a>"
-msgstr "Controlerele au fost mutate din <a href='%s'>Modulul %s</a>"
+msgstr "Controlere mutate de la <a href='%s'>Modulul %s</a>"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack_replace_wiz.py:0
 msgid "Controllers moved to <a href='%s'>Module %s</a>"
-msgstr "Controlerele au fost mutate în <a href='%s'>Modulul %s</a>"
+msgstr "Controlere mutate la <a href='%s'>Modulul %s</a>"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__active
@@ -3131,7 +3177,7 @@ msgid ""
 "Check if it is turned on or if it's on a different ip.\n"
 msgstr ""
 "Nu s-a putut conecta la modul. \n"
-"Verificați dacă este pornit sau dacă se află la o altă adresă IP.\n"
+"Verificați dacă este pornit sau dacă are o altă adresă IP.\n"
 
 #. module: hr_rfid
 #. odoo-python
@@ -3141,13 +3187,20 @@ msgid ""
 "Check if it is turned on or if it's on a different ip:\n"
 msgstr ""
 "Nu s-a putut conecta la modul. \n"
-"Verificați dacă este pornit sau dacă se află la o altă adresă IP:\n"
+"Verificați dacă este pornit sau dacă are o altă adresă IP:\n"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
 msgid "Could not find the card"
-msgstr "Cartela nu a fost găsită"
+msgstr "Cardul nu a putut fi găsit"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_card.py:0
+msgid "Could not generate a unique barcode card number after %d attempts."
+msgstr ""
+"Nu s-a putut genera un număr unic de card cu cod de bare după %d încercări."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_system__occurrences
@@ -3157,6 +3210,14 @@ msgid ""
 msgstr ""
 "Numărul de ori în care a apărut acest eveniment identic. Sistemul grupează "
 "evenimentele repetate pentru a reduce aglomerarea jurnalului."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/onboarding_onboarding_step.py:0
+#: model:onboarding.onboarding.step,step_image_alt:hr_rfid.onboarding_step_create_access_group
+#: model:onboarding.onboarding.step,title:hr_rfid.onboarding_step_create_access_group
+msgid "Create Access Group"
+msgstr "Creare grup de acces"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_form_view
@@ -3169,9 +3230,19 @@ msgid "Create Date"
 msgstr "Dată creare"
 
 #. module: hr_rfid
+#: model:onboarding.onboarding.step,button_text:hr_rfid.onboarding_step_create_access_group
+msgid "Create Group"
+msgstr "Creare grup"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
 msgid "Create Sub-group"
-msgstr "Creați subgrup"
+msgstr "Creare subgrup"
+
+#. module: hr_rfid
+#: model:ir.model,website_form_label:hr_rfid.model_res_partner
+msgid "Create a Customer"
+msgstr "Creează un client"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_form_view
@@ -3226,13 +3297,13 @@ msgstr "Creați prima dvs. zonă"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Created a command to close the door for %d seconds."
-msgstr "A fost creată o comandă pentru a închide ușa timp de %d secunde."
+msgstr "A fost creată o comandă de închidere a ușii pentru %d secunde."
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Created a command to open the door for %d seconds."
-msgstr "A fost creată o comandă pentru a deschide ușa timp de %d secunde."
+msgstr "A fost creată o comandă de deschidere a ușii pentru %d secunde."
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_acc_grs__create_uid
@@ -3459,8 +3530,8 @@ msgid ""
 "Current state of the alarm siren. True = Siren is active/sounding, False = "
 "Siren is silent. Automatically controlled by alarm triggers."
 msgstr ""
-"Current state of the alarm siren. True = Siren is active/sounding, False = "
-"Siren is silent. Automatically controlled by alarm triggers."
+"Starea curentă a sirenei de alarmă. Adevărat = Sirena este activă/sună, Fals"
+" = Sirena este silențioasă. Controlată automat de declanșatoarele de alarmă."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__lock_state
@@ -3644,7 +3715,7 @@ msgstr ""
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
 msgid "Deactivate emergency mode"
-msgstr "Dezactivați modul de urgență"
+msgstr "Dezactivare mod de urgență"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__deactivate_on
@@ -3731,6 +3802,11 @@ msgid ""
 msgstr ""
 "Definiți grupurile de acces cărora aparține acest angajat pentru "
 "permisiunile de ușă"
+
+#. module: hr_rfid
+#: model:onboarding.onboarding.step,description:hr_rfid.onboarding_step_create_access_group
+msgid "Define which doors can be accessed and when."
+msgstr "Definiți ce uși pot fi accesate și când."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__mode
@@ -3986,28 +4062,28 @@ msgstr "Dezactivați"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
 msgid "Disarm Group"
-msgstr "Dezactivați grupul"
+msgstr "Dezarmare grup"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0
 msgid "Disarm command success"
-msgstr "Comandă de dezactivare reușită"
+msgstr "Comandă de dezarmare reușită"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
 msgid "Disarm the alarm group"
-msgstr "Dezactivați grupul de alarmă"
+msgstr "Dezarmare grup de alarmă"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
 msgid "Disarm the alarm line"
-msgstr "Dezactivați linia de alarmă"
+msgstr "Dezarmare linie de alarmă"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Disarm the door alarm"
-msgstr "Dezactivați alarma de la ușă"
+msgstr "Dezarmare alarmă ușă"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__armed__disarm
@@ -4018,6 +4094,12 @@ msgstr "Dezactivați alarma de la ușă"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Disarmed"
 msgstr "Dezarmat"
+
+#. module: hr_rfid
+#: model:onboarding.onboarding.step,step_image_alt:hr_rfid.onboarding_step_scan_controllers
+#: model:onboarding.onboarding.step,title:hr_rfid.onboarding_step_scan_controllers
+msgid "Discover Controllers"
+msgstr "Descoperire controlere"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__discovery_id
@@ -4072,6 +4154,8 @@ msgstr "Descoperire"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_onboarding_onboarding__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_onboarding_onboarding_step__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_res_company__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_res_config_settings__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_res_partner__display_name
@@ -4125,7 +4209,7 @@ msgstr "Efectuați transferul"
 #: code:addons/hr_rfid/models/digest.py:0
 msgid "Do not have access, skip this data for user's digest email"
 msgstr ""
-"Nu aveți acces, omiteți aceste date pentru emailul rezumat al utilizatorului"
+"Nu are acces, se omit aceste date pentru e-mailul rezumat al utilizatorului"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_door
@@ -4142,13 +4226,13 @@ msgstr "Ușă"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 msgid "Door %d of ctrl id %d (%s)"
-msgstr "Ușa %d a controlerului cu id-ul %d (%s)"
+msgstr "Ușa %d a controlerului cu ID %d (%s)"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
 msgid "Door %s can only use the first 3 time schedules"
-msgstr "Ușa %s poate folosi doar primele 3 programe de timp"
+msgstr "Ușa %s poate folosi doar primele 3 orare"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__access_group_ids
@@ -4233,7 +4317,7 @@ msgstr ""
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Door is controller from camera. THis function is not supported yet."
 msgstr ""
-"Ușa este controlată de cameră. Această funcție nu este acceptată încă."
+"Ușa este controlată de cameră. Această funcție nu este încă suportată."
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__door_rel_ids
@@ -4279,15 +4363,15 @@ msgid ""
 "Doors \"%s\" and \"%s\" both belong to a controller that cannot give access "
 "to multiple doors with same card type in a group."
 msgstr ""
-"Ușile \"%s\" și \"%s\" aparțin ambele unui controler care nu poate oferi "
-"acces la mai multe uși cu același tip de cartelă într-un grup."
+"Ușile „%s\" și „%s\" aparțin ambele unui controler care nu poate acorda "
+"acces la mai multe uși cu același tip de card într-un grup."
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_employee.py:0
 #: code:addons/hr_rfid/models/res_partner.py:0
 msgid "Doors accessible from {}"
-msgstr "Uși accesibile din {}"
+msgstr "Uși accesibile de la {}"
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_door_action
@@ -4378,7 +4462,7 @@ msgstr "Uși de deschis/închis"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_reader.py:0
 msgid "Doors using {}"
-msgstr "Uși care utilizează {}"
+msgstr "Uși care folosesc {}"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__dual_person_mode
@@ -4413,7 +4497,7 @@ msgstr "Eroare constrângere"
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
 msgid "Duress mode"
-msgstr "Mod constrângere"
+msgstr "Mod sub constrângere"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__2
@@ -4463,7 +4547,7 @@ msgstr "Cartelă ejectată"
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__notification_type__email
 msgid "Email"
-msgstr "Email"
+msgstr "E-mail"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_emergency_group__state__emergency
@@ -4766,7 +4850,7 @@ msgstr "Activat"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
 msgid "Enabled but not running"
-msgstr "Activat, dar nu funcționează"
+msgstr "Activat, dar nu rulează"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_line__end
@@ -4782,7 +4866,7 @@ msgstr "Dată de sfârșit"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
 msgid "End is not in range"
-msgstr "Sfârșitul nu se află în interval"
+msgstr "Sfârșitul nu este în intervalul valid"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_workcode__user_action__stop
@@ -4881,9 +4965,9 @@ msgid ""
 " \n"
 "                              Return {reason}({code}) with body:\n"
 msgstr ""
-"Eroare primită în timp ce se încerca repornirea modulului!\n"
+"Eroare primită la încercarea de repornire a modulului!\n"
 " \n"
-"                              Return {reason}({code}) with body:\n"
+"                              Returnare {reason}({code}) cu conținut:\n"
 
 #. module: hr_rfid
 #. odoo-python
@@ -4893,9 +4977,9 @@ msgid ""
 " \n"
 "                          (/protect/uart/conf) returned {reason}({code}) with body:\n"
 msgstr ""
-"Eroare primită în timp ce se încerca configurarea modulului!\n"
+"Eroare primită la încercarea de configurare a modulului!\n"
 " \n"
-"                          (/protect/uart/conf) returned {reason}({code}) with body:\n"
+"                          (/protect/uart/conf) a returnat {reason}({code}) cu conținut:\n"
 
 #. module: hr_rfid
 #. odoo-python
@@ -4907,7 +4991,7 @@ msgstr "Răspuns de eroare de la Webstack. {} ({})"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Error while trying to connect to the module. Information:\n"
-msgstr "Eroare la conectarea la modul. Informații:\n"
+msgstr "Eroare la încercarea de conectare la modul. Informații:\n"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_system_ev_view_pivot
@@ -5002,13 +5086,13 @@ msgstr "Evenimente de astăzi"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_reader.py:0
 msgid "Events from {}"
-msgstr "Evenimente din {}"
+msgstr "Evenimente de la {}"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 msgid "Events on {}"
-msgstr "Evenimente la {}"
+msgstr "Evenimente pe {}"
 
 #. module: hr_rfid
 #. odoo-python
@@ -5071,7 +5155,7 @@ msgstr "Buton de ieșire"
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
 msgid "Exit button %d pressed "
-msgstr "Butonul de ieșire %d apăsat "
+msgstr "Buton de ieșire %d apăsat "
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__expiration
@@ -5376,7 +5460,7 @@ msgstr "Plecat la pauză"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 msgid "Got controller mode=%d for hw_ver=%s???"
-msgstr "Mod controler obținut=%d pentru hw_ver=%s???"
+msgstr "S-a obținut modul controler=%d pentru hw_ver=%s???"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_wizard__alarm_rights
@@ -5406,7 +5490,7 @@ msgstr "Gardian"
 #. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.hr_rfid_set_card_active_inactive_status_ir_actions_server
 msgid "HR RFID: Check card activation status"
-msgstr "HR RFID: Verificați starea de activare a cardului"
+msgstr "HR RFID: Verificare stare activare card"
 
 #. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.hr_rfid_read_ctrl_status_cron_ir_actions_server
@@ -5705,6 +5789,8 @@ msgstr "Eroare I2C"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__id
+#: model:ir.model.fields,field_description:hr_rfid.field_onboarding_onboarding__id
+#: model:ir.model.fields,field_description:hr_rfid.field_onboarding_onboarding_step__id
 #: model:ir.model.fields,field_description:hr_rfid.field_res_company__id
 #: model:ir.model.fields,field_description:hr_rfid.field_res_config_settings__id
 #: model:ir.model.fields,field_description:hr_rfid.field_res_partner__id
@@ -5735,7 +5821,7 @@ msgstr "Linii tabel I/O"
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "IO table lengths are different, this should never happen????"
 msgstr ""
-"Lungimile tabelelor I/O sunt diferite, aceasta nu ar trebui să se întâmple "
+"Lungimile tabelei IO sunt diferite, acest lucru nu ar trebui să se întâmple "
 "niciodată????"
 
 #. module: hr_rfid
@@ -5829,7 +5915,7 @@ msgstr "Imagine"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_card.py:0
 msgid "Import Template for Cards"
-msgstr "Șablon import carduri"
+msgstr "Șablon de import pentru carduri"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_res_config_settings__module_hr_rfid_andromeda_import
@@ -5879,8 +5965,8 @@ msgid ""
 "In \"Setup/Services\" menu fill \"HTTP Server Push URL\" with {Odoo IP or\n"
 "                                Domain}/hr/rfid/event e.g. my.server.com/hr/rfid/event"
 msgstr ""
-"În meniul \"Setup/Services\" completați \"HTTP Server Push URL\" cu {Adresa IP Odoo sau\n"
-"                                Domeniu}/hr/rfid/event ex. my.server.com/hr/rfid/event"
+"În meniul \"Setup/Services\" completați \"HTTP Server Push URL\" cu {Odoo IP or\n"
+"                                Domain}/hr/rfid/event ex. my.server.com/hr/rfid/event"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__enableDC
@@ -5961,8 +6047,8 @@ msgid ""
 "Indicates whether the siren/alarm is currently active. True = Siren ON "
 "(alarm condition), False = Siren OFF (normal state)."
 msgstr ""
-"Indicates whether the siren/alarm is currently active. True = Siren ON "
-"(alarm condition), False = Siren OFF (normal state)."
+"Indică dacă sirena/alarma este activă în prezent. Adevărat = Sirenă PORNITĂ "
+"(condiție de alarmă), Fals = Sirenă OPRITĂ (stare normală)."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__is_empty
@@ -6015,9 +6101,9 @@ msgid ""
 "start communication with this instance. The URL in use is http://%s on port "
 "%d."
 msgstr ""
-"Informații trimise modulului. Dacă totul este în regulă, modulul trebuie să "
-"înceapă comunicarea cu această instanță. URL-ul utilizat este http://%s pe "
-"portul %d."
+"Informații trimise către modul. Dacă totul este în regulă, modulul trebuie "
+"să înceapă comunicarea cu această instanță. URL-ul utilizat este http://%s "
+"pe portul %d."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
@@ -6537,12 +6623,12 @@ msgstr "Timp blocare"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Lock the door"
-msgstr "Blocați ușa"
+msgstr "Blocare ușă"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Locked"
-msgstr "Blocat"
+msgstr "Blocată"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_form_view
@@ -6851,13 +6937,18 @@ msgstr "Administrare web modul"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Module connection error:\n"
-msgstr "Eroare conexiune modul:\n"
+msgstr "Eroare de conexiune a modulului:\n"
+
+#. module: hr_rfid
+#: model:onboarding.onboarding.step,done_text:hr_rfid.onboarding_step_add_webstack
+msgid "Module registered!"
+msgstr "Modul înregistrat!"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Module sent us a response from a controller that does not exist"
-msgstr "Modulul a trimis un răspuns de la un controler care nu există"
+msgstr "Modulul ne-a trimis un răspuns de la un controler care nu există"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
@@ -7072,7 +7163,7 @@ msgstr "Nicio comandă găsită"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "No controllers detected in the Module or the Module is Archived"
-msgstr "Niciun controler detectat în modul sau modulul este arhivat"
+msgstr "Nu au fost detectate controlere în modul sau modulul este arhivat"
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_door_action
@@ -7083,7 +7174,7 @@ msgstr "Nicio ușă configurată încă"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
 msgid "No found any door duplicates in the access groups."
-msgstr "Nu au fost găsite uși duplicate în grupurile de acces."
+msgstr "Nu au fost găsite duplicări de uși în grupurile de acces."
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_webstack_action
@@ -7099,7 +7190,7 @@ msgstr "Niciun cititor configurat încă"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_notification.py:0
 msgid "No recipients for %s notification!"
-msgstr "Niciun destinatar pentru notificarea %s!"
+msgstr "Nu există destinatari pentru notificarea %s!"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__30
@@ -7151,7 +7242,7 @@ msgstr "Neutilizat"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
 msgid "Not using TS"
-msgstr "Fără TS"
+msgstr "OP nefolosit"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_notification__notification_type
@@ -7520,6 +7611,16 @@ msgid "On Delay"
 msgstr "Întârziere pornire"
 
 #. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_onboarding_onboarding
+msgid "Onboarding"
+msgstr "Înrolare"
+
+#. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_onboarding_onboarding_step
+msgid "Onboarding Step"
+msgstr "Pas de înrolare"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__mode_selection__1
 msgid "One door"
 msgstr "O ușă"
@@ -7546,6 +7647,11 @@ msgid "Open Output"
 msgstr "Deschidere ieșire"
 
 #. module: hr_rfid
+#: model:onboarding.onboarding.step,button_text:hr_rfid.onboarding_step_module_settings
+msgid "Open Settings"
+msgstr "Deschidere setări"
+
+#. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.action_open_door
 msgid "Open door"
 msgstr "Deschidere ușă"
@@ -7554,7 +7660,7 @@ msgstr "Deschidere ușă"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Open door command success"
-msgstr "Comandă deschidere ușă reușită"
+msgstr "Comandă de deschidere ușă reușită"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_open_close_wiz_form
@@ -7602,7 +7708,7 @@ msgstr "Deschidere ușă 4 de la In4"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Opened the door for %d seconds."
-msgstr "Ușa a fost deschisă timp de %d secunde."
+msgstr "Ușa a fost deschisă pentru %d secunde."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__mode
@@ -7716,7 +7822,7 @@ msgstr "Out8"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "Output %d working with TS %s"
-msgstr "Ieșirea %d funcționează cu TS %s"
+msgstr "Ieșirea %d funcționează cu OP %s"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__output_states
@@ -7732,7 +7838,7 @@ msgstr "TS ieșire pentru controlere"
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
 msgid "Output control from Software"
-msgstr "Control ieșire din software"
+msgstr "Control ieșire prin software"
 
 #. module: hr_rfid
 #: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_ctrl_output_ts_controller_output_unique
@@ -7748,7 +7854,7 @@ msgstr "Număr ieșire"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "Output number %(out)d not in range from 1 to %(to)d"
-msgstr "Output number %(out)d not in range from 1 to %(to)d"
+msgstr "Numărul ieșirii %(out)d nu este în intervalul de la 1 la %(to)d"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__output_ts_ids
@@ -7786,7 +7892,7 @@ msgstr ""
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
 msgid "Overlap found between access group(%s) active period ranges for (%s)"
 msgstr ""
-"S-a găsit suprapunere între intervalele perioadei active ale grupului de "
+"Suprapunere găsită între intervalele de perioadă activă ale grupului de "
 "acces(%s) pentru (%s)"
 
 #. module: hr_rfid
@@ -7843,8 +7949,8 @@ msgid ""
 "Partner %s have the %s door twice via different access groups. This is not "
 "allowed."
 msgstr ""
-"Partenerul %s are ușa %s de două ori prin intermediul unor grupuri de acces "
-"diferite. Acest lucru nu este permis."
+"Partenerul %s are ușa %s de două ori prin grupuri de acces diferite. Acest "
+"lucru nu este permis."
 
 #. module: hr_rfid
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_partners
@@ -8171,6 +8277,11 @@ msgid "RFID System Settings"
 msgstr "Setări sistem RFID"
 
 #. module: hr_rfid
+#: model:onboarding.onboarding,name:hr_rfid.onboarding_rfid_setup
+msgid "RFID System Setup"
+msgstr "Configurare sistem RFID"
+
+#. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_event_user
 msgid "RFID User Event"
 msgstr "Eveniment utilizator RFID"
@@ -8276,6 +8387,26 @@ msgstr "Setări RFID"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__3
 msgid "RS485 Error"
 msgstr "Eroare RS485"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__rating_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__rating_ids
+msgid "Ratings"
+msgstr "Evaluări"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_system__input_js
@@ -8552,7 +8683,7 @@ msgstr "Număr cititori"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Readers for {}"
-msgstr "Cititori pentru {}"
+msgstr "Cititoare pentru {}"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th_log__event_time
@@ -8618,7 +8749,7 @@ msgstr "Repornire"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Reboot the Module"
-msgstr "Reporniți modulul"
+msgstr "Repornire modul"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_form
@@ -8638,13 +8769,13 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_notification.py:0
 msgid "Recipient %s has no email address in %s!"
-msgstr "Destinatarul %s nu are o adresă de e-mail în %s!"
+msgstr "Destinatarul %s nu are adresă de e-mail în %s!"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_notification.py:0
 msgid "Recipient %s has no user account in %s!"
-msgstr "Destinatarul %s nu are un cont de utilizator în %s!"
+msgstr "Destinatarul %s nu are cont de utilizator în %s!"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_ts_line__week_id
@@ -8655,7 +8786,7 @@ msgstr "Referință la asistentul de săptămână al programului de timp părin
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "Refresh Controller information"
-msgstr "Actualizați informațiile controlerului"
+msgstr "Actualizare informații controler"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
@@ -8668,6 +8799,18 @@ msgid "Refresh status"
 msgstr "Actualizați starea"
 
 #. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/onboarding_onboarding_step.py:0
+msgid "Register Card"
+msgstr "Înregistrare card"
+
+#. module: hr_rfid
+#: model:onboarding.onboarding.step,step_image_alt:hr_rfid.onboarding_step_register_card
+#: model:onboarding.onboarding.step,title:hr_rfid.onboarding_step_register_card
+msgid "Register First Card"
+msgstr "Înregistrare primul card"
+
+#. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_add_card_action
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_sys_ev_wiz_action
 msgid ""
@@ -8676,6 +8819,11 @@ msgid ""
 msgstr ""
 "Înregistrați un card necunoscut care a fost prezentat sistemului.\n"
 "                    Îl puteți atribui unui angajat sau contact și puteți seta permisiunile de acces ale acestuia."
+
+#. module: hr_rfid
+#: model:onboarding.onboarding.step,description:hr_rfid.onboarding_step_add_webstack
+msgid "Register your first RFID network module (WebStack)."
+msgstr "Înregistrați primul dumneavoastră modul de rețea RFID (WebStack)."
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_event_system_action
@@ -8992,6 +9140,11 @@ msgid "Save new Webstacks"
 msgstr "Salvați webstack-uri noi"
 
 #. module: hr_rfid
+#: model:onboarding.onboarding.step,description:hr_rfid.onboarding_step_scan_controllers
+msgid "Scan for RFID controllers connected to your module."
+msgstr "Scanați controlerelele RFID conectate la modulul dumneavoastră."
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "Security"
 msgstr "Securitate"
@@ -9268,7 +9421,7 @@ msgstr "Trimiteți legitimație cod de bare"
 #. odoo-python
 #: code:addons/hr_rfid/models/res_partner.py:0
 msgid "Send Barcode card - Compose Email"
-msgstr "Trimiteți card cod de bare - Compuneți e-mail"
+msgstr "Trimitere card cu cod de bare - Compunere e-mail"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_notification__notify_followers
@@ -9329,7 +9482,7 @@ msgstr "Senzori"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__serial_number
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__serial
 msgid "Serial"
-msgstr "Serial"
+msgstr "Serie"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__uid
@@ -9400,6 +9553,13 @@ msgstr ""
 "modulului."
 
 #. module: hr_rfid
+#: model:onboarding.onboarding.step,description:hr_rfid.onboarding_step_module_settings
+msgid "Set timezone and module parameters for your RFID system."
+msgstr ""
+"Setați fusul orar și parametrii modulului pentru sistemul dumneavoastră "
+"RFID."
+
+#. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_access_group_action
 msgid ""
 "Set up department defaults for automatic access assignment to new employees"
@@ -9412,6 +9572,11 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_partner_form_inherit_hr_rfid
 msgid "Settings"
 msgstr "Setări"
+
+#. module: hr_rfid
+#: model:onboarding.onboarding.step,done_text:hr_rfid.onboarding_step_module_settings
+msgid "Settings configured!"
+msgstr "Setări configurate!"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_form
@@ -9435,7 +9600,7 @@ msgstr "Configurați modulul pentru această instanță Odoo"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Setup the Module"
-msgstr "Configurați modulul"
+msgstr "Configurare modul"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__state__short
@@ -9514,14 +9679,14 @@ msgstr "Stare sirenă"
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Siren turned Off successful"
-msgstr "Sirena oprită cu succes"
+msgstr "Sirenă oprită cu succes"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Siren turned On successful"
-msgstr "Sirena pornită cu succes"
+msgstr "Sirenă pornită cu succes"
 
 #. module: hr_rfid
 #. odoo-python
@@ -9628,13 +9793,13 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0
 msgid "Success Line(s) Arm"
-msgstr "Activare linie(i) reușită"
+msgstr "Linie/Linii armate cu succes"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0
 msgid "Success Line(s) Disarm"
-msgstr "Dezactivare linie(i) reușită"
+msgstr "Linie/Linii dezarmate cu succes"
 
 #. module: hr_rfid
 #. odoo-python
@@ -9691,7 +9856,7 @@ msgstr "Număr evenimente sistem"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "System Events on {}"
-msgstr "Evenimente sistem la {}"
+msgstr "Evenimente de sistem pe {}"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__dc
@@ -9721,7 +9886,7 @@ msgstr "Eveniment sistem"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_event_system.py:0
 msgid "System event does not have a card number in it"
-msgstr "Evenimentul sistem nu conține un număr de card"
+msgstr "Evenimentul de sistem nu conține un număr de card"
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_event_system_action
@@ -9753,7 +9918,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "T&H Sensor {} on {}"
-msgstr "Senzor T&H {} la {}"
+msgstr "Senzor T&U {} pe {}"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__ts_code
@@ -9891,7 +10056,7 @@ msgstr "Jurnal temperatură și umiditate"
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_th.py:0
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Temperature and Humidity Log for {}"
-msgstr "Jurnal temperatură și umiditate pentru {}"
+msgstr "Jurnal de temperatură și umiditate pentru {}"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_ctrl_th_log
@@ -10147,7 +10312,7 @@ msgstr "Cardul este pregătit pentru utilizare. Totul este finalizat."
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 msgid "The command is marked for execution again."
-msgstr "Comanda este marcată pentru a fi executată din nou."
+msgstr "Comanda este marcată pentru executare din nou."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__webstack_id
@@ -10288,7 +10453,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
 msgid "The door is opened by force/key"
-msgstr "Ușa este deschisă prin forță/cheie"
+msgstr "Ușa a fost deschisă prin forță/cheie"
 
 #. module: hr_rfid
 #. odoo-python
@@ -10409,13 +10574,13 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_emergency_group.py:0
 msgid "The group turn off Emergency Mode Manually"
-msgstr "Grupul dezactivează manual modul de urgență"
+msgstr "Grupul a dezactivat manual modul de urgență"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_emergency_group.py:0
 msgid "The group turn on Emergency Mode Manually"
-msgstr "Grupul activează manual modul de urgență"
+msgstr "Grupul a activat manual modul de urgență"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th_log__humidity
@@ -10454,7 +10619,7 @@ msgid ""
 "conditions"
 msgstr ""
 "Modulul a fost repornit. Durează până la 10 secunde pentru a restabili "
-"condițiile de lucru."
+"condițiile de funcționare"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th__humidity
@@ -10492,7 +10657,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
 msgid "The number is not in range"
-msgstr "Numărul nu este în interval"
+msgstr "Numărul nu este în intervalul valid"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__controller_id
@@ -10693,11 +10858,14 @@ msgid ""
 "The unique 10-digit number printed on or associated with the RFID card. This"
 " is what the card readers recognize. Example: 0012345678"
 msgstr ""
+"Numărul unic de 10 cifre tipărit pe sau asociat cu cardul RFID. Acesta este "
+"ceea ce recunosc cititoarele de carduri. Exemplu: 0012345678"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__card_number
 msgid "The unique identification number of the RFID card used in this event."
 msgstr ""
+"Numărul unic de identificare al cardului RFID utilizat în acest eveniment."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th__uid
@@ -10705,16 +10873,19 @@ msgid ""
 "The unique serial number of this temperature/humidity sensor. This is set by"
 " the manufacturer and cannot be changed."
 msgstr ""
+"Numărul de serie unic al acestui senzor de temperatură/umiditate. Acesta "
+"este setat de producător și nu poate fi modificat."
 
 #. module: hr_rfid
 #: model:res.groups,comment:hr_rfid.hr_rfid_group_manager
 msgid "The user have full rights for access control management"
 msgstr ""
+"Utilizatorul are drepturi complete pentru gestionarea controlului accesului"
 
 #. module: hr_rfid
 #: model:res.groups,comment:hr_rfid.hr_rfid_view_module_discovery
 msgid "The user will be able to Search Hardware in local network."
-msgstr ""
+msgstr "Utilizatorul va putea căuta hardware în rețeaua locală."
 
 #. module: hr_rfid
 #: model:res.groups,comment:hr_rfid.hr_rfid_view_own_department
@@ -10724,36 +10895,40 @@ msgid ""
 "                Head of Department\n"
 "            "
 msgstr ""
+"Utilizatorul va putea controla DOAR angajații din departamentul său. Util pentru\n"
+"                Șef de departament\n"
+"            "
 
 #. module: hr_rfid
 #: model:res.groups,comment:hr_rfid.hr_rfid_view_emergency_on_off
 msgid "The user will be able to control the Emergency lines from interface"
-msgstr ""
+msgstr "Utilizatorul va putea controla liniile de urgență din interfață"
 
 #. module: hr_rfid
 #: model:res.groups,comment:hr_rfid.hr_rfid_view_door_arm_disarm
 msgid "The user will be able to control the alarm lines from interface"
-msgstr ""
+msgstr "Utilizatorul va putea controla liniile de alarmă din interfață"
 
 #. module: hr_rfid
 #: model:res.groups,comment:hr_rfid.hr_rfid_view_door_open_close
 msgid "The user will be able to control the doors from interface"
-msgstr ""
+msgstr "Utilizatorul va putea controla ușile din interfață"
 
 #. module: hr_rfid
 #: model:res.groups,comment:hr_rfid.hr_rfid_group_officer
 msgid "The user will be able to manage cards without hardware setup"
-msgstr ""
+msgstr "Utilizatorul va putea gestiona cardurile fără configurare hardware"
 
 #. module: hr_rfid
 #: model:res.groups,comment:hr_rfid.hr_rfid_group_viewer
 msgid "The user will be able to see User Events."
-msgstr ""
+msgstr "Utilizatorul va putea vedea evenimentele utilizatorilor."
 
 #. module: hr_rfid
 #: model:res.groups,comment:hr_rfid.hr_rfid_view_rfid_pin_code_data
 msgid "The user will be able to see Users PIN codes for system"
 msgstr ""
+"Utilizatorul va putea vedea codurile PIN ale utilizatorilor pentru sistem"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__webstack_id
@@ -10761,6 +10936,8 @@ msgid ""
 "The webstack module that connects this door's controller to the system. This"
 " manages the network communication with the physical hardware."
 msgstr ""
+"Modulul webstack care conectează controlerul acestei uși la sistem. Acesta "
+"gestionează comunicarea în rețea cu hardware-ul fizic."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_notification__zone_id
@@ -10768,6 +10945,8 @@ msgid ""
 "The zone or area where this notification rule applies. When events occur in "
 "this zone, the notification will be triggered."
 msgstr ""
+"Zona în care se aplică această regulă de notificare. Când apar evenimente în"
+" această zonă, notificarea va fi declanșată."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone_doors_wiz__zone_id
@@ -10775,6 +10954,8 @@ msgid ""
 "The zone you are modifying. This field is read-only as you're working with "
 "the currently selected zone."
 msgstr ""
+"Zona pe care o modificați. Acest câmp este doar pentru citire, deoarece "
+"lucrați cu zona selectată curent."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_department_add_def_acc_grs__acc_gr
@@ -10783,6 +10964,9 @@ msgid ""
 " as the default for new employees. Existing employees without access groups "
 "will also receive this group."
 msgstr ""
+"Acest grup de acces va fi adăugat la grupurile disponibile ale "
+"departamentului ȘI setat ca implicit pentru angajații noi. Angajații "
+"existenți fără grupuri de acces vor primi și ei acest grup."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_form_view
@@ -10790,6 +10974,8 @@ msgid ""
 "This alarm is currently ARMED and monitoring for intrusions. Click to DISARM"
 " and temporarily disable monitoring."
 msgstr ""
+"Această alarmă este în prezent ARMATĂ și monitorizează pentru intruziuni. "
+"Faceți clic pentru a DEZARMA și a dezactiva temporar monitorizarea."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_form_view
@@ -10797,6 +10983,8 @@ msgid ""
 "This alarm is currently DISARMED and not monitoring. Click to ARM and start "
 "monitoring for intrusions."
 msgstr ""
+"Această alarmă este în prezent DEZARMATĂ și nu monitorizează. Faceți clic "
+"pentru a ARMA și a începe monitorizarea pentru intruziuni."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_wizard__acc_gr_doors
@@ -10804,6 +10992,8 @@ msgid ""
 "This field stores the current doors in the access group, used internally to "
 "filter available doors."
 msgstr ""
+"Acest câmp stochează ușile curente din grupul de acces, utilizat intern "
+"pentru filtrarea ușilor disponibile."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_replace_wiz_view_form
@@ -10811,6 +11001,8 @@ msgid ""
 "This function will move controllers from one module to another. The source module will be\n"
 "                            disabled.The Destination module will be Enabled. We suggest to make both modules inactive!"
 msgstr ""
+"Această funcție va muta controlerele de la un modul la altul. Modulul sursă va fi\n"
+"                            dezactivat. Modulul destinație va fi activat. Vă sugerăm să dezactivați ambele module!"
 
 #. module: hr_rfid
 #. odoo-python
@@ -10819,12 +11011,14 @@ msgid ""
 "This is a automatic Todo activity based on communication statistics with the"
 " module."
 msgstr ""
+"Aceasta este o activitate de tip Sarcină automată bazată pe statisticile de "
+"comunicare cu modulul."
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack_discovery.py:0
 msgid "This serial number already exist in the system!"
-msgstr ""
+msgstr "Acest număr de serie există deja în sistem!"
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_ctrl_th_action
@@ -10833,6 +11027,9 @@ msgid ""
 "                    You can monitor current readings and configure logging settings for each sensor.\n"
 "                    Sensors are automatically detected when connected to compatible RFID controllers."
 msgstr ""
+"Această vizualizare afișează senzorii de temperatură și umiditate conectați la controlerele RFID.\n"
+"                    Puteți monitoriza citirile curente și configura setările de înregistrare pentru fiecare senzor.\n"
+"                    Senzorii sunt detectați automat când sunt conectați la controlere RFID compatibile."
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_acc_gr_contact_rel_action
@@ -10841,6 +11038,9 @@ msgid ""
 "                    Access groups control which doors contacts can access and when.\n"
 "                    Assignments can have activation dates, expiration dates, and visit counters for limited access."
 msgstr ""
+"Această vizualizare afișează toate atribuirile de contacte (vizitatori/contractori) la grupurile de acces RFID.\n"
+"                    Grupurile de acces controlează la ce uși pot accesa contactele și când.\n"
+"                    Atribuirile pot avea date de activare, date de expirare și contoare de vizite pentru acces limitat."
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_acc_gr_employee_rel_action
@@ -10881,8 +11081,8 @@ msgstr ""
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_emergency_group.py:0
 msgid "This will take time. For more information check controller's commands"
 msgstr ""
-"Aceasta va dura ceva timp. Pentru mai multe informații verificați comenzile "
-"controlerului."
+"Aceasta va dura. Pentru mai multe informații verificați comenzile "
+"controlerului"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__mode_selection_4__3
@@ -10953,7 +11153,7 @@ msgstr "Asistent linie program de timp"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "Time Schedule number  %(ts)d not in range from 1 to %(to)d"
-msgstr "Time Schedule number  %(ts)d not in range from 1 to %(to)d"
+msgstr "Numărul orarului %(ts)d nu este în intervalul de la 1 la %(to)d"
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_time_schedule_action
@@ -10992,8 +11192,8 @@ msgstr "Date program de timp pentru"
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
 msgid "Time schedule does not match for door \"%s\" in access groups \"%s\" and \"%s\""
 msgstr ""
-"Programul de timp nu corespunde pentru ușa \"%s\" în grupurile de acces "
-"\"%s\" și \"%s\""
+"Orarul nu se potrivește pentru ușa „%s\" în grupurile de acces „%s\" și "
+"„%s\""
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_output_ts__time_schedule_id
@@ -11052,7 +11252,7 @@ msgstr "Pentru a configura un modul, urmați acești pași:"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Todo Check communication or contact with support team"
-msgstr "De făcut: Verificați comunicarea sau contactați echipa de asistență"
+msgstr "Sarcină: Verificați comunicarea sau contactați echipa de suport"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_res_partner__partner_event_count
@@ -11161,12 +11361,12 @@ msgstr "Marți"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Turn off the siren"
-msgstr "Opriți sirena"
+msgstr "Oprire sirenă"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Turn on the siren"
-msgstr "Porniți sirena"
+msgstr "Pornire sirenă"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__9
@@ -11228,7 +11428,7 @@ msgstr "Indisponibil"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Unexpected communication error:\n"
-msgstr "Eroare de comunicare neașteptată:\n"
+msgstr "Eroare neașteptată de comunicare:\n"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__serial
@@ -11305,7 +11505,7 @@ msgstr "Plăcuță necunoscută"
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
 msgid "Unknown event. Please contact with your support!"
-msgstr "Eveniment necunoscut. Vă rugăm să contactați asistența!"
+msgstr "Eveniment necunoscut. Vă rugăm să contactați echipa de suport!"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.card_barcode_report_template_foldable_badge
@@ -11315,17 +11515,17 @@ msgstr "Nelimitat"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Unlock the door"
-msgstr "Deblocați ușa"
+msgstr "Deblocare ușă"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Unlocked"
-msgstr "Deblocat"
+msgstr "Deblocată"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
 msgid "Up and running"
-msgstr "Operațional"
+msgstr "Funcțional"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_form
@@ -11398,7 +11598,7 @@ msgstr "Evenimente utilizator"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "User Events on {}"
-msgstr "Evenimente utilizator la {}"
+msgstr "Evenimente utilizator pe {}"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__user_action
@@ -11452,19 +11652,19 @@ msgstr "Utilizatori"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "Valid High Temperature range is -55 .. 125 ℃"
-msgstr "Intervalul valid pentru temperatură ridicată este -55 .. 125 ℃"
+msgstr "Intervalul valid pentru temperatura maximă este -55 .. 125 ℃"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "Valid Low Temperature range is -55 .. 125 ℃"
-msgstr "Intervalul valid pentru temperatură scăzută este -55 .. 125 ℃"
+msgstr "Intervalul valid pentru temperatura minimă este -55 .. 125 ℃"
 
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "Valid Low Temperature range is 0.5 .. 9 ℃"
-msgstr "Intervalul valid pentru temperatură scăzută este 0,5 .. 9 ℃"
+msgstr "Intervalul valid pentru temperatura minimă este 0,5 .. 9 ℃"
 
 #. module: hr_rfid
 #. odoo-python
@@ -11522,6 +11722,11 @@ msgstr "Versiune"
 #: model:res.groups,name:hr_rfid.hr_rfid_view_module_discovery
 msgid "View Module Discovery"
 msgstr "Vizualizați descoperirea modulului"
+
+#. module: hr_rfid
+#: model:onboarding.onboarding.step,button_text:hr_rfid.onboarding_step_scan_controllers
+msgid "View Modules"
+msgstr "Vizualizare module"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_form_view
@@ -11679,7 +11884,7 @@ msgstr "Rânduri descoperire Webstack"
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Webstack gave us bad data when requesting /config.json"
-msgstr "Webstack a furnizat date incorecte la solicitarea /config.json"
+msgstr "Webstack-ul ne-a furnizat date invalide la solicitarea /config.json"
 
 #. module: hr_rfid
 #. odoo-python
@@ -11688,7 +11893,7 @@ msgid ""
 "Webstack sent us error {}({}) \n"
 " while requesting device list"
 msgstr ""
-"Webstack a trimis eroarea {}({}) \n"
+"Webstack-ul ne-a trimis eroare {}({}) \n"
 " la solicitarea listei de dispozitive"
 
 #. module: hr_rfid
@@ -11698,7 +11903,7 @@ msgid ""
 "Webstack sent us error {}({}) \n"
 " while requesting information for controller {}"
 msgstr ""
-"Webstack a trimis eroarea {}({}) \n"
+"Webstack-ul ne-a trimis eroare {}({}) \n"
 " la solicitarea informațiilor pentru controlerul {}"
 
 #. module: hr_rfid
@@ -11813,7 +12018,7 @@ msgid ""
 msgstr ""
 "La încercarea de repornire a modulului \n"
 "\n"
-"                                                           a apărut eroarea {response.reason}({response.status_code}) cu corpul:\n"
+"                                                           eroare returnată {response.reason}({response.status_code}) cu conținut:\n"
 
 #. module: hr_rfid
 #. odoo-python
@@ -11825,7 +12030,7 @@ msgid ""
 msgstr ""
 "La încercarea de repornire a modulului \n"
 "\n"
-"                                                       a apărut eroarea {response.reason}({response.status_code}) cu corpul:\n"
+"                                                       eroare returnată {response.reason}({response.status_code}) cu conținut:\n"
 
 #. module: hr_rfid
 #. odoo-python
@@ -11834,7 +12039,8 @@ msgid ""
 "While trying to send the command to the module, it returned code {} with "
 "body:\n"
 msgstr ""
-"La trimiterea comenzii la modul, acesta a returnat codul {} cu corpul:\n"
+"La încercarea de trimitere a comenzii către modul, a returnat codul {} cu "
+"conținut:\n"
 
 #. module: hr_rfid
 #. odoo-python
@@ -11844,9 +12050,9 @@ msgid ""
 "\n"
 "                                                 error returned {reason}({code}) with body:\n"
 msgstr ""
-"La configurarea /protect/config.htm a modulului\n"
+"La încercarea de configurare /protect/config.htm a modulului\n"
 "\n"
-"                                                 a apărut eroarea {reason}({code}) cu corpul:\n"
+"                                                 eroare returnată {reason}({code}) cu conținut:\n"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_form
@@ -11863,13 +12069,13 @@ msgstr "Cine: %s"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_card__card_input_type__w34s
 #: model:ir.model.fields.selection,name:hr_rfid.selection__res_company__card_input_type__w34s
 msgid "Wiegand 34 bit (10d)"
-msgstr "Wiegand 34 bit (10d)"
+msgstr "Wiegand 34 biți (10d)"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_card__card_input_type__w34
 #: model:ir.model.fields.selection,name:hr_rfid.selection__res_company__card_input_type__w34
 msgid "Wiegand 34 bit (5d+5d)"
-msgstr "Wiegand 34 bit (5d+5d)"
+msgstr "Wiegand 34 biți (5d+5d)"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_webstack_replace_wiz
@@ -11980,6 +12186,12 @@ msgid "You can not change the reader mode to this value!"
 msgstr "Nu puteți schimba modul cititorului la această valoare!"
 
 #. module: hr_rfid
+#. odoo-javascript
+#: code:addons/hr_rfid/static/src/components/onboarding/onboarding.xml:0
+msgid "Your RFID system is ready!"
+msgstr "Sistemul dumneavoastră RFID este pregătit!"
+
+#. module: hr_rfid
 #: model:mail.template,name:hr_rfid.card_barcode_mail_template_badge
 msgid "Your access control barcode badge"
 msgstr "Legitimația dvs. cu cod de bare pentru control acces"
@@ -11991,8 +12203,8 @@ msgid ""
 "Your current setup not permit this operation. You need to do it manually.\n"
 " Please call your support team for more information!"
 msgstr ""
-"Configurarea dvs. curentă nu permite această operațiune. Trebuie să o efectuați manual.\n"
-" Vă rugăm să contactați echipa de asistență pentru mai multe informații!"
+"Configurația dumneavoastră curentă nu permite această operațiune. Trebuie să o faceți manual.\n"
+" Vă rugăm să contactați echipa de suport pentru mai multe informații!"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_zone
@@ -12088,7 +12300,7 @@ msgstr "admin"
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
 msgid "alarm line(s)"
-msgstr "linie(i) de alarmă"
+msgstr "linie/linii de alarmă"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.card_barcode_report_template_foldable_badge
@@ -12147,6 +12359,12 @@ msgstr "după cititor"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_log_search_view
 msgid "by Sensor"
 msgstr "după senzor"
+
+#. module: hr_rfid
+#. odoo-javascript
+#: code:addons/hr_rfid/static/src/components/onboarding/onboarding.xml:0
+msgid "confetti"
+msgstr "confetti"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban

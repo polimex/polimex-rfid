@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-05 16:23+0000\n"
-"PO-Revision-Date: 2026-03-06 17:16\n"
+"POT-Creation-Date: 2026-03-23 11:19+0000\n"
+"PO-Revision-Date: 2026-03-23 20:54\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it\n"
@@ -57,6 +57,7 @@ msgstr "URL Portale Cliente"
 
 #. module: hr_rfid_portal
 #: model:ir.model.fields,field_description:hr_rfid_portal.field_hr_rfid_card__display_name
+#: model:ir.model.fields,field_description:hr_rfid_portal.field_ir_actions_report__display_name
 msgid "Display Name"
 msgstr "Nome Visualizzato"
 
@@ -77,13 +78,14 @@ msgstr "Eventi"
 
 #. module: hr_rfid_portal
 #: model:ir.model.fields,field_description:hr_rfid_portal.field_hr_rfid_card__id
+#: model:ir.model.fields,field_description:hr_rfid_portal.field_ir_actions_report__id
 msgid "ID"
 msgstr "ID"
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_barcode_table
 msgid "Link"
-msgstr "Link"
+msgstr "Collegamento"
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_my_barcode
@@ -126,6 +128,11 @@ msgid "Reference"
 msgstr "Riferimento"
 
 #. module: hr_rfid_portal
+#: model:ir.model,name:hr_rfid_portal.model_ir_actions_report
+msgid "Report Action"
+msgstr "Azione resoconto"
+
+#. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_my_home_hr_rfid
 msgid "Review all Events generated from you"
 msgstr "Visualizza tutti gli Eventi generati da te"
@@ -152,18 +159,18 @@ msgid ""
 "The card cannot be shared with the recipient(s) because the type is not "
 "Barcode."
 msgstr ""
-"La tessera non può essere condivisa con il/i destinatario/i perché il tipo "
-"non è Barcode."
-
-#. module: hr_rfid_portal
-#: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_barcode_table
-msgid "There haven't Web Cards in your account."
-msgstr "Non ci sono Web Card nel tuo account."
+"La scheda non può essere condivisa con il/i destinatario/i perché il tipo "
+"non è Codice a barre."
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_user_event_table
-msgid "There haven't events generated from you."
-msgstr "Non ci sono eventi generati da te."
+msgid "There are currently no events for your account."
+msgstr "Al momento non ci sono eventi per il tuo account."
+
+#. module: hr_rfid_portal
+#: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_barcode_table
+msgid "There are currently no web cards for your account."
+msgstr "Al momento non ci sono web card per il tuo account."
 
 #. module: hr_rfid_portal
 #: model_terms:ir.ui.view,arch_db:hr_rfid_portal.portal_layout
@@ -209,7 +216,7 @@ msgstr "Quando"
 #. odoo-python
 #: code:addons/hr_rfid_portal/models/hr_rfid_card.py:0
 msgid "You cannot %s %s fields in card."
-msgstr "Non è possibile %s i campi %s nella tessera."
+msgstr "Non è possibile %s %s campi nella scheda."
 
 #. module: hr_rfid_portal
 #. odoo-python

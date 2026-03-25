@@ -95,19 +95,19 @@
                             </group>
 
                             <!-- Warnings: source module installed but not in target -->
-                            <div class="alert alert-warning"
+                            <div class="alert alert-warning" role="alert"
                                  invisible="not source_has_vending or target_has_vending">
                                 <i class="fa fa-exclamation-triangle"/> Module <strong>hr_rfid_vending</strong> is installed on source but NOT on target. Install it to import vending data.
                             </div>
-                            <div class="alert alert-warning"
+                            <div class="alert alert-warning" role="alert"
                                  invisible="not source_has_attendance or target_has_attendance">
                                 <i class="fa fa-exclamation-triangle"/> Module <strong>hr_attendance_multi_rfid</strong> is installed on source but NOT on target. Install it to import attendance data.
                             </div>
-                            <div class="alert alert-warning"
+                            <div class="alert alert-warning" role="alert"
                                  invisible="not source_has_attendance_late or target_has_attendance_late">
                                 <i class="fa fa-exclamation-triangle"/> Module <strong>hr_attendance_late</strong> is installed on source but NOT on target. Install it to import attendance extra data.
                             </div>
-                            <div class="alert alert-warning"
+                            <div class="alert alert-warning" role="alert"
                                  invisible="not source_has_service or target_has_service">
                                 <i class="fa fa-exclamation-triangle"/> Module <strong>rfid_service_base</strong> is installed on source but NOT on target. Install it to import service data.
                             </div>
