@@ -610,7 +610,16 @@ class WebRfidController(http.Controller):
         return post
 
     def _make_response(self, result):
-        """Wrap result in JSON-RPC 2.0 for ESP32 modules, plain JSON for legacy."""
+        """Wrap result in JSON-RPC 2.0 for ESP32 modules, plain JSON for legacy.
+
+        Legacy modules (10.3) expect:
+        - Empty body when no command to send (just status 200)
+        - Only {"cmd":{...}} without "status" key when sending a command
+          (firmware JSON parser checks tokens[2] for cmd object/array,
+           "status" field shifts token positions and causes error 21)
+
+        ESP32 modules (100.1) expect standard JSON-RPC 2.0 wrapper.
+        """
         if isinstance(result, Response):
             return result
         if getattr(self, '_is_jsonrpc', False):
@@ -622,6 +631,13 @@ class WebRfidController(http.Controller):
                 }),
                 content_type='application/json; charset=utf-8',
             )
+        # Legacy module (10.3): strip "status" key from response
+        if isinstance(result, dict):
+            if 'cmd' in result:
+                body = json.dumps({k: v for k, v in result.items() if k != 'status'})
+            else:
+                return Response('', status=200)
+            return Response(body, content_type='application/json; charset=utf-8')
         return result
 
     @http.route(['/hr/rfid/event'], type='json2', auth='none', methods=['POST'], cors='*', csrf=False,

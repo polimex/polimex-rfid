@@ -889,7 +889,7 @@ class HrRfidWebstack(models.Model):
 
         if len(command) == 0:
             controller.report_sys_ev(_('Controller sent us a response to a command we never sent'))
-            return not direct_cmd and self.check_for_unsent_cmd(200)
+            return {'status': 200}
 
         # controller not response!
         if response['e'] != 0:
