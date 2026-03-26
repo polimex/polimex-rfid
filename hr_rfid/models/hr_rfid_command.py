@@ -365,7 +365,7 @@ class HrRfidCommands(models.Model):
         for c in self.filtered(lambda cmd: cmd.status in ['Failure', 'Process']):
             c.write({
                 'status': 'Wait',
-                'retries': c.retries + 1,
+                'retries': 0,
                 'response': None,
                 'error': 0,
             })
@@ -531,7 +531,7 @@ class HrRfidCommands(models.Model):
         ])
 
         if not old_cmd:
-            self.env.create_d1_cmd_relay(ctrl.webstack_id.id, ctrl_id, card_number, rights_data, rights_mask)
+            self._create_d1_cmd_relay(ctrl.webstack_id.id, ctrl_id, card_number, rights_data, rights_mask)
         else:
             if ctrl.mode == 3:
                 new_rights_data = rights_data

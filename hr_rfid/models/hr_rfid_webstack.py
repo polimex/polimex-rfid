@@ -756,7 +756,7 @@ class HrRfidWebstack(models.Model):
         return self.get_ws_time(post_data).strftime('%Y-%m-%d %H:%M:%S')
 
     def _retry_command(self, status_code, cmd, event=None):
-        if cmd.retries == 5:
+        if cmd.retries >= 5:
             cmd.status = 'Failure'
             return self.check_for_unsent_cmd(status_code, event)
 
@@ -1115,3 +1115,172 @@ class HrRfidWebstack(models.Model):
                 controller._update_output_state(out_num, out_state)
 
         return not direct_cmd and self.check_for_unsent_cmd(200)
+
+    # ================================================================
+    # Demo data generation
+    # ================================================================
+
+    @api.model
+    def _generate_demo_data(self):
+        """Generate 60 working days of RFID events and configure time schedules.
+
+        Called via <function> tag in demo XML during module installation.
+        Follows the Odoo 19 hr_attendance._load_demo_data() pattern.
+        """
+        from random import randint, random as rand
+
+        company = self.env.company
+
+        # --- Time Schedule Setup ---
+        ts_env = self.env['hr.rfid.time.schedule'].sudo()
+        ts_configs = {
+            1: ('Working Hours', '08001800000000000000000000000000' * 5 + '00000000000000000000000000000000' * 3),
+            2: ('24/7 Access', '00002359000000000000000000000000' * 8),
+            3: ('Extended Hours', '06002200000000000000000000000000' * 5 + '00000000000000000000000000000000' * 3),
+            4: ('Visitor Hours', '09001700000000000000000000000000' * 5 + '00000000000000000000000000000000' * 3),
+        }
+        for number, (name, data) in ts_configs.items():
+            ts = ts_env.search([('number', '=', number), ('company_id', '=', company.id)], limit=1)
+            if ts:
+                ts.write({'name': name, 'ts_data': '%02X' % number + data})
+
+        # --- Resolve demo references ---
+        def ref(xmlid):
+            return self.env.ref(xmlid, raise_if_not_found=False)
+
+        # (card_xmlid, reader_in_xmlid, reader_out_xmlid, [extra_reader_xmlids])
+        card_defs = [
+            ('hr_rfid.demo_card_1', 'hr_rfid.demo_ctrl_icon110_R1', 'hr_rfid.demo_ctrl_icon110_R2',
+             ['hr_rfid.demo_ctrl_icon115_R1', 'hr_rfid.demo_ctrl_icon50_R1']),
+            ('hr_rfid.demo_card_qdp', 'hr_rfid.demo_ctrl_icon110_R1', 'hr_rfid.demo_ctrl_icon110_R2',
+             ['hr_rfid.demo_ctrl_icon115_R1', 'hr_rfid.demo_ctrl_relay_R1']),
+            ('hr_rfid.demo_card_al', 'hr_rfid.demo_ctrl_icon110_R1', 'hr_rfid.demo_ctrl_icon110_R2',
+             []),
+            ('hr_rfid.demo_card_lur', 'hr_rfid.demo_ctrl_icon110_R1', 'hr_rfid.demo_ctrl_icon110_R2',
+             ['hr_rfid.demo_ctrl_icon130_R1']),
+            ('hr_rfid.demo_card_mit', 'hr_rfid.demo_ctrl_icon110_R1', 'hr_rfid.demo_ctrl_icon110_R2',
+             ['hr_rfid.demo_ctrl_icon130_R2']),
+        ]
+
+        cards = []
+        for card_ref, rin_ref, rout_ref, extra_refs in card_defs:
+            card = ref(card_ref)
+            rin = ref(rin_ref)
+            rout = ref(rout_ref)
+            if not (card and rin and rout):
+                continue
+            extras = [r for r in (ref(e) for e in extra_refs) if r]
+            cards.append({
+                'card_id': card.id,
+                'employee_id': card.employee_id.id or False,
+                'contact_id': card.contact_id.id or False,
+                'reader_in': rin,
+                'reader_out': rout,
+                'extras': extras,
+            })
+
+        # --- Generate User Events (60 working days) ---
+        now = datetime.now()
+        event_vals = []
+
+        for day_offset in range(1, 85):
+            day = now - timedelta(days=day_offset)
+            if day.weekday() >= 5:
+                continue
+
+            for c in cards:
+                # Morning IN: base 08:00, ±10 min normal, 15% late (10-45 min)
+                base_min = randint(-10, 5)
+                if rand() < 0.15:
+                    base_min = randint(10, 45)
+                check_in = day.replace(hour=8, minute=0, second=randint(0, 59), microsecond=0) + timedelta(minutes=base_min)
+
+                # Action: 88% granted, 4% denied, 4% TS denied, 4% APB denied
+                r = rand()
+                action = '1' if r >= 0.12 else ('2' if r < 0.04 else ('3' if r < 0.08 else '4'))
+
+                rin = c['reader_in']
+                event_vals.append({
+                    'card_id': c['card_id'],
+                    'employee_id': c['employee_id'],
+                    'contact_id': c['contact_id'],
+                    'reader_id': rin.id,
+                    'door_id': rin.door_id.id,
+                    'ctrl_addr': rin.controller_id.ctrl_id,
+                    'event_action': action,
+                    'event_time': check_in,
+                })
+
+                if action == '1':
+                    # Evening OUT: 17:00-17:15, 10% overtime (+30-120 min)
+                    overtime = randint(30, 120) if rand() < 0.10 else 0
+                    check_out = day.replace(hour=17, minute=randint(0, 15), second=randint(0, 59), microsecond=0) + timedelta(minutes=overtime)
+                    rout = c['reader_out']
+                    event_vals.append({
+                        'card_id': c['card_id'],
+                        'employee_id': c['employee_id'],
+                        'contact_id': c['contact_id'],
+                        'reader_id': rout.id,
+                        'door_id': rout.door_id.id,
+                        'ctrl_addr': rout.controller_id.ctrl_id,
+                        'event_action': '1',
+                        'event_time': check_out,
+                    })
+
+                    # Extra events on secondary doors (40% per door)
+                    for extra_r in c['extras']:
+                        if rand() < 0.4:
+                            extra_time = check_in + timedelta(hours=randint(1, 6), minutes=randint(0, 59))
+                            event_vals.append({
+                                'card_id': c['card_id'],
+                                'employee_id': c['employee_id'],
+                                'contact_id': c['contact_id'],
+                                'reader_id': extra_r.id,
+                                'door_id': extra_r.door_id.id,
+                                'ctrl_addr': extra_r.controller_id.ctrl_id,
+                                'event_action': '1',
+                                'event_time': extra_time,
+                            })
+
+        # --- Generate System Events ---
+        sys_vals = []
+        ws = ref('hr_rfid.demo_module')
+        sys_defs = [
+            (ref('hr_rfid.demo_ctrl_icon115'), ref('hr_rfid.demo_ctrl_icon115_D1'), '25', 'Door held open > 30s'),
+            (ref('hr_rfid.demo_ctrl_icon50'), ref('hr_rfid.demo_ctrl_icon50_D1'), '26', 'Door forced open'),
+            (ref('hr_rfid.demo_ctrl_icon130'), None, '30', 'Controller power cycle'),
+        ]
+        ctrl_temp = ref('hr_rfid.demo_ctrl_temperature')
+
+        if ws:
+            for week in range(9):
+                ts = now - timedelta(days=week * 7 + randint(1, 5))
+                ts = ts.replace(hour=randint(8, 17), minute=randint(0, 59), second=0, microsecond=0)
+                ctrl, door, act, desc = sys_defs[week % len(sys_defs)]
+                if ctrl:
+                    val = {
+                        'event_action': act, 'webstack_id': ws.id,
+                        'controller_id': ctrl.id, 'error_description': desc, 'timestamp': ts,
+                    }
+                    if door:
+                        val['door_id'] = door.id
+                    sys_vals.append(val)
+
+            if ctrl_temp:
+                for _ in range(5):
+                    ts = now - timedelta(days=randint(5, 60))
+                    ts = ts.replace(hour=randint(12, 17), minute=randint(0, 59), second=0, microsecond=0)
+                    sys_vals.append({
+                        'event_action': '51', 'webstack_id': ws.id,
+                        'controller_id': ctrl_temp.id,
+                        'error_description': 'Temperature exceeded threshold: %.1f C' % (26 + rand() * 8),
+                        'timestamp': ts,
+                    })
+
+        # --- Bulk create ---
+        if event_vals:
+            self.env['hr.rfid.event.user'].sudo().with_context(demo_bulk_create=True).create(event_vals)
+            _logger.info('Generated %d demo RFID user events', len(event_vals))
+        if sys_vals:
+            self.env['hr.rfid.event.system'].sudo().create(sys_vals)
+            _logger.info('Generated %d demo RFID system events', len(sys_vals))
