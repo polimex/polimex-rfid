@@ -1,4 +1,8 @@
+import logging
+
 from odoo import api, models
+
+_logger = logging.getLogger(__name__)
 
 
 class OnboardingOnboarding(models.Model):
@@ -36,7 +40,18 @@ class OnboardingOnboarding(models.Model):
         onboarding = self.search([('route_name', '=', 'hr_rfid_setup')], limit=1)
         if not onboarding:
             return {'closed': True}
-        onboarding._search_or_create_progress()
+        # Use a savepoint to handle concurrent progress creation gracefully.
+        # When multiple browser tabs or requests load the RFID dashboard
+        # simultaneously, _search_or_create_progress can raise a
+        # UniqueViolation on the onboarding_progress_onboarding_company_uniq
+        # constraint. The savepoint allows us to roll back only the failed
+        # INSERT while keeping the rest of the transaction intact.
+        try:
+            with self.env.cr.savepoint():
+                onboarding._search_or_create_progress()
+        except Exception:
+            _logger.debug("Concurrent onboarding progress creation, re-reading existing record.")
+            onboarding.invalidate_recordset()
         if onboarding.is_onboarding_closed or onboarding.current_onboarding_state == 'done':
             return {'closed': True}
         values = onboarding._prepare_rendering_values()
