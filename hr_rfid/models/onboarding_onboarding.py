@@ -49,12 +49,13 @@ class OnboardingOnboarding(models.Model):
         try:
             with self.env.cr.savepoint():
                 onboarding._search_or_create_progress()
+                if onboarding.is_onboarding_closed or onboarding.current_onboarding_state == 'done':
+                    return {'closed': True}
+                values = onboarding._prepare_rendering_values()
         except Exception:
             _logger.debug("Concurrent onboarding progress creation, re-reading existing record.")
             onboarding.invalidate_recordset()
-        if onboarding.is_onboarding_closed or onboarding.current_onboarding_state == 'done':
             return {'closed': True}
-        values = onboarding._prepare_rendering_values()
         return {
             'closed': False,
             'onboarding_state': onboarding.current_onboarding_state,
