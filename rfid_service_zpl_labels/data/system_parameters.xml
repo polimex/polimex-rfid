@@ -3,13 +3,13 @@
     <data noupdate="1">
         <!-- Printer Connection Settings -->
         <!-- IP address of the Zebra label printer for wristband printing. Default port 9100 is standard for network printers. -->
-        <record id="rfid_label_printer_ip" model="ir.config_parameter">
+        <record id="rfid_label_printer_ip" model="ir.config_parameter" forcecreate="False">
             <field name="key">rfid.label.printer.ip</field>
             <field name="value">192.168.1.100</field>
         </record>
-        
+
         <!-- TCP port for the Zebra label printer connection. Standard port is 9100 for RAW printing. -->
-        <record id="rfid_label_printer_port" model="ir.config_parameter">
+        <record id="rfid_label_printer_port" model="ir.config_parameter" forcecreate="False">
             <field name="key">rfid.label.printer.port</field>
             <field name="value">9100</field>
         </record>
