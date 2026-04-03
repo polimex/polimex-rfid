@@ -1063,7 +1063,8 @@ class HrRfidCommands(models.Model):
                 self.controller_id.read_readers_mode_cmd()
             self.controller_id.read_io_table_cmd()
             self.controller_id.read_input_masks_cmd()
-            self.controller_id.read_outputs_ts_cmd()
+            if not self.controller_id.is_vending_ctrl():
+                self.controller_id.read_outputs_ts_cmd()
             self.controller_id.read_status()
 
         if self.controller_id.is_temperature_ctrl():
