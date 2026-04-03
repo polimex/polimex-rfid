@@ -901,8 +901,7 @@ class HrRfidWebstack(models.Model):
                 'ex_timestamp': fields.Datetime.now(),
                 'response': json.dumps(post_data),
             })
-            # Don't send next command on controller error - wait for next heartbeat
-            return {'status': 200}
+            return not direct_cmd and self.check_for_unsent_cmd(200)
 
         command.write({
             'status': 'Success',
