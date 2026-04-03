@@ -295,6 +295,11 @@ Contains technical details about the hardware communication."""
         self._check_save_comms(vals)
         return super(VendingEvents, self).write(vals)
 
+    # TODO: Replace this search() override with a proper ir.rule for group_customer.
+    #  The current approach filters in Python (slow, breaks on auth='none' routes).
+    #  Correct solution: add ir.rule on hr.rfid.vending.event that limits
+    #  group_customer to records where employee_id is set, similar to
+    #  hr_rfid_group_operator_vending_events_rule in security.xml.
     @api.model
     def search(self, *args, **kwargs):
         ret = super(VendingEvents, self).search(*args, **kwargs)
