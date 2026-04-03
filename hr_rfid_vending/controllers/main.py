@@ -244,7 +244,7 @@ class HrRfidVending(WebRfidController):
 
         try:
             if 'event' in post_data:
-                _logger.info('Received=' + str(post_data))
+                _logger.info('Received=%s', post_data)
                 ret = parse_event()
             else:
                 ret = ret_super()

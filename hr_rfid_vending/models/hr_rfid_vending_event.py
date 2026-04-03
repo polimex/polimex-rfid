@@ -304,7 +304,7 @@ Contains technical details about the hardware communication."""
     def search(self, *args, **kwargs):
         ret = super(VendingEvents, self).search(*args, **kwargs)
 
-        if type(ret) == type(self):
+        if isinstance(ret, type(self)):
             user = self.env.user
             if user:
                 has_customer = user.has_group('hr_rfid_vending.group_customer')
