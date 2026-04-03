@@ -301,11 +301,12 @@ Contains technical details about the hardware communication."""
 
         if type(ret) == type(self):
             user = self.env.user
-            has_customer = user.has_group('hr_rfid_vending.group_customer')
-            has_operator = user.has_group('hr_rfid_vending.group_operator')
+            if user:
+                has_customer = user.has_group('hr_rfid_vending.group_customer')
+                has_operator = user.has_group('hr_rfid_vending.group_operator')
 
-            if has_customer and not has_operator:
-                ret = ret.filtered(lambda a: a.employee_id)
+                if has_customer and not has_operator:
+                    ret = ret.filtered(lambda a: a.employee_id)
 
         return ret
 
