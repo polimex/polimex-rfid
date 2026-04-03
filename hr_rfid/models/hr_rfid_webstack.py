@@ -478,7 +478,7 @@ class HrRfidWebstack(models.Model):
                     _('Could not connect to the module. \n'
                       "Check if it is turned on or if it's on a different ip:\n") +
                     str(e))
-            except KeyError as __:
+            except KeyError:
                 raise exceptions.ValidationError(_('Information returned by the webstack at {} is invalid', host))
             except Exception as e:
                 raise exceptions.ValidationError(_('Unexpected communication error:\n') + str(e))
@@ -649,8 +649,8 @@ class HrRfidWebstack(models.Model):
                                                      + response.content.decode())
             _logger.info('Direct receiving %s' % str(result))
             return result
-        except requests.exceptions.ReadTimeout as __:
-            _logger.error(f'Timeout {str(__.args)}')
+        except requests.exceptions.ReadTimeout as e:
+            _logger.error('Timeout %s', e.args)
         # except json.decoder.JSONDecodeError as __:
         #     _logger.error(f'JSON decoder error {str(__.args)} in {}')
         except Exception as e:
