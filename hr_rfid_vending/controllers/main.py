@@ -221,6 +221,7 @@ class HrRfidVending(WebRfidController):
                 _logger.info('Vending ev47 purchase: card=%s item=%s price=%.2f',
                              event['card'], item_sold, purchase_money)
                 return ret_local_no_command(controller, ev)
+            # TODO Move into function "deal_with_err_evs"
             elif event['event_n'] in [48, 49]:
                 _logger.info('Vending ev%d error from %s', event['event_n'], controller.name)
                 controller.report_sys_ev('Vending machine sent us an error', event)
