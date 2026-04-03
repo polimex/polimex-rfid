@@ -10,7 +10,7 @@ class OnboardingOnboarding(models.Model):
 
     @api.model
     def action_close_panel_rfid_setup(self):
-        self.action_close_panel('hr_rfid.onboarding_rfid_setup')
+        self.sudo().action_close_panel('hr_rfid.onboarding_rfid_setup')
 
     def _prepare_rendering_values(self):
         """Auto-complete onboarding steps based on existing data."""
@@ -37,7 +37,7 @@ class OnboardingOnboarding(models.Model):
     @api.model
     def action_fetch_rfid_onboarding(self):
         """Fetch RFID onboarding step data for the frontend banner."""
-        onboarding = self.search([('route_name', '=', 'hr_rfid_setup')], limit=1)
+        onboarding = self.sudo().search([('route_name', '=', 'hr_rfid_setup')], limit=1)
         if not onboarding:
             return {'closed': True}
         # Use a savepoint to handle concurrent progress creation gracefully.

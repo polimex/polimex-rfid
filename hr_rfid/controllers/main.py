@@ -555,7 +555,7 @@ class WebRfidController(http.Controller):
         return cmd.send_command(200)
 
     @http.route(['/hr/rfid/barcode'], type='json2', auth='none', methods=['POST'], cors='*', csrf=False,
-                save_session=False, sitemap=False)
+                save_session=False, sitemap=False, readonly=False)
     def post_barcode(self, **post):
         """
         :param post: Dictionary of parameters sent in the POST request.
@@ -641,7 +641,7 @@ class WebRfidController(http.Controller):
         return result
 
     @http.route(['/hr/rfid/event'], type='json2', auth='none', methods=['POST'], cors='*', csrf=False,
-                save_session=False, sitemap=False)
+                save_session=False, sitemap=False, readonly=False)
     def post_event(self, **post):
         """
         This method handles the POST request to the '/hr/rfid/event' route. It processes the received data from the request and performs necessary actions based on the data.

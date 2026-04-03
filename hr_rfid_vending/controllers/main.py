@@ -18,7 +18,7 @@ _logger = logging.getLogger(__name__)
 class HrRfidVending(WebRfidController):
 
     @http.route(['/hr/rfid/event'], type='json2', auth='none', methods=['POST'], cors='*', csrf=False,
-                save_session=False, sitemap=False)
+                save_session=False, sitemap=False, readonly=False)
     def post_event(self, **post):
         post_data = self._decode_post(post)
 
