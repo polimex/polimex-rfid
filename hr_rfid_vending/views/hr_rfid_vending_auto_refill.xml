@@ -30,9 +30,13 @@
             <field name="model">hr.rfid.vending.auto.refill</field>
             <field name="arch" type="xml">
                 <form create="0" delete="0" edit="0">
-                    <group>
-                        <field name="create_date"/>
-                        <field name="auto_refill_total"/>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="create_date"/>
+                                <field name="auto_refill_total"/>
+                            </group>
+                        </group>
                         <field name="balance_history_ids">
                             <list create="0" delete="0" edit="0">
                                 <field name="employee_id"/>
@@ -40,7 +44,7 @@
                                 <field name="balance_result"/>
                             </list>
                         </field>
-                    </group>
+                    </sheet>
                 </form>
             </field>
         </record>

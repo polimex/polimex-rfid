@@ -31,6 +31,13 @@
             <field name="model">hr.rfid.vending.event</field>
             <field name="arch" type="xml">
                 <form create="0" delete="0" edit="0">
+                    <header>
+                        <button name="%(hr_rfid_vending.action_vending_event_reverse)d"
+                                string="Reverse" type="action"
+                                class="btn-primary"
+                                invisible="event_action != '47'"
+                                groups="hr_rfid_vending.group_operator"/>
+                    </header>
                     <sheet>
                         <group>
                             <group string="Where">
@@ -56,6 +63,7 @@
                             </group>
                         </group>
                     </sheet>
+                    <chatter/>
                 </form>
             </field>
         </record>
@@ -86,7 +94,7 @@
                     <field name="event_time"/>
                     <field name="employee_id"/>
                     <field name="card_id"/>
-                    <filter name="sale_events" string="Transaction events" domain="[('event_action','in',['47',50])]"/>
+                    <filter name="sale_events" string="Transaction events" domain="[('event_action','in',['47','50'])]"/>
                     <filter name="sale_employee_events" string="Employee Transaction Events"
                             domain="[('event_action','=','47'),('employee_id','!=',False)]"/>
                     <filter name="sale_non_employee_events" string="Non-Employee Transaction Events"

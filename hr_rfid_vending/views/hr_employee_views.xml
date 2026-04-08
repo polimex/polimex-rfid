@@ -37,18 +37,9 @@
             </field>
         </record>
 
-<!--        <record id="action_account_recurring_payment" model="ir.actions.act_window">-->
-<!--            <field name="name">Recurring Payment</field>-->
-<!--            <field name="type">ir.actions.act_window</field>-->
-<!--            <field name="res_model">recurring.payment</field>-->
-<!--            <field name="view_mode">list,form</field>-->
-<!--            <field name="view_id" ref="view_account_recurring_payment_tree"/>-->
-<!--        </record>-->
-
         <record id="hr_employee_vending_balance_change_action" model="ir.actions.act_window">
             <field name="name">Change vending balance</field>
             <field name="res_model">hr.employee.vending.balance.wiz</field>
-            <!--      <field name="view_type">form</field>-->
             <field name="view_mode">list,form</field>
             <field name="view_id" ref="hr_employee_vending_balance_change_form"/>
             <field name="binding_model_id" ref="model_hr_employee"/>
@@ -58,7 +49,6 @@
         <record id="hr_employee_vending_balance_set_action" model="ir.actions.act_window">
             <field name="name">Set vending balance</field>
             <field name="res_model">hr.employee.vending.balance.wiz</field>
-            <!--      <field name="view_type">form</field>-->
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_employee_vending_balance_set_form"/>
             <field name="binding_model_id" ref="model_hr_employee"/>
@@ -69,7 +59,6 @@
         <record id="hr_employee_vending_recharge_balance_set_action" model="ir.actions.act_window">
             <field name="name">Set recharge vending balance (self balance)</field>
             <field name="res_model">hr.employee.vending.balance.wiz</field>
-            <!--      <field name="view_type">form</field>-->
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_employee_vending_balance_set_form"/>
             <field name="binding_model_id" ref="model_hr_employee"/>
@@ -82,21 +71,19 @@
             <field name="model">hr.employee</field>
             <field name="inherit_id" ref="hr.view_employee_form"/>
             <field name="arch" type="xml">
-                <header position="inside">
+                <xpath expr="//div[@name='button_box']" position="inside">
                     <button name="%(hr_employee_vending_balance_change_action)d" id="hr_employee_vending_balance_btn"
-                            type="action" class="oe_stat_button" icon="fa-money" string="Add/Subtract from balance"
+                            type="action" class="oe_stat_button" icon="fa-money" string="Add/Subtract"
                             context="{'setting_balance':1}" groups="hr_rfid_vending.group_customer"
                             help="Add or remove balance to person's account"/>
                     <button name="%(hr_employee_vending_balance_set_action)d" id="hr_employee_vending_balance_fixed_btn"
-                            type="action" class="oe_stat_button" icon="fa-money" string="Set balance to"
+                            type="action" class="oe_stat_button" icon="fa-money" string="Set balance"
                             context="{'setting_balance':2}" groups="hr_rfid_vending.group_customer"
                             help="Set person's balance"/>
                     <button name="%(hr_employee_vending_recharge_balance_set_action)d" id="hr_employee_vending_own_balance_btn"
-                            type="action" class="oe_stat_button" icon="fa-money" string="Set private balance"
+                            type="action" class="oe_stat_button" icon="fa-money" string="Set private"
                             groups="hr_rfid_vending.group_customer"
-                            help="Set person's balance"/>
-                </header>
-                <xpath expr="//div[@name='button_box']" position="inside">
+                            help="Set person's private balance"/>
                     <button name="employee_vending_balance_history_action" id="hr_employee_vending_balance_history_btn"
                             type="object" class="oe_stat_button" icon="fa-list" string="Balance History"
                             groups="hr_rfid_vending.group_customer"

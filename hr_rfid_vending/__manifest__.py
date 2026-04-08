@@ -2,7 +2,7 @@
 # noinspection PyStatementEffect
 {
     'name': 'RFID Vending Control',
-    'version': '19.0.1.6.1',
+    'version': '19.0.1.7.0',
     'category': 'Vending',
     'summary': 'Manage EXECUTIVE based vending machines',
     'author': 'Polimex Dev Team',
@@ -24,6 +24,8 @@
         'views/hr_rfid_ctrl.xml',
         'views/hr_rfid_vending_auto_refill.xml',
         'views/hr_rfid_vending_balance_history.xml',
+        'wizards/vending_event_reverse_action.xml',
+        'wizards/vending_event_reverse_views.xml',
         'views/vending_event.xml',
         'views/vending_menus.xml',
         'views/digest_views.xml',

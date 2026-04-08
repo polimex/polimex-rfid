@@ -1,16 +1,13 @@
-# Translation of Odoo Server.
-# This file contains the translation of the following modules:
-# 	* hr_rfid_vending
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-05 16:24+0000\n"
-"PO-Revision-Date: 2026-03-06 20:22\n"
+"PO-Revision-Date: 2026-04-08 23:34\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: it\n"
+"Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -43,8 +40,8 @@ msgstr "Aggiungere o rimuovere saldo dall'account del dipendente"
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
-msgid "Add/Subtract from balance"
-msgstr "Aggiungi/Sottrai dal saldo"
+msgid "Add/Subtract"
+msgstr "Добавяне/Изваждане"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__more_json
@@ -101,35 +98,9 @@ msgid "Amount"
 msgstr "Importo"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_change
-msgid "Amount Changed"
-msgstr "Importo modificato"
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__value
 msgid "Amount Collected"
 msgstr "Importo raccolto"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_change
-msgid ""
-"Amount added to (+) or subtracted from (-) the employee's balance.\n"
-"        \n"
-"• Positive values: Money added (refills, manual top-ups, corrections)\n"
-"• Negative values: Money spent (purchases, manual deductions, corrections)\n"
-"• Source: Purchases, auto-refills, or manual adjustments\n"
-"• Tracking: Complete audit trail of all balance movements\n"
-"        \n"
-"This shows the actual change amount, not the resulting balance."
-msgstr ""
-"Importo aggiunto a (+) o sottratto da (-) il saldo del dipendente.\n"
-"        \n"
-"• Valori positivi: denaro aggiunto (ricariche, ricariche manuali, correzioni)\n"
-"• Valori negativi: denaro speso (acquisti, detrazioni manuali, correzioni)\n"
-"• Fonte: acquisti, ricariche automatiche o rettifiche manuali\n"
-"• Monitoraggio: registro di controllo completo di tutti i movimenti del saldo\n"
-"        \n"
-"Mostra l'importo effettivo della variazione, non il saldo risultante."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_spent_today
@@ -261,11 +232,6 @@ msgid "Attachment Count"
 msgstr "Numero allegati"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__in_or_out
-msgid "Attendance"
-msgstr "Presenze"
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__auto_refill_id
 msgid "Auto Refill Event"
 msgstr "Evento ricarica automatica"
@@ -274,6 +240,11 @@ msgstr "Evento ricarica automatica"
 #: model:ir.model,name:hr_rfid_vending.model_hr_rfid_vending_auto_refill
 msgid "Auto Refill Events"
 msgstr "Eventi ricarica automatica"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__create_date
+msgid "Auto Refill Time"
+msgstr "Час за автоматично зареждане"
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
@@ -352,6 +323,11 @@ msgid "Balance History"
 msgstr "Storico saldo"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__balance_history_ids
+msgid "Balance History Changes"
+msgstr "История на промените на баланса"
+
+#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
 msgid "Balance Increases"
 msgstr "Aumenti saldo"
@@ -362,16 +338,33 @@ msgid "Balance Limits"
 msgstr "Limiti saldo"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_change
+msgid "Balance change"
+msgstr "Промяна на баланса"
+
+#. module: hr_rfid_vending
 #: model:ir.model,name:hr_rfid_vending.model_hr_rfid_vending_balance_history
 msgid "Balance history for employees"
 msgstr "Storico saldo dei dipendenti"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_result
+msgid "Balance result"
+msgstr "Резултат на баланса"
+
+#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.ctrl_cash_collect_wizard_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_change_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_set_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.vending_event_reverse_form
 msgid "Cancel"
 msgstr "Annulla"
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/wizards/vending_event_reverse.py:0
+msgid "Cannot reverse a cash purchase (no employee)."
+msgstr "Не може да се сторнира касова покупка (няма служител)."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__card_id
@@ -530,6 +523,7 @@ msgstr "ID controller"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__create_uid
 msgid "Created by"
 msgstr "Creato da"
 
@@ -541,6 +535,7 @@ msgstr "Creato da"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__create_date
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__create_date
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__create_date
 msgid "Created on"
 msgstr "Creato il"
 
@@ -602,27 +597,6 @@ msgid "Date"
 msgstr "Data"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__create_date
-msgid ""
-"Date and time when this automatic refill was processed.\n"
-"        \n"
-"• Schedule: Based on company's auto-refill cron job settings\n"
-"• Frequency: Typically monthly, but configurable\n"
-"• Processing: Shows when the refill calculation and application occurred\n"
-"• Audit: Used for tracking refill schedule compliance\n"
-"        \n"
-"Shows exactly when employee balances were automatically updated."
-msgstr ""
-"Data e ora in cui è stata elaborata questa ricarica automatica.\n"
-"        \n"
-"• Pianificazione: basata sulle impostazioni del processo pianificato di ricarica automatica dell'azienda\n"
-"• Frequenza: generalmente mensile, ma configurabile\n"
-"• Elaborazione: indica quando è avvenuto il calcolo e l'applicazione della ricarica\n"
-"• Controllo: utilizzato per verificare la conformità alla pianificazione delle ricariche\n"
-"        \n"
-"Mostra esattamente quando i saldi dei dipendenti sono stati aggiornati automaticamente."
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__res_company__refill_interval_type__days
 msgid "Days"
 msgstr "Giorni"
@@ -638,18 +612,9 @@ msgid "Department"
 msgstr "Dipartimento"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__name
-msgid "Description"
-msgstr "Descrizione"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__name
-msgid ""
-"Description of the balance change - either the item purchased or the person "
-"responsible for manual changes."
-msgstr ""
-"Descrizione della variazione del saldo: l'articolo acquistato o il "
-"responsabile delle modifiche manuali."
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_form
+msgid "Details"
+msgstr "Детайли"
 
 #. module: hr_rfid_vending
 #: model:ir.model,name:hr_rfid_vending.model_digest_digest
@@ -668,6 +633,7 @@ msgstr "Riepilogo"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_product_template__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_res_company__display_name
 msgid "Display Name"
@@ -717,11 +683,6 @@ msgid "Employee"
 msgstr "Dipendente"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__balance_history_ids
-msgid "Employee Balance Changes"
-msgstr "Variazioni saldo dipendenti"
-
-#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
 msgid "Employee Transaction Events"
 msgstr "Eventi transazione dipendenti"
@@ -730,36 +691,6 @@ msgstr "Eventi transazione dipendenti"
 #: model:ir.model,name:hr_rfid_vending.model_hr_employee_vending_balance_wiz
 msgid "Employee balance setter"
 msgstr "Impostazione saldo dipendente"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__employee_id
-msgid ""
-"Employee whose vending balance was affected by this transaction. History is "
-"deleted when employee record is removed."
-msgstr ""
-"Dipendente il cui saldo vending è stato interessato da questa transazione. "
-"Lo storico viene eliminato quando il record del dipendente viene rimosso."
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_result
-msgid ""
-"Employee's total balance after this change was applied.\n"
-"        \n"
-"• Calculation: Previous balance + balance change = resulting balance\n"
-"• Snapshot: Shows exact balance at the time of this transaction\n"
-"• Audit: Useful for tracking balance progression over time\n"
-"• Verification: Can be used to verify balance calculations\n"
-"        \n"
-"This is the employee's balance immediately after this transaction."
-msgstr ""
-"Saldo totale del dipendente dopo l'applicazione di questa variazione.\n"
-"        \n"
-"• Calcolo: saldo precedente + variazione saldo = saldo risultante\n"
-"• Istantanea: mostra il saldo esatto al momento di questa transazione\n"
-"• Controllo: utile per monitorare l'andamento del saldo nel tempo\n"
-"• Verifica: può essere utilizzato per verificare i calcoli del saldo\n"
-"        \n"
-"Questo è il saldo del dipendente immediatamente dopo questa transazione."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__employee_ids
@@ -778,6 +709,8 @@ msgid "Error"
 msgstr "Errore"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__vending_event_id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__event_id
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_pivot
 msgid "Event"
 msgstr "Evento"
@@ -843,8 +776,8 @@ msgstr "Seguaci (Partner)"
 
 #. module: hr_rfid_vending
 #: model:ir.actions.server,name:hr_rfid_vending.hr_rfid_vending_employees_auto_refill_ir_actions_server
-msgid "HR RFID Vending: Employee balance auto-refill"
-msgstr "HR RFID Vending: Ricarica automatica saldo dipendenti"
+msgid "HR RFID Vending: Employees Auto Refill"
+msgstr "HR RFID Вендинг: Автоматично зареждане на служители"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__has_message
@@ -855,6 +788,16 @@ msgstr "Ha messaggi"
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__res_company__refill_interval_type__hours
 msgid "Hours"
 msgstr "Ore"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_result
+msgid "How much the balance was after the change"
+msgstr "Колко е бил балансът след промяната"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_change
+msgid "How much was deposited/withdrawn from the employee's balance"
+msgstr "Колко е било внесено/изтеглено от баланса на служителя"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_type
@@ -912,6 +855,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_product_template__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_res_company__id
 msgid "ID"
@@ -927,46 +871,6 @@ msgstr "Se selezionato, i nuovi messaggi richiedono attenzione."
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Se selezionato, alcuni messaggi presentano un errore di recapito."
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__in_or_out
-msgid ""
-"Indicates whether this RFID event was processed as attendance check-in or check-out.\n"
-"\n"
-"• Check In: Employee entered an attendance zone\n"
-"• Check Out: Employee left an attendance zone  \n"
-"• No Info: Event not processed for attendance (may be non-attendance zone or error)\n"
-"\n"
-"This field is automatically set when recalculating attendance from RFID events."
-msgstr ""
-"Indica se questo evento RFID è stato elaborato come entrata o uscita per le presenze.\n"
-"\n"
-"• Entrata: il dipendente è entrato in una zona presenze\n"
-"• Uscita: il dipendente ha lasciato una zona presenze  \n"
-"• Nessuna info: evento non elaborato per le presenze (potrebbe essere una zona non presenze o un errore)\n"
-"\n"
-"Questo campo viene impostato automaticamente durante il ricalcolo delle presenze dagli eventi RFID."
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__balance_history_ids
-msgid ""
-"Individual balance changes made to each employee during this auto-refill event.\n"
-"        \n"
-"• Detail view: Shows exactly which employees received refills and how much\n"
-"• Audit trail: Complete record of who received money and when\n"
-"• Verification: Allows checking individual refill calculations\n"
-"• Troubleshooting: Helps identify any refill processing issues\n"
-"\n"
-"Each record shows one employee's balance change in this refill cycle."
-msgstr ""
-"Variazioni di saldo individuali apportate a ciascun dipendente durante questo evento di ricarica automatica.\n"
-"        \n"
-"• Vista dettaglio: mostra esattamente quali dipendenti hanno ricevuto le ricariche e per quale importo\n"
-"• Registro di controllo: registro completo di chi ha ricevuto denaro e quando\n"
-"• Verifica: consente di controllare i calcoli delle singole ricariche\n"
-"• Risoluzione problemi: aiuta a identificare eventuali problemi di elaborazione delle ricariche\n"
-"\n"
-"Ciascun record mostra la variazione del saldo di un singolo dipendente in questo ciclo di ricarica."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_res_company__refill_interval_type
@@ -992,6 +896,7 @@ msgid "Item Slot Number"
 msgstr "Numero slot articolo"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__item_id
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
 msgid "Item Sold"
@@ -1058,6 +963,7 @@ msgstr "Ultime 24 ore"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__write_uid
 msgid "Last Updated by"
 msgstr "Ultimo aggiornamento di"
 
@@ -1070,6 +976,7 @@ msgstr "Ultimo aggiornamento di"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__write_date
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__write_date
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__write_date
 msgid "Last Updated on"
 msgstr "Ultimo aggiornamento il"
 
@@ -1198,6 +1105,7 @@ msgstr ""
 "Questo valore viene letto dalle impostazioni hardware del distributore automatico."
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__name
 msgid "Name"
 msgstr "Nome"
@@ -1253,6 +1161,12 @@ msgid "Number of messages with delivery error"
 msgstr "Numero di messaggi con errore di recapito"
 
 #. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/wizards/vending_event_reverse.py:0
+msgid "Only purchase events can be reversed."
+msgstr "Могат да се сторнират само събития от тип покупка."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__input_js
 msgid ""
 "Original JSON data received from the vending machine hardware.\n"
@@ -1274,10 +1188,19 @@ msgstr ""
 "Contiene dettagli tecnici sulle comunicazioni hardware."
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__person_responsible
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
 msgid "Person Responsible"
 msgstr "Responsabile"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__name
+msgid "Person Responsible/Item"
+msgstr "Отговорно лице/Артикул"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__person_responsible
+msgid "Person responsible for the change"
+msgstr "Лице, отговорно за промяната"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_recharge_balance
@@ -1373,20 +1296,9 @@ msgid "Product Pricelist"
 msgstr "Listino prezzi prodotto"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__item_id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__item_sold_id
 msgid "Product Purchased"
 msgstr "Prodotto acquistato"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__item_id
-msgid ""
-"Product that was purchased in the vending transaction that caused this "
-"balance change. Empty for refills and manual adjustments."
-msgstr ""
-"Prodotto acquistato nella transazione del distributore automatico che ha "
-"causato questa variazione di saldo. Vuoto per ricariche e rettifiche "
-"manuali."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__item_sold_id
@@ -1467,6 +1379,16 @@ msgid "Reader"
 msgstr "Lettore"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__reason
+msgid "Reason"
+msgstr "Причина"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.vending_event_reverse_form
+msgid "Reason for reversal..."
+msgstr "Причина за сторниране..."
+
+#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
 msgid "Receive Date"
 msgstr "Data ricezione"
@@ -1475,16 +1397,6 @@ msgstr "Data ricezione"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_amount
 msgid "Refill Amount"
 msgstr "Importo ricarica"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__create_date
-msgid "Refill Date & Time"
-msgstr "Data e ora ricarica"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__name
-msgid "Refill Event Name"
-msgstr "Nome evento ricarica"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_res_company__refill_interval_number
@@ -1500,24 +1412,6 @@ msgstr "Massimo ricarica"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_type
 msgid "Refill Type"
 msgstr "Tipo ricarica"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__auto_refill_id
-msgid ""
-"Related automatic refill event that added money to the employee's balance. "
-"Empty for purchases and manual adjustments."
-msgstr ""
-"Evento di ricarica automatica correlato che ha aggiunto denaro al saldo del "
-"dipendente. Vuoto per acquisti e rettifiche manuali."
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__vending_event_id
-msgid ""
-"Related vending machine transaction that caused this balance change. Empty "
-"for manual adjustments and auto-refills."
-msgstr ""
-"Transazione del distributore automatico correlata che ha causato questa "
-"variazione di saldo. Vuota per rettifiche manuali e ricariche automatiche."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_res_company__refill_interval_number
@@ -1551,9 +1445,26 @@ msgstr ""
 "Utile per le aziende che desiderano limitare l'accesso ai distributori automatici alle ore lavorative."
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_result
-msgid "Resulting Balance"
-msgstr "Saldo risultante"
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.vending_event_reverse_form
+msgid "Reverse"
+msgstr "Сторниране"
+
+#. module: hr_rfid_vending
+#: model:ir.actions.act_window,name:hr_rfid_vending.action_vending_event_reverse
+msgid "Reverse Purchase"
+msgstr "Сторниране на покупка"
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_rfid_vending_event_reverse
+msgid "Reverse Vending Purchase"
+msgstr "Сторниране на вендинг покупка"
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/wizards/vending_event_reverse.py:0
+msgid "Reversed by %s. Reason: %s"
+msgstr "Сторнирано от %s. Причина: %s"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__row_num
@@ -1623,8 +1534,8 @@ msgstr "Imposta saldo vending"
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
-msgid "Set balance to"
-msgstr "Imposta saldo a"
+msgid "Set balance"
+msgstr "Задаване на баланс"
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
@@ -1633,8 +1544,13 @@ msgstr "Imposta saldo del dipendente"
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
-msgid "Set private balance"
-msgstr "Imposta saldo personale"
+msgid "Set person's private balance"
+msgstr "Задаване на личен баланс на лицето"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
+msgid "Set private"
+msgstr "Задаване на личен"
 
 #. module: hr_rfid_vending
 #: model:ir.actions.act_window,name:hr_rfid_vending.hr_employee_vending_recharge_balance_set_action
@@ -1660,30 +1576,6 @@ msgstr "Timeout visualizzazione prezzo"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
 msgid "Show employee history balance"
 msgstr "Mostra storico saldo dipendente"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__site_id
-msgid "Site"
-msgstr "Sede"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__site_id
-msgid ""
-"Site where this RFID event occurred, computed automatically from the door, controller, or webstack location.\n"
-"\n"
-"• Source: Determined from door location, controller site, or webstack site\n"
-"• Purpose: Enables site-based filtering and reporting of access events\n"
-"• Usage: Track activity by location, generate site-specific reports\n"
-"\n"
-"This field helps analyze access patterns and security events by physical location."
-msgstr ""
-"Sede in cui si è verificato questo evento RFID, calcolata automaticamente dalla porta, dal controller o dall'ubicazione del webstack.\n"
-"\n"
-"• Fonte: determinata dall'ubicazione della porta, dalla sede del controller o dal webstack\n"
-"• Scopo: consente il filtraggio e la reportistica degli eventi di accesso per sede\n"
-"• Utilizzo: monitorare l'attività per ubicazione, generare report specifici per sede\n"
-"\n"
-"Questo campo aiuta ad analizzare i modelli di accesso e gli eventi di sicurezza per ubicazione fisica."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_spent_today
@@ -1790,6 +1682,12 @@ msgid "The value of %s is invalid. Must be between 0 and 255"
 msgstr "Il valore di %s non è valido. Deve essere compreso tra 0 e 255"
 
 #. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/wizards/vending_event_reverse.py:0
+msgid "This event has already been reversed."
+msgstr "Това събитие вече е сторнирано."
+
+#. module: hr_rfid_vending
 #: model_terms:ir.actions.act_window,help:hr_rfid_vending.hr_rfid_vending_event_action
 msgid ""
 "This view shows all interactions with your vending machines.\n"
@@ -1870,8 +1768,8 @@ msgstr "Marca temporale"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__auto_refill_total
-msgid "Total Amount Refilled"
-msgstr "Importo totale ricaricato"
+msgid "Total Cash Refilled"
+msgstr "Общо заредена каса"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_current_balance
@@ -1884,25 +1782,9 @@ msgstr ""
 "restrizioni di spesa giornaliera."
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__auto_refill_total
-msgid ""
-"Total amount of money added to all employee balances in this refill event.\n"
-"        \n"
-"• Calculation: Sum of all individual employee refills in this batch\n"
-"• Cost tracking: Helps monitor total company spending on vending allowances\n"
-"• Budget control: Useful for financial planning and budget monitoring\n"
-"• Reporting: Aggregate view of refill costs per period\n"
-"        \n"
-"Shows the company's total investment in employee vending benefits for this cycle."
-msgstr ""
-"Importo totale aggiunto a tutti i saldi dei dipendenti in questo evento di ricarica.\n"
-"        \n"
-"• Calcolo: somma di tutte le singole ricariche dei dipendenti in questo lotto\n"
-"• Monitoraggio costi: aiuta a monitorare la spesa aziendale totale per le indennità vending\n"
-"• Controllo budget: utile per la pianificazione finanziaria e il monitoraggio del budget\n"
-"• Reportistica: vista aggregata dei costi di ricarica per periodo\n"
-"        \n"
-"Mostra l'investimento totale dell'azienda nei benefici vending per i dipendenti in questo ciclo."
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_form
+msgid "Transaction"
+msgstr "Транзакция"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__transaction_price
@@ -1951,14 +1833,6 @@ msgstr ""
 "dispositivo."
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__name
-msgid ""
-"Unique identifier for this automatic refill event, generated automatically."
-msgstr ""
-"Identificatore univoco per questo evento di ricarica automatica, generato "
-"automaticamente."
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_employee__hr_rfid_vending_refill_type__up_to
 msgid "Up To"
 msgstr "Fino a"
@@ -1967,17 +1841,6 @@ msgstr "Fino a"
 #: model:ir.module.category,description:hr_rfid_vending.hr_rfid_vending_management
 msgid "User rights for the Vending module"
 msgstr "Diritti utente per il modulo Vending"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__person_responsible
-msgid ""
-"User who initiated this balance change. For purchases, this is the "
-"purchasing employee. For manual adjustments, this is the administrator who "
-"made the change."
-msgstr ""
-"Utente che ha avviato questa variazione di saldo. Per gli acquisti, si "
-"tratta del dipendente che ha effettuato l'acquisto. Per le rettifiche "
-"manuali, si tratta dell'amministratore che ha apportato la modifica."
 
 #. module: hr_rfid_vending
 #: model:ir.ui.menu,name:hr_rfid_vending.hr_rfid_vending_menu
@@ -2018,11 +1881,6 @@ msgstr "Controllo vending"
 #: model:res.groups,name:hr_rfid_vending.group_customer
 msgid "Vending Customer"
 msgstr "Cliente vending"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__vending_event_id
-msgid "Vending Event"
-msgstr "Evento vending"
 
 #. module: hr_rfid_vending
 #: model:ir.actions.act_window,name:hr_rfid_vending.hr_rfid_vending_event_action
@@ -2168,7 +2026,6 @@ msgid "_Collect"
 msgstr "_Raccogli"
 
 #. module: hr_rfid_vending
-#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.ctrl_cash_collect_log_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.ctrl_cash_collect_wizard_view_form
 msgid "_form"
 msgstr "_form"

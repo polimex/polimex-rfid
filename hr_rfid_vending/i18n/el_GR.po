@@ -1,16 +1,13 @@
-# Translation of Odoo Server.
-# This file contains the translation of the following modules:
-# 	* hr_rfid_vending
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-05 16:53+0000\n"
-"PO-Revision-Date: 2026-03-08 16:19\n"
+"PO-Revision-Date: 2026-04-08 23:33\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: el\n"
+"Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -43,8 +40,8 @@ msgstr "Προσθήκη ή αφαίρεση υπολοίπου από τον λ
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
-msgid "Add/Subtract from balance"
-msgstr "Προσθήκη/Αφαίρεση από υπόλοιπο"
+msgid "Add/Subtract"
+msgstr "Добавяне/Изваждане"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__more_json
@@ -101,35 +98,9 @@ msgid "Amount"
 msgstr "Ποσό"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_change
-msgid "Amount Changed"
-msgstr "Μεταβολή Ποσού"
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__value
 msgid "Amount Collected"
 msgstr "Εισπραχθέν Ποσό"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_change
-msgid ""
-"Amount added to (+) or subtracted from (-) the employee's balance.\n"
-"        \n"
-"• Positive values: Money added (refills, manual top-ups, corrections)\n"
-"• Negative values: Money spent (purchases, manual deductions, corrections)\n"
-"• Source: Purchases, auto-refills, or manual adjustments\n"
-"• Tracking: Complete audit trail of all balance movements\n"
-"        \n"
-"This shows the actual change amount, not the resulting balance."
-msgstr ""
-"Ποσό που προστέθηκε (+) ή αφαιρέθηκε (-) από το υπόλοιπο του υπαλλήλου.\n"
-"        \n"
-"• Θετικές τιμές: Χρήματα που προστέθηκαν (επαναφορτώσεις, χειροκίνητες συμπληρώσεις, διορθώσεις)\n"
-"• Αρνητικές τιμές: Χρήματα που δαπανήθηκαν (αγορές, χειροκίνητες αφαιρέσεις, διορθώσεις)\n"
-"• Πηγή: Αγορές, αυτόματες επαναφορτώσεις ή χειροκίνητες προσαρμογές\n"
-"• Παρακολούθηση: Πλήρες ιστορικό ελέγχου όλων των κινήσεων υπολοίπου\n"
-"        \n"
-"Εμφανίζει το πραγματικό ποσό μεταβολής, όχι το προκύπτον υπόλοιπο."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_spent_today
@@ -261,11 +232,6 @@ msgid "Attachment Count"
 msgstr "Αριθμός Συνημμένων"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__in_or_out
-msgid "Attendance"
-msgstr "Παρουσία"
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__auto_refill_id
 msgid "Auto Refill Event"
 msgstr "Συμβάν Αυτόματης Επαναφόρτωσης"
@@ -274,6 +240,11 @@ msgstr "Συμβάν Αυτόματης Επαναφόρτωσης"
 #: model:ir.model,name:hr_rfid_vending.model_hr_rfid_vending_auto_refill
 msgid "Auto Refill Events"
 msgstr "Συμβάντα Αυτόματης Επαναφόρτωσης"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__create_date
+msgid "Auto Refill Time"
+msgstr "Време за автоматично попълване"
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
@@ -352,6 +323,11 @@ msgid "Balance History"
 msgstr "Ιστορικό Υπολοίπου"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__balance_history_ids
+msgid "Balance History Changes"
+msgstr "История на промените на баланса"
+
+#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
 msgid "Balance Increases"
 msgstr "Αυξήσεις Υπολοίπου"
@@ -362,16 +338,33 @@ msgid "Balance Limits"
 msgstr "Όρια Υπολοίπου"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_change
+msgid "Balance change"
+msgstr "Промяна на баланса"
+
+#. module: hr_rfid_vending
 #: model:ir.model,name:hr_rfid_vending.model_hr_rfid_vending_balance_history
 msgid "Balance history for employees"
 msgstr "Ιστορικό υπολοίπου υπαλλήλων"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_result
+msgid "Balance result"
+msgstr "Резултат на баланса"
+
+#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.ctrl_cash_collect_wizard_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_change_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_set_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.vending_event_reverse_form
 msgid "Cancel"
 msgstr "Ακύρωση"
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/wizards/vending_event_reverse.py:0
+msgid "Cannot reverse a cash purchase (no employee)."
+msgstr "Не може да се анулира покупка в брой (няма служител)."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__card_id
@@ -531,6 +524,7 @@ msgstr "Αναγνωριστικό Ελεγκτή"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__create_uid
 msgid "Created by"
 msgstr "Δημιουργήθηκε από"
 
@@ -542,6 +536,7 @@ msgstr "Δημιουργήθηκε από"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__create_date
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__create_date
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__create_date
 msgid "Created on"
 msgstr "Δημιουργήθηκε στις"
 
@@ -603,27 +598,6 @@ msgid "Date"
 msgstr "Ημερομηνία"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__create_date
-msgid ""
-"Date and time when this automatic refill was processed.\n"
-"        \n"
-"• Schedule: Based on company's auto-refill cron job settings\n"
-"• Frequency: Typically monthly, but configurable\n"
-"• Processing: Shows when the refill calculation and application occurred\n"
-"• Audit: Used for tracking refill schedule compliance\n"
-"        \n"
-"Shows exactly when employee balances were automatically updated."
-msgstr ""
-"Ημερομηνία και ώρα κατά την οποία επεξεργάστηκε αυτή η αυτόματη επαναφόρτωση.\n"
-"        \n"
-"• Πρόγραμμα: Βασίζεται στις ρυθμίσεις προγραμματισμένης εργασίας αυτόματης επαναφόρτωσης της εταιρείας\n"
-"• Συχνότητα: Συνήθως μηνιαία, αλλά διαμορφώσιμη\n"
-"• Επεξεργασία: Εμφανίζει πότε πραγματοποιήθηκε ο υπολογισμός και η εφαρμογή της επαναφόρτωσης\n"
-"• Έλεγχος: Χρησιμοποιείται για την παρακολούθηση συμμόρφωσης με το πρόγραμμα επαναφόρτωσης\n"
-"        \n"
-"Εμφανίζει ακριβώς πότε ενημερώθηκαν αυτόματα τα υπόλοιπα των υπαλλήλων."
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__res_company__refill_interval_type__days
 msgid "Days"
 msgstr "Ημέρες"
@@ -639,18 +613,9 @@ msgid "Department"
 msgstr "Τμήμα"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__name
-msgid "Description"
-msgstr "Περιγραφή"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__name
-msgid ""
-"Description of the balance change - either the item purchased or the person "
-"responsible for manual changes."
-msgstr ""
-"Περιγραφή της μεταβολής υπολοίπου - είτε το αγορασθέν αντικείμενο είτε το "
-"άτομο που είναι υπεύθυνο για χειροκίνητες αλλαγές."
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_form
+msgid "Details"
+msgstr "Подробности"
 
 #. module: hr_rfid_vending
 #: model:ir.model,name:hr_rfid_vending.model_digest_digest
@@ -669,6 +634,7 @@ msgstr "Περίληψη"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_product_template__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_res_company__display_name
 msgid "Display Name"
@@ -718,11 +684,6 @@ msgid "Employee"
 msgstr "Υπάλληλος"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__balance_history_ids
-msgid "Employee Balance Changes"
-msgstr "Μεταβολές Υπολοίπου Υπαλλήλου"
-
-#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
 msgid "Employee Transaction Events"
 msgstr "Συμβάντα Συναλλαγών Υπαλλήλου"
@@ -731,37 +692,6 @@ msgstr "Συμβάντα Συναλλαγών Υπαλλήλου"
 #: model:ir.model,name:hr_rfid_vending.model_hr_employee_vending_balance_wiz
 msgid "Employee balance setter"
 msgstr "Ορισμός υπολοίπου υπαλλήλου"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__employee_id
-msgid ""
-"Employee whose vending balance was affected by this transaction. History is "
-"deleted when employee record is removed."
-msgstr ""
-"Υπάλληλος του οποίου το υπόλοιπο μηχανήματος αυτόματης πώλησης επηρεάστηκε "
-"από αυτή τη συναλλαγή. Το ιστορικό διαγράφεται όταν αφαιρεθεί η εγγραφή του "
-"υπαλλήλου."
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_result
-msgid ""
-"Employee's total balance after this change was applied.\n"
-"        \n"
-"• Calculation: Previous balance + balance change = resulting balance\n"
-"• Snapshot: Shows exact balance at the time of this transaction\n"
-"• Audit: Useful for tracking balance progression over time\n"
-"• Verification: Can be used to verify balance calculations\n"
-"        \n"
-"This is the employee's balance immediately after this transaction."
-msgstr ""
-"Συνολικό υπόλοιπο υπαλλήλου μετά την εφαρμογή αυτής της μεταβολής.\n"
-"        \n"
-"• Υπολογισμός: Προηγούμενο υπόλοιπο + μεταβολή υπολοίπου = προκύπτον υπόλοιπο\n"
-"• Στιγμιότυπο: Εμφανίζει το ακριβές υπόλοιπο τη στιγμή αυτής της συναλλαγής\n"
-"• Έλεγχος: Χρήσιμο για παρακολούθηση της εξέλιξης του υπολοίπου διαχρονικά\n"
-"• Επαλήθευση: Μπορεί να χρησιμοποιηθεί για την επαλήθευση υπολογισμών υπολοίπου\n"
-"        \n"
-"Αυτό είναι το υπόλοιπο του υπαλλήλου αμέσως μετά από αυτή τη συναλλαγή."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__employee_ids
@@ -780,6 +710,8 @@ msgid "Error"
 msgstr "Σφάλμα"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__vending_event_id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__event_id
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_pivot
 msgid "Event"
 msgstr "Συμβάν"
@@ -845,8 +777,8 @@ msgstr "Ακόλουθοι (Συνεργάτες)"
 
 #. module: hr_rfid_vending
 #: model:ir.actions.server,name:hr_rfid_vending.hr_rfid_vending_employees_auto_refill_ir_actions_server
-msgid "HR RFID Vending: Employee balance auto-refill"
-msgstr "HR RFID Vending: Αυτόματη επαναφόρτωση υπολοίπου υπαλλήλου"
+msgid "HR RFID Vending: Employees Auto Refill"
+msgstr "HR RFID Вендинг: Автоматично попълване на служители"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__has_message
@@ -857,6 +789,16 @@ msgstr "Έχει Μήνυμα"
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__res_company__refill_interval_type__hours
 msgid "Hours"
 msgstr "Ώρες"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_result
+msgid "How much the balance was after the change"
+msgstr "Какъв е бил балансът след промяната"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_change
+msgid "How much was deposited/withdrawn from the employee's balance"
+msgstr "Колко е внесено/изтеглено от баланса на служителя"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_type
@@ -913,6 +855,7 @@ msgstr "Αναγνώσιμη περιγραφή της ενέργειας συμ
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_product_template__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_res_company__id
 msgid "ID"
@@ -928,46 +871,6 @@ msgstr "Εάν είναι επιλεγμένο, νέα μηνύματα απαι
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Εάν είναι επιλεγμένο, ορισμένα μηνύματα έχουν σφάλμα παράδοσης."
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__in_or_out
-msgid ""
-"Indicates whether this RFID event was processed as attendance check-in or check-out.\n"
-"\n"
-"• Check In: Employee entered an attendance zone\n"
-"• Check Out: Employee left an attendance zone  \n"
-"• No Info: Event not processed for attendance (may be non-attendance zone or error)\n"
-"\n"
-"This field is automatically set when recalculating attendance from RFID events."
-msgstr ""
-"Υποδεικνύει εάν αυτό το συμβάν RFID επεξεργάστηκε ως είσοδος ή έξοδος παρουσίας.\n"
-"\n"
-"• Είσοδος: Ο υπάλληλος εισήλθε σε ζώνη παρουσίας\n"
-"• Έξοδος: Ο υπάλληλος εξήλθε από ζώνη παρουσίας  \n"
-"• Χωρίς Πληροφορίες: Το συμβάν δεν επεξεργάστηκε για παρουσία (ενδέχεται να είναι μη-ζώνη παρουσίας ή σφάλμα)\n"
-"\n"
-"Αυτό το πεδίο ορίζεται αυτόματα κατά τον επανυπολογισμό παρουσιών από συμβάντα RFID."
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__balance_history_ids
-msgid ""
-"Individual balance changes made to each employee during this auto-refill event.\n"
-"        \n"
-"• Detail view: Shows exactly which employees received refills and how much\n"
-"• Audit trail: Complete record of who received money and when\n"
-"• Verification: Allows checking individual refill calculations\n"
-"• Troubleshooting: Helps identify any refill processing issues\n"
-"\n"
-"Each record shows one employee's balance change in this refill cycle."
-msgstr ""
-"Μεμονωμένες μεταβολές υπολοίπου που έγιναν σε κάθε υπάλληλο κατά τη διάρκεια αυτού του συμβάντος αυτόματης επαναφόρτωσης.\n"
-"        \n"
-"• Λεπτομερής προβολή: Εμφανίζει ακριβώς ποιοι υπάλληλοι έλαβαν επαναφορτώσεις και πόσο\n"
-"• Ιστορικό ελέγχου: Πλήρες αρχείο για το ποιος έλαβε χρήματα και πότε\n"
-"• Επαλήθευση: Επιτρέπει τον έλεγχο μεμονωμένων υπολογισμών επαναφόρτωσης\n"
-"• Αντιμετώπιση προβλημάτων: Βοηθά στον εντοπισμό τυχόν προβλημάτων επεξεργασίας επαναφόρτωσης\n"
-"\n"
-"Κάθε εγγραφή εμφανίζει τη μεταβολή υπολοίπου ενός υπαλλήλου σε αυτόν τον κύκλο επαναφόρτωσης."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_res_company__refill_interval_type
@@ -993,6 +896,7 @@ msgid "Item Slot Number"
 msgstr "Αριθμός Θέσης Προϊόντος"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__item_id
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
 msgid "Item Sold"
@@ -1060,6 +964,7 @@ msgstr "Τελευταίες 24 ώρες"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__write_uid
 msgid "Last Updated by"
 msgstr "Τελευταία ενημέρωση από"
 
@@ -1072,6 +977,7 @@ msgstr "Τελευταία ενημέρωση από"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__write_date
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__write_date
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__write_date
 msgid "Last Updated on"
 msgstr "Τελευταία ενημέρωση στις"
 
@@ -1200,6 +1106,7 @@ msgstr ""
 "Αυτή η τιμή διαβάζεται από τις ρυθμίσεις υλικού του μηχανήματος αυτόματης πώλησης."
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__name
 msgid "Name"
 msgstr "Όνομα"
@@ -1256,6 +1163,12 @@ msgid "Number of messages with delivery error"
 msgstr "Αριθμός μηνυμάτων με σφάλμα παράδοσης"
 
 #. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/wizards/vending_event_reverse.py:0
+msgid "Only purchase events can be reversed."
+msgstr "Могат да се анулират само събития от тип покупка."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__input_js
 msgid ""
 "Original JSON data received from the vending machine hardware.\n"
@@ -1277,10 +1190,19 @@ msgstr ""
 "Περιέχει τεχνικές λεπτομέρειες σχετικά με την επικοινωνία υλικού."
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__person_responsible
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
 msgid "Person Responsible"
 msgstr "Υπεύθυνο Πρόσωπο"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__name
+msgid "Person Responsible/Item"
+msgstr "Отговорно лице/Артикул"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__person_responsible
+msgid "Person responsible for the change"
+msgstr "Лице, отговорно за промяната"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_recharge_balance
@@ -1376,20 +1298,9 @@ msgid "Product Pricelist"
 msgstr "Τιμοκατάλογος Προϊόντος"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__item_id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__item_sold_id
 msgid "Product Purchased"
 msgstr "Αγορασθέν Προϊόν"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__item_id
-msgid ""
-"Product that was purchased in the vending transaction that caused this "
-"balance change. Empty for refills and manual adjustments."
-msgstr ""
-"Προϊόν που αγοράστηκε στη συναλλαγή μηχανήματος αυτόματης πώλησης που "
-"προκάλεσε αυτήν τη μεταβολή υπολοίπου. Κενό για επαναφορτώσεις και "
-"χειροκίνητες προσαρμογές."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__item_sold_id
@@ -1471,6 +1382,16 @@ msgid "Reader"
 msgstr "Αναγνώστης"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__reason
+msgid "Reason"
+msgstr "Причина"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.vending_event_reverse_form
+msgid "Reason for reversal..."
+msgstr "Причина за анулирането..."
+
+#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
 msgid "Receive Date"
 msgstr "Ημερομηνία Λήψης"
@@ -1479,16 +1400,6 @@ msgstr "Ημερομηνία Λήψης"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_amount
 msgid "Refill Amount"
 msgstr "Ποσό Επαναφόρτωσης"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__create_date
-msgid "Refill Date & Time"
-msgstr "Ημερομηνία & Ώρα Επαναφόρτωσης"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__name
-msgid "Refill Event Name"
-msgstr "Όνομα Συμβάντος Επαναφόρτωσης"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_res_company__refill_interval_number
@@ -1504,25 +1415,6 @@ msgstr "Μέγιστο Επαναφόρτωσης"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_type
 msgid "Refill Type"
 msgstr "Τύπος Επαναφόρτωσης"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__auto_refill_id
-msgid ""
-"Related automatic refill event that added money to the employee's balance. "
-"Empty for purchases and manual adjustments."
-msgstr ""
-"Σχετιζόμενο συμβάν αυτόματης επαναφόρτωσης που πρόσθεσε χρήματα στο υπόλοιπο"
-" του υπαλλήλου. Κενό για αγορές και χειροκίνητες προσαρμογές."
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__vending_event_id
-msgid ""
-"Related vending machine transaction that caused this balance change. Empty "
-"for manual adjustments and auto-refills."
-msgstr ""
-"Σχετιζόμενη συναλλαγή μηχανήματος αυτόματης πώλησης που προκάλεσε αυτήν τη "
-"μεταβολή υπολοίπου. Κενό για χειροκίνητες προσαρμογές και αυτόματες "
-"επαναφορτώσεις."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_res_company__refill_interval_number
@@ -1556,9 +1448,26 @@ msgstr ""
 "Χρήσιμο για εταιρείες που θέλουν να περιορίσουν την πρόσβαση στο μηχάνημα αυτόματης πώλησης κατά τις ώρες εργασίας."
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__balance_result
-msgid "Resulting Balance"
-msgstr "Προκύπτον Υπόλοιπο"
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.vending_event_reverse_form
+msgid "Reverse"
+msgstr "Анулиране"
+
+#. module: hr_rfid_vending
+#: model:ir.actions.act_window,name:hr_rfid_vending.action_vending_event_reverse
+msgid "Reverse Purchase"
+msgstr "Анулиране на покупка"
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_rfid_vending_event_reverse
+msgid "Reverse Vending Purchase"
+msgstr "Анулиране на вендинг покупка"
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/wizards/vending_event_reverse.py:0
+msgid "Reversed by %s. Reason: %s"
+msgstr "Анулирано от %s. Причина: %s"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__row_num
@@ -1628,8 +1537,8 @@ msgstr "Ορισμός Υπολοίπου Μηχανήματος Αυτόματ�
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
-msgid "Set balance to"
-msgstr "Ορισμός υπολοίπου σε"
+msgid "Set balance"
+msgstr "Задаване на баланс"
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
@@ -1638,8 +1547,13 @@ msgstr "Ορισμός υπολοίπου ατόμου"
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
-msgid "Set private balance"
-msgstr "Ορισμός προσωπικού υπολοίπου"
+msgid "Set person's private balance"
+msgstr "Задаване на личен баланс на лицето"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
+msgid "Set private"
+msgstr "Задаване на личен"
 
 #. module: hr_rfid_vending
 #: model:ir.actions.act_window,name:hr_rfid_vending.hr_employee_vending_recharge_balance_set_action
@@ -1667,30 +1581,6 @@ msgstr "Εμφάνιση Χρονικού Ορίου Τιμής"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
 msgid "Show employee history balance"
 msgstr "Εμφάνιση ιστορικού υπολοίπου υπαλλήλου"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__site_id
-msgid "Site"
-msgstr "Τοποθεσία"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__site_id
-msgid ""
-"Site where this RFID event occurred, computed automatically from the door, controller, or webstack location.\n"
-"\n"
-"• Source: Determined from door location, controller site, or webstack site\n"
-"• Purpose: Enables site-based filtering and reporting of access events\n"
-"• Usage: Track activity by location, generate site-specific reports\n"
-"\n"
-"This field helps analyze access patterns and security events by physical location."
-msgstr ""
-"Τοποθεσία όπου συνέβη αυτό το συμβάν RFID, υπολογίζεται αυτόματα από τη θέση της πόρτας, του ελεγκτή ή του webstack.\n"
-"\n"
-"• Πηγή: Προσδιορίζεται από την τοποθεσία πόρτας, τη θέση ελεγκτή ή τη θέση webstack\n"
-"• Σκοπός: Επιτρέπει φιλτράρισμα βάσει τοποθεσίας και αναφορές συμβάντων πρόσβασης\n"
-"• Χρήση: Παρακολούθηση δραστηριότητας ανά τοποθεσία, δημιουργία αναφορών ανά τοποθεσία\n"
-"\n"
-"Αυτό το πεδίο βοηθά στην ανάλυση προτύπων πρόσβασης και συμβάντων ασφαλείας ανά φυσική τοποθεσία."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_spent_today
@@ -1797,6 +1687,12 @@ msgid "The value of %s is invalid. Must be between 0 and 255"
 msgstr "Η τιμή του %s δεν είναι έγκυρη. Πρέπει να είναι μεταξύ 0 και 255"
 
 #. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/wizards/vending_event_reverse.py:0
+msgid "This event has already been reversed."
+msgstr "Това събитие вече е анулирано."
+
+#. module: hr_rfid_vending
 #: model_terms:ir.actions.act_window,help:hr_rfid_vending.hr_rfid_vending_event_action
 msgid ""
 "This view shows all interactions with your vending machines.\n"
@@ -1877,8 +1773,8 @@ msgstr "Χρονική σήμανση"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__auto_refill_total
-msgid "Total Amount Refilled"
-msgstr "Συνολικό Ποσό Επαναφόρτωσης"
+msgid "Total Cash Refilled"
+msgstr "Общо попълнена каса"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_current_balance
@@ -1891,25 +1787,9 @@ msgstr ""
 " όρια πίστωσης και τους ημερήσιους περιορισμούς δαπανών."
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__auto_refill_total
-msgid ""
-"Total amount of money added to all employee balances in this refill event.\n"
-"        \n"
-"• Calculation: Sum of all individual employee refills in this batch\n"
-"• Cost tracking: Helps monitor total company spending on vending allowances\n"
-"• Budget control: Useful for financial planning and budget monitoring\n"
-"• Reporting: Aggregate view of refill costs per period\n"
-"        \n"
-"Shows the company's total investment in employee vending benefits for this cycle."
-msgstr ""
-"Συνολικό ποσό χρημάτων που προστέθηκε σε όλα τα υπόλοιπα υπαλλήλων σε αυτό το συμβάν επαναφόρτωσης.\n"
-"        \n"
-"• Υπολογισμός: Άθροισμα όλων των μεμονωμένων επαναφορτώσεων υπαλλήλων σε αυτήν την παρτίδα\n"
-"• Παρακολούθηση κόστους: Βοηθά στην παρακολούθηση συνολικών εταιρικών δαπανών για επιδόματα μηχανήματος αυτόματης πώλησης\n"
-"• Έλεγχος προϋπολογισμού: Χρήσιμο για οικονομικό σχεδιασμό και παρακολούθηση προϋπολογισμού\n"
-"• Αναφορά: Συγκεντρωτική προβολή κόστους επαναφόρτωσης ανά περίοδο\n"
-"        \n"
-"Εμφανίζει τη συνολική επένδυση της εταιρείας σε παροχές μηχανήματος αυτόματης πώλησης για υπαλλήλους για αυτόν τον κύκλο."
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_form
+msgid "Transaction"
+msgstr "Транзакция"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__transaction_price
@@ -1957,14 +1837,6 @@ msgstr ""
 "Χρησιμοποιείται για εσωτερική επικοινωνία και αναγνώριση συσκευής."
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__name
-msgid ""
-"Unique identifier for this automatic refill event, generated automatically."
-msgstr ""
-"Μοναδικό αναγνωριστικό για αυτό το συμβάν αυτόματης επαναφόρτωσης, που "
-"δημιουργείται αυτόματα."
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_employee__hr_rfid_vending_refill_type__up_to
 msgid "Up To"
 msgstr "Έως"
@@ -1973,17 +1845,6 @@ msgstr "Έως"
 #: model:ir.module.category,description:hr_rfid_vending.hr_rfid_vending_management
 msgid "User rights for the Vending module"
 msgstr "Δικαιώματα χρήστη για τη μονάδα Αυτόματης Πώλησης"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__person_responsible
-msgid ""
-"User who initiated this balance change. For purchases, this is the "
-"purchasing employee. For manual adjustments, this is the administrator who "
-"made the change."
-msgstr ""
-"Χρήστης που κίνησε αυτήν τη μεταβολή υπολοίπου. Για αγορές, πρόκειται για "
-"τον υπάλληλο που πραγματοποίησε την αγορά. Για χειροκίνητες προσαρμογές, "
-"πρόκειται για τον διαχειριστή που έκανε την αλλαγή."
 
 #. module: hr_rfid_vending
 #: model:ir.ui.menu,name:hr_rfid_vending.hr_rfid_vending_menu
@@ -2024,11 +1885,6 @@ msgstr "Έλεγχος Μηχανήματος Αυτόματης Πώλησης"
 #: model:res.groups,name:hr_rfid_vending.group_customer
 msgid "Vending Customer"
 msgstr "Πελάτης Μηχανήματος Αυτόματης Πώλησης"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__vending_event_id
-msgid "Vending Event"
-msgstr "Συμβάν Μηχανήματος Αυτόματης Πώλησης"
 
 #. module: hr_rfid_vending
 #: model:ir.actions.act_window,name:hr_rfid_vending.hr_rfid_vending_event_action
@@ -2174,7 +2030,6 @@ msgid "_Collect"
 msgstr "_Είσπραξη"
 
 #. module: hr_rfid_vending
-#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.ctrl_cash_collect_log_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.ctrl_cash_collect_wizard_view_form
 msgid "_form"
 msgstr "_Φόρμα"
