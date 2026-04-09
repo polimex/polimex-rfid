@@ -1,4 +1,4 @@
-from odoo import fields, models, api
+from odoo import _, fields, models, api
 
 
 class BalanceHistory(models.Model):
@@ -71,7 +71,11 @@ class BalanceHistory(models.Model):
 
     def _compute_name(self):
         for it in self:
-            if len(it.vending_event_id) > 0 and len(it.vending_event_id.item_sold_id) > 0:
+            if it.vending_event_id and it.balance_change > 0:
+                # Reversal record — show "Reversal: Product" or "Reversal"
+                product = it.vending_event_id.item_sold_id.name or ''
+                it.name = _('Reversal: %s') % product if product else _('Reversal')
+            elif it.vending_event_id and it.vending_event_id.item_sold_id:
                 it.name = it.vending_event_id.item_sold_id.name
             else:
                 it.name = it.person_responsible.name

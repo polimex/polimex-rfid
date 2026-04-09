@@ -39,7 +39,7 @@ class VendingEventReverse(models.TransientModel):
             raise UserError(_('This event has already been reversed.'))
 
         # Restore balance — creates balance_history with vending_event_id
-        event.employee_id.hr_rfid_vending_add_to_balance(
+        bh = event.employee_id.hr_rfid_vending_add_to_balance(
             event.transaction_price, ev=event.id,
         )
 
@@ -52,7 +52,15 @@ class VendingEventReverse(models.TransientModel):
                 self.env.user.name, self.reason),
         )
 
-        return {'type': 'ir.actions.act_window_close'}
+        # Show balance history for this event (purchase + reversal)
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Reversal: %s') % event.name,
+            'res_model': 'hr.rfid.vending.balance.history',
+            'view_mode': 'list,form',
+            'domain': [('vending_event_id', '=', event.id)],
+            'target': 'current',
+        }
 
     def _neutralize_daily_spend(self, event):
         """If the original purchase is within today's daily limit period,
