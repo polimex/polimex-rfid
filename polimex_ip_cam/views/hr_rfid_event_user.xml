@@ -1,12 +1,10 @@
 <odoo>
     <data>
-        <!-- Наследяване на формовия изглед на hr.rfid.event.user -->
         <record id="view_hr_rfid_user_ev_form_anpr_ext" model="ir.ui.view">
             <field name="name">hr.rfid.user.ev.form.anpr.ext</field>
             <field name="model">hr.rfid.event.user</field>
             <field name="inherit_id" ref="hr_rfid.hr_rfid_user_ev_view_form"/>
             <field name="arch" type="xml">
-                <!-- Например, след групата "Where" добавяме нова група за ANPR данни -->
                 <xpath expr="//group[@id='card_data']" position="inside">
                     <group string="ANPR Details" invisible="not camera_id">
                         <field name="camera_id"/>
@@ -23,11 +21,10 @@
             </field>
         </record>
 
-        <!-- Наследяване на списъчния (list) изглед за hr.rfid.event.user -->
         <record id="view_hr_rfid_user_ev_list_anpr_ext" model="ir.ui.view">
             <field name="name">hr.rfid.user.ev.list.anpr.ext</field>
             <field name="model">hr.rfid.event.user</field>
-            <field name="inherit_id" ref="hr_rfid.hr_rfid_user_ev_view_tree"/>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_user_ev_view_list"/>
             <field name="arch" type="xml">
                 <xpath expr="//list" position="inside">
                     <field name="camera_id" optional="hide"/>

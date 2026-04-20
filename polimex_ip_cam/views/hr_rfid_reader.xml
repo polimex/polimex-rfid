@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <record id="hr_rfid_reader_view_tree" model="ir.ui.view">
+        <record id="hr_rfid_reader_view_list" model="ir.ui.view">
             <field name="name">hr.rfid.reader.view.list.camera</field>
             <field name="model">hr.rfid.reader</field>
-            <field name="inherit_id" ref="hr_rfid.hr_rfid_reader_view_tree"/>
+            <field name="inherit_id" ref="hr_rfid.hr_rfid_reader_view_list"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='door_ids']" position="after">
                     <field name="camera_id" optional="hide"/>
