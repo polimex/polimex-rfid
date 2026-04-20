@@ -67,7 +67,7 @@ For CUPS printing support, install `rfid_service_zpl_labels_cups` module.
     'license': 'AGPL-3',
 
     'category': "Generic Modules/Property Management System",
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
 
     # any module necessary for this one to work correctly
     'depends': ['rfid_service_base', 'hr_rfid'],
