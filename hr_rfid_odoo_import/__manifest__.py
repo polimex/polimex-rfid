@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'RFID Odoo Data Import',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'HR',
     'summary': 'Import RFID access control data from older Odoo instances (v14-v18)',
     'author': 'Polimex Dev Team',

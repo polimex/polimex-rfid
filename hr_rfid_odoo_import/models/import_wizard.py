@@ -26,12 +26,16 @@ class HrRfidOdooImportWiz(models.TransientModel):
     # ── Step 1: Connection ─────────────────────────────────────
     source_url = fields.Char(
         string='Source URL',
-        default='http://localhost:8069',
         required=True,
+        help='Full URL of the source Odoo server, e.g. https://erp.example.com',
     )
     source_db = fields.Char(
         string='Source Database',
-        required=True,
+        help=(
+            'Leave empty if the source server hosts a single database — it will '
+            'be auto-detected. If the source has multiple databases, enter the '
+            'exact database name here.'
+        ),
     )
     source_login = fields.Char(
         string='Username',
@@ -276,6 +280,29 @@ class HrRfidOdooImportWiz(models.TransientModel):
         self.ensure_one()
 
         try:
+            # Auto-detect database name if left empty
+            if not self.source_db:
+                db_proxy = xmlrpc.client.ServerProxy(
+                    f'{self.source_url}/xmlrpc/2/db',
+                    allow_none=True,
+                )
+                try:
+                    databases = db_proxy.list()
+                except xmlrpc.client.Fault:
+                    raise UserError(_(
+                        "Source server does not expose the database list "
+                        "(list_db=False). Please enter the database name manually."
+                    ))
+                if not databases:
+                    raise UserError(_("No databases found on the source server."))
+                if len(databases) > 1:
+                    raise UserError(_(
+                        "Source server hosts multiple databases: %s. "
+                        "Please specify which one to use.",
+                        ', '.join(databases),
+                    ))
+                self.source_db = databases[0]
+
             # Authenticate
             common = xmlrpc.client.ServerProxy(
                 f'{self.source_url}/xmlrpc/2/common',
