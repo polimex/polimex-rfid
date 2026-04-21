@@ -84,7 +84,7 @@ Technical Notes
     'license': 'AGPL-3',
 
     'category': "Generic Modules/Property Management System",
-    'version': '19.0.0.1.2',
+    'version': '19.0.0.1.3',
 
     # This module depends on both ZPL labels and CUPS printing
     'depends': [
@@ -102,6 +102,11 @@ Technical Notes
         'views/rfid_service.xml',
         'views/rfid_service_sale.xml',
     ],
-    
+
+    # base_report_to_label_printer lives in OCA repo report-print-send and is
+    # not bundled in this repository. Keep installable=False so the Odoo Apps
+    # validator does not flag an unmet dependency. Flip to True after adding
+    # the OCA repo to the addons path.
+    'installable': False,
     "application": False,
 }
