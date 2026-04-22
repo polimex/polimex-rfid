@@ -320,9 +320,56 @@ class WebRfidController(http.Controller):
             )
 
             return controller_id.read_status().send_command(200)
-        # Reserved
+        # SOT Denied (firmware v7.13+): arm/disarm attempt refused by controller.
+        # Same semantics as event 33 (Zone Arm/Disarm Denied) — card event with
+        # direction derived from current zone state (line_id.armed).
+        # Falls back to a system event when no cardholder is known.
         elif event_action in [32]:
-            raise Exception('Not Implemented(Reserved 32)')
+            if is_card_event and card_id:
+                line_id = controller_id.alarm_line_ids.filtered(
+                    lambda l: l.line_number == reader_num)
+                event_dict = {
+                    'ctrl_addr': controller_id.ctrl_id,
+                    'door_id': door and door.id or False,
+                    'reader_id': reader_id.id,
+                    'alarm_line_id': line_id.id,
+                    'card_id': card_id and card_id.id or None,
+                    'event_time': webstack.get_ws_time_str(post_data=post_data['event']),
+                    'event_action': line_id.armed == 'arm' and '15' or '5',
+                    'more_json': json.dumps(post_data),
+                }
+
+                if reader_id.mode == '03' and not controller_id.is_vending_ctrl():  # Card and workcode
+                    wc = workcodes_env.search([
+                        ('workcode', '=', dt),
+                        ('company_id', '=', webstack.company_id.id)
+                    ])
+                    if len(wc) == 0:
+                        event_dict['workcode'] = dt
+                    else:
+                        event_dict['workcode_id'] = wc.id
+
+                ev_env.create(event_dict)
+                return webstack.check_for_unsent_cmd(200)
+            # No cardholder identified — record as system event so the
+            # controller still gets a 200 and stops retrying.
+            try:
+                reader_byte = int(post_data['event'].get('reader', 0))
+            except (TypeError, ValueError):
+                reader_byte = 0
+            msg = _('Arm denied') if reader_byte & 0x10 else _('Disarm denied')
+            sys_event_dict = {
+                'door_id': door and door.id or False,
+                'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
+                'event_action': str(event_action),
+                'error_description': msg,
+            }
+            controller_id.report_sys_ev(
+                description=msg,
+                post_data=post_data,
+                sys_ev_dict=sys_event_dict,
+            )
+            return webstack.check_for_unsent_cmd(200)
         # Zone Arm/Disarm Denied
         elif event_action in [33]:
             if is_card_event and card_id:
