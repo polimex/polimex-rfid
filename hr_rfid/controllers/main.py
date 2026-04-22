@@ -305,9 +305,27 @@ class WebRfidController(http.Controller):
             )
 
             return controller_id.read_status().send_command(200)
-        # Reserved
+        # SOT Denied (firmware v7.13+): arm/disarm attempt refused by controller.
+        # bit 4 of reader byte: 0 = disarm denied, 1 = arm denied.
         elif event_action in [32]:
-            raise Exception('Not Implemented(Reserved 32)')
+            try:
+                reader_byte = int(post_data['event'].get('reader', 0))
+            except (TypeError, ValueError):
+                reader_byte = 0
+            is_arm = bool(reader_byte & 0x10)
+            msg = _('Arm denied') if is_arm else _('Disarm denied')
+            sys_event_dict = {
+                'door_id': door and door.id or False,
+                'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
+                'event_action': str(event_action),
+                'error_description': msg,
+            }
+            controller_id.report_sys_ev(
+                description=msg,
+                post_data=post_data,
+                sys_ev_dict=sys_event_dict,
+            )
+            return webstack.check_for_unsent_cmd(200)
         # Zone Arm/Disarm Denied
         elif event_action in [33]:
             if is_card_event and card_id:
