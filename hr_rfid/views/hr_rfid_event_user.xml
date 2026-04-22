@@ -140,6 +140,7 @@
                     <field name="card_id"/>
                     <field name="contact_id"/>
                     <field name="employee_id"/>
+                    <field name="department_id"/>
                     <field name="door_id"/>
                     <field name="event_action"/>
 
@@ -168,9 +169,11 @@
                     <filter name="groupby_reader" string="by Reader" context="{'group_by':'reader_id'}"/>
                     <filter name="groupby_time" string="by Event Time" context="{'group_by':'event_time'}"/>
                     <filter name="groupby_employee" string="by Employee" context="{'group_by':'employee_id'}"/>
+                    <filter name="groupby_department" string="by Department" context="{'group_by':'department_id'}"/>
                     <filter name="groupby_contact" string="by Contact" context="{'group_by':'contact_id'}"/>
                     <searchpanel>
                         <field name="event_action" string="Status" icon="fa-info-circle" color="#875A7B"/>
+                        <field name="department_id" string="Department" icon="fa-users" color="#4A5568" enable_counters="1"/>
                     </searchpanel>
 
                 </search>

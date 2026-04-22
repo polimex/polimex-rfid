@@ -66,6 +66,15 @@ class HrRfidUserEvent(models.Model):
         ondelete='cascade',
     )
 
+    department_id = fields.Many2one(
+        'hr.department',
+        string='Department',
+        related='employee_id.department_id',
+        store=True,
+        index=True,
+        help="Department of the employee at the time this event was recorded. Stored copy lets us filter and group events by department directly.",
+    )
+
     door_id = fields.Many2one(
         'hr.rfid.door',
         string='Door',
