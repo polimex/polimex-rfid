@@ -15,7 +15,7 @@
 
     # for the full list
     'category': 'Administration',
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.2.0',
     'license': 'AGPL-3',
 
     # any module necessary for this one to work correctly
@@ -44,6 +44,9 @@
     'assets': {
         'web.assets_backend': [
             'hr_rfid_site_manager/static/src/**/*',
+        ],
+        'web.assets_unit_tests': [
+            'hr_rfid_site_manager/static/tests/**/*.test.js',
         ],
     },
 
