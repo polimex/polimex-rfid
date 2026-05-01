@@ -3,7 +3,7 @@
 
 {
     'name': 'RFID Access Control',
-    'version': '19.0.2.5.0',
+    'version': '19.0.2.5.1',
     'category': 'Human Resources',
     'summary': 'Manage employee access control',
     'description': """
@@ -130,11 +130,15 @@ For detailed documentation, visit: https://polimex.co/
         #     'hr_rfid/static/src/xml/**/*',
         # ],
         'web.report_assets_common': [
+            '/hr_rfid/static/src/scss/_variables.scss',
             '/hr_rfid/static/src/scss/card_foldable_badge_report.scss',
             '/hr_rfid/static/src/scss/card_full_page_ticket_report.scss',
         ],
         'web.report_assets_pdf': [
             '/hr_rfid/static/src/scss/card_full_page_ticket_report_pdf.scss',
+        ],
+        'web.assets_unit_tests': [
+            'hr_rfid/static/tests/**/*.test.js',
         ],
     },
     'application': True,
