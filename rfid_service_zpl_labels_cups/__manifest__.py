@@ -84,7 +84,7 @@ Technical Notes
     'license': 'AGPL-3',
 
     'category': "Generic Modules/Property Management System",
-    'version': '19.0.0.1.3',
+    'version': '19.0.0.1.4',
 
     # This module depends on both ZPL labels and CUPS printing
     'depends': [
