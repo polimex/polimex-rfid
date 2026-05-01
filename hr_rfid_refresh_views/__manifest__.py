@@ -34,14 +34,6 @@
         'views/hr_rfid_ctrl.xml',
         'views/res_company.xml',
     ],
-    # 'images': ['static/images/main_screenshot.png'],
-    # only loaded in demonstration mode
-    'assets': {
-        # 'web.assets_backend': [
-        #     'refresh_mixin/static/src/js/*',
-        # ],
-    },
-
     'application': False,
-    'auto_install': True
+    'auto_install': True,
 }
