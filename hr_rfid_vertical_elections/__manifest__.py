@@ -8,7 +8,7 @@
     'author': "Polimex Dev Team",
     'website': "https://polimex.co",
     'category': 'Human Resources',
-    'version': '19.0.1.0.1',
+    'version': '19.0.1.1.0',
     'license': 'AGPL-3',
     'depends': ['hr_rfid', 'bus'],
     'data': [
@@ -48,6 +48,9 @@
 
             # Display's specific assets
             'hr_rfid_vertical_elections/static/src/display/**/*',
+        ],
+        'web.assets_unit_tests': [
+            'hr_rfid_vertical_elections/static/tests/**/*.test.js',
         ],
     },
 }

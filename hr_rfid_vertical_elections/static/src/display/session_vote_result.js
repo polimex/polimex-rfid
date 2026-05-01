@@ -1,7 +1,6 @@
 /** @odoo-module **/
 
 import {useInterval} from "@hr_rfid_vertical_elections/display/useInterval";
-import {deserializeDateTime, serializeDateTime} from "@web/core/l10n/dates";
 
 import {Component, useState, xml} from "@odoo/owl";
 
@@ -31,30 +30,19 @@ export class SessionVoteResult extends Component {
 
     setup() {
         if (this.props.currentSession.start_datetime) {
-            if (this.props.currentSession.final_vote === 'no_vote')
+            if (this.props.currentSession.final_vote === 'no_vote') {
                 this.vote_results_time = 10;
-             else
+            } else {
                 this.vote_results_time = this.props.currentSession.vote_results_time;
-            console.log('vote_results_time', this.vote_results_time);
-            // this.startTime = deserializeDateTime(this.props.startTime);
-            // const endTime = this.startTime.plus({seconds: this.props.voting_time});
-            this.state = useState({
-                 currentTime: 0,
-                // timePast: luxon.DateTime.now().diff(this.startTime),
-                // timeToEnd: endTime.diff(luxon.DateTime.now())
-            });
+            }
+            this.state = useState({currentTime: 0});
 
-            // Define intervalAction within the setup method
-            const intervalAction = () => {
+            useInterval(() => {
                 this.state.currentTime += 1;
                 if (this.state.currentTime > this.vote_results_time) {
-                    console.log('Voting results time is over');
                     this.props.onVoteResultEnd(this.props.currentSession.id);
                 }
-            };
-
-            // Use intervalAction in useInterval
-            useInterval(intervalAction, 1000);
+            }, 1000);
         }
     }
 }

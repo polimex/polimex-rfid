@@ -3,7 +3,7 @@
 import {useInterval} from "@hr_rfid_vertical_elections/display/useInterval";
 import {deserializeDateTime, serializeDateTime} from "@web/core/l10n/dates";
 
-import {Component, EventBus, useState, xml} from "@odoo/owl";
+import {Component, useState, xml} from "@odoo/owl";
 
 export class SessionRemainingTime extends Component {
     static template = xml`
@@ -40,9 +40,7 @@ export class SessionRemainingTime extends Component {
     intervalAction() {
         const currentTime = luxon.DateTime.now();
         this.state.timePast = currentTime.diff(this.startTime);
-        console.log('seconds', this.state.timePast.as("seconds"), 'voting_time', this.props.currentSession.voting_time);
         if (this.state.timePast.as("seconds") > this.props.currentSession.voting_time) {
-            console.log('Voting time is over');
             this.props.onVotingEnd(this.props.currentSession.id);
         }
     }
