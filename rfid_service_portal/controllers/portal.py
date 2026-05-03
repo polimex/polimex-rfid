@@ -13,13 +13,11 @@ class ProjectCustomerPortal(CustomerPortal):
                 [('partner_id', '=', request.env.user.partner_id.id)])
         return values
 
-    @http.route(['/my/rfid_services'], type='http', auth="public", website=True, sitemap=False)
+    @http.route(['/my/rfid_services'], type='http', auth="user", website=True, sitemap=False)
     def portal_my_services(self, access_token=None, p=1, **kw):
-        user_id = request.env.user
-        if not user_id:
-            return request.redirect('/my')
+        partner = request.env.user.partner_id
         user_services = request.env['rfid.service.sale'].sudo().search(
-            [('partner_id', '=', user_id.partner_id.id)])
+            [('partner_id', '=', partner.id)])
         values = {
             'page_name': 'rfidservices',
             'services': user_services,
