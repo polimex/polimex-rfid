@@ -1,0 +1,180 @@
+name: Tests
+
+on:
+  push:
+    branches: [19.0]
+  pull_request:
+    branches: [19.0]
+  workflow_dispatch:
+
+env:
+  ODOO_VERSION: '19.0'
+  PYTHON_VERSION: '3.12'
+
+jobs:
+  test:
+    name: Backend tests on PostgreSQL ${{ matrix.postgres }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['15']
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgres }}
+        env:
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U odoo"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Checkout polimex modules
+        uses: actions/checkout@v4
+        with:
+          path: addons/polimex
+
+      - name: Cache Odoo source
+        id: odoo-cache
+        uses: actions/cache@v4
+        with:
+          path: odoo
+          key: odoo-${{ env.ODOO_VERSION }}-${{ runner.os }}
+
+      - name: Clone Odoo ${{ env.ODOO_VERSION }}
+        if: steps.odoo-cache.outputs.cache-hit != 'true'
+        run: |
+          git clone --depth=1 --branch ${{ env.ODOO_VERSION }} \
+            https://github.com/odoo/odoo.git odoo
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: odoo/requirements.txt
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            postgresql-client \
+            libldap2-dev \
+            libsasl2-dev \
+            libxml2-dev \
+            libxslt1-dev \
+            libjpeg-dev \
+            libpq-dev \
+            libssl-dev
+
+      - name: Install Odoo Python dependencies
+        run: |
+          python -m pip install --upgrade pip wheel setuptools
+          pip install -r odoo/requirements.txt
+
+      - name: Install module-specific Python dependencies
+        run: |
+          # defusedxml is required by polimex_ip_cam.
+          pip install defusedxml
+          # fdb (Firebird driver) is required by hr_rfid_andromeda_import only;
+          # the binary client may not install on every runner — make this best-effort.
+          pip install fdb || echo "fdb install failed; hr_rfid_andromeda_import tests will be skipped"
+
+      - name: Initialise test database
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: odoo
+          PGPASSWORD: odoo
+        run: |
+          # Drop any pre-existing test DB so the run starts clean.
+          psql -c "DROP DATABASE IF EXISTS polimex_test;" postgres
+          psql -c "CREATE DATABASE polimex_test OWNER odoo;" postgres
+
+      - name: Compute installable module list
+        id: modules
+        run: |
+          # Build a comma-separated list of installable modules whose
+          # external Python deps are present on this runner. fdb is the
+          # only known optional dep and gates hr_rfid_andromeda_import.
+          MODULES=$(python <<'PY'
+          import ast, importlib.util, pathlib
+          root = pathlib.Path("addons/polimex")
+          mods = []
+          for d in sorted(root.iterdir()):
+              manifest = d / "__manifest__.py"
+              if not manifest.exists():
+                  continue
+              try:
+                  m = ast.literal_eval(manifest.read_text())
+              except Exception:
+                  continue
+              if not m.get("installable", True):
+                  continue
+              ext_py = m.get("external_dependencies", {}).get("python", [])
+              missing = [pkg for pkg in ext_py if importlib.util.find_spec(pkg) is None]
+              if missing:
+                  print(f"SKIP {d.name} — missing python deps: {missing}")
+                  continue
+              mods.append(d.name)
+          print("MODS=" + ",".join(mods))
+          PY
+          )
+          INSTALL_LIST="${MODULES##*MODS=}"
+          echo "Installing: $INSTALL_LIST"
+          echo "list=$INSTALL_LIST" >> $GITHUB_OUTPUT
+
+      - name: Install polimex modules
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: odoo
+          PGPASSWORD: odoo
+        run: |
+          python odoo/odoo-bin \
+            -d polimex_test \
+            -i "${{ steps.modules.outputs.list }}" \
+            --no-http --stop-after-init \
+            --addons-path=odoo/addons,addons/polimex \
+            --db_host=localhost --db_port=5432 \
+            --db_user=odoo --db_password=odoo \
+            --log-level=warn
+
+      - name: Run backend tests
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: odoo
+          PGPASSWORD: odoo
+        run: |
+          # Tag set covers every test class added by this audit. Listed
+          # explicitly (instead of /<module>) to keep failures pinpointable.
+          TAGS="rfid_site_manager,rfid_voting,rfid_vending_auto_refill,refresh_mixin,rfid_service,rfid_service_lifecycle,rfid_service_portal_security,rfid_pms,rfid_odoo_import,rfid_old_cloud_import,polimex_ip_cam,rfid_portal,rfid_refresh_views,rfid_hourly_cost,rfid_zpl_labels,rfid_attendance_zone"
+          python odoo/odoo-bin \
+            -d polimex_test \
+            --test-enable --test-tags="$TAGS" \
+            -u "${{ steps.modules.outputs.list }}" \
+            --no-http --stop-after-init \
+            --addons-path=odoo/addons,addons/polimex \
+            --db_host=localhost --db_port=5432 \
+            --db_user=odoo --db_password=odoo \
+            --log-level=test 2>&1 | tee test.log
+          # Fail the job if the runner reported any failed/error tests.
+          if grep -qE "[1-9][0-9]* failed|[1-9][0-9]* error\(s\)" test.log; then
+            echo "::error::Tests reported failures or errors"
+            exit 1
+          fi
+
+      - name: Upload test log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-log-pg${{ matrix.postgres }}
+          path: test.log
+          retention-days: 7
