@@ -206,7 +206,6 @@ class AndromedaImportWiz(models.TransientModel):
             'import_as':import_as,
         }
 
-    @api.returns('res.partner')
     def create_res_partner_company(self, user_id):
         company_id = self.env.ref(f'__export__.andromeda_c_id_{user_id.c_id}', raise_if_not_found=False)
         if not company_id:
@@ -225,7 +224,6 @@ class AndromedaImportWiz(models.TransientModel):
             )
         return company_id
 
-    @api.returns('res.partner')
     def create_res_partner(self, user_id):
         if self.force_default_company:
             parent_id = self.default_company
@@ -257,7 +255,6 @@ class AndromedaImportWiz(models.TransientModel):
             self.create_user_ag_relation(user_id=user_id, partner_id=partner_id)
         return partner_id
 
-    @api.returns('hr.department')
     def create_department(self, d_id, d_name):
         department_id = self.env.ref(f'__export__.andromeda_d_id_{d_id}', raise_if_not_found=False)
         if not department_id:
@@ -275,7 +272,6 @@ class AndromedaImportWiz(models.TransientModel):
             )
         return department_id
 
-    @api.returns('hr.employee')
     def create_employee(self, user_id, department_id):
         employee = self.env.ref(f'__export__.andromeda_u_id_{user_id.u_id}', raise_if_not_found=False)
         if not employee:
