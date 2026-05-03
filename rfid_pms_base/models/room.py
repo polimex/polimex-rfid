@@ -116,7 +116,8 @@ class SchEncoderRoom(models.Model):
 
     @api.constrains('number')
     def _check_number(self):
-        if 0 > self.number > 65535:
-            raise ValidationError(_('Room number have to be between 1 and 65535'))
+        for record in self:
+            if record.number < 1 or record.number > 65535:
+                raise ValidationError(_('Room number have to be between 1 and 65535'))
 
     _unique_room_number = models.Constraint('unique(number)', "Duplicate room number.")

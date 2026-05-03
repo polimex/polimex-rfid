@@ -81,11 +81,11 @@
                                     <div class="col-3 text-left">
                                         <img alt="Guests present" src="/rfid_pms_base/static/icons/guests.png"
                                              style="padding: 0px; margin: 1px; height: 24px;"
-                                             attrs="{'invisible': [('hb_card_present', '=', False)]}"
+                                             invisible="not hb_card_present"
                                              title="Guests present"/>
                                         <img alt="Guests present" src="/rfid_pms_base/static/icons/guests_off.png"
                                              style="padding: 0px; margin: 1px; height: 24px;"
-                                             attrs="{'invisible': [('hb_card_present', '!=', False)]}"
+                                             invisible="hb_card_present"
                                              title="No Guests present"/>
                                         <!--                                        <div role="img"-->
                                         <!--                                             class="fa fa-fw fa-circle o_button_icon oe_hr_attendance_status_green"-->
@@ -131,11 +131,11 @@
                                            t-attf-data-context="{'btn':'dnd'}">
                                             <img alt="DND" src="/rfid_pms_base/static/icons/dnd.png"
                                                  style="padding: 0px; margin: 1px; height: 24px;"
-                                                 attrs="{'invisible': [('hb_dnd', '=', False)]}"
+                                                 invisible="not hb_dnd"
                                                  title="Do not disturb"/>
                                             <img alt="DND" src="/rfid_pms_base/static/icons/dnd_off.png"
                                                  style="padding: 0px; margin: 1px; height: 24px;"
-                                                 attrs="{'invisible': [('hb_dnd', '!=', False)]}"
+                                                 invisible="hb_dnd"
                                                  title="DND Off"/>
                                         </a>
 
@@ -143,11 +143,11 @@
                                            t-attf-data-context="{'btn':'clean'}">
                                             <img alt="Clean" src="/rfid_pms_base/static/icons/clean.png"
                                                  style="padding: 0px; margin: 1px; height: 24px;"
-                                                 attrs="{'invisible': [('hb_clean', '=', False)]}"
+                                                 invisible="not hb_clean"
                                                  title="Please Clean"/>
                                             <img alt="Clean" src="/rfid_pms_base/static/icons/clean_off.png"
                                                  style="padding: 0px; margin: 1px; height: 24px;"
-                                                 attrs="{'invisible': [('hb_clean', '!=', False)]}"
+                                                 invisible="hb_clean"
                                                  title="Clean Off"/>
                                         </a>
                                     </div>
@@ -182,7 +182,7 @@
                                 <div class="row">
                                     <div class="col-7 text-left">
                                         <field name="last_insert_name"
-                                               attrs="{'invisible': [('hb_card_present', '=', False)]}"
+                                               invisible="not hb_card_present"
                                                title="Current inserted card"/>
                                     </div>
                                     <div class="col-3 text-right" t-if="record.reservation.value">
