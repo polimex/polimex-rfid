@@ -42,11 +42,12 @@ class WebRfidController(http.Controller):
         workcodes_env = request.env['hr.rfid.workcode'].sudo().with_user(SUPERUSER_ID)
         ev_env = request.env['hr.rfid.event.user'].sudo().with_user(SUPERUSER_ID)
 
-        # Find Controller
+        # Find Controller — (ctrl_id, webstack_id) is logically unique,
+        # so limit=1 lets PostgreSQL stop after the first match.
         controller_id = ctrl_env.search([
             ('ctrl_id', '=', post_data['event']['id']),
             ('webstack_id', '=', webstack.id),
-        ]).with_context(no_output=True)
+        ], limit=1).with_context(no_output=True)
         # Create new controller if needed
         if len(controller_id) == 0 and post_data['event']['id']:
             controller_id = controller_id.create({
