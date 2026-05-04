@@ -93,24 +93,8 @@ class OldCloudWelcomeWiz(models.TransientModel):
 
         try:
             self._chech_connection()
-            # def get_count(table):
-            #     cur.execute(f"select count(*) from {table}")
-            #     res = cur.fetchall()
-            #     return res[0][0]
-            #
-            # def get_companies():
-            #     cur.execute("select c_id,c_name from COMPANY")
-            #     return cur.fetchall()
-            # def get_ags():
-            #     cur.execute("select ag_id, ag_name from ACCESS_GROUPS")
-            #     return cur.fetchall()
-
-            # self.users_count = get_count('USERS')
-            # self.company_dict = json.dumps(get_companies())
             self.company_dict = [('-1', 'Old Cloud Customer')]
-            # self.ag_dict = json.dumps(get_ags())
             self.connection_checked = True
-            # curr_vals = self.read(list(set(self._fields)))[0]
             curr_vals = self.read(['url_domain',
                                    'url_token',
                                    'users_count',

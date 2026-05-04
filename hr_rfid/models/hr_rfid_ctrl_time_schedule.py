@@ -69,12 +69,6 @@ class HrRfidTimeSchedule(models.Model):
         # compute='_compute_controllers_ids'
     )
 
-    # @api.depends('access_group_door_ids')
-    # def _compute_controllers_ids(self):
-    #     for ts in self:
-    #         ctrl_ids = ts.access_group_door_ids.mapped(lambda rel: rel.door_id.controller_id)
-    #         ts.sudo().write({'controller_ids': [(6, 0, ctrl_ids.mapped('id'))]})
-
     @api.depends('ts_data')
     def _compute_is_empty(self):
         for ts in self:

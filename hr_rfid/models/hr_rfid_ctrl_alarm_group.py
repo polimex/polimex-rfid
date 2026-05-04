@@ -78,10 +78,6 @@ class HrRfidCtrlAlarmGroup(models.Model):
             'domain': [('alarm_group_id', 'in', self.ids)],
             'context': {'create': False},
         }
-    # # @api.depends()
-    # def _compute_children(self):
-    #     for g in self:
-    #         result = self.env['hr.rfid.ctrl.alarm.group'].search
 
     @api.depends('alarm_line_ids.state', 'alarm_line_ids.armed')
     def _compute_states(self):
