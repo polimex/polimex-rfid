@@ -6,60 +6,6 @@
     'version': '19.0.2.5.1',
     'category': 'Human Resources',
     'summary': 'Manage employee access control',
-    'description': """
-RFID Access Control System
-==========================
-
-Enterprise-grade physical access control system fully integrated with Odoo, providing 
-comprehensive security management through RFID card technology.
-
-Key Features
-------------
-* **Hardware Integration**: Supports multiple RFID controller models (iCON50, iCON110, iCON115, iCON130, iCON180)
-* **Access Management**: Define who can access which doors and when
-* **Real-time Monitoring**: Live event tracking and door status monitoring
-* **Multi-site Support**: Manage multiple locations with webstack architecture
-* **Time-based Access**: Schedule-based permissions with holiday support
-* **Security Features**: Anti-passback, alarms, emergency overrides
-* **Employee Integration**: Seamless integration with HR module for employee access
-* **Visitor Management**: Support for contractors and temporary visitors
-* **Zone Control**: Group doors into logical security zones
-* **Reporting**: Access logs, failed attempts, and usage analytics
-
-Quick User Guide
-----------------
-
-1. **Initial Setup**
-   - Navigate to RFID > Configuration > Hardware Manager > Webstacks
-   - Add your webstack (network module) with IP address
-   - Use 'Module Discovery' to auto-detect connected controllers
-   - Configure each controller and its doors
-
-2. **Card Management**
-   - Go to RFID > Card Management > Cards
-   - Create new card with 10-digit number
-   - Assign to employee or contact
-   - Set activation/expiration dates if needed
-
-3. **Access Control Setup**
-   - Create Time Schedules (Configuration > Time Schedules)
-   - Create Access Groups (Access Control > Access Groups)
-   - Add doors to access groups with appropriate schedules
-   - Assign access groups to employees, departments, or cards
-
-4. **Daily Operations**
-   - Monitor real-time events in Events > User Events
-   - Handle alarms in Alarm System menu
-   - Use 'Open Door' action for remote access
-   - Review access reports and analytics
-
-5. **Emergency Procedures**
-   - Configure Emergency Groups for crisis situations
-   - Use manual door commands when needed
-   - Monitor system events for hardware issues
-
-For detailed documentation, visit: https://polimex.co/
-    """,
     'company': 'Polimex Holding Ltd',
     'author': 'Polimex Dev Team',
 'license': 'AGPL-3',

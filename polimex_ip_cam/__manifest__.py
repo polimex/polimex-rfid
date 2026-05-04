@@ -2,14 +2,6 @@
     'name': "IP Camera Management",
     'version': '19.0.1.0.1',
     'summary': "Module for managing IP cameras via manufacturers integration integration",
-    'description': """
-        This module is designed for managing cameras (e.g. Hikvision, Dahua) with automatic
-        configuration through the API interfaces. It provides a model for storing camera data,
-        including connection status and license plate lists (whitelist, blacklist, etc.).
-        The module is designed to be flexible and extensible for different manufacturers,
-        separating the logic for ANPR, CCTV IP Cams, CCTV IP NVRs.
-
-    """,
     'author': "Polimex Dev Team",
     'website': "https://polimex.co",
     'license': 'AGPL-3',

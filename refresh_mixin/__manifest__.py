@@ -4,18 +4,6 @@
 
     'summary': "Refresh Mixin for Odoo models",
 
-    'description': """
-The module refreshes the views of models that inherit from it.
-Supported views: List, Kanban, Hierarchy.
-
-Usage:
-- Inherit from 'refresh.mixin' in your model
-- Use js_class="list_refresh_view" for List views
-- Use js_class="kanban_refresh_view" for Kanban views
-- Use js_class="hierarchy_refresh_view" for Hierarchy views
-- Enable "Real-time View Refresh" in Company settings
-    """,
-
     'author': "Polimex Team <software@polimex.co>",
     'website': "https://polimex.co",
 
