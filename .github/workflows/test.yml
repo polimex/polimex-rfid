@@ -160,7 +160,13 @@ jobs:
           # in hr_rfid.tests.controller. The legacy test runs locally
           # but not on a clean CI DB; we cover the same flow at the
           # model layer through 'rfid_service_lifecycle'.
-          TAGS="rfid_site_manager,rfid_voting,rfid_vending_auto_refill,refresh_mixin,rfid_service_lifecycle,rfid_service_portal_security,rfid_pms,rfid_odoo_import,rfid_old_cloud_import,polimex_ip_cam,rfid_portal,rfid_refresh_views,rfid_hourly_cost,rfid_zpl_labels,rfid_attendance_zone"
+          # 'rfid' covers the full hr_rfid suite (rfid_card / rfid_apb /
+          # rfid_events / rfid_security / rfid_webstack / rfid_commands /
+          # rfid_constraints / rfid_access_group / rfid_schedules /
+          # rfid_wizards / rfid_hardware) — ~163 tests in one tag.
+          # 'rfid_vending' covers the full vending suite incl. auto-refill
+          # and ev64. Sister modules each carry their own dedicated tag.
+          TAGS="rfid,rfid_vending,sot_denied,hr_attendance_late,rfid_site_manager,rfid_site_manager_tour,rfid_voting,refresh_mixin,rfid_service_lifecycle,rfid_service_portal_security,rfid_pms,rfid_odoo_import,rfid_old_cloud_import,polimex_ip_cam,rfid_portal,rfid_refresh_views,rfid_hourly_cost,rfid_zpl_labels,rfid_attendance_zone"
           python odoo/odoo-bin \
             -d polimex_test \
             --test-enable --test-tags="$TAGS" \
