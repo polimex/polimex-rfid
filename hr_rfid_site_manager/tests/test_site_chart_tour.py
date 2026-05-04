@@ -15,7 +15,7 @@ the tour is supplementary rather than load-bearing.
 from odoo.tests import HttpCase, tagged
 
 
-@tagged("-standard", "-at_install", "rfid_site_manager_tour", "manual")
+@tagged("post_install", "-at_install", "rfid_site_manager_tour")
 class TestSiteChartTour(HttpCase):
     _registry_readonly_enabled = False
 

@@ -1,45 +1,56 @@
 import { registry } from "@web/core/registry";
 
 /**
- * E2E tour — verify the site_chart widget navigation.
+ * E2E tour — drives the user from the Site Manager action through the
+ * hierarchy view into the form view of "HQ", checks the site_chart
+ * widget rendered the child site name, then clicks the child link to
+ * confirm navigation lands on its form.
  *
- * Pre-conditions (set up by the Python HttpCase):
- *   * an hr.rfid.site named "HQ" with a child "Floor 1".
- *   * the user has access to the site form action.
+ * Pre-conditions (HttpCase fixture):
+ *   * an hr.rfid.site named "HQ" with no parent
+ *   * a child site named "Floor 1" with parent_id = HQ
  *
- * NOTE: tours are sensitive to view-mode order in the action and to the
- * exact CSS that the chosen view emits (list / kanban / hierarchy). The
- * Python wrapper is currently disabled while the selectors are tuned
- * against a fresh DB; the JS lives here as the canonical pattern.
+ * The action ships with view_mode="hierarchy,list,form", so the
+ * landing view is hierarchy. Odoo's tour engine does not understand
+ * the CSS :is() functional pseudo-class, so each candidate selector
+ * is listed as its own comma-separated branch.
  */
 registry.category("web_tour.tours").add("hr_rfid_site_chart_navigation_tour", {
     url: "/odoo/action-hr_rfid_site_manager.hr_rfid_site_action",
     steps: () => [
         {
-            content: "Action loaded — at least one site visible",
-            trigger: ".o_view_controller :is(.o_data_row, .o_kanban_record, .o_hierarchy_node):contains(HQ)",
+            content: "Hierarchy view rendered with HQ visible",
+            trigger:
+                ".o_hierarchy_node:contains(HQ), " +
+                ".o_kanban_record:contains(HQ), " +
+                ".o_data_row td:contains(HQ)",
         },
         {
             content: "Open HQ form",
-            trigger: ".o_view_controller :is(.o_data_row, .o_kanban_record, .o_hierarchy_node):contains(HQ)",
+            trigger:
+                ".o_hierarchy_node:contains(HQ), " +
+                ".o_kanban_record:contains(HQ), " +
+                ".o_data_row:contains(HQ)",
             run: "click",
         },
         {
-            content: "Site form shows the site_chart widget",
+            content: "Form view loaded — site_chart widget rendered",
             trigger: ".o_form_view .o_site_chart",
         },
         {
-            content: "Hierarchy lists the child site name",
+            content: "site_chart lists the Floor 1 child link",
             trigger: ".o_site_chart_children .site_name a:contains(Floor 1)",
         },
         {
-            content: "Clicking the child site name navigates to its form",
+            content: "Click the child link",
             trigger: ".o_site_chart_children .site_name a:contains(Floor 1)",
             run: "click",
         },
         {
-            content: "After navigation, name field reads Floor 1",
-            trigger: ".o_form_view input.o_input[id^='name']:value(Floor 1)",
+            content: "Navigation succeeded — Floor 1 form is showing",
+            trigger:
+                ".o_form_view input[id^='name'][value='Floor 1'], " +
+                ".o_form_view .o_breadcrumb:contains(Floor 1)",
         },
     ],
 });
