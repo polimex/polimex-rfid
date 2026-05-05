@@ -1,7 +1,8 @@
 # Polimex RFID Access Control Suite for Odoo
 
+[![Tests](https://github.com/polimex/polimex-rfid/actions/workflows/test.yml/badge.svg?branch=19.0)](https://github.com/polimex/polimex-rfid/actions/workflows/test.yml)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![Odoo Version](https://img.shields.io/badge/Odoo-18.0-875A7B.svg)](https://www.odoo.com/)
+[![Odoo Version](https://img.shields.io/badge/Odoo-19.0-875A7B.svg)](https://www.odoo.com/)
 [![Company](https://img.shields.io/badge/Company-Polimex-orange.svg)](https://polimex.co)
 
 A comprehensive suite of Odoo modules for professional RFID-based access control, attendance tracking, and facility management.
