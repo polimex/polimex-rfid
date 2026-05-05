@@ -83,6 +83,8 @@ jobs:
           # fdb (Firebird driver) is required by hr_rfid_andromeda_import only;
           # the binary client may not install on every runner — make this best-effort.
           pip install fdb || echo "fdb install failed; hr_rfid_andromeda_import tests will be skipped"
+          # coverage is only used by the workflow_dispatch path.
+          pip install coverage
 
       - name: Initialise test database
         env:
@@ -189,3 +191,44 @@ jobs:
           name: test-log-pg${{ matrix.postgres }}
           path: test.log
           retention-days: 7
+
+      # Coverage report — only on manual workflow_dispatch to keep the
+      # routine push runs fast. Run a second pass under coverage and
+      # publish a per-module summary artifact.
+      - name: Coverage report (manual dispatch only)
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: odoo
+          PGPASSWORD: odoo
+        run: |
+          # Fresh DB for the coverage pass so it doesn't reuse the
+          # already-tested polimex_test state.
+          psql -c "DROP DATABASE IF EXISTS polimex_cov;" postgres
+          psql -c "CREATE DATABASE polimex_cov OWNER odoo;" postgres
+          # Same tag list as the regular run.
+          TAGS="rfid,rfid_vending,sot_denied,hr_attendance_late,rfid_site_manager,rfid_site_manager_tour,rfid_voting,refresh_mixin,rfid_service_lifecycle,rfid_service_portal_security,rfid_pms,rfid_odoo_import,rfid_old_cloud_import,polimex_ip_cam,rfid_portal,rfid_refresh_views,rfid_hourly_cost,rfid_zpl_labels,rfid_attendance_zone"
+          coverage run --source=addons/polimex --omit='*/tests/*,*/__pycache__/*' \
+            odoo/odoo-bin \
+              -d polimex_cov \
+              --test-enable --test-tags="$TAGS" \
+              -i "${{ steps.modules.outputs.list }}" \
+              --no-http --stop-after-init \
+              --addons-path=odoo/addons,addons/polimex \
+              --db_host=localhost --db_port=5432 \
+              --db_user=odoo --db_password=odoo \
+              --log-level=warn 2>&1 | tail -20 || true
+          coverage report --skip-empty --sort=cover -m > coverage-report.txt || true
+          echo "## Coverage summary" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          coverage report --skip-empty --sort=cover | tail -20 >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload coverage report
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage-report.txt
+          retention-days: 30
