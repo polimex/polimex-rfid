@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime, timedelta, time
+from freezegun import freeze_time
 from odoo import fields
 from .common import TestAttendanceLateCommon
 import logging
@@ -34,22 +35,16 @@ class TestAttendanceCalculation(TestAttendanceLateCommon):
         self.assertAlmostEqual(attendance_extra.late_time, 0.0, 2)
         self.assertAlmostEqual(attendance_extra.early_leave_time, 0.0, 2)
     
+    @freeze_time("2026-11-09 12:00:00")
     def test_02_missing_checkout_current_day(self):
         """Test attendance with missing check-out on current day.
 
-        Skipped on a clean CI database because actual_work_time depends
-        on the wall-clock falling inside the company calendar's working
-        hours: when the runner picks up the job outside 08:00-17:00
-        local time, check_in 2 hours ago is outside business hours and
-        actual_work_time computes to 0. The same test passes locally
-        during normal working hours. A proper fix needs the calendar to
-        be patched / mocked instead of relying on `datetime.now()`.
+        Frozen to a Monday 12:00 so that `check_in = now() - 2h` always
+        lands inside the calendar's working window (08:00-17:00). Without
+        the freeze the test was flaky on CI: when the runner picked the
+        job up early in the UTC morning, check_in fell outside business
+        hours and actual_work_time computed to 0.
         """
-        self.skipTest(
-            "wall-clock-dependent: actual_work_time is 0 when the test "
-            "runs outside the calendar's working hours (CI runs UTC). "
-            "Needs a freezegun-style time mock before re-enabling."
-        )
         test_date = fields.Date.today()
         current_time = fields.Datetime.now()
 
