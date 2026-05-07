@@ -1,28 +1,12 @@
 {
     'name': "RFID PMS Base",
-
-    'summary': """
-        RFID PMS system Base structures
-    """,
-
-    'description': """
-        RFID PMS system Base structures
-    """,
-
+    'summary': "RFID PMS system Base structures",
     'author': "Polimex Dev Team",
     'website': "https://polimex.co",
     'license': 'AGPL-3',
-
-    # Categories can be used to filter modules in modules listing
-    # Check https://github.com/odoo/odoo/blob/14.0/odoo/addons/base/data/ir_module_category_data.xml
-    # for the full list
     'category': "Generic Modules/Property Management System",
-    'version': '19.0.0.2.0',
-
-    # any module necessary for this one to work correctly
+    'version': '19.0.0.3.0',
     'depends': ['hr_rfid'],
-
-    # always loaded
     'data': [
         'security/pms_base_security.xml',
         'security/ir.model.access.csv',
@@ -34,7 +18,6 @@
         'views/menus.xml',
         'data/data.xml',
     ],
-    # 'images': ['static/images/main_screenshot.png'],
-    "application": True,
+    'application': True,
     'installable': True,
 }

@@ -52,8 +52,6 @@ class SchEncoderRoom(models.Model):
         related='door_id.hb_card_present',
     )
 
-    # log = fields.One2many(comodel_name='sch_encoder.encoder.log', inverse_name='room_id')
-    # bms_log_ids = fields.One2many(comodel_name='sch_encoder.bms.log', inverse_name='room_id')
     last_temperature = fields.Float(string='Temperature', compute='_compute_temperature')
     last_humidity = fields.Float(string='Humidity', compute='_compute_temperature')
     last_occupancy = fields.Char(string='Occupancy', compute='_compute_temperature')
@@ -61,15 +59,27 @@ class SchEncoderRoom(models.Model):
 
     @api.depends('hb_card_present')
     def _compute_last_insert_name(self):
+        # Batched: one query for all rooms in self instead of N+1 — important
+        # because the kanban renders this field on every card refresh.
+        door_ids = self.mapped('door_id').ids
+        last_event_per_door = {}
+        if door_ids:
+            grouped = self.env['hr.rfid.event.user']._read_group(
+                domain=[('door_id', 'in', door_ids), ('event_action', '=', '7')],
+                groupby=['door_id'],
+                aggregates=['id:max'],
+            )
+            event_ids = [event_id for __, event_id in grouped if event_id]
+            events_by_id = {e.id: e for e in self.env['hr.rfid.event.user'].browse(event_ids)}
+            last_event_per_door = {
+                door.id: events_by_id[event_id]
+                for door, event_id in grouped if event_id and event_id in events_by_id
+            }
         for r in self:
-            last_event_id = self.env['hr.rfid.event.user'].search([
-                ('door_id', '=', r.door_id.id),
-                ('event_action', '=', '7')
-            ], limit=1)
-            r.last_insert_name = last_event_id.employee_id and last_event_id.employee_id.name or \
-                                 last_event_id.contact_id and last_event_id.contact_id.name or 'Unknown'
-            # if not r.last_insert_name:
-            #     r.last_insert_name = 'Unknown'
+            event = last_event_per_door.get(r.door_id.id)
+            r.last_insert_name = (
+                event and (event.employee_id.name or event.contact_id.name) or 'Unknown'
+            )
 
     @api.depends('all_contact_ids')
     def _compute_reservation(self):
@@ -90,29 +100,12 @@ class SchEncoderRoom(models.Model):
         elif button == 'guests':
             pass
 
-    # @api.depends('bms_log_ids')
     def _compute_temperature(self):
+        # Stub values until a BMS sensor module supplies live data.
         for r in self:
             r.last_humidity = 45.7
             r.last_occupancy = 1
             r.last_temperature = 21.5
-            continue
-
-            last_log = r.bms_log_ids.search([
-                ('room_id', '=', r.id),
-                ('temperature', '!=', False)], limit=1)
-            if last_log:
-                r.last_temperature = last_log.temperature
-            else:
-                r.last_temperature = 0.00
-
-            last_log = r.bms_log_ids.search([
-                ('room_id', '=', r.id),
-                ('occupancy', '!=', False)], limit=1)
-            if last_log:
-                r.last_occupancy = last_log.occupancy
-            else:
-                r.last_occupancy = False
 
     @api.constrains('number')
     def _check_number(self):

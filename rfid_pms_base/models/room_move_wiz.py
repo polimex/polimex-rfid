@@ -9,15 +9,15 @@ class RoomMoveWiz(models.TransientModel):
         return self.env['rfid_pms_base.room'].browse(self.env.context.get("active_id", []))
 
     def _get_free_room_domain(self):
-        # 'reservation' is a non-stored computed field (Many2one), so we
-        # must materialise the candidate set in Python rather than embed
-        # it in the SQL domain — Odoo 19 rejects non-stored fields in
-        # ORM domains.
+        # `reservation` is a non-stored compute (Many2one) so it cannot live
+        # inside an ORM domain. We approximate "free" as "AG has no contact
+        # rel" — same condition `_compute_reservation` uses — via a batched
+        # prefetch instead of per-room compute calls.
         excluded_id = self._get_room_id().id
-        free_room_ids = self.env['rfid_pms_base.room'].search([]).filtered(
-            lambda r: not r.reservation and r.id != excluded_id
-        ).ids
-        return [('id', 'in', free_room_ids)]
+        rooms = self.env['rfid_pms_base.room'].search([('id', '!=', excluded_id)])
+        rooms.mapped('all_contact_ids')
+        free_ids = [r.id for r in rooms if not r.all_contact_ids]
+        return [('id', 'in', free_ids)]
 
     room_from_id = fields.Many2one(comodel_name='rfid_pms_base.room', default=_get_room_id)
     room_to_id = fields.Many2one(comodel_name='rfid_pms_base.room', domain=_get_free_room_domain, required=True)
