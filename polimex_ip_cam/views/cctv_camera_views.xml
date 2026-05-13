@@ -6,6 +6,12 @@
         <field name="view_mode">list</field>
         <field name="domain">[('camera_id','=',active_id), ('list_category','=','whitelist')]</field>
         <field name="context">{'default_camera_id': active_id, 'default_list_category': 'whitelist'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No plates whitelisted on this camera</p>
+            <p>
+                Whitelisted plates are auto-granted on detection. Add a row by selecting a card whose number matches the plate the camera should accept.
+            </p>
+        </field>
     </record>
 
     <!-- Action for Blacklist smart button -->
@@ -15,6 +21,12 @@
         <field name="view_mode">list</field>
         <field name="domain">[('camera_id','=',active_id), ('list_category','=','blacklist')]</field>
         <field name="context">{'default_camera_id': active_id, 'default_list_category': 'blacklist'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No plates blacklisted on this camera</p>
+            <p>
+                Blacklisted plates trigger a denial event on detection. Add rows for vehicles that should never gain access through this camera's barrier.
+            </p>
+        </field>
     </record>
 
     <!-- Action for Graylist smart button -->
@@ -24,6 +36,12 @@
         <field name="view_mode">list</field>
         <field name="domain">[('camera_id','=',active_id), ('list_category','=','graylist')]</field>
         <field name="context">{'default_camera_id': active_id, 'default_list_category': 'graylist'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No plates on the graylist</p>
+            <p>
+                Graylisted plates are tagged as suspect — detections produce an event but the gate does not open automatically. Use the list to triage plates between whitelist and blacklist.
+            </p>
+        </field>
     </record>
 
     <!-- Action for Yellolist smart button -->
@@ -33,6 +51,12 @@
         <field name="view_mode">list</field>
         <field name="domain">[('camera_id','=',active_id), ('list_category','=','yellolist')]</field>
         <field name="context">{'default_camera_id': active_id, 'default_list_category': 'yellolist'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No plates on the yellow list</p>
+            <p>
+                Visitor / temporary plates with limited validity. Use this list for delivery vehicles, guest cars, or contractors that need access only for a short period.
+            </p>
+        </field>
     </record>
 
     <!-- Action for Otherlist smart button -->
@@ -42,6 +66,12 @@
         <field name="view_mode">list</field>
         <field name="domain">[('camera_id','=',active_id), ('list_category','=','otherlist')]</field>
         <field name="context">{'default_camera_id': active_id, 'default_list_category': 'otherlist'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No plates on the other list</p>
+            <p>
+                Catch-all category for plates that don't fit the standard lists (allow / deny / suspect / temporary). Useful for tagging plates pending classification.
+            </p>
+        </field>
     </record>
 
     <!-- List View for CCTV Cameras -->
@@ -261,6 +291,12 @@ action = {'type': 'ir.actions.client', 'tag': 'reload'}
         <field name="name">CCTV Cameras</field>
         <field name="res_model">cctv.camera</field>
         <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Register your first CCTV camera</p>
+            <p>
+                Add an ANPR camera by giving it an IP address, port, timezone and the operator credentials configured on the camera's web UI. Once connected, the camera pushes plate detection events back to Odoo and you can manage its access lists from here.
+            </p>
+        </field>
     </record>
 
     <menuitem id="menu_cctv_camera_action"

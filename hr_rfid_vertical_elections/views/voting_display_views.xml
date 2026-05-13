@@ -73,5 +73,11 @@
         <field name="name">Voting Display</field>
         <field name="res_model">voting.display</field>
         <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Configure your first voting display</p>
+            <p>
+                A voting display is the public kiosk page where eligible voters cast their ballot. Each display has a short code and an access token that secure the public URL. You need at least one display before opening a session.
+            </p>
+        </field>
     </record>
 </odoo>

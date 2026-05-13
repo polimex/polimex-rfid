@@ -21,6 +21,12 @@
             <field name="res_model">hr.rfid.card</field>
             <field name="view_mode">list,search</field>
             <field name="context">{"search_default_showall": 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">No cards have been issued yet</p>
+                <p>
+                    Cards appear here automatically when receptionists open a reservation from the Hotel Rooms kanban. Manager-only view — use it to audit which cards are in circulation and which doors each card can open.
+                </p>
+            </field>
         </record>
 
 

@@ -6,6 +6,12 @@
         <field name="view_mode">list,form</field>
         <field name="domain">[('card_id','=',active_id)]</field>
         <field name="context">{'default_card_id': active_id}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">This card is not registered with any camera</p>
+            <p>
+                Add a row to associate this card with an ANPR camera and a list category (whitelist / blacklist / etc.). The camera enforces the list on plate detection.
+            </p>
+        </field>
     </record>
 
     <!-- Inherit the existing hr.rfid.card form view -->

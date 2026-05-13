@@ -186,6 +186,15 @@
             <field name="name">Hotel Rooms</field>
             <field name="res_model">rfid_pms_base.room</field>
             <field name="view_mode">kanban,list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">Register your first hotel room</p>
+                <p>
+                    Rooms tie a guest access group to the controller door that locks the room. Once you have at least one room here, this kanban becomes the receptionist's daily working surface — issue new reservations, toggle DND / Clean, and move occupants between rooms.
+                </p>
+                <p>
+                    <strong>Prerequisite:</strong> create a guest access group with doors first (Configuration → Access Groups in the RFID app).
+                </p>
+            </field>
         </record>
 
     </data>
