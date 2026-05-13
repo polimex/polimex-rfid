@@ -35,11 +35,17 @@
                           groups="hr_rfid.hr_rfid_group_officer"
                           invisible="is_company or is_employee"
                           name="rfid_main_page">
+                        <p class="text-muted">
+                            RFID access for this contact: PIN code, the cards they carry, and the access groups that decide which doors they can open.
+                        </p>
                         <group string="Settings" groups="hr_rfid.hr_rfid_view_rfid_pin_code_data" name="rfid_settings">
                             <field name="hr_rfid_pin_code"/>
                         </group>
                         <notebook name="rfid_notebook">
                             <page string="Cards" name="rfid_cards_page">
+                                <p class="text-muted">
+                                    Cards issued to this contact. Use Generate to add a printable barcode card on the fly.
+                                </p>
                                 <field name="hr_rfid_card_ids" context="{'active_test': False,'default_contact_id': id}" edit="0">
                                     <list string="Cards belonging this Contact" editable="bottom"
                                           decoration-success="active"
@@ -62,6 +68,9 @@
                             </page>
 
                             <page string="Access Groups" name="rfid_ag_page">
+                                <p class="text-muted">
+                                    Access groups assigned to this contact. Each row can be time-limited (Activate on / Expiration) and visit-limited (Permitted Visits counts down on every successful swipe).
+                                </p>
                                 <field name="hr_rfid_access_group_ids" widget="one2many_list">
                                     <list editable="bottom">
                                         <field name="access_group_id"/>

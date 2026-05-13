@@ -12,6 +12,9 @@
                           name="rfid_site_page"
                           invisible="is_company or is_employee"
                           groups="hr_rfid_site_manager.group_guard">
+                        <p class="text-muted">
+                            Sites this contact is permitted to enter. The guard role uses this tag list to filter the contacts they can see in their own sites.
+                        </p>
                         <label for="site_ids"/>
                         <field name="site_ids" widget="many2many_tags"/>
                     </page>

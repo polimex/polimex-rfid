@@ -200,7 +200,10 @@
                             </group>
                         </group>
                         <notebook>
-                            <page string="Settings">
+                            <page string="Settings" name="settings">
+                                <p class="text-muted">
+                                    Default access rights and tagging for the service. The access group is inherited by every card issued from this service, and tags help filter the catalog.
+                                </p>
                                 <group>
                                     <group string="Default Access Rights">
                                         <field name="access_group_id"/>

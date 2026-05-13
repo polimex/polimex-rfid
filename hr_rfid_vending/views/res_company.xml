@@ -8,7 +8,10 @@
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <xpath expr="//notebook" position="inside">
-                    <page string="Vending" groups="hr_rfid_vending.group_operator">
+                    <page string="Vending" name="vending" groups="hr_rfid_vending.group_operator">
+                        <p class="text-muted">
+                            Schedule for the auto-refill cron at the company level. The interval below controls how often employee balances are recharged; the next call timestamp shows when the scheduler will fire next.
+                        </p>
                         <group string="Vending settings" name="Vending">
                             <group>
                                 <label for="refill_interval_number" string="Execute Every"/>

@@ -130,7 +130,11 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
 
     @api.onchange('partner_id')
     def _compute_partner_contact(self):
-        self.mobile = self.partner_id.mobile
+        # `mobile` was merged into `phone` in Odoo 19; res.partner no longer
+        # exposes a separate mobile field. The wizard keeps its own
+        # `self.mobile` field for the UI label but mirrors the partner's
+        # `phone` value here.
+        self.mobile = self.partner_id.phone
         self.email = self.partner_id.email
 
     @api.onchange('service_id')
@@ -163,17 +167,16 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         access_group_contact_rel = self.env['hr.rfid.access.group.contact.rel']
         if not partner_id:
             partner_id = self.env['res.partner'].create({
-                # 'name': '%s (%s)' % (transaction_name, self.service_id.name),
                 'name': transaction_name,
                 'company_id': self.service_id.company_id.id,
-                'mobile': self.mobile,
+                'phone': self.mobile,
                 'email': self.email,
                 'parent_id': self.parent_id.id,
             })
         else:
-            if partner_id.mobile != self.mobile or partner_id.email != self.email:
+            if partner_id.phone != self.mobile or partner_id.email != self.email:
                 partner_id.write({
-                    'mobile': self.mobile,
+                    'phone': self.mobile,
                     'email': self.email,
                 })
             access_group_contact_rel = self.env['hr.rfid.access.group.contact.rel'].sudo().search([
@@ -317,8 +320,9 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
             'start_date': self.start_date,
             'end_date': self.end_date,
             'card_id': card_id.id,
-            'create_uid': self.env.user,
-            'write_uid': self.env.user,
+            # create_uid / write_uid are auto-managed by Odoo — don't set them
+            # manually, especially not with a recordset value (Odoo 19 rejects
+            # `res.users` recordsets where an Integer FK is expected).
             'access_group_contact_rel': access_group_contact_rel.id
         })
         sale_id.sudo().message_subscribe(partner_ids=[self.partner_id.id])

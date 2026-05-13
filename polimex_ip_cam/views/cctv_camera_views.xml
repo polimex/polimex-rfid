@@ -134,7 +134,10 @@
                         <field name="description"/>
                     </group>
                     <notebook>
-                        <page string="Plate Lists" groups="base.group_no_one">
+                        <page string="Plate Lists" name="plate_lists" groups="base.group_no_one">
+                            <p class="text-muted">
+                                License plates registered with this camera and the ANPR list they belong to (allow, block, visitor, etc.). The camera enforces the list on each plate detection.
+                            </p>
                             <div class="oe_button_box" name="button_box" groups="base.group_no_one">
                                 <!--                                <button name="action_get_whitelist" type="object"-->
                                 <!--                                        string="Get Whitelist"-->
@@ -157,7 +160,10 @@
                                 </form>
                             </field>
                         </page>
-                        <page string="Settings">
+                        <page string="Settings" name="network_settings">
+                            <p class="text-muted">
+                                Connection details Odoo uses to reach the camera. Authentication is the same operator account configured on the camera's web UI.
+                            </p>
                             <group>
                                 <group string="Network Settings">
                                     <field name="ip_address"/>
@@ -170,7 +176,10 @@
                                 </group>
                             </group>
                         </page>
-                        <page string="Server Settings" groups="base.group_no_one">
+                        <page string="Server Settings" name="server_settings" groups="base.group_no_one">
+                            <p class="text-muted">
+                                Where the camera pushes ANPR events to. Use Get to read the current push target from the camera, then Set to redirect it to this Odoo endpoint.
+                            </p>
                             <div class="oe_button_box" name="button_box">
                                 <button name="action_get_http_host" type="object"
                                         string="Get Push Server Information"
@@ -185,7 +194,10 @@
                                 <field name="server_setup"/>
                             </group>
                         </page>
-                        <page string="Entrance Settings" groups="base.group_no_one">
+                        <page string="Entrance Settings" name="entrance_settings" groups="base.group_no_one">
+                            <p class="text-muted">
+                                Per-entrance parameters (lane direction, allowed list, snapshot mode) pulled from the camera. Use Get to read the current configuration; Set writes any local changes back to the device.
+                            </p>
                             <div class="oe_button_box" name="button_box">
                                 <button name="action_get_entrance_param" type="object"
                                         string="Get Entrance settings"

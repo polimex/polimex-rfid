@@ -90,7 +90,10 @@
                             help="Show employee history balance"/>
                 </xpath>
                 <notebook position="inside">
-                    <page string="Vending" groups="hr_rfid_vending.group_customer">
+                    <page string="Vending" name="vending" groups="hr_rfid_vending.group_customer">
+                        <p class="text-muted">
+                            Personal vending balance and refill rules. The current balance is the value the controller charges against on each purchase; the auto-refill settings drive how often the company cron tops it up.
+                        </p>
                         <group>
                             <group string="Balance">
                                 <field name="hr_rfid_vending_balance" readonly="1"/>

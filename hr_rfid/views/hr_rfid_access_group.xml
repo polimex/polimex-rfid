@@ -215,9 +215,15 @@
                             </ul>
                         </div>
                         <notebook>
-                            <page string="Door access">
+                            <page string="Door access" name="door_access">
+                                <p class="text-muted">
+                                    Everything this access group grants: which doors are open, on what schedule, and which employees and contacts inherit those rights.
+                                </p>
                                 <notebook colspan="4" invisible="not id">
-                                    <page string="Doors">
+                                    <page string="Doors" name="doors">
+                                        <p class="text-muted">
+                                            Doors directly bound to this access group, together with the time schedule that controls when they unlock and the card type the reader expects.
+                                        </p>
                                         <field name="door_ids" readonly="1">
                                             <list string="Doors group has access to">
                                                 <field name="door_id"/>
@@ -228,7 +234,10 @@
                                         </field>
                                     </page>
 
-                                    <page string="Departments">
+                                    <page string="Departments" name="departments">
+                                        <p class="text-muted">
+                                            Departments where this access group is listed as one of the allowed groups. Membership flows through to every employee in those departments.
+                                        </p>
                                         <field name="department_ids" readonly="1">
                                             <list string="Departments assigned to this access group">
                                                 <field name="name"/>
@@ -287,9 +296,15 @@
 
                                 </notebook>
                             </page>
-                            <page string="Group access">
+                            <page string="Group access" name="group_access">
+                                <p class="text-muted">
+                                    Access this group gains from other groups (inheritance), plus the groups that inherit from it. The resolved set of doors is shown under All Doors.
+                                </p>
                                 <notebook colspan="4" invisible="not id">
-                                    <page string="Inherited Access Groups">
+                                    <page string="Inherited Access Groups" name="inherited_groups">
+                                        <p class="text-muted">
+                                            Groups whose doors and schedules are added to this group. Useful for building "VIP includes Standard" overlays without duplicating door lists.
+                                        </p>
                                         <field name="inherited_ids">
                                             <list>
                                                 <field name="name"/>
@@ -297,7 +312,10 @@
                                         </field>
                                     </page>
 
-                                    <page string="All Doors">
+                                    <page string="All Doors" name="all_doors">
+                                        <p class="text-muted">
+                                            The resolved door list — direct doors plus every door inherited from the groups above.
+                                        </p>
                                         <field name="all_door_ids" readonly="1">
                                             <list string="Doors group has access to">
                                                 <field name="door_id"/>
@@ -306,7 +324,10 @@
                                         </field>
                                     </page>
 
-                                    <page string="Inheritor Access Groups">
+                                    <page string="Inheritor Access Groups" name="inheritor_groups">
+                                        <p class="text-muted">
+                                            Groups that include this group as an inherited source. Use this to spot the downstream impact before editing the door list.
+                                        </p>
                                         <field name="inheritor_ids" readonly="1">
                                             <list>
                                                 <field name="name"/>

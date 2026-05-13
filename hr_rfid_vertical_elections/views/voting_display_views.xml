@@ -42,7 +42,10 @@
                         </group>
                     </group>
                     <notebook>
-                        <page name="Appearance">
+                        <page name="Appearance" string="Appearance">
+                            <p class="text-muted">
+                                Colours and background shown on the kiosk page. Switching between voting and non-voting modes uses the two background colours below.
+                            </p>
                             <group>
                                 <group>
                                     <field name="no_voting_background_color" widget="color"/>
@@ -53,7 +56,10 @@
                                 </group>
                             </group>
                         </page>
-                        <page name="Announcements">
+                        <page name="Announcements" string="Announcements">
+                            <p class="text-muted">
+                                HTML content rendered on the kiosk while no session is open. Use it for rules, opening hours, or a welcome message.
+                            </p>
                             <field name="description" placeholder="E.g. Rules, notes and etc."/>
                         </page>
                     </notebook>
