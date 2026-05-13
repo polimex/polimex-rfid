@@ -9,16 +9,46 @@ class Digest(models.Model):
     _name = 'digest.digest'
     _inherit = 'digest.digest'
 
-    kpi_hr_rfid_att_early_come = fields.Boolean('Early come')
-    kpi_hr_rfid_att_late = fields.Boolean('Late')
-    kpi_hr_rfid_att_leave = fields.Boolean('Early leave')
-    kpi_hr_rfid_att_overtime = fields.Boolean('Overtime')
-    kpi_hr_rfid_att_extra = fields.Boolean('Extra time')
-    kpi_hr_rfid_att_early_come_value = fields.Integer(compute='_compute_kpi_hr_rfid_att_values')
-    kpi_hr_rfid_att_late_value = fields.Integer(compute='_compute_kpi_hr_rfid_att_values')
-    kpi_hr_rfid_att_leave_value = fields.Integer(compute='_compute_kpi_hr_rfid_att_values')
-    kpi_hr_rfid_att_overtime_value = fields.Integer(compute='_compute_kpi_hr_rfid_att_values')
-    kpi_hr_rfid_att_extra_value = fields.Integer(compute='_compute_kpi_hr_rfid_att_values')
+    kpi_hr_rfid_att_early_come = fields.Boolean(
+        'Early come',
+        help="Include a 'Count of employees who arrived early today' KPI in the digest email.",
+    )
+    kpi_hr_rfid_att_late = fields.Boolean(
+        'Late',
+        help="Include a 'Count of late arrivals' KPI in the digest email.",
+    )
+    kpi_hr_rfid_att_leave = fields.Boolean(
+        'Early leave',
+        help="Include a 'Count of employees who left early' KPI in the digest email.",
+    )
+    kpi_hr_rfid_att_overtime = fields.Boolean(
+        'Overtime',
+        help="Include a 'Count of employees who stayed past contract hours' KPI in the digest email.",
+    )
+    kpi_hr_rfid_att_extra = fields.Boolean(
+        'Extra time',
+        help="Include a 'Count of employees with extra unrecorded time' KPI in the digest email.",
+    )
+    kpi_hr_rfid_att_early_come_value = fields.Integer(
+        compute='_compute_kpi_hr_rfid_att_values',
+        help="Live count of employees who checked in before their schedule start during the digest window.",
+    )
+    kpi_hr_rfid_att_late_value = fields.Integer(
+        compute='_compute_kpi_hr_rfid_att_values',
+        help="Live count of employees who checked in after their schedule start during the digest window.",
+    )
+    kpi_hr_rfid_att_leave_value = fields.Integer(
+        compute='_compute_kpi_hr_rfid_att_values',
+        help="Live count of employees who checked out before their schedule end during the digest window.",
+    )
+    kpi_hr_rfid_att_overtime_value = fields.Integer(
+        compute='_compute_kpi_hr_rfid_att_values',
+        help="Live count of employees with recorded overtime during the digest window.",
+    )
+    kpi_hr_rfid_att_extra_value = fields.Integer(
+        compute='_compute_kpi_hr_rfid_att_values',
+        help="Live count of employees with extra unrecorded time during the digest window.",
+    )
 
     def _compute_kpi_hr_rfid_att_values(self):
         if not self.env.user.has_group('hr_attendance.group_hr_attendance_officer'):

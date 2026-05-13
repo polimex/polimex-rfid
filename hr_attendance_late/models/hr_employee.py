@@ -18,7 +18,8 @@ class HrEmployee(models.Model):
     attendance_extra_ids = fields.One2many(
         comodel_name='hr.attendance.extra',
         inverse_name='employee_id',
-        groups='hr_attendance.group_hr_attendance_officer'
+        groups='hr_attendance.group_hr_attendance_officer',
+        help="Daily roll-up records computed for this employee by the Recompute Extra Attendance wizard or the nightly cron — late minutes, overtime, extra time per working day.",
     )
 
     @api.model
