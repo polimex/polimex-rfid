@@ -23,27 +23,15 @@
                             <field name="room_id"
                                    options="{'no_create_edit': True}"
                                    invisible="not room_id"
-                                   required="mode in ['new', 'current']"/>
-                            <field name="checkin_date" string='Valid from'
-                                   invisible="mode != 'stuff'"/>
-                            <field name="checkin_date"
-                                   invisible="mode not in ['current', 'new']"/>
-                            <field name="checkout_date" string='Valid to'
-                                   invisible="mode != 'stuff'"/>
-                            <field name="checkout_date"
-                                   invisible="mode not in ['current', 'new']"/>
+                                   required="True"/>
+                            <field name="checkin_date"/>
+                            <field name="checkout_date"/>
                         </group>
                     </sheet>
                     <footer>
-                        <button name="read_card"
-                                string="Read Card"
-                                type="object"
-                                invisible="mode != 'read'"
-                                class="oe_highlight" icon="fa-info"/>
                         <button name="write_card" string="Encode Card"
-                                help="Encode card "
+                                help="Encode card"
                                 type="object"
-                                invisible="mode == 'read'"
                                 class="oe_highlight" icon="fa-bolt"/>
                         <button string="Done" class="oe_link" special="cancel"/>
                     </footer>
