@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="onboarding_step_voting_display" model="onboarding.onboarding.step">
+            <field name="title">Configure a voting display</field>
+            <field name="description">A voting display is the public kiosk page where eligible voters cast their ballot. Each display has a short code and an access token that secure the public URL. You need at least one display before opening a session.</field>
+            <field name="button_text">Open Voting Displays</field>
+            <field name="done_text">Display configured!</field>
+            <field name="done_icon">fa-tv</field>
+            <field name="panel_step_open_action_name">action_open_step_voting_display</field>
+            <field name="step_image" type="base64" file="base/static/img/onboarding_cog.png"/>
+            <field name="step_image_filename">onboarding_cog.png</field>
+            <field name="step_image_alt">Configure a voting display</field>
+            <field name="is_per_company">True</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <record id="onboarding_step_voting_participants" model="onboarding.onboarding.step">
+            <field name="title">Define the participants list</field>
+            <field name="description">A participants record groups the people eligible to vote in a session. Add the contacts that may cast a ballot and the RFID terminals through which they will identify themselves.</field>
+            <field name="button_text">Open Participants</field>
+            <field name="done_text">Participants ready!</field>
+            <field name="done_icon">fa-users</field>
+            <field name="panel_step_open_action_name">action_open_step_voting_participants</field>
+            <field name="step_image" type="base64" file="base/static/img/onboarding_puzzle.png"/>
+            <field name="step_image_filename">onboarding_puzzle.png</field>
+            <field name="step_image_alt">Define the participants list</field>
+            <field name="is_per_company">True</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <record id="onboarding_step_voting_items" model="onboarding.onboarding.step">
+            <field name="title">Add voting items</field>
+            <field name="description">A voting item is a question or motion presented to voters. Each item carries a short description and an optional HTML document with the full text. A session needs at least one item.</field>
+            <field name="button_text">Open Voting Items</field>
+            <field name="done_text">Items ready!</field>
+            <field name="done_icon">fa-list</field>
+            <field name="panel_step_open_action_name">action_open_step_voting_items</field>
+            <field name="step_image" type="base64" file="base/static/img/onboarding_company-data.png"/>
+            <field name="step_image_filename">onboarding_company-data.png</field>
+            <field name="step_image_alt">Add voting items</field>
+            <field name="is_per_company">True</field>
+            <field name="sequence">3</field>
+        </record>
+
+        <record id="onboarding_step_voting_session" model="onboarding.onboarding.step">
+            <field name="title">Open the first voting session</field>
+            <field name="description">A session bundles a display, a participants list and the voting items, plus the start and end times during which ballots are accepted. Once the session state changes to open, the kiosk URL starts collecting votes.</field>
+            <field name="button_text">Open Voting Sessions</field>
+            <field name="done_text">First session ready!</field>
+            <field name="done_icon">fa-play</field>
+            <field name="panel_step_open_action_name">action_open_step_voting_session</field>
+            <field name="step_image" type="base64" file="base/static/img/onboarding_sample-quotation.png"/>
+            <field name="step_image_filename">onboarding_sample-quotation.png</field>
+            <field name="step_image_alt">Open the first voting session</field>
+            <field name="is_per_company">True</field>
+            <field name="sequence">4</field>
+        </record>
+
+        <record id="onboarding_voting_setup" model="onboarding.onboarding">
+            <field name="name">Voting Setup</field>
+            <field name="route_name">hr_rfid_vertical_elections_setup</field>
+            <field name="step_ids" eval="[
+                Command.link(ref('hr_rfid_vertical_elections.onboarding_step_voting_display')),
+                Command.link(ref('hr_rfid_vertical_elections.onboarding_step_voting_participants')),
+                Command.link(ref('hr_rfid_vertical_elections.onboarding_step_voting_items')),
+                Command.link(ref('hr_rfid_vertical_elections.onboarding_step_voting_session')),
+            ]"/>
+            <field name="panel_close_action_name">action_close_panel_voting_setup</field>
+            <field name="text_completed">Voting is ready. Open the session to start accepting ballots, and visit the display URL to see live counts.</field>
+        </record>
+
+    </data>
+</odoo>
