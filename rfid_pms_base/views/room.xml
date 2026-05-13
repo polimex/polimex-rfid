@@ -94,7 +94,7 @@
                                 <div class="col-4">
                                     <button type="action"
                                             name="%(cards_program_wiz_action)d"
-                                            t-attf-data-context="{'new':True}"
+                                            context="{'new': True}"
                                             icon="fa-plus"
                                             class="btn btn-primary w-100"
                                             title="Add new Reservation and issue a Guest card">
@@ -102,8 +102,9 @@
                                     </button>
                                 </div>
                                 <div class="col-4 text-center">
-                                    <a name="toggle_hotel" type="object"
-                                       t-attf-data-context="{'btn':'dnd'}">
+                                    <button type="object" name="toggle_hotel"
+                                            context="{'btn': 'dnd'}"
+                                            class="btn btn-link p-0">
                                         <img alt="DND" src="/rfid_pms_base/static/icons/dnd.png"
                                              class="mx-1" style="height: 24px;"
                                              invisible="not hb_dnd"
@@ -111,10 +112,11 @@
                                         <img alt="DND off" src="/rfid_pms_base/static/icons/dnd_off.png"
                                              class="mx-1" style="height: 24px;"
                                              invisible="hb_dnd"
-                                             title="DND Off"/>
-                                    </a>
-                                    <a name="toggle_hotel" type="object"
-                                       t-attf-data-context="{'btn':'clean'}">
+                                             title="DND off"/>
+                                    </button>
+                                    <button type="object" name="toggle_hotel"
+                                            context="{'btn': 'clean'}"
+                                            class="btn btn-link p-0">
                                         <img alt="Clean" src="/rfid_pms_base/static/icons/clean.png"
                                              class="mx-1" style="height: 24px;"
                                              invisible="not hb_clean"
@@ -122,13 +124,13 @@
                                         <img alt="Clean off" src="/rfid_pms_base/static/icons/clean_off.png"
                                              class="mx-1" style="height: 24px;"
                                              invisible="hb_clean"
-                                             title="Clean Off"/>
-                                    </a>
+                                             title="Clean off"/>
+                                    </button>
                                 </div>
                                 <div class="col-4" t-if="record.reservation.value">
                                     <button type="action"
                                             name="%(cards_program_wiz_action)d"
-                                            t-attf-data-context="{'current':True}"
+                                            context="{'current': True}"
                                             icon="fa-address-card"
                                             class="btn btn-secondary w-100"
                                             title="Add more cards to current reservation">
