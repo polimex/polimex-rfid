@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="onboarding_step_service_define" model="onboarding.onboarding.step">
+            <field name="title">Define a visitor service</field>
+            <field name="description">Create the catalog entry for the access type you want to issue (for example: day pass, weekly visitor, contractor card). Each service binds an access group, a time window, and a card type.</field>
+            <field name="button_text">Open Services</field>
+            <field name="done_text">Service defined!</field>
+            <field name="done_icon">fa-ticket</field>
+            <field name="panel_step_open_action_name">action_open_step_service_define</field>
+            <field name="step_image" type="base64" file="base/static/img/onboarding_puzzle.png"/>
+            <field name="step_image_filename">onboarding_puzzle.png</field>
+            <field name="step_image_alt">Define a visitor service</field>
+            <field name="is_per_company">True</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <record id="onboarding_step_service_first_sale" model="onboarding.onboarding.step">
+            <field name="title">Issue the first visitor card</field>
+            <field name="description">Open Service Sales to issue a card to a visitor. Pick the service from the catalog, scan or type the card number, and the start/end dates. The visitor gains access immediately within the time window you set.</field>
+            <field name="button_text">Open Service Sales</field>
+            <field name="done_text">First visitor card issued!</field>
+            <field name="done_icon">fa-id-card</field>
+            <field name="panel_step_open_action_name">action_open_step_service_first_sale</field>
+            <field name="step_image" type="base64" file="base/static/img/onboarding_sample-quotation.png"/>
+            <field name="step_image_filename">onboarding_sample-quotation.png</field>
+            <field name="step_image_alt">Issue the first visitor card</field>
+            <field name="is_per_company">True</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <record id="onboarding_service_setup" model="onboarding.onboarding">
+            <field name="name">Visitor Services Setup</field>
+            <field name="route_name">rfid_service_base_setup</field>
+            <field name="step_ids" eval="[
+                Command.link(ref('rfid_service_base.onboarding_step_service_define')),
+                Command.link(ref('rfid_service_base.onboarding_step_service_first_sale')),
+            ]"/>
+            <field name="panel_close_action_name">action_close_panel_service_setup</field>
+            <field name="text_completed">Visitor services are ready. New visitor cards are issued from Service Sales, and the card expires automatically at the end date.</field>
+        </record>
+
+    </data>
+</odoo>

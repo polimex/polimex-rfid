@@ -13,12 +13,9 @@
     # Check https://github.com/odoo/odoo/blob/14.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
     'category': "Generic Modules/Property Management System",
-    'version': '19.0.0.3.0',
+    'version': '19.0.0.4.0',
 
-    # any module necessary for this one to work correctly
-    'depends': ['hr_rfid'],
-
-    # always loaded
+    'depends': ['hr_rfid', 'onboarding'],
     'data': [
         'security/rfid_service_base_security.xml',
         'security/ir.model.access.csv',
@@ -28,11 +25,12 @@
         'views/res_partner_views.xml',
         'views/menus.xml',
         'data/data.xml',
+        'data/onboarding_data.xml',
         'security/rfid_services_multi_company.xml',
     ],
-    # 'images': ['static/images/main_screenshot.png'],
-    "demo": [
+    'demo': [
         'demo/rfid_service_demo.xml',
     ],
-    "application": True,
+    'application': True,
+    'installable': True,
 }
