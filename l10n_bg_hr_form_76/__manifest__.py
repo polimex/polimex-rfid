@@ -1,7 +1,7 @@
 # noinspection PyStatementEffect
 {
     'name': 'Attendance Form 76 Bulgaria',
-    'version': '19.0.1.0.2',
+    'version': '19.0.1.0.3',
     'category': 'Human Resources',
     'summary': 'Form 76 for Bulgaria',
     'author': 'Polimex Holding Ltd.',

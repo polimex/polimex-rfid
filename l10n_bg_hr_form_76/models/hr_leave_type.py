@@ -4,6 +4,17 @@ from odoo import fields, models
 class HolidaysType(models.Model):
     _inherit = "hr.leave.type"
 
-    form76_code = fields.Char('Код за форма 76', default='NA')
-    form76_law_reason = fields.Char('Основание за оптуска', default='чл. 155, ал. 1 от Кодекса на труда /КТ/')
-    form76_description = fields.Text('Описание')
+    form76_code = fields.Char(
+        'Код за форма 76',
+        default='NA',
+        help="Кодът на типа отпуск според Форма 76 на НАП (например '01' за платен годишен отпуск). Излиза в графата на справката.",
+    )
+    form76_law_reason = fields.Char(
+        'Основание за оптуска',
+        default='чл. 155, ал. 1 от Кодекса на труда /КТ/',
+        help="Правното основание за този тип отпуск (член/алинея от КТ или друг нормативен акт). Излиза в съответната колона на справката.",
+    )
+    form76_description = fields.Text(
+        'Описание',
+        help="Свободен текст за вътрешни нужди — пояснява в кои ситуации да се ползва този тип отпуск. Не излиза в справката.",
+    )

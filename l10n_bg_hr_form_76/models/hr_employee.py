@@ -6,7 +6,9 @@ import pytz
 class HrEmployee(models.Model):
     _inherit = 'hr.employee'
 
-    corporate_internal_number = fields.Char()
+    corporate_internal_number = fields.Char(
+        help="Вътрешен корпоративен номер на служителя в дружеството (например табелен/служебен №). Излиза в съответната колона на Форма 76, ако е попълнен.",
+    )
 
     def f76_intervals(self, specific_date):
         """Check if a specific date is a non-working day for the employee.

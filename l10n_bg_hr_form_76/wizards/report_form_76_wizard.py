@@ -16,21 +16,27 @@ class WizardHrForm76(models.TransientModel):
         "Calendar Year",
         required=True,
         default=lambda self: fields.Date.today().year,
+        help="Календарна година за която се генерира Форма 76. Приема стойности от 2020 нататък.",
     )
-    report_month = fields.Selection([
-        ('1', 'January'),
-        ('2', 'February'),
-        ('3', 'March'),
-        ('4', 'April'),
-        ('5', 'May'),
-        ('6', 'June'),
-        ('7', 'July'),
-        ('8', 'August'),
-        ('9', 'September'),
-        ('10', 'October'),
-        ('11', 'November'),
-        ('12', 'December'),
-    ], default=lambda self: str(fields.Date.today().month), required=True)
+    report_month = fields.Selection(
+        [
+            ('1', 'January'),
+            ('2', 'February'),
+            ('3', 'March'),
+            ('4', 'April'),
+            ('5', 'May'),
+            ('6', 'June'),
+            ('7', 'July'),
+            ('8', 'August'),
+            ('9', 'September'),
+            ('10', 'October'),
+            ('11', 'November'),
+            ('12', 'December'),
+        ],
+        default=lambda self: str(fields.Date.today().month),
+        required=True,
+        help="Месец, за който се генерира Форма 76 в комбинация с годината по-горе.",
+    )
     precision = fields.Integer(
         default=0,
         required=True,

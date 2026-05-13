@@ -16,8 +16,11 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
     _description = 'Base RFID Service Sale Wizard'
     _inherit = ['rfid.service.sale.wiz']
 
-    invite_in_portal = fields.Boolean('Invite in Portal', default=False
-                                      )
+    invite_in_portal = fields.Boolean(
+        'Invite in Portal',
+        default=False,
+        help="When checked, the visitor receives a portal access invitation by email right after the card is issued. They can then sign in to /my and see the card's validity, scan history, and barcode for the access page.",
+    )
 
     def share_card(self):
         if not self.email and not self.mobile:
