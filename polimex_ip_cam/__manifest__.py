@@ -1,6 +1,6 @@
 {
     'name': "IP Camera Management",
-    'version': '19.0.1.2.0',
+    'version': '19.0.1.3.0',
     'summary': "Module for managing IP cameras via manufacturers integration integration",
     'author': "Polimex Dev Team",
     'website': "https://polimex.co",

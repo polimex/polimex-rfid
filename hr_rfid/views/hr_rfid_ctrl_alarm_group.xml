@@ -123,7 +123,7 @@
             <field name="name">hr.rfid.ctrl.alarm.group.kanban</field>
             <field name="model">hr.rfid.ctrl.alarm.group</field>
             <field name="arch" type="xml">
-                <kanban group_create="false"
+                <kanban sample="1" group_create="false"
                         group_edit="false"
                         quick_create="false"
                         default_group_by="parent_id">

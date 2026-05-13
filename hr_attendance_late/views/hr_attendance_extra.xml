@@ -76,7 +76,7 @@
             <field name="name">hr_attendance_extra_view_tree</field>
             <field name="model">hr.attendance.extra</field>
             <field name="arch" type="xml">
-                <list string="hr_attendance_extra_tree">
+                <list sample="1" string="hr_attendance_extra_tree">
                     <field name="for_date"/>
                     <field name="employee_id"/>
                     <field name="theoretical_work_time" widget="float_time" optional="show"/>

@@ -38,7 +38,7 @@
             <field name="name">hr.rfid.card.door.rel.list</field>
             <field name="model">hr.rfid.card.door.rel</field>
             <field name="arch" type="xml">
-                <list string="Card/Door Relations" create="0" edit="0" delete="0">
+                <list sample="1" string="Card/Door Relations" create="0" edit="0" delete="0">
                     <field name="card_id"/>
                     <field name="door_id"/>
                 </list>

@@ -228,7 +228,7 @@
             <field name="name">RFID Services List</field>
             <field name="model">rfid.service</field>
             <field name="arch" type="xml">
-                <list string="RFID Services List" decoration-success="active==True" decoration-danger="active!=True">
+                <list sample="1" string="RFID Services List" decoration-success="active==True" decoration-danger="active!=True">
                     <field name="name"/>
                     <field name="service_type"/>
                     <field name="access_group_id" optional="hide"/>

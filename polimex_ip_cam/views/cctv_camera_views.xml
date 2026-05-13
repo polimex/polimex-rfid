@@ -79,7 +79,7 @@
         <field name="name">cctv.camera.list</field>
         <field name="model">cctv.camera</field>
         <field name="arch" type="xml">
-            <list string="CCTV Cameras"
+            <list sample="1" string="CCTV Cameras"
                   decoration-muted="connection_status == 'unknown'"
                   decoration-success="connection_status == 'connected'"
                   decoration-warning="connection_status == 'failed'">

@@ -49,7 +49,7 @@
             <field name="name">Schneider Room list</field>
             <field name="model">rfid_pms_base.room</field>
             <field name="arch" type="xml">
-                <list import="False">
+                <list sample="1" import="False">
                     <field name="name"/>
                     <field name="number"/>
                     <field name="hb_card_present"/>
@@ -63,7 +63,7 @@
             <field name="name">rfid_pms_base_room_view_kanban</field>
             <field name="model">rfid_pms_base.room</field>
             <field name="arch" type="xml">
-                <kanban default_group_by="group"
+                <kanban sample="1" default_group_by="group"
                         records_draggable="false"
                         group_create="true"
                         quick_create="false">

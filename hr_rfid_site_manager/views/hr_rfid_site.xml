@@ -35,7 +35,7 @@
             <field name="name">hr_rfid_site_view_tree</field>
             <field name="model">hr.rfid.site</field>
             <field name="arch" type="xml">
-                <list string="hr_rfid_site_tree">
+                <list sample="1" string="hr_rfid_site_tree">
                     <field name="name"/>
                     <field name="parent_id"/>
                     <field name="door_ids" widget="many2many_tags"/>
