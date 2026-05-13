@@ -19,8 +19,17 @@ class RoomMoveWiz(models.TransientModel):
         free_ids = [r.id for r in rooms if not r.all_contact_ids]
         return [('id', 'in', free_ids)]
 
-    room_from_id = fields.Many2one(comodel_name='rfid_pms_base.room', default=_get_room_id)
-    room_to_id = fields.Many2one(comodel_name='rfid_pms_base.room', domain=_get_free_room_domain, required=True)
+    room_from_id = fields.Many2one(
+        comodel_name='rfid_pms_base.room',
+        default=_get_room_id,
+        help="Source room the reservation is currently registered against. Read-only — set automatically from the room you clicked Move on.",
+    )
+    room_to_id = fields.Many2one(
+        comodel_name='rfid_pms_base.room',
+        domain=_get_free_room_domain,
+        required=True,
+        help="Destination room. Only rooms with no active reservation are offered. After confirmation, the guest cards stay valid but now open the destination room's door.",
+    )
 
     def move_customers(self):
         self.room_from_id.all_contact_ids.access_group_id = self.room_to_id.access_group_id

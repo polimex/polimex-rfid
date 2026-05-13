@@ -49,16 +49,40 @@ class RfidPmsBaseCardEncodeWiz(models.TransientModel):
                 return first_contact.hr_rfid_card_ids[0].deactivate_on
         return default
 
-    room_id = fields.Many2one(comodel_name='rfid_pms_base.room', default=_get_room_id)
-    reservation = fields.Char(default=_get_reservation_seq)
-    checkin_date = fields.Datetime(string="Check In", default=_default_checkin)
-    checkout_date = fields.Datetime(string="Check Out", default=_default_checkout)
-    mode = fields.Selection(selection=[
-        ('new', 'New Reservation'),
-        ('current', 'Current Reservation'),
-    ], default=_compute_mode)
+    room_id = fields.Many2one(
+        comodel_name='rfid_pms_base.room',
+        default=_get_room_id,
+        help="The hotel room this card opens. Set automatically from the kanban card you clicked New / Add on.",
+    )
+    reservation = fields.Char(
+        default=_get_reservation_seq,
+        help="Reservation reference used as the parent partner name (e.g. R002615). Only meaningful in New mode; in Current mode the wizard reuses the existing reservation.",
+    )
+    checkin_date = fields.Datetime(
+        string="Check In",
+        default=_default_checkin,
+        help="Moment the card starts working. In New mode defaults to now; in Current mode inherits from the room's first guest card.",
+    )
+    checkout_date = fields.Datetime(
+        string="Check Out",
+        default=_default_checkout,
+        help="Moment the card stops working. In New mode defaults to tomorrow at 09:00; in Current mode inherits from the room's first guest card. Maximum 30 days from check-in.",
+    )
+    mode = fields.Selection(
+        selection=[
+            ('new', 'New Reservation'),
+            ('current', 'Current Reservation'),
+        ],
+        default=_compute_mode,
+        help="New = open a fresh reservation and revoke any leftover cards; Current = add another card to the room's existing reservation.",
+    )
 
-    card_number = fields.Char(string='The card number', size=10, required=True)
+    card_number = fields.Char(
+        string='The card number',
+        size=10,
+        required=True,
+        help="Number printed on the RFID card or barcode. The wizard zero-pads to 10 digits before checking the card pool. If the number is in use and the existing card is inactive or already linked to a contact, it gets recycled.",
+    )
 
     def write_card(self):
         if (self.checkout_date - self.checkin_date) < timedelta(seconds=1):
