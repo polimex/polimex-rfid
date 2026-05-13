@@ -5,8 +5,8 @@
     'website': "https://polimex.co",
     'license': 'AGPL-3',
     'category': "Generic Modules/Property Management System",
-    'version': '19.0.0.5.0',
-    'depends': ['hr_rfid'],
+    'version': '19.0.0.6.0',
+    'depends': ['hr_rfid', 'onboarding'],
     'data': [
         'security/pms_base_security.xml',
         'security/ir.model.access.csv',
@@ -17,6 +17,7 @@
         'views/views.xml',
         'views/menus.xml',
         'data/data.xml',
+        'data/onboarding_data.xml',
     ],
     'application': True,
     'installable': True,

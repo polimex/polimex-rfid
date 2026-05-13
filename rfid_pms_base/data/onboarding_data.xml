@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ONBOARDING STEPS -->
+
+        <record id="onboarding_step_pms_access_group" model="onboarding.onboarding.step">
+            <field name="title">Define an access group for guests</field>
+            <field name="description">Pick the doors guests are allowed to use. Each hotel room will reference an access group, so create one group per access level (for example: standard room access, suite access, staff areas).</field>
+            <field name="button_text">Open Access Groups</field>
+            <field name="done_text">Guest access group ready!</field>
+            <field name="done_icon">fa-key</field>
+            <field name="panel_step_open_action_name">action_open_step_pms_access_group</field>
+            <field name="step_image" type="base64" file="base/static/img/onboarding_puzzle.png"/>
+            <field name="step_image_filename">onboarding_puzzle.png</field>
+            <field name="step_image_alt">Define an access group for guests</field>
+            <field name="is_per_company">True</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <record id="onboarding_step_pms_first_room" model="onboarding.onboarding.step">
+            <field name="title">Register the first hotel room</field>
+            <field name="description">Add a room: room name, internal number, the controller door that locks it, and the guest access group that will receive cards for it. Once at least one room exists, the Hotel Rooms kanban becomes your daily working surface.</field>
+            <field name="button_text">Open Hotel Rooms</field>
+            <field name="done_text">First room registered!</field>
+            <field name="done_icon">fa-home</field>
+            <field name="panel_step_open_action_name">action_open_step_pms_first_room</field>
+            <field name="step_image" type="base64" file="base/static/img/onboarding_company-data.png"/>
+            <field name="step_image_filename">onboarding_company-data.png</field>
+            <field name="step_image_alt">Register the first hotel room</field>
+            <field name="is_per_company">True</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- ONBOARDING PANEL -->
+
+        <record id="onboarding_pms_setup" model="onboarding.onboarding">
+            <field name="name">Hotel PMS Setup</field>
+            <field name="route_name">rfid_pms_base_setup</field>
+            <field name="step_ids" eval="[
+                Command.link(ref('rfid_pms_base.onboarding_step_pms_access_group')),
+                Command.link(ref('rfid_pms_base.onboarding_step_pms_first_room')),
+            ]"/>
+            <field name="panel_close_action_name">action_close_panel_pms_setup</field>
+            <field name="text_completed">Hotel rooms are ready. From the Hotel Rooms kanban, use the New button on a free room to open a reservation and encode a guest card.</field>
+        </record>
+
+    </data>
+</odoo>

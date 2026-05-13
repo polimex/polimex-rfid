@@ -528,3 +528,78 @@ msgstr "rfid_pms_base_room_form"
 #: model_terms:ir.ui.view,arch_db:rfid_pms_base.room_move_wiz_view_form
 msgid "room_move_wiz_form"
 msgstr "room_move_wiz_form"
+
+#. module: rfid_pms_base
+#: model:onboarding.onboarding.step,step_image_alt:rfid_pms_base.onboarding_step_pms_access_group
+#: model:onboarding.onboarding.step,title:rfid_pms_base.onboarding_step_pms_access_group
+msgid "Define an access group for guests"
+msgstr "Определете група за достъп за гости"
+
+#. module: rfid_pms_base
+#: model:onboarding.onboarding.step,done_text:rfid_pms_base.onboarding_step_pms_first_room
+msgid "First room registered!"
+msgstr "Първата стая е регистрирана!"
+
+#. module: rfid_pms_base
+#: model:onboarding.onboarding.step,done_text:rfid_pms_base.onboarding_step_pms_access_group
+msgid "Guest access group ready!"
+msgstr "Групата за достъп за гости е готова!"
+
+#. module: rfid_pms_base
+#: model:onboarding.onboarding,name:rfid_pms_base.onboarding_pms_setup
+msgid "Hotel PMS Setup"
+msgstr "Настройка на хотелския PMS"
+
+#. module: rfid_pms_base
+#: model:onboarding.onboarding.step,button_text:rfid_pms_base.onboarding_step_pms_access_group
+msgid "Open Access Groups"
+msgstr "Отвори Групи за достъп"
+
+#. module: rfid_pms_base
+#: model:onboarding.onboarding.step,button_text:rfid_pms_base.onboarding_step_pms_first_room
+msgid "Open Hotel Rooms"
+msgstr "Отвори Хотелски стаи"
+
+#. module: rfid_pms_base
+#: model:onboarding.onboarding.step,step_image_alt:rfid_pms_base.onboarding_step_pms_first_room
+#: model:onboarding.onboarding.step,title:rfid_pms_base.onboarding_step_pms_first_room
+msgid "Register the first hotel room"
+msgstr "Регистрирайте първата хотелска стая"
+
+#. module: rfid_pms_base
+#: model:onboarding.onboarding.step,description:rfid_pms_base.onboarding_step_pms_access_group
+msgid ""
+"Pick the doors guests are allowed to use. Each hotel room will reference an "
+"access group, so create one group per access level (for example: standard "
+"room access, suite access, staff areas)."
+msgstr ""
+"Изберете вратите, които гостите могат да използват. Всяка хотелска стая се "
+"позовава на група за достъп — създайте по една група за всяко ниво на достъп"
+" (например: стандартна стая, апартамент, служебни помещения)."
+
+#. module: rfid_pms_base
+#: model:onboarding.onboarding.step,description:rfid_pms_base.onboarding_step_pms_first_room
+msgid ""
+"Add a room: room name, internal number, the controller door that locks it, "
+"and the guest access group that will receive cards for it. Once at least one"
+" room exists, the Hotel Rooms kanban becomes your daily working surface."
+msgstr ""
+"Добавете стая: име, вътрешен номер, врата на контролера, която я заключва, и"
+" групата за достъп на гостите. След като има поне една стая, Канбан изгледът"
+" Хотелски стаи става ежедневният ви работен екран."
+
+#. module: rfid_pms_base
+#. odoo-python
+#: code:addons/rfid_pms_base/models/card_encode_wiz.py:0
+msgid "Guest {n} for "
+msgstr "Гост {n} за "
+
+#. module: rfid_pms_base
+#: model:ir.model,name:rfid_pms_base.model_onboarding_onboarding
+msgid "Onboarding"
+msgstr "Onboarding"
+
+#. module: rfid_pms_base
+#: model:ir.model,name:rfid_pms_base.model_onboarding_onboarding_step
+msgid "Onboarding Step"
+msgstr "Onboarding стъпка"
