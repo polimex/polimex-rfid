@@ -11,3 +11,4 @@ from . import test_wizards
 from . import test_commands
 from . import test_webstack
 from . import test_sot_denied
+from . import test_tours
