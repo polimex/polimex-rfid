@@ -6,6 +6,7 @@
             <field name="model">hr.employee.vending.balance.wiz</field>
             <field name="arch" type="xml">
                 <form string="Change Vending Balance">
+                    <p>Adjust the employee's vending balance. Enter the amount, then click Add to credit it or Subtract to debit. Each operation creates a balance-history entry stamped with your name for the audit trail.</p>
                     <group>
                         <field name="value"/>
                     </group>
@@ -25,6 +26,7 @@
             <field name="model">hr.employee.vending.balance.wiz</field>
             <field name="arch" type="xml">
                 <form string="Set Vending Balance">
+                    <p>Overwrite the employee's vending balance with the exact value below. Useful after a manual reconciliation; for incremental changes use the Add/Subtract wizard instead.</p>
                     <group>
                         <field name="value"/>
                     </group>

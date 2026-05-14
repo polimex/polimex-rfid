@@ -106,6 +106,7 @@
             <field name="model">res.partner.mass.wiz</field>
             <field name="arch" type="xml">
                 <form string="Add/Remove Access Groups for Partners">
+                    <p>Bulk-edit access for the contacts selected in the list. Pick the access groups, optionally set an expiration, and choose whether existing assignments should be wiped first.</p>
                     <group>
                         <field name="acc_gr_ids"
                                widget="many2many_tags"

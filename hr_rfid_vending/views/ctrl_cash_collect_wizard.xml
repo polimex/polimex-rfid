@@ -14,6 +14,7 @@
             <field name="arch" type="xml">
                 <form string="_form">
                     <sheet>
+                        <p>Record the cash you have physically removed from the selected vending controllers. The amount is logged for audit and the controller's cash counter is reduced accordingly. The amount cannot exceed what each controller currently reports.</p>
                         <group>
                             <field name="value"/>
                             <field name="currency_id" invisible="1"/>

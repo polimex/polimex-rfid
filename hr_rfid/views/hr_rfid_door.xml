@@ -6,6 +6,7 @@
             <field name="model">hr.rfid.door.open.close.wiz</field>
             <field name="arch" type="xml">
                 <form string="Open/close door">
+                    <p>Remotely unlock the selected doors for the duration you set below, or close them immediately. The command is queued for the controller and runs as soon as it polls in.</p>
                     <group>
                         <field name="doors" readonly="1">
                             <list editable="top">

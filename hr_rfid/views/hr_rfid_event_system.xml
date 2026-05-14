@@ -32,6 +32,7 @@
             <field name="model">hr.rfid.event.sys.wiz</field>
             <field name="arch" type="xml">
                 <form string="Add card" create="0" delete="0" edit="0">
+                    <p>Register the unknown card recorded by the system event. Assign it to an employee or contact, pick the card type, and set the validity window — once saved, the next swipe will be granted as expected.</p>
                     <group>
                         <field name="card_number"/>
                         <field name="employee_id"/>

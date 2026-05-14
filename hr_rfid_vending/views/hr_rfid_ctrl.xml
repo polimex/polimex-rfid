@@ -7,6 +7,7 @@
             <field name="model">hr.rfid.ctrl.vending.settings</field>
             <field name="arch" type="xml">
                 <form string="Vending Settings">
+                    <p>Map products to the controller's 4-per-row slot grid and tune two firmware parameters: how long the price stays on the LCD, and the scale factor used to encode prices into a single byte. Save writes the new I/O table to the controller.</p>
                     <div>
                         <h3>Vending settings:</h3>
                         <group>

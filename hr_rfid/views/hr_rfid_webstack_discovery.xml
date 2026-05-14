@@ -6,6 +6,7 @@
             <field name="model">hr.rfid.webstack.discovery</field>
             <field name="arch" type="xml">
                 <form string="Module Discovery">
+                    <p>Modules detected by a UDP broadcast on the local network. Delete the rows you don't want to register, pick how the rest should be added (Inactive only — register without contact; Active — also read controllers), then click Process.</p>
                      <separator string="Please remove unwanted modules from list. Choose the operation for rest of them. Press Add to add them in the system!" colspan="4"/>
                     <group >
                         <group colspan="4">

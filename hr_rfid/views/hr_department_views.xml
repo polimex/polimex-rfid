@@ -7,6 +7,7 @@
             <field name="model">hr.department.acc.grs</field>
             <field name="arch" type="xml">
                 <form string="Manage Access Groups">
+                    <p>Pick the access groups that should be available to employees in this department. Only groups listed here can later be assigned to individual employees.</p>
                     <group>
                         <field name="dep_id" invisible="1"/>
                         <field name="acc_grs"
@@ -46,6 +47,7 @@
             <field name="model">hr.department.def.acc.gr</field>
             <field name="arch" type="xml">
                 <form string="Change Default Access Group for Current Department">
+                    <p>Pick the access group that new employees in this department will receive automatically. Use Change and Apply to also assign it to employees who currently have none, or Change and Apply for Everyone to overwrite assignments across the whole department.</p>
                     <group>
                         <field name="dep_id" invisible="1"/>
                         <field name="def_acc_gr" domain="[('department_ids', 'in', [dep_id])]"/>
@@ -68,6 +70,7 @@
             <field name="model">hr.department.mass.wiz</field>
             <field name="arch" type="xml">
                 <form string="Add/Remove Access Groups from Employees">
+                    <p>Bulk-edit access for every employee in this department. Pick the groups, optionally set an expiration date, and exclude any individuals you want to skip. Then Add or Remove in one click.</p>
                     <group>
                         <field name="dep_id" invisible="1"/>
                         <field name="acc_gr_ids"

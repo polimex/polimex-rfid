@@ -7,6 +7,7 @@
             <field name="model">hr.rfid.ctrl.io.table.wiz</field>
             <field name="arch" type="xml">
                 <form string="View/Modify IO table">
+                    <p>Edit how the controller responds to each event — for every event row, set the value written to outputs 1-8 (range 0-99). Use Load factory defaults to reset the table to the values shipped with the controller's hardware version.</p>
                     <div>
                         <field name="controller_id" invisible="1"/>
                         <field name="outs" invisible="1"/>

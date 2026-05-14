@@ -52,6 +52,7 @@
             <field name="model">hr.rfid.zone.doors.wiz</field>
             <field name="arch" type="xml">
                 <form string="Add/Remove Doors">
+                    <p>Pick the doors to attach to or detach from this zone. The zone's anti-passback rules and event filters apply to whatever doors are linked here.</p>
                     <group>
                         <field name="zone_id" readonly="1"/>
                         <field name="door_ids" widget="many2many_tags"/>

@@ -77,6 +77,7 @@
             <field name="model">hr.rfid.access.group.wizard</field>
             <field name="arch" type="xml">
                 <form string="Add Doors">
+                    <p>Pick the doors to attach to this access group, the schedule that controls when they unlock, and the alarm rights. Existing members of the group gain access as soon as you click Add Doors.</p>
                     <group>
                         <field name="acc_gr_doors" invisible="1"/>
                         <field name="acc_gr_id" invisible="1"/>
@@ -99,6 +100,7 @@
             <field name="model">hr.rfid.access.group.wizard</field>
             <field name="arch" type="xml">
                 <form string="Remove Doors">
+                    <p>Pick the doors to detach from this access group. Members lose access to those doors immediately after you click Remove Doors.</p>
                     <group>
                         <field name="acc_gr_doors" invisible="1"/>
                         <field name="door_ids" options='{"no_open": True, "no_create": True}'
