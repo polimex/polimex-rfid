@@ -15,13 +15,17 @@ class HrRfidOdooImportWiz(models.TransientModel):
     _description = 'Import RFID Data from Odoo'
 
     # ── State ──────────────────────────────────────────────────
-    state = fields.Selection([
-        ('connection', 'Connection'),
-        ('configure', 'Configure'),
-        ('confirm', 'Confirm'),
-        ('importing', 'Importing'),
-        ('done', 'Done'),
-    ], string='State', default='connection', required=True, readonly=True)
+    state = fields.Selection(
+        [
+            ('connection', 'Connection'),
+            ('configure', 'Configure'),
+            ('confirm', 'Confirm'),
+            ('importing', 'Importing'),
+            ('done', 'Done'),
+        ],
+        string='State', default='connection', required=True, readonly=True,
+        help="Step the wizard is currently on — Connection: enter source URL + creds. Configure: pick what to import. Confirm: review preview + conflicts. Importing: run in progress. Done: results shown.",
+    )
 
     # ── Step 1: Connection ─────────────────────────────────────
     source_url = fields.Char(
@@ -41,23 +45,28 @@ class HrRfidOdooImportWiz(models.TransientModel):
         string='Username',
         default='admin',
         required=True,
+        help="Login of an admin-level user on the source Odoo instance — the user must have read access to every model the import will fetch.",
     )
     source_password = fields.Char(
         string='Password',
         default='admin',
         required=True,
+        help="Password for the source user above. Use an API key if the source enforces 2FA. Stored only for the wizard's lifetime.",
     )
     source_version = fields.Char(
         string='Source Odoo Version',
         readonly=True,
+        help="Major Odoo version detected on the source instance (e.g. '14.0', '15.0'). Used to dispatch the right importer per phase.",
     )
     source_uid = fields.Integer(
         string='Source UID',
         readonly=True,
+        help="res.users ID of the connected source user. Cached after Test Connection.",
     )
     installed_modules_json = fields.Text(
         string='Installed Modules (JSON)',
         readonly=True,
+        help="JSON list of installed modules on the source instance.",
     )
 
     # ── Step 2: Configuration ──────────────────────────────────
@@ -65,11 +74,24 @@ class HrRfidOdooImportWiz(models.TransientModel):
         'hr.rfid.odoo.import.company.line',
         'wizard_id',
         string='Company Mapping',
+        help="One row per company discovered on the source. Operator picks which to import and which existing target company to merge into.",
     )
-    import_hardware = fields.Boolean(string='Import Hardware', default=True)
-    import_people = fields.Boolean(string='Import People', default=True)
-    import_access = fields.Boolean(string='Import Access Control', default=True)
-    import_cards = fields.Boolean(string='Import Cards', default=True)
+    import_hardware = fields.Boolean(
+        string='Import Hardware', default=True,
+        help="Include webstacks, controllers, doors, readers and time schedules.",
+    )
+    import_people = fields.Boolean(
+        string='Import People', default=True,
+        help="Include employees and partner contacts referenced by the imported access groups and cards.",
+    )
+    import_access = fields.Boolean(
+        string='Import Access Control', default=True,
+        help="Include access groups (and their door/department bindings) and zones.",
+    )
+    import_cards = fields.Boolean(
+        string='Import Cards', default=True,
+        help="Include hr.rfid.card records, including their owner and access-group memberships.",
+    )
     import_all_partners = fields.Boolean(
         string='Import all partners',
         default=False,
@@ -98,14 +120,17 @@ class HrRfidOdooImportWiz(models.TransientModel):
     import_user_events = fields.Boolean(
         string='Import user events',
         default=False,
+        help="Include the historical hr.rfid.event.user log. Can be large — disable for first pass, re-run separately later if needed.",
     )
     import_system_events = fields.Boolean(
         string='Import system events',
         default=False,
+        help="Include the historical hr.rfid.event.system log (controller power loss, tamper, etc.).",
     )
     import_th_logs = fields.Boolean(
         string='Import temperature/humidity logs',
         default=False,
+        help="Include temperature-controller log records. Disable unless the source actually used temperature controllers.",
     )
     event_date_from = fields.Date(
         string='Events from date',
@@ -114,43 +139,73 @@ class HrRfidOdooImportWiz(models.TransientModel):
     import_vending = fields.Boolean(
         string='Import vending data',
         default=False,
+        help="Include vending balances, history and events. Only visible if both source and target have hr_rfid_vending installed.",
     )
     import_attendance = fields.Boolean(
         string='Import attendance',
         default=False,
+        help="Include hr.attendance records linked to RFID events.",
     )
     import_attendance_extra = fields.Boolean(
         string='Import attendance extra',
         default=False,
+        help="Include the daily roll-ups produced by hr_attendance_late (late/overtime/extra time).",
     )
     import_service = fields.Boolean(
         string='Import service data',
         default=False,
+        help="Include rfid.service catalog and rfid.service.sale records from the source.",
     )
 
-    # Module availability flags (computed from source + target)
-    source_has_vending = fields.Boolean(readonly=True)
-    source_has_attendance = fields.Boolean(readonly=True)
-    source_has_attendance_late = fields.Boolean(readonly=True)
-    source_has_service = fields.Boolean(readonly=True)
-    target_has_vending = fields.Boolean(compute='_compute_target_modules')
-    target_has_attendance = fields.Boolean(compute='_compute_target_modules')
-    target_has_attendance_late = fields.Boolean(compute='_compute_target_modules')
-    target_has_service = fields.Boolean(compute='_compute_target_modules')
+    source_has_vending = fields.Boolean(
+        readonly=True,
+        help="Source instance has the hr_rfid_vending module installed (detected from Test Connection).",
+    )
+    source_has_attendance = fields.Boolean(
+        readonly=True,
+        help="Source instance has hr_attendance_multi_rfid installed.",
+    )
+    source_has_attendance_late = fields.Boolean(
+        readonly=True,
+        help="Source instance has hr_attendance_late installed.",
+    )
+    source_has_service = fields.Boolean(
+        readonly=True,
+        help="Source instance has rfid_service_base installed.",
+    )
+    target_has_vending = fields.Boolean(
+        compute='_compute_target_modules',
+        help="This (target) instance has hr_rfid_vending installed — the related import_vending toggle is only meaningful when both source and target have it.",
+    )
+    target_has_attendance = fields.Boolean(
+        compute='_compute_target_modules',
+        help="This (target) instance has hr_attendance_multi_rfid installed.",
+    )
+    target_has_attendance_late = fields.Boolean(
+        compute='_compute_target_modules',
+        help="This (target) instance has hr_attendance_late installed.",
+    )
+    target_has_service = fields.Boolean(
+        compute='_compute_target_modules',
+        help="This (target) instance has rfid_service_base installed.",
+    )
 
     # ── Step 3: Confirm / Preview ──────────────────────────────
     warnings = fields.Json(
         string='Warnings',
         compute='_compute_warnings',
+        help="Pre-flight warnings calculated from the configuration (e.g. asked to import vending but target doesn't have the module). Shown on the confirm page.",
     )
     preview_text = fields.Text(
         string='Preview',
         readonly=True,
+        help="Human-readable summary of what will be created/linked if the operator confirms. Filled by the dry-run preview.",
     )
     conflict_ids = fields.One2many(
         'hr.rfid.odoo.import.conflict',
         'wizard_id',
         string='Conflicts',
+        help="Per-record collisions detected against the target. Operator must pick a resolution (Link / Create / Skip) before running the import.",
     )
     dry_run = fields.Boolean(
         string='Full dry-run',
@@ -159,16 +214,26 @@ class HrRfidOdooImportWiz(models.TransientModel):
     )
 
     # ── Step 4: Progress ───────────────────────────────────────
-    progress_text = fields.Text(string='Progress', readonly=True)
-    progress_percent = fields.Float(string='Progress %', readonly=True)
+    progress_text = fields.Text(
+        string='Progress', readonly=True,
+        help="Live status of the running import job (current phase, processed records). Updated by the worker that performs the import.",
+    )
+    progress_percent = fields.Float(
+        string='Progress %', readonly=True,
+        help="Estimated completion percentage. Driven by the phase log — useful for the operator to gauge runtime.",
+    )
 
     # ── Step 5: Results ────────────────────────────────────────
     log_ids = fields.One2many(
         'hr.rfid.odoo.import.log',
         'wizard_id',
         string='Import Log',
+        help="Per-phase result rows (counts of imported / skipped / linked, plus any error). The Results step renders this list.",
     )
-    error_message = fields.Text(string='Error', readonly=True)
+    error_message = fields.Text(
+        string='Error', readonly=True,
+        help="Top-level error captured if the run aborted mid-way. Individual phase errors are also stored on their log rows.",
+    )
 
     # ══════════════════════════════════════════════════════════
     # Computed fields

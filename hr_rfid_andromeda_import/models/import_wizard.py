@@ -72,15 +72,37 @@ class AndromedaImportusers(models.TransientModel):
         • Display: Shown for administrator reference
         
         Note: May differ from the person's actual name - often a login identifier.""")
-    u_fname = fields.Char(string='First Name')
-    u_sname = fields.Char(string='Second Name')
-    u_lname = fields.Char(string='Last Name')
-    d_id = fields.Integer(string='Department ID')
-    d_name = fields.Char(string='Department Name')
-    c_id = fields.Integer(string='Company ID')
-    c_name = fields.Char(string='Company Name')
+    u_fname = fields.Char(
+        string='First Name',
+        help="First name field from the Andromeda DB. Maps to the Odoo record's structured name.",
+    )
+    u_sname = fields.Char(
+        string='Second Name',
+        help="Middle / second name from the Andromeda DB.",
+    )
+    u_lname = fields.Char(
+        string='Last Name',
+        help="Last name from the Andromeda DB.",
+    )
+    d_id = fields.Integer(
+        string='Department ID',
+        help="Numeric department ID from Andromeda. Translated to a local hr.department through the welcome-wizard mapping.",
+    )
+    d_name = fields.Char(
+        string='Department Name',
+        help="Department display name from Andromeda — shown for human cross-check.",
+    )
+    c_id = fields.Integer(
+        string='Company ID',
+        help="Numeric company ID from Andromeda. Translated to a local res.company via company_dict.",
+    )
+    c_name = fields.Char(
+        string='Company Name',
+        help="Company display name from Andromeda — shown for human cross-check.",
+    )
     import_id = fields.Many2one(
-        comodel_name='hr.rfid.andromeda.import.wiz'
+        comodel_name='hr.rfid.andromeda.import.wiz',
+        help="Parent import-run wizard this user row belongs to. Set automatically when the wizard fetches the user list.",
     )
 
     @api.onchange('import_as')
@@ -129,15 +151,20 @@ class AndromedaImportWiz(models.TransientModel):
 
     users_ids = fields.One2many(
         comodel_name='hr.rfid.andromeda.import.users',
-        inverse_name='import_id'
+        inverse_name='import_id',
+        help="Users discovered in the Andromeda DB. Operator picks per-row which ones to import and as what (contact vs employee).",
     )
 
     import_as = fields.Selection(
         [('contact', 'Contacts'), ('employee', 'Employees')],
         default='employee',
+        help="Bulk-applied default for the per-row Import As column. Changing this rewrites every users_ids row.",
     )
 
-    select_all = fields.Boolean(default=False)
+    select_all = fields.Boolean(
+        default=False,
+        help="Master toggle that ticks/un-ticks the do_import flag on every users_ids row.",
+    )
 
     @api.onchange('import_as')
     def _import_as_on_change(self):

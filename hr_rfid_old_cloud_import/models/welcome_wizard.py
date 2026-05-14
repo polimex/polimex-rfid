@@ -12,31 +12,56 @@ class OldCloudWelcomeWiz(models.TransientModel):
     _name = 'hr.rfid.old.cloud.welcome.wiz'
     _description = 'Old Polimex Cloud Import Welcome'
 
-    url_domain = fields.Selection([
-        ('pc', 'my.polimex.online'),
-        ('ss', 'schoolsafety.online'),
-    ], default='pc')
+    url_domain = fields.Selection(
+        [
+            ('pc', 'my.polimex.online'),
+            ('ss', 'schoolsafety.online'),
+        ],
+        default='pc',
+        help="Which legacy cloud to import from — the public Polimex cloud or the School Safety variant. Determines the API base URL used by the wizard.",
+    )
     url_token = fields.Char(
         string='Access token',
         required=True,
-        default='v3cTzhBpqDxJ8vIzzT1eR0faBZIvbJVLK1zrCpmpQG70dILeFSPNw1MyNAbzuslxTwWFkCkOincv9luwBcr0sJwXgFFNIdji6Vm76qEgYQi7Slrec9WldyVFiSqpp5AITAM6eJ81EbdNrWrYEGdCKusOizd7mhs9iUimq3t1RKgMue2dXAnnkOwOEt9LEXTiRhEwb1ERlhKBpEZxQRpZWQm56onizQVWk4zIFXMXqrimMj5LpvVz6oQ5fRBfosQ'
+        help="Bearer token that authenticates this Odoo instance with the legacy cloud's REST API. Generate one from your account on the source cloud (My account → API Keys) and paste it here.",
     )
     users_count = fields.Integer(
-        default=0
+        default=0,
+        help="Number of users discovered in the source cloud after Test Connection — informational, used to estimate import volume.",
     )
-    company_dict = fields.Char()
-    ag_dict = fields.Char()
+    company_dict = fields.Char(
+        help="Internal mapping JSON (source-cloud company ID → local res.company ID) cached after Test Connection. Not user-editable.",
+    )
+    ag_dict = fields.Char(
+        help="Internal mapping JSON (source-cloud access-group ID → local hr.rfid.access.group ID) cached after Test Connection. Not user-editable.",
+    )
 
-    connection_checked = fields.Boolean(default=False)
+    connection_checked = fields.Boolean(
+        default=False,
+        help="True after Test Connection succeeded and the mapping dictionaries are populated. Gates the Import button.",
+    )
     default_import_as = fields.Selection(
         [('contact', 'Contacts'), ('employee', 'Employees')],
         default='employee',
+        help="How users from the source cloud become Odoo records — Employees: imported into hr.employee (full HR profile); Contacts: imported into res.partner (lighter, suitable for visitors).",
     )
 
-    import_hardware = fields.Boolean(default=True)
-    import_access_groups = fields.Boolean(default=True)
-    import_users = fields.Boolean(default=True)
-    import_events = fields.Boolean(default=True)
+    import_hardware = fields.Boolean(
+        default=True,
+        help="Include webstacks, controllers, doors and readers in the import.",
+    )
+    import_access_groups = fields.Boolean(
+        default=True,
+        help="Include access groups and their door bindings in the import.",
+    )
+    import_users = fields.Boolean(
+        default=True,
+        help="Include users (employees or contacts depending on Default Import As) and their card assignments.",
+    )
+    import_events = fields.Boolean(
+        default=True,
+        help="Include the historical access-event log. May be large — disable for a faster first import and re-run separately later.",
+    )
 
     def _cloud_url(self, d=None):
         if d is None:

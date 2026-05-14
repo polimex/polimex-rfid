@@ -15,28 +15,45 @@ class AndromedaWelcomeWiz(models.TransientModel):
     ip_address = fields.Char(
         string='IP address',
         required=True,
-        default='192.168.10.89'
+        default='192.168.10.89',
+        help="IP address of the Windows host running the Andromeda Firebird DB engine. Reachable from this Odoo box on the Firebird port (3050).",
     )
     database_path = fields.Char(
         string='Database Path',
         required=True,
-        default=r'C:\Program Files (x86)\Polimex\Andromeda\Database\Andromeda.fdb'
+        default=r'C:\Program Files (x86)\Polimex\Andromeda\Database\Andromeda.fdb',
+        help="Absolute path to the Andromeda.fdb file as seen by the Firebird server (Windows path on a Windows host). Default points to a typical install.",
     )
 
     users_count = fields.Integer(
-        default=0
+        default=0,
+        help="Number of users discovered in the Andromeda DB after Test Connection — informational, used to size the import.",
     )
-    company_dict = fields.Char()
-    ag_dict = fields.Char()
+    company_dict = fields.Char(
+        help="Internal JSON mapping (Andromeda company ID → Odoo res.company ID) populated after Test Connection. Not user-editable.",
+    )
+    ag_dict = fields.Char(
+        help="Internal JSON mapping (Andromeda access group → Odoo hr.rfid.access.group) populated after Test Connection. Not user-editable.",
+    )
 
-    connection_checked = fields.Boolean(default=False)
+    connection_checked = fields.Boolean(
+        default=False,
+        help="True after a successful Firebird login and structural probe. Gates the Import button.",
+    )
     default_import_as = fields.Selection(
         [('contact', 'Contacts'), ('employee', 'Employees')],
         default='employee',
+        help="Where Andromeda users land in Odoo by default — hr.employee for staff, res.partner for external contacts.",
     )
 
-    import_access_groups = fields.Boolean(default=True)
-    import_users = fields.Boolean(default=True)
+    import_access_groups = fields.Boolean(
+        default=True,
+        help="Include Andromeda access groups and their door bindings in the import.",
+    )
+    import_users = fields.Boolean(
+        default=True,
+        help="Include Andromeda users (with cards) in the import. Disable to import only structure first.",
+    )
 
     def do_check_connection(self):
         try:
