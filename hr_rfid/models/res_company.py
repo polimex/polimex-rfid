@@ -15,7 +15,8 @@ class ResCompany(models.Model):
             ('w34','Wiegand 34 bit (5d+5d)'),
             ('w34s','Wiegand 34 bit (10d)'),
         ],
-        default='w34'
+        default='w34',
+        help="Format readers in this company report card numbers in — Wiegand 34 (5d+5d): facility code + card number separated; Wiegand 34 (10d): single 10-digit decimal. Set to match how cards are printed/sourced.",
     )
 
 

@@ -9,25 +9,33 @@ class HrRfidWebstackDiscoveryRow(models.TransientModel):
     _name = 'hr.rfid.webstack.discovery.row'
     _description = 'Webstack discovery rows'
 
-    name = fields.Char()
+    name = fields.Char(
+        help="Module name as reported in the UDP discovery beacon.",
+    )
     last_ip = fields.Char(
-        readonly=True
+        readonly=True,
+        help="IP address from which the module's discovery beacon was received.",
     )
     version = fields.Char(
-        readonly=True
+        readonly=True,
+        help="Firmware/software version reported by the discovered module.",
     )
     hw_version = fields.Char(
-        readonly=True
+        readonly=True,
+        help="Hardware version reported by the discovered module.",
     )
     serial = fields.Char(
-        readonly=True
+        readonly=True,
+        help="Serial number reported by the discovered module — used as the unique key when adopting the module into the registered list.",
     )
     behind_nat = fields.Boolean(
-        readonly=True
+        readonly=True,
+        help="Discovery flag indicating whether the module sits behind a NAT and must initiate the connection itself.",
     )
     discovery_id = fields.Many2one(
         comodel_name='hr.rfid.webstack.discovery',
         readonly=True,
+        help="Discovery wizard run that found this module.",
     )
 
 class HrRfidWebstackDiscovery(models.TransientModel):
@@ -110,7 +118,8 @@ class HrRfidWebstackDiscovery(models.TransientModel):
             ('full', 'Add as Active and read all information')
         ],
         default='add',
-        required=True
+        required=True,
+        help="What happens when you click Setup — Add as Inactive: register the module but do not contact it yet (useful for cabling-pending sites). Add as Active: register + immediately call Test Connection + read controllers.",
     )
 
     def setup_modules(self):
@@ -139,18 +148,20 @@ class HrRfidWebstackManualCreate(models.TransientModel):
 
     webstack_name = fields.Char(
         string='Module Name',
-        # required=True,
+        help="Friendly name for the module (e.g. 'Warehouse Gate Module'). Auto-filled from the serial if left empty.",
     )
 
     webstack_serial = fields.Char(
         string='Serial Number',
         required=True,
+        help="Serial number printed on the module's label. Must be unique across the database; used as the key to talk to the device.",
     )
     behind_nat = fields.Boolean(
-        default=True
+        default=True,
+        help="Check if the module sits behind a NAT and Odoo cannot reach its IP directly. In that case the module initiates the connection; otherwise Odoo dials out via Last IP.",
     )
     local_ip_address = fields.Char(
-
+        help="Required when Behind NAT is off — the LAN IP at which Odoo can reach the module to send commands.",
     )
 
     @api.onchange('webstack_serial')

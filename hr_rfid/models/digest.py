@@ -8,16 +8,46 @@ from odoo.exceptions import AccessError
 class Digest(models.Model):
     _inherit = 'digest.digest'
 
-    kpi_hr_rfid_denied = fields.Boolean('Denied Events')
-    kpi_hr_rfid_granted = fields.Boolean('Granted Events')
-    kpi_hr_rfid_system = fields.Boolean('System Events')
-    kpi_hr_rfid_command = fields.Boolean('Commands executed')
-    kpi_hr_rfid_card = fields.Boolean('Active cards')
-    kpi_hr_rfid_denied_value = fields.Integer(compute='_compute_kpi_hr_rfid_values')
-    kpi_hr_rfid_granted_value = fields.Integer(compute='_compute_kpi_hr_rfid_values')
-    kpi_hr_rfid_system_value = fields.Integer(compute='_compute_kpi_hr_rfid_values')
-    kpi_hr_rfid_command_value = fields.Integer(compute='_compute_kpi_hr_rfid_values')
-    kpi_hr_rfid_card_value = fields.Integer(compute='_compute_kpi_hr_rfid_values')
+    kpi_hr_rfid_denied = fields.Boolean(
+        'Denied Events',
+        help="Include a 'Count of denied card swipes' KPI in the digest email — covers card-not-recognised, wrong-time-schedule, anti-passback, and similar refusals.",
+    )
+    kpi_hr_rfid_granted = fields.Boolean(
+        'Granted Events',
+        help="Include a 'Count of granted accesses' KPI in the digest email — covers normal and emergency-mode allowed swipes.",
+    )
+    kpi_hr_rfid_system = fields.Boolean(
+        'System Events',
+        help="Include a 'Count of system events' KPI (controller power loss, tamper, etc.) in the digest email.",
+    )
+    kpi_hr_rfid_command = fields.Boolean(
+        'Commands executed',
+        help="Include a 'Count of commands sent to controllers' KPI in the digest email — useful for sanity-checking command queue depth.",
+    )
+    kpi_hr_rfid_card = fields.Boolean(
+        'Active cards',
+        help="Include a 'Count of cards created this period' KPI in the digest email.",
+    )
+    kpi_hr_rfid_denied_value = fields.Integer(
+        compute='_compute_kpi_hr_rfid_values',
+        help="Live count of denied access events during the digest window.",
+    )
+    kpi_hr_rfid_granted_value = fields.Integer(
+        compute='_compute_kpi_hr_rfid_values',
+        help="Live count of granted access events during the digest window.",
+    )
+    kpi_hr_rfid_system_value = fields.Integer(
+        compute='_compute_kpi_hr_rfid_values',
+        help="Live count of system events during the digest window.",
+    )
+    kpi_hr_rfid_command_value = fields.Integer(
+        compute='_compute_kpi_hr_rfid_values',
+        help="Live count of commands executed against controllers during the digest window.",
+    )
+    kpi_hr_rfid_card_value = fields.Integer(
+        compute='_compute_kpi_hr_rfid_values',
+        help="Live count of new cards created during the digest window.",
+    )
 
     def _compute_kpi_hr_rfid_values(self):
         if not self.env.user.has_group('hr_rfid.hr_rfid_group_officer'):

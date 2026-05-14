@@ -15,18 +15,22 @@ class HrRfidWebstackReplaceWiz(models.TransientModel):
     source_webstack_id = fields.Many2one(
         comodel_name='hr.rfid.webstack',
         context={'active_test': False},
+        help="Old webstack being replaced. Inactive modules are included to allow swap-in of pre-archived devices.",
     )
     destination_webstack_id = fields.Many2one(
         comodel_name='hr.rfid.webstack',
         context={'active_test': False},
+        help="New webstack that will take over the controllers. Inactive modules are included so a newly registered device can be activated as part of the swap.",
     )
     source_controller_ids = fields.Many2many(
         comodel_name='hr.rfid.ctrl',
+        help="Controllers attached to the source webstack — these will be moved to the destination webstack on confirmation.",
     )
     destination_controller_ids = fields.One2many(
         'hr.rfid.ctrl',
         'webstack_id',
-        related='destination_webstack_id.controllers'
+        related='destination_webstack_id.controllers',
+        help="Controllers currently attached to the destination webstack — shown for reference so you can spot collisions before clicking Replace.",
     )
     replace_existing = fields.Boolean(
         help="Replace existing controllers in destination module. \n"

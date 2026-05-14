@@ -46,14 +46,38 @@ class HrRfidCtrlIoTableRow(models.TransientModel):
     )
 
     # Range is from 00 to 99
-    out8 = fields.Integer(string='Out8', required=True)
-    out7 = fields.Integer(string='Out7', required=True)
-    out6 = fields.Integer(string='Out6', required=True)
-    out5 = fields.Integer(string='Out5', required=True)
-    out4 = fields.Integer(string='Out4', required=True)
-    out3 = fields.Integer(string='Out3', required=True)
-    out2 = fields.Integer(string='Out2', required=True)
-    out1 = fields.Integer(string='Out1', required=True)
+    out8 = fields.Integer(
+        string='Out8', required=True,
+        help="Output #8 setting for this event (0-99). Bound to a relay / output by the controller's wiring.",
+    )
+    out7 = fields.Integer(
+        string='Out7', required=True,
+        help="Output #7 setting for this event (0-99).",
+    )
+    out6 = fields.Integer(
+        string='Out6', required=True,
+        help="Output #6 setting for this event (0-99).",
+    )
+    out5 = fields.Integer(
+        string='Out5', required=True,
+        help="Output #5 setting for this event (0-99).",
+    )
+    out4 = fields.Integer(
+        string='Out4', required=True,
+        help="Output #4 setting for this event (0-99).",
+    )
+    out3 = fields.Integer(
+        string='Out3', required=True,
+        help="Output #3 setting for this event (0-99).",
+    )
+    out2 = fields.Integer(
+        string='Out2', required=True,
+        help="Output #2 setting for this event (0-99).",
+    )
+    out1 = fields.Integer(
+        string='Out1', required=True,
+        help="Output #1 setting for this event (0-99).",
+    )
 
 
 class HrRfidCtrlIoTableWiz(models.TransientModel):
@@ -94,17 +118,20 @@ class HrRfidCtrlIoTableWiz(models.TransientModel):
     controller_id = fields.Many2one(
         'hr.rfid.ctrl',
         default=_default_ctrl,
-        required=True
+        required=True,
+        help="Controller being edited. Set automatically from the active record when the wizard opens.",
     )
 
     io_row_ids = fields.Many2many(
         'hr.rfid.ctrl.io.table.row',
         string='IO Table',
         default=_generate_io_table,
+        help="One row per event code (Duress, Card OK, etc.) with the values written to each of the 8 outputs when that event fires.",
     )
 
     outs = fields.Integer(
         default=_default_outs,
+        help="Number of output columns shown in the table (4 for relay controllers, otherwise inherited from the controller's hardware capabilities).",
     )
 
     def load_system_defaults(self):

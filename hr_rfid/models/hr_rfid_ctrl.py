@@ -30,15 +30,19 @@ class HrRfidControllerOutputTS(models.Model):
         comodel_name='hr.rfid.ctrl',
         required=True,
         ondelete='cascade',
+        help="Controller that owns this output-to-time-schedule binding. Cascade on delete — the row disappears with its controller.",
     )
     output_count = fields.Integer(
-        related='controller_id.outputs'
+        related='controller_id.outputs',
+        help="Number of physical outputs reported by the controller. Used to validate that output_number stays in range.",
     )
     max_ts = fields.Integer(
-        related='controller_id.time_schedules'
+        related='controller_id.time_schedules',
+        help="Highest time-schedule slot the controller supports. Used to validate that the assigned schedule fits the controller's capacity.",
     )
     time_schedule_number = fields.Integer(
-        related='time_schedule_id.number'
+        related='time_schedule_id.number',
+        help="Numeric slot of the linked time schedule, shown for quick reference in lists.",
     )
 
     @api.constrains('output_number', 'time_schedule_id')
@@ -84,9 +88,11 @@ class HrRfidCtrlInputMask(models.Model):
         comodel_name='hr.rfid.ctrl',
         required=True,
         ondelete='cascade',
+        help="Controller that owns this input-mask row. Cascade on delete — the row disappears with its controller.",
     )
     input_count = fields.Integer(
-        related='controller_id.inputs'
+        related='controller_id.inputs',
+        help="Total number of physical inputs on the controller — used to display only the masks the hardware actually has.",
     )
 
     @api.model
@@ -166,6 +172,7 @@ class HrRfidController(models.Model):
         comodel_name='hr.rfid.ctrl.input.mask',
         inverse_name='controller_id',
         string='Input Masks',
+        help="Per-input NC/NO configuration. One row per physical input. Toggling a row sends a write_input_masks command to the controller.",
     )
     input_states = fields.Integer(
         help='Current state of all inputs as a binary value. Each bit represents one input: 1 = Active/Triggered, 0 = Inactive. Used to monitor real-time sensor states.',

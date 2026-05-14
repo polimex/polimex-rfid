@@ -91,6 +91,7 @@ class HrDepartmentAccGrWizard(models.TransientModel):
         string='Department',
         required=True,
         default=_default_dep,
+        help="Department this wizard run targets. Set automatically from the selected record(s); read-only for the user.",
     )
 
     acc_grs = fields.Many2many(
@@ -126,6 +127,7 @@ class HrDepartmentDefAccGrWizard(models.TransientModel):
         string='Department',
         required=True,
         default=_default_dep,
+        help="Department this wizard run targets. Set automatically from the selected record(s); read-only for the user.",
     )
 
     def_acc_gr = fields.Many2one(
@@ -164,6 +166,7 @@ class HrDepartmentMassAccGrsWiz(models.TransientModel):
         string='Department',
         required=True,
         default=_default_dep,
+        help="Department this wizard run targets. Set automatically from the selected record(s); read-only for the user.",
     )
 
     acc_gr_ids = fields.Many2many(
@@ -223,6 +226,7 @@ class HrDepartmentAddDefAccGrWizard(models.TransientModel):
         string='Department',
         required=True,
         default=_default_dep,
+        help="Department this wizard run targets. Set automatically from the selected record(s); read-only for the user.",
     )
 
     acc_gr = fields.Many2one(

@@ -21,7 +21,8 @@ class RFIDNotification(models.Model):
     # )
 
     name = fields.Char(
-        compute='_default_name'
+        compute='_default_name',
+        help="Computed display label combining the event type and notification channel (e.g. 'Door Forced Open (Email)').",
     )
 
     zone_id = fields.Many2one(
