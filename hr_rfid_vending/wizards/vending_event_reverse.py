@@ -13,10 +13,12 @@ class VendingEventReverse(models.TransientModel):
         required=True,
         readonly=True,
         default=lambda self: self.env.context.get('active_id'),
+        help="Vending event being reversed. Set automatically from the active record when the wizard is opened.",
     )
     reason = fields.Text(
         string='Reason',
         required=True,
+        help="Audit note explaining why the purchase is reversed (machine jam, double-charge, customer dispute, etc.). Stored on the original event's chatter.",
     )
 
     def _is_already_reversed(self, event):

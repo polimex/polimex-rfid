@@ -21,26 +21,32 @@ class VendingAutoRefillEvents(models.Model):
     name = fields.Char(
         string='Name',
         default=lambda self: self.env['ir.sequence'].next_by_code('hr.rfid.vending.auto.refill.event.seq'),
+        help="Auto-generated reference for each cron run (e.g. AR/2026/000123). Used as the human label in lists and history reports.",
     )
-    company_id = fields.Many2one('res.company',
-                                 string='Company',
-                                 default=lambda self: self.env.company)
-
+    company_id = fields.Many2one(
+        'res.company',
+        string='Company',
+        default=lambda self: self.env.company,
+        help="Company in whose scope this refill run executed. Auto-refill is scheduled per company.",
+    )
 
     create_date = fields.Datetime(
         string='Auto Refill Time',
+        help="Timestamp the cron run created the record. Use this to correlate refill totals with the cron's nextcall schedule.",
     )
 
     auto_refill_total = fields.Float(
         string='Total Cash Refilled',
         required=True,
         readonly=True,
+        help="Sum of all balance top-ups credited during this run. A useful sanity check against the company's vending budget.",
     )
 
     balance_history_ids = fields.One2many(
         'hr.rfid.vending.balance.history',
         'auto_refill_id',
         string='Balance History Changes',
+        help="Individual employee balance-history entries created by this run. Use them to see exactly which employees were topped up and by how much.",
     )
 
     # Cron job task

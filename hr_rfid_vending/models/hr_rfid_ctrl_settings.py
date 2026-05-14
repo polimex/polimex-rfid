@@ -30,6 +30,7 @@ class HrRfidVendingSettingsWiz(models.TransientModel):
         default=_default_ctrl,
         required=True,
         ondelete='cascade',
+        help="Vending controller being configured. Set automatically from the active record when the wizard is opened.",
     )
 
     vending_row_ids = fields.Many2many(
@@ -37,11 +38,12 @@ class HrRfidVendingSettingsWiz(models.TransientModel):
         string='Item/Price',
         default=_default_io_rows,
         required=True,
+        help="The 4-slot rows of the vending machine grid. Editing the products here writes a new I/O table to the controller on Save.",
     )
 
     show_price_timeout = fields.Integer(
         string='Show Price Timeout',
-        help='After how long the vending machine will stop showing the product price on the screen',
+        help="Seconds the vending controller keeps the product price on its screen after the user picks the item. Range 0-255.",
         default=_default_show_price_timeout,
         required=True,
     )
@@ -50,6 +52,7 @@ class HrRfidVendingSettingsWiz(models.TransientModel):
         string='Scale Factor',
         default=_default_scale_factor,
         required=True,
+        help="Divisor used to encode product prices in the controller (price in stotinki ÷ scale_factor must fit a single byte 0-255). Increase it if any item exceeds 2.55 currency units at the default factor.",
     )
 
     def save_settings(self):

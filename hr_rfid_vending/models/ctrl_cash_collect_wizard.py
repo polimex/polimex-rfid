@@ -18,6 +18,7 @@ class CashCollectLog(models.Model):
         string="Currency",
         readonly=True,
         default=lambda self: self.env.user.company_id.currency_id,
+        help="Currency used to record the collected amount — taken from the company default and shown for context only.",
     )
     value = fields.Monetary(
         string='Amount Collected',
@@ -64,6 +65,7 @@ Select all machines from which you are physically collecting cash."""
         string="Currency",
         readonly=True,
         default=lambda self: self.env.user.company_id.currency_id,
+        help="Currency used to record the collected amount — taken from the company default and shown for context only.",
     )
     value = fields.Monetary(
         string='Collection Amount',

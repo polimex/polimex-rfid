@@ -10,12 +10,30 @@ class Digest(models.Model):
     _name = 'digest.digest'
     _inherit = 'digest.digest'
 
-    kpi_hr_rfid_vending_refill = fields.Boolean('Auto refill amount')
-    kpi_hr_rfid_vending_sale = fields.Boolean('Sales amount')
-    kpi_hr_rfid_vending_sale_count = fields.Boolean('Sales count')
-    kpi_hr_rfid_vending_refill_value = fields.Monetary(compute='_compute_kpi_hr_rfid_vending_values')
-    kpi_hr_rfid_vending_sale_value = fields.Monetary(compute='_compute_kpi_hr_rfid_vending_values')
-    kpi_hr_rfid_vending_sale_count_value = fields.Integer(compute='_compute_kpi_hr_rfid_vending_values')
+    kpi_hr_rfid_vending_refill = fields.Boolean(
+        'Auto refill amount',
+        help="Include the total amount auto-refilled to employee balances in the digest email.",
+    )
+    kpi_hr_rfid_vending_sale = fields.Boolean(
+        'Sales amount',
+        help="Include the total amount of vending purchases (positive sum of debits) in the digest email.",
+    )
+    kpi_hr_rfid_vending_sale_count = fields.Boolean(
+        'Sales count',
+        help="Include the count of individual purchases made through the vending controllers in the digest email.",
+    )
+    kpi_hr_rfid_vending_refill_value = fields.Monetary(
+        compute='_compute_kpi_hr_rfid_vending_values',
+        help="Live total of auto-refill credits added to employee balances during the digest window.",
+    )
+    kpi_hr_rfid_vending_sale_value = fields.Monetary(
+        compute='_compute_kpi_hr_rfid_vending_values',
+        help="Live total spent by employees through the vending controllers during the digest window.",
+    )
+    kpi_hr_rfid_vending_sale_count_value = fields.Integer(
+        compute='_compute_kpi_hr_rfid_vending_values',
+        help="Live count of individual vending purchases during the digest window.",
+    )
 
     def _compute_kpi_hr_rfid_vending_values(self):
         if not self.env.user.has_group('hr_rfid_vending.group_operator'):

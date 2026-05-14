@@ -9,6 +9,7 @@ class BalanceHistory(models.Model):
     name = fields.Char(
         string='Person Responsible/Item',
         compute='_compute_name',
+        help="Human-readable label — the operator who made the change for manual adjustments, the product name for vending sales, or 'Reversal: …' for reversed sales.",
     )
 
     person_responsible = fields.Many2one(
@@ -16,6 +17,7 @@ class BalanceHistory(models.Model):
         string='Person responsible for the change',
         default=lambda self: self.env.uid,
         readonly=True,
+        help="User who triggered the balance change. For vending sales this is the system user; for manual top-ups it is the operator who used the wizard.",
     )
 
     balance_change = fields.Float(
@@ -38,12 +40,14 @@ class BalanceHistory(models.Model):
         required=True,
         ondelete='cascade',
         readonly=True,
+        help="Employee whose vending balance changed. Cascades on delete — when the employee record is removed, their balance history is removed with them.",
     )
     department_id = fields.Many2one(
         'hr.department', 'Department',
         domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]",
         related='employee_id.department_id',
-        store=True
+        store=True,
+        help="Department of the employee at the time of the change. Stored so reports filter correctly even after the employee moves.",
     )
 
 
@@ -52,6 +56,7 @@ class BalanceHistory(models.Model):
         string='Event',
         ondelete='set null',
         readonly=True,
+        help="Vending controller event that triggered the balance change (a sale or a sale reversal). Empty for manual operator adjustments.",
     )
 
     auto_refill_id = fields.Many2one(
@@ -59,6 +64,7 @@ class BalanceHistory(models.Model):
         string='Auto Refill Event',
         ondelete='set null',
         readonly=True,
+        help="Auto-refill cron run that produced this credit. Empty for manual top-ups and for sales/reversals.",
     )
 
     item_id = fields.Many2one(
@@ -67,6 +73,7 @@ class BalanceHistory(models.Model):
         compute='_compute_item_sold',
         store=True,
         ondelete='set null',
+        help="Product matching the item sold by the vending controller for this entry — copied from the linked vending event so it survives event archiving.",
     )
 
     def _compute_name(self):

@@ -16,7 +16,9 @@ class ResConfigSettings(models.TransientModel):
          ('months', 'Months')],
         related='company_id.refill_interval_type',
         readonly=False,
-        string='Interval Unit')
+        string='Interval Unit',
+        help="Time unit for the auto-refill repeat interval. Combined with Repeat every (above) to drive the cron schedule.",
+    )
     refill_nextcall = fields.Datetime(
         string='Next Execution Date',
         related='company_id.refill_nextcall',
