@@ -27,22 +27,40 @@ class CctvCameraCommand(models.Model):
         ('set_time', "Set Time"),
         ('other', "Other"),
     ], string="Command Type", required=True, tracking=True)
-    execution_time = fields.Datetime(string="Execution Time", readonly=True)
+    execution_time = fields.Datetime(
+        string="Execution Time",
+        readonly=True,
+        help="Timestamp the command was successfully delivered to the camera. Empty while the command is queued or has failed.",
+    )
     request_data = fields.Text(string="Request Data", tracking=True,
                                help="Data sent to the camera as part of the command, e.g. in param=value per line format.")
-    response_data = fields.Text(string="Response Data", tracking=True)
+    response_data = fields.Text(
+        string="Response Data",
+        tracking=True,
+        help="Raw response returned by the camera, kept for audit / debugging.",
+    )
     camera_id = fields.Many2one(
         comodel_name='cctv.camera',
         required=True,
         ondelete='cascade',
+        help="Camera this command targets. If the camera is deleted, queued commands cascade-delete with it.",
     )
-    retry_count = fields.Integer(string="Retry Count", default=0, tracking=True)
-    state = fields.Selection([
-        ('new', "New"),
-        ('in_progress', "In Progress"),
-        ('done', "Done"),
-        ('error', "Error"),
-    ], string="State", default='new', tracking=True)
+    retry_count = fields.Integer(
+        string="Retry Count",
+        default=0,
+        tracking=True,
+        help="How many times this command has been retried. Capped at 5 — beyond that the command stays in Error state and must be re-sent manually.",
+    )
+    state = fields.Selection(
+        [
+            ('new', "New"),
+            ('in_progress', "In Progress"),
+            ('done', "Done"),
+            ('error', "Error"),
+        ],
+        string="State", default='new', tracking=True,
+        help="Lifecycle of the command — New: queued, not yet sent. In Progress: handler is currently delivering. Done: camera acknowledged. Error: delivery failed (see Response Data). Use the Restart Sending server action to requeue an Error command.",
+    )
 
     @api.constrains('retry_count')
     def _check_retry_count(self):

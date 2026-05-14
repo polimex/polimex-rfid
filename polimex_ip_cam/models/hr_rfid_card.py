@@ -15,7 +15,8 @@ class HrRfidCard(models.Model):
     camera_count = fields.Integer(
         string='Camera Count',
         compute='_compute_camera_count',
-        store=True
+        store=True,
+        help="Number of ANPR cameras this card (license plate) is registered with. Drives the Cameras smart button on the card form.",
     )
 
     @api.depends('camera_rel_ids')

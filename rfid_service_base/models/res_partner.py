@@ -10,7 +10,8 @@ class ResPartner(models.Model):
 
     partner_rfid_sales_count = fields.Char(
         compute='_compute_partner_rfid_sales_count',
-        groups="rfid_service_base.group_card_user"
+        groups="rfid_service_base.group_card_user",
+        help="Number of visitor service sales registered against this contact across all services. Used by the smart button to drive the user to the sales history.",
     )
 
     def _compute_partner_rfid_sales_count(self):

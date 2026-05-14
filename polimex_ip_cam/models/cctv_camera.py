@@ -24,11 +24,16 @@ class CctvCamera(models.Model):
     # Original fields (unchanged)
     name = fields.Char(string='Name', required=True, tracking=True,
                        help="Camera name for easy identification")
-    active = fields.Boolean(string='Active', default=True)
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+        help="Uncheck to archive the camera. Inactive cameras no longer receive commands or accept push events; existing plate-list records remain for history.",
+    )
     company_id = fields.Many2one(
         comodel_name='res.company',
         string='Company',
         default=lambda self: self.env.company,
+        help="Company that owns the camera. Cameras are isolated per company; record rules prevent users seeing devices outside their allowed companies.",
     )
     tz = fields.Selection(
         selection=_tzs, string='Timezone',
@@ -37,7 +42,11 @@ class CctvCamera(models.Model):
              "The plates are sent to camera with data and time in this timezone."
     )
 
-    tz_offset = fields.Char(compute='_compute_tz_offset', string='Timezone offset')
+    tz_offset = fields.Char(
+        compute='_compute_tz_offset',
+        string='Timezone offset',
+        help="UTC offset string derived from the timezone above. Sent to the camera when synchronising clocks.",
+    )
 
     behind_nat = fields.Boolean(
         string='Behind NAT',
@@ -107,6 +116,7 @@ class CctvCamera(models.Model):
     door_id = fields.One2many(
         comodel_name='hr.rfid.door',
         inverse_name='camera_id',
+        help="RFID doors whose readers are wired to this camera. Card assignments on these doors are mirrored to the camera's plate whitelist automatically.",
     )
     # Intermediate relations to link RFID cards with a list category
     rfid_rel_ids = fields.One2many(
@@ -119,14 +129,34 @@ class CctvCamera(models.Model):
     rfid_card_ids = fields.Many2many(
         comodel_name='hr.rfid.card',
         compute='_compute_rfid_card_ids',
-        string='RFID Cards'
+        string='RFID Cards',
+        help="Flat view of every RFID card registered with this camera, across all list categories. Convenience field for searches and reports.",
     )
-    # Computed counts per list type
-    rfid_whitelist_count = fields.Integer(string='Whitelist Count', compute='_compute_list_counts', store=True)
-    rfid_blacklist_count = fields.Integer(string='Blacklist Count', compute='_compute_list_counts', store=True)
-    rfid_graylist_count = fields.Integer(string='Graylist Count', compute='_compute_list_counts', store=True)
-    rfid_yellolist_count = fields.Integer(string='Yellolist Count', compute='_compute_list_counts', store=True)
-    rfid_otherlist_count = fields.Integer(string='Otherlist Count', compute='_compute_list_counts', store=True)
+    rfid_whitelist_count = fields.Integer(
+        string='Whitelist Count',
+        compute='_compute_list_counts', store=True,
+        help="Live count of plates classified as Whitelist (auto-grant). Used by the smart button on the form.",
+    )
+    rfid_blacklist_count = fields.Integer(
+        string='Blacklist Count',
+        compute='_compute_list_counts', store=True,
+        help="Live count of plates classified as Blacklist (auto-deny). Used by the smart button on the form.",
+    )
+    rfid_graylist_count = fields.Integer(
+        string='Graylist Count',
+        compute='_compute_list_counts', store=True,
+        help="Live count of plates classified as Graylist (suspect — event raised but gate stays closed).",
+    )
+    rfid_yellolist_count = fields.Integer(
+        string='Yellolist Count',
+        compute='_compute_list_counts', store=True,
+        help="Live count of plates classified as Yellow list (temporary visitor / contractor).",
+    )
+    rfid_otherlist_count = fields.Integer(
+        string='Otherlist Count',
+        compute='_compute_list_counts', store=True,
+        help="Live count of plates classified as Other (catch-all for unclassified plates).",
+    )
 
     @api.depends('tz')
     def _compute_tz_offset(self):

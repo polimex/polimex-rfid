@@ -11,6 +11,7 @@ class HrRfidDoor(models.Model):
         related="reader_ids.camera_id",
         ondelete="cascade",
         store=True,
+        help="ANPR camera bound to this door's reader (inherited via the reader). When set, card-to-door assignments are mirrored to the camera's whitelist automatically.",
     )
 
     @api.depends('webstack_id', 'camera_id')

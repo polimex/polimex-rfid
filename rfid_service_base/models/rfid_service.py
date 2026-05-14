@@ -41,7 +41,8 @@ Deactivate to stop new sales while preserving existing customer access."""
     company_id = fields.Many2one(
         comodel_name='res.company',
         string='Company',
-        default=lambda self: self.env.company
+        default=lambda self: self.env.company,
+        help="Company that owns this service template. Services are isolated per company — users only see services of their allowed companies.",
     )
     color = fields.Integer(
         string='Color',
@@ -327,7 +328,8 @@ Colors improve visual organization when managing multiple service categories."""
     company_id = fields.Many2one(
         comodel_name='res.company',
         string='Company',
-        default=lambda self: self.env.company
+        default=lambda self: self.env.company,
+        help="Company that owns this tag. Tags are isolated per company so each tenant can build its own catalog taxonomy.",
     )
 
     _name_uniq = models.Constraint(

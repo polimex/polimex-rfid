@@ -92,7 +92,8 @@ Status is automatically calculated based on dates, visits, and access permission
     company_id = fields.Many2one(
         comodel_name='res.company',
         string='Company',
-        related='service_id.company_id'
+        related='service_id.company_id',
+        help="Company that owns this sale — inherited from the underlying service. Used for multi-company record-rule scoping.",
     )
     partner_id = fields.Many2one(
         comodel_name='res.partner', 
