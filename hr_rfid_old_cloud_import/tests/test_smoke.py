@@ -7,7 +7,12 @@ class TestOldCloudImportSmoke(TransactionCase):
     produce stable strings the controllers can consume."""
 
     def test_welcome_wizard_create(self):
-        wiz = self.env["hr.rfid.old.cloud.welcome.wiz"].create({})
+        # url_token is required (no default) — operator must paste a real
+        # token; pass any non-empty placeholder here just to satisfy the
+        # NOT NULL constraint.
+        wiz = self.env["hr.rfid.old.cloud.welcome.wiz"].create({
+            "url_token": "TEST_TOKEN_PLACEHOLDER",
+        })
         self.assertTrue(wiz.id)
 
     def test_import_wiz_model_is_registered(self):
