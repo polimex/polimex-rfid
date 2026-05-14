@@ -8,7 +8,12 @@
             <field name="res_model">rfid.service.sale.wiz</field>
             <field name="view_mode">form</field>
             <field name="binding_model_id" ref="model_rfid_service"/>
+            <field name="binding_view_types">form,list,kanban</field>
             <field name="target">new</field>
+            <!-- Propagate active_id so the wizard's service_id field
+                 (readonly in the form) is pre-populated from the rfid.service
+                 the user opened the Actions menu on. -->
+            <field name="context">{'default_service_id': active_id}</field>
         </record>
         <!--        <record id="sale_extend_wiz_action" model="ir.actions.act_window">-->
         <!--            <field name="name">Extend RFID Service</field>-->

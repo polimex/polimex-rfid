@@ -88,9 +88,8 @@
                             </div>
                         </t>
 
-                        <!-- Заменяме "kanban-box" с "card" -->
                         <t t-name="card">
-                            <div t-attf-class="#{kanban_color(record.color.raw_value)} col o_has_icon oe_kanban_content oe_kanban_card">
+                            <div class="col o_has_icon oe_kanban_content oe_kanban_card">
                                 <div class="o_kanban_card_content mw-100">
                                     <div class="o_kanban_primary_left">
                                         <div class="o_primary">
@@ -187,7 +186,7 @@
                             </group>
                             <group id="rfid_service_form_group">
                                 <field name="fixed_time"/>
-                                <field name="generate_barcode_card" widget="generate_barcode_card"/>
+                                <field name="generate_barcode_card"/>
                             </group>
                             <p class="text-muted">
                                 <i class="fa fa-lightbulb-o" role="img"/>
