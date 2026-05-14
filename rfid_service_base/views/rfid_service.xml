@@ -189,6 +189,10 @@
                                 <field name="fixed_time"/>
                                 <field name="generate_barcode_card" widget="generate_barcode_card"/>
                             </group>
+                            <p class="text-muted">
+                                <i class="fa fa-lightbulb-o" role="img"/>
+                                Tip: turn Fixed Time on to make every card expire at the same wall-clock cut-off (for example "all day passes end at 18:00"). Leave it off for rolling windows (e.g. "4 hours from check-in").
+                            </p>
                             <group id="rfid_service_form_group2">
                                 <field name="card_type" options='{"no_open": True, "no_create": True}'/>
                                 <field name="parent_id"/>

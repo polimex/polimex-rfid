@@ -118,6 +118,10 @@
                                 <field name="hr_rfid_vending_refill_max"
                                        invisible="not hr_rfid_vending_auto_refill or hr_rfid_vending_refill_type=='fixed'"/>
                             </group>
+                            <p class="text-muted" colspan="2" invisible="not hr_rfid_vending_auto_refill">
+                                <i class="fa fa-lightbulb-o" role="img"/>
+                                Tip: Fixed type sets the balance to the amount every cron run (good for a fixed daily allowance). Top-up type adds the amount until Max balance is reached (good for an "up to N" credit).
+                            </p>
                             <group string="Current state">
                                 <field name="hr_rfid_vending_spent_today"/>
                                 <field name="hr_rfid_vending_current_balance"/>
