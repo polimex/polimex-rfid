@@ -722,11 +722,16 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
     def _deactivate(self):
         for rel in self:
             cards = rel.employee_id.hr_rfid_card_ids.filtered(lambda c: c.card_ready())
-            doors = rel.access_group_id.all_door_ids.mapped('door_id')
-            self.env['hr.rfid.card.door.rel']._remove_cards(cards, doors)
-            # for card in cards:
-            #     for door in doors:
-            #         self.env['hr.rfid.card.door.rel'].check_relevance_slow(card, door)
+            # Skip doors still covered by other active access groups for this employee.
+            other_active_doors = (
+                rel.employee_id.hr_rfid_access_group_ids
+                ._filter_active()
+                .filtered(lambda r: r.id != rel.id)
+                .mapped('access_group_id.all_door_ids.door_id')
+            )
+            doors = rel.access_group_id.all_door_ids.mapped('door_id') - other_active_doors
+            if doors:
+                self.env['hr.rfid.card.door.rel']._remove_cards(cards, doors)
 
     def _activate(self):
         for rel in self:
@@ -799,11 +804,18 @@ class HrRfidAccessGroupContactRel(models.Model):
     def _deactivate(self):
         for rel in self:
             cards = rel.contact_id.hr_rfid_card_ids.filtered(lambda c: c.card_ready())
-            doors = rel.access_group_id.all_door_ids.mapped('door_id')
-            self.env['hr.rfid.card.door.rel']._remove_cards(cards, doors)
-            # for card in cards:
-            #     for door in doors:
-            #         self.env['hr.rfid.card.door.rel'].check_relevance_slow(card, door)
+            # Skip doors still covered by other active access groups for this contact
+            # to avoid losing card permission when an overlapping rel is in effect
+            # (e.g. old monthly service expires exactly when next one activates).
+            other_active_doors = (
+                rel.contact_id.hr_rfid_access_group_ids
+                ._filter_active()
+                .filtered(lambda r: r.id != rel.id)
+                .mapped('access_group_id.all_door_ids.door_id')
+            )
+            doors = rel.access_group_id.all_door_ids.mapped('door_id') - other_active_doors
+            if doors:
+                self.env['hr.rfid.card.door.rel']._remove_cards(cards, doors)
 
     def _activate(self):
         for rel in self:
