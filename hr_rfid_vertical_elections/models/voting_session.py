@@ -1,7 +1,3 @@
-from email.policy import default
-
-from wheel.metadata import requires_to_requires_dist
-
 from odoo import fields, models, api
 from odoo.exceptions import ValidationError
 
