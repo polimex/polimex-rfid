@@ -231,10 +231,15 @@ class HrRfidCard(models.Model):
     def _compute_pin_code(self):
         for card in self:
             card.pin_code = card.get_owner().hr_rfid_pin_code
-    @api.depends('number', 'card_type')
+    @api.depends('internal_number', 'card_type')
     def _compute_barcode_number(self):
+        # Encode from internal_number, not from number: internal_number is the
+        # canonical 5+5 decimal form regardless of card_input_type, so
+        # w34_to_hex always returns the hex actually programmed onto the card.
+        # Using number directly would mis-encode w34s (10d) cards because
+        # w34_to_hex splits its input as two 5-digit decimals.
         for c in self:
-            c.barcode_number = c.number and self.w34_to_hex(c.number).upper() or False
+            c.barcode_number = c.internal_number and self.w34_to_hex(c.internal_number).upper() or False
             c.is_barcode = c.card_type == self.env.ref('hr_rfid.hr_rfid_card_type_barcode')
 
     @api.constrains('employee_id', 'contact_id')
