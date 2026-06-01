@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'RFID Polimex Old Cloud Import',
-    'version': '19.0.1.2.0',
+    'version': '19.0.1.2.1',
     'category': 'HR',
     'summary': 'Import access control data from my.polimex.online and schoolsafety.online',
     'author': 'Polimex',

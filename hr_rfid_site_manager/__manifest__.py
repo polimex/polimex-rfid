@@ -15,7 +15,7 @@
 
     # for the full list
     'category': 'Administration',
-    'version': '19.0.1.5.0',
+    'version': '19.0.1.5.1',
     'license': 'AGPL-3',
 
     # any module necessary for this one to work correctly
