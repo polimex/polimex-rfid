@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Bulgarian statutory labour coefficients, dated.
+
+         noupdate="1": these are seed defaults the customer may adjust in
+         Settings → Attendances → Legal Rates; a module update must not
+         overwrite a local change. When the law changes, add a NEW dated row
+         (new record id) rather than editing one of these.
+
+         Overtime multipliers — КТ чл. 262 minimums (Labour Code):
+           workday  +50%  -> 1.5
+           rest day +75%  -> 1.75
+           holiday  +100% -> 2.0
+         These are floors; the employer may pay more. -->
+    <data noupdate="1">
+        <record id="rate_overtime_workday" model="hr.legal.rate">
+            <field name="code">overtime_workday</field>
+            <field name="name">Overtime — working day (КТ чл. 262)</field>
+            <field name="date_from">2020-01-01</field>
+            <field name="value">1.5</field>
+        </record>
+
+        <record id="rate_overtime_weekend" model="hr.legal.rate">
+            <field name="code">overtime_weekend</field>
+            <field name="name">Overtime — rest day (КТ чл. 262)</field>
+            <field name="date_from">2020-01-01</field>
+            <field name="value">1.75</field>
+        </record>
+
+        <record id="rate_overtime_holiday" model="hr.legal.rate">
+            <field name="code">overtime_holiday</field>
+            <field name="name">Overtime — official holiday (КТ чл. 262)</field>
+            <field name="date_from">2020-01-01</field>
+            <field name="value">2.0</field>
+        </record>
+
+        <!-- Night-shift supplement — НСОРЗ чл. 8: an ADDITIVE amount per night
+             hour (22:00-06:00), not a multiplier. Statutory minimum is the
+             greater of 0.15% of the monthly minimum wage and a fixed floor.
+             From 2026-01-01 (euro adoption) the floor is EUR 0.51.
+
+             Seeded at the verified floor. If 0.15% of the current minimum wage
+             exceeds it, raise this value (add a new dated row) — see README.
+             Currency matters here because this is an amount, not a ratio. -->
+        <record id="rate_night_supplement_2026" model="hr.legal.rate">
+            <field name="code">night_supplement</field>
+            <field name="name">Night-shift supplement / hour (НСОРЗ чл. 8)</field>
+            <field name="date_from">2026-01-01</field>
+            <field name="value">0.51</field>
+            <field name="currency_id" ref="base.EUR"/>
+        </record>
+    </data>
+</odoo>

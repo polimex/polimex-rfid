@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="generate_bg_holidays_wizard_form" model="ir.ui.view">
+            <field name="name">l10n.bg.generate.holidays.wizard.form</field>
+            <field name="model">l10n.bg.generate.holidays.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Generate Bulgarian Public Holidays">
+                    <p>
+                        Creates the official Bulgarian public holidays for the
+                        chosen year as company-wide Public Holidays — fixed
+                        dates plus the moving Orthodox-Easter days (Good Friday,
+                        Holy Saturday, Easter Monday). Already-existing days are
+                        skipped, so re-running is safe.
+                    </p>
+                    <group>
+                        <field name="year"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                    <footer>
+                        <button name="action_generate" type="object"
+                                string="Generate" class="btn-primary"/>
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="generate_bg_holidays_wizard_action" model="ir.actions.act_window">
+            <field name="name">Generate BG Public Holidays</field>
+            <field name="res_model">l10n.bg.generate.holidays.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_generate_bg_holidays"
+                  name="Generate BG Public Holidays"
+                  parent="hr_attendance.menu_hr_attendance_configuration"
+                  action="generate_bg_holidays_wizard_action"
+                  sequence="55"
+                  groups="hr_attendance.group_hr_attendance_manager"/>
+    </data>
+</odoo>
