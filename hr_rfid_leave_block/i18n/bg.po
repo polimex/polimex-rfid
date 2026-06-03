@@ -1,0 +1,220 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* hr_rfid_leave_block
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-03 07:59+0000\n"
+"PO-Revision-Date: 2026-06-03 11:05\n"
+"Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
+"Language-Team: Polimex Dev Team <odoo@polimex.co>\n"
+"Language: bg\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: hr_rfid_leave_block
+#: model_terms:ir.ui.view,arch_db:hr_rfid_leave_block.hr_rfid_leave_block_view_form
+msgid ""
+"<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
+"                            Only the cards listed here are re-activated when access\n"
+"                            is restored. A card the employee disabled before the\n"
+"                            leave, or added during it, is intentionally left as-is."
+msgstr ""
+"<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
+"                            Само картите, изброени тук, се активират отново при възстановяване на достъпа. Карта, деактивирана от служителя преди отпуска или добавена по времето му, умишлено се оставя непроменена."
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,field_description:hr_rfid_leave_block.field_hr_rfid_leave_block__blocked_at
+msgid "Blocked At"
+msgstr "Блокирано на"
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields.selection,name:hr_rfid_leave_block.selection__hr_rfid_leave_block__state__active
+#: model_terms:ir.ui.view,arch_db:hr_rfid_leave_block.hr_rfid_leave_block_view_search
+msgid "Blocking"
+msgstr "Блокиране"
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,help:hr_rfid_leave_block.field_hr_rfid_leave_block__state
+msgid ""
+"Blocking: cards currently suspended. Restored: access was given back (leave "
+"ended, cancelled or refused)."
+msgstr ""
+"Блокиране: картите са спрени в момента. Възстановено: достъпът е върнат "
+"(отпускът е приключил, отменен или отказан)."
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,field_description:hr_rfid_leave_block.field_hr_rfid_leave_block__company_id
+msgid "Company"
+msgstr "Фирма"
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,help:hr_rfid_leave_block.field_hr_rfid_leave_block__company_id
+msgid "Company of the leave, for multi-company isolation."
+msgstr "Фирмата на отпуска, за мулти-фирмена изолация."
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,field_description:hr_rfid_leave_block.field_hr_rfid_leave_block__create_uid
+msgid "Created by"
+msgstr "Създадено от"
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,field_description:hr_rfid_leave_block.field_hr_rfid_leave_block__create_date
+msgid "Created on"
+msgstr "Създадено на"
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,field_description:hr_rfid_leave_block.field_hr_leave__display_name
+#: model:ir.model.fields,field_description:hr_rfid_leave_block.field_hr_rfid_leave_block__display_name
+msgid "Display Name"
+msgstr "Показвано име"
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,field_description:hr_rfid_leave_block.field_hr_rfid_leave_block__employee_id
+#: model_terms:ir.ui.view,arch_db:hr_rfid_leave_block.hr_rfid_leave_block_view_search
+msgid "Employee"
+msgstr "Служител"
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,help:hr_rfid_leave_block.field_hr_rfid_leave_block__employee_id
+msgid "Employee whose cards were suspended (from the leave)."
+msgstr "Служителят, чиито карти са спрени (по повод отпуска)."
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,help:hr_rfid_leave_block.field_hr_rfid_leave_block__blocked_card_ids
+msgid ""
+"Exactly the cards that were active when the leave was approved and got "
+"deactivated. Only these are re-activated on restore."
+msgstr ""
+"Точно картите, които са били активни при одобряването на отпуска и са "
+"деактивирани. Само тези се активират отново при възстановяване."
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,field_description:hr_rfid_leave_block.field_hr_leave__id
+#: model:ir.model.fields,field_description:hr_rfid_leave_block.field_hr_rfid_leave_block__id
+msgid "ID"
+msgstr "ID"
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,field_description:hr_rfid_leave_block.field_hr_rfid_leave_block__write_uid
+msgid "Last Updated by"
+msgstr "Последно актуализирано от"
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,field_description:hr_rfid_leave_block.field_hr_rfid_leave_block__write_date
+msgid "Last Updated on"
+msgstr "Последно актуализирано на"
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,field_description:hr_rfid_leave_block.field_hr_rfid_leave_block__leave_id
+msgid "Leave"
+msgstr "Отпуск"
+
+#. module: hr_rfid_leave_block
+#: model:ir.actions.act_window,name:hr_rfid_leave_block.hr_rfid_leave_block_action
+#: model:ir.ui.menu,name:hr_rfid_leave_block.hr_rfid_menu_leave_blocks
+msgid "Leave Access Blocks"
+msgstr "Блокирания на достъп при отпуск"
+
+#. module: hr_rfid_leave_block
+#: model_terms:ir.actions.act_window,help:hr_rfid_leave_block.hr_rfid_leave_block_action
+msgid "No RFID access blocks yet"
+msgstr "Все още няма RFID блокирания на достъп"
+
+#. module: hr_rfid_leave_block
+#: model:ir.model,name:hr_rfid_leave_block.model_hr_rfid_leave_block
+msgid "RFID Access Block for Leave"
+msgstr "RFID блокиране на достъп при отпуск"
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,field_description:hr_rfid_leave_block.field_hr_leave__rfid_block_ids
+msgid "RFID Access Blocks"
+msgstr "RFID блокирания на достъп"
+
+#. module: hr_rfid_leave_block
+#: model_terms:ir.ui.view,arch_db:hr_rfid_leave_block.hr_rfid_leave_block_view_form
+msgid "RFID Leave Block"
+msgstr "RFID блокиране при отпуск"
+
+#. module: hr_rfid_leave_block
+#: model_terms:ir.ui.view,arch_db:hr_rfid_leave_block.hr_rfid_leave_block_view_list
+#: model_terms:ir.ui.view,arch_db:hr_rfid_leave_block.hr_rfid_leave_block_view_search
+msgid "RFID Leave Blocks"
+msgstr "RFID блокирания при отпуск"
+
+#. module: hr_rfid_leave_block
+#: model:ir.actions.server,name:hr_rfid_leave_block.ir_cron_restore_expired_leave_blocks_ir_actions_server
+msgid "RFID: Restore access after leave ends"
+msgstr "RFID: Възстановяване на достъп след края на отпуска"
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields.selection,name:hr_rfid_leave_block.selection__hr_rfid_leave_block__state__restored
+#: model_terms:ir.ui.view,arch_db:hr_rfid_leave_block.hr_rfid_leave_block_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_leave_block.hr_rfid_leave_block_view_search
+msgid "Restored"
+msgstr "Възстановено"
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,field_description:hr_rfid_leave_block.field_hr_rfid_leave_block__restored_at
+msgid "Restored At"
+msgstr "Възстановено на"
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,help:hr_rfid_leave_block.field_hr_leave__rfid_block_ids
+msgid "Snapshots of RFID cards suspended while this leave is approved."
+msgstr "Снимки на RFID карти, спрени докато този отпуск е одобрен."
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,field_description:hr_rfid_leave_block.field_hr_rfid_leave_block__state
+msgid "State"
+msgstr "Състояние"
+
+#. module: hr_rfid_leave_block
+#: model_terms:ir.ui.view,arch_db:hr_rfid_leave_block.hr_rfid_leave_block_view_search
+msgid "Status"
+msgstr "Статус"
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,field_description:hr_rfid_leave_block.field_hr_rfid_leave_block__blocked_card_ids
+#: model_terms:ir.ui.view,arch_db:hr_rfid_leave_block.hr_rfid_leave_block_view_form
+msgid "Suspended Cards"
+msgstr "Спрени карти"
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,help:hr_rfid_leave_block.field_hr_rfid_leave_block__leave_id
+msgid "The approved time-off that triggered suspending the cards."
+msgstr "Одобреният отпуск, предизвикал спирането на картите."
+
+#. module: hr_rfid_leave_block
+#: model:ir.model,name:hr_rfid_leave_block.model_hr_leave
+msgid "Time Off"
+msgstr "Отпуск"
+
+#. module: hr_rfid_leave_block
+#: model_terms:ir.actions.act_window,help:hr_rfid_leave_block.hr_rfid_leave_block_action
+msgid ""
+"When a time-off request is approved, the employee's active\n"
+"                    RFID cards are automatically suspended for the leave period\n"
+"                    and recorded here. Access is restored automatically the day\n"
+"                    after the leave ends, or immediately if the leave is\n"
+"                    cancelled or refused."
+msgstr ""
+"При одобряване на заявка за отпуск, активните RFID карти на служителя\n"
+"                    се спират автоматично за периода на отпуска\n"
+"                    и се записват тук. Достъпът се възстановява автоматично в деня\n"
+"                    след края на отпуска, или незабавно, ако отпускът е\n"
+"                    отменен или отказан."
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,help:hr_rfid_leave_block.field_hr_rfid_leave_block__restored_at
+msgid "When access was restored."
+msgstr "Кога е възстановен достъпът."
+
+#. module: hr_rfid_leave_block
+#: model:ir.model.fields,help:hr_rfid_leave_block.field_hr_rfid_leave_block__blocked_at
+msgid "When the cards were suspended."
+msgstr "Кога са спрени картите."

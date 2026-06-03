@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="ir_cron_restore_expired_leave_blocks" model="ir.cron">
+            <field name="name">RFID: Restore access after leave ends</field>
+            <field name="model_id" ref="model_hr_rfid_leave_block"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_restore_expired_blocks()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+        </record>
+    </data>
+</odoo>

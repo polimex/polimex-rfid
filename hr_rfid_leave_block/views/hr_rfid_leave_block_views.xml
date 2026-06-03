@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="hr_rfid_leave_block_view_list" model="ir.ui.view">
+            <field name="name">hr.rfid.leave.block.list</field>
+            <field name="model">hr.rfid.leave.block</field>
+            <field name="arch" type="xml">
+                <list string="RFID Leave Blocks" sample="1"
+                      decoration-muted="state == 'restored'">
+                    <field name="employee_id"/>
+                    <field name="leave_id"/>
+                    <field name="blocked_at"/>
+                    <field name="restored_at" optional="show"/>
+                    <field name="state" widget="badge"
+                           decoration-warning="state == 'active'"
+                           decoration-success="state == 'restored'"/>
+                    <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="hr_rfid_leave_block_view_form" model="ir.ui.view">
+            <field name="name">hr.rfid.leave.block.form</field>
+            <field name="model">hr.rfid.leave.block</field>
+            <field name="arch" type="xml">
+                <form string="RFID Leave Block">
+                    <sheet>
+                        <widget name="web_ribbon" title="Restored" bg_color="bg-success"
+                                invisible="state != 'restored'"/>
+                        <group>
+                            <group>
+                                <field name="employee_id"/>
+                                <field name="leave_id"/>
+                                <field name="state"/>
+                            </group>
+                            <group>
+                                <field name="blocked_at"/>
+                                <field name="restored_at"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
+                        </group>
+                        <separator string="Suspended Cards"/>
+                        <field name="blocked_card_ids">
+                            <list>
+                                <field name="number"/>
+                                <field name="card_reference" optional="show"/>
+                                <field name="active"/>
+                            </list>
+                        </field>
+                        <p class="text-muted">
+                            <i class="fa fa-lightbulb-o" role="img"/>
+                            Only the cards listed here are re-activated when access
+                            is restored. A card the employee disabled before the
+                            leave, or added during it, is intentionally left as-is.
+                        </p>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_rfid_leave_block_view_search" model="ir.ui.view">
+            <field name="name">hr.rfid.leave.block.search</field>
+            <field name="model">hr.rfid.leave.block</field>
+            <field name="arch" type="xml">
+                <search string="RFID Leave Blocks">
+                    <field name="employee_id"/>
+                    <field name="leave_id"/>
+                    <filter name="blocking" string="Blocking" domain="[('state', '=', 'active')]"/>
+                    <filter name="restored" string="Restored" domain="[('state', '=', 'restored')]"/>
+                    <group>
+                        <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                        <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="hr_rfid_leave_block_action" model="ir.actions.act_window">
+            <field name="name">Leave Access Blocks</field>
+            <field name="res_model">hr.rfid.leave.block</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'search_default_blocking': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No RFID access blocks yet
+                </p>
+                <p>
+                    When a time-off request is approved, the employee's active
+                    RFID cards are automatically suspended for the leave period
+                    and recorded here. Access is restored automatically the day
+                    after the leave ends, or immediately if the leave is
+                    cancelled or refused.
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="hr_rfid_menu_leave_blocks"
+                  name="Leave Access Blocks"
+                  parent="hr_rfid.hr_rfid_events_menu"
+                  action="hr_rfid_leave_block_action"
+                  sequence="80"/>
+    </data>
+</odoo>
