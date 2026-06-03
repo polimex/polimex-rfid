@@ -188,6 +188,34 @@
                 action="hr_attendance_extra_action"
                 groups="hr_attendance.group_hr_attendance_officer"/>
 
+        <!-- Т.3 Self-leave (samootluchki) report: employees who left before
+             their scheduled end. Reuses the existing extra views with a
+             pinned domain; no new model — early_leave_time already measures it. -->
+        <record id="hr_attendance_self_leave_action" model="ir.actions.act_window">
+            <field name="name">Self-leave (Early Departures)</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.attendance.extra</field>
+            <field name="view_mode">list,pivot,form</field>
+            <field name="domain">[('early_leave_time', '&gt;', 0)]</field>
+            <field name="context">{'search_default_groupby_employee': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">No self-leaves in this period</p>
+                <p>
+                    Days where an employee left before their scheduled end
+                    (beyond the department tolerance). Use the date filters and
+                    group by employee or department to review unaccounted early
+                    departures for a period.
+                </p>
+            </field>
+        </record>
+        <menuitem
+                id="menu_hr_attendance_self_leave"
+                name="Self-leave"
+                sequence="25"
+                parent="hr_attendance_late.menu_hr_attendance_report"
+                action="hr_attendance_self_leave_action"
+                groups="hr_attendance.group_hr_attendance_officer"/>
+
         <!--        <menuitem-->
         <!--                id="menu_hr_attendance_extra_recompute"-->
         <!--                name="Recompute Extra Attendance"-->

@@ -15,5 +15,16 @@
             <field name="perm_create" eval="False"/>
             <field name="perm_unlink" eval="False"/>
         </record>
+
+        <record id="ir_rule_hr_legal_rate_multi_company" model="ir.rule">
+            <field name="name">Legal rate: Multi Company (company-specific + global)</field>
+            <field name="model_id" ref="model_hr_legal_rate"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[
+                '|', ('company_id', 'in', company_ids),
+                ('company_id', '=', False),
+                ]
+            </field>
+        </record>
     </data>
 </odoo>
