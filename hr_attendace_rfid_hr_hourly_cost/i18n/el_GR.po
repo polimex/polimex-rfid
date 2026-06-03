@@ -1,16 +1,13 @@
-# Translation of Odoo Server.
-# This file contains the translation of the following modules:
-# 	* hr_attendace_rfid_hr_hourly_cost
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-05 16:53+0000\n"
-"PO-Revision-Date: 2026-03-06 15:58\n"
+"PO-Revision-Date: 2026-06-03 13:17\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: el_GR\n"
+"Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -20,6 +17,49 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__actual_work_time_cost
 msgid "Actual Work Time Cost"
 msgstr "Κόστος Πραγματικού Χρόνου Εργασίας"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,help:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__cost_night_supplement
+msgid ""
+"Additive night-shift supplement (НСОРЗ чл. 8) applied to every night hour "
+"worked — regular, overtime or holiday — on top of the rates above."
+msgstr ""
+"Добавъчна нощна добавка (НСОРЗ чл. 8), прилагана към всеки отработен нощен "
+"час — редовен, извънреден или в официален празник — в допълнение към горните"
+" ставки."
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model_terms:ir.ui.view,arch_db:hr_attendace_rfid_hr_hourly_cost.view_hr_attendance_extra_form_inherit
+msgid "Cost breakdown"
+msgstr "Разбивка на разходите"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,help:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__cost_regular
+msgid ""
+"Cost of hours worked inside the schedule at the base rate (hourly cost × "
+"actual work time)."
+msgstr ""
+"Стойност на часовете, отработени в рамките на графика по основната ставка "
+"(почасова стойност × действително отработено време)."
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,help:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__cost_overtime
+msgid ""
+"Cost of overtime worked on a working day, at the КТ чл. 262 working-day "
+"multiplier."
+msgstr ""
+"Стойност на извънреден труд в работен ден, по коефициента за работен ден "
+"съгласно КТ чл. 262."
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,help:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__cost_extra
+msgid ""
+"Cost of work performed on a rest day or official holiday, at the КТ чл. 262 "
+"rest-day or holiday multiplier (holiday detected from Public Holidays)."
+msgstr ""
+"Стойност на труд, положен в почивен ден или официален празник, по "
+"коефициента за почивен ден или официален празник съгласно КТ чл. 262 "
+"(официалните празници се разпознават от модула Официални празници)."
 
 #. module: hr_attendace_rfid_hr_hourly_cost
 #: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__currency_id
@@ -85,20 +125,33 @@ msgid "ID"
 msgstr "ID"
 
 #. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__cost_night_supplement
+msgid "Night Supplement"
+msgstr "Нощна добавка"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__cost_overtime
+msgid "Overtime Cost"
+msgstr "Стойност на извънреден труд"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__cost_regular
+msgid "Regular Cost"
+msgstr "Редовна стойност"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
+#: model:ir.model.fields,field_description:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__cost_extra
+msgid "Rest-day / Holiday Cost"
+msgstr "Стойност за почивен ден / официален празник"
+
+#. module: hr_attendace_rfid_hr_hourly_cost
 #: model:ir.model.fields,help:hr_attendace_rfid_hr_hourly_cost.field_hr_attendance_extra__actual_work_time_cost
 msgid ""
-"Total cost of actual work time (automatically calculated).\n"
-"        \n"
-"        • Calculation: Hourly cost × Actual work time hours\n"
-"        • Access: Visible to HR managers only\n"
-"        • Auto-update: Recalculated when hourly cost or work time changes\n"
-"        \n"
-"        Note: Provides financial overview of actual labor costs per day."
+"Total labour cost for the day: regular hours plus overtime and rest-"
+"day/holiday premiums, plus the night-shift supplement. Uses the legal rates "
+"effective on this date, so past days keep their historical coefficients."
 msgstr ""
-"Συνολικό κόστος πραγματικού χρόνου εργασίας (υπολογίζεται αυτόματα).\n"
-"        \n"
-"        • Υπολογισμός: Ωριαίο κόστος × Ώρες πραγματικού χρόνου εργασίας\n"
-"        • Πρόσβαση: Ορατό μόνο σε διαχειριστές HR\n"
-"        • Αυτόματη ενημέρωση: Επανυπολογίζεται όταν αλλάζει το ωριαίο κόστος ή ο χρόνος εργασίας\n"
-"        \n"
-"        Σημείωση: Παρέχει οικονομική επισκόπηση του πραγματικού κόστους εργασίας ανά ημέρα."
+"Обща стойност на труда за деня: редовни часове плюс извънреден труд и "
+"добавки за почивен ден/официален празник, плюс нощна добавка. Използва "
+"законовите ставки, действащи към тази дата, така че минали дни запазват "
+"историческите си коефициенти."
