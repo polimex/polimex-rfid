@@ -808,6 +808,7 @@ class HrRfidCommands(models.Model):
         ctrl_mode = int(data[42:44], 16)
         external_db = (ctrl_mode & 0x20) > 0
         relay_time_factor = '1' if ctrl_mode & 0x40 else '0'
+        interlocking_mode = (ctrl_mode & 0x10) > 0
         dual_person_mode = (ctrl_mode & 0x08) > 0
         ctrl_mode = ctrl_mode & 0x07
 
@@ -981,7 +982,6 @@ class HrRfidCommands(models.Model):
                 create_reader('R3', 3, '0', last_door)
                 create_reader('R4', 4, '1', last_door)
             else:  # (ctrl_mode == 2 and readers_count == 2) or ctrl_mode == 4
-                # print('harware version', hw_ver)
                 last_door = create_door(gen_d_name(1, self.controller_id), 1)
                 if last_door:
                     last_door = last_door.id
@@ -1036,6 +1036,7 @@ class HrRfidCommands(models.Model):
             'mode': ctrl_mode,
             'external_db': external_db,
             'relay_time_factor': relay_time_factor,
+            'interlocking_mode': interlocking_mode,
             'dual_person_mode': dual_person_mode,
             'max_cards_count': max_cards_count,
             'max_events_count': max_events_count,

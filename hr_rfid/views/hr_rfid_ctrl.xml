@@ -175,6 +175,8 @@
                                         <field name="external_db" widget="boolean_toggle"/>
                                         <field name="relay_time_factor"/>
                                         <field name="dual_person_mode" widget="boolean_toggle"/>
+                                        <field name="interlocking_mode" widget="boolean_toggle"
+                                               invisible="hw_version not in ['11','17']"/>
                                     </group>
                                     <group>
                                         <field name="alarm_sensor_events" invisible="hw_version not in ['10','11']"

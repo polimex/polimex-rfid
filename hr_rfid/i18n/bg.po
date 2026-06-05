@@ -1,13 +1,10 @@
-# Translation of Odoo Server.
-# This file contains the translation of the following modules:
-# 	* hr_rfid
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-23 11:19+0000\n"
-"PO-Revision-Date: 2026-03-23 13:27\n"
+"PO-Revision-Date: 2026-06-04 17:08\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -579,6 +576,15 @@ msgstr ""
 "14 дни за поддържане на производителността на системата."
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
+msgid ""
+"<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
+"                                Tip: turn Behind NAT on when the module sits on a private LAN and Odoo cannot reach its IP directly — in that case the module dials out to Odoo. Leave it off and fill Last IP when Odoo can dial the module on the LAN."
+msgstr ""
+"<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
+"                                Съвет: включете Behind NAT, когато модулът е в частна локална мрежа и Odoo не може да достигне неговия IP директно — тогава модулът сам се свързва към Odoo. Оставете го изключено и попълнете Last IP, когато Odoo може да набере модула в локалната мрежа."
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 msgid "<i class=\"fa fa-list\" title=\"Commands\"/>"
 msgstr "<i class=\"fa fa-list\" title=\"Команди\"/>"
@@ -1123,6 +1129,17 @@ msgid "Access group ready!"
 msgstr "Групата за достъп е готова!"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_partner_form_inherit_hr_rfid
+msgid ""
+"Access groups assigned to this contact. Each row can be time-limited "
+"(Activate on / Expiration) and visit-limited (Permitted Visits counts down "
+"on every successful swipe)."
+msgstr ""
+"Групи за достъп, присвоени на този контакт. Всеки ред може да бъде ограничен"
+" по време (Активиране на / Изтичане) и по брой посещения (Разрешени "
+"посещения се намалява при всяко успешно преминаване)."
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_employee_form_inherit_hr_rfid
 msgid ""
 "Access groups control door permissions and time schedules. Groups are "
@@ -1158,6 +1175,16 @@ msgstr ""
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Access groups with {}"
 msgstr "Групи за достъп с {}"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
+msgid ""
+"Access this group gains from other groups (inheritance), plus the groups "
+"that inherit from it. The resolved set of doors is shown under All Doors."
+msgstr ""
+"Достъпът, който тази група получава от други групи (наследяване), плюс "
+"групите, които наследяват от нея. Обединеният набор от врати е показан под "
+"Всички врати."
 
 #. module: hr_rfid
 #. odoo-python
@@ -1815,6 +1842,12 @@ msgid "Arm command success"
 msgstr "Командата за активиране е успешна"
 
 #. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/controllers/main.py:0
+msgid "Arm denied"
+msgstr "Включването отказано"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
 msgid "Arm the alarm group"
 msgstr "Активирай алармената група"
@@ -2089,6 +2122,28 @@ msgstr ""
 "                    Можете да зададете дати на изтичане и да изберете дали да замените съществуващите групи за достъп."
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_department_mass_acc_grs_wiz
+msgid ""
+"Bulk-edit access for every employee in this department. Pick the groups, "
+"optionally set an expiration date, and exclude any individuals you want to "
+"skip. Then Add or Remove in one click."
+msgstr ""
+"Масово редактиране на достъп за всички служители в отдела. Изберете групите,"
+" по желание задайте дата на изтичане и изключете лицата, които искате да "
+"пропуснете. След това добавете или премахнете с едно кликване."
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.res_partner_mass_acc_grs_wiz
+msgid ""
+"Bulk-edit access for the contacts selected in the list. Pick the access "
+"groups, optionally set an expiration, and choose whether existing "
+"assignments should be wiped first."
+msgstr ""
+"Масово редактиране на достъп за избраните в списъка контакти. Изберете "
+"групите за достъп, по желание задайте дата на изтичане и решете дали "
+"съществуващите присвоявания да бъдат изтрити предварително."
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__5
 msgid "CRC Error"
 msgstr "Грешка CRC"
@@ -2131,56 +2186,48 @@ msgstr "Брой карти"
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__2
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__2
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__2
 msgid "Card Denied"
 msgstr "Картата е отказана"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__4
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__4
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__4
 msgid "Card Denied APB"
 msgstr "Картата е отказана APB"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__8
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__8
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__8
 msgid "Card Denied Insert"
 msgstr "Картата е отказана при вмъкване"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__3
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__3
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__3
 msgid "Card Denied T/S"
 msgstr "Картата е отказана T/S"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__9
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__9
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__9
 msgid "Card Ejected"
 msgstr "Картата е извадена"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__1
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__1
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__1
 msgid "Card Granted"
 msgstr "Достъп разрешен"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__6
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__6
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__6
 msgid "Card Granted (no entry)"
 msgstr "Достъп разрешен (без влизане)"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__7
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__7
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__7
 msgid "Card Granted Insert"
 msgstr "Достъп разрешен при поставяне"
 
@@ -2404,6 +2451,15 @@ msgid "Cards for {}"
 msgstr "Карти за {}"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_partner_form_inherit_hr_rfid
+msgid ""
+"Cards issued to this contact. Use Generate to add a printable barcode card "
+"on the fly."
+msgstr ""
+"Карти, издадени на този контакт. Използвайте Генериране, за да добавите "
+"карта с баркод за печат при поискване."
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_type_view_form
 msgid "Cards of this type"
 msgstr "Карти от този тип"
@@ -2438,6 +2494,17 @@ msgstr "Проверка на врати"
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Check connection to the Module"
 msgstr "Проверете връзката с модула"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_manual_create__behind_nat
+msgid ""
+"Check if the module sits behind a NAT and Odoo cannot reach its IP directly."
+" In that case the module initiates the connection; otherwise Odoo dials out "
+"via Last IP."
+msgstr ""
+"Отметнете, ако модулът се намира зад NAT и Odoo не може да достигне IP "
+"адреса му директно. В такъв случай модулът инициира връзката; в противен "
+"случай Odoo се свързва чрез Последен IP."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th__log_every_read
@@ -2786,6 +2853,18 @@ msgstr ""
 "избраната зона."
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.rfid_form_inherit_res_company
+msgid ""
+"Company-wide defaults for the access-control stack. The event lifetime "
+"controls how long card swipes are retained before the cleanup cron archives "
+"them; the card input type sets the format the readers report."
+msgstr ""
+"Настройки по подразбиране за цялата фирма за системата за контрол на достъп."
+" Времето на живот на събитията контролира колко дълго се съхраняват записите"
+" за преминавания с карти, преди cron задачата за почистване да ги архивира; "
+"типът вход на картата задава формата, в който четците докладват."
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_res_partner__hr_rfid_event_ids
 #: model:ir.model.fields,help:hr_rfid.field_res_users__hr_rfid_event_ids
 msgid ""
@@ -2831,6 +2910,15 @@ msgstr ""
 "група, включително директно зададени контакти и тези, които имат този достъп"
 " чрез наследяващи групи. Полезно за одит на това кой има достъп до "
 "определени зони."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_notification__name
+msgid ""
+"Computed display label combining the event type and notification channel "
+"(e.g. 'Door Forced Open (Email)')."
+msgstr ""
+"Изчислен етикет за показване, комбиниращ типа на събитието и канала за "
+"известяване (напр. „Насилствено отваряне на врата (Имейл)“)."
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_res_config_settings
@@ -3073,6 +3161,15 @@ msgid "Controller Mode"
 msgstr "Режим на контролер"
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__controller_id
+msgid ""
+"Controller being edited. Set automatically from the active record when the "
+"wizard opens."
+msgstr ""
+"Редактираният контролер. Задава се автоматично от активния запис при "
+"отваряне на съветника."
+
+#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
 msgid "Controller cards reload"
@@ -3094,6 +3191,24 @@ msgstr "Контролерът е преместен от <a href='%s'>Моду�
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Controller sent us a response to a command we never sent"
 msgstr "Контролерът изпрати отговор на команда, която никога не е изпращана"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_input_mask__controller_id
+msgid ""
+"Controller that owns this input-mask row. Cascade on delete — the row "
+"disappears with its controller."
+msgstr ""
+"Контролерът, притежаващ този ред на входна маска. При изтриване на "
+"контролера редът се изтрива заедно с него (каскадно изтриване)."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_output_ts__controller_id
+msgid ""
+"Controller that owns this output-to-time-schedule binding. Cascade on delete"
+" — the row disappears with its controller."
+msgstr ""
+"Контролерът, притежаващ тази обвързка изход–времеви график. Каскадно "
+"изтриване — редът се премахва заедно с контролера."
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_ctrl_action
@@ -3123,6 +3238,15 @@ msgstr ""
 "                    Всеки контролер се свързва с четци на карти, брави на врати, сензори и друго оборудване."
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_replace_wiz__source_controller_ids
+msgid ""
+"Controllers attached to the source webstack — these will be moved to the "
+"destination webstack on confirmation."
+msgstr ""
+"Контролерите, свързани с изходния уебстек — те ще бъдат преместени към "
+"целевия уебстек след потвърждение."
+
+#. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_ctrl_action
 msgid ""
 "Controllers communicate with Odoo through IP modules (webstacks) and can "
@@ -3135,6 +3259,15 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__controllers_count
 msgid "Controllers count"
 msgstr "Брой контролери"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_replace_wiz__destination_controller_ids
+msgid ""
+"Controllers currently attached to the destination webstack — shown for "
+"reference so you can spot collisions before clicking Replace."
+msgstr ""
+"Контролери, прикачени в момента към целевия уебстек — показани за справка, "
+"за да можете да забележите конфликти преди да натиснете Замени."
 
 #. module: hr_rfid
 #: model:onboarding.onboarding.step,done_text:hr_rfid.onboarding_step_scan_controllers
@@ -3233,11 +3366,6 @@ msgstr "Създай група"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
 msgid "Create Sub-group"
 msgstr "Създай подгрупа"
-
-#. module: hr_rfid
-#: model:ir.model,website_form_label:hr_rfid.model_res_partner
-msgid "Create a Customer"
-msgstr "Създай клиент"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_form_view
@@ -3911,6 +4039,8 @@ msgstr "Отхвърлени събития"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_add_def_acc_grs__dep_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_def_acc_gr__dep_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_mass_wiz__dep_id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__department_id
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
 msgid "Department"
 msgstr "Отдел"
 
@@ -3930,6 +4060,27 @@ msgid "Department Access Groups"
 msgstr "Групи за достъп до отдели"
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__department_id
+msgid ""
+"Department of the employee at the time this event was recorded. Stored copy "
+"lets us filter and group events by department directly."
+msgstr ""
+"Отделът на служителя по времето на записване на това събитие. Съхраненото "
+"копие позволява директно филтриране и групиране на събитията по отдел."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_department_acc_grs__dep_id
+#: model:ir.model.fields,help:hr_rfid.field_hr_department_add_def_acc_grs__dep_id
+#: model:ir.model.fields,help:hr_rfid.field_hr_department_def_acc_gr__dep_id
+#: model:ir.model.fields,help:hr_rfid.field_hr_department_mass_wiz__dep_id
+msgid ""
+"Department this wizard run targets. Set automatically from the selected "
+"record(s); read-only for the user."
+msgstr ""
+"Отделът, към който е насочено изпълнението на този съветник. Задава се "
+"автоматично от избрания(ите) запис(и); само за четене за потребителя."
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__department_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__permitted_department_ids
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_department
@@ -3941,6 +4092,16 @@ msgstr "Отдели"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
 msgid "Departments (default)"
 msgstr "Отдели (по подразбиране)"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_zone_view_form
+msgid ""
+"Departments and employee tags that are allowed inside this zone. The anti-"
+"passback engine rejects card swipes from anyone outside these lists."
+msgstr ""
+"Отделите и таговете на служителите, разрешени в тази зона. Механизмът за "
+"анти-пасбек отхвърля преминаванията с карти на всеки, който не е включен в "
+"тези списъци."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
@@ -3978,6 +4139,15 @@ msgstr ""
 "автоматично получава тази група за достъп. Това е полезно за стандартни "
 "права за достъп, като например \"Всички служители имат достъп до главния "
 "вход по време на работно време\"."
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
+msgid ""
+"Departments where this access group is listed as one of the allowed groups. "
+"Membership flows through to every employee in those departments."
+msgstr ""
+"Отделите, в които тази група за достъп е посочена като една от разрешените "
+"групи. Членството се прехвърля към всички служители в тези отдели."
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__error_description
@@ -4063,6 +4233,12 @@ msgid "Disarm command success"
 msgstr "Командата за деактивиране е успешна"
 
 #. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/controllers/main.py:0
+msgid "Disarm denied"
+msgstr "Изключването отказано"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
 msgid "Disarm the alarm group"
 msgstr "Деактивирай алармената група"
@@ -4097,6 +4273,21 @@ msgstr "Открий контролери"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__discovery_id
 msgid "Discovery"
 msgstr "Откриване"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_discovery_row__behind_nat
+msgid ""
+"Discovery flag indicating whether the module sits behind a NAT and must "
+"initiate the connection itself."
+msgstr ""
+"Флаг при разпознаване, показващ дали модулът се намира зад NAT и трябва сам "
+"да инициира връзката."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_discovery_row__discovery_id
+msgid "Discovery wizard run that found this module."
+msgstr ""
+"Изпълнението на съветника за разпознаване, при което е открит този модул."
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_balloon_mixin__display_name
@@ -4396,6 +4587,15 @@ msgstr "Брой врати"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
+msgid ""
+"Doors directly bound to this access group, together with the time schedule "
+"that controls when they unlock and the card type the reader expects."
+msgstr ""
+"Вратите, директно свързани с тази група за достъп, заедно с времевия график,"
+" контролиращ кога се отключват, и типа карта, който очаква четецът."
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
 msgid "Doors group has access to"
 msgstr "Групата врати има достъп до"
 
@@ -4442,6 +4642,15 @@ msgstr ""
 "Врати, конфигурирани да приемат този тип карти. Само карти от този тип ще "
 "могат да отворят тези врати (при условие, че собственикът на картата има "
 "съответните права за достъп)."
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_zone_view_form
+msgid ""
+"Doors that belong to this zone. A reader passing a card through any of these"
+" doors counts as entering the zone."
+msgstr ""
+"Вратите, принадлежащи към тази зона. Преминаването на карта през която и да "
+"е от тези врати се счита за влизане в зоната."
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door_open_close_wiz__doors
@@ -4528,6 +4737,19 @@ msgstr ""
 "Редактирай отдел и задай \"Група по подразбиране за достъп\" - тази група ще"
 " бъде добавена към всички съществуващи или бъдещи добавени служители в "
 "отдела"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_io_table_wiz
+msgid ""
+"Edit how the controller responds to each event — for every event row, set "
+"the value written to outputs 1-8 (range 0-99). Use Load factory defaults to "
+"reset the table to the values shipped with the controller's hardware "
+"version."
+msgstr ""
+"Редактирайте начина, по който контролерът реагира на всяко събитие — за "
+"всеки ред на събитие задайте стойността, записана на изходи 1-8 (диапазон "
+"0-99). Използвайте Зареди фабрични настройки, за да нулирате таблицата до "
+"стойностите, доставени с хардуерната версия на контролера."
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__37
@@ -4744,17 +4966,6 @@ msgid "Enable anti-passback to prevent card sharing between users"
 msgstr ""
 "Активирайте анти-пасбек, за да предотвратите споделянето на карти между "
 "потребителите"
-
-#. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__external_db
-msgid ""
-"Enable external database mode. When active, the controller can receive card "
-"data from an external system instead of storing cards in its internal "
-"memory. Useful for large installations."
-msgstr ""
-"Активирайте режим на външна база данни. Когато е активен, контролерът може "
-"да получава данни за карти от външна система, вместо да съхранява карти във "
-"вътрешната си памет. Полезно за големи инсталации."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_employee_form_inherit_hr_rfid
@@ -5092,6 +5303,15 @@ msgid "Everything looks just great!"
 msgstr "Всичко изглежда отлично!"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
+msgid ""
+"Everything this access group grants: which doors are open, on what schedule,"
+" and which employees and contacts inherit those rights."
+msgstr ""
+"Всичко, което тази група за достъп предоставя: кои врати са отворени, по "
+"какъв график и кои служители и контакти наследяват тези права."
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__event_time
 msgid ""
 "Exact date and time when the access event occurred at the reader. Used for "
@@ -5196,6 +5416,19 @@ msgstr ""
 "изтичане. Идеален за управление на временен достъп за външни лица."
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__external_db
+msgid ""
+"External database mode. When on, the controller does not keep the card list "
+"in its own memory — on every card it asks the server in real time whether to"
+" allow or deny access. Use it for large installations where access is "
+"managed centrally."
+msgstr ""
+"Режим на външна база данни. При включен режим контролерът не пази списъка с "
+"карти в собствената си памет — при всяко преминаване на карта пита сървъра в"
+" реално време дали да разреши или откаже достъп. Използвайте за големи "
+"инсталации, при които достъпът се управлява централизирано."
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__default_io_table
 msgid ""
 "Factory default I/O table configuration for this controller model and mode. "
@@ -5252,6 +5485,11 @@ msgid ""
 msgstr ""
 "Версия на фърмуера, работеща на модула. Тя се открива автоматично. Свържете "
 "се с техническата поддръжка, ако е необходима актуализация."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_discovery_row__version
+msgid "Firmware/software version reported by the discovered module."
+msgstr "Версия на фърмуера/софтуера, докладвана от разпознатия модул."
 
 #. module: hr_rfid
 #: model:ir.actions.report,name:hr_rfid.action_report_hr_rfid_card_foldable_badge
@@ -5320,6 +5558,18 @@ msgid "Forced Door Open"
 msgstr "Принудително отваряне на врата"
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_res_company__card_input_type
+msgid ""
+"Format readers in this company report card numbers in — Wiegand 34 (5d+5d): "
+"facility code + card number separated; Wiegand 34 (10d): single 10-digit "
+"decimal. Set to match how cards are printed/sourced."
+msgstr ""
+"Форматът, в който четците в тази фирма докладват номерата на картите — "
+"Wiegand 34 (5d+5d): код на обект + номер на карта, разделени; Wiegand 34 "
+"(10d): единично 10-цифрено десетично число. Задайте в съответствие с начина "
+"на печат/издаване на картите."
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__found_webstacks
 msgid "Found modules"
 msgstr "Намерени модули"
@@ -5338,6 +5588,15 @@ msgstr "Петък"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_time_schedule_view_form
 msgid "Friendly name"
 msgstr "Потребителско име"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_manual_create__webstack_name
+msgid ""
+"Friendly name for the module (e.g. 'Warehouse Gate Module'). Auto-filled "
+"from the serial if left empty."
+msgstr ""
+"Удобно име на модула (напр. „Модул Складова порта“). Попълва се автоматично "
+"от серийния номер, ако се остави празно."
 
 #. module: hr_rfid
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_settings
@@ -5476,6 +5735,35 @@ msgid "Group access"
 msgstr "Групов достъп"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_employee_form_inherit_hr_rfid
+msgid ""
+"Groups grant doors and schedules to this employee. Membership can be time-"
+"limited (set Expiration) or temporarily disabled via the state toggle."
+msgstr ""
+"Групите предоставят врати и времеви графици на този служител. Членството "
+"може да бъде ограничено по время (задайте Изтичане) или временно "
+"деактивирано чрез превключвателя на състоянието."
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
+msgid ""
+"Groups that include this group as an inherited source. Use this to spot the "
+"downstream impact before editing the door list."
+msgstr ""
+"Групите, включващи тази група като наследен източник. Използвайте за "
+"установяване на последващото влияние преди редактиране на списъка с врати."
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
+msgid ""
+"Groups whose doors and schedules are added to this group. Useful for "
+"building \"VIP includes Standard\" overlays without duplicating door lists."
+msgstr ""
+"Групи, чиито врати и графици се добавят към тази група. Полезно за "
+"изграждане на наслагвания тип „VIP включва Standard“ без дублиране на "
+"списъците с врати."
+
+#. module: hr_rfid
 #: model:res.groups,name:hr_rfid.hr_rfid_group_viewer
 msgid "Guard"
 msgstr "Охрана"
@@ -5552,6 +5840,11 @@ msgstr ""
 "възможностите и поддържаните функции на модула."
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_discovery_row__hw_version
+msgid "Hardware version reported by the discovered module."
+msgstr "Хардуерна версия, докладвана от разпознатия модул."
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__has_message
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__has_message
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__has_message
@@ -5591,6 +5884,15 @@ msgid "High Temperature"
 msgstr "Висока температура"
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_output_ts__max_ts
+msgid ""
+"Highest time-schedule slot the controller supports. Used to validate that "
+"the assigned schedule fits the controller's capacity."
+msgstr ""
+"Най-високият слот на времеви график, поддържан от контролера. Използва се за"
+" проверка дали присвоеният график се побира в капацитета на контролера."
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th__th_log_ids
 msgid ""
 "Historical temperature and humidity readings from this sensor. Use the "
@@ -5619,7 +5921,6 @@ msgstr "Почивeн ден"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__12
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__38
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__12
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__12
 msgid "Hotel Button Pressed"
 msgstr "Натиснат бутон \"Хотел\""
 
@@ -5826,6 +6127,11 @@ msgid "IO table:"
 msgstr "Таблица за вход/изход:"
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_discovery_row__last_ip
+msgid "IP address from which the module's discovery beacon was received."
+msgstr "IP адресът, от който е получен маякът за разпознаване на модула."
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__webstack_id
 msgid ""
 "IP communication module (webstack) this controller is connected to. The "
@@ -5966,6 +6272,49 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__enableDC
 msgid "Include Door contact"
 msgstr "Включване на контакт на врата"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_digest_digest__kpi_hr_rfid_card
+msgid ""
+"Include a 'Count of cards created this period' KPI in the digest email."
+msgstr "Включва KPI „Брой карти, създадени през периода“ в обобщаващия имейл."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_digest_digest__kpi_hr_rfid_command
+msgid ""
+"Include a 'Count of commands sent to controllers' KPI in the digest email — "
+"useful for sanity-checking command queue depth."
+msgstr ""
+"Включва KPI „Брой команди, изпратени към контролерите“ в обобщаващия имейл —"
+" полезно за проверка на дълбочината на опашката с команди."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_digest_digest__kpi_hr_rfid_denied
+msgid ""
+"Include a 'Count of denied card swipes' KPI in the digest email — covers "
+"card-not-recognised, wrong-time-schedule, anti-passback, and similar "
+"refusals."
+msgstr ""
+"Включва KPI „Брой отказани четения на карти“ в обобщаващия имейл — покрива "
+"непозната карта, грешен времеви график, anti-passback и подобни откази."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_digest_digest__kpi_hr_rfid_granted
+msgid ""
+"Include a 'Count of granted accesses' KPI in the digest email — covers "
+"normal and emergency-mode allowed swipes."
+msgstr ""
+"Включва KPI „Брой разрешени достъпи“ в обобщаващия имейл — покрива нормални "
+"и разрешени в авариен режим четения."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_digest_digest__kpi_hr_rfid_system
+msgid ""
+"Include a 'Count of system events' KPI (controller power loss, tamper, etc.)"
+" in the digest email."
+msgstr ""
+"Включва KPI „Брой системни събития“ (загуба на захранване на контролер, "
+"саботаж и др.) в обобщаващия имейл."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_form_view
@@ -6193,6 +6542,25 @@ msgid "Integrate with Access control"
 msgstr "Интегриране с контрол на достъпа"
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__interlocking_mode
+msgid ""
+"Interlocking (mantrap): only one of the controller's doors may be open at a "
+"time — a second door stays locked until the first one is closed. Available "
+"on iCON115 and iCON130 (firmware V7.44 or newer). On legacy iCON50 firmware "
+"the same setting controlled the now-removed Master Card mode."
+msgstr ""
+"Блокировка (шлюз): само една врата на контролера може да бъде отворена "
+"едновременно — втората врата остава заключена, докато първата не се затвори."
+" Налична на iCON115 и iCON130 (фърмуер V7.44 или по-нов). При стария фърмуер"
+" на iCON50 същата настройка управляваше вече премахнатия режим на главна "
+"карта."
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__interlocking_mode
+msgid "Interlocking Mode"
+msgstr "Режим на блокировка"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__24
 msgid "Internal Error, Try Again (WebSDK)"
 msgstr "Вътрешна грешка, опитайте отново (WebSDK)"
@@ -6218,6 +6586,17 @@ msgstr "Вътрешно състояние"
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_ts_line__day_number
 msgid "Internal day number (0-7) used for data processing."
 msgstr "Вътрешен номер на ден (0-7), използван за обработка на данни."
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
+msgid ""
+"Internal debug fields, visible to developers only. Shows raw input/output "
+"masks and state bitmaps as reported by the controller — useful for protocol "
+"troubleshooting."
+msgstr ""
+"Вътрешни полета за отстраняване на грешки, видими само за разработчици. "
+"Показва необработените входни/изходни маски и битовите карти на състоянието,"
+" докладвани от контролера — полезно за диагностика на протокола."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_contact_rel__internal_state
@@ -6279,6 +6658,12 @@ msgstr ""
 "Номер на интервала (1-4). Всеки ден може да има до 4 отделни периода на "
 "достъп. Например: Интервал 1 за сутринта (8:00-12:00), Интервал 2 за "
 "следобеда (13:00-17:00)."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
+msgid "Invalid IO line number"
+msgstr "Невалиден номер на IO линия"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__is_barcode
@@ -6539,7 +6924,6 @@ msgstr "Списък с потребителски събития"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__controllers
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_replace_wiz__destination_controller_ids
 msgid ""
 "List of access control devices connected to this module. Each controller "
 "manages doors, readers, and access permissions. Click \"Read controllers\" "
@@ -6584,6 +6968,46 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
 msgid "List readers"
 msgstr "Списък с четци"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_digest_digest__kpi_hr_rfid_command_value
+msgid ""
+"Live count of commands executed against controllers during the digest "
+"window."
+msgstr ""
+"Текущ брой команди, изпълнени на контролерите за периода на обобщение."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_digest_digest__kpi_hr_rfid_denied_value
+msgid "Live count of denied access events during the digest window."
+msgstr "Текущ брой събития за отказан достъп за периода на обобщение."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_digest_digest__kpi_hr_rfid_granted_value
+msgid "Live count of granted access events during the digest window."
+msgstr "Текущ брой събития за разрешен достъп за периода на обобщение."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_digest_digest__kpi_hr_rfid_card_value
+msgid "Live count of new cards created during the digest window."
+msgstr "Текущ брой нови карти, създадени за периода на обобщение."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_digest_digest__kpi_hr_rfid_system_value
+msgid "Live count of system events during the digest window."
+msgstr "Текущ брой системни събития за периода на обобщение."
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
+msgid ""
+"Live telemetry from the controller — emergency state, on-board temperature "
+"and humidity, power rails, and the current card count. Use this tab to "
+"diagnose a controller that misbehaves in production."
+msgstr ""
+"Телеметрия в реално време от контролера — аварийно състояние, температура и "
+"влажност на борда, захранващи шини и текущ брой карти. Използвайте този "
+"раздел за диагностика на контролер, работещ нестабилно в производствена "
+"среда."
 
 #. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.action_read_controller_status
@@ -6793,7 +7217,6 @@ msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__time_schedules
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_output_ts__max_ts
 msgid ""
 "Maximum number of time schedules this controller can store. Time schedules "
 "define when access is allowed, when outputs activate, or when certain rules "
@@ -6932,6 +7355,11 @@ msgid "Module connection error:\n"
 msgstr "Грешка при свързване с модула:\n"
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_discovery_row__name
+msgid "Module name as reported in the UDP discovery beacon."
+msgstr "Наименованието на модула, докладвано в UDP маяка за разпознаване."
+
+#. module: hr_rfid
 #: model:onboarding.onboarding.step,done_text:hr_rfid.onboarding_step_add_webstack
 msgid "Module registered!"
 msgstr "Модулът е регистриран!"
@@ -6957,6 +7385,19 @@ msgstr "Модули"
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_webstack_discovery_action
 msgid "Modules Discovery"
 msgstr "Откриване на модули"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_discovery_wiz
+msgid ""
+"Modules detected by a UDP broadcast on the local network. Delete the rows "
+"you don't want to register, pick how the rest should be added (Inactive only"
+" — register without contact; Active — also read controllers), then click "
+"Process."
+msgstr ""
+"Модули, открити чрез UDP разпращане в локалната мрежа. Изтрийте редовете, "
+"които не искате да регистрирате, изберете как да бъдат добавени останалите "
+"(Само неактивни — регистрирай без свързване; Активни — прочети и "
+"контролерите), след което натиснете Обработи."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_discovery__found_webstacks
@@ -7082,6 +7523,21 @@ msgstr ""
 "Новите служители в този отдел автоматично ще получат тази група достъп. Това"
 " гарантира, че те ще имат основния достъп до вратите, необходим за работната"
 " им зона от първия ден."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_replace_wiz__destination_webstack_id
+msgid ""
+"New webstack that will take over the controllers. Inactive modules are "
+"included so a newly registered device can be activated as part of the swap."
+msgstr ""
+"Новият уебстек, който ще поеме контролерите. Неактивните модули са включени,"
+" за да може новорегистрирано устройство да бъде активирано като част от "
+"смяната."
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr "Следващо събитие в календара на дейностите"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_date_deadline
@@ -7500,8 +7956,16 @@ msgid "Number of messages with delivery error"
 msgstr "Брой съобщения с грешка при доставката"
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__outs
+msgid ""
+"Number of output columns shown in the table (4 for relay controllers, "
+"otherwise inherited from the controller's hardware capabilities)."
+msgstr ""
+"Брой изходни колони, показани в таблицата (4 за контролери с релета, иначе "
+"се наследява от хардуерните възможности на контролера)."
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__inputs
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_input_mask__input_count
 msgid ""
 "Number of physical input connections available on this controller. Inputs "
 "are used to connect sensors, buttons, switches, or alarm detectors."
@@ -7512,7 +7976,6 @@ msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__outputs
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_output_ts__output_count
 msgid ""
 "Number of physical output connections (relays) available on this controller."
 " Outputs control devices like door locks, alarms, lights, or other "
@@ -7520,6 +7983,15 @@ msgid ""
 msgstr ""
 "Брой физически изходни връзки (релета), налични на този контролер. Изходите "
 "управляват устройства като врати, аларми, осветление или друго оборудване."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_output_ts__output_count
+msgid ""
+"Number of physical outputs reported by the controller. Used to validate that"
+" output_number stays in range."
+msgstr ""
+"Брой физически изходи, докладвани от контролера. Използва се за проверка "
+"дали output_number остава в допустимия диапазон."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__io_table_lines
@@ -7580,6 +8052,15 @@ msgstr ""
 "Показва нивото на активност на достъпа."
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_output_ts__time_schedule_number
+msgid ""
+"Numeric slot of the linked time schedule, shown for quick reference in "
+"lists."
+msgstr ""
+"Цифровият слот на свързания времеви график, показан за бърза справка в "
+"списъците."
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__occurrences
 msgid "Occurrences"
 msgstr "Случаи"
@@ -7593,6 +8074,15 @@ msgstr "Забавяне при изключване"
 #: model:res.groups,name:hr_rfid.hr_rfid_group_officer
 msgid "Officer"
 msgstr "Служител"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_replace_wiz__source_webstack_id
+msgid ""
+"Old webstack being replaced. Inactive modules are included to allow swap-in "
+"of pre-archived devices."
+msgstr ""
+"Старият уебстек, който се замества. Неактивните модули са включени, за да "
+"позволят замяната с предварително архивирани устройства."
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__27
@@ -7613,6 +8103,15 @@ msgstr "Стъпка за въвеждане"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__mode_selection__1
 msgid "One door"
 msgstr "Една врата"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__io_row_ids
+msgid ""
+"One row per event code (Duress, Card OK, etc.) with the values written to "
+"each of the 8 outputs when that event fires."
+msgstr ""
+"Един ред за всеки код на събитие (Принуда, Карта ОК и др.) със стойностите, "
+"записвани в 8-те изхода при задействане на съответното събитие."
 
 #. module: hr_rfid
 #: model:res.groups,name:hr_rfid.hr_rfid_view_own_department
@@ -7698,6 +8197,18 @@ msgstr "Отвори врата 4 от вход 4"
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "Opened the door for %d seconds."
 msgstr "Вратата е отворена за %d секунди."
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
+msgid ""
+"Operating mode and behavioural flags for this controller. Most fields depend"
+" on the controller's hardware version — irrelevant options are hidden "
+"automatically. Use Read Input Masks to refresh the live input wiring map."
+msgstr ""
+"Режим на работа и поведенчески флагове за този контролер. Повечето полета "
+"зависят от хардуерната версия на контролера — неприложимите опции се скриват"
+" автоматично. Използвайте Прочети маски на входове, за да опресните "
+"актуалната карта на окабеляване на входовете."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__mode
@@ -7805,6 +8316,50 @@ msgstr "Изх7"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__out8
 msgid "Out8"
 msgstr "Изход8"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_io_table_row__out1
+msgid "Output #1 setting for this event (0-99)."
+msgstr "Настройка на изход №1 за това събитие (0-99)."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_io_table_row__out2
+msgid "Output #2 setting for this event (0-99)."
+msgstr "Настройка на изход №2 за това събитие (0-99)."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_io_table_row__out3
+msgid "Output #3 setting for this event (0-99)."
+msgstr "Настройка на изход №3 за това събитие (0-99)."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_io_table_row__out4
+msgid "Output #4 setting for this event (0-99)."
+msgstr "Настройка на изход №4 за това събитие (0-99)."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_io_table_row__out5
+msgid "Output #5 setting for this event (0-99)."
+msgstr "Настройка на изход №5 за това събитие (0-99)."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_io_table_row__out6
+msgid "Output #6 setting for this event (0-99)."
+msgstr "Настройка на изход №6 за това събитие (0-99)."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_io_table_row__out7
+msgid "Output #7 setting for this event (0-99)."
+msgstr "Настройка на изход №7 за това събитие (0-99)."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_io_table_row__out8
+msgid ""
+"Output #8 setting for this event (0-99). Bound to a relay / output by the "
+"controller's wiring."
+msgstr ""
+"Настройка на изход №8 за това събитие (0-99). Свързан с реле/изход чрез "
+"окабеляването на контролера."
 
 #. module: hr_rfid
 #. odoo-python
@@ -7956,6 +8511,26 @@ msgstr ""
 "модула."
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_zone_view_form
+msgid ""
+"Per-event subscriptions. Each row picks an event type (user or system) and "
+"the recipients who receive the notification when the event fires inside this"
+" zone."
+msgstr ""
+"Абонаменти по събитие. Всеки ред определя тип събитие (потребителско или "
+"системно) и получателите, които получават уведомление при задействане на "
+"събитието в тази зона."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__input_mask_ids
+msgid ""
+"Per-input NC/NO configuration. One row per physical input. Toggling a row "
+"sends a write_input_masks command to the controller."
+msgstr ""
+"NC/NO конфигурация по вход. Един ред за всеки физически вход. Превключването"
+" на ред изпраща команда write_input_masks към контролера."
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
 msgid ""
 "Permit automatic adding modules from"
@@ -7995,6 +8570,60 @@ msgid ""
 msgstr ""
 "Физически изходен номер на контролера (1, 2, 3 и т.н.). Всеки изход може да "
 "управлява различни устройства като заключалки на врати, аларми или светлини."
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_department_def_acc_gr_wiz
+msgid ""
+"Pick the access group that new employees in this department will receive "
+"automatically. Use Change and Apply to also assign it to employees who "
+"currently have none, or Change and Apply for Everyone to overwrite "
+"assignments across the whole department."
+msgstr ""
+"Изберете групата за достъп, която новите служители в този отдел ще получават"
+" автоматично. Използвайте Промени и приложи, за да я присвоите и на "
+"служители, които в момента нямат такава, или Промени и приложи за всички, за"
+" да презапишете присвояванията в целия отдел."
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_department_add_acc_grs_wiz
+msgid ""
+"Pick the access groups that should be available to employees in this "
+"department. Only groups listed here can later be assigned to individual "
+"employees."
+msgstr ""
+"Изберете групите за достъп, които трябва да бъдат налични за служителите в "
+"отдела. Само групите, изброени тук, могат по-късно да бъдат присвоени на "
+"отделни служители."
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_zone_doors_wiz
+msgid ""
+"Pick the doors to attach to or detach from this zone. The zone's anti-"
+"passback rules and event filters apply to whatever doors are linked here."
+msgstr ""
+"Изберете вратите за свързване с или откачване от тази зона. Правилата за "
+"анти-пасбек и филтрите за събития на зоната се прилагат за всички врати, "
+"свързани тук."
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_add_doors_wiz
+msgid ""
+"Pick the doors to attach to this access group, the schedule that controls "
+"when they unlock, and the alarm rights. Existing members of the group gain "
+"access as soon as you click Add Doors."
+msgstr ""
+"Изберете вратите, които да прикачите към тази група за достъп, графика, "
+"контролиращ кога се отключват, и правата за аларма. Съществуващите членове "
+"на групата получават достъп веднага след като натиснете Добави врати."
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_del_doors_wiz
+msgid ""
+"Pick the doors to detach from this access group. Members lose access to "
+"those doors immediately after you click Remove Doors."
+msgstr ""
+"Изберете вратите, които да откачите от тази група за достъп. Членовете губят"
+" достъп до тези врати веднага след като натиснете Премахни врати."
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__pin_code
@@ -8277,6 +8906,26 @@ msgid "RFID Workcode for Time Tracking"
 msgstr "RFID работен код за отчитане на време"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_partner_form_inherit_hr_rfid
+msgid ""
+"RFID access for this contact: PIN code, the cards they carry, and the access"
+" groups that decide which doors they can open."
+msgstr ""
+"RFID достъп за този контакт: ПИН код, картите, които носи, и групите за "
+"достъп, определящи кои врати може да отвори."
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_employee_form_inherit_hr_rfid
+msgid ""
+"RFID access for this employee: the personal PIN (used at PIN-enabled "
+"readers), the cards issued to them, and the access groups that decide which "
+"doors they can open."
+msgstr ""
+"RFID достъп за този служител: личен ПИН (използван при четци с ПИН), "
+"издадените му карти и групите за достъп, определящи кои врати може да "
+"отвори."
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_employee__hr_rfid_access_group_ids
 msgid ""
 "RFID access groups determine which doors and areas this employee can access."
@@ -8372,26 +9021,6 @@ msgstr "RFID настройки"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__3
 msgid "RS485 Error"
 msgstr "RS485 грешка"
-
-#. module: hr_rfid
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__rating_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__rating_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__rating_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__rating_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__rating_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__rating_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__rating_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__rating_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__rating_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__rating_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__rating_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__rating_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__rating_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__rating_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__rating_ids
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__rating_ids
-msgid "Ratings"
-msgstr "Оценки"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_system__input_js
@@ -8519,6 +9148,17 @@ msgstr "Прочети контролери"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "Read controllers detected in Module"
 msgstr "Прочетени контролери, открити в модула"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
+msgid ""
+"Read-only identification reported by the controller firmware: hardware and "
+"software versions, capacity limits (cards and events), and the timestamp of "
+"the last full F0 sync."
+msgstr ""
+"Само за четене идентификация, докладвана от фърмуера на контролера: "
+"хардуерни и софтуерни версии, капацитетни ограничения (карти и събития) и "
+"времевият печат на последната пълна F0 синхронизация."
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__cmd__f1
@@ -8809,6 +9449,17 @@ msgstr ""
 "                    Можете да я присвоите на служител или контакт и да зададете нейните права за достъп."
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_sys_ev_wiz_form
+msgid ""
+"Register the unknown card recorded by the system event. Assign it to an "
+"employee or contact, pick the card type, and set the validity window — once "
+"saved, the next swipe will be granted as expected."
+msgstr ""
+"Регистрирайте непознатата карта, записана от системното събитие. Присвоете я"
+" на служител или контакт, изберете типа карта и задайте периода на валидност"
+" — след запазване следващото преминаване ще бъде разрешено."
+
+#. module: hr_rfid
 #: model:onboarding.onboarding.step,description:hr_rfid.onboarding_step_add_webstack
 msgid "Register your first RFID network module (WebStack)."
 msgstr "Регистрирайте първия си RFID мрежов модул (WebStack)."
@@ -8927,6 +9578,17 @@ msgstr ""
 "                    период или да ги заключите незабавно. Това изпраща команди директно към контролерите на вратите."
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_open_close_wiz_form
+msgid ""
+"Remotely unlock the selected doors for the duration you set below, or close "
+"them immediately. The command is queued for the controller and runs as soon "
+"as it polls in."
+msgstr ""
+"Дистанционно отключете избраните врати за зададената по-долу продължителност"
+" или ги затворете незабавно. Командата се поставя в опашка за контролера и "
+"се изпълнява веднага щом той провери за нови команди."
+
+#. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_access_group_del_doors_action
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_access_group_del_doors_wiz_action
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_del_doors_wiz
@@ -8989,9 +9651,17 @@ msgstr "Заявка"
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__64
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__64
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__64
 msgid "Request Instructions"
 msgstr "Инструкции за заявка"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_manual_create__local_ip_address
+msgid ""
+"Required when Behind NAT is off — the LAN IP at which Odoo can reach the "
+"module to send commands."
+msgstr ""
+"Задължително, когато Behind NAT е изключено — локалният IP адрес, на който "
+"Odoo може да достигне модула, за да изпраща команди."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_form
@@ -9488,6 +10158,24 @@ msgid "Serial number for Module must be unique!"
 msgstr "Серийният номер на модула трябва да бъде уникален!"
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_manual_create__webstack_serial
+msgid ""
+"Serial number printed on the module's label. Must be unique across the "
+"database; used as the key to talk to the device."
+msgstr ""
+"Серийният номер, отпечатан на етикета на модула. Трябва да бъде уникален в "
+"цялата база данни; използва се като ключ за комуникация с устройството."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_discovery_row__serial
+msgid ""
+"Serial number reported by the discovered module — used as the unique key "
+"when adopting the module into the registered list."
+msgstr ""
+"Серийният номер, докладван от разпознатия модул — използва се като уникален "
+"ключ при добавяне на модула в списъка с регистрирани."
+
+#. module: hr_rfid
 #: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_ctrl_rfid_controller_unique
 msgid "Serial numbers must be unique!"
 msgstr "Серийните номера трябва да бъдат уникални!"
@@ -9754,6 +10442,15 @@ msgstr ""
 "Планирано: Бъдещи дейности."
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
+msgid ""
+"Status of in-room hotel readers and the DND/Clean buttons wired to them. "
+"Only visible when the controller advertises at least one hotel reader."
+msgstr ""
+"Статус на хотелските четци в стаята и бутоните DND/Почистване, свързани с "
+"тях. Видимо само когато контролерът обявява поне един хотелски четец."
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
 msgid "Status: Denied"
 msgstr "Статус: Отказан"
@@ -9888,7 +10585,6 @@ msgid "System information"
 msgstr "Системна информация"
 
 #. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_output_ts__time_schedule_number
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__number
 msgid ""
 "System-assigned time schedule number (0-15). TS 0 is reserved for \"Not "
@@ -10740,6 +11436,15 @@ msgid "The requested day is not in the range!"
 msgstr "Заявеният ден е извън допустимия диапазон!"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
+msgid ""
+"The resolved door list — direct doors plus every door inherited from the "
+"groups above."
+msgstr ""
+"Пълният списък с врати — директните врати плюс всяка врата, наследена от "
+"групите по-горе."
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_system__door_id
 msgid ""
 "The specific door involved in this system event (e.g., forced open, "
@@ -11077,6 +11782,18 @@ msgid "Three doors"
 msgstr "Три врати"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
+msgid ""
+"Threshold and reporting cadence for the temperature controller (hw=22). The "
+"hysteresis prevents the controller from oscillating around the threshold; an"
+" event is raised when temperature crosses the high or low limits."
+msgstr ""
+"Праг и честота на докладване за температурния контролер (hw=22). "
+"Хистерезисът предотвратява осцилирането на контролера около прага; събитие "
+"се генерира при преминаване на температурата над горния или под долния "
+"лимит."
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_ts_line__day__3
 msgid "Thursday"
 msgstr "Четвъртък"
@@ -11301,6 +12018,15 @@ msgid ""
 msgstr ""
 "Общ брой врати, които тази карта може да отвори. Показва се като статистика "
 "във формуляра на картата."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_input_mask__input_count
+msgid ""
+"Total number of physical inputs on the controller — used to display only the"
+" masks the hardware actually has."
+msgstr ""
+"Общият брой физически входове на контролера — използва се за показване само "
+"на маските, които хардуерът действително притежава."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__system_event_count
@@ -11900,6 +12626,18 @@ msgid "What To Do"
 msgstr "Какво да направи"
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_discovery__what_to_do
+msgid ""
+"What happens when you click Setup — Add as Inactive: register the module but"
+" do not contact it yet (useful for cabling-pending sites). Add as Active: "
+"register + immediately call Test Connection + read controllers."
+msgstr ""
+"Какво се случва, когато натиснете Настройка — Добави като неактивен: "
+"регистрира модула, но не го свързва все още (полезно за обекти с незавършено"
+" окабеляване). Добави като активен: регистрира + незабавно извиква Тест на "
+"връзката + чете контролерите."
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_io_table_row__event_number
 msgid "What the outs are set to when this event occurs"
 msgstr "На какво се задават изходите, когато възникне това събитие"
@@ -12194,14 +12932,12 @@ msgstr "Зона"
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__10
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__10
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__10
 msgid "Zone Arm"
 msgstr "Активиране на зона"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__5
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__5
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__5
 msgid "Zone Arm Denied"
 msgstr "Отказано активиране на зона"
 
@@ -12225,14 +12961,12 @@ msgstr "Брой зони"
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__11
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__11
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__11
 msgid "Zone Disarm"
 msgstr "Деактивиране на зона"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__15
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__15
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__15
 msgid "Zone Disarm Denied"
 msgstr "Отказано деактивиране на зона"
 
@@ -12311,6 +13045,11 @@ msgstr "по Контролер"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_search
 msgid "by Deactivation Date"
 msgstr "по Дата на деактивиране"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
+msgid "by Department"
+msgstr "по Отдел"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
