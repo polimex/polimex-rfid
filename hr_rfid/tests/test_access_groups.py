@@ -55,6 +55,53 @@ class TestAccessGroupBasic(RFIDAppCase):
             self.env['hr.rfid.access.group'].search([('id', '=', ag_id)]),
             'AG should be deleted')
 
+    def test_delay_zero_means_disabled(self):
+        """delay_between_events=0 must disable the anti-passback window.
+
+        The field's help promises 'Set to 0 to disable this feature'.
+        Regression guard: a granted event in the same second used to match
+        (event_time >= now() - 0) and deny legitimate rapid swipes.
+        """
+        ctrl = self.env['hr.rfid.ctrl'].create({
+            'name': 'Delay Probe Ctrl',
+            'ctrl_id': 97,
+            'webstack_id': self.test_webstack_10_3_id.id,
+        })
+        door = self.env['hr.rfid.door'].create({
+            'name': 'Delay Probe Door',
+            'number': 9701,
+            'controller_id': ctrl.id,
+            'company_id': self.test_company_id,
+        })
+        reader = self.env['hr.rfid.reader'].create({
+            'name': 'R1',
+            'number': 1,
+            'reader_type': '0',
+            'controller_id': ctrl.id,
+            'door_id': door.id,
+        })
+        ag = self.test_ag_employee_1
+        ag.add_doors(door)
+        # Granted event "right now" — the worst case for the 0-delay window.
+        self.env['hr.rfid.event.user'].create({
+            'employee_id': self.test_employee_id.id,
+            'door_id': door.id,
+            'reader_id': reader.id,
+            'event_action': '1',
+            'event_time': fields.Datetime.now(),
+            'ctrl_addr': ctrl.ctrl_id,
+        })
+
+        ag.delay_between_events = 0
+        self.assertFalse(
+            ag._calc_last_user_event_in_ag(employee_id=self.test_employee_id),
+            'With delay 0 the feature is disabled — nothing may block access')
+
+        ag.delay_between_events = 60
+        self.assertTrue(
+            ag._calc_last_user_event_in_ag(employee_id=self.test_employee_id),
+            'With delay 60 the same-second granted event must be found')
+
 
 @tagged('standard', 'at_install', 'rfid', 'rfid_access_group')
 class TestAccessGroupInheritance(RFIDAppCase):
