@@ -1,13 +1,10 @@
-# Translation of Odoo Server.
-# This file contains the translation of the following modules:
-# 	* hr_rfid
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-06-23 09:57+0000\n"
-"PO-Revision-Date: 2025-06-25 10:46\n"
+"PO-Revision-Date: 2026-06-10 17:18\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -540,190 +537,29 @@ msgstr ""
 "            "
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid "<i class=\"fa fa-fw fa-bell text-danger\" role=\"img\" aria-label=\"Siren On\"/>"
-msgstr ""
-"<i class=\"fa fa-fw fa-bell text-danger\" role=\"img\" aria-label=\"Сирена "
-"включена\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid ""
-"<i class=\"fa fa-fw fa-bell-slash-o text-success\" role=\"img\" aria-"
-"label=\"Siren Off\"/>"
-msgstr ""
-"<i class=\"fa fa-fw fa-bell-slash-o text-success\" role=\"img\" aria-"
-"label=\"Сирената е изключена\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
-msgid ""
-"<i class=\"fa fa-fw fa-fire text-danger\" role=\"img\" aria-label=\"Turn on "
-"Emergency for this Group manually\"/>"
-msgstr ""
-"<i class=\"fa fa-fw fa-fire text-danger\" role=\"img\" aria-label=\"Ръчно "
-"включване на авариен режим за тази група\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
-msgid ""
-"<i class=\"fa fa-fw fa-free-code-camp text-success\" role=\"img\" aria-"
-"label=\"Turn off Emergency for this Group manually\"/>"
-msgstr ""
-"<i class=\"fa fa-fw fa-free-code-camp text-success\" role=\"img\" aria-"
-"label=\"Ръчно изключване на авариен режим за тази група\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid "<i class=\"fa fa-fw fa-list\" role=\"img\" aria-label=\"Cards\"/>"
-msgstr "<i class=\"fa fa-fw fa-list\" role=\"img\" aria-label=\"Карти\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
-msgid "<i class=\"fa fa-fw fa-list\" role=\"img\" aria-label=\"Commands\"/>"
-msgstr "<i class=\"fa fa-fw fa-list\" role=\"img\" aria-label=\"Команди\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
-msgid "<i class=\"fa fa-fw fa-list\" role=\"img\" aria-label=\"System Events\"/>"
-msgstr "<i class=\"fa fa-fw fa-list\" role=\"img\" aria-label=\"Системни събития\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid "<i class=\"fa fa-fw fa-list\" role=\"img\" aria-label=\"User Events\"/>"
-msgstr "<i class=\"fa fa-fw fa-list\" role=\"img\" aria-label=\"Потребителски събития\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid "<i class=\"fa fa-fw fa-list\" role=\"img\" aria-label=\"in Access Groups\"/>"
-msgstr "<i class=\"fa fa-fw fa-list\" role=\"img\" aria-label=\"в групи за достъп\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid "<i class=\"fa fa-fw fa-list\" role=\"img\" aria-label=\"in Zones\"/>"
-msgstr "<i class=\"fa fa-fw fa-list\" role=\"img\" aria-label=\"в зони\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid ""
-"<i class=\"fa fa-fw fa-lock text-danger\" role=\"img\" aria-label=\"Lock the"
-" Door\"/>"
-msgstr ""
-"<i class=\"fa fa-fw fa-lock text-danger\" role=\"img\" aria-"
-"label=\"Заключване на вратата\"/>"
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_time_schedule_view_kanban
+msgid "<i class=\"fa fa-check-circle me-1\"/>TS is not empty"
+msgstr "<i class=\"fa fa-check-circle me-1\"/>TS не е празен"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
-msgid "<i class=\"fa fa-fw fa-microchip\" role=\"img\" aria-label=\"Controllers\"/>"
-msgstr "<i class=\"fa fa-fw fa-microchip\" role=\"img\" aria-label=\"Контролери\"/>"
+msgid "<i class=\"fa fa-fw fa-list\" title=\"Commands\"/>"
+msgstr "<i class=\"fa fa-fw fa-list\" title=\"Команди\"/>"
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
-msgid "<i class=\"fa fa-fw fa-microchip\" role=\"img\" aria-label=\"System Events\"/>"
-msgstr "<i class=\"fa fa-fw fa-microchip\" role=\"img\" aria-label=\"Системни събития\"/>"
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
+msgid "<i class=\"fa fa-fw fa-list\" title=\"System Events\"/>"
+msgstr "<i class=\"fa fa-fw fa-list\" title=\"Системни събития\"/>"
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
-msgid "<i class=\"fa fa-fw fa-rss\" role=\"img\" aria-label=\"Readers\"/>"
-msgstr "<i class=\"fa fa-fw fa-rss\" role=\"img\" aria-label=\"Четци\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid ""
-"<i class=\"fa fa-fw fa-shield text-danger\" role=\"img\" aria-label=\"Arm "
-"the Door\"/>"
-msgstr ""
-"<i class=\"fa fa-fw fa-shield text-danger\" role=\"img\" aria-"
-"label=\"Активиране на вратата\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
-msgid ""
-"<i class=\"fa fa-fw fa-shield text-danger\" role=\"img\" aria-label=\"Arm "
-"the Group manually\"/>"
-msgstr ""
-"<i class=\"fa fa-fw fa-shield text-danger\" role=\"img\" aria-label=\"Ръчно "
-"активиране на групата\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
-msgid ""
-"<i class=\"fa fa-fw fa-shield text-danger\" role=\"img\" aria-label=\"Arm "
-"the Line manually\"/>"
-msgstr ""
-"<i class=\"fa fa-fw fa-shield text-danger\" role=\"img\" aria-label=\"Ръчно "
-"активиране на линията\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
-msgid "<i class=\"fa fa-fw fa-shield\" role=\"img\" aria-label=\"Alarm lines\"/>"
-msgstr "<i class=\"fa fa-fw fa-shield\" role=\"img\" aria-label=\"Алармени линии\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
-msgid "<i class=\"fa fa-fw fa-sign-in\" role=\"img\" aria-label=\"Doors\"/>"
-msgstr "<i class=\"fa fa-fw fa-sign-in\" role=\"img\" aria-label=\"Врати\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid ""
-"<i class=\"fa fa-fw fa-thermometer-full text-info\" role=\"img\" "
-"title=\"Temperature\"/>"
-msgstr ""
-"<i class=\"fa fa-fw fa-thermometer-full text-info\" role=\"img\" "
-"title=\"Температура\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
-msgid "<i class=\"fa fa-fw fa-tint text-info\" role=\"img\" title=\"Humidity\"/>"
-msgstr "<i class=\"fa fa-fw fa-tint text-info\" role=\"img\" title=\"Влажност\"/>"
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
+msgid "<i class=\"fa fa-fw fa-microchip\" title=\"Controllers\"/>"
+msgstr "<i class=\"fa fa-fw fa-microchip\" title=\"Контролери\"/>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid ""
-"<i class=\"fa fa-fw fa-universal-access text-success\" role=\"img\" aria-"
-"label=\"Disarm the Door\"/>"
-msgstr ""
-"<i class=\"fa fa-fw fa-universal-access text-success\" role=\"img\" aria-"
-"label=\"Деактивиране на вратата\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
-msgid ""
-"<i class=\"fa fa-fw fa-universal-access text-success\" role=\"img\" aria-"
-"label=\"Disarm the Group manually\"/>"
-msgstr ""
-"<i class=\"fa fa-fw fa-universal-access text-success\" role=\"img\" aria-"
-"label=\"Ръчно деактивиране на групата\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
-msgid ""
-"<i class=\"fa fa-fw fa-universal-access text-success\" role=\"img\" aria-"
-"label=\"Disarm the Line manually\"/>"
-msgstr ""
-"<i class=\"fa fa-fw fa-universal-access text-success\" role=\"img\" aria-"
-"label=\"Ръчно деактивиране на линията\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid ""
-"<i class=\"fa fa-fw fa-unlock text-success\" role=\"img\" aria-"
-"label=\"Unlock the Door\"/>"
-msgstr ""
-"<i class=\"fa fa-fw fa-unlock text-success\" role=\"img\" aria-"
-"label=\"Отключване на вратата\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
-msgid "<i class=\"fa fa-fw fa-user\" role=\"img\" aria-label=\"User Events\"/>"
-msgstr "<i class=\"fa fa-fw fa-user\" role=\"img\" aria-label=\"Потребителски събития\"/>"
+msgid "<i class=\"fa fa-id-card\" title=\"Cards\"/>"
+msgstr "<i class=\"fa fa-id-card\" title=\"Карти\"/>"
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_command_action
@@ -735,6 +571,43 @@ msgstr ""
 "14 дни за поддържане на производителността на системата."
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
+msgid "<i class=\"fa fa-list\" title=\"Commands\"/>"
+msgstr "<i class=\"fa fa-list\" title=\"Команди\"/>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+msgid "<i class=\"fa fa-list\" title=\"System Events\"/>"
+msgstr "<i class=\"fa fa-list\" title=\"Системни събития\"/>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+msgid "<i class=\"fa fa-list\" title=\"User Events\"/>"
+msgstr "<i class=\"fa fa-list\" title=\"Потребителски събития\"/>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+msgid "<i class=\"fa fa-map-marker\" title=\"Zones\"/>"
+msgstr "<i class=\"fa fa-map-marker\" title=\"Зони\"/>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
+msgid "<i class=\"fa fa-pencil me-2\"/>Edit"
+msgstr "<i class=\"fa fa-pencil me-2\"/>Редактирай"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
+msgid "<i class=\"fa fa-rss\" title=\"Readers\"/>"
+msgstr "<i class=\"fa fa-rss\" title=\"Четци\"/>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
+msgid "<i class=\"fa fa-shield me-2\"/>Arm"
+msgstr "<i class=\"fa fa-shield me-2\"/>Активирай"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_hierarchy_view
 msgid "<i class=\"fa fa-shield text-danger ms-auto\" title=\"Arm the Group\"/>"
 msgstr ""
@@ -742,9 +615,41 @@ msgstr ""
 "групата\"/>"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
+msgid "<i class=\"fa fa-shield\" title=\"Alarm Lines\"/>"
+msgstr "<i class=\"fa fa-shield\" title=\"Алармени линии\"/>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
+msgid "<i class=\"fa fa-shield\"/> Arm"
+msgstr "<i class=\"fa fa-shield\"/> Активирай"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
+msgid "<i class=\"fa fa-sign-in\" title=\"Doors\"/>"
+msgstr "<i class=\"fa fa-sign-in\" title=\"Врати\"/>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
+msgid "<i class=\"fa fa-thermometer-full me-1\" title=\"Temperature\"/>"
+msgstr "<i class=\"fa fa-thermometer-full me-1\" title=\"Температура\"/>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+msgid "<i class=\"fa fa-thermometer-full text-info me-1\" title=\"Temperature\"/>"
+msgstr "<i class=\"fa fa-thermometer-full text-info me-1\" title=\"Температура\"/>"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.webstack_onboarding_panel
 msgid "<i class=\"fa fa-times\" title=\"Close the onboarding panel\"/>"
 msgstr "<i class=\"fa fa-times\" title=\"Затваряне на панела за въвеждане\"/>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+msgid "<i class=\"fa fa-tint text-info me-1\" title=\"Humidity\"/>"
+msgstr "<i class=\"fa fa-tint text-info me-1\" title=\"Влажност\"/>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_hierarchy_view
@@ -754,6 +659,26 @@ msgid ""
 msgstr ""
 "<i class=\"fa fa-universal-access text-success ms-auto\" "
 "title=\"Деактивиране на групата\"/>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
+msgid "<i class=\"fa fa-unlock me-2\"/>Disarm"
+msgstr "<i class=\"fa fa-unlock me-2\"/>Деактивирай"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
+msgid "<i class=\"fa fa-unlock\"/> Disarm"
+msgstr "<i class=\"fa fa-unlock\"/> Деактивирай"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+msgid "<i class=\"fa fa-users\" title=\"Access Groups\"/>"
+msgstr "<i class=\"fa fa-users\" title=\"Групи за достъп\"/>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_time_schedule_view_kanban
+msgid "<i class=\"fa fa-warning me-1\"/>TS is empty"
+msgstr "<i class=\"fa fa-warning me-1\"/>TS е празен"
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_reader_action
@@ -813,38 +738,9 @@ msgstr ""
 "                </p>"
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
-msgid ""
-"<span class=\"fa fa-circle text-danger\" role=\"img\" aria-"
-"label=\"Disabled\" title=\"Disabled\" name=\"webstack_disabled\"/>"
-msgstr ""
-"<span class=\"fa fa-circle text-danger\" role=\"img\" aria-"
-"label=\"Деактивиран\" title=\"Деактивиран\" name=\"webstack_disabled\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
-msgid ""
-"<span class=\"fa fa-circle text-success\" role=\"img\" aria-label=\"Up and "
-"running\" title=\"Up and running\" name=\"webstack_enabled_and_running\"/>"
-msgstr ""
-"<span class=\"fa fa-circle text-success\" role=\"img\" aria-label=\"Работи\""
-" title=\"Работи\" name=\"webstack_enabled_and_running\"/>"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
-msgid ""
-"<span class=\"fa fa-circle text-warning\" role=\"img\" aria-label=\"Enabled "
-"but not running\" title=\"Enabled but not running\" "
-"name=\"webstack_enabled\"/>"
-msgstr ""
-"<span class=\"fa fa-circle text-warning\" role=\"img\" aria-"
-"label=\"Активиран, но не работи\" title=\"Активиран, но не работи\" "
-"name=\"webstack_enabled\"/>"
-
-#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
-msgid "<span class=\"ms-2 me-1\">ID</span>"
-msgstr "<span class=\"ms-2 me-1\">ИД</span>"
+msgid "<span class=\"ms-1 text-muted\">ID:</span>"
+msgstr "<span class=\"ms-1 text-muted\">ID:</span>"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_time_schedule_view_form
@@ -865,6 +761,89 @@ msgstr "<span class=\"oe_grey p-2\">VDC</span>"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
 msgid "<span class=\"oe_grey p-2\">°C</span>"
 msgstr "<span class=\"oe_grey p-2\">°C</span>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
+msgid "<span class=\"text-muted\">Serial:</span>"
+msgstr "<span class=\"text-muted\">Сериен:</span>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
+msgid "<span class=\"text-muted\">State:</span>"
+msgstr "<span class=\"text-muted\">Статус:</span>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+msgid "<span class=\"text-muted\">Type:</span>"
+msgstr "<span class=\"text-muted\">Тип:</span>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
+msgid "<span class=\"text-muted\">Version:</span>"
+msgstr "<span class=\"text-muted\">Версия:</span>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
+msgid "<span class=\"text-muted\">Версия:</span>"
+msgstr "<span class=\"text-muted\">Версия:</span>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
+msgid "<span class=\"text-muted\">Последна актуализация:</span>"
+msgstr "<span class=\"text-muted\">Последна актуализация:</span>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
+msgid "<span class=\"text-muted\">Сериен номер:</span>"
+msgstr "<span class=\"text-muted\">Сериен номер:</span>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
+msgid "<span class=\"text-muted\">Хардуер:</span>"
+msgstr "<span class=\"text-muted\">Хардуер:</span>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+msgid "<span>Alarm: </span>"
+msgstr "<span>Аларма: </span>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
+msgid "<span>Controllers: </span>"
+msgstr "<span>Контролери: </span>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
+msgid "<span>Parent: </span>"
+msgstr "<span>Родител: </span>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
+msgid "<span>Serial: </span>"
+msgstr "<span>Сериен номер: </span>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
+msgid "<span>State: </span>"
+msgstr "<span>Статус: </span>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_time_schedule_view_kanban
+msgid "<span>TS #</span>"
+msgstr "<span>TS №</span>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_time_schedule_view_kanban
+msgid "<span>TS Number: </span>"
+msgstr "<span>TS номер: </span>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+msgid "<span>Type: </span>"
+msgstr "<span>Тип: </span>"
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_access_group_action
@@ -1224,6 +1203,11 @@ msgid "Action String"
 msgstr "Низ за действие"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
+msgid "Activate emergency mode"
+msgstr "Активирай аварийния режим"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_search
 msgid "Activate in Future"
 msgstr "Активиране в бъдеще"
@@ -1497,7 +1481,6 @@ msgstr "Ред на аларма {} на {}"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__alarm_lines
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__alarm_line_ids
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_form
 msgid "Alarm Lines"
 msgstr "Редове на аларми"
@@ -1532,11 +1515,6 @@ msgstr "Състояние на аларма"
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_root_menu_alarm_system
 msgid "Alarm System"
 msgstr "Алармена система"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
-msgid "Alarm group"
-msgstr "Група аларми"
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_ctrl_alarm_group_action
@@ -1797,15 +1775,14 @@ msgid "Arm"
 msgstr "Активиране"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
+msgid "Arm Group"
+msgstr "Активирай група"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__20
 msgid "Arm On Siren"
 msgstr "Активиране при сирена"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
-msgid "Arm State"
-msgstr "Състояние на активиране"
 
 #. module: hr_rfid
 #. odoo-python
@@ -1814,21 +1791,34 @@ msgid "Arm command success"
 msgstr "Успешна команда за активиране"
 
 #. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/controllers/main.py:0
+msgid "Arm denied"
+msgstr "Активирането е отказано"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
-msgid "Arm manual"
-msgstr "Ръчно активиране"
+msgid "Arm the alarm group"
+msgstr "Активирай алармената група"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid "Arm the Door"
-msgstr "Активиране на вратата"
+msgid "Arm the door alarm"
+msgstr "Активирай аларма на вратата"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
+msgid "Arm this alarm"
+msgstr "Активирай тази аларма"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__armed
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__armed__arm
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm_group__state__arm
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_door__alarm_state__arm
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Armed"
 msgstr "Активирано"
 
@@ -2122,48 +2112,56 @@ msgstr "Брой карти"
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__2
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__2
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__2
 msgid "Card Denied"
 msgstr "Картата е отказана"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__4
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__4
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__4
 msgid "Card Denied APB"
 msgstr "Картата е отказана APB"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__8
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__8
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__8
 msgid "Card Denied Insert"
 msgstr "Картата е отказана при вмъкване"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__3
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__3
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__3
 msgid "Card Denied T/S"
 msgstr "Картата е отказана T/S"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__9
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__9
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__9
 msgid "Card Ejected"
 msgstr "Картата е извадена"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__1
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__1
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__1
 msgid "Card Granted"
 msgstr "Достъп разрешен"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__6
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__6
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__6
 msgid "Card Granted (no entry)"
 msgstr "Достъп разрешен (без влизане)"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__7
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__7
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__7
 msgid "Card Granted Insert"
 msgstr "Достъп разрешен при поставяне"
 
@@ -2350,7 +2348,6 @@ msgstr "Връзки карта/врата"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__card_rel_ids
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_cards
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_form
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_employee_form_inherit_hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_partner_form_inherit_hr_rfid
 msgid "Cards"
@@ -2655,9 +2652,7 @@ msgstr "Команда към контролер"
 #. module: hr_rfid
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_commands
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
 msgid "Commands"
 msgstr "Команди"
 
@@ -2717,10 +2712,6 @@ msgstr "Често срещаните типове аларми включват
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_res_company
-msgid "Companies"
-msgstr "Фирми"
-
-#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__company_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__company_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__company_id
@@ -3021,11 +3012,6 @@ msgid "Controller ID"
 msgstr "ID на контролер"
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
-msgid "Controller ID on Serial line (behind IP Module)"
-msgstr "ID на контролер на сериен порт (зад IP модул)"
-
-#. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_ctrl_io_table_wiz
 msgid "Controller IO Table Wizard"
 msgstr "Помощник за IO таблица на контролер"
@@ -3039,11 +3025,6 @@ msgstr "Ред от IO таблица на контролер"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__mode
 msgid "Controller Mode"
 msgstr "Режим на контролер"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
-msgid "Controller Serial Number"
-msgstr "Сериен номер на контролер"
 
 #. module: hr_rfid
 #. odoo-python
@@ -3075,7 +3056,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__destination_controller_ids
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_controllers
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
 msgid "Controllers"
 msgstr "Контролери"
 
@@ -3179,6 +3159,11 @@ msgstr "Създаване на подгрупа"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__create_date
 msgid "Create Date"
 msgstr "Дата на създаване"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
+msgid "Create Sub-group"
+msgstr "Създай подгрупа"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_form_view
@@ -3647,6 +3632,11 @@ msgstr ""
 "делничните дни."
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
+msgid "Deactivate emergency mode"
+msgstr "Деактивирай аварийния режим"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__deactivate_on
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz__deactivate_on
 msgid "Deactivate on"
@@ -3814,7 +3804,9 @@ msgid "Delay Between Events"
 msgstr "Забавяне между събитията"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
 msgid "Delete"
 msgstr "Изтриване"
@@ -3840,6 +3832,8 @@ msgstr "Отхвърлени събития"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_add_def_acc_grs__dep_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_def_acc_gr__dep_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_mass_wiz__dep_id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__department_id
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
 msgid "Department"
 msgstr "Отдел"
 
@@ -3857,6 +3851,15 @@ msgstr "Конфигурация на групи за достъп до отде
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_acc_grs__acc_grs
 msgid "Department Access Groups"
 msgstr "Групи за достъп до отдели"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__department_id
+msgid ""
+"Department of the employee at the time this event was recorded. Stored copy "
+"lets us filter and group events by department directly."
+msgstr ""
+"Отделът на служителя към момента на регистриране на събитието. Съхраненото "
+"копие позволява директно филтриране и групиране на събитията по отдел."
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__department_ids
@@ -3968,6 +3971,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_form_view
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
 msgid "Disabled"
 msgstr "Деактивирано"
 
@@ -3979,26 +3983,44 @@ msgid "Disarm"
 msgstr "Дезактивиране"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
+msgid "Disarm Group"
+msgstr "Деактивирай група"
+
+#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0
 msgid "Disarm command success"
 msgstr "Командата за дезактивиране е успешна"
 
 #. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/controllers/main.py:0
+msgid "Disarm denied"
+msgstr "Деактивирането е отказано"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
-msgid "Disarm manual"
-msgstr "Ръчно дезактивиране"
+msgid "Disarm the alarm group"
+msgstr "Деактивирай алармената група"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid "Disarm the Door"
-msgstr "Дезактивиране на вратата"
+msgid "Disarm the door alarm"
+msgstr "Деактивирай аларма на вратата"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
+msgid "Disarm this alarm"
+msgstr "Деактивирай тази аларма"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__armed__disarm
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm_group__state__disarm
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_door__alarm_state__disarm
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Disarmed"
 msgstr "Дезактивирано"
 
@@ -4151,11 +4173,6 @@ msgid "Door Forced Open"
 msgstr "Врата отворена с взлом"
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid "Door Name"
-msgstr "Име на врата"
-
-#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_io_table_row__event_number__25
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__25
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__25
@@ -4240,7 +4257,6 @@ msgstr "Събития на вратата"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_reader_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_employee_form_inherit_hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_partner_form_inherit_hr_rfid
@@ -4413,8 +4429,11 @@ msgstr ""
 "групиран за по-лесно управление."
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_time_schedule_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
 msgid "Edit"
 msgstr "Редактирай"
@@ -4442,6 +4461,7 @@ msgstr "Имейл"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_emergency_group__state__emergency
+#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
 msgid "Emergency"
 msgstr "Спешно"
 
@@ -4480,7 +4500,6 @@ msgstr "Аварийно отворено"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__emergency_state
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__emergency_state
-#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Emergency State"
 msgstr "Аварийно състояние"
@@ -4500,20 +4519,10 @@ msgstr ""
 "                    Функцията намалява разходите за инсталация и управлява"
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid "Emergency door state"
-msgstr "Състояние на аварийната врата"
-
-#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/controllers/main.py:0
 msgid "Emergency from %s %s"
 msgstr "Аварийно от %s %s"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
-msgid "Emergency group"
-msgstr "Група за спешни случаи"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__emergency_group_id
@@ -4656,17 +4665,6 @@ msgstr ""
 "потребителите"
 
 #. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__external_db
-msgid ""
-"Enable external database mode. When active, the controller can receive card "
-"data from an external system instead of storing cards in its internal "
-"memory. Useful for large installations."
-msgstr ""
-"Активирайте режим на външна база данни. Когато е активен, контролерът може "
-"да получава данни за карти от външна система, вместо да съхранява карти във "
-"вътрешната си памет. Полезно за големи инсталации."
-
-#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_employee_form_inherit_hr_rfid
 msgid "Enable for virtual/mobile cards that work through cloud services"
 msgstr ""
@@ -4747,6 +4745,11 @@ msgstr "Временно активирайте/деактивирайте чл�
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_form_view
 msgid "Enabled"
 msgstr "Активирано"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
+msgid "Enabled but not running"
+msgstr "Активирано, но не работи"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_line__end
@@ -5101,16 +5104,17 @@ msgstr ""
 "изтичане. Идеален за управление на временен достъп за външни лица."
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid "External humidity sensor value"
-msgstr "Стойност на външния сензор за влажност"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid "External temperature sensor value"
-msgstr "Стойност на външния сензор за температура"
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__external_db
+msgid ""
+"External database mode. When on, the controller does not keep the card list "
+"in its own memory — on every card it asks the server in real time whether to"
+" allow or deny access. Use it for large installations where access is "
+"managed centrally."
+msgstr ""
+"Режим на външна база данни. При активиране контролерът не съхранява списъка "
+"с карти в собствената си памет — при всяка карта той пита сървъра в реално "
+"време дали да разреши или откаже достъп. Използвайте при мащабни инсталации,"
+" при които достъпът се управлява централизирано."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__default_io_table
@@ -5429,6 +5433,8 @@ msgstr "Хардуер"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__emergency_state__hard
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Hardware Emergency"
 msgstr "Авариен хардуер"
 
@@ -5472,11 +5478,6 @@ msgid ""
 msgstr ""
 "Модел/версия на хардуера на модула (напр. 10.3, 50.1, 100.1). Това определя "
 "възможностите и поддържаните функции на модула."
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
-msgid "Hardware:"
-msgstr "Хардуер:"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__has_message
@@ -5546,6 +5547,7 @@ msgstr "Почивeн ден"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__12
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__38
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__12
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__12
 msgid "Hotel Button Pressed"
 msgstr "Натиснат бутон \"Хотел\""
 
@@ -5869,11 +5871,6 @@ msgstr ""
 "my.server.com/hr/rfid/event"
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
-msgid "In group:"
-msgstr "В група:"
-
-#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__enableDC
 msgid "Include Door contact"
 msgstr "Включване на контакт на врата"
@@ -6104,6 +6101,25 @@ msgid "Integrate with Access control"
 msgstr "Интегриране с контрол на достъпа"
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__interlocking_mode
+msgid ""
+"Interlocking (mantrap): only one of the controller's doors may be open at a "
+"time — a second door stays locked until the first one is closed. Available "
+"on iCON115 and iCON130 (firmware V7.44 or newer). On legacy iCON50 firmware "
+"the same setting controlled the now-removed Master Card mode."
+msgstr ""
+"Шлюзов режим (антрап): само една от вратите на контролера може да бъде "
+"отворена в даден момент — втората врата остава заключена, докато първата не "
+"бъде затворена. Налично за iCON115 и iCON130 (фърмуер V7.44 или по-нов). При"
+" остарелия фърмуер на iCON50 същата настройка управляваше режима на Главна "
+"карта, който вече е премахнат."
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__interlocking_mode
+msgid "Interlocking Mode"
+msgstr "Шлюзов режим"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__24
 msgid "Internal Error, Try Again (WebSDK)"
 msgstr "Вътрешна грешка, опитайте отново (WebSDK)"
@@ -6190,6 +6206,12 @@ msgstr ""
 "Номер на интервала (1-4). Всеки ден може да има до 4 отделни периода на "
 "достъп. Например: Интервал 1 за сутринта (8:00-12:00), Интервал 2 за "
 "следобеда (13:00-17:00)."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
+msgid "Invalid IO line number"
+msgstr "Невалиден номер на I/O линия"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__is_barcode
@@ -6286,11 +6308,6 @@ msgstr "Последно обновяване на информацията от
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__updated_at
 msgid "Last Update"
 msgstr "Последно обновяване"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
-msgid "Last Update:"
-msgstr "Последна актуализация:"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_acc_grs__write_uid
@@ -6397,11 +6414,6 @@ msgid ""
 msgstr ""
 "Последното време, когато този модул комуникираше с Odoo. Ако е минало повече"
 " от 10 минути, модулът може да е офлайн или да има проблеми с връзката."
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
-msgid "Line Name"
-msgstr "Име на линия"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__line_number
@@ -6538,8 +6550,13 @@ msgstr "Време за заключване"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid "Lock the Door"
+msgid "Lock the door"
 msgstr "Заключи вратата"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+msgid "Locked"
+msgstr "Заключено"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_form_view
@@ -6799,6 +6816,11 @@ msgid "Messages"
 msgstr "Съобщения"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
+msgid "Mixed"
+msgstr "Смесен"
+
+#. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_webstack
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__webstack_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__webstack_id
@@ -7005,6 +7027,11 @@ msgid "Next Activity Type"
 msgstr "Тип на следващата дейност"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+msgid "No Alarm"
+msgstr "Без аларма"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__armed__no_alarm
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm_group__state__no_alarm
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_door__alarm_state__no_alarm
@@ -7121,6 +7148,7 @@ msgstr "Локални карти"
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__state__normal
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_emergency_group__state__normal
+#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
 msgid "Normal"
 msgstr "Нормален"
 
@@ -8522,7 +8550,6 @@ msgstr "Събития на четеца"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__reader_ids
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_readers
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_form
 msgid "Readers"
 msgstr "Четци"
@@ -8670,11 +8697,6 @@ msgid ""
 msgstr ""
 "Редовното наблюдение на системните събития помага за поддържане на сигурността и предотвратяване на проблеми.\n"
 "                    Критичните събития задействат незабавни известия до администраторите."
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
-msgid "Related door"
-msgstr "Свързана врата"
 
 #. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_access_group_contact_rel
@@ -8843,6 +8865,7 @@ msgstr "Заявка"
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__64
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__64
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__64
 msgid "Request Instructions"
 msgstr "Инструкции за заявка"
 
@@ -9321,11 +9344,6 @@ msgid "Serial numbers must be unique!"
 msgstr "Серийните номера трябва да бъдат уникални!"
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
-msgid "Serial:"
-msgstr "Сериен номер:"
-
-#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_department_form_inherit_hr_rfid
 msgid "Set Default Access group"
 msgstr "Задаване на група за достъп по подразбиране"
@@ -9456,6 +9474,11 @@ msgid "Siren"
 msgstr "Сирена"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
+msgid "Siren Active"
+msgstr "Сирената е активна"
+
+#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_alarm.py:0
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
@@ -9469,13 +9492,7 @@ msgid "Siren ON/OFF"
 msgstr "Сирена ВКЛ/ИЗКЛ"
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid "Siren Off"
-msgstr "Сирена изкл."
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Siren On"
 msgstr "Сирена вкл."
@@ -9506,6 +9523,12 @@ msgstr "Сирената е успешно включена"
 #: code:addons/hr_rfid/controllers/main.py:0
 msgid "Software"
 msgstr "Софтуер"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+msgid "Software Emergency"
+msgstr "Софтуерна аварийна ситуация"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__source_controller_ids
@@ -9647,13 +9670,10 @@ msgstr "Брой системни събития"
 #: model:ir.model.fields,field_description:hr_rfid.field_digest_digest__kpi_hr_rfid_system
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_system_events
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_form_view
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_form
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
 msgid "System Events"
 msgstr "Системни събития"
 
@@ -9741,21 +9761,6 @@ msgstr "TS код (дебъг информация)"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__number
 msgid "TS Number"
 msgstr "TS номер"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_time_schedule_view_kanban
-msgid "TS Number:"
-msgstr "ТС номер:"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_time_schedule_view_kanban
-msgid "TS is empty"
-msgstr "ТС е празен"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_time_schedule_view_kanban
-msgid "TS is not empty"
-msgstr "ТС не е празен"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__permitted_employee_category_ids
@@ -11181,6 +11186,16 @@ msgid "Tuesday"
 msgstr "Вторник"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+msgid "Turn off the siren"
+msgstr "Изключи сирената"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+msgid "Turn on the siren"
+msgstr "Включи сирената"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__9
 msgid "Turnstile"
 msgstr "Турникет"
@@ -11324,8 +11339,18 @@ msgstr "Неограничен"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid "Unlock the Door"
-msgstr "Отключване на вратата"
+msgid "Unlock the door"
+msgstr "Отключи вратата"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
+msgid "Unlocked"
+msgstr "Отключено"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
+msgid "Up and running"
+msgstr "Работи нормално"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_view_form
@@ -11387,11 +11412,9 @@ msgstr "Брой събития на потребител"
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_event_user_action
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_user_events
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_form_view
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_form
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_reader_view_form
 msgid "User Events"
 msgstr "Събития от потребители"
@@ -11519,11 +11542,6 @@ msgstr "Прехвърляне към карта"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__version
 msgid "Version"
 msgstr "Версия"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
-msgid "Version:"
-msgstr "Версия:"
 
 #. module: hr_rfid
 #: model:res.groups,name:hr_rfid.hr_rfid_view_module_discovery
@@ -12012,12 +12030,14 @@ msgstr "Зона"
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__10
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__10
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__10
 msgid "Zone Arm"
 msgstr "Активиране на зона"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__5
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__5
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__5
 msgid "Zone Arm Denied"
 msgstr "Отказано активиране на зона"
 
@@ -12041,12 +12061,14 @@ msgstr "Брой зони"
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__11
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__11
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__11
 msgid "Zone Disarm"
 msgstr "Деактивиране на зона"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__15
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__15
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__15
 msgid "Zone Disarm Denied"
 msgstr "Отказано деактивиране на зона"
 
@@ -12090,6 +12112,11 @@ msgid "admin"
 msgstr "администратор"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
+msgid "alarm line(s)"
+msgstr "алармена(и) линия(и)"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.card_barcode_report_template_foldable_badge
 msgid "barcode"
 msgstr "баркод"
@@ -12123,6 +12150,11 @@ msgstr "по Дата на деактивиране"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
+msgid "by Department"
+msgstr "по отдел"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
 msgid "by Door"
 msgstr "по Врата"
 
@@ -12146,6 +12178,11 @@ msgstr "по Четец"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_th_log_search_view
 msgid "by Sensor"
 msgstr "по Сензор"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
+msgid "controller(s)"
+msgstr "контролер(и)"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__6
@@ -12220,13 +12257,11 @@ msgstr "iТемп"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_form
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "in Access Groups"
 msgstr "в Групи за достъп"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_form
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "in Zones"
 msgstr "в Зони"
 
@@ -12242,6 +12277,11 @@ msgid "reserved"
 msgstr "резервиран"
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
+msgid "sub-group(s)"
+msgstr "подгрупа(и)"
+
+#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 msgid "{hw_type} SN:{serial} ID:{id}"
@@ -12252,12 +12292,3 @@ msgstr "{hw_type} СН:{serial} ИД:{id}"
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "{} in zones"
 msgstr "{} в зони"
-
-#. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
-msgid ""
-"℃\n"
-"                                                    <i class=\"fa fa-fw fa-tint text-info\" role=\"img\" title=\"Humidity\"/>"
-msgstr ""
-"℃\n"
-"                                                    <i class=\"fa fa-fw fa-tint text-info\" role=\"img\" title=\"Влажност\"/>"

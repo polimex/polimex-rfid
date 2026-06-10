@@ -607,6 +607,9 @@ class RFIDAppCase(common.TransactionCase):
                 self.assertEqual(response, {'cmd': {'id': ctrl.ctrl_id, 'c': 'DB', 'd': '400300'}}, '(%s)' % ctrl.name)
             response = self._send_cmd_response(response, '400300')
             self.assertEqual(response, {})
+            # Hardware opens door and reports Granted event
+            response = self._make_event(ctrl, card=self.test_card_employee.number, reader=1, event_code=3)
+            self.assertEqual(response, {}, 'Follow-up Granted event after ev64 should not generate commands (%s)' % ctrl.name)
             # Set delay on access group
             self.test_ag_employee_1.delay_between_events = 60
             self.test_ag_employee_1._flush()

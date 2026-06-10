@@ -748,7 +748,6 @@ class WebRfidController(http.Controller):
                 'error_description': traceback.format_exc() or str(e),
                 'input_js': json.dumps(post_data),
             })
-            # print('Caught an exception, returning status=500 and creating a system event')
             return {'status': 500}
         except BadTimeException:
             _logger.error(f'Caught a time error from {webstack_id.name}/{webstack_id.company_id.name}, returning '

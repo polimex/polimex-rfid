@@ -125,8 +125,10 @@ class RFIDController(RFIDAppCase):
 
         response = self._hearbeat(self.c_180.webstack_id)
         self.assertEqual(response, {'cmd': {'id': id, 'c': 'F0', 'd': ''}}, '(%s)' % self.c_180.name)
-        # response = self._send_cmd_response(response, self.default_F0[17])
-        response = self._send_cmd_response(response, '0107000601000703090000090000080401050208000401050807000008010900')
+        # Same F0 shape as iCON130 but with a distinct serial (0620 vs 0610),
+        # so running _add_iCon130 and _add_iCon180 in one test does not hit
+        # the UNIQUE(serial_number, hw_version) constraint.
+        response = self._send_cmd_response(response, '0107000602000703090000090000080401050208000401050807000008010900')
         self.assertTrue(response['cmd']['c'] == 'D7')
         response = self._send_cmd_response(response)
         self.assertTrue(response['cmd']['c'] == 'DC')

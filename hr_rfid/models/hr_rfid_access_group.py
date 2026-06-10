@@ -118,6 +118,11 @@ class HrRfidAccessGroup(models.Model):
     def _calc_last_user_event_in_ag(self, partner_id=None, employee_id=None):
         last_event = self.env['hr.rfid.event.user']
         for ag in self:
+            # 0 = feature disabled, as the field's help promises. Without this
+            # guard a granted event in the same second still matched
+            # (event_time >= now() - 0) and blocked rapid consecutive swipes.
+            if not ag.delay_between_events:
+                continue
             ag_last_event = self.env['hr.rfid.event.user'].last_event(ag.all_door_ids.mapped('door_id'), partner_id,
                                                                       employee_id, event_action=1)
             if ag_last_event and (ag_last_event.event_time >= (
