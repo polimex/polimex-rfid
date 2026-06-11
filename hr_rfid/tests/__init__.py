@@ -5,6 +5,7 @@ from . import test_access_groups
 from . import test_events
 from . import test_constraints
 from . import test_security
+from . import test_multi_company_rules
 from . import test_apb_zones
 from . import test_time_schedules
 from . import test_wizards
