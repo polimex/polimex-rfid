@@ -688,6 +688,58 @@ class WebRfidController(http.Controller):
             return Response(body, content_type='application/json; charset=utf-8')
         return result
 
+    def _authenticate_webstack(self, post_data):
+        """Find and authenticate the webstack behind a hardware POST.
+
+        Returns a ``(webstack, error_response)`` tuple. On success
+        ``error_response`` is ``None``. On failure the webstack may be empty
+        (or a record, kept for the system-event log) and ``error_response`` is
+        a ready response the caller must return.
+
+        Shared by the base ``/hr/rfid/event`` handler and the
+        ``hr_rfid_vending`` override so that BOTH validate the module key with
+        a constant-time compare before any event is processed — a forged event
+        for a known serial must not be able to drive a controller without the
+        key.
+        """
+        webstack = request.env['hr.rfid.webstack'].with_user(SUPERUSER_ID).search([
+            '|', ('active', '=', True), ('active', '=', False),
+            ('serial', '=', str(post_data['convertor'])),
+        ])
+        if not webstack:
+            if request.env['ir.config_parameter'].sudo().get_param(
+                    'hr_rfid.save_new_webstacks') in ['true', 'True', '1']:
+                webstack = request.env['hr.rfid.webstack'].sudo().with_context(
+                    tz=request.env['res.users'].sudo().browse(2).tz).create({
+                        'name': f"Module {post_data['convertor']}",
+                        'serial': str(post_data['convertor']),
+                        'key': post_data['key'],
+                        'last_ip': _get_remote_ip_address(),
+                        'updated_at': fields.Datetime.now(),
+                        'available': 'a',
+                        'company_id': request.env['res.company'].sudo().search([])[0].id,
+                    })
+            else:
+                _logger.info('Unknown Module. Received=' + str(post_data))
+                return webstack, self._make_response({'status': 400})
+
+        if not webstack.key:
+            webstack.key = post_data['key']
+            webstack.available = 'a'
+            webstack.message_post(body=_("The Module contacted us and activated."))
+        elif not consteq(webstack.key, str(post_data['key'])):
+            webstack.report_sys_ev('Webstack key and key in json did not match', post_data=post_data)
+            _logger.info(
+                f'Wrong Module key for {webstack.name}/{webstack.company_id.name}! Received=' + str(post_data))
+            return webstack, self._make_response({'status': 400})
+
+        if not webstack.active:
+            webstack.write(_ws_db_update_dict())
+            webstack.report_sys_ev('Webstack is not active', post_data=post_data)
+            return webstack, self._make_response({'status': 400})
+
+        return webstack, None
+
     @http.route(['/hr/rfid/event'], type='json2', auth='none', methods=['POST'], cors='*', csrf=False,
                 save_session=False, sitemap=False, readonly=False)
     def post_event(self, **post):
@@ -704,46 +756,11 @@ class WebRfidController(http.Controller):
         if 'convertor' not in post_data:
             return self._parse_raw_data(post_data)
 
-        webstack_id = request.env['hr.rfid.webstack'].with_user(SUPERUSER_ID).search([
-            '|', ('active', '=', True), ('active', '=', False),
-            ('serial', '=', str(post_data['convertor']))
-        ])
+        webstack_id = request.env['hr.rfid.webstack']
         try:
-            if not webstack_id:
-                if request.env['ir.config_parameter'].sudo().get_param('hr_rfid.save_new_webstacks') in ['true', 'True',
-                                                                                                         '1']:
-                    new_webstack_dict = {
-                        'name': f"Module {post_data['convertor']}",
-                        'serial': str(post_data['convertor']),
-                        'key': post_data['key'],
-                        'last_ip': _get_remote_ip_address(),
-                        'updated_at': fields.Datetime.now(),
-                        'available': 'a',
-                        'company_id': request.env['res.company'].sudo().search([])[0].id,
-                    }
-                    webstack_id = request.env['hr.rfid.webstack'].sudo().with_context(
-                        tz=request.env['res.users'].sudo().browse(2).tz).create(new_webstack_dict)
-                else:
-                    _logger.info('Unknown Module. Received=' + str(post_data))
-                    return self._make_response({'status': 400})
-
-            if not webstack_id.key:
-                webstack_id.key = post_data['key']
-                webstack_id.available = 'a'
-                webstack_id.message_post(
-                    body=_("The Module contacted us and activated.")
-                )
-
-            elif not consteq(webstack_id.key, str(post_data['key'])):
-                webstack_id.report_sys_ev('Webstack key and key in json did not match', post_data=post_data)
-                _logger.info(f'Wrong Module key for {webstack_id.name}/{webstack_id.company_id.name}! Received=' + str(
-                    post_data))
-                return self._make_response({'status': 400})
-
-            if not webstack_id.active:
-                webstack_id.write(_ws_db_update_dict())
-                webstack_id.report_sys_ev('Webstack is not active', post_data=post_data)
-                return self._make_response({'status': 400})
+            webstack_id, auth_error = self._authenticate_webstack(post_data)
+            if auth_error is not None:
+                return auth_error
 
             result = {
                 'status': 400

@@ -22,11 +22,24 @@ class HrRfidVending(WebRfidController):
     def post_event(self, **post):
         post_data = self._decode_post(post)
 
+        # A raw/barcode device POST has no 'convertor'; this override otherwise
+        # shadows the base handler's raw-data path, so delegate to it.
+        if 'convertor' not in post_data:
+            return super().post_event(**post)
+
+        # SECURITY: validate the module key (constant-time) before processing
+        # any vending event. The base /hr/rfid/event handler authenticates the
+        # webstack, but this override short-circuits it for vending hardware;
+        # without this gate a forged event for a known serial could drive a
+        # vending grant (DB2) with no key.
+        webstack_id, auth_error = self._authenticate_webstack(post_data)
+        if auth_error is not None:
+            return auth_error
+
         cmd_env = request.env['hr.rfid.command'].sudo()
         ev_env = request.env['hr.rfid.vending.event'].sudo()
         sys_ev_env = request.env['hr.rfid.event.system'].sudo()
 
-        webstack_id = request.env['hr.rfid.webstack'].sudo().search([('serial', '=', str(post_data['convertor']))])
         status_code = 200
 
         item_missing_err_str = _('Item number %d missing from vending machine configuration')

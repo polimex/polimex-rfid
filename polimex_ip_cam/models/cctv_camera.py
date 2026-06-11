@@ -221,6 +221,10 @@ class CctvCamera(models.Model):
         return new_records
 
     def get_api(self):
+        # Always connect to the admin-configured endpoint. The ANPR webhook
+        # must never feed an IP from the (unauthenticated) event body into
+        # this credentialed client — see anpr_controller for the SSRF context.
+        self.ensure_one()
         return HikvisionCamera(self.ip_address, self.port, self.username, self.password)
 
     def _time_setup(self, cam_api):
