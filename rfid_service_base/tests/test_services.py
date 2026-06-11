@@ -2,6 +2,8 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 from datetime import timedelta, datetime, time
 
+from freezegun import freeze_time
+
 from odoo import fields
 from odoo.addons.hr_rfid.tests.controller import RFIDController
 from odoo.exceptions import UserError
@@ -14,9 +16,31 @@ from odoo.tools.safe_eval import pytz
 
 _logger = logging.getLogger(__name__)
 
+# Pinned wall clock for the whole test (UTC). 13:30 local in Europe/Sofia —
+# the tz forced by the RFIDController scaffolding — i.e. mid-day, away from
+# the midnight hour-wrap and from DST transition days. The service window the
+# test derives as [hour(now-1h):00, hour(now+1h):00] local therefore always
+# contains the frozen "now", so the sale state is deterministically 'progress'
+# at assert time regardless of the machine's wall clock or timezone.
+FROZEN_NOW = "2026-06-15 10:30:00"
+
 
 @tagged('rfid_service')
 class RFIDServices(RFIDController, HttpCase):
+    def setUp(self):
+        # Freeze BEFORE super(): RFIDController.setUp() computes the simulated
+        # device clock (test_date_10_3 / test_time_10_3) from
+        # fields.Datetime.now(), so freezing first keeps the device events and
+        # the ORM clock on the same instant. All model-side comparisons
+        # (rfid.service.sale._compute_state, the access-group rel state and
+        # the wizard's start/end calculation) use fields.Datetime.now() /
+        # datetime.now(), which freezegun pins process-wide, including the
+        # HttpCase server thread that handles /hr/rfid/event.
+        freezer = freeze_time(FROZEN_NOW)
+        freezer.start()
+        self.addCleanup(freezer.stop)
+        super().setUp()
+
     def test_rfid_services(self):
         now = fields.Datetime.context_timestamp(
             self.test_webstack_10_3_id, fields.Datetime.now()
@@ -69,9 +93,17 @@ class RFIDServices(RFIDController, HttpCase):
         self.assertEqual(sales_ids.state, 'progress')
         self._check_cmd_add_card_and_remove(self.c_110, count=1, rights=3)
 
-        self._make_event(self.c_110, card_number, reader=1, event_code=3)
+        response = self._make_event(self.c_110, card_number, reader=1, event_code=3)
         self.assertEqual(len(self.test_partner.hr_rfid_access_group_ids.filtered(lambda agr: agr.state)), 0,
                          'Only one visit permitted')
+        # The consumed last visit revokes the card on the controller: the
+        # event response carries the D1 revoke command. Acknowledge it like
+        # the real device would, so it does not linger in the command queue
+        # (commands created in the HTTP request's own transaction sort newer
+        # than anything from the test transaction and would otherwise shadow
+        # the next sale's add-card command in _check_cmd_add_card).
+        self.assertEqual(response['cmd']['c'], 'D1', 'Expecting card revoke command after the last visit')
+        self.assertEqual(self._send_cmd_response(response), {}, 'Queue must be empty after the revoke ack')
 
         service_id.generate_barcode_card = True
         hex_num, num = self.env['hr.rfid.card'].create_bc_card()
@@ -91,9 +123,11 @@ class RFIDServices(RFIDController, HttpCase):
         self.assertEqual(sales_ids[-1].state, 'progress')
         self._check_cmd_add_card_and_remove(self.c_110, count=1, rights=3)
 
-        self._make_event(self.c_110, num, reader=1, event_code=3)
+        response = self._make_event(self.c_110, num, reader=1, event_code=3)
         self.assertEqual(len(sale_wiz_id.partner_id.hr_rfid_access_group_ids.filtered(lambda agr: agr.state)), 0)
-        pass
+        # Same revoke-and-ack cycle for the barcode card's single visit.
+        self.assertEqual(response['cmd']['c'], 'D1', 'Expecting card revoke command after the last visit')
+        self.assertEqual(self._send_cmd_response(response), {}, 'Queue must be empty after the revoke ack')
 
     def _add_service(self):
         pass

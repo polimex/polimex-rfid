@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
+import logging
+
 from datetime import timedelta
 
 from odoo import models, api, fields, _, exceptions
 from dateutil.relativedelta import relativedelta
+
+_logger = logging.getLogger(__name__)
 
 
 class HrRfidZone(models.Model):
@@ -112,11 +116,17 @@ class HrRfidZone(models.Model):
             
             # For out-of-order events, we need more sophisticated attendance matching
             if event:
-                # First, try to find an open attendance that should be closed by this event
-                # The attendance must have started BEFORE this event time
+                # First, try to find an open attendance that should be closed by this event.
+                # The attendance must have started AT or BEFORE this event time:
+                # controller clocks have 1-second resolution, so an entry and an
+                # exit on adjacent readers can legitimately carry the same
+                # timestamp. A strict '<' here silently dropped such check-outs,
+                # leaving the attendance open forever (core allows
+                # check_out == check_in, see hr_attendance
+                # _check_validity_check_in_check_out).
                 attendance_to_close = self.env['hr.attendance'].search([
                     ('employee_id', '=', person.id),
-                    ('check_in', '<', event.event_time),
+                    ('check_in', '<=', event.event_time),
                     ('check_out', '=', False),
                     ('in_zone_id', '=', zone.id),
                 ], order='check_in desc', limit=1)

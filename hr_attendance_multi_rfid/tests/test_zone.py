@@ -1,3 +1,4 @@
+from odoo import fields
 from odoo.tests.common import TransactionCase, tagged
 
 
@@ -45,3 +46,31 @@ class TestAttendanceZone(TransactionCase):
     def test_event_user_extension_loaded(self):
         Model = self.env["hr.rfid.event.user"]
         self.assertEqual(Model._name, "hr.rfid.event.user")
+
+    def test_same_second_checkout_closes_attendance(self):
+        """Controller clocks have 1-second resolution: an entry and an exit on
+        adjacent readers can carry the same timestamp. person_left() must
+        close the open attendance even when the exit event time equals
+        check_in (core allows check_out == check_in)."""
+        employee = self.env["hr.employee"].create({
+            "name": "Same Second Employee",
+            "company_id": self.company.id,
+            "category_ids": [(4, self.tag.id)],
+        })
+        zone = self._make_zone("Same Second Zone")
+        event_time = fields.Datetime.now()
+        attendance = self.env["hr.attendance"].create({
+            "employee_id": employee.id,
+            "check_in": event_time,
+            "in_zone_id": zone.id,
+        })
+        # Lightweight pseudo-event: person_left() only reads event_time and
+        # flags in_or_out, so no controller/door fixture is needed.
+        event = self.env["hr.rfid.event.user"].new({"event_time": event_time})
+
+        zone.person_left(employee, event)
+
+        self.assertEqual(attendance.check_out, event_time,
+                         "Same-second exit event must close the open attendance")
+        self.assertEqual(event.in_or_out, "out")
+        self.assertEqual(employee.attendance_state, "checked_out")

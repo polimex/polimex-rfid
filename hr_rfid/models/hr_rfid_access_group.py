@@ -594,11 +594,22 @@ class HrRfidAccessGroupRelations(models.AbstractModel):
     )
 
     def active_for_visits(self):
-        res = []
-        for agr in self:
-            if (agr.visits_counting and agr.permitted_visits < agr.visits_counter) or not agr.visits_counting:
-                res.append(True)
-        return res and all(res) or False
+        """Whether every relation in ``self`` still grants access from the
+        visits standpoint: counting disabled, unlimited (``permitted_visits``
+        <= 0) or visits remaining (``visits_counter < permitted_visits``).
+
+        Mirrors the visit clause of :meth:`_compute_state`. An empty
+        recordset reports False — a sale without an access relation grants
+        no access.
+        """
+        if not self:
+            return False
+        return all(
+            not agr.visits_counting
+            or agr.permitted_visits <= 0
+            or agr.visits_counter < agr.permitted_visits
+            for agr in self
+        )
 
     def _deactivate(self):
         raise exceptions.ValidationError('Not implemented yet!')
