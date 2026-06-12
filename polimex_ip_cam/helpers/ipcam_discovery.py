@@ -5,16 +5,12 @@ import requests
 from requests.auth import HTTPDigestAuth
 import logging
 
-# Конфигуриране на базовия logger
+# Use Odoo's log routing — do not attach our own StreamHandler/level here.
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-handler = logging.StreamHandler()
-formatter = logging.Formatter('[%(levelname)s] %(asctime)s - %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+
 
 class HikvisionDiscoverer:
-    def __init__(self, admin_user="admin", admin_pass="AdminPassword", timeout=1, log_enabled=True):
+    def __init__(self, admin_user="admin", admin_pass="", timeout=1, log_enabled=True):
         """
         Инициализира настройките за автентикация, timeout за мрежови заявки и логването.
         :param admin_user: потребител за достъп до камерите
@@ -218,7 +214,7 @@ class HikvisionDiscoverer:
 # Примерна употреба
 if __name__ == "__main__":
     # За да видите логовете, оставете log_enabled=True
-    discoverer = HikvisionDiscoverer(admin_user="admin", admin_pass="AdminPassword", timeout=1, log_enabled=True)
+    discoverer = HikvisionDiscoverer(admin_user="admin", admin_pass="", timeout=1, log_enabled=True)
     devices = discoverer.discover_all()
     for device in devices:
         print(device)

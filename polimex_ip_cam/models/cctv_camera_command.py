@@ -43,6 +43,7 @@ class CctvCameraCommand(models.Model):
         comodel_name='cctv.camera',
         required=True,
         ondelete='cascade',
+        index=True,
         help="Camera this command targets. If the camera is deleted, queued commands cascade-delete with it.",
     )
     retry_count = fields.Integer(

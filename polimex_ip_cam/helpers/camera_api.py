@@ -694,7 +694,7 @@ class HikvisionCamera(BaseCamera):
 
     def get_plate_list(self, list_type='whitelist'):
         # Този метод не се използва поради съображения за сигурност.
-        raise "Do not use. This method is not working for security reasons."
+        raise NotImplementedError("get_plate_list is disabled for security reasons.")
 
     def set_time_config(self, time_config):
         """
@@ -792,6 +792,7 @@ class HikvisionCamera(BaseCamera):
                 error_detail = self._extract_error(response.text)
                 return {"status": "failed", "error": error_detail}
         except Exception as e:
+            _logger.error("Hikvision API request failed: %s", e)
             return {"status": "failed", "error": str(e)}
 
     def get_dst_config(self):
@@ -1036,6 +1037,7 @@ class HikvisionCamera(BaseCamera):
                 error_detail = self._extract_error(response.text)
                 return {"status": "failed", "error": error_detail}
         except Exception as e:
+            _logger.error("Hikvision API request failed: %s", e)
             return {"status": "failed", "error": str(e)}
 
     def set_entrance_param(self, config):
@@ -1122,5 +1124,6 @@ class HikvisionCamera(BaseCamera):
                 error_detail = self._extract_error(response.text)
                 return {"status": "failed", "error": error_detail}
         except Exception as e:
+            _logger.error("Hikvision API request failed: %s", e)
             return {"status": "failed", "error": str(e)}
 

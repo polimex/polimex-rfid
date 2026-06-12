@@ -11,6 +11,7 @@ class HrRfidDoor(models.Model):
         related="reader_ids.camera_id",
         ondelete="cascade",
         store=True,
+        index=True,
         help="ANPR camera bound to this door's reader (inherited via the reader). When set, card-to-door assignments are mirrored to the camera's whitelist automatically.",
     )
 
@@ -31,16 +32,14 @@ class HrRfidCardDoorRel(models.Model):
         records = self.env['hr.rfid.card.door.rel']
 
         for vals in vals_list:
-            if 'door_id' in vals:
+            # Always create the rel. Earlier the create was skipped — and the
+            # record silently dropped from the result — whenever vals had no
+            # door_id, breaking callers that set the door link separately.
+            if vals.get('door_id') and vals.get('card_id'):
                 door = self.env['hr.rfid.door'].browse(vals['door_id'])
                 if door.camera_id:
                     door.camera_id.add_card_id_to_list(vals['card_id'])
-                    rel = super().create([vals])
-                    records += rel
-                else:
-                    # rel.with_user(SUPERUSER_ID)._create_add_card_command()
-                    rel = super().create([vals])
-                    records += rel
+            records += super().create([vals])
         return records
 
     def write(self, vals):

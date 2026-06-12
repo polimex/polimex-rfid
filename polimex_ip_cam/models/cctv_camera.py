@@ -10,6 +10,13 @@ import json
 
 _logger = logging.getLogger(__name__)
 
+# Hikvision ISAPI ANPR `barrierGateCtrlType`. ASSUMED mapping from the module's
+# observed behaviour: '1' = the plate was in the camera's local allow-list and
+# the barrier opened (access granted); any other value = not in list / denied.
+# NOT confirmed against an authoritative ISAPI spec — verify before relying on
+# the granted/denied audit semantics (see docs/SECURITY_AUDIT_2026-06.md, H5).
+BARRIER_GATE_IN_LIST = '1'
+
 # put POSIX 'Etc/*' entries at the end to avoid confusing users - see bug 1086728
 _tzs = [(tz, tz) for tz in sorted(pytz.all_timezones, key=lambda tz: tz if not tz.startswith('Etc/') else '_')]
 def _tz_get(self):
@@ -59,7 +66,12 @@ class CctvCamera(models.Model):
                           help="Camera port (usually 80 or 8000)")
     username = fields.Char(string='Username', default='admin', tracking=True,
                            help="Camera access username")
-    password = fields.Char(string='Password', help="Camera access password")
+    password = fields.Char(
+        string='Password',
+        groups='polimex_ip_cam.group_cctv_manager',
+        help="Camera access password. Restricted to CCTV managers — it is the "
+             "credential an attacker would need; do not expose it to plain "
+             "CCTV users or in shared exports.")
     brand = fields.Selection([
         ('hikvision', 'Hikvision'),
         ('dahua', 'Dahua'),
@@ -227,66 +239,12 @@ class CctvCamera(models.Model):
         self.ensure_one()
         return HikvisionCamera(self.ip_address, self.port, self.username, self.password)
 
-    def _time_setup(self, cam_api):
-        self.ensure_one()
-        # Получаване на време от камерата
-        t_result = cam_api.get_time_config()
-        update_info = ""
-        if t_result.get("status") == "success":
-            time_data = t_result
-
-            # Използваме директно rec.tz_offset (например "+0200") като очаквана стойност
-            expected_offset = self.tz_offset or "+0000"
-            if expected_offset not in time_data.get("timeZone", ""):
-                update_info += _(
-                    "TimeZone mismatch: Camera reports %(cam_tz)s, expected %(exp_tz)s. "
-                ) % {"cam_tz": time_data.get("timeZone"), "exp_tz": expected_offset}
-
-            # Изчисляваме очакваното локално време на базата на self.tz
-            # Използваме текущото време от Odoo (наивно) и го локализираме в self.tz
-            expected_local = fields.Datetime.now()
-            expected_local = pytz.utc.localize(expected_local).astimezone(pytz.timezone(self.tz))
-            expected_local_str = expected_local.replace(microsecond=0).isoformat()
-
-            try:
-                camera_local_time = datetime.datetime.fromisoformat(time_data.get("localTime"))
-                # Преобразуваме и двете времена към UTC за коректно сравнение
-                camera_local_utc = camera_local_time.astimezone(pytz.utc)
-                expected_local_utc = expected_local.astimezone(pytz.utc)
-                diff = abs((camera_local_utc - expected_local_utc).total_seconds())
-                if diff > 300:  # ако разликата е над 5 минути
-                    update_info += _(
-                        "LocalTime difference: Camera shows %(cam_time)s, expected %(exp_time)s. "
-                    ) % {"cam_time": time_data.get("localTime"), "exp_time": expected_local_str}
-            except Exception as e:
-                update_info += _("Error parsing camera localTime: %s. ") % str(e)
-
-            if update_info:
-                # Ако има разлики, създаваме команда за актуализация на времето
-                new_time_config = {
-                    "timeMode": "NTP",  # или "manual", според нуждите
-                    "timeZone": expected_offset,  # използваме само offset-а, напр. "+0200"
-                    "localTime": expected_local_str,
-                }
-                self.env['cctv.camera.command'].sudo().create([{
-                    'camera_id': self.id,
-                    'command_type': 'set_time',
-                    'request_data': "\n".join([f"{k}={v}" for k, v in new_time_config.items()]),
-                }])
-                update_info += _("A command has been created to update the camera time configuration.")
-            else:
-                update_info += _("Camera time configuration is correct.")
-        else:
-            update_info = _("Failed to read camera time configuration.")
-        return update_info or ''
-
     def action_check_connection(self):
         """
         When the camera brand is hikvision, instantiate the HikvisionCamera API class and use it.
         Update the record's connection_status and, if available, update the camera's model and serial number.
         Also, check the HTTP host configuration and time configuration.
         """
-        import datetime, pytz
         for rec in self:
             if rec.brand == 'hikvision':
                 _logger.info("Using Hikvision API for camera %s at %s", rec.name, rec.ip_address)
@@ -818,7 +776,6 @@ class CctvCamera(models.Model):
                     .get('fileName', '')
 
                 activePostCount = anpr_data.get('activePostCount', 0)
-                event_type = anpr_data.get('event_type', '')
                 event_state = anpr_data.get('eventState', '')
                 ipaddress = anpr_data.get('ipAddress', '')
                 macAddress = anpr_data.get('macAddress', '')
@@ -853,7 +810,7 @@ class CctvCamera(models.Model):
                     # attachments = [('detectionPicture.jpg', snapshot_b64)] if snapshot_b64 else []
                     # self.notify_by_discuss(self.message_partner_ids, msg, attachments)
                     ed = _('Plate number not found in database (%s), ', plate_number)
-                    ed+= _('but exist in the camera memory. ') if barrierGateCtrlType == '1' else 'nor in camera memory. '
+                    ed+= _('but exist in the camera memory. ') if barrierGateCtrlType == BARRIER_GATE_IN_LIST else _('nor in camera memory. ')
                     ed+= _("Direction: %s, DetectType: %s, ActivePostCount: %s, EventState: %s, IPAddress: %s, MACAddress: %s, BarrierGateCtrlType: %s, Direction: %s.") % (direction, detectType, activePostCount, event_state, ipaddress, macAddress, barrierGateCtrlType, direction)
                     sys_event_vals= {
                         'timestamp': event_datetime,
@@ -871,7 +828,7 @@ class CctvCamera(models.Model):
                     # създаване на събитие
                     event_vals = {
                         'event_time': event_datetime,
-                        'event_action': '1' if barrierGateCtrlType == '1' else '2',
+                        'event_action': '1' if barrierGateCtrlType == BARRIER_GATE_IN_LIST else '2',
                         'license_plate': plate_number,
                         'more_json': str(event_info),
                         'camera_id': self.id,
@@ -882,12 +839,18 @@ class CctvCamera(models.Model):
                     }
                     new_event = self.env['hr.rfid.event.user'].sudo().create([event_vals])
 
-                self.behind_nat = not (ipaddress and ipaddress == self.ip_address or False)
+                # Only write when the value actually changes — parse_event runs
+                # on every car passage and the camera is a mail.thread; an
+                # unconditional write here amplified into a tracking/recompute
+                # write per event on a hot path.
+                behind_nat = not (ipaddress and ipaddress == self.ip_address)
+                if self.behind_nat != behind_nat:
+                    self.behind_nat = behind_nat
 
             elif event_type == 'illaccess':
-                _logger.warning(f"Illegal access detected for camera {self.name}")
+                _logger.warning("Illegal access detected for camera %s", self.name)
             else:
-                _logger.warning(f"Unknown event type: {event_type} for camera {self.name}")
+                _logger.warning("Unknown event type: %s for camera %s", event_type, self.name)
         return True
 
     def add_plate_to_cam(self, plate_number, list_type):

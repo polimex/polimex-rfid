@@ -10,6 +10,7 @@ class HrRfidEventUser(models.Model):
         comodel_name='cctv.camera',
         string='Camera',
         ondelete='cascade',
+        index=True,
         help="Camera to use"
     )
     license_plate = fields.Char(

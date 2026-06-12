@@ -9,7 +9,7 @@ class CctvCameraRfidRel(models.Model):
     _description = 'CCTV Camera - RFID Card Relation'
 
     camera_id = fields.Many2one(
-        comodel_name='cctv.camera', string='Camera', required=True, ondelete='cascade',
+        comodel_name='cctv.camera', string='Camera', required=True, ondelete='cascade', index=True,
         help="Camera to which this card relation belongs")
     card_id = fields.Many2one(
         comodel_name='hr.rfid.card', string='RFID Card', required=True, ondelete='cascade',

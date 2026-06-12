@@ -168,7 +168,8 @@ class IpcamController(Controller):
                     diff = abs((server_time - hb_aware.astimezone(pytz.utc)).total_seconds())
                     if diff > 300:
                         _logger.info(
-                            f"Heartbeat time difference ({diff} seconds) is greater than 5 minutes. Synchronizing time.")
+                            "Heartbeat time difference (%s s) > 5 min for camera %s; "
+                            "queuing a time-sync command.", diff, camera.name)
                         new_time_config = {
                             "timeMode": "manual",  # или "NTP" според нуждите
                             "timeZone": formatted_offset,
@@ -176,14 +177,17 @@ class IpcamController(Controller):
                             # is carried separately in timeZone.
                             "localTime": server_time_local.replace(tzinfo=None, microsecond=0).isoformat()
                         }
-                        with camera.get_api() as cam_api:
-                            result = cam_api.set_time_config(new_time_config)
-                            if result.get("status") == "success":
-                                _logger.info("Time synchronized successfully for camera %s", camera.name)
-                            else:
-                                _logger.error("Failed to synchronize time for camera %s: %s", camera.name,
-                                              result.get("error"))
+                        # Do NOT run the credentialed outbound HTTP inline in the
+                        # public web worker (it blocks the request and can 500 /
+                        # cause camera retry-storms). Queue it; cctv.camera.command
+                        # delivers it asynchronously on a fresh cursor.
+                        request.env['cctv.camera.command'].sudo().create([{
+                            'camera_id': camera.id,
+                            'command_type': 'set_time',
+                            'request_data': "\n".join(f"{k}={v}" for k, v in new_time_config.items()),
+                        }])
             else:
-                _logger.error("Camera with IP %s not found in the model.", heartbeat_data.get('ipAddress'))
+                _logger.warning("Heartbeat from %s did not match any configured camera IP.",
+                                request.httprequest.remote_addr)
 
         return 'OK'
