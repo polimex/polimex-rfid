@@ -791,12 +791,20 @@ class CctvCamera(models.Model):
             event_type = files_data.get('eventType', 'ANPR')
 
             date_str = anpr_data.get('dateTime')
+            event_datetime = False
             if date_str:
-                dt_with_tz = datetime.fromisoformat(date_str)
-                dt_utc = dt_with_tz.astimezone(timezone.utc)
-                event_datetime = dt_utc.replace(tzinfo=None)
-            else:
-                event_datetime = False
+                try:
+                    dt_with_tz = datetime.fromisoformat(date_str)
+                    dt_utc = dt_with_tz.astimezone(timezone.utc)
+                    event_datetime = dt_utc.replace(tzinfo=None)
+                except (ValueError, TypeError):
+                    _logger.warning("Camera %s sent an unparseable dateTime %r; "
+                                    "using server time.", self.name, date_str)
+            # hr.rfid.event.system.timestamp / event.user.event_time are NOT
+            # NULL; a missing/odd dateTime must fall back to now() or the
+            # (public, unauthenticated) webhook 500s on the unknown-plate path.
+            if not event_datetime:
+                event_datetime = fields.Datetime.now()
 
             if event_type == 'ANPR':
                 plate_number = event_info.get('licensePlate', '')
@@ -816,6 +824,18 @@ class CctvCamera(models.Model):
                 macAddress = anpr_data.get('macAddress', '')
                 barrierGateCtrlType = event_info.get('barrierGateCtrlType', '9') #granted/denied
                 direction = anpr_data.get('direction', 'forward') # for use in R1 In or R2 Out
+
+                # A reader (and its door) is mandatory to record either event
+                # type. They are auto-created with the camera, but a manager can
+                # detach/delete one — guard the index access so a live event on
+                # the public webhook can't IndexError into a 500.
+                if not self.reader_ids:
+                    _logger.warning(
+                        "Camera %s has no readers configured; cannot record the "
+                        "ANPR event for plate %s.", self.name, plate_number)
+                    return
+                reader_in = self.reader_ids[0]
+                reader_out = self.reader_ids[1] if len(self.reader_ids) > 1 else reader_in
 
                 # търсене на собственик на регистрационния номер
                 card_id = self.env['hr.rfid.card'].with_context(active_test=False).sudo().search([
@@ -842,7 +862,7 @@ class CctvCamera(models.Model):
                         'card_number': plate_number,
                         'error_description': ed,
                         'camera_id': self.id,
-                        'door_id': self.reader_ids[0].door_id.id,
+                        'door_id': reader_in.door_id.id,
                         'anpr_confidence': confidenceLevel,
                         'snapshot': snapshot_b64
                     }
@@ -855,7 +875,7 @@ class CctvCamera(models.Model):
                         'license_plate': plate_number,
                         'more_json': str(event_info),
                         'camera_id': self.id,
-                        'reader_id': self.reader_ids[0].id if direction == 'forward' else self.reader_ids[1].id,
+                        'reader_id': reader_in.id if direction == 'forward' else reader_out.id,
                         'card_id': card_id.id if card_id else False,
                         'anpr_confidence': confidenceLevel,
                         'snapshot': snapshot_b64

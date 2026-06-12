@@ -133,3 +133,37 @@ class TestVotingPublicControllers(HttpCase):
             self.assertIn("error", data)
         else:
             self.assertEqual(response.status_code, 404)
+
+    def test_session_close_ignores_malicious_state(self):
+        """A client-supplied `state` must be ignored — the public close route
+        may only close, never re-draft a finished vote (mass-assignment)."""
+        voter = self.env["res.partner"].create({"name": "Voter B"})
+        item = self.env["voting.item"].create({"name": "Item 2"})
+        self.open_session.write({"item_ids": [(4, item.id)]})
+        self.env["voting.vote"].create({
+            "voting_session_id": self.open_session.id,
+            "voting_item_id": item.id,
+            "voter_id": voter.id,
+            "vote": "yes",
+        })
+
+        response = self._jsonrpc(
+            f"/voting_display/{self.access_token}/session/{self.open_session.id}/close",
+            params={"state": "draft"},  # attacker tries to reset the session
+        )
+        self.assertEqual(response.status_code, 200)
+        self.open_session.invalidate_recordset()
+        self.assertEqual(self.open_session.state, "closed",
+                         "The malicious 'draft' state must be ignored; the session is closed")
+
+    def test_session_close_cannot_reopen_finished_vote(self):
+        """An already-closed session must not be reopened via the public route
+        (election integrity)."""
+        response = self._jsonrpc(
+            f"/voting_display/{self.access_token}/session/{self.closed_session.id}/close",
+            params={"state": "open"},  # attacker tries to reopen voting
+        )
+        self.assertEqual(response.status_code, 200)
+        self.closed_session.invalidate_recordset()
+        self.assertEqual(self.closed_session.state, "closed",
+                         "A finished vote must stay closed — no reopening from the public route")

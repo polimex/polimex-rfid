@@ -1,7 +1,5 @@
-import json
 import logging
 import base64
-import time
 import defusedxml.ElementTree as ET
 from datetime import datetime
 
@@ -23,6 +21,33 @@ class IpcamController(Controller):
             data_dict[child_tag] = self.parse_xml_to_dict(child) if len(child) > 0 else child.text
         return data_dict
 
+    def _source_ip_verification_on(self):
+        return request.env['ir.config_parameter'].sudo().get_param(
+            'polimex_ip_cam.anpr_verify_source_ip', '1') in ('1', 'true', 'True')
+
+    def _verify_camera_source(self, camera):
+        """Authenticate the webhook: the request must originate from the
+        camera's configured IP.
+
+        The /ipcam/anpr/event route is auth='public' with no shared secret, so
+        without this check anyone who can reach the host could forge ANPR /
+        heartbeat events (fake access & attendance, or trigger a credentialed
+        outbound time-sync). Gated by the system parameter
+        polimex_ip_cam.anpr_verify_source_ip (default ON); NAT'd deployments
+        where Odoo cannot see the camera's real source IP can set it to 0.
+        """
+        if not self._source_ip_verification_on():
+            return True
+        src = request.httprequest.remote_addr
+        if src and camera.ip_address and src == camera.ip_address:
+            return True
+        _logger.warning(
+            "Rejected ANPR webhook for camera %s: request from %s does not "
+            "match the configured camera IP %s. If this camera is behind NAT, "
+            "set system parameter polimex_ip_cam.anpr_verify_source_ip to 0.",
+            camera.name, src, camera.ip_address)
+        return False
+
     def validate_files(self, files):
         allowed_extensions = ['.xml', '.jpg']
         for file_key, file_storage in files.items():
@@ -36,38 +61,6 @@ class IpcamController(Controller):
 
     @route(['/ipcam/anpr/event'], type='http', auth='public', methods=['POST'], csrf=False)
     def receive_anpr_event(self, **kwargs):
-        # --- Log the incoming request ---
-        # Използваме Odoo парсването на multipart/form-data:
-        # form_data = dict(request.httprequest.form)
-        # headers = dict(request.httprequest.headers)
-        # files_dict = {}
-        #
-        # for key, file_storage in request.httprequest.files.items():
-        #     try:
-        #         content = file_storage.read()
-        #         # Възстановяваме позицията в стрийма, ако е необходимо по-късно
-        #         file_storage.stream.seek(0)
-        #         files_dict[file_storage.filename] = base64.b64encode(content).decode('utf-8')
-        #     except Exception as e:
-        #         _logger.error("Грешка при четене на файл %s: %s", file_storage.filename, e)
-        #
-        # # Създаваме структура за логване на заявката
-        # log_record = {
-        #     'timestamp': time.time(),
-        #     'headers': headers,
-        #     'form': form_data,
-        #     'files': files_dict
-        # }
-        #
-        # try:
-        #     with open("/tmp/request1", "a") as log_file:
-        #         log_file.write(json.dumps(log_record) + "\n")
-        # except Exception as e:
-        #     _logger.error("Грешка при запис във файла /tmp/request1: %s", e)
-        #
-        # _logger.info("Заявката е записана във файла /tmp/request1")
-        # --- End log ---
-
         files = request.httprequest.files
         if not files:
             _logger.error("No files uploaded.")
@@ -110,6 +103,9 @@ class IpcamController(Controller):
                     _logger.error(f"Camera with serial number {anpr_data['deviceUUID']} not found.")
                     # TODO Log System Event
                     return request.not_found()
+                # SECURITY: authenticate the sender (the webhook is public).
+                if not self._verify_camera_source(camera_id):
+                    return request.not_found()
                 # SECURITY: never trust the IP reported in this unauthenticated
                 # event body. Overwriting the stored camera IP here let an
                 # attacker point the server's credentialed outbound calls
@@ -128,10 +124,17 @@ class IpcamController(Controller):
                 _logger.info(f'Camera ID detected: {camera_id}')
         if 'heartBeat' in files_data:
             heartbeat_data = files_data["heartBeat"]
-            # Намери камерата по IP адрес
+            # SECURITY: identify the camera by the request's network source IP
+            # (trustworthy on an isolated camera LAN) rather than the body IP,
+            # so a forged heartbeat cannot trigger an outbound time-sync. Only
+            # when source verification is disabled do we fall back to the
+            # body-reported IP for identification.
+            src_ip = request.httprequest.remote_addr
             camera = request.env['cctv.camera'].sudo().search(
-                [('ip_address', '=', heartbeat_data.get('ipAddress'))],
-                limit=1)
+                [('ip_address', '=', src_ip)], limit=1)
+            if not camera and not self._source_ip_verification_on():
+                camera = request.env['cctv.camera'].sudo().search(
+                    [('ip_address', '=', heartbeat_data.get('ipAddress'))], limit=1)
             if camera:
                 # Актуализиране на last_heart_beat
                 camera.sudo().write({'last_heart_beat': fields.Datetime.now()})
@@ -143,34 +146,35 @@ class IpcamController(Controller):
                     _logger.error(f"Error parsing heartbeat dateTime: {e}")
                     hb_time = None
 
-                # Текущо сървърно време
-                server_time = fields.Datetime.now()
+                # fields.Datetime.now() is naive UTC; localise it before any
+                # astimezone() or the local-time math (and the camera time-sync
+                # it drives) is wrong whenever the server OS tz is not UTC.
+                server_time = pytz.utc.localize(fields.Datetime.now())
 
                 if hb_time:
-                    # Преобразуваме текущото време в часовата зона на камерата, ако е зададена
-                    if camera.tz:
-                        tz_obj = pytz.timezone(camera.tz)
-                        server_time_local = server_time.astimezone(tz_obj)
-                    else:
-                        server_time_local = server_time
+                    cam_tz = pytz.timezone(camera.tz) if camera.tz else pytz.utc
+                    server_time_local = server_time.astimezone(cam_tz)
 
                     # Форматираме офсета – от "+0200" към "GMT+02:00"
                     offset = camera.tz_offset or "+0000"
                     formatted_offset = "GMT" + offset[:3] + ":" + offset[3:]
 
-                    # Изчисляваме разликата
-                    try:
-                        hb_time_local = hb_time.astimezone(tz_obj) if camera.tz else hb_time
-                    except Exception:
-                        hb_time_local = hb_time
-                    diff = abs((server_time_local - hb_time_local).total_seconds())
+                    # Normalise the camera time to aware-UTC for the comparison:
+                    # a camera may send an offset-aware OR a naive local time.
+                    if hb_time.tzinfo is None:
+                        hb_aware = cam_tz.localize(hb_time)
+                    else:
+                        hb_aware = hb_time
+                    diff = abs((server_time - hb_aware.astimezone(pytz.utc)).total_seconds())
                     if diff > 300:
                         _logger.info(
                             f"Heartbeat time difference ({diff} seconds) is greater than 5 minutes. Synchronizing time.")
                         new_time_config = {
                             "timeMode": "manual",  # или "NTP" според нуждите
                             "timeZone": formatted_offset,
-                            "localTime": server_time_local.replace(microsecond=0).isoformat()
+                            # Naive local wall-clock (no offset suffix); the tz
+                            # is carried separately in timeZone.
+                            "localTime": server_time_local.replace(tzinfo=None, microsecond=0).isoformat()
                         }
                         with camera.get_api() as cam_api:
                             result = cam_api.set_time_config(new_time_config)

@@ -18,6 +18,11 @@ class TestAnprSsrf(HttpCase):
 
     def setUp(self):
         super().setUp()
+        # These tests target the body-IP overwrite (SSRF), not the source-IP
+        # webhook auth — disable the latter so the request reaches parse_event
+        # regardless of the test client's source IP.
+        self.env['ir.config_parameter'].sudo().set_param(
+            'polimex_ip_cam.anpr_verify_source_ip', '0')
         self.stored_ip = '10.99.0.5'
         self.camera = self.env['cctv.camera'].create({
             'name': 'SSRF Probe Cam',
@@ -69,3 +74,29 @@ class TestAnprSsrf(HttpCase):
         self.assertEqual(resp.status_code, 404)
         self.camera.invalidate_recordset(['ip_address'])
         self.assertEqual(self.camera.ip_address, self.stored_ip)
+
+    def test_missing_datetime_does_not_crash_webhook(self):
+        """An ANPR event without a dateTime must not 500 the public webhook —
+        the required timestamp falls back to server time (C1)."""
+        xml = (
+            '<EventNotificationAlert xmlns="http://www.isapi.org/ver20/XMLSchema">'
+            '<deviceUUID>SSRFTESTUUID</deviceUUID>'
+            '<eventType>ANPR</eventType>'
+            '<ANPR><licensePlate>NOCARD99</licensePlate>'
+            '<barrierGateCtrlType>0</barrierGateCtrlType></ANPR>'
+            '</EventNotificationAlert>'
+        ).encode('utf-8')
+        before = self.env['hr.rfid.event.system'].sudo().search_count(
+            [('camera_id', '=', self.camera.id)])
+        resp = self.url_open(
+            '/ipcam/anpr/event',
+            files={'anpr.xml': ('anpr.xml', xml, 'application/xml')},
+        )
+        self.assertNotEqual(resp.status_code, 500, 'Missing dateTime must not 500')
+        sys_event = self.env['hr.rfid.event.system'].sudo().search(
+            [('camera_id', '=', self.camera.id)], order='id desc', limit=1)
+        self.assertEqual(
+            self.env['hr.rfid.event.system'].sudo().search_count(
+                [('camera_id', '=', self.camera.id)]),
+            before + 1, 'Unknown plate must record a system event')
+        self.assertTrue(sys_event.timestamp, 'timestamp must be set (defaulted to now)')

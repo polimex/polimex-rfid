@@ -40,12 +40,17 @@ class VoteController(http.Controller):
         )
 
     @http.route("/voting_display/<string:access_token>/session/<int:session_id>/close", type="jsonrpc", auth="public", sitemap=False)
-    def session_close(self, access_token, session_id, state=None, **kwargs):
+    def session_close(self, access_token, session_id, **kwargs):
         session = self._fetch_sessions(session_id, access_token)
-        vals = {"end_datetime": datetime.now()}
-        if state:
-            vals["state"] = state
-        session.write(vals)
+        # SECURITY: this is a public (token-only) endpoint, so it must never
+        # accept a client-supplied state — writing an arbitrary `state` here
+        # would let anyone holding the display token reopen or re-draft a
+        # finished vote (election-integrity / mass-assignment). The kiosk only
+        # ever closes the currently-open session; any other `state` passed in
+        # kwargs is intentionally ignored.
+        if session.state != 'open':
+            return True
+        session.write({"end_datetime": datetime.now(), "state": "closed"})
         session.message_post(body="Session closed from display.")
         return True
 
