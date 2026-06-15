@@ -10,14 +10,14 @@ Polimex ANPR Module
 .. image:: https://img.shields.io/badge/github-Polimex%20ANPR-lightgray.png?logo=github
    :target: https://github.com/polimex/polimex-rfid
    :alt: GitHub
-.. image:: https://img.shields.io/badge/odoo-18.0-blue.svg
+.. image:: https://img.shields.io/badge/odoo-19.0-blue.svg
    :target: https://www.odoo.com
-   :alt: Odoo 18.0
+   :alt: Odoo 19.0
 
 Overview
 --------
 
-The **Polimex ANPR** module for Odoo 18 provides a robust solution for managing IP cameras with Automatic Number Plate Recognition (ANPR) functionality. This module integrates with Hikvision cameras via the ISAPI protocol and offers seamless synchronization between camera settings and Odoo records.
+The **Polimex ANPR** module for Odoo 19 provides a robust solution for managing IP cameras with Automatic Number Plate Recognition (ANPR) functionality. This module integrates with Hikvision cameras via the ISAPI protocol and offers seamless synchronization between camera settings and Odoo records.
 
 Key features include:
 
@@ -38,9 +38,9 @@ Installation
 
 1. **Dependencies:**
 
-   - Odoo 18.0
+   - Odoo 19.0
    - HR RFID module
-   - Python packages: ``requests`` (plus standard libraries)
+   - Python packages: ``defusedxml`` (plus standard libraries)
 
 2. **Setup:**
 

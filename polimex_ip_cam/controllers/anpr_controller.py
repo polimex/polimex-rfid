@@ -10,6 +10,25 @@ from odoo.http import Controller, route, request
 
 _logger = logging.getLogger(__name__)
 
+# Re-sync the camera clock only past this drift (seconds); below it the small
+# offset is left alone to avoid churning set_time on every heartbeat.
+HEARTBEAT_CLOCK_DRIFT_TOLERANCE = 300
+
+
+def _hikvision_timezone(iso_offset):
+    """Build a Hikvision <timeZone> string from an ISO offset.
+
+    Hikvision follows the POSIX/inverted sign convention: a zone of UTC+3 must
+    be sent as ``GMT-03:00`` — sending ``GMT+03:00`` is applied by the camera as
+    UTC-3, which keeps the clock ~2x off and triggers an endless set_time loop.
+    Invert the ISO offset's sign; tolerate a missing/garbage value (-> UTC).
+    """
+    iso_offset = (iso_offset or "").strip()
+    if len(iso_offset) < 5 or iso_offset[0] not in "+-":
+        iso_offset = "+0000"
+    sign = "-" if iso_offset[0] == "+" else "+"
+    return "GMT%s%s:%s" % (sign, iso_offset[1:3], iso_offset[3:5])
+
 
 class IpcamController(Controller):
 
@@ -96,32 +115,36 @@ class IpcamController(Controller):
             _logger.info(f'illaccess_data: {illaccess_data})')
         if 'anpr' in files_data:
             anpr_data = files_data['anpr']
-            # Searching for camera ID in anpr.xml
-            if 'deviceUUID' in anpr_data:
-                camera_id = request.env['cctv.camera'].sudo().search([('serial_number', '=', anpr_data['deviceUUID'])])
-                if not camera_id:
-                    _logger.error(f"Camera with serial number {anpr_data['deviceUUID']} not found.")
-                    # TODO Log System Event
-                    return request.not_found()
-                # SECURITY: authenticate the sender (the webhook is public).
-                if not self._verify_camera_source(camera_id):
-                    return request.not_found()
-                # SECURITY: never trust the IP reported in this unauthenticated
-                # event body. Overwriting the stored camera IP here let an
-                # attacker point the server's credentialed outbound calls
-                # (get_api -> HTTPDigestAuth) at an arbitrary host — SSRF plus
-                # theft of the camera admin credentials. The admin-configured
-                # ip_address is the only trusted endpoint; a mismatch is only
-                # logged for manual review, never auto-applied.
-                reported_ip = anpr_data.get('ipAddress')
-                if reported_ip and reported_ip != camera_id.ip_address:
-                    _logger.warning(
-                        "ANPR event for camera %s reports IP %s but the "
-                        "configured IP is %s; ignoring it (possible DHCP "
-                        "change or spoofing attempt).",
-                        camera_id.name, reported_ip, camera_id.ip_address)
-                camera_id.parse_event(files_data)
-                _logger.info(f'Camera ID detected: {camera_id}')
+            # Identify the camera by the deviceUUID it reports (its ISAPI
+            # subSerialNumber, stored as sub_serial_number), with a full-serial
+            # and a trusted-source-IP fallback — see _resolve_anpr_camera.
+            device_uuid = anpr_data.get('deviceUUID')
+            src_ip = request.httprequest.remote_addr
+            camera_id = request.env['cctv.camera'].sudo()._resolve_anpr_camera(
+                device_uuid, src_ip, self._source_ip_verification_on())
+            if not camera_id:
+                _logger.error("ANPR event (deviceUUID=%s) from %s matched no camera.",
+                              device_uuid, src_ip)
+                return request.not_found()
+            # SECURITY: authenticate the sender (the webhook is public).
+            if not self._verify_camera_source(camera_id):
+                return request.not_found()
+            # SECURITY: never trust the IP reported in this unauthenticated
+            # event body. Overwriting the stored camera IP here let an
+            # attacker point the server's credentialed outbound calls
+            # (get_api -> HTTPDigestAuth) at an arbitrary host — SSRF plus
+            # theft of the camera admin credentials. The admin-configured
+            # ip_address is the only trusted endpoint; a mismatch is only
+            # logged for manual review, never auto-applied.
+            reported_ip = anpr_data.get('ipAddress')
+            if reported_ip and reported_ip != camera_id.ip_address:
+                _logger.warning(
+                    "ANPR event for camera %s reports IP %s but the "
+                    "configured IP is %s; ignoring it (possible DHCP "
+                    "change or spoofing attempt).",
+                    camera_id.name, reported_ip, camera_id.ip_address)
+            camera_id.parse_event(files_data)
+            _logger.info("ANPR event processed for camera %s.", camera_id.name)
         if 'heartBeat' in files_data:
             heartbeat_data = files_data["heartBeat"]
             # SECURITY: identify the camera by the request's network source IP
@@ -155,9 +178,10 @@ class IpcamController(Controller):
                     cam_tz = pytz.timezone(camera.tz) if camera.tz else pytz.utc
                     server_time_local = server_time.astimezone(cam_tz)
 
-                    # Форматираме офсета – от "+0200" към "GMT+02:00"
-                    offset = camera.tz_offset or "+0000"
-                    formatted_offset = "GMT" + offset[:3] + ":" + offset[3:]
+                    # Hikvision uses the POSIX/inverted timeZone sign: UTC+3
+                    # must be sent as "GMT-03:00" (sending "GMT+03:00" is applied
+                    # as UTC-3 and loops set_time forever). See _hikvision_timezone.
+                    formatted_offset = _hikvision_timezone(camera.tz_offset)
 
                     # Normalise the camera time to aware-UTC for the comparison:
                     # a camera may send an offset-aware OR a naive local time.
@@ -166,7 +190,8 @@ class IpcamController(Controller):
                     else:
                         hb_aware = hb_time
                     diff = abs((server_time - hb_aware.astimezone(pytz.utc)).total_seconds())
-                    if diff > 300:
+                    _logger.debug("Heartbeat clock diff for camera %s: %.0fs", camera.name, diff)
+                    if diff > HEARTBEAT_CLOCK_DRIFT_TOLERANCE:
                         _logger.info(
                             "Heartbeat time difference (%s s) > 5 min for camera %s; "
                             "queuing a time-sync command.", diff, camera.name)

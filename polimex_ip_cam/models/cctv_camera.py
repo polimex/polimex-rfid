@@ -81,6 +81,13 @@ class CctvCamera(models.Model):
                         help="Camera model (obtained via ISAPI)", readonly=True)
     serial_number = fields.Char(string='Serial Number', tracking=True,
                                 help="Camera serial number", readonly=True)
+    sub_serial_number = fields.Char(
+        string='Sub-Serial (Device UUID)', tracking=True, index=True, readonly=True,
+        help="Short device serial the camera reports as 'deviceUUID' in ANPR "
+             "events (ISAPI subSerialNumber). Incoming plate events are matched "
+             "to this camera by this value. Filled automatically on Check "
+             "Connection, or learned from the first event received from the "
+             "camera's IP.")
     firmware = fields.Char(string='Firmware', tracking=True,
                            help="Camera firmware version", readonly=True)
     description = fields.Text(string='Description',
@@ -239,6 +246,57 @@ class CctvCamera(models.Model):
         self.ensure_one()
         return HikvisionCamera(self.ip_address, self.port, self.username, self.password)
 
+    @api.model
+    def _resolve_anpr_camera(self, device_uuid, src_ip, source_verify_on):
+        """Map an ANPR webhook event to its cctv.camera.
+
+        The camera reports its ISAPI ``subSerialNumber`` as the event
+        ``deviceUUID`` (e.g. ``GN9163457``), which differs from the full
+        ``serialNumber`` (e.g. ``DS-TCG406-E 20260120AIGN9163457``). Match in
+        order:
+          1. stored ``sub_serial_number`` == deviceUUID (canonical);
+          2. ``serial_number`` == deviceUUID (firmwares that report the full
+             serial as deviceUUID);
+          3. only when the source IP is trusted (source verification on), the
+             request IP — and learn/store the deviceUUID on that camera so
+             subsequent events match directly.
+
+        ``device_uuid`` comes from the unauthenticated event body, so it is only
+        ever used to look up an existing record, never to create one; the IP
+        fallback is the trusted anchor. Returns an (empty) cctv.camera recordset.
+        """
+        Camera = self.sudo()
+
+        def _single(domain):
+            # Never guess: an identity matching >1 camera is a duplicate
+            # serial/sub-serial/IP misconfiguration — booking the event against
+            # whichever row the DB returns first could attribute it to the wrong
+            # camera/company. Refuse and log loudly so the duplicate gets fixed.
+            recs = Camera.search(domain)
+            if len(recs) > 1:
+                _logger.error(
+                    "ANPR identity matched %s cameras for %s (ids %s); refusing "
+                    "to guess — fix the duplicate serial/sub-serial/IP.",
+                    len(recs), domain, recs.ids)
+                return Camera.browse()
+            return recs
+
+        camera = Camera.browse()
+        if device_uuid:
+            camera = _single([('sub_serial_number', '=', device_uuid)])
+            if not camera:
+                camera = _single([('serial_number', '=', device_uuid)])
+        if not camera and source_verify_on and src_ip:
+            by_ip = _single([('ip_address', '=', src_ip)])
+            if by_ip:
+                if device_uuid and not by_ip.sub_serial_number:
+                    by_ip.sub_serial_number = device_uuid
+                    _logger.info(
+                        "Learned ANPR deviceUUID %s for camera %s (id %s).",
+                        device_uuid, by_ip.name, by_ip.id)
+                camera = by_ip
+        return camera
+
     def action_check_connection(self):
         """
         When the camera brand is hikvision, instantiate the HikvisionCamera API class and use it.
@@ -254,6 +312,7 @@ class CctvCamera(models.Model):
                     if result.get("status") == "connected":
                         rec.model = result.get("model")
                         rec.serial_number = result.get("serial")
+                        rec.sub_serial_number = result.get("subserial")
                         rec.firmware = result.get("firmware")
                         rec.action_set_http_host()
                         rec.action_set_entrance_param()

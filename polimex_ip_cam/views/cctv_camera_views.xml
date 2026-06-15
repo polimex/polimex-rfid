@@ -259,7 +259,7 @@
         <field name="arch" type="xml">
             <search string="CCTV Cameras">
                 <field name="name" string="Camera"
-                       filter_domain="['|','|','|', ('serial', 'ilike', self),('model', 'ilike', self), ('ip_address', 'ilike', self), ('name', 'ilike', self)]"/>
+                       filter_domain="['|','|','|','|', ('serial_number', 'ilike', self), ('sub_serial_number', 'ilike', self), ('model', 'ilike', self), ('ip_address', 'ilike', self), ('name', 'ilike', self)]"/>
                 <field name="description"/>
                 <field name="connection_status"/>
                 <searchpanel>
