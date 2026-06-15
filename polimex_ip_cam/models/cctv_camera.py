@@ -389,7 +389,10 @@ class CctvCamera(models.Model):
                 # Process nested SubscribeEvent block.
                 if not isinstance(config.get('SubscribeEvent'), dict):
                     config['SubscribeEvent'] = {}
-                config['SubscribeEvent'].setdefault('heartbeat', '3600')
+                # Keep the default within typical ISAPI limits. The HTTP-host
+                # capabilities advertise a max (180 on the DS-TCG406-E); the API
+                # layer clamps this to the camera's real range before sending.
+                config['SubscribeEvent'].setdefault('heartbeat', '30')
                 config['SubscribeEvent'].setdefault('eventMode', 'all')
 
                 config.setdefault('enabled', 'true' if rec.active else 'false')

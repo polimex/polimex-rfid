@@ -6,6 +6,25 @@ import base64
 
 _logger = logging.getLogger(__name__)
 
+# ISAPI ver20 namespace used by the HttpHostNotification messages. Registering
+# it as the default (empty) prefix makes ElementTree re-serialise parsed or
+# qualified trees with a plain `xmlns="..."` on the root instead of `ns0:`
+# prefixes — which is what the camera expects on the wire.
+ISAPI_VER20_NS = "http://www.isapi.org/ver20/XMLSchema"
+ET.register_namespace("", ISAPI_VER20_NS)
+
+# Heartbeat (SubscribeEvent keep-alive, seconds). Cameras advertise their own
+# [min, max] range via the httpHosts/capabilities endpoint; these are only used
+# as a safe default and as a conservative ceiling when that range cannot be read
+# (a value above the camera's max is rejected with "Invalid XML Content").
+DEFAULT_HEARTBEAT = 30
+FALLBACK_MAX_HEARTBEAT = 180
+
+
+def _ver20_tag(tag):
+    """Qualify a local tag name with the ISAPI ver20 namespace."""
+    return "{%s}%s" % (ISAPI_VER20_NS, tag)
+
 VEHICLE_LOGO_MAP = {
     1026: "ALFAROMEO",
     1027: "ASTONMARTIN",
@@ -398,7 +417,7 @@ class HikvisionCamera(BaseCamera):
         """
         url = f"http://{self.ip_address}:{self.port}/ISAPI/Event/notification/httpHosts/1"
         try:
-            response = requests.get(url, auth=HTTPDigestAuth(self.username, self.password), timeout=5)
+            response = requests.get(url, auth=HTTPDigestAuth(self.username, self.password), timeout=self.timeout)
             if response.status_code == 200:
                 xml_response = response.text.strip()
                 root = ET.fromstring(xml_response)
@@ -421,6 +440,7 @@ class HikvisionCamera(BaseCamera):
                         'heartbeat': root.findtext('ns:SubscribeEvent/ns:heartbeat', namespaces=ns),
                         'eventMode': root.findtext('ns:SubscribeEvent/ns:eventMode', namespaces=ns)
                     },
+                    'checkResponseEnabled': root.findtext('ns:checkResponseEnabled', namespaces=ns),
                     'enabled': root.findtext('ns:enabled', namespaces=ns)
                 }
                 _logger.debug("Hikvision get_http_host: Parsed response: %s", result)
@@ -459,45 +479,62 @@ class HikvisionCamera(BaseCamera):
         XML документът се създава с помощта на ElementTree и се изпраща чрез PUT заявка към:
           /ISAPI/Event/notification/httpHosts/1
         """
-        # Извличане на параметрите с дефолтни стойности
-        id_val = config.get('id', '1')
-        url_path = config.get('url', '/ipcam/anpr/event')
-        protocolType = config.get('protocolType', 'HTTP')
-        parameterFormatType = config.get('parameterFormatType', 'XML')
-        addressingFormatType = config.get('addressingFormatType', 'ipaddress')
-        ipAddress = config.get('ipAddress', '')
-        portNo = config.get('portNo', '')
-        userName = config.get('userName', '')
-        httpAuthenticationMethod = config.get('httpAuthenticationMethod', 'none')
-        anpr = config.get('ANPR', {})
-        detectionUpLoadPicturesType = anpr.get('detectionUpLoadPicturesType', 'all')
-        subscribe = config.get('SubscribeEvent', {})
-        heartbeat = subscribe.get('heartbeat', '')
-        eventMode = subscribe.get('eventMode', 'all')
-        enabled = config.get('enabled', 'false')
+        # Determine the camera's allowed heartbeat range and clamp the desired
+        # value into it. A heartbeat above the camera's advertised max is
+        # rejected with "Invalid XML Content" (statusCode 6).
+        caps = self.get_http_host_capabilities()
+        if caps.get("status") == "success":
+            hb_min = caps["heartbeat"]["min"]
+            hb_max = caps["heartbeat"]["max"]
+        else:
+            hb_min, hb_max = 0, FALLBACK_MAX_HEARTBEAT
+            _logger.warning(
+                "Hikvision set_http_host: heartbeat capabilities unavailable (%s); "
+                "applying conservative range [0, %s].",
+                caps.get("error"), FALLBACK_MAX_HEARTBEAT)
 
-        # Създаване на XML чрез ElementTree
-        root = ET.Element("HttpHostNotification", version="2.0", xmlns="http://www.isapi.org/ver20/XMLSchema")
-        ET.SubElement(root, "id").text = id_val
-        ET.SubElement(root, "url").text = url_path
-        ET.SubElement(root, "protocolType").text = protocolType
-        ET.SubElement(root, "parameterFormatType").text = parameterFormatType
-        ET.SubElement(root, "addressingFormatType").text = addressingFormatType
-        ET.SubElement(root, "ipAddress").text = ipAddress
-        ET.SubElement(root, "portNo").text = portNo
-        ET.SubElement(root, "userName").text = userName
-        ET.SubElement(root, "httpAuthenticationMethod").text = httpAuthenticationMethod
+        subscribe = config.get("SubscribeEvent", {})
+        heartbeat = str(self._clamp_heartbeat(subscribe.get("heartbeat"), hb_min, hb_max))
+        anpr = config.get("ANPR", {})
 
-        # ANPR блок – определя кой тип на изображение да се качва
-        anpr_elem = ET.SubElement(root, "ANPR")
-        ET.SubElement(anpr_elem, "detectionUpLoadPicturesType").text = detectionUpLoadPicturesType
+        # Read-modify-write: start from the camera's current document so its own
+        # element ordering and any fields we do not manage (e.g.
+        # checkResponseEnabled) survive untouched. Fall back to building a fresh
+        # document if the GET fails — the camera accepts that document too, it
+        # just cannot carry forward the unmanaged fields.
+        root = self._fetch_current_http_host_tree()
+        if root is None:
+            root = ET.Element(_ver20_tag("HttpHostNotification"), version="2.0")
 
-        # SubscribeEvent блок – настройка на абонамента за събития
-        subscribe_elem = ET.SubElement(root, "SubscribeEvent")
-        ET.SubElement(subscribe_elem, "heartbeat").text = heartbeat
-        ET.SubElement(subscribe_elem, "eventMode").text = eventMode
+        self._set_child(root, "id", config.get("id", "1"))
+        self._set_child(root, "url", config.get("url", "/ipcam/anpr/event"))
+        self._set_child(root, "protocolType", config.get("protocolType", "HTTP"))
+        self._set_child(root, "parameterFormatType", config.get("parameterFormatType", "XML"))
+        self._set_child(root, "addressingFormatType", config.get("addressingFormatType", "ipaddress"))
+        self._set_child(root, "ipAddress", config.get("ipAddress", ""))
+        self._set_child(root, "portNo", config.get("portNo", ""))
+        self._set_child(root, "userName", config.get("userName", ""))
+        self._set_child(root, "httpAuthenticationMethod", config.get("httpAuthenticationMethod", "none"))
 
-        ET.SubElement(root, "enabled").text = enabled
+        # ANPR block — which image type to upload.
+        anpr_elem = self._get_or_create_child(root, "ANPR")
+        self._set_child(anpr_elem, "detectionUpLoadPicturesType",
+                        anpr.get("detectionUpLoadPicturesType", "all"))
+
+        # SubscribeEvent block — event subscription + clamped heartbeat.
+        subscribe_elem = self._get_or_create_child(root, "SubscribeEvent")
+        self._set_child(subscribe_elem, "heartbeat", heartbeat)
+        self._set_child(subscribe_elem, "eventMode", subscribe.get("eventMode", "all"))
+
+        # Only write checkResponseEnabled when the caller explicitly provides one
+        # (e.g. read back from the camera into server_setup); never invent a
+        # default. When absent, the read-modify-write above keeps the camera's
+        # own value (merge mode) or omits it (rebuild fallback).
+        check_response = config.get("checkResponseEnabled")
+        if check_response not in (None, ""):
+            self._set_child(root, "checkResponseEnabled", check_response)
+
+        self._set_child(root, "enabled", config.get("enabled", "false"))
 
         xml_body = ET.tostring(root, encoding="utf-8", method="xml")
 
@@ -506,10 +543,11 @@ class HikvisionCamera(BaseCamera):
                 f"http://{self.ip_address}:{self.port}/ISAPI/Event/notification/httpHosts/1",
                 auth=HTTPDigestAuth(self.username, self.password),
                 data=xml_body,
-                timeout=5
+                timeout=self.timeout
             )
             if response.status_code == 200:
-                _logger.debug("Hikvision set_http_host: SUCCESS. Response: %s", response.text.strip())
+                _logger.debug("Hikvision set_http_host: SUCCESS (heartbeat=%s). Response: %s",
+                              heartbeat, response.text.strip())
                 return {"status": "success", "response": response.text.strip()}
             else:
                 error_detail = self._extract_error(response.text)
@@ -519,6 +557,115 @@ class HikvisionCamera(BaseCamera):
         except Exception as e:
             _logger.error("Hikvision set_http_host: Request error: %s", e)
             return {"status": "failed", "error": str(e)}
+
+    @staticmethod
+    def _clamp_heartbeat(value, min_v, max_v):
+        """Clamp a desired heartbeat (seconds) into the camera's [min, max].
+
+        A non-numeric or missing value collapses to DEFAULT_HEARTBEAT, which is
+        then clamped as well (the camera's min may exceed the default).
+        """
+        try:
+            hb = int(value)
+        except (TypeError, ValueError):
+            hb = DEFAULT_HEARTBEAT
+        return max(min_v, min(hb, max_v))
+
+    @staticmethod
+    def _parse_heartbeat_capabilities(xml_text):
+        """Parse the httpHosts/capabilities document for the heartbeat range.
+
+        Returns ``{"min": int, "max": int}`` or ``None`` when the element or its
+        min/max attributes are missing/unparseable.
+        """
+        try:
+            root = ET.fromstring(xml_text)
+        except ET.ParseError:
+            return None
+        hb = root.find(".//" + _ver20_tag("heartbeat"))
+        if hb is None:
+            # Tolerate firmwares that omit the namespace on capabilities.
+            hb = root.find(".//heartbeat")
+        if hb is None:
+            return None
+        min_attr, max_attr = hb.get("min"), hb.get("max")
+        if min_attr is None or max_attr is None:
+            return None
+        try:
+            return {"min": int(min_attr), "max": int(max_attr)}
+        except (TypeError, ValueError):
+            return None
+
+    @staticmethod
+    def _set_child(parent, tag, text):
+        """Upsert a ver20-namespaced child element under ``parent``.
+
+        Reuses an existing element (preserving the document's element order) or
+        appends a new one, then sets its text.
+        """
+        child = HikvisionCamera._get_or_create_child(parent, tag)
+        child.text = "" if text is None else str(text)
+        return child
+
+    @staticmethod
+    def _get_or_create_child(parent, tag):
+        """Return the ver20-namespaced child ``tag``, creating it if absent."""
+        qtag = _ver20_tag(tag)
+        child = parent.find(qtag)
+        if child is None:
+            child = ET.SubElement(parent, qtag)
+        return child
+
+    def get_http_host_capabilities(self):
+        """Read the allowed HTTP-host configuration ranges from the camera.
+
+        GET /ISAPI/Event/notification/httpHosts/capabilities and extract the
+        SubscribeEvent heartbeat ``[min, max]``. Returns
+        ``{"status": "success", "heartbeat": {"min": int, "max": int}}`` or a
+        ``{"status": "failed", "error": ...}`` dict the caller can fall back on.
+        """
+        url = f"http://{self.ip_address}:{self.port}/ISAPI/Event/notification/httpHosts/capabilities"
+        try:
+            response = requests.get(url, auth=HTTPDigestAuth(self.username, self.password),
+                                    timeout=self.timeout)
+        except Exception as e:
+            _logger.warning("Hikvision get_http_host_capabilities: request error: %s", e, exc_info=True)
+            return {"status": "failed", "error": str(e)}
+        if response.status_code != 200:
+            error_detail = self._extract_error(response.text)
+            _logger.warning("Hikvision get_http_host_capabilities: HTTP %s. Error: %s",
+                            response.status_code, error_detail)
+            return {"status": "failed", "error": error_detail}
+        heartbeat = self._parse_heartbeat_capabilities(response.text)
+        if not heartbeat:
+            _logger.warning("Hikvision get_http_host_capabilities: no usable <heartbeat min/max> advertised")
+            return {"status": "failed", "error": "heartbeat range not advertised"}
+        return {"status": "success", "heartbeat": heartbeat}
+
+    def _fetch_current_http_host_tree(self):
+        """Return the camera's current httpHosts/1 document as an Element.
+
+        Returns ``None`` (and logs a warning) when the document cannot be read or
+        parsed, so the caller falls back to building a fresh document.
+        """
+        url = f"http://{self.ip_address}:{self.port}/ISAPI/Event/notification/httpHosts/1"
+        try:
+            response = requests.get(url, auth=HTTPDigestAuth(self.username, self.password),
+                                    timeout=self.timeout)
+        except Exception as e:
+            _logger.warning("Hikvision set_http_host: could not read current config for merge: %s",
+                            e, exc_info=True)
+            return None
+        if response.status_code != 200:
+            _logger.warning("Hikvision set_http_host: current config GET returned HTTP %s; "
+                            "rebuilding the document from scratch.", response.status_code)
+            return None
+        try:
+            return ET.fromstring(response.text)
+        except ET.ParseError as e:
+            _logger.warning("Hikvision set_http_host: current config XML unparseable (%s); "
+                            "rebuilding the document from scratch.", e)
+            return None
 
     def add_plate_to_list(self, plate_entries):
         """
