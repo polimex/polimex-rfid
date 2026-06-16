@@ -53,7 +53,7 @@ class CctvCameraRfidRel(models.Model):
                 # Изграждаме request_data като редове с формат param=value
                 lines = [
                     "plateNum=" + plate_number,
-                    # "listType=" + str(list_type)
+                    "listType=" + str(list_type),
                 ]
                 if card_no:
                     lines.append("cardNo=" + card_no)

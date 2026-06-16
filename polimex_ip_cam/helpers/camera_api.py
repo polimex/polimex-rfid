@@ -3,6 +3,10 @@ import xml.etree.ElementTree as ET
 from requests.auth import HTTPDigestAuth
 import logging
 import base64
+import io
+import json
+
+import xlwt
 
 _logger = logging.getLogger(__name__)
 
@@ -19,6 +23,22 @@ ET.register_namespace("", ISAPI_VER20_NS)
 # (a value above the camera's max is rejected with "Invalid XML Content").
 DEFAULT_HEARTBEAT = 30
 FALLBACK_MAX_HEARTBEAT = 180
+
+# Plate white/black list management. Legacy cameras use /ISAPI/ITC/Entrance/VCL;
+# TCG/7-series firmware (e.g. DS-TCG406-E V5.4.4) dropped VCL and manage the
+# list via the LP-audit API on the Traffic channel below: an Excel .xls import
+# (licensePlateAuditData?fileType=xls, merge/upsert by plate) plus a JSON delete
+# (DelLicensePlateAuditData). The .xls layout and the "Belong to" wording were
+# confirmed against the live camera.
+LP_AUDIT_CHANNEL = 1
+LP_XLS_COLUMNS = [
+    "License Plate Number", "Belong to", "Card No.",
+    "Start Time For Entry", "End Time For Entry",
+]
+LP_BELONG_BY_LISTTYPE = {"0": "Allowlist", "1": "Blocklist"}
+# Permanent-validity window used when a plate carries no explicit start/end.
+LP_DEFAULT_START_TIME = "2000-01-01T00:00:00"
+LP_DEFAULT_END_TIME = "2099-12-31T23:59:59"
 
 
 def _ver20_tag(tag):
@@ -667,86 +687,179 @@ class HikvisionCamera(BaseCamera):
                             "rebuilding the document from scratch.", e)
             return None
 
+    def _uses_lp_audit_api(self):
+        """True when this camera manages the plate list via the newer LP-audit
+        API (Traffic channel) rather than the legacy VCL endpoint.
+
+        Detected once (and cached on the instance) by probing the VCL
+        capabilities: VCL-capable cameras answer HTTP 200; TCG/7-series
+        firmware that dropped VCL answer statusCode 4 "notSupport".
+        """
+        if getattr(self, "_lp_audit_api", None) is not None:
+            return self._lp_audit_api
+        url = f"http://{self.ip_address}:{self.port}/ISAPI/ITC/Entrance/VCL/capabilities"
+        try:
+            resp = requests.get(url, auth=HTTPDigestAuth(self.username, self.password),
+                                timeout=self.timeout)
+            # Cache only a conclusive answer.
+            self._lp_audit_api = resp.status_code != 200
+            return self._lp_audit_api
+        except Exception as e:
+            # Probe unreachable — assume the modern API (the deployed TCG
+            # cameras) for THIS call and let the actual operation surface the
+            # error, but do NOT cache so a transient blip can't pin the instance.
+            _logger.warning("Hikvision plate-list capability probe failed (%s); "
+                            "assuming LP-audit API for this operation.", e, exc_info=True)
+            return True
+
+    @staticmethod
+    def _build_lp_xls(plate_entries):
+        """Build the Excel .xls body the LP-audit import expects: one sheet with
+        the fixed 5-column layout. Returns the workbook as bytes.
+
+        Each entry maps listType '0'/'1' to the "Belong to" wording
+        Allowlist/Blocklist; a plate without an explicit validity window gets a
+        permanent default window (the camera requires a non-empty End Time).
+        """
+        wb = xlwt.Workbook()
+        ws = wb.add_sheet("sheet1")
+        for col, title in enumerate(LP_XLS_COLUMNS):
+            ws.write(0, col, title)
+        for row, entry in enumerate(plate_entries, start=1):
+            belong = LP_BELONG_BY_LISTTYPE.get(str(entry.get("listType", "0")), "Allowlist")
+            ws.write(row, 0, entry.get("plateNum", ""))
+            ws.write(row, 1, belong)
+            ws.write(row, 2, entry.get("cardNo", "") or "")
+            ws.write(row, 3, entry.get("startTime") or LP_DEFAULT_START_TIME)
+            ws.write(row, 4, entry.get("endTime") or LP_DEFAULT_END_TIME)
+        buf = io.BytesIO()
+        wb.save(buf)
+        return buf.getvalue()
+
     def add_plate_to_list(self, plate_entries):
+        """Add/update one or more plates on the camera's white/black list.
+
+        Routes to the camera's supported API: legacy VCL (SetVCLData) or, on
+        TCG/7-series firmware that dropped VCL, the LP-audit Excel import
+        (merge/upsert by plate). Entry dict keys: plateNum, listType ('0'
+        whitelist / '1' blacklist), optional cardNo, startTime, endTime.
         """
-        Добавя един или повече регистрационни номера към списъка на камерата.
+        if self._uses_lp_audit_api():
+            return self._lp_audit_add(plate_entries)
+        return self._vcl_add(plate_entries)
 
-        Параметър:
-          plate_entries: Списък от речници. Всеки речник трябва да съдържа:
-            - 'plateNum': (str) Регистрационният номер.
-            - 'listType': (str/int) Тип на списъка (например 0 за whitelist).
-            - Опционално: 'startTime' и 'endTime' във формат ISO 8601 (дефолт "0000-00-00T00:00:00Z").
-            - Опционално: 'cardNo': Допълнителен идентификатор (дефолт празен низ).
+    @staticmethod
+    def _lp_audit_success_count(body):
+        """Parse <successNum> from an LP-audit import response. Returns the int,
+        or None when the camera did not report a count (so the caller falls back
+        to the statusCode check). Tolerates the ver20 namespace or none."""
+        try:
+            root = ET.fromstring(body or "")
+        except ET.ParseError:
+            return None
+        txt = root.findtext(".//{%s}successNum" % ISAPI_VER20_NS)
+        if txt is None:
+            txt = root.findtext(".//successNum")
+        try:
+            return int(txt) if txt is not None else None
+        except (TypeError, ValueError):
+            return None
 
-        Изпраща PUT заявка към: /ISAPI/ITC/Entrance/VCL
+    def _lp_audit_add(self, plate_entries):
+        url = (f"http://{self.ip_address}:{self.port}"
+               f"/ISAPI/Traffic/channels/{LP_AUDIT_CHANNEL}/licensePlateAuditData?fileType=xls")
+        xls_body = self._build_lp_xls(plate_entries)
+        submitted = len(plate_entries)
+        try:
+            response = requests.put(url, auth=HTTPDigestAuth(self.username, self.password),
+                                    headers={"Content-Type": "application/vnd.ms-excel"},
+                                    data=xls_body, timeout=self.timeout)
+            body = response.text or ""
+            # statusCode==1 only means the .xls was accepted/parsed; successNum
+            # is how many rows were actually applied. A "200 + statusCode 1 +
+            # successNum=0/partial" must NOT be reported as success, or a plate
+            # the camera rejected would be marked done in Odoo.
+            applied = self._lp_audit_success_count(body)
+            if (response.status_code == 200 and "<statusCode>1</statusCode>" in body
+                    and (applied is None or applied >= submitted)):
+                _logger.debug("Hikvision LP-audit import OK (%s/%s applied): %s",
+                              applied if applied is not None else submitted, submitted,
+                              [e.get("plateNum") for e in plate_entries])
+                return {"status": "success", "response": body}
+            error_detail = self._extract_error(body)
+            _logger.error("Hikvision LP-audit import FAILED (HTTP %s, applied %s of %s). Error: %s",
+                          response.status_code, applied, submitted, error_detail)
+            return {"status": "failed", "error": error_detail}
+        except Exception as e:
+            _logger.error("Hikvision LP-audit import: Request error: %s", e, exc_info=True)
+            return {"status": "failed", "error": str(e)}
 
-        XML структурата:
-          <SetVCLData>
-            <VCLDataList>
-              <singleVCLData>
-                <id>0</id>
-                <runNum>0</runNum>
-                <listType>...</listType>
-                <plateNum>...</plateNum>
-                <cardNo>...</cardNo>
-                <startTime>...</startTime>
-                <endTime>...</endTime>
-              </singleVCLData>
-              ...
-            </VCLDataList>
-          </SetVCLData>
-        """
+    def _vcl_add(self, plate_entries):
         url = f"http://{self.ip_address}:{self.port}/ISAPI/ITC/Entrance/VCL"
         set_vcl_data = ET.Element("SetVCLData")
         vcl_data_list = ET.SubElement(set_vcl_data, "VCLDataList")
         for entry in plate_entries:
-            plate = entry.get('plateNum', '')
-            list_type = str(entry.get('listType', '0'))
-            startTime = entry.get('startTime', "0000-00-00T00:00:00Z")
-            endTime = entry.get('endTime', "0000-00-00T00:00:00Z")
-            cardNo = entry.get('cardNo', '')
             single_entry = ET.Element("singleVCLData")
             ET.SubElement(single_entry, "id").text = "0"
             ET.SubElement(single_entry, "runNum").text = "0"
-            ET.SubElement(single_entry, "listType").text = list_type
-            ET.SubElement(single_entry, "plateNum").text = plate
-            ET.SubElement(single_entry, "cardNo").text = cardNo
-            ET.SubElement(single_entry, "startTime").text = startTime
-            ET.SubElement(single_entry, "endTime").text = endTime
+            ET.SubElement(single_entry, "listType").text = str(entry.get('listType', '0'))
+            ET.SubElement(single_entry, "plateNum").text = entry.get('plateNum', '')
+            ET.SubElement(single_entry, "cardNo").text = entry.get('cardNo', '')
+            ET.SubElement(single_entry, "startTime").text = entry.get('startTime', "0000-00-00T00:00:00Z")
+            ET.SubElement(single_entry, "endTime").text = entry.get('endTime', "0000-00-00T00:00:00Z")
             vcl_data_list.append(single_entry)
         xml_body = ET.tostring(set_vcl_data, encoding="utf-8", method="xml")
         try:
             response = requests.put(url, auth=HTTPDigestAuth(self.username, self.password), data=xml_body,
                                     timeout=self.timeout)
             if response.status_code == 200:
-                _logger.debug("Hikvision add_plate_to_list: Plates added successfully: %s", plate_entries)
+                _logger.debug("Hikvision add_plate_to_list (VCL): added: %s", plate_entries)
                 return {"status": "success", "response": response.text}
-            else:
-                error_detail = self._extract_error(response.text)
-                _logger.error("Hikvision add_plate_to_list: FAILED with status %s. Error: %s", response.status_code,
-                              error_detail)
-                return {"status": "failed", "error": error_detail}
+            error_detail = self._extract_error(response.text)
+            _logger.error("Hikvision add_plate_to_list (VCL): FAILED with status %s. Error: %s",
+                          response.status_code, error_detail)
+            return {"status": "failed", "error": error_detail}
         except Exception as e:
-            _logger.error("Hikvision add_plate_to_list: Request error: %s", e)
+            _logger.error("Hikvision add_plate_to_list (VCL): Request error: %s", e, exc_info=True)
             return {"status": "failed", "error": str(e)}
 
     def delete_plate_from_list(self, plate_entries):
-        """
-        Изтрива един или повече регистрационни номера от списъка на камерата.
+        """Remove one or more plates. Routes to the LP-audit JSON delete
+        (DelLicensePlateAuditData) or the legacy VCL delete (VCLDelCond).
+        Entry dict requires 'plateNum'."""
+        if self._uses_lp_audit_api():
+            return self._lp_audit_delete(plate_entries)
+        return self._vcl_delete(plate_entries)
 
-        Параметър:
-          plate_entries: Списък от речници, където всеки трябва да съдържа:
-            - 'plateNum': (str) Регистрационният номер, който да бъде изтрит.
+    def _lp_audit_delete(self, plate_entries):
+        url = (f"http://{self.ip_address}:{self.port}"
+               f"/ISAPI/Traffic/channels/{LP_AUDIT_CHANNEL}/DelLicensePlateAuditData?format=json")
+        errors = []
+        for entry in plate_entries:
+            plate = entry.get('plateNum', '')
+            payload = {"deleteAllEnabled": False,
+                       "CompoundCond": {"plateColor": "", "licensePlate": plate}}
+            try:
+                response = requests.put(url, auth=HTTPDigestAuth(self.username, self.password),
+                                        headers={"Content-Type": "application/json"},
+                                        data=json.dumps(payload), timeout=self.timeout)
+                ok = False
+                if response.status_code == 200:
+                    try:
+                        ok = json.loads(response.text or "{}").get("statusCode") == 1
+                    except ValueError:
+                        ok = False
+                if not ok:
+                    errors.append("%s: HTTP %s %s" % (plate, response.status_code, (response.text or "")[:120]))
+            except Exception as e:
+                errors.append("%s: %s" % (plate, e))
+        if errors:
+            _logger.error("Hikvision LP-audit delete errors: %s", "; ".join(errors))
+            return {"status": "failed", "error": "; ".join(errors)}
+        _logger.debug("Hikvision LP-audit delete OK: %s", [e.get('plateNum') for e in plate_entries])
+        return {"status": "success", "response": "deleted %s plate(s)" % len(plate_entries)}
 
-        Изпраща DELETE заявка към: /ISAPI/ITC/Entrance/VCL
-
-        XML структурата включва няколко <VCLDelCond> елемента, всеки със следните полета:
-          - delVCLCond: Флаг за изтриване (стойност "1")
-          - plateNum: Регистрационният номер
-          - plateColor: Обикновено "0"
-          - plateType: Обикновено "0"
-          - cardNo: Повтаря регистрационния номер
-        """
+    def _vcl_delete(self, plate_entries):
         url = f"http://{self.ip_address}:{self.port}/ISAPI/ITC/Entrance/VCL"
         root = ET.Element("VCLDelConditions")
         for entry in plate_entries:
@@ -763,15 +876,14 @@ class HikvisionCamera(BaseCamera):
             response = requests.delete(url, auth=HTTPDigestAuth(self.username, self.password), data=xml_body,
                                        timeout=self.timeout)
             if response.status_code == 200:
-                _logger.debug("Hikvision delete_plate_from_list: Plates deleted successfully: %s", plate_entries)
+                _logger.debug("Hikvision delete_plate_from_list (VCL): deleted: %s", plate_entries)
                 return {"status": "success", "response": response.text}
-            else:
-                error_detail = self._extract_error(response.text)
-                _logger.error("Hikvision delete_plate_from_list: FAILED with status %s. Error: %s",
-                              response.status_code, error_detail)
-                return {"status": "failed", "error": error_detail}
+            error_detail = self._extract_error(response.text)
+            _logger.error("Hikvision delete_plate_from_list (VCL): FAILED with status %s. Error: %s",
+                          response.status_code, error_detail)
+            return {"status": "failed", "error": error_detail}
         except Exception as e:
-            _logger.error("Hikvision delete_plate_from_list: Request error: %s", e)
+            _logger.error("Hikvision delete_plate_from_list (VCL): Request error: %s", e, exc_info=True)
             return {"status": "failed", "error": str(e)}
 
     def barrier_gate_control(self, operation, gate_num):

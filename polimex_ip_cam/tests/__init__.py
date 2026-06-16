@@ -4,3 +4,4 @@ from . import test_anpr_ssrf
 from . import test_anpr_auth
 from . import test_http_host_config
 from . import test_anpr_identity_time
+from . import test_lp_audit_api
