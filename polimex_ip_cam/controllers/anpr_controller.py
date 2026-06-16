@@ -78,8 +78,16 @@ class IpcamController(Controller):
                 return False
         return True
 
-    @route(['/ipcam/anpr/event'], type='http', auth='public', methods=['POST'], csrf=False)
-    def receive_anpr_event(self, **kwargs):
+    @route(['/ipcam/anpr/event', '/ipcam/anpr/event/<camera_token>'],
+           type='http', auth='public', methods=['POST'], csrf=False)
+    def receive_anpr_event(self, camera_token=None, **kwargs):
+        # The camera posts to a URL that embeds its own identifier (sub-serial /
+        # deviceUUID), set by action_set_http_host. That token rides in EVERY
+        # request — including the heartbeat, whose body carries no UUID — and is
+        # stable behind NAT where the source and body IPs are not. It is the
+        # primary way to identify the camera; IP is only a legacy fallback.
+        token_camera = request.env['cctv.camera'].sudo().search(
+            [('sub_serial_number', '=', camera_token)], limit=1) if camera_token else request.env['cctv.camera'].sudo().browse()
         files = request.httprequest.files
         if not files:
             _logger.error("No files uploaded.")
@@ -120,41 +128,43 @@ class IpcamController(Controller):
             # and a trusted-source-IP fallback — see _resolve_anpr_camera.
             device_uuid = anpr_data.get('deviceUUID')
             src_ip = request.httprequest.remote_addr
-            camera_id = request.env['cctv.camera'].sudo()._resolve_anpr_camera(
+            # Prefer the URL token (NAT-proof); fall back to body deviceUUID / IP.
+            camera_id = token_camera or request.env['cctv.camera'].sudo()._resolve_anpr_camera(
                 device_uuid, src_ip, self._source_ip_verification_on())
             if not camera_id:
-                _logger.error("ANPR event (deviceUUID=%s) from %s matched no camera.",
-                              device_uuid, src_ip)
+                _logger.error("ANPR event (token=%s, deviceUUID=%s) from %s matched no camera.",
+                              camera_token, device_uuid, src_ip)
                 return request.not_found()
-            # SECURITY: authenticate the sender (the webhook is public).
-            if not self._verify_camera_source(camera_id):
+            # SECURITY: when the camera is identified by its URL token the token
+            # IS the authentication and works behind NAT, so the source-IP check
+            # (which fails behind NAT) is skipped. Without a token, fall back to
+            # verifying the request's source IP as before.
+            if not token_camera and not self._verify_camera_source(camera_id):
                 return request.not_found()
-            # SECURITY: never trust the IP reported in this unauthenticated
-            # event body. Overwriting the stored camera IP here let an
-            # attacker point the server's credentialed outbound calls
-            # (get_api -> HTTPDigestAuth) at an arbitrary host — SSRF plus
-            # theft of the camera admin credentials. The admin-configured
-            # ip_address is the only trusted endpoint; a mismatch is only
-            # logged for manual review, never auto-applied.
+            # The body-reported IP is never trusted for identification or for
+            # repointing outbound calls (SSRF guard). It frequently differs from
+            # the real address (stale camera config / NAT) — log at debug only;
+            # it does NOT affect processing of the event.
             reported_ip = anpr_data.get('ipAddress')
             if reported_ip and reported_ip != camera_id.ip_address:
-                _logger.warning(
-                    "ANPR event for camera %s reports IP %s but the "
-                    "configured IP is %s; ignoring it (possible DHCP "
-                    "change or spoofing attempt).",
+                _logger.debug(
+                    "ANPR event for camera %s carries body IP %s (stored %s); "
+                    "body IP is informational only, not used for identification.",
                     camera_id.name, reported_ip, camera_id.ip_address)
             camera_id.parse_event(files_data)
             _logger.info("ANPR event processed for camera %s.", camera_id.name)
         if 'heartBeat' in files_data:
             heartbeat_data = files_data["heartBeat"]
-            # SECURITY: identify the camera by the request's network source IP
-            # (trustworthy on an isolated camera LAN) rather than the body IP,
-            # so a forged heartbeat cannot trigger an outbound time-sync. Only
-            # when source verification is disabled do we fall back to the
-            # body-reported IP for identification.
+            # The heartbeat body carries NO device UUID — only an IP — so without
+            # the URL token it can only be matched by IP, which fails behind NAT.
+            # Prefer the URL token (NAT-proof); otherwise match by the request's
+            # network source IP, and only when source verification is disabled
+            # fall back to the body-reported IP.
             src_ip = request.httprequest.remote_addr
-            camera = request.env['cctv.camera'].sudo().search(
-                [('ip_address', '=', src_ip)], limit=1)
+            camera = token_camera
+            if not camera:
+                camera = request.env['cctv.camera'].sudo().search(
+                    [('ip_address', '=', src_ip)], limit=1)
             if not camera and not self._source_ip_verification_on():
                 camera = request.env['cctv.camera'].sudo().search(
                     [('ip_address', '=', heartbeat_data.get('ipAddress'))], limit=1)

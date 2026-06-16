@@ -413,7 +413,16 @@ class CctvCamera(models.Model):
 
                 # Приложете дефолтни стойности за липсващи ключове.
                 config.setdefault('id', '1')
-                config.setdefault('url', '/ipcam/anpr/event')
+                # Embed the camera's sub-serial (deviceUUID) in the callback URL
+                # so every notification — ANPR event AND heartbeat — carries the
+                # camera's identity in the path. The webhook then identifies the
+                # camera by this token, which is stable behind NAT (where the
+                # source/body IPs are not). Falls back to the plain path until a
+                # Check Connection has populated sub_serial_number.
+                default_url = '/ipcam/anpr/event'
+                if rec.sub_serial_number:
+                    default_url = '/ipcam/anpr/event/%s' % rec.sub_serial_number
+                config.setdefault('url', default_url)
                 config.setdefault('protocolType', 'HTTP')
                 config.setdefault('parameterFormatType', 'XML')
                 config.setdefault('addressingFormatType', 'ipaddress')
@@ -824,7 +833,16 @@ class CctvCamera(models.Model):
                 ipaddress = anpr_data.get('ipAddress', '')
                 macAddress = anpr_data.get('macAddress', '')
                 barrierGateCtrlType = event_info.get('barrierGateCtrlType', '9') #granted/denied
-                direction = anpr_data.get('direction', 'forward') # for use in R1 In or R2 Out
+                # Direction lives INSIDE the <ANPR> block (event_info), not at the
+                # top level — reading it from anpr_data always yielded the default
+                # 'forward'. The companion raw fields (detectDir / carDirectionType /
+                # relaLaneDirectionType) are recorded for diagnosis: firmware may
+                # encode the real travel direction in one of those rather than in
+                # <direction>.  R1 In (forward) vs R2 Out (reverse).
+                direction = event_info.get('direction', 'forward')
+                detect_dir = event_info.get('detectDir', '')
+                rela_lane_dir = event_info.get('relaLaneDirectionType', '')
+                car_dir_type = anpr_data.get('carDirectionType', '')
 
                 # A reader (and its door) is mandatory to record either event
                 # type. They are auto-created with the camera, but a manager can
@@ -855,7 +873,7 @@ class CctvCamera(models.Model):
                     # self.notify_by_discuss(self.message_partner_ids, msg, attachments)
                     ed = _('Plate number not found in database (%s), ', plate_number)
                     ed+= _('but exist in the camera memory. ') if barrierGateCtrlType == BARRIER_GATE_IN_LIST else _('nor in camera memory. ')
-                    ed+= _("Direction: %s, DetectType: %s, ActivePostCount: %s, EventState: %s, IPAddress: %s, MACAddress: %s, BarrierGateCtrlType: %s, Direction: %s.") % (direction, detectType, activePostCount, event_state, ipaddress, macAddress, barrierGateCtrlType, direction)
+                    ed+= _("Direction: %s (detectDir: %s, carDirectionType: %s, relaLaneDirectionType: %s), DetectType: %s, ActivePostCount: %s, EventState: %s, IPAddress: %s, MACAddress: %s, BarrierGateCtrlType: %s.") % (direction, detect_dir, car_dir_type, rela_lane_dir, detectType, activePostCount, event_state, ipaddress, macAddress, barrierGateCtrlType)
                     sys_event_vals= {
                         'timestamp': event_datetime,
                         'event_action': '39',
