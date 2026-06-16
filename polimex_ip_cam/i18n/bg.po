@@ -2306,8 +2306,8 @@ msgstr ""
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_command__request_data
 msgid ""
-"Data sent to the camera as part of the command, e.g. in param=value per "
-"line format."
+"Data sent to the camera as part of the command, e.g. in param=value per line"
+" format."
 msgstr ""
 "Данни, изпратени на камерата като част от командата, например във формат "
 "param=стойност на ред."
@@ -2995,22 +2995,6 @@ msgid "Get Snapshot"
 msgstr "Вземи снимка"
 
 #. module: polimex_ip_cam
-#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_rfid_rel__list_category__graylist
-#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
-msgid "Graylist"
-msgstr "Сив списък"
-
-#. module: polimex_ip_cam
-#: model:ir.actions.act_window,name:polimex_ip_cam.action_cctv_camera_graylist
-msgid "Graylist Cards"
-msgstr "Карти от сивия списък"
-
-#. module: polimex_ip_cam
-#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__rfid_graylist_count
-msgid "Graylist Count"
-msgstr "Брояч на сивия списък"
-
-#. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__greenwich
 msgid "Greenwich"
 msgstr "Гринуич"
@@ -3438,22 +3422,6 @@ msgstr "Брой съобщения с грешка при доставка"
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__command_type__other
 msgid "Other"
 msgstr "Друг"
-
-#. module: polimex_ip_cam
-#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_rfid_rel__list_category__otherlist
-#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
-msgid "Otherlist"
-msgstr "Друг списък"
-
-#. module: polimex_ip_cam
-#: model:ir.actions.act_window,name:polimex_ip_cam.action_cctv_camera_otherlist
-msgid "Otherlist Cards"
-msgstr "Карти в списък Други"
-
-#. module: polimex_ip_cam
-#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__rfid_otherlist_count
-msgid "Otherlist Count"
-msgstr "Брояч на списък Други"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__prc
@@ -3967,12 +3935,10 @@ msgstr "Снимката от камерата"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__tz
 msgid ""
-"The timezone of the camera. Used to display dates and times in the correct "
-"timezone.\n"
+"The timezone of the camera. Used to display dates and times in the correct timezone.\n"
 "The plates are sent to camera with data and time in this timezone."
 msgstr ""
-"Часовата зона на камерата. Използва се за показване на дати и часове в "
-"правилния часови пояс.\n"
+"Часовата зона на камерата. Използва се за показване на дати и часове в правилния часови пояс.\n"
 "Номерата се изпращат към камерата с данни и време в този часови пояс."
 
 #. module: polimex_ip_cam
@@ -4162,22 +4128,6 @@ msgstr "Карти в Бял списък"
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__rfid_whitelist_count
 msgid "Whitelist Count"
 msgstr "Брояч за Бял списък"
-
-#. module: polimex_ip_cam
-#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_rfid_rel__list_category__yellolist
-#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
-msgid "Yellolist"
-msgstr "Жълт списък"
-
-#. module: polimex_ip_cam
-#: model:ir.actions.act_window,name:polimex_ip_cam.action_cctv_camera_yellolist
-msgid "Yellolist Cards"
-msgstr "Карти в Жълт списък"
-
-#. module: polimex_ip_cam
-#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__rfid_yellolist_count
-msgid "Yellolist Count"
-msgstr "Брояч в Жълтия списък"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__zulu

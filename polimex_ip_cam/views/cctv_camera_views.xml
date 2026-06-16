@@ -29,51 +29,6 @@
         </field>
     </record>
 
-    <!-- Action for Graylist smart button -->
-    <record id="action_cctv_camera_graylist" model="ir.actions.act_window">
-        <field name="name">Graylist Cards</field>
-        <field name="res_model">cctv.camera.rfid.rel</field>
-        <field name="view_mode">list</field>
-        <field name="domain">[('camera_id','=',active_id), ('list_category','=','graylist')]</field>
-        <field name="context">{'default_camera_id': active_id, 'default_list_category': 'graylist'}</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">No plates on the graylist</p>
-            <p>
-                Graylisted plates are tagged as suspect — detections produce an event but the gate does not open automatically. Use the list to triage plates between whitelist and blacklist.
-            </p>
-        </field>
-    </record>
-
-    <!-- Action for Yellolist smart button -->
-    <record id="action_cctv_camera_yellolist" model="ir.actions.act_window">
-        <field name="name">Yellolist Cards</field>
-        <field name="res_model">cctv.camera.rfid.rel</field>
-        <field name="view_mode">list</field>
-        <field name="domain">[('camera_id','=',active_id), ('list_category','=','yellolist')]</field>
-        <field name="context">{'default_camera_id': active_id, 'default_list_category': 'yellolist'}</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">No plates on the yellow list</p>
-            <p>
-                Visitor / temporary plates with limited validity. Use this list for delivery vehicles, guest cars, or contractors that need access only for a short period.
-            </p>
-        </field>
-    </record>
-
-    <!-- Action for Otherlist smart button -->
-    <record id="action_cctv_camera_otherlist" model="ir.actions.act_window">
-        <field name="name">Otherlist Cards</field>
-        <field name="res_model">cctv.camera.rfid.rel</field>
-        <field name="view_mode">list</field>
-        <field name="domain">[('camera_id','=',active_id), ('list_category','=','otherlist')]</field>
-        <field name="context">{'default_camera_id': active_id, 'default_list_category': 'otherlist'}</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">No plates on the other list</p>
-            <p>
-                Catch-all category for plates that don't fit the standard lists (allow / deny / suspect / temporary). Useful for tagging plates pending classification.
-            </p>
-        </field>
-    </record>
-
     <!-- List View for CCTV Cameras -->
     <record id="view_cctv_camera_list" model="ir.ui.view">
         <field name="name">cctv.camera.list</field>
@@ -124,18 +79,6 @@
                         <button class="oe_stat_button" name="%(action_cctv_camera_blacklist)d" type="action"
                                 icon="fa-users" invisible="rfid_blacklist_count == 0">
                             <field string="Blacklist" name="rfid_blacklist_count" widget="statinfo"/>
-                        </button>
-                        <button class="oe_stat_button" name="%(action_cctv_camera_graylist)d" type="action"
-                                icon="fa-users" invisible="rfid_graylist_count == 0">
-                            <field string="Graylist" name="rfid_graylist_count" widget="statinfo"/>
-                        </button>
-                        <button class="oe_stat_button" name="%(action_cctv_camera_yellolist)d" type="action"
-                                icon="fa-users" invisible="rfid_yellolist_count == 0">
-                            <field string="Yellolist" name="rfid_yellolist_count" widget="statinfo"/>
-                        </button>
-                        <button class="oe_stat_button" name="%(action_cctv_camera_otherlist)d" type="action"
-                                icon="fa-users" invisible="rfid_otherlist_count == 0">
-                            <field string="Otherlist" name="rfid_otherlist_count" widget="statinfo"/>
                         </button>
                         <button class="oe_stat_button" name="action_show_reader" type="object"
                                 icon="fa-users" string="Readers" invisible="not reader_ids"/>

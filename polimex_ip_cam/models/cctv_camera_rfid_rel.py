@@ -4,6 +4,15 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
+# Mapping from the Odoo list_category to the numeric listType value the camera
+# API expects. Matches the Hikvision ISAPI standard: 0 = whitelist (allow),
+# 1 = blacklist (deny). Only these two buckets are supported by the hardware.
+LIST_TYPE_MAP = {
+    'whitelist': '0',
+    'blacklist': '1',
+}
+
+
 class CctvCameraRfidRel(models.Model):
     _name = 'cctv.camera.rfid.rel'
     _description = 'CCTV Camera - RFID Card Relation'
@@ -18,30 +27,20 @@ class CctvCameraRfidRel(models.Model):
     list_category = fields.Selection([
         ('whitelist', 'Whitelist'),
         ('blacklist', 'Blacklist'),
-        ('graylist', 'Graylist'),
-        ('yellolist', 'Yellolist'),
-        ('otherlist', 'Otherlist'),
-    ], string='List Category', required=True,
+    ], string='List Category', required=True, default='whitelist',
        help="The type of list this relation represents")
 
     def _hv_get_request_data(self):
         # This method is used to generate the request data for the Hikvision camera.
         # It should be overridden in subclasses if needed.
-        # Mapping from list_category to numeric value expected by camera API.
-        list_map = {
-            'whitelist': 0,
-            'blacklist': 1,
-            'graylist': 2,
-            'yellolist': 3,
-            'otherlist': 4,
-        }
         self.ensure_one()
         rec = self
         if rec.camera_id and rec.camera_id.brand == 'hikvision' and rec.card_id.card_type == self.env.ref(
                 'hr_rfid.hr_rfid_card_type_8'):
             plate_number = rec.card_id.number or ''
             if plate_number:
-                list_type = list_map.get(rec.list_category, 0)
+                # listType the camera expects: '0' whitelist, '1' blacklist.
+                list_type = LIST_TYPE_MAP.get(rec.list_category, '0')
                 # Използваме новите опционални полета:
                 other_card_ids = rec.card_id.get_owner().hr_rfid_card_ids.filtered(
                     lambda c: c.card_type != self.env.ref('hr_rfid.hr_rfid_card_type_8'))

@@ -161,21 +161,6 @@ class CctvCamera(models.Model):
         compute='_compute_list_counts', store=True,
         help="Live count of plates classified as Blacklist (auto-deny). Used by the smart button on the form.",
     )
-    rfid_graylist_count = fields.Integer(
-        string='Graylist Count',
-        compute='_compute_list_counts', store=True,
-        help="Live count of plates classified as Graylist (suspect — event raised but gate stays closed).",
-    )
-    rfid_yellolist_count = fields.Integer(
-        string='Yellolist Count',
-        compute='_compute_list_counts', store=True,
-        help="Live count of plates classified as Yellow list (temporary visitor / contractor).",
-    )
-    rfid_otherlist_count = fields.Integer(
-        string='Otherlist Count',
-        compute='_compute_list_counts', store=True,
-        help="Live count of plates classified as Other (catch-all for unclassified plates).",
-    )
 
     @api.depends('tz')
     def _compute_tz_offset(self):
@@ -192,9 +177,6 @@ class CctvCamera(models.Model):
         for rec in self:
             rec.rfid_whitelist_count = len(rec.rfid_rel_ids.filtered(lambda r: r.list_category == 'whitelist'))
             rec.rfid_blacklist_count = len(rec.rfid_rel_ids.filtered(lambda r: r.list_category == 'blacklist'))
-            rec.rfid_graylist_count = len(rec.rfid_rel_ids.filtered(lambda r: r.list_category == 'graylist'))
-            rec.rfid_yellolist_count = len(rec.rfid_rel_ids.filtered(lambda r: r.list_category == 'yellolist'))
-            rec.rfid_otherlist_count = len(rec.rfid_rel_ids.filtered(lambda r: r.list_category == 'otherlist'))
 
     @api.depends('model', 'name', 'brand')
     def _compute_display_name(self):
