@@ -873,7 +873,18 @@ class CctvCamera(models.Model):
                     # self.notify_by_discuss(self.message_partner_ids, msg, attachments)
                     ed = _('Plate number not found in database (%s), ', plate_number)
                     ed+= _('but exist in the camera memory. ') if barrierGateCtrlType == BARRIER_GATE_IN_LIST else _('nor in camera memory. ')
-                    ed+= _("Direction: %s (detectDir: %s, carDirectionType: %s, relaLaneDirectionType: %s), DetectType: %s, ActivePostCount: %s, EventState: %s, IPAddress: %s, MACAddress: %s, BarrierGateCtrlType: %s.") % (direction, detect_dir, car_dir_type, rela_lane_dir, detectType, activePostCount, event_state, ipaddress, macAddress, barrierGateCtrlType)
+                    # Raw camera telemetry appended for integrator diagnosis. This is
+                    # NOT user-facing copy: it is a verbatim Hikvision field dump, so
+                    # it is deliberately left out of the translatable corpus —
+                    # translating identifiers such as detectDir would be meaningless
+                    # and the field names must stay exactly as the camera reports them.
+                    ed+= (
+                        "Direction: %s (detectDir: %s, carDirectionType: %s, "
+                        "relaLaneDirectionType: %s), DetectType: %s, ActivePostCount: %s, "
+                        "EventState: %s, IPAddress: %s, MACAddress: %s, "
+                        "BarrierGateCtrlType: %s."
+                    ) % (direction, detect_dir, car_dir_type, rela_lane_dir, detectType,
+                         activePostCount, event_state, ipaddress, macAddress, barrierGateCtrlType)
                     sys_event_vals= {
                         'timestamp': event_datetime,
                         'event_action': '39',
