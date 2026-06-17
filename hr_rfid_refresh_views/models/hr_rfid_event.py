@@ -11,15 +11,21 @@ class HRRFIDEvent(models.AbstractModel):
     _refresh_on_create = True   # Refresh when new RFID events occur (real-time monitoring)
     _refresh_on_write = False   # Don't refresh on event edits (events rarely change)
 
+    # Order matters: the card is the authoritative owner of a user event; the
+    # webstack owns a controller event; the door is the fallback that also
+    # carries the company of camera-originated events (its company_id is
+    # computed from the bound camera in polimex_ip_cam).
+    _company_source_fields = ('card_id', 'webstack_id', 'door_id')
+
     def get_company_id(self):
-        # check if model have field employee_id, contact_id, webstack_id
-        # if 'employee_id' in self._fields:
-        #     return self.employee_id.company_id.id
-        # if 'contact_id' in self._fields:
-        #     return self.contact_id.company_id.id
-        if 'card_id' in self._fields:
-            return self.card_id.company_id
-        if 'webstack_id' in self._fields:
-            return self.webstack_id.company_id
-        if 'door_id' in self._fields:
-            return self.door_id.company_id
+        # Return the company from the first source that is actually populated.
+        # A source field can exist in the schema yet be empty on the record
+        # (e.g. webstack_id on a camera system event); short-circuiting on the
+        # mere presence of the field would return an empty company and silently
+        # skip the realtime refresh, so fall through empty sources instead.
+        for field_name in self._company_source_fields:
+            if field_name in self._fields:
+                company = self[field_name].company_id
+                if company:
+                    return company
+        return False

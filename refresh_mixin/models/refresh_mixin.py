@@ -61,10 +61,17 @@ class RefreshMixin(models.AbstractModel):
         Args:
             operation (str): 'create' or 'write'
         """
-        # Check if model has company_id field
+        # Resolve the company that owns these records. An empty result is
+        # expected control flow — a global record, or an event whose
+        # company-bearing relations are all empty — for which the realtime
+        # refresh is simply skipped. That is not an operator-actionable
+        # problem, so it is logged at debug (silent by default) rather than
+        # flooding the log with a WARNING on every such create/write.
         company_id = self.get_company_id()
         if not company_id:
-            _logger.warning('Model %s does not have company_id field', self._name)
+            _logger.debug(
+                'No company resolved for %s %s; skipping realtime refresh',
+                self._name, self.ids)
             return
 
         # Check if company has realtime refresh enabled
@@ -79,13 +86,18 @@ class RefreshMixin(models.AbstractModel):
             'operation': operation,
         }
 
-        # Add extra payload data from model (e.g., alert info)
+        # Add extra payload data from model (e.g., alert info). A faulty
+        # override must not block the core refresh, but the traceback has to
+        # survive — otherwise a broken _get_refresh_payload_extra() silently
+        # drops its enrichment (is_alert/priority/...) with no way to diagnose.
         try:
             extra = self._get_refresh_payload_extra()
             if extra:
                 payload.update(extra)
-        except Exception as e:
-            _logger.warning('Error getting extra payload for %s: %s', self._name, e)
+        except Exception:
+            _logger.warning(
+                'Error building extra refresh payload for %s %s; '
+                'sending base payload only', self._name, self.ids, exc_info=True)
 
         # Send bus notification
         channel = f'polimex.{self._name}'

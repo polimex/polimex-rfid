@@ -1,3 +1,4 @@
+import logging
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -66,6 +67,17 @@ class TestRefreshMixin(common.TransactionCase):
         with self._patch_bus() as mock_send:
             Mixin.send_notice.__func__(stub, "write")
         self.assertEqual(mock_send.call_count, 0)
+
+    def test_unresolvable_company_does_not_warn(self):
+        # A record whose company cannot be resolved is expected control flow
+        # (global record, camera event with no populated relations, ...): the
+        # refresh is skipped silently. It must NOT be logged at WARNING — that
+        # floods the operator log on a normal create/write path.
+        stub, Mixin = self._make_stub(has_company=False)
+        logger = logging.getLogger(
+            "odoo.addons.refresh_mixin.models.refresh_mixin")
+        with self._patch_bus(), self.assertNoLogs(logger, level="WARNING"):
+            Mixin.send_notice.__func__(stub, "write")
 
     def test_extra_payload_is_merged(self):
         stub, Mixin = self._make_stub(
