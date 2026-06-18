@@ -10,11 +10,15 @@ import json
 
 _logger = logging.getLogger(__name__)
 
-# Hikvision ISAPI ANPR `barrierGateCtrlType`. ASSUMED mapping from the module's
-# observed behaviour: '1' = the plate was in the camera's local allow-list and
-# the barrier opened (access granted); any other value = not in list / denied.
-# NOT confirmed against an authoritative ISAPI spec — verify before relying on
-# the granted/denied audit semantics (see docs/SECURITY_AUDIT_2026-06.md, H5).
+# Hikvision ISAPI ANPR `barrierGateCtrlType`. '1' = the camera drove the barrier
+# open for an in-list plate. This is NOT a reliable allow/deny signal: on
+# installations where the camera does not control the barrier the field is
+# always '0', even for recognised whitelist plates (confirmed in production on
+# DS-TCG406-E V5.4.4 — the push omits the list-match result entirely, listType
+# arrives empty). The granted/denied decision for user events is therefore taken
+# from this camera's own plate lists in Odoo (cctv.camera.rfid.rel), NOT from
+# this field. The constant is kept only as a descriptive hint in the
+# unknown-plate system-event text (see docs/SECURITY_AUDIT_2026-06.md, H5).
 BARRIER_GATE_IN_LIST = '1'
 
 # put POSIX 'Etc/*' entries at the end to avoid confusing users - see bug 1086728
@@ -898,15 +902,32 @@ class CctvCamera(models.Model):
                     }
                     new_sys_event = self.env['hr.rfid.event.system'].sudo().create([sys_event_vals])
                 else: # Make User event
-                    # създаване на събитие
+                    # The camera push does NOT report the allow/deny result of
+                    # its local plate-list match (barrierGateCtrlType reflects
+                    # physical barrier control and is '0' when the camera does
+                    # not drive a barrier — see BARRIER_GATE_IN_LIST note above).
+                    # Decide granted/denied from THIS camera's plate lists in
+                    # Odoo instead: a plate whose card is on the camera whitelist
+                    # is granted; blacklist — or no relation for this camera —
+                    # is denied. card_id is a search result that may hold more
+                    # than one card for the same plate number, so collapse to a
+                    # single record before use. There is no unique constraint on
+                    # (camera, card), so a card may carry several relations;
+                    # fail safe — any blacklist relation denies, even if a
+                    # whitelist one also exists.
+                    card = card_id[:1]
+                    rels = self.rfid_rel_ids.filtered(
+                        lambda r: r.card_id.id == card.id)
+                    access_granted = bool(rels) and all(
+                        r.list_category == 'whitelist' for r in rels)
                     event_vals = {
                         'event_time': event_datetime,
-                        'event_action': '1' if barrierGateCtrlType == BARRIER_GATE_IN_LIST else '2',
+                        'event_action': '1' if access_granted else '2',
                         'license_plate': plate_number,
                         'more_json': str(event_info),
                         'camera_id': self.id,
                         'reader_id': reader_in.id if direction == 'forward' else reader_out.id,
-                        'card_id': card_id.id if card_id else False,
+                        'card_id': card.id if card else False,
                         'anpr_confidence': confidenceLevel,
                         'snapshot': snapshot_b64
                     }

@@ -6,4 +6,5 @@ from . import test_http_host_config
 from . import test_anpr_identity_time
 from . import test_lp_audit_api
 from . import test_anpr_direction
+from . import test_anpr_access_decision
 from . import test_refresh_company

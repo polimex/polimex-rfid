@@ -23,7 +23,7 @@ Key features include:
 
 - **Camera Management:** Store and update camera details (IP, port, credentials, brand, etc.), check connection status, and retrieve snapshots. Connection check also records the model, serial number and the short *sub-serial* (the identifier the camera reports as ``deviceUUID`` in ANPR events).
 - **HTTP Host Configuration:** Configure and read the camera's HTTP host (event-notification) settings. The ``SubscribeEvent`` heartbeat is **clamped to the camera's advertised range** (read from the device capabilities) so an out-of-range value can no longer be rejected with *"Invalid XML Content"*; the host document is updated read-modify-write so fields the module does not manage (e.g. ``checkResponseEnabled``) are preserved.
-- **Plate List Management:** Add and remove license plates in the camera's two hardware lists — **Whitelist** (allow) and **Blacklist** (deny). The transport is **capability-detected**: legacy cameras use ``/ISAPI/ITC/Entrance/VCL``; TCG/7-series firmware that dropped VCL uses the LP-audit API (Excel import + JSON delete). See *Hikvision ISAPI Compatibility* below.
+- **Plate List Management:** Add and remove license plates in the camera's two hardware lists — **Whitelist** (allow) and **Blacklist** (deny). The transport is **capability-detected**: legacy cameras use ``/ISAPI/ITC/Entrance/VCL``; TCG/7-series firmware that dropped VCL uses the LP-audit API (JSON record upsert + JSON delete). See *Hikvision ISAPI Compatibility* below.
 - **ANPR Event Handling:** The public webhook records plate detections as RFID events. Cameras are identified by their stored sub-serial (``deviceUUID``) with a trusted source-IP fallback that learns the sub-serial on first contact; the request source IP (honoured via ``proxy_mode`` behind a reverse proxy) is the authentication anchor.
 - **Clock Sync:** Heartbeats drive an automatic time-sync; the camera time zone is sent using Hikvision's POSIX/inverted sign convention to avoid an endless ``set_time`` loop.
 - **RFID & ANPR Integration:** Link HR RFID cards (whose number is the license plate) to cameras; creating/removing a relation queues the matching add/remove command automatically.
@@ -42,8 +42,7 @@ Installation
 
    - Odoo 19.0
    - HR RFID module
-   - Python packages: ``defusedxml`` and ``xlwt`` (both ship with Odoo's own
-     ``requirements.txt``; ``xlwt`` is used to build the LP-audit Excel import).
+   - Python package: ``defusedxml`` (ships with Odoo's own ``requirements.txt``).
 
 2. **Setup:**
 
@@ -113,15 +112,15 @@ V5.4.4)**.
 **Current — LP-audit** (``/ISAPI/Traffic/channels/<n>/...``, TCG / 7-series
 firmware that returns *notSupport* for VCL):
 
-- Read: ``POST searchLPListAudit`` (XML ``<LPListAuditSearchDescription>``).
-- Add / update: ``PUT licensePlateAuditData?fileType=xls`` with an **Excel
-  .xls** body (columns: *License Plate Number, Belong to (Allowlist/Blocklist),
-  Card No., Start Time For Entry, End Time For Entry*). The import is a
-  merge/upsert by plate; the response ``<successNum>`` is checked against the
-  number of submitted rows — a ``statusCode 1`` with ``successNum`` short of the
-  batch is treated as a failure (the camera accepted the file but applied
-  nothing/part). The XML variant (``fileType=xml``) is broken on V5.4.4 and is
-  not used.
+- Read: ``POST searchLPListAudit`` (XML ``<LPListAuditSearchDescription>``)
+  returns the plates currently stored on the camera, paged.
+- Add / update: ``PUT licensePlateAuditData/record?format=json`` with a JSON
+  body ``{"LicensePlateInfoList": [{...}]}``. Each record carries
+  ``LicensePlate``, ``listType`` (``allowList``/``blockList``), ``cardNo`` /
+  ``cardID``, a ``createTime`` (validity start) / ``effectiveTime`` (validity
+  end) window and ``operationType``/``operation``. The upsert merges by plate;
+  success is HTTP 200 with ``statusCode 1`` — any other status is a failure, so
+  a plate the camera rejected is not marked done in Odoo.
 - Delete: ``PUT DelLicensePlateAuditData?format=json`` with
   ``{"deleteAllEnabled": false, "CompoundCond": {"plateColor": "", "licensePlate": "<plate>"}}``.
 

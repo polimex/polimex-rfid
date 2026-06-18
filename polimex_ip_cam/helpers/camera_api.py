@@ -3,10 +3,7 @@ import xml.etree.ElementTree as ET
 from requests.auth import HTTPDigestAuth
 import logging
 import base64
-import io
 import json
-
-import xlwt
 
 _logger = logging.getLogger(__name__)
 
@@ -25,18 +22,22 @@ DEFAULT_HEARTBEAT = 30
 FALLBACK_MAX_HEARTBEAT = 180
 
 # Plate white/black list management. Legacy cameras use /ISAPI/ITC/Entrance/VCL;
-# TCG/7-series firmware (e.g. DS-TCG406-E V5.4.4) dropped VCL and manage the
-# list via the LP-audit API on the Traffic channel below: an Excel .xls import
-# (licensePlateAuditData?fileType=xls, merge/upsert by plate) plus a JSON delete
-# (DelLicensePlateAuditData). The .xls layout and the "Belong to" wording were
-# confirmed against the live camera.
+# TCG/7-series firmware (e.g. DS-TCG406-E V5.4.4 / V5.5.0) dropped VCL and manage
+# the list via the LP-audit API on the Traffic channel below: a JSON record
+# upsert (licensePlateAuditData/record?format=json) plus a JSON delete
+# (DelLicensePlateAuditData). The JSON record body and field set were confirmed
+# against a live camera's web-UI traffic (V5.5.0.100228).
 LP_AUDIT_CHANNEL = 1
-LP_XLS_COLUMNS = [
-    "License Plate Number", "Belong to", "Card No.",
-    "Start Time For Entry", "End Time For Entry",
-]
-LP_BELONG_BY_LISTTYPE = {"0": "Allowlist", "1": "Blocklist"}
+# Odoo numeric listType ('0'/'1') -> the camera's JSON record listType wording.
+# NB: the WRITE path (record upsert) uses 'allowList'/'blockList', but the READ
+# path (searchLPListAudit) reports the bucket in a <type> element with DIFFERENT
+# wording: 'whiteList'/'blackList' (camelCase). Keep both mappings so a reconcile
+# can line the device state up against the Odoo list_category.
+LP_RECORD_LISTTYPE = {"0": "allowList", "1": "blockList"}
+LP_READ_TYPE_TO_CATEGORY = {"whiteList": "whitelist", "blackList": "blacklist"}
 # Permanent-validity window used when a plate carries no explicit start/end.
+# In the JSON record these map to createTime (start) and effectiveTime (end);
+# the camera requires a non-empty effectiveTime.
 LP_DEFAULT_START_TIME = "2000-01-01T00:00:00"
 LP_DEFAULT_END_TIME = "2099-12-31T23:59:59"
 
@@ -712,86 +713,80 @@ class HikvisionCamera(BaseCamera):
                             "assuming LP-audit API for this operation.", e, exc_info=True)
             return True
 
-    @staticmethod
-    def _build_lp_xls(plate_entries):
-        """Build the Excel .xls body the LP-audit import expects: one sheet with
-        the fixed 5-column layout. Returns the workbook as bytes.
-
-        Each entry maps listType '0'/'1' to the "Belong to" wording
-        Allowlist/Blocklist; a plate without an explicit validity window gets a
-        permanent default window (the camera requires a non-empty End Time).
-        """
-        wb = xlwt.Workbook()
-        ws = wb.add_sheet("sheet1")
-        for col, title in enumerate(LP_XLS_COLUMNS):
-            ws.write(0, col, title)
-        for row, entry in enumerate(plate_entries, start=1):
-            belong = LP_BELONG_BY_LISTTYPE.get(str(entry.get("listType", "0")), "Allowlist")
-            ws.write(row, 0, entry.get("plateNum", ""))
-            ws.write(row, 1, belong)
-            ws.write(row, 2, entry.get("cardNo", "") or "")
-            ws.write(row, 3, entry.get("startTime") or LP_DEFAULT_START_TIME)
-            ws.write(row, 4, entry.get("endTime") or LP_DEFAULT_END_TIME)
-        buf = io.BytesIO()
-        wb.save(buf)
-        return buf.getvalue()
-
     def add_plate_to_list(self, plate_entries):
         """Add/update one or more plates on the camera's white/black list.
 
         Routes to the camera's supported API: legacy VCL (SetVCLData) or, on
-        TCG/7-series firmware that dropped VCL, the LP-audit Excel import
-        (merge/upsert by plate). Entry dict keys: plateNum, listType ('0'
-        whitelist / '1' blacklist), optional cardNo, startTime, endTime.
+        TCG/7-series firmware that dropped VCL, the LP-audit JSON record upsert.
+        Entry dict keys: plateNum, listType ('0' whitelist / '1' blacklist),
+        optional cardNo, startTime, endTime.
         """
         if self._uses_lp_audit_api():
             return self._lp_audit_add(plate_entries)
         return self._vcl_add(plate_entries)
 
     @staticmethod
-    def _lp_audit_success_count(body):
-        """Parse <successNum> from an LP-audit import response. Returns the int,
-        or None when the camera did not report a count (so the caller falls back
-        to the statusCode check). Tolerates the ver20 namespace or none."""
+    def _lp_record_info(entry):
+        """Build one LicensePlateInfoList element for the JSON record upsert,
+        mirroring the field set the camera web UI sends. Optional fields are
+        passed as empty strings (the firmware rejects a record with keys
+        omitted); the validity window maps to createTime (start) /
+        effectiveTime (end), defaulting to a permanent window."""
+        plate = entry.get("plateNum", "")
+        card_no = entry.get("cardNo", "") or ""
+        return {
+            "id": plate,
+            "LicensePlate": plate,
+            "listType": LP_RECORD_LISTTYPE.get(str(entry.get("listType", "0")), "allowList"),
+            "cardNo": card_no,
+            "cardID": card_no,
+            "plateType": "",
+            "plateColor": "",
+            "plateDescription": "",
+            "remoteControllerCode": "",
+            "plateNoSub": "",
+            "CRIndex": "",
+            "area": "",
+            "name": "",
+            "certificateType": "",
+            "certificateNumber": "",
+            "operationType": "add",
+            "virtualParkingNum": "",
+            "groupName": "",
+            "createTime": entry.get("startTime") or LP_DEFAULT_START_TIME,
+            "effectiveTime": entry.get("endTime") or LP_DEFAULT_END_TIME,
+            "operation": "new",
+        }
+
+    @staticmethod
+    def _lp_audit_json_ok(response):
+        """An LP-audit JSON endpoint reports success as HTTP 200 + statusCode 1.
+        Returns True only when both hold."""
+        if response.status_code != 200:
+            return False
         try:
-            root = ET.fromstring(body or "")
-        except ET.ParseError:
-            return None
-        txt = root.findtext(".//{%s}successNum" % ISAPI_VER20_NS)
-        if txt is None:
-            txt = root.findtext(".//successNum")
-        try:
-            return int(txt) if txt is not None else None
-        except (TypeError, ValueError):
-            return None
+            return json.loads(response.text or "{}").get("statusCode") == 1
+        except ValueError:
+            return False
 
     def _lp_audit_add(self, plate_entries):
         url = (f"http://{self.ip_address}:{self.port}"
-               f"/ISAPI/Traffic/channels/{LP_AUDIT_CHANNEL}/licensePlateAuditData?fileType=xls")
-        xls_body = self._build_lp_xls(plate_entries)
-        submitted = len(plate_entries)
+               f"/ISAPI/Traffic/channels/{LP_AUDIT_CHANNEL}/licensePlateAuditData/record?format=json")
+        payload = {"LicensePlateInfoList": [self._lp_record_info(e) for e in plate_entries]}
         try:
             response = requests.put(url, auth=HTTPDigestAuth(self.username, self.password),
-                                    headers={"Content-Type": "application/vnd.ms-excel"},
-                                    data=xls_body, timeout=self.timeout)
-            body = response.text or ""
-            # statusCode==1 only means the .xls was accepted/parsed; successNum
-            # is how many rows were actually applied. A "200 + statusCode 1 +
-            # successNum=0/partial" must NOT be reported as success, or a plate
-            # the camera rejected would be marked done in Odoo.
-            applied = self._lp_audit_success_count(body)
-            if (response.status_code == 200 and "<statusCode>1</statusCode>" in body
-                    and (applied is None or applied >= submitted)):
-                _logger.debug("Hikvision LP-audit import OK (%s/%s applied): %s",
-                              applied if applied is not None else submitted, submitted,
+                                    headers={"Content-Type": "application/json"},
+                                    data=json.dumps(payload), timeout=self.timeout)
+            if self._lp_audit_json_ok(response):
+                _logger.debug("Hikvision LP-audit record upsert OK: %s",
                               [e.get("plateNum") for e in plate_entries])
-                return {"status": "success", "response": body}
-            error_detail = self._extract_error(body)
-            _logger.error("Hikvision LP-audit import FAILED (HTTP %s, applied %s of %s). Error: %s",
-                          response.status_code, applied, submitted, error_detail)
+                return {"status": "success", "response": response.text}
+            error_detail = self._extract_error(response.text)
+            _logger.error("Hikvision LP-audit record upsert FAILED (HTTP %s). Error: %s",
+                          response.status_code, error_detail)
             return {"status": "failed", "error": error_detail}
         except Exception as e:
-            _logger.error("Hikvision LP-audit import: Request error: %s", e, exc_info=True)
+            _logger.error("Hikvision LP-audit record upsert: Request error: %s", e, exc_info=True)
             return {"status": "failed", "error": str(e)}
 
     def _vcl_add(self, plate_entries):
@@ -843,13 +838,7 @@ class HikvisionCamera(BaseCamera):
                 response = requests.put(url, auth=HTTPDigestAuth(self.username, self.password),
                                         headers={"Content-Type": "application/json"},
                                         data=json.dumps(payload), timeout=self.timeout)
-                ok = False
-                if response.status_code == 200:
-                    try:
-                        ok = json.loads(response.text or "{}").get("statusCode") == 1
-                    except ValueError:
-                        ok = False
-                if not ok:
+                if not self._lp_audit_json_ok(response):
                     errors.append("%s: HTTP %s %s" % (plate, response.status_code, (response.text or "")[:120]))
             except Exception as e:
                 errors.append("%s: %s" % (plate, e))
@@ -885,6 +874,83 @@ class HikvisionCamera(BaseCamera):
         except Exception as e:
             _logger.error("Hikvision delete_plate_from_list (VCL): Request error: %s", e, exc_info=True)
             return {"status": "failed", "error": str(e)}
+
+    def search_lp_audit(self, max_results=50, position=0, search_id="0"):
+        """Read the plates currently stored on the camera's LP-audit list.
+
+        POSTs the LP-audit search (the only read available on TCG/7-series
+        firmware that dropped VCL). One page is returned per call; the caller
+        pages by advancing ``position`` until it has read ``total`` records.
+        Returns a dict with the raw response body, ``records`` (one dict per
+        plate: plate, type, list_category, card_no, effective_time,
+        create_time), a convenience ``plates`` list of plate strings, and
+        ``total`` (the camera's totalMatches). Used for reconciling the Odoo
+        whitelist against what is actually loaded on the device.
+        """
+        url = (f"http://{self.ip_address}:{self.port}"
+               f"/ISAPI/Traffic/channels/{LP_AUDIT_CHANNEL}/searchLPListAudit")
+        body = ("<LPListAuditSearchDescription>"
+                f"<maxResults>{int(max_results)}</maxResults>"
+                f"<searchResultPosition>{int(position)}</searchResultPosition>"
+                f"<searchID>{search_id}</searchID>"
+                "</LPListAuditSearchDescription>")
+        try:
+            response = requests.post(url, auth=HTTPDigestAuth(self.username, self.password),
+                                     headers={"Content-Type": "application/xml"},
+                                     data=body, timeout=self.timeout)
+            if response.status_code != 200:
+                error_detail = self._extract_error(response.text)
+                _logger.error("Hikvision searchLPListAudit FAILED (HTTP %s). Error: %s",
+                              response.status_code, error_detail)
+                return {"status": "failed", "error": error_detail}
+            records, total = self._parse_lp_search(response.text)
+            _logger.debug("Hikvision searchLPListAudit OK: %s/%s plate(s) at position %s",
+                          len(records), total, position)
+            return {"status": "success", "response": response.text, "records": records,
+                    "plates": [r["plate"] for r in records], "total": total}
+        except Exception as e:
+            _logger.error("Hikvision searchLPListAudit: Request error: %s", e, exc_info=True)
+            return {"status": "failed", "error": str(e)}
+
+    @staticmethod
+    def _parse_lp_search(body):
+        """Parse an LP-audit search response into (records, total_matches).
+
+        The camera answers with the ver20 namespace (or none), so element
+        lookups match on the local tag name. Each LicensePlateInfo becomes a
+        dict; the bucket <type> ('whiteList'/'blackList') is also mapped to the
+        Odoo list_category for direct comparison. Returns ([], 0) on an
+        unparseable body.
+        """
+        try:
+            root = ET.fromstring(body or "")
+        except ET.ParseError:
+            return [], 0
+
+        def _local(elem, tag):
+            return next((c.text for c in elem
+                         if c.tag.rsplit("}", 1)[-1] == tag and c.text), None)
+
+        records = []
+        total = 0
+        for elem in root.iter():
+            local = elem.tag.rsplit("}", 1)[-1]
+            if local == "totalMatches" and elem.text:
+                total = int(elem.text)
+            elif local == "LicensePlateInfo":
+                plate = _local(elem, "LicensePlate")
+                if not plate:
+                    continue
+                cam_type = _local(elem, "type")
+                records.append({
+                    "plate": plate,
+                    "type": cam_type,
+                    "list_category": LP_READ_TYPE_TO_CATEGORY.get(cam_type),
+                    "card_no": _local(elem, "cardNo"),
+                    "effective_time": _local(elem, "effectiveTime"),
+                    "create_time": _local(elem, "createTime"),
+                })
+        return records, total
 
     def barrier_gate_control(self, operation, gate_num):
         """

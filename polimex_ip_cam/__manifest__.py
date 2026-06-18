@@ -1,6 +1,6 @@
 {
     'name': "IP Camera Management",
-    'version': '19.0.1.7.1',
+    'version': '19.0.1.8.0',
     'summary': "Module for managing IP cameras via manufacturers integration integration",
     'author': "Polimex Dev Team",
     'website': "https://polimex.co",
@@ -8,7 +8,7 @@
     'category': 'Hidden/Tools',
     'depends': ['hr_rfid'],
     'external_dependencies': {
-        'python': ['defusedxml', 'xlwt'],
+        'python': ['defusedxml'],
     },
 
     'data': [
