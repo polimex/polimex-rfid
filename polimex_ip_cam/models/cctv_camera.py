@@ -79,8 +79,12 @@ class CctvCamera(models.Model):
     brand = fields.Selection([
         ('hikvision', 'Hikvision'),
         ('dahua', 'Dahua'),
+        ('onvif_generic', 'ONVIF (generic)'),
     ], string='Brand', required=True, default='hikvision', tracking=True,
-        help="Camera brand")
+        help="Camera brand. 'ONVIF (generic)' is set by network discovery for a "
+             "non-Hikvision device that answered ONVIF — it supports the standard "
+             "ONVIF surface (video, device info) but not the Hikvision-specific "
+             "ANPR/plate-list features.")
     model = fields.Char(string='Model', tracking=True,
                         help="Camera model (obtained via ISAPI)", readonly=True)
     serial_number = fields.Char(string='Serial Number', tracking=True,

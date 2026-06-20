@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-17 09:34+0000\n"
-"PO-Revision-Date: 2026-06-17 12:41\n"
+"POT-Creation-Date: 2026-06-19 13:15+0000\n"
+"PO-Revision-Date: 2026-06-19 16:16\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: it\n"
@@ -61,6 +61,11 @@ msgid "Action Needed"
 msgstr "Azione Richiesta"
 
 #. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__activated
+msgid "Activated"
+msgstr "Attivata"
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__active
 msgid "Active"
 msgstr "Attivo"
@@ -88,6 +93,11 @@ msgstr "Stato Attività"
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__activity_type_icon
 msgid "Activity Type Icon"
 msgstr "Icona Tipo Attività"
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_discovery_form
+msgid "Add Cameras"
+msgstr "Aggiungi telecamere"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__command_type__add_plate
@@ -123,6 +133,11 @@ msgstr ""
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__description
 msgid "Additional camera information"
 msgstr "Informazioni aggiuntive sulla telecamera"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__ip_address
+msgid "Address the camera reported on the local segment."
+msgstr "Indirizzo con cui la telecamera è stata rilevata nel segmento locale."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/abidjan
@@ -2043,6 +2058,7 @@ msgstr ""
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__brand
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__brand
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_filter
 msgid "Brand"
 msgstr "Marca"
@@ -2140,6 +2156,11 @@ msgid "Camera Count"
 msgstr "Conteggio Telecamere"
 
 #. module: polimex_ip_cam
+#: model:ir.model,name:polimex_ip_cam.model_cctv_camera_discovery
+msgid "Camera Discovery"
+msgstr "Rilevamento telecamere"
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__ip_address
 msgid "Camera IP address"
 msgstr "Indirizzo IP Telecamera"
@@ -2164,6 +2185,11 @@ msgid "Camera Manager"
 msgstr "Gestore Telecamere"
 
 #. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__name
+msgid "Camera Name"
+msgstr "Nome telecamera"
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_card__camera_rel_ids
 msgid "Camera Relations"
 msgstr "Relazioni Telecamera"
@@ -2186,8 +2212,16 @@ msgstr "Nome utente di accesso telecamera"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__brand
-msgid "Camera brand"
-msgstr "Marca telecamera"
+msgid ""
+"Camera brand. 'ONVIF (generic)' is set by network discovery for a non-"
+"Hikvision device that answered ONVIF — it supports the standard ONVIF "
+"surface (video, device info) but not the Hikvision-specific ANPR/plate-list "
+"features."
+msgstr ""
+"Marca della telecamera. 'ONVIF (generico)' viene impostato dal rilevamento "
+"di rete per un dispositivo non Hikvision che ha risposto a ONVIF — supporta "
+"le funzionalità ONVIF standard (video, informazioni dispositivo) ma non le "
+"funzioni specifiche Hikvision di ANPR e lista targhe."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__entrance_setup
@@ -2267,6 +2301,28 @@ msgid "Cameras for Card"
 msgstr "Telecamere per Tessera"
 
 #. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery__found_camera_ids
+msgid ""
+"Cameras found on the local network. Remove the ones you do not want, then "
+"click Add Cameras."
+msgstr ""
+"Telecamere trovate nella rete locale. Rimuovere quelle non desiderate, "
+"quindi fare clic su Aggiungi telecamere."
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_discovery_form
+msgid ""
+"Cameras found on your local network (Hikvision SADP and ONVIF).\n"
+"                    Remove the ones you do not want, rename the rest if you like, then\n"
+"                    click Add Cameras. Connection details are completed afterwards with\n"
+"                    Check Connection on each new camera."
+msgstr ""
+"Telecamere trovate nella rete locale (Hikvision SADP e ONVIF).\n"
+"                    Rimuovere quelle non desiderate, rinominare le altre se necessario, quindi\n"
+"                    fare clic su Aggiungi telecamere. I dettagli di connessione vengono completati\n"
+"                    successivamente con Verifica connessione su ciascuna nuova telecamera."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__canada/atlantic
 msgid "Canada/Atlantic"
 msgstr "Canada/Atlantic"
@@ -2305,6 +2361,11 @@ msgstr "Canada/Saskatchewan"
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__canada/yukon
 msgid "Canada/Yukon"
 msgstr "Canada/Yukon"
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_discovery_form
+msgid "Cancel"
+msgstr "Annulla"
 
 #. module: polimex_ip_cam
 #: model:ir.model,name:polimex_ip_cam.model_hr_rfid_card
@@ -2412,6 +2473,8 @@ msgstr ""
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__create_uid
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__create_uid
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery__create_uid
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__create_uid
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__create_uid
 msgid "Created by"
 msgstr "Creato da"
@@ -2419,6 +2482,8 @@ msgstr "Creato da"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__create_date
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__create_date
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery__create_date
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__create_date
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__create_date
 msgid "Created on"
 msgstr "Creato il"
@@ -2430,6 +2495,7 @@ msgstr "Cuba"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__brand__dahua
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_discovery_line__brand__dahua
 msgid "Dahua"
 msgstr "Dahua"
 
@@ -2448,8 +2514,57 @@ msgid "Description"
 msgstr "Descrizione"
 
 #. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__brand
+msgid ""
+"Detected from the discovery reply (SADP/ONVIF). Generic ONVIF for non-"
+"Hikvision devices."
+msgstr ""
+"Rilevato dalla risposta di scansione (SADP/ONVIF). ONVIF generico per "
+"dispositivi non Hikvision."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__serial_number
+msgid "Device serial number from the discovery reply."
+msgstr "Numero di serie del dispositivo ottenuto dalla risposta di scansione."
+
+#. module: polimex_ip_cam
+#: model:ir.actions.act_window,name:polimex_ip_cam.action_cctv_camera_discovery
+#: model:ir.ui.menu,name:polimex_ip_cam.menu_cctv_camera_discovery
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_discovery_form
+msgid "Discover Cameras"
+msgstr "Rileva telecamere"
+
+#. module: polimex_ip_cam
+#: model:ir.model,name:polimex_ip_cam.model_cctv_camera_discovery_line
+msgid "Discovered Camera"
+msgstr "Telecamera rilevata"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery__found_camera_ids
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_discovery_form
+msgid "Discovered Cameras"
+msgstr "Telecamere rilevate"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__discovery_id
+msgid "Discovery"
+msgstr "Rilevamento"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__discovery_method
+msgid "Discovery Method"
+msgstr "Metodo di rilevamento"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__discovery_id
+msgid "Discovery run that found this camera."
+msgstr "Sessione di rilevamento che ha trovato questa telecamera."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__display_name
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__display_name
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery__display_name
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__display_name
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__display_name
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_card__display_name
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_card_door_rel__display_name
@@ -3207,6 +3322,23 @@ msgid "HTTP host configuration set successfully."
 msgstr "Configurazione host HTTP impostata con successo."
 
 #. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__http_port
+msgid "HTTP/ISAPI port the device serves on (default 80)."
+msgstr "Porta HTTP/ISAPI su cui il dispositivo risponde (predefinita: 80)."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__mac_address
+msgid "Hardware (MAC) address — stable identity across DHCP changes."
+msgstr ""
+"Indirizzo hardware (MAC) — identificatore stabile indipendente dalle "
+"variazioni DHCP."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__model
+msgid "Hardware model as reported by the device."
+msgstr "Modello hardware come riportato dal dispositivo."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__has_message
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__has_message
 msgid "Has Message"
@@ -3214,8 +3346,19 @@ msgstr "Ha Messaggi"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__brand__hikvision
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_discovery_line__brand__hikvision
 msgid "Hikvision"
 msgstr "Hikvision"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__activated
+msgid ""
+"Hikvision cameras must be activated (password set) before use. Unchecked "
+"devices are still factory-default and need activation first."
+msgstr ""
+"Le telecamere Hikvision devono essere attivate (impostazione password) prima"
+" dell'uso. I dispositivi non selezionati sono ancora alla configurazione "
+"predefinita di fabbrica e devono essere attivati prima dell'adozione."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__hongkong
@@ -3233,8 +3376,15 @@ msgstr ""
 " manualmente."
 
 #. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__http_port
+msgid "Http Port"
+msgstr "Porta HTTP"
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__id
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__id
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery__id
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__id
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__id
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_card__id
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_card_door_rel__id
@@ -3364,6 +3514,11 @@ msgid "Integration Type"
 msgstr "Tipo di Integrazione"
 
 #. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__ip_address
+msgid "Ip Address"
+msgstr "Indirizzo IP"
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__iran
 msgid "Iran"
 msgstr "Iran"
@@ -3402,6 +3557,8 @@ msgstr "Ultimo Heartbeat"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__write_uid
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__write_uid
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery__write_uid
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__write_uid
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__write_uid
 msgid "Last Updated by"
 msgstr "Ultimo aggiornamento di"
@@ -3409,6 +3566,8 @@ msgstr "Ultimo aggiornamento di"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__write_date
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__write_date
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery__write_date
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__write_date
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__write_date
 msgid "Last Updated on"
 msgstr "Ultimo aggiornamento il"
@@ -3523,6 +3682,11 @@ msgid "MST7MDT"
 msgstr "MST7MDT"
 
 #. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__mac_address
+msgid "Mac Address"
+msgstr "Indirizzo MAC"
+
+#. module: polimex_ip_cam
 #: model:res.groups,name:polimex_ip_cam.group_cctv_manager
 msgid "Manager"
 msgstr "Responsabile"
@@ -3569,6 +3733,7 @@ msgstr ""
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__model
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__model
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_filter
 msgid "Model"
 msgstr "Modello"
@@ -3595,6 +3760,16 @@ msgid "Name"
 msgstr "Nome"
 
 #. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__name
+msgid ""
+"Name the camera will be created with. Pre-filled from the model and address;"
+" edit it to something meaningful before adopting."
+msgstr ""
+"Nome con cui verrà creata la telecamera. Precompilato da modello e "
+"indirizzo; modificarlo con un nome significativo prima di aggiungere la "
+"telecamera."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__navajo
 msgid "Navajo"
 msgstr "Navajo"
@@ -3610,6 +3785,12 @@ msgstr "Impostazioni di Rete"
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__state__new
 msgid "New"
 msgstr "Nuovo"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera_discovery_wizard.py:0
+msgid "New Camera"
+msgstr "Nuova telecamera"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__activity_calendar_event_id
@@ -3639,6 +3820,17 @@ msgstr "Tipo Prossima Attività"
 #: model_terms:ir.actions.act_window,help:polimex_ip_cam.action_cctv_camera_command
 msgid "No camera commands sent today"
 msgstr "Nessun comando telecamera inviato oggi"
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_discovery_form
+msgid ""
+"No cameras answered on this network segment. Make sure Odoo runs on\n"
+"                    the same LAN as the cameras (discovery does not cross routers), then\n"
+"                    try again — or add a camera manually."
+msgstr ""
+"Nessuna telecamera ha risposto in questo segmento di rete. Verificare che Odoo sia in esecuzione\n"
+"                    sulla stessa LAN delle telecamere (il rilevamento non attraversa i router), quindi\n"
+"                    riprovare — oppure aggiungere una telecamera manualmente."
 
 #. module: polimex_ip_cam
 #: model_terms:ir.actions.act_window,help:polimex_ip_cam.action_cctv_camera_blacklist
@@ -3682,6 +3874,12 @@ msgstr "Numero di messaggi che richiedono un'azione"
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_command__message_has_error_counter
 msgid "Number of messages with delivery error"
 msgstr "Numero di messaggi con errore di consegna"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__brand__onvif_generic
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_discovery_line__brand__onvif_generic
+msgid "ONVIF (generic)"
+msgstr "ONVIF (generico)"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__command_type__other
@@ -4137,7 +4335,15 @@ msgid "SMS Delivery error"
 msgstr "Errore di consegna SMS"
 
 #. module: polimex_ip_cam
+#: model_terms:ir.actions.act_window,help:polimex_ip_cam.action_cctv_camera_discovery
+msgid "Scan the local network for IP cameras and add the ones you choose."
+msgstr ""
+"Eseguire la scansione della rete locale alla ricerca di telecamere IP e "
+"aggiungere quelle desiderate."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__serial_number
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__serial_number
 msgid "Serial Number"
 msgstr "Numero di Serie"
 
@@ -4481,6 +4687,11 @@ msgstr ""
 "Destinazione verso cui la telecamera invia gli eventi ANPR. Utilizzare "
 "Recupera per leggere la destinazione push corrente dalla telecamera, poi "
 "Imposta per reindirizzarla a questo endpoint Odoo."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__discovery_method
+msgid "Which probe found it: SADP, ONVIF, or both."
+msgstr "Sonda che ha rilevato il dispositivo: SADP, ONVIF o entrambe."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_rfid_rel__list_category__whitelist

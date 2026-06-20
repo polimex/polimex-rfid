@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cctv_camera_discovery_form" model="ir.ui.view">
+        <field name="name">cctv.camera.discovery.form</field>
+        <field name="model">cctv.camera.discovery</field>
+        <field name="arch" type="xml">
+            <form string="Discover Cameras">
+                <p class="text-muted">
+                    Cameras found on your local network (Hikvision SADP and ONVIF).
+                    Remove the ones you do not want, rename the rest if you like, then
+                    click Add Cameras. Connection details are completed afterwards with
+                    Check Connection on each new camera.
+                </p>
+                <p class="text-muted" invisible="found_camera_ids">
+                    No cameras answered on this network segment. Make sure Odoo runs on
+                    the same LAN as the cameras (discovery does not cross routers), then
+                    try again — or add a camera manually.
+                </p>
+                <field name="found_camera_ids">
+                    <list string="Discovered Cameras" create="0" delete="1" editable="bottom"
+                          decoration-warning="not activated">
+                        <field name="name"/>
+                        <field name="ip_address"/>
+                        <field name="brand"/>
+                        <field name="model"/>
+                        <field name="serial_number" optional="show"/>
+                        <field name="mac_address" optional="hide"/>
+                        <field name="http_port" optional="hide"/>
+                        <field name="activated" optional="show"/>
+                        <field name="discovery_method" optional="hide"/>
+                    </list>
+                </field>
+                <footer>
+                    <button name="action_create_cameras" type="object" string="Add Cameras"
+                            class="oe_highlight" invisible="not found_camera_ids"/>
+                    <button special="cancel" string="Cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_cctv_camera_discovery" model="ir.actions.act_window">
+        <field name="name">Discover Cameras</field>
+        <field name="res_model">cctv.camera.discovery</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_cctv_camera_discovery_form"/>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="model_cctv_camera"/>
+        <field name="binding_view_types">list</field>
+        <field name="group_ids" eval="[(4, ref('polimex_ip_cam.group_cctv_manager'))]"/>
+        <field name="help" type="html">
+            <p>
+                Scan the local network for IP cameras and add the ones you choose.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_cctv_camera_discovery"
+              name="Discover Cameras"
+              parent="hr_rfid.hr_rfid_root_menu_hardware_manager"
+              groups="polimex_ip_cam.group_cctv_manager"
+              action="action_cctv_camera_discovery"
+              sequence="20"/>
+</odoo>

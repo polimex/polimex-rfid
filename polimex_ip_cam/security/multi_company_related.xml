@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <record id="ir_rule_cctv_camera_multi_company" model="ir.rule">
+            <field name="name">CCTV Camera: Multi Company</field>
+            <field name="model_id" ref="model_cctv_camera"/>
+            <field name="global" eval="True"/>
+            <!-- company_id is optional on cctv.camera (no required=); tolerate
+                 NULL so a global camera is not hidden from every user
+                 (odoo19-gotchas: optional company_id rule must allow False). -->
+            <field name="domain_force">[('company_id', 'in', company_ids + [False])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
         <record id="hr_rfid.ir_rule_hr_rfid_reader_multi_company" model="ir.rule">
             <field name="name">HR RFID Readers Camera: Multi Company</field>
             <field name="model_id" ref="model_hr_rfid_reader"/>
