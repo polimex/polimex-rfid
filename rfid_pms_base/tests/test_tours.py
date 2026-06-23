@@ -46,6 +46,16 @@ class TestRfidPmsRoomTours(HttpCase):
             "company_id": cls.company.id,
         })
 
+    def test_onboarding_panel_tour(self):
+        """A new hotelier is greeted by the onboarding banner above the
+        rooms kanban and can dismiss it cleanly. No rooms are created so the
+        onboarding steps stay open and the banner is shown."""
+        self.start_tour(
+            "/odoo/action-rfid_pms_base.action_window_room",
+            "rfid_pms_base_onboarding_panel_tour",
+            login="admin",
+        )
+
     def test_room_kanban_actions_tour(self):
         """User flow: toggle DND, toggle Clean, navigate to user events."""
         self.env["rfid_pms_base.room"].create({

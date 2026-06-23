@@ -13,6 +13,7 @@ from . import test_commands
 from . import test_webstack
 from . import test_sot_denied
 from . import test_tours
+from . import test_onboarding
 from . import test_overlapping_access_groups
 from . import test_barcode_qr
 from . import test_interlocking_mode

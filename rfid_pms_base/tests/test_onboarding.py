@@ -28,6 +28,13 @@ class TestRfidPmsOnboarding(TransactionCase):
         self.assertEqual(ag_action['res_model'], 'hr.rfid.access.group')
         self.assertEqual(room_action['res_model'], 'rfid_pms_base.room')
 
+    def test_panel_html_renders_for_route(self):
+        # The Hotel Rooms kanban wires the banner via this route_name; the
+        # shared renderer (hr_rfid) must produce the native onboarding markup.
+        html = self.env['onboarding.onboarding'].get_onboarding_panel_html('rfid_pms_base_setup')
+        self.assertTrue(html, "The PMS onboarding route must render a panel")
+        self.assertIn('o_onboarding_main', html)
+
     def test_ag_step_completes_when_ag_with_door_exists(self):
         # Build the minimum hardware for an AG to have at least one door.
         webstack = self.env["hr.rfid.webstack"].create({

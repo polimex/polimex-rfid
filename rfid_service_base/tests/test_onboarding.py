@@ -31,6 +31,13 @@ class TestRfidServiceOnboarding(TransactionCase):
         self.assertEqual(define_action['res_model'], 'rfid.service')
         self.assertEqual(sale_action['res_model'], 'rfid.service.sale')
 
+    def test_panel_html_renders_for_route(self):
+        # The Services kanban wires the banner via this route_name; the shared
+        # renderer (hr_rfid) must produce the native onboarding markup.
+        html = self.env['onboarding.onboarding'].get_onboarding_panel_html('rfid_service_base_setup')
+        self.assertTrue(html, "The visitor-services onboarding route must render a panel")
+        self.assertIn('o_onboarding_main', html)
+
     def test_define_step_completes_when_service_exists(self):
         ag = self.env["hr.rfid.access.group"].create({
             "name": "OnbVisitorAG", "company_id": self.company.id,

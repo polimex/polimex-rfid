@@ -91,6 +91,15 @@ class TestHrRfidTours(HttpCase):
         # door is now attached.
         self.assertIn(self.door, new_ag.door_ids.mapped("door_id"))
 
+    def test_onboarding_panel_tour(self):
+        """Process 0: a new admin lands on User Events and is guided by the
+        native onboarding banner, then opens a step's action."""
+        self.start_tour(
+            "/odoo/action-hr_rfid.hr_rfid_event_user_action",
+            "hr_rfid_onboarding_panel_tour",
+            login="admin",
+        )
+
     def test_card_assign_tour(self):
         """Process 3: admin issues a card to a contact."""
         before = self.env["hr.rfid.card"].search_count([

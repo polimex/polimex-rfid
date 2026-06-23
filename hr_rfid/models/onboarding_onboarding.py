@@ -35,53 +35,48 @@ class OnboardingOnboarding(models.Model):
         return super()._prepare_rendering_values()
 
     @api.model
-    def action_fetch_rfid_onboarding(self):
-        """Fetch RFID onboarding step data for the frontend banner."""
-        onboarding = self.sudo().search([('route_name', '=', 'hr_rfid_setup')], limit=1)
+    def close_onboarding_panel(self, route_name):
+        """Close (hide) the onboarding panel identified by ``route_name``.
+
+        Generic counterpart of :meth:`get_onboarding_panel_html` so the OWL
+        banner can dismiss any onboarding by its route — no per-onboarding
+        close action is required.
+        """
+        onboarding = self.sudo().search([('route_name', '=', route_name)], limit=1)
+        if onboarding:
+            onboarding.action_close()
+
+    @api.model
+    def get_onboarding_panel_html(self, route_name):
+        """Render Odoo's standard onboarding panel for ``route_name``.
+
+        Reuses core's ``onboarding.onboarding_panel`` QWeb template so the
+        in-app banner is pixel-identical to Odoo's native onboarding —
+        translated server-side and overflow-safe via the core onboarding
+        SCSS — instead of a hand-maintained Bootstrap copy that drifts and
+        breaks on longer translations.
+
+        Returns the rendered HTML (``Markup``) for the OWL banner to inject,
+        or ``False`` when there is nothing to show (unknown route, or the
+        user has closed the panel).
+        """
+        onboarding = self.sudo().search([('route_name', '=', route_name)], limit=1)
         if not onboarding:
-            return {'closed': True}
-        # Use a savepoint to handle concurrent progress creation gracefully.
-        # When multiple browser tabs or requests load the RFID dashboard
-        # simultaneously, _search_or_create_progress can raise a
-        # UniqueViolation on the onboarding_progress_onboarding_company_uniq
-        # constraint. The savepoint allows us to roll back only the failed
-        # INSERT while keeping the rest of the transaction intact.
+            return False
+        # The onboarding panel is non-critical UI: never let it break the
+        # host list view. A savepoint also absorbs the rare unique-constraint
+        # race when several dashboard tabs create the progress record at once.
         try:
             with self.env.cr.savepoint():
                 onboarding._search_or_create_progress()
-                if onboarding.is_onboarding_closed or onboarding.current_onboarding_state == 'done':
-                    return {'closed': True}
+                if onboarding.is_onboarding_closed:
+                    return False
                 values = onboarding._prepare_rendering_values()
+                return self.env['ir.qweb']._render('onboarding.onboarding_panel', values)
         except Exception:
-            _logger.debug("Concurrent onboarding progress creation, re-reading existing record.")
+            _logger.warning(
+                "Could not render onboarding panel %r; hiding it for this load.",
+                route_name, exc_info=True,
+            )
             onboarding.invalidate_recordset()
-            return {'closed': True}
-        return {
-            'closed': False,
-            'onboarding_state': onboarding.current_onboarding_state,
-            'steps': [
-                self._prepare_step_data(step, values)
-                for step in values['steps']
-            ],
-        }
-
-    def _prepare_step_data(self, step, values):
-        """Build step dict with optional extra actions based on user rights."""
-        data = {
-            'id': step.id,
-            'title': step.title,
-            'description': step.description,
-            'button_text': step.button_text,
-            'done_text': step.done_text,
-            'done_icon': step.done_icon,
-            'state': values['state'].get(step.id, 'not_done'),
-            'action': step.panel_step_open_action_name,
-        }
-        # Add "Discover" extra action for webstack step if user has discovery rights
-        add_webstack_step = self.env.ref('hr_rfid.onboarding_step_add_webstack', raise_if_not_found=False)
-        if step == add_webstack_step and self.env.user.has_group('hr_rfid.hr_rfid_view_module_discovery'):
-            data['extra_action'] = {
-                'label': 'Discover',
-                'method': 'action_open_step_scan_controllers',
-            }
-        return data
+            return False

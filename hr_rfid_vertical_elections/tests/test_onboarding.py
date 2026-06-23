@@ -33,6 +33,13 @@ class TestVotingOnboarding(TransactionCase):
         self.assertEqual(step_model.action_open_step_voting_items()['res_model'], 'voting.item')
         self.assertEqual(step_model.action_open_step_voting_session()['res_model'], 'voting.session')
 
+    def test_panel_html_renders_for_route(self):
+        # The Vote Session kanban wires the banner via this route_name; the
+        # shared renderer (hr_rfid) must produce the native onboarding markup.
+        html = self.env['onboarding.onboarding'].get_onboarding_panel_html('hr_rfid_vertical_elections_setup')
+        self.assertTrue(html, "The voting onboarding route must render a panel")
+        self.assertIn('o_onboarding_main', html)
+
     def test_each_step_completes_independently(self):
         # Create one record per model and verify only that step flips.
         display = self.env['voting.display'].create({

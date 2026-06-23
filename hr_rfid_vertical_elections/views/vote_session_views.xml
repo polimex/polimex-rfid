@@ -58,6 +58,7 @@
         <field name="model">voting.session</field>
         <field name="arch" type="xml">
             <kanban sample="1" default_group_by="state"
+                    js_class="onboarding_kanban"
                     records_draggable="false"
                     group_create="false"
                     quick_create="false">
@@ -276,6 +277,7 @@
         <field name="name">Vote Session</field>
         <field name="res_model">voting.session</field>
         <field name="view_mode">kanban,calendar,list,form</field>
+        <field name="context">{'onboarding_route_name': 'hr_rfid_vertical_elections_setup'}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">Open your first voting session</p>
             <p>

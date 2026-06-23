@@ -8,50 +8,41 @@ import {
     mountWithCleanup,
     onRpc,
 } from "@web/../tests/web_test_helpers";
-import {RfidOnboardingBanner} from "@hr_rfid/components/onboarding/onboarding";
+import {OnboardingBanner} from "@hr_rfid/components/onboarding/onboarding";
 
 class OnboardingOnboarding extends models.Model {
     _name = "onboarding.onboarding";
 }
 
-class OnboardingOnboardingStep extends models.Model {
-    _name = "onboarding.onboarding.step";
-}
-
 beforeEach(() => {
-    defineModels([OnboardingOnboarding, OnboardingOnboardingStep]);
+    defineModels([OnboardingOnboarding]);
 });
 
-test("banner hides when server returns closed=true", async () => {
-    onRpc("onboarding.onboarding", "action_fetch_rfid_onboarding", () => ({
-        closed: true,
-    }));
+test("banner stays empty when the server returns nothing", async () => {
+    onRpc("onboarding.onboarding", "get_onboarding_panel_html", () => false);
 
-    await mountWithCleanup(RfidOnboardingBanner);
+    await mountWithCleanup(OnboardingBanner, {props: {routeName: "hr_rfid_setup"}});
     await animationFrame();
 
     expect(".o_onboarding_main").toHaveCount(0);
 });
 
-test("banner renders steps returned by the server", async () => {
-    onRpc("onboarding.onboarding", "action_fetch_rfid_onboarding", () => ({
-        closed: false,
-        onboarding_state: "not_done",
-        steps: [
-            {
-                id: 1,
-                title: "Connect a webstack",
-                description: "Add your first network controller",
-                state: "not_done",
-                button_text: "Open settings",
-                action: "action_open_step_1",
-            },
-        ],
-    }));
+test("banner injects the server-rendered onboarding panel markup", async () => {
+    // The component injects the core onboarding HTML verbatim; assert the
+    // native onboarding markup (o_onboarding_main / step title) is present.
+    onRpc("onboarding.onboarding", "get_onboarding_panel_html", () =>
+        `<div class="o_onboarding_main">
+            <div class="o_onboarding_steps d-flex">
+                <div class="o_onboarding_step">
+                    <h5 class="o_onboarding_step_title">Connect a webstack</h5>
+                </div>
+            </div>
+         </div>`
+    );
 
-    await mountWithCleanup(RfidOnboardingBanner);
+    await mountWithCleanup(OnboardingBanner, {props: {routeName: "hr_rfid_setup"}});
     await animationFrame();
 
-    expect(".o_onboarding_step").toHaveCount(1);
+    expect(".o_onboarding_main").toHaveCount(1);
     expect(".o_onboarding_step_title").toHaveText("Connect a webstack");
 });
