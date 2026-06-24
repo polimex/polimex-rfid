@@ -413,16 +413,25 @@ class HikvisionCamera(BaseCamera):
                             "supportBeep": supportBeep,
                             "supportVideoLoss": supportVideoLoss}
                 except Exception as e:
-                    _logger.error("Hikvision check_connection: XML parsing error: %s", e)
-                    return {"status": "failed", "error": str(e)}
+                    # Reachable + authenticated, but the body is not the expected
+                    # ISAPI XML (wrong model/firmware, or a captive page).
+                    _logger.debug("Hikvision check_connection: XML parsing error: %s", e)
+                    return {"status": "protocol_error", "error": str(e)}
             else:
                 error_detail = self._extract_error(response.text)
-                _logger.error("Hikvision check_connection: Failed with status %s. Error: %s", response.status_code,
-                              error_detail)
-                return {"status": "failed", "error": error_detail}
+                _logger.debug("Hikvision check_connection: HTTP %s. %s", response.status_code, error_detail)
+                # 401/403 = wrong credentials / no rights; anything else = some
+                # other camera-side error. The caller (model) owns operator-level
+                # logging, gated on state change, to avoid per-poll log spam.
+                status = "auth_failed" if response.status_code in (401, 403) else "error"
+                return {"status": status, "error": error_detail}
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
+            # DNS/route/connect/timeout -> the camera is not reachable at all.
+            _logger.debug("Hikvision check_connection: unreachable: %s", e)
+            return {"status": "unreachable", "error": str(e)}
         except Exception as e:
-            _logger.error("Hikvision check_connection: Request error: %s", e)
-            return {"status": "failed", "error": str(e)}
+            _logger.debug("Hikvision check_connection: request error: %s", e)
+            return {"status": "error", "error": str(e)}
 
     def get_http_host(self):
         """

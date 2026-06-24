@@ -48,9 +48,12 @@ class CctvCamera(models.Model):
     )
     tz = fields.Selection(
         selection=_tzs, string='Timezone',
-        default=lambda self: self.env.context.get('tz'),
-        help="The timezone of the camera. Used to display dates and times in the correct timezone.\n"
-             "The plates are sent to camera with data and time in this timezone."
+        # The camera's timezone is a property of its physical location, so prefer
+        # the company's timezone over the session user's (who may be elsewhere).
+        default=lambda self: self.env.company.partner_id.tz or self.env.context.get('tz'),
+        help="The timezone of the camera's location. The camera's on-screen clock "
+             "(burned onto recordings) and the plate timestamps are set in this "
+             "timezone; Odoo stores everything in UTC and converts."
     )
 
     tz_offset = fields.Char(
@@ -122,14 +125,32 @@ class CctvCamera(models.Model):
 
     connection_status = fields.Selection(
         selection=[
-        ('unknown', 'Unknown'),
-        ('connected', 'Connected'),
-        ('failed', 'Failed'),
+        ('unknown', 'Not checked yet'),
+        ('connected', 'Online'),
+        ('unreachable', 'Not reachable'),
+        ('auth_failed', 'Wrong credentials'),
+        ('protocol_error', 'Unexpected response'),
+        ('error', 'Error'),
+        ('failed', 'Failed'),  # legacy value, re-classified on next check
     ],
         string='Connection Status',
         default='unknown',
         tracking=True,
         help="Latest connection check result")
+    connection_message = fields.Char(
+        string='Connection Details',
+        compute='_compute_connection_message',
+        help="Plain-language explanation of the latest connection status and "
+             "what to do about it.")
+    last_seen = fields.Datetime(
+        string='Last Seen Online',
+        readonly=True,
+        help="When the camera last answered a connection check successfully.")
+    connection_error_detail = fields.Text(
+        string='Technical Details',
+        readonly=True,
+        help="Raw error returned by the last failed connection check "
+             "(for support/diagnostics).")
     last_heart_beat = fields.Datetime(
         string='Last Heartbeat',
         help="Last successful received HeartBeat from the camera",
@@ -174,6 +195,29 @@ class CctvCamera(models.Model):
     def _compute_tz_offset(self):
         for cam in self:
             cam.tz_offset = datetime.now(pytz.timezone(cam.tz or 'GMT')).strftime('%z')
+
+    @api.depends('connection_status')
+    def _compute_connection_message(self):
+        # Plain-language, actionable copy — what happened and what to do — kept
+        # out of the server log (operators read the log; users read the form).
+        messages = {
+            'unknown': self.env._("Not checked yet. Use “Check Connection” to test."),
+            'connected': self.env._("Online — the camera is reachable and responding."),
+            'unreachable': self.env._(
+                "Camera not reachable. Check that it is powered on, the network "
+                "cable, and that the IP address is correct."),
+            'auth_failed': self.env._(
+                "Wrong username or password for the camera. Update the "
+                "credentials and check again."),
+            'protocol_error': self.env._(
+                "The camera answered but in an unexpected format "
+                "(wrong model or firmware?)."),
+            'error': self.env._("Connection error — see the technical details below."),
+            'failed': self.env._(
+                "Connection failed. Run “Check Connection” for an updated diagnosis."),
+        }
+        for cam in self:
+            cam.connection_message = messages.get(cam.connection_status, '')
 
     @api.depends('rfid_rel_ids.card_id')
     def _compute_rfid_card_ids(self):
@@ -295,37 +339,57 @@ class CctvCamera(models.Model):
         """
         for rec in self:
             if rec.brand == 'hikvision':
-                _logger.info("Using Hikvision API for camera %s at %s", rec.name, rec.ip_address)
                 with HikvisionCamera(rec.ip_address, rec.port, rec.username, rec.password) as cam_api:
                     result = cam_api.check_connection()
-                    rec.connection_status = result.get("status", "failed")
-                    if result.get("status") == "connected":
-                        rec.model = result.get("model")
-                        rec.serial_number = result.get("serial")
-                        rec.sub_serial_number = result.get("subserial")
-                        rec.firmware = result.get("firmware")
-                        rec.action_set_http_host()
-                        rec.action_set_entrance_param()
-                        rec.action_get_snapshot()
-                        # update_info = rec._time_setup(cam_api) or ""
-                        update_info = ""
-
-                        # Създаваме общо съобщение
-                        message = _(
-                            "Camera Info: Name: %(name)s, Type: %(type)s, ID: %(devid)s, Model: %(model)s, "
-                            "Serial: %(serial)s, Firmware: %(firmware)s (Date: %(firmwaredate)s), "
-                            "Hardware: %(hardware)s, Beep: %(supportBeep)s, Video Loss: %(supportVideoLoss)s"
-                        ) % result
-                        message += " • " + update_info if update_info else ""
-                        rec.message_post(body=message)
-                    elif result.get("status") == "failed":
-                        return self.balloon_warning_sticky(
-                            title=_("Connection check failed"),
-                            message=str(result.get("error")),
-                        )
+                rec._apply_connection_result(result)
+                if result.get("status") == "connected":
+                    rec.model = result.get("model")
+                    rec.serial_number = result.get("serial")
+                    rec.sub_serial_number = result.get("subserial")
+                    rec.firmware = result.get("firmware")
+                    rec.action_set_http_host()
+                    rec.action_set_entrance_param()
+                    rec.action_get_snapshot()
             else:
-                _logger.warning("Camera %s: No API implementation for brand '%s'", rec.name, rec.brand)
-                rec.connection_status = 'unknown'
+                rec._apply_connection_result({
+                    "status": "unknown",
+                    "error": _("No camera API for brand '%s'.", rec.brand),
+                })
+        # Feedback for the button click (single record): green when online,
+        # otherwise the plain-language reason — never a raw stack/telemetry dump.
+        if len(self) == 1:
+            if self.connection_status == 'connected':
+                return self.balloon_success(
+                    title=_("Camera online"), message=self.connection_message)
+            return self.balloon_warning_sticky(
+                title=_("Connection check"), message=self.connection_message)
+        return True
+
+    def _apply_connection_result(self, result):
+        """Store a classified connection result: status + raw detail + last-seen.
+
+        Logs at WARNING only when the state *changes*, so a permanently
+        unreachable/misconfigured camera does not spam the operator log on
+        every poll (the previous code logged ERROR on each call). The
+        user-facing explanation lives in the computed ``connection_message``.
+        """
+        self.ensure_one()
+        status = result.get("status", "error")
+        raw = result.get("error") or ""
+        previous = self.connection_status
+        vals = {
+            "connection_status": status,
+            "connection_error_detail": raw if status != 'connected' else False,
+        }
+        if status == 'connected':
+            vals["last_seen"] = fields.Datetime.now()
+        self.write(vals)
+        if status != previous:
+            if status == 'connected':
+                _logger.info("Camera %s is back online.", self.name)
+            else:
+                _logger.warning("Camera %s connection %s: %s",
+                                self.name, status, raw or "no detail")
         return True
 
     def action_get_http_host(self):

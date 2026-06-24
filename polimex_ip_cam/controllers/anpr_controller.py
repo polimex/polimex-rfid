@@ -176,8 +176,18 @@ class IpcamController(Controller):
                 hb_time_str = heartbeat_data.get('dateTime')
                 try:
                     hb_time = datetime.fromisoformat(hb_time_str)
+                    # Hikvision reports the heartbeat time with its INVERTED
+                    # timeZone offset (e.g. '-03:00' for a UTC+3 camera, because
+                    # we configure it as GMT-03:00 — see _hikvision_timezone).
+                    # Trusting that offset makes the comparison below see a
+                    # constant ~6h false drift and re-queue set_time on every
+                    # heartbeat, forever. Drop the unreliable offset and treat
+                    # the value as a naive wall-clock in the camera's configured
+                    # timezone (re-anchored just below).
+                    if hb_time is not None and hb_time.tzinfo is not None:
+                        hb_time = hb_time.replace(tzinfo=None)
                 except Exception as e:
-                    _logger.error(f"Error parsing heartbeat dateTime: {e}")
+                    _logger.warning("Could not parse heartbeat dateTime %r: %s", hb_time_str, e)
                     hb_time = None
 
                 # fields.Datetime.now() is naive UTC; localise it before any

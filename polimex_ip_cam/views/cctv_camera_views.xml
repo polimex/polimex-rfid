@@ -37,14 +37,19 @@
             <list sample="1" string="CCTV Cameras"
                   decoration-muted="connection_status == 'unknown'"
                   decoration-success="connection_status == 'connected'"
-                  decoration-warning="connection_status == 'failed'">
+                  decoration-warning="connection_status in ('protocol_error', 'failed')"
+                  decoration-danger="connection_status in ('unreachable', 'auth_failed', 'error')">
                 <field name="name"/>
                 <field name="ip_address"/>
                 <field name="brand" optional="hide"/>
                 <field name="model" optional="show"/>
                 <field name="serial_number" optional="hide"/>
-                <field name="connection_status" optional="hide"/>
-                <field name="last_heart_beat" optional="show"/>
+                <field name="connection_status" widget="badge" optional="show"
+                       decoration-success="connection_status == 'connected'"
+                       decoration-warning="connection_status in ('protocol_error', 'failed', 'unknown')"
+                       decoration-danger="connection_status in ('unreachable', 'auth_failed', 'error')"/>
+                <field name="last_seen" optional="show"/>
+                <field name="last_heart_beat" optional="hide"/>
                 <field name="active" optional="hide"/>
             </list>
         </field>
@@ -57,7 +62,10 @@
         <field name="arch" type="xml">
             <form string="CCTV Camera">
                 <header>
-                    <field name="connection_status" widget="statusbar" statusbar_visible="unknown,connected,failed"/>
+                    <field name="connection_status" widget="badge"
+                           decoration-success="connection_status == 'connected'"
+                           decoration-warning="connection_status in ('protocol_error', 'failed', 'unknown')"
+                           decoration-danger="connection_status in ('unreachable', 'auth_failed', 'error')"/>
                     <!-- Manager-only: both actions read the manager-restricted
                          `password` field to authenticate to the camera. A plain
                          CCTV user would read it as empty and the API call would
@@ -70,6 +78,19 @@
                             invisible="not ip_address or not port or not username"/>
                 </header>
                 <sheet>
+                    <!-- Health banner: plain-language status + what to do, shown
+                         only when there is a problem (hidden when online/unchecked). -->
+                    <div class="alert alert-warning" role="alert"
+                         invisible="connection_status in ('connected', 'unknown')">
+                        <field name="connection_message" class="fw-bold mb-0"/>
+                        <div class="small text-muted mt-1" invisible="not last_seen">
+                            <span>Last online: </span>
+                            <field name="last_seen" class="d-inline-block"/>
+                        </div>
+                        <field name="connection_error_detail"
+                               class="d-block small text-muted mt-1"
+                               invisible="not connection_error_detail"/>
+                    </div>
                     <div class="oe_button_box" name="button_box">
                         <!-- Smart button for Whitelist -->
                         <button class="oe_stat_button" name="%(action_cctv_camera_whitelist)d" type="action"
