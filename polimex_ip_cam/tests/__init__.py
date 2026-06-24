@@ -1,4 +1,5 @@
 from . import test_smoke
+from . import test_safe_xml
 from . import test_list_category
 from . import test_anpr_ssrf
 from . import test_anpr_auth

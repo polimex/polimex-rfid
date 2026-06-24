@@ -1,9 +1,16 @@
 import requests
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET          # building OUR requests (trusted, namespace-registered)
 from requests.auth import HTTPDigestAuth
 import logging
 import base64
 import json
+
+from lxml import etree
+
+from odoo.addons.polimex_ip_cam.helpers.safe_xml import (
+    parse_untrusted_xml,          # read-only parsing of camera responses
+    parse_untrusted_xml_stdlib,   # read-modify-write trees that re-serialise via stdlib ET
+)
 
 _logger = logging.getLogger(__name__)
 
@@ -339,7 +346,7 @@ class HikvisionCamera(BaseCamera):
         В противен случай, връща оригиналния текст.
         """
         try:
-            root = ET.fromstring(response_text)
+            root = parse_untrusted_xml(response_text)
             ns = {'ns': 'http://www.isapi.org/ver20/XMLSchema'}
             status_code = root.findtext('ns:statusCode', default='Unknown', namespaces=ns)
             status_string = root.findtext('ns:statusString', default='', namespaces=ns)
@@ -379,7 +386,7 @@ class HikvisionCamera(BaseCamera):
             if response.status_code == 200:
                 ns = {'ns': 'http://www.isapi.org/ver20/XMLSchema'}
                 try:
-                    root = ET.fromstring(response.text)
+                    root = parse_untrusted_xml(response.text)
                     name = root.findtext('.//ns:deviceName', namespaces=ns)
                     dev_type = root.findtext('.//ns:deviceType', namespaces=ns)
                     devid = root.findtext('.//ns:deviceID', namespaces=ns)
@@ -441,7 +448,7 @@ class HikvisionCamera(BaseCamera):
             response = requests.get(url, auth=HTTPDigestAuth(self.username, self.password), timeout=self.timeout)
             if response.status_code == 200:
                 xml_response = response.text.strip()
-                root = ET.fromstring(xml_response)
+                root = parse_untrusted_xml(xml_response)
                 ns = {'ns': 'http://www.isapi.org/ver20/XMLSchema'}
                 result = {
                     'id': root.findtext('ns:id', namespaces=ns),
@@ -600,8 +607,8 @@ class HikvisionCamera(BaseCamera):
         min/max attributes are missing/unparseable.
         """
         try:
-            root = ET.fromstring(xml_text)
-        except ET.ParseError:
+            root = parse_untrusted_xml(xml_text)
+        except etree.XMLSyntaxError:
             return None
         hb = root.find(".//" + _ver20_tag("heartbeat"))
         if hb is None:
@@ -682,8 +689,8 @@ class HikvisionCamera(BaseCamera):
                             "rebuilding the document from scratch.", response.status_code)
             return None
         try:
-            return ET.fromstring(response.text)
-        except ET.ParseError as e:
+            return parse_untrusted_xml_stdlib(response.text)
+        except (ET.ParseError, etree.XMLSyntaxError) as e:
             _logger.warning("Hikvision set_http_host: current config XML unparseable (%s); "
                             "rebuilding the document from scratch.", e)
             return None
@@ -923,8 +930,8 @@ class HikvisionCamera(BaseCamera):
         unparseable body.
         """
         try:
-            root = ET.fromstring(body or "")
-        except ET.ParseError:
+            root = parse_untrusted_xml(body or "")
+        except etree.XMLSyntaxError:
             return [], 0
 
         def _local(elem, tag):
@@ -1107,7 +1114,7 @@ class HikvisionCamera(BaseCamera):
         try:
             response = requests.get(url, auth=HTTPDigestAuth(self.username, self.password), timeout=self.timeout)
             if response.status_code == 200:
-                root = ET.fromstring(response.content)
+                root = parse_untrusted_xml(response.content)
                 ns = {'ns': 'http://www.isapi.org/ver20/XMLSchema'}
                 timeMode = root.findtext('ns:timeMode', namespaces=ns)
                 timeZone = root.findtext('ns:timeZone', namespaces=ns)
@@ -1162,7 +1169,7 @@ class HikvisionCamera(BaseCamera):
                 error_detail = self._extract_error(response.text)
                 return {"status": "failed", "error": error_detail}
 
-            root = ET.fromstring(response.content)
+            root = parse_untrusted_xml(response.content)
             ns = {'ns': 'http://www.isapi.org/ver20/XMLSchema'}
 
             dst_elem = root.find('ns:DST', namespaces=ns)
@@ -1276,7 +1283,7 @@ class HikvisionCamera(BaseCamera):
             response = requests.get(url, auth=HTTPDigestAuth(self.username, self.password), timeout=self.timeout)
             if response.status_code == 200:
                 ns = {'ns': 'http://www.hikvision.com/ver10/XMLSchema'}
-                root = ET.fromstring(response.content)
+                root = parse_untrusted_xml(response.content)
                 entrance = root.find('ns:EntranceParam', namespaces=ns)
                 if entrance is None:
                     return {"status": "failed", "error": "Не е намерен елемент EntranceParam"}

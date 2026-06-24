@@ -1,12 +1,13 @@
 import logging
 import base64
-import defusedxml.ElementTree as ET
 from datetime import datetime
 
 import pytz
+from lxml import etree
 
 from odoo import fields
 from odoo.http import Controller, route, request
+from odoo.addons.polimex_ip_cam.helpers.safe_xml import parse_untrusted_xml
 
 _logger = logging.getLogger(__name__)
 
@@ -101,12 +102,12 @@ class IpcamController(Controller):
             file_content = file_storage.read()
             if file_storage.filename.endswith('.xml'):
                 try:
-                    root = ET.fromstring(file_content)
+                    root = parse_untrusted_xml(file_content)
                     parsed_xml = self.parse_xml_to_dict(root)
                     # illaccess.xml, anpr.xml, etc.
                     file_base_name = file_storage.filename.rsplit('.', 1)[0]
                     files_data[file_base_name] = parsed_xml
-                except ET.ParseError as e:
+                except etree.XMLSyntaxError as e:
                     _logger.error(f"Invalid XML content in {file_storage.filename}: {e}")
                     return request.not_found()
             elif file_storage.filename.endswith('.jpg'):

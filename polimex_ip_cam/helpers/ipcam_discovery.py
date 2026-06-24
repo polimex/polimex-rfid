@@ -12,17 +12,19 @@ same port while the switch had stopped forwarding the multicast group to it.
 
 Parsers are pure/static (unit-tested against canned ProbeMatch payloads); only
 the ``discover_*`` methods touch the network. Style mirrors ``camera_api.py``
-(stdlib sockets, ``defusedxml`` for untrusted input, sockets closed in finally,
-explicit timeouts, ``_logger`` levels per odoo-logger-conventions).
+(stdlib sockets, hardened lxml parsing for untrusted input, sockets closed in
+finally, explicit timeouts, ``_logger`` levels per odoo-logger-conventions).
 """
 import socket
 import time
 import uuid
 import logging
 from xml.etree import ElementTree as ET          # building OUR probes (trusted)
-from defusedxml.ElementTree import fromstring as safe_fromstring  # untrusted replies
+
+from lxml import etree
 
 from odoo.addons.hr_rfid.models.hr_rfid_webstack import get_local_ip
+from odoo.addons.polimex_ip_cam.helpers.safe_xml import parse_untrusted_xml  # untrusted replies
 
 _logger = logging.getLogger(__name__)
 
@@ -121,8 +123,8 @@ class CameraDiscoverer:
         payload is not a SADP match. *payload* is bytes or str."""
         try:
             text = payload.decode("utf-8", "replace") if isinstance(payload, bytes) else payload
-            root = safe_fromstring(text)
-        except (ET.ParseError, ValueError):
+            root = parse_untrusted_xml(payload)
+        except (etree.XMLSyntaxError, ValueError):
             return None
         if cls._local_text(root, "DeviceSN") == "" and cls._local_text(root, "IPv4Address") == "":
             # Parsed as XML but carries neither serial nor address — a
@@ -148,8 +150,8 @@ class CameraDiscoverer:
         None if not a match."""
         try:
             text = payload.decode("utf-8", "replace") if isinstance(payload, bytes) else payload
-            root = safe_fromstring(text)
-        except (ET.ParseError, ValueError):
+            root = parse_untrusted_xml(payload)
+        except (etree.XMLSyntaxError, ValueError):
             return None
         if "ProbeMatch" not in text:
             return None

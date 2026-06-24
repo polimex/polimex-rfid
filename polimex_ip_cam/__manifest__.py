@@ -1,15 +1,12 @@
 {
     'name': "IP Camera Management",
-    'version': '19.0.1.9.0',
+    'version': '19.0.1.10.0',
     'summary': "Module for managing IP cameras via manufacturers integration integration",
     'author': "Polimex Dev Team",
     'website': "https://polimex.co",
     'license': 'AGPL-3',
     'category': 'Hidden/Tools',
     'depends': ['hr_rfid'],
-    'external_dependencies': {
-        'python': ['defusedxml'],
-    },
 
     'data': [
         'security/security.xml',
