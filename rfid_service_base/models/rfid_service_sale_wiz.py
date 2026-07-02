@@ -61,28 +61,40 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
 
     extend_sale_id = fields.Many2one(
         comodel_name='rfid.service.sale',
-        readonly=True
+        readonly=True,
+        help="When set, the wizard runs in Extend mode - it adds time to the linked sale instead of creating a new one. Populated automatically from the Extend action on the existing sale.",
     )
     ext_start_date = fields.Datetime(
         string="Old start",
         related='extend_sale_id.start_date',
-        readonly=True
+        readonly=True,
+        help="Original start date of the sale being extended (shown for reference).",
     )
     ext_end_date = fields.Datetime(
         string="Old end",
         related='extend_sale_id.end_date',
-        readonly=True
+        readonly=True,
+        help="Original end date of the sale being extended (shown for reference). The new end below replaces it on confirmation.",
     )
-    service_id = fields.Many2one(comodel_name='rfid.service')
-    fixed_time = fields.Boolean(related='service_id.fixed_time', readonly=True)
+    service_id = fields.Many2one(
+        comodel_name='rfid.service',
+        help="Catalog entry from which the card inherits its access group, time window and card type. Set automatically when the wizard is opened from a service.",
+    )
+    fixed_time = fields.Boolean(
+        related='service_id.fixed_time',
+        readonly=True,
+        help="Mirrors the service's Fixed Time flag - when true, the end date snaps to a fixed daily cut-off instead of a rolling interval.",
+    )
     generate_barcode_card = fields.Boolean(
         related='service_id.generate_barcode_card',
-        readonly=True
+        readonly=True,
+        help="Mirrors the service flag - when true, the wizard auto-generates a printable barcode instead of expecting a scanned RFID number.",
     )
     parent_id = fields.Many2one(
         comodel_name='res.partner',
         related='service_id.parent_id',
-        readonly=True
+        readonly=True,
+        help="Parent partner the new visitor contact will be filed under (inherited from the service template).",
     )
     partner_id = fields.Many2one(
         comodel_name='res.partner',
@@ -93,24 +105,28 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
     email = fields.Char(
         compute='_compute_partner_contact',
         readonly=False,
-        store=True
+        store=True,
+        help="Visitor email address. Pre-filled from the selected partner; editing here also updates the partner record on confirmation.",
     )
     mobile = fields.Char(
         compute='_compute_partner_contact',
         readonly=False,
-        store=True
+        store=True,
+        help="Visitor mobile/phone number. Pre-filled from the selected partner; editing here also updates the partner's mobile field on confirmation.",
     )
     start_date = fields.Datetime(
         string="Service start",
         compute='_onchange_service_id',
         readonly=False,
-        store=True
+        store=True,
+        help="Moment the card becomes active. Defaults to a calculated start based on the service's time interval, but you can override it.",
     )
     end_date = fields.Datetime(
         string="Service end",
         compute='_onchange_start_date',
         readonly=False,
-        store=True
+        store=True,
+        help="Moment the card stops working. Calculated from start + the service's time interval; for Fixed Time services it snaps to the daily cut-off.",
         # inverse='_inverse_end_date',
     )
     # end_date_manual = fields.Datetime(
@@ -119,8 +135,12 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
     card_number = fields.Char(
         string='The card number', size=10,
         required=True,
+        help="The RFID number or generated barcode the visitor will carry. For RFID services, type or scan the printed number; for barcode services, the value is generated automatically.",
     )
-    visits = fields.Integer(related='service_id.visits')
+    visits = fields.Integer(
+        related='service_id.visits',
+        help="Mirrors the visits-per-card limit from the service template - informational only, the wizard does not let you override it.",
+    )
 
     # def _inverse_end_date(self):
     #     self.end_date_manual = self.end_date

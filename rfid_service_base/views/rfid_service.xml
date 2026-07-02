@@ -152,9 +152,16 @@
                                 <field name="card_type" options='{"no_open": True, "no_create": True}'/>
                                 <field name="fixed_time"/>
                             </group>
+                            <p class="text-muted">
+                                <i class="fa fa-lightbulb-o" role="img"/>
+                                Tip: turn Fixed Time on to make every card expire at the same wall-clock cut-off (for example "all day passes end at 18:00"). Leave it off for rolling windows (e.g. "4 hours from check-in").
+                            </p>
                         </group>
                         <notebook>
-                            <page string="Settings">
+                            <page string="Settings" name="settings">
+                                <p class="text-muted">
+                                    Default access rights and tagging for the service. The access group is inherited by every card issued from this service, and tags help filter the catalog.
+                                </p>
                                 <group>
                                     <group string="Default Access Rights">
                                         <field name="access_group_id"/>
@@ -183,7 +190,7 @@
             <field name="name">RFID Services List</field>
             <field name="model">rfid.service</field>
             <field name="arch" type="xml">
-                <tree string="RFID Services List" decoration-success="active==True" decoration-danger="active!=True">
+                <tree sample="1" string="RFID Services List" decoration-success="active==True" decoration-danger="active!=True">
                     <field name="active" invisible="1"/>
                     <field name="name"/>
                     <field name="service_type"/>

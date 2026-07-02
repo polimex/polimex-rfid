@@ -3,10 +3,26 @@
     <data>
 
         <record id="hr_rfid_service_sale_action" model="ir.actions.act_window">
-            <field name="name">Sale RFID Service</field>
+            <field name="name">Service Sales</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">rfid.service.sale</field>
             <field name="view_mode">tree,form,pivot,graph,calendar</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No service sales recorded yet
+                </p>
+                <p>
+                    This view tracks all RFID service sales and customer access grants.
+                    <br/><br/>
+                    Monitor and manage:
+                    • <b>Customer access:</b> Track who has access and when it expires
+                    • <b>Service usage:</b> Monitor active, expired, and upcoming services
+                    • <b>Sales analytics:</b> Analyze service performance and customer patterns
+                    • <b>Customer communication:</b> Send badges and access information
+                    <br/><br/>
+                    Use the calendar view to see service periods and the pivot view for sales analysis.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_service_sale_action_search" model="ir.ui.view">
@@ -144,7 +160,7 @@
             <field name="name">Sale RFID Service Tree</field>
             <field name="model">rfid.service.sale</field>
             <field name="arch" type="xml">
-                <tree string="">
+                <tree sample="1" string="">
                     <field name="name"/>
                     <field name="partner_id"/>
                     <field name="service_id"/>
