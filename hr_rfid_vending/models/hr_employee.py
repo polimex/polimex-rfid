@@ -115,30 +115,29 @@ class HrEmployee(models.Model):
 
     @api.depends('hr_rfid_vending_balance_history')
     def _compute_spend_today(self):
+        BalanceHistory = self.env['hr.rfid.vending.balance.history']
         for e in self:
-            if self.daily_limit_type == 'last_24':
-                spent_today = self.env['hr.rfid.vending.balance.history'].read_group(
+            if e.daily_limit_type == 'last_24':
+                result = BalanceHistory._read_group(
                     domain=[
                         ('employee_id', '=', e.id),
                         ('balance_change', '<', 0),
                         ('create_date', '>=', fields.Datetime.now() - timedelta(hours=24)),
                         ('create_date', '<=', fields.Datetime.now()),
                     ],
-                    fields=['balance_change'],
-                    groupby=['employee_id']
+                    aggregates=['balance_change:sum'],
                 )
             else:
-                spent_today = self.env['hr.rfid.vending.balance.history'].read_group(
+                result = BalanceHistory._read_group(
                     domain=[
                         ('employee_id', '=', e.id),
                         ('balance_change', '<', 0),
                         ('create_date', '>=', datetime.combine(fields.Date.today(), time(0, 0, 0))),
                         ('create_date', '<=', datetime.combine(fields.Date.today(), time(23, 59, 59))),
                     ],
-                    fields=['balance_change'],
-                    groupby=['employee_id']
+                    aggregates=['balance_change:sum'],
                 )
-            e.hr_rfid_vending_spent_today = 0 if spent_today == [] else abs(spent_today[0]['balance_change'])
+            e.hr_rfid_vending_spent_today = abs(result[0][0] or 0)
 
     def get_employee_balance(self, controller=None):
         self.ensure_one()

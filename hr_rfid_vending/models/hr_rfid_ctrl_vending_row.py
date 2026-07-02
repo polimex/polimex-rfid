@@ -7,17 +7,47 @@ class HrRfidVendingRow(models.Model):
     _description = 'Vending Machine Row'
     _order = 'row_num'
 
-    row_num = fields.Integer(required=True, readonly=True)
-    controller_id = fields.Many2one('hr.rfid.ctrl', required=True, readonly=True, ondelete='cascade')
+    row_num = fields.Integer(
+        required=True, readonly=True,
+        help="Row index inside the vending machine grid (1-based). Each row holds 4 item slots; the global item number is (row_num - 1) * 4 + slot.",
+    )
+    controller_id = fields.Many2one(
+        'hr.rfid.ctrl', required=True, readonly=True, ondelete='cascade',
+        help="Vending controller this row belongs to. Cascade on delete - rows do not survive their controller.",
+    )
 
-    item_number1 = fields.Char(string='#', compute='_compute_number_1')
-    item_number2 = fields.Char(string='#', compute='_compute_number_2')
-    item_number3 = fields.Char(string='#', compute='_compute_number_3')
-    item_number4 = fields.Char(string='#', compute='_compute_number_4')
-    item1  = fields.Many2one('product.template', string='Item#1')
-    item2  = fields.Many2one('product.template', string='Item#2')
-    item3  = fields.Many2one('product.template', string='Item#3')
-    item4  = fields.Many2one('product.template', string='Item#4')
+    item_number1 = fields.Char(
+        string='#', compute='_compute_number_1',
+        help="Label for the first slot in this row, computed from row_num (e.g. 'Item #1:' on row 1, 'Item #5:' on row 2).",
+    )
+    item_number2 = fields.Char(
+        string='#', compute='_compute_number_2',
+        help="Label for the second slot in this row.",
+    )
+    item_number3 = fields.Char(
+        string='#', compute='_compute_number_3',
+        help="Label for the third slot in this row.",
+    )
+    item_number4 = fields.Char(
+        string='#', compute='_compute_number_4',
+        help="Label for the fourth slot in this row.",
+    )
+    item1 = fields.Many2one(
+        'product.template', string='Item#1',
+        help="Product mapped to the first slot of this row. Determines the name shown on the controller's price screen.",
+    )
+    item2 = fields.Many2one(
+        'product.template', string='Item#2',
+        help="Product mapped to the second slot of this row.",
+    )
+    item3 = fields.Many2one(
+        'product.template', string='Item#3',
+        help="Product mapped to the third slot of this row.",
+    )
+    item4 = fields.Many2one(
+        'product.template', string='Item#4',
+        help="Product mapped to the fourth slot of this row.",
+    )
 
     def _compute_number_1(self):
         for row in self:

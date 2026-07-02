@@ -17,7 +17,8 @@ class ResCompany(models.Model):
          ('weeks', 'Weeks'),
          ('months', 'Months')],
         string='Interval Unit',
-        default='months'
+        default='months',
+        help="Time unit for the auto-refill repeat interval. Combined with Repeat every (above): 'every 1 months' tops up balances on the same day each month.",
     )
     refill_nextcall = fields.Datetime(
         string='Next Execution Date',

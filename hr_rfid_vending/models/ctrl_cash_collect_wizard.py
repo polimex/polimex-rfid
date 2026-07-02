@@ -10,16 +10,26 @@ class CashCollectLog(models.Model):
         'hr.rfid.ctrl',
         required=True,
         readonly=True,
+        string="Vending Machine",
+        help="Vending machine from which cash was collected. Set automatically based on the collection event."
     )
     currency_id = fields.Many2one(
         "res.currency",
         string="Currency",
         readonly=True,
         default=lambda self: self.env.user.company_id.currency_id,
+        help="Currency used to record the collected amount - taken from the company default and shown for context only.",
     )
     value = fields.Monetary(
-        string='Value',
-        help='Amount of money collected from Vending machine',
+        string='Amount Collected',
+        help="""Amount of physical cash collected from the vending machine.
+
+• Physical cash: Real money removed from machine's cash storage
+• Tracking: Logged for audit trail and cash management
+• Machine update: Reduces the machine's cash_contained amount
+• Currency: Uses company's default currency
+
+Record the actual amount of cash physically removed from the machine.""",
         readonly=True,
         required=True,
     )
@@ -40,16 +50,33 @@ class CashCollectWiz(models.TransientModel):
         required=True,
         readonly=True,
         default=_default_ctrl,
+        string="Vending Machines",
+        help="""Vending machines from which cash will be collected.
+
+• Multiple machines: Can collect from several machines at once
+• Batch operation: Efficient for route-based cash collection
+• Pre-selected: Based on current context or selection
+• Validation: System ensures machines have sufficient cash
+
+Select all machines from which you are physically collecting cash."""
     )
     currency_id = fields.Many2one(
         "res.currency",
         string="Currency",
         readonly=True,
         default=lambda self: self.env.user.company_id.currency_id,
+        help="Currency used to record the collected amount - taken from the company default and shown for context only.",
     )
     value = fields.Monetary(
-        string='Value',
-        help='Amount of money collected from Vending machine',
+        string='Collection Amount',
+        help="""Amount of cash to collect from each selected vending machine.
+
+• Per machine: This amount applies to each selected machine
+• Validation: Cannot exceed the cash currently in each machine
+• Default: Pre-filled with current cash amount if single machine selected
+• Tracking: Creates collection log entries for audit purposes
+
+Enter the amount you are physically removing from the machines.""",
         required=True,
         default=_default_value,
     )
