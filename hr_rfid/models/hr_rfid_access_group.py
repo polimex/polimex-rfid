@@ -118,6 +118,12 @@ class HrRfidAccessGroup(models.Model):
     def _calc_last_user_event_in_ag(self, partner_id=None, employee_id=None):
         last_event = self.env['hr.rfid.event.user']
         for ag in self:
+            # 0 = feature disabled, as the field's help promises. Without this
+            # guard a granted event in the same second still matched
+            # (event_time >= now() - 0) and blocked rapid consecutive swipes
+            # / cloud-card requests. (backport d78c5a8)
+            if not ag.delay_between_events:
+                continue
             ag_last_event = self.env['hr.rfid.event.user'].last_event(ag.all_door_ids.mapped('door_id'), partner_id,
                                                                       employee_id, event_action=1)
             if ag_last_event and (ag_last_event.event_time >= (
@@ -589,11 +595,24 @@ class HrRfidAccessGroupRelations(models.AbstractModel):
     )
 
     def active_for_visits(self):
-        res = []
-        for agr in self:
-            if (agr.visits_counting and agr.permitted_visits < agr.visits_counter) or not agr.visits_counting:
-                res.append(True)
-        return res and all(res) or False
+        """Whether every relation in ``self`` still grants access from the
+        visits standpoint: counting disabled, unlimited (``permitted_visits``
+        <= 0) or visits remaining (``visits_counter < permitted_visits``).
+
+        Mirrors the visit clause of :meth:`_compute_state`. An empty
+        recordset reports False - a sale without an access relation grants
+        no access. (backport 27870ac - fixes inverted comparison
+        ``permitted_visits < visits_counter`` that was ported from 17.0 and
+        born every visits-counting sale 'finished'.)
+        """
+        if not self:
+            return False
+        return all(
+            not agr.visits_counting
+            or agr.permitted_visits <= 0
+            or agr.visits_counter < agr.permitted_visits
+            for agr in self
+        )
 
     def _deactivate(self):
         raise exceptions.ValidationError('Not implemented yet!')
@@ -722,8 +741,18 @@ class HrRfidAccessGroupEmployeeRel(models.Model):
     def _deactivate(self):
         for rel in self:
             cards = rel.employee_id.hr_rfid_card_ids.filtered(lambda c: c.card_ready())
-            doors = rel.access_group_id.all_door_ids.mapped('door_id')
-            self.env['hr.rfid.card.door.rel']._remove_cards(cards, doors)
+            # Skip doors still covered by another active access group of this
+            # employee, so an overlapping renewal (old rel expires exactly as the
+            # new one activates) does not wipe the card's door rel. (backport 46650f3)
+            other_active_doors = (
+                rel.employee_id.hr_rfid_access_group_ids
+                ._filter_active()
+                .filtered(lambda r: r.id != rel.id)
+                .mapped('access_group_id.all_door_ids.door_id')
+            )
+            doors = rel.access_group_id.all_door_ids.mapped('door_id') - other_active_doors
+            if doors:
+                self.env['hr.rfid.card.door.rel']._remove_cards(cards, doors)
             # for card in cards:
             #     for door in doors:
             #         self.env['hr.rfid.card.door.rel'].check_relevance_slow(card, door)
@@ -799,8 +828,18 @@ class HrRfidAccessGroupContactRel(models.Model):
     def _deactivate(self):
         for rel in self:
             cards = rel.contact_id.hr_rfid_card_ids.filtered(lambda c: c.card_ready())
-            doors = rel.access_group_id.all_door_ids.mapped('door_id')
-            self.env['hr.rfid.card.door.rel']._remove_cards(cards, doors)
+            # Skip doors still covered by another active access group of this
+            # contact (e.g. an old monthly service expires exactly when the next
+            # one activates) so the card keeps its door permission. (backport 46650f3)
+            other_active_doors = (
+                rel.contact_id.hr_rfid_access_group_ids
+                ._filter_active()
+                .filtered(lambda r: r.id != rel.id)
+                .mapped('access_group_id.all_door_ids.door_id')
+            )
+            doors = rel.access_group_id.all_door_ids.mapped('door_id') - other_active_doors
+            if doors:
+                self.env['hr.rfid.card.door.rel']._remove_cards(cards, doors)
             # for card in cards:
             #     for door in doors:
             #         self.env['hr.rfid.card.door.rel'].check_relevance_slow(card, door)

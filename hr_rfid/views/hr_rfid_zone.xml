@@ -23,6 +23,26 @@
 
         <record id="hr_rfid_zone_action" model="ir.actions.act_window">
             <field name="name">Zones</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first zone
+                </p>
+                <p>
+                    Zones help you organize your facility into logical areas for access control and tracking.
+                    Each zone represents a physical area (like "Main Building" or "Warehouse") with specific doors
+                    as entry/exit points.
+                </p>
+                <p>
+                    Key features:
+                    <ul>
+                        <li><b>Real-time occupancy:</b> See who is currently in each zone</li>
+                        <li><b>Anti-pass back:</b> Prevent tailgating and ensure accurate tracking</li>
+                        <li><b>Attendance tracking:</b> Automatically track work hours based on zone entry/exit</li>
+                        <li><b>Access restrictions:</b> Limit zones to specific departments or employee groups</li>
+                        <li><b>Safety compliance:</b> Monitor zone capacity for emergency evacuations</li>
+                    </ul>
+                </p>
+            </field>
             <field name="res_model">hr.rfid.zone</field>
             <field name="view_mode">tree,form</field>
         </record>
@@ -32,6 +52,7 @@
             <field name="model">hr.rfid.zone.doors.wiz</field>
             <field name="arch" type="xml">
                 <form string="Add/Remove Doors">
+                    <p>Pick the doors to attach to or detach from this zone. The zone's anti-passback rules and event filters apply to whatever doors are linked here.</p>
                     <group>
                         <field name="zone_id" readonly="1"/>
                         <field name="door_ids" widget="many2many_tags"/>
@@ -49,6 +70,12 @@
 
         <record id="hr_rfid_zone_doors_wiz_action" model="ir.actions.act_window">
             <field name="name">Add/Remove Doors</field>
+            <field name="help" type="html">
+                <p>
+                    Manage which doors belong to this zone.
+                    Doors marked as entrance or exit points will track movement in and out of the zone.
+                </p>
+            </field>
             <field name="res_model">hr.rfid.zone.doors.wiz</field>
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_rfid_zone_doors_wiz"/>
@@ -95,18 +122,27 @@
                             </group>
                         </group>
                         <notebook>
-                            <page string="Included doors">
+                            <page string="Included doors" name="included_doors">
+                                <p class="text-muted">
+                                    Doors that belong to this zone. A reader passing a card through any of these doors counts as entering the zone.
+                                </p>
                                 <group>
                                     <field name="door_ids" readonly="1" widget="many2many_tags"/>
                                 </group>
                             </page>
-                            <page string="Permitted employees">
+                            <page string="Permitted employees" name="permitted_employees">
+                                <p class="text-muted">
+                                    Departments and employee tags that are allowed inside this zone. The anti-passback engine rejects card swipes from anyone outside these lists.
+                                </p>
                                 <group>
                                     <field name="permitted_department_ids" widget="many2many_tags"/>
                                     <field name="permitted_employee_category_ids" widget="many2many_tags"/>
                                 </group>
                             </page>
-                            <page string="Notifications">
+                            <page string="Notifications" name="notifications">
+                                <p class="text-muted">
+                                    Per-event subscriptions. Each row picks an event type (user or system) and the recipients who receive the notification when the event fires inside this zone.
+                                </p>
                                 <field name="notification_ids">
                                     <tree string="Notifications">
                                         <field name="notification_type"/>
@@ -129,6 +165,12 @@
         <!--    TODO remove buttons and move actions-->
         <record id="hr_rfid_zone_doors_action" model="ir.actions.act_window">
             <field name="name">Add/Remove Doors</field>
+            <field name="help" type="html">
+                <p>
+                    Manage which doors belong to this zone.
+                    Doors marked as entrance or exit points will track movement in and out of the zone.
+                </p>
+            </field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">hr.rfid.zone.doors.wiz</field>
             <field name="view_mode">form</field>

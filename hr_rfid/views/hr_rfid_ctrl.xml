@@ -73,6 +73,9 @@
                         </group>
                         <notebook>
                             <page string="System information" name="system_information">
+                                <p class="text-muted">
+                                    Read-only identification reported by the controller firmware: hardware and software versions, capacity limits (cards and events), and the timestamp of the last full F0 sync.
+                                </p>
                                 <group>
                                     <group>
                                         <field name="ctrl_id" readonly="1"/>
@@ -89,6 +92,9 @@
                                 </group>
                             </page>
                             <page string="Current status" name="current_status">
+                                <p class="text-muted">
+                                    Live telemetry from the controller - emergency state, on-board temperature and humidity, power rails, and the current card count. Use this tab to diagnose a controller that misbehaves in production.
+                                </p>
                                 <group>
                                     <group>
                                         <field name="emergency_state" readonly="1"/>
@@ -125,6 +131,9 @@
                             </page>
                             <page string="Hotel equipment" name="hotel_equipment"
                                   invisible="hotel_readers==0">
+                                <p class="text-muted">
+                                    Status of in-room hotel readers and the DND/Clean buttons wired to them. Only visible when the controller advertises at least one hotel reader.
+                                </p>
                                 <group>
                                     <group>
                                         <field name="hotel_readers" readonly="1"/>
@@ -137,6 +146,9 @@
                             </page>
                             <page string="Temperature control" name="temperature_control"
                                   invisible="hw_version!='22'">
+                                <p class="text-muted">
+                                    Threshold and reporting cadence for the temperature controller (hw=22). The hysteresis prevents the controller from oscillating around the threshold; an event is raised when temperature crosses the high or low limits.
+                                </p>
                                 <group>
                                     <group>
                                         <field name="event_interval" widget="numeric_step"
@@ -153,6 +165,9 @@
                                 </group>
                             </page>
                             <page string="Setup" name="setup">
+                                <p class="text-muted">
+                                    Operating mode and behavioural flags for this controller. Most fields depend on the controller's hardware version - irrelevant options are hidden automatically. Use Read Input Masks to refresh the live input wiring map.
+                                </p>
                                 <group>
                                     <group>
                                         <field name="mode" readonly="1" invisible="1"/>
@@ -165,6 +180,8 @@
                                         <field name="external_db" widget="boolean_toggle"/>
                                         <field name="relay_time_factor" readonly="1"/>
                                         <field name="dual_person_mode" widget="boolean_toggle" readonly="1"/>
+                                        <field name="interlocking_mode" widget="boolean_toggle"
+                                               invisible="hw_version not in ['11','17']"/>
                                     </group>
                                     <group>
                                         <field name="alarm_sensor_events" invisible="hw_version not in ['10','11']"
@@ -203,6 +220,9 @@
                                 </group>
                             </page>
                             <page string="Debug Information" name="debug" groups="base.group_no_one">
+                                <p class="text-muted">
+                                    Internal debug fields, visible to developers only. Shows raw input/output masks and state bitmaps as reported by the controller - useful for protocol troubleshooting.
+                                </p>
                                 <group>
                                     <group>
                                         <field name="inputs" readonly="1"/>
@@ -237,7 +257,7 @@
             <field name="name">hr.rfid.controller.kanban</field>
             <field name="model">hr.rfid.ctrl</field>
             <field name="arch" type="xml">
-                <kanban group_create="false"
+                <kanban sample="1" group_create="false"
                         group_edit="false"
                         quick_create="false"
                         create="false">
@@ -433,6 +453,28 @@
 
         <record id="hr_rfid_ctrl_action" model="ir.actions.act_window">
             <field name="name">Controllers</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first RFID Controller
+                </p>
+                <p>
+                    Controllers are hardware devices that manage access control, alarms, and other security features.
+                    Each controller connects to card readers, door locks, sensors, and other equipment.
+                </p>
+                <p>
+                    Controllers communicate with Odoo through IP modules (webstacks) and can operate different types of hardware:
+                </p>
+                <ul>
+                    <li><b>Access Controllers</b> - Manage doors, readers, and access permissions</li>
+                    <li><b>Alarm Controllers</b> - Monitor security zones and sensors</li>
+                    <li><b>Relay Controllers</b> - Control multiple relay outputs for various equipment</li>
+                    <li><b>Temperature Controllers</b> - Monitor environmental conditions</li>
+                    <li><b>Turnstile Controllers</b> - Manage turnstile access points</li>
+                </ul>
+                <p>
+                    Controllers are automatically created when discovered by the system. You cannot manually create controllers.
+                </p>
+            </field>
             <field name="res_model">hr.rfid.ctrl</field>
             <field name="view_mode">kanban,tree,form,search</field>
         </record>

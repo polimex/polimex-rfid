@@ -6,6 +6,7 @@
             <field name="model">hr.rfid.door.open.close.wiz</field>
             <field name="arch" type="xml">
                 <form string="Open/close door">
+                    <p>Remotely unlock the selected doors for the duration you set below, or close them immediately. The command is queued for the controller and runs as soon as it polls in.</p>
                     <group>
                         <field name="doors" readonly="1">
                             <tree editable="top">
@@ -27,6 +28,12 @@
 
         <record id="hr_rfid_door_open_close_wiz_action" model="ir.actions.act_window">
             <field name="name">Open/close door</field>
+            <field name="help" type="html">
+                <p>
+                    Remotely control door locks. You can temporarily unlock doors for a specified
+                    duration or lock them immediately. This sends commands directly to the door controllers.
+                </p>
+            </field>
             <field name="res_model">hr.rfid.door.open.close.wiz</field>
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_rfid_door_open_close_wiz_form"/>
@@ -35,6 +42,20 @@
 
         <record id="hr_rfid_door_action" model="ir.actions.act_window">
             <field name="name">Doors</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No doors configured yet
+                </p>
+                <p>
+                    Doors are physical access points controlled by RFID readers. Each door is managed by a controller
+                    and can be part of multiple access groups. You can configure unlock times, alarm settings, and
+                    monitor access events for each door.
+                </p>
+                <p>
+                    Doors are automatically created when controllers are configured. To add new doors, configure them
+                    on the physical controller first, then sync with the system.
+                </p>
+            </field>
             <field name="res_model">hr.rfid.door</field>
             <field name="view_mode">kanban,tree,form,search</field>
         </record>
@@ -183,7 +204,7 @@
             <field name="name">hr.rfid.door.kanban</field>
             <field name="model">hr.rfid.door</field>
             <field name="arch" type="xml">
-                <kanban group_create="false"
+                <kanban sample="1" group_create="false"
                         group_edit="false"
                         quick_create="false"
                         create="false">

@@ -6,6 +6,7 @@
             <field name="model">hr.rfid.webstack.discovery</field>
             <field name="arch" type="xml">
                 <form string="Module Discovery">
+                    <p>Modules detected by a UDP broadcast on the local network. Delete the rows you don't want to register, pick how the rest should be added (Inactive only - register without contact; Active - also read controllers), then click Process.</p>
                      <separator string="Please remove unwanted modules from list. Choose the operation for rest of them. Press Add to add them in the system!" colspan="4"/>
                     <group >
                         <group colspan="4">
@@ -39,6 +40,7 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_rfid_webstack_discovery_wiz"/>
             <field name="target">new</field>
+            <field name="help" type="html"><p>Automatically discover RFID modules on your network. Found modules can be added to the system or have their configuration updated.</p></field>
         </record>
 
         <record id="hr_rfid_webstack_manual_create_wiz" model="ir.ui.view">
@@ -92,6 +94,7 @@
             <field name="target">new</field>
             <field name="binding_model_id" ref="model_hr_rfid_webstack"/>
             <field name="binding_view_types">tree</field>
+            <field name="help" type="html"><p>Manually add an RFID module to the system. You'll need the module's serial number and network configuration details.</p></field>
         </record>
 
     </data>

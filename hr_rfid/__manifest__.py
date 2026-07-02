@@ -3,7 +3,7 @@
 
 {
     'name': 'RFID Access Control',
-    'version': '2.2',
+    'version': '2.3',
     'category': 'Human Resources',
     'summary': 'Manage employee access control',
     'company': 'Polimex Holding Ltd',
@@ -80,6 +80,7 @@
         #     'hr_rfid/static/src/xml/**/*',
         # ],
         'web.report_assets_common': [
+            '/hr_rfid/static/src/scss/_variables.scss',
             '/hr_rfid/static/src/scss/card_foldable_badge_report.scss',
             '/hr_rfid/static/src/scss/card_full_page_ticket_report.scss',
         ],

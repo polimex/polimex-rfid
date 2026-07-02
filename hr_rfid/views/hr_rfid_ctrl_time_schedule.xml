@@ -101,7 +101,7 @@
             <field name="name">hr.rfid.time.schedule.kanban</field>
             <field name="model">hr.rfid.time.schedule</field>
             <field name="arch" type="xml">
-                <kanban create="0" delete="0">
+                <kanban sample="1" create="0" delete="0">
                     <field name="id"/>
                     <field name="name"/>
                     <field name="number"/>
@@ -134,7 +134,7 @@
             <field name="name">hr.rfid.time.schedule.tree</field>
             <field name="model">hr.rfid.time.schedule</field>
             <field name="arch" type="xml">
-                <tree create="false" delete="false">
+                <tree sample="1" create="false" delete="false">
                     <field name="name"/>
                 </tree>
             </field>

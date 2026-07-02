@@ -24,13 +24,17 @@
                 </xpath>
                 <notebook position="inside">
                     <page string="RFID Info"
+                          name="rfid_info"
                           groups="hr_rfid.hr_rfid_group_officer"
                           invisible="not id">
+                        <p class="text-muted">
+                            RFID access for this employee: the personal PIN (used at PIN-enabled readers), the cards issued to them, and the access groups that decide which doors they can open.
+                        </p>
                         <group>
                             <field name="hr_rfid_pin_code" groups="hr_rfid.hr_rfid_view_rfid_pin_code_data"/>
                         </group>
                         <notebook>
-                            <page string="Cards">
+                            <page string="Cards" name="employee_cards">
                                 <field name="hr_rfid_card_ids"
                                        context="{'active_test': False, 'default_employee_id': context.get('active_id')}"
                                        edit="0">
@@ -38,12 +42,12 @@
                                           decoration-success="active"
                                           decoration-danger="not active">
                                         <field name="active" invisible="1"/>
-                                        <field name="number"/>
-                                        <field name="card_reference"/>
-                                        <field name="activate_on"/>
-                                        <field name="deactivate_on"/>
-                                        <field name="card_type"/>
-                                        <field name="cloud_card"/>
+                                        <field name="number" help="Unique card identifier (hexadecimal format for RFID, numeric for Barcode)"/>
+                                        <field name="card_reference" help="Optional reference label for easy identification"/>
+                                        <field name="activate_on" help="Date when this card becomes active (leave empty for immediate activation)"/>
+                                        <field name="deactivate_on" help="Date when this card expires (leave empty for no expiration)"/>
+                                        <field name="card_type" help="Type of card: RFID for proximity cards, Barcode for printed badges"/>
+                                        <field name="cloud_card" help="Enable for virtual/mobile cards that work through cloud services"/>
                                     </tree>
                                 </field>
                                 <label for="hr_rfid_card_ids" string="New Barcode card"/>
@@ -54,14 +58,18 @@
 
                             </page>
 
-                            <page string="Access Groups">
+                            <page string="Access Groups" name="employee_access_groups">
+                                <p class="text-muted">
+                                    Groups grant doors and schedules to this employee. Membership can be time-limited (set Expiration) or temporarily disabled via the state toggle.
+                                </p>
                                 <field name="hr_rfid_access_group_ids" widget="one2many_list">
                                     <tree editable="bottom">
                                         <field name="access_group_id"
-                                               domain="[('department_ids','in',[parent.department_id])]"/>
-                                        <field name="activate_on"/>
-                                        <field name="expiration"/>
-                                        <field name="state" widget="boolean_toggle"/>
+                                               domain="[('department_ids','in',[parent.department_id])]"
+                                               help="Select an access group available for the employee's department"/>
+                                        <field name="activate_on" help="Date when this access group membership becomes active"/>
+                                        <field name="expiration" help="Date when this access group membership expires (leave empty for permanent access)"/>
+                                        <field name="state" widget="boolean_toggle" help="Enable/disable this access group membership temporarily"/>
                                     </tree>
                                 </field>
                             </page>

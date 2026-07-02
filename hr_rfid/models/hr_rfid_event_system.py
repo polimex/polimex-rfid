@@ -46,6 +46,7 @@ action_selection = [
         ('36', _('Inserted Card')),  # User Event
         ('37', _('Ejected Card')),  # User Event
         ('38', _('Hotel Button Pressed')),  # User Event
+        ('39', _('Unknown Plate')),  # System Event
         ('45', _('1-W ERROR (wiring problems)')),
         ('47', _('Vending Purchase Complete')),
         ('48', _('Vending Error1')),
@@ -150,18 +151,115 @@ class HrRfidSystemEvent(models.Model):
 
     @api.autovacuum
     def _gc_events_life(self):
-        for c in self.env['res.company'].search([]):
-            if c.event_lifetime is None:
-                return False
-            # self._cr.execute("""
-            #                        DELETE FROM hr_rfid_event_system
-            #                        WHERE timestamp < NOW() - INTERVAL '%s days'
-            #                    """, [c.event_lifetime])
-            # _logger.info("GC'd %d old rfid system event entries", self._cr.rowcount)
-            res = self.with_company(c).search([
-                ('timestamp', '<', fields.Datetime.now() - timedelta(days=int(c.event_lifetime)))
-            ], limit=1000)
-            res.unlink()
+        """
+        Clean up old system event records per company based on event_lifetime.
+
+        Per-company batched raw SQL (event->webstack->company_id) with
+        commit/rollback isolation, following Odoo core GC patterns.
+        """
+        batch_size = 1000
+        max_batches_per_company = 20
+
+        companies = self.env['res.company'].search([])
+        total_deleted = 0
+
+        _logger.info(
+            "[SYSTEM EVENTS] Starting GC across %d companies",
+            len(companies)
+        )
+
+        for company in companies:
+            if company.event_lifetime is None:
+                _logger.debug(
+                    "[SYSTEM EVENTS] Company %s has no event_lifetime set, skipping",
+                    company.name
+                )
+                continue
+
+            try:
+                cutoff_date = fields.Datetime.now() - timedelta(days=int(company.event_lifetime))
+                company_deleted = 0
+                batch_num = 0
+
+                _logger.info(
+                    "[SYSTEM EVENTS] Company %s (ID: %d) - deleting events older than %s (%d days)",
+                    company.name,
+                    company.id,
+                    cutoff_date,
+                    company.event_lifetime
+                )
+
+                while batch_num < max_batches_per_company:
+                    batch_num += 1
+
+                    try:
+                        self._cr.execute("""
+                            DELETE FROM hr_rfid_event_system
+                            WHERE id IN (
+                                SELECT e.id
+                                FROM hr_rfid_event_system e
+                                INNER JOIN hr_rfid_webstack w ON e.webstack_id = w.id
+                                WHERE e.timestamp < %s
+                                  AND w.company_id = %s
+                                ORDER BY e.id
+                                LIMIT %s
+                            )
+                        """, (cutoff_date, company.id, batch_size))
+
+                        deleted_count = self._cr.rowcount
+
+                        if deleted_count == 0:
+                            break
+
+                        self._cr.commit()
+
+                        company_deleted += deleted_count
+                        total_deleted += deleted_count
+
+                        _logger.info(
+                            "[SYSTEM EVENTS] Company %s batch %d: Deleted %d events (company total: %d)",
+                            company.name,
+                            batch_num,
+                            deleted_count,
+                            company_deleted
+                        )
+
+                        if deleted_count < batch_size:
+                            break
+
+                    except Exception as batch_error:
+                        _logger.error(
+                            "[SYSTEM EVENTS] Company %s batch %d error: %s",
+                            company.name,
+                            batch_num,
+                            str(batch_error),
+                            exc_info=True
+                        )
+                        self._cr.rollback()
+                        break
+
+                if company_deleted > 0:
+                    _logger.info(
+                        "[SYSTEM EVENTS] Company %s completed: %d events deleted in %d batches",
+                        company.name,
+                        company_deleted,
+                        batch_num
+                    )
+
+            except Exception as company_error:
+                _logger.error(
+                    "[SYSTEM EVENTS] Company %s fatal error: %s",
+                    company.name,
+                    str(company_error),
+                    exc_info=True
+                )
+                self._cr.rollback()
+
+        _logger.info(
+            "[SYSTEM EVENTS] GC completed: %d total events deleted across %d companies",
+            total_deleted,
+            len(companies)
+        )
 
         return True
 
@@ -190,7 +288,7 @@ class HrRfidSystemEvent(models.Model):
                 vals.pop('input_js')
 
     def _check_duplicate_sys_ev(self, vals):
-        if not vals['webstack_id']:
+        if not 'webstack_id' in vals:
             return False
         dupe = self.env['hr.rfid.event.system'].search([
             ('webstack_id', '=', vals['webstack_id']),
@@ -280,14 +378,13 @@ class HrRfidSystemEventWizard(models.TransientModel):
         if type(sys_ev.card_number) != type(''):
             raise exceptions.ValidationError(_('System event does not have a card number in it'))
 
-        if len(sys_ev.card_number) == 10:
+        if sys_ev.card_number:
             return sys_ev.card_number
-
-        js = json.loads(sys_ev.input_js)
         try:
+            js = json.loads(sys_ev.input_js)
             card_number = js['event']['card']
             return card_number
-        except KeyError as e:
+        except Exception:
             raise exceptions.ValidationError(_('System event does not have a card number in it'))
 
     sys_ev_id = fields.Many2one(

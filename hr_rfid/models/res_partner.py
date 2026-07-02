@@ -325,12 +325,12 @@ class ResPartner(models.Model):
                         'card_input_type': card_input_type or self.env.company.card_input_type,
                     })]})
 
-    def action_send_badge_email(self):
+    def action_send_badge_email(self, template_xml_id=None):
         """ Open a window to compose an email, with the template - 'card_badge'
             message loaded by default
         """
         self.ensure_one()
-        template = self.env.ref('hr_rfid.card_barcode_mail_template_badge', raise_if_not_found=False)
+        template = self.env.ref(template_xml_id or 'hr_rfid.card_barcode_mail_template_badge', raise_if_not_found=False)
         compose_form = self.env.ref('mail.email_compose_message_wizard_form')
         ctx = dict(
             default_model='res.partner',

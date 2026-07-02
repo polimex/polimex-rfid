@@ -39,7 +39,7 @@
             <field name="name">HR RFID Work code: Multi Company</field>
             <field name="model_id" ref="model_hr_rfid_workcode"/>
             <field name="global" eval="True"/>
-            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="domain_force">[('company_id', 'in', company_ids + [False])]</field>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
@@ -83,7 +83,7 @@
             <field name="name">HR RFID Doors: Multi Company</field>
             <field name="model_id" ref="model_hr_rfid_door"/>
             <field name="global" eval="True"/>
-            <field name="domain_force">[('webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="domain_force">['|', '|', ('controller_id', '=', False), ('webstack_id.company_id', '=', False), ('webstack_id.company_id', 'in', company_ids)]</field>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
@@ -94,7 +94,7 @@
             <field name="name">HR RFID Readers: Multi Company</field>
             <field name="model_id" ref="model_hr_rfid_reader"/>
             <field name="global" eval="True"/>
-            <field name="domain_force">[('webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="domain_force">['|', '|', ('controller_id', '=', False), ('webstack_id.company_id', '=', False), ('webstack_id.company_id', 'in', company_ids)]</field>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
@@ -155,7 +155,7 @@
             <field name="name">HR RFID System Events: Multi Company</field>
             <field name="model_id" ref="model_hr_rfid_event_system"/>
             <field name="global" eval="True"/>
-            <field name="domain_force">[('controller_id.webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="domain_force">['|', '|', ('controller_id', '=', False), ('controller_id.webstack_id.company_id', '=', False), ('controller_id.webstack_id.company_id', 'in', company_ids)]</field>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
