@@ -8,13 +8,18 @@
             <field name="view_mode">hierarchy,tree,form</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
-                    Add your first sites here.
+                    Create your first site to organize your RFID infrastructure
                 </p>
                 <p>
-                    A site is a physical location where you can install doors, controllers and modules. This can be a
-                    building, a floor, a room, etc. You can create a hierarchy of sites to represent your company's
-                    physical
-                    organization.
+                    Sites represent physical locations in your organization's hierarchy.
+                    <br/><br/>
+                    Key features:
+                    • <b>Hierarchy:</b> Create building > floor > room structures
+                    • <b>Auto Access Groups:</b> Generate access groups containing all site doors
+                    • <b>Equipment Organization:</b> Group doors, controllers, and modules by location
+                    • <b>Centralized Control:</b> Manage alarms and access permissions per site
+                    <br/><br/>
+                    <b>Examples:</b> "Main Building", "Parking Garage", "Research Lab", "Executive Floor"
                 </p>
             </field>
         </record>
@@ -30,7 +35,7 @@
             <field name="name">hr_rfid_site_view_tree</field>
             <field name="model">hr.rfid.site</field>
             <field name="arch" type="xml">
-                <tree string="hr_rfid_site_tree">
+                <tree sample="1" string="hr_rfid_site_tree">
                     <field name="name"/>
                     <field name="parent_id"/>
                     <field name="door_ids" widget="many2many_tags"/>
@@ -121,24 +126,39 @@
                         </group>
                         <notebook>
                             <page name="access_group_list" string="Access Groups" invisible="not access_group_ids">
-                                    <field name="access_group_ids" nolabel="1"
-                                           domain="[('site_id','=',False)]"/>
+                                <p class="text-muted">
+                                    Access groups assigned to this site. Only groups not yet attached to another site are listed below.
+                                </p>
+                                <field name="access_group_ids" nolabel="1"
+                                       domain="[('site_id','=',False)]"/>
                             </page>
                             <page name="door_list" string="Doors" invisible="not door_ids">
-                                    <field name="door_ids" nolabel="1" widget="many2many_tags"
-                                           domain="[('site_id','=',False)]"/>
+                                <p class="text-muted">
+                                    Physical doors that belong to this site. A door can be on at most one site at a time.
+                                </p>
+                                <field name="door_ids" nolabel="1" widget="many2many_tags"
+                                       domain="[('site_id','=',False)]"/>
                             </page>
                             <page name="ctrl_list" string="Controllers" invisible="not controller_ids">
-                                    <field name="controller_ids" nolabel="1"
-                                           domain="[('site_id','=',False)]"/>
+                                <p class="text-muted">
+                                    RFID controllers (iCON boards) classified under this site. The controller's webstack typically stays in the same site as its controllers.
+                                </p>
+                                <field name="controller_ids" nolabel="1"
+                                       domain="[('site_id','=',False)]"/>
                             </page>
                             <page name="module_list" string="Modules" invisible="not webstack_ids">
-                                    <field name="webstack_ids" nolabel="1"
-                                           domain="[('site_id','=',False)]"/>
+                                <p class="text-muted">
+                                    Webstack network modules (the hubs that talk to the controllers) located at this site.
+                                </p>
+                                <field name="webstack_ids" nolabel="1"
+                                       domain="[('site_id','=',False)]"/>
                             </page>
                             <page name="alarm_group_list" string="Alarm Line Groups" invisible="not alarm_line_group_ids">
-                                    <field name="alarm_line_group_ids" nolabel="1"
-                                           domain="[('site_id','=',False)]"/>
+                                <p class="text-muted">
+                                    Alarm line groups (zones) wired to controllers on this site. Useful for filtering security events by location.
+                                </p>
+                                <field name="alarm_line_group_ids" nolabel="1"
+                                       domain="[('site_id','=',False)]"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -244,6 +264,20 @@
                 <!--                "default_parent_id": active_id,-->
                 "search_default_site_id": active_id,
                 "expand": 1}
+            </field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No sites found for this context
+                </p>
+                <p>
+                    This view shows sites filtered by the selected context.
+                    <br/><br/>
+                    Use the search panel and filters to:
+                    • Find sites by parent location
+                    • Filter by equipment type (doors, controllers, modules)
+                    • View hierarchical organization
+                    • Access site-specific management tools
+                </p>
             </field>
         </record>
     </data>

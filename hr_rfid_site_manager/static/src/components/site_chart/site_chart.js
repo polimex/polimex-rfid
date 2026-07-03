@@ -26,23 +26,20 @@ export class SiteChart extends Component {
         this.state.hierarchy = await this.orm.call("hr.rfid.site", "get_site_hierarchy", [
             siteId,
         ]);
-        console.log(this.state.hierarchy);
     }
 
-    openSiteDoors(siteId) {
-        return;
-        this.action.doAction("hr_rfid.hr_rfid_door_action", {
-            additionalContext: {
-                active_id: siteId,
-            },
-        });
+    async openSiteDoors(siteId) {
+        const action = await this.orm.call("hr.rfid.site", "open_door_list_action", [[siteId]]);
+        await this.action.doAction(action);
     }
-    openSite(siteId) {
-        return;
-        this.action.doAction("hr_rfid_site_manager.act_site_from_sites", {
-            additionalContext: {
-                active_id: siteId,
-            },
+
+    async openSite(siteId) {
+        await this.action.doAction({
+            type: "ir.actions.act_window",
+            res_model: "hr.rfid.site",
+            res_id: siteId,
+            views: [[false, "form"]],
+            target: "current",
         });
     }
 }

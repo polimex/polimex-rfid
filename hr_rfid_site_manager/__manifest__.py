@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "RFID addon for site management",
+    'name': "RFID Site Manager",
 
     'summary': """
         Add classification of the access control equipment
@@ -15,7 +15,7 @@
 
     # for the full list
     'category': 'Administration',
-    'version': '1.0',
+    'version': '1.1',
     'license': 'AGPL-3',
 
     # any module necessary for this one to work correctly
