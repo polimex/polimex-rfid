@@ -44,7 +44,7 @@
         <field name="name">vote.session.view.list</field>
         <field name="model">voting.session</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree sample="1">
                 <field name="name" string="Name"/>
                 <field name="start_datetime"/>
                 <field name="end_datetime"/>
@@ -57,7 +57,7 @@
         <field name="name">vote_session.view.kanban</field>
         <field name="model">voting.session</field>
         <field name="arch" type="xml">
-            <kanban default_group_by="state"
+            <kanban sample="1" default_group_by="state"
                     records_draggable="false"
                     group_create="false"
                     quick_create="false">
@@ -279,5 +279,14 @@
         <field name="name">Vote Session</field>
         <field name="res_model">voting.session</field>
         <field name="view_mode">kanban,calendar,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Open your first voting session</p>
+            <p>
+                A session bundles a display (kiosk page), a participants list and the voting items, plus the start and end times during which ballots are accepted. Once the session moves to Open, the kiosk URL starts collecting votes.
+            </p>
+            <p>
+                <strong>Prerequisite:</strong> at least one voting display, one participants list and one voting item must exist first.
+            </p>
+        </field>
     </record>
 </odoo>

@@ -5,7 +5,7 @@
         <field name="name">voting.display.view.list</field>
         <field name="model">voting.display</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree sample="1">
                 <field name="name" string="Name"/>
             </tree>
         </field>
@@ -42,7 +42,10 @@
                         </group>
                     </group>
                     <notebook>
-                        <page name="Appearance">
+                        <page name="Appearance" string="Appearance">
+                            <p class="text-muted">
+                                Colours and background shown on the kiosk page. Switching between voting and non-voting modes uses the two background colours below.
+                            </p>
                             <group>
                                 <group>
                                     <field name="no_voting_background_color" widget="color"/>
@@ -53,7 +56,10 @@
                                 </group>
                             </group>
                         </page>
-                        <page name="Announcements">
+                        <page name="Announcements" string="Announcements">
+                            <p class="text-muted">
+                                HTML content rendered on the kiosk while no session is open. Use it for rules, opening hours, or a welcome message.
+                            </p>
                             <field name="description" placeholder="E.g. Rules, notes and etc."/>
                         </page>
                     </notebook>
@@ -70,5 +76,11 @@
         <field name="name">Voting Display</field>
         <field name="res_model">voting.display</field>
         <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Configure your first voting display</p>
+            <p>
+                A voting display is the public kiosk page where eligible voters cast their ballot. Each display has a short code and an access token that secure the public URL. You need at least one display before opening a session.
+            </p>
+        </field>
     </record>
 </odoo>

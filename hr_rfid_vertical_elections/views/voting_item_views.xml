@@ -5,7 +5,7 @@
         <field name="name">voting.item.view.list</field>
         <field name="model">voting.item</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree sample="1">
                 <field name="name" string="Name"/>
             </tree>
         </field>
@@ -49,5 +49,11 @@
         <field name="name">Voting Item</field>
         <field name="res_model">voting.item</field>
         <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add your first voting item</p>
+            <p>
+                A voting item is a question or motion presented to voters. Each item carries a short description and an optional HTML document with the full text. A voting session needs at least one item before it can open.
+            </p>
+        </field>
     </record>
 </odoo>

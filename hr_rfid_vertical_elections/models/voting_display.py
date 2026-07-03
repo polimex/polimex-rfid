@@ -14,29 +14,63 @@ class VotingDisplay(models.Model):
     name = fields.Char(
         string='Name of the voting Display',
         required=True,
+        help="Internal name of the kiosk display (e.g. 'Main Hall Kiosk', 'Board Room Tablet'). Not shown publicly - the kiosk page uses the session title instead.",
     )
-    description = fields.Html(string="Announcements", translate=html_translate)
+    description = fields.Html(
+        string="Announcements",
+        translate=html_translate,
+        help="HTML content shown on the kiosk while no session is open. Use it for rules, opening hours, or a welcome message.",
+    )
     company_id = fields.Many2one(
         comodel_name="res.company",
         string="Company",
         default=lambda self: self.env.company,
+        help="Company that owns the display. Displays are isolated per company.",
     )
     voting_session_ids = fields.One2many(
         comodel_name='voting.session',
         inverse_name='display_id',
         string='Voting Display',
         readonly=True,
+        help="Sessions that have been hosted on this display. Used by the Sessions smart button on the form.",
     )
-    short_code = fields.Char("Short Code", default=lambda self: str(uuid4())[:8], copy=False, required=True, tracking=1)
-    # Technical/Statistics
-    access_token = fields.Char("Access Token", default=lambda self: str(uuid4()), copy=False, readonly=True, required=True)
-    display_url = fields.Char("Voting Display URL", compute="_compute_display_url")
-    # Frontend design fields
-    no_voting_background_color = fields.Char("No Voting Background Color", default="#83c5be")
-    voting_background_color = fields.Char("Voting Background Color", default="#dd2d4a")
-    display_background_image = fields.Image("Background Image")
+    short_code = fields.Char(
+        "Short Code",
+        default=lambda self: str(uuid4())[:8],
+        copy=False, required=True, tracking=1,
+        help="Short 8-character public identifier that appears in the kiosk URL (`/voting_display/<short_code>/voting`). Regenerate it to invalidate any printed/QR-coded links.",
+    )
+    access_token = fields.Char(
+        "Access Token",
+        default=lambda self: str(uuid4()),
+        copy=False, readonly=True, required=True,
+        help="Internal UUID used by the bus to route real-time events to this display. Not shown in the URL; rotate via Regenerate Display Key.",
+    )
+    display_url = fields.Char(
+        "Voting Display URL",
+        compute="_compute_display_url",
+        help="Full public URL of the kiosk page. Open this on the device that voters interact with.",
+    )
+    no_voting_background_color = fields.Char(
+        "No Voting Background Color",
+        default="#83c5be",
+        help="Hex colour for the kiosk background when no session is active (default: teal).",
+    )
+    voting_background_color = fields.Char(
+        "Voting Background Color",
+        default="#dd2d4a",
+        help="Hex colour for the kiosk background while a session is open (default: red).",
+    )
+    display_background_image = fields.Image(
+        "Background Image",
+        help="Optional image displayed behind the kiosk content. Falls back to the colour fields above when empty.",
+    )
 
-    voting_sessions_count = fields.Integer("Voting Sessions Count", compute="_compute_voting_sessions_count")
+    voting_sessions_count = fields.Integer(
+        "Voting Sessions Count",
+        compute="_compute_voting_sessions_count",
+        help="Number of sessions ever hosted on this display. Updated automatically.",
+    )
 
     _sql_constraints = [
         ("uniq_access_token", "unique(access_token)", "The access token must be unique"),
