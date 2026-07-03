@@ -14,24 +14,62 @@ class OldCloudImportusers(models.TransientModel):
     _name = 'hr.rfid.old.cloud.import.users'
     _description = 'Old Cloud Import Users'
 
-    do_import = fields.Boolean(default=False)
+    do_import = fields.Boolean(
+        default=False,
+        help="Tick the user to include them in the import run. Auto-set to True when you change Import As.",
+    )
     import_as = fields.Selection(
         [('contact', 'Contact'), ('employee', 'Employee')],
-        default='contact'
+        default='contact',
+        help="Whether this particular user becomes an hr.employee or a res.partner in Odoo. Defaults from the welcome wizard's Default Import As; override per row.",
     )
-    u_id = fields.Integer(string='Internal ID')
-    u_code = fields.Char(string='User code')
-    u_name = fields.Char(string='User name')
-    u_fname = fields.Char(string='First Name')
-    u_sname = fields.Char(string='Second Name')
-    u_lname = fields.Char(string='Last Name')
-    d_id = fields.Integer(string='Department ID')
-    d_name = fields.Char(string='Department Name')
-    c_id = fields.Integer(string='Company ID')
-    c_name = fields.Char(string='Company Name')
-    json_data = fields.Char(string='Json Data')
+    u_id = fields.Integer(
+        string='Internal ID',
+        help="Numeric user ID in the source cloud. Used as the dedup key during import.",
+    )
+    u_code = fields.Char(
+        string='User code',
+        help="External / facility user code from the source cloud (often the RFID card number).",
+    )
+    u_name = fields.Char(
+        string='User name',
+        help="Display name as stored in the source cloud - used as Odoo record name when the structured first/second/last name fields are empty.",
+    )
+    u_fname = fields.Char(
+        string='First Name',
+        help="First name field from the source cloud. Maps to res.partner.firstname / hr.employee personal name.",
+    )
+    u_sname = fields.Char(
+        string='Second Name',
+        help="Middle / second name field from the source cloud.",
+    )
+    u_lname = fields.Char(
+        string='Last Name',
+        help="Last name / surname field from the source cloud.",
+    )
+    d_id = fields.Integer(
+        string='Department ID',
+        help="Numeric department ID from the source cloud. Translated to a local hr.department via the welcome-wizard mapping.",
+    )
+    d_name = fields.Char(
+        string='Department Name',
+        help="Department display name from the source cloud - shown here for human cross-check.",
+    )
+    c_id = fields.Integer(
+        string='Company ID',
+        help="Numeric company ID from the source cloud. Translated to a local res.company via company_dict.",
+    )
+    c_name = fields.Char(
+        string='Company Name',
+        help="Company display name from the source cloud - shown here for human cross-check.",
+    )
+    json_data = fields.Char(
+        string='Json Data',
+        help="Full raw JSON record from the source cloud, kept for audit and for replay if the import needs to be re-run after a mapping fix.",
+    )
     import_id = fields.Many2one(
-        comodel_name='hr.rfid.old.cloud.import.wiz'
+        comodel_name='hr.rfid.old.cloud.import.wiz',
+        help="Parent import-run wizard this user row belongs to. Set automatically when the wizard fetches the user list.",
     )
 
     @api.onchange('import_as')
@@ -85,17 +123,24 @@ class OldCloudImportWiz(models.TransientModel):
 
     users_ids = fields.One2many(
         comodel_name='hr.rfid.old.cloud.import.users',
-        inverse_name='import_id'
+        inverse_name='import_id',
+        help="Users discovered in the source cloud. Operator picks per-row which ones to import and as what (contact vs employee).",
     )
 
     import_as = fields.Selection(
         [('contact', 'Contacts'), ('employee', 'Employees')],
         default='employee',
+        help="Bulk-applied default for the per-row Import As column. Changing this rewrites every users_ids row.",
     )
 
-    select_all = fields.Boolean(default=False)
+    select_all = fields.Boolean(
+        default=False,
+        help="Master toggle that ticks/un-ticks the do_import flag on every users_ids row.",
+    )
 
-    user_data = fields.Char()
+    user_data = fields.Char(
+        help="Raw payload received from the source cloud's user list endpoint, kept for diagnostics if the row-level parse misbehaves.",
+    )
 
     @api.onchange('import_as')
     def _import_as_on_change(self):

@@ -7,11 +7,14 @@
             <field name="inherit_id" ref="hr_attendance_late.hr_attendance_extra_view_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='actual_work_time_night']" position="after">
-                    <label for="actual_work_time_cost"/>
-                    <div name="actual_work_time_cost">
-                        <field name="actual_work_time_cost" class="oe_inline"/>
-                        <field name="currency_id" invisible="1"/>
-                    </div>
+                    <field name="currency_id" invisible="1"/>
+                    <group string="Cost breakdown" groups="hr.group_hr_manager">
+                        <field name="cost_regular"/>
+                        <field name="cost_overtime"/>
+                        <field name="cost_extra"/>
+                        <field name="cost_night_supplement"/>
+                        <field name="actual_work_time_cost" class="fw-bold"/>
+                    </group>
                 </xpath>
             </field>
         </record>

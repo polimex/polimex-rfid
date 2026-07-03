@@ -15,21 +15,29 @@ class AndromedaWelcomeWiz(models.Model):
     ip_address = fields.Char(
         string='IP address',
         required=True,
-        default='192.168.10.89'
+        default='192.168.10.89',
+        help="IP address of the Windows host running the Andromeda Firebird DB engine.",
     )
     database_path = fields.Char(
         string='Database Path',
         required=True,
-        default='C:\Program Files (x86)\Polimex\Andromeda\Database\Andromeda.fdb'
+        default=r'C:\Program Files (x86)\Polimex\Andromeda\Database\Andromeda.fdb',
+        help="Absolute path to the Andromeda.fdb file as seen by the Firebird server on the Windows host.",
     )
 
     users_count = fields.Integer(
-        default=0
+        default=0,
+        help="Number of users last reported by the Andromeda database. Populated by Check Connection.",
     )
-    state = fields.Selection([('new', "New connection"),
-                              ('checked', "Confirmed connection"),
-                              ('done', "Import Done"),
-                              ], string="State", default='new')
+    state = fields.Selection(
+        [
+            ('new', "New connection"),
+            ('checked', "Confirmed connection"),
+            ('done', "Import Done"),
+        ],
+        string="State", default='new',
+        help="Lifecycle of this Andromeda connection record - New: not yet probed. Confirmed: Firebird login succeeded. Done: at least one successful import has been run.",
+    )
 
     def do_check_connection(self):
         try:

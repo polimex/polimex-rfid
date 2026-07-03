@@ -5,16 +5,12 @@
         RFID attendance hourly cost plugin
     """,
 
-    'description': """
-        RFID attendance hourly cost plugin
-    """,
-
     'author': "Polimex Dev Team",
     'website': "https://polimex.co",
     'license': 'AGPL-3',
 
     'category': "Human Resources",
-    'version': '1.0',
+    'version': '1.1',
 
     'depends': ['hr_hourly_cost', 'hr_attendance_late'],
 
