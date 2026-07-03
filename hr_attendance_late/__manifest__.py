@@ -2,7 +2,7 @@
 # noinspection PyStatementEffect
 {
     'name': 'RFID Attendance calculations',
-    'version': '1.0',
+    'version': '1.1',
     'category': 'Human Resources',
     'summary': 'Enhances employee attendance tracking with additional work time calculations',
     'author': 'Polimex',
@@ -23,6 +23,7 @@
         'security/ir.model.access.csv',
         'views/hr_department.xml',
         'views/digest_views.xml',
+        'views/hr_legal_rate_views.xml',
         'wizards/hr_attendance_extra_wizard.xml',
         'views/hr_attendance_extra.xml',
         'views/resource_calendar.xml',

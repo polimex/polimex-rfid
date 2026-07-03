@@ -29,17 +29,46 @@ class WizardHrEmployee(models.TransientModel):
         required=True,
         string="Employees",
         default=lambda self: self._get_default_employees(),
-        help="Recompute these employees extra attendances",
+        help="""Select employees for attendance calculation recalculation.
+
+        • Selection: Choose one or multiple employees
+        • Effect: Recalculates overtime, late arrivals, and extra time for selected employees
+        • Default: Pre-selected based on current context
+
+        Note: Large employee selections may take longer to process.""",
     )
     start_date = fields.Date(
         string='Start Date',
         default=lambda self: self._get_default_from(),
+        help="""Start date for the attendance calculation period.
+
+        • Range: Beginning of the date range to recalculate
+        • Default: 30 days ago or specific date from context
+        • Effect: All attendance records from this date forward will be processed
+
+        Note: Earlier dates will include more historical data in the calculation.""",
     )
     end_date = fields.Date(
         string='End Date',
         default=lambda self: self._get_default_to(),
+        help="""End date for the attendance calculation period.
+
+        • Range: Final date of the calculation period
+        • Default: Today or specific date from context
+        • Effect: All attendance records up to this date will be processed
+
+        Note: Future dates will be ignored even if selected.""",
     )
-    overwrite_existing = fields.Boolean(help="Overwrite existing calculations or make only new one.", default=False)
+    overwrite_existing = fields.Boolean(
+        string="Overwrite Existing",
+        help="""Control how existing attendance calculations are handled.
+
+        • When enabled: Recalculates and overwrites all existing attendance extra records
+        • When disabled: Only creates calculations for dates that don't have records yet
+        • Effect: Determines whether to update or skip existing data
+
+        Note: Enable this to fix calculation errors or update after policy changes.""",
+        default=False)
 
 
     def execute(self):
