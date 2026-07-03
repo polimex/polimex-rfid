@@ -14,7 +14,7 @@
     'license': 'AGPL-3',
 
     'category': "Generic Modules/Property Management System",
-    'version': '0.1',
+    'version': '0.2',
 
     'depends': ['hr_rfid', 'portal'],
 
@@ -22,11 +22,6 @@
         'views/hr_rfid_card.xml',
         'views/hr_rfid_portal.xml',
     ],
-    'assets': {
-        'web.report_assets_common': [
-            '/hr_rfid_portal/static/src/scss/barcode_card_web.scss',
-        ],
-    },
     'application': False,
     'auto_install': True,
 }
