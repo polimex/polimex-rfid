@@ -1,19 +1,7 @@
-from odoo import fields, models, api, _
-from datetime import datetime, timedelta, date, time, timezone
-from odoo.exceptions import UserError, ValidationError
-import pytz
-import requests
+from datetime import datetime, timedelta, time
 
-import logging
-
-_logger = logging.getLogger(__name__)
-
-
-class RfidPmsBaseCardEncodeMsgWiz(models.TransientModel):
-    _name = 'rfid_pms_base.message_wiz'
-    _description = 'Message Wizard'
-
-    message = fields.Html()
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 
 
 class RfidPmsBaseCardEncodeWiz(models.TransientModel):
@@ -23,22 +11,20 @@ class RfidPmsBaseCardEncodeWiz(models.TransientModel):
     def _compute_mode(self):
         if self.env.context.get('current', False):
             return 'current'
-        elif self.env.context.get('new', False):
+        if self.env.context.get('new', False):
             return 'new'
-        elif self.env.context.get('stuff', False):
-            return 'stuff'
-        else:
-            return 'read'
+        # Wizard is reachable only from the kanban "New" / "Add" buttons,
+        # both of which set one of those context flags. A direct open with
+        # no context is a misconfiguration.
+        raise UserError(_(
+            "This wizard must be opened from a room's "
+            "kanban card (use the New or Add button)."
+        ))
 
     def _get_room_id(self):
-        # return self._context.get("active_id")
-        if not self.env.context.get('stuff', False):
-            return self.env['rfid_pms_base.room'].browse(self._context.get("active_id", []))
-
-    def _get_employee_id(self):
-        # return self._context.get("active_id")
-        if self.env.context.get('stuff', False):
-            return self.env['hr.employee'].browse(self._context.get("active_id", []))
+        return self.env['rfid_pms_base.room'].browse(
+            self.env.context.get("active_id", [])
+        )
 
     def _get_reservation_seq(self):
         if self.env.context.get('new', False):
@@ -48,104 +34,55 @@ class RfidPmsBaseCardEncodeWiz(models.TransientModel):
         mode = self._compute_mode()
         if mode == 'new':
             return fields.Datetime.now()
-        elif mode == 'current':
-            if self._get_room_id().all_contact_ids[0].contact_id.hr_rfid_card_ids:
-                return self._get_room_id().all_contact_ids[0].contact_id.hr_rfid_card_ids[0].activate_on
-            else:
-                return fields.Datetime.now()
+        if mode == 'current' and self._get_room_id().all_contact_ids[:1]:
+            first_contact = self._get_room_id().all_contact_ids[0].contact_id
+            if first_contact.hr_rfid_card_ids:
+                return first_contact.hr_rfid_card_ids[0].activate_on
+        return fields.Datetime.now()
 
     def _default_checkout(self):
         mode = self._compute_mode()
-        if mode == 'new':
-            return datetime.combine(fields.Date.today() + timedelta(days=1), time(hour=9))
-        elif mode == 'current':
-            if self._get_room_id().all_contact_ids[0].contact_id.hr_rfid_card_ids:
-                return self._get_room_id().all_contact_ids[0].contact_id.hr_rfid_card_ids[0].deactivate_on
-            else:
-                return datetime.combine(fields.Date.today() + timedelta(days=1), time(hour=9))
+        default = datetime.combine(fields.Date.today() + timedelta(days=1), time(hour=9))
+        if mode == 'current' and self._get_room_id().all_contact_ids[:1]:
+            first_contact = self._get_room_id().all_contact_ids[0].contact_id
+            if first_contact.hr_rfid_card_ids:
+                return first_contact.hr_rfid_card_ids[0].deactivate_on
+        return default
 
-    room_id = fields.Many2one(comodel_name='rfid_pms_base.room', default=_get_room_id)
-    employee_id = fields.Many2one(comodel_name='hr.employee', default=_get_employee_id)
-    reservation = fields.Char(default=_get_reservation_seq)
+    room_id = fields.Many2one(
+        comodel_name='rfid_pms_base.room',
+        default=_get_room_id,
+        help="The hotel room this card opens. Set automatically from the kanban card you clicked New / Add on.",
+    )
+    reservation = fields.Char(
+        default=_get_reservation_seq,
+        help="Reservation reference used as the parent partner name (e.g. R002615). Only meaningful in New mode; in Current mode the wizard reuses the existing reservation.",
+    )
     checkin_date = fields.Datetime(
         string="Check In",
         default=_default_checkin,
+        help="Moment the card starts working. In New mode defaults to now; in Current mode inherits from the room's first guest card.",
     )
     checkout_date = fields.Datetime(
         string="Check Out",
         default=_default_checkout,
+        help="Moment the card stops working. In New mode defaults to tomorrow at 09:00; in Current mode inherits from the room's first guest card. Maximum 30 days from check-in.",
     )
-    mode = fields.Selection(selection=[
-        ('read', 'Read only'),
-        ('new', 'New Reservation'),
-        ('current', 'Current Reservation'),
-        ('stuff', 'Stuff encoding'),
-    ], default=_compute_mode)
+    mode = fields.Selection(
+        selection=[
+            ('new', 'New Reservation'),
+            ('current', 'Current Reservation'),
+        ],
+        default=_compute_mode,
+        help="New = open a fresh reservation and revoke any leftover cards; Current = add another card to the room's existing reservation.",
+    )
 
-    card_number = fields.Char(string='The card number', size=10, required=True)
-
-    def read_card(self):
-        if not self.encoder_id:
-            raise UserError('No encoder for operation!')
-        rdata = requests.get(self.encoder_id.ip + '/cards').json()
-        _logger.debug('Read from encoder:\n{data}'.format(data=rdata))
-        if 'status' not in rdata:
-            raise UserError('Unknown response from Encoder.')
-        if rdata['status'] == 'error':
-            raise UserError('Put card on encoder and try again!')
-        elif rdata['status'] == 'success':
-            try:
-                exp_tmp = datetime.fromtimestamp(rdata.get('validity_to'))
-            except Exception as e:
-                _logger.error('Received Validity to {d} is not correct. May be old card. Error: {e}'.format(e=e,
-                                                                                                            d=rdata.get(
-                                                                                                                'validity_to')))
-                exp_tmp = datetime.now()
-            room = rdata.get('room')
-            group = rdata.get('group_id')
-            self.card_id = self.env['sch_encoder.card'].search([('uid', '=', rdata.get('uid'))])
-            employee_id = self.card_id.employee_id or None
-            if room != 0:
-                c_type = '<strong>GUEST</strong> Card '
-                r_num = 'Room: {r}'.format(r=room)
-            else:
-                c_type = '<strong>STUFF ({name}) </strong> card'.format(
-                    name=employee_id.name if employee_id else 'Unknown employee')
-                group_id = self.env['sch_encoder.group'].search([('number', '=', group)], limit=1)
-                r_num = 'Group: ' + group_id.name if group_id else 'Unknown({n})'.format(n=group)
-            tz = pytz.timezone(self.env.user.tz)
-            dt_format = '%Y-%m-%d %H:%M:%S'
-            # dt_format = self.env.user.lang_id.date_format+' '+self.env.user.lang_id.time_format
-            card_data = '{valid} VALID<br/>Card Number: {uid}<br/> {rn}<br/> Validity: {dfrom} to {exp}'.format(
-                valid=c_type + ' <strong>IS</strong>' if exp_tmp > datetime.now() else c_type + ' <strong>IS NOT</strong>',
-                uid=rdata.get('uid'),
-                rn=r_num,
-                exp=datetime.fromtimestamp(exp_tmp.timestamp(), tz).strftime(dt_format),
-                dfrom=datetime.fromtimestamp(rdata.get('validity_from'), tz).strftime(dt_format)
-            )
-            if not self.card_id:
-                vals = {
-                    'name': 'Autogenerated {num}'.format(num=rdata.get('uid')),
-                    'uid': rdata.get('uid'),
-                    'valid_from': datetime.fromtimestamp(rdata.get('validity_from')),
-                    'valid_to': exp_tmp,
-                }
-                _logger.info('New card: ' + str(vals))
-                self.card_id = self.env['sch_encoder.card'].sudo().create([vals])
-            return {
-                'type': 'ir.actions.act_window',
-                "name": "Card data",
-                "res_model": "sch_encoder.message_wiz",
-                "view_type": "form",
-                "view_mode": "form",
-                "target": "new",
-                "context": {"default_message": card_data},
-            }
-        else:
-            raise UserError(rdata.get('error', 'Unknown error!'))
-        return {
-            "type": "ir.actions.do_nothing",
-        }
+    card_number = fields.Char(
+        string='The card number',
+        size=10,
+        required=True,
+        help="Number printed on the RFID card or barcode. The wizard zero-pads to 10 digits before checking the card pool. If the number is in use and the existing card is inactive or already linked to a contact, it gets recycled.",
+    )
 
     def write_card(self):
         if (self.checkout_date - self.checkin_date) < timedelta(seconds=1):
@@ -157,15 +94,10 @@ class RfidPmsBaseCardEncodeWiz(models.TransientModel):
         if (self.checkout_date - self.checkin_date) > timedelta(days=30):
             raise UserError(_('The period for this card is more than 30 days'))
 
-        data = {
-            'validity_to': int(self.checkout_date.timestamp()),
-            'validity_from': int(self.checkin_date.timestamp()),
-        }
         card_number = self.card_number.zfill(10)
-
-        _logger.debug('Data for encode:\n{data}'.format(data=data))
-
-        existing_card = self.env['hr.rfid.card'].with_context(active_test=False).search([('number', '=', card_number)])
+        existing_card = self.env['hr.rfid.card'].with_context(active_test=False).search(
+            [('number', '=', card_number)]
+        )
         if existing_card:
             if (not existing_card.active) or existing_card.contact_id:
                 existing_card.unlink()
@@ -185,21 +117,16 @@ class RfidPmsBaseCardEncodeWiz(models.TransientModel):
                 self.room_id.all_contact_ids.contact_id.hr_rfid_card_ids.unlink()
                 self.room_id.all_contact_ids.contact_id.hr_rfid_access_group_ids.unlink()
 
-        res_guest_id = self.env['res.partner'].create(
-            {
-                "name": _(f'Guest {count+1} for ') + parent.name,
-                "parent_id": parent.id,
-                'hr_rfid_card_ids': [(0, 0, {
-                    'number': card_number,
-                    # 'contact_id': res_guest_id.id,
-                    'activate_on': self.checkin_date,
-                    'deactivate_on': self.checkout_date,
-                })],
-                'hr_rfid_access_group_ids': [(0,0, {
-                    'access_group_id': self.room_id.access_group_id.id,
-                    # 'contact_id':
-                    'expiration': self.checkout_date,
-                })]
-
-            }
-        )
+        self.env['res.partner'].create({
+            "name": _("Guest {n} for ").format(n=count + 1) + parent.name,
+            "parent_id": parent.id,
+            'hr_rfid_card_ids': [(0, 0, {
+                'number': card_number,
+                'activate_on': self.checkin_date,
+                'deactivate_on': self.checkout_date,
+            })],
+            'hr_rfid_access_group_ids': [(0, 0, {
+                'access_group_id': self.room_id.access_group_id.id,
+                'expiration': self.checkout_date,
+            })],
+        })

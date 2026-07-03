@@ -1,39 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <odoo>
     <data>
-
-
-        <record id="message_wiz_view_form" model="ir.ui.view">
-            <field name="name">message_wiz_view_form</field>
-            <field name="model">rfid_pms_base.message_wiz</field>
-            <field name="arch" type="xml">
-                <form string="cards_encode_wiz_form">
-                    <sheet>
-                        <field name="message" readonly="True"></field>
-                    </sheet>
-                    <footer>
-                        <button string="Done" class="oe_link" special="cancel"/>
-                    </footer>
-                </form>
-            </field>
-        </record>
-
-        <!-- actions opening views on models -->
         <record model="ir.actions.act_window" id="rfid_pms_base.action_window_hr">
             <field name="name">Hotel Employees</field>
             <field name="res_model">hr.employee</field>
             <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">No hotel employees yet</p>
+                <p>
+                    Standard HR employees who have cards in the hotel. Their cards typically belong to a staff access group with broader rights than guest cards.
+                </p>
+            </field>
         </record>
 
         <record model="ir.actions.act_window" id="rfid_pms_base.action_window_partner">
             <field name="name">Hotel Guests</field>
             <field name="res_model">res.partner</field>
             <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">No guests on file yet</p>
+                <p>
+                    Guest contacts created from the New / Add buttons on the Hotel Rooms kanban. Each reservation becomes a parent partner (e.g. R002615) with one child contact per issued guest card.
+                </p>
+            </field>
         </record>
-
-        <!-- server action to the one above -->
-
-
     </data>
 </odoo>
