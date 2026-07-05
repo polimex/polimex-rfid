@@ -231,11 +231,16 @@ class RFIDAppCase(common.TransactionCase):
         else:
             return {}
 
-    def _hearbeat(self, webstack_id):
+    def _hearbeat(self, webstack_id, controllers=None):
+        payload = {'convertor': webstack_id.serial, 'FW': '1.3400', 'key': webstack_id.key,
+                   'heartbeat': self._get_heartbeat()}
+        # Only new firmware reports the detected-controllers array; when the
+        # caller omits it we post the legacy payload (no key) to exercise the
+        # backward-compatible path.
+        if controllers is not None:
+            payload['controllers'] = controllers
         response = self.url_open(self.app_url,
-                                 data=json.dumps(
-                                     {'convertor': webstack_id.serial, 'FW': '1.3400', 'key': webstack_id.key,
-                                      'heartbeat': self._get_heartbeat()}),
+                                 data=json.dumps(payload),
                                  timeout=_TIMEOUT,
                                  headers={'Content-Type': 'application/json'})
         return self._assertResponse(response)

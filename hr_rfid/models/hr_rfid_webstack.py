@@ -16,6 +16,12 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
+# Upper bound on the controllers a single heartbeat may provision — defence in
+# depth against an oversized/hostile `controllers` array from an (authenticated)
+# module. The hardware bus tops out at 64 devices (`maxDevInList` in the module
+# SDK), so a larger list is never a real bus and is ignored wholesale.
+MAX_DETECTED_CONTROLLERS = 64
+
 # put POSIX 'Etc/*' entries at the end to avoid confusing users - see bug 1086728
 _tzs = [(tz, tz) for tz in sorted(pytz.all_timezones, key=lambda tz: tz if not tz.startswith('Etc/') else '_')]
 
@@ -856,7 +862,82 @@ class HrRfidWebstack(models.Model):
     def parse_heartbeat(self, post_data: dict):
         self.ensure_one()
         self.version = str(post_data['FW'])
+        # New firmware reports the controllers it currently detects on the bus in
+        # the heartbeat. Pre-provision any we don't have locally yet so their
+        # setup (F0) is queued proactively, before their first event, instead of
+        # being onboarded lazily on that event. The queued F0 is delivered by the
+        # check_for_unsent_cmd(200) below — no explicit send (see the method doc).
+        self._provision_detected_controllers(post_data.get('controllers'))
         return self.check_for_unsent_cmd(200)
+
+    def _provision_detected_controllers(self, detected_ids):
+        """Onboard controllers the module reports as detected in its heartbeat
+        (the ``controllers`` array) but that we do not have locally yet.
+
+        Mirrors the manual discovery path :meth:`get_controllers` and the lazy
+        event-path onboarding (``controllers/main.py`` ``_parse_event``), minus
+        the inline command fire: create the ``hr.rfid.ctrl`` record and call
+        :meth:`~odoo.addons.hr_rfid.models.hr_rfid_ctrl.HrRfidController.read_controller_information_cmd`
+        to QUEUE the F0 (read information). We deliberately do NOT ``send_command``
+        it — the ``check_for_unsent_cmd(200)`` that :meth:`parse_heartbeat` returns
+        drains the queued F0 into the heartbeat response naturally.
+
+        Add-only: a controller that drops out of the array is never removed (it
+        may be temporarily offline yet still configured). No-op on old firmware
+        that sends no ``controllers`` key. Works behind NAT because the heartbeat
+        is module -> server (unlike :meth:`get_controllers`, which polls the
+        module and cannot reach a NAT-ed webstack).
+
+        :param detected_ids: list of RS-485 controller IDs from the heartbeat,
+            or ``None``/empty on firmware that does not report them.
+        """
+        self.ensure_one()
+        # Present only in new-firmware heartbeats; old firmware omits the key
+        # entirely (post_data.get(...) -> None). Be strict about the shape so a
+        # missing or malformed field can never break heartbeat command delivery.
+        if not detected_ids or not isinstance(detected_ids, (list, tuple)):
+            return
+        if len(detected_ids) > MAX_DETECTED_CONTROLLERS:
+            # A real bus never has this many — treat an oversized list as
+            # malformed/hostile and skip it rather than mass-creating records.
+            _logger.warning(
+                "Webstack %s reported %d controllers in its heartbeat "
+                "(hardware max %d); ignoring the oversized list.",
+                self.name, len(detected_ids), MAX_DETECTED_CONTROLLERS)
+            return
+        ctrl_env = self.env['hr.rfid.ctrl'].sudo()
+        known_ids = set(self.controllers.mapped('ctrl_id'))
+        for ctrl_id in detected_ids:
+            # Accept only a real, non-zero integer ID. 0 is the broadcast /
+            # no-controller address (same guard the event path applies to
+            # post_data['event']['id']); bool is an int subclass so exclude it.
+            # Anything else in a stray payload is silently skipped.
+            if not isinstance(ctrl_id, int) or isinstance(ctrl_id, bool) or not ctrl_id:
+                continue
+            if ctrl_id in known_ids:
+                continue
+            # Pre-provisioning is purely opportunistic: if it fails, the
+            # controller is still onboarded lazily on its first event
+            # (controllers/main.py::_parse_event). Keep each one strictly
+            # best-effort inside a savepoint so one bad entry can never abort the
+            # heartbeat's primary job — delivering queued commands via the
+            # check_for_unsent_cmd(200) that parse_heartbeat returns. A savepoint
+            # is required so a DB-level error does not leave the cursor aborted.
+            try:
+                with self.env.cr.savepoint():
+                    controller = ctrl_env.create({
+                        'name': 'Controller',
+                        'ctrl_id': ctrl_id,
+                        'webstack_id': self.id,
+                    })
+                    controller.read_controller_information_cmd()
+            except Exception:
+                _logger.warning(
+                    "Webstack %s: could not pre-provision controller %s from the "
+                    "heartbeat; it will be onboarded on its first event instead.",
+                    self.name, ctrl_id, exc_info=True)
+                continue
+            known_ids.add(ctrl_id)
 
     def parse_response(self, post_data: dict, direct_cmd=False):
         """
