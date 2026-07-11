@@ -254,11 +254,8 @@ class HrRfidWebstack(models.Model):
         for ws in self:
             # The FW version comes verbatim from the device; a non-numeric
             # value must not poison this compute (and with it every event
-            # parse) - fall back to the legacy format instead.
-            try:
-                new_fw = bool(ws.version) and float(ws.version) > 1.40
-            except (TypeError, ValueError):
-                new_fw = False
+            # parse) - _version_num falls back to 0.0 -> legacy format.
+            new_fw = ws._version_num() > 1.40
             if (ws.hw_version and ws.hw_version in ['100.1', '50.1']) or new_fw:
                 ws.time_format = '%m.%d.%y %H:%M:%S'
             elif ws.hw_version in ['10.3']:
@@ -702,19 +699,34 @@ class HrRfidWebstack(models.Model):
                 cmd_response = ws._execute_direct_cmd(cmd)
                 return cmd_response
 
+    def _version_num(self):
+        """FW version as a float, 0.0 for a missing / non-numeric value.
+
+        The version string comes verbatim from the device (the classic
+        heartbeat ``FW`` and the websocket ``hello`` ``fw``), so it is
+        untrusted input and must never raise into a compute or a command
+        builder. Single source of the parse for ``is_10_3`` / ``is_100_1`` /
+        ``_compute_time_format``.
+        """
+        self.ensure_one()
+        try:
+            return float(self.version) if self.version else 0.0
+        except (TypeError, ValueError):
+            return 0.0
+
     def is_10_3(self):
         """
         Check if the hardware version is '10.3' or the version number is less than 1.40 for all instances of `HrRfidWebstack`.
 
         :return: True if all instances meet the conditions, False otherwise.
         """
-        return all([(ws.hw_version == '10.3') or (float(ws.version) < 1.40) for ws in self])
+        return all([(ws.hw_version == '10.3') or (ws._version_num() < 1.40) for ws in self])
 
     def is_50_1(self):
         return all([ws.hw_version == '50.1' for ws in self])
 
     def is_100_1(self):
-        return all([(ws.hw_version == '100.1') and (float(ws.version) > 1.40) for ws in self])
+        return all([(ws.hw_version == '100.1') and (ws._version_num() > 1.40) for ws in self])
 
     def in_cmd_execution(self):
         return self.env['hr.rfid.command'].search_count([

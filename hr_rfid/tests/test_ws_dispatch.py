@@ -190,16 +190,107 @@ class TestWsDispatch(RFIDAppCase):
         payload = sendone.call_args_list[-1].args[2]
         self.assertEqual(payload['res'], [{'i': 0, 'ok': True, 'dup': True}])
 
-    def test_ev_malformed_entry_is_logged_and_acked(self):
+    def test_ev_malformed_entry_is_consumed_not_looped(self):
+        """A non-dict / unparseable entry is FINAL - consume it (ok:true +
+        system event) so a device does not loop re-sending garbage, and
+        never let it reach the controller-create path."""
         ws = self._enable()
+        Sys = self.env['hr.rfid.event.system']
+        before = Sys.search_count([('webstack_id', '=', ws.id)])
         with patch.object(type(self.env['bus.bus']), '_sendone') as sendone:
             with self.assertLogs(
                     'odoo.addons.hr_rfid.models.hr_rfid_webstack_ws',
                     level='WARNING'):
                 self._dispatch(self._msg('ev', bid=301, ev=['garbage']))
         payload = sendone.call_args_list[-1].args[2]
-        self.assertEqual(payload['res'][0]['ok'], False,
-                         'delivered-and-logged: acked with ok=false')
+        self.assertEqual(payload['res'][0], {'i': 0, 'ok': True, 'dup': False},
+                         'malformed is final -> consumed, not re-sent forever')
+        self.assertEqual(Sys.search_count([('webstack_id', '=', ws.id)]),
+                         before + 1, 'operator sees it as a system event')
+
+    def test_ev_out_of_range_controller_id_dropped(self):
+        """An event whose controller id is outside the RS-485 range (1..254)
+        is dropped (consumed + logged) and creates NO controller - bounds the
+        tables an authenticated device can grow (F4)."""
+        ws = self._enable()
+        for bad_id in (0, 255, 999, 'x'):
+            ev = self._event_dict(bos=1)
+            ev['id'] = bad_id
+            with patch.object(type(self.env['bus.bus']), '_sendone') as sendone:
+                self._dispatch(self._msg('ev', bid=310, ev=[ev]))
+            payload = [c for c in sendone.call_args_list
+                       if c.args[1] == 'hr_rfid.ev_ack'][-1].args[2]
+            self.assertEqual(payload['res'][0], {'i': 0, 'ok': True, 'dup': False},
+                             'bad id %r -> consumed' % bad_id)
+        self.assertFalse(
+            ws.controllers.filtered(lambda c: c.ctrl_id in (0, 255, 999)),
+            'no controller is created from an out-of-range id')
+
+    def test_ev_bad_time_is_consumed(self):
+        """A bad controller clock is consumed (ok:true) like the HTTP path's
+        status 200, so a permanently-bad-time event does not loop forever."""
+        ws = self._enable()
+        with patch.object(type(self.env['bus.bus']), '_sendone'):
+            self._dispatch(self._msg('hello', ctrl=[5]))
+        ev = self._event_dict(ctrl_id=5, bos=7)
+        ev['time'] = '99:99:99'   # unparseable -> BadTimeException in the core
+        Sys = self.env['hr.rfid.event.system']
+        before = Sys.search_count([('webstack_id', '=', ws.id)])
+        with patch.object(type(self.env['bus.bus']), '_sendone') as sendone:
+            self._dispatch(self._msg('ev', bid=320, ev=[ev]))
+        payload = [c for c in sendone.call_args_list
+                   if c.args[1] == 'hr_rfid.ev_ack'][-1].args[2]
+        self.assertTrue(payload['res'][0]['ok'], 'bad time -> consume like HTTP 200')
+        self.assertEqual(Sys.search_count([('webstack_id', '=', ws.id)]),
+                         before + 1)
+
+    def test_malformed_rsp_does_not_escape_to_transport(self):
+        """A malformed rsp (missing 'c') must be caught in-dispatch: the HTTP
+        twin wraps parse_response, and the WS path must not let it escape to
+        the bus frame loop (1011 close + ERROR log). It is logged as a
+        warning + system event, and _ws_dispatch returns normally (F2)."""
+        ws = self._enable()
+        with patch.object(type(self.env['bus.bus']), '_sendone'):
+            self._dispatch(self._msg('hello', ctrl=[5]))
+        Sys = self.env['hr.rfid.event.system']
+        before = Sys.search_count([('webstack_id', '=', ws.id)])
+        with self.assertLogs(
+                'odoo.addons.hr_rfid.models.hr_rfid_webstack_ws',
+                level='WARNING'):
+            # missing 'c' -> KeyError inside parse_response; must NOT raise out
+            self._dispatch(self._msg('rsp', cid=0, r={'id': 5, 'e': 0}))
+        self.assertEqual(Sys.search_count([('webstack_id', '=', ws.id)]),
+                         before + 1, 'malformed message -> one system event')
+
+    def test_auth_fail_writes_are_bounded(self):
+        """Bad-token frames increment the counter only up to the threshold
+        (F1): once the single system event has fired, further frames in the
+        window do NOT keep writing the row."""
+        ws = self._enable()
+        for _i in range(WS_AUTH_FAIL_THRESHOLD + 5):
+            self._dispatch(self._msg('hb', token='f' * 32))
+        self.assertEqual(ws.ws_auth_fail_count, WS_AUTH_FAIL_THRESHOLD,
+                         'counter is capped at the threshold, not unbounded')
+
+    def test_poisoned_fw_does_not_break_parsing(self):
+        """A non-numeric fw from the device (hello) must not poison the
+        version-derived computes/command builders (F5b): the module still
+        works and events still parse."""
+        ws = self._enable()
+        with patch.object(type(self.env['bus.bus']), '_sendone'):
+            self._dispatch(self._msg('hello', fw='abc', ctrl=[5]))
+        self.assertEqual(ws.sudo().version, 'abc')
+        # version-derived helpers must not raise on the poisoned value
+        self.assertIn(ws.is_10_3(), (True, False))
+        self.assertIn(ws.is_100_1(), (True, False))
+        self.assertTrue(ws.time_format, 'time_format compute survived')
+        # ... and a real event on that module still processes
+        with patch.object(type(self.env['bus.bus']), '_sendone') as sendone:
+            self._dispatch(self._msg('ev', bid=330,
+                                     ev=[self._event_dict(ctrl_id=5, bos=1)]))
+        payload = [c for c in sendone.call_args_list
+                   if c.args[1] == 'hr_rfid.ev_ack'][-1].args[2]
+        self.assertEqual(payload['res'][0]['ok'], True)
 
     # ------------------------------------------------------------------
     # Full round-trip: hello -> F0 response over WS -> ev64 inline command

@@ -22,7 +22,10 @@ import secrets
 from datetime import timedelta
 
 from odoo import api, fields, models, _
+from odoo.http import request
 from odoo.tools import consteq
+
+from odoo.addons.hr_rfid.models.hr_rfid_webstack import BadTimeException
 
 _logger = logging.getLogger(__name__)
 
@@ -43,6 +46,11 @@ WS_RL = {'rate': 5, 'burst': 8}
 # the window, ONE system event is raised for the operator.
 WS_AUTH_FAIL_THRESHOLD = 5
 WS_AUTH_FAIL_WINDOW_S = 60
+# Controllers sit on the RS-485 bus at addresses 1..254 (0 = broadcast / no
+# controller). An event with an id outside this range is malformed and must
+# not create a controller (bounds the tables an authenticated device grows).
+WS_CTRL_ID_MIN = 1
+WS_CTRL_ID_MAX = 254
 
 
 class HrRfidWebstackWs(models.Model):
@@ -279,7 +287,33 @@ class HrRfidWebstackWs(models.Model):
         if handler is None:
             _logger.debug('WS: unknown message type %r from %s', mtype, serial)
             return
-        handler(data)
+        # Isolate the transport from malformed device input. A parse error in
+        # a handler (e.g. a missing key in an ``rsp`` payload reaching
+        # parse_response) must NOT escape to the bus frame loop: there it
+        # would close the socket with 1011 SERVER_ERROR and log a full
+        # traceback, letting a device with a valid token churn connections
+        # and flood the ERROR log. Mirror the HTTP twin
+        # (controllers/main.py::post_event): roll the partial work back in a
+        # savepoint, log a warning, record a system event. SPEC §9.2.
+        try:
+            with self.env.cr.savepoint():
+                handler(data)
+        except Exception:
+            _logger.warning(
+                'WS: handler %r from module %s failed to process',
+                mtype, serial, exc_info=True)
+            self._ws_report_sys_ev(
+                webstack, 'Real-time message could not be processed',
+                {'t': mtype})
+
+    @api.model
+    def _ws_report_sys_ev(self, webstack, description, post_data):
+        """``report_sys_ev`` that never raises into the caller - the websocket
+        paths must stay isolated even from a logging failure."""
+        try:
+            webstack.report_sys_ev(description, post_data=post_data)
+        except Exception:
+            _logger.exception('WS: could not record system event: %s', description)
 
     @api.model
     def _ws_auth_failed(self, webstack, mtype):
@@ -293,6 +327,14 @@ class HrRfidWebstackWs(models.Model):
         window_start = now - timedelta(seconds=WS_AUTH_FAIL_WINDOW_S)
         if not rec.ws_auth_fail_since or rec.ws_auth_fail_since < window_start:
             rec.write({'ws_auth_fail_count': 1, 'ws_auth_fail_since': now})
+            return
+        # Bound the pre-auth writes. The serial is enumerable (not secret), so
+        # an attacker who guessed a valid one could otherwise force one UPDATE
+        # on that row for EVERY frame. Once the window's single system event
+        # has fired, stop counting: writes are capped at THRESHOLD per window
+        # per serial (a per-IP connection cap on /websocket is a deployment
+        # requirement - nginx limit_conn/limit_req; see ODOO_PLAN §8).
+        if rec.ws_auth_fail_count >= WS_AUTH_FAIL_THRESHOLD:
             return
         rec.ws_auth_fail_count += 1
         if rec.ws_auth_fail_count == WS_AUTH_FAIL_THRESHOLD:
@@ -322,6 +364,21 @@ class HrRfidWebstackWs(models.Model):
         icp = self.env['ir.config_parameter'].sudo()
         base_url = icp.get_param('hr_rfid.ws_base_url') or icp.get_param(
             'web.base.url')
+        # The 128-bit token travels in cleartext in this reply. TLS on the
+        # classic channel is a production requirement (ARCHITECTURE §8): on a
+        # non-HTTPS request a passive eavesdropper reads the token and can
+        # impersonate the device. Surface it loudly - provisioning is rare
+        # (only while pending), so this does not spam.
+        try:
+            scheme = request.httprequest.scheme if request else None
+        except Exception:
+            scheme = None
+        if rec.ws_enabled and rec.ws_token and scheme and scheme != 'https':
+            _logger.warning(
+                'Delivering the real-time channel token for module %s over a '
+                'non-HTTPS request (scheme=%s). Enable TLS on the module '
+                'channel in production - the token is exposed to on-path '
+                'eavesdroppers otherwise.', rec.serial, scheme)
         result = dict(result)
         result['ws'] = {
             'en': 1 if rec.ws_enabled else 0,
@@ -421,12 +478,33 @@ class HrRfidWebstackWs(models.Model):
         inline_cmd = None
         for i, event in enumerate(events[:WS_EV_BATCH_MAX]):
             entry = {'i': i, 'ok': False, 'dup': False}
+            # Validate the controller id BEFORE any DB work: a non-dict entry,
+            # an unparseable id, or an id outside the RS-485 range is malformed
+            # and final - consume it (ok:true, so a real device does not loop
+            # re-sending) but never let it reach the create path.
+            ctrl_num = -1
+            if isinstance(event, dict):
+                try:
+                    ctrl_num = int(event.get('id') or 0)
+                except (TypeError, ValueError):
+                    ctrl_num = -1
+            if not (WS_CTRL_ID_MIN <= ctrl_num <= WS_CTRL_ID_MAX):
+                _logger.warning(
+                    'WS: dropping malformed event %s of batch %s from %s '
+                    '(controller id %r)', i, bid, rec.serial,
+                    event.get('id') if isinstance(event, dict) else event)
+                # Do NOT put the raw entry under an 'event' key - report_sys_ev
+                # special-cases that and tries to read a timestamp out of it,
+                # which a non-dict/garbage entry does not have.
+                self._ws_report_sys_ev(
+                    rec, 'Real-time event dropped (bad controller id)',
+                    {'bid': bid, 'bad_event': repr(event)[:200]})
+                entry['ok'] = True   # final: consume, do not loop
+                results.append(entry)
+                continue
             try:
                 with self.env.cr.savepoint():
-                    if not isinstance(event, dict):
-                        raise ValueError('malformed event entry')
                     ev_ts = '%s %s' % (event.get('date') or '', event.get('time') or '')
-                    ctrl_num = int(event.get('id') or 0)
                     bos = int(event.get('bos') or 0)
                     if Dedup._seen(rec, ctrl_num, bos, ev_ts):
                         entry.update(ok=True, dup=True)
@@ -450,6 +528,17 @@ class HrRfidWebstackWs(models.Model):
                             order='id desc', limit=1)
                         inline_cmd = {'cid': cmd_rec.id or 0,
                                       'cmd': result['cmd']}
+            except BadTimeException:
+                # Bad controller clock: the HTTP path answers 200 (accept +
+                # system event) so the device does not loop - mirror it here,
+                # otherwise a permanently-bad-time event re-sends forever.
+                _logger.warning(
+                    'WS: event %s of batch %s from %s has an invalid date/time',
+                    i, bid, rec.serial)
+                self._ws_report_sys_ev(
+                    rec, 'Controller sent an invalid date or time',
+                    {'bid': bid, 'event': event})
+                entry['ok'] = True   # consume like HTTP status 200
             except Exception:
                 # ok:false -> the device keeps the event and re-sends it
                 # later; the failure is visible in the log and as a system
@@ -457,12 +546,9 @@ class HrRfidWebstackWs(models.Model):
                 _logger.warning(
                     'WS: event %s of batch %s from %s failed to parse',
                     i, bid, rec.serial, exc_info=True)
-                try:
-                    rec.report_sys_ev(
-                        'Real-time event could not be processed',
-                        post_data={'bid': bid, 'event': event})
-                except Exception:
-                    _logger.exception('WS: could not log the parse failure')
+                self._ws_report_sys_ev(
+                    rec, 'Real-time event could not be processed',
+                    {'bid': bid, 'event': event})
                 entry['ok'] = False
             results.append(entry)
         ack = {'bid': bid, 'res': results}
