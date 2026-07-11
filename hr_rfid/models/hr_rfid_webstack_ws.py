@@ -17,10 +17,14 @@ naming lives in exactly one place. During a token rotation grace window the
 publish is mirrored on the OLD channel so the device never misses a message
 mid-switch (SPEC §6.6).
 """
+import logging
 import secrets
 from datetime import timedelta
 
 from odoo import api, fields, models, _
+from odoo.tools import consteq
+
+_logger = logging.getLogger(__name__)
 
 # Wire-contract constants (docs/odoo-bus/ODOO_BUS_PROTOCOL_SPEC.md)
 WS_PROTO_VERSION = 1
@@ -31,6 +35,14 @@ WS_TOKEN_ROTATE_GRACE_S = 300
 # tunable per install via the system parameter below.
 WS_HB_INTERVAL_DEFAULT_S = 60
 WS_HB_INTERVAL_PARAM = 'hr_rfid.ws_hb_interval'
+# hello_ack settings advertised to the device (SPEC §6.1)
+WS_ACK_TIMEOUT_S = 10
+WS_EV_BATCH_MAX = 20
+WS_RL = {'rate': 5, 'burst': 8}
+# Anti-flood on invalid tokens (SPEC §9.2): after this many failures within
+# the window, ONE system event is raised for the operator.
+WS_AUTH_FAIL_THRESHOLD = 5
+WS_AUTH_FAIL_WINDOW_S = 60
 
 
 class HrRfidWebstackWs(models.Model):
@@ -93,6 +105,8 @@ class HrRfidWebstackWs(models.Model):
         help='The real-time settings changed and will be delivered to the '
              'module on its next check-in.',
     )
+    ws_auth_fail_count = fields.Integer(copy=False)
+    ws_auth_fail_since = fields.Datetime(copy=False)
 
     # ------------------------------------------------------------------
     # Presence
@@ -216,3 +230,194 @@ class HrRfidWebstackWs(models.Model):
         if self._ws_grace_active():
             bus._sendone(self._ws_channel(token=rec.ws_token_old), mtype, payload)
         return True
+
+    # ------------------------------------------------------------------
+    # Inbound dispatch (device -> Odoo over the websocket)
+    # ------------------------------------------------------------------
+
+    @api.model
+    def _ws_dispatch(self, data):
+        """Entry point for device websocket messages (SPEC §4.1).
+
+        Called by the ``ir.websocket`` extension for every
+        ``{"event_name": "hr_rfid", "data": {...}}`` frame. Every message
+        carries the channel token and is re-authenticated with a
+        constant-time compare - the connection itself is anonymous
+        (public user), the token IS the device identity.
+        """
+        if not isinstance(data, dict):
+            return
+        serial, token, mtype = data.get('s'), data.get('k'), data.get('t')
+        if not (serial and token and isinstance(mtype, str)):
+            return
+        webstack = self.sudo().with_context(active_test=False).search(
+            [('serial', '=', str(serial))], limit=1)
+        if (not webstack or not webstack.active or not webstack.ws_enabled
+                or not webstack.ws_token
+                or not consteq(webstack.ws_token, str(token))):
+            self._ws_auth_failed(webstack, mtype)
+            return
+        webstack._ws_touch()
+        if data.get('v') != WS_PROTO_VERSION:
+            # Unsupported protocol: answer only a hello (SPEC §9.2), drop
+            # anything else silently.
+            if mtype == 'hello':
+                webstack._ws_send('hr_rfid.hello_ack', {
+                    'ok': False, 'err': 'proto', 'proto': WS_PROTO_VERSION})
+            return
+        handlers = {
+            'hello': webstack._ws_on_hello,
+            'hb': webstack._ws_on_hb,
+            'ev': webstack._ws_on_event_batch,
+            'rsp': webstack._ws_on_cmd_response,
+        }
+        handler = handlers.get(mtype)
+        if handler is None:
+            _logger.debug('WS: unknown message type %r from %s', mtype, serial)
+            return
+        handler(data)
+
+    @api.model
+    def _ws_auth_failed(self, webstack, mtype):
+        """Count invalid-token messages; raise ONE system event at the
+        threshold (SPEC §9.2 anti-flood - never a system event per message)."""
+        if not webstack:
+            _logger.debug('WS: message for unknown module (type %r)', mtype)
+            return
+        rec = webstack.sudo()
+        now = fields.Datetime.now()
+        window_start = now - timedelta(seconds=WS_AUTH_FAIL_WINDOW_S)
+        if not rec.ws_auth_fail_since or rec.ws_auth_fail_since < window_start:
+            rec.write({'ws_auth_fail_count': 1, 'ws_auth_fail_since': now})
+            return
+        rec.ws_auth_fail_count += 1
+        if rec.ws_auth_fail_count == WS_AUTH_FAIL_THRESHOLD:
+            rec.report_sys_ev(
+                'Real-time messages with an invalid channel token '
+                '(%d in the last minute)' % rec.ws_auth_fail_count,
+                post_data={'t': mtype})
+
+    # -- handlers ------------------------------------------------------
+
+    def _ws_on_connect_sync(self):
+        """Hook: called on every device hello. The command-publish stage
+        re-publishes all pending commands here (sync-on-connect,
+        ARCHITECTURE §3.2)."""
+        self.ensure_one()
+
+    def _ws_on_hello(self, data):
+        self.ensure_one()
+        rec = self.sudo()
+        if data.get('fw'):
+            rec.version = str(data['fw'])[:6]
+        rec.ws_proto = WS_PROTO_VERSION
+        rec._provision_detected_controllers(data.get('ctrl'))
+        rec.ws_provision_pending = False
+        self._ws_on_connect_sync()
+        self._ws_send('hr_rfid.hello_ack', {
+            'ok': True,
+            'proto': WS_PROTO_VERSION,
+            'srv_ts': fields.Datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'hb_interval': self._ws_hb_interval(),
+            'ack_timeout': WS_ACK_TIMEOUT_S,
+            'ev_batch': WS_EV_BATCH_MAX,
+            'rl': dict(WS_RL),
+            'err': None,
+        })
+
+    def _ws_on_hb(self, data):
+        self.ensure_one()
+        # Presence is already updated by the dispatcher; mirror the HTTP
+        # heartbeat's controller pre-provisioning (commands do NOT piggyback
+        # here - over WS they travel as their own publishes).
+        self.sudo()._provision_detected_controllers(data.get('ctrl'))
+
+    def _ws_on_event_batch(self, data):
+        """Process an ``ev`` batch (SPEC §5.3) and acknowledge it (§6.3).
+
+        Consume semantics MIRROR the HTTP path: the parse core answers with
+        a status dict, and only status 200 means "processed" - e.g. an event
+        from a brand-new controller answers 400 + the F0 setup command, and
+        the event must stay in the controller FIFO for a later re-send.
+
+        - ``ok:true``  -> processed (or already processed: ``dup:true``);
+          the device consumes the event (0xDA).
+        - ``ok:false`` -> NOT consumed; the device re-sends it later
+          (after the inline setup command, after the error clears).
+
+        The dedup table is written only for successfully processed events;
+        each event runs in its own savepoint so one poisoned entry never
+        breaks the batch.
+        """
+        self.ensure_one()
+        bid = data.get('bid')
+        events = data.get('ev')
+        if bid is None or not isinstance(events, list):
+            return
+        rec = self.sudo()
+        Dedup = self.env['hr.rfid.ws.dedup']
+        Command = self.env['hr.rfid.command'].sudo()
+        results = []
+        inline_cmd = None
+        for i, event in enumerate(events[:WS_EV_BATCH_MAX]):
+            entry = {'i': i, 'ok': False, 'dup': False}
+            try:
+                with self.env.cr.savepoint():
+                    if not isinstance(event, dict):
+                        raise ValueError('malformed event entry')
+                    ev_ts = '%s %s' % (event.get('date') or '', event.get('time') or '')
+                    ctrl_num = int(event.get('id') or 0)
+                    bos = int(event.get('bos') or 0)
+                    if Dedup._seen(rec, ctrl_num, bos, ev_ts):
+                        entry.update(ok=True, dup=True)
+                        results.append(entry)
+                        continue
+                    result = rec._hw_parse_event(
+                        {'convertor': rec.serial, 'event': event})
+                    status = result.get('status') if isinstance(result, dict) else None
+                    entry['ok'] = status == 200
+                    if entry['ok']:
+                        Dedup._claim(rec, ctrl_num, bos, ev_ts)
+                    # An event may spawn an immediate command - the ev64
+                    # cloud-permission reply (status 200) or the F0 setup of
+                    # a new controller (status 400). Carry it inline in the
+                    # ack so the controller timeout is honoured (SPEC §6.3).
+                    if (inline_cmd is None and isinstance(result, dict)
+                            and result.get('cmd')):
+                        cmd_rec = Command.search(
+                            [('webstack_id', '=', rec.id),
+                             ('status', '=', 'Process')],
+                            order='id desc', limit=1)
+                        inline_cmd = {'cid': cmd_rec.id or 0,
+                                      'cmd': result['cmd']}
+            except Exception:
+                # ok:false -> the device keeps the event and re-sends it
+                # later; the failure is visible in the log and as a system
+                # event. Same recovery shape as the HTTP path's 500.
+                _logger.warning(
+                    'WS: event %s of batch %s from %s failed to parse',
+                    i, bid, rec.serial, exc_info=True)
+                try:
+                    rec.report_sys_ev(
+                        'Real-time event could not be processed',
+                        post_data={'bid': bid, 'event': event})
+                except Exception:
+                    _logger.exception('WS: could not log the parse failure')
+                entry['ok'] = False
+            results.append(entry)
+        ack = {'bid': bid, 'res': results}
+        if inline_cmd:
+            ack['cmd'] = inline_cmd
+        self._ws_send('hr_rfid.ev_ack', ack)
+
+    def _ws_on_cmd_response(self, data):
+        """A command response over WS (SPEC §5.4) - same core as HTTP;
+        ``direct_cmd=True`` stops the poll-era command piggyback (over WS
+        commands travel as their own publishes)."""
+        self.ensure_one()
+        response = data.get('r')
+        if not isinstance(response, dict):
+            return
+        rec = self.sudo()
+        rec.parse_response(
+            {'convertor': rec.serial, 'response': response}, direct_cmd=True)
