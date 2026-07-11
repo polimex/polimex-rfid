@@ -64,6 +64,13 @@ class HrRfidCommandWs(models.Model):
             if not webstack.ws_online:
                 continue
             if command.retries >= WS_CMD_MAX_RETRIES:
+                # Permanent delivery failure - persist it AND surface it to
+                # the operator log (a silently dying command is invisible
+                # until someone opens the command list).
+                _logger.warning(
+                    'Real-time delivery of command %s (%s) to module %s '
+                    'gave up after %d attempts; marked Failure.',
+                    command.id, command.cmd, webstack.serial, command.retries)
                 command.write({'status': 'Failure',
                                'error': 'Real-time delivery gave up after '
                                         '%d attempts' % command.retries})

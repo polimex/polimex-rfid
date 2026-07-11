@@ -226,7 +226,10 @@ class HrRfidWebstackWs(models.Model):
         rec = self.sudo()
         if not (rec.ws_enabled and rec.ws_token):
             return False
-        bus = self.env['bus.bus'].sudo()
+        # bus.bus._sendone defers the row insert to a precommit callback that
+        # always runs sudo().create(); no create right is needed here, so no
+        # sudo (matching action_ws_rotate_token's _sendone call).
+        bus = self.env['bus.bus']
         bus._sendone(self._ws_channel(), mtype, payload)
         if self._ws_grace_active():
             bus._sendone(self._ws_channel(token=rec.ws_token_old), mtype, payload)
@@ -316,9 +319,9 @@ class HrRfidWebstackWs(models.Model):
             return result
         if rec.ws_enabled and not rec.ws_token:
             return result   # enable flow always generates a token first
-        base_url = self.env['ir.config_parameter'].sudo().get_param(
-            'hr_rfid.ws_base_url') or self.env['ir.config_parameter'].sudo(
-            ).get_param('web.base.url')
+        icp = self.env['ir.config_parameter'].sudo()
+        base_url = icp.get_param('hr_rfid.ws_base_url') or icp.get_param(
+            'web.base.url')
         result = dict(result)
         result['ws'] = {
             'en': 1 if rec.ws_enabled else 0,
