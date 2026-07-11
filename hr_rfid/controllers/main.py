@@ -227,6 +227,7 @@ class WebRfidController(http.Controller):
                 result = webstack_id.parse_response(post_data=post_data)
             if not post and 'cmd' in result:
                 result = {'cmd': result['cmd']}
+            result = webstack_id._ws_provision_payload(result)
             webstack_id.write(_ws_db_update_dict())
             return self._make_response(result)
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,

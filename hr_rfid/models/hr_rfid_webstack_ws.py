@@ -101,6 +101,7 @@ class HrRfidWebstackWs(models.Model):
              'activity within the last two heartbeat intervals).',
     )
     ws_provision_pending = fields.Boolean(
+        string='Settings Pending Delivery',
         copy=False,
         help='The real-time settings changed and will be delivered to the '
              'module on its next check-in.',
@@ -296,6 +297,37 @@ class HrRfidWebstackWs(models.Model):
                 'Real-time messages with an invalid channel token '
                 '(%d in the last minute)' % rec.ws_auth_fail_count,
                 post_data={'t': mtype})
+
+    # -- provisioning over the classic HTTP channel (SPEC §10) ----------
+
+    def _ws_provision_payload(self, result):
+        """Attach the real-time provisioning block to an HTTP reply.
+
+        Delivered piggyback on the existing device check-in (heartbeat /
+        event / response reply) whenever the settings changed - the device
+        stores them and (re)starts its websocket state machine. The legacy
+        (10.3) reply encoder strips unknown keys, so only JSON-RPC (ESP32)
+        modules ever see the block. Requires TLS on the classic channel in
+        production - the token travels in this payload (ARCHITECTURE §8).
+        """
+        self.ensure_one()
+        rec = self.sudo()
+        if not isinstance(result, dict) or not rec.ws_provision_pending:
+            return result
+        if rec.ws_enabled and not rec.ws_token:
+            return result   # enable flow always generates a token first
+        base_url = self.env['ir.config_parameter'].sudo().get_param(
+            'hr_rfid.ws_base_url') or self.env['ir.config_parameter'].sudo(
+            ).get_param('web.base.url')
+        result = dict(result)
+        result['ws'] = {
+            'en': 1 if rec.ws_enabled else 0,
+            'url': base_url,
+            'db': self.env.cr.dbname,
+            'tok': rec.ws_token or '',
+            'proto': WS_PROTO_VERSION,
+        }
+        return result
 
     # -- commands ------------------------------------------------------
 

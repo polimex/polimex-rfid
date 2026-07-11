@@ -144,6 +144,39 @@ class TestWsLayer(RFIDAppCase):
         self.assertNotIn(ws, Webstack.search([('ws_online', '=', True)]))
 
     # ------------------------------------------------------------------
+    # Provisioning over the classic HTTP reply (SPEC §10)
+    # ------------------------------------------------------------------
+
+    def test_provision_payload_only_when_pending(self):
+        ws = self._ws()
+        base = {'status': 200}
+        self.assertEqual(ws._ws_provision_payload(base), base,
+                         'nothing pending -> untouched reply')
+        ws.action_ws_enable()   # sets ws_provision_pending
+        result = ws._ws_provision_payload(base)
+        self.assertEqual(result['status'], 200)
+        block = result['ws']
+        self.assertEqual(block['en'], 1)
+        self.assertEqual(block['tok'], ws.ws_token)
+        self.assertEqual(block['db'], self.env.cr.dbname)
+        self.assertTrue(block['url'])
+        self.assertEqual(block['proto'], 1)
+        # the original dict is not mutated (the reply may be reused)
+        self.assertNotIn('ws', base)
+
+    def test_provision_cleared_by_hello(self):
+        ws = self._ws()
+        ws.action_ws_enable()
+        self.assertTrue(ws.ws_provision_pending)
+        with patch.object(type(self.env['bus.bus']), '_sendone'):
+            self.env['ir.websocket']._serve_ir_websocket('hr_rfid', {
+                'v': 1, 's': ws.serial, 'k': ws.ws_token, 't': 'hello'})
+        self.assertFalse(ws.ws_provision_pending,
+                         'a hello with the new token confirms delivery')
+        self.assertEqual(ws._ws_provision_payload({'status': 200}),
+                         {'status': 200})
+
+    # ------------------------------------------------------------------
     # Secret protection
     # ------------------------------------------------------------------
 
