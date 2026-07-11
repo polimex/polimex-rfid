@@ -1,0 +1,72 @@
+# -*- coding: utf-8 -*-
+"""Real-time delivery of ``hr.rfid.command`` over the websocket channel.
+
+The command QUEUE stays exactly what it is today (Wait/Process + retries,
+delivered in the HTTP response whenever the module polls) - the bus is a
+TRANSPORT, never the persistent copy (ODOO_BUS_ARCHITECTURE.md §3.2).
+This file only adds the low-latency path:
+
+- a command created while its module is real-time online is published
+  immediately (seconds instead of the next poll);
+- a re-publish cron covers lost bus messages for connected modules;
+- everything else (offline modules, disabled channel, legacy firmware)
+  keeps flowing through ``check_for_unsent_cmd`` untouched.
+"""
+import logging
+from datetime import timedelta
+
+from odoo import api, fields, models
+
+_logger = logging.getLogger(__name__)
+
+# How long a published command may stay unanswered before the cron
+# re-publishes it (ARCHITECTURE §10.1 proposal). Retries share the same
+# counter/limit as the HTTP retry path.
+WS_CMD_REPUBLISH_TIMEOUT_S = 15
+WS_CMD_MAX_RETRIES = 5
+
+
+class HrRfidCommandWs(models.Model):
+    _inherit = 'hr.rfid.command'
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        commands = super().create(vals_list)
+        if self.env.context.get('ws_no_publish'):
+            # the event-batch path carries the spawned command INLINE in the
+            # ev_ack (SPEC §6.3) - a parallel publish would only duplicate it
+            return commands
+        for command in commands:
+            webstack = command.webstack_id
+            if (command.status == 'Wait' and webstack
+                    and webstack.sudo().ws_enabled and webstack.ws_online):
+                webstack._ws_publish_command(command)
+        return commands
+
+    @api.model
+    def _ws_republish_cron(self):
+        """Re-publish commands stuck in Process on real-time-online modules.
+
+        Covers a lost ``hr_rfid.cmd`` bus message or a device that dropped
+        between the publish and its response. Shares the retries counter and
+        the 5-attempt limit with the HTTP retry path; a module that fell
+        back to HTTP is skipped here (its next poll retries via
+        ``check_for_unsent_cmd`` as always).
+        """
+        cutoff = fields.Datetime.now() - timedelta(seconds=WS_CMD_REPUBLISH_TIMEOUT_S)
+        commands = self.sudo().search([
+            ('status', '=', 'Process'),
+            ('write_date', '<', cutoff),
+            ('webstack_id.ws_enabled', '=', True),
+        ])
+        for command in commands:
+            webstack = command.webstack_id
+            if not webstack.ws_online:
+                continue
+            if command.retries >= WS_CMD_MAX_RETRIES:
+                command.write({'status': 'Failure',
+                               'error': 'Real-time delivery gave up after '
+                                        '%d attempts' % command.retries})
+                continue
+            command.retries += 1
+            webstack._ws_publish_command(command)

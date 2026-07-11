@@ -297,13 +297,38 @@ class HrRfidWebstackWs(models.Model):
                 '(%d in the last minute)' % rec.ws_auth_fail_count,
                 post_data={'t': mtype})
 
+    # -- commands ------------------------------------------------------
+
+    def _ws_publish_command(self, command):
+        """Publish one queued command on the device channel (SPEC §6.2).
+
+        Reuses ``send_command()`` - the SAME wire-payload builder the HTTP
+        delivery uses (D1/D7/DB specials included), so both transports carry
+        byte-identical commands; it also flips the command to Process and
+        records the request, exactly like an HTTP delivery does.
+        """
+        self.ensure_one()
+        json_cmd = command.sudo().send_command(200)
+        return self._ws_send('hr_rfid.cmd', {
+            'cid': command.id,
+            'cmd': json_cmd['cmd'],
+            'ts': fields.Datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        })
+
     # -- handlers ------------------------------------------------------
 
     def _ws_on_connect_sync(self):
-        """Hook: called on every device hello. The command-publish stage
-        re-publishes all pending commands here (sync-on-connect,
-        ARCHITECTURE §3.2)."""
+        """Re-publish every pending command on device (re)connect
+        (sync-on-connect, ARCHITECTURE §3.2). Idempotent: the device
+        deduplicates by ``cid``, so commands already delivered over a
+        previous connection are acknowledged, not re-executed."""
         self.ensure_one()
+        commands = self.env['hr.rfid.command'].sudo().search([
+            ('webstack_id', '=', self.id),
+            ('status', 'in', ('Wait', 'Process')),
+        ], order='id')
+        for command in commands:
+            self._ws_publish_command(command)
 
     def _ws_on_hello(self, data):
         self.ensure_one()
@@ -372,7 +397,7 @@ class HrRfidWebstackWs(models.Model):
                         entry.update(ok=True, dup=True)
                         results.append(entry)
                         continue
-                    result = rec._hw_parse_event(
+                    result = rec.with_context(ws_no_publish=True)._hw_parse_event(
                         {'convertor': rec.serial, 'event': event})
                     status = result.get('status') if isinstance(result, dict) else None
                     entry['ok'] = status == 200
@@ -413,11 +438,22 @@ class HrRfidWebstackWs(models.Model):
     def _ws_on_cmd_response(self, data):
         """A command response over WS (SPEC §5.4) - same core as HTTP;
         ``direct_cmd=True`` stops the poll-era command piggyback (over WS
-        commands travel as their own publishes)."""
+        commands travel as their own publishes). The ``cid`` correlation
+        targets the exact command, so two identical queued commands can
+        never swallow each other's response; an unusable cid falls back to
+        the classic (controller, cmd) match."""
         self.ensure_one()
         response = data.get('r')
         if not isinstance(response, dict):
             return
         rec = self.sudo()
+        command = None
+        cid = data.get('cid')
+        if isinstance(cid, int) and cid > 0:
+            candidate = self.env['hr.rfid.command'].sudo().browse(cid).exists()
+            if (candidate and candidate.webstack_id == rec
+                    and candidate.status == 'Process'):
+                command = candidate
         rec.parse_response(
-            {'convertor': rec.serial, 'response': response}, direct_cmd=True)
+            {'convertor': rec.serial, 'response': response},
+            direct_cmd=True, command=command)

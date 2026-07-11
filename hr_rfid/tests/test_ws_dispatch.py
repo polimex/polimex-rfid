@@ -104,8 +104,10 @@ class TestWsDispatch(RFIDAppCase):
         self.assertFalse(ws.ws_provision_pending)
         self.assertTrue(ws.controllers.filtered(lambda c: c.ctrl_id == 7),
                         'hello ctrl list pre-provisions controllers')
-        channel, mtype, payload = sendone.call_args_list[0].args
-        self.assertEqual(mtype, 'hr_rfid.hello_ack')
+        acks = [c for c in sendone.call_args_list
+                if c.args[1] == 'hr_rfid.hello_ack']
+        self.assertEqual(len(acks), 1)
+        payload = acks[0].args[2]
         self.assertTrue(payload['ok'])
         self.assertEqual(payload['proto'], WS_PROTO_VERSION)
         self.assertGreater(payload['hb_interval'], 0)

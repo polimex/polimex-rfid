@@ -20,3 +20,4 @@ from . import test_interlocking_mode
 from . import test_alarm_line_state
 from . import test_ws_layer
 from . import test_ws_dispatch
+from . import test_ws_commands

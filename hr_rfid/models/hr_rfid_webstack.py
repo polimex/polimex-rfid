@@ -939,10 +939,13 @@ class HrRfidWebstack(models.Model):
                 continue
             known_ids.add(ctrl_id)
 
-    def parse_response(self, post_data: dict, direct_cmd=False):
+    def parse_response(self, post_data: dict, direct_cmd=False, command=None):
         """
         :param post_data: A dictionary containing the response data received from a request.
         :param direct_cmd: A boolean indicating whether the command was sent directly or not.
+        :param command: Optional pre-matched command record (the websocket
+            path correlates by command id - SPEC §5.4 ``cid``); when omitted
+            the command is looked up by (controller, cmd) exactly as before.
         :return: None
 
         This method parses the response received from a controller and performs actions based on the command type and response data. It updates the status and response fields of the corresponding command record. If the response indicates an error, it handles the error accordingly. It also updates various fields of the controller based on the response data for different command types.
@@ -957,16 +960,17 @@ class HrRfidWebstack(models.Model):
                                post_data=post_data)
             return not direct_cmd and self.check_for_unsent_cmd(200)
 
-        command = command_env.search([('webstack_id', '=', self.id),
-                                      ('controller_id', '=', controller.id),
-                                      ('status', '=', 'Process'),
-                                      ('cmd', '=', response['c']), ], limit=1)
-
-        if len(command) == 0 and response['c'] == 'DB':
+        if command is None:
             command = command_env.search([('webstack_id', '=', self.id),
                                           ('controller_id', '=', controller.id),
                                           ('status', '=', 'Process'),
-                                          ('cmd', '=', 'DB2'), ], limit=1)
+                                          ('cmd', '=', response['c']), ], limit=1)
+
+            if len(command) == 0 and response['c'] == 'DB':
+                command = command_env.search([('webstack_id', '=', self.id),
+                                              ('controller_id', '=', controller.id),
+                                              ('status', '=', 'Process'),
+                                              ('cmd', '=', 'DB2'), ], limit=1)
 
         if len(command) == 0:
             controller.report_sys_ev(_('Controller sent us a response to a command we never sent'))
