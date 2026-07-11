@@ -18,3 +18,4 @@ from . import test_overlapping_access_groups
 from . import test_barcode_qr
 from . import test_interlocking_mode
 from . import test_alarm_line_state
+from . import test_ws_layer

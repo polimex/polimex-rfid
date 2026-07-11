@@ -7,6 +7,7 @@ from . import hr_employee
 from . import hr_rfid_access_group
 from . import hr_rfid_webstack
 from . import hr_rfid_webstack_hw_events
+from . import hr_rfid_webstack_ws
 from . import hr_rfid_webstack_replace_wiz
 from . import hr_rfid_webstack_discovery
 from . import hr_rfid_card
