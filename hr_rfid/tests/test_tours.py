@@ -67,6 +67,24 @@ class TestHrRfidTours(HttpCase):
         self.assertIn("TOURWS9000042", new_ws.name)
         self.assertTrue(new_ws.active)
 
+    def test_realtime_channel_tour(self):
+        """Process: an operator enables the real-time channel on a module
+        from its form and sees the state flip (button + online field)."""
+        self.assertFalse(self.webstack.ws_enabled)
+        self.start_tour(
+            "/odoo/action-hr_rfid.hr_rfid_webstack_action/%d" % self.webstack.id,
+            "hr_rfid_realtime_channel_tour",
+            login="admin",
+        )
+        self.assertTrue(
+            self.webstack.ws_enabled,
+            "The real-time tour should enable the channel on the module",
+        )
+        self.assertTrue(
+            self.webstack.ws_token,
+            "Enabling generates the 128-bit channel token",
+        )
+
     def test_access_group_add_door_tour(self):
         """Process 2: admin creates an Access Group and attaches a door."""
         before = self.env["hr.rfid.access.group"].search_count([
