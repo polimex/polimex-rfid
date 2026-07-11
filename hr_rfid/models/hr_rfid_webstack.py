@@ -802,6 +802,17 @@ class HrRfidWebstack(models.Model):
         """
         self.ensure_one()
 
+        # Websocket event-batch seam: over WS a queued command is delivered as
+        # its own hr_rfid.cmd publish (create-publish / sync-on-connect /
+        # re-publish cron), NOT piggybacked per event. Without this guard,
+        # EACH event in a batch would re-enter here, flip/retry the same
+        # pending command and burn its retry budget to a false silent Failure
+        # (the batch is one transaction - the device cannot answer between
+        # events). The handler runs the piggyback for at most the first event
+        # of a batch (ws_skip_piggyback set once a command was captured).
+        if self.env.context.get('ws_skip_piggyback'):
+            return {'status': status_code}
+
         commands_env = self.env['hr.rfid.command'].sudo()
         processing_comm = commands_env.search([
             ('webstack_id', '=', self.id),

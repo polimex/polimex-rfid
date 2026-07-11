@@ -261,6 +261,7 @@ class HrRfidWebstackWs(models.Model):
             return
         serial, token, mtype = data.get('s'), data.get('k'), data.get('t')
         if not (serial and token and isinstance(mtype, str)):
+            _logger.debug('WS: malformed frame (missing s/k/t): %r', data)
             return
         webstack = self.sudo().with_context(active_test=False).search(
             [('serial', '=', str(serial))], limit=1)
@@ -360,7 +361,11 @@ class HrRfidWebstackWs(models.Model):
         if not isinstance(result, dict) or not rec.ws_provision_pending:
             return result
         if rec.ws_enabled and not rec.ws_token:
-            return result   # enable flow always generates a token first
+            # Enabled without a token (reachable only via API/import, not the
+            # UI). Mint it here rather than hold provisioning pending forever
+            # (F8) - same as action_ws_enable, and this method already runs
+            # sudo on rec.
+            rec.ws_token = secrets.token_hex(16)
         icp = self.env['ir.config_parameter'].sudo()
         base_url = icp.get_param('hr_rfid.ws_base_url') or icp.get_param(
             'web.base.url')
@@ -420,7 +425,21 @@ class HrRfidWebstackWs(models.Model):
             ('status', 'in', ('Wait', 'Process')),
         ], order='id')
         for command in commands:
-            self._ws_publish_command(command)
+            # Per-command savepoint: one command with corrupt data (send_command
+            # can raise on e.g. an empty pin/rights field) must not abort the
+            # whole hello - that would roll back hello_ack and loop the device
+            # (F4). It also keeps the publish and its status flip atomic per
+            # command: _ws_publish_command sends first and publishes last, so a
+            # failure never leaves an orphan hr_rfid.cmd on the wire whose DB
+            # flip was rolled back (F12).
+            try:
+                with self.env.cr.savepoint():
+                    self._ws_publish_command(command)
+            except Exception:
+                _logger.warning(
+                    'WS: could not publish command %s (%s) to module %s on '
+                    'connect', command.id, command.cmd, self.serial,
+                    exc_info=True)
 
     def _ws_on_hello(self, data):
         self.ensure_one()
@@ -510,8 +529,13 @@ class HrRfidWebstackWs(models.Model):
                         entry.update(ok=True, dup=True)
                         results.append(entry)
                         continue
-                    result = rec.with_context(ws_no_publish=True)._hw_parse_event(
-                        {'convertor': rec.serial, 'event': event})
+                    # ws_skip_piggyback: run the queued-command piggyback for at
+                    # most the FIRST event of the batch (once a command is
+                    # captured, later events must not re-flip/retry it - F1).
+                    result = rec.with_context(
+                        ws_no_publish=True,
+                        ws_skip_piggyback=inline_cmd is not None,
+                    )._hw_parse_event({'convertor': rec.serial, 'event': event})
                     status = result.get('status') if isinstance(result, dict) else None
                     entry['ok'] = status == 200
                     if entry['ok']:
@@ -520,14 +544,20 @@ class HrRfidWebstackWs(models.Model):
                     # cloud-permission reply (status 200) or the F0 setup of
                     # a new controller (status 400). Carry it inline in the
                     # ack so the controller timeout is honoured (SPEC §6.3).
+                    # Correlate the cid to the EXACT command the wire payload
+                    # describes (its target controller + command code), never
+                    # a "newest Process" guess that could belong to another
+                    # command (F2).
                     if (inline_cmd is None and isinstance(result, dict)
                             and result.get('cmd')):
+                        wire = result['cmd']
                         cmd_rec = Command.search(
                             [('webstack_id', '=', rec.id),
+                             ('controller_id.ctrl_id', '=', wire.get('id')),
+                             ('cmd', '=like', (wire.get('c') or '_') + '%'),
                              ('status', '=', 'Process')],
                             order='id desc', limit=1)
-                        inline_cmd = {'cid': cmd_rec.id or 0,
-                                      'cmd': result['cmd']}
+                        inline_cmd = {'cid': cmd_rec.id or 0, 'cmd': wire}
             except BadTimeException:
                 # Bad controller clock: the HTTP path answers 200 (accept +
                 # system event) so the device does not loop - mirror it here,
@@ -572,8 +602,13 @@ class HrRfidWebstackWs(models.Model):
         cid = data.get('cid')
         if isinstance(cid, int) and cid > 0:
             candidate = self.env['hr.rfid.command'].sudo().browse(cid).exists()
+            # Accept the cid pre-match only if it is this webstack's, still in
+            # flight, AND its command code matches the response - so a stale /
+            # wrong cid cannot attach the answer to another command; otherwise
+            # fall back to the classic (controller, cmd) match (F2).
             if (candidate and candidate.webstack_id == rec
-                    and candidate.status == 'Process'):
+                    and candidate.status == 'Process'
+                    and candidate.cmd[:2] == str(response.get('c'))):
                 command = candidate
         rec.parse_response(
             {'convertor': rec.serial, 'response': response},

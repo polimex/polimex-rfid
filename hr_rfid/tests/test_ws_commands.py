@@ -47,6 +47,126 @@ class TestWsCommands(RFIDAppCase):
         base.update(vals)
         return self.env['hr.rfid.command'].sudo().create(base)
 
+    def _event(self, ctrl, bos, event_n=4):
+        return {'id': ctrl.ctrl_id, 'event_n': event_n, 'bos': bos, 'tos': bos,
+                'card': self.test_card_employee.number, 'cmd': 'FA', 'err': 0,
+                'reader': 1, 'dt': '00000000000000',
+                'date': self.test_date_10_3, 'time': self.test_time_10_3,
+                'day': self.test_dow_10_3}
+
+    def _dispatch_ev(self, ws, bid, events):
+        with patch.object(type(self.env['bus.bus']), '_sendone'):
+            self.env['ir.websocket']._serve_ir_websocket('hr_rfid', {
+                'v': 1, 's': ws.serial, 'k': ws.ws_token, 't': 'ev',
+                'bid': bid, 'ev': events})
+
+    def test_event_batch_does_not_burn_command_retries(self):
+        """F1: a multi-event batch must run the queued-command piggyback for
+        at most the FIRST event - it must NOT re-flip/retry a pending command
+        once per event and burn it to a false Failure (the device cannot
+        answer between events of one batch)."""
+        ws = self._ws()
+        ctrl = self._go_online(ws)
+        cmd = self._mk_cmd(ctrl)   # Wait, published + drained by _go_online...
+        cmd.write({'status': 'Wait', 'retries': 0})  # ... reset to a clean Wait
+        # a batch of 6 distinct card events (> the 5-retry give-up limit)
+        events = [self._event(ctrl, bos=b) for b in range(1, 7)]
+        with patch.object(type(self.env['bus.bus']), '_sendone'):
+            self.env['ir.websocket']._serve_ir_websocket('hr_rfid', {
+                'v': 1, 's': ws.serial, 'k': ws.ws_token, 't': 'ev',
+                'bid': 500, 'ev': events})
+        self.assertNotEqual(cmd.status, 'Failure',
+                            'the command must not be burned to Failure by a batch')
+        self.assertLessEqual(cmd.retries, 1,
+                             'at most one attempt per batch, not one per event')
+
+    def test_rsp_wrong_cid_falls_back_to_code_match(self):
+        """F2: a cid that points at a command whose code does not match the
+        response is rejected - the answer attaches to the correct command via
+        the classic (controller, code) match, never to the wrong one."""
+        ws = self._ws()
+        ctrl = self._go_online(ws)
+        with patch.object(type(self.env['bus.bus']), '_sendone'):
+            db_cmd = self._mk_cmd(ctrl, cmd='DB', cmd_data='400300')
+            d7_cmd = self._mk_cmd(ctrl, cmd='D7', cmd_data='')
+        self.assertEqual((db_cmd.status, d7_cmd.status), ('Process', 'Process'))
+        # device answers a D7 result but (wrongly) tags it with the DB cid
+        with patch.object(type(self.env['bus.bus']), '_sendone'):
+            self.env['ir.websocket']._serve_ir_websocket('hr_rfid', {
+                'v': 1, 's': ws.serial, 'k': ws.ws_token, 't': 'rsp',
+                'cid': db_cmd.id,
+                'r': {'id': ctrl.ctrl_id, 'c': 'D7', 'e': 0, 'd': ''}})
+        self.assertEqual(d7_cmd.status, 'Success',
+                         'the D7 answer resolves to the D7 command by code')
+        self.assertEqual(db_cmd.status, 'Process',
+                         'the mismatched-cid DB command is left untouched')
+
+    def test_poison_command_does_not_abort_sync_on_connect(self):
+        """F4/F12: one command that raises in send_command must not abort the
+        whole hello - the hello_ack still goes out and the healthy command is
+        still delivered."""
+        ws = self._ws()
+        ctrl = self._go_online(ws)
+        # a D1 (add-card) with empty numeric fields raises int('') in
+        # send_command; a healthy DB queued alongside it
+        poison = self._mk_cmd(ctrl, cmd='D1', cmd_data='', card_number='',
+                              pin_code='', ts_code='0', rights_data='',
+                              rights_mask='')
+        poison.write({'status': 'Wait'})
+        healthy = self._mk_cmd(ctrl, cmd='DB', cmd_data='400300')
+        healthy.write({'status': 'Wait'})
+        sent = []
+        with patch.object(type(self.env['bus.bus']), '_sendone',
+                          side_effect=lambda ch, t, p: sent.append((t, p))):
+            self.env['ir.websocket']._serve_ir_websocket('hr_rfid', {
+                'v': 1, 's': ws.serial, 'k': ws.ws_token, 't': 'hello'})
+        types = [t for t, _ in sent]
+        self.assertIn('hr_rfid.hello_ack', types,
+                      'hello_ack must still be sent despite the poison command')
+        self.assertTrue(
+            any(t == 'hr_rfid.cmd' and p['cid'] == healthy.id for t, p in sent),
+            'the healthy command is still delivered')
+
+    def test_republish_cron_climbs_to_giveup_on_poison(self):
+        """F5: a command that keeps failing to publish still climbs its retry
+        count toward the give-up limit (the increment survives the failed
+        publish savepoint) - it does not starve the cron forever."""
+        ws = self._ws()
+        ctrl = self._go_online(ws)
+        cmd = self._mk_cmd(ctrl, cmd='DB', cmd_data='400300')
+        cmd.write({'status': 'Process', 'retries': 0})
+        Command = self.env['hr.rfid.command']
+        stale = fields.Datetime.now() - timedelta(
+            seconds=WS_CMD_REPUBLISH_TIMEOUT_S + 5)
+
+        def age():
+            self.env.flush_all()
+            self.env.cr.execute(
+                'UPDATE hr_rfid_command SET write_date=%s WHERE id=%s',
+                (stale, cmd.id))
+            cmd.invalidate_recordset(['write_date'])
+
+        # make the publish raise; the retry must still increment
+        with patch.object(type(ws), '_ws_publish_command',
+                          side_effect=ValueError('boom')):
+            age()
+            Command._ws_republish_cron()
+        self.assertEqual(cmd.retries, 1,
+                         'the attempt is counted even though the publish failed')
+
+    def test_create_publish_failure_does_not_break_creation(self):
+        """F6: a publish failure at create-time must never break the business
+        transaction - the command is still created and stays queued for the
+        classic delivery."""
+        ws = self._ws()
+        ctrl = self._go_online(ws)
+        with patch.object(type(ws), '_ws_publish_command',
+                          side_effect=ValueError('boom')):
+            cmd = self._mk_cmd(ctrl, cmd='DB', cmd_data='400300')
+        self.assertTrue(cmd.exists(), 'the command is created despite the failure')
+        self.assertEqual(cmd.status, 'Wait',
+                         'it stays queued for the HTTP / next-sync delivery')
+
     # ------------------------------------------------------------------
 
     def test_create_publishes_when_online(self):

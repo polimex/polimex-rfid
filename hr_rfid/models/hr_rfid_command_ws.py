@@ -40,7 +40,17 @@ class HrRfidCommandWs(models.Model):
             webstack = command.webstack_id
             if (command.status == 'Wait' and webstack
                     and webstack.sudo().ws_enabled and webstack.ws_online):
-                webstack._ws_publish_command(command)
+                # The real-time publish is best-effort transport: it must NEVER
+                # break the business transaction that created the command (a
+                # card write, an access-group change). On failure the command
+                # stays Wait -> the HTTP piggyback / next sync delivers it (F6).
+                try:
+                    webstack._ws_publish_command(command)
+                except Exception:
+                    _logger.warning(
+                        'WS: could not publish new command %s (%s) to module '
+                        '%s; it stays queued for the classic delivery.',
+                        command.id, command.cmd, webstack.serial, exc_info=True)
         return commands
 
     @api.model
@@ -75,5 +85,18 @@ class HrRfidCommandWs(models.Model):
                                'error': 'Real-time delivery gave up after '
                                         '%d attempts' % command.retries})
                 continue
+            # Count the attempt OUTSIDE the publish savepoint so a command that
+            # keeps failing still climbs toward the give-up limit (otherwise a
+            # poison command rolls back its own retries and starves the whole
+            # cron forever - F5). The publish + its status flip are atomic per
+            # command; one failure never aborts the others.
             command.retries += 1
-            webstack._ws_publish_command(command)
+            try:
+                with self.env.cr.savepoint():
+                    webstack._ws_publish_command(command)
+            except Exception:
+                _logger.warning(
+                    'WS: re-publish of command %s (%s) to module %s failed '
+                    '(attempt %d); will retry next cron.',
+                    command.id, command.cmd, webstack.serial, command.retries,
+                    exc_info=True)

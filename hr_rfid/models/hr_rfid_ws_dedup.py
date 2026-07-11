@@ -11,6 +11,8 @@ index in a circular buffer and gets reused after a wrap.
 """
 from datetime import timedelta
 
+import psycopg2
+
 from odoo import api, fields, models
 
 # Keep claims long enough to cover any realistic re-send window; the
@@ -56,6 +58,13 @@ class HrRfidWsDedup(models.Model):
 
         Runs in a savepoint so the unique-constraint violation of a racing
         re-send never poisons the surrounding transaction.
+
+        Only an ``IntegrityError`` (the expected duplicate-key race) is
+        swallowed as "already claimed". Any OTHER database error must
+        propagate: catching it here would return False on a genuinely
+        unclaimed event that was in fact processed, so a later re-send would
+        pass ``_seen``-False and process it a SECOND time - a silent hole in
+        the exactly-once guarantee (F7).
         """
         try:
             with self.env.cr.savepoint():
@@ -66,7 +75,7 @@ class HrRfidWsDedup(models.Model):
                     'ev_ts': ev_ts or '',
                 })
             return True
-        except Exception:
+        except psycopg2.IntegrityError:
             return False
 
     @api.autovacuum
