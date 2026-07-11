@@ -252,7 +252,14 @@ class HrRfidWebstack(models.Model):
     @api.depends('hw_version')
     def _compute_time_format(self):
         for ws in self:
-            if (ws.hw_version and ws.hw_version in ['100.1', '50.1']) or (ws.version and float(ws.version) > 1.40):
+            # The FW version comes verbatim from the device; a non-numeric
+            # value must not poison this compute (and with it every event
+            # parse) - fall back to the legacy format instead.
+            try:
+                new_fw = bool(ws.version) and float(ws.version) > 1.40
+            except (TypeError, ValueError):
+                new_fw = False
+            if (ws.hw_version and ws.hw_version in ['100.1', '50.1']) or new_fw:
                 ws.time_format = '%m.%d.%y %H:%M:%S'
             elif ws.hw_version in ['10.3']:
                 ws.time_format = '%d.%m.%y %H:%M:%S'
