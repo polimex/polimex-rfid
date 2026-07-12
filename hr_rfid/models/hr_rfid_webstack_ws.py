@@ -278,13 +278,7 @@ class HrRfidWebstackWs(models.Model):
                 webstack._ws_send('hr_rfid.hello_ack', {
                     'ok': False, 'err': 'proto', 'proto': WS_PROTO_VERSION})
             return
-        handlers = {
-            'hello': webstack._ws_on_hello,
-            'hb': webstack._ws_on_hb,
-            'ev': webstack._ws_on_event_batch,
-            'rsp': webstack._ws_on_cmd_response,
-        }
-        handler = handlers.get(mtype)
+        handler = self._ws_handlers(webstack).get(mtype)
         if handler is None:
             _logger.debug('WS: unknown message type %r from %s', mtype, serial)
             return
@@ -306,6 +300,22 @@ class HrRfidWebstackWs(models.Model):
             self._ws_report_sys_ev(
                 webstack, 'Real-time message could not be processed',
                 {'t': mtype})
+
+    @api.model
+    def _ws_handlers(self, webstack):
+        """Message-type -> bound-handler map for inbound device messages.
+
+        Extension seam: inheritor modules (e.g. the IoT tunnel drivers) add
+        their own message types by overriding this with super() and updating
+        the returned dict, so they never re-implement the auth/isolation
+        wrapper around dispatch (SPEC §4.1).
+        """
+        return {
+            'hello': webstack._ws_on_hello,
+            'hb': webstack._ws_on_hb,
+            'ev': webstack._ws_on_event_batch,
+            'rsp': webstack._ws_on_cmd_response,
+        }
 
     @api.model
     def _ws_report_sys_ev(self, webstack, description, post_data):
