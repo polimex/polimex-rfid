@@ -70,6 +70,11 @@
                                        invisible="behind_nat"/>
                                 <field name="module_password" password="True"
                                        invisible="behind_nat"/>
+                                <!-- Security posture at a glance: is the real-time
+                                     channel allowed for this module (default: off).
+                                     Managed via the Enable/Disable real-time buttons
+                                     below - they mint/revoke the channel token. -->
+                                <field name="ws_enabled" readonly="1"/>
                             </group>
                             <group string="Setup">
                                 <field name="tz" required="1"/>
@@ -86,6 +91,32 @@
                                 <field name="updated_at" readonly="1"/>
                                 <field name="http_link" readonly="1" widget="url"
                                        invisible="behind_nat"/>
+                            </group>
+                            <group string="Real-time connection" name="ws_realtime">
+                                <field name="ws_enabled" readonly="1"/>
+                                <field name="ws_online" invisible="not ws_enabled"/>
+                                <field name="ws_last_seen" readonly="1"
+                                       invisible="not ws_enabled"/>
+                                <field name="ws_provision_pending" readonly="1"
+                                       invisible="not ws_provision_pending"/>
+                                <div colspan="2">
+                                    <button name="action_ws_enable" type="object"
+                                            string="Enable real-time" class="btn-primary"
+                                            invisible="ws_enabled"
+                                            help="The module receives its access keys and commands within seconds, even behind NAT. It keeps working the classic way whenever the real-time connection is unavailable."/>
+                                    <button name="action_ws_disable" type="object"
+                                            string="Disable real-time"
+                                            invisible="not ws_enabled"/>
+                                    <button name="action_ws_rekey" type="object"
+                                            string="Accept new key" class="btn-secondary"
+                                            invisible="not ws_enabled"
+                                            groups="hr_rfid.hr_rfid_group_officer"
+                                            confirm="Accept a new security key from this module on its next check-in? Use this only after you changed the key on the device itself."/>
+                                </div>
+                                <p class="text-muted" colspan="2">
+                                    <i class="fa fa-lightbulb-o" role="img"/>
+                                    Tip: real-time works alongside the classic check-in. The new settings reach the module on its next check-in - no manual setup on the device is needed.
+                                </p>
                             </group>
                         </group>
                     </sheet>
@@ -109,6 +140,7 @@
                     <field name="version" optional="show"/>
                     <field name="updated_at" optional="show"/>
                     <field name="last_ip" optional="show"/>
+                    <field name="ws_online" optional="hide"/>
                     <field name="active" invisible="1"/>
                     <field name="last_update" invisible="1"/>
                     <field name="company_id" groups="base.group_multi_company"/>

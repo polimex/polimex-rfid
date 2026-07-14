@@ -252,7 +252,11 @@ class HrRfidWebstack(models.Model):
     @api.depends('hw_version')
     def _compute_time_format(self):
         for ws in self:
-            if (ws.hw_version and ws.hw_version in ['100.1', '50.1']) or (ws.version and float(ws.version) > 1.40):
+            # The FW version comes verbatim from the device; a non-numeric
+            # value must not poison this compute (and with it every event
+            # parse) - _version_num falls back to 0.0 -> legacy format.
+            new_fw = ws._version_num() > 1.40
+            if (ws.hw_version and ws.hw_version in ['100.1', '50.1']) or new_fw:
                 ws.time_format = '%m.%d.%y %H:%M:%S'
             elif ws.hw_version in ['10.3']:
                 ws.time_format = '%d.%m.%y %H:%M:%S'
@@ -695,19 +699,58 @@ class HrRfidWebstack(models.Model):
                 cmd_response = ws._execute_direct_cmd(cmd)
                 return cmd_response
 
+    def _version_num(self):
+        """FW version as a float, 0.0 for a missing / non-numeric value.
+
+        The version string comes verbatim from the device (the classic
+        heartbeat ``FW`` and the websocket ``hello`` ``fw``), so it is
+        untrusted input and must never raise into a compute or a command
+        builder. Single source of the parse for ``is_10_3`` / ``is_100_1`` /
+        ``_compute_time_format``.
+        """
+        self.ensure_one()
+        try:
+            return float(self.version) if self.version else 0.0
+        except (TypeError, ValueError):
+            return 0.0
+
     def is_10_3(self):
         """
         Check if the hardware version is '10.3' or the version number is less than 1.40 for all instances of `HrRfidWebstack`.
 
         :return: True if all instances meet the conditions, False otherwise.
         """
-        return all([(ws.hw_version == '10.3') or (float(ws.version) < 1.40) for ws in self])
+        return all([(ws.hw_version == '10.3') or (ws._version_num() < 1.40) for ws in self])
 
     def is_50_1(self):
         return all([ws.hw_version == '50.1' for ws in self])
 
     def is_100_1(self):
-        return all([(ws.hw_version == '100.1') and (float(ws.version) > 1.40) for ws in self])
+        return all([(ws.hw_version == '100.1') and (ws._version_num() > 1.40) for ws in self])
+
+    @api.model
+    def _serial_is_100_1(self, serial):
+        """SSOT device-model test: an iCON1XX 100.1 is identified by its SERIAL.
+
+        Owner 2026-07-14: every 100.1 ships a serial starting with '4'; neither
+        legacy 10.3 nor 50.1 ever do. The serial rides in the ``convertor``
+        field of EVERY device POST (and is set at auto-create), so a 100.1 is
+        identified from the very FIRST packet of a fresh HTTP re-discovery -
+        before hw_version (absent over the HTTP heartbeat) or version (absent
+        until the first heartbeat parse) exist. Taking the serial as the
+        argument (not a record) lets a caller decide from
+        ``post_data['convertor']`` before the webstack is even authenticated.
+
+        Two uses, both keyed off this single fact:
+        - PLAIN wire (INTEROP 2026-07-13): a 100.1 gets the bare plain-JSON
+          reply; without this the plain ack collapsed to the legacy empty-body
+          path and a re-discovered 100.1 command hung in "Process". Legacy 10.3
+          (serial not '4') stays on the cmd-only wire.
+        - WS AUTO-ENABLE (owner 2026-07-14): a 100.1 supports the real-time
+          channel, so it is turned on automatically at discovery (opt-out) -
+          no manual "Enable real-time" click needed for it to come up.
+        """
+        return (str(serial) if serial else '').startswith('4')
 
     def in_cmd_execution(self):
         return self.env['hr.rfid.command'].search_count([
@@ -782,6 +825,17 @@ class HrRfidWebstack(models.Model):
 
         """
         self.ensure_one()
+
+        # Websocket event-batch seam: over WS a queued command is delivered as
+        # its own hr_rfid.cmd publish (create-publish / sync-on-connect /
+        # re-publish cron), NOT piggybacked per event. Without this guard,
+        # EACH event in a batch would re-enter here, flip/retry the same
+        # pending command and burn its retry budget to a false silent Failure
+        # (the batch is one transaction - the device cannot answer between
+        # events). The handler runs the piggyback for at most the first event
+        # of a batch (ws_skip_piggyback set once a command was captured).
+        if self.env.context.get('ws_skip_piggyback'):
+            return {'status': status_code}
 
         commands_env = self.env['hr.rfid.command'].sudo()
         processing_comm = commands_env.search([
@@ -939,10 +993,13 @@ class HrRfidWebstack(models.Model):
                 continue
             known_ids.add(ctrl_id)
 
-    def parse_response(self, post_data: dict, direct_cmd=False):
+    def parse_response(self, post_data: dict, direct_cmd=False, command=None):
         """
         :param post_data: A dictionary containing the response data received from a request.
         :param direct_cmd: A boolean indicating whether the command was sent directly or not.
+        :param command: Optional pre-matched command record (the websocket
+            path correlates by command id - SPEC §5.4 ``cid``); when omitted
+            the command is looked up by (controller, cmd) exactly as before.
         :return: None
 
         This method parses the response received from a controller and performs actions based on the command type and response data. It updates the status and response fields of the corresponding command record. If the response indicates an error, it handles the error accordingly. It also updates various fields of the controller based on the response data for different command types.
@@ -957,16 +1014,17 @@ class HrRfidWebstack(models.Model):
                                post_data=post_data)
             return not direct_cmd and self.check_for_unsent_cmd(200)
 
-        command = command_env.search([('webstack_id', '=', self.id),
-                                      ('controller_id', '=', controller.id),
-                                      ('status', '=', 'Process'),
-                                      ('cmd', '=', response['c']), ], limit=1)
-
-        if len(command) == 0 and response['c'] == 'DB':
+        if command is None:
             command = command_env.search([('webstack_id', '=', self.id),
                                           ('controller_id', '=', controller.id),
                                           ('status', '=', 'Process'),
-                                          ('cmd', '=', 'DB2'), ], limit=1)
+                                          ('cmd', '=', response['c']), ], limit=1)
+
+            if len(command) == 0 and response['c'] == 'DB':
+                command = command_env.search([('webstack_id', '=', self.id),
+                                              ('controller_id', '=', controller.id),
+                                              ('status', '=', 'Process'),
+                                              ('cmd', '=', 'DB2'), ], limit=1)
 
         if len(command) == 0:
             controller.report_sys_ev(_('Controller sent us a response to a command we never sent'))
@@ -976,6 +1034,18 @@ class HrRfidWebstack(models.Model):
         if response['e'] != 0:
             if response['e'] == 20:  # controller not response!
                 return self._retry_command(200, command)
+            if response['e'] == 24 and command.retries < 5:
+                # Device command buffer momentarily full (NO_QUADRANT - the
+                # module stages at most 4 commands; INTEROP 2026-07-13):
+                # transient by contract, so queue again instead of Failure.
+                # The websocket chain (_ws_publish_next_command) or the
+                # republish cron delivers it once a slot frees.
+                command.write({
+                    'status': 'Wait',
+                    'retries': command.retries + 1,
+                    'response': json.dumps(post_data),
+                })
+                return not direct_cmd and self.check_for_unsent_cmd(200)
             command.write({
                 'status': 'Failure',
                 'error': str(response['e']),

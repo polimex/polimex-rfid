@@ -1008,7 +1008,15 @@ class HrRfidController(models.Model):
                 SUPERUSER_ID).create([new_cmd])
         # Execute commands
         for c in commands:
-            if not c.webstack_id.is_limit_executed_cmd_reached() and not c.webstack_id.behind_nat and c.webstack_id.active:
+            # When the module holds a live real-time socket (ws_online), the
+            # command is already published on the bus by hr_rfid_command_ws
+            # (create hook). Firing direct_execute here too would send the SAME
+            # command a second time over the /sdk/cmd.json WebSDK path, which
+            # contends with the active WS session on the module's UART bridge
+            # ("Internal Error, Try Again" / "Bridge in Use"). So the direct
+            # (WebSDK) path is for modules WITHOUT a live socket only.
+            if (not c.webstack_id.is_limit_executed_cmd_reached() and not c.webstack_id.behind_nat
+                    and c.webstack_id.active and not c.webstack_id.ws_online):
                 try:
                     c.webstack_id.direct_execute({}, c)
                 except Exception as e:

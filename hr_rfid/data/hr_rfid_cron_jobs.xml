@@ -47,5 +47,20 @@
             <field name="priority">10</field>
         </record>
 
+
+        <!-- Real-time channel: re-publish commands that got no response
+             while their module is connected (lost bus message / device
+             drop between publish and response). Modules that fell back to
+             HTTP are served by their own polls, not by this cron. -->
+        <record id="hr_rfid_ws_republish_cron" model="ir.cron">
+            <field name="name">HR RFID: Real-time command re-publish</field>
+            <field name="model_id" ref="model_hr_rfid_command"/>
+            <field name="code">model._ws_republish_cron()</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="priority">10</field>
+        </record>
+
     </data>
 </odoo>

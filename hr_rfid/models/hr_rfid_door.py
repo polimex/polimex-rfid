@@ -405,7 +405,17 @@ class HrRfidDoor(models.Model):
             )
         cmd_id = self.controller_id.change_output_state(self.lock_output, 1, self.lock_time)
         self.log_door_change(1, self.lock_time, cmd_id)
-        if self.controller_id.webstack_id.behind_nat:
+        webstack = self.controller_id.webstack_id
+        if webstack.ws_online:
+            # Real-time channel up: the command rides the socket and runs
+            # within ~1 s. The "behind NAT, wait for the module to call us"
+            # warning is wrong on WS - NAT is irrelevant while the socket is
+            # up (owner, 2026-07-14).
+            return self.balloon_success(
+                title=_('Open door command success'),
+                message=_('The door is opening.'),
+            )
+        if webstack.behind_nat:
             return self.balloon_warning_sticky(
                 title=_('Open door command success'),
                 message=_('Because the webstack is behind NAT, we have to wait for the webstack to call us, '
@@ -417,11 +427,10 @@ class HrRfidDoor(models.Model):
                     'action': 'hr_rfid.hr_rfid_command_action'
                 }] or None
             )
-        else:
-            return self.balloon_success(
-                title=_('Open door command success'),
-                message=_('Success opening')
-            )
+        return self.balloon_success(
+            title=_('Open door command success'),
+            message=_('Success opening')
+        )
 
     def close_door(self):
         self.ensure_one()
@@ -432,7 +441,15 @@ class HrRfidDoor(models.Model):
             )
         cmd_id = self.controller_id.change_output_state(self.lock_output, 0, self.lock_time)
         self.log_door_change(0, self.lock_time, cmd_id)
-        if self.controller_id.webstack_id.behind_nat:
+        webstack = self.controller_id.webstack_id
+        if webstack.ws_online:
+            # Real-time channel up: delivered over the socket within ~1 s;
+            # the NAT-poll warning is wrong here (owner, 2026-07-14).
+            return self.balloon_success(
+                title=_('Close door command success'),
+                message=_('The door is closing.'),
+            )
+        if webstack.behind_nat:
             return self.balloon_warning_sticky(
                 title=_('Close door command success'),
                 message=_('Because the webstack is behind NAT, we have to wait for the webstack to call us, '
@@ -444,11 +461,10 @@ class HrRfidDoor(models.Model):
                     'action': 'hr_rfid.hr_rfid_command_action'
                 }]
             )
-        else:
-            return self.balloon_success(
-                title=_('Close door command success'),
-                message=_('Closing success')
-            )
+        return self.balloon_success(
+            title=_('Close door command success'),
+            message=_('Closing success')
+        )
 
     def arm_door(self):
         if not self.controller_id:

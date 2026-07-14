@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-04 14:08+0000\n"
-"PO-Revision-Date: 2026-06-04 14:08+0000\n"
+"POT-Creation-Date: 2026-07-11 08:11+0000\n"
+"PO-Revision-Date: 2026-07-11 08:11+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -450,6 +450,13 @@ msgstr ""
 msgid ""
 "<i class=\"fa fa-info-circle\"></i> Commands are automatically cleaned up "
 "after 14 days to maintain system performance."
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
+msgid ""
+"<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
+"                                    Tip: real-time works alongside the classic check-in. The new settings reach the module on its next check-in - no manual setup on the device is needed."
 msgstr ""
 
 #. module: hr_rfid
@@ -1060,7 +1067,7 @@ msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/controllers/main.py:0
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
 msgid "Activated"
 msgstr ""
 
@@ -1564,6 +1571,12 @@ msgid "Are you sure to turn Emergency mode for the group"
 msgstr ""
 
 #. module: hr_rfid
+#. odoo-javascript
+#: code:addons/hr_rfid/static/src/components/onboarding/onboarding.js:0
+msgid "Are you sure you want to hide these configuration steps?"
+msgstr ""
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_time_schedule_view_form
 msgid "Are you sure you want to reset the time schedule data?"
 msgstr ""
@@ -1600,7 +1613,7 @@ msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/controllers/main.py:0
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
 msgid "Arm denied"
 msgstr ""
 
@@ -1820,6 +1833,11 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ws_dedup__bos
+msgid "Bos"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__23
 msgid "Bridge is Currently in Use (WebSDK)"
 msgstr ""
@@ -1900,48 +1918,56 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__2
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__2
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__2
 msgid "Card Denied"
 msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__4
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__4
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__4
 msgid "Card Denied APB"
 msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__8
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__8
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__8
 msgid "Card Denied Insert"
 msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__3
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__3
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__3
 msgid "Card Denied T/S"
 msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__9
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__9
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__9
 msgid "Card Ejected"
 msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__1
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__1
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__1
 msgid "Card Granted"
 msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__6
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__6
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__6
 msgid "Card Granted (no entry)"
 msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__7
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__7
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__7
 msgid "Card Granted Insert"
 msgstr ""
 
@@ -2020,7 +2046,7 @@ msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/controllers/main.py:0
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
 msgid "Card event without card number"
 msgstr ""
 
@@ -2191,6 +2217,11 @@ msgid "Change and Apply for Everyone"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_token
+msgid "Channel Token"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.hr_rfid_access_group_check_doors_action
 msgid "Check Doors"
 msgstr ""
@@ -2284,12 +2315,6 @@ msgid "Close"
 msgstr ""
 
 #. module: hr_rfid
-#. odoo-javascript
-#: code:addons/hr_rfid/static/src/components/onboarding/onboarding.xml:0
-msgid "Close Panel"
-msgstr ""
-
-#. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.action_close_door
 msgid "Close door"
 msgstr ""
@@ -2303,12 +2328,6 @@ msgstr ""
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_open_close_wiz_form
 msgid "Close doors"
-msgstr ""
-
-#. module: hr_rfid
-#. odoo-javascript
-#: code:addons/hr_rfid/static/src/components/onboarding/onboarding.xml:0
-msgid "Close the onboarding panel"
 msgstr ""
 
 #. module: hr_rfid
@@ -2800,6 +2819,11 @@ msgid "Controller cards reload"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ws_dedup__ev_ts
+msgid "Controller date+time string of the event."
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__mode_selection
 msgid "Controller mode"
 msgstr ""
@@ -2922,7 +2946,7 @@ msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/controllers/main.py:0
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
 msgid "Could not find the card"
 msgstr ""
 
@@ -2954,6 +2978,7 @@ msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__create_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ws_dedup__create_date
 msgid "Create Date"
 msgstr ""
 
@@ -3120,6 +3145,11 @@ msgstr ""
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_command_view_search
 msgid "Creation Time"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ws_dedup__ctrl_id_num
+msgid "Ctrl Id Num"
 msgstr ""
 
 #. module: hr_rfid
@@ -3378,7 +3408,7 @@ msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/controllers/main.py:0
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
 msgid "Deactivated"
 msgstr ""
 
@@ -3671,6 +3701,11 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
+msgid "Disable real-time"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__state__disabled
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_form_view
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
@@ -3701,7 +3736,7 @@ msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/controllers/main.py:0
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
 msgid "Disarm denied"
 msgstr ""
 
@@ -3799,8 +3834,10 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_manual_create__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ws_dedup__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_ir_websocket__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_onboarding_onboarding__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_onboarding_onboarding_step__display_name
 #: model:ir.model.fields,field_description:hr_rfid.field_res_company__display_name
@@ -4099,6 +4136,11 @@ msgid "Dual Person Mode"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_ws_dedup_ws_dedup_key_uniq
+msgid "Duplicate real-time event claim."
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door_open_close_wiz__time
 msgid ""
 "Duration in seconds for the door action. For opening: how long the door "
@@ -4119,7 +4161,7 @@ msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/controllers/main.py:0
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
 msgid "Duress mode"
 msgstr ""
 
@@ -4237,7 +4279,7 @@ msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/controllers/main.py:0
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
 msgid "Emergency from %s %s"
 msgstr ""
 
@@ -4367,6 +4409,20 @@ msgid ""
 "Enable if the module is behind a firewall/router (most common). When "
 "enabled, the module initiates connection to Odoo. When disabled, Odoo can "
 "directly connect to the module's IP address."
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
+msgid "Enable real-time"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_enabled
+msgid ""
+"Enable the permanent real-time connection for this module. Commands reach "
+"the module within seconds instead of waiting for its next check-in. The "
+"module keeps working the classic way whenever the real-time connection is "
+"not available."
 msgstr ""
 
 #. module: hr_rfid
@@ -4543,6 +4599,11 @@ msgid "Error while trying to connect to the module. Information:\n"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ws_dedup__ev_ts
+msgid "Ev Ts"
+msgstr ""
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_system_ev_view_pivot
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_pivot
 msgid "Event"
@@ -4572,7 +4633,7 @@ msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/controllers/main.py:0
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
 msgid "Event from Temperature Sensor"
 msgstr ""
 
@@ -4707,7 +4768,7 @@ msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/controllers/main.py:0
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
 msgid "Exit button %d pressed "
 msgstr ""
 
@@ -5071,13 +5132,18 @@ msgid "HR RFID: Read controller statuses"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.actions.server,name:hr_rfid.hr_rfid_ws_republish_cron_ir_actions_server
+msgid "HR RFID: Real-time command re-publish"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.hr_rfid_sync_ctrl_clock_cron_ir_actions_server
 msgid "HR RFID: Synchronize controller clocks"
 msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/controllers/main.py:0
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
 msgid "Hardware"
 msgstr ""
 
@@ -5090,7 +5156,7 @@ msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/controllers/main.py:0
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
 msgid "Hardware Event"
 msgstr ""
 
@@ -5162,6 +5228,18 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid
+#. odoo-javascript
+#: code:addons/hr_rfid/static/src/components/onboarding/onboarding.js:0
+msgid "Hide"
+msgstr ""
+
+#. module: hr_rfid
+#. odoo-javascript
+#: code:addons/hr_rfid/static/src/components/onboarding/onboarding.js:0
+msgid "Hide onboarding tips"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__high_temperature
 msgid "High Temperature"
 msgstr ""
@@ -5197,6 +5275,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__12
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__38
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__12
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__12
 msgid "Hotel Button Pressed"
 msgstr ""
 
@@ -5348,8 +5427,10 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_manual_create__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ws_dedup__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__id
+#: model:ir.model.fields,field_description:hr_rfid.field_ir_websocket__id
 #: model:ir.model.fields,field_description:hr_rfid.field_onboarding_onboarding__id
 #: model:ir.model.fields,field_description:hr_rfid.field_onboarding_onboarding_step__id
 #: model:ir.model.fields,field_description:hr_rfid.field_res_company__id
@@ -5899,6 +5980,13 @@ msgid "Is Follower"
 msgstr ""
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
+msgid ""
+"Issue a new secret token for this module? The module switches to it "
+"automatically within a few minutes and stays connected."
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__key
 msgid "Key"
 msgstr ""
@@ -5941,6 +6029,11 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__last_ip
 msgid "Last Ip"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_last_seen
+msgid "Last Real-time Activity"
 msgstr ""
 
 #. module: hr_rfid
@@ -6048,6 +6141,11 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__last_occurrence
 msgid "Last occurrence"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_last_seen
+msgid "Last time the module sent anything over the real-time connection."
 msgstr ""
 
 #. module: hr_rfid
@@ -7407,7 +7505,7 @@ msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/controllers/main.py:0
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
 msgid "Output control from Software"
 msgstr ""
 
@@ -7661,6 +7759,13 @@ msgid "Present card in reader"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_token_old
+msgid ""
+"Previous channel token, kept only during the short rotation grace window so "
+"the module never misses a message while switching channels."
+msgstr ""
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_discovery_wiz
 msgid "Process"
 msgstr ""
@@ -7684,6 +7789,11 @@ msgstr ""
 msgid ""
 "Property Management System integration. Allows using RFID system for hotel "
 "room access and guest management."
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_proto
+msgid "Protocol Version"
 msgstr ""
 
 #. module: hr_rfid
@@ -8262,6 +8372,44 @@ msgid "Reading controllers from the Module"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_enabled
+msgid "Real-time Channel"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_hr_rfid_ws_dedup
+msgid "Real-time Event Deduplication"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_online
+msgid "Real-time Online"
+msgstr ""
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_webstack_ws.py:0
+msgid "Real-time channel disabled."
+msgstr ""
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_webstack_ws.py:0
+msgid "Real-time channel enabled."
+msgstr ""
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_webstack_ws.py:0
+msgid "Real-time channel token rotated."
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
+msgid "Real-time connection"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone__employee_ids
 msgid ""
 "Real-time list of employees currently present in this zone. This field is "
@@ -8275,6 +8423,12 @@ msgid ""
 "Real-time list of external contacts (visitors, contractors, vendors) "
 "currently in this zone. Automatically updated as contacts enter/exit. Useful"
 " for visitor tracking and emergency evacuation lists."
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_proto
+msgid ""
+"Real-time protocol version the module negotiated on its last connection."
 msgstr ""
 
 #. module: hr_rfid
@@ -8545,6 +8699,7 @@ msgstr ""
 #: code:addons/hr_rfid/models/hr_rfid_event_user.py:0
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__64
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__64
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__64
 msgid "Request Instructions"
 msgstr ""
 
@@ -8617,6 +8772,11 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
+msgid "Rotate token"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_webstack__module_username__sdk
 msgid "SDK"
 msgstr ""
@@ -8678,6 +8838,14 @@ msgstr ""
 #. module: hr_rfid
 #: model:onboarding.onboarding.step,description:hr_rfid.onboarding_step_scan_controllers
 msgid "Scan for RFID controllers connected to your module."
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_token
+msgid ""
+"Secret token of the real-time channel. It is generated automatically and "
+"delivered to the module on its next check-in. Use \"Rotate token\" if you "
+"suspect it leaked."
 msgstr ""
 
 #. module: hr_rfid
@@ -9036,6 +9204,11 @@ msgid "Settings"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_provision_pending
+msgid "Settings Pending Delivery"
+msgstr ""
+
+#. module: hr_rfid
 #: model:onboarding.onboarding.step,done_text:hr_rfid.onboarding_step_module_settings
 msgid "Settings configured!"
 msgstr ""
@@ -9145,7 +9318,7 @@ msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/controllers/main.py:0
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
 msgid "Software"
 msgstr ""
 
@@ -9798,13 +9971,13 @@ msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/controllers/main.py:0
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
 msgid "The door is opened by force/key"
 msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/controllers/main.py:0
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
 msgid "The door is still opened"
 msgstr ""
 
@@ -9927,6 +10100,21 @@ msgid "The module does not be behind NAT!"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_online
+msgid ""
+"The module is currently connected in real time (it reported activity within "
+"the last two heartbeat intervals)."
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
+msgid ""
+"The module receives its access keys and commands within seconds, even behind"
+" NAT. It keeps working the classic way whenever the real-time connection is "
+"unavailable."
+msgstr ""
+
+#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid ""
@@ -10029,6 +10217,13 @@ msgstr ""
 msgid ""
 "The primary door controlled by this reader. This field is shown when the "
 "reader controls exactly one door."
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_provision_pending
+msgid ""
+"The real-time settings changed and will be delivered to the module on its "
+"next check-in."
 msgstr ""
 
 #. module: hr_rfid
@@ -10679,7 +10874,7 @@ msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
-#: code:addons/hr_rfid/controllers/main.py:0
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
 msgid "Unknown event. Please contact with your support!"
 msgstr ""
 
@@ -11016,6 +11211,11 @@ msgid "Website communication history"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ws_dedup__webstack_id
+msgid "Webstack"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_webstack_manual_create
 msgid "Webstack Manual Creation"
 msgstr ""
@@ -11118,6 +11318,11 @@ msgid ""
 "When enabled, this card can arm/disarm the alarm system for this door. "
 "Typically given to security personnel or managers who need to control the "
 "alarm system."
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_token_rotated_at
+msgid "When the channel token was last rotated."
 msgstr ""
 
 #. module: hr_rfid
@@ -11304,15 +11509,29 @@ msgid "Wrong Value/Parameter"
 msgstr ""
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_ctrl_reader.py:0
-msgid "You can not change the reader mode to this value!"
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_auth_fail_count
+msgid "Ws Auth Fail Count"
 msgstr ""
 
 #. module: hr_rfid
-#. odoo-javascript
-#: code:addons/hr_rfid/static/src/components/onboarding/onboarding.xml:0
-msgid "Your RFID system is ready!"
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_auth_fail_since
+msgid "Ws Auth Fail Since"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_token_old
+msgid "Ws Token Old"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_token_rotated_at
+msgid "Ws Token Rotated At"
+msgstr ""
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_ctrl_reader.py:0
+msgid "You can not change the reader mode to this value!"
 msgstr ""
 
 #. module: hr_rfid
@@ -11338,12 +11557,14 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__10
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__10
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__10
 msgid "Zone Arm"
 msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__5
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__5
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__5
 msgid "Zone Arm Denied"
 msgstr ""
 
@@ -11367,12 +11588,14 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__11
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__11
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__11
 msgid "Zone Disarm"
 msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_user__event_action__15
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__15
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_vending_event__event_action__15
 msgid "Zone Disarm Denied"
 msgstr ""
 
@@ -11481,12 +11704,6 @@ msgid "by Sensor"
 msgstr ""
 
 #. module: hr_rfid
-#. odoo-javascript
-#: code:addons/hr_rfid/static/src/components/onboarding/onboarding.xml:0
-msgid "confetti"
-msgstr ""
-
-#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
 msgid "controller(s)"
 msgstr ""
@@ -11586,6 +11803,11 @@ msgstr ""
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
 msgid "sub-group(s)"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_ir_websocket
+msgid "websocket message handling"
 msgstr ""
 
 #. module: hr_rfid

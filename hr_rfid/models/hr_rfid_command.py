@@ -758,8 +758,13 @@ class HrRfidCommands(models.Model):
 
             records += super(HrRfidCommands, self).create([vals])
 
-            if records and len(
-                    records) == 1 and not records.webstack_id.is_limit_executed_cmd_reached() and records.webstack_id.active:
+            # Skip the direct (WebSDK /sdk/cmd.json) push when the module has a
+            # live real-time socket: over WS the command already rides the bus
+            # (hr_rfid_command_ws), and a parallel direct send contends with the
+            # WS session on the module UART bridge. Direct is the no-socket path.
+            if (records and len(records) == 1
+                    and not records.webstack_id.is_limit_executed_cmd_reached()
+                    and records.webstack_id.active and not records.webstack_id.ws_online):
                 records.webstack_id.direct_execute(command_id=records)
 
         return records
