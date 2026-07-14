@@ -70,6 +70,11 @@
                                        invisible="behind_nat"/>
                                 <field name="module_password" password="True"
                                        invisible="behind_nat"/>
+                                <!-- Security posture at a glance: is the real-time
+                                     channel allowed for this module (default: off).
+                                     Managed via the Enable/Disable real-time buttons
+                                     below - they mint/revoke the channel token. -->
+                                <field name="ws_enabled" readonly="1"/>
                             </group>
                             <group string="Setup">
                                 <field name="tz" required="1"/>
@@ -102,11 +107,11 @@
                                     <button name="action_ws_disable" type="object"
                                             string="Disable real-time"
                                             invisible="not ws_enabled"/>
-                                    <button name="action_ws_rotate_token" type="object"
-                                            string="Rotate token" class="btn-secondary"
+                                    <button name="action_ws_rekey" type="object"
+                                            string="Accept new key" class="btn-secondary"
                                             invisible="not ws_enabled"
                                             groups="hr_rfid.hr_rfid_group_officer"
-                                            confirm="Issue a new secret token for this module? The module switches to it automatically within a few minutes and stays connected."/>
+                                            confirm="Accept a new security key from this module on its next check-in? Use this only after you changed the key on the device itself."/>
                                 </div>
                                 <p class="text-muted" colspan="2">
                                     <i class="fa fa-lightbulb-o" role="img"/>

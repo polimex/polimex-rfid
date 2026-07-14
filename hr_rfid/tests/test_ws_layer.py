@@ -2,17 +2,14 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 """Unit tests for the WebSocket (Odoo bus) transport layer - package A of
 docs/odoo-bus/ODOO_BUS_ODOO_PLAN.md (esp32 repo); wire contract in
-ODOO_BUS_PROTOCOL_SPEC.md."""
+ODOO_BUS_PROTOCOL_SPEC.md (proto 3: key-channel, no ws_token, TOFU re-key)."""
 from datetime import timedelta
 from unittest.mock import patch
 
 from odoo import fields
-from odoo.exceptions import AccessError
 from odoo.tests.common import tagged
 
-from odoo.addons.hr_rfid.models.hr_rfid_webstack_ws import (
-    WS_TOKEN_ROTATE_GRACE_S,
-)
+from odoo.addons.hr_rfid.models.hr_rfid_webstack_ws import WS_PROTO_VERSION
 from odoo.addons.hr_rfid.tests.common import RFIDAppCase
 
 import logging
@@ -22,60 +19,50 @@ _logger = logging.getLogger(__name__)
 
 @tagged('standard', 'at_install', 'rfid', 'rfid_ws')
 class TestWsLayer(RFIDAppCase):
-    """Token lifecycle, channel naming, publish helper, presence."""
+    """Channel naming, publish helper, presence, provisioning, re-key.
+
+    proto 3 (owner 2026-07-14): the channel credential is the module ``key``
+    (server_push_key) - there is no server-issued ws_token, so there is no
+    token generation or rotation to test; re-key is TOFU (clear the key,
+    adopt the next hello's ``k``).
+    """
 
     def _ws(self):
         return self.test_webstack_10_3_id
 
     # ------------------------------------------------------------------
-    # Token lifecycle
+    # Enable / disable / re-key
     # ------------------------------------------------------------------
 
-    def test_enable_generates_token_once(self):
+    def test_enable_does_not_mint_a_secret(self):
         ws = self._ws()
         self.assertFalse(ws.ws_enabled)
+        key_before = ws.sudo().key
         ws.action_ws_enable()
         self.assertTrue(ws.ws_enabled)
         self.assertTrue(ws.ws_provision_pending)
-        token = ws.ws_token
-        self.assertEqual(len(token), 32, 'token must be 32 hex chars (128 bit)')
-        int(token, 16)  # raises if not hex
-        # enable is idempotent for the secret: a second enable keeps it
-        ws.action_ws_enable()
-        self.assertEqual(ws.ws_token, token, 'enable must not rotate the token')
+        # proto 3 has no ws_token: the channel credential is the existing key,
+        # so enable must not touch it.
+        self.assertEqual(ws.sudo().key, key_before,
+                         'enable must reuse the module key, not mint a token')
 
-    def test_disable_keeps_token(self):
+    def test_disable_keeps_key(self):
         ws = self._ws()
         ws.action_ws_enable()
-        token = ws.ws_token
+        key = ws.sudo().key
         ws.action_ws_disable()
         self.assertFalse(ws.ws_enabled)
-        self.assertEqual(ws.ws_token, token)
+        self.assertEqual(ws.sudo().key, key, 'disable must not clear the key')
 
-    def test_rotate_token_notifies_old_channel(self):
+    def test_rekey_clears_key_for_tofu(self):
+        """action_ws_rekey arms TOFU: it clears the stored key so the next
+        authenticated hello adopts the device's current ``k`` (SPEC §6.6)."""
         ws = self._ws()
         ws.action_ws_enable()
-        old_token = ws.ws_token
-        old_channel = ws._ws_channel()
-        with patch.object(type(self.env['bus.bus']), '_sendone') as sendone:
-            ws.action_ws_rotate_token()
-        self.assertNotEqual(ws.ws_token, old_token)
-        self.assertEqual(ws.ws_token_old, old_token)
+        self.assertTrue(ws.sudo().key)
+        ws.action_ws_rekey()
+        self.assertFalse(ws.sudo().key, 'rekey clears the key (TOFU re-adopt)')
         self.assertTrue(ws.ws_provision_pending)
-        # the rotation notice travels on the OLD channel (SPEC §6.6)
-        sendone.assert_called_once()
-        channel, mtype, payload = sendone.call_args.args
-        self.assertEqual(channel, old_channel)
-        self.assertEqual(mtype, 'hr_rfid.token')
-        self.assertEqual(payload['new_token'], ws.ws_token)
-        self.assertEqual(payload['grace_s'], WS_TOKEN_ROTATE_GRACE_S)
-
-    def test_rotate_requires_enabled(self):
-        ws = self._ws()
-        with patch.object(type(self.env['bus.bus']), '_sendone') as sendone:
-            ws.action_ws_rotate_token()   # not enabled -> no-op
-        sendone.assert_not_called()
-        self.assertFalse(ws.ws_token)
 
     # ------------------------------------------------------------------
     # Channel + publish helper
@@ -85,12 +72,10 @@ class TestWsLayer(RFIDAppCase):
         ws = self._ws()
         ws.action_ws_enable()
         self.assertEqual(
-            ws._ws_channel(), 'hr_rfid#%s#%s' % (ws.serial, ws.ws_token))
-        self.assertEqual(
-            ws._ws_channel(token='cafe'), 'hr_rfid#%s#cafe' % ws.serial)
+            ws._ws_channel(), 'hr_rfid#%s#%s' % (ws.serial, ws.sudo().key))
 
-    def test_send_requires_enabled_and_token(self):
-        ws = self._ws()
+    def test_send_requires_enabled_and_key(self):
+        ws = self._ws()  # not enabled
         with patch.object(type(self.env['bus.bus']), '_sendone') as sendone:
             self.assertFalse(ws._ws_send('hr_rfid.sync', {'pending_cmds': 1}))
         sendone.assert_not_called()
@@ -103,24 +88,15 @@ class TestWsLayer(RFIDAppCase):
         sendone.assert_called_once_with(
             ws._ws_channel(), 'hr_rfid.sync', {'pending_cmds': 2})
 
-    def test_send_mirrors_old_channel_during_grace(self):
+    def test_send_requires_a_key(self):
+        """With the key cleared (TOFU armed) there is no channel to publish
+        on, so _ws_send is a no-op until the next hello re-adopts the key."""
         ws = self._ws()
         ws.action_ws_enable()
-        old_channel = ws._ws_channel()
-        ws.action_ws_rotate_token()
+        ws.sudo().key = False
         with patch.object(type(self.env['bus.bus']), '_sendone') as sendone:
-            ws._ws_send('hr_rfid.sync', {'pending_cmds': 3})
-        channels = [c.args[0] for c in sendone.call_args_list]
-        self.assertEqual(len(channels), 2, 'grace window -> publish on both')
-        self.assertIn(ws._ws_channel(), channels)
-        self.assertIn(old_channel, channels)
-        # after the grace window only the new channel receives
-        ws.sudo().ws_token_rotated_at = fields.Datetime.now() - timedelta(
-            seconds=WS_TOKEN_ROTATE_GRACE_S + 5)
-        with patch.object(type(self.env['bus.bus']), '_sendone') as sendone:
-            ws._ws_send('hr_rfid.sync', {'pending_cmds': 4})
-        sendone.assert_called_once_with(
-            ws._ws_channel(), 'hr_rfid.sync', {'pending_cmds': 4})
+            self.assertFalse(ws._ws_send('hr_rfid.sync', {'pending_cmds': 3}))
+        sendone.assert_not_called()
 
     # ------------------------------------------------------------------
     # Presence
@@ -157,36 +133,11 @@ class TestWsLayer(RFIDAppCase):
         self.assertEqual(result['status'], 200)
         block = result['ws']
         self.assertEqual(block['en'], 1)
-        self.assertEqual(block['tok'], ws.ws_token)
+        # proto 3: NO token travels down - the device owns its key.
+        self.assertNotIn('tok', block, 'proto 3 sends no secret in the block')
         self.assertEqual(block['db'], self.env.cr.dbname)
         self.assertTrue(block['url'])
-        self.assertEqual(block['proto'], 1)
+        self.assertEqual(block['proto'], WS_PROTO_VERSION)
         # the original dict is not mutated (the reply may be reused)
         self.assertNotIn('ws', base)
 
-    def test_provision_cleared_by_hello(self):
-        ws = self._ws()
-        ws.action_ws_enable()
-        self.assertTrue(ws.ws_provision_pending)
-        with patch.object(type(self.env['bus.bus']), '_sendone'):
-            self.env['ir.websocket']._serve_ir_websocket('hr_rfid', {
-                'v': 1, 's': ws.serial, 'k': ws.ws_token, 't': 'hello'})
-        self.assertFalse(ws.ws_provision_pending,
-                         'a hello with the new token confirms delivery')
-        self.assertEqual(ws._ws_provision_payload({'status': 200}),
-                         {'status': 200})
-
-    # ------------------------------------------------------------------
-    # Secret protection
-    # ------------------------------------------------------------------
-
-    def test_token_field_is_group_protected(self):
-        ws = self._ws()
-        ws.action_ws_enable()
-        user = self.env['res.users'].create({
-            'name': 'WS NoAccess',
-            'login': 'ws_noaccess',
-            'group_ids': [(6, 0, [self.env.ref('base.group_user').id])],
-        })
-        with self.assertRaises(AccessError):
-            ws.with_user(user).read(['ws_token'])

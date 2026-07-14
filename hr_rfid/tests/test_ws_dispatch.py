@@ -31,14 +31,26 @@ class TestWsDispatch(RFIDAppCase):
     def _ws(self):
         return self.test_webstack_10_3_id
 
+    def setUp(self):
+        super().setUp()
+        # Unit tests exercise the parse / provision / auth-gating flow, not the
+        # HMAC crypto itself (that is bench-verified, INTEROP 2026-07-14).
+        # Clearing FW_SECRET takes the skip-HMAC path so a hello without a
+        # signature is accepted for an already-keyed module.
+        self.env['ir.config_parameter'].sudo().set_param(
+            'hr_rfid.ws_fw_secret', '')
+
     def _enable(self):
         ws = self._ws()
         ws.action_ws_enable()
         return ws
 
-    def _msg(self, mtype, ws=None, token=None, v=WS_PROTO_VERSION, **payload):
+    def _msg(self, mtype, ws=None, k=None, v=WS_PROTO_VERSION, **payload):
         ws = ws or self._ws()
-        data = {'v': v, 's': ws.serial, 'k': token or ws.ws_token, 't': mtype}
+        # proto 3: `k` is the module key (server_push_key), the channel
+        # credential; defaults to the record's key when the test does not
+        # override it with a bad value.
+        data = {'v': v, 's': ws.serial, 'k': k or ws.sudo().key, 't': mtype}
         data.update(payload)
         return data
 
@@ -60,32 +72,44 @@ class TestWsDispatch(RFIDAppCase):
     # Authentication
     # ------------------------------------------------------------------
 
-    def test_bad_token_is_ignored(self):
+    def test_bad_key_is_refused_with_nack(self):
         ws = self._enable()
         with patch.object(type(self.env['bus.bus']), '_sendone') as sendone:
-            self._dispatch(self._msg('hello', token='f' * 32))
-        sendone.assert_not_called()
+            self._dispatch(self._msg('hello', k='f' * 32))
+        # A wrong key never touches presence or processing...
         self.assertFalse(ws.ws_last_seen, 'auth failure must not touch presence')
+        # ...but a hello gets an explicit auth nack (ok:false) so the device
+        # falls back to HTTP instead of sitting deaf-mute (SPEC §9.2, v1.1).
+        acks = [c for c in sendone.call_args_list
+                if c.args[1] == 'hr_rfid.hello_ack']
+        self.assertEqual(len(acks), 1, 'a refused hello is nacked')
+        self.assertFalse(acks[0].args[2]['ok'])
+        self.assertEqual(acks[0].args[2]['err'], 'auth')
 
     def test_auth_flood_raises_one_system_event(self):
         ws = self._enable()
         Sys = self.env['hr.rfid.event.system']
         before = Sys.search_count([('webstack_id', '=', ws.id)])
         for _i in range(WS_AUTH_FAIL_THRESHOLD + 3):
-            self._dispatch(self._msg('hb', token='f' * 32))
+            self._dispatch(self._msg('hb', k='f' * 32))
         after = Sys.search_count([('webstack_id', '=', ws.id)])
         self.assertEqual(after - before, 1,
                          'exactly ONE system event at the flood threshold')
 
-    def test_disabled_module_is_ignored(self):
-        ws = self._ws()
-        ws.sudo().ws_token = 'a' * 32  # token present but channel disabled
+    def test_disabled_module_is_refused_with_nack(self):
+        ws = self._ws()  # never enabled -> ws_enabled is False
         with patch.object(type(self.env['bus.bus']), '_sendone') as sendone:
             self._dispatch(self._msg('hello'))
-        sendone.assert_not_called()
+        self.assertFalse(ws.ws_last_seen, 'a disabled module is not processed')
+        # A disabled module refuses the hello (ok:false) so the device parks
+        # on HTTP rather than staying on a dead real-time socket.
+        acks = [c for c in sendone.call_args_list
+                if c.args[1] == 'hr_rfid.hello_ack']
+        self.assertEqual(len(acks), 1)
+        self.assertFalse(acks[0].args[2]['ok'])
 
     def test_unknown_serial_is_safe(self):
-        self._dispatch({'v': 1, 's': '999999', 'k': 'a' * 32, 't': 'hello'})
+        self._dispatch({'v': 3, 's': '999999', 'k': 'a' * 32, 't': 'hello'})
         # nothing to assert beyond "no exception, no records"
         self.assertFalse(self.env['hr.rfid.webstack'].search(
             [('serial', '=', '999999')]))
@@ -268,7 +292,7 @@ class TestWsDispatch(RFIDAppCase):
         window do NOT keep writing the row."""
         ws = self._enable()
         for _i in range(WS_AUTH_FAIL_THRESHOLD + 5):
-            self._dispatch(self._msg('hb', token='f' * 32))
+            self._dispatch(self._msg('hb', k='f' * 32))
         self.assertEqual(ws.ws_auth_fail_count, WS_AUTH_FAIL_THRESHOLD,
                          'counter is capped at the threshold, not unbounded')
 
@@ -296,7 +320,13 @@ class TestWsDispatch(RFIDAppCase):
     # Full round-trip: hello -> F0 response over WS -> ev64 inline command
     # ------------------------------------------------------------------
 
-    def test_f0_rsp_and_ev64_inline_command(self):
+    def test_f0_rsp_and_inline_command_on_event(self):
+        """Full round-trip: hello -> F0 read queued -> F0 response over the WS
+        rsp path (the SAME parse_response core as HTTP) closes the command and
+        parses the reader count. Then a card event piggybacks the queued
+        controller command INLINE in the ev_ack, so the controller timeout is
+        honoured (SPEC §6.3) - the same controller-timeout delivery the HTTP
+        reply uses."""
         ws = self._enable()
         with patch.object(type(self.env['bus.bus']), '_sendone'):
             self._dispatch(self._msg('hello', fw='2.01', ctrl=[5]))
@@ -315,20 +345,34 @@ class TestWsDispatch(RFIDAppCase):
                                         'd': F0_ICON110}))
         self.assertEqual(cmd.status, 'Success', 'rsp closes the command')
         self.assertEqual(ctrl.readers, 2, 'F0 parsed: iCON110 has 2 readers')
-        # ev64 (cloud permission) now has a reader; the deny/grant command
-        # must ride INLINE in the ev_ack (controller timeout, SPEC §6.3)
+        # Drain F0's controller-setup batch and queue ONE known command; a card
+        # event must then piggyback it INLINE in the ev_ack (SPEC §6.3).
+        self.env['hr.rfid.command'].sudo().search([
+            ('webstack_id', '=', ws.id),
+            ('status', 'in', ('Wait', 'Process'))]).write({'status': 'Success'})
+        db_cmd = self.env['hr.rfid.command'].sudo().with_context(
+            ws_no_publish=True).create({
+                'webstack_id': ws.id, 'controller_id': ctrl.id,
+                'cmd': 'DB', 'cmd_data': '400300', 'status': 'Wait'})
+        self.assertEqual(db_cmd.status, 'Wait')
+        # the hello reported fw 2.01 -> the webstack is new_fw, whose time
+        # format is MM.DD.YY (test_date_10_3 is the legacy DD.MM.YY form); the
+        # event date must match or the parse raises BadTime and the piggyback
+        # never runs.
+        ev = self._event_dict(ctrl_id=5, bos=3, event_n=3)
+        ev['date'] = '%02d.%02d.%02d' % (
+            self.test_now.month, self.test_now.day, self.test_now.year - 2000)
         with patch.object(type(self.env['bus.bus']), '_sendone') as sendone:
-            self._dispatch(self._msg(
-                'ev', bid=401,
-                ev=[self._event_dict(ctrl_id=5, bos=3, event_n=64)]))
+            self._dispatch(self._msg('ev', bid=401, ev=[ev]))
         payload = [c for c in sendone.call_args_list
                    if c.args[1] == 'hr_rfid.ev_ack'][-1].args[2]
-        self.assertEqual(payload['res'][0], {'i': 0, 'ok': True, 'dup': False})
-        self.assertIn('cmd', payload, 'ev64 reply rides inline in the ack')
-        self.assertEqual(payload['cmd']['cmd']['id'], 5)
+        self.assertIn('cmd', payload,
+                      'the queued command rides inline in the ev_ack (SPEC §6.3)')
+        self.assertEqual(payload['cmd']['cmd']['id'], 5,
+                         'the inline command targets this controller')
         self.assertEqual(payload['cmd']['cmd']['c'], 'DB')
-        self.assertGreater(payload['cmd']['cid'], 0,
-                           'inline command carries its correlation id')
+        self.assertEqual(payload['cmd']['cid'], db_cmd.id,
+                         'inline command carries its exact correlation id')
 
     # ------------------------------------------------------------------
     # Dedup GC

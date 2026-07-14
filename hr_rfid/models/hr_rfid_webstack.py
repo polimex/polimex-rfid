@@ -728,6 +728,30 @@ class HrRfidWebstack(models.Model):
     def is_100_1(self):
         return all([(ws.hw_version == '100.1') and (ws._version_num() > 1.40) for ws in self])
 
+    @api.model
+    def _serial_is_100_1(self, serial):
+        """SSOT device-model test: an iCON1XX 100.1 is identified by its SERIAL.
+
+        Owner 2026-07-14: every 100.1 ships a serial starting with '4'; neither
+        legacy 10.3 nor 50.1 ever do. The serial rides in the ``convertor``
+        field of EVERY device POST (and is set at auto-create), so a 100.1 is
+        identified from the very FIRST packet of a fresh HTTP re-discovery -
+        before hw_version (absent over the HTTP heartbeat) or version (absent
+        until the first heartbeat parse) exist. Taking the serial as the
+        argument (not a record) lets a caller decide from
+        ``post_data['convertor']`` before the webstack is even authenticated.
+
+        Two uses, both keyed off this single fact:
+        - PLAIN wire (INTEROP 2026-07-13): a 100.1 gets the bare plain-JSON
+          reply; without this the plain ack collapsed to the legacy empty-body
+          path and a re-discovered 100.1 command hung in "Process". Legacy 10.3
+          (serial not '4') stays on the cmd-only wire.
+        - WS AUTO-ENABLE (owner 2026-07-14): a 100.1 supports the real-time
+          channel, so it is turned on automatically at discovery (opt-out) -
+          no manual "Enable real-time" click needed for it to come up.
+        """
+        return (str(serial) if serial else '').startswith('4')
+
     def in_cmd_execution(self):
         return self.env['hr.rfid.command'].search_count([
             ('webstack_id', 'in', self.mapped('id')),
@@ -1010,6 +1034,18 @@ class HrRfidWebstack(models.Model):
         if response['e'] != 0:
             if response['e'] == 20:  # controller not response!
                 return self._retry_command(200, command)
+            if response['e'] == 24 and command.retries < 5:
+                # Device command buffer momentarily full (NO_QUADRANT - the
+                # module stages at most 4 commands; INTEROP 2026-07-13):
+                # transient by contract, so queue again instead of Failure.
+                # The websocket chain (_ws_publish_next_command) or the
+                # republish cron delivers it once a slot frees.
+                command.write({
+                    'status': 'Wait',
+                    'retries': command.retries + 1,
+                    'response': json.dumps(post_data),
+                })
+                return not direct_cmd and self.check_for_unsent_cmd(200)
             command.write({
                 'status': 'Failure',
                 'error': str(response['e']),

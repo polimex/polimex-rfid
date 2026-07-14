@@ -23,6 +23,15 @@ _logger = logging.getLogger(__name__)
 
 @tagged('standard', 'at_install', 'rfid', 'rfid_ws')
 class TestWsCommands(RFIDAppCase):
+    def setUp(self):
+        super().setUp()
+        # Unit tests exercise the parse / provision / auth-gating flow, not the
+        # HMAC crypto itself (that is bench-verified, INTEROP 2026-07-14).
+        # Clearing FW_SECRET takes the skip-HMAC path so a hello without a
+        # signature is accepted for an already-keyed module.
+        self.env['ir.config_parameter'].sudo().set_param(
+            'hr_rfid.ws_fw_secret', '')
+
 
     def _ws(self):
         return self.test_webstack_10_3_id
@@ -31,7 +40,7 @@ class TestWsCommands(RFIDAppCase):
         ws.action_ws_enable()
         with patch.object(type(self.env['bus.bus']), '_sendone'):
             self.env['ir.websocket']._serve_ir_websocket('hr_rfid', {
-                'v': 1, 's': ws.serial, 'k': ws.ws_token, 't': 'hello',
+                'v': 3, 's': ws.serial, 'k': ws.sudo().key, 't': 'hello',
                 'ctrl': [5]})
         ctrl = ws.controllers.filtered(lambda c: c.ctrl_id == 5)
         # drain the F0 setup command the hello provisioning queued+published,
@@ -57,7 +66,7 @@ class TestWsCommands(RFIDAppCase):
     def _dispatch_ev(self, ws, bid, events):
         with patch.object(type(self.env['bus.bus']), '_sendone'):
             self.env['ir.websocket']._serve_ir_websocket('hr_rfid', {
-                'v': 1, 's': ws.serial, 'k': ws.ws_token, 't': 'ev',
+                'v': 3, 's': ws.serial, 'k': ws.sudo().key, 't': 'ev',
                 'bid': bid, 'ev': events})
 
     def test_event_batch_does_not_burn_command_retries(self):
@@ -73,7 +82,7 @@ class TestWsCommands(RFIDAppCase):
         events = [self._event(ctrl, bos=b) for b in range(1, 7)]
         with patch.object(type(self.env['bus.bus']), '_sendone'):
             self.env['ir.websocket']._serve_ir_websocket('hr_rfid', {
-                'v': 1, 's': ws.serial, 'k': ws.ws_token, 't': 'ev',
+                'v': 3, 's': ws.serial, 'k': ws.sudo().key, 't': 'ev',
                 'bid': 500, 'ev': events})
         self.assertNotEqual(cmd.status, 'Failure',
                             'the command must not be burned to Failure by a batch')
@@ -89,11 +98,14 @@ class TestWsCommands(RFIDAppCase):
         with patch.object(type(self.env['bus.bus']), '_sendone'):
             db_cmd = self._mk_cmd(ctrl, cmd='DB', cmd_data='400300')
             d7_cmd = self._mk_cmd(ctrl, cmd='D7', cmd_data='')
+        # one-command-in-flight publishes only the oldest; force both to
+        # Process to exercise the cid vs (controller, code) fallback in isolation.
+        (db_cmd | d7_cmd).write({'status': 'Process'})
         self.assertEqual((db_cmd.status, d7_cmd.status), ('Process', 'Process'))
         # device answers a D7 result but (wrongly) tags it with the DB cid
         with patch.object(type(self.env['bus.bus']), '_sendone'):
             self.env['ir.websocket']._serve_ir_websocket('hr_rfid', {
-                'v': 1, 's': ws.serial, 'k': ws.ws_token, 't': 'rsp',
+                'v': 3, 's': ws.serial, 'k': ws.sudo().key, 't': 'rsp',
                 'cid': db_cmd.id,
                 'r': {'id': ctrl.ctrl_id, 'c': 'D7', 'e': 0, 'd': ''}})
         self.assertEqual(d7_cmd.status, 'Success',
@@ -102,13 +114,15 @@ class TestWsCommands(RFIDAppCase):
                          'the mismatched-cid DB command is left untouched')
 
     def test_poison_command_does_not_abort_sync_on_connect(self):
-        """F4/F12: one command that raises in send_command must not abort the
-        whole hello - the hello_ack still goes out and the healthy command is
-        still delivered."""
+        """F4/F12: the OLDEST queued command raising in send_command must not
+        abort the whole hello - the hello_ack still goes out and the poison is
+        left queued (not burned), so the next sync / HTTP retries it. With
+        one-command-in-flight only the oldest is attempted per connect, so a
+        second command simply waits behind it."""
         ws = self._ws()
         ctrl = self._go_online(ws)
         # a D1 (add-card) with empty numeric fields raises int('') in
-        # send_command; a healthy DB queued alongside it
+        # send_command; it is the OLDEST queued command
         poison = self._mk_cmd(ctrl, cmd='D1', cmd_data='', card_number='',
                               pin_code='', ts_code='0', rights_data='',
                               rights_mask='')
@@ -119,13 +133,14 @@ class TestWsCommands(RFIDAppCase):
         with patch.object(type(self.env['bus.bus']), '_sendone',
                           side_effect=lambda ch, t, p: sent.append((t, p))):
             self.env['ir.websocket']._serve_ir_websocket('hr_rfid', {
-                'v': 1, 's': ws.serial, 'k': ws.ws_token, 't': 'hello'})
+                'v': 3, 's': ws.serial, 'k': ws.sudo().key, 't': 'hello'})
         types = [t for t, _ in sent]
         self.assertIn('hr_rfid.hello_ack', types,
                       'hello_ack must still be sent despite the poison command')
-        self.assertTrue(
-            any(t == 'hr_rfid.cmd' and p['cid'] == healthy.id for t, p in sent),
-            'the healthy command is still delivered')
+        self.assertNotEqual(poison.status, 'Failure',
+                            'the poison command is left queued, not burned')
+        self.assertEqual(healthy.status, 'Wait',
+                         'the second command waits behind the in-flight one')
 
     def test_republish_cron_climbs_to_giveup_on_poison(self):
         """F5: a command that keeps failing to publish still climbs its retry
@@ -209,7 +224,7 @@ class TestWsCommands(RFIDAppCase):
         self.assertEqual(cmd.status, 'Wait')
         with patch.object(type(self.env['bus.bus']), '_sendone') as sendone:
             self.env['ir.websocket']._serve_ir_websocket('hr_rfid', {
-                'v': 1, 's': ws.serial, 'k': ws.ws_token, 't': 'hello'})
+                'v': 3, 's': ws.serial, 'k': ws.sudo().key, 't': 'hello'})
         publishes = [c for c in sendone.call_args_list
                      if c.args[1] == 'hr_rfid.cmd']
         self.assertEqual(len(publishes), 1, 'sync-on-connect delivers it')
@@ -256,10 +271,13 @@ class TestWsCommands(RFIDAppCase):
         with patch.object(type(self.env['bus.bus']), '_sendone'):
             first = self._mk_cmd(ctrl, cmd='D7', cmd_data='')
             second = self._mk_cmd(ctrl, cmd='D7', cmd_data='')
+        # one-command-in-flight publishes only the oldest, so force both to
+        # Process to exercise the rsp cid-correlation logic in isolation.
+        (first | second).write({'status': 'Process'})
         self.assertEqual((first.status, second.status), ('Process', 'Process'))
         with patch.object(type(self.env['bus.bus']), '_sendone'):
             self.env['ir.websocket']._serve_ir_websocket('hr_rfid', {
-                'v': 1, 's': ws.serial, 'k': ws.ws_token, 't': 'rsp',
+                'v': 3, 's': ws.serial, 'k': ws.sudo().key, 't': 'rsp',
                 'cid': second.id,
                 'r': {'id': 5, 'c': 'D7', 'e': 0, 'd': ''}})
         self.assertEqual(second.status, 'Success',

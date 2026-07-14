@@ -38,8 +38,14 @@ class HrRfidCommandWs(models.Model):
             return commands
         for command in commands:
             webstack = command.webstack_id
+            # One-command-in-flight (owner rule): publish immediately ONLY
+            # when nothing is outstanding on this module - the device stages
+            # at most 4 commands (e=24 NO_QUADRANT on overflow, INTEROP
+            # 2026-07-13). A command left in Wait is chained by
+            # _ws_publish_next_command when the in-flight one answers.
             if (command.status == 'Wait' and webstack
-                    and webstack.sudo().ws_enabled and webstack.ws_online):
+                    and webstack.sudo().ws_enabled and webstack.ws_online
+                    and not webstack.sudo().in_cmd_execution()):
                 # The real-time publish is best-effort transport: it must NEVER
                 # break the business transaction that created the command (a
                 # card write, an access-group change). On failure the command

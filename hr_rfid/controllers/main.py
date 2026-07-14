@@ -104,15 +104,22 @@ class WebRfidController(http.Controller):
         return post
 
     def _make_response(self, result):
-        """Wrap result in JSON-RPC 2.0 for ESP32 modules, plain JSON for legacy.
+        """Wrap the result for the wire the module speaks. THREE shapes:
 
-        Legacy modules (10.3) expect:
-        - Empty body when no command to send (just status 200)
-        - Only {"cmd":{...}} without "status" key when sending a command
-          (firmware JSON parser checks tokens[2] for cmd object/array,
-           "status" field shifts token positions and causes error 21)
-
-        ESP32 modules (100.1) expect standard JSON-RPC 2.0 wrapper.
+        - JSON-RPC 2.0 (ESP32 100.1, ``enable_json_rpc`` + jsonrpc envelope):
+          ``{"jsonrpc":"2.0","id":..,"result":{...}}`` - production default.
+        - PLAIN (ESP32 100.1 with ``wire=plain``, owner directive INTEROP
+          2026-07-13): the FULL result BARE - ``{"status":..,"cmd":..,"ws":..}``
+          with NO envelope, so ``result.ws`` provisioning survives. The caller
+          (:meth:`post_event`) sets ``_wire_plain`` from the device SERIAL
+          (:meth:`~hr.rfid.webstack._serial_is_100_1`, '4' => 100.1)
+          BEFORE auth/parse, so every exit - including auth-failure 400s and
+          exception 500/200 - reaches a 100.1 as a parseable full dict. It MUST
+          NOT touch the legacy path.
+        - Legacy 10.3 (non-jsonrpc, non-100.1): UNCHANGED - empty body when no
+          command, else only ``{"cmd":{...}}`` WITHOUT ``status`` (the 10.3
+          firmware JSON parser reads tokens[2] for the cmd; a ``status`` key
+          shifts positions and raises error 21).
         """
         if isinstance(result, Response):
             return result
@@ -125,7 +132,13 @@ class WebRfidController(http.Controller):
                 }),
                 content_type='application/json; charset=utf-8',
             )
-        # Legacy module (10.3): strip "status" key from response
+        # PLAIN wire - ESP32 (WS-capable) ONLY. Full result bare, envelope-free.
+        if getattr(self, '_wire_plain', False):
+            if isinstance(result, dict):
+                return Response(json.dumps(result),
+                                content_type='application/json; charset=utf-8')
+            return result
+        # Legacy module (10.3): strip "status" key from response - UNCHANGED.
         if isinstance(result, dict):
             if 'cmd' in result:
                 body = json.dumps({k: v for k, v in result.items() if k != 'status'})
@@ -155,7 +168,16 @@ class WebRfidController(http.Controller):
         if not webstack:
             if request.env['ir.config_parameter'].sudo().get_param(
                     'hr_rfid.save_new_webstacks') in ['true', 'True', '1']:
-                webstack = request.env['hr.rfid.webstack'].sudo().with_context(
+                Webstack = request.env['hr.rfid.webstack']
+                # WS auto-enable (owner 2026-07-14): a 100.1 (serial '4')
+                # supports the real-time channel, so turn it on at discovery -
+                # no manual "Enable real-time" click needed for WS to come up.
+                # The next heartbeat then carries the ws provisioning block
+                # (en:1) and the device opens its socket. Opt-out: an admin can
+                # still disable it afterwards. Legacy 10.3 (serial not '4')
+                # stays HTTP-only.
+                ws_on = Webstack._serial_is_100_1(post_data['convertor'])
+                webstack = Webstack.sudo().with_context(
                     tz=request.env['res.users'].sudo().browse(2).tz).create({
                         'name': f"Module {post_data['convertor']}",
                         'serial': str(post_data['convertor']),
@@ -164,6 +186,8 @@ class WebRfidController(http.Controller):
                         'updated_at': fields.Datetime.now(),
                         'available': 'a',
                         'company_id': request.env['res.company'].sudo().search([])[0].id,
+                        'ws_enabled': ws_on,
+                        'ws_provision_pending': ws_on,
                     })
             else:
                 _logger.info('Unknown Module. Received=' + str(post_data))
@@ -203,6 +227,20 @@ class WebRfidController(http.Controller):
             return self._parse_raw_data(post_data)
 
         webstack_id = request.env['hr.rfid.webstack']
+        # Plain wire (owner directive INTEROP 2026-07-13; serial-gate
+        # 2026-07-14): fix the response envelope from the device SERIAL right
+        # HERE - before auth and before any parse - so that EVERY exit emits a
+        # parseable full-dict ack to a 100.1: the auth-failure 400s raised INSIDE
+        # _authenticate_webstack (wrong key / inactive / unknown module), the
+        # exception 500/200 in the except blocks below, AND the success path.
+        # Deciding it post-parse (the old code) left auth-failure and Odoo-side
+        # exceptions on the legacy empty-body branch: a 100.1 then saw an empty
+        # body and could not tell "keep the event" (500) from "delete it" (200)
+        # - the exact event loss the 500 exists to prevent. '4' => 100.1 is the
+        # SSOT rule on hr.rfid.webstack; jsonrpc is unaffected (it always wraps).
+        self._wire_plain = (
+            not getattr(self, '_is_jsonrpc', False)
+            and webstack_id._serial_is_100_1(post_data.get('convertor')))
         try:
             webstack_id, auth_error = self._authenticate_webstack(post_data)
             if auth_error is not None:
