@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-11 08:11+0000\n"
-"PO-Revision-Date: 2026-07-11 11:14\n"
+"POT-Creation-Date: 2026-07-14 08:21+0000\n"
+"PO-Revision-Date: 2026-07-14 11:22\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -1090,9 +1090,23 @@ msgstr ""
 "сензори ще започнат активно да следят за нарушения."
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
+msgid ""
+"Accept a new security key from this module on its next check-in? Use this "
+"only after you changed the key on the device itself."
+msgstr ""
+"Приемане на нов ключ за сигурност от този модул при следващото му включване? "
+"Използвайте това само след като сте променили ключа на самото устройство."
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_res_config_settings__save_new_webstacks
 msgid "Accept new Modules"
 msgstr "Приемане на нови модули"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
+msgid "Accept new key"
+msgstr "Приемане на нов ключ"
 
 #. module: hr_rfid
 #: model:mail.template,subject:hr_rfid.card_barcode_mail_template_badge
@@ -2612,11 +2626,6 @@ msgstr "Промяна и прилагане"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_department_def_acc_gr_wiz
 msgid "Change and Apply for Everyone"
 msgstr "Промяна и прилагане за всички"
-
-#. module: hr_rfid
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_token
-msgid "Channel Token"
-msgstr "Токен на канала"
 
 #. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.hr_rfid_access_group_check_doors_action
@@ -6946,15 +6955,6 @@ msgid "Is Follower"
 msgstr "Следи"
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
-msgid ""
-"Issue a new secret token for this module? The module switches to it "
-"automatically within a few minutes and stays connected."
-msgstr ""
-"Издаване на нов таен токен за този модул? Модулът автоматично преминава към "
-"него в рамките на няколко минути и остава свързан."
-
-#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__key
 msgid "Key"
 msgstr "Ключ"
@@ -8950,15 +8950,6 @@ msgid "Present card in reader"
 msgstr "Поднесете карта към четеца"
 
 #. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_token_old
-msgid ""
-"Previous channel token, kept only during the short rotation grace window so "
-"the module never misses a message while switching channels."
-msgstr ""
-"Предишен токен на канала, запазен само по време на краткия гратисен период "
-"на смяна, за да не пропусне модулът съобщение при преминаване към нов канал."
-
-#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_discovery_wiz
 msgid "Process"
 msgstr "Обработка"
@@ -9647,8 +9638,11 @@ msgstr "Каналът за реално време е активиран."
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack_ws.py:0
-msgid "Real-time channel token rotated."
-msgstr "Токенът на канала за реално време е сменен."
+msgid ""
+"Real-time channel re-key armed: the next module check-in sets the new key."
+msgstr ""
+"Смяната на ключа за реалновремевия канал е активирана: следващото включване "
+"на модула ще зададе новия ключ."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
@@ -10083,11 +10077,6 @@ msgstr ""
 "че обитателят на стаята е поискал услуга за почистване."
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
-msgid "Rotate token"
-msgstr "Смяна на токен"
-
-#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_webstack__module_username__sdk
 msgid "SDK"
 msgstr "SDK"
@@ -10153,17 +10142,6 @@ msgstr "Запази нови Webstacks"
 #: model:onboarding.onboarding.step,description:hr_rfid.onboarding_step_scan_controllers
 msgid "Scan for RFID controllers connected to your module."
 msgstr "Сканирайте за RFID контролери, свързани с вашия модул."
-
-#. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_token
-msgid ""
-"Secret token of the real-time channel. It is generated automatically and "
-"delivered to the module on its next check-in. Use \"Rotate token\" if you "
-"suspect it leaked."
-msgstr ""
-"Таен токен на канала за реално време. Генерира се автоматично и се предава "
-"на модула при следващата му проверка. Използвайте \"Смяна на токен\", ако "
-"подозирате, че е изтекъл."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
@@ -11513,9 +11491,21 @@ msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_door.py:0
+msgid "The door is closing."
+msgstr "Вратата се затваря."
+
+#. module: hr_rfid
+#. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
 msgid "The door is opened by force/key"
 msgstr "Вратата е отворена насила/с ключ"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_door.py:0
+msgid "The door is opening."
+msgstr "Вратата се отваря."
 
 #. module: hr_rfid
 #. odoo-python
@@ -13153,11 +13143,6 @@ msgstr ""
 "мениджъри, които трябва да управляват алармената система."
 
 #. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_token_rotated_at
-msgid "When the channel token was last rotated."
-msgstr "Кога е сменен последно токенът на канала."
-
-#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th__active
 msgid ""
 "When unchecked, this sensor will be hidden and stop recording data. You can "
@@ -13375,14 +13360,9 @@ msgid "Ws Auth Fail Since"
 msgstr "WS неуспешно удостоверяване от"
 
 #. module: hr_rfid
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_token_old
-msgid "Ws Token Old"
-msgstr "Стар WS токен"
-
-#. module: hr_rfid
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_token_rotated_at
-msgid "Ws Token Rotated At"
-msgstr "WS токен сменен на"
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_last_n
+msgid "Ws Last N"
+msgstr "Ws Последни N"
 
 #. module: hr_rfid
 #. odoo-python
