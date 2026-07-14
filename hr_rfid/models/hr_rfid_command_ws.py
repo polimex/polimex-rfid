@@ -102,7 +102,7 @@ class HrRfidCommandWs(models.Model):
                     webstack._ws_publish_command(command)
             except Exception:
                 _logger.warning(
-                    'WS: re-publish of command %s (%s) to module %s failed '
-                    '(attempt %d); will retry next cron.',
+                    'WS: re-publish of command %s (%s) did not go through for '
+                    'module %s (attempt %d); will retry next cron.',
                     command.id, command.cmd, webstack.serial, command.retries,
                     exc_info=True)

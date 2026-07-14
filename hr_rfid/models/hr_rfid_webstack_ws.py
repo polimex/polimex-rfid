@@ -433,8 +433,8 @@ class HrRfidWebstackWs(models.Model):
             hashlib.sha256).hexdigest()
         auth = data.get('auth')
         if not (auth and hmac.compare_digest(expected, str(auth).lower())):
-            _logger.info('WS: hello from %s failed the firmware '
-                         'authenticity check', rec.serial)
+            _logger.info('WS: firmware authenticity check did not pass for '
+                         'hello from %s', rec.serial)
             return False
         if not rec.key:
             # TOFU: adopt the HMAC-proven key for a keyless / re-keyed module.
