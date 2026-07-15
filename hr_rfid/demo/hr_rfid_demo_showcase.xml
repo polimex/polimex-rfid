@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Additive showcase demo for hr_rfid.
+        Reuses the hardware topology, access groups and demo people already
+        defined in demo/hr_rfid_demo.xml + core hr/base demo data.
+        Showcases: Time & Attendance work codes, per-employee card issuance,
+        a temporary auto-expiring visitor badge, and a granted check-in/out
+        event pair feeding the audit trail.
+    -->
+    <data noupdate="True">
+
+        <!-- Time & Attendance work codes: scanned at a reader in workcode mode -->
+        <record id="demo_workcode_start" model="hr.rfid.workcode">
+            <field name="name">Coming to work</field>
+            <field name="workcode">0100</field>
+            <field name="user_action">start</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="demo_workcode_break" model="hr.rfid.workcode">
+            <field name="name">Going to a break</field>
+            <field name="workcode">0200</field>
+            <field name="user_action">break</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="demo_workcode_stop" model="hr.rfid.workcode">
+            <field name="name">End of action</field>
+            <field name="workcode">0300</field>
+            <field name="user_action">stop</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- Per-employee cards for core demo employees who belong to
+             hr.dep_management (its default access group is demo_access_group_2
+             on the iCON115), so these badges inherit door rights automatically. -->
+        <record id="demo_card_employee_al" model="hr.rfid.card">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="number">0011122233</field>
+            <field name="card_reference">Badge 101</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="demo_card_employee_qdp" model="hr.rfid.card">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="number">0011122234</field>
+            <field name="card_reference">Badge 102</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- Temporary contractor badge with a bounded validity window:
+             activates now, auto-expires in ~14 days (card lifecycle showcase). -->
+        <record id="demo_card_temp_visitor" model="hr.rfid.card">
+            <field name="contact_id" ref="base.res_partner_address_15"/>
+            <field name="number">0099988877</field>
+            <field name="card_reference">Temp Contractor</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="activate_on" eval="datetime.now()"/>
+            <field name="deactivate_on" eval="(datetime.now()+relativedelta(days=14))"/>
+        </record>
+
+    </data>
+
+    <data noupdate="False">
+
+        <!-- Granted check-in / check-out pair for a carded employee at the
+             iCON115 entry reader, extending the event audit trail. -->
+        <record id="demo_event_al_checkin" model="hr.rfid.event.user">
+            <field name="event_action">1</field>    <!-- Card Granted -->
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="card_id" ref="demo_card_employee_al"/>
+            <field name="ctrl_addr" eval="2"/>
+            <field name="door_id" ref="demo_ctrl_icon115_D1"/>
+            <field name="reader_id" ref="demo_ctrl_icon115_R1"/>
+            <field name="event_time" eval="(datetime.now()+relativedelta(hours=-8))"/>
+        </record>
+        <record id="demo_event_al_checkout" model="hr.rfid.event.user">
+            <field name="event_action">1</field>    <!-- Card Granted -->
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="card_id" ref="demo_card_employee_al"/>
+            <field name="ctrl_addr" eval="2"/>
+            <field name="door_id" ref="demo_ctrl_icon115_D1"/>
+            <field name="reader_id" ref="demo_ctrl_icon115_R1"/>
+            <field name="event_time" eval="(datetime.now()+relativedelta(hours=-1))"/>
+        </record>
+
+    </data>
+</odoo>

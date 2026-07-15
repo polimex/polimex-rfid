@@ -10,7 +10,7 @@
     'license': 'AGPL-3',
 
     'category': "Generic Modules/Property Management System",
-    'version': '19.0.1.0.2',
+    'version': '19.0.1.0.3',
 
     # any module necessary for this one to work correctly
     'depends': ['rfid_service_base', 'hr_rfid'],
@@ -26,6 +26,9 @@
         'views/res_config_settings_views.xml',
         'views/label_preview_template.xml',
         'views/menu.xml',
+    ],
+    'demo': [
+        'demo/rfid_service_zpl_labels_demo_showcase.xml',
     ],
     # 'images': ['static/images/main_screenshot.png'],
     "application": False,

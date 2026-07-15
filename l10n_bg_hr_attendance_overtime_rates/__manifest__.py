@@ -2,7 +2,7 @@
 # Part of Polimex Modules. See LICENSE file for full copyright and licensing details.
 {
     'name': 'Bulgaria — Attendance Overtime Rates',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'category': 'Human Resources/Attendances',
     'summary': 'Bulgarian statutory overtime/night coefficients and public holidays',
     'author': 'Polimex',
@@ -19,6 +19,10 @@
         'data/legal_rates.xml',
         'data/ir_cron.xml',
         'views/hr_public_holidays_views.xml',
+    ],
+
+    'demo': [
+        'demo/l10n_bg_hr_attendance_overtime_rates_demo_showcase.xml',
     ],
 
     'installable': True,

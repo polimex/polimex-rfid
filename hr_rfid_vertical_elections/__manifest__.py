@@ -8,7 +8,7 @@
     'author': "Polimex Dev Team",
     'website': "https://polimex.co",
     'category': 'Human Resources',
-    'version': '19.0.1.8.0',
+    'version': '19.0.1.8.1',
     'license': 'AGPL-3',
     'depends': ['hr_rfid', 'bus', 'onboarding'],
     'data': [
@@ -23,6 +23,9 @@
         'reports/voting_session_reports.xml',
         'security/ir.model.access.csv',
         'data/onboarding_data.xml',
+    ],
+    'demo': [
+        'demo/hr_rfid_vertical_elections_demo_showcase.xml',
     ],
     # 'images': ['static/images/main_screenshot.png'],
     'installable': True,

@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!--
+            Form 76 showcase demo (single department, single month).
+            Reproduce the sheet: open the "Form 76" wizard, pick department
+            "Research & Development" (hr.dep_rd), year 2026, month April, and print.
+
+            All base master data (employees, department, 38h Mon-Fri calendar) is
+            reused from Odoo core HR demo. This file only adds:
+              * corporate_internal_number on the three R&D employees,
+              * three validated leaves keyed to this module's own leave types
+                (codes O / B / D), plus the paid-annual allocation the O leave needs,
+              * one hr.attendance.extra row per worked day (the report reads these
+                for the worked-hours / overtime / night columns). In the full RFID
+                suite these rows are produced by the RFID -> attendance -> measurement
+                pipeline, which cannot run from a static demo file.
+        -->
+
+        <!-- ============================================================
+             1. Corporate internal numbers on the core R&D demo employees
+             (all three already sit in department hr.dep_rd from core demo)
+             ============================================================ -->
+        <record id="hr.employee_al" model="hr.employee">
+            <field name="corporate_internal_number">0001</field>
+        </record>
+        <record id="hr.employee_qdp" model="hr.employee">
+            <field name="corporate_internal_number">0002</field>
+        </record>
+        <record id="hr.employee_han" model="hr.employee">
+            <field name="corporate_internal_number">0003</field>
+        </record>
+
+        <!-- ============================================================
+             2. Paid-annual allocation (leave type f76_1 requires allocation)
+             ============================================================ -->
+        <record id="demo_f76_alloc_al_annual" model="hr.leave.allocation">
+            <field name="name">Годишен отпуск 2026 (демо)</field>
+            <field name="holiday_status_id" ref="holiday_status_f76_1"/>
+            <field name="number_of_days">20</field>
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="state">confirm</field>
+            <field name="date_from">2026-01-01</field>
+        </record>
+        <function model="hr.leave.allocation" name="action_approve">
+            <value eval="[ref('demo_f76_alloc_al_annual')]"/>
+        </function>
+
+        <!-- ============================================================
+             3. Validated leaves within April 2026 (codes O / B / D)
+             ============================================================ -->
+        <!-- Code O - paid annual leave, 3 working days (Apr 20-22) -->
+        <record id="demo_f76_leave_al_annual" model="hr.leave">
+            <field name="name">Платен годишен отпуск (демо)</field>
+            <field name="holiday_status_id" ref="holiday_status_f76_1"/>
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="request_date_from">2026-04-20</field>
+            <field name="request_date_to">2026-04-22</field>
+            <field name="state">confirm</field>
+        </record>
+
+        <!-- Code B - temporary incapacity (sick), 2 working days (Apr 6-7) -->
+        <record id="demo_f76_leave_qdp_sick" model="hr.leave">
+            <field name="name">Отпуск при временна неработоспособност (демо)</field>
+            <field name="holiday_status_id" ref="holiday_status_f76_2"/>
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="request_date_from">2026-04-06</field>
+            <field name="request_date_to">2026-04-07</field>
+            <field name="state">confirm</field>
+        </record>
+
+        <!-- Code D - civic / public duty, 1 working day (Apr 15) -->
+        <record id="demo_f76_leave_han_civic" model="hr.leave">
+            <field name="name">Отпуск за граждански задължения (демо)</field>
+            <field name="holiday_status_id" ref="holiday_status_f76_5"/>
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="request_date_from">2026-04-15</field>
+            <field name="request_date_to">2026-04-15</field>
+            <field name="state">confirm</field>
+        </record>
+
+        <!--
+            Approve all three leaves to state "validate" (the report SQL reads
+            lv.state = 'validate'). Demo/data loads run as the superuser, so
+            action_approve validates each leave in a single step regardless of
+            its validation type (mirrors the core hr_holidays demo pattern).
+        -->
+        <function model="hr.leave" name="action_approve">
+            <value eval="[ref('demo_f76_leave_al_annual'), ref('demo_f76_leave_qdp_sick'), ref('demo_f76_leave_han_civic')]"/>
+        </function>
+
+        <!-- ============================================================
+             4. Worked-time rows (one per worked day). The report cell picks
+                extra_time first, then actual_work_time, then the leave code.
+             ============================================================ -->
+        <record id="demo_f76_extra_al_01" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="for_date">2026-04-01</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_al_02" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="for_date">2026-04-02</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_al_03" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="for_date">2026-04-03</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_al_06" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="for_date">2026-04-06</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_al_07" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="for_date">2026-04-07</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_al_08" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="for_date">2026-04-08</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_al_09" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="for_date">2026-04-09</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_al_10" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="for_date">2026-04-10</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_al_13" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="for_date">2026-04-13</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_al_14" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="for_date">2026-04-14</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_al_15" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="for_date">2026-04-15</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_al_16" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="for_date">2026-04-16</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_al_17" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="for_date">2026-04-17</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_al_23" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="for_date">2026-04-23</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_al_24" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="for_date">2026-04-24</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_al_27" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="for_date">2026-04-27</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_al_28" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="for_date">2026-04-28</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_al_29" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="for_date">2026-04-29</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_al_30" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="for_date">2026-04-30</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+
+        <record id="demo_f76_extra_qdp_01" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="for_date">2026-04-01</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_qdp_02" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="for_date">2026-04-02</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_qdp_03" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="for_date">2026-04-03</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_qdp_08" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="for_date">2026-04-08</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_qdp_09" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="for_date">2026-04-09</field>
+            <field name="actual_work_time">8.0</field>
+            <field name="extra_time">2.0</field>
+        </record>
+        <record id="demo_f76_extra_qdp_10" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="for_date">2026-04-10</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_qdp_13" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="for_date">2026-04-13</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_qdp_14" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="for_date">2026-04-14</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_qdp_15" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="for_date">2026-04-15</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_qdp_16" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="for_date">2026-04-16</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_qdp_17" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="for_date">2026-04-17</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_qdp_20" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="for_date">2026-04-20</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_qdp_21" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="for_date">2026-04-21</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_qdp_22" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="for_date">2026-04-22</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_qdp_23" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="for_date">2026-04-23</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_qdp_24" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="for_date">2026-04-24</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_qdp_27" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="for_date">2026-04-27</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_qdp_28" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="for_date">2026-04-28</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_qdp_29" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="for_date">2026-04-29</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_qdp_30" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="for_date">2026-04-30</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+
+        <record id="demo_f76_extra_han_01" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="for_date">2026-04-01</field>
+            <field name="actual_work_time">8.0</field>
+            <field name="actual_work_time_day">5.0</field>
+            <field name="actual_work_time_night">3.0</field>
+        </record>
+        <record id="demo_f76_extra_han_02" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="for_date">2026-04-02</field>
+            <field name="actual_work_time">8.0</field>
+            <field name="actual_work_time_day">5.0</field>
+            <field name="actual_work_time_night">3.0</field>
+        </record>
+        <record id="demo_f76_extra_han_03" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="for_date">2026-04-03</field>
+            <field name="actual_work_time">8.0</field>
+            <field name="actual_work_time_day">5.0</field>
+            <field name="actual_work_time_night">3.0</field>
+        </record>
+        <record id="demo_f76_extra_han_06" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="for_date">2026-04-06</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_han_07" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="for_date">2026-04-07</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_han_08" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="for_date">2026-04-08</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_han_09" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="for_date">2026-04-09</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_han_10" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="for_date">2026-04-10</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_han_13" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="for_date">2026-04-13</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_han_14" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="for_date">2026-04-14</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_han_16" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="for_date">2026-04-16</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_han_17" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="for_date">2026-04-17</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_han_20" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="for_date">2026-04-20</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_han_21" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="for_date">2026-04-21</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_han_22" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="for_date">2026-04-22</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_han_23" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="for_date">2026-04-23</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_han_24" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="for_date">2026-04-24</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_han_27" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="for_date">2026-04-27</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_han_28" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="for_date">2026-04-28</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_han_29" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="for_date">2026-04-29</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+        <record id="demo_f76_extra_han_30" model="hr.attendance.extra">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="for_date">2026-04-30</field>
+            <field name="actual_work_time">8.0</field>
+        </record>
+
+    </data>
+</odoo>

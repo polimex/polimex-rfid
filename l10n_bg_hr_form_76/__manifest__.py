@@ -1,7 +1,7 @@
 # noinspection PyStatementEffect
 {
     'name': 'Attendance Form 76 Bulgaria',
-    'version': '19.0.1.0.3',
+    'version': '19.0.1.0.4',
     'category': 'Human Resources',
     'summary': 'Form 76 for Bulgaria',
     'author': 'Polimex Holding Ltd.',
@@ -20,6 +20,10 @@
         'reports/hr_holidays_request.xml',
         'reports/report_form_76_bg.xml',
         'wizards/report_form_76_wizard.xml',
+    ],
+
+    'demo': [
+        'demo/l10n_bg_hr_form_76_demo_showcase.xml',
     ],
 
     "images": [

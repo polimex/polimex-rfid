@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================
+             Per-room guest access groups.
+             Each group contains only its own room's door, so an issued
+             guest card opens that room only. Doors are reused from the
+             hr_rfid demo hardware (iCON110 / iCON115), no new controllers.
+             ============================================================ -->
+        <record id="demo_pms_ag_101" model="hr.rfid.access.group">
+            <field name="name">Hotel Guest - Room 101</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="door_ids"
+                   eval="[(0, 0, {'door_id': ref('hr_rfid.demo_ctrl_icon110_D1')})]"/>
+        </record>
+
+        <record id="demo_pms_ag_102" model="hr.rfid.access.group">
+            <field name="name">Hotel Guest - Room 102</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="door_ids"
+                   eval="[(0, 0, {'door_id': ref('hr_rfid.demo_ctrl_icon110_D2')})]"/>
+        </record>
+
+        <record id="demo_pms_ag_201" model="hr.rfid.access.group">
+            <field name="name">Hotel Guest - Suite 201</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="door_ids"
+                   eval="[(0, 0, {'door_id': ref('hr_rfid.demo_ctrl_icon115_D1')})]"/>
+        </record>
+
+        <record id="demo_pms_ag_202" model="hr.rfid.access.group">
+            <field name="name">Hotel Guest - Room 202</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="door_ids"
+                   eval="[(0, 0, {'door_id': ref('hr_rfid.demo_ctrl_icon115_D2')})]"/>
+        </record>
+
+        <!-- ============================================================
+             Reservation + guest, exactly as the check-in wizard produces:
+             a reservation parent partner grouping the guest contact(s),
+             the guest holding an RFID card with a check-in / check-out
+             validity window and a contact rel into the room access group.
+             This drives room.all_contact_ids and room.reservation for
+             the occupied Room 102.
+             ============================================================ -->
+        <record id="demo_pms_reservation_1" model="res.partner">
+            <field name="name">R2026000042</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <record id="demo_pms_guest_1" model="res.partner">
+            <field name="name">Guest 1 for R2026000042</field>
+            <field name="parent_id" ref="demo_pms_reservation_1"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="hr_rfid_card_ids"
+                   eval="[(0, 0, {
+                        'number': '0000700042',
+                        'company_id': ref('base.main_company'),
+                        'activate_on': (datetime.now()).strftime('%Y-%m-%d %H:%M:%S'),
+                        'deactivate_on': (datetime.now() + relativedelta(days=25)).strftime('%Y-%m-%d %H:%M:%S'),
+                   })]"/>
+            <field name="hr_rfid_access_group_ids"
+                   eval="[(0, 0, {
+                        'access_group_id': ref('demo_pms_ag_102'),
+                        'activate_on': (datetime.now()).strftime('%Y-%m-%d %H:%M:%S'),
+                        'expiration': (datetime.now() + relativedelta(days=25)).strftime('%Y-%m-%d %H:%M:%S'),
+                   })]"/>
+        </record>
+
+        <!-- ============================================================
+             Room registry. Three free rooms + one occupied (102),
+             grouped into two kanban columns by floor. Each room is wired
+             to a distinct hr_rfid demo door and its own guest group.
+             ============================================================ -->
+        <record id="demo_room_101" model="rfid_pms_base.room">
+            <field name="name">Room 101 - Standard</field>
+            <field name="group">Floor 1</field>
+            <field name="number">101</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="door_id" ref="hr_rfid.demo_ctrl_icon110_D1"/>
+            <field name="access_group_id" ref="demo_pms_ag_101"/>
+        </record>
+
+        <record id="demo_room_102" model="rfid_pms_base.room">
+            <field name="name">Room 102 - Twin</field>
+            <field name="group">Floor 1</field>
+            <field name="number">102</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="door_id" ref="hr_rfid.demo_ctrl_icon110_D2"/>
+            <field name="access_group_id" ref="demo_pms_ag_102"/>
+        </record>
+
+        <record id="demo_room_201" model="rfid_pms_base.room">
+            <field name="name">Suite 201 - Sea View</field>
+            <field name="group">Floor 2</field>
+            <field name="number">201</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="door_id" ref="hr_rfid.demo_ctrl_icon115_D1"/>
+            <field name="access_group_id" ref="demo_pms_ag_201"/>
+        </record>
+
+        <record id="demo_room_202" model="rfid_pms_base.room">
+            <field name="name">Room 202 - Double</field>
+            <field name="group">Floor 2</field>
+            <field name="number">202</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="door_id" ref="hr_rfid.demo_ctrl_icon115_D2"/>
+            <field name="access_group_id" ref="demo_pms_ag_202"/>
+        </record>
+
+    </data>
+</odoo>

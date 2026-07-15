@@ -15,7 +15,7 @@
 
     # for the full list
     'category': 'Administration',
-    'version': '19.0.1.5.2',
+    'version': '19.0.1.5.3',
     'license': 'AGPL-3',
 
     # any module necessary for this one to work correctly
@@ -39,6 +39,7 @@
     # only loaded in demonstration mode
     'demo': [
         'data/hr_rfid_site_demo.xml',
+        'demo/hr_rfid_site_manager_demo_showcase.xml',
     ],
 
     'assets': {

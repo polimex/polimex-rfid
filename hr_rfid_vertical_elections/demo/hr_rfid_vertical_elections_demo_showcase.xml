@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Showcase demo for hr_rfid_vertical_elections.
+        Builds a 2026 AGM story on top of the hr_rfid access-control demo:
+          - a board-room kiosk display,
+          - a reusable participant group binding core demo partners to the
+            existing hr_rfid demo doors (no new hardware is created),
+          - two motions (budget + dividend),
+          - a CLOSED historical session with a frozen tally (Yes 3 / No 1 /
+            Abstain 1 -> final Yes) and an OPEN live session on the same display
+            (proves one-open-per-display coexists with closed history),
+          - ballots, one of them anchored to an existing Granted RFID event.
+    -->
+
+    <!-- ============================================================ -->
+    <!-- Kiosk display                                                -->
+    <!-- ============================================================ -->
+    <record id="vote_display_boardroom" model="voting.display">
+        <field name="name">Board Room Kiosk</field>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="no_voting_background_color">#83c5be</field>
+        <field name="voting_background_color">#dd2d4a</field>
+        <field name="description" type="html">
+            <p>Welcome to the 2026 Annual General Meeting. Tap your badge to vote.</p>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Participant group (voters + terminals)                       -->
+    <!-- Terminals reuse existing hr_rfid demo doors.                 -->
+    <!-- ============================================================ -->
+    <record id="vote_participants_agm_2026" model="voting.participants">
+        <field name="name">2026 AGM Voting Body</field>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="description">Registered shareholders entitled to vote at the 2026 Annual General Meeting.</field>
+        <field name="participant_ids" eval="[(6, 0, [
+            ref('base.res_partner_address_15'),
+            ref('base.res_partner_2'),
+            ref('base.res_partner_3'),
+            ref('base.res_partner_4'),
+            ref('base.res_partner_10'),
+        ])]"/>
+        <field name="terminal_ids" eval="[(6, 0, [
+            ref('hr_rfid.demo_ctrl_icon110_D1'),
+            ref('hr_rfid.demo_ctrl_icon115_D1'),
+        ])]"/>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Voting items (motions)                                       -->
+    <!-- ============================================================ -->
+    <record id="vote_item_budget_2026" model="voting.item">
+        <field name="name">Approve the 2026 Annual Budget</field>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="short_description">Adoption of the consolidated operating budget for fiscal year 2026.</field>
+        <field name="document" type="html">
+            <p>The Board proposes the adoption of the consolidated operating budget for fiscal year 2026,
+               including planned capital expenditure and the reserve allocation policy.</p>
+        </field>
+    </record>
+
+    <record id="vote_item_dividend_2026" model="voting.item">
+        <field name="name">Approve Dividend Distribution of 15%</field>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="short_description">Distribution of a 15% dividend to shareholders of record.</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Sessions                                                     -->
+    <!-- ============================================================ -->
+    <!-- Closed historical session, carries the frozen tally. -->
+    <record id="vote_session_agm_budget_closed" model="voting.session">
+        <field name="name">2026 AGM - Budget Vote</field>
+        <field name="state">closed</field>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="planned_date" eval="(datetime.now())"/>
+        <field name="start_datetime" eval="(datetime.now() + relativedelta(hours=-2))"/>
+        <field name="end_datetime" eval="(datetime.now() + relativedelta(hours=-1))"/>
+        <field name="participant_group_id" ref="vote_participants_agm_2026"/>
+        <field name="display_id" ref="vote_display_boardroom"/>
+        <field name="item_ids" eval="[(6, 0, [ref('vote_item_budget_2026')])]"/>
+    </record>
+
+    <!-- Currently open live session on the same display. -->
+    <record id="vote_session_agm_dividend_open" model="voting.session">
+        <field name="name">2026 AGM - Dividend Vote</field>
+        <field name="state">open</field>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="planned_date" eval="(datetime.now())"/>
+        <field name="start_datetime" eval="(datetime.now() + relativedelta(minutes=-10))"/>
+        <field name="participant_group_id" ref="vote_participants_agm_2026"/>
+        <field name="display_id" ref="vote_display_boardroom"/>
+        <field name="item_ids" eval="[(6, 0, [ref('vote_item_dividend_2026')])]"/>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Ballots (closed budget session)                              -->
+    <!-- ============================================================ -->
+    <!-- Anchored to an existing Granted RFID event: tap -> vote -> audit. -->
+    <record id="vote_budget_addr15_yes" model="voting.vote">
+        <field name="voting_session_id" ref="vote_session_agm_budget_closed"/>
+        <field name="voting_item_id" ref="vote_item_budget_2026"/>
+        <field name="voter_id" ref="base.res_partner_address_15"/>
+        <field name="vote">yes</field>
+        <field name="vote_event_id" ref="hr_rfid.demo_user_event_1_partner"/>
+    </record>
+
+    <record id="vote_budget_p2_yes" model="voting.vote">
+        <field name="voting_session_id" ref="vote_session_agm_budget_closed"/>
+        <field name="voting_item_id" ref="vote_item_budget_2026"/>
+        <field name="voter_id" ref="base.res_partner_2"/>
+        <field name="vote">yes</field>
+    </record>
+
+    <record id="vote_budget_p3_no" model="voting.vote">
+        <field name="voting_session_id" ref="vote_session_agm_budget_closed"/>
+        <field name="voting_item_id" ref="vote_item_budget_2026"/>
+        <field name="voter_id" ref="base.res_partner_3"/>
+        <field name="vote">no</field>
+    </record>
+
+    <record id="vote_budget_p4_abstain" model="voting.vote">
+        <field name="voting_session_id" ref="vote_session_agm_budget_closed"/>
+        <field name="voting_item_id" ref="vote_item_budget_2026"/>
+        <field name="voter_id" ref="base.res_partner_4"/>
+        <field name="vote">abstain</field>
+    </record>
+
+    <record id="vote_budget_p10_yes" model="voting.vote">
+        <field name="voting_session_id" ref="vote_session_agm_budget_closed"/>
+        <field name="voting_item_id" ref="vote_item_budget_2026"/>
+        <field name="voter_id" ref="base.res_partner_10"/>
+        <field name="vote">yes</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Ballots (open dividend session)                              -->
+    <!-- ============================================================ -->
+    <record id="vote_dividend_p2_yes" model="voting.vote">
+        <field name="voting_session_id" ref="vote_session_agm_dividend_open"/>
+        <field name="voting_item_id" ref="vote_item_dividend_2026"/>
+        <field name="voter_id" ref="base.res_partner_2"/>
+        <field name="vote">yes</field>
+    </record>
+
+    <record id="vote_dividend_p3_no" model="voting.vote">
+        <field name="voting_session_id" ref="vote_session_agm_dividend_open"/>
+        <field name="voting_item_id" ref="vote_item_dividend_2026"/>
+        <field name="voter_id" ref="base.res_partner_3"/>
+        <field name="vote">no</field>
+    </record>
+</odoo>

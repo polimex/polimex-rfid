@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="False">
+        <!--
+            Portal showcase demo for rfid_service_portal.
+
+            Retargets the rfid_service_base card+sale demo pattern at the
+            login-able core account Marc Demo (base.user_demo / partner
+            base.partner_demo, login "demo"). This makes the PORTAL pages
+            demonstrable end-to-end for a real login:
+              - /my                     -> non-zero "service_count" badge
+              - /my/rfid_services       -> a live service sale row
+              - /my/rfid_service<id>    -> a currently-valid barcode badge
+
+            All hardware (barcode card type, access group) and the sold
+            service (Half Day ticket) are reused from hr_rfid /
+            rfid_service_base demo - no new hardware, service, or tag.
+
+            Time windows span the present (eval'd on every install) so the
+            badge stays valid instead of expiring against a fixed date,
+            mirroring rfid_service_base/demo/rfid_service_demo.xml.
+        -->
+
+        <!-- Barcode service badge held by the login-able demo partner. -->
+        <record id="demo_portal_service_card" model="hr.rfid.card">
+            <field name="contact_id" ref="base.partner_demo"/>
+            <field name="number">5432154399</field>
+            <field name="card_reference">Portal Service Badge</field>
+            <field name="card_type" ref="hr_rfid.hr_rfid_card_type_barcode"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="activate_on" eval="datetime.now() - timedelta(hours=1)"/>
+            <field name="deactivate_on" eval="datetime.now() + timedelta(hours=3)"/>
+        </record>
+
+        <!-- Half-Day service sale for Marc Demo, valid right now (state=active). -->
+        <record id="demo_portal_service_sale" model="rfid.service.sale">
+            <field name="name">DEMO-PORTAL-0001</field>
+            <field name="service_id" ref="rfid_service_base.demo_service_half_day"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="card_id" ref="demo_portal_service_card"/>
+            <field name="partner_id" ref="base.partner_demo"/>
+            <field name="start_date" eval="datetime.now() - timedelta(hours=1)"/>
+            <field name="end_date" eval="datetime.now() + timedelta(hours=3)"/>
+        </record>
+    </data>
+</odoo>

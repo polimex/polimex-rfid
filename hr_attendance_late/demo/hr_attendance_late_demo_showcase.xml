@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Showcase demo for hr_attendance_late.
+
+        Authors ONLY source records:
+          * hr.legal.rate      - dated statutory coefficients (this module owns
+                                 the demo rows; hr_attendace_rfid_hr_hourly_cost
+                                 reuses these exact xml_ids).
+          * hr.attendance      - raw check-in/out pairs. The daily hr.attendance.extra
+                                 roll-ups (late/overtime/day-night split) are NOT
+                                 authored here - they are COMPUTED by this module's
+                                 create/write hooks on hr.attendance when these
+                                 records load.
+        Plus three property updates on existing core demo records (department
+        tolerances, shift-mode calendar flag, digest KPI toggles).
+
+        Dates are eval-based ("last Monday" / "last Tuesday") so the late and
+        overtime windows land on real weekdays of the std_38h theoretical
+        schedule regardless of install date.
+    -->
+    <data>
+
+        <!-- ============================================================
+             1. Dated legal coefficients (hr.legal.rate)
+             date_from = 2000-01-01: clearly-demo, will not collide with the
+             real dated BG rates seeded by l10n_bg_hr_attendance_overtime_rates.
+             The *_prior row (1999) demonstrates effective-date versioning:
+             for any modern work date the 2000 row wins, the 1999 row is kept
+             untouched as history.
+             ============================================================ -->
+        <record id="demo_rate_overtime_workday" model="hr.legal.rate">
+            <field name="code">overtime_workday</field>
+            <field name="name">Overtime - workday</field>
+            <field name="date_from">2000-01-01</field>
+            <field name="value">1.5</field>
+        </record>
+
+        <record id="demo_rate_overtime_weekend" model="hr.legal.rate">
+            <field name="code">overtime_weekend</field>
+            <field name="name">Overtime - rest day</field>
+            <field name="date_from">2000-01-01</field>
+            <field name="value">1.75</field>
+        </record>
+
+        <record id="demo_rate_overtime_holiday" model="hr.legal.rate">
+            <field name="code">overtime_holiday</field>
+            <field name="name">Overtime - holiday</field>
+            <field name="date_from">2000-01-01</field>
+            <field name="value">2.0</field>
+        </record>
+
+        <record id="demo_rate_night_supplement" model="hr.legal.rate">
+            <field name="code">night_supplement</field>
+            <field name="name">Night-shift supplement</field>
+            <field name="date_from">2000-01-01</field>
+            <field name="value">0.51</field>
+        </record>
+
+        <!-- Superseded prior-period coefficient (same code, earlier date_from).
+             Demonstrates that historical periods keep their historical value. -->
+        <record id="demo_rate_overtime_workday_prior" model="hr.legal.rate">
+            <field name="code">overtime_workday</field>
+            <field name="name">Overtime - workday (prior period)</field>
+            <field name="date_from">1999-01-01</field>
+            <field name="value">1.4</field>
+        </record>
+
+        <!-- ============================================================
+             2. Source attendance records.
+             The hr.attendance.extra daily roll-ups are computed on load.
+             ============================================================ -->
+
+        <!-- Ronnie Hart (hr.employee_al): on-time full day, morning shift.
+             08:00-12:00 last Monday. Baseline: no late / no overtime. -->
+        <record id="demo_att_al_normal_am" model="hr.attendance">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="check_in"
+                   eval="(datetime.now() - relativedelta(days=datetime.now().weekday() + 7)).replace(hour=8, minute=0, second=0, microsecond=0)"/>
+            <field name="check_out"
+                   eval="(datetime.now() - relativedelta(days=datetime.now().weekday() + 7)).replace(hour=12, minute=0, second=0, microsecond=0)"/>
+        </record>
+
+        <!-- Ronnie Hart: afternoon shift 13:00-17:00 same Monday (lunch split). -->
+        <record id="demo_att_al_normal_pm" model="hr.attendance">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="check_in"
+                   eval="(datetime.now() - relativedelta(days=datetime.now().weekday() + 7)).replace(hour=13, minute=0, second=0, microsecond=0)"/>
+            <field name="check_out"
+                   eval="(datetime.now() - relativedelta(days=datetime.now().weekday() + 7)).replace(hour=17, minute=0, second=0, microsecond=0)"/>
+        </record>
+
+        <!-- Jeffrey Kelly (hr.employee_ngh, Sales): arrives ~1h20 late
+             (09:20 vs 08:00 schedule). Drives the digest 'late arrivals' KPI
+             and interacts with the Sales-department ignore_late_time threshold. -->
+        <record id="demo_att_ngh_late" model="hr.attendance">
+            <field name="employee_id" ref="hr.employee_ngh"/>
+            <field name="check_in"
+                   eval="(datetime.now() - relativedelta(days=datetime.now().weekday() + 7)).replace(hour=9, minute=20, second=0, microsecond=0)"/>
+            <field name="check_out"
+                   eval="(datetime.now() - relativedelta(days=datetime.now().weekday() + 7)).replace(hour=17, minute=0, second=0, microsecond=0)"/>
+        </record>
+
+        <!-- Marc Demo (hr.employee_qdp): works past schedule 08:00-19:30,
+             generating daytime overtime beyond the std_38h theoretical day. -->
+        <record id="demo_att_qdp_overtime" model="hr.attendance">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="check_in"
+                   eval="(datetime.now() - relativedelta(days=datetime.now().weekday() + 7)).replace(hour=8, minute=0, second=0, microsecond=0)"/>
+            <field name="check_out"
+                   eval="(datetime.now() - relativedelta(days=datetime.now().weekday() + 7)).replace(hour=19, minute=30, second=0, microsecond=0)"/>
+        </record>
+
+        <!-- Mitchell Admin (hr.employee_admin, holder of hr_rfid.demo_card_1):
+             night shift 21:00 -> 05:00 next day. Exercises the day-vs-night
+             split at 06:00-22:00 (actual_work_time_night, overtime_night) and
+             ties the RFID card chain to the night roll-up. -->
+        <record id="demo_att_admin_night" model="hr.attendance">
+            <field name="employee_id" ref="hr.employee_admin"/>
+            <field name="check_in"
+                   eval="(datetime.now() - relativedelta(days=datetime.now().weekday() + 7)).replace(hour=21, minute=0, second=0, microsecond=0)"/>
+            <field name="check_out"
+                   eval="(datetime.now() - relativedelta(days=datetime.now().weekday() + 6)).replace(hour=5, minute=0, second=0, microsecond=0)"/>
+        </record>
+
+        <!-- Ronnie Hart: leaves 45 min early on the next day (Tuesday),
+             08:00-16:15. Drives the 'early departure' KPI. -->
+        <record id="demo_att_al_early_leave" model="hr.attendance">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="check_in"
+                   eval="(datetime.now() - relativedelta(days=datetime.now().weekday() + 6)).replace(hour=8, minute=0, second=0, microsecond=0)"/>
+            <field name="check_out"
+                   eval="(datetime.now() - relativedelta(days=datetime.now().weekday() + 6)).replace(hour=16, minute=15, second=0, microsecond=0)"/>
+        </record>
+
+        <!-- ============================================================
+             3. Property updates on existing core demo records.
+             ============================================================ -->
+
+        <!-- Sales department: explicit attendance tolerances so the late /
+             early-come / overtime roll-ups are department-specific. -->
+        <record id="hr.dep_sales" model="hr.department">
+            <field name="ignore_late_time" eval="5.0 / 60"/>
+            <field name="ignore_early_come_time" eval="10.0 / 60"/>
+            <field name="ignore_overtime" eval="15.0 / 60"/>
+        </record>
+
+        <!-- Standard 38h calendar: enable shift-mode so each daily time range
+             is treated as a separate shift (affects overtime/break calc). -->
+        <record id="resource.resource_calendar_std_38h" model="resource.calendar">
+            <field name="daily_ranges_are_shifts" eval="True"/>
+        </record>
+
+        <!-- Default digest: surface all six attendance KPIs in the email. -->
+        <record id="digest.digest_digest_default" model="digest.digest">
+            <field name="kpi_hr_rfid_att_early_come" eval="True"/>
+            <field name="kpi_hr_rfid_att_late" eval="True"/>
+            <field name="kpi_hr_rfid_att_leave" eval="True"/>
+            <field name="kpi_hr_rfid_att_overtime" eval="True"/>
+            <field name="kpi_hr_rfid_att_extra" eval="True"/>
+            <field name="kpi_hr_rfid_att_no_show" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

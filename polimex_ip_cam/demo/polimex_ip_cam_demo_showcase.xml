@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--
+            Showcase demo for polimex_ip_cam.
+
+            Builds a complete, self-contained ANPR story on top of the two
+            records already shipped in demo/demo_cam.xml:
+
+              employee (hr.employee_admin) owns a license plate (demo_plate_1)
+                -> plate is whitelisted on the entrance camera (demo_rel_whitelist_1)
+                -> the module auto-queues an "add_plate" command (cctv.camera.command)
+                -> when the camera reads the plate the ANPR webhook books an event.
+
+            A denied van and a time-limited visitor plate round out the
+            whitelist / blacklist / validity surface, and a second camera shows
+            a non-ANPR integration type and a different connection-health state.
+
+            NOTE: creating a cctv.camera.rfid.rel auto-generates an add_plate
+            command whose post-commit dispatch makes a live ISAPI call to the
+            camera IP. The demo cameras therefore point at the RFC 5737 TEST-NET
+            range (192.0.2.x) so those calls fail fast on a demo database instead
+            of blocking install against a possibly-real host. The resulting
+            command "error" state is itself part of what the queue view shows.
+        -->
+
+        <!-- =====================================================================
+             1. Enrich the existing entrance ANPR camera with device identity +
+                connection health. UPDATE of demo_cam.xml's demo_camera_1.
+             ===================================================================== -->
+        <record id="demo_camera_1" model="cctv.camera">
+            <field name="name">Parking Entrance ANPR</field>
+            <field name="ip_address">192.0.2.64</field>
+            <field name="brand">hikvision</field>
+            <field name="integration_type">anpr</field>
+            <field name="model">DS-TCG406-E</field>
+            <field name="serial_number">DS-TCG406-E20260120AIGN9163457</field>
+            <field name="sub_serial_number">GN9163457</field>
+            <field name="firmware">V5.4.4</field>
+            <field name="behind_nat" eval="True"/>
+            <field name="connection_status">connected</field>
+            <field name="last_seen" eval="DateTime.now()"/>
+            <field name="description">Entrance ANPR barrier camera (LP-audit capable firmware, identified by deviceUUID behind NAT).</field>
+            <field name="tz">Europe/Sofia</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- =====================================================================
+             2. Re-home the existing whitelist plate to a core demo employee so
+                the plate has a person behind it. UPDATE of demo_plate_1.
+             ===================================================================== -->
+        <record id="demo_plate_1" model="hr.rfid.card">
+            <field name="card_reference">Company car (Tesla S)</field>
+            <field name="employee_id" ref="hr.employee_admin"/>
+            <field name="contact_id" eval="False"/>
+        </record>
+
+        <!-- =====================================================================
+             3. THE key missing record: whitelist the employee's plate on the
+                entrance camera -> auto-queues an add_plate command.
+             ===================================================================== -->
+        <record id="demo_rel_whitelist_1" model="cctv.camera.rfid.rel">
+            <field name="camera_id" ref="demo_camera_1"/>
+            <field name="card_id" ref="demo_plate_1"/>
+            <field name="list_category">whitelist</field>
+        </record>
+
+        <!-- =====================================================================
+             4. A denied delivery van plate (blacklist side of plate-list mgmt).
+             ===================================================================== -->
+        <record id="demo_plate_blacklist" model="hr.rfid.card">
+            <field name="contact_id" ref="base.res_partner_2"/>
+            <field name="number">CB1234AC</field>
+            <field name="card_reference">Blacklisted delivery van</field>
+            <field name="card_type" ref="hr_rfid.hr_rfid_card_type_8"/>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <record id="demo_rel_blacklist_1" model="cctv.camera.rfid.rel">
+            <field name="camera_id" ref="demo_camera_1"/>
+            <field name="card_id" ref="demo_plate_blacklist"/>
+            <field name="list_category">blacklist</field>
+        </record>
+
+        <!-- =====================================================================
+             5. A time-limited visitor plate (activation/deactivation window,
+                which the add_plate payload carries as startTime/endTime).
+             ===================================================================== -->
+        <record id="demo_plate_visitor" model="hr.rfid.card">
+            <field name="contact_id" ref="base.res_partner_address_15"/>
+            <field name="number">PB5678KH</field>
+            <field name="card_reference">Visitor - valid this week</field>
+            <field name="card_type" ref="hr_rfid.hr_rfid_card_type_8"/>
+            <field name="activate_on" eval="DateTime.now() - relativedelta(days=2)"/>
+            <field name="deactivate_on" eval="DateTime.now() + relativedelta(days=5)"/>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <record id="demo_rel_whitelist_visitor" model="cctv.camera.rfid.rel">
+            <field name="camera_id" ref="demo_camera_1"/>
+            <field name="card_id" ref="demo_plate_visitor"/>
+            <field name="list_category">whitelist</field>
+        </record>
+
+        <!-- =====================================================================
+             6. A second camera: non-ANPR integration type + "Not reachable"
+                connection health, for list-view variety.
+             ===================================================================== -->
+        <record id="demo_camera_2" model="cctv.camera">
+            <field name="name">Yard Overview CCTV</field>
+            <field name="ip_address">192.0.2.65</field>
+            <field name="brand">hikvision</field>
+            <field name="integration_type">cctv_cam</field>
+            <field name="model">DS-2CD2xxx</field>
+            <field name="connection_status">unreachable</field>
+            <field name="description">General yard overview camera (IP CCTV, no plate recognition).</field>
+            <field name="tz">Europe/Sofia</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+    </data>
+</odoo>

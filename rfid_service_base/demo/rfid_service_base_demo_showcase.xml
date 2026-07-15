@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="False">
+
+        <!-- New tag for consumption-based offerings -->
+        <record id="demo_tag_pay_per_visit" model="rfid.service.tags">
+            <field name="name">Pay per visit</field>
+            <field name="color">7</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- Visits-based service: a finite 5-visit pool pass, barcode badge,
+             presence tracked in a zone -->
+        <record id="demo_service_visit_pass" model="rfid.service">
+            <field name="name">5-Visit Pool Pass</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="color">7</field>
+            <field name="service_type">count</field>
+            <field name="visits">5</field>
+            <field name="generate_barcode_card" eval="True"/>
+            <field name="card_type" ref="hr_rfid.hr_rfid_card_type_barcode"/>
+            <field name="access_group_id" ref="hr_rfid.demo_access_group_1"/>
+            <field name="zone_id" ref="hr_rfid.demo_zone_APB"/>
+            <field name="tag_ids"
+                   eval="[(4, ref('rfid_service_base.demo_tag_pay_per_visit'), 0), (4, ref('rfid_service_base.demo_tag_ticket'), 0)]"/>
+        </record>
+
+        <!-- Combined time + visits service: monthly membership capped at 10
+             visits, flexible per-sale timing, zone-tracked -->
+        <record id="demo_service_gym_combo" model="rfid.service">
+            <field name="name">Gym 10-Visit Monthly</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="color">8</field>
+            <field name="service_type">time_count</field>
+            <field name="visits">10</field>
+            <field name="time_interval_number">1</field>
+            <field name="time_interval_type">months</field>
+            <field name="fixed_time" eval="False"/>
+            <field name="time_interval_start">6</field>
+            <field name="time_interval_end">22</field>
+            <field name="access_group_id" ref="hr_rfid.demo_access_group_1"/>
+            <field name="zone_id" ref="hr_rfid.demo_zone_APB"/>
+            <field name="tag_ids"
+                   eval="[(4, ref('rfid_service_base.demo_tag_membership'), 0), (4, ref('rfid_service_base.demo_tag_18'), 0)]"/>
+        </record>
+
+        <!-- Barcode service badge for the active visit-based sale visitor -->
+        <record id="demo_service_card_visit" model="hr.rfid.card">
+            <field name="contact_id" ref="base.res_partner_address_13"/>
+            <field name="number">5432154314</field>
+            <field name="card_reference">Service Badge 74</field>
+            <field name="card_type" ref="hr_rfid.hr_rfid_card_type_barcode"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="activate_on" eval="datetime.now() - timedelta(days=1)"/>
+            <field name="deactivate_on" eval="datetime.now() + timedelta(days=30)"/>
+        </record>
+
+        <!-- Backing permission that grants the visitor access to the pool-pass
+             doors and carries the remaining-visit counter (3 of 5 used) -->
+        <record id="demo_service_visit_rel" model="hr.rfid.access.group.contact.rel">
+            <field name="access_group_id" ref="hr_rfid.demo_access_group_1"/>
+            <field name="contact_id" ref="base.res_partner_address_13"/>
+            <field name="activate_on" eval="datetime.now() - timedelta(days=1)"/>
+            <field name="expiration" eval="datetime.now() + timedelta(days=30)"/>
+            <field name="visits_counting" eval="True"/>
+            <field name="permitted_visits">5</field>
+            <field name="visits_counter">3</field>
+        </record>
+
+        <!-- Active sale of the 5-visit pool pass - full
+             service -> card -> partner -> permission chain -->
+        <record id="demo_service_visit_sale" model="rfid.service.sale">
+            <field name="name">DEMO23000004</field>
+            <field name="service_id" ref="demo_service_visit_pass"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="partner_id" ref="base.res_partner_address_13"/>
+            <field name="card_id" ref="demo_service_card_visit"/>
+            <field name="access_group_contact_rel" ref="demo_service_visit_rel"/>
+            <field name="start_date" eval="datetime.now() - timedelta(days=1)"/>
+            <field name="end_date" eval="datetime.now() + timedelta(days=30)"/>
+        </record>
+
+        <!-- Canceled-sale example: badge whose window was closed on cancel -->
+        <record id="demo_service_card_canceled" model="hr.rfid.card">
+            <field name="contact_id" ref="base.res_partner_address_17"/>
+            <field name="number">5432154315</field>
+            <field name="card_reference">Service Badge 75</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="activate_on" eval="datetime.now() - timedelta(hours=2)"/>
+            <field name="deactivate_on" eval="datetime.now() - timedelta(hours=1)"/>
+        </record>
+
+        <!-- Permission with the exact 1-second activate->expire span that
+             cancel_sale() leaves behind, so the sale computes as 'canceled'.
+             The sale's own start/end window is in the past so the 'progress'
+             branch is skipped and the 1-second-span 'canceled' branch fires. -->
+        <record id="demo_service_canceled_rel" model="hr.rfid.access.group.contact.rel">
+            <field name="access_group_id" ref="hr_rfid.demo_access_group_1"/>
+            <field name="contact_id" ref="base.res_partner_address_17"/>
+            <field name="activate_on" eval="datetime.now() - timedelta(seconds=2)"/>
+            <field name="expiration" eval="datetime.now() - timedelta(seconds=1)"/>
+        </record>
+
+        <!-- Canceled daily-ticket sale - completes the state coverage matrix
+             (existing demo shows registered / active / finished only) -->
+        <record id="demo_service_canceled_sale" model="rfid.service.sale">
+            <field name="name">DEMO23000005</field>
+            <field name="service_id" ref="rfid_service_base.demo_service_daily"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="partner_id" ref="base.res_partner_address_17"/>
+            <field name="card_id" ref="demo_service_card_canceled"/>
+            <field name="access_group_contact_rel" ref="demo_service_canceled_rel"/>
+            <field name="start_date" eval="datetime.now() - timedelta(hours=2)"/>
+            <field name="end_date" eval="datetime.now() - timedelta(hours=1)"/>
+        </record>
+
+    </data>
+</odoo>

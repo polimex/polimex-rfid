@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Polimex Modules. See LICENSE file for full copyright and licensing details.
+
+     Showcase demo for hr_rfid_leave_block.
+
+     Strategy: drive the module through its REAL production hooks instead of
+     hand-seeding audit rows. We create RFID cards for two core-demo employees,
+     then approve a leave for each via the standard hr.leave flow. Approving a
+     leave writes state='validate', which fires this module's write hook
+     (_rfid_block_access) -> it snapshots exactly the employee's ACTIVE cards
+     into an hr.rfid.leave.block and deactivates them. Finally we run the
+     restore cron once, which re-activates the snapshot of the already-ended
+     (past-dated) leave. Result:
+
+       * Anita Oliver  (employee_al)  -> ACTIVE 'Blocking' block, 2 suspended
+         cards; a 3rd card she had already disabled is correctly NOT in the
+         snapshot and stays off.
+       * Joel Willis   (employee_qdp) -> RESTORED block, its 1 card re-enabled,
+         with blocked_at + restored_at audit timestamps.
+
+     noupdate="1": the <function> approvals mutate state and must run ONLY at
+     install (mode='init'); re-running them on a module -u would try to approve
+     an already-validated leave and raise. Records are preserved across updates.
+-->
+<odoo noupdate="1">
+
+    <!-- ============================================================
+         RFID cards for Anita Oliver (hr.employee_al)
+         Two active badges + one she already disabled before the leave.
+         ============================================================ -->
+    <record id="demo_lb_card_al_1" model="hr.rfid.card">
+        <field name="employee_id" ref="hr.employee_al"/>
+        <field name="number">2200000001</field>
+        <field name="card_reference">Badge LB-1</field>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+
+    <record id="demo_lb_card_al_2" model="hr.rfid.card">
+        <field name="employee_id" ref="hr.employee_al"/>
+        <field name="number">2200000002</field>
+        <field name="card_reference">Badge LB-2</field>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+
+    <!-- Already disabled BEFORE the leave. Not active at approval time, so the
+         snapshot must exclude it; restore must never switch it back on. -->
+    <record id="demo_lb_card_al_old" model="hr.rfid.card">
+        <field name="employee_id" ref="hr.employee_al"/>
+        <field name="number">2200000003</field>
+        <field name="card_reference">Old Badge (already off)</field>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- ============================================================
+         RFID card for Joel Willis (hr.employee_qdp)
+         Snapshotted by a past leave, then re-activated on restore.
+         ============================================================ -->
+    <record id="demo_lb_card_qdp_1" model="hr.rfid.card">
+        <field name="employee_id" ref="hr.employee_qdp"/>
+        <field name="number">2200000010</field>
+        <field name="card_reference">Badge LB-3</field>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+
+    <!-- ============================================================
+         Anita Oliver's CURRENT (future-dated) approved leave.
+         Sick Time Off: requires_allocation=False, single-step ('hr')
+         validation, so one action_approve reaches 'validate'. The window is
+         the first working week of next month - clear of her existing demo
+         leaves and safely in the future, so the daily restore cron leaves the
+         block 'Blocking'.
+         ============================================================ -->
+    <record id="demo_lb_leave_al" model="hr.leave">
+        <field name="name">RFID access block demo - approved absence</field>
+        <field name="holiday_status_id" ref="hr_holidays.leave_type_sick_time_off"/>
+        <field name="employee_id" ref="hr.employee_al"/>
+        <field name="request_date_from"
+               eval="(datetime.today().date() + relativedelta(months=1, day=1, weekday=0))"/>
+        <field name="request_date_to"
+               eval="(datetime.today().date() + relativedelta(months=1, day=1, weekday=0) + relativedelta(days=4))"/>
+        <field name="state">confirm</field>
+    </record>
+    <!-- Approve -> state 'validate' -> _rfid_block_access snapshots her two
+         active cards (Badge LB-1/LB-2) and suspends them. -->
+    <function model="hr.leave" name="action_approve">
+        <value eval="ref('hr_rfid_leave_block.demo_lb_leave_al')"/>
+    </function>
+
+    <!-- ============================================================
+         Joel Willis's PAST (already-ended) approved leave.
+         First working days of last month: clear of his existing demo leaves
+         and entirely in the past, so the restore cron below re-activates its
+         snapshot.
+         ============================================================ -->
+    <record id="demo_lb_leave_qdp" model="hr.leave">
+        <field name="name">RFID access block demo - ended absence</field>
+        <field name="holiday_status_id" ref="hr_holidays.leave_type_sick_time_off"/>
+        <field name="employee_id" ref="hr.employee_qdp"/>
+        <field name="request_date_from"
+               eval="(datetime.today().date() + relativedelta(months=-1, day=1, weekday=0))"/>
+        <field name="request_date_to"
+               eval="(datetime.today().date() + relativedelta(months=-1, day=1, weekday=0) + relativedelta(days=2))"/>
+        <field name="state">confirm</field>
+    </record>
+    <!-- Approve -> _rfid_block_access snapshots his card (Badge LB-3) and
+         suspends it. -->
+    <function model="hr.leave" name="action_approve">
+        <value eval="ref('hr_rfid_leave_block.demo_lb_leave_qdp')"/>
+    </function>
+
+    <!-- Run the restore cron once: it restores every ACTIVE block whose leave
+         has already ended. Joel's past leave -> block goes 'Restored', his card
+         is re-enabled, restored_at is stamped. Anita's future leave is untouched
+         (stays 'Blocking'). -->
+    <function model="hr.rfid.leave.block" name="_cron_restore_expired_blocks"/>
+
+</odoo>

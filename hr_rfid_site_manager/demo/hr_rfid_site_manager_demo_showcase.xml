@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--
+            Additive showcase demo for hr_rfid_site_manager.
+            Extends the base site tree from data/hr_rfid_site_demo.xml (loaded first)
+            using ONLY existing hr_rfid demo hardware. No new controller/door/webstack
+            is invented - the two previously site-less icon115 doors (D1/D2) are the
+            only spare doors and are consumed exactly once here.
+        -->
+
+        <!-- Root Site A: add a distinct colour for the interactive site_chart -->
+        <record id="siteA" model="hr.rfid.site">
+            <field name="color">4</field>
+        </record>
+
+        <!-- Building 1: enable roll-up access group aggregating both entrance doors -->
+        <record id="siteA_building1" model="hr.rfid.site">
+            <field name="make_access_group">True</field>
+            <field name="color">5</field>
+        </record>
+
+        <!-- Building 2: enable roll-up access group aggregating the two new child sites' doors -->
+        <record id="siteA_building2" model="hr.rfid.site">
+            <field name="make_access_group">True</field>
+            <field name="color">2</field>
+        </record>
+
+        <!-- New leaf site: Server Room, classifies icon115 door D1, own access group -->
+        <record id="siteA_building2_serverroom" model="hr.rfid.site">
+            <field name="name">Server Room</field>
+            <field name="parent_id" ref="siteA_building2"/>
+            <field name="make_access_group">True</field>
+            <field name="color">1</field>
+            <field name="door_ids" eval="[Command.set([ref('hr_rfid.demo_ctrl_icon115_D1')])]"/>
+        </record>
+
+        <!-- New leaf site: Warehouse, classifies icon115 door D2, NO access group -->
+        <record id="siteA_building2_warehouse" model="hr.rfid.site">
+            <field name="name">Warehouse</field>
+            <field name="parent_id" ref="siteA_building2"/>
+            <field name="make_access_group">False</field>
+            <field name="color">3</field>
+            <field name="door_ids" eval="[Command.set([ref('hr_rfid.demo_ctrl_icon115_D2')])]"/>
+        </record>
+
+        <!--
+            Person -> site assignment. base.res_partner_address_15 already owns
+            hr_rfid.demo_card_2 and is a member of hr_rfid.demo_access_group_1.
+            Assigning to Entrance 1 + Server Room exercises res.partner.site_ids
+            and the onchange access-group narrowing.
+        -->
+        <record id="base.res_partner_address_15" model="res.partner">
+            <field name="site_ids" eval="[Command.set([
+                ref('hr_rfid_site_manager.siteA_building1_entrance_A1'),
+                ref('hr_rfid_site_manager.siteA_building2_serverroom'),
+            ])]"/>
+        </record>
+
+    </data>
+</odoo>

@@ -14,13 +14,16 @@
     'license': 'AGPL-3',
 
     'category': "Generic Modules/Property Management System",
-    'version': '19.0.0.1.1',
+    'version': '19.0.0.1.2',
 
     'depends': ['hr_rfid', 'portal'],
 
     'data': [
         'views/hr_rfid_card.xml',
         'views/hr_rfid_portal.xml',
+    ],
+    'demo': [
+        'demo/hr_rfid_portal_demo_showcase.xml',
     ],
     # 'images': ['static/images/main_screenshot.png'],
     'application': False,

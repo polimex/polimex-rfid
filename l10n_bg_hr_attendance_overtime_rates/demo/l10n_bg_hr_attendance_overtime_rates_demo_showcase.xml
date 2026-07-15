@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Showcase demo: populate the official Bulgarian public holidays for the
+        demo reference year 2026 on the main company's working calendar.
+
+        This reuses the module's own idempotent generator
+        (res.company._generate_bg_public_holidays) rather than hardcoding
+        dates, so the resulting global resource.calendar.leaves are real,
+        law-derived holidays (10 fixed BG dates + the movable Orthodox-Easter
+        cluster: Good Friday / Holy Saturday / Easter Monday).
+
+        It makes the "rest day vs official holiday" distinction concrete, which
+        is exactly what the overtime coefficient table (x1.5 / x1.75 / x2.0,
+        already shipped as install data) keys off. Running it also opts the main
+        company into the yearly holiday cron.
+
+        The method is not @api.model, so odoo/tools/convert.py binds `self` to
+        the browsed record: first arg = company id, remaining arg = year.
+    -->
+    <function model="res.company"
+              name="_generate_bg_public_holidays"
+              eval="[ref('base.main_company'), 2026]"/>
+</odoo>

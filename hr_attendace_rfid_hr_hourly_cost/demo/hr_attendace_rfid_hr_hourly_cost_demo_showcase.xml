@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Showcase demo for hr_attendace_rfid_hr_hourly_cost.
+
+        Adds an hourly cost to two core HR demo employees and seeds a handful of
+        hr.attendance.extra day-records so the inherited cost columns
+        (cost_regular / cost_overtime / cost_extra / cost_night_supplement /
+        actual_work_time_cost) carry real monetary values in the form, list and
+        pivot views.
+
+        The legal multipliers (overtime_workday / overtime_weekend /
+        overtime_holiday / night_supplement) are resolved at compute time by
+        hr.legal.rate code lookup - they are provided by the BG rate modules
+        (hr_attendance_late / l10n_bg_hr_attendance_overtime_rates) and are NOT
+        duplicated here. The official-holiday leave (Гергьовден, 2026-05-06) is
+        likewise seeded by l10n_bg_hr_attendance_overtime_rates and not
+        re-created here.
+
+        Cost fields are group-restricted (hr.group_hr_manager) - view as an HR
+        manager to see the amounts.
+    -->
+
+    <!-- 1. Hourly cost on the badge-holding admin employee (owns hr_rfid demo
+            card demo_card_1 / badge 0012312345): the RFID-to-cost anchor. -->
+    <record id="hr.employee_admin" model="hr.employee">
+        <field name="hourly_cost">10.00</field>
+    </record>
+
+    <!-- 2. Hourly cost on a second core employee for a per-employee /
+            per-department cost comparison in the pivot view. -->
+    <record id="hr.employee_al" model="hr.employee">
+        <field name="hourly_cost">8.50</field>
+    </record>
+
+    <!-- 3a. Baseline regular working day (Mon) - base rate only. -->
+    <record id="demo_extra_admin_regular" model="hr.attendance.extra">
+        <field name="employee_id" ref="hr.employee_admin"/>
+        <field name="for_date">2026-05-04</field>
+        <field name="actual_work_time">8.0</field>
+        <field name="actual_work_time_day">8.0</field>
+    </record>
+
+    <!-- 3b. Working day (Tue) with 2h overtime - КТ чл. 262 working-day tier. -->
+    <record id="demo_extra_admin_overtime" model="hr.attendance.extra">
+        <field name="employee_id" ref="hr.employee_admin"/>
+        <field name="for_date">2026-05-05</field>
+        <field name="actual_work_time">8.0</field>
+        <field name="actual_work_time_day">8.0</field>
+        <field name="overtime">2.0</field>
+    </record>
+
+    <!-- 3c. Night-shift day (Thu): 8h worked, 6h inside the night window -
+             additive НСОРЗ чл. 8 supplement on regular hours. -->
+    <record id="demo_extra_admin_night" model="hr.attendance.extra">
+        <field name="employee_id" ref="hr.employee_admin"/>
+        <field name="for_date">2026-05-07</field>
+        <field name="actual_work_time">8.0</field>
+        <field name="actual_work_time_day">2.0</field>
+        <field name="actual_work_time_night">6.0</field>
+    </record>
+
+    <!-- 3d. Work on the official holiday 2026-05-06 (Гергьовден): 6h extra -
+             holiday multiplier when the l10n_bg holiday leave is present. -->
+    <record id="demo_extra_admin_holiday" model="hr.attendance.extra">
+        <field name="employee_id" ref="hr.employee_admin"/>
+        <field name="for_date">2026-05-06</field>
+        <field name="extra_time">6.0</field>
+    </record>
+
+    <!-- 3e. Rest-day (Sat) work for the second employee, partly at night -
+             weekend multiplier + night supplement at a different hourly cost. -->
+    <record id="demo_extra_al_weekend_night" model="hr.attendance.extra">
+        <field name="employee_id" ref="hr.employee_al"/>
+        <field name="for_date">2026-05-09</field>
+        <field name="extra_time">6.0</field>
+        <field name="extra_night">3.0</field>
+    </record>
+</odoo>

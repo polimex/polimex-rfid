@@ -13,7 +13,7 @@
     # Check https://github.com/odoo/odoo/blob/14.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
     'category': "Generic Modules/Property Management System",
-    'version': '19.0.0.11.0',
+    'version': '19.0.0.11.1',
 
     'depends': ['hr_rfid', 'onboarding'],
     'data': [
@@ -30,6 +30,7 @@
     ],
     'demo': [
         'demo/rfid_service_demo.xml',
+        'demo/rfid_service_base_demo_showcase.xml',
     ],
     'application': True,
     'installable': True,

@@ -2,7 +2,7 @@
 # Part of Polimex Modules. See LICENSE file for full copyright and licensing details.
 {
     'name': 'RFID Access Block on Leave',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'category': 'Human Resources',
     'summary': 'Suspend RFID cards while an employee is on approved leave',
     'author': 'Polimex',
@@ -16,6 +16,10 @@
         'security/hr_rfid_leave_block_rules.xml',
         'data/ir_cron.xml',
         'views/hr_rfid_leave_block_views.xml',
+    ],
+
+    'demo': [
+        'demo/hr_rfid_leave_block_demo_showcase.xml',
     ],
 
     'assets': {

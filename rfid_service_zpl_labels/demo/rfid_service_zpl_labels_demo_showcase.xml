@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!--
+            Showcase demo for rfid_service_zpl_labels.
+
+            This module defines NO own records (no services/cards/sales) - it only
+            decorates existing rfid_service_base demo services with a label template
+            and configures the company Zebra/ZPL printer. All records below are
+            UPDATES to already-existing demo/core records so the base demo
+            "Print Label" / "Preview" buttons and the Settings > Label Printer
+            Settings block become fully exercisable.
+        -->
+
+        <!--
+            Configure the demo Zebra/ZPL label printer on the main company so the
+            Label Printer Settings block is populated and print_label_direct /
+            test_label_printer_connection have a network target.
+            NOTE: a clearly-demo LAN IP - NOT a real device; a real network print
+            will fail in a demo DB (the value showcases the CONFIGURATION surface).
+        -->
+        <record id="base.main_company" model="res.company">
+            <field name="rfid_label_printer_ip">192.168.1.100</field>
+            <field name="rfid_label_printer_port">9100</field>
+        </record>
+
+        <!--
+            Half Day ticket service -> CODE-128 barcode wristband template.
+            This service already has generate_barcode_card=True, so a scannable
+            Code-128 wristband fits its barcode-card nature. Its three base demo
+            sales (demo_service_half_day_sale1/2/3) now preview/print a Code-128
+            wristband. Demonstrates overriding the default QR template per service.
+        -->
+        <record id="rfid_service_base.demo_service_half_day" model="rfid.service">
+            <field name="label_template_id"
+                   ref="rfid_service_zpl_labels.action_report_rfid_wristband_barcode"/>
+        </record>
+
+        <!--
+            Weekly membership service -> QR-code wristband template (the module
+            default) made explicit, so the two layouts (QR vs CODE-128) are shown
+            side-by-side against the Half Day barcode service.
+        -->
+        <record id="rfid_service_base.demo_service_weekly" model="rfid.service">
+            <field name="label_template_id"
+                   ref="rfid_service_zpl_labels.action_report_rfid_wristband"/>
+        </record>
+
+    </data>
+</odoo>

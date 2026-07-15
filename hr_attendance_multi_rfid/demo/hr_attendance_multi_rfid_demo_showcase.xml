@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Showcase demo for hr_attendance_multi_rfid.
+        Builds ON hr_rfid's shipped demo hardware (iCON110 doors/readers, admin card,
+        granted-access events) instead of re-creating access-control data.
+        noupdate="1" so re-running attendance recalculation in a demo DB does not
+        clobber these curated records.
+    -->
+    <data noupdate="1">
+
+        <!-- Flip the second iCON110 reader from entry (type 0) to exit (type 1)
+             so the attendance zone has a distinct check-out reader. Without this,
+             both demo readers are entries and recalculation only yields check-ins. -->
+        <record id="hr_rfid.demo_ctrl_icon110_R2" model="hr.rfid.reader">
+            <field name="reader_type">1</field>
+        </record>
+
+        <!-- Core config: an attendance-enabled zone over the iCON110 entrance doors.
+             This is what turns door events into hr.attendance records. -->
+        <record id="demo_zone_attendance" model="hr.rfid.zone">
+            <field name="name">Demo Attendance Zone (Main Entrance)</field>
+            <field name="attendance" eval="True"/>
+            <field name="overwrite_check_in" eval="True"/>
+            <field name="overwrite_check_out" eval="False"/>
+            <field name="max_time_in_zone">12</field>
+            <field name="auto_close_time_for_zone">7</field>
+            <field name="delete_attendance_if_late_more_than">0</field>
+            <field name="door_ids"
+                   eval="[
+                       (4, ref('hr_rfid.demo_ctrl_icon110_D1'), 0),
+                       (4, ref('hr_rfid.demo_ctrl_icon110_D2'), 0),
+                   ]"/>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- Completed work session for the admin employee (happy path).
+             in_zone_id records which zone tracked the session; department_id is
+             an auto-derived stored historical snapshot. -->
+        <record id="demo_att_admin_completed" model="hr.attendance">
+            <field name="employee_id" ref="hr.employee_admin"/>
+            <field name="check_in"
+                   eval="(datetime.now()+relativedelta(days=-1)).replace(hour=8, minute=15, second=0, microsecond=0)"/>
+            <field name="check_out"
+                   eval="(datetime.now()+relativedelta(days=-1)).replace(hour=17, minute=30, second=0, microsecond=0)"/>
+            <field name="in_zone_id" ref="demo_zone_attendance"/>
+        </record>
+
+        <!-- Currently on-site: checked in earlier today, no check-out yet
+             (drives the 'Who is Present' view). -->
+        <record id="demo_att_al_open" model="hr.attendance">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="check_in" eval="(datetime.now()+relativedelta(hours=-3))"/>
+            <field name="in_zone_id" ref="demo_zone_attendance"/>
+        </record>
+
+        <!-- Stale open attendance (48h ago, exceeds max_time_in_zone=12h):
+             the record the shipped attendance_autoclose_cron will close to
+             auto_close_time_for_zone=7 worked hours. -->
+        <record id="demo_att_qdp_autoclose" model="hr.attendance">
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="check_in" eval="(datetime.now()+relativedelta(days=-2))"/>
+            <field name="in_zone_id" ref="demo_zone_attendance"/>
+        </record>
+
+        <!-- Tag hr_rfid's existing admin granted-access entry event as a
+             check-in so its Attendance badge is visible and correlates to
+             demo_att_admin_completed. -->
+        <record id="hr_rfid.demo_user_event_1" model="hr.rfid.event.user">
+            <field name="in_or_out">in</field>
+        </record>
+
+        <!-- Matching exit event on the (now) exit reader, tagged as check-out:
+             completes the visible in->out event pair behind the admin session. -->
+        <record id="demo_att_event_admin_out" model="hr.rfid.event.user">
+            <field name="event_action">1</field>    <!-- Access Granted -->
+            <field name="employee_id" ref="hr.employee_admin"/>
+            <field name="card_id" ref="hr_rfid.demo_card_1"/>
+            <field name="ctrl_addr" eval="1"/>
+            <field name="door_id" ref="hr_rfid.demo_ctrl_icon110_D2"/>
+            <field name="reader_id" ref="hr_rfid.demo_ctrl_icon110_R2"/>
+            <field name="event_time"
+                   eval="(datetime.now()+relativedelta(days=-1)).replace(hour=17, minute=30, second=0, microsecond=0)"/>
+            <field name="in_or_out">out</field>
+        </record>
+
+    </data>
+</odoo>

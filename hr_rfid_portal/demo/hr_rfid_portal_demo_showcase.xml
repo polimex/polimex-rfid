@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Additive showcase demo for hr_rfid_portal.
+        Gives the CORE portal demo persona (base.partner_demo_portal /
+        login "portal", Joel Willis - a non-employee contact) a real RFID
+        footprint so every self-service portal page actually populates:
+          * /my  "RFID Information" badges (WebCards, Cards, Events)
+          * /my/webcards          -> the barcode "web card"
+          * /my/webcard/<id>      -> public QR badge page + foldable-badge PDF
+          * /my/events            -> personal access history (granted/denied)
+        Reuses the hr_rfid demo hardware topology (iCON110 doors/readers) and
+        the "Demo Access Group 1 (Partners)"; creates no new webstack /
+        controller / door / reader. Mirrors the hr_rfid demo's contact-owned
+        card/event pattern, but for a genuine portal-group user.
+    -->
+    <data noupdate="True">
+
+        <!-- Portal user joins the existing partner access group so his taps
+             on the iCON110 doors read as authorized. -->
+        <record id="demo_portal_ag_contact_rel" model="hr.rfid.access.group.contact.rel">
+            <field name="access_group_id" ref="hr_rfid.demo_access_group_1"/>
+            <field name="contact_id" ref="base.partner_demo_portal"/>
+        </record>
+
+        <!-- Barcode "web card": feeds /my/webcards, the /my/webcard QR badge
+             page and the foldable-badge PDF; bounded 1-year validity window. -->
+        <record id="demo_portal_webcard" model="hr.rfid.card">
+            <field name="contact_id" ref="base.partner_demo_portal"/>
+            <field name="card_type" ref="hr_rfid.hr_rfid_card_type_barcode"/>
+            <field name="number">7788990011</field>
+            <field name="card_reference">Web Access Badge - Joel Willis</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="activate_on" eval="datetime.now()"/>
+            <field name="deactivate_on" eval="(datetime.now()+relativedelta(years=1))"/>
+        </record>
+
+        <!-- Physical office badge: feeds the Cards badge and backs the access
+             events below (read-only in the portal via SELF_READABLE_FIELDS). -->
+        <record id="demo_portal_card" model="hr.rfid.card">
+            <field name="contact_id" ref="base.partner_demo_portal"/>
+            <field name="card_type" ref="hr_rfid.hr_rfid_card_type_def"/>
+            <field name="number">5566778899</field>
+            <field name="card_reference">Office Badge - Joel Willis</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- Access history: granted entry, granted exit, one denied attempt -
+             a non-uniform timeline reviewable from /my/events. -->
+        <record id="demo_portal_event_granted_in" model="hr.rfid.event.user">
+            <field name="event_action">1</field>    <!-- Access Granted -->
+            <field name="contact_id" ref="base.partner_demo_portal"/>
+            <field name="card_id" ref="demo_portal_card"/>
+            <field name="ctrl_addr" eval="1"/>
+            <field name="door_id" ref="hr_rfid.demo_ctrl_icon110_D1"/>
+            <field name="reader_id" ref="hr_rfid.demo_ctrl_icon110_R1"/>
+            <field name="event_time" eval="(datetime.now()+relativedelta(hours=-3))"/>
+        </record>
+        <record id="demo_portal_event_granted_out" model="hr.rfid.event.user">
+            <field name="event_action">1</field>    <!-- Access Granted -->
+            <field name="contact_id" ref="base.partner_demo_portal"/>
+            <field name="card_id" ref="demo_portal_card"/>
+            <field name="ctrl_addr" eval="1"/>
+            <field name="door_id" ref="hr_rfid.demo_ctrl_icon110_D2"/>
+            <field name="reader_id" ref="hr_rfid.demo_ctrl_icon110_R2"/>
+            <field name="event_time" eval="(datetime.now()+relativedelta(hours=-1))"/>
+        </record>
+        <record id="demo_portal_event_denied" model="hr.rfid.event.user">
+            <field name="event_action">2</field>    <!-- Access Denied -->
+            <field name="contact_id" ref="base.partner_demo_portal"/>
+            <field name="card_id" ref="demo_portal_card"/>
+            <field name="ctrl_addr" eval="1"/>
+            <field name="door_id" ref="hr_rfid.demo_ctrl_icon110_D1"/>
+            <field name="reader_id" ref="hr_rfid.demo_ctrl_icon110_R1"/>
+            <field name="event_time" eval="(datetime.now()+relativedelta(minutes=-30))"/>
+        </record>
+
+    </data>
+</odoo>

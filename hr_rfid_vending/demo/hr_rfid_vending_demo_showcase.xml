@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Showcase demo data for hr_rfid_vending.
+        Additive: builds on the hr_rfid demo topology (webstack hr_rfid.demo_module,
+        card hr_rfid.demo_card_1) and the core hr/product demo records.
+        noupdate="1" so operators may freely edit balances/prices after install.
+    -->
+    <data noupdate="1">
+
+        <!-- ============================================================ -->
+        <!-- 1. Vending consumable products (new; core demo has none)      -->
+        <!-- ============================================================ -->
+        <record id="product_vending_espresso" model="product.template">
+            <field name="name">Espresso Coffee</field>
+            <field name="type">consu</field>
+            <field name="sale_ok" eval="True"/>
+            <field name="list_price">0.80</field>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+        </record>
+        <record id="product_vending_water" model="product.template">
+            <field name="name">Bottled Water</field>
+            <field name="type">consu</field>
+            <field name="sale_ok" eval="True"/>
+            <field name="list_price">0.50</field>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+        </record>
+        <record id="product_vending_chocolate" model="product.template">
+            <field name="name">Chocolate Bar</field>
+            <field name="type">consu</field>
+            <field name="sale_ok" eval="True"/>
+            <field name="list_price">1.20</field>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+        </record>
+        <record id="product_vending_crisps" model="product.template">
+            <field name="name">Potato Crisps</field>
+            <field name="type">consu</field>
+            <field name="sale_ok" eval="True"/>
+            <field name="list_price">1.00</field>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- 2. Machine pricelist (product.list0 removed in Odoo 19)       -->
+        <!-- ============================================================ -->
+        <record id="demo_vending_pricelist" model="product.pricelist">
+            <field name="name">Vending Machine Pricelist</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- 3. The vending machine - 3rd controller on the hr_rfid        -->
+        <!--    demo webstack (ctrl_id 1 &amp; 2 are the access ctrls)     -->
+        <!-- ============================================================ -->
+        <record id="demo_ctrl_vending" model="hr.rfid.ctrl">
+            <field name="name">Demo Vending Machine</field>
+            <field name="ctrl_id">3</field>
+            <field name="serial_number">54321</field>
+            <field name="webstack_id" ref="hr_rfid.demo_module"/>
+            <field name="hw_version">16</field>
+            <field name="sw_version">741</field>
+            <field name="readers">1</field>
+            <field name="cash_contained">42.50</field>
+            <field name="pricelist_id" ref="demo_vending_pricelist"/>
+            <!-- Known-good io_table from tests: scale_factor=5, show_price_timeout=15 -->
+            <field name="io_table">000400030002000100080007000600050F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F000000000000000F0000000000000005</field>
+        </record>
+
+        <!-- Reader on the machine (vending events require a reader_id) -->
+        <record id="demo_vending_reader" model="hr.rfid.reader">
+            <field name="name">Vending Machine Reader</field>
+            <field name="number">1</field>
+            <field name="reader_type">0</field>
+            <field name="mode">01</field>
+            <field name="controller_id" ref="demo_ctrl_vending"/>
+        </record>
+
+        <!-- Slot rows: row 1 maps the 4 consumables; row 2 reuses core products -->
+        <record id="demo_vending_row_1" model="hr.rfid.ctrl.vending.row">
+            <field name="controller_id" ref="demo_ctrl_vending"/>
+            <field name="row_num">1</field>
+            <field name="item1" ref="product_vending_espresso"/>
+            <field name="item2" ref="product_vending_water"/>
+            <field name="item3" ref="product_vending_chocolate"/>
+            <field name="item4" ref="product_vending_crisps"/>
+        </record>
+        <record id="demo_vending_row_2" model="hr.rfid.ctrl.vending.row">
+            <field name="controller_id" ref="demo_ctrl_vending"/>
+            <field name="row_num">2</field>
+            <field name="item1" ref="product.product_product_4_product_template"/>
+            <field name="item2" ref="product.product_product_11_product_template"/>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- 4. Extend core demo employees with vending config            -->
+        <!-- ============================================================ -->
+        <record id="hr.employee_admin" model="hr.employee">
+            <field name="hr_rfid_vending_balance">25.00</field>
+            <field name="hr_rfid_vending_daily_limit">10.00</field>
+            <field name="daily_limit_type">day</field>
+            <field name="hr_rfid_vending_auto_refill" eval="True"/>
+            <field name="hr_rfid_vending_refill_type">fixed</field>
+            <field name="hr_rfid_vending_refill_amount">30.00</field>
+        </record>
+        <record id="hr.employee_al" model="hr.employee">
+            <field name="hr_rfid_vending_balance">5.00</field>
+            <field name="hr_rfid_vending_negative_balance" eval="True"/>
+            <field name="hr_rfid_vending_limit">10.00</field>
+            <field name="hr_rfid_vending_in_attendance" eval="True"/>
+        </record>
+        <record id="hr.employee_qdp" model="hr.employee">
+            <field name="hr_rfid_vending_recharge_balance">15.00</field>
+            <field name="hr_rfid_vending_auto_refill" eval="True"/>
+            <field name="hr_rfid_vending_refill_type">up_to</field>
+            <field name="hr_rfid_vending_refill_amount">10.00</field>
+            <field name="hr_rfid_vending_refill_max">20.00</field>
+        </record>
+
+        <!-- Company-level auto-refill schedule -->
+        <record id="base.main_company" model="res.company">
+            <field name="refill_interval_number">1</field>
+            <field name="refill_interval_type">months</field>
+            <field name="refill_nextcall" eval="(datetime.now().replace(day=1) + relativedelta(months=1))"/>
+        </record>
+
+        <!-- Card credential for employee_al at the vending reader -->
+        <record id="demo_vending_card_al" model="hr.rfid.card">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="number">0055500123</field>
+            <field name="card_reference">Vending Badge AL</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- 5. Vending events                                             -->
+        <!-- ============================================================ -->
+        <record id="demo_vending_event_1" model="hr.rfid.vending.event">
+            <field name="event_action">47</field>    <!-- Purchase Complete -->
+            <field name="controller_id" ref="demo_ctrl_vending"/>
+            <field name="reader_id" ref="demo_vending_reader"/>
+            <field name="employee_id" ref="hr.employee_admin"/>
+            <field name="card_id" ref="hr_rfid.demo_card_1"/>
+            <field name="ctrl_addr" eval="3"/>
+            <field name="item_sold">1</field>
+            <field name="item_sold_id" ref="product_vending_espresso"/>
+            <field name="transaction_price">0.80</field>
+            <field name="event_time" eval="(datetime.now()+relativedelta(hours=-4))"/>
+        </record>
+        <record id="demo_vending_event_2" model="hr.rfid.vending.event">
+            <field name="event_action">47</field>
+            <field name="controller_id" ref="demo_ctrl_vending"/>
+            <field name="reader_id" ref="demo_vending_reader"/>
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="card_id" ref="demo_vending_card_al"/>
+            <field name="ctrl_addr" eval="3"/>
+            <field name="item_sold">2</field>
+            <field name="item_sold_id" ref="product_vending_water"/>
+            <field name="transaction_price">0.50</field>
+            <field name="event_time" eval="(datetime.now()+relativedelta(hours=-3))"/>
+        </record>
+        <record id="demo_vending_event_3" model="hr.rfid.vending.event">
+            <field name="event_action">47</field>
+            <field name="controller_id" ref="demo_ctrl_vending"/>
+            <field name="reader_id" ref="demo_vending_reader"/>
+            <field name="employee_id" ref="hr.employee_qdp"/>
+            <field name="ctrl_addr" eval="3"/>
+            <field name="item_sold">3</field>
+            <field name="item_sold_id" ref="product_vending_chocolate"/>
+            <field name="transaction_price">1.20</field>
+            <field name="event_time" eval="(datetime.now()+relativedelta(hours=-2))"/>
+        </record>
+        <record id="demo_vending_event_4" model="hr.rfid.vending.event">
+            <field name="event_action">48</field>    <!-- Machine Error -->
+            <field name="controller_id" ref="demo_ctrl_vending"/>
+            <field name="reader_id" ref="demo_vending_reader"/>
+            <field name="ctrl_addr" eval="3"/>
+            <field name="transaction_price">-1</field>
+            <field name="event_time" eval="(datetime.now()+relativedelta(hours=-1, minutes=-30))"/>
+        </record>
+        <record id="demo_vending_event_5" model="hr.rfid.vending.event">
+            <field name="event_action">50</field>    <!-- Collect cash -->
+            <field name="controller_id" ref="demo_ctrl_vending"/>
+            <field name="reader_id" ref="demo_vending_reader"/>
+            <field name="ctrl_addr" eval="3"/>
+            <field name="transaction_price">-1</field>
+            <field name="event_time" eval="(datetime.now()+relativedelta(hours=-1))"/>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- 6. Auto-refill run + balance history                          -->
+        <!-- ============================================================ -->
+        <record id="demo_auto_refill_1" model="hr.rfid.vending.auto.refill">
+            <field name="company_id" ref="base.main_company"/>
+            <field name="auto_refill_total">30.00</field>
+        </record>
+
+        <!-- Manual operator top-up (name = operator, no event/refill link) -->
+        <record id="demo_bh_topup_admin" model="hr.rfid.vending.balance.history">
+            <field name="employee_id" ref="hr.employee_admin"/>
+            <field name="balance_change">25.00</field>
+            <field name="balance_result">25.00</field>
+            <field name="person_responsible" ref="base.user_admin"/>
+        </record>
+        <!-- Sale rows linked to purchase events (name = product) -->
+        <record id="demo_bh_sale_admin" model="hr.rfid.vending.balance.history">
+            <field name="employee_id" ref="hr.employee_admin"/>
+            <field name="balance_change">-0.80</field>
+            <field name="balance_result">24.20</field>
+            <field name="vending_event_id" ref="demo_vending_event_1"/>
+        </record>
+        <record id="demo_bh_sale_al" model="hr.rfid.vending.balance.history">
+            <field name="employee_id" ref="hr.employee_al"/>
+            <field name="balance_change">-0.50</field>
+            <field name="balance_result">4.50</field>
+            <field name="vending_event_id" ref="demo_vending_event_2"/>
+        </record>
+        <!-- Auto-refill credit row (auto_refill_id set, no event) -->
+        <record id="demo_bh_refill_admin" model="hr.rfid.vending.balance.history">
+            <field name="employee_id" ref="hr.employee_admin"/>
+            <field name="balance_change">30.00</field>
+            <field name="balance_result">54.20</field>
+            <field name="auto_refill_id" ref="demo_auto_refill_1"/>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- 7. Cash collection audit log                                  -->
+        <!-- ============================================================ -->
+        <record id="demo_cash_log_1" model="hr.rfid.ctrl.cash.log">
+            <field name="controller_id" ref="demo_ctrl_vending"/>
+            <field name="value">100.00</field>
+        </record>
+
+    </data>
+</odoo>
