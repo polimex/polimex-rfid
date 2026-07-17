@@ -16,10 +16,10 @@ class TestCardConstraints(RFIDAppCase):
 
     def test_card_number_unique_per_type(self):
         """Test card number must be unique per card type and company."""
-        # Card 1234512345 w34 already exists from setUpClass
+        # Card 7734512345 w34 already exists from setUpClass
         with self.assertRaises(Exception):
             self.env['hr.rfid.card'].create({
-                'number': '1234512345',
+                'number': '7734512345',
                 'card_input_type': 'w34',
                 'employee_id': self.test_employee_2_id.id,
                 'company_id': self.test_company_id,

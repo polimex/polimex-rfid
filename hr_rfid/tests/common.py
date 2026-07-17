@@ -69,7 +69,7 @@ class RFIDAppCase(common.TransactionCase):
         })
 
         cls.test_card_employee = cls.env['hr.rfid.card'].create({
-            'number': '1234512345',
+            'number': '7734512345',
             'card_input_type': 'w34',
             'card_reference': 'Badge 77',
             'employee_id': cls.test_employee_id.id,
@@ -84,7 +84,7 @@ class RFIDAppCase(common.TransactionCase):
         })
 
         cls.test_card_employee_2 = cls.env['hr.rfid.card'].create({
-            'number': '1234612346',
+            'number': '7734612346',
             'card_input_type': 'w34',
             'card_reference': 'Badge 78',
             'employee_id': cls.test_employee_2_id.id,
@@ -109,7 +109,7 @@ class RFIDAppCase(common.TransactionCase):
         })
 
         cls.test_card_partner = cls.env['hr.rfid.card'].create({
-            'number': '0012312345',
+            'number': '0077312345',
             'card_input_type': 'w34',
             'card_reference': 'Badge 33',
             'contact_id': cls.test_partner.id,
@@ -653,7 +653,7 @@ class RFIDHttpCase(HttpCase):
         })
 
         cls.test_card_employee = cls.env['hr.rfid.card'].create({
-            'number': '1234512345',
+            'number': '7734512345',
             'card_input_type': 'w34',
             'card_reference': 'Badge 77',
             'employee_id': cls.test_employee_id.id,
@@ -668,7 +668,7 @@ class RFIDHttpCase(HttpCase):
         })
 
         cls.test_card_employee_2 = cls.env['hr.rfid.card'].create({
-            'number': '1234612346',
+            'number': '7734612346',
             'card_input_type': 'w34',
             'card_reference': 'Badge 78',
             'employee_id': cls.test_employee_2_id.id,
@@ -693,7 +693,7 @@ class RFIDHttpCase(HttpCase):
         })
 
         cls.test_card_partner = cls.env['hr.rfid.card'].create({
-            'number': '0012312345',
+            'number': '0077312345',
             'card_input_type': 'w34',
             'card_reference': 'Badge 33',
             'contact_id': cls.test_partner.id,

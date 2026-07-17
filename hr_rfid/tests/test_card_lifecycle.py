@@ -61,7 +61,7 @@ class TestCardCreation(RFIDAppCase):
         """Test that duplicate card number in same company raises error."""
         with self.assertRaises(Exception):
             self.env['hr.rfid.card'].create({
-                'number': '1234512345',  # Same as test_card_employee
+                'number': '7734512345',  # Same as test_card_employee
                 'card_input_type': 'w34',
                 'employee_id': self.test_employee_2_id.id,
                 'company_id': self.test_company_id,
@@ -169,5 +169,5 @@ class TestCardOwnerChange(RFIDAppCase):
 
     def test_card_internal_number_w34(self):
         """Test internal number calculation for w34 format."""
-        self.assertEqual(self.test_card_partner.internal_number, '0012312345',
+        self.assertEqual(self.test_card_partner.internal_number, '0077312345',
                          'W34 internal number should equal card number')
