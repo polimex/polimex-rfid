@@ -1,10 +1,17 @@
 import json
-from datetime import timedelta
+import random
+from datetime import datetime, time, timedelta
 
 from odoo import fields, models, api, exceptions, _
 
 import logging
 _logger = logging.getLogger(__name__)
+
+# Deterministic seed + guard flag for the demo system-event generator, so every
+# fresh demo DB renders the same "Security and Devices" dashboard and a demo
+# reload never duplicates events.
+DEMO_SYSTEM_EVENT_SEED = 20260717
+DEMO_SYSTEM_EVENTS_FLAG = 'hr_rfid.demo_system_events_generated'
 
 action_selection = [
         ('0', 'Unknown Event?'),
@@ -388,6 +395,76 @@ class HrRfidSystemEvent(models.Model):
     def write(self, vals):
         self._check_save_comms(vals)
         return super(HrRfidSystemEvent, self).write(vals)
+
+    # ------------------------------------------------------------------
+    # Demo data generation (Security and Devices dashboard)
+    # ------------------------------------------------------------------
+    @api.model
+    def _demo_generate_system_events(self):
+        """Generate ~30 days of security/device system events for the demo.
+
+        Feeds the "Security and Devices" spreadsheet dashboard (forced/held
+        door counts, fire and duress, siren, device power-cycles and wiring
+        faults) with a realistic month of data over the shipped demo hardware:
+        held-open events cluster on one busy door, wiring faults on one flaky
+        controller - the shape a security operator actually investigates.
+
+        Only invoked from the demo data <function> hook. Idempotent via an
+        ir.config_parameter flag; deterministic via a fixed-seed RNG.
+        """
+        param = self.env['ir.config_parameter'].sudo()
+        if param.get_param(DEMO_SYSTEM_EVENTS_FLAG):
+            return
+
+        doors = []
+        for door_xml in ('hr_rfid.demo_ctrl_icon110_D1', 'hr_rfid.demo_ctrl_icon110_D2',
+                         'hr_rfid.demo_ctrl_icon115_D1', 'hr_rfid.demo_ctrl_icon115_D2'):
+            door = self.env.ref(door_xml, raise_if_not_found=False)
+            if door:
+                doors.append(door)
+        if not doors:
+            return
+        controllers = [d.controller_id for d in doors]
+
+        # (action, weight, needs_door): held-open dominates, then power-cycles,
+        # forced doors, siren, wiring faults; fire/duress stay rare.
+        mix = [('25', 30, True), ('30', 12, False), ('26', 10, True),
+               ('20', 8, False), ('45', 6, False), ('19', 2, True), ('1', 1, True)]
+        rng = random.Random(DEMO_SYSTEM_EVENT_SEED)
+        now = fields.Datetime.now()
+        today = now.date()
+        busy_door = doors[0]          # held-open hotspot
+        flaky_ctrl = controllers[-1]  # wiring-fault hotspot
+
+        vals_list = []
+        for action, count, needs_door in mix:
+            for _i in range(count):
+                # include today (0) so the System Events list's default
+                # "today" filter - the dashboard click-through - is not empty
+                day = today - timedelta(days=rng.randint(0, 30))
+                ts = datetime.combine(day, time(rng.randint(6, 21),
+                                                rng.randint(0, 59), rng.randint(0, 59)))
+                if day == today and ts >= now:
+                    continue      # never future-dated
+                if action == '25' and rng.random() < 0.6:
+                    door = busy_door
+                elif needs_door:
+                    door = rng.choice(doors)
+                else:
+                    door = None
+                ctrl = door.controller_id if door else (
+                    flaky_ctrl if action == '45' else rng.choice(controllers))
+                vals_list.append({
+                    'event_action': action,
+                    'timestamp': ts,
+                    'door_id': door.id if door else False,
+                    'controller_id': ctrl.id,
+                    'webstack_id': ctrl.webstack_id.id,
+                })
+        if vals_list:
+            self.create(vals_list)
+        param.set_param(DEMO_SYSTEM_EVENTS_FLAG, '1')
+        _logger.info('Demo system events generated: %d over 30 days', len(vals_list))
 
 
 class HrRfidSystemEventWizard(models.TransientModel):

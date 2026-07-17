@@ -1,0 +1,1164 @@
+{
+ "version": "18.4.14",
+ "sheets": [
+  {
+   "id": "f15b2c19-8e8f-54e0-9216-be8273a4d345",
+   "name": "Dashboard",
+   "colNumber": 9,
+   "rowNumber": 80,
+   "rows": {},
+   "cols": {
+    "0": {
+     "size": 120
+    },
+    "1": {
+     "size": 120
+    },
+    "2": {
+     "size": 120
+    },
+    "3": {
+     "size": 120
+    },
+    "4": {
+     "size": 120
+    },
+    "5": {
+     "size": 120
+    },
+    "6": {
+     "size": 120
+    },
+    "7": {
+     "size": 120
+    },
+    "8": {
+     "size": 120
+    }
+   },
+   "merges": [],
+   "cells": {},
+   "styles": {},
+   "formats": {},
+   "borders": {},
+   "conditionalFormats": [],
+   "dataValidationRules": [],
+   "figures": [
+    {
+     "id": "afc78b8a-8ae9-5cf4-a210-479e4f9cc70d",
+     "width": 188,
+     "height": 100,
+     "tag": "chart",
+     "data": {
+      "baselineColorDown": "#DC6965",
+      "baselineColorUp": "#00A04A",
+      "baselineMode": "percentage",
+      "title": {
+       "text": "Total Events",
+       "bold": true,
+       "color": "#434343"
+      },
+      "type": "scorecard",
+      "background": "#EFF6FF",
+      "keyValue": "Data!C1",
+      "humanize": true,
+      "chartId": "afc78b8a-8ae9-5cf4-a210-479e4f9cc70d",
+      "baseline": "Data!D1",
+      "baselineDescr": "vs previous period"
+     },
+     "offset": {
+      "x": 8,
+      "y": 8
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "cf2f2ffa-ac93-5f00-936d-617e2dc9318b",
+     "width": 188,
+     "height": 100,
+     "tag": "chart",
+     "data": {
+      "baselineColorDown": "#00A04A",
+      "baselineColorUp": "#DC6965",
+      "baselineMode": "percentage",
+      "title": {
+       "text": "Denied",
+       "bold": true,
+       "color": "#434343"
+      },
+      "type": "scorecard",
+      "background": "#EFF6FF",
+      "keyValue": "Data!C2",
+      "humanize": true,
+      "chartId": "cf2f2ffa-ac93-5f00-936d-617e2dc9318b",
+      "baseline": "Data!D2",
+      "baselineDescr": "vs previous period"
+     },
+     "offset": {
+      "x": 204,
+      "y": 8
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "5814ff08-fbe4-54f1-97de-14ea36ccc62c",
+     "width": 188,
+     "height": 100,
+     "tag": "chart",
+     "data": {
+      "baselineColorDown": "#DC6965",
+      "baselineColorUp": "#00A04A",
+      "baselineMode": "percentage",
+      "title": {
+       "text": "Unique People",
+       "bold": true,
+       "color": "#434343"
+      },
+      "type": "scorecard",
+      "background": "#EFF6FF",
+      "keyValue": "Data!C3",
+      "humanize": true,
+      "chartId": "5814ff08-fbe4-54f1-97de-14ea36ccc62c",
+      "baseline": "Data!D3",
+      "baselineDescr": "vs previous period"
+     },
+     "offset": {
+      "x": 400,
+      "y": 8
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "8753674c-17ba-5fbd-a757-dbef1ab58ad3",
+     "width": 188,
+     "height": 100,
+     "tag": "chart",
+     "data": {
+      "baselineColorDown": "#DC6965",
+      "baselineColorUp": "#00A04A",
+      "baselineMode": "text",
+      "title": {
+       "text": "Grant Rate",
+       "bold": true,
+       "color": "#434343"
+      },
+      "type": "scorecard",
+      "background": "#EFF6FF",
+      "keyValue": "Data!C4",
+      "humanize": false,
+      "chartId": "8753674c-17ba-5fbd-a757-dbef1ab58ad3"
+     },
+     "offset": {
+      "x": 596,
+      "y": 8
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "785ed408-2184-5232-9cdc-8a004b5543cd",
+     "width": 980,
+     "height": 300,
+     "tag": "chart",
+     "data": {
+      "title": {
+       "text": "Events by Action"
+      },
+      "background": "#FFFFFF",
+      "legendPosition": "top",
+      "metaData": {
+       "groupBy": [
+        "event_action"
+       ],
+       "measure": "__count",
+       "order": null,
+       "resModel": "hr.rfid.event.user",
+       "mode": "bar"
+      },
+      "searchParams": {
+       "comparison": null,
+       "context": {},
+       "domain": [],
+       "groupBy": [
+        "event_action"
+       ],
+       "orderBy": []
+      },
+      "type": "odoo_bar",
+      "dataSets": [],
+      "chartId": "785ed408-2184-5232-9cdc-8a004b5543cd",
+      "fieldMatching": {
+       "8d55c1dc-6dce-5f8c-9d10-5c12cf8e4a8d": {
+        "chain": "event_time",
+        "type": "date",
+        "offset": 0
+       },
+       "16432123-ccb5-59a3-95e5-1e1ba228ea59": {
+        "chain": "company_id",
+        "type": "many2one"
+       },
+       "51f4aa31-3dca-50fa-b917-5a30a19324f6": {
+        "chain": "door_id",
+        "type": "many2one"
+       },
+       "a04f13c2-eb64-5604-a8ce-99aed578615c": {
+        "chain": "site_id",
+        "type": "many2one"
+       }
+      },
+      "verticalAxisPosition": "left",
+      "stacked": false
+     },
+     "offset": {
+      "x": 8,
+      "y": 128
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "c121819a-7b9f-5c5a-9c8a-f6a02c7c1595",
+     "width": 486,
+     "height": 300,
+     "tag": "chart",
+     "data": {
+      "title": {
+       "text": "Busiest Doors"
+      },
+      "background": "#FFFFFF",
+      "legendPosition": "top",
+      "metaData": {
+       "groupBy": [
+        "door_id"
+       ],
+       "measure": "__count",
+       "order": null,
+       "resModel": "hr.rfid.event.user",
+       "mode": "bar"
+      },
+      "searchParams": {
+       "comparison": null,
+       "context": {},
+       "domain": [],
+       "groupBy": [
+        "door_id"
+       ],
+       "orderBy": []
+      },
+      "type": "odoo_bar",
+      "dataSets": [],
+      "chartId": "c121819a-7b9f-5c5a-9c8a-f6a02c7c1595",
+      "fieldMatching": {
+       "8d55c1dc-6dce-5f8c-9d10-5c12cf8e4a8d": {
+        "chain": "event_time",
+        "type": "date",
+        "offset": 0
+       },
+       "16432123-ccb5-59a3-95e5-1e1ba228ea59": {
+        "chain": "company_id",
+        "type": "many2one"
+       },
+       "51f4aa31-3dca-50fa-b917-5a30a19324f6": {
+        "chain": "door_id",
+        "type": "many2one"
+       },
+       "a04f13c2-eb64-5604-a8ce-99aed578615c": {
+        "chain": "site_id",
+        "type": "many2one"
+       }
+      },
+      "verticalAxisPosition": "left",
+      "stacked": false
+     },
+     "offset": {
+      "x": 8,
+      "y": 456
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "e1c1e348-7e31-593c-8107-b888ead5b7cc",
+     "width": 486,
+     "height": 300,
+     "tag": "chart",
+     "data": {
+      "type": "bar",
+      "dataSetsHaveTitle": true,
+      "dataSets": [
+       {
+        "dataRange": "Data!B7:B17"
+       }
+      ],
+      "labelRange": "Data!A7:A17",
+      "legendPosition": "none",
+      "title": {
+       "text": "Top 10 Employees by Events"
+      },
+      "background": "#FFFFFF",
+      "stacked": false,
+      "aggregated": false,
+      "horizontal": true
+     },
+     "offset": {
+      "x": 502,
+      "y": 456
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "1f2455c2-f79e-5068-9889-cd37597a0f02",
+     "width": 486,
+     "height": 300,
+     "tag": "chart",
+     "data": {
+      "type": "bar",
+      "dataSetsHaveTitle": true,
+      "dataSets": [
+       {
+        "dataRange": "Data!B19:B43"
+       }
+      ],
+      "labelRange": "Data!A19:A43",
+      "legendPosition": "none",
+      "title": {
+       "text": "Traffic by Hour of Day"
+      },
+      "background": "#FFFFFF",
+      "stacked": false,
+      "aggregated": false,
+      "horizontal": false
+     },
+     "offset": {
+      "x": 8,
+      "y": 784
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "365b8627-9498-550b-8ce1-fc690a90b691",
+     "width": 486,
+     "height": 300,
+     "tag": "chart",
+     "data": {
+      "title": {
+       "text": "Access Share by Door"
+      },
+      "background": "#FFFFFF",
+      "legendPosition": "top",
+      "metaData": {
+       "groupBy": [
+        "door_id"
+       ],
+       "measure": "__count",
+       "order": null,
+       "resModel": "hr.rfid.event.user",
+       "mode": "pie"
+      },
+      "searchParams": {
+       "comparison": null,
+       "context": {},
+       "domain": [
+        [
+         "event_action",
+         "=",
+         "1"
+        ]
+       ],
+       "groupBy": [
+        "door_id"
+       ],
+       "orderBy": []
+      },
+      "type": "odoo_pie",
+      "dataSets": [],
+      "chartId": "365b8627-9498-550b-8ce1-fc690a90b691",
+      "fieldMatching": {
+       "8d55c1dc-6dce-5f8c-9d10-5c12cf8e4a8d": {
+        "chain": "event_time",
+        "type": "date",
+        "offset": 0
+       },
+       "16432123-ccb5-59a3-95e5-1e1ba228ea59": {
+        "chain": "company_id",
+        "type": "many2one"
+       },
+       "51f4aa31-3dca-50fa-b917-5a30a19324f6": {
+        "chain": "door_id",
+        "type": "many2one"
+       },
+       "a04f13c2-eb64-5604-a8ce-99aed578615c": {
+        "chain": "site_id",
+        "type": "many2one"
+       }
+      }
+     },
+     "offset": {
+      "x": 502,
+      "y": 784
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "fba90f07-b6e8-51ed-85d0-7a85c10b343a",
+     "width": 980,
+     "height": 300,
+     "tag": "chart",
+     "data": {
+      "title": {
+       "text": "Daily Access Trend"
+      },
+      "background": "#FFFFFF",
+      "legendPosition": "top",
+      "metaData": {
+       "groupBy": [
+        "event_time:day"
+       ],
+       "measure": "__count",
+       "order": null,
+       "resModel": "hr.rfid.event.user",
+       "mode": "line"
+      },
+      "searchParams": {
+       "comparison": null,
+       "context": {},
+       "domain": [],
+       "groupBy": [
+        "event_time:day"
+       ],
+       "orderBy": []
+      },
+      "type": "odoo_line",
+      "dataSets": [],
+      "chartId": "fba90f07-b6e8-51ed-85d0-7a85c10b343a",
+      "fieldMatching": {
+       "8d55c1dc-6dce-5f8c-9d10-5c12cf8e4a8d": {
+        "chain": "event_time",
+        "type": "date",
+        "offset": 0
+       },
+       "16432123-ccb5-59a3-95e5-1e1ba228ea59": {
+        "chain": "company_id",
+        "type": "many2one"
+       },
+       "51f4aa31-3dca-50fa-b917-5a30a19324f6": {
+        "chain": "door_id",
+        "type": "many2one"
+       },
+       "a04f13c2-eb64-5604-a8ce-99aed578615c": {
+        "chain": "site_id",
+        "type": "many2one"
+       }
+      },
+      "verticalAxisPosition": "left",
+      "stacked": false,
+      "fillArea": false,
+      "cumulatedStart": false
+     },
+     "offset": {
+      "x": 8,
+      "y": 1112
+     },
+     "col": 0,
+     "row": 0
+    }
+   ],
+   "tables": [],
+   "areGridLinesVisible": false,
+   "isVisible": true,
+   "headerGroups": {
+    "ROW": [],
+    "COL": []
+   },
+   "comments": {}
+  },
+  {
+   "id": "aea175ea-04b3-508e-a3b5-70ee78974f9b",
+   "name": "Data",
+   "colNumber": 6,
+   "rowNumber": 7,
+   "rows": {},
+   "cols": {},
+   "merges": [],
+   "cells": {
+    "A1": "=_t(\"Total Events\")",
+    "B1": "=PIVOT.VALUE(1,\"__count\")",
+    "C1": "=FORMAT.LARGE.NUMBER(B1)",
+    "D1": "=PIVOT.VALUE(2,\"__count\")",
+    "A2": "=_t(\"Denied\")",
+    "B2": "=PIVOT.VALUE(3,\"__count\")",
+    "C2": "=FORMAT.LARGE.NUMBER(B2)",
+    "D2": "=PIVOT.VALUE(4,\"__count\")",
+    "A3": "=_t(\"Unique People\")",
+    "B3": "=PIVOT.VALUE(5,\"employee_id:count_distinct\")",
+    "C3": "=FORMAT.LARGE.NUMBER(B3)",
+    "D3": "=PIVOT.VALUE(6,\"employee_id:count_distinct\")",
+    "A4": "=_t(\"Grant Rate\")",
+    "B4": "=IFERROR(PIVOT.VALUE(7,\"__count\")/PIVOT.VALUE(8,\"__count\"),0)",
+    "C4": "=B4",
+    "A7": "=_t(\"Top 10 Employees by Events\")",
+    "B7": "=_t(\"Events\")",
+    "A8": "=IFERROR(PIVOT.HEADER(9,\"#employee_id\",1),\"\")",
+    "B8": "=IFERROR(PIVOT.VALUE(9,\"__count\",\"#employee_id\",1),\"\")",
+    "A9": "=IFERROR(PIVOT.HEADER(9,\"#employee_id\",2),\"\")",
+    "B9": "=IFERROR(PIVOT.VALUE(9,\"__count\",\"#employee_id\",2),\"\")",
+    "A10": "=IFERROR(PIVOT.HEADER(9,\"#employee_id\",3),\"\")",
+    "B10": "=IFERROR(PIVOT.VALUE(9,\"__count\",\"#employee_id\",3),\"\")",
+    "A11": "=IFERROR(PIVOT.HEADER(9,\"#employee_id\",4),\"\")",
+    "B11": "=IFERROR(PIVOT.VALUE(9,\"__count\",\"#employee_id\",4),\"\")",
+    "A12": "=IFERROR(PIVOT.HEADER(9,\"#employee_id\",5),\"\")",
+    "B12": "=IFERROR(PIVOT.VALUE(9,\"__count\",\"#employee_id\",5),\"\")",
+    "A13": "=IFERROR(PIVOT.HEADER(9,\"#employee_id\",6),\"\")",
+    "B13": "=IFERROR(PIVOT.VALUE(9,\"__count\",\"#employee_id\",6),\"\")",
+    "A14": "=IFERROR(PIVOT.HEADER(9,\"#employee_id\",7),\"\")",
+    "B14": "=IFERROR(PIVOT.VALUE(9,\"__count\",\"#employee_id\",7),\"\")",
+    "A15": "=IFERROR(PIVOT.HEADER(9,\"#employee_id\",8),\"\")",
+    "B15": "=IFERROR(PIVOT.VALUE(9,\"__count\",\"#employee_id\",8),\"\")",
+    "A16": "=IFERROR(PIVOT.HEADER(9,\"#employee_id\",9),\"\")",
+    "B16": "=IFERROR(PIVOT.VALUE(9,\"__count\",\"#employee_id\",9),\"\")",
+    "A17": "=IFERROR(PIVOT.HEADER(9,\"#employee_id\",10),\"\")",
+    "B17": "=IFERROR(PIVOT.VALUE(9,\"__count\",\"#employee_id\",10),\"\")",
+    "A19": "=_t(\"Traffic by Hour of Day\")",
+    "B19": "=_t(\"Granted entries\")",
+    "B20": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",0),0)",
+    "B21": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",1),0)",
+    "B22": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",2),0)",
+    "B23": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",3),0)",
+    "B24": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",4),0)",
+    "B25": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",5),0)",
+    "B26": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",6),0)",
+    "B27": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",7),0)",
+    "B28": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",8),0)",
+    "B29": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",9),0)",
+    "B30": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",10),0)",
+    "B31": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",11),0)",
+    "B32": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",12),0)",
+    "B33": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",13),0)",
+    "B34": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",14),0)",
+    "B35": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",15),0)",
+    "B36": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",16),0)",
+    "B37": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",17),0)",
+    "B38": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",18),0)",
+    "B39": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",19),0)",
+    "B40": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",20),0)",
+    "B41": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",21),0)",
+    "B42": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",22),0)",
+    "B43": "=IFERROR(PIVOT.VALUE(10,\"__count\",\"event_time:hour_number\",23),0)",
+    "A20": "00h",
+    "A21": "01h",
+    "A22": "02h",
+    "A23": "03h",
+    "A24": "04h",
+    "A25": "05h",
+    "A26": "06h",
+    "A27": "07h",
+    "A28": "08h",
+    "A29": "09h",
+    "A30": "10h",
+    "A31": "11h",
+    "A32": "12h",
+    "A33": "13h",
+    "A34": "14h",
+    "A35": "15h",
+    "A36": "16h",
+    "A37": "17h",
+    "A38": "18h",
+    "A39": "19h",
+    "A40": "20h",
+    "A41": "21h",
+    "A42": "22h",
+    "A43": "23h"
+   },
+   "styles": {},
+   "formats": {
+    "C4": "1"
+   },
+   "borders": {},
+   "conditionalFormats": [],
+   "dataValidationRules": [],
+   "figures": [],
+   "tables": [],
+   "areGridLinesVisible": true,
+   "isVisible": true,
+   "headerGroups": {
+    "ROW": [],
+    "COL": []
+   },
+   "comments": {}
+  }
+ ],
+ "styles": {},
+ "formats": {
+  "1": "0.0%"
+ },
+ "borders": {},
+ "revisionId": "START_REVISION",
+ "uniqueFigureIds": true,
+ "settings": {
+  "locale": {
+   "name": "English (US)",
+   "code": "en_US",
+   "thousandsSeparator": ",",
+   "decimalSeparator": ".",
+   "dateFormat": "mm/dd/yyyy",
+   "timeFormat": "hh:mm:ss",
+   "formulaArgSeparator": ",",
+   "weekStart": 7
+  }
+ },
+ "pivots": {
+  "1": {
+   "type": "ODOO",
+   "id": "1",
+   "formulaId": "1",
+   "name": "Total Events",
+   "model": "hr.rfid.event.user",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "8d55c1dc-6dce-5f8c-9d10-5c12cf8e4a8d": {
+     "chain": "event_time",
+     "type": "date",
+     "offset": 0
+    },
+    "16432123-ccb5-59a3-95e5-1e1ba228ea59": {
+     "chain": "company_id",
+     "type": "many2one"
+    },
+    "51f4aa31-3dca-50fa-b917-5a30a19324f6": {
+     "chain": "door_id",
+     "type": "many2one"
+    },
+    "a04f13c2-eb64-5604-a8ce-99aed578615c": {
+     "chain": "site_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "2": {
+   "type": "ODOO",
+   "id": "2",
+   "formulaId": "2",
+   "name": "Total Events (previous period)",
+   "model": "hr.rfid.event.user",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "8d55c1dc-6dce-5f8c-9d10-5c12cf8e4a8d": {
+     "chain": "event_time",
+     "type": "date",
+     "offset": -1
+    },
+    "16432123-ccb5-59a3-95e5-1e1ba228ea59": {
+     "chain": "company_id",
+     "type": "many2one"
+    },
+    "51f4aa31-3dca-50fa-b917-5a30a19324f6": {
+     "chain": "door_id",
+     "type": "many2one"
+    },
+    "a04f13c2-eb64-5604-a8ce-99aed578615c": {
+     "chain": "site_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "3": {
+   "type": "ODOO",
+   "id": "3",
+   "formulaId": "3",
+   "name": "Denied",
+   "model": "hr.rfid.event.user",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [
+    [
+     "event_action",
+     "in",
+     [
+      "2",
+      "3",
+      "4",
+      "5",
+      "8",
+      "15"
+     ]
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "8d55c1dc-6dce-5f8c-9d10-5c12cf8e4a8d": {
+     "chain": "event_time",
+     "type": "date",
+     "offset": 0
+    },
+    "16432123-ccb5-59a3-95e5-1e1ba228ea59": {
+     "chain": "company_id",
+     "type": "many2one"
+    },
+    "51f4aa31-3dca-50fa-b917-5a30a19324f6": {
+     "chain": "door_id",
+     "type": "many2one"
+    },
+    "a04f13c2-eb64-5604-a8ce-99aed578615c": {
+     "chain": "site_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "4": {
+   "type": "ODOO",
+   "id": "4",
+   "formulaId": "4",
+   "name": "Denied (previous period)",
+   "model": "hr.rfid.event.user",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [
+    [
+     "event_action",
+     "in",
+     [
+      "2",
+      "3",
+      "4",
+      "5",
+      "8",
+      "15"
+     ]
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "8d55c1dc-6dce-5f8c-9d10-5c12cf8e4a8d": {
+     "chain": "event_time",
+     "type": "date",
+     "offset": -1
+    },
+    "16432123-ccb5-59a3-95e5-1e1ba228ea59": {
+     "chain": "company_id",
+     "type": "many2one"
+    },
+    "51f4aa31-3dca-50fa-b917-5a30a19324f6": {
+     "chain": "door_id",
+     "type": "many2one"
+    },
+    "a04f13c2-eb64-5604-a8ce-99aed578615c": {
+     "chain": "site_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "5": {
+   "type": "ODOO",
+   "id": "5",
+   "formulaId": "5",
+   "name": "Unique People",
+   "model": "hr.rfid.event.user",
+   "measures": [
+    {
+     "id": "employee_id:count_distinct",
+     "fieldName": "employee_id",
+     "aggregator": "count_distinct"
+    }
+   ],
+   "domain": [
+    [
+     "employee_id",
+     "!=",
+     false
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "employee_id:count_distinct",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "8d55c1dc-6dce-5f8c-9d10-5c12cf8e4a8d": {
+     "chain": "event_time",
+     "type": "date",
+     "offset": 0
+    },
+    "16432123-ccb5-59a3-95e5-1e1ba228ea59": {
+     "chain": "company_id",
+     "type": "many2one"
+    },
+    "51f4aa31-3dca-50fa-b917-5a30a19324f6": {
+     "chain": "door_id",
+     "type": "many2one"
+    },
+    "a04f13c2-eb64-5604-a8ce-99aed578615c": {
+     "chain": "site_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "6": {
+   "type": "ODOO",
+   "id": "6",
+   "formulaId": "6",
+   "name": "Unique People (previous period)",
+   "model": "hr.rfid.event.user",
+   "measures": [
+    {
+     "id": "employee_id:count_distinct",
+     "fieldName": "employee_id",
+     "aggregator": "count_distinct"
+    }
+   ],
+   "domain": [
+    [
+     "employee_id",
+     "!=",
+     false
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "employee_id:count_distinct",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "8d55c1dc-6dce-5f8c-9d10-5c12cf8e4a8d": {
+     "chain": "event_time",
+     "type": "date",
+     "offset": -1
+    },
+    "16432123-ccb5-59a3-95e5-1e1ba228ea59": {
+     "chain": "company_id",
+     "type": "many2one"
+    },
+    "51f4aa31-3dca-50fa-b917-5a30a19324f6": {
+     "chain": "door_id",
+     "type": "many2one"
+    },
+    "a04f13c2-eb64-5604-a8ce-99aed578615c": {
+     "chain": "site_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "7": {
+   "type": "ODOO",
+   "id": "7",
+   "formulaId": "7",
+   "name": "Grant Rate",
+   "model": "hr.rfid.event.user",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [
+    [
+     "event_action",
+     "in",
+     [
+      "1",
+      "6",
+      "7"
+     ]
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "8d55c1dc-6dce-5f8c-9d10-5c12cf8e4a8d": {
+     "chain": "event_time",
+     "type": "date",
+     "offset": 0
+    },
+    "16432123-ccb5-59a3-95e5-1e1ba228ea59": {
+     "chain": "company_id",
+     "type": "many2one"
+    },
+    "51f4aa31-3dca-50fa-b917-5a30a19324f6": {
+     "chain": "door_id",
+     "type": "many2one"
+    },
+    "a04f13c2-eb64-5604-a8ce-99aed578615c": {
+     "chain": "site_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "8": {
+   "type": "ODOO",
+   "id": "8",
+   "formulaId": "8",
+   "name": "Grant Rate",
+   "model": "hr.rfid.event.user",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [
+    [
+     "event_action",
+     "in",
+     [
+      "1",
+      "6",
+      "7",
+      "2",
+      "3",
+      "4",
+      "5",
+      "8",
+      "15"
+     ]
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "8d55c1dc-6dce-5f8c-9d10-5c12cf8e4a8d": {
+     "chain": "event_time",
+     "type": "date",
+     "offset": 0
+    },
+    "16432123-ccb5-59a3-95e5-1e1ba228ea59": {
+     "chain": "company_id",
+     "type": "many2one"
+    },
+    "51f4aa31-3dca-50fa-b917-5a30a19324f6": {
+     "chain": "door_id",
+     "type": "many2one"
+    },
+    "a04f13c2-eb64-5604-a8ce-99aed578615c": {
+     "chain": "site_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "9": {
+   "type": "ODOO",
+   "id": "9",
+   "formulaId": "9",
+   "name": "Top 10 Employees by Events",
+   "model": "hr.rfid.event.user",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [
+    [
+     "employee_id",
+     "!=",
+     false
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [
+    {
+     "fieldName": "employee_id"
+    }
+   ],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "8d55c1dc-6dce-5f8c-9d10-5c12cf8e4a8d": {
+     "chain": "event_time",
+     "type": "date",
+     "offset": 0
+    },
+    "16432123-ccb5-59a3-95e5-1e1ba228ea59": {
+     "chain": "company_id",
+     "type": "many2one"
+    },
+    "51f4aa31-3dca-50fa-b917-5a30a19324f6": {
+     "chain": "door_id",
+     "type": "many2one"
+    },
+    "a04f13c2-eb64-5604-a8ce-99aed578615c": {
+     "chain": "site_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "10": {
+   "type": "ODOO",
+   "id": "10",
+   "formulaId": "10",
+   "name": "Traffic by Hour of Day - Granted entries",
+   "model": "hr.rfid.event.user",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [
+    [
+     "event_action",
+     "in",
+     [
+      "1",
+      "6",
+      "7"
+     ]
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [
+    {
+     "fieldName": "event_time",
+     "order": "asc",
+     "granularity": "hour_number"
+    }
+   ],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "8d55c1dc-6dce-5f8c-9d10-5c12cf8e4a8d": {
+     "chain": "event_time",
+     "type": "date",
+     "offset": 0
+    },
+    "16432123-ccb5-59a3-95e5-1e1ba228ea59": {
+     "chain": "company_id",
+     "type": "many2one"
+    },
+    "51f4aa31-3dca-50fa-b917-5a30a19324f6": {
+     "chain": "door_id",
+     "type": "many2one"
+    },
+    "a04f13c2-eb64-5604-a8ce-99aed578615c": {
+     "chain": "site_id",
+     "type": "many2one"
+    }
+   }
+  }
+ },
+ "pivotNextId": 11,
+ "customTableStyles": {},
+ "globalFilters": [
+  {
+   "id": "8d55c1dc-6dce-5f8c-9d10-5c12cf8e4a8d",
+   "type": "date",
+   "label": "Period",
+   "defaultValue": "last_30_days"
+  },
+  {
+   "id": "a04f13c2-eb64-5604-a8ce-99aed578615c",
+   "type": "relation",
+   "label": "Site",
+   "modelName": "hr.rfid.site",
+   "defaultValueDisplayNames": []
+  },
+  {
+   "id": "16432123-ccb5-59a3-95e5-1e1ba228ea59",
+   "type": "relation",
+   "label": "Company",
+   "modelName": "res.company",
+   "defaultValueDisplayNames": []
+  },
+  {
+   "id": "51f4aa31-3dca-50fa-b917-5a30a19324f6",
+   "type": "relation",
+   "label": "Door",
+   "modelName": "hr.rfid.door",
+   "defaultValueDisplayNames": []
+  }
+ ],
+ "lists": {},
+ "listNextId": 1,
+ "chartOdooMenusReferences": {
+  "afc78b8a-8ae9-5cf4-a210-479e4f9cc70d": "hr_rfid.hr_rfid_menu_user_events",
+  "cf2f2ffa-ac93-5f00-936d-617e2dc9318b": "hr_rfid.hr_rfid_menu_user_events",
+  "5814ff08-fbe4-54f1-97de-14ea36ccc62c": "hr_rfid.hr_rfid_menu_user_events",
+  "8753674c-17ba-5fbd-a757-dbef1ab58ad3": "hr_rfid.hr_rfid_menu_user_events",
+  "785ed408-2184-5232-9cdc-8a004b5543cd": "hr_rfid.hr_rfid_menu_user_events",
+  "c121819a-7b9f-5c5a-9c8a-f6a02c7c1595": "hr_rfid.hr_rfid_menu_user_events",
+  "e1c1e348-7e31-593c-8107-b888ead5b7cc": "hr_rfid.hr_rfid_menu_user_events",
+  "1f2455c2-f79e-5068-9889-cd37597a0f02": "hr_rfid.hr_rfid_menu_user_events",
+  "365b8627-9498-550b-8ce1-fc690a90b691": "hr_rfid.hr_rfid_menu_user_events",
+  "fba90f07-b6e8-51ed-85d0-7a85c10b343a": "hr_rfid.hr_rfid_menu_user_events"
+ }
+}

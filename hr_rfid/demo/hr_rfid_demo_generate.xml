@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Volume demo generator for the Access Control spreadsheet dashboard.
+
+        A few hundred hr.rfid.event.user records over the last ~30 days is
+        impractical as static XML, so a deterministic Python helper bulk-creates
+        them from the shipped demo hardware. The helper is idempotent (guarded by
+        an ir.config_parameter flag) so a demo reload never duplicates events.
+
+        Runs last, after demo/hr_rfid_demo.xml (hardware + cards) and
+        demo/hr_rfid_demo_events.xml (the hand-authored one-of-each showcase),
+        so the topology and cards it references already exist.
+    -->
+    <data noupdate="1">
+        <function model="hr.rfid.event.user" name="_demo_generate_events"/>
+        <function model="hr.rfid.event.system" name="_demo_generate_system_events"/>
+    </data>
+</odoo>

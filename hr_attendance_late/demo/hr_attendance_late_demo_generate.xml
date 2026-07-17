@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Volume demo generator for the Working Time (and, via
+        hr_attendace_rfid_hr_hourly_cost, Labour Cost) spreadsheet dashboards.
+
+        ~30 days x several employees of hr.attendance check-in/out pairs is
+        impractical as static XML, so a deterministic Python helper bulk-creates
+        them and triggers this module's extra-time roll-up. The daily
+        hr.attendance.extra records (worked hours, overtime, late, day/night
+        split) are therefore COMPUTED, not authored - exactly as in production.
+
+        A dedicated full-time, non-shift calendar (below) is assigned to the demo
+        employees by the helper so the generated worked-hours / overtime figures
+        are realistic and reproducible, independent of the shift-mode showcase
+        calendar. UTC so the 08:00-17:00 schedule lines up with the naive UTC
+        check-ins the helper builds.
+
+        Runs after demo/hr_attendance_late_demo_showcase.xml. The helper is
+        idempotent and overlap-safe.
+    -->
+    <data noupdate="1">
+
+        <record id="demo_calendar_fulltime" model="resource.calendar">
+            <field name="name">Polimex Demo Full-Time (Mon-Fri, 8h)</field>
+            <field name="tz">UTC</field>
+            <field name="hours_per_day">8.0</field>
+            <field name="attendance_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'name': 'Monday Morning',    'dayofweek': '0', 'hour_from': 8.0,  'hour_to': 12.0, 'day_period': 'morning'}),
+                (0, 0, {'name': 'Monday Afternoon',  'dayofweek': '0', 'hour_from': 13.0, 'hour_to': 17.0, 'day_period': 'afternoon'}),
+                (0, 0, {'name': 'Tuesday Morning',   'dayofweek': '1', 'hour_from': 8.0,  'hour_to': 12.0, 'day_period': 'morning'}),
+                (0, 0, {'name': 'Tuesday Afternoon', 'dayofweek': '1', 'hour_from': 13.0, 'hour_to': 17.0, 'day_period': 'afternoon'}),
+                (0, 0, {'name': 'Wednesday Morning',   'dayofweek': '2', 'hour_from': 8.0,  'hour_to': 12.0, 'day_period': 'morning'}),
+                (0, 0, {'name': 'Wednesday Afternoon', 'dayofweek': '2', 'hour_from': 13.0, 'hour_to': 17.0, 'day_period': 'afternoon'}),
+                (0, 0, {'name': 'Thursday Morning',   'dayofweek': '3', 'hour_from': 8.0,  'hour_to': 12.0, 'day_period': 'morning'}),
+                (0, 0, {'name': 'Thursday Afternoon', 'dayofweek': '3', 'hour_from': 13.0, 'hour_to': 17.0, 'day_period': 'afternoon'}),
+                (0, 0, {'name': 'Friday Morning',   'dayofweek': '4', 'hour_from': 8.0,  'hour_to': 12.0, 'day_period': 'morning'}),
+                (0, 0, {'name': 'Friday Afternoon', 'dayofweek': '4', 'hour_from': 13.0, 'hour_to': 17.0, 'day_period': 'afternoon'}),
+            ]"/>
+        </record>
+
+        <function model="hr.employee" name="_demo_generate_attendances"/>
+    </data>
+</odoo>

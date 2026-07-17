@@ -1,7 +1,13 @@
-from datetime import timedelta
+import random
+from datetime import datetime, timedelta, time
 from odoo import fields, models, api, _
 import logging
 _logger = logging.getLogger(__name__)
+
+# Deterministic seed for the demo event generator so every fresh demo DB
+# renders the same distribution (reproducible dashboards).
+DEMO_EVENT_SEED = 20260716
+DEMO_EVENTS_FLAG = 'hr_rfid.demo_events_generated'
 
 
 action_selection = [
@@ -539,3 +545,119 @@ class HrRfidUserEvent(models.Model):
                 ('event_action', '=', str(event_action))
             )
         return self.search(domain, limit=limit)
+
+    @api.model
+    def _demo_generate_events(self):
+        """Generate ~30 days of realistic demo access events for the dashboards.
+
+        Populates the Access Control spreadsheet dashboard (events-by-action bar,
+        busiest-doors bar, daily-trend line, access-share-by-door pie) with a
+        few hundred events spread over the last ~30 days across the shipped demo
+        doors, with a realistic action mix (mostly granted, some denials, a few
+        zone operations) over several employees and visitor contacts.
+
+        Only invoked from the demo data <function> hook. Idempotent: an
+        ir.config_parameter flag makes a demo reload (module update) a no-op so
+        events are never duplicated. Deterministic: a fixed-seed RNG yields the
+        same distribution on every fresh install.
+        """
+        param = self.env['ir.config_parameter'].sudo()
+        if param.get_param(DEMO_EVENTS_FLAG):
+            return
+
+        # Reuse the shipped demo hardware topology (doors + entry/exit readers +
+        # controller address). Skip silently if a piece is missing.
+        specs = [
+            ('hr_rfid.demo_ctrl_icon110_D1', 'hr_rfid.demo_ctrl_icon110_R1', 1),
+            ('hr_rfid.demo_ctrl_icon110_D2', 'hr_rfid.demo_ctrl_icon110_R2', 1),
+            ('hr_rfid.demo_ctrl_icon115_D1', 'hr_rfid.demo_ctrl_icon115_R1', 2),
+            ('hr_rfid.demo_ctrl_icon115_D2', 'hr_rfid.demo_ctrl_icon115_R2', 2),
+        ]
+        doors = []
+        for door_xml, reader_xml, ctrl_addr in specs:
+            door = self.env.ref(door_xml, raise_if_not_found=False)
+            reader = self.env.ref(reader_xml, raise_if_not_found=False)
+            if door and reader:
+                doors.append((door, reader, ctrl_addr))
+        if not doors:
+            return
+
+        company = self.env.ref('base.main_company', raise_if_not_found=False)
+        company_domain = [('company_id', '=', company.id)] if company else []
+
+        # People: the named demo employees first, then top up from the main
+        # company so the "by employee" breakdown has 6-10 distinct people.
+        employees = self.env['hr.employee']
+        for emp_xml in ('hr.employee_admin', 'hr.employee_al',
+                        'hr.employee_qdp', 'hr.employee_ngh'):
+            emp = self.env.ref(emp_xml, raise_if_not_found=False)
+            if emp:
+                employees |= emp
+        top_up = self.env['hr.employee'].search(
+            company_domain + [('id', 'not in', employees.ids)], limit=6)
+        employees |= top_up
+        if not employees:
+            return
+
+        # A couple of external visitor contacts (the carded demo visitor plus one
+        # more contact) so the audit trail is not employee-only.
+        visitors = self.env['res.partner']
+        addr = self.env.ref('base.res_partner_address_15', raise_if_not_found=False)
+        if addr:
+            visitors |= addr
+        extra_visitor = self.env['res.partner'].search(
+            [('is_company', '=', False), ('type', '=', 'contact'),
+             ('id', 'not in', visitors.ids)], limit=1)
+        visitors |= extra_visitor
+
+        people = [(p, True) for p in employees] + [(p, False) for p in visitors]
+        if not people:
+            return
+
+        # Weighted action mix: ~70% granted, ~20% denials, ~10% other.
+        actions = ['1', '2', '3', '4', '6', '10', '11', '12']
+        weights = [70, 8, 6, 4, 4, 3, 3, 2]
+
+        rng = random.Random(DEMO_EVENT_SEED)
+        now = fields.Datetime.now()
+        today = now.date()
+        vals_list = []
+
+        # 30 full days back PLUS today (partial, up to the current hour) so the
+        # "Events from today" default filter on the User Events list - the
+        # click-through target of the Access dashboard - is never empty.
+        for day_offset in range(0, 31):
+            day = today - timedelta(days=day_offset)
+            weekend = day.weekday() >= 5
+            n_events = rng.randint(2, 5) if weekend else rng.randint(9, 15)
+            for _i in range(n_events):
+                person, is_emp = rng.choice(people)
+                door, reader, ctrl_addr = rng.choice(doors)
+                action = rng.choices(actions, weights=weights, k=1)[0]
+                hour = rng.randint(6, 20)
+                minute = rng.randint(0, 59)
+                second = rng.randint(0, 59)
+                ev_time = datetime.combine(day, time(hour, minute, second))
+                if day_offset == 0 and ev_time >= now:
+                    continue    # today: only events up to "now", never future
+                vals = {
+                    'event_action': action,
+                    'event_time': ev_time,
+                    'reader_id': reader.id,
+                    'door_id': door.id,
+                    'ctrl_addr': ctrl_addr,
+                }
+                if is_emp:
+                    vals['employee_id'] = person.id
+                else:
+                    vals['contact_id'] = person.id
+                card = person.hr_rfid_card_ids[:1]
+                if card:
+                    vals['card_id'] = card.id
+                vals_list.append(vals)
+
+        if vals_list:
+            self.create(vals_list)
+        param.set_param(DEMO_EVENTS_FLAG, '1')
+        _logger.info('Demo access events generated: %d events over 30 days',
+                     len(vals_list))

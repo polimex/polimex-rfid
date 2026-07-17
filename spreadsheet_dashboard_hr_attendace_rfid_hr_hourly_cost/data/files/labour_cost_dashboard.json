@@ -1,0 +1,929 @@
+{
+ "version": "18.4.14",
+ "sheets": [
+  {
+   "id": "90d467f3-4bde-5ade-a1cb-41eaa90a5886",
+   "name": "Dashboard",
+   "colNumber": 9,
+   "rowNumber": 64,
+   "rows": {},
+   "cols": {
+    "0": {
+     "size": 120
+    },
+    "1": {
+     "size": 120
+    },
+    "2": {
+     "size": 120
+    },
+    "3": {
+     "size": 120
+    },
+    "4": {
+     "size": 120
+    },
+    "5": {
+     "size": 120
+    },
+    "6": {
+     "size": 120
+    },
+    "7": {
+     "size": 120
+    },
+    "8": {
+     "size": 120
+    }
+   },
+   "merges": [],
+   "cells": {},
+   "styles": {},
+   "formats": {},
+   "borders": {},
+   "conditionalFormats": [],
+   "dataValidationRules": [],
+   "figures": [
+    {
+     "id": "34645ff4-cda7-593c-bdf0-b8f1fbebd36d",
+     "width": 188,
+     "height": 100,
+     "tag": "chart",
+     "data": {
+      "baselineColorDown": "#00A04A",
+      "baselineColorUp": "#DC6965",
+      "baselineMode": "percentage",
+      "title": {
+       "text": "Total Cost",
+       "bold": true,
+       "color": "#434343"
+      },
+      "type": "scorecard",
+      "background": "#EFF6FF",
+      "keyValue": "Data!C1",
+      "humanize": true,
+      "chartId": "34645ff4-cda7-593c-bdf0-b8f1fbebd36d",
+      "baseline": "Data!D1",
+      "baselineDescr": "vs previous period"
+     },
+     "offset": {
+      "x": 8,
+      "y": 8
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "e78aac08-12c1-5f94-9e16-fafde8a53d84",
+     "width": 188,
+     "height": 100,
+     "tag": "chart",
+     "data": {
+      "baselineColorDown": "#00A04A",
+      "baselineColorUp": "#DC6965",
+      "baselineMode": "percentage",
+      "title": {
+       "text": "Overtime Cost",
+       "bold": true,
+       "color": "#434343"
+      },
+      "type": "scorecard",
+      "background": "#EFF6FF",
+      "keyValue": "Data!C2",
+      "humanize": true,
+      "chartId": "e78aac08-12c1-5f94-9e16-fafde8a53d84",
+      "baseline": "Data!D2",
+      "baselineDescr": "vs previous period"
+     },
+     "offset": {
+      "x": 204,
+      "y": 8
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "d38110aa-d7b6-5280-b68f-804372cef9fe",
+     "width": 188,
+     "height": 100,
+     "tag": "chart",
+     "data": {
+      "baselineColorDown": "#00A04A",
+      "baselineColorUp": "#DC6965",
+      "baselineMode": "percentage",
+      "title": {
+       "text": "Night Supplement",
+       "bold": true,
+       "color": "#434343"
+      },
+      "type": "scorecard",
+      "background": "#EFF6FF",
+      "keyValue": "Data!C3",
+      "humanize": true,
+      "chartId": "d38110aa-d7b6-5280-b68f-804372cef9fe",
+      "baseline": "Data!D3",
+      "baselineDescr": "vs previous period"
+     },
+     "offset": {
+      "x": 400,
+      "y": 8
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "1e2e23bb-4673-5028-bcbf-1537fb59e1b2",
+     "width": 188,
+     "height": 100,
+     "tag": "chart",
+     "data": {
+      "baselineColorDown": "#DC6965",
+      "baselineColorUp": "#00A04A",
+      "baselineMode": "text",
+      "title": {
+       "text": "Overtime Share",
+       "bold": true,
+       "color": "#434343"
+      },
+      "type": "scorecard",
+      "background": "#EFF6FF",
+      "keyValue": "Data!C4",
+      "humanize": false,
+      "chartId": "1e2e23bb-4673-5028-bcbf-1537fb59e1b2"
+     },
+     "offset": {
+      "x": 596,
+      "y": 8
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "515e54f2-18f7-58c1-a8d1-ec5e55d9c3e8",
+     "width": 188,
+     "height": 100,
+     "tag": "chart",
+     "data": {
+      "baselineColorDown": "#DC6965",
+      "baselineColorUp": "#00A04A",
+      "baselineMode": "difference",
+      "title": {
+       "text": "Cost per Hour",
+       "bold": true,
+       "color": "#434343"
+      },
+      "type": "scorecard",
+      "background": "#EFF6FF",
+      "keyValue": "Data!C5",
+      "humanize": true,
+      "chartId": "515e54f2-18f7-58c1-a8d1-ec5e55d9c3e8"
+     },
+     "offset": {
+      "x": 792,
+      "y": 8
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "77d4428c-e441-54e1-b9d3-df6a408ddec2",
+     "width": 486,
+     "height": 300,
+     "tag": "chart",
+     "data": {
+      "title": {
+       "text": "Cost by Department"
+      },
+      "background": "#FFFFFF",
+      "legendPosition": "top",
+      "metaData": {
+       "groupBy": [
+        "department_id"
+       ],
+       "measure": "actual_work_time_cost",
+       "order": null,
+       "resModel": "hr.attendance.extra",
+       "mode": "bar"
+      },
+      "searchParams": {
+       "comparison": null,
+       "context": {},
+       "domain": [],
+       "groupBy": [
+        "department_id"
+       ],
+       "orderBy": []
+      },
+      "type": "odoo_bar",
+      "dataSets": [],
+      "chartId": "77d4428c-e441-54e1-b9d3-df6a408ddec2",
+      "fieldMatching": {
+       "28d5cc31-3356-50c1-94d9-ab3973b83408": {
+        "chain": "for_date",
+        "type": "date",
+        "offset": 0
+       },
+       "263ebed6-cf4b-528c-b0fc-ca023335b283": {
+        "chain": "department_id",
+        "type": "many2one"
+       },
+       "fa651b07-ea1e-51ce-9fc6-6eda7479b261": {
+        "chain": "employee_id.company_id",
+        "type": "many2one"
+       }
+      },
+      "verticalAxisPosition": "left",
+      "stacked": false
+     },
+     "offset": {
+      "x": 8,
+      "y": 128
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "79fb2f9d-d6e4-5499-b526-4c31a982b139",
+     "width": 486,
+     "height": 300,
+     "tag": "chart",
+     "data": {
+      "title": {
+       "text": "Overtime Cost by Department"
+      },
+      "background": "#FFFFFF",
+      "legendPosition": "top",
+      "metaData": {
+       "groupBy": [
+        "department_id"
+       ],
+       "measure": "cost_overtime",
+       "order": null,
+       "resModel": "hr.attendance.extra",
+       "mode": "bar"
+      },
+      "searchParams": {
+       "comparison": null,
+       "context": {},
+       "domain": [],
+       "groupBy": [
+        "department_id"
+       ],
+       "orderBy": []
+      },
+      "type": "odoo_bar",
+      "dataSets": [],
+      "chartId": "79fb2f9d-d6e4-5499-b526-4c31a982b139",
+      "fieldMatching": {
+       "28d5cc31-3356-50c1-94d9-ab3973b83408": {
+        "chain": "for_date",
+        "type": "date",
+        "offset": 0
+       },
+       "263ebed6-cf4b-528c-b0fc-ca023335b283": {
+        "chain": "department_id",
+        "type": "many2one"
+       },
+       "fa651b07-ea1e-51ce-9fc6-6eda7479b261": {
+        "chain": "employee_id.company_id",
+        "type": "many2one"
+       }
+      },
+      "verticalAxisPosition": "left",
+      "stacked": false
+     },
+     "offset": {
+      "x": 502,
+      "y": 128
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "9a67cdfd-a245-5e55-9a06-cc880e0e1f18",
+     "width": 980,
+     "height": 300,
+     "tag": "chart",
+     "data": {
+      "title": {
+       "text": "Cost Trend"
+      },
+      "background": "#FFFFFF",
+      "legendPosition": "top",
+      "metaData": {
+       "groupBy": [
+        "for_date:week"
+       ],
+       "measure": "actual_work_time_cost",
+       "order": null,
+       "resModel": "hr.attendance.extra",
+       "mode": "line"
+      },
+      "searchParams": {
+       "comparison": null,
+       "context": {},
+       "domain": [],
+       "groupBy": [
+        "for_date:week"
+       ],
+       "orderBy": []
+      },
+      "type": "odoo_line",
+      "dataSets": [],
+      "chartId": "9a67cdfd-a245-5e55-9a06-cc880e0e1f18",
+      "fieldMatching": {
+       "28d5cc31-3356-50c1-94d9-ab3973b83408": {
+        "chain": "for_date",
+        "type": "date",
+        "offset": 0
+       },
+       "263ebed6-cf4b-528c-b0fc-ca023335b283": {
+        "chain": "department_id",
+        "type": "many2one"
+       },
+       "fa651b07-ea1e-51ce-9fc6-6eda7479b261": {
+        "chain": "employee_id.company_id",
+        "type": "many2one"
+       }
+      },
+      "verticalAxisPosition": "left",
+      "stacked": false,
+      "fillArea": false,
+      "cumulatedStart": false
+     },
+     "offset": {
+      "x": 8,
+      "y": 456
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "681c470d-2ea3-585b-871f-2596433a50a1",
+     "width": 486,
+     "height": 300,
+     "tag": "chart",
+     "data": {
+      "title": {
+       "text": "Weekly Cost by Department"
+      },
+      "background": "#FFFFFF",
+      "legendPosition": "top",
+      "metaData": {
+       "groupBy": [
+        "for_date:week",
+        "department_id"
+       ],
+       "measure": "actual_work_time_cost",
+       "order": null,
+       "resModel": "hr.attendance.extra",
+       "mode": "line"
+      },
+      "searchParams": {
+       "comparison": null,
+       "context": {},
+       "domain": [],
+       "groupBy": [
+        "for_date:week",
+        "department_id"
+       ],
+       "orderBy": []
+      },
+      "type": "odoo_line",
+      "dataSets": [],
+      "chartId": "681c470d-2ea3-585b-871f-2596433a50a1",
+      "fieldMatching": {
+       "28d5cc31-3356-50c1-94d9-ab3973b83408": {
+        "chain": "for_date",
+        "type": "date",
+        "offset": 0
+       },
+       "263ebed6-cf4b-528c-b0fc-ca023335b283": {
+        "chain": "department_id",
+        "type": "many2one"
+       },
+       "fa651b07-ea1e-51ce-9fc6-6eda7479b261": {
+        "chain": "employee_id.company_id",
+        "type": "many2one"
+       }
+      },
+      "verticalAxisPosition": "left",
+      "stacked": false,
+      "fillArea": false,
+      "cumulatedStart": false
+     },
+     "offset": {
+      "x": 8,
+      "y": 784
+     },
+     "col": 0,
+     "row": 0
+    }
+   ],
+   "tables": [],
+   "areGridLinesVisible": false,
+   "isVisible": true,
+   "headerGroups": {
+    "ROW": [],
+    "COL": []
+   },
+   "comments": {}
+  },
+  {
+   "id": "4518d3df-9a64-5983-b6e4-7b06c753c2b0",
+   "name": "Data",
+   "colNumber": 6,
+   "rowNumber": 8,
+   "rows": {},
+   "cols": {},
+   "merges": [],
+   "cells": {
+    "A1": "=_t(\"Total Cost\")",
+    "B1": "=PIVOT.VALUE(1,\"actual_work_time_cost:sum_currency\")",
+    "C1": "=B1",
+    "D1": "=PIVOT.VALUE(2,\"actual_work_time_cost:sum_currency\")",
+    "A2": "=_t(\"Overtime Cost\")",
+    "B2": "=PIVOT.VALUE(3,\"cost_overtime:sum_currency\")",
+    "C2": "=B2",
+    "D2": "=PIVOT.VALUE(4,\"cost_overtime:sum_currency\")",
+    "A3": "=_t(\"Night Supplement\")",
+    "B3": "=PIVOT.VALUE(5,\"cost_night_supplement:sum_currency\")",
+    "C3": "=B3",
+    "D3": "=PIVOT.VALUE(6,\"cost_night_supplement:sum_currency\")",
+    "A4": "=_t(\"Overtime Share\")",
+    "B4": "=IFERROR(PIVOT.VALUE(7,\"cost_overtime\")/PIVOT.VALUE(8,\"actual_work_time_cost\"),0)",
+    "C4": "=B4",
+    "A5": "=_t(\"Cost per Hour\")",
+    "B5": "=IFERROR(PIVOT.VALUE(9,\"actual_work_time_cost\")/PIVOT.VALUE(10,\"actual_work_time\"),0)",
+    "C5": "=B5"
+   },
+   "styles": {},
+   "formats": {
+    "C1": "1",
+    "C2": "1",
+    "C3": "1",
+    "C4": "2",
+    "C5": "1"
+   },
+   "borders": {},
+   "conditionalFormats": [],
+   "dataValidationRules": [],
+   "figures": [],
+   "tables": [],
+   "areGridLinesVisible": true,
+   "isVisible": true,
+   "headerGroups": {
+    "ROW": [],
+    "COL": []
+   },
+   "comments": {}
+  }
+ ],
+ "styles": {},
+ "formats": {
+  "1": "#,##0.00 [$€]",
+  "2": "0.0%"
+ },
+ "borders": {},
+ "revisionId": "START_REVISION",
+ "uniqueFigureIds": true,
+ "settings": {
+  "locale": {
+   "name": "English (US)",
+   "code": "en_US",
+   "thousandsSeparator": ",",
+   "decimalSeparator": ".",
+   "dateFormat": "mm/dd/yyyy",
+   "timeFormat": "hh:mm:ss",
+   "formulaArgSeparator": ",",
+   "weekStart": 7
+  }
+ },
+ "pivots": {
+  "1": {
+   "type": "ODOO",
+   "id": "1",
+   "formulaId": "1",
+   "name": "Total Cost",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "actual_work_time_cost:sum_currency",
+     "fieldName": "actual_work_time_cost",
+     "aggregator": "sum_currency"
+    }
+   ],
+   "domain": [],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "actual_work_time_cost:sum_currency",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "28d5cc31-3356-50c1-94d9-ab3973b83408": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": 0
+    },
+    "263ebed6-cf4b-528c-b0fc-ca023335b283": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "fa651b07-ea1e-51ce-9fc6-6eda7479b261": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "2": {
+   "type": "ODOO",
+   "id": "2",
+   "formulaId": "2",
+   "name": "Total Cost (previous period)",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "actual_work_time_cost:sum_currency",
+     "fieldName": "actual_work_time_cost",
+     "aggregator": "sum_currency"
+    }
+   ],
+   "domain": [],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "actual_work_time_cost:sum_currency",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "28d5cc31-3356-50c1-94d9-ab3973b83408": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": -1
+    },
+    "263ebed6-cf4b-528c-b0fc-ca023335b283": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "fa651b07-ea1e-51ce-9fc6-6eda7479b261": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "3": {
+   "type": "ODOO",
+   "id": "3",
+   "formulaId": "3",
+   "name": "Overtime Cost",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "cost_overtime:sum_currency",
+     "fieldName": "cost_overtime",
+     "aggregator": "sum_currency"
+    }
+   ],
+   "domain": [],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "cost_overtime:sum_currency",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "28d5cc31-3356-50c1-94d9-ab3973b83408": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": 0
+    },
+    "263ebed6-cf4b-528c-b0fc-ca023335b283": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "fa651b07-ea1e-51ce-9fc6-6eda7479b261": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "4": {
+   "type": "ODOO",
+   "id": "4",
+   "formulaId": "4",
+   "name": "Overtime Cost (previous period)",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "cost_overtime:sum_currency",
+     "fieldName": "cost_overtime",
+     "aggregator": "sum_currency"
+    }
+   ],
+   "domain": [],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "cost_overtime:sum_currency",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "28d5cc31-3356-50c1-94d9-ab3973b83408": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": -1
+    },
+    "263ebed6-cf4b-528c-b0fc-ca023335b283": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "fa651b07-ea1e-51ce-9fc6-6eda7479b261": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "5": {
+   "type": "ODOO",
+   "id": "5",
+   "formulaId": "5",
+   "name": "Night Supplement",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "cost_night_supplement:sum_currency",
+     "fieldName": "cost_night_supplement",
+     "aggregator": "sum_currency"
+    }
+   ],
+   "domain": [],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "cost_night_supplement:sum_currency",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "28d5cc31-3356-50c1-94d9-ab3973b83408": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": 0
+    },
+    "263ebed6-cf4b-528c-b0fc-ca023335b283": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "fa651b07-ea1e-51ce-9fc6-6eda7479b261": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "6": {
+   "type": "ODOO",
+   "id": "6",
+   "formulaId": "6",
+   "name": "Night Supplement (previous period)",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "cost_night_supplement:sum_currency",
+     "fieldName": "cost_night_supplement",
+     "aggregator": "sum_currency"
+    }
+   ],
+   "domain": [],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "cost_night_supplement:sum_currency",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "28d5cc31-3356-50c1-94d9-ab3973b83408": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": -1
+    },
+    "263ebed6-cf4b-528c-b0fc-ca023335b283": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "fa651b07-ea1e-51ce-9fc6-6eda7479b261": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "7": {
+   "type": "ODOO",
+   "id": "7",
+   "formulaId": "7",
+   "name": "Overtime Share",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "cost_overtime",
+     "fieldName": "cost_overtime"
+    }
+   ],
+   "domain": [],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "cost_overtime",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "28d5cc31-3356-50c1-94d9-ab3973b83408": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": 0
+    },
+    "263ebed6-cf4b-528c-b0fc-ca023335b283": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "fa651b07-ea1e-51ce-9fc6-6eda7479b261": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "8": {
+   "type": "ODOO",
+   "id": "8",
+   "formulaId": "8",
+   "name": "Overtime Share",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "actual_work_time_cost",
+     "fieldName": "actual_work_time_cost"
+    }
+   ],
+   "domain": [
+    [
+     "actual_work_time_cost",
+     ">",
+     0
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "actual_work_time_cost",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "28d5cc31-3356-50c1-94d9-ab3973b83408": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": 0
+    },
+    "263ebed6-cf4b-528c-b0fc-ca023335b283": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "fa651b07-ea1e-51ce-9fc6-6eda7479b261": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "9": {
+   "type": "ODOO",
+   "id": "9",
+   "formulaId": "9",
+   "name": "Cost per Hour",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "actual_work_time_cost",
+     "fieldName": "actual_work_time_cost"
+    }
+   ],
+   "domain": [],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "actual_work_time_cost",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "28d5cc31-3356-50c1-94d9-ab3973b83408": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": 0
+    },
+    "263ebed6-cf4b-528c-b0fc-ca023335b283": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "fa651b07-ea1e-51ce-9fc6-6eda7479b261": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "10": {
+   "type": "ODOO",
+   "id": "10",
+   "formulaId": "10",
+   "name": "Cost per Hour",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "actual_work_time",
+     "fieldName": "actual_work_time"
+    }
+   ],
+   "domain": [
+    [
+     "actual_work_time",
+     ">",
+     0
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "actual_work_time",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "28d5cc31-3356-50c1-94d9-ab3973b83408": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": 0
+    },
+    "263ebed6-cf4b-528c-b0fc-ca023335b283": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "fa651b07-ea1e-51ce-9fc6-6eda7479b261": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  }
+ },
+ "pivotNextId": 11,
+ "customTableStyles": {},
+ "globalFilters": [
+  {
+   "id": "28d5cc31-3356-50c1-94d9-ab3973b83408",
+   "type": "date",
+   "label": "Period",
+   "defaultValue": "last_30_days"
+  },
+  {
+   "id": "263ebed6-cf4b-528c-b0fc-ca023335b283",
+   "type": "relation",
+   "label": "Department",
+   "modelName": "hr.department",
+   "defaultValueDisplayNames": []
+  },
+  {
+   "id": "fa651b07-ea1e-51ce-9fc6-6eda7479b261",
+   "type": "relation",
+   "label": "Company",
+   "modelName": "res.company",
+   "defaultValueDisplayNames": []
+  }
+ ],
+ "lists": {},
+ "listNextId": 1,
+ "chartOdooMenusReferences": {
+  "34645ff4-cda7-593c-bdf0-b8f1fbebd36d": "hr_attendance_late.menu_hr_attendance_extra",
+  "e78aac08-12c1-5f94-9e16-fafde8a53d84": "hr_attendance_late.menu_hr_attendance_extra",
+  "d38110aa-d7b6-5280-b68f-804372cef9fe": "hr_attendance_late.menu_hr_attendance_extra",
+  "1e2e23bb-4673-5028-bcbf-1537fb59e1b2": "hr_attendance_late.menu_hr_attendance_extra",
+  "515e54f2-18f7-58c1-a8d1-ec5e55d9c3e8": "hr_attendance_late.menu_hr_attendance_extra",
+  "77d4428c-e441-54e1-b9d3-df6a408ddec2": "hr_attendance_late.menu_hr_attendance_extra",
+  "79fb2f9d-d6e4-5499-b526-4c31a982b139": "hr_attendance_late.menu_hr_attendance_extra",
+  "9a67cdfd-a245-5e55-9a06-cc880e0e1f18": "hr_attendance_late.menu_hr_attendance_extra",
+  "681c470d-2ea3-585b-871f-2596433a50a1": "hr_attendance_late.menu_hr_attendance_extra"
+ }
+}

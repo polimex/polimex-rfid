@@ -1,0 +1,883 @@
+{
+ "version": "18.4.14",
+ "sheets": [
+  {
+   "id": "b74a068e-1ae6-5c96-a43c-f47dbd5b90d3",
+   "name": "Dashboard",
+   "colNumber": 9,
+   "rowNumber": 47,
+   "rows": {},
+   "cols": {
+    "0": {
+     "size": 120
+    },
+    "1": {
+     "size": 120
+    },
+    "2": {
+     "size": 120
+    },
+    "3": {
+     "size": 120
+    },
+    "4": {
+     "size": 120
+    },
+    "5": {
+     "size": 120
+    },
+    "6": {
+     "size": 120
+    },
+    "7": {
+     "size": 120
+    },
+    "8": {
+     "size": 120
+    }
+   },
+   "merges": [],
+   "cells": {},
+   "styles": {},
+   "formats": {},
+   "borders": {},
+   "conditionalFormats": [],
+   "dataValidationRules": [],
+   "figures": [
+    {
+     "id": "cf61425d-095e-51b9-9269-ba2ee6c3ee0f",
+     "width": 188,
+     "height": 100,
+     "tag": "chart",
+     "data": {
+      "baselineColorDown": "#00A04A",
+      "baselineColorUp": "#DC6965",
+      "baselineMode": "percentage",
+      "title": {
+       "text": "Forced Door Open",
+       "bold": true,
+       "color": "#434343"
+      },
+      "type": "scorecard",
+      "background": "#EFF6FF",
+      "keyValue": "Data!C1",
+      "humanize": true,
+      "chartId": "cf61425d-095e-51b9-9269-ba2ee6c3ee0f",
+      "baseline": "Data!D1",
+      "baselineDescr": "vs previous period"
+     },
+     "offset": {
+      "x": 8,
+      "y": 8
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "503e1a06-7b62-53ab-b67c-c3dc06feedcf",
+     "width": 188,
+     "height": 100,
+     "tag": "chart",
+     "data": {
+      "baselineColorDown": "#00A04A",
+      "baselineColorUp": "#DC6965",
+      "baselineMode": "percentage",
+      "title": {
+       "text": "Door Held Open",
+       "bold": true,
+       "color": "#434343"
+      },
+      "type": "scorecard",
+      "background": "#EFF6FF",
+      "keyValue": "Data!C2",
+      "humanize": true,
+      "chartId": "503e1a06-7b62-53ab-b67c-c3dc06feedcf",
+      "baseline": "Data!D2",
+      "baselineDescr": "vs previous period"
+     },
+     "offset": {
+      "x": 204,
+      "y": 8
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "21d9c2e8-503c-5c3e-9e90-1145128c5311",
+     "width": 188,
+     "height": 100,
+     "tag": "chart",
+     "data": {
+      "baselineColorDown": "#00A04A",
+      "baselineColorUp": "#DC6965",
+      "baselineMode": "percentage",
+      "title": {
+       "text": "Fire and Duress",
+       "bold": true,
+       "color": "#434343"
+      },
+      "type": "scorecard",
+      "background": "#EFF6FF",
+      "keyValue": "Data!C3",
+      "humanize": true,
+      "chartId": "21d9c2e8-503c-5c3e-9e90-1145128c5311",
+      "baseline": "Data!D3",
+      "baselineDescr": "vs previous period"
+     },
+     "offset": {
+      "x": 400,
+      "y": 8
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "b70152d8-5eea-52c7-8696-a3ce615fd6ad",
+     "width": 188,
+     "height": 100,
+     "tag": "chart",
+     "data": {
+      "baselineColorDown": "#00A04A",
+      "baselineColorUp": "#DC6965",
+      "baselineMode": "percentage",
+      "title": {
+       "text": "Device Faults",
+       "bold": true,
+       "color": "#434343"
+      },
+      "type": "scorecard",
+      "background": "#EFF6FF",
+      "keyValue": "Data!C4",
+      "humanize": true,
+      "chartId": "b70152d8-5eea-52c7-8696-a3ce615fd6ad",
+      "baseline": "Data!D4",
+      "baselineDescr": "vs previous period"
+     },
+     "offset": {
+      "x": 596,
+      "y": 8
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "62dfc73f-e1aa-54ab-ad1c-1f0b2ba425f8",
+     "width": 980,
+     "height": 300,
+     "tag": "chart",
+     "data": {
+      "title": {
+       "text": "Security Events Trend"
+      },
+      "background": "#FFFFFF",
+      "legendPosition": "top",
+      "metaData": {
+       "groupBy": [
+        "timestamp:day"
+       ],
+       "measure": "__count",
+       "order": null,
+       "resModel": "hr.rfid.event.system",
+       "mode": "line"
+      },
+      "searchParams": {
+       "comparison": null,
+       "context": {},
+       "domain": [
+        [
+         "event_action",
+         "in",
+         [
+          "26",
+          "25",
+          "19",
+          "1",
+          "2",
+          "20"
+         ]
+        ]
+       ],
+       "groupBy": [
+        "timestamp:day"
+       ],
+       "orderBy": []
+      },
+      "type": "odoo_line",
+      "dataSets": [],
+      "chartId": "62dfc73f-e1aa-54ab-ad1c-1f0b2ba425f8",
+      "fieldMatching": {
+       "4ee6d8c3-df6b-5542-8921-5cd33af00ab1": {
+        "chain": "timestamp",
+        "type": "date",
+        "offset": 0
+       },
+       "81f65951-0270-58bc-aeee-a9c30604daa5": {
+        "chain": "webstack_id.company_id",
+        "type": "many2one"
+       },
+       "190d3adb-2f02-52c8-ad6d-864673034bfa": {
+        "chain": "controller_id",
+        "type": "many2one"
+       },
+       "0128f9f7-8c81-5fdb-be26-d24b16d616fe": {
+        "chain": "door_id.site_id",
+        "type": "many2one"
+       }
+      },
+      "verticalAxisPosition": "left",
+      "stacked": false,
+      "fillArea": false,
+      "cumulatedStart": false
+     },
+     "offset": {
+      "x": 8,
+      "y": 128
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "4a0a0b8c-24de-51ea-9b07-d230f3d8a995",
+     "width": 486,
+     "height": 300,
+     "tag": "chart",
+     "data": {
+      "title": {
+       "text": "Forced or Held Doors"
+      },
+      "background": "#FFFFFF",
+      "legendPosition": "top",
+      "metaData": {
+       "groupBy": [
+        "door_id"
+       ],
+       "measure": "__count",
+       "order": null,
+       "resModel": "hr.rfid.event.system",
+       "mode": "bar"
+      },
+      "searchParams": {
+       "comparison": null,
+       "context": {},
+       "domain": [
+        [
+         "event_action",
+         "in",
+         [
+          "25",
+          "26"
+         ]
+        ]
+       ],
+       "groupBy": [
+        "door_id"
+       ],
+       "orderBy": []
+      },
+      "type": "odoo_bar",
+      "dataSets": [],
+      "chartId": "4a0a0b8c-24de-51ea-9b07-d230f3d8a995",
+      "fieldMatching": {
+       "4ee6d8c3-df6b-5542-8921-5cd33af00ab1": {
+        "chain": "timestamp",
+        "type": "date",
+        "offset": 0
+       },
+       "81f65951-0270-58bc-aeee-a9c30604daa5": {
+        "chain": "webstack_id.company_id",
+        "type": "many2one"
+       },
+       "190d3adb-2f02-52c8-ad6d-864673034bfa": {
+        "chain": "controller_id",
+        "type": "many2one"
+       },
+       "0128f9f7-8c81-5fdb-be26-d24b16d616fe": {
+        "chain": "door_id.site_id",
+        "type": "many2one"
+       }
+      },
+      "verticalAxisPosition": "left",
+      "stacked": false
+     },
+     "offset": {
+      "x": 8,
+      "y": 456
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "3fd638a0-acf5-5d6b-844d-2d4782407d68",
+     "width": 486,
+     "height": 300,
+     "tag": "chart",
+     "data": {
+      "title": {
+       "text": "Device Events by Controller"
+      },
+      "background": "#FFFFFF",
+      "legendPosition": "top",
+      "metaData": {
+       "groupBy": [
+        "controller_id"
+       ],
+       "measure": "__count",
+       "order": null,
+       "resModel": "hr.rfid.event.system",
+       "mode": "bar"
+      },
+      "searchParams": {
+       "comparison": null,
+       "context": {},
+       "domain": [
+        [
+         "event_action",
+         "in",
+         [
+          "30",
+          "45",
+          "20"
+         ]
+        ]
+       ],
+       "groupBy": [
+        "controller_id"
+       ],
+       "orderBy": []
+      },
+      "type": "odoo_bar",
+      "dataSets": [],
+      "chartId": "3fd638a0-acf5-5d6b-844d-2d4782407d68",
+      "fieldMatching": {
+       "4ee6d8c3-df6b-5542-8921-5cd33af00ab1": {
+        "chain": "timestamp",
+        "type": "date",
+        "offset": 0
+       },
+       "81f65951-0270-58bc-aeee-a9c30604daa5": {
+        "chain": "webstack_id.company_id",
+        "type": "many2one"
+       },
+       "190d3adb-2f02-52c8-ad6d-864673034bfa": {
+        "chain": "controller_id",
+        "type": "many2one"
+       },
+       "0128f9f7-8c81-5fdb-be26-d24b16d616fe": {
+        "chain": "door_id.site_id",
+        "type": "many2one"
+       }
+      },
+      "verticalAxisPosition": "left",
+      "stacked": false
+     },
+     "offset": {
+      "x": 502,
+      "y": 456
+     },
+     "col": 0,
+     "row": 0
+    }
+   ],
+   "tables": [],
+   "areGridLinesVisible": false,
+   "isVisible": true,
+   "headerGroups": {
+    "ROW": [],
+    "COL": []
+   },
+   "comments": {}
+  },
+  {
+   "id": "2931834b-8073-5c8c-b830-717837eabb9a",
+   "name": "Data",
+   "colNumber": 6,
+   "rowNumber": 7,
+   "rows": {},
+   "cols": {},
+   "merges": [],
+   "cells": {
+    "A1": "=_t(\"Forced Door Open\")",
+    "B1": "=PIVOT.VALUE(1,\"__count\")",
+    "C1": "=FORMAT.LARGE.NUMBER(B1)",
+    "D1": "=PIVOT.VALUE(2,\"__count\")",
+    "A2": "=_t(\"Door Held Open\")",
+    "B2": "=PIVOT.VALUE(3,\"__count\")",
+    "C2": "=FORMAT.LARGE.NUMBER(B2)",
+    "D2": "=PIVOT.VALUE(4,\"__count\")",
+    "A3": "=_t(\"Fire and Duress\")",
+    "B3": "=PIVOT.VALUE(5,\"__count\")",
+    "C3": "=FORMAT.LARGE.NUMBER(B3)",
+    "D3": "=PIVOT.VALUE(6,\"__count\")",
+    "A4": "=_t(\"Device Faults\")",
+    "B4": "=PIVOT.VALUE(7,\"__count\")",
+    "C4": "=FORMAT.LARGE.NUMBER(B4)",
+    "D4": "=PIVOT.VALUE(8,\"__count\")"
+   },
+   "styles": {},
+   "formats": {},
+   "borders": {},
+   "conditionalFormats": [],
+   "dataValidationRules": [],
+   "figures": [],
+   "tables": [],
+   "areGridLinesVisible": true,
+   "isVisible": true,
+   "headerGroups": {
+    "ROW": [],
+    "COL": []
+   },
+   "comments": {}
+  }
+ ],
+ "styles": {},
+ "formats": {},
+ "borders": {},
+ "revisionId": "START_REVISION",
+ "uniqueFigureIds": true,
+ "settings": {
+  "locale": {
+   "name": "English (US)",
+   "code": "en_US",
+   "thousandsSeparator": ",",
+   "decimalSeparator": ".",
+   "dateFormat": "mm/dd/yyyy",
+   "timeFormat": "hh:mm:ss",
+   "formulaArgSeparator": ",",
+   "weekStart": 7
+  }
+ },
+ "pivots": {
+  "1": {
+   "type": "ODOO",
+   "id": "1",
+   "formulaId": "1",
+   "name": "Forced Door Open",
+   "model": "hr.rfid.event.system",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [
+    [
+     "event_action",
+     "=",
+     "26"
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "4ee6d8c3-df6b-5542-8921-5cd33af00ab1": {
+     "chain": "timestamp",
+     "type": "date",
+     "offset": 0
+    },
+    "81f65951-0270-58bc-aeee-a9c30604daa5": {
+     "chain": "webstack_id.company_id",
+     "type": "many2one"
+    },
+    "190d3adb-2f02-52c8-ad6d-864673034bfa": {
+     "chain": "controller_id",
+     "type": "many2one"
+    },
+    "0128f9f7-8c81-5fdb-be26-d24b16d616fe": {
+     "chain": "door_id.site_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "2": {
+   "type": "ODOO",
+   "id": "2",
+   "formulaId": "2",
+   "name": "Forced Door Open (previous period)",
+   "model": "hr.rfid.event.system",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [
+    [
+     "event_action",
+     "=",
+     "26"
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "4ee6d8c3-df6b-5542-8921-5cd33af00ab1": {
+     "chain": "timestamp",
+     "type": "date",
+     "offset": -1
+    },
+    "81f65951-0270-58bc-aeee-a9c30604daa5": {
+     "chain": "webstack_id.company_id",
+     "type": "many2one"
+    },
+    "190d3adb-2f02-52c8-ad6d-864673034bfa": {
+     "chain": "controller_id",
+     "type": "many2one"
+    },
+    "0128f9f7-8c81-5fdb-be26-d24b16d616fe": {
+     "chain": "door_id.site_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "3": {
+   "type": "ODOO",
+   "id": "3",
+   "formulaId": "3",
+   "name": "Door Held Open",
+   "model": "hr.rfid.event.system",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [
+    [
+     "event_action",
+     "=",
+     "25"
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "4ee6d8c3-df6b-5542-8921-5cd33af00ab1": {
+     "chain": "timestamp",
+     "type": "date",
+     "offset": 0
+    },
+    "81f65951-0270-58bc-aeee-a9c30604daa5": {
+     "chain": "webstack_id.company_id",
+     "type": "many2one"
+    },
+    "190d3adb-2f02-52c8-ad6d-864673034bfa": {
+     "chain": "controller_id",
+     "type": "many2one"
+    },
+    "0128f9f7-8c81-5fdb-be26-d24b16d616fe": {
+     "chain": "door_id.site_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "4": {
+   "type": "ODOO",
+   "id": "4",
+   "formulaId": "4",
+   "name": "Door Held Open (previous period)",
+   "model": "hr.rfid.event.system",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [
+    [
+     "event_action",
+     "=",
+     "25"
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "4ee6d8c3-df6b-5542-8921-5cd33af00ab1": {
+     "chain": "timestamp",
+     "type": "date",
+     "offset": -1
+    },
+    "81f65951-0270-58bc-aeee-a9c30604daa5": {
+     "chain": "webstack_id.company_id",
+     "type": "many2one"
+    },
+    "190d3adb-2f02-52c8-ad6d-864673034bfa": {
+     "chain": "controller_id",
+     "type": "many2one"
+    },
+    "0128f9f7-8c81-5fdb-be26-d24b16d616fe": {
+     "chain": "door_id.site_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "5": {
+   "type": "ODOO",
+   "id": "5",
+   "formulaId": "5",
+   "name": "Fire and Duress",
+   "model": "hr.rfid.event.system",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [
+    [
+     "event_action",
+     "in",
+     [
+      "19",
+      "1",
+      "2"
+     ]
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "4ee6d8c3-df6b-5542-8921-5cd33af00ab1": {
+     "chain": "timestamp",
+     "type": "date",
+     "offset": 0
+    },
+    "81f65951-0270-58bc-aeee-a9c30604daa5": {
+     "chain": "webstack_id.company_id",
+     "type": "many2one"
+    },
+    "190d3adb-2f02-52c8-ad6d-864673034bfa": {
+     "chain": "controller_id",
+     "type": "many2one"
+    },
+    "0128f9f7-8c81-5fdb-be26-d24b16d616fe": {
+     "chain": "door_id.site_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "6": {
+   "type": "ODOO",
+   "id": "6",
+   "formulaId": "6",
+   "name": "Fire and Duress (previous period)",
+   "model": "hr.rfid.event.system",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [
+    [
+     "event_action",
+     "in",
+     [
+      "19",
+      "1",
+      "2"
+     ]
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "4ee6d8c3-df6b-5542-8921-5cd33af00ab1": {
+     "chain": "timestamp",
+     "type": "date",
+     "offset": -1
+    },
+    "81f65951-0270-58bc-aeee-a9c30604daa5": {
+     "chain": "webstack_id.company_id",
+     "type": "many2one"
+    },
+    "190d3adb-2f02-52c8-ad6d-864673034bfa": {
+     "chain": "controller_id",
+     "type": "many2one"
+    },
+    "0128f9f7-8c81-5fdb-be26-d24b16d616fe": {
+     "chain": "door_id.site_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "7": {
+   "type": "ODOO",
+   "id": "7",
+   "formulaId": "7",
+   "name": "Device Faults",
+   "model": "hr.rfid.event.system",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [
+    [
+     "event_action",
+     "in",
+     [
+      "30",
+      "45"
+     ]
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "4ee6d8c3-df6b-5542-8921-5cd33af00ab1": {
+     "chain": "timestamp",
+     "type": "date",
+     "offset": 0
+    },
+    "81f65951-0270-58bc-aeee-a9c30604daa5": {
+     "chain": "webstack_id.company_id",
+     "type": "many2one"
+    },
+    "190d3adb-2f02-52c8-ad6d-864673034bfa": {
+     "chain": "controller_id",
+     "type": "many2one"
+    },
+    "0128f9f7-8c81-5fdb-be26-d24b16d616fe": {
+     "chain": "door_id.site_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "8": {
+   "type": "ODOO",
+   "id": "8",
+   "formulaId": "8",
+   "name": "Device Faults (previous period)",
+   "model": "hr.rfid.event.system",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [
+    [
+     "event_action",
+     "in",
+     [
+      "30",
+      "45"
+     ]
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "4ee6d8c3-df6b-5542-8921-5cd33af00ab1": {
+     "chain": "timestamp",
+     "type": "date",
+     "offset": -1
+    },
+    "81f65951-0270-58bc-aeee-a9c30604daa5": {
+     "chain": "webstack_id.company_id",
+     "type": "many2one"
+    },
+    "190d3adb-2f02-52c8-ad6d-864673034bfa": {
+     "chain": "controller_id",
+     "type": "many2one"
+    },
+    "0128f9f7-8c81-5fdb-be26-d24b16d616fe": {
+     "chain": "door_id.site_id",
+     "type": "many2one"
+    }
+   }
+  }
+ },
+ "pivotNextId": 9,
+ "customTableStyles": {},
+ "globalFilters": [
+  {
+   "id": "4ee6d8c3-df6b-5542-8921-5cd33af00ab1",
+   "type": "date",
+   "label": "Period",
+   "defaultValue": "last_30_days"
+  },
+  {
+   "id": "0128f9f7-8c81-5fdb-be26-d24b16d616fe",
+   "type": "relation",
+   "label": "Site",
+   "modelName": "hr.rfid.site",
+   "defaultValueDisplayNames": []
+  },
+  {
+   "id": "81f65951-0270-58bc-aeee-a9c30604daa5",
+   "type": "relation",
+   "label": "Company",
+   "modelName": "res.company",
+   "defaultValueDisplayNames": []
+  },
+  {
+   "id": "190d3adb-2f02-52c8-ad6d-864673034bfa",
+   "type": "relation",
+   "label": "Controller",
+   "modelName": "hr.rfid.ctrl",
+   "defaultValueDisplayNames": []
+  }
+ ],
+ "lists": {},
+ "listNextId": 1,
+ "chartOdooMenusReferences": {
+  "cf61425d-095e-51b9-9269-ba2ee6c3ee0f": "hr_rfid.hr_rfid_menu_system_events",
+  "503e1a06-7b62-53ab-b67c-c3dc06feedcf": "hr_rfid.hr_rfid_menu_system_events",
+  "21d9c2e8-503c-5c3e-9e90-1145128c5311": "hr_rfid.hr_rfid_menu_system_events",
+  "b70152d8-5eea-52c7-8696-a3ce615fd6ad": "hr_rfid.hr_rfid_menu_system_events",
+  "62dfc73f-e1aa-54ab-ad1c-1f0b2ba425f8": "hr_rfid.hr_rfid_menu_system_events",
+  "4a0a0b8c-24de-51ea-9b07-d230f3d8a995": "hr_rfid.hr_rfid_menu_system_events",
+  "3fd638a0-acf5-5d6b-844d-2d4782407d68": "hr_rfid.hr_rfid_menu_system_events"
+ }
+}

@@ -1,0 +1,1554 @@
+{
+ "version": "18.4.14",
+ "sheets": [
+  {
+   "id": "620c3b50-9d08-551f-a4bb-989c148672d3",
+   "name": "Dashboard",
+   "colNumber": 9,
+   "rowNumber": 102,
+   "rows": {},
+   "cols": {
+    "0": {
+     "size": 120
+    },
+    "1": {
+     "size": 120
+    },
+    "2": {
+     "size": 120
+    },
+    "3": {
+     "size": 120
+    },
+    "4": {
+     "size": 120
+    },
+    "5": {
+     "size": 120
+    },
+    "6": {
+     "size": 120
+    },
+    "7": {
+     "size": 120
+    },
+    "8": {
+     "size": 120
+    }
+   },
+   "merges": [],
+   "cells": {},
+   "styles": {},
+   "formats": {},
+   "borders": {},
+   "conditionalFormats": [],
+   "dataValidationRules": [],
+   "figures": [
+    {
+     "id": "9c22a9d9-744b-559f-9ba0-4c5bc5b06d68",
+     "width": 188,
+     "height": 100,
+     "tag": "chart",
+     "data": {
+      "baselineColorDown": "#DC6965",
+      "baselineColorUp": "#00A04A",
+      "baselineMode": "percentage",
+      "title": {
+       "text": "Worked Hours",
+       "bold": true,
+       "color": "#434343"
+      },
+      "type": "scorecard",
+      "background": "#EFF6FF",
+      "keyValue": "Data!C1",
+      "humanize": true,
+      "chartId": "9c22a9d9-744b-559f-9ba0-4c5bc5b06d68",
+      "baseline": "Data!D1",
+      "baselineDescr": "vs previous period"
+     },
+     "offset": {
+      "x": 8,
+      "y": 8
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "e6383d02-f571-5614-8f7f-3573b4e1bef9",
+     "width": 188,
+     "height": 100,
+     "tag": "chart",
+     "data": {
+      "baselineColorDown": "#00A04A",
+      "baselineColorUp": "#DC6965",
+      "baselineMode": "percentage",
+      "title": {
+       "text": "Absence Days",
+       "bold": true,
+       "color": "#434343"
+      },
+      "type": "scorecard",
+      "background": "#EFF6FF",
+      "keyValue": "Data!C2",
+      "humanize": true,
+      "chartId": "e6383d02-f571-5614-8f7f-3573b4e1bef9",
+      "baseline": "Data!D2",
+      "baselineDescr": "vs previous period"
+     },
+     "offset": {
+      "x": 204,
+      "y": 8
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "76786fee-43ec-5a52-a873-ee58dc59fd20",
+     "width": 188,
+     "height": 100,
+     "tag": "chart",
+     "data": {
+      "baselineColorDown": "#00A04A",
+      "baselineColorUp": "#DC6965",
+      "baselineMode": "percentage",
+      "title": {
+       "text": "Late Arrivals",
+       "bold": true,
+       "color": "#434343"
+      },
+      "type": "scorecard",
+      "background": "#EFF6FF",
+      "keyValue": "Data!C3",
+      "humanize": true,
+      "chartId": "76786fee-43ec-5a52-a873-ee58dc59fd20",
+      "baseline": "Data!D3",
+      "baselineDescr": "vs previous period"
+     },
+     "offset": {
+      "x": 400,
+      "y": 8
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "38ada6f9-127d-5aa9-8a88-7b33cea30188",
+     "width": 188,
+     "height": 100,
+     "tag": "chart",
+     "data": {
+      "baselineColorDown": "#DC6965",
+      "baselineColorUp": "#00A04A",
+      "baselineMode": "percentage",
+      "title": {
+       "text": "Overtime Hours",
+       "bold": true,
+       "color": "#434343"
+      },
+      "type": "scorecard",
+      "background": "#EFF6FF",
+      "keyValue": "Data!C4",
+      "humanize": true,
+      "chartId": "38ada6f9-127d-5aa9-8a88-7b33cea30188",
+      "baseline": "Data!D4",
+      "baselineDescr": "vs previous period"
+     },
+     "offset": {
+      "x": 596,
+      "y": 8
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "1b9655b0-942e-51cd-849d-9bb77deb258c",
+     "width": 188,
+     "height": 100,
+     "tag": "chart",
+     "data": {
+      "baselineColorDown": "#DC6965",
+      "baselineColorUp": "#00A04A",
+      "baselineMode": "text",
+      "title": {
+       "text": "Utilization",
+       "bold": true,
+       "color": "#434343"
+      },
+      "type": "scorecard",
+      "background": "#EFF6FF",
+      "keyValue": "Data!C5",
+      "humanize": false,
+      "chartId": "1b9655b0-942e-51cd-849d-9bb77deb258c"
+     },
+     "offset": {
+      "x": 792,
+      "y": 8
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "aa8ea21b-8e86-5ca1-b2ff-e6308f5c8d4b",
+     "width": 188,
+     "height": 100,
+     "tag": "chart",
+     "data": {
+      "baselineColorDown": "#DC6965",
+      "baselineColorUp": "#00A04A",
+      "baselineMode": "text",
+      "title": {
+       "text": "Punctuality",
+       "bold": true,
+       "color": "#434343"
+      },
+      "type": "scorecard",
+      "background": "#EFF6FF",
+      "keyValue": "Data!C6",
+      "humanize": false,
+      "chartId": "aa8ea21b-8e86-5ca1-b2ff-e6308f5c8d4b"
+     },
+     "offset": {
+      "x": 8,
+      "y": 116
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "f5886bca-32b2-55fd-aa8d-c53db5233eb0",
+     "width": 486,
+     "height": 300,
+     "tag": "chart",
+     "data": {
+      "title": {
+       "text": "Worked Hours by Department"
+      },
+      "background": "#FFFFFF",
+      "legendPosition": "top",
+      "metaData": {
+       "groupBy": [
+        "department_id"
+       ],
+       "measure": "actual_work_time",
+       "order": null,
+       "resModel": "hr.attendance.extra",
+       "mode": "bar"
+      },
+      "searchParams": {
+       "comparison": null,
+       "context": {},
+       "domain": [],
+       "groupBy": [
+        "department_id"
+       ],
+       "orderBy": []
+      },
+      "type": "odoo_bar",
+      "dataSets": [],
+      "chartId": "f5886bca-32b2-55fd-aa8d-c53db5233eb0",
+      "fieldMatching": {
+       "2565a634-49f7-5405-8cec-0fc340acadd7": {
+        "chain": "for_date",
+        "type": "date",
+        "offset": 0
+       },
+       "00dd3e72-e08d-5fe4-b6fe-d52983b2d561": {
+        "chain": "department_id",
+        "type": "many2one"
+       },
+       "37d6b95b-57fc-520b-ba45-2f667d398525": {
+        "chain": "employee_id.company_id",
+        "type": "many2one"
+       }
+      },
+      "verticalAxisPosition": "left",
+      "stacked": false
+     },
+     "offset": {
+      "x": 8,
+      "y": 236
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "551d2dea-3856-5d8d-ab85-68bb2b7ad3e1",
+     "width": 486,
+     "height": 300,
+     "tag": "chart",
+     "data": {
+      "title": {
+       "text": "Absence Days by Department"
+      },
+      "background": "#FFFFFF",
+      "legendPosition": "top",
+      "metaData": {
+       "groupBy": [
+        "department_id"
+       ],
+       "measure": "__count",
+       "order": null,
+       "resModel": "hr.attendance.extra",
+       "mode": "bar"
+      },
+      "searchParams": {
+       "comparison": null,
+       "context": {},
+       "domain": [
+        [
+         "theoretical_work_time",
+         ">",
+         0
+        ],
+        [
+         "actual_work_time",
+         "=",
+         0
+        ]
+       ],
+       "groupBy": [
+        "department_id"
+       ],
+       "orderBy": []
+      },
+      "type": "odoo_bar",
+      "dataSets": [],
+      "chartId": "551d2dea-3856-5d8d-ab85-68bb2b7ad3e1",
+      "fieldMatching": {
+       "2565a634-49f7-5405-8cec-0fc340acadd7": {
+        "chain": "for_date",
+        "type": "date",
+        "offset": 0
+       },
+       "00dd3e72-e08d-5fe4-b6fe-d52983b2d561": {
+        "chain": "department_id",
+        "type": "many2one"
+       },
+       "37d6b95b-57fc-520b-ba45-2f667d398525": {
+        "chain": "employee_id.company_id",
+        "type": "many2one"
+       }
+      },
+      "verticalAxisPosition": "left",
+      "stacked": false
+     },
+     "offset": {
+      "x": 502,
+      "y": 236
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "2f32e5ee-3724-589c-a7c4-a3498db9c8c3",
+     "width": 486,
+     "height": 300,
+     "tag": "chart",
+     "data": {
+      "title": {
+       "text": "Late Hours by Department"
+      },
+      "background": "#FFFFFF",
+      "legendPosition": "top",
+      "metaData": {
+       "groupBy": [
+        "department_id"
+       ],
+       "measure": "late_time",
+       "order": null,
+       "resModel": "hr.attendance.extra",
+       "mode": "bar"
+      },
+      "searchParams": {
+       "comparison": null,
+       "context": {},
+       "domain": [
+        [
+         "late_time",
+         ">",
+         0
+        ]
+       ],
+       "groupBy": [
+        "department_id"
+       ],
+       "orderBy": []
+      },
+      "type": "odoo_bar",
+      "dataSets": [],
+      "chartId": "2f32e5ee-3724-589c-a7c4-a3498db9c8c3",
+      "fieldMatching": {
+       "2565a634-49f7-5405-8cec-0fc340acadd7": {
+        "chain": "for_date",
+        "type": "date",
+        "offset": 0
+       },
+       "00dd3e72-e08d-5fe4-b6fe-d52983b2d561": {
+        "chain": "department_id",
+        "type": "many2one"
+       },
+       "37d6b95b-57fc-520b-ba45-2f667d398525": {
+        "chain": "employee_id.company_id",
+        "type": "many2one"
+       }
+      },
+      "verticalAxisPosition": "left",
+      "stacked": false
+     },
+     "offset": {
+      "x": 8,
+      "y": 564
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "634eefad-6b59-5ec1-87d2-8e25298344e7",
+     "width": 486,
+     "height": 300,
+     "tag": "chart",
+     "data": {
+      "type": "bar",
+      "dataSetsHaveTitle": true,
+      "dataSets": [
+       {
+        "dataRange": "Data!B9:B19"
+       }
+      ],
+      "labelRange": "Data!A9:A19",
+      "legendPosition": "none",
+      "title": {
+       "text": "Top 10 Late Arrivers"
+      },
+      "background": "#FFFFFF",
+      "stacked": false,
+      "aggregated": false,
+      "horizontal": true
+     },
+     "offset": {
+      "x": 502,
+      "y": 564
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "f74ae471-c7ea-51ed-8201-87df9df0d065",
+     "width": 486,
+     "height": 300,
+     "tag": "chart",
+     "data": {
+      "type": "bar",
+      "dataSetsHaveTitle": true,
+      "dataSets": [
+       {
+        "dataRange": "Data!B21:B31"
+       }
+      ],
+      "labelRange": "Data!A21:A31",
+      "legendPosition": "none",
+      "title": {
+       "text": "Top 10 Early Leavers"
+      },
+      "background": "#FFFFFF",
+      "stacked": false,
+      "aggregated": false,
+      "horizontal": true
+     },
+     "offset": {
+      "x": 8,
+      "y": 892
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "3974f13c-dbf3-5e19-a0d4-15aabf253d75",
+     "width": 486,
+     "height": 300,
+     "tag": "chart",
+     "data": {
+      "type": "bar",
+      "dataSetsHaveTitle": true,
+      "dataSets": [
+       {
+        "dataRange": "Data!B33:B43"
+       }
+      ],
+      "labelRange": "Data!A33:A43",
+      "legendPosition": "none",
+      "title": {
+       "text": "Top 10 Most Punctual"
+      },
+      "background": "#FFFFFF",
+      "stacked": false,
+      "aggregated": false,
+      "horizontal": true
+     },
+     "offset": {
+      "x": 502,
+      "y": 892
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "240115bd-50fd-5497-8c0a-3ca57cdf3ba7",
+     "width": 486,
+     "height": 300,
+     "tag": "chart",
+     "data": {
+      "title": {
+       "text": "Overtime by Department"
+      },
+      "background": "#FFFFFF",
+      "legendPosition": "top",
+      "metaData": {
+       "groupBy": [
+        "department_id"
+       ],
+       "measure": "overtime",
+       "order": null,
+       "resModel": "hr.attendance.extra",
+       "mode": "bar"
+      },
+      "searchParams": {
+       "comparison": null,
+       "context": {},
+       "domain": [],
+       "groupBy": [
+        "department_id"
+       ],
+       "orderBy": []
+      },
+      "type": "odoo_bar",
+      "dataSets": [],
+      "chartId": "240115bd-50fd-5497-8c0a-3ca57cdf3ba7",
+      "fieldMatching": {
+       "2565a634-49f7-5405-8cec-0fc340acadd7": {
+        "chain": "for_date",
+        "type": "date",
+        "offset": 0
+       },
+       "00dd3e72-e08d-5fe4-b6fe-d52983b2d561": {
+        "chain": "department_id",
+        "type": "many2one"
+       },
+       "37d6b95b-57fc-520b-ba45-2f667d398525": {
+        "chain": "employee_id.company_id",
+        "type": "many2one"
+       }
+      },
+      "verticalAxisPosition": "left",
+      "stacked": false
+     },
+     "offset": {
+      "x": 8,
+      "y": 1220
+     },
+     "col": 0,
+     "row": 0
+    },
+    {
+     "id": "f5ebeac6-4745-5aa8-997d-f24533067e21",
+     "width": 980,
+     "height": 300,
+     "tag": "chart",
+     "data": {
+      "type": "line",
+      "dataSetsHaveTitle": true,
+      "dataSets": [
+       {
+        "dataRange": "Data!B45:B57"
+       },
+       {
+        "dataRange": "Data!C45:C57"
+       }
+      ],
+      "labelRange": "Data!A45:A57",
+      "legendPosition": "top",
+      "title": {
+       "text": "Actual vs Planned Hours by Month"
+      },
+      "background": "#FFFFFF",
+      "stacked": false,
+      "aggregated": false
+     },
+     "offset": {
+      "x": 8,
+      "y": 1548
+     },
+     "col": 0,
+     "row": 0
+    }
+   ],
+   "tables": [],
+   "areGridLinesVisible": false,
+   "isVisible": true,
+   "headerGroups": {
+    "ROW": [],
+    "COL": []
+   },
+   "comments": {}
+  },
+  {
+   "id": "0477dd2a-e99f-54f3-b915-8ef07474423b",
+   "name": "Data",
+   "colNumber": 6,
+   "rowNumber": 9,
+   "rows": {},
+   "cols": {},
+   "merges": [],
+   "cells": {
+    "A1": "=_t(\"Worked Hours\")",
+    "B1": "=PIVOT.VALUE(1,\"actual_work_time\")",
+    "C1": "=B1",
+    "D1": "=PIVOT.VALUE(2,\"actual_work_time\")",
+    "A2": "=_t(\"Absence Days\")",
+    "B2": "=PIVOT.VALUE(3,\"__count\")",
+    "C2": "=FORMAT.LARGE.NUMBER(B2)",
+    "D2": "=PIVOT.VALUE(4,\"__count\")",
+    "A3": "=_t(\"Late Arrivals\")",
+    "B3": "=PIVOT.VALUE(5,\"__count\")",
+    "C3": "=FORMAT.LARGE.NUMBER(B3)",
+    "D3": "=PIVOT.VALUE(6,\"__count\")",
+    "A4": "=_t(\"Overtime Hours\")",
+    "B4": "=PIVOT.VALUE(7,\"overtime\")",
+    "C4": "=B4",
+    "D4": "=PIVOT.VALUE(8,\"overtime\")",
+    "A5": "=_t(\"Utilization\")",
+    "B5": "=IFERROR(PIVOT.VALUE(9,\"actual_work_time\")/PIVOT.VALUE(10,\"theoretical_work_time\"),0)",
+    "C5": "=B5",
+    "A6": "=_t(\"Punctuality\")",
+    "B6": "=IFERROR(PIVOT.VALUE(11,\"__count\")/PIVOT.VALUE(12,\"__count\"),0)",
+    "C6": "=B6",
+    "A9": "=_t(\"Top 10 Late Arrivers\")",
+    "B9": "=_t(\"Late hours\")",
+    "A10": "=IFERROR(PIVOT.HEADER(13,\"#employee_id\",1),\"\")",
+    "B10": "=IFERROR(PIVOT.VALUE(13,\"late_time\",\"#employee_id\",1),\"\")",
+    "A11": "=IFERROR(PIVOT.HEADER(13,\"#employee_id\",2),\"\")",
+    "B11": "=IFERROR(PIVOT.VALUE(13,\"late_time\",\"#employee_id\",2),\"\")",
+    "A12": "=IFERROR(PIVOT.HEADER(13,\"#employee_id\",3),\"\")",
+    "B12": "=IFERROR(PIVOT.VALUE(13,\"late_time\",\"#employee_id\",3),\"\")",
+    "A13": "=IFERROR(PIVOT.HEADER(13,\"#employee_id\",4),\"\")",
+    "B13": "=IFERROR(PIVOT.VALUE(13,\"late_time\",\"#employee_id\",4),\"\")",
+    "A14": "=IFERROR(PIVOT.HEADER(13,\"#employee_id\",5),\"\")",
+    "B14": "=IFERROR(PIVOT.VALUE(13,\"late_time\",\"#employee_id\",5),\"\")",
+    "A15": "=IFERROR(PIVOT.HEADER(13,\"#employee_id\",6),\"\")",
+    "B15": "=IFERROR(PIVOT.VALUE(13,\"late_time\",\"#employee_id\",6),\"\")",
+    "A16": "=IFERROR(PIVOT.HEADER(13,\"#employee_id\",7),\"\")",
+    "B16": "=IFERROR(PIVOT.VALUE(13,\"late_time\",\"#employee_id\",7),\"\")",
+    "A17": "=IFERROR(PIVOT.HEADER(13,\"#employee_id\",8),\"\")",
+    "B17": "=IFERROR(PIVOT.VALUE(13,\"late_time\",\"#employee_id\",8),\"\")",
+    "A18": "=IFERROR(PIVOT.HEADER(13,\"#employee_id\",9),\"\")",
+    "B18": "=IFERROR(PIVOT.VALUE(13,\"late_time\",\"#employee_id\",9),\"\")",
+    "A19": "=IFERROR(PIVOT.HEADER(13,\"#employee_id\",10),\"\")",
+    "B19": "=IFERROR(PIVOT.VALUE(13,\"late_time\",\"#employee_id\",10),\"\")",
+    "A21": "=_t(\"Top 10 Early Leavers\")",
+    "B21": "=_t(\"Early-leave hours\")",
+    "A22": "=IFERROR(PIVOT.HEADER(14,\"#employee_id\",1),\"\")",
+    "B22": "=IFERROR(PIVOT.VALUE(14,\"early_leave_time\",\"#employee_id\",1),\"\")",
+    "A23": "=IFERROR(PIVOT.HEADER(14,\"#employee_id\",2),\"\")",
+    "B23": "=IFERROR(PIVOT.VALUE(14,\"early_leave_time\",\"#employee_id\",2),\"\")",
+    "A24": "=IFERROR(PIVOT.HEADER(14,\"#employee_id\",3),\"\")",
+    "B24": "=IFERROR(PIVOT.VALUE(14,\"early_leave_time\",\"#employee_id\",3),\"\")",
+    "A25": "=IFERROR(PIVOT.HEADER(14,\"#employee_id\",4),\"\")",
+    "B25": "=IFERROR(PIVOT.VALUE(14,\"early_leave_time\",\"#employee_id\",4),\"\")",
+    "A26": "=IFERROR(PIVOT.HEADER(14,\"#employee_id\",5),\"\")",
+    "B26": "=IFERROR(PIVOT.VALUE(14,\"early_leave_time\",\"#employee_id\",5),\"\")",
+    "A27": "=IFERROR(PIVOT.HEADER(14,\"#employee_id\",6),\"\")",
+    "B27": "=IFERROR(PIVOT.VALUE(14,\"early_leave_time\",\"#employee_id\",6),\"\")",
+    "A28": "=IFERROR(PIVOT.HEADER(14,\"#employee_id\",7),\"\")",
+    "B28": "=IFERROR(PIVOT.VALUE(14,\"early_leave_time\",\"#employee_id\",7),\"\")",
+    "A29": "=IFERROR(PIVOT.HEADER(14,\"#employee_id\",8),\"\")",
+    "B29": "=IFERROR(PIVOT.VALUE(14,\"early_leave_time\",\"#employee_id\",8),\"\")",
+    "A30": "=IFERROR(PIVOT.HEADER(14,\"#employee_id\",9),\"\")",
+    "B30": "=IFERROR(PIVOT.VALUE(14,\"early_leave_time\",\"#employee_id\",9),\"\")",
+    "A31": "=IFERROR(PIVOT.HEADER(14,\"#employee_id\",10),\"\")",
+    "B31": "=IFERROR(PIVOT.VALUE(14,\"early_leave_time\",\"#employee_id\",10),\"\")",
+    "A33": "=_t(\"Top 10 Most Punctual\")",
+    "B33": "=_t(\"Punctual days\")",
+    "A34": "=IFERROR(PIVOT.HEADER(15,\"#employee_id\",1),\"\")",
+    "B34": "=IFERROR(PIVOT.VALUE(15,\"__count\",\"#employee_id\",1),\"\")",
+    "A35": "=IFERROR(PIVOT.HEADER(15,\"#employee_id\",2),\"\")",
+    "B35": "=IFERROR(PIVOT.VALUE(15,\"__count\",\"#employee_id\",2),\"\")",
+    "A36": "=IFERROR(PIVOT.HEADER(15,\"#employee_id\",3),\"\")",
+    "B36": "=IFERROR(PIVOT.VALUE(15,\"__count\",\"#employee_id\",3),\"\")",
+    "A37": "=IFERROR(PIVOT.HEADER(15,\"#employee_id\",4),\"\")",
+    "B37": "=IFERROR(PIVOT.VALUE(15,\"__count\",\"#employee_id\",4),\"\")",
+    "A38": "=IFERROR(PIVOT.HEADER(15,\"#employee_id\",5),\"\")",
+    "B38": "=IFERROR(PIVOT.VALUE(15,\"__count\",\"#employee_id\",5),\"\")",
+    "A39": "=IFERROR(PIVOT.HEADER(15,\"#employee_id\",6),\"\")",
+    "B39": "=IFERROR(PIVOT.VALUE(15,\"__count\",\"#employee_id\",6),\"\")",
+    "A40": "=IFERROR(PIVOT.HEADER(15,\"#employee_id\",7),\"\")",
+    "B40": "=IFERROR(PIVOT.VALUE(15,\"__count\",\"#employee_id\",7),\"\")",
+    "A41": "=IFERROR(PIVOT.HEADER(15,\"#employee_id\",8),\"\")",
+    "B41": "=IFERROR(PIVOT.VALUE(15,\"__count\",\"#employee_id\",8),\"\")",
+    "A42": "=IFERROR(PIVOT.HEADER(15,\"#employee_id\",9),\"\")",
+    "B42": "=IFERROR(PIVOT.VALUE(15,\"__count\",\"#employee_id\",9),\"\")",
+    "A43": "=IFERROR(PIVOT.HEADER(15,\"#employee_id\",10),\"\")",
+    "B43": "=IFERROR(PIVOT.VALUE(15,\"__count\",\"#employee_id\",10),\"\")",
+    "A45": "=_t(\"Actual vs Planned Hours by Month\")",
+    "B45": "=_t(\"Actual\")",
+    "B46": "=IFERROR(PIVOT.VALUE(16,\"actual_work_time\",\"for_date:month_number\",1),0)",
+    "B47": "=IFERROR(PIVOT.VALUE(16,\"actual_work_time\",\"for_date:month_number\",2),0)",
+    "B48": "=IFERROR(PIVOT.VALUE(16,\"actual_work_time\",\"for_date:month_number\",3),0)",
+    "B49": "=IFERROR(PIVOT.VALUE(16,\"actual_work_time\",\"for_date:month_number\",4),0)",
+    "B50": "=IFERROR(PIVOT.VALUE(16,\"actual_work_time\",\"for_date:month_number\",5),0)",
+    "B51": "=IFERROR(PIVOT.VALUE(16,\"actual_work_time\",\"for_date:month_number\",6),0)",
+    "B52": "=IFERROR(PIVOT.VALUE(16,\"actual_work_time\",\"for_date:month_number\",7),0)",
+    "B53": "=IFERROR(PIVOT.VALUE(16,\"actual_work_time\",\"for_date:month_number\",8),0)",
+    "B54": "=IFERROR(PIVOT.VALUE(16,\"actual_work_time\",\"for_date:month_number\",9),0)",
+    "B55": "=IFERROR(PIVOT.VALUE(16,\"actual_work_time\",\"for_date:month_number\",10),0)",
+    "B56": "=IFERROR(PIVOT.VALUE(16,\"actual_work_time\",\"for_date:month_number\",11),0)",
+    "B57": "=IFERROR(PIVOT.VALUE(16,\"actual_work_time\",\"for_date:month_number\",12),0)",
+    "C45": "=_t(\"Planned\")",
+    "C46": "=IFERROR(PIVOT.VALUE(17,\"theoretical_work_time\",\"for_date:month_number\",1),0)",
+    "C47": "=IFERROR(PIVOT.VALUE(17,\"theoretical_work_time\",\"for_date:month_number\",2),0)",
+    "C48": "=IFERROR(PIVOT.VALUE(17,\"theoretical_work_time\",\"for_date:month_number\",3),0)",
+    "C49": "=IFERROR(PIVOT.VALUE(17,\"theoretical_work_time\",\"for_date:month_number\",4),0)",
+    "C50": "=IFERROR(PIVOT.VALUE(17,\"theoretical_work_time\",\"for_date:month_number\",5),0)",
+    "C51": "=IFERROR(PIVOT.VALUE(17,\"theoretical_work_time\",\"for_date:month_number\",6),0)",
+    "C52": "=IFERROR(PIVOT.VALUE(17,\"theoretical_work_time\",\"for_date:month_number\",7),0)",
+    "C53": "=IFERROR(PIVOT.VALUE(17,\"theoretical_work_time\",\"for_date:month_number\",8),0)",
+    "C54": "=IFERROR(PIVOT.VALUE(17,\"theoretical_work_time\",\"for_date:month_number\",9),0)",
+    "C55": "=IFERROR(PIVOT.VALUE(17,\"theoretical_work_time\",\"for_date:month_number\",10),0)",
+    "C56": "=IFERROR(PIVOT.VALUE(17,\"theoretical_work_time\",\"for_date:month_number\",11),0)",
+    "C57": "=IFERROR(PIVOT.VALUE(17,\"theoretical_work_time\",\"for_date:month_number\",12),0)",
+    "A46": "01",
+    "A47": "02",
+    "A48": "03",
+    "A49": "04",
+    "A50": "05",
+    "A51": "06",
+    "A52": "07",
+    "A53": "08",
+    "A54": "09",
+    "A55": "10",
+    "A56": "11",
+    "A57": "12"
+   },
+   "styles": {},
+   "formats": {
+    "C1": "1",
+    "C4": "1",
+    "C5": "2",
+    "C6": "2"
+   },
+   "borders": {},
+   "conditionalFormats": [],
+   "dataValidationRules": [],
+   "figures": [],
+   "tables": [],
+   "areGridLinesVisible": true,
+   "isVisible": true,
+   "headerGroups": {
+    "ROW": [],
+    "COL": []
+   },
+   "comments": {}
+  }
+ ],
+ "styles": {},
+ "formats": {
+  "1": "#,##0.0",
+  "2": "0.0%"
+ },
+ "borders": {},
+ "revisionId": "START_REVISION",
+ "uniqueFigureIds": true,
+ "settings": {
+  "locale": {
+   "name": "English (US)",
+   "code": "en_US",
+   "thousandsSeparator": ",",
+   "decimalSeparator": ".",
+   "dateFormat": "mm/dd/yyyy",
+   "timeFormat": "hh:mm:ss",
+   "formulaArgSeparator": ",",
+   "weekStart": 7
+  }
+ },
+ "pivots": {
+  "1": {
+   "type": "ODOO",
+   "id": "1",
+   "formulaId": "1",
+   "name": "Worked Hours",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "actual_work_time",
+     "fieldName": "actual_work_time"
+    }
+   ],
+   "domain": [],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "actual_work_time",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "2565a634-49f7-5405-8cec-0fc340acadd7": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": 0
+    },
+    "00dd3e72-e08d-5fe4-b6fe-d52983b2d561": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "37d6b95b-57fc-520b-ba45-2f667d398525": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "2": {
+   "type": "ODOO",
+   "id": "2",
+   "formulaId": "2",
+   "name": "Worked Hours (previous period)",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "actual_work_time",
+     "fieldName": "actual_work_time"
+    }
+   ],
+   "domain": [],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "actual_work_time",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "2565a634-49f7-5405-8cec-0fc340acadd7": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": -1
+    },
+    "00dd3e72-e08d-5fe4-b6fe-d52983b2d561": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "37d6b95b-57fc-520b-ba45-2f667d398525": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "3": {
+   "type": "ODOO",
+   "id": "3",
+   "formulaId": "3",
+   "name": "Absence Days",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [
+    [
+     "theoretical_work_time",
+     ">",
+     0
+    ],
+    [
+     "actual_work_time",
+     "=",
+     0
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "2565a634-49f7-5405-8cec-0fc340acadd7": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": 0
+    },
+    "00dd3e72-e08d-5fe4-b6fe-d52983b2d561": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "37d6b95b-57fc-520b-ba45-2f667d398525": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "4": {
+   "type": "ODOO",
+   "id": "4",
+   "formulaId": "4",
+   "name": "Absence Days (previous period)",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [
+    [
+     "theoretical_work_time",
+     ">",
+     0
+    ],
+    [
+     "actual_work_time",
+     "=",
+     0
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "2565a634-49f7-5405-8cec-0fc340acadd7": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": -1
+    },
+    "00dd3e72-e08d-5fe4-b6fe-d52983b2d561": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "37d6b95b-57fc-520b-ba45-2f667d398525": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "5": {
+   "type": "ODOO",
+   "id": "5",
+   "formulaId": "5",
+   "name": "Late Arrivals",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [
+    [
+     "late_time",
+     ">",
+     0
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "2565a634-49f7-5405-8cec-0fc340acadd7": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": 0
+    },
+    "00dd3e72-e08d-5fe4-b6fe-d52983b2d561": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "37d6b95b-57fc-520b-ba45-2f667d398525": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "6": {
+   "type": "ODOO",
+   "id": "6",
+   "formulaId": "6",
+   "name": "Late Arrivals (previous period)",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [
+    [
+     "late_time",
+     ">",
+     0
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "2565a634-49f7-5405-8cec-0fc340acadd7": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": -1
+    },
+    "00dd3e72-e08d-5fe4-b6fe-d52983b2d561": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "37d6b95b-57fc-520b-ba45-2f667d398525": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "7": {
+   "type": "ODOO",
+   "id": "7",
+   "formulaId": "7",
+   "name": "Overtime Hours",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "overtime",
+     "fieldName": "overtime"
+    }
+   ],
+   "domain": [],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "overtime",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "2565a634-49f7-5405-8cec-0fc340acadd7": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": 0
+    },
+    "00dd3e72-e08d-5fe4-b6fe-d52983b2d561": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "37d6b95b-57fc-520b-ba45-2f667d398525": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "8": {
+   "type": "ODOO",
+   "id": "8",
+   "formulaId": "8",
+   "name": "Overtime Hours (previous period)",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "overtime",
+     "fieldName": "overtime"
+    }
+   ],
+   "domain": [],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "overtime",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "2565a634-49f7-5405-8cec-0fc340acadd7": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": -1
+    },
+    "00dd3e72-e08d-5fe4-b6fe-d52983b2d561": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "37d6b95b-57fc-520b-ba45-2f667d398525": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "9": {
+   "type": "ODOO",
+   "id": "9",
+   "formulaId": "9",
+   "name": "Utilization",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "actual_work_time",
+     "fieldName": "actual_work_time"
+    }
+   ],
+   "domain": [],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "actual_work_time",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "2565a634-49f7-5405-8cec-0fc340acadd7": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": 0
+    },
+    "00dd3e72-e08d-5fe4-b6fe-d52983b2d561": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "37d6b95b-57fc-520b-ba45-2f667d398525": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "10": {
+   "type": "ODOO",
+   "id": "10",
+   "formulaId": "10",
+   "name": "Utilization",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "theoretical_work_time",
+     "fieldName": "theoretical_work_time"
+    }
+   ],
+   "domain": [
+    [
+     "theoretical_work_time",
+     ">",
+     0
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "theoretical_work_time",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "2565a634-49f7-5405-8cec-0fc340acadd7": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": 0
+    },
+    "00dd3e72-e08d-5fe4-b6fe-d52983b2d561": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "37d6b95b-57fc-520b-ba45-2f667d398525": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "11": {
+   "type": "ODOO",
+   "id": "11",
+   "formulaId": "11",
+   "name": "Punctuality",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [
+    [
+     "actual_work_time",
+     ">",
+     0
+    ],
+    [
+     "late_time",
+     "=",
+     0
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "2565a634-49f7-5405-8cec-0fc340acadd7": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": 0
+    },
+    "00dd3e72-e08d-5fe4-b6fe-d52983b2d561": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "37d6b95b-57fc-520b-ba45-2f667d398525": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "12": {
+   "type": "ODOO",
+   "id": "12",
+   "formulaId": "12",
+   "name": "Punctuality",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [
+    [
+     "actual_work_time",
+     ">",
+     0
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "2565a634-49f7-5405-8cec-0fc340acadd7": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": 0
+    },
+    "00dd3e72-e08d-5fe4-b6fe-d52983b2d561": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "37d6b95b-57fc-520b-ba45-2f667d398525": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "13": {
+   "type": "ODOO",
+   "id": "13",
+   "formulaId": "13",
+   "name": "Top 10 Late Arrivers",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "late_time",
+     "fieldName": "late_time"
+    }
+   ],
+   "domain": [
+    [
+     "late_time",
+     ">",
+     0
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [
+    {
+     "fieldName": "employee_id"
+    }
+   ],
+   "sortedColumn": {
+    "measure": "late_time",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "2565a634-49f7-5405-8cec-0fc340acadd7": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": 0
+    },
+    "00dd3e72-e08d-5fe4-b6fe-d52983b2d561": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "37d6b95b-57fc-520b-ba45-2f667d398525": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "14": {
+   "type": "ODOO",
+   "id": "14",
+   "formulaId": "14",
+   "name": "Top 10 Early Leavers",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "early_leave_time",
+     "fieldName": "early_leave_time"
+    }
+   ],
+   "domain": [
+    [
+     "early_leave_time",
+     ">",
+     0
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [
+    {
+     "fieldName": "employee_id"
+    }
+   ],
+   "sortedColumn": {
+    "measure": "early_leave_time",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "2565a634-49f7-5405-8cec-0fc340acadd7": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": 0
+    },
+    "00dd3e72-e08d-5fe4-b6fe-d52983b2d561": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "37d6b95b-57fc-520b-ba45-2f667d398525": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "15": {
+   "type": "ODOO",
+   "id": "15",
+   "formulaId": "15",
+   "name": "Top 10 Most Punctual",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "__count",
+     "fieldName": "__count"
+    }
+   ],
+   "domain": [
+    [
+     "actual_work_time",
+     ">",
+     0
+    ],
+    [
+     "late_time",
+     "=",
+     0
+    ],
+    [
+     "early_leave_time",
+     "=",
+     0
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [
+    {
+     "fieldName": "employee_id"
+    }
+   ],
+   "sortedColumn": {
+    "measure": "__count",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "2565a634-49f7-5405-8cec-0fc340acadd7": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": 0
+    },
+    "00dd3e72-e08d-5fe4-b6fe-d52983b2d561": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "37d6b95b-57fc-520b-ba45-2f667d398525": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "16": {
+   "type": "ODOO",
+   "id": "16",
+   "formulaId": "16",
+   "name": "Actual vs Planned Hours by Month - Actual",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "actual_work_time",
+     "fieldName": "actual_work_time"
+    }
+   ],
+   "domain": [],
+   "context": {},
+   "columns": [],
+   "rows": [
+    {
+     "fieldName": "for_date",
+     "order": "asc",
+     "granularity": "month_number"
+    }
+   ],
+   "sortedColumn": {
+    "measure": "actual_work_time",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "2565a634-49f7-5405-8cec-0fc340acadd7": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": 0
+    },
+    "00dd3e72-e08d-5fe4-b6fe-d52983b2d561": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "37d6b95b-57fc-520b-ba45-2f667d398525": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  },
+  "17": {
+   "type": "ODOO",
+   "id": "17",
+   "formulaId": "17",
+   "name": "Actual vs Planned Hours by Month - Planned",
+   "model": "hr.attendance.extra",
+   "measures": [
+    {
+     "id": "theoretical_work_time",
+     "fieldName": "theoretical_work_time"
+    }
+   ],
+   "domain": [],
+   "context": {},
+   "columns": [],
+   "rows": [
+    {
+     "fieldName": "for_date",
+     "order": "asc",
+     "granularity": "month_number"
+    }
+   ],
+   "sortedColumn": {
+    "measure": "theoretical_work_time",
+    "order": "desc",
+    "domain": []
+   },
+   "fieldMatching": {
+    "2565a634-49f7-5405-8cec-0fc340acadd7": {
+     "chain": "for_date",
+     "type": "date",
+     "offset": 0
+    },
+    "00dd3e72-e08d-5fe4-b6fe-d52983b2d561": {
+     "chain": "department_id",
+     "type": "many2one"
+    },
+    "37d6b95b-57fc-520b-ba45-2f667d398525": {
+     "chain": "employee_id.company_id",
+     "type": "many2one"
+    }
+   }
+  }
+ },
+ "pivotNextId": 18,
+ "customTableStyles": {},
+ "globalFilters": [
+  {
+   "id": "2565a634-49f7-5405-8cec-0fc340acadd7",
+   "type": "date",
+   "label": "Period",
+   "defaultValue": "last_30_days"
+  },
+  {
+   "id": "00dd3e72-e08d-5fe4-b6fe-d52983b2d561",
+   "type": "relation",
+   "label": "Department",
+   "modelName": "hr.department",
+   "defaultValueDisplayNames": []
+  },
+  {
+   "id": "37d6b95b-57fc-520b-ba45-2f667d398525",
+   "type": "relation",
+   "label": "Company",
+   "modelName": "res.company",
+   "defaultValueDisplayNames": []
+  }
+ ],
+ "lists": {},
+ "listNextId": 1,
+ "chartOdooMenusReferences": {
+  "9c22a9d9-744b-559f-9ba0-4c5bc5b06d68": "hr_attendance_late.menu_hr_attendance_extra",
+  "e6383d02-f571-5614-8f7f-3573b4e1bef9": "hr_attendance_late.menu_hr_attendance_extra",
+  "76786fee-43ec-5a52-a873-ee58dc59fd20": "hr_attendance_late.menu_hr_attendance_extra",
+  "38ada6f9-127d-5aa9-8a88-7b33cea30188": "hr_attendance_late.menu_hr_attendance_extra",
+  "1b9655b0-942e-51cd-849d-9bb77deb258c": "hr_attendance_late.menu_hr_attendance_extra",
+  "aa8ea21b-8e86-5ca1-b2ff-e6308f5c8d4b": "hr_attendance_late.menu_hr_attendance_extra",
+  "f5886bca-32b2-55fd-aa8d-c53db5233eb0": "hr_attendance_late.menu_hr_attendance_extra",
+  "551d2dea-3856-5d8d-ab85-68bb2b7ad3e1": "hr_attendance_late.menu_hr_attendance_extra",
+  "2f32e5ee-3724-589c-a7c4-a3498db9c8c3": "hr_attendance_late.menu_hr_attendance_extra",
+  "634eefad-6b59-5ec1-87d2-8e25298344e7": "hr_attendance_late.menu_hr_attendance_extra",
+  "f74ae471-c7ea-51ed-8201-87df9df0d065": "hr_attendance_late.menu_hr_attendance_extra",
+  "3974f13c-dbf3-5e19-a0d4-15aabf253d75": "hr_attendance_late.menu_hr_attendance_extra",
+  "240115bd-50fd-5497-8c0a-3ca57cdf3ba7": "hr_attendance_late.menu_hr_attendance_extra",
+  "f5ebeac6-4745-5aa8-997d-f24533067e21": "hr_attendance_late.menu_hr_attendance_extra"
+ }
+}

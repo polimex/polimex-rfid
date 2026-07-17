@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Labour Cost dashboard enrichment.
+
+        hr_attendance_late generates the ~30 days of attendance-extra volume; this
+        module only adds the cost dimension. The helper assigns an hourly cost to
+        every demo employee that still has none and forces the stored cost columns
+        to recompute, so the Labour Cost dashboard's monetary charts are populated.
+
+        Runs after demo/hr_attendace_rfid_hr_hourly_cost_demo_showcase.xml (which
+        sets the two anchor employees' costs and the one-of-each cost rows).
+        Naturally idempotent.
+    -->
+    <data noupdate="1">
+        <function model="hr.attendance.extra" name="_demo_apply_hourly_costs"/>
+    </data>
+</odoo>

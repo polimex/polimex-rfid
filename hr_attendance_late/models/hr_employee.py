@@ -10,6 +10,14 @@ from odoo.tools import float_compare
 
 _logger = logging.getLogger(__name__)
 
+# Guard flag + tuning constants for the demo attendance generator, so every
+# fresh demo DB renders the same working-time / labour-cost dashboards and a
+# demo reload never duplicates records. The per-day deviations are derived
+# deterministically from (employee index, day offset), so no RNG is needed.
+DEMO_ATT_FLAG = 'hr_attendance_late.demo_generated'
+DEMO_ATT_EMPLOYEE_LIMIT = 10
+DEMO_ATT_DAYS = 30
+
 
 class HrEmployee(models.Model):
     _name = 'hr.employee'
@@ -164,19 +172,52 @@ class HrEmployee(models.Model):
                     
                     attendance_ranges.append((check_in, check_out))
 
+                # Scheduled work ranges for the day (empty on a non-working day).
+                # Computed once here and reused both for the absence-row
+                # theoretical time below and the presence calculation further down.
+                work_time_ranges = [line_to_tz_datetime(current_date, line, tz) for line in
+                                    e.resource_calendar_id.attendance_ids if
+                                    line.dayofweek == str(current_date.weekday())]
+
                 # Check if we have any attendance data to process
                 if not attendance_ranges:
-                    if overwrite_existing and attendance_extra_id:
+                    # No badge at all on a SCHEDULED working day = an absence
+                    # (no-show). Record it as a measurement row with only the
+                    # planned time filled in, so absence reporting ("who was
+                    # missing", absence rate, absences per department) can be
+                    # counted directly: theoretical_work_time > 0 and
+                    # actual_work_time = 0. Non-working days stay rowless.
+                    planned_time = (self._total_time(work_time_ranges) / 3600.0) if work_time_ranges else 0.0
+                    if planned_time > 0 and current_date < fields.Date.today():
+                        absence_vals = {
+                            'theoretical_work_time': planned_time,
+                            'actual_work_time': 0, 'actual_work_time_day': 0,
+                            'actual_work_time_night': 0, 'late_time': 0,
+                            'early_leave_time': 0, 'early_come_time': 0,
+                            'overtime': 0, 'overtime_night': 0,
+                            'extra_time': 0, 'extra_night': 0,
+                            'first_in': 0, 'last_out': 0,
+                        }
+                        if attendance_extra_id:
+                            attendance_extra_id.sudo().write(absence_vals)
+                        else:
+                            absence_vals.update({'employee_id': e.id,
+                                                 'for_date': current_date})
+                            self.env['hr.attendance.extra'].sudo().create(absence_vals)
+                    elif overwrite_existing and attendance_extra_id:
                         attendance_extra_id.unlink()
                     current_date += timedelta(days=1)
                     continue
 
-                # Get work schedule for the day
-                work_time_ranges = [line_to_tz_datetime(current_date, line, tz) for line in
-                                    e.resource_calendar_id.attendance_ids if
-                                    line.dayofweek == str(current_date.weekday())]
                 shift_number = None
-                if e.resource_calendar_id.daily_ranges_are_shifts:
+                # Only pick a shift when the day actually has scheduled ranges.
+                # On a non-working day (empty work_time_ranges) an attendance is
+                # extra/rest-day work: leave the ranges empty so the non-working
+                # day path below computes extra_time. Guarding here also avoids
+                # max([]) raising on shift calendars when someone badges on a day
+                # off - which would otherwise crash attendance creation via the
+                # create hook.
+                if e.resource_calendar_id.daily_ranges_are_shifts and work_time_ranges:
                     # Handle shift-based schedules
                     shift_intersections = [self._total_time(self._intersection_time([wr], attendance_ranges)) for
                                            wr in work_time_ranges]
@@ -226,6 +267,17 @@ class HrEmployee(models.Model):
                     if e.department_id.ignore_extra_time >= att_extra_vals['extra_time']:
                         att_extra_vals['extra_time'] = 0
 
+                    # First badge-in / last badge-out of the day as local-time
+                    # hour fractions (e.g. 8.25 = 08:15) - the "came at / left
+                    # at" columns clients expect on working-time reports. Added
+                    # AFTER the record-creation gate above so they never change
+                    # which days produce a record.
+                    first_in_dt = UTC.localize(min(r[0] for r in attendance_ranges)).astimezone(tz)
+                    last_out_dt = UTC.localize(max(r[1] for r in attendance_ranges)).astimezone(tz)
+                    att_extra_vals['first_in'] = (first_in_dt.hour + first_in_dt.minute / 60.0
+                                                  + first_in_dt.second / 3600.0)
+                    att_extra_vals['last_out'] = (last_out_dt.hour + last_out_dt.minute / 60.0
+                                                  + last_out_dt.second / 3600.0)
                     # Create or update attendance extra record
                     if attendance_extra_id:
                         attendance_extra_id.sudo().write(att_extra_vals)
@@ -311,7 +363,12 @@ class HrEmployee(models.Model):
             attendance_ranges = [range for range in attendance_ranges if range[1]]
             if not work_time_ranges or not attendance_ranges:
                 return 0
-            overtime_intersec = [(attendance_ranges[-1][1], attendance_ranges[-1][1] + timedelta(days=1))]
+            # Overtime = presence AFTER the SCHEDULED end of the day. The
+            # window must open at the schedule end (work_time_ranges), not at
+            # the end of the attendance itself - intersecting the attendance
+            # with a window that starts where the attendance ends is always
+            # empty, which made night overtime permanently zero.
+            overtime_intersec = [(work_time_ranges[-1][1], work_time_ranges[-1][1] + timedelta(days=1))]
             overtime_ranges = self._intersection_time(attendance_ranges, overtime_intersec)
             overtime_day_ranges = self._intersection_time(overtime_ranges, day_time_intersection())
             return self._total_time(overtime_ranges) - self._total_time(overtime_day_ranges)
@@ -461,3 +518,173 @@ class HrEmployee(models.Model):
             if non_zero_times:
                 warning_msg = f"Extra time found ({extra_time_value/3600:.2f}h) but other times are not zero: " + ", ".join([f"{k}={v/3600:.2f}h" for k, v in non_zero_times])
                 _logger.warning(warning_msg)
+
+    # ------------------------------------------------------------------
+    # Demo data generation (dashboards)
+    # ------------------------------------------------------------------
+    @api.model
+    def _demo_select_employees(self):
+        """Deterministic set of demo employees with a work schedule + department.
+
+        Shared entry point so the working-time and labour-cost dashboards are
+        populated for the same people. Named core demo employees come first for
+        continuity with the hand-authored showcase, then the list is topped up
+        from the main company. Only employees that have both a resource calendar
+        (for a theoretical schedule) and a department (for the department
+        breakdown) qualify.
+        """
+        company = self.env.ref('base.main_company', raise_if_not_found=False)
+        employees = self.env['hr.employee']
+        for emp_xml in ('hr.employee_admin', 'hr.employee_al',
+                        'hr.employee_qdp', 'hr.employee_ngh'):
+            emp = self.env.ref(emp_xml, raise_if_not_found=False)
+            if emp:
+                employees |= emp
+        employees = employees.filtered(
+            lambda e: e.resource_calendar_id and e.department_id)
+        domain = [('resource_calendar_id', '!=', False),
+                  ('department_id', '!=', False),
+                  ('id', 'not in', employees.ids)]
+        if company:
+            domain.append(('company_id', '=', company.id))
+        top_up = self.env['hr.employee'].search(
+            domain, limit=max(0, DEMO_ATT_EMPLOYEE_LIMIT - len(employees)),
+            order='id')
+        return employees | top_up
+
+    def _demo_day_window(self, day):
+        """Scheduled work window (check-in, check-out) in naive UTC for a date.
+
+        Derived from the employee's own resource calendar so deviations added on
+        top land exactly relative to the theoretical schedule the extra-time
+        computation compares against. Returns None on a non-working day (no
+        calendar range for that weekday).
+        """
+        self.ensure_one()
+        cal = self.resource_calendar_id
+        tz = timezone(cal.tz) if cal.tz else UTC
+        lines = cal.attendance_ids.filtered(
+            lambda l: l.dayofweek == str(day.weekday()))
+        if not lines:
+            return None
+        hour_from = min(lines.mapped('hour_from'))
+        hour_to = max(lines.mapped('hour_to'))
+        start_local = datetime.combine(
+            day, time(int(hour_from), int((hour_from % 1) * 60)))
+        end_day = day
+        if float_compare(hour_to, 24.00, 2) >= 0:
+            hour_to -= 24.00
+            end_day = day + timedelta(days=1)
+        end_local = datetime.combine(
+            end_day, time(int(hour_to), int((hour_to % 1) * 60)))
+        check_in = tz.localize(start_local).astimezone(UTC).replace(tzinfo=None)
+        check_out = tz.localize(end_local).astimezone(UTC).replace(tzinfo=None)
+        return check_in, check_out
+
+    @api.model
+    def _demo_generate_attendances(self):
+        """Generate ~30 days of demo attendances for the working-time dashboards.
+
+        Creates hr.attendance check-in/out pairs over the last ~30 days for a
+        handful of employees across several departments, then triggers this
+        module's extra-time roll-up so hr.attendance.extra (worked hours,
+        overtime, late, day/night split) - and, once hr_attendace_rfid_hr_hourly_cost
+        is installed, the derived cost columns - carry rich values.
+
+        Deterministic per (employee, day) so the distribution is reproducible.
+        Idempotent: an ir.config_parameter flag makes a demo reload a no-op, and
+        every candidate session is overlap-checked against existing attendances
+        so it never clashes with the hand-authored showcase or an open session.
+        Only invoked from the demo data <function> hook.
+        """
+        param = self.env['ir.config_parameter'].sudo()
+        if param.get_param(DEMO_ATT_FLAG):
+            return
+
+        employees = self._demo_select_employees()
+        if not employees:
+            return
+
+        # Put the demo employees on a clean full-time, non-shift calendar (seeded
+        # by the demo XML that calls this helper) so the generated worked-hours /
+        # overtime figures are realistic and reproducible, independent of the
+        # shift-mode showcase calendar. Skip if the calendar is missing.
+        calendar = self.env.ref(
+            'hr_attendance_late.demo_calendar_fulltime', raise_if_not_found=False)
+        if calendar:
+            employees.write({'resource_calendar_id': calendar.id})
+
+        Attendance = self.env['hr.attendance']
+        today = fields.Datetime.now().date()
+        start_date = today - timedelta(days=DEMO_ATT_DAYS)
+        vals_list = []
+
+        for emp_index, emp in enumerate(employees):
+            for day_offset in range(1, DEMO_ATT_DAYS + 1):
+                day = today - timedelta(days=day_offset)
+                window = emp._demo_day_window(day)
+                seed = emp_index * 97 + day_offset
+
+                if window is None:
+                    # Occasional rest-day (Saturday) work for the first two
+                    # employees -> drives extra_time and the rest-day cost tier.
+                    if (emp.resource_calendar_id and emp_index < 2
+                            and day.weekday() == 5 and day_offset % 2 == 0):
+                        tz = (timezone(emp.resource_calendar_id.tz)
+                              if emp.resource_calendar_id.tz else UTC)
+                        check_in = tz.localize(datetime.combine(
+                            day, time(9, 0))).astimezone(UTC).replace(tzinfo=None)
+                        check_out = tz.localize(datetime.combine(
+                            day, time(14, 0))).astimezone(UTC).replace(tzinfo=None)
+                    else:
+                        continue
+                else:
+                    check_in, check_out = window
+                    if seed % 5 == 0:
+                        # Late arrival (20-59 min, above the 5 min tolerance).
+                        check_in += timedelta(minutes=20 + (seed % 40))
+                    elif seed % 6 == 0:
+                        if emp_index == 0:
+                            # Long shift into the night window (22:00-06:00) so
+                            # overtime_night and the night-shift supplement appear.
+                            check_out += timedelta(hours=6, minutes=15)
+                        else:
+                            # Daytime overtime (75-210 min, above the 15 min tol).
+                            check_out += timedelta(minutes=75 + (seed % 4) * 45)
+                    elif seed % 8 == 0:
+                        # Early departure (30-54 min).
+                        check_out -= timedelta(minutes=30 + (seed % 25))
+
+                if check_out <= check_in:
+                    continue
+
+                # Never clash with an existing (or still-open) attendance.
+                overlap = Attendance.search([
+                    ('employee_id', '=', emp.id),
+                    ('check_in', '<', check_out),
+                    '|', ('check_out', '=', False),
+                    ('check_out', '>', check_in),
+                ], limit=1)
+                if overlap:
+                    continue
+
+                vals_list.append({
+                    'employee_id': emp.id,
+                    'check_in': check_in,
+                    'check_out': check_out,
+                })
+
+        if vals_list:
+            # migration_mode defers the per-create extra roll-up; recompute once
+            # per employee over the whole window instead (fewer passes).
+            Attendance.with_context(migration_mode=True).create(vals_list)
+            for emp in employees:
+                emp.update_extra_attendance_data(
+                    from_datetime=start_date,
+                    to_datetime=today - timedelta(days=1),
+                    overwrite_existing=True,
+                )
+        param.set_param(DEMO_ATT_FLAG, '1')
+        _logger.info(
+            'Demo attendances generated: %d sessions for %d employees over %d days',
+            len(vals_list), len(employees), DEMO_ATT_DAYS)

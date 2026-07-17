@@ -113,6 +113,24 @@ class HrAttendanceExtra(models.Model):
         • Recognition: Shows employee punctuality and dedication
         
         Note: Early arrivals may qualify for recognition but typically don't count as overtime.""")
+    first_in = fields.Float(
+        digits=(2, 2),
+        string="First In",
+        help="""Time of the first badge-in for the day, in the employee's local time.
+
+        • Format: Hour as a decimal (e.g., 8.25 = 08:15)
+        • Source: The earliest check-in of the day's attendance records
+        • Usage: The classic "came at / left at" column on daily and monthly
+          working-time reports, and averages on the Working Time dashboard.""")
+    last_out = fields.Float(
+        digits=(2, 2),
+        string="Last Out",
+        help="""Time of the last badge-out for the day, in the employee's local time.
+
+        • Format: Hour as a decimal (e.g., 17.5 = 17:30)
+        • Source: The latest check-out of the day's attendance records
+        • Usage: The classic "came at / left at" column on daily and monthly
+          working-time reports, and averages on the Working Time dashboard.""")
     overtime = fields.Float(
         digits=(2, 2),
         string="Overtime Hours",

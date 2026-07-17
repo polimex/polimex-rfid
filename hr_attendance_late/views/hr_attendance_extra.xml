@@ -79,6 +79,8 @@
                 <list sample="1" string="hr_attendance_extra_tree">
                     <field name="for_date"/>
                     <field name="employee_id"/>
+                    <field name="first_in" widget="float_time" optional="show"/>
+                    <field name="last_out" widget="float_time" optional="show"/>
                     <field name="theoretical_work_time" widget="float_time" optional="show"/>
                     <field name="actual_work_time" widget="float_time" optional="show"/>
                     <field name="actual_work_time_day" widget="float_time" optional="hide"/>

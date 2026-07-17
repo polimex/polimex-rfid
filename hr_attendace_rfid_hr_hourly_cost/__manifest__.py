@@ -10,7 +10,7 @@
     'license': 'AGPL-3',
 
     'category': "Human Resources",
-    'version': '19.0.1.1.1',
+    'version': '19.0.1.2.0',
 
     'depends': ['hr_hourly_cost', 'hr_attendance_late'],
 
@@ -19,6 +19,7 @@
     ],
     'demo': [
         'demo/hr_attendace_rfid_hr_hourly_cost_demo_showcase.xml',
+        'demo/hr_attendace_rfid_hr_hourly_cost_demo_generate.xml',
     ],
     # 'images': ['static/images/main_screenshot.png'],
     'application': False,
