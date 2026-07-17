@@ -6,6 +6,12 @@ from odoo import fields, models, api, exceptions, _
 import logging
 _logger = logging.getLogger(__name__)
 
+# A repeating identical system event within this many seconds of the existing
+# row's LAST occurrence is the same ongoing incident (grouped via occurrences);
+# after a longer quiet gap the repeat is a NEW incident and gets its own row,
+# so e.g. a forced door today never disappears into last week's record.
+SYS_EV_DEDUP_WINDOW_SECONDS = 300
+
 action_selection = [
         ('0', _('Unknown Event?')),
         ('1', _('DuressOK')),
@@ -291,38 +297,43 @@ class HrRfidSystemEvent(models.Model):
                 vals.pop('input_js')
 
     def _check_duplicate_sys_ev(self, vals):
-        if not vals['webstack_id']:
+        """Group a repeating identical system event into its existing row.
+
+        "Identical" = same module, controller, door, alarm line, action,
+        description and raw payload. A repeat within
+        SYS_EV_DEDUP_WINDOW_SECONDS of the row's last occurrence is the same
+        ongoing incident: bump ``occurrences`` and slide ``last_occurrence``
+        (a door held open pings every few seconds -> one row). A repeat after
+        a longer quiet gap is a NEW incident and must get its own row.
+
+        Note: the previous implementation compared the new door/alarm line
+        against the candidate's CONTROLLER id and matched only the single
+        newest event of the module, with no time limit - door-level events
+        (forced/held door) were never grouped, and fixing the field comparison
+        alone would have let a new break-in silently vanish into an old row.
+        """
+        if not vals.get('webstack_id') or not vals.get('timestamp'):
             return False
+        window_start = fields.Datetime.to_datetime(vals['timestamp']) \
+            - timedelta(seconds=SYS_EV_DEDUP_WINDOW_SECONDS)
         dupe = self.env['hr.rfid.event.system'].search([
             ('webstack_id', '=', vals['webstack_id']),
-        ], limit=1)
+            ('controller_id', '=', vals.get('controller_id', False)),
+            ('door_id', '=', vals.get('door_id', False)),
+            ('alarm_line_id', '=', vals.get('alarm_line_id', False)),
+            ('event_action', '=', vals.get('event_action', False)),
+            ('error_description', '=', vals.get('error_description', False)),
+            ('input_js', '=', vals.get('input_js', False)),
+            ('last_occurrence', '>=', window_start),
+        ], limit=1, order='last_occurrence desc')
 
         if not dupe:
-            return False
-
-        if vals.get('controller_id', False) != dupe.controller_id.id:
-            return False
-
-        if vals.get('door_id', False) != dupe.controller_id.id:
-            return False
-
-        if vals.get('alarm_line_id', False) != dupe.controller_id.id:
-            return False
-
-        if vals.get('event_action', False) != dupe.event_action:
-            return False
-
-        if vals.get('error_description', False) != dupe.error_description:
-            return False
-
-        if vals.get('input_js', False) != dupe.input_js:
             return False
 
         dupe.write({
             'last_occurrence': vals['timestamp'],
             'occurrences': dupe.occurrences + 1,
         })
-
         return True
 
     @api.model_create_multi
