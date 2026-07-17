@@ -1,0 +1,353 @@
+---
+id: rfid_pms_base
+title: RFID PMS Base
+module: rfid_pms_base
+doc_type: user_guide
+audience:
+- user
+summary: RFID PMS system Base structures
+last_updated: '2026-05-14'
+source_digest: sha256:c62b009d4388adfc9875d68038831797fe93f475216234b61e40d5d2f7561e6e
+companion_doc: llms-full.md
+---
+
+
+# RFID PMS Base
+
+> RFID PMS system Base structures
+
+
+## What this module does
+
+RFID PMS system Base structures.
+
+This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
+
+
+## How to use it
+
+### RFID PMS Base
+
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![Version](https://img.shields.io/badge/Version-18.0.0.1.0-green.svg)](https://apps.odoo.com)
+
+Property Management System integration for RFID access control.
+
+#### 🎯 Overview
+
+RFID PMS Base bridges the gap between property management and access control, providing seamless integration for hotels, student accommodation, serviced apartments, and residential complexes. It manages room assignments, guest check-ins, and automatically configures RFID access based on room bookings.
+
+#### ✨ Key Features
+
+##### Room Management
+- **Room Registry**: Complete room database
+- **Status Tracking**: Available, occupied, cleaning, maintenance
+- **Multi-property**: Support for multiple buildings
+- **Room Types**: Single, double, suite configurations
+
+##### Guest Integration
+- **Check-in/out**: Streamlined guest processing
+- **Card Encoding**: Instant RFID card programming
+- **Room Moves**: Easy guest relocation
+- **Group Bookings**: Handle multiple guests
+
+##### Access Control
+- **Automatic Rights**: Room-based access configuration
+- **Time Limits**: Check-in to check-out access
+- **Common Areas**: Gym, pool, parking access
+- **Master Keys**: Staff and emergency access
+
+##### Status Indicators
+- **Occupancy Status**: Real-time room status
+- **Cleaning Flags**: Housekeeping coordination
+- **DND Indicators**: Do not disturb tracking
+- **Maintenance Mode**: Block room access
+
+#### 📋 Requirements
+
+- Odoo 18.0+
+- hr_rfid module
+- Python 3.8+
+
+#### 🛠️ Installation
+
+1. Install hr_rfid module first
+
+2. Install PMS base module:
+```bash
+./odoo-bin -d your_database -i rfid_pms_base
+```
+
+3. Configure rooms and access rules
+
+#### 🔧 Configuration
+
+##### Initial Setup
+
+1. **Building Configuration**
+   - Create building records
+   - Set address and details
+   - Configure access zones
+
+2. **Room Setup**
+   - Add rooms to buildings
+   - Set room numbers and types
+   - Assign doors to rooms
+   - Configure amenity access
+
+3. **Access Templates**
+   - Guest room access
+   - Common area access
+   - Time-based restrictions
+   - Emergency procedures
+
+##### Room Types
+
+Configure different room categories:
+```python
+### Room type examples
+room_types = [
+    ('single', 'Single Room'),
+    ('double', 'Double Room'),
+    ('suite', 'Suite'),
+    ('dormitory', 'Dormitory'),
+    ('apartment', 'Apartment'),
+]
+```
+
+##### Door Assignment
+
+Link rooms to physical doors:
+1. Navigate to room record
+2. Assign primary door (room entrance)
+3. Add common area doors
+4. Set access schedules
+
+#### 📖 Usage
+
+##### Guest Check-in
+
+1. **Create/Select Guest**
+   - New guest registration
+   - Or select existing guest
+   - Enter stay details
+
+2. **Assign Room**
+   - Select available room
+   - Set check-in/out dates
+   - Configure access level
+
+3. **Encode Card**
+   - Insert blank RFID card
+   - Click "Encode Card"
+   - Card automatically configured
+   - Hand to guest
+
+##### Room Status Management
+
+###### Status Types
+- 🟢 **Available**: Ready for guests
+- 🔴 **Occupied**: Guest checked in
+- 🟡 **Cleaning**: Housekeeping in progress
+- 🔧 **Maintenance**: Under repair
+- 🚫 **Blocked**: Temporarily unavailable
+
+###### Status Changes
+```python
+### Automatic status updates
+room.state = 'occupied'  # On check-in
+room.state = 'cleaning'  # On check-out
+room.state = 'available' # After cleaning
+```
+
+##### Card Management
+
+###### Card Encoding Wizard
+1. **From Room View**
+   - Open room record
+   - Click "Encode Card"
+   - Select guest
+   - Program card
+
+2. **Batch Encoding**
+   - Select multiple rooms
+   - Action → Encode Cards
+   - Process group bookings
+
+###### Access Rights
+- Room door access
+- Floor elevator access
+- Common areas (configurable)
+- Parking (if assigned)
+
+##### Room Moves
+
+Handle guest relocations:
+1. **Initiate Move**
+   - Current room → Move Guest
+   - Select new room
+   - Choose move time
+
+2. **Access Update**
+   - Old room access revoked
+   - New room access granted
+   - Card reprogrammed if needed
+
+#### 🏨 Hotel-Specific Features
+
+##### Housekeeping Integration
+```python
+### Cleaning workflow
+room.request_cleaning()  # After checkout
+room.start_cleaning()    # Housekeeper begins
+room.complete_cleaning() # Ready for next guest
+```
+
+##### Mini-bar & Services
+- Link to POS for charges
+- Room service ordering
+- Amenity usage tracking
+
+##### Group Management
+- Tour groups
+- Conference attendees  
+- Corporate bookings
+
+#### 🏢 Other Verticals
+
+##### Student Accommodation
+- Semester-long access
+- Shared room management
+- Study room bookings
+- Meal plan integration
+
+##### Corporate Housing
+- Long-term assignments
+- Visitor management
+- Maintenance requests
+- Utility tracking
+
+##### Residential Complexes
+- Tenant management
+- Visitor passes
+- Amenity bookings
+- Package notifications
+
+#### 🔌 API Extensions
+
+##### Custom Check-in
+```python
+class CustomPMSRoom(models.Model):
+    _inherit = 'pms.room'
+    
+    def custom_checkin(self, guest_data):
+        # Pre-checkin validation
+        self.validate_guest(guest_data)
+        
+        # Standard check-in
+        res = super().checkin(guest_data)
+        
+        # Post-checkin actions
+        self.send_welcome_message()
+        self.activate_room_features()
+        
+        return res
+```
+
+##### Integration Webhooks
+```python
+### Notify external PMS
+@api.model
+def create_booking_webhook(self, booking_data):
+    webhook_url = self.env['ir.config_parameter'].get_param('pms.webhook.url')
+    requests.post(webhook_url, json={
+        'room': booking_data['room_id'],
+        'guest': booking_data['guest_name'],
+        'checkin': booking_data['checkin_date'],
+        'checkout': booking_data['checkout_date'],
+    })
+```
+
+#### 🐛 Troubleshooting
+
+##### Common Issues
+
+1. **Card not opening door**
+   - Check room assignment
+   - Verify check-in completed
+   - Confirm door mapping
+   - Test access schedule
+
+2. **Wrong room status**
+   - Manual status update
+   - Check automation rules
+   - Review housekeeping workflow
+
+3. **Guest can't access amenities**
+   - Verify access template
+   - Check amenity doors configuration
+   - Review time restrictions
+
+##### Maintenance Mode
+
+Enable for debugging:
+```python
+### System parameters
+pms_debug_mode = True
+pms_log_door_events = True
+pms_test_mode = False  # Disables actual door control
+```
+
+#### 📊 Reports
+
+##### Occupancy Reports
+- Daily occupancy rate
+- Room utilization
+- Average stay duration
+- Revenue per room
+
+##### Guest Reports
+- Check-in/out list
+- Guest history
+- No-show tracking
+- Repeat guest analysis
+
+##### Access Reports
+- Door usage by room
+- Failed access attempts
+- Emergency opens
+- Master key usage
+
+#### 🤝 Contributing
+
+We welcome contributions:
+1. Fork repository
+2. Add PMS features
+3. Test with demo data
+4. Submit pull request
+
+#### 📄 License
+
+Licensed under AGPL-3.0. See [LICENSE](../LICENSE) for details.
+
+#### 👥 Credits
+
+##### Maintainer
+- [Polimex](https://polimex.co)
+
+#### 🌐 Links
+
+- [Documentation](https://polimex.co/docs/rfid-pms)
+- [PMS Integration Guide](https://polimex.co/docs/pms-integration)
+- [Odoo Apps Store](https://apps.odoo.com/apps/modules/18.0/rfid_pms_base/)
+
+---
+
+For more information, visit [polimex.co](https://polimex.co)
+
+
+### Available actions
+
+- **Close panel pms setup**
+- **Open step pms access group**
+- **Open step pms first room**

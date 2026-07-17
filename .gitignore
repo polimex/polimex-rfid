@@ -6,7 +6,10 @@ CLAUDE.md
 migration_progress.md
 MIGRATION_GUIDE.md
 CI_CD_GUIDE.md
-docs/
+# docs/ stays ignored EXCEPT the llms context files - those ship with the module
+**/docs/*
+!**/docs/llms.txt
+!**/docs/llms-full.md
 **/tests/test_import_all.py
 **/tests/test_cross_validate.py
 **/tests/test_field_audit.py

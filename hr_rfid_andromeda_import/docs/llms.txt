@@ -1,0 +1,35 @@
+---
+id: hr_rfid_andromeda_import
+title: RFID Andromeda Data Import
+module: hr_rfid_andromeda_import
+doc_type: user_guide
+audience:
+- user
+summary: Import access control data from Polimex Andromeda Database
+last_updated: '2026-05-14'
+source_digest: sha256:9a0e8b6e25c272594255feed587e0df8df2ebd5e5e4c2dfe30478ad01813c719
+companion_doc: llms-full.md
+---
+
+
+# RFID Andromeda Data Import
+
+> Import access control data from Polimex Andromeda Database
+
+
+## What this module does
+
+Import access control data from Polimex Andromeda Database.
+
+This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
+
+
+## How to use it
+
+### Introduction
+This module extends the RFID Access Control (hr_rfid) module, allowing it to import user data from Windows based Andromeda Access Control System by Polimex
+
+### Features
+* Import all Users and cards.
+* Import All Access Control Groups.
+* Import all Access Users Rights.

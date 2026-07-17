@@ -1,0 +1,342 @@
+---
+id: hr_rfid_vertical_elections
+title: RFID Elections
+module: hr_rfid_vertical_elections
+doc_type: user_guide
+audience:
+- user
+summary: HR RFID Vertical Elections
+last_updated: '2026-05-14'
+source_digest: sha256:7d35422a10a83a49a29b86c886b6f82aa8f83f7094c61bf681be937896d052ac
+companion_doc: llms-full.md
+---
+
+
+# RFID Elections
+
+> HR RFID Vertical Elections
+
+
+## What this module does
+
+HR RFID Vertical Elections.
+
+This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
+
+
+## How to use it
+
+### RFID Elections
+
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![Version](https://img.shields.io/badge/Version-18.0.1.0.0-green.svg)](https://apps.odoo.com)
+
+Electronic voting system using RFID cards for secure, transparent elections.
+
+#### 🎯 Overview
+
+RFID Elections transforms traditional voting into a modern, secure electronic process using RFID technology. Perfect for corporate elections, board meetings, shareholder voting, and any scenario requiring authenticated, auditable voting with real-time results.
+
+#### ✨ Key Features
+
+##### Voting System
+- **RFID Authentication**: Secure voter identification
+- **Secret Ballot**: Anonymous voting options
+- **Real-time Results**: Instant vote counting
+- **Multiple Sessions**: Concurrent voting sessions
+
+##### Election Management
+- **Session Control**: Start/stop voting periods
+- **Participant Management**: Voter registration and validation
+- **Voting Items**: Multiple questions per session
+- **Result Display**: Live results on displays
+
+##### Security Features
+- **One Person, One Vote**: Duplicate prevention
+- **Audit Trail**: Complete voting history
+- **Encrypted Storage**: Secure vote recording
+- **Access Control**: Role-based permissions
+
+##### Display System
+- **Public Displays**: Real-time result boards
+- **Vote Progress**: Live participation rates
+- **Winner Announcement**: Automatic determination
+- **Multi-screen Support**: Distributed displays
+
+#### 📋 Requirements
+
+- Odoo 18.0+
+- hr_rfid module
+- RFID readers at voting stations
+- Display screens (optional)
+
+#### 🛠️ Installation
+
+1. Install hr_rfid module first
+
+2. Install the elections module:
+```bash
+./odoo-bin -d your_database -i hr_rfid_vertical_elections
+```
+
+3. Configure voting stations and displays
+
+#### 🔧 Configuration
+
+##### Voting Station Setup
+
+1. **RFID Readers**
+   - Assign readers as voting stations
+   - Configure workcode for voting
+   - Set station location/name
+
+2. **Display Screens**
+   - Create display records
+   - Generate display URLs
+   - Configure refresh rates
+   - Set display layouts
+
+##### Election Configuration
+
+1. **Create Session**
+   - Name and description
+   - Start/end times
+   - Voting rules (secret/public)
+   - Participant list
+
+2. **Add Voting Items**
+   - Question text
+   - Answer options
+   - Vote type (yes/no, multiple choice)
+   - Required majority
+
+3. **Register Participants**
+   - Import from employees
+   - Add external participants
+   - Assign RFID cards
+   - Set voting rights
+
+#### 📖 Usage
+
+##### Running an Election
+
+1. **Preparation**
+   - Create voting session
+   - Add all voting items
+   - Register participants
+   - Test voting stations
+
+2. **Start Voting**
+   - Activate session
+   - Open voting stations
+   - Monitor participation
+   - Display live results
+
+3. **Voting Process**
+   - Participant scans RFID card
+   - System validates eligibility
+   - Shows voting items
+   - Records vote securely
+
+4. **End Session**
+   - Close voting
+   - Finalize results
+   - Generate reports
+   - Archive session
+
+##### Voter Experience
+
+1. **Approach Station**
+   - Scan RFID card
+   - Wait for validation
+   - See welcome message
+
+2. **Cast Votes**
+   - View each item
+   - Select choice
+   - Confirm vote
+   - See confirmation
+
+3. **Completion**
+   - Vote recorded message
+   - Thank you screen
+   - Automatic logout
+
+#### 📊 Result Management
+
+##### Real-time Display
+```
+Current Voting Session: Board Elections 2024
+
+Item 1: Approve Annual Budget
+Yes: 145 (72.5%)  [████████████████░░░░]
+No:   55 (27.5%)  [█████░░░░░░░░░░░░░░░]
+Participation: 200/250 (80%)
+
+Item 2: Elect Board Chairman
+John Doe:    89 (44.5%)  [████████░░░░░░░░]
+Jane Smith:  76 (38.0%)  [███████░░░░░░░░░]
+Bob Wilson:  35 (17.5%)  [███░░░░░░░░░░░░░]
+```
+
+##### Reports Available
+- Detailed results by item
+- Participation statistics
+- Timeline of votes
+- Audit trail report
+
+#### 🖥️ Display System
+
+##### Display Types
+
+1. **Result Board**
+   - Live vote counts
+   - Percentage bars
+   - Winner indication
+   - Auto-refresh
+
+2. **Participation Monitor**
+   - Total voters
+   - Votes cast
+   - Remaining voters
+   - Time remaining
+
+3. **Winner Announcement**
+   - Final results
+   - Winner declaration
+   - Official stamp
+   - QR code verification
+
+##### Display URLs
+```
+### Main results display
+https://your-odoo.com/voting/display/main
+
+### Participation monitor
+https://your-odoo.com/voting/display/participation
+
+### Mobile-friendly view
+https://your-odoo.com/voting/display/mobile
+```
+
+#### 🔒 Security & Compliance
+
+##### Security Measures
+- **Encrypted Votes**: AES-256 encryption
+- **Tamper Detection**: Hash verification
+- **Access Logs**: Complete audit trail
+- **Time Stamps**: Blockchain-ready
+
+##### Compliance Features
+- **Anonymous Voting**: When required
+- **Proxy Voting**: Delegation support
+- **Quorum Tracking**: Minimum participation
+- **Legal Reports**: Compliance documentation
+
+#### 🔌 API Integration
+
+##### External Integration
+```python
+### Webhook for vote cast
+@http.route('/voting/webhook/vote', type='json', auth='public')
+def vote_webhook(self, session_id, vote_data):
+    # Process external vote
+    # Validate and record
+    return {'status': 'recorded', 'id': vote_id}
+```
+
+##### Result Export
+```python
+### Export results via API
+@http.route('/voting/api/results/<int:session_id>', 
+            type='json', auth='api_key')
+def get_results(self, session_id):
+    session = request.env['voting.session'].browse(session_id)
+    return {
+        'session': session.name,
+        'items': session.get_results_json(),
+        'participation': session.participation_rate,
+    }
+```
+
+#### 🐛 Troubleshooting
+
+##### Common Issues
+
+1. **Card not recognized**
+   - Check participant registration
+   - Verify card is active
+   - Test reader connection
+
+2. **Vote not recording**
+   - Check session is active
+   - Verify voting rights
+   - Review error logs
+
+3. **Display not updating**
+   - Check network connection
+   - Verify display URL
+   - Clear browser cache
+
+### Enable debug logging
+voting_debug = True
+log_all_votes = True
+```
+
+#### ⚙️ Advanced Features
+
+##### Weighted Voting
+```python
+### Shareholders with different weights
+participant.vote_weight = shares_owned
+```
+
+##### Delegation/Proxy
+```python
+### Allow vote delegation
+participant.delegate_to = proxy_participant
+```
+
+##### Multi-round Voting
+- Elimination rounds
+- Runoff elections
+- Ranked choice voting
+
+#### 🤝 Contributing
+
+We welcome contributions:
+1. Fork repository
+2. Add voting features
+3. Test with mock elections
+4. Submit pull request
+
+#### 📄 License
+
+Licensed under AGPL-3.0. See [LICENSE](../LICENSE) for details.
+
+#### 👥 Credits
+
+##### Maintainer
+- [Polimex](https://polimex.co)
+
+#### 🌐 Links
+
+- [Documentation](https://polimex.co/docs/rfid-elections)
+- [Demo Video](https://polimex.co/videos/rfid-voting)
+- [Odoo Apps Store](https://apps.odoo.com/apps/modules/18.0/hr_rfid_vertical_elections/)
+
+---
+
+For more information, visit [polimex.co](https://polimex.co)
+
+
+### Available actions
+
+- **Close panel voting setup**
+- **Open step voting display**
+- **Open step voting participants**
+- **Open step voting items**
+- **Open step voting session**
+- **Open display view**
+- **View sessions**
+- **Vote result send** — Opens a wizard to compose an email, with relevant mail template loaded by default

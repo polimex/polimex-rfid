@@ -1,0 +1,102 @@
+---
+id: hr_rfid_odoo_import
+title: RFID Odoo Data Import
+module: hr_rfid_odoo_import
+doc_type: user_guide
+audience:
+- user
+summary: Import RFID access control data from older Odoo instances (v14-v18)
+last_updated: '2026-05-14'
+source_digest: sha256:86334d3d301325831b66950d340668e21d02ad47b8ffe17b5d658ec29db2f443
+companion_doc: llms-full.md
+---
+
+
+# RFID Odoo Data Import
+
+> Import RFID access control data from older Odoo instances (v14-v18)
+
+
+## What this module does
+
+Import RFID access control data from older Odoo instances (v14-v18).
+
+This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
+
+
+## How to use it
+
+========================
+RFID Odoo Data Import
+========================
+
+..
+   :target: https://polimex.co
+   :alt: License: AGPL-3
+
+Import RFID access control data from older Odoo instances (v14—v18) into Odoo 19
+via XML-RPC API.
+
+Overview
+========
+
+This module provides a multi-step wizard for migrating RFID access control data
+from older Odoo instances into Odoo 19. It connects to the source Odoo via
+XML-RPC API, reads configuration and historical data, and recreates it in the
+target database.
+
+Features
+========
+
+* **XML-RPC connection** — works with any Odoo instance (local or remote, v14—v18)
+* **Dynamic schema discovery** — automatically detects source fields via ``fields_get()``
+* **Multi-company support** — select which company to import
+* **Phased import** with savepoint isolation per phase:
+
+  - Phase 1+3: Hardware (webstacks, controllers, doors, readers, zones, time schedules)
+  - Phase 2: People (employees, partners, departments, categories)
+  - Phase 4: Access (access groups, relations, cards → automatic card-door regeneration)
+  - Phase 5: Events (user events, system events, temperature/humidity logs)
+  - Phase 6a: Vending (rows, events, balance history, auto-refill)
+  - Phase 6b: Attendance (hr.attendance, hr.attendance.extra)
+  - Phase 6c: Services (rfid.service, rfid.service.sale, tags)
+
+* **Deduplication** via ``ir.model.data`` with ``__import__`` prefix
+* **Hardware command suppression** — no commands sent to controllers during import
+* **Conflict detection** — warns about duplicate cards, employees, etc.
+* **Direct SQL batch insert** for large datasets (events, attendance, balance history)
+* **Progress tracking** with real-time status updates
+
+Configuration
+=============
+
+No special configuration is needed. The module adds a menu entry under
+**RFID → Import → Import from Odoo**.
+
+Usage
+=====
+
+1. Go to **RFID → Import → Import from Odoo**
+2. Enter the source Odoo connection details (URL, database, login, password)
+3. Click **Check Connection** to verify connectivity
+4. Select the source company to import
+5. Choose which optional data to include (events, vending, attendance, services)
+6. Click **Start Import** and monitor progress
+7. Review the import log for results and any warnings
+
+
+### Available actions
+
+- **Test connection** — Step 1 → Step 2: Test connection and load companies.
+- **Preview** — Step 2 → Step 3: Generate preview with counts and detect conflicts.
+- **Back** — Navigate back one step.
+- **Import** — Step 3 → Step 4 → Step 5: Execute the import.
+
+
+## Common questions and errors
+
+Actions in this list display a message dialog when something is wrong (missing data, invalid configuration, server unreachable, etc.). If an action fails, read the dialog message and check the configuration described above.
+
+- **Test connection** (on `hr.rfid.odoo.import.wiz`) — Step 1 → Step 2: Test connection and load companies.
+- **Preview** (on `hr.rfid.odoo.import.wiz`) — Step 2 → Step 3: Generate preview with counts and detect conflicts.
+- **Import** (on `hr.rfid.odoo.import.wiz`) — Step 3 → Step 4 → Step 5: Execute the import.

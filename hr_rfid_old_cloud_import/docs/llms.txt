@@ -1,0 +1,41 @@
+---
+id: hr_rfid_old_cloud_import
+title: RFID Polimex Old Cloud Import
+module: hr_rfid_old_cloud_import
+doc_type: user_guide
+audience:
+- user
+summary: Import access control data from my.polimex.online and schoolsafety.online
+last_updated: '2026-05-14'
+source_digest: sha256:61c60e35dab22043928dd3d728caa520f35f9ff7d7ce1688e1497337f988d006
+companion_doc: llms-full.md
+---
+
+
+# RFID Polimex Old Cloud Import
+
+> Import access control data from my.polimex.online and schoolsafety.online
+
+
+## What this module does
+
+Import access control data from my.polimex.online and schoolsafety.online.
+
+This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
+
+
+## How to use it
+
+### Introduction
+This module extends the RFID Access Control (hr_rfid) module, allowing it to import user data from Cloud based Access Control System by Polimex
+
+https://my.polimex.online
+
+https://schoolsafety.online
+
+### Features
+* Import all Controllers and modules.
+* Import all Users and cards.
+* Import All Access Control Groups.
+* Import all Access Users Rights.
+* Import all User Events.

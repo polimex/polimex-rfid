@@ -1,0 +1,25 @@
+# Access Control & Security Dashboards
+
+Two ready-made boards in the Dashboards app (Human Resources section), installed
+automatically with the RFID Access Control module.
+
+## Access Control board
+KPI cards: Total Events, Denied, Unique People, Grant Rate - each with a
+percentage change vs the previous period (red/green arrows; for "Denied" a rise
+is red). Charts: Events by Action, Busiest Doors, Top 10 Employees by Events,
+Traffic by Hour of Day, Access Share by Door, Daily Access Trend.
+
+## Security and Devices board
+KPI cards: Forced Door Open, Door Held Open, Fire and Duress, Device Faults.
+Charts: Security Events Trend, Forced or Held Doors, Device Events by Controller.
+
+## How to use
+- Filters at the top/right: Period (default last 30 days), Company, Door /
+  Controller. With Site Manager installed a Site filter is added.
+- Every card and chart links to the underlying events list ("see records").
+  The lists open filtered to today by default.
+- KPI arrows compare the selected period with the previous one of equal length.
+
+## Access
+Visible to RFID officers (Access Control / Officer group). Data respects the
+company and record rules of the current user.

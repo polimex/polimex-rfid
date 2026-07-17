@@ -1,0 +1,760 @@
+---
+id: hr_attendance_multi_rfid
+title: RFID Attendance
+module: hr_attendance_multi_rfid
+module_version: 19.0.1.0.0
+odoo_version: '19.0'
+odoo_edition: custom
+doc_type: technical_reference
+audience:
+- administrator
+- developer
+companion_doc: llms.txt
+summary: Manage employee attendance
+last_updated: '2026-04-29'
+source_digest: sha256:fba71369265be1500bbdcac39b04096b2b03bc6204a695e6fa698151e653a08d
+depends:
+- hr_rfid
+- hr_attendance
+entities:
+  primary: hr.attendance
+  related:
+  - hr.employee
+  - hr.rfid.event.user
+  - hr.rfid.zone
+  - hr.attendance.recalc.wizard
+keywords:
+- attendance
+- employee
+- event
+- manage
+- multi
+- recalc
+- rfid
+- user
+- wizard
+- zone
+license: AGPL-3
+author: Polimex
+category: Human Resources
+installable: true
+application: false
+auto_install: false
+counts:
+  models: 5
+  views: 9
+  access_rules: 3
+  record_rules: 1
+  crons: 1
+  images: 2
+images:
+- path: static/description/icon.png
+  sha256: sha256:d70a216007d467e90f778f75562ea2f2b6d65b2f2ab424c6bff67cf842e31217
+  alt: Icon
+  caption_generated_by: noop
+  caption_prompt_version: v1
+- path: static/description/icon.svg
+  sha256: sha256:0a47a90dd7a8e09f66ab579ccce74cae6dba5a4749ea1ba18eb2dcbfca369b25
+  alt: Icon
+  caption_generated_by: noop
+  caption_prompt_version: v1
+chunking:
+  target_tokens: 500
+  overlap_tokens: 75
+  contextual_prefix_template: This chunk belongs to section '{section_title}' in Odoo module '{module}'
+    v{module_version} (Odoo {odoo_version}), documenting {entities_primary}.
+---
+
+
+# RFID Attendance — `hr_attendance_multi_rfid` v19.0.1.0.0
+
+Manage employee attendance
+
+> **Audience: system administrators and developers.** End users who only configure and use the module should read [`llms.txt`](llms.txt) instead.
+
+
+## Overview <a id='overview'></a>
+
+Technical overview — module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
+
+- **Technical name**: `hr_attendance_multi_rfid`
+- **Version**: `19.0.1.0.0`
+- **Category**: Human Resources
+- **License**: AGPL-3
+- **Author**: Polimex
+- **Application**: no
+- **Auto-install**: no
+- **Installable**: yes
+- **Depends on**: `hr_rfid`, `hr_attendance`
+
+### README (verbatim)
+
+#### RFID Attendance
+
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![Version](https://img.shields.io/badge/Version-18.0.1.0.0-green.svg)](https://apps.odoo.com)
+
+Seamless integration between RFID access control and Odoo HR attendance tracking.
+
+##### 🎯 Overview
+
+RFID Attendance bridges the gap between physical access control and time tracking, automatically creating attendance records from RFID door events. It supports multiple check-in/out locations, zone-based attendance, and automatic session closure.
+
+##### ✨ Key Features
+
+###### Attendance Automation
+- **Automatic Check-in/out**: Convert RFID events to attendance records
+- **Zone-based Tracking**: Different zones for different attendance types
+- **Multi-location Support**: Track attendance across multiple sites
+- **Flexible Rules**: Configure which doors/zones create attendance
+
+###### Smart Processing
+- **Event Filtering**: Ignore rapid consecutive events
+- **Session Management**: Automatic session closure after timeout
+- **Break Handling**: Support for multiple check-ins/outs per day
+- **Overtime Calculation**: Automatic overtime tracking
+
+###### Integration Features
+- **Real-time Sync**: Instant attendance from access events
+- **Bulk Processing**: Handle high-volume event streams
+- **Error Recovery**: Resilient to network/system issues
+- **Multi-company**: Separate attendance per company
+
+###### Reporting
+- **Attendance Reports**: Standard Odoo attendance reports
+- **RFID Event Correlation**: Link attendance to access events
+- **Exception Reporting**: Missing check-outs, anomalies
+- **Export Capabilities**: Excel, CSV exports
+
+##### 📋 Requirements
+
+- Odoo 18.0+
+- hr_rfid module installed and configured
+- hr_attendance module (Odoo standard)
+
+###### Dependencies
+```python
+'depends': ['hr_rfid', 'hr_attendance']
+```
+
+##### 🛠️ Installation
+
+1. Install the hr_rfid module first (if not already installed)
+
+2. Install this module:
+```bash
+./odoo-bin -d your_database -i hr_attendance_multi_rfid
+```
+
+3. Configure attendance zones in existing RFID setup
+
+##### 🔧 Configuration
+
+###### Zone Configuration
+
+1. **Navigate to**: RFID → Configuration → Zones
+2. **Enable Attendance**: Check "Attendance Zone" on relevant zones
+3. **Set Type**: Choose attendance behavior:
+   - `auto`: Automatic in/out detection
+   - `in`: Always check-in
+   - `out`: Always check-out
+   - `toggle`: Alternate between in/out
+
+###### Door Assignment
+
+1. **Assign Zones to Doors**: RFID → Doors → Edit
+2. **Select Zone**: Choose attendance-enabled zone
+3. **Save**: Doors in this zone will generate attendance
+
+###### Employee Setup
+
+1. **RFID Cards**: Ensure employees have active RFID cards
+2. **Working Hours**: Set employee working schedules
+3. **PIN Codes**: Optional PIN for attendance validation
+
+###### System Parameters
+
+Configure in Settings → Technical → System Parameters:
+
+```
+#### Minimum time between attendance events (seconds)
+hr_attendance_multi_rfid.min_time_between_events: 60
+
+#### Auto check-out after hours
+hr_attendance_multi_rfid.auto_checkout_hours: 12
+
+#### Allow multiple check-ins per day
+hr_attendance_multi_rfid.allow_multiple_sessions: True
+```
+
+##### 📖 Usage
+
+###### Automatic Attendance
+
+1. **Employee enters**: Scans card at entrance
+2. **System creates**: Check-in record automatically
+3. **Employee exits**: Scans card at exit
+4. **System creates**: Check-out record
+
+###### Manual Overrides
+
+Managers can still:
+- Edit attendance records
+- Add missing entries
+- Correct errors
+- Override automatic entries
+
+###### Monitoring
+
+1. **Real-time View**: Attendance → Dashboard
+2. **Who's Present**: See current on-site employees
+3. **Event History**: Track all RFID events
+4. **Anomalies**: Review attendance exceptions
+
+##### 🔌 API Extension
+
+###### Custom Event Processing
+
+```python
+class CustomAttendance(models.Model):
+    _inherit = 'hr.attendance'
+    
+    def process_rfid_event(self, event):
+        # Custom logic before standard processing
+        if self.custom_validation(event):
+            return super().process_rfid_event(event)
+```
+
+###### Zone Handlers
+
+```python
+#### Custom zone attendance logic
+class CustomZone(models.Model):
+    _inherit = 'hr.rfid.zone'
+    
+    def get_attendance_action(self, employee, last_attendance):
+        # Custom logic for check-in/out decision
+        return 'check_in' or 'check_out'
+```
+
+##### 🐛 Troubleshooting
+
+###### Common Issues
+
+1. **No attendance created**
+   - Check zone configuration
+   - Verify door has attendance zone
+   - Confirm employee has valid card
+   - Check system parameters
+
+2. **Duplicate entries**
+   - Increase min_time_between_events
+   - Check for multiple doors in same zone
+   - Review event processing logs
+
+3. **Wrong in/out detection**
+   - Verify zone type settings
+   - Check last attendance state
+   - Review employee schedule
+
+###### Debug Mode
+
+Enable detailed logging:
+```python
+#### In Odoo config
+log_handler = hr_attendance_multi_rfid:DEBUG
+```
+
+##### ⚙️ Advanced Features
+
+###### Multi-Zone Attendance
+
+Configure complex scenarios:
+- Entry zones (parking → building → office)
+- Break areas with different rules
+- Restricted zones with no attendance
+
+###### Shift Management
+
+Integration with hr_attendance features:
+- Shift planning
+- Overtime rules
+- Break policies
+- Holiday handling
+
+###### Notifications
+
+Set up alerts for:
+- Missing check-outs
+- Overtime threshold
+- Unusual patterns
+- System errors
+
+##### 📊 Reports
+
+###### Standard Reports
+- Daily attendance summary
+- Monthly timesheets
+- Overtime analysis
+- Late arrival tracking
+
+###### Custom Reports
+- RFID event correlation
+- Zone utilization
+- Access vs attendance comparison
+- Exception reports
+
+##### 🤝 Contributing
+
+We welcome contributions! Please:
+1. Fork the repository
+2. Create feature branch
+3. Add tests for new features
+4. Submit pull request
+
+##### 📄 License
+
+This module is licensed under AGPL-3.0. See [LICENSE](../LICENSE) for details.
+
+##### 👥 Credits
+
+###### Authors
+- Polimex Dev Team
+
+###### Contributors
+- See [contributors](https://github.com/polimex/odoo-apps/contributors)
+
+###### Maintainer
+- [Polimex](https://polimex.co)
+
+##### 🌐 Links
+
+- [Documentation](https://polimex.co/docs/rfid-attendance)
+- [Support](https://polimex.co/support)
+- [Odoo Apps Store](https://apps.odoo.com/apps/modules/18.0/hr_attendance_multi_rfid/)
+
+---
+
+For more information, visit [polimex.co](https://polimex.co)
+
+
+## Installation & Configuration <a id='install'></a>
+
+Installation requirements and configuration entry points. Use this section to answer 'why won't the module install' questions.
+
+```bash
+./venv/bin/python odoo/odoo-bin -d DATABASE -i hr_attendance_multi_rfid --stop-after-init
+```
+
+
+## Models <a id='models'></a>
+Each model below is an atomic concept: one H3 per model. Inherited models (extending core) are marked explicitly.
+
+### `hr.attendance` <a id='model-hr-attendance'></a>
+Python class `HrAttendance` in `models/hr_attendance.py:7`.  Model.  Inherits: `hr.attendance`.
+
+#### Fields
+
+| Name | Type | Label | Required | Store | Help |
+|---|---|---|---|---|---|
+| `department_id` | Many2one |  |  | ✓ | Employee's department at the time of this attendance record. This field is store |
+| `check_in` | Datetime |  |  | ✓ | Date and time when the employee checked in to work. This is automatically record |
+| `check_out` | Datetime |  |  | ✓ | Date and time when the employee checked out from work. This is automatically rec |
+| `in_zone_id` | Many2one → \`hr.rfid.zone\` |  |  | ✓ | The RFID zone where this attendance session is taking place. Set when checking i |
+
+#### Notable methods
+
+- **`_compute_checkin_zone(self)`** — decorators: `@api.depends`
+- **`write(self, vals)`** — decorators: —
+  - calls `super() `write``
+- **`needs_autoclose(self)`** — decorators: —
+- **`autoclose_attendance(self, reason)`** — decorators: —
+  - effects: `write`
+- **`check_for_incomplete_attendances(self)`** — decorators: `@api.model`
+
+### `hr.employee` <a id='model-hr-employee'></a>
+Python class `HrEmployee` in `models/hr_employee.py:11`.  Model.  Inherits: `hr.employee`.
+
+#### Notable methods
+
+- **`attendance_action_change_with_date(self, action_date, zone_id=None)`** — decorators: —
+  - Check In/Check Out action with support for out-of-order events.
+  - effects: `log_warn`, `raise:UserError`, `with_context`
+  - touches: `hr.attendance`
+- **`recalc_attendance(self, from_date=None, to_date=None)`** — decorators: —
+  - Recalculate attendance records from RFID events.
+  - effects: `log_warn`, `with_context`
+  - touches: `hr.attendance`, `hr.rfid.event.user`, `hr.rfid.zone`
+
+### `hr.rfid.event.user` <a id='model-hr-rfid-event-user'></a>
+Python class `HrRfidUserEvent` in `models/hr_rfid_event_user.py:6`.  Model.  Inherits: `hr.rfid.event.user`.
+
+#### Fields
+
+| Name | Type | Label | Required | Store | Help |
+|---|---|---|---|---|---|
+| `in_or_out` | Selection | Attendance |  | ✓ | Indicates whether this RFID event was processed as attendance check-in or check- |
+
+#### Notable methods
+
+- **`button_show_employee_att_events(self)`** — decorators: —
+  - effects: `i18n`
+
+### `hr.rfid.zone` <a id='model-hr-rfid-zone'></a>
+Python class `HrRfidZone` in `models/hr_rfid_zone.py:8`.  Model.  Inherits: `hr.rfid.zone`.
+
+#### Fields
+
+| Name | Type | Label | Required | Store | Help |
+|---|---|---|---|---|---|
+| `attendance` | Boolean | Attendance |  | ✓ | Enable automatic attendance tracking for this zone. When employees enter this zo |
+| `overwrite_check_in` | Boolean | Overwrite check-in |  | ✓ | When enabled, if an employee who is already checked in enters this zone, their c |
+| `overwrite_check_out` | Boolean | Overwrite check-out |  | ✓ | When enabled, if an employee who has already checked out leaves this zone, their |
+| `max_time_in_zone` | Float | Maximum Hours in Zone |  | ✓ | Maximum hours an employee can stay in the zone before attendance is automaticall |
+| `auto_close_time_for_zone` | Float | Auto-close Worked Hours |  | ✓ | When attendance is automatically closed (due to max_time_in_zone), this value wi |
+| `delete_attendance_if_late_more_than` | Float | Delete if Late More Than (Hours) |  | ✓ | Automatically delete attendance records if the employee is late by more than thi |
+
+#### Notable methods
+
+- **`person_entered(self, person, event)`** — decorators: —
+  - super-split (super `person_entered`): pre=— · post=`with_context`
+  - effects: `with_context`
+  - touches: `hr.employee`
+- **`person_left(self, person, event=None)`** — decorators: —
+  - Handle person leaving a zone with improved out-of-order event support.
+  - super-split (super `person_left`): pre=— · post=`log_warn`, `with_context`
+  - effects: `log_warn`, `with_context`
+  - touches: `hr.attendance`, `hr.employee`
+- **`attendance_for_current_zone(self)`** — decorators: —
+  - effects: `i18n`
+
+### `hr.attendance.recalc.wizard` <a id='model-hr-attendance-recalc-wizard'></a>
+Python class `WizardHrRecalcAttendanceEmployee` in `wizards/hr_recalc_attendance_wizard.py:5`.  TransientModel (wizard).  Description: *Wizard for re-create attendance records based on RFID events*.
+
+#### Fields
+
+| Name | Type | Label | Required | Store | Help |
+|---|---|---|---|---|---|
+| `employee_ids` | Many2many → \`hr.employee\` | Employees | ✓ | ✓ | Select employees whose attendance records will be recalculated from RFID events. |
+| `start_date` | Date | Start Date |  | ✓ | Starting date for attendance recalculation. Only attendance records from this da |
+| `end_date` | Date | End Date |  | ✓ | Ending date for attendance recalculation. Attendance records will be processed u |
+
+#### Notable methods
+
+- **`execute(self)`** — decorators: —
+
+
+## Module Constants <a id='constants'></a>
+
+No module-level UPPER_CASE constants are declared by this module.
+
+
+## Module Helpers & Hooks <a id='helpers'></a>
+
+Top-level functions that sit outside any Odoo model class. Use this section to answer 'how do I call this programmatically' and 'what happens at install/uninstall'.
+
+
+### Public helpers
+
+- **`RFIDAttendanceTests.setUp(self)`** — `tests/test_functional.py:17`
+  - calls `super()`
+- **`RFIDAttendanceTests.test_functionality(self)`** — `tests/test_functional.py:20`
+  - effects: `log_info`
+
+### Private helpers
+
+- **`RFIDAttendanceTests._test_attendance_zone(self)`** — `tests/test_functional.py:25`
+  - effects: `with_context`
+  - touches: `hr.rfid.access.group.wizard`, `hr.rfid.zone`
+
+
+## Views & Inheritance <a id='views'></a>
+
+List of `ir.ui.view` records created or extended by this module.
+
+| XML id | Model | Type | Inherit | File |
+|---|---|---|---|---|
+| `hr_attendance_calendar_view` | `hr.attendance` | — |  | `views/hr_attendance.xml` |
+| `view_attendance_list_inherit` | `hr.attendance` | — | hr_attendance.view_attendance_tree | `views/hr_attendance.xml` |
+| `hr_attendance_view_filter_inherit` | `hr.attendance` | — | hr_attendance.hr_attendance_view_filter | `views/hr_attendance.xml` |
+| `rfid_hr_employee_view_search` | `hr.employee` | — | hr.view_employee_filter | `views/hr_employee.xml` |
+| `hr_rfid_view_user_ev_form_inherit_hr_attendance_multi_rfid` | `hr.rfid.event.user` | — | hr_rfid.hr_rfid_user_ev_view_form | `views/hr_rfid_webstack_views.xml` |
+| `hr_rfid_view_user_ev_tree_inherit_hr_attendance_multi_rfid` | `hr.rfid.event.user` | — | hr_rfid.hr_rfid_user_ev_view_list | `views/hr_rfid_webstack_views.xml` |
+| `hr_rfid_view_zone_form_inherit_hr_attendance_multi_rfid` | `hr.rfid.zone` | — | hr_rfid.hr_rfid_zone_view_form | `views/hr_rfid_webstack_views.xml` |
+| `hr_rfid_view_zone_tree_inherit_hr_attendance_multi_rfid` | `hr.rfid.zone` | — | hr_rfid.hr_rfid_zone_view_list | `views/hr_rfid_webstack_views.xml` |
+| `hr_rfid_user_ev_view_search_inherit_hr_attendance_multi_rfid` | `hr.rfid.event.user` | — | hr_rfid.hr_rfid_user_ev_view_search | `views/hr_rfid_webstack_views.xml` |
+
+#### Sample XPath operations
+
+- In `view_attendance_list_inherit`:
+  - `//field[@name='worked_hours'] [after]`
+
+- In `hr_attendance_view_filter_inherit`:
+  - `//group [before]`
+  - `//group [inside]`
+  - `//group [after]`
+
+- In `rfid_hr_employee_view_search`:
+  - `//filter[@name='inactive'] [after]`
+
+- In `hr_rfid_view_user_ev_form_inherit_hr_attendance_multi_rfid`:
+  - `//div[hasclass('oe_button_box')] [inside]`
+  - `//group [inside]`
+
+- In `hr_rfid_view_user_ev_tree_inherit_hr_attendance_multi_rfid`:
+  - `//list [attributes]`
+  - `//field[@name='door_id'] [after]`
+
+
+
+## Security <a id='security'></a>
+
+Who can do what. Answer access-related questions from this section.
+
+
+### Access rights (ir.model.access)
+
+| CSV id | Model | Group | R | W | C | D |
+|---|---|---|---|---|---|---|
+
+| `access_hr_attendance_recalc_wizard` | `model_hr_attendance_recalc_wizard` | `hr_attendance.group_hr_attendance_manager` | ✓ | ✓ | ✓ |  |
+
+| `access_resource_calendar_hr_attendance_manager` | `resource.model_resource_calendar` | `hr_attendance.group_hr_attendance_manager` | ✓ | ✓ | ✓ | ✓ |
+
+| `access_resource_calendar_attendance_hr_attendance_manager` | `resource.model_resource_calendar_attendance` | `hr_attendance.group_hr_attendance_manager` | ✓ | ✓ | ✓ | ✓ |
+
+
+### Record rules (ir.rule)
+
+- **`ir_rule_hr_rfid_card_multi_company`** on `resource.model_resource_calendar` — perms=`R`, groups=`global`, domain=`[('company_id', 'in', company_ids)]`
+
+
+## Data & Automation <a id='data'></a>
+
+XML records seeded at install and scheduled actions.
+
+
+### Cron jobs
+
+- **`hr_attendance_multi_rfid_autoclose_cron`** (HR RFID Multi Attendance: Auto-close incomplete attendances) on `model_hr_attendance`, runs every 1 minutes, active=True
+
+### Data records summary
+
+- `ir.cron`: 1 record(s)
+
+
+## UI & Frontend <a id='assets'></a>
+
+This module ships no frontend assets (no JavaScript, SCSS, OWL components or QWeb templates).
+
+
+## Diagrams & Screenshots <a id='images'></a>
+Visual assets shipped with the module. Captions generated by VLM; review before production.
+
+<figure id='fig-static-description-icon-png'>
+
+![Icon](static/description/icon.png)
+
+<figcaption>[Placeholder caption] Image at `icon.png`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+</figure>
+
+> Tags: `icon`
+
+<figure id='fig-static-description-icon-svg'>
+
+![Icon](static/description/icon.svg)
+
+<figcaption>[Placeholder caption] Image at `icon.svg`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+</figure>
+
+> Tags: `icon`
+
+
+## FAQ & Troubleshooting <a id='faq'></a>
+Candidate entries mined from code comments, git history and past Claude Code sessions. Review before publishing; `<!-- source: ... -->` markers should be removed after vetting.
+
+### From `code_comments` (3)
+
+#### TODO: multiple zone not proccessed!!!
+<!-- source: code_comments ref: models/hr_attendance.py:69 occ: 1 conf: 0.50 -->
+
+**TODO** in `models/hr_attendance.py:69`
+
+> multiple zone not proccessed!!!
+
+#### TODO: multiple zone not proccessed!!!
+<!-- source: code_comments ref: models/hr_attendance.py:79 occ: 1 conf: 0.50 -->
+
+**TODO** in `models/hr_attendance.py:79`
+
+> multiple zone not proccessed!!!
+
+#### TODO: Need to added .with_context(no_validity_check=True) for attendance man
+<!-- source: code_comments ref: models/hr_rfid_zone.py:61 occ: 1 conf: 0.50 -->
+
+**TODO** in `models/hr_rfid_zone.py:61`
+
+> Need to added .with_context(no_validity_check=True) for attendance management!!!
+
+### From `gotchas` (4)
+
+#### Gotcha: `account.account` **НЯМА** `company_id` — ползвай уникални кодове (нап
+<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
+
+From **Модели и полета** in odoo19-gotchas.md:
+
+> `account.account` **НЯМА** `company_id` — ползвай уникални кодове (напр. `411.NRA`)
+
+Matched tokens: `company_id`
+
+#### Gotcha: `@api.onchange` **НЕ** се вика при `create()` — само при UI промяна. З
+<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
+
+From **Модели и полета** in odoo19-gotchas.md:
+
+> `@api.onchange` **НЕ** се вика при `create()` — само при UI промяна. За логика при create ползвай `@api.model_create_multi` или `_compute`
+
+Matched tokens: `_compute`
+
+#### Gotcha: `_registry_readonly_enabled = False` (НЕ `readonly_enabled`) за `HttpC
+<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
+
+From **Тестове** in odoo19-gotchas.md:
+
+> `_registry_readonly_enabled = False` (НЕ `readonly_enabled`) за `HttpCase` тестове с DB writes
+
+Matched tokens: `httpcase`
+
+#### Gotcha: При `ev64` хардуерни събития: хардуерът изпраща follow-up Granted even
+<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
+
+From **Общи** in odoo19-gotchas.md:
+
+> При `ev64` хардуерни събития: хардуерът изпраща follow-up Granted event след grant — симулирай с `event_code=3`
+
+Matched tokens: `event_code=3`
+
+### From `git_log` (23)
+
+#### Fix: [IMP][FIX] Optimize batch attendance processing and fix boolean comparis
+<!-- source: git_log ref: 510764a4f824e0eb4da212e08fe5021b3b51b5c9 occ: 1 conf: 0.60 -->
+
+Commit `510764a4f8` (2025-10-22): [IMP][FIX] Optimize batch attendance processing and fix boolean comparisons
+
+#### Fix: FIX: Bug in relative delta call
+<!-- source: git_log ref: 15998e70edb489e995097d9d718b954d71c11e2f occ: 1 conf: 0.60 -->
+
+Commit `15998e70ed` (2023-11-20): FIX: Bug in relative delta call
+
+#### Fix: fixes from 14.0
+<!-- source: git_log ref: 679dec5fa47da3f66e559dc178f06f23ed3784ed occ: 1 conf: 0.60 -->
+
+Commit `679dec5fa4` (2023-06-16): fixes from 14.0
+
+#### Fix: re-write extra data calcs and fixes in attendance_multi
+<!-- source: git_log ref: 0b5798ff91793ad7e7598cd727f837cb56f9dee8 occ: 1 conf: 0.60 -->
+
+Commit `0b5798ff91` (2023-06-06): re-write extra data calcs and fixes in attendance_multi
+
+#### Fix: Fixes for Toni
+<!-- source: git_log ref: f96d2b4fc1b2cfa9606336afc69c06d0eede7390 occ: 1 conf: 0.60 -->
+
+Commit `f96d2b4fc1` (2022-11-15): Fixes for Toni
+
+#### Fix: attendance fix from 14.0
+<!-- source: git_log ref: 93171012f20e945f18f619ede5f7840ce35f7427 occ: 1 conf: 0.60 -->
+
+Commit `93171012f2` (2022-06-18): attendance fix from 14.0
+
+#### Fix: Fix from 14.0
+<!-- source: git_log ref: 3df14c626d3b05a69d06cb6805d8ce5b2376459d occ: 1 conf: 0.60 -->
+
+Commit `3df14c626d` (2022-06-09): Fix from 14.0
+
+#### Fix: Fix from 14.0
+<!-- source: git_log ref: 37f4b63de90821f6bbb150e2e101742cc64ccf2b occ: 1 conf: 0.60 -->
+
+Commit `37f4b63de9` (2022-06-08): Fix from 14.0
+
+#### Fix: [FIX] Calculations work time
+<!-- source: git_log ref: 4a0d0731d7915f64eb35dc32a2de4f258bd953e6 occ: 1 conf: 0.60 -->
+
+Commit `4a0d0731d7` (2021-04-09): [FIX] Calculations work time
+
+#### Fix: [FIX] Fixes
+<!-- source: git_log ref: 3d695ce265499043c345863ade49aa0b415fa36f occ: 1 conf: 0.60 -->
+
+Commit `3d695ce265` (2021-04-09): [FIX] Fixes
+
+#### Fix: [FIX] auto close with OCA autoclose
+<!-- source: git_log ref: 3e7d332314cd7ea65c204fc564d28623c960c6a5 occ: 1 conf: 0.60 -->
+
+Commit `3e7d332314` (2021-03-15): [FIX] auto close with OCA autoclose
+
+#### Fix: [FIX] auto close with OCA autoclose
+<!-- source: git_log ref: d59bb7b2f9fc4e7d201d585263269ac51f610f17 occ: 1 conf: 0.60 -->
+
+Commit `d59bb7b2f9` (2021-03-15): [FIX] auto close with OCA autoclose
+
+#### Fix: [FIX] auto close with OCA autoclose
+<!-- source: git_log ref: e72c49bc8942b0fba557d0afd573e0b82e08778f occ: 1 conf: 0.60 -->
+
+Commit `e72c49bc89` (2021-03-15): [FIX] auto close with OCA autoclose
+
+#### Fix: zone attendance fix
+<!-- source: git_log ref: bcfe7be6ee25014bad67ebe2bf32b298e2edc6c0 occ: 1 conf: 0.60 -->
+
+Commit `bcfe7be6ee` (2021-03-09): zone attendance fix
+
+#### Fix: BG Translation & minor fixes
+<!-- source: git_log ref: aeef6b44a0cb38d66ffe58fbb3c90dc0e6ff5e0b occ: 1 conf: 0.60 -->
+
+Commit `aeef6b44a0` (2020-06-25): BG Translation & minor fixes
+
+#### Fix: Zone check in fix
+<!-- source: git_log ref: 82567edcf3cc72d5235089f9c1b0b8d201d0b4e2 occ: 1 conf: 0.60 -->
+
+Commit `82567edcf3` (2020-01-28): Zone check in fix
+
+#### Fix: Zone overwrite check_in/out and F0 renaming things fixed
+<!-- source: git_log ref: 077d26773147aa81b29f4750b9a6450cbb7e5e78 occ: 1 conf: 0.60 -->
+
+Commit `077d267731` (2020-01-28): Zone overwrite check_in/out and F0 renaming things fixed
+
+#### Fix: Bug fixes (workcode menu doesn't show up??)
+<!-- source: git_log ref: 7b254dc48fd140d2ca5feb97a1a882f07d3e1c62 occ: 1 conf: 0.60 -->
+
+Commit `7b254dc48f` (2019-06-24): Bug fixes (workcode menu doesn't show up??)
+
+#### Fix: Bug fixes
+<!-- source: git_log ref: b5d4d17ed5f1336ad1a92426e842c4d72360dd8a occ: 1 conf: 0.60 -->
+
+Commit `b5d4d17ed5` (2019-06-06): Bug fixes
+
+#### Fix: Bug fix
+<!-- source: git_log ref: 36b57db7f1b9a04c6c4bc7d21077b94242d6e9a3 occ: 1 conf: 0.60 -->
+
+Commit `36b57db7f1` (2019-06-06): Bug fix
+
+#### Fix: hr_attendance_multi_rfid: Implement the theoretical time module into our
+<!-- source: git_log ref: 7dae7c9f005a9831c5093447dddb795c5b7e2e73 occ: 1 conf: 0.60 -->
+
+Commit `7dae7c9f00` (2019-06-06): hr_attendance_multi_rfid: Implement the theoretical time module into ours, some bug fixes
+
+#### Fix: hr_rfid and hr_attendance_multi_rfid: Bug fixes
+<!-- source: git_log ref: 8003939a6635fe5bec9b8b79d6cb796747b50e25 occ: 1 conf: 0.60 -->
+
+Commit `8003939a66` (2019-05-11): hr_rfid and hr_attendance_multi_rfid: Bug fixes
+
+#### Fix: Fix create methods to use the new "model_create_multi" decorator
+<!-- source: git_log ref: 805151030b078022440298acb5676832237cba35 occ: 1 conf: 0.60 -->
+
+Commit `805151030b` (2019-03-22): Fix create methods to use the new "model_create_multi" decorator
+
+
+## Source provenance <a id='provenance'></a>
+
+- Module path: `/home/lubo/PycharmProjects/odoo19/custom-addons/polimex/hr_attendance_multi_rfid`
+- Source digest: `sha256:fba71369265be1500bbdcac39b04096b2b03bc6204a695e6fa698151e653a08d`
+- Generated at: `2026-04-29T07:30:41+00:00`
+- Generator: `polimex_module_knowledge` (see `~/.claude/lib/polimex_module_knowledge/`)

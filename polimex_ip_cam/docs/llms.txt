@@ -1,0 +1,202 @@
+---
+id: polimex_ip_cam
+title: IP Camera Management
+module: polimex_ip_cam
+doc_type: user_guide
+audience:
+- user
+summary: Module for managing IP cameras via manufacturers integration integration
+last_updated: '2026-06-19'
+source_digest: sha256:5e04b818dc6208b79c78ff5b149171c2e492a40285ced080a2dc7bc91fc9ee86
+companion_doc: llms-full.md
+---
+
+
+# IP Camera Management
+
+> Module for managing IP cameras via manufacturers integration integration
+
+
+## What this module does
+
+Module for managing IP cameras via manufacturers integration integration.
+
+This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
+
+
+## How to use it
+
+Polimex ANPR Module
+===================
+
+.. image:: https://img.shields.io/badge/maturity-Beta-yellow.png
+   :target: https://odoo-community.org/page/development-status
+   :alt: Beta
+.. image:: https://img.shields.io/badge/licence-AGPL--3-blue.png
+   :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
+   :alt: AGPL-3
+.. image:: https://img.shields.io/badge/github-Polimex%20ANPR-lightgray.png?logo=github
+   :target: https://github.com/polimex/polimex-rfid
+   :alt: GitHub
+.. image:: https://img.shields.io/badge/odoo-19.0-blue.svg
+   :target: https://www.odoo.com
+   :alt: Odoo 19.0
+
+Overview
+--------
+
+The **Polimex ANPR** module for Odoo 19 provides a robust solution for managing IP cameras with Automatic Number Plate Recognition (ANPR) functionality. This module integrates with Hikvision cameras via the ISAPI protocol and offers seamless synchronization between camera settings and Odoo records.
+
+Key features include:
+
+- **Camera Management:** Store and update camera details (IP, port, credentials, brand, etc.), check connection status, and retrieve snapshots. Connection check also records the model, serial number and the short *sub-serial* (the identifier the camera reports as ``deviceUUID`` in ANPR events).
+- **HTTP Host Configuration:** Configure and read the camera's HTTP host (event-notification) settings. The ``SubscribeEvent`` heartbeat is **clamped to the camera's advertised range** (read from the device capabilities) so an out-of-range value can no longer be rejected with *"Invalid XML Content"*; the host document is updated read-modify-write so fields the module does not manage (e.g. ``checkResponseEnabled``) are preserved.
+- **Plate List Management:** Add and remove license plates in the camera's two hardware lists — **Whitelist** (allow) and **Blacklist** (deny). The transport is **capability-detected**: legacy cameras use ``/ISAPI/ITC/Entrance/VCL``; TCG/7-series firmware that dropped VCL uses the LP-audit API (JSON record upsert + JSON delete). See *Hikvision ISAPI Compatibility* below.
+- **ANPR Event Handling:** The public webhook records plate detections as RFID events. Cameras are identified by their stored sub-serial (``deviceUUID``) with a trusted source-IP fallback that learns the sub-serial on first contact; the request source IP (honoured via ``proxy_mode`` behind a reverse proxy) is the authentication anchor.
+- **Clock Sync:** Heartbeats drive an automatic time-sync; the camera time zone is sent using Hikvision's POSIX/inverted sign convention to avoid an endless ``set_time`` loop.
+- **RFID & ANPR Integration:** Link HR RFID cards (whose number is the license plate) to cameras; creating/removing a relation queues the matching add/remove command automatically.
+- **Asynchronous Command Execution:** A dedicated command model queues and executes operations (retry + state tracking), serialising commands per camera.
+
+Table of Contents
+-----------------
+.. contents::
+   :local:
+   :depth: 2
+
+Configuration
+-------------
+
+1. **Camera Configuration:**
+
+   - Create a new camera record in the ``CCTV Camera`` model.
+   - Fill in the camera's IP address, port, username, password, and brand (e.g., Hikvision).
+   - Configure additional parameters such as HTTP host and integration type.
+
+2. **HTTP Host Setup:**
+
+   - Use the action methods to set and retrieve the camera's HTTP host configuration.
+   - The configuration is stored in a field using a ``param=value`` format and is sent to the camera via ISAPI.
+
+3. **Plate List Management:**
+
+   - Link HR RFID cards with cameras via the ``cctv.camera.rfid.rel`` model.
+   - When a relation is created or removed, the module automatically creates and executes a corresponding command
+     (e.g., add_plate or remove_plate).
+
+4. **Command Processing:**
+
+   - Commands are recorded in the ``cctv.camera.command`` model.
+   - Each command includes type, request/response data, execution time, retry count (max 5), and state (new, in_progress, done, error).
+   - Commands execute automatically upon creation and can be re-executed manually if needed.
+
+Usage
+-----
+
+- **Camera Management:** Manage cameras and view their statuses and snapshots from the standard Odoo views.
+- **Plate List Synchronization:** When you link an RFID card to a camera, the module automatically updates the camera’s plate list.
+- **Command Monitoring:** Use the provided form and tree views for camera commands to monitor, review, and re-execute commands.
+
+API Details
+-----------
+
+The module talks to Hikvision cameras through the ``HikvisionCamera`` helper
+(``helpers/camera_api.py``) over ISAPI with HTTP Digest auth:
+
+- **Connection & Snapshot:** ``check_connection()`` (also stores ``serialNumber`` and ``subSerialNumber``) and ``get_snapshot()``.
+- **HTTP Host Configuration:** ``set_http_host(config)`` / ``get_http_host()`` — heartbeat is clamped to ``get_http_host_capabilities()``; the document is updated read-modify-write.
+- **Plate List Commands:** ``add_plate_to_list(plate_entries)`` / ``delete_plate_from_list(plate_entries)`` — routed by ``_uses_lp_audit_api()`` to the VCL or LP-audit implementation (see below).
+- **Time Sync:** ``set_time_config(...)`` driven from the ANPR webhook on heartbeat drift.
+
+Hikvision ISAPI Compatibility
+-----------------------------
+
+Hikvision changed the plate-list API across camera generations, so the module
+detects the supported one per camera (probing ``/ISAPI/ITC/Entrance/VCL/capabilities``)
+and routes accordingly. Both paths are exercised by the test suite; the
+LP-audit contract below was verified live against a **DS-TCG406-E (firmware
+V5.4.4)**.
+
+**Legacy — VCL** (``/ISAPI/ITC/Entrance/VCL``, older cameras):
+
+- Add: ``PUT`` ``<SetVCLData>`` with ``<singleVCLData>`` rows (``listType`` ``0`` whitelist / ``1`` blacklist).
+- Delete: ``DELETE`` ``<VCLDelCond>`` by ``plateNum``.
+
+**Current — LP-audit** (``/ISAPI/Traffic/channels/<n>/...``, TCG / 7-series
+firmware that returns *notSupport* for VCL):
+
+- Read: ``POST searchLPListAudit`` (XML ``<LPListAuditSearchDescription>``)
+  returns the plates currently stored on the camera, paged.
+- Add / update: ``PUT licensePlateAuditData/record?format=json`` with a JSON
+  body ``{"LicensePlateInfoList": [{...}]}``. Each record carries
+  ``LicensePlate``, ``listType`` (``allowList``/``blockList``), ``cardNo`` /
+  ``cardID``, a ``createTime`` (validity start) / ``effectiveTime`` (validity
+  end) window and ``operationType``/``operation``. The upsert merges by plate;
+  success is HTTP 200 with ``statusCode 1`` — any other status is a failure, so
+  a plate the camera rejected is not marked done in Odoo.
+- Delete: ``PUT DelLicensePlateAuditData?format=json`` with
+  ``{"deleteAllEnabled": false, "CompoundCond": {"plateColor": "", "licensePlate": "<plate>"}}``.
+
+**Camera identification (NAT-proof):** ``action_set_http_host`` embeds the
+camera's sub-serial (deviceUUID) in the callback URL —
+``/ipcam/anpr/event/<sub_serial>``. Every notification (ANPR event *and*
+heartbeat, whose body carries no UUID) therefore arrives with the camera
+identity in the path, which is stable even when the camera is behind NAT and
+its source/body IPs do not match the stored address. The webhook resolves the
+camera by this URL token first; when so identified, the token is the
+authentication and the source-IP check (which cannot work behind NAT) is
+skipped. Note: the token is the camera sub-serial, not a secret — on an
+untrusted segment, prefer a per-camera random token. Body-reported IP is never
+used for identification (informational/debug only).
+
+**Travel direction:** read from ``<direction>`` inside the ``<ANPR>`` block
+(``forward`` / ``reverse``) — forward books the In reader, reverse the Out
+reader. The companion ``detectDir`` / ``carDirectionType`` are recorded in the
+event description for diagnosis.
+
+**Operational notes:**
+
+- Behind a reverse proxy, enable Odoo ``proxy_mode = True`` and forward
+  ``X-Forwarded-For`` so the IP fallback (legacy, no-token) still sees the
+  camera's real source IP. With the URL token, identification no longer
+  depends on the IP.
+- ``server_setup`` accepts ``param=value`` lines that override the HTTP-host
+  defaults (e.g. ``SubscribeEvent.heartbeat=30``); values are still clamped to
+  the camera's advertised range.
+
+For the full XML/JSON structures refer to the official Hikvision ISAPI guides
+(the TCG ANPR integration guide for the LP-audit endpoints).
+
+Contributing
+------------
+
+Contributions are welcome! Please follow the best practices outlined in the Odoo developer guidelines.
+For detailed instructions on contributing, visit the
+`Odoo Community Association contribution page <https://odoo-community.org/page/Contribute>`_.
+
+Bug Tracker
+-----------
+
+Bugs are tracked on the GitHub Issues page:
+`https://github.com/polimex/polimex-rfid/issues <https://github.com/polimex/polimex-rfid/issues>`_
+
+
+### Available actions
+
+- **Show reader**
+- **Check connection** — When the camera brand is hikvision, instantiate the HikvisionCamera API class and use it.
+- **Get http host** — Retrieve the camera's HTTP host configuration, store it in server_setup as param=value lines,
+- **Set http host** — Задава HTTP host конфигурация на камерата, като използва стойностите от server_setup.
+- **Get entrance param** — Извлича entrance параметрите от камерата и ги записва във rec.entrance_setup във формат 'param=value'.
+- **Set entrance param** — Задава entrance параметрите на камерата чрез API, като прочита конфигурацията от
+- **Get snapshot** — Get a snapshot from the camera (base64 encoded) and store it in the snapshot field.
+- **Control barrier** — Control the camera's barrier gate by sending an open/close command.
+- **Reload whitelist** — Reload each whitelist plate as a separate add_plate command.
+- **Execute** — Изпълнява командата. Методът променя състоянието на командата на 'in_progress',
+- **Create cameras** — Create a cctv.camera per remaining line, then open the camera list
+
+
+## Common questions and errors
+
+Actions in this list display a message dialog when something is wrong (missing data, invalid configuration, server unreachable, etc.). If an action fails, read the dialog message and check the configuration described above.
+
+- **Execute** (on `cctv.camera.command`) — Изпълнява командата. Методът променя състоянието на командата на 'in_progress',

@@ -1,0 +1,368 @@
+---
+id: rfid_service_portal
+title: RFID Services Portal
+module: rfid_service_portal
+doc_type: user_guide
+audience:
+- user
+summary: "\n        RFID Service System Portal plugin\n    "
+last_updated: '2026-04-29'
+source_digest: sha256:ccf7f1beec84f9b0620fff7a43f552ca0e341ffe343f2d63206308dd7170416a
+companion_doc: llms-full.md
+---
+
+
+# RFID Services Portal
+
+> 
+        RFID Service System Portal plugin
+    
+
+
+## What this module does
+
+
+        RFID Service System Portal plugin
+    .
+
+This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
+
+
+## How to use it
+
+### RFID Services Portal
+
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![Version](https://img.shields.io/badge/Version-18.0.0.1.0-green.svg)](https://apps.odoo.com)
+
+Portal extension for RFID service management and self-service visitor registration.
+
+#### 🎯 Overview
+
+RFID Services Portal extends the RFID service system with portal functionality, enabling self-service visitor registration, service purchases, and badge management through a web interface. Perfect for visitor management systems that require minimal staff intervention.
+
+#### ✨ Key Features
+
+##### Self-Service Portal
+- **Service Selection**: Browse available services
+- **Online Registration**: Visitor self-registration
+- **Badge Generation**: Instant badge creation
+- **Email Delivery**: Automatic badge sending
+
+##### Service Catalog
+- **Public Services**: Display available services
+- **Pricing Display**: Transparent pricing
+- **Service Details**: Duration, access levels
+- **Terms & Conditions**: Accept before purchase
+
+##### Visitor Features
+- **Quick Registration**: Minimal required fields
+- **Badge Preview**: See badge before completion
+- **Multiple Services**: Purchase several services
+- **Receipt Generation**: Instant confirmation
+
+##### Integration
+- **Portal Framework**: Extends Odoo portal
+- **Payment Options**: Online payment ready
+- **Multi-language**: Full translation support
+- **Mobile Responsive**: Works on all devices
+
+#### 📋 Requirements
+
+- Odoo 18.0+
+- rfid_service_base module
+- portal module (Odoo standard)
+- website module (Odoo standard)
+
+#### 🛠️ Installation
+
+1. Install rfid_service_base first
+
+2. Install the portal module:
+```bash
+./odoo-bin -d your_database -i rfid_service_portal
+```
+
+3. Configure public services
+
+#### 🔧 Configuration
+
+##### Portal Setup
+
+1. **Enable Public Access**
+   - Settings → Website → RFID Services
+   - Enable "Public Service Portal"
+   - Configure terms & conditions
+
+2. **Service Configuration**
+   - Mark services as "Available in Portal"
+   - Set public pricing
+   - Add service descriptions
+   - Upload service images
+
+3. **Registration Form**
+   - Configure required fields
+   - Add custom fields if needed
+   - Set validation rules
+   - Configure email templates
+
+##### Security Settings
+
+```python
+### Portal access configuration
+portal_allow_anonymous = True  # Allow without login
+portal_require_email_verification = True
+portal_max_services_per_session = 5
+portal_session_timeout = 30  # minutes
+```
+
+#### 📖 Usage
+
+##### Visitor Experience
+
+1. **Access Portal**
+   - Navigate to /my/services
+   - Or direct link from website
+   - No login required (configurable)
+
+2. **Select Service**
+   - Browse service catalog
+   - View service details
+   - Check pricing and duration
+   - Add to cart
+
+3. **Registration**
+   - Fill visitor information
+   - Upload photo (optional)
+   - Accept terms
+   - Submit registration
+
+4. **Receive Badge**
+   - Preview on screen
+   - Download PDF
+   - Receive via email
+   - Print if needed
+
+##### Service Catalog Display
+
+Services are displayed with:
+- Service name and icon
+- Duration (1 day, 1 week, etc.)
+- Access areas included
+- Price (if applicable)
+- Available spots (if limited)
+
+##### Registration Flow
+
+```
+Select Service → Enter Details → Preview Badge → Confirm → Receive Badge
+     ↓               ↓               ↓             ↓           ↓
+   Catalog      Registration    Validation    Payment    Email/Download
+```
+
+#### 🎨 Customization
+
+##### Portal Templates
+
+Customize the look and feel:
+
+```xml
+<!-- Inherit service catalog template -->
+<template id="portal_services_custom" inherit_id="rfid_service_portal.portal_my_services">
+    <xpath expr="//div[@class='service-card']" position="attributes">
+        <attribute name="class">service-card custom-style</attribute>
+    </xpath>
+    <xpath expr="//div[@class='service-description']" position="after">
+        <div class="custom-features">
+            <!-- Add custom content -->
+        </div>
+    </xpath>
+</template>
+```
+
+##### Custom Fields
+
+Add fields to registration:
+
+```python
+class ServiceSaleWizard(models.TransientModel):
+    _inherit = 'rfid.service.sale.wiz'
+    
+    # Add custom fields
+    company_name = fields.Char('Company')
+    purpose_of_visit = fields.Selection([
+        ('meeting', 'Business Meeting'),
+        ('interview', 'Job Interview'),
+        ('delivery', 'Delivery'),
+        ('contractor', 'Contractor Work'),
+    ])
+    host_employee = fields.Many2one('hr.employee', 'Host')
+```
+
+##### Styling
+
+Add custom CSS:
+
+```css
+/* In static/src/scss/portal_services.scss */
+.service-portal {
+    .service-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+    
+    .service-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        transition: all 0.3s ease;
+        
+        &:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+    }
+}
+```
+
+#### 🔒 Security Features
+
+##### Validation
+- Email verification
+- Phone number validation
+- Duplicate detection
+- Blacklist checking
+
+##### Rate Limiting
+- Registration limits
+- IP-based throttling
+- Session management
+- CAPTCHA integration
+
+##### Data Protection
+- Minimal data collection
+- Automatic data expiry
+- GDPR compliance
+- Secure badge generation
+
+#### 🔌 API Integration
+
+##### External Registration
+
+```python
+@http.route('/api/service/register', type='json', auth='public', methods=['POST'])
+def api_register_visitor(self, **kwargs):
+    # Validate input
+    required_fields = ['name', 'email', 'service_id']
+    for field in required_fields:
+        if field not in kwargs:
+            return {'error': f'Missing required field: {field}'}
+    
+    # Create registration
+    wizard = request.env['rfid.service.sale.wiz'].sudo().create({
+        'partner_name': kwargs['name'],
+        'email': kwargs['email'],
+        'service_id': kwargs['service_id'],
+    })
+    
+    # Process and return badge
+    wizard.action_confirm()
+    return {
+        'success': True,
+        'badge_url': wizard.get_badge_url(),
+        'card_number': wizard.card_number,
+    }
+```
+
+##### Webhook Notifications
+
+```python
+### Notify external system on registration
+def send_registration_webhook(self):
+    webhook_url = self.env['ir.config_parameter'].get_param('rfid.portal.webhook')
+    if webhook_url:
+        requests.post(webhook_url, json={
+            'visitor': self.partner_name,
+            'service': self.service_id.name,
+            'valid_from': self.start_date.isoformat(),
+            'valid_to': self.end_date.isoformat(),
+        })
+```
+
+#### 📱 Mobile Optimization
+
+##### Responsive Design
+- Touch-friendly interface
+- Mobile-first approach
+- Optimized forms
+- QR code support
+
+##### Progressive Web App
+- Offline capability
+- Install to homescreen
+- Push notifications
+- Camera integration
+
+#### 🐛 Troubleshooting
+
+##### Common Issues
+
+1. **Services not showing**
+   - Check "Available in Portal" flag
+   - Verify service is active
+   - Check access rights
+   - Clear website cache
+
+2. **Registration fails**
+   - Check required fields
+   - Verify email configuration
+   - Review validation rules
+   - Check server logs
+
+3. **Badge not received**
+   - Verify email settings
+   - Check spam folder
+   - Test email template
+   - Review mail queue
+
+### In settings
+portal_debug = True
+portal_log_registrations = True
+```
+
+#### 📊 Analytics
+
+Track portal usage:
+- Service popularity
+- Registration trends
+- Conversion rates
+- Error tracking
+- User journey analysis
+
+#### 🤝 Contributing
+
+We welcome contributions:
+1. Fork repository
+2. Add portal features
+3. Test responsive design
+4. Submit pull request
+
+#### 📄 License
+
+Licensed under AGPL-3.0. See [LICENSE](../LICENSE) for details.
+
+#### 👥 Credits
+
+##### Maintainer
+- [Polimex](https://polimex.co)
+
+#### 🌐 Links
+
+- [Documentation](https://polimex.co/docs/rfid-service-portal)
+- [Live Demo](https://demo.polimex.co/my/services)
+- [Odoo Apps Store](https://apps.odoo.com/apps/modules/18.0/rfid_service_portal/)
+
+---
+
+For more information, visit [polimex.co](https://polimex.co)

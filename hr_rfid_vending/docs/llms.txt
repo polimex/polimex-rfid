@@ -1,0 +1,340 @@
+---
+id: hr_rfid_vending
+title: RFID Vending Control
+module: hr_rfid_vending
+doc_type: user_guide
+audience:
+- user
+summary: Manage EXECUTIVE based vending machines
+last_updated: '2026-05-14'
+source_digest: sha256:9bcbf88c8ed2cabeb3b1a9972dd251f32ddffeb4ecf7f6732a67cdea37b111cf
+companion_doc: llms-full.md
+---
+
+
+# RFID Vending Control
+
+> Manage EXECUTIVE based vending machines
+
+
+## What this module does
+
+Manage EXECUTIVE based vending machines.
+
+This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
+
+
+## How to configure
+
+Open **Settings → General Settings** and look for the section named after this module. Available options:
+
+- **refill_interval_number** — Repeat every x.
+- **Interval Unit** — Time unit for the auto-refill repeat interval. Combined with Repeat every (above) to drive the cron schedule.
+- **Next Execution Date** — Next planned execution date for this refill.
+
+
+## How to use it
+
+### RFID Vending Machine Integration
+
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![Version](https://img.shields.io/badge/Version-18.0.1.6.0-green.svg)](https://apps.odoo.com)
+
+Complete vending machine management system integrated with RFID access control and employee accounts.
+
+#### 🎯 Overview
+
+RFID Vending integrates EXECUTIVE-based vending machines with Odoo's RFID system, enabling cashless transactions using employee RFID cards. It provides balance management, transaction tracking, automatic refills, and comprehensive reporting.
+
+#### ✨ Key Features
+
+##### Vending Management
+- **Machine Configuration**: Support multiple vending machines
+- **Product Mapping**: Link Odoo products to vending slots
+- **Price Management**: Centralized pricing control
+- **Stock Tracking**: Monitor product levels per machine
+
+##### Employee Features
+- **Card Balance**: Prepaid balance on RFID cards
+- **Transaction History**: Complete purchase history
+- **Auto-refill**: Automatic balance top-ups
+- **Spending Limits**: Daily/monthly limits
+
+##### Financial Control
+- **Balance Management**: Add/deduct employee balances
+- **Payroll Integration**: Deduct from salary
+- **Subsidy System**: Company-subsidized products
+- **Cash Collection**: Track physical cash removal
+
+##### Reporting & Analytics
+- **Sales Reports**: By product, employee, machine
+- **Balance Reports**: Current balances, movements
+- **Consumption Analysis**: Patterns and trends
+- **Machine Performance**: Uptime, sales volume
+
+#### 📋 Requirements
+
+- Odoo 18.0+
+- hr_rfid module installed
+- EXECUTIVE vending machines with RFID readers
+- Network connectivity to vending machines
+
+#### 🛠️ Installation
+
+1. Install hr_rfid module first
+
+2. Install the vending module:
+```bash
+./odoo-bin -d your_database -i hr_rfid_vending
+```
+
+3. Configure vending controllers in RFID system
+
+#### 🔧 Configuration
+
+##### Vending Controller Setup
+
+1. **Add Controller**
+   - RFID → Configuration → Controllers
+   - Select type: "Vending Machine"
+   - Configure network settings
+
+2. **Configure Products**
+   - RFID → Vending → Machine Configuration
+   - Map slots to Odoo products
+   - Set prices per slot
+
+3. **Enable on Employees**
+   - HR → Employees → RFID tab
+   - Check "Enable Vending"
+   - Set initial balance
+
+##### System Parameters
+
+Configure in Settings → Technical → System Parameters:
+
+```
+### Default balance for new employees
+hr_rfid_vending.default_balance: 50.00
+
+### Maximum negative balance allowed
+hr_rfid_vending.max_negative_balance: -10.00
+
+### Auto-refill settings
+hr_rfid_vending.auto_refill_enabled: True
+hr_rfid_vending.auto_refill_amount: 100.00
+hr_rfid_vending.auto_refill_threshold: 10.00
+```
+
+##### Product Configuration
+
+1. **Create Products**
+   - Inventory → Products
+   - Set as "Can be Sold"
+   - Define vending price
+
+2. **Map to Slots**
+   - Vending → Machines → Select machine
+   - Configure each slot/row
+   - Assign product and capacity
+
+#### 📖 Usage
+
+##### Employee Perspective
+
+1. **Check Balance**
+   - Employee portal → My Vending Balance
+   - View transaction history
+   - Request balance top-up
+
+2. **Make Purchase**
+   - Scan RFID card at vending machine
+   - Select product
+   - Balance automatically deducted
+
+3. **Top-up Balance**
+   - Request through portal
+   - Automatic refill when low
+   - Manager approval for manual adds
+
+##### Manager Functions
+
+1. **Balance Management**
+   - HR → Employees → Vending Balance
+   - Add/deduct amounts
+   - View employee history
+
+2. **Machine Monitoring**
+   - Vending → Machines
+   - Check online status
+   - View sales in real-time
+
+3. **Reports**
+   - Vending → Reports
+   - Sales analysis
+   - Balance movements
+   - Product popularity
+
+##### Accounting Integration
+
+1. **Journal Entries**
+   - Automatic entries for sales
+   - Balance movements tracking
+   - Cash collection reconciliation
+
+2. **Payroll Deduction**
+   - Monthly balance settlement
+   - Automatic salary deduction
+   - Detailed payslip lines
+
+#### 🔌 API Integration
+
+##### Vending Events
+
+```python
+### Process vending transaction
+POST /hr/rfid/vending/event
+{
+    "controller_id": "VEND001",
+    "card_number": "1234567890",
+    "slot": 5,
+    "price": 2.50,
+    "product_code": "COLA330"
+}
+```
+
+##### Balance Operations
+
+```python
+### Check balance
+GET /api/vending/balance/{card_number}
+
+### Add balance
+POST /api/vending/balance/add
+{
+    "employee_id": 123,
+    "amount": 50.00,
+    "reference": "Manual top-up"
+}
+```
+
+#### 🐛 Troubleshooting
+
+##### Common Issues
+
+1. **Card not recognized**
+   - Verify card is active in RFID system
+   - Check vending enabled for employee
+   - Confirm machine is online
+
+2. **Insufficient balance**
+   - Check current balance
+   - Verify price configuration
+   - Review negative balance settings
+
+3. **Product not dispensing**
+   - Check machine mechanical status
+   - Verify product mapping
+   - Review transaction logs
+
+##### Machine Diagnostics
+
+1. **Connection Test**
+   - Vending → Machines → Test Connection
+   - Check network settings
+   - Verify controller status
+
+2. **Event Logs**
+   - Review vending events
+   - Check for error codes
+   - Monitor response times
+
+#### ⚙️ Advanced Features
+
+##### Auto-refill Rules
+
+Configure automatic balance top-ups:
+
+```python
+### In employee vending settings
+auto_refill_enabled = True
+auto_refill_amount = 100.00
+auto_refill_threshold = 10.00
+auto_refill_day = 1  # 1st of month
+```
+
+##### Subsidy System
+
+Company-subsidized products:
+
+```python
+### Product subsidy configuration
+subsidy_percentage = 50  # Company pays 50%
+employee_price = original_price * (1 - subsidy_percentage / 100)
+```
+
+##### Multi-Currency
+
+Support for different currencies:
+- Machine currency setting
+- Automatic conversion
+- Exchange rate updates
+
+#### 📊 Reports
+
+##### Standard Reports
+- Daily sales summary
+- Employee consumption report
+- Product popularity analysis
+- Machine revenue report
+
+##### Financial Reports
+- Balance movement report
+- Payroll deduction summary
+- Cash collection report
+- Subsidy cost analysis
+
+##### Custom Analytics
+- Peak usage times
+- Product preferences by department
+- Machine utilization rates
+- Predictive restocking
+
+#### 🤝 Contributing
+
+We welcome contributions:
+1. Fork the repository
+2. Create feature branch
+3. Test thoroughly
+4. Submit pull request
+
+#### 📄 License
+
+This module is licensed under AGPL-3.0. See [LICENSE](../LICENSE) for details.
+
+#### 👥 Credits
+
+##### Maintainer
+- [Polimex](https://polimex.co)
+
+#### 🌐 Links
+
+- [User Manual](https://polimex.co/docs/rfid-vending)
+- [Technical Documentation](https://github.com/polimex/odoo-apps/wiki)
+- [Odoo Apps Store](https://apps.odoo.com/apps/modules/18.0/hr_rfid_vending/)
+
+---
+
+For more information, visit [polimex.co](https://polimex.co)
+
+
+### Available actions
+
+- **Reverse**
+
+
+## Common questions and errors
+
+Actions in this list display a message dialog when something is wrong (missing data, invalid configuration, server unreachable, etc.). If an action fails, read the dialog message and check the configuration described above.
+
+- **Reverse** (on `hr.rfid.vending.event.reverse`)
