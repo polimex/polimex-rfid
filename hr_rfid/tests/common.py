@@ -75,7 +75,7 @@ class RFIDAppCase(common.TransactionCase):
         })
 
         self.test_card_employee = self.env['hr.rfid.card'].create({
-            'number': '1234512345',
+            'number': '7734512345',
             'card_input_type': 'w34',
             'card_reference': 'Badge 77',
             'employee_id': self.test_employee_id.id,
@@ -90,7 +90,7 @@ class RFIDAppCase(common.TransactionCase):
         })
 
         self.test_card_employee_2 = self.env['hr.rfid.card'].create({
-            'number': '1234612346',
+            'number': '7734612346',
             'card_input_type': 'w34',
             'card_reference': 'Badge 78',
             'employee_id': self.test_employee_2_id.id,
@@ -116,13 +116,13 @@ class RFIDAppCase(common.TransactionCase):
         })
 
         self.test_card_partner = self.env['hr.rfid.card'].create({
-            'number': '0012312345',
+            'number': '0077312345',
             'card_input_type': 'w34',
             'card_reference': 'Badge 33',
             'contact_id': self.test_partner.id,
             'company_id': self.test_company_id,
         })
-        self.assertTrue(self.test_card_partner.internal_number == '0012312345', 'Check cad number w34')
+        self.assertTrue(self.test_card_partner.internal_number == '0077312345', 'Check cad number w34')
         self.test_card2_partner = self.env['hr.rfid.card'].create({
             'number': '2760500060',
             'card_input_type': 'w34s',
