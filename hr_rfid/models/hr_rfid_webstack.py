@@ -101,14 +101,14 @@ class HrRfidWebstack(models.Model):
         readonly=True,
     )
 
-    key = fields.Char(
-        string='Key',
-        size=4,
-        index=True,
-        default='0000',
-        help='4-digit security key for module authentication. Change this from the default "0000" to secure your module. The module must have the same key configured.',
-        tracking=True,
-    )
+    # `key` is a DELEGATED field: it lives on the shared per-serial
+    # polimex.ws.endpoint (module polimex_ws) so a device that is both an AC
+    # module and an IoT gateway shares ONE credential (the double-key fix). It
+    # is read/written transparently as `webstack.key`; the storage is the
+    # endpoint. See hr_rfid_webstack_ws.py for the _inherits delegation. proto 3
+    # is trust-on-first-use (default False): a keyless module adopts the device's
+    # key on the first authenticated check-in (_authenticate_webstack /
+    # _ws_check_hello) rather than defaulting to "0000".
 
     active = fields.Boolean(
         string='Active',

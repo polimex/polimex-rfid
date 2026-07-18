@@ -53,58 +53,23 @@ WS_CTRL_ID_MAX = 254
 
 
 class HrRfidWebstackWs(models.Model):
-    # Extend hr.rfid.webstack IN PLACE and mix in polimex.ws.mixin (the shared
-    # transport/auth methods this model's ws_* fields drive). The explicit _name
-    # equal to the extended model is REQUIRED: a list _inherit without _name
-    # would make Odoo create a NEW model (hr.rfid.webstack.ws) instead of
-    # extending the webstack, so the ws_* fields would never register on it.
+    # Extend hr.rfid.webstack IN PLACE, mix in polimex.ws.mixin (the shared
+    # transport/auth methods) and DELEGATE the credential/presence to the shared
+    # per-serial polimex.ws.endpoint. The explicit _name equal to the extended
+    # model is REQUIRED with a list _inherit (otherwise Odoo creates a NEW model
+    # instead of extending the webstack).
     _name = 'hr.rfid.webstack'
     _inherit = ['hr.rfid.webstack', 'polimex.ws.mixin']
-
-    ws_enabled = fields.Boolean(
-        string='Real-time Channel',
-        help='Enable the permanent real-time connection for this module. '
-             'Commands reach the module within seconds instead of waiting '
-             'for its next check-in. The module keeps working the classic '
-             'way whenever the real-time connection is not available.',
-        default=False,
-        tracking=True,
-    )
-    ws_proto = fields.Integer(
-        string='Protocol Version',
-        readonly=True,
-        copy=False,
-        help='Real-time protocol version the module negotiated on its last '
-             'connection.',
-    )
-    ws_last_seen = fields.Datetime(
-        string='Last Real-time Activity',
-        readonly=True,
-        copy=False,
-        help='Last time the module sent anything over the real-time '
-             'connection.',
-    )
-    ws_online = fields.Boolean(
-        string='Real-time Online',
-        compute='_compute_ws_online',
-        search='_search_ws_online',
-        help='The module is currently connected in real time (it reported '
-             'activity within the last two heartbeat intervals).',
-    )
-    ws_provision_pending = fields.Boolean(
-        string='Settings Pending Delivery',
-        copy=False,
-        help='The real-time settings changed and will be delivered to the '
-             'module on its next check-in.',
-    )
-    ws_auth_fail_count = fields.Integer(copy=False)
-    ws_auth_fail_since = fields.Datetime(copy=False)
-    # Anti-replay watermark for the secure hello: the highest `n`
-    # (boot_count*65536 + seq) this module has proven; a hello with
-    # n <= ws_last_n is a replay and is refused. int4 ceiling note: the
-    # counter overflows Odoo's Integer only after ~32k device boots
-    # (INTEROP 2026-07-13) - acceptable; revisit before a production fleet.
-    ws_last_n = fields.Integer(copy=False, default=0)
+    # key + ws_enabled/ws_proto/ws_last_seen/ws_online/ws_provision_pending/
+    # ws_auth_fail_*/ws_last_n now live ONCE on polimex.ws.endpoint (per serial);
+    # the module reads/writes them transparently (webstack.key, .ws_online, ...)
+    # but a device that is both a module and an IoT gateway shares ONE row - the
+    # double-key fix. The get-or-create-by-serial wiring is in polimex.ws.mixin's
+    # create/write overrides. The module keeps its own serial (its identity).
+    _inherits = {'polimex.ws.endpoint': 'endpoint_id'}
+    endpoint_id = fields.Many2one(
+        'polimex.ws.endpoint', string='Real-time endpoint',
+        required=True, ondelete='restrict', index=True, copy=False)
 
     # ------------------------------------------------------------------
     # polimex.ws.mixin hooks - the Access-Control branch specifics.
