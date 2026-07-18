@@ -1,67 +1,50 @@
 # -*- coding: utf-8 -*-
-"""WebSocket (Odoo bus) transport layer of ``hr.rfid.webstack``.
+"""WebSocket (Odoo bus) transport layer of ``hr.rfid.webstack`` - the Access
+Control host for the shared secure-WS transport base.
 
-Package A of the Odoo Bus real-time channel - see
-``docs/odoo-bus/ODOO_BUS_ODOO_PLAN.md`` (esp32 repo) for the task and
-``docs/odoo-bus/ODOO_BUS_PROTOCOL_SPEC.md`` for the wire contract (SSOT).
+The transport-generic half (the anonymous ``/websocket`` dispatch, the secure
+hello with firmware HMAC + anti-replay + TOFU key adoption, per-frame key auth,
+presence, the channel lifecycle and the single bus-publish helper) lives ONCE in
+``polimex.ws.mixin`` (module ``polimex_ws`` - a neutral shared base, NOT the IoT
+app). This file keeps the Access-Control domain layer:
 
-The module (iCON1XX 100.1) subscribes to ONE string channel per device:
-``hr_rfid#<serial>#<key>`` (WIRE CONTRACT v3, proto 3, owner 2026-07-14). The
-credential is the module ``key`` (``server_push_key``) - the SAME secret the
-classic HTTP heartbeat authenticates with (``_authenticate_webstack``); the
-device already holds it and never receives it from Odoo. proto 3 REMOVED the
-separate 128-bit ``ws_token`` (it duplicated the key). The channel binds the
-socket to the webstack at connect; the hello proves firmware authenticity with
-an HMAC over ``s|k|n`` (``FW_SECRET``), so guessing the short key alone does
-not let a network attacker drive a controller. The classic HTTP channel runs
-over TLS in production (owner: HTTPS), so the key is not exposed on the wire -
-the same trust model the HTTP POST always used.
+* one-command-in-flight delivery over the socket (``_ws_publish_command`` /
+  ``_ws_on_connect_sync`` / ``_ws_publish_next_command``),
+* the ``ev`` event-batch consume + ack path (mirrors the HTTP twin),
+* the ``rsp`` command-response path,
+* HTTP-piggyback provisioning (``_ws_provision_payload``),
+* the server-side socket kick on disable/unlink,
 
-Every server->device publish goes through :meth:`_ws_send` - the channel
-naming lives in exactly one place. Key rotation is TOFU (SPEC §6.6): an admin
-clears the stored ``key`` in Odoo and the next hello's ``k`` is adopted; there
-is no server-issued token to rotate and no grace window.
+plus the small branch hooks the base calls (channel prefix, handler map, hello
+capture + command sync, hello_ack ev_batch, system-event sink = the AC
+``event.system``, disable = bye + kick).
+
+Wire contract (SSOT): ``docs/odoo-bus/ODOO_BUS_PROTOCOL_SPEC.md`` (proto 3). The
+device subscribes to ``hr_rfid#<serial>#<key>``; the credential is the module
+``key`` (``server_push_key``). Key rotation is TOFU (SPEC §6.6). hr_rfid and
+polimex_iot both depend on ``polimex_ws`` but never on each other.
 """
-import hashlib
-import hmac
 import logging
-from datetime import timedelta
 
-from odoo import api, fields, models, _
-from odoo.http import request
-from odoo.tools import consteq
+from odoo import fields, models
 from odoo.addons.bus.websocket import CloseCode, _websocket_instances
 
 from odoo.addons.hr_rfid.models.hr_rfid_webstack import BadTimeException
+# The shared secure-WS transport constants live in the neutral polimex_ws base;
+# imported here (and thus re-exported from this module's namespace) so the
+# existing test imports (tests/test_ws_dispatch.py, tests/test_ws_layer.py) keep
+# resolving after the extraction.
+from odoo.addons.polimex_ws.models.ws_mixin import (  # noqa: F401  (re-export)
+    BYE,
+    WS_AUTH_FAIL_THRESHOLD,
+    WS_PROTO_VERSION,
+)
 
 _logger = logging.getLogger(__name__)
 
-# Wire-contract constants (docs/odoo-bus/ODOO_BUS_PROTOCOL_SPEC.md)
-# proto 3 (owner 2026-07-14) = the secure hello WITHOUT ws_token: the channel
-# credential IS the module `key` (`k` in every frame), and the hello proves
-# firmware authenticity with an HMAC (`auth`) over `s|k|n` plus an anti-replay
-# counter (`n`). The signature is checked ONCE at connect (hello), not per
-# message. proto 2 (separate ws_token) is retired - its channel no longer
-# exists, so an un-migrated device falls back to HTTP (auto-provision) rather
-# than being half-served on a dead channel.
-WS_PROTO_VERSION = 3
-WS_PROTO_SUPPORTED = (3,)
-# HMAC secret shared with the firmware build (out-of-band; NOT in any spec).
-# Missing parameter = the authenticity check is skipped with a loud WARNING
-# (resilience over fleet lockout at a forgotten deploy step).
-WS_FW_SECRET_PARAM = 'hr_rfid.ws_fw_secret'
-# Default heartbeat interval the server advertises in hello_ack (SPEC §6.1);
-# tunable per install via the system parameter below.
-WS_HB_INTERVAL_DEFAULT_S = 60
-WS_HB_INTERVAL_PARAM = 'hr_rfid.ws_hb_interval'
-# hello_ack settings advertised to the device (SPEC §6.1)
-WS_ACK_TIMEOUT_S = 10
+# AC-specific wire constants (the shared ones live in polimex_ws).
+# hello_ack advertises the max event-batch size the device may pack.
 WS_EV_BATCH_MAX = 20
-WS_RL = {'rate': 5, 'burst': 8}
-# Anti-flood on invalid tokens (SPEC §9.2): after this many failures within
-# the window, ONE system event is raised for the operator.
-WS_AUTH_FAIL_THRESHOLD = 5
-WS_AUTH_FAIL_WINDOW_S = 60
 # Controllers sit on the RS-485 bus at addresses 1..254 (0 = broadcast / no
 # controller). An event with an id outside this range is malformed and must
 # not create a controller (bounds the tables an authenticated device grows).
@@ -70,7 +53,13 @@ WS_CTRL_ID_MAX = 254
 
 
 class HrRfidWebstackWs(models.Model):
-    _inherit = 'hr.rfid.webstack'
+    # Extend hr.rfid.webstack IN PLACE and mix in polimex.ws.mixin (the shared
+    # transport/auth methods this model's ws_* fields drive). The explicit _name
+    # equal to the extended model is REQUIRED: a list _inherit without _name
+    # would make Odoo create a NEW model (hr.rfid.webstack.ws) instead of
+    # extending the webstack, so the ws_* fields would never register on it.
+    _name = 'hr.rfid.webstack'
+    _inherit = ['hr.rfid.webstack', 'polimex.ws.mixin']
 
     ws_enabled = fields.Boolean(
         string='Real-time Channel',
@@ -118,75 +107,63 @@ class HrRfidWebstackWs(models.Model):
     ws_last_n = fields.Integer(copy=False, default=0)
 
     # ------------------------------------------------------------------
-    # Presence
+    # polimex.ws.mixin hooks - the Access-Control branch specifics.
     # ------------------------------------------------------------------
+    def _ws_channel_prefix(self):
+        return 'hr_rfid'
 
-    @api.model
-    def _ws_hb_interval(self):
-        """Heartbeat interval (seconds) advertised to devices (SPEC §6.1)."""
-        param = self.env['ir.config_parameter'].sudo().get_param(
-            WS_HB_INTERVAL_PARAM, WS_HB_INTERVAL_DEFAULT_S)
-        try:
-            return max(10, int(param))
-        except (TypeError, ValueError):
-            return WS_HB_INTERVAL_DEFAULT_S
+    def _ws_handlers(self):
+        """Shared hello/hb (base) + the AC event-batch and command-response
+        frames. Extension seam for inheritors (e.g. vending) via super()."""
+        handlers = super()._ws_handlers()
+        handlers.update({
+            'ev': self._ws_on_event_batch,
+            'rsp': self._ws_on_cmd_response,
+        })
+        return handlers
 
-    def _ws_online_threshold(self):
-        """A device is online if seen within 2 heartbeat intervals
-        (ARCHITECTURE §5.2 presence model - timestamp based, no connection
-        tracking)."""
-        return fields.Datetime.now() - timedelta(seconds=2 * self._ws_hb_interval())
+    def _ws_on_hello_extra(self, data):
+        """AC captures the controllers the device pre-provisions on hello."""
+        self._provision_detected_controllers(data.get('ctrl'))
 
-    @api.depends('ws_enabled', 'ws_last_seen')
-    def _compute_ws_online(self):
-        threshold = self._ws_online_threshold()
-        for rec in self:
-            rec.ws_online = bool(
-                rec.ws_enabled and rec.ws_last_seen and rec.ws_last_seen >= threshold)
+    def _ws_after_hello(self):
+        """(Re)start command delivery on (re)connect - ONE command in flight
+        (sync-on-connect, ARCHITECTURE §3.2)."""
+        self._ws_on_connect_sync()
 
-    def _search_ws_online(self, operator, value):
-        if operator not in ('=', '!=') or not isinstance(value, bool):
-            return NotImplemented
-        online = (operator == '=') == value
-        threshold = self._ws_online_threshold()
-        if online:
-            return ['&', ('ws_enabled', '=', True), ('ws_last_seen', '>=', threshold)]
-        return ['|', ('ws_enabled', '=', False), '|',
-                ('ws_last_seen', '=', False), ('ws_last_seen', '<', threshold)]
+    def _ws_hello_ack_extra(self):
+        """The device may pack up to WS_EV_BATCH_MAX events per ev frame."""
+        return {'ev_batch': WS_EV_BATCH_MAX}
 
-    def _ws_touch(self):
-        """Record upstream activity (any device message updates presence)."""
-        self.sudo().write({'ws_last_seen': fields.Datetime.now()})
+    def _ws_on_hb_extra(self, data):
+        """Mirror the HTTP heartbeat's controller pre-provisioning (commands do
+        NOT piggyback here - over WS they travel as their own publishes)."""
+        self._provision_detected_controllers(data.get('ctrl'))
 
-    # ------------------------------------------------------------------
-    # Token lifecycle
-    # ------------------------------------------------------------------
+    def _ws_sys_ev_record(self, description, post_data):
+        """AC's diagnostic sink is its ``event.system`` log (not the chatter)."""
+        self.report_sys_ev(description, post_data=post_data)
 
-    def action_ws_enable(self):
-        """Enable the real-time channel.
+    def _ws_auth_fail_notify(self, count, mtype):
+        """Raise ONE system event when the auth-fail threshold is hit."""
+        self.report_sys_ev(
+            'Real-time messages with an invalid channel key '
+            '(%d in the last minute)' % count,
+            post_data={'t': mtype})
 
-        proto 3 has no server-issued token: the channel credential is the
-        module ``key`` the device already holds, so there is no secret to mint
-        here. A module with no key yet (never contacted us) adopts its key on
-        the first authenticated hello (TOFU, :meth:`_ws_check_hello`).
-        """
-        for rec in self:
-            rec.sudo().write({'ws_enabled': True, 'ws_provision_pending': True})
-            rec.message_post(body=_('Real-time channel enabled.'))
-        return True
+    def _ws_before_disable(self):
+        """The bye must go out while the channel is still enabled (_ws_send
+        refuses on a disabled record). It tells a connected device to close +
+        park on HTTP (contract v1.1, OD-Q4-c); the kick in _ws_after_disable
+        covers devices that predate the bye handler."""
+        self._ws_send(BYE, {'reason': 'disabled'})
 
-    def action_ws_disable(self):
-        for rec in self:
-            # The bye must go out while the channel is still enabled
-            # (_ws_send refuses on a disabled record). It tells a connected
-            # device to close + park on HTTP (contract v1.1, OD-Q4-c); the
-            # kick below covers devices that predate the bye handler.
-            rec._ws_send('hr_rfid.bye', {'reason': 'disabled'})
-            rec.sudo().write({'ws_enabled': False, 'ws_provision_pending': True})
-            rec.message_post(body=_('Real-time channel disabled.'))
+    def _ws_after_disable(self):
         self._ws_kick()
-        return True
 
+    # ------------------------------------------------------------------
+    # Socket kick + unlink (AC-specific - reaches live sockets of this process)
+    # ------------------------------------------------------------------
     def _ws_kick(self):
         """Actively close this module's open websocket(s) server-side.
 
@@ -229,278 +206,12 @@ class HrRfidWebstackWs(models.Model):
         # The kick covers devices that predate the bye handler.
         for rec in self:
             try:
-                rec._ws_send('hr_rfid.bye', {'reason': 'deleted'})
+                rec._ws_send(BYE, {'reason': 'deleted'})
             except Exception:
                 _logger.warning('WS: could not send bye to module %s on '
                                 'unlink', rec.serial, exc_info=True)
         self._ws_kick()
         return super().unlink()
-
-    def action_ws_rekey(self):
-        """Re-key the real-time channel by TOFU (SPEC §6.6, owner 2026-07-14).
-
-        proto 3 has no server-issued token to rotate: the credential is the
-        module ``key`` the device owns. To accept a NEW key (e.g. after the
-        key was changed on the device), clear the stored key here - the next
-        authenticated hello then presents the device's current ``k`` and Odoo
-        adopts it (:meth:`_ws_check_hello`). If the device is still online with
-        the OLD key, its next hello simply re-adopts that same key (a no-op),
-        so re-keying only takes effect once the device actually presents a
-        different key - exactly the intended trust-on-first-use behaviour.
-        """
-        for rec in self:
-            rec.sudo().write({'key': False, 'ws_provision_pending': True})
-            rec.message_post(body=_(
-                'Real-time channel re-key armed: the next module check-in '
-                'sets the new key.'))
-        return True
-
-    # ------------------------------------------------------------------
-    # Publish helper - the ONLY place that knows the channel name
-    # ------------------------------------------------------------------
-
-    def _ws_channel(self):
-        """The device's bus channel: ``hr_rfid#<serial>#<key>`` (proto 3).
-
-        The credential in the channel name is the module ``key`` - the same
-        secret the device presents in every frame's ``k`` and in the HTTP
-        heartbeat. Lives in exactly ONE place so the naming never drifts.
-        """
-        self.ensure_one()
-        rec = self.sudo()
-        return 'hr_rfid#%s#%s' % (rec.serial, rec.key or '')
-
-    def _ws_send(self, mtype, payload):
-        """Publish ``mtype``/``payload`` on this device's bus channel.
-
-        Returns True when a publish happened. sudo() is deliberate and narrow:
-        reading the group-protected key to build the channel name is a system
-        operation performed on behalf of whatever flow produced the message
-        (command queue, ack path); the payload itself never contains the key.
-        """
-        self.ensure_one()
-        rec = self.sudo()
-        if not (rec.ws_enabled and rec.key):
-            return False
-        # bus.bus._sendone defers the row insert to a precommit callback that
-        # always runs sudo().create(); no create right is needed here, so no
-        # sudo on the call itself.
-        self.env['bus.bus']._sendone(self._ws_channel(), mtype, payload)
-        return True
-
-    # ------------------------------------------------------------------
-    # Inbound dispatch (device -> Odoo over the websocket)
-    # ------------------------------------------------------------------
-
-    @api.model
-    def _ws_dispatch(self, data):
-        """Entry point for device websocket messages (SPEC §4.1).
-
-        Called by the ``ir.websocket`` extension for every
-        ``{"event_name": "hr_rfid", "data": {...}}`` frame. Every message
-        carries the channel token and is re-authenticated with a
-        constant-time compare - the connection itself is anonymous
-        (public user), the token IS the device identity.
-        """
-        if not isinstance(data, dict):
-            return
-        serial, k, mtype = data.get('s'), data.get('k'), data.get('t')
-        if not (serial and k and isinstance(mtype, str)):
-            _logger.debug('WS: malformed frame (missing s/k/t): %r', data)
-            return
-        webstack = self.sudo().with_context(active_test=False).search(
-            [('serial', '=', str(serial))], limit=1)
-        # proto 3 auth: the channel credential is the module `key` (`k`). Every
-        # frame must key-match the stored key, EXCEPT a hello from a keyless
-        # module (never-contacted or re-keyed) - a TOFU candidate whose key is
-        # adopted inside _ws_check_hello, but ONLY after the firmware HMAC over
-        # s|k|n verifies (so a network peer cannot seed a key without FW_SECRET).
-        key_ok = (webstack and webstack.key
-                  and consteq(webstack.key.upper(), str(k).upper()))
-        tofu_hello = bool(mtype == 'hello' and webstack and not webstack.key)
-        if (not webstack or not webstack.active or not webstack.ws_enabled
-                or not (key_ok or tofu_hello)):
-            self._ws_auth_failed(webstack, mtype)
-            if mtype == 'hello':
-                self._ws_nack_hello(serial, k, webstack)
-            return
-        webstack._ws_touch()
-        proto = data.get('v')
-        if proto not in WS_PROTO_SUPPORTED:
-            # Unsupported protocol: answer only a hello (SPEC §9.2), drop
-            # anything else silently.
-            if mtype == 'hello':
-                webstack._ws_send('hr_rfid.hello_ack', {
-                    'ok': False, 'err': 'proto', 'proto': WS_PROTO_VERSION})
-            return
-        if mtype == 'hello' and not webstack._ws_check_hello(data):
-            # The secure-hello identity (firmware HMAC + counter, + key adoption
-            # on TOFU) did not hold - same refusal shape as a bad key (OD-Q4-b).
-            self._ws_auth_failed(webstack, mtype)
-            self._ws_nack_hello(serial, k, webstack)
-            return
-        handler = self._ws_handlers(webstack).get(mtype)
-        if handler is None:
-            _logger.debug('WS: unknown message type %r from %s', mtype, serial)
-            return
-        # Isolate the transport from malformed device input. A parse error in
-        # a handler (e.g. a missing key in an ``rsp`` payload reaching
-        # parse_response) must NOT escape to the bus frame loop: there it
-        # would close the socket with 1011 SERVER_ERROR and log a full
-        # traceback, letting a device with a valid token churn connections
-        # and flood the ERROR log. Mirror the HTTP twin
-        # (controllers/main.py::post_event): roll the partial work back in a
-        # savepoint, log a warning, record a system event. SPEC §9.2.
-        try:
-            with self.env.cr.savepoint():
-                handler(data)
-        except Exception:
-            _logger.warning(
-                'WS: handler %r from module %s failed to process',
-                mtype, serial, exc_info=True)
-            self._ws_report_sys_ev(
-                webstack, 'Real-time message could not be processed',
-                {'t': mtype})
-
-    @api.model
-    def _ws_handlers(self, webstack):
-        """Message-type -> bound-handler map for inbound device messages.
-
-        Extension seam: inheritor modules (e.g. the IoT tunnel drivers) add
-        their own message types by overriding this with super() and updating
-        the returned dict, so they never re-implement the auth/isolation
-        wrapper around dispatch (SPEC §4.1).
-        """
-        return {
-            'hello': webstack._ws_on_hello,
-            'hb': webstack._ws_on_hb,
-            'ev': webstack._ws_on_event_batch,
-            'rsp': webstack._ws_on_cmd_response,
-        }
-
-    def _ws_check_hello(self, data):
-        """Secure-hello identity for proto 3 (SPEC §5.1, owner 2026-07-14).
-
-        The channel credential ``k`` IS the module key (``server_push_key``) -
-        there is no separate ``key`` field and no ws_token. The hello proves:
-
-        - ``auth`` - firmware authenticity:
-          ``lowercase_hex(HMAC_SHA256(FW_SECRET, s|k|n))`` over the wire values
-          verbatim (``k`` is the key). Binds the connection to a genuine
-          firmware build: a peer that guessed the short key still cannot forge
-          ``auth`` without FW_SECRET.
-        - ``n`` - strictly monotonic anti-replay counter
-          (boot_count*65536 + seq); anything <= the stored watermark is a replay.
-
-        TOFU key adoption: a module with no stored key (never contacted us, or
-        re-keyed via :meth:`action_ws_rekey`) that presents an HMAC-verified
-        hello has its ``k`` ADOPTED as the module key. This is the ONLY way a
-        keyless module comes online, and it is gated by the HMAC, so it is not
-        a network-triggerable key seed.
-
-        Returns True when the hello is authentic. A missing FW_SECRET parameter
-        skips only the HMAC with a loud WARNING (resilience over fleet lockout);
-        adoption is then NOT performed - a keyless module cannot pass without a
-        proof to trust.
-        """
-        self.ensure_one()
-        rec = self.sudo()
-        wire_s = str(data.get('s'))
-        wire_k = str(data.get('k'))
-        secret = self.env['ir.config_parameter'].sudo().get_param(
-            WS_FW_SECRET_PARAM)
-        if not secret:
-            _logger.warning(
-                'WS: %s is not set - accepting hello from %s WITHOUT the '
-                'firmware authenticity check. Set the parameter in '
-                'production.', WS_FW_SECRET_PARAM, rec.serial)
-            # No proof: an already-keyed module passes (its key matched in the
-            # dispatcher); a keyless module cannot be adopted without a proof.
-            return bool(rec.key)
-        try:
-            n = int(data.get('n'))
-        except (TypeError, ValueError):
-            _logger.info('WS: hello from %s with a malformed counter %r',
-                         rec.serial, data.get('n'))
-            return False
-        if n <= rec.ws_last_n:
-            _logger.info('WS: hello replay from %s (n=%s <= last %s)',
-                         rec.serial, n, rec.ws_last_n)
-            return False
-        expected = hmac.new(
-            secret.encode(),
-            ('%s|%s|%s' % (wire_s, wire_k, n)).encode(),
-            hashlib.sha256).hexdigest()
-        auth = data.get('auth')
-        if not (auth and hmac.compare_digest(expected, str(auth).lower())):
-            _logger.info('WS: firmware authenticity check did not pass for '
-                         'hello from %s', rec.serial)
-            return False
-        if not rec.key:
-            # TOFU: adopt the HMAC-proven key for a keyless / re-keyed module.
-            rec.key = wire_k
-            _logger.info('WS: adopted key for module %s on an authenticated '
-                         'hello (TOFU re-key)', rec.serial)
-        rec.ws_last_n = n
-        return True
-
-    @api.model
-    def _ws_nack_hello(self, serial, k, webstack):
-        """Explicit auth refusal for a hello - and ONLY a hello (contract
-        v1.1, INTEROP OD-Q4-b 2026-07-13). Without it a refused device sits
-        deaf-mute on a live socket (its messages silently dropped, transport
-        PING/PONG keeps it alive) and never falls back to HTTP. The nack
-        goes to the CLAIMED channel (serial+key exactly as presented) - the
-        only channel the refused peer is subscribed to.
-
-        Rate limit: known serial -> only while the auth-fail window counter
-        is below the threshold (shares :meth:`_ws_auth_failed`'s window);
-        unknown serial (e.g. a deleted module) -> every hello, because a
-        hello costs the sender a full TCP+websocket upgrade per attempt, so
-        flooding is bounded at the connection level, not per message.
-        """
-        if webstack and webstack.sudo().ws_auth_fail_count >= WS_AUTH_FAIL_THRESHOLD:
-            return
-        self.env['bus.bus']._sendone(
-            'hr_rfid#%s#%s' % (serial, k), 'hr_rfid.hello_ack',
-            {'ok': False, 'err': 'auth', 'proto': WS_PROTO_VERSION})
-
-    @api.model
-    def _ws_report_sys_ev(self, webstack, description, post_data):
-        """``report_sys_ev`` that never raises into the caller - the websocket
-        paths must stay isolated even from a logging failure."""
-        try:
-            webstack.report_sys_ev(description, post_data=post_data)
-        except Exception:
-            _logger.exception('WS: could not record system event: %s', description)
-
-    @api.model
-    def _ws_auth_failed(self, webstack, mtype):
-        """Count invalid-token messages; raise ONE system event at the
-        threshold (SPEC §9.2 anti-flood - never a system event per message)."""
-        if not webstack:
-            _logger.debug('WS: message for unknown module (type %r)', mtype)
-            return
-        rec = webstack.sudo()
-        now = fields.Datetime.now()
-        window_start = now - timedelta(seconds=WS_AUTH_FAIL_WINDOW_S)
-        if not rec.ws_auth_fail_since or rec.ws_auth_fail_since < window_start:
-            rec.write({'ws_auth_fail_count': 1, 'ws_auth_fail_since': now})
-            return
-        # Bound the pre-auth writes. The serial is enumerable (not secret), so
-        # an attacker who guessed a valid one could otherwise force one UPDATE
-        # on that row for EVERY frame. Once the window's single system event
-        # has fired, stop counting: writes are capped at THRESHOLD per window
-        # per serial (a per-IP connection cap on /websocket is a deployment
-        # requirement - nginx limit_conn/limit_req; see ODOO_PLAN §8).
-        if rec.ws_auth_fail_count >= WS_AUTH_FAIL_THRESHOLD:
-            return
-        rec.ws_auth_fail_count += 1
-        if rec.ws_auth_fail_count == WS_AUTH_FAIL_THRESHOLD:
-            rec.report_sys_ev(
-                'Real-time messages with an invalid channel key '
-                '(%d in the last minute)' % rec.ws_auth_fail_count,
-                post_data={'t': mtype})
 
     # -- provisioning over the classic HTTP channel (SPEC §10) ----------
 
@@ -613,39 +324,6 @@ class HrRfidWebstackWs(models.Model):
                     'WS: could not publish command %s (%s) to module %s on '
                     'connect', command.id, command.cmd, self.serial,
                     exc_info=True)
-
-    def _ws_on_hello(self, data):
-        self.ensure_one()
-        rec = self.sudo()
-        if data.get('fw'):
-            rec.version = str(data['fw'])[:6]
-        if data.get('hw'):
-            # The hello carries the hardware model (e.g. "100.1") - for an
-            # auto-registered module this is the ONLY source: the classic
-            # writer is the UDP discovery flow, which never ran for it, and
-            # the HTTP heartbeat does not carry the hardware version at all.
-            rec.hw_version = str(data['hw'])[:6]
-        rec.ws_proto = data.get('v') or WS_PROTO_VERSION
-        rec._provision_detected_controllers(data.get('ctrl'))
-        rec.ws_provision_pending = False
-        self._ws_on_connect_sync()
-        self._ws_send('hr_rfid.hello_ack', {
-            'ok': True,
-            'proto': WS_PROTO_VERSION,
-            'srv_ts': fields.Datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'hb_interval': self._ws_hb_interval(),
-            'ack_timeout': WS_ACK_TIMEOUT_S,
-            'ev_batch': WS_EV_BATCH_MAX,
-            'rl': dict(WS_RL),
-            'err': None,
-        })
-
-    def _ws_on_hb(self, data):
-        self.ensure_one()
-        # Presence is already updated by the dispatcher; mirror the HTTP
-        # heartbeat's controller pre-provisioning (commands do NOT piggyback
-        # here - over WS they travel as their own publishes).
-        self.sudo()._provision_detected_controllers(data.get('ctrl'))
 
     def _ws_on_event_batch(self, data):
         """Process an ``ev`` batch (SPEC §5.3) and acknowledge it (§6.3).

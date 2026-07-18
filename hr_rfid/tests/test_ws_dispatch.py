@@ -279,7 +279,10 @@ class TestWsDispatch(RFIDAppCase):
         Sys = self.env['hr.rfid.event.system']
         before = Sys.search_count([('webstack_id', '=', ws.id)])
         with self.assertLogs(
-                'odoo.addons.hr_rfid.models.hr_rfid_webstack_ws',
+                # the dispatch-level isolation warning is emitted by the shared
+                # transport base (polimex_ws), where _ws_dispatch now lives; the
+                # AC event.system record is still written via the branch sink.
+                'odoo.addons.polimex_ws.models.ws_mixin',
                 level='WARNING'):
             # missing 'c' -> KeyError inside parse_response; must NOT raise out
             self._dispatch(self._msg('rsp', cid=0, r={'id': 5, 'e': 0}))
