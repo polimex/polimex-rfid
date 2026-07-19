@@ -194,7 +194,18 @@ class WebRfidController(http.Controller):
                 return webstack, self._make_response({'status': 400})
 
         if not webstack.key:
-            webstack.key = post_data['key']
+            # Adopt the device's key on first contact - but NEVER the insecure
+            # '0000' (or empty) placeholder (owner + FW-Q26, 2026-07-19): the
+            # firmware mints a NON-zero credential, so a device presenting '0000'
+            # is unprovisioned. Keep serving it (availability) but leave it
+            # keyless + flagged needs-provisioning rather than persisting 0000.
+            if post_data['key'] and str(post_data['key']) != '0000':
+                webstack.key = post_data['key']
+            else:
+                _logger.warning(
+                    'Module %s presented the insecure key %r on HTTP - not '
+                    'adopting it; the device needs provisioning with a real key.',
+                    webstack.serial, post_data.get('key'))
             webstack.available = 'a'
             webstack.message_post(body=_("The Module contacted us and activated."))
         elif not consteq(webstack.key, str(post_data['key'])):

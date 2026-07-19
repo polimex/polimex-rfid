@@ -40,6 +40,11 @@ class RFIDAppCase(common.TransactionCase):
         cls.test_webstack_10_3_id = cls.env['hr.rfid.webstack'].create({
             'name': 'Test Stack',
             'serial': '234567',
+            # Explicit key: the P2 endpoint now defaults keyless (never '0000'),
+            # so the fixtures provision an established key that the frame helpers
+            # (key='0000') match - the tests exercise a provisioned device, not
+            # the keyless-unprovisioned path.
+            'key': '0000',
             'company_id': cls.test_company_id,
             'available': 'a',
             'tz': 'Europe/Sofia',
@@ -625,6 +630,11 @@ class RFIDHttpCase(HttpCase):
         cls.test_webstack_10_3_id = cls.env['hr.rfid.webstack'].create({
             'name': 'Test Stack',
             'serial': '234567',
+            # Explicit key: the P2 endpoint now defaults keyless (never '0000'),
+            # so the fixtures provision an established key that the frame helpers
+            # (key='0000') match - the tests exercise a provisioned device, not
+            # the keyless-unprovisioned path.
+            'key': '0000',
             'company_id': cls.test_company_id,
             'available': 'a',
             'tz': 'Europe/Sofia',
