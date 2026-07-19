@@ -193,21 +193,34 @@ class WebRfidController(http.Controller):
                 _logger.info('Unknown Module. Received=' + str(post_data))
                 return webstack, self._make_response({'status': 400})
 
+        key = str(post_data.get('key') or '')
+        key_secure = bool(key) and key != '0000'
         if not webstack.key:
-            # Adopt the device's key on first contact - but NEVER the insecure
-            # '0000' (or empty) placeholder (owner + FW-Q26, 2026-07-19): the
-            # firmware mints a NON-zero credential, so a device presenting '0000'
-            # is unprovisioned. Keep serving it (availability) but leave it
-            # keyless + flagged needs-provisioning rather than persisting 0000.
-            if post_data['key'] and str(post_data['key']) != '0000':
-                webstack.key = post_data['key']
-            else:
-                _logger.warning(
-                    'Module %s presented the insecure key %r on HTTP - not '
-                    'adopting it; the device needs provisioning with a real key.',
-                    webstack.serial, post_data.get('key'))
-            webstack.available = 'a'
-            webstack.message_post(body=_("The Module contacted us and activated."))
+            # First contact for a keyless module. Adopt only a real (NON-zero)
+            # key - NEVER persist the insecure '0000' placeholder (owner + FW-Q26,
+            # 2026-07-19): the firmware mints a non-zero credential.
+            if key_secure:
+                webstack.key = key
+                webstack.available = 'a'
+                webstack.message_post(body=_("The Module contacted us and activated."))
+            elif webstack.available != 'a':
+                # Unprovisioned device (presents '0000'/blank): activate ONCE and
+                # keep it keyless + flagged; do NOT re-announce/warn on every
+                # heartbeat - _authenticate_webstack runs on every POST, so a
+                # per-POST warning + chatter would flood the log and grow
+                # mail.message unbounded (idempotency).
+                webstack.available = 'a'
+                _logger.info(
+                    'Module %s contacted us with the insecure key %r - kept '
+                    'unprovisioned; it needs a real generated key.',
+                    webstack.serial, key)
+        elif str(webstack.key) == '0000' and key_secure:
+            # G1 heal: a legacy '0000' module now presents a real generated key ->
+            # adopt it (replace the insecure placeholder). '0000' is unprovisioned,
+            # so this is a provisioning, not a credential override of a real key;
+            # the classic channel is TLS in production.
+            webstack.key = key
+            webstack.message_post(body=_("The Module was re-keyed from the insecure default."))
         elif not consteq(webstack.key, str(post_data['key'])):
             webstack.report_sys_ev('Webstack key and key in json did not match', post_data=post_data)
             _logger.info(

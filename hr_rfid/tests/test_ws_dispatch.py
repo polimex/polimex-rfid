@@ -86,6 +86,70 @@ class TestWsDispatch(RFIDAppCase):
         self.assertFalse(acks[0].args[2]['ok'])
         self.assertEqual(acks[0].args[2]['err'], 'auth')
 
+    def test_keyless_device_presenting_0000_is_refused(self):
+        """A keyless (never-provisioned / re-keyed) module presenting the insecure
+        '0000' is NOT adopted and is refused - it needs a real generated key."""
+        ws = self._enable()
+        ws.action_ws_rekey()   # clear the key -> keyless
+        with patch.object(type(self.env['bus.bus']), '_sendone'):
+            self._dispatch(self._msg('hello', k='0000'))
+        self.assertFalse(ws.sudo().key, 'keyless + 0000 -> not adopted, stays keyless')
+        self.assertFalse(ws.sudo().ws_last_seen,
+                         'a refused unprovisioned hello does not touch presence')
+
+    def test_heal_0000_to_real_key_adopts_onto_same_endpoint(self):
+        """G1 heal: a module stored with the insecure '0000' presents a new
+        NON-zero key with a VALID HMAC -> the key is adopted (healed) onto the
+        SAME endpoint, the serial mapping + advancing watermark are preserved, and
+        needs-provisioning clears. Enables the firmware auto-heal with no per-device
+        cloud step."""
+        import hashlib
+        import hmac as _hmac
+        ws = self._enable()                      # key='0000' (fixture)
+        ws.sudo().ws_last_n = 100
+        endpoint_before = ws.sudo().endpoint_id
+        secret = 'unit-fw-secret'
+        self.env['ir.config_parameter'].sudo().set_param(
+            'hr_rfid.ws_fw_secret', secret)
+        new_key, n = 'A85F', 200
+        auth = _hmac.new(
+            secret.encode(),
+            ('%s|%s|%s' % (ws.serial, new_key, n)).encode(),
+            hashlib.sha256).hexdigest()
+        with patch.object(type(self.env['bus.bus']), '_sendone'):
+            self._dispatch(self._msg('hello', k=new_key, n=n, auth=auth))
+        ws.invalidate_recordset()
+        self.assertEqual(ws.sudo().key, new_key,
+                         'the insecure 0000 was healed to the new real key')
+        self.assertEqual(ws.sudo().endpoint_id, endpoint_before,
+                         'healed onto the SAME endpoint (mapping preserved)')
+        self.assertEqual(ws.sudo().ws_last_n, n, 'anti-replay watermark advanced')
+        self.assertFalse(ws.sudo().ws_needs_provisioning,
+                         'a real key clears needs-provisioning')
+
+    def test_real_key_is_never_overridden_by_a_different_key(self):
+        """A device with a REAL (non-0000) key is NOT healable: a different key,
+        even HMAC-valid, is refused (only the insecure 0000 placeholder is soft)."""
+        import hashlib
+        import hmac as _hmac
+        ws = self._enable()
+        ws.sudo().key = 'REAL'
+        ws.sudo().ws_last_n = 100
+        secret = 'unit-fw-secret'
+        self.env['ir.config_parameter'].sudo().set_param(
+            'hr_rfid.ws_fw_secret', secret)
+        other, n = 'BEEF', 200
+        auth = _hmac.new(
+            secret.encode(), ('%s|%s|%s' % (ws.serial, other, n)).encode(),
+            hashlib.sha256).hexdigest()
+        with patch.object(type(self.env['bus.bus']), '_sendone') as sendone:
+            self._dispatch(self._msg('hello', k=other, n=n, auth=auth))
+        self.assertEqual(ws.sudo().key, 'REAL', 'a real key is never overridden')
+        acks = [c for c in sendone.call_args_list
+                if c.args[1] == 'hr_rfid.hello_ack']
+        self.assertTrue(acks and not acks[0].args[2]['ok'],
+                        'the mismatched hello on a real key is refused')
+
     def test_auth_flood_raises_one_system_event(self):
         ws = self._enable()
         Sys = self.env['hr.rfid.event.system']
