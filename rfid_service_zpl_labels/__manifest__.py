@@ -10,7 +10,7 @@
     'license': 'AGPL-3',
 
     'category': "Generic Modules/Property Management System",
-    'version': '19.0.1.0.3',
+    'version': '19.0.1.0.4',
 
     # any module necessary for this one to work correctly
     'depends': ['rfid_service_base', 'hr_rfid'],

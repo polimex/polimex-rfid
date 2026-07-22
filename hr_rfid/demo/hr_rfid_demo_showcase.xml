@@ -8,7 +8,7 @@
         a temporary auto-expiring visitor badge, and a granted check-in/out
         event pair feeding the audit trail.
     -->
-    <data noupdate="True">
+    <data noupdate="1">
 
         <!-- Time & Attendance work codes: scanned at a reader in workcode mode -->
         <record id="demo_workcode_start" model="hr.rfid.workcode">
@@ -59,7 +59,7 @@
 
     </data>
 
-    <data noupdate="False">
+    <data noupdate="1">
 
         <!-- Granted check-in / check-out pair for a carded employee at the
              iCON115 entry reader, extending the event audit trail. -->

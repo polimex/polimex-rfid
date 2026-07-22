@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <data noupdate="1">
     <!--
         Showcase demo for hr_rfid_vertical_elections.
         Builds a 2026 AGM story on top of the hr_rfid access-control demo:
@@ -150,4 +151,5 @@
         <field name="voter_id" ref="base.res_partner_3"/>
         <field name="vote">no</field>
     </record>
+    </data>
 </odoo>

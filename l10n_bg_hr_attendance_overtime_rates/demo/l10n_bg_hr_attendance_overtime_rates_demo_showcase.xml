@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <data noupdate="1">
     <!--
         Showcase demo: populate the official Bulgarian public holidays for the
         demo reference year 2026 on the main company's working calendar.
@@ -21,4 +22,5 @@
     <function model="res.company"
               name="_generate_bg_public_holidays"
               eval="[ref('base.main_company'), 2026]"/>
+    </data>
 </odoo>
