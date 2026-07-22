@@ -38,6 +38,13 @@ jobs:
         with:
           path: addons/polimex
 
+      - name: Checkout polimex-ws (hr_rfid dependency)
+        uses: actions/checkout@v6
+        with:
+          repository: polimex/polimex-ws
+          ref: '19.0'
+          path: addons/polimex-ws
+
       - name: Cache Odoo source
         id: odoo-cache
         uses: actions/cache@v5
@@ -141,7 +148,7 @@ jobs:
             -d polimex_test \
             -i "${{ steps.modules.outputs.list }}" \
             --no-http --stop-after-init \
-            --addons-path=odoo/addons,addons/polimex \
+            --addons-path=odoo/addons,addons/polimex,addons/polimex-ws \
             --db_host=localhost --db_port=5432 \
             --db_user=odoo --db_password=odoo \
             --log-level=warn
@@ -174,7 +181,7 @@ jobs:
             --test-enable --test-tags="$TAGS" \
             -u "${{ steps.modules.outputs.list }}" \
             --no-http --stop-after-init \
-            --addons-path=odoo/addons,addons/polimex \
+            --addons-path=odoo/addons,addons/polimex,addons/polimex-ws \
             --db_host=localhost --db_port=5432 \
             --db_user=odoo --db_password=odoo \
             --log-level=test 2>&1 | tee test.log
@@ -215,7 +222,7 @@ jobs:
               --test-enable --test-tags="$TAGS" \
               -i "${{ steps.modules.outputs.list }}" \
               --no-http --stop-after-init \
-              --addons-path=odoo/addons,addons/polimex \
+              --addons-path=odoo/addons,addons/polimex,addons/polimex-ws \
               --db_host=localhost --db_port=5432 \
               --db_user=odoo --db_password=odoo \
               --log-level=warn 2>&1 | tail -20 || true
