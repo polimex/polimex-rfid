@@ -331,7 +331,8 @@ class HrRfidSystemEvent(models.Model):
         "Identical" = same module, controller, door, alarm line, action,
         description and raw payload. A repeat within
         SYS_EV_DEDUP_WINDOW_SECONDS of the row's last occurrence is the same
-        ongoing incident: bump ``occurrences`` and slide ``last_occurrence``
+        ongoing incident: bump ``occurrences``, slide ``last_occurrence`` and
+        return the EXISTING row so ``create()`` can hand it to the caller
         (a door held open pings every few seconds -> one row). A repeat after
         a longer quiet gap is a NEW incident and must get its own row.
 
@@ -357,13 +358,13 @@ class HrRfidSystemEvent(models.Model):
         ], limit=1, order='last_occurrence desc')
 
         if not dupe:
-            return False
+            return dupe
 
         dupe.write({
             'last_occurrence': vals['timestamp'],
             'occurrences': dupe.occurrences + 1,
         })
-        return True
+        return dupe
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -375,7 +376,11 @@ class HrRfidSystemEvent(models.Model):
 
             self._check_save_comms(vals)
 
-            if self._check_duplicate_sys_ev(vals):
+            dupe = self._check_duplicate_sys_ev(vals)
+            if dupe:
+                # grouped into an existing row: keep create()'s contract and
+                # hand the caller that row instead of dropping it
+                records += dupe
                 continue
 
             if 'last_occurrence' not in vals:

@@ -80,9 +80,12 @@ class TestHrRfidTours(HttpCase):
             self.webstack.ws_enabled,
             "The real-time tour should enable the channel on the module",
         )
+        # proto 3 has no server-issued token: the channel credential is the
+        # device key (TOFU). Enabling only queues provisioning so the next
+        # heartbeat tells the device to open its socket.
         self.assertTrue(
-            self.webstack.ws_token,
-            "Enabling generates the 128-bit channel token",
+            self.webstack.ws_provision_pending,
+            "Enabling the channel queues device provisioning",
         )
 
     def test_access_group_add_door_tour(self):

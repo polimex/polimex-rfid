@@ -16,11 +16,20 @@ class TestVendingKeyAuth(RFIDController, HttpCase):
 
     _registry_readonly_enabled = False
 
+    # A real, provisioned module key. '0000' is the unprovisioned sentinel
+    # (owner decision 2026-07-19 + FW-Q26): a webstack still holding '0000'
+    # adopts the first real key presented (G1 heal / TOFU provisioning), so a
+    # forged-event rejection can only be proven on a device that already has a
+    # real key. The security property under test is exactly that.
+    PROVISIONED_KEY = 'AB12'  # 4-char module key (field size=4), non-'0000'
+
     def setUp(self):
         super().setUp()
         self._add_Vending()
-        # The add flow adopts key '0000' on the webstack via TOFU.
-        self.assertEqual(self.c_vending.webstack_id.key, '0000')
+        # Provision the module with a real key so this suite exercises a
+        # PROVISIONED device (not the keyless/'0000' TOFU path).
+        self.c_vending.webstack_id.key = self.PROVISIONED_KEY
+        self.assertEqual(self.c_vending.webstack_id.key, self.PROVISIONED_KEY)
 
     def _ev64_with_key(self, card_number, key):
         """Send an ev64 (Cloud Card Request) signed with an explicit key."""
@@ -72,7 +81,7 @@ class TestVendingKeyAuth(RFIDController, HttpCase):
         event for audit, which is the observable proof it got past auth."""
         ev_before = self._vending_event_count()
 
-        self._ev64_with_key(self.test_card_employee.number, '0000')
+        self._ev64_with_key(self.test_card_employee.number, self.PROVISIONED_KEY)
 
         self.assertEqual(self._vending_event_count(), ev_before + 1,
                          'Correct key must let the event reach the vending logic')

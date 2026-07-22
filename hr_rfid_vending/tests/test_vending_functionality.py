@@ -87,8 +87,14 @@ class VendingController(RFIDController, HttpCase):
         })
         if expected != 0:
             es = '{:02}'.format(expected)
+            # The DB grant echoes the requesting card back digit-by-digit (each
+            # decimal digit as a '0X' byte), then the two balance digits the
+            # same way. Derive the expected payload from the actual card number
+            # so the assertion is not coupled to a specific fixture card value.
+            card_bytes = ''.join('0' + digit for digit in self.test_card_employee.number)
             self.assertEqual(response, {
-                'cmd': {'id': ctrl_id.ctrl_id, 'c': 'DB', 'd': f'4000010203040501020304050{es[0]}0{es[1]}'}})
+                'cmd': {'id': ctrl_id.ctrl_id, 'c': 'DB',
+                        'd': f'4000{card_bytes}0{es[0]}0{es[1]}'}})
             response = self._send_cmd_response(response, '0000')
         self.assertEqual(response, {})
 
