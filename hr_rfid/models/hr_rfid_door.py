@@ -563,6 +563,7 @@ class HrRfidDoor(models.Model):
     #         door.controller_id._add_remove_card_relay(card_number, 0, rmask)
 
     def change_apb_flag(self, card, can_exit=True):
+        command_env = self.env['hr.rfid.command']
         for door in self:
             if door.number == 1:
                 rights = 0x40  # Bit 7
@@ -575,14 +576,18 @@ class HrRfidDoor(models.Model):
             # ignore doors without rights (optimisation)
             if door.id not in card_door_rel_id.mapped('door_id').ids:
                 continue
-            self.env['hr.rfid.command'].add_remove_card(
+            command_env.add_remove_card(
                 card_number=card.internal_number,
                 ctrl_id=door.controller_id.id,
                 pin_code=card.get_owner().hr_rfid_pin_code,
                 ts_code='00000000',
                 rights_data=rights if can_exit else 0,
                 rights_mask=rights,
-                alarm_right=card_door_rel_id.alarm_right
+                alarm_right=card_door_rel_id.alarm_right,
+                # APB flag changes jump the webstack queue so the exit
+                # permission reaches the other controller before the person
+                # walks to it.
+                priority=command_env.PRIORITY_APB,
             )
 
 

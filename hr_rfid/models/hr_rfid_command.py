@@ -12,6 +12,14 @@ import logging
 _logger = logging.getLogger(__name__)
 from odoo.addons.hr_rfid.controllers import polimex
 
+# Command queue priorities. Higher priority commands are sent to the module
+# first (see hr.rfid.webstack.check_for_unsent_cmd). Anti-passback flag
+# changes are prioritized so the exit permission reaches the other door's
+# controller before the person walks to it, instead of waiting behind the
+# regular command backlog of the whole webstack.
+PRIORITY_DEFAULT = 0
+PRIORITY_APB = 10
+
 
 class F0Parse(Enum):
     hw_ver = 0
@@ -33,6 +41,12 @@ class HrRfidCommands(models.Model):
     _description = 'Command to controller'
     _inherit = 'balloon.mixin'
     _order = 'create_date desc, id desc'
+
+    # Exposed as model attributes so other models can reference them through
+    # the registry (self.env['hr.rfid.command'].PRIORITY_APB) without
+    # importing this module (avoids a circular import with hr_rfid_door).
+    PRIORITY_DEFAULT = PRIORITY_DEFAULT
+    PRIORITY_APB = PRIORITY_APB
 
     commands = [
         ('F0', _('Read System Information')),
@@ -191,6 +205,15 @@ class HrRfidCommands(models.Model):
         default=0,
     )
 
+    priority = fields.Integer(
+        string='Priority',
+        help='Commands with higher priority are sent to the module first. '
+             'Anti-passback flag changes are prioritized so the person can '
+             'pass before the regular command backlog is drained.',
+        default=PRIORITY_DEFAULT,
+        readonly=True,
+    )
+
     pin_code = fields.Char(string='Pin Code (debug info)')
     ts_code = fields.Char(string='TS Code (debug info)', size=8)
 
@@ -198,6 +221,29 @@ class HrRfidCommands(models.Model):
     rights_mask = fields.Char(string='Rights Mask (debug info)')
 
     alarm_right = fields.Boolean(string='Alarm Data (debug info)', default=False)
+
+    def init(self):
+        # Priority must never be NULL: the picker orders 'priority desc' and
+        # Postgres sorts NULLs FIRST on DESC, so a NULL row (only possible via
+        # manual SQL - the ORM always writes the default) would jump ahead of
+        # every prioritized command. Backfill, then enforce at the DB level.
+        self.env.cr.execute("""
+            UPDATE hr_rfid_command SET priority = 0 WHERE priority IS NULL
+        """)
+        self.env.cr.execute("""
+            ALTER TABLE hr_rfid_command
+                ALTER COLUMN priority SET DEFAULT 0,
+                ALTER COLUMN priority SET NOT NULL
+        """)
+        # Partial index covering the hot-path picker query in
+        # hr.rfid.webstack.check_for_unsent_cmd - runs on every webstack POST
+        # (events, heartbeats, responses). Wait rows only, so the index stays
+        # tiny (the autovacuum drains the table).
+        self.env.cr.execute("""
+            CREATE INDEX IF NOT EXISTS hr_rfid_command_wait_pick_idx
+            ON hr_rfid_command (webstack_id, priority DESC, id)
+            WHERE status = 'Wait'
+        """)
 
     @api.depends('cmd')
     def _compute_cmd_name(self):
@@ -394,7 +440,8 @@ class HrRfidCommands(models.Model):
         return self._system_init(controller, 4)
 
     @api.model
-    def create_d1_cmd(self, ws_id, ctrl_id, card_num, pin_code, ts_code, rights_data, rights_mask, alarm_right):
+    def create_d1_cmd(self, ws_id, ctrl_id, card_num, pin_code, ts_code, rights_data, rights_mask, alarm_right,
+                      priority=PRIORITY_DEFAULT):
         cmd_dict = {
             'webstack_id': ws_id,
             'controller_id': ctrl_id,
@@ -405,6 +452,7 @@ class HrRfidCommands(models.Model):
             'rights_data': rights_data,
             'rights_mask': rights_mask,
             'alarm_right': alarm_right,
+            'priority': priority,
         }
         return self.create([cmd_dict])
 
@@ -420,7 +468,8 @@ class HrRfidCommands(models.Model):
         }])
 
     @api.model
-    def add_remove_card(self, card_number, ctrl_id, pin_code, ts_code, rights_data, rights_mask, alarm_right):
+    def add_remove_card(self, card_number, ctrl_id, pin_code, ts_code, rights_data, rights_mask, alarm_right,
+                        priority=PRIORITY_DEFAULT):
         ctrl = self.env['hr.rfid.ctrl'].browse(ctrl_id)
         commands_env = self.env['hr.rfid.command'].with_user(SUPERUSER_ID)
 
@@ -435,7 +484,8 @@ class HrRfidCommands(models.Model):
         if not old_cmd:
             if rights_mask != 0:
                 self.create_d1_cmd(ctrl.webstack_id.id, ctrl_id, card_number,
-                                   pin_code, ts_code, rights_data, rights_mask, alarm_right)
+                                   pin_code, ts_code, rights_data, rights_mask, alarm_right,
+                                   priority=priority)
         else:
             new_ts_code = ''
             if str(ts_code) != '':
@@ -461,6 +511,9 @@ class HrRfidCommands(models.Model):
 
             write_dict['rights_mask'] = new_rights_mask
             write_dict['rights_data'] = new_rights_data
+            # The merged command inherits the highest priority so an APB flag
+            # change merged into an older regular command is never delayed.
+            write_dict['priority'] = max(old_cmd.priority, priority)
 
             if new_rights_mask == 0:
                 old_cmd.unlink()
@@ -594,23 +647,9 @@ class HrRfidCommands(models.Model):
 
     @api.model
     def change_apb_flag(self, door, card, can_exit=True):
-        if door.number == 1:
-            rights = 0x40  # Bit 7
-        else:
-            rights = 0x20  # Bit 6
-        card_door_rel_id = self.env['hr.rfid.card.door.rel'].search([
-            ('card_id', '=', card.id),
-            ('door_id', '=', door.id),
-        ])
-        self.add_remove_card(
-            card_number=card.internal_number,
-            ctrl_id=door.controller_id.id,
-            pin_code=card.get_owner().hr_rfid_pin_code,
-            ts_code='00000000',
-            rights_data=rights if can_exit else 0,
-            rights_mask=rights,
-            alarm_right=card_door_rel_id.alarm_right
-        )
+        # Kept for API compatibility - delegates to the door implementation
+        # (single source of truth, incl. the APB command prioritization).
+        return door.change_apb_flag(card, can_exit)
 
     @api.model
     def _update_commands(self):

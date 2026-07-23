@@ -751,21 +751,20 @@ class HrRfidWebstack(models.Model):
         processing_comm = commands_env.search([
             ('webstack_id', '=', self.id),
             ('status', '=', 'Process'),
-        ])
+        ], order='id asc', limit=1)
 
-        if len(processing_comm) > 0:
-            processing_comm = processing_comm[-1]
+        if processing_comm:
             return self._retry_command(status_code, processing_comm, event)
 
+        # Higher priority first (e.g. anti-passback flag changes), then FIFO
+        # by id among equal priorities.
         command_id = commands_env.search([
             ('webstack_id', '=', self.id),
             ('status', '=', 'Wait'),
-        ], order='id desc')
+        ], order='priority desc, id asc', limit=1)
 
-        if len(command_id) == 0:
+        if not command_id:
             return {'status': status_code}
-
-        command_id = command_id[-1]
 
         if event is not None:
             event.command_id = command_id.id
