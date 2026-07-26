@@ -62,10 +62,9 @@ class CoreImporter:
         linked = 0
 
         for rec in source_records:
-            # Match by name
-            existing = self.env[model].search([
-                ('name', '=', rec['name'])
-            ], limit=1)
+            # Идентичност САМО по source id (ledger). Текстът е втора
+            # проверка на вече намерения запис, не ключ за търсене.
+            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
@@ -100,9 +99,9 @@ class CoreImporter:
         linked = 0
 
         for rec in source_records:
-            existing = self.env[model].search([
-                ('name', '=', rec['name'])
-            ], limit=1)
+            # Идентичност САМО по source id (ledger). Текстът е втора
+            # проверка на вече намерения запис, не ключ за търсене.
+            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
@@ -148,11 +147,9 @@ class CoreImporter:
             if not target_company_id:
                 continue
 
-            # Match by name + company
-            existing = self.env[model].search([
-                ('name', '=', rec['name']),
-                ('company_id', '=', target_company_id),
-            ], limit=1)
+            # Идентичност САМО по source id (ledger). Текстът е втора
+            # проверка на вече намерения запис, не ключ за търсене.
+            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
@@ -217,13 +214,9 @@ class CoreImporter:
             if not target_company_id:
                 continue
 
-            # sudo: the dedup must see an existing row even when the operator
-            # is not a member of the target company, otherwise a duplicate is
-            # created instead of a link.
-            existing = self.env[model].sudo().search([
-                ('workcode', '=', rec['workcode']),
-                ('company_id', '=', target_company_id),
-            ], limit=1)
+            # Идентичност САМО по source id (ledger). Текстът е втора
+            # проверка на вече намерения запис, не ключ за търсене.
+            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
@@ -266,10 +259,9 @@ class CoreImporter:
             if not target_company_id:
                 continue
 
-            existing = self.env[model].sudo().search([
-                ('number', '=', rec['number']),
-                ('company_id', '=', target_company_id),
-            ], limit=1)
+            # Идентичност САМО по source id (ledger). Текстът е втора
+            # проверка на вече намерения запис, не ключ за търсене.
+            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
             if existing:
                 # Update ts_data and name from source for linked records
                 update_vals = {}

@@ -222,6 +222,40 @@ class BaseImporter:
                 found[by_name[name]] = res_id
         return found
 
+    def find_by_ledger(self, model, source_id, expect_text=None, text_field='name'):
+        """Единствената допустима идентичност: source id, през ledger-а.
+
+        Съпоставянето по ТЕКСТ (име, имейл, номер) слива РАЗЛИЧНИ обекти, които
+        случайно носят еднакъв надпис, и разделя един обект на два, когато
+        надписът се е разминал с един знак. И двете са тихи. Измерено на живо:
+        възилото съпоставяше служители по `name` и от 1059 души на един клиент
+        в целта влязоха 1022 - точно броят на различните имена; изчезналите се
+        сляха със съименниците си заедно с картите и събитията си.
+
+        `expect_text` е ВТОРА проверка на вече намерения по ИД запис - потвърждава,
+        че сме попаднали на правилния. Разминаване НЕ праща търсенето другаде;
+        то се докладва, защото значи, че ледгерът или данните са мръднали.
+
+        Returns:
+            recordset - намереният запис, или празен ако ледгерът мълчи (=> НОВ).
+        """
+        Model = self.env[model].sudo().with_context(active_test=False)
+        target_id = self._get_target_id(model, source_id)
+        if not target_id:
+            target_id = self._resolve_from_imd(model, source_id)
+        if not target_id:
+            return Model.browse()
+        rec = Model.browse(target_id).exists()
+        if rec and expect_text and text_field in rec._fields:
+            actual = rec[text_field] or ''
+            if actual.strip().lower() != (expect_text or '').strip().lower():
+                _logger.warning(
+                    "%s source=%s: ледгерът сочи запис %s с %s=%r, а източникът "
+                    "казва %r - съвпадението по ИД се запазва, но разминаването "
+                    "иска преглед",
+                    model, source_id, rec.id, text_field, actual, expect_text)
+        return rec
+
     def link_existing(self, model, source_id, target_id):
         """Record a source->target mapping for a record we did NOT create.
 

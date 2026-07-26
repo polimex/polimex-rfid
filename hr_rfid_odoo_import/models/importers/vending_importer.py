@@ -65,17 +65,9 @@ class VendingImporter:
         prefix = model.replace('.', '_')
 
         for rec in source_records:
-            existing = False
-            # Match by default_code first
-            if rec.get('default_code'):
-                existing = self.env[model].search([
-                    ('default_code', '=', rec['default_code'])
-                ], limit=1)
-            # Fallback: match by name
-            if not existing:
-                existing = self.env[model].search([
-                    ('name', '=', rec['name'])
-                ], limit=1)
+            # Идентичност САМО по source id (ledger). Текстът е втора
+            # проверка на вече намерения запис, не ключ за търсене.
+            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
 
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)

@@ -62,11 +62,9 @@ class AccessImporter:
             if not target_company_id:
                 continue
 
-            # Match by name + company
-            existing = self.env[model].search([
-                ('name', '=', rec['name']),
-                ('company_id', '=', target_company_id),
-            ], limit=1)
+            # Идентичност САМО по source id (ledger). Текстът е втора
+            # проверка на вече намерения запис, не ключ за търсене.
+            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1

@@ -49,12 +49,9 @@ class ServiceImporter:
             if not target_company_id:
                 skipped += 1
                 continue
-            # sudo: must see an existing tag even when the operator is not a
-            # member of the target company, or a duplicate is created.
-            existing = self.env[model].sudo().search([
-                ('name', '=', rec['name']),
-                ('company_id', 'in', [target_company_id, False]),
-            ], limit=1)
+            # Идентичност САМО по source id (ledger). Текстът е втора
+            # проверка на вече намерения запис, не ключ за търсене.
+            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1

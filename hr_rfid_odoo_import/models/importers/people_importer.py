@@ -76,20 +76,9 @@ class PeopleImporter:
         for rec in source_records:
             target_company_id = self.b._map_company(rec.get('company_id'))
 
-            # Try to match existing partner by email or vat (within same company)
-            existing = False
-            company_domain = [('company_id', '=', target_company_id)] if target_company_id else []
-            if rec.get('email'):
-                existing = self.env[model].with_context(active_test=False).search(
-                    [('email', '=', rec['email'])] + company_domain,
-                    limit=1,
-                )
-            # VAT matching only for company-type partners (child contacts share parent VAT)
-            if not existing and rec.get('vat') and rec.get('is_company'):
-                existing = self.env[model].with_context(active_test=False).search(
-                    [('vat', '=', rec['vat']), ('is_company', '=', True)] + company_domain,
-                    limit=1,
-                )
+            # Идентичност САМО по source id (ledger). Текстът е втора
+            # проверка на вече намерения запис, не ключ за търсене.
+            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
 
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
@@ -124,15 +113,14 @@ class PeopleImporter:
             if target_company_id:
                 vals['company_id'] = target_company_id
 
-            # Country mapping by name
+            # Държавата е справочник на самата платформа - съпоставя се по
+            # СТАБИЛЕН ISO код през external ID-то на base (`base.bg`), не по
+            # преводимо име и не по сурово id (id-тата на res.country не са
+            # гарантирано еднакви между инсталации).
             if rec.get('country_id'):
-                country = self.env['res.country'].search([
-                    ('id', '=', rec['country_id'][0])
-                ], limit=1) or self.env['res.country'].search([
-                    ('name', '=', rec['country_id'][1])
-                ], limit=1)
+                country = self._resolve_country(rec['country_id'])
                 if country:
-                    vals['country_id'] = country.id
+                    vals['country_id'] = country
 
             # Image
             if rec.get('image_1920'):
@@ -171,6 +159,36 @@ class PeopleImporter:
             duration=time.time() - start,
         ))
 
+    def _resolve_country(self, source_country):
+        """ID на държавата в целта, по ISO код от external ID-то на източника.
+
+        `res.country` е справочник на Odoo, не мигриран обект: и двете страни го
+        носят с един и същ external ID (`base.bg`), който кодира ISO кода.
+        Сравняване по `name` е превод-зависимо, а по сурово `id` - зависи от
+        реда на инсталация.
+        """
+        source_id = source_country[0] if isinstance(source_country, (list, tuple)) else source_country
+        if not hasattr(self, '_country_cache'):
+            self._country_cache = {}
+        if source_id in self._country_cache:
+            return self._country_cache[source_id]
+        result = False
+        imd = self.b._search_read(
+            'ir.model.data',
+            [('model', '=', 'res.country'), ('res_id', '=', source_id)],
+            ['module', 'name'],
+        )
+        if imd:
+            rec = self.env.ref('%s.%s' % (imd[0]['module'], imd[0]['name']),
+                               raise_if_not_found=False)
+            if rec:
+                result = rec.id
+        if not result:
+            _logger.warning("Държава %s от източника не се резолва по external ID "
+                            "- оставя се празна", source_country)
+        self._country_cache[source_id] = result
+        return result
+
     def _import_users(self):
         """Step 6: res.users - optional, match by login."""
         start = time.time()
@@ -202,13 +220,27 @@ class PeopleImporter:
         prefix = model.replace('.', '_')
 
         for rec in source_records:
-            # Match by login
-            existing = self.env[model].with_context(active_test=False).search([
-                ('login', '=', rec['login'])
-            ], limit=1)
+            # Идентичност САМО по source id (ledger). Текстът е втора
+            # проверка на вече намерения запис, не ключ за търсене.
+            existing = self.b.find_by_ledger(model, rec['id'], rec.get('login'), 'login')
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
+                continue
+
+            # Няма ледгер => НОВ потребител. Ако login-ът вече е зает в целта,
+            # това е КОНФЛИКТ за докладване, не покана за сливане: login-ът е
+            # credential, не идентичност. Най-честият случай е системният
+            # потребител на източника (admin), закачен за служител - целта си
+            # има свой и не бива да бъде пренаписан.
+            clash = self.env[model].sudo().with_context(active_test=False).search(
+                [('login', '=', rec['login'])], limit=1)
+            if clash:
+                skipped += 1
+                _logger.warning(
+                    "Потребител %s от източника не е внесен: login-ът вече е зает "
+                    "от %s в целта, а ледгерът не сочи към него - изисква решение "
+                    "на оператора, не автоматично сливане", rec['login'], clash.id)
                 continue
 
             # res.users.company_id/company_ids both default to env.company.
@@ -345,21 +377,10 @@ class PeopleImporter:
                 skipped += 1
                 continue
 
-            # Try to match by barcode (unique) or name+company (only if unique)
-            existing = False
-            if rec.get('barcode'):
-                existing = self.env[model].with_context(active_test=False).search([
-                    ('barcode', '=', rec['barcode']),
-                    ('company_id', '=', target_company_id),
-                ], limit=1)
-            if not existing:
-                name_matches = self.env[model].with_context(active_test=False).search([
-                    ('name', '=', rec['name']),
-                    ('company_id', '=', target_company_id),
-                ])
-                # Only link if exactly one match (avoid duplicate name collisions)
-                if len(name_matches) == 1:
-                    existing = name_matches
+            # Идентичност САМО по source id. Съпоставянето по име сля
+            # съименници: от 1059 души на един клиент в целта влязоха 1022
+            # (точно броят различни имена), заедно с картите и събитията им.
+            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
 
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
