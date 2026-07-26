@@ -67,7 +67,7 @@ class CoreImporter:
                 ('name', '=', rec['name'])
             ], limit=1)
             if existing:
-                self.b._set_target_id(model, rec['id'], existing.id)
+                self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
             else:
                 prefix = model.replace('.', '_')
@@ -104,7 +104,7 @@ class CoreImporter:
                 ('name', '=', rec['name'])
             ], limit=1)
             if existing:
-                self.b._set_target_id(model, rec['id'], existing.id)
+                self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
             else:
                 vals = {'name': rec['name']}
@@ -154,7 +154,7 @@ class CoreImporter:
                 ('company_id', '=', target_company_id),
             ], limit=1)
             if existing:
-                self.b._set_target_id(model, rec['id'], existing.id)
+                self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
             else:
                 vals = {
@@ -225,7 +225,7 @@ class CoreImporter:
                 ('company_id', '=', target_company_id),
             ], limit=1)
             if existing:
-                self.b._set_target_id(model, rec['id'], existing.id)
+                self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
             else:
                 data_list = [{
@@ -279,7 +279,7 @@ class CoreImporter:
                     update_vals['name'] = rec['name']
                 if update_vals:
                     existing.with_context(**IMPORT_CONTEXT).write(update_vals)
-                self.b._set_target_id(model, rec['id'], existing.id)
+                self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
             else:
                 vals = {

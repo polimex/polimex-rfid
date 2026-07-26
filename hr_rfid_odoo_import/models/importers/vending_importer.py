@@ -78,7 +78,7 @@ class VendingImporter:
                 ], limit=1)
 
             if existing:
-                self.b._set_target_id(model, rec['id'], existing.id)
+                self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
             else:
                 vals = {

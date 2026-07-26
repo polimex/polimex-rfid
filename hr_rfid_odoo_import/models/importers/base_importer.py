@@ -222,6 +222,27 @@ class BaseImporter:
                 found[by_name[name]] = res_id
         return found
 
+    def link_existing(self, model, source_id, target_id):
+        """Record a source->target mapping for a record we did NOT create.
+
+        The external ID IS the migration's source->target map, so it has to
+        exist whether the target record was created by this import or matched
+        to one that was already present. Without it, reconciliation counts the
+        class as missing even though the data is there and correctly mapped -
+        measured on the pilot: 16 time schedules linked, reconciliation
+        reported 0 in the target for both pilot tenants.
+        """
+        self._set_target_id(model, source_id, target_id)
+        self.env.cr.execute(
+            "INSERT INTO ir_model_data "
+            "(module, name, model, res_id, noupdate, create_date, write_date) "
+            "VALUES (%s, %s, %s, %s, TRUE, now() at time zone \'UTC\', "
+            "now() at time zone \'UTC\') "
+            "ON CONFLICT (module, name) DO NOTHING",
+            (LEDGER_MODULE, self._xml_id_name(model.replace('.', '_'), source_id),
+             model, target_id),
+        )
+
     def _direct_sql_insert_tracked(self, table, columns, rows, model, source_ids,
                                    batch_size=5000):
         """Idempotent bulk INSERT: SQL speed + ``ir.model.data`` external ID.

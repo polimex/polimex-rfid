@@ -92,7 +92,7 @@ class PeopleImporter:
                 )
 
             if existing:
-                self.b._set_target_id(model, rec['id'], existing.id)
+                self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
                 continue
 
@@ -207,7 +207,7 @@ class PeopleImporter:
                 ('login', '=', rec['login'])
             ], limit=1)
             if existing:
-                self.b._set_target_id(model, rec['id'], existing.id)
+                self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
                 continue
 
@@ -355,7 +355,7 @@ class PeopleImporter:
                     existing = name_matches
 
             if existing:
-                self.b._set_target_id(model, rec['id'], existing.id)
+                self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
                 continue
 

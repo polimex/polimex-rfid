@@ -56,7 +56,7 @@ class ServiceImporter:
                 ('company_id', 'in', [target_company_id, False]),
             ], limit=1)
             if existing:
-                self.b._set_target_id(model, rec['id'], existing.id)
+                self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
             else:
                 vals = {'name': rec['name'], 'company_id': target_company_id}
