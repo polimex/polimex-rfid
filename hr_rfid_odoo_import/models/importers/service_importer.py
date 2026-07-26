@@ -209,6 +209,7 @@ class ServiceImporter:
 
         source_records = self.b._read_all(model, [], fields_to_read, batch_size=2000)
         imported = 0
+        already = 0
 
         columns = ['service_id', 'partner_id', 'card_id', 'create_date']
         for f in ['state', 'start_date', 'end_date', 'visits_count',
@@ -217,6 +218,7 @@ class ServiceImporter:
                 columns.append(f)
 
         rows = []
+        src_ids = []
         for rec in source_records:
             service_target = self.b._map_m2o('rfid.service', rec.get('service_id'))
             if not service_target:
@@ -240,11 +242,13 @@ class ServiceImporter:
                     row.append(rec.get(f) if rec.get(f) is not False else None)
 
             rows.append(tuple(row))
+            src_ids.append(rec['id'])
 
         if rows:
             try:
                 with self.env.cr.savepoint():
-                    imported = self.b._direct_sql_insert(table, columns, rows)
+                    imported, already = self.b._direct_sql_insert_tracked(
+                        table, columns, rows, model, src_ids)
             except Exception as e:
                 _logger.error("Failed to insert service events: %s", e)
                 self.results.append(self._make_result(
@@ -255,6 +259,6 @@ class ServiceImporter:
                 return
 
         self.results.append(self._make_result(
-            model, len(source_records), imported,
+            model, len(source_records), imported, already,
             duration=time.time() - start,
         ))

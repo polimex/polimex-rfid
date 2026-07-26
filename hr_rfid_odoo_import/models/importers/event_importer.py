@@ -72,6 +72,7 @@ class EventImporter:
 
         source_records = self.b._read_all(model, domain, fields_to_read, batch_size=2000)
         imported = 0
+        already = 0
         skipped = 0
 
         # Target columns for SQL INSERT — only include columns available in target
@@ -95,6 +96,7 @@ class EventImporter:
         }
 
         rows = []
+        src_ids = []
         for rec in source_records:
             row = []
             skip_row = False
@@ -117,11 +119,13 @@ class EventImporter:
                 skipped += 1
                 continue
             rows.append(tuple(row))
+            src_ids.append(rec['id'])
 
         if rows:
             try:
                 with self.env.cr.savepoint():
-                    imported = self.b._direct_sql_insert(table, columns, rows)
+                    imported, already = self.b._direct_sql_insert_tracked(
+                        table, columns, rows, model, src_ids)
             except Exception as e:
                 _logger.error("Failed to insert user events: %s", e)
                 self.results.append(self._make_result(
@@ -132,7 +136,7 @@ class EventImporter:
                 return
 
         self.results.append(self._make_result(
-            model, len(source_records), imported, 0, skipped,
+            model, len(source_records), imported, already, skipped,
             duration=time.time() - start,
         ))
 
@@ -169,6 +173,7 @@ class EventImporter:
 
         source_records = self.b._read_all(model, domain, fields_to_read, batch_size=2000)
         imported = 0
+        already = 0
 
         columns = [target_time_field]
         for f in ['event_action', 'door_id', 'controller_id', 'error_description']:
@@ -180,6 +185,7 @@ class EventImporter:
             columns.append('card_number')
 
         rows = []
+        src_ids = []
         for rec in source_records:
             door_target = False
             if rec.get('door_id'):
@@ -203,11 +209,13 @@ class EventImporter:
                 row.append(rec.get('card_number', '') or None)
 
             rows.append(tuple(row))
+            src_ids.append(rec['id'])
 
         if rows:
             try:
                 with self.env.cr.savepoint():
-                    imported = self.b._direct_sql_insert(table, columns, rows)
+                    imported, already = self.b._direct_sql_insert_tracked(
+                        table, columns, rows, model, src_ids)
             except Exception as e:
                 _logger.error("Failed to insert system events: %s", e)
                 self.results.append(self._make_result(
@@ -218,7 +226,7 @@ class EventImporter:
                 return
 
         self.results.append(self._make_result(
-            model, len(source_records), imported,
+            model, len(source_records), imported, already,
             duration=time.time() - start,
         ))
 
@@ -248,12 +256,14 @@ class EventImporter:
 
         source_records = self.b._read_all(model, domain, fields_to_read, batch_size=5000)
         imported = 0
+        already = 0
 
         # Determine time column name in target
         time_col = 'event_time' if 'event_time' in target_fields else 'log_date'
         columns = [time_col, 'th_id', 'temperature', 'humidity']
 
         rows = []
+        src_ids = []
         for rec in source_records:
             th_target = False
             if rec.get('th_id'):
@@ -269,11 +279,13 @@ class EventImporter:
                 rec.get('humidity', 0.0),
             )
             rows.append(row)
+            src_ids.append(rec['id'])
 
         if rows:
             try:
                 with self.env.cr.savepoint():
-                    imported = self.b._direct_sql_insert(table, columns, rows)
+                    imported, already = self.b._direct_sql_insert_tracked(
+                        table, columns, rows, model, src_ids)
             except Exception as e:
                 _logger.error("Failed to insert TH logs: %s", e)
                 self.results.append(self._make_result(
@@ -284,6 +296,6 @@ class EventImporter:
                 return
 
         self.results.append(self._make_result(
-            model, len(source_records), imported,
+            model, len(source_records), imported, already,
             duration=time.time() - start,
         ))

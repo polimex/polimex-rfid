@@ -283,6 +283,7 @@ class VendingImporter:
             model, domain, fields_to_read, batch_size=2000,
         )
         imported = 0
+        already = 0
         skipped = 0
 
         columns = ['event_time']
@@ -304,6 +305,7 @@ class VendingImporter:
         }
 
         rows = []
+        src_ids = []
         for rec in source_records:
             row = []
             skip_row = False
@@ -326,11 +328,13 @@ class VendingImporter:
                 skipped += 1
                 continue
             rows.append(tuple(row))
+            src_ids.append(rec['id'])
 
         if rows:
             try:
                 with self.env.cr.savepoint():
-                    imported = self.b._direct_sql_insert(table, columns, rows)
+                    imported, already = self.b._direct_sql_insert_tracked(
+                        table, columns, rows, model, src_ids)
             except Exception as e:
                 _logger.error("Failed to insert vending events: %s", e)
                 self.results.append(self._make_result(
@@ -341,7 +345,7 @@ class VendingImporter:
                 return
 
         self.results.append(self._make_result(
-            model, len(source_records), imported, 0, skipped,
+            model, len(source_records), imported, already, skipped,
             duration=time.time() - start,
         ))
 
@@ -367,6 +371,7 @@ class VendingImporter:
 
         source_records = self.b._read_all(model, [], fields_to_read, batch_size=5000)
         imported = 0
+        already = 0
 
         # Build target columns
         columns = ['employee_id']
@@ -381,6 +386,7 @@ class VendingImporter:
         }
 
         rows = []
+        src_ids = []
         for rec in source_records:
             emp_target = self.b._map_m2o('hr.employee', rec.get('employee_id'))
             if not emp_target:
@@ -399,11 +405,13 @@ class VendingImporter:
                     row.append(val if val is not False else None)
 
             rows.append(tuple(row))
+            src_ids.append(rec['id'])
 
         if rows:
             try:
                 with self.env.cr.savepoint():
-                    imported = self.b._direct_sql_insert(table, columns, rows)
+                    imported, already = self.b._direct_sql_insert_tracked(
+                        table, columns, rows, model, src_ids)
             except Exception as e:
                 _logger.error("Failed to insert balance history: %s", e)
                 self.results.append(self._make_result(
@@ -414,7 +422,7 @@ class VendingImporter:
                 return
 
         self.results.append(self._make_result(
-            model, len(source_records), imported,
+            model, len(source_records), imported, already,
             duration=time.time() - start,
         ))
 

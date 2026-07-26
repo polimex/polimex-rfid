@@ -8,6 +8,11 @@ from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
+# ir.model.data module used for every imported record's external ID.
+# Matches the standard Odoo import convention (odoo/orm/models.py load():
+# context.get('module', '__import__')), so imports stay idempotent on re-run.
+LEDGER_MODULE = '__import__'
+
 # Context flags for suppressing side-effects during import
 IMPORT_CONTEXT = {
     'no_hardware_commands': True,
@@ -161,6 +166,13 @@ class BaseImporter:
         """Direct SQL INSERT into target DB — bypass ORM.
 
         Uses execute_values for performance. Skips duplicates via ON CONFLICT.
+
+        WARNING — NOT idempotent on re-run: rows are inserted with a fresh
+        auto-generated ``id`` and the target tables only have a PK, so
+        ``ON CONFLICT DO NOTHING`` never matches and a second run DUPLICATES
+        every row. Use :meth:`_direct_sql_insert_tracked` for migration data
+        (it records an ``ir.model.data`` external ID per row, exactly like the
+        ORM import path, which makes re-runs idempotent).
         """
         if not rows:
             return 0
@@ -179,16 +191,157 @@ class BaseImporter:
             total += len(batch)
         return total
 
+    def already_imported(self, model, source_ids):
+        """Map source ids that were already imported to their target ids.
+
+        Mirrors the ORM import dedup (ir.model.data) for bulk-inserted rows.
+        The lookup JOINs the target table, so an external ID whose row is gone
+        (deleted, or cascaded away) does NOT count as imported — the record is
+        re-imported instead of being silently skipped forever.
+
+        Returns:
+            dict: {source_id: target_id} for the records already present.
+        """
+        if not source_ids:
+            return {}
+        prefix = model.replace('.', '_')
+        by_name = {self._xml_id_name(prefix, sid): sid for sid in source_ids}
+        # Model-derived table name (trusted, not user input).
+        table = self.env[model]._table
+        found = {}
+        names = list(by_name)
+        for i in range(0, len(names), 10000):
+            chunk = names[i:i + 10000]
+            self.env.cr.execute(
+                f"SELECT d.name, d.res_id FROM ir_model_data d "
+                f'JOIN "{table}" t ON t.id = d.res_id '
+                f"WHERE d.module = %s AND d.model = %s AND d.name = ANY(%s)",
+                (LEDGER_MODULE, model, chunk),
+            )
+            for name, res_id in self.env.cr.fetchall():
+                found[by_name[name]] = res_id
+        return found
+
+    def _direct_sql_insert_tracked(self, table, columns, rows, model, source_ids,
+                                   batch_size=5000):
+        """Idempotent bulk INSERT: SQL speed + ``ir.model.data`` external ID.
+
+        This is the bulk counterpart of the standard Odoo import: every row gets
+        an external ID (``__import__.rfid_import_{db_slug}_{model}_{source_id}``)
+        exactly like ORM-loaded records, so a second run skips what is already
+        there instead of duplicating it.
+
+        ``rows[i]`` must correspond to ``source_ids[i]``.
+
+        Target ids are drawn from the table sequence UP FRONT (rather than read
+        back with ``RETURNING``) so the source→target mapping stays exact even
+        when a batch is partially skipped. An external ID is written ONLY for a
+        row the database actually accepted, so "external ID exists" always
+        means "row exists".
+
+        Returns:
+            tuple[int, int]: (rows inserted now, rows already imported before).
+        """
+        if not rows:
+            return 0, 0
+        if len(rows) != len(source_ids):
+            raise UserError(_(
+                "Bulk import bug: %(rows)d rows but %(ids)d source ids for %(model)s.",
+                rows=len(rows), ids=len(source_ids), model=model,
+            ))
+        from psycopg2.extras import execute_values
+
+        done = self.already_imported(model, source_ids)
+        # A resumed run must still resolve these for later phases/relations,
+        # otherwise FKs pointing at bulk models would silently become NULL.
+        for sid, target_id in done.items():
+            self._set_target_id(model, sid, target_id)
+
+        pending = [(r, sid) for r, sid in zip(rows, source_ids) if sid not in done]
+        if not pending:
+            _logger.info("%s: all %d rows already imported (external ID) — skipped",
+                         model, len(rows))
+            return 0, len(done)
+
+        prefix = model.replace('.', '_')
+        cols = ', '.join(['id'] + list(columns))
+        placeholders = ', '.join(['%s'] * (len(columns) + 1))
+        inserted = 0
+        rejected = 0
+        # Buffered: only published once every batch succeeded, so a savepoint
+        # rollback in the caller cannot leave stale ids behind in id_map.
+        mapped = []
+
+        for i in range(0, len(pending), batch_size):
+            batch = pending[i:i + batch_size]
+            # Reserve target ids from the table sequence (exact, ordered mapping).
+            self.env.cr.execute(
+                "SELECT nextval(pg_get_serial_sequence(%s, 'id')) "
+                "FROM generate_series(1, %s)",
+                (table, len(batch)),
+            )
+            new_ids = [r[0] for r in self.env.cr.fetchall()]
+
+            returned = execute_values(
+                self.env.cr._obj,
+                f"INSERT INTO {table} ({cols}) VALUES %s "
+                f"ON CONFLICT DO NOTHING RETURNING id",
+                [(nid,) + tuple(row) for nid, (row, _sid) in zip(new_ids, batch)],
+                template=f"({placeholders})",
+                fetch=True,
+            )
+            accepted_ids = {r[0] for r in returned}
+            accepted = [(nid, sid) for nid, (_row, sid) in zip(new_ids, batch)
+                        if nid in accepted_ids]
+            if len(accepted) != len(batch):
+                rejected += len(batch) - len(accepted)
+                _logger.warning(
+                    "%s: %d of %d rows rejected by a constraint — not ledgered "
+                    "(they will be retried on the next run)",
+                    model, len(batch) - len(accepted), len(batch),
+                )
+            if not accepted:
+                continue
+
+            execute_values(
+                self.env.cr._obj,
+                "INSERT INTO ir_model_data "
+                "(module, name, model, res_id, noupdate, create_date, write_date) "
+                "VALUES %s ON CONFLICT (module, name) DO NOTHING",
+                [
+                    (LEDGER_MODULE, self._xml_id_name(prefix, sid), model, nid, True)
+                    for nid, sid in accepted
+                ],
+                template="(%s, %s, %s, %s, %s, now() at time zone 'UTC', now() at time zone 'UTC')",
+            )
+            mapped.extend(accepted)
+            inserted += len(accepted)
+
+        # Publish the mapping only after the whole call succeeded.
+        for nid, sid in mapped:
+            self._set_target_id(model, sid, nid)
+
+        _logger.info("%s: inserted %d rows (%d already imported, %d rejected)",
+                     model, inserted, len(done), rejected)
+        return inserted, len(done)
+
     # ── ID Mapping ────────────────────────────────────────────
 
-    def _xml_id(self, model_prefix, source_id):
-        """Generate XML ID for ir.model.data.
+    def _xml_id_name(self, model_prefix, source_id):
+        """Name part of the external ID (without the module prefix).
 
         Includes source_db slug to prevent collisions between different sources.
-        Format: __import__.rfid_import_{db_slug}_{model_prefix}_{source_id}
+        Format: rfid_import_{db_slug}_{model_prefix}_{source_id}
         """
         db_slug = self.source_db.replace('-', '_').replace('.', '_')
-        return f'__import__.rfid_import_{db_slug}_{model_prefix}_{source_id}'
+        return f'rfid_import_{db_slug}_{model_prefix}_{source_id}'
+
+    def _xml_id(self, model_prefix, source_id):
+        """Full XML ID for ir.model.data.
+
+        Format: __import__.rfid_import_{db_slug}_{model_prefix}_{source_id}
+        """
+        return f'{LEDGER_MODULE}.{self._xml_id_name(model_prefix, source_id)}'
 
     def _get_target_id(self, model, source_id):
         """Get target ID from previously imported record.
@@ -243,12 +396,9 @@ class BaseImporter:
     def _resolve_from_imd(self, model, source_id):
         """Try to resolve target ID from ir.model.data."""
         prefix = model.replace('.', '_')
-        xml_id = self._xml_id(prefix, source_id)
-        # xml_id format: __import__.rfid_import_db_slug_prefix_id
-        module = '__import__'
-        name = xml_id.split('.', 1)[1] if '.' in xml_id else xml_id
+        name = self._xml_id_name(prefix, source_id)
         imd = self.env['ir.model.data'].sudo().search([
-            ('module', '=', module),
+            ('module', '=', LEDGER_MODULE),
             ('name', '=', name),
             ('model', '=', model),
         ], limit=1)

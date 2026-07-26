@@ -59,6 +59,7 @@ class AttendanceImporter:
 
         source_records = self.b._read_all(model, [], fields_to_read, batch_size=5000)
         imported = 0
+        already = 0
 
         # date is a stored computed field in v19 (from check_in + tz)
         # We must include it in SQL INSERT since it's required
@@ -72,6 +73,7 @@ class AttendanceImporter:
             columns.append('out_zone_id')
 
         rows = []
+        src_ids = []
         for rec in source_records:
             emp_target = self.b._map_m2o('hr.employee', rec.get('employee_id'))
             if not emp_target:
@@ -95,11 +97,13 @@ class AttendanceImporter:
                 row.append(zone_target or None)
 
             rows.append(tuple(row))
+            src_ids.append(rec['id'])
 
         if rows:
             try:
                 with self.env.cr.savepoint():
-                    imported = self.b._direct_sql_insert(table, columns, rows)
+                    imported, already = self.b._direct_sql_insert_tracked(
+                        table, columns, rows, model, src_ids)
             except Exception as e:
                 _logger.error("Failed to insert attendance: %s", e)
                 self.results.append(self._make_result(
@@ -110,7 +114,7 @@ class AttendanceImporter:
                 return
 
         self.results.append(self._make_result(
-            model, len(source_records), imported,
+            model, len(source_records), imported, already,
             duration=time.time() - start,
         ))
 
@@ -127,21 +131,27 @@ class AttendanceImporter:
         target_fields = set(self.env[model]._fields.keys())
 
         fields_to_read = ['employee_id', 'department_id']
-        for f in ['date', 'check_in', 'check_out', 'late_minutes',
+        # 'for_date' is NOT NULL in the target — it must be read and written,
+        # otherwise every batch is rejected and no extra record migrates at all.
+        for f in ['for_date', 'check_in', 'check_out', 'late_minutes',
                    'early_leave_minutes', 'overtime_minutes', 'worked_hours']:
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
 
         source_records = self.b._read_all(model, [], fields_to_read, batch_size=5000)
         imported = 0
+        already = 0
 
         columns = ['employee_id', 'department_id']
-        for f in ['date', 'check_in', 'check_out', 'late_minutes',
+        # 'for_date' is NOT NULL in the target — it must be read and written,
+        # otherwise every batch is rejected and no extra record migrates at all.
+        for f in ['for_date', 'check_in', 'check_out', 'late_minutes',
                    'early_leave_minutes', 'overtime_minutes', 'worked_hours']:
             if f in fields_to_read:
                 columns.append(f)
 
         rows = []
+        src_ids = []
         for rec in source_records:
             emp_target = self.b._map_m2o('hr.employee', rec.get('employee_id'))
             if not emp_target:
@@ -153,11 +163,13 @@ class AttendanceImporter:
                 row.append(rec.get(f) if rec.get(f) is not False else None)
 
             rows.append(tuple(row))
+            src_ids.append(rec['id'])
 
         if rows:
             try:
                 with self.env.cr.savepoint():
-                    imported = self.b._direct_sql_insert(table, columns, rows)
+                    imported, already = self.b._direct_sql_insert_tracked(
+                        table, columns, rows, model, src_ids)
             except Exception as e:
                 _logger.error("Failed to insert attendance extra: %s", e)
                 self.results.append(self._make_result(
@@ -168,6 +180,6 @@ class AttendanceImporter:
                 return
 
         self.results.append(self._make_result(
-            model, len(source_records), imported,
+            model, len(source_records), imported, already,
             duration=time.time() - start,
         ))
