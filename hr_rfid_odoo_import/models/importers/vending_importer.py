@@ -33,21 +33,8 @@ class VendingImporter:
         self._update_employee_vending_fields()
         return self.results
 
-    def _make_result(self, model, source_count, imported_count, linked_count=0,
-                     skipped_count=0, duration=0, status='done', error=''):
-        return {
-            'model': model,
-            'source_count': source_count,
-            'imported_count': imported_count,
-            'linked_count': linked_count,
-            'skipped_count': skipped_count,
-            'duration': duration,
-            'status': status,
-            'error': error,
-        }
-
     def _import_products(self):
-        """Step 29: product.template — match by default_code, fallback name."""
+        """Step 29: product.template - match by default_code, fallback name."""
         start = time.time()
         model = 'product.template'
 
@@ -111,24 +98,26 @@ class VendingImporter:
                     self.b._set_target_id(model, rec['id'], created.id)
                     imported += 1
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, linked,
             duration=time.time() - start,
         ))
 
     def _import_vending_rows(self):
-        """Step 30: hr.rfid.ctrl.vending.row — depends on ctrl + product."""
+        """Step 30: hr.rfid.ctrl.vending.row - depends on ctrl + product."""
         start = time.time()
         model = 'hr.rfid.ctrl.vending.row'
         source_fields_info = self.b._get_source_fields(model)
-        target_fields = set(self.env[model]._fields.keys())
+        # Real columns only - a non-stored field in a raw INSERT is an
+        # UndefinedColumn that kills the whole step.
+        target_fields = self.b._target_columns(model)
         fields_to_read = ['controller_id']
-        # row_number (v15) or row_num (v19) — detect source field name
+        # row_number (v15) or row_num (v19) - detect source field name
         for f in ['name', 'product_id', 'row_number', 'row_num', 'price']:
             if f in source_fields_info:
                 fields_to_read.append(f)
         source_records = self.b._search_read(
-            model, [], fields_to_read,
+            model, self.b._scoped_domain('controller_id.webstack_id'), fields_to_read,
         )
         imported = 0
         skipped = 0
@@ -167,27 +156,30 @@ class VendingImporter:
                 self.b._set_target_id(model, rec['id'], created.id)
                 imported += 1
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, 0, skipped,
             duration=time.time() - start,
         ))
 
     def _import_vending_settings(self):
-        """Step 31: hr.rfid.ctrl.vending.settings — depends on ctrl."""
+        """Step 31: hr.rfid.ctrl.vending.settings - depends on ctrl."""
         start = time.time()
         model = 'hr.rfid.ctrl.vending.settings'
         if not self.b._has_model(model):
+            self.results.append(self.b._make_result(model, 0, 0, status='skipped'))
             return
         source_records = self.b._search_read(
-            model, [],
+            model, self.b._scoped_domain('controller_id.webstack_id'),
             ['name', 'controller_id', 'vending_row_ids'],
         )
         imported = 0
+        skipped = 0
         prefix = model.replace('.', '_')
 
         for rec in source_records:
             ctrl_target = self.b._map_m2o('hr.rfid.ctrl', rec.get('controller_id'))
             if not ctrl_target:
+                skipped += 1
                 continue
             vals = {
                 'name': rec.get('name', ''),
@@ -207,20 +199,23 @@ class VendingImporter:
                 self.b._set_target_id(model, rec['id'], created.id)
                 imported += 1
 
-        self.results.append(self._make_result(
-            model, len(source_records), imported,
+        self.results.append(self.b._make_result(
+            model, len(source_records), imported, 0, skipped,
             duration=time.time() - start,
         ))
 
     def _import_auto_refill(self):
-        """Step 32: hr.rfid.vending.auto.refill — company-level."""
+        """Step 32: hr.rfid.vending.auto.refill - company-level."""
         start = time.time()
         model = 'hr.rfid.vending.auto.refill'
         if not self.b._has_model(model):
+            self.results.append(self.b._make_result(model, 0, 0, status='skipped'))
             return
         co_domain = self.b._company_domain()
         source_fields_info = self.b._get_source_fields(model)
-        target_fields = set(self.env[model]._fields.keys())
+        # Real columns only - a non-stored field in a raw INSERT is an
+        # UndefinedColumn that kills the whole step.
+        target_fields = self.b._target_columns(model)
 
         fields_to_read = ['name', 'company_id']
         for f in ['amount', 'period']:
@@ -255,13 +250,13 @@ class VendingImporter:
                 self.b._set_target_id(model, rec['id'], created.id)
                 imported += 1
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported,
             duration=time.time() - start,
         ))
 
     def _import_vending_events(self):
-        """Step 33: hr.rfid.vending.event — Direct SQL batch (separate table)."""
+        """Step 33: hr.rfid.vending.event - Direct SQL batch (separate table)."""
         start = time.time()
         model = 'hr.rfid.vending.event'
         table = 'hr_rfid_vending_event'
@@ -272,7 +267,9 @@ class VendingImporter:
             domain.append(('event_time', '>=', date_from))
 
         source_fields_info = self.b._get_source_fields(model)
-        target_fields = set(self.env[model]._fields.keys())
+        # Real columns only - a non-stored field in a raw INSERT is an
+        # UndefinedColumn that kills the whole step.
+        target_fields = self.b._target_columns(model)
         fields_to_read = ['event_time']
         for f in ['event_action', 'door_id', 'reader_id', 'card_id',
                   'employee_id', 'contact_id', 'controller_id',
@@ -280,10 +277,17 @@ class VendingImporter:
             if f in source_fields_info:
                 fields_to_read.append(f)
         source_records = self.b._read_all(
-            model, domain, fields_to_read, batch_size=2000,
+            # Scope on reader_id, NOT door_id: the source leaves door_id NULL on
+            # every vending event (32046/32046), and a dotted domain compiles to
+            # EXISTS - a NULL link never matches, so scoping there would drop the
+            # whole vending history while reporting "this client has none".
+            # reader_id is required=True on the model and NOT NULL in the target.
+            model, self.b._scoped_domain('reader_id.controller_id.webstack_id') + domain,
+            fields_to_read, batch_size=2000,
         )
         imported = 0
         already = 0
+        rejected = 0
         skipped = 0
 
         columns = ['event_time']
@@ -333,45 +337,52 @@ class VendingImporter:
         if rows:
             try:
                 with self.env.cr.savepoint():
-                    imported, already = self.b._direct_sql_insert_tracked(
+                    imported, already, rejected = self.b._direct_sql_insert_tracked(
                         table, columns, rows, model, src_ids)
             except Exception as e:
-                _logger.error("Failed to insert vending events: %s", e)
-                self.results.append(self._make_result(
+                _logger.error("Failed to insert vending events: %s", e, exc_info=True)
+                self.results.append(self.b._make_result(
                     model, len(source_records), 0, 0, len(source_records),
                     duration=time.time() - start,
                     status='error', error=str(e)[:500],
                 ))
                 return
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, already, skipped,
-            duration=time.time() - start,
+            duration=time.time() - start, rejected_count=rejected,
         ))
 
     def _import_balance_history(self):
-        """Step 34: hr.rfid.vending.balance.history — Direct SQL batch."""
+        """Step 34: hr.rfid.vending.balance.history - Direct SQL batch."""
         start = time.time()
         model = 'hr.rfid.vending.balance.history'
         table = 'hr_rfid_vending_balance_history'
 
         if not self.b._has_model(model):
+            self.results.append(self.b._make_result(model, 0, 0, status='skipped'))
             return
 
         source_fields_info = self.b._get_source_fields(model)
-        target_fields = set(self.env[model]._fields.keys())
+        # Real columns only - a non-stored field in a raw INSERT is an
+        # UndefinedColumn that kills the whole step.
+        target_fields = self.b._target_columns(model)
 
         # Required fields
         fields_to_read = ['employee_id']
-        # Optional — check source availability
+        # Optional - check source availability
         for f in ['balance_change', 'balance_result', 'vending_event_id',
                   'auto_refill_id', 'person_responsible', 'create_date']:
             if f in source_fields_info:
                 fields_to_read.append(f)
 
-        source_records = self.b._read_all(model, [], fields_to_read, batch_size=5000)
+        source_records = self.b._read_all(
+            model, self.b._scoped_domain('employee_id'), fields_to_read,
+            batch_size=5000)
         imported = 0
         already = 0
+        rejected = 0
+        skipped = 0
 
         # Build target columns
         columns = ['employee_id']
@@ -390,6 +401,7 @@ class VendingImporter:
         for rec in source_records:
             emp_target = self.b._map_m2o('hr.employee', rec.get('employee_id'))
             if not emp_target:
+                skipped += 1
                 continue
 
             row = [emp_target]
@@ -398,7 +410,7 @@ class VendingImporter:
                     target = self.b._map_m2o(m2o_map[col], rec.get(col))
                     row.append(target or None)
                 elif col == 'person_responsible':
-                    # Skip user mapping — just set None
+                    # Skip user mapping - just set None
                     row.append(None)
                 else:
                     val = rec.get(col)
@@ -410,20 +422,20 @@ class VendingImporter:
         if rows:
             try:
                 with self.env.cr.savepoint():
-                    imported, already = self.b._direct_sql_insert_tracked(
+                    imported, already, rejected = self.b._direct_sql_insert_tracked(
                         table, columns, rows, model, src_ids)
             except Exception as e:
-                _logger.error("Failed to insert balance history: %s", e)
-                self.results.append(self._make_result(
+                _logger.error("Failed to insert balance history: %s", e, exc_info=True)
+                self.results.append(self.b._make_result(
                     model, len(source_records), 0, 0, len(source_records),
                     duration=time.time() - start,
                     status='error', error=str(e)[:500],
                 ))
                 return
 
-        self.results.append(self._make_result(
-            model, len(source_records), imported, already,
-            duration=time.time() - start,
+        self.results.append(self.b._make_result(
+            model, len(source_records), imported, already, skipped,
+            duration=time.time() - start, rejected_count=rejected,
         ))
 
     def _update_employee_vending_fields(self):
@@ -483,7 +495,7 @@ class VendingImporter:
                 updated += 1
 
         if updated:
-            self.results.append(self._make_result(
+            self.results.append(self.b._make_result(
                 'hr.employee (vending fields)', len(source_records), updated,
                 duration=time.time() - start,
             ))

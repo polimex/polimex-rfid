@@ -34,7 +34,7 @@ class BaseImporter:
     def __init__(self, env, source_url, source_db, source_uid, source_password,
                  company_map, options):
         self.env = env
-        # XML-RPC connection (source — read only)
+        # XML-RPC connection (source - read only)
         self.source_url = source_url
         self.source_db = source_db
         self.source_uid = source_uid
@@ -145,7 +145,7 @@ class BaseImporter:
         return Model._load_records(data_list)
 
     def _try_load_records(self, model_name, data_list):
-        """Load records with savepoint — skip silently on failure.
+        """Load records with savepoint - skip silently on failure.
 
         Use this for records that may have incompatible schemas between versions
         (e.g., hardware sub-records like input_mask, output_ts, alarm, th).
@@ -163,11 +163,11 @@ class BaseImporter:
             return self.env[model_name]
 
     def _direct_sql_insert(self, table, columns, rows, batch_size=5000):
-        """Direct SQL INSERT into target DB — bypass ORM.
+        """Direct SQL INSERT into target DB - bypass ORM.
 
         Uses execute_values for performance. Skips duplicates via ON CONFLICT.
 
-        WARNING — NOT idempotent on re-run: rows are inserted with a fresh
+        WARNING - NOT idempotent on re-run: rows are inserted with a fresh
         auto-generated ``id`` and the target tables only have a PK, so
         ``ON CONFLICT DO NOTHING`` never matches and a second run DUPLICATES
         every row. Use :meth:`_direct_sql_insert_tracked` for migration data
@@ -196,7 +196,7 @@ class BaseImporter:
 
         Mirrors the ORM import dedup (ir.model.data) for bulk-inserted rows.
         The lookup JOINs the target table, so an external ID whose row is gone
-        (deleted, or cascaded away) does NOT count as imported — the record is
+        (deleted, or cascaded away) does NOT count as imported - the record is
         re-imported instead of being silently skipped forever.
 
         Returns:
@@ -240,10 +240,14 @@ class BaseImporter:
         means "row exists".
 
         Returns:
-            tuple[int, int]: (rows inserted now, rows already imported before).
+            tuple[int, int, int]: (inserted now, already imported before,
+            rejected by a constraint). ``rejected`` is reported so the phase
+            log can distinguish "nothing to do" from "the database refused
+            every row" - a rejection that is only logged is invisible to the
+            operator reading the import protocol.
         """
         if not rows:
-            return 0, 0
+            return 0, 0, 0
         if len(rows) != len(source_ids):
             raise UserError(_(
                 "Bulk import bug: %(rows)d rows but %(ids)d source ids for %(model)s.",
@@ -259,9 +263,9 @@ class BaseImporter:
 
         pending = [(r, sid) for r, sid in zip(rows, source_ids) if sid not in done]
         if not pending:
-            _logger.info("%s: all %d rows already imported (external ID) — skipped",
+            _logger.info("%s: all %d rows already imported (external ID) - skipped",
                          model, len(rows))
-            return 0, len(done)
+            return 0, len(done), 0
 
         prefix = model.replace('.', '_')
         cols = ', '.join(['id'] + list(columns))
@@ -296,7 +300,7 @@ class BaseImporter:
             if len(accepted) != len(batch):
                 rejected += len(batch) - len(accepted)
                 _logger.warning(
-                    "%s: %d of %d rows rejected by a constraint — not ledgered "
+                    "%s: %d of %d rows rejected by a constraint - not ledgered "
                     "(they will be retried on the next run)",
                     model, len(batch) - len(accepted), len(batch),
                 )
@@ -323,7 +327,7 @@ class BaseImporter:
 
         _logger.info("%s: inserted %d rows (%d already imported, %d rejected)",
                      model, inserted, len(done), rejected)
-        return inserted, len(done)
+        return inserted, len(done), rejected
 
     # ── ID Mapping ────────────────────────────────────────────
 
@@ -423,6 +427,43 @@ class BaseImporter:
             return [('company_id', '=', source_ids[0])]
         return [('company_id', 'in', source_ids)]
 
+    def _target_columns(self, model):
+        """Real database columns of a target model.
+
+        ``_fields`` also contains non-stored related/computed fields, which
+        have NO column. Naming one in a raw INSERT raises UndefinedColumn and
+        takes the whole bulk step down - e.g. v19 `hr.rfid.event.user` exposes
+        `card_number` as a related field with no column of its own. Only the
+        bulk (SQL) paths need this; the ORM paths legitimately write
+        non-column fields such as Many2many.
+        """
+        return {
+            name for name, field in self.env[model]._fields.items()
+            if field.store and field.column_type
+        }
+
+    def _scoped_domain(self, path=''):
+        """Domain restricting a model to the companies in scope.
+
+        A model without its own ``company_id`` is attributed through the
+        Many2one chain that owns it (``path``), e.g. ``'webstack_id'`` for
+        system events or ``'employee_id'`` for attendance.
+
+        WITHOUT this, a per-company run reads the WHOLE source table over
+        XML-RPC and relies on a later ``continue`` to drop foreign rows -
+        which silently leaks any row whose foreign key happens to be
+        nullable (reproduced on hr.rfid.zone: importing a tenant that owns
+        zero zones created all nine zones of the other tenants).
+
+        Note: a dotted domain compiles to an EXISTS sub-query, so rows whose
+        link is NULL do NOT match. That is intended - a row with no owner
+        cannot be attributed to a company - but it means the caller must
+        add an explicit branch when NULL links are legitimately in scope
+        (see ``_import_system_events``).
+        """
+        field = '%s.company_id' % path if path else 'company_id'
+        return [(field, 'in', self._source_company_ids())]
+
     def _source_company_ids(self):
         """Return list of source company IDs being imported."""
         return list(self.company_map.keys())
@@ -432,7 +473,7 @@ class BaseImporter:
     def _map_m2o(self, model, source_val):
         """Map Many2one field: [id, name] or id → target_id or False.
 
-        Does NOT fail hard — use _require_target_id for mandatory fields.
+        Does NOT fail hard - use _require_target_id for mandatory fields.
         """
         if not source_val:
             return False
@@ -477,6 +518,30 @@ class BaseImporter:
             'message_partner_ids', 'website_message_ids',
         }
         return (set(source_fields.keys()) & target_fields) - exclude
+
+    def _make_result(self, model, source_count, imported_count, linked_count=0,
+                     skipped_count=0, duration=0, status='done', error='',
+                     rejected_count=0):
+        """One row of the import protocol.
+
+        The counts must add up: a source row is imported, linked to an
+        existing target record, skipped (out of scope / unresolvable
+        relation) or rejected (the database refused it). An uncounted
+        ``continue`` makes "no data in the source" indistinguishable from
+        "every row was dropped" - the operator cannot tell a clean run from
+        a broken one.
+        """
+        return {
+            'model': model,
+            'source_count': source_count,
+            'imported_count': imported_count,
+            'linked_count': linked_count,
+            'skipped_count': skipped_count,
+            'rejected_count': rejected_count,
+            'duration': duration,
+            'status': status,
+            'error': error,
+        }
 
     def _log(self, msg, *args):
         """Log a message."""

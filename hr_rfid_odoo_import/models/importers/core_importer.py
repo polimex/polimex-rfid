@@ -44,32 +44,19 @@ class CoreImporter:
             self._import_output_ts()
             self._import_alarms()
             self._import_th_sensors()
-            self._import_zones()
-            self._import_notifications()
 
         return self.results
-
-    def _make_result(self, model, source_count, imported_count, linked_count=0,
-                     skipped_count=0, duration=0, status='done', error=''):
-        return {
-            'model': model,
-            'source_count': source_count,
-            'imported_count': imported_count,
-            'linked_count': linked_count,
-            'skipped_count': skipped_count,
-            'duration': duration,
-            'status': status,
-            'error': error,
-        }
 
     # ══════════════════════════════════════════════════════════
     # Phase 1: Foundation
     # ══════════════════════════════════════════════════════════
 
     def _import_card_types(self):
-        """Step 1: hr.rfid.card.type — match by name."""
+        """Step 1: hr.rfid.card.type - match by name."""
         start = time.time()
         model = 'hr.rfid.card.type'
+        # Deliberately global: hr.rfid.card.type has no company_id in either
+        # version - it is a shared lookup table, matched by name.
         source_records = self.b._search_read(model, [], ['name'])
         imported = 0
         linked = 0
@@ -96,15 +83,18 @@ class CoreImporter:
                     self.b._set_target_id(model, rec['id'], created.id)
                     imported += 1
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, linked,
             duration=time.time() - start,
         ))
 
     def _import_employee_categories(self):
-        """Step 2: hr.employee.category — match by name."""
+        """Step 2: hr.employee.category - match by name."""
         start = time.time()
         model = 'hr.employee.category'
+        # Deliberately global: hr.employee.category is core Odoo and carries
+        # no company_id; the target enforces UNIQUE(name), so tenants share
+        # one tag vocabulary by design.
         source_records = self.b._search_read(model, [], ['name', 'color'])
         imported = 0
         linked = 0
@@ -131,13 +121,13 @@ class CoreImporter:
                     self.b._set_target_id(model, rec['id'], created.id)
                     imported += 1
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, linked,
             duration=time.time() - start,
         ))
 
     def _import_departments(self):
-        """Step 3: hr.department — TWO PASSES (parent_id self-ref).
+        """Step 3: hr.department - TWO PASSES (parent_id self-ref).
 
         Pass 1: Create all departments without parent_id.
         Pass 2: Update parent_id with mapped IDs.
@@ -199,21 +189,24 @@ class CoreImporter:
                     **IMPORT_CONTEXT
                 ).write({'parent_id': parent_target_id})
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, linked,
             duration=time.time() - start,
         ))
 
     def _import_workcodes(self):
-        """Step 4: hr.rfid.workcode — filtered by company."""
+        """Step 4: hr.rfid.workcode - filtered by company."""
         start = time.time()
         model = 'hr.rfid.workcode'
         if not self.b._has_model(model):
+            # Report it: a step that returns nothing at all is
+            # indistinguishable from a step that never ran.
+            self.results.append(self.b._make_result(model, 0, 0, status='skipped'))
             return
         co_domain = self.b._company_domain()
         source_records = self.b._search_read(
             model, co_domain,
-            ['name', 'number', 'company_id'],
+            ['name', 'workcode', 'user_action', 'company_id'],
         )
         imported = 0
         linked = 0
@@ -224,8 +217,11 @@ class CoreImporter:
             if not target_company_id:
                 continue
 
-            existing = self.env[model].search([
-                ('number', '=', rec['number']),
+            # sudo: the dedup must see an existing row even when the operator
+            # is not a member of the target company, otherwise a duplicate is
+            # created instead of a link.
+            existing = self.env[model].sudo().search([
+                ('workcode', '=', rec['workcode']),
                 ('company_id', '=', target_company_id),
             ], limit=1)
             if existing:
@@ -236,7 +232,8 @@ class CoreImporter:
                     'xml_id': self.b._xml_id(prefix, rec['id']),
                     'values': {
                         'name': rec['name'],
-                        'number': rec['number'],
+                        'workcode': rec['workcode'],
+                        'user_action': rec['user_action'],
                         'company_id': target_company_id,
                     },
                     'noupdate': True,
@@ -246,13 +243,13 @@ class CoreImporter:
                     self.b._set_target_id(model, rec['id'], created.id)
                     imported += 1
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, linked,
             duration=time.time() - start,
         ))
 
     def _import_time_schedules(self):
-        """Step 5: hr.rfid.time.schedule — match by number + company."""
+        """Step 5: hr.rfid.time.schedule - match by number + company."""
         start = time.time()
         model = 'hr.rfid.time.schedule'
         co_domain = self.b._company_domain()
@@ -269,7 +266,7 @@ class CoreImporter:
             if not target_company_id:
                 continue
 
-            existing = self.env[model].search([
+            existing = self.env[model].sudo().search([
                 ('number', '=', rec['number']),
                 ('company_id', '=', target_company_id),
             ], limit=1)
@@ -302,7 +299,7 @@ class CoreImporter:
                     self.b._set_target_id(model, rec['id'], created.id)
                     imported += 1
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, linked,
             duration=time.time() - start,
         ))
@@ -312,10 +309,13 @@ class CoreImporter:
     # ══════════════════════════════════════════════════════════
 
     def _import_alarm_groups(self):
-        """Step 8: hr.rfid.ctrl.alarm.group — TWO PASSES (parent_id self-ref)."""
+        """Step 8: hr.rfid.ctrl.alarm.group - TWO PASSES (parent_id self-ref)."""
         start = time.time()
         model = 'hr.rfid.ctrl.alarm.group'
         if not self.b._has_model(model):
+            # Report it: a step that returns nothing at all is
+            # indistinguishable from a step that never ran.
+            self.results.append(self.b._make_result(model, 0, 0, status='skipped'))
             return
         co_domain = self.b._company_domain()
         source_records = self.b._search_read(
@@ -356,16 +356,19 @@ class CoreImporter:
                     **IMPORT_CONTEXT
                 ).write({'parent_id': parent_target_id})
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, linked,
             duration=time.time() - start,
         ))
 
     def _import_emergency_groups(self):
-        """Step 9: hr.rfid.ctrl.emergency.group — company-level."""
+        """Step 9: hr.rfid.ctrl.emergency.group - company-level."""
         start = time.time()
         model = 'hr.rfid.ctrl.emergency.group'
         if not self.b._has_model(model):
+            # Report it: a step that returns nothing at all is
+            # indistinguishable from a step that never ran.
+            self.results.append(self.b._make_result(model, 0, 0, status='skipped'))
             return
         co_domain = self.b._company_domain()
         source_records = self.b._search_read(
@@ -392,13 +395,13 @@ class CoreImporter:
                 self.b._set_target_id(model, rec['id'], created.id)
                 imported += 1
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported,
             duration=time.time() - start,
         ))
 
     def _import_webstacks(self):
-        """Step 10: hr.rfid.webstack — filtered by company."""
+        """Step 10: hr.rfid.webstack - filtered by company."""
         start = time.time()
         model = 'hr.rfid.webstack'
         co_domain = self.b._company_domain()
@@ -419,6 +422,7 @@ class CoreImporter:
         source_records = self.b._search_read(model, co_domain, fields_to_read)
         imported = 0
         linked = 0
+        skipped = 0
         prefix = model.replace('.', '_')
 
         for rec in source_records:
@@ -428,11 +432,15 @@ class CoreImporter:
                 linked += 1
                 continue
             if existing_target is None:
-                # Explicitly skipped
+                # Operator resolved this conflict as 'Skip'. Count it: the
+                # downstream controllers/doors will report skips too, and
+                # without this row the operator cannot see the root cause.
+                skipped += 1
                 continue
 
             target_company_id = self.b._map_company(rec['company_id'])
             if not target_company_id:
+                skipped += 1
                 continue
 
             vals = {
@@ -459,13 +467,13 @@ class CoreImporter:
                 self.b._set_target_id(model, rec['id'], created.id)
                 imported += 1
 
-        self.results.append(self._make_result(
-            model, len(source_records), imported, linked,
+        self.results.append(self.b._make_result(
+            model, len(source_records), imported, linked, skipped,
             duration=time.time() - start,
         ))
 
     def _import_controllers(self):
-        """Step 11: hr.rfid.ctrl — filtered by webstack."""
+        """Step 11: hr.rfid.ctrl - filtered by webstack."""
         start = time.time()
         model = 'hr.rfid.ctrl'
         source_fields_info = self.b._get_source_fields(model)
@@ -483,7 +491,8 @@ class CoreImporter:
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
 
-        source_records = self.b._search_read(model, [], fields_to_read)
+        source_records = self.b._search_read(
+            model, self.b._scoped_domain('webstack_id'), fields_to_read)
         imported = 0
         linked = 0
         skipped = 0
@@ -538,13 +547,13 @@ class CoreImporter:
                 self.b._set_target_id(model, rec['id'], created.id)
                 imported += 1
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, linked, skipped,
             duration=time.time() - start,
         ))
 
     def _import_doors(self):
-        """Step 12: hr.rfid.door — filtered by ctrl→ws→company chain."""
+        """Step 12: hr.rfid.door - filtered by ctrl→ws→company chain."""
         start = time.time()
         model = 'hr.rfid.door'
         source_fields_info = self.b._get_source_fields(model)
@@ -558,7 +567,8 @@ class CoreImporter:
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
 
-        source_records = self.b._search_read(model, [], fields_to_read)
+        source_records = self.b._search_read(
+            model, self.b._scoped_domain('controller_id.webstack_id'), fields_to_read)
         imported = 0
         skipped = 0
         prefix = model.replace('.', '_')
@@ -595,13 +605,13 @@ class CoreImporter:
                 self.b._set_target_id(model, rec['id'], created.id)
                 imported += 1
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, 0, skipped,
             duration=time.time() - start,
         ))
 
     def _import_readers(self):
-        """Step 13: hr.rfid.reader — filtered by ctrl."""
+        """Step 13: hr.rfid.reader - filtered by ctrl."""
         start = time.time()
         model = 'hr.rfid.reader'
         source_fields_info = self.b._get_source_fields(model)
@@ -614,7 +624,8 @@ class CoreImporter:
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
 
-        source_records = self.b._search_read(model, [], fields_to_read)
+        source_records = self.b._search_read(
+            model, self.b._scoped_domain('controller_id.webstack_id'), fields_to_read)
         imported = 0
         skipped = 0
         prefix = model.replace('.', '_')
@@ -649,24 +660,31 @@ class CoreImporter:
                 self.b._set_target_id(model, rec['id'], created.id)
                 imported += 1
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, 0, skipped,
             duration=time.time() - start,
         ))
 
     def _import_input_masks(self):
-        """Step 14: hr.rfid.ctrl.input.mask — per controller."""
+        """Step 14: hr.rfid.ctrl.input.mask - per controller."""
         start = time.time()
         model = 'hr.rfid.ctrl.input.mask'
         if not self.b._has_model(model):
+            # Report it: a step that returns nothing at all is
+            # indistinguishable from a step that never ran.
+            self.results.append(self.b._make_result(model, 0, 0, status='skipped'))
             return
         source_fields_info = self.b._get_source_fields(model)
         target_fields = set(self.env[model]._fields.keys())
         fields_to_read = ['controller_id']
-        for f in ['name', 'mask']:
+        # i_number / i_mask - both NOT NULL in the target. The previous probe
+        # used 'name'/'mask', which exist in neither version, so every row
+        # failed validation and was swallowed as "skipped" (116 -> 0).
+        for f in ['i_number', 'i_mask']:
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
-        source_records = self.b._search_read(model, [], fields_to_read)
+        source_records = self.b._search_read(
+            model, self.b._scoped_domain('controller_id.webstack_id'), fields_to_read)
         imported = 0
         skipped = 0
         prefix = model.replace('.', '_')
@@ -677,9 +695,9 @@ class CoreImporter:
                 skipped += 1
                 continue
             vals = {'controller_id': ctrl_target_id}
-            for f in ['name', 'mask']:
+            for f in ['i_number', 'i_mask']:
                 if f in rec and f in target_fields:
-                    vals[f] = rec.get(f, '')
+                    vals[f] = rec[f]
             data_list = [{
                 'xml_id': self.b._xml_id(prefix, rec['id']),
                 'values': vals,
@@ -692,16 +710,19 @@ class CoreImporter:
             else:
                 skipped += 1
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, 0, skipped,
             duration=time.time() - start,
         ))
 
     def _import_output_ts(self):
-        """Step 15: hr.rfid.ctrl.output.ts — per controller."""
+        """Step 15: hr.rfid.ctrl.output.ts - per controller."""
         start = time.time()
         model = 'hr.rfid.ctrl.output.ts'
         if not self.b._has_model(model):
+            # Report it: a step that returns nothing at all is
+            # indistinguishable from a step that never ran.
+            self.results.append(self.b._make_result(model, 0, 0, status='skipped'))
             return
         source_fields_info = self.b._get_source_fields(model)
         target_fields = set(self.env[model]._fields.keys())
@@ -709,7 +730,8 @@ class CoreImporter:
         for f in ['name', 'time_schedule_id', 'output_number']:
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
-        source_records = self.b._search_read(model, [], fields_to_read)
+        source_records = self.b._search_read(
+            model, self.b._scoped_domain('controller_id.webstack_id'), fields_to_read)
         imported = 0
         skipped = 0
         prefix = model.replace('.', '_')
@@ -740,16 +762,19 @@ class CoreImporter:
             else:
                 skipped += 1
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, 0, skipped,
             duration=time.time() - start,
         ))
 
     def _import_alarms(self):
-        """Step 16: hr.rfid.ctrl.alarm — depends on ctrl + door + alarm_group."""
+        """Step 16: hr.rfid.ctrl.alarm - depends on ctrl + door + alarm_group."""
         start = time.time()
         model = 'hr.rfid.ctrl.alarm'
         if not self.b._has_model(model):
+            # Report it: a step that returns nothing at all is
+            # indistinguishable from a step that never ran.
+            self.results.append(self.b._make_result(model, 0, 0, status='skipped'))
             return
         source_fields_info = self.b._get_source_fields(model)
         target_fields = set(self.env[model]._fields.keys())
@@ -758,7 +783,8 @@ class CoreImporter:
                   'control_output', 'line_number', 'armed', 'door_id']:
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
-        source_records = self.b._search_read(model, [], fields_to_read)
+        source_records = self.b._search_read(
+            model, self.b._scoped_domain('controller_id.webstack_id'), fields_to_read)
         imported = 0
         skipped = 0
         prefix = model.replace('.', '_')
@@ -803,24 +829,31 @@ class CoreImporter:
             else:
                 skipped += 1
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, 0, skipped,
             duration=time.time() - start,
         ))
 
     def _import_th_sensors(self):
-        """Step 17: hr.rfid.ctrl.th — depends on ctrl + door."""
+        """Step 17: hr.rfid.ctrl.th - depends on ctrl + door."""
         start = time.time()
         model = 'hr.rfid.ctrl.th'
         if not self.b._has_model(model):
+            # Report it: a step that returns nothing at all is
+            # indistinguishable from a step that never ran.
+            self.results.append(self.b._make_result(model, 0, 0, status='skipped'))
             return
         source_fields_info = self.b._get_source_fields(model)
         target_fields = set(self.env[model]._fields.keys())
         fields_to_read = ['controller_id']
-        for f in ['name', 'door_id']:
+        # sensor_number is NOT NULL in the target; without it every sensor was
+        # rejected and silently counted as skipped.
+        for f in ['name', 'sensor_number', 'door_id', 'uid',
+                  'internal_number', 'log_every_read', 'active']:
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
-        source_records = self.b._search_read(model, [], fields_to_read)
+        source_records = self.b._search_read(
+            model, self.b._scoped_domain('controller_id.webstack_id'), fields_to_read)
         imported = 0
         skipped = 0
         prefix = model.replace('.', '_')
@@ -833,6 +866,14 @@ class CoreImporter:
             vals = {'controller_id': ctrl_target_id}
             if 'name' in rec and 'name' in target_fields:
                 vals['name'] = rec.get('name', '')
+            for f in ['sensor_number', 'uid', 'internal_number']:
+                if f in rec and f in target_fields and rec[f] is not False:
+                    vals[f] = rec[f]
+            for f in ['log_every_read', 'active']:
+                # Booleans: copy False as well. Dropping it would let the
+                # target default win and resurrect an archived sensor as active.
+                if f in rec and f in target_fields:
+                    vals[f] = bool(rec[f])
             if rec.get('door_id') and 'door_id' in target_fields:
                 door_target = self.b._map_m2o('hr.rfid.door', rec['door_id'])
                 if door_target:
@@ -849,18 +890,25 @@ class CoreImporter:
             else:
                 skipped += 1
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, 0, skipped,
             duration=time.time() - start,
         ))
 
     def _import_zones(self):
-        """Step 18: hr.rfid.zone — M2M: door_ids, departments, categories, employees, contacts."""
+        """Step 18: hr.rfid.zone - M2M: door_ids, departments, categories, employees, contacts.
+
+        A zone carries its own ``company_id``. Reading globally and creating
+        without it let the target-side default (``env.company``) claim every
+        other tenant's zone: a pilot that imported a client owning ZERO zones
+        still created all nine zones of the other clients inside the
+        operator's company, and ``noupdate=True`` made that permanent.
+        """
         start = time.time()
         model = 'hr.rfid.zone'
         source_fields_info = self.b._get_source_fields(model)
         target_fields = set(self.env[model]._fields.keys())
-        fields_to_read = ['name']
+        fields_to_read = ['name', 'company_id']
         for f in ['door_ids', 'permitted_department_ids',
                   'permitted_employee_category_ids', 'employee_ids',
                   'contact_ids', 'anti_passback', 'anti_pass_back',
@@ -870,8 +918,10 @@ class CoreImporter:
                   'delete_attendance_if_late_more_than']:
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
-        source_records = self.b._search_read(model, [], fields_to_read)
+        source_records = self.b._search_read(
+            model, self.b._company_domain(), fields_to_read)
         imported = 0
+        skipped = 0
         prefix = model.replace('.', '_')
 
         # M2M field → model mapping
@@ -884,7 +934,11 @@ class CoreImporter:
         }
 
         for rec in source_records:
-            vals = {'name': rec['name']}
+            target_company_id = self.b._map_company(rec.get('company_id'))
+            if not target_company_id:
+                skipped += 1
+                continue
+            vals = {'name': rec['name'], 'company_id': target_company_id}
             # Add scalar fields that are in both source and target
             for sf in ['anti_passback', 'anti_pass_back', 'attendance',
                        'auto_close_time_for_zone', 'max_time_in_zone',
@@ -906,68 +960,96 @@ class CoreImporter:
             if created:
                 self.b._set_target_id(model, rec['id'], created.id)
                 imported += 1
+            else:
+                skipped += 1
 
-        self.results.append(self._make_result(
-            model, len(source_records), imported,
+        self.results.append(self.b._make_result(
+            model, len(source_records), imported, 0, skipped,
             duration=time.time() - start,
         ))
 
     def _import_notifications(self):
-        """Step 19: hr.rfid.notification — depends on zone + notify_partner_ids."""
+        """Step 19: hr.rfid.notification - owned by its zone.
+
+        The previous version was written against a model shape that exists in
+        neither version: it wrote ``name`` (computed, no column) and probed
+        ``user_event_ids`` / ``sys_event_ids`` while the real fields are the
+        singular ``user_event`` / ``system_event``. Every row therefore
+        violated the "must name an event" check constraint, and because the
+        create ran without a savepoint one notification in the source was
+        enough to roll back the whole phase.
+        """
         start = time.time()
         model = 'hr.rfid.notification'
         if not self.b._has_model(model):
+            self.results.append(self.b._make_result(model, 0, 0, status='skipped'))
             return
         source_fields_info = self.b._get_source_fields(model)
         target_fields = set(self.env[model]._fields.keys())
 
-        fields_to_read = ['name', 'notify_partner_ids']
-        # Add event type selection fields that may exist
-        for f in ['user_event_ids', 'sys_event_ids', 'zone_id',
-                   'controller_id', 'door_id']:
+        # `name` and `company_id` are computed on both sides (no column) -
+        # the notification belongs to whoever owns its zone.
+        fields_to_read = ['zone_id']
+        for f in ['notification_type', 'user_event', 'system_event',
+                  'notify_followers', 'notify_partner_ids']:
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
 
-        source_records = self.b._search_read(model, [], fields_to_read)
+        source_records = self.b._search_read(
+            model, self.b._scoped_domain('zone_id'), fields_to_read)
         imported = 0
+        skipped = 0
         prefix = model.replace('.', '_')
 
         for rec in source_records:
-            vals = {'name': rec.get('name', '')}
-
-            if rec.get('notify_partner_ids'):
+            # zone_id is NOT NULL in the target and is the only company link.
+            zone_target = self.b._map_m2o('hr.rfid.zone', rec.get('zone_id'))
+            if not zone_target:
+                skipped += 1
+                continue
+            vals = {'zone_id': zone_target}
+            for f in ['notification_type', 'user_event', 'system_event']:
+                if rec.get(f) and f in target_fields:
+                    vals[f] = rec[f]
+            if 'notify_followers' in rec and 'notify_followers' in target_fields:
+                # Boolean: copy False as well, do not fall back to the default.
+                vals['notify_followers'] = bool(rec['notify_followers'])
+            if rec.get('notify_partner_ids') and 'notify_partner_ids' in target_fields:
                 vals['notify_partner_ids'] = self.b._map_m2m(
                     'res.partner', rec['notify_partner_ids']
                 )
-            if rec.get('zone_id'):
-                zone_target = self.b._map_m2o('hr.rfid.zone', rec['zone_id'])
-                if zone_target:
-                    vals['zone_id'] = zone_target
-            if rec.get('controller_id'):
-                ctrl_target = self.b._map_m2o('hr.rfid.ctrl', rec['controller_id'])
-                if ctrl_target:
-                    vals['controller_id'] = ctrl_target
-            if rec.get('door_id'):
-                door_target = self.b._map_m2o('hr.rfid.door', rec['door_id'])
-                if door_target:
-                    vals['door_id'] = door_target
-
-            # Copy selection fields directly (event type selections)
-            for f in ['user_event_ids', 'sys_event_ids']:
-                if f in rec and f in target_fields:
-                    vals[f] = rec[f]
 
             data_list = [{
                 'xml_id': self.b._xml_id(prefix, rec['id']),
                 'values': vals,
                 'noupdate': True,
             }]
-            created = self.b._load_records(model, data_list)
+            # Savepoint: a row the check constraint rejects must not take the
+            # rest of the phase down with it.
+            created = self.b._try_load_records(model, data_list)
             if created:
                 self.b._set_target_id(model, rec['id'], created.id)
                 imported += 1
+            else:
+                skipped += 1
 
-        self.results.append(self._make_result(
-            model, len(source_records), imported,
+        self.results.append(self.b._make_result(
+            model, len(source_records), imported, 0, skipped,
             duration=time.time() - start,
         ))
+
+
+class ZoneImporter(CoreImporter):
+    """Phase 3b: zones + notifications, run AFTER People.
+
+    Zones carry M2M links to employees and contacts, and notifications point
+    at partners. Those target ids only exist once Phase 2 has run, so
+    importing them alongside the hardware left every membership list silently
+    empty - and ``noupdate=True`` meant no later run ever repaired it.
+    """
+
+    def run(self, wizard):
+        if self.b.options.get('import_hardware'):
+            self._import_zones()
+            self._import_notifications()
+        return self.results

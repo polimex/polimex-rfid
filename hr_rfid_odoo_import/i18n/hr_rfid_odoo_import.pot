@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-19 21:38+0000\n"
-"PO-Revision-Date: 2026-03-19 21:38+0000\n"
+"POT-Creation-Date: 2026-07-26 11:33+0000\n"
+"PO-Revision-Date: 2026-07-26 11:33+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -132,6 +132,12 @@ msgstr ""
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "Back"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "Bulk import bug: %(rows)d rows but %(ids)d source ids for %(model)s."
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -265,11 +271,42 @@ msgid "Created on"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__target_id
+msgid "Database ID of the matching record on this (target) instance."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__source_id
+msgid "Database ID of the record on the source instance."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__display_name
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__display_name
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__display_name
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__display_name
 msgid "Display Name"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__source_name
+msgid ""
+"Display name of the company on the source instance - shown for operator "
+"cross-check."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__target_name
+msgid ""
+"Display name of the existing target record - operator decides whether to "
+"keep it (Link) or create a new one (Create)."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__source_name
+msgid ""
+"Display name of the record on the source instance - shown so the operator "
+"can identify it."
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -288,6 +325,20 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__error_message
 #: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_log__status__error
 msgid "Error"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__error_message
+msgid ""
+"Error message captured if the phase status is Error - full traceback for "
+"debugging."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__progress_percent
+msgid ""
+"Estimated completion percentage. Driven by the phase log - useful for the "
+"operator to gauge runtime."
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -311,8 +362,34 @@ msgid "Existing in Target"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__target_company_id
+msgid ""
+"Existing res.company on this instance to merge the source data into. Leave "
+"empty to create a fresh company with the source name."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__conflict_field
+msgid ""
+"Field on which the two records collide (typically the unique constraint that"
+" fired)."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_url
+msgid "Full URL of the source Odoo server, e.g. https://erp.example.com"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__dry_run
 msgid "Full dry-run"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__preview_text
+msgid ""
+"Human-readable summary of what will be created/linked if the operator "
+"confirms. Filled by the dry-run preview."
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -459,8 +536,83 @@ msgid "Importing"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_access
+msgid "Include access groups (and their door/department bindings) and zones."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_people
+msgid ""
+"Include employees and partner contacts referenced by the imported access "
+"groups and cards."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_attendance
+msgid "Include hr.attendance records linked to RFID events."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_cards
+msgid ""
+"Include hr.rfid.card records, including their owner and access-group "
+"memberships."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_service
+msgid ""
+"Include rfid.service catalog and rfid.service.sale records from the source."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_th_logs
+msgid ""
+"Include temperature-controller log records. Disable unless the source "
+"actually used temperature controllers."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_attendance_extra
+msgid ""
+"Include the daily roll-ups produced by hr_attendance_late "
+"(late/overtime/extra time)."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_system_events
+msgid ""
+"Include the historical hr.rfid.event.system log (controller power loss, "
+"tamper, etc.)."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_user_events
+msgid ""
+"Include the historical hr.rfid.event.user log. Can be large - disable for "
+"first pass, re-run separately later if needed."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_vending
+msgid ""
+"Include vending balances, history and events. Only visible if both source "
+"and target have hr_rfid_vending installed."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_hardware
+msgid "Include webstacks, controllers, doors, readers and time schedules."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__installed_modules_json
 msgid "Installed Modules (JSON)"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__installed_modules_json
+msgid "JSON list of installed modules on the source instance."
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -480,6 +632,14 @@ msgid "Last Updated on"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_db
+msgid ""
+"Leave empty if the source server hosts a single database - it will be auto-"
+"detected. If the source has multiple databases, enter the exact database "
+"name here."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_conflict__resolution__link
 msgid "Link to existing"
 msgstr ""
@@ -490,15 +650,99 @@ msgid "Linked"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__progress_text
+msgid ""
+"Live status of the running import job (current phase, processed records). "
+"Updated by the worker that performs the import."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_login
+msgid ""
+"Login of an admin-level user on the source Odoo instance - the user must "
+"have read access to every model the import will fetch."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_version
+msgid ""
+"Major Odoo version detected on the source instance (e.g. '14.0', '15.0'). "
+"Used to dispatch the right importer per phase."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__source_model
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__model
 msgid "Model"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__orphan_event_cutoff
+msgid "Module-only events from date"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "No companies selected for import."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "No databases found on the source server."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__imported_count
+msgid "Number of records actually created in the target during this phase."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__skipped_count
+msgid ""
+"Number of records skipped (operator chose Skip in conflicts, or validation "
+"rejected them)."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__rejected_count
+msgid ""
+"Number of records the database refused because another record already holds "
+"the same unique value. Unlike Skipped, these were meant to come across - any"
+" figure above zero means data did not arrive and the run needs a look. A "
+"missing required value is a different case: it fails the whole step, which "
+"shows up as Error."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__source_count
+msgid "Number of records the source instance reported for this model+phase."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__linked_count
+msgid ""
+"Number of source records mapped to an existing target record instead of "
+"being created anew."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__source_model
+msgid ""
+"Odoo model name of the conflicting record (e.g. hr.rfid.card, res.partner)."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__model
+msgid "Odoo model processed during this phase."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__company_line_ids
+msgid ""
+"One row per company discovered on the source. Operator picks which to import"
+" and which existing target company to merge into."
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -512,8 +756,39 @@ msgid "Optional Modules"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__status
+msgid ""
+"Outcome of this phase - Pending: not yet started. Done: finished without "
+"error. Error: failed, see the Error column. Skipped: nothing to do here, "
+"either because the option was left unticked or because the source system "
+"does not have this kind of record at all."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__wizard_id
+msgid "Parent import-run wizard this company mapping belongs to."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__wizard_id
+msgid "Parent import-run wizard this conflict belongs to."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__wizard_id
+msgid "Parent import-run wizard this log entry belongs to."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_password
 msgid "Password"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_password
+msgid ""
+"Password for the source user above. Use an API key if the source enforces "
+"2FA. Stored only for the wizard's lifetime."
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -524,6 +799,20 @@ msgstr ""
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "People Options"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__log_ids
+msgid ""
+"Per-phase result rows (counts of imported / skipped / linked, plus any "
+"error). The Results step renders this list."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__conflict_ids
+msgid ""
+"Per-record collisions detected against the target. Operator must pick a "
+"resolution (Link / Create / Skip) before running the import."
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -541,6 +830,13 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "Please select at least one company to import."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__warnings
+msgid ""
+"Pre-flight warnings calculated from the configuration (e.g. asked to import "
+"vending but target doesn't have the module). Shown on the confirm page."
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -581,6 +877,11 @@ msgid "RFID Odoo Import Log"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__rejected_count
+msgid "Rejected"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__resolution
 msgid "Resolution"
 msgstr ""
@@ -600,6 +901,16 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__skipped_count
 #: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_log__status__skipped
 msgid "Skipped"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__orphan_event_cutoff
+msgid ""
+"Some system events are recorded against the communication module alone, with"
+" no controller attached (power-on, module connected). They are usually the "
+"bulk of the log. Set a date to bring across only the recent ones and leave "
+"the older noise behind; leave empty to bring all of them. Events that do "
+"name a controller are always imported in full."
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -689,6 +1000,50 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_has_attendance_late
+msgid "Source instance has hr_attendance_late installed."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_has_attendance
+msgid "Source instance has hr_attendance_multi_rfid installed."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_has_service
+msgid "Source instance has rfid_service_base installed."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_has_vending
+msgid ""
+"Source instance has the hr_rfid_vending module installed (detected from Test"
+" Connection)."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid ""
+"Source server does not expose the database list (list_db=False). Please "
+"enter the database name manually."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid ""
+"Source server hosts multiple databases: %s. Please specify which one to use."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__phase
+msgid ""
+"Stage of the import pipeline (e.g. 'companies', 'access_groups', 'users', "
+"'events'). Used to group log rows for the operator."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "Start Import"
 msgstr ""
@@ -707,6 +1062,14 @@ msgstr ""
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__status
 msgid "Status"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__state
+msgid ""
+"Step the wizard is currently on - Connection: enter source URL + creds. "
+"Configure: pick what to import. Confirm: review preview + conflicts. "
+"Importing: run in progress. Done: results shown."
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -745,8 +1108,45 @@ msgid "Test Connection"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__source_ref
+msgid ""
+"The natural key that triggered the conflict (e.g. card number, EGN). Both "
+"sides match on this value."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__target_has_attendance_late
+msgid "This (target) instance has hr_attendance_late installed."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__target_has_attendance
+msgid "This (target) instance has hr_attendance_multi_rfid installed."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__target_has_vending
+msgid ""
+"This (target) instance has hr_rfid_vending installed - the related "
+"import_vending toggle is only meaningful when both source and target have "
+"it."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__target_has_service
+msgid "This (target) instance has rfid_service_base installed."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "This will import data from the source Odoo instance. Continue?"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__error_message
+msgid ""
+"Top-level error captured if the run aborted mid-way. Individual phase errors"
+" are also stored on their log rows."
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -765,13 +1165,35 @@ msgid "Unique Key"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__do_import
+msgid ""
+"Untick to skip this source company entirely. Useful when you only want to "
+"migrate one tenant out of a multi-company source."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_login
 msgid "Username"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__duration
+msgid ""
+"Wall-clock seconds this phase took. Useful to spot slow phases for the next "
+"run."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__warnings
 msgid "Warnings"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__resolution
+msgid ""
+"What to do with this conflict during the import - Link: re-use the existing "
+"target record (default, safest). Create: import anyway as a second record. "
+"Skip: do not import this row at all."
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -789,12 +1211,25 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
-msgid "http://localhost:8069"
+msgid "https://erp.example.com"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "my_database"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__source_id
+msgid ""
+"res.company ID on the source instance - the natural key used to match across"
+" instances."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_uid
+msgid ""
+"res.users ID of the connected source user. Cached after Test Connection."
 msgstr ""
 
 #. module: hr_rfid_odoo_import

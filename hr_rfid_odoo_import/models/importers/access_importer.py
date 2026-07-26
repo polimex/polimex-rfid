@@ -34,21 +34,8 @@ class AccessImporter:
         self._department_second_pass()
         return self.results
 
-    def _make_result(self, model, source_count, imported_count, linked_count=0,
-                     skipped_count=0, duration=0, status='done', error=''):
-        return {
-            'model': model,
-            'source_count': source_count,
-            'imported_count': imported_count,
-            'linked_count': linked_count,
-            'skipped_count': skipped_count,
-            'duration': duration,
-            'status': status,
-            'error': error,
-        }
-
     def _import_access_groups(self):
-        """Step 20: hr.rfid.access.group — TWO PASSES (inherited_ids M2M self-ref).
+        """Step 20: hr.rfid.access.group - TWO PASSES (inherited_ids M2M self-ref).
 
         Pass 1: Create all AGs without inherited_ids and department_ids.
         Pass 2: Update inherited_ids + department_ids with mapped IDs.
@@ -126,13 +113,13 @@ class AccessImporter:
                     **IMPORT_CONTEXT
                 ).write(update_vals)
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, linked,
             duration=time.time() - start,
         ))
 
     def _import_ag_door_rels(self):
-        """Step 21: hr.rfid.access.group.door.rel — AG↔Door relations.
+        """Step 21: hr.rfid.access.group.door.rel - AG↔Door relations.
 
         Chain: update_door_rels() fires but no AG employee rels yet → chain stops.
         write_ts_id() is suppressed by no_hardware_commands.
@@ -142,10 +129,11 @@ class AccessImporter:
         source_fields_info = self.b._get_source_fields(model)
         target_fields = set(self.env[model]._fields.keys())
         fields_to_read = ['access_group_id', 'door_id']
-        for f in ['time_schedule_id', 'alarm_right']:
+        for f in ['time_schedule_id', 'alarm_rights']:
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
-        source_records = self.b._search_read(model, [], fields_to_read)
+        source_records = self.b._search_read(
+            model, self.b._scoped_domain('access_group_id'), fields_to_read)
         imported = 0
         skipped = 0
         prefix = model.replace('.', '_')
@@ -169,8 +157,8 @@ class AccessImporter:
                 'access_group_id': ag_target,
                 'door_id': door_target,
             }
-            if 'alarm_right' in rec and 'alarm_right' in target_fields:
-                vals['alarm_right'] = rec.get('alarm_right', False)
+            if 'alarm_rights' in rec and 'alarm_rights' in target_fields:
+                vals['alarm_rights'] = rec.get('alarm_rights', False)
             if ts_target and 'time_schedule_id' in target_fields:
                 vals['time_schedule_id'] = ts_target
 
@@ -186,13 +174,13 @@ class AccessImporter:
             else:
                 skipped += 1
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, 0, skipped,
             duration=time.time() - start,
         ))
 
     def _import_ag_employee_rels(self):
-        """Step 22: hr.rfid.access.group.employee.rel — exact copy from source.
+        """Step 22: hr.rfid.access.group.employee.rel - exact copy from source.
 
         Chain: _compute_state → _activate → update_card_rels
         But employees have no cards yet → chain stops at _activate.
@@ -208,7 +196,8 @@ class AccessImporter:
             if f in source_fields_info:
                 fields_to_read.append(f)
 
-        source_records = self.b._search_read(model, [], fields_to_read)
+        source_records = self.b._search_read(
+            model, self.b._scoped_domain('access_group_id'), fields_to_read)
         imported = 0
         skipped = 0
         prefix = model.replace('.', '_')
@@ -254,13 +243,13 @@ class AccessImporter:
             else:
                 skipped += 1
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, 0, skipped,
             duration=time.time() - start,
         ))
 
     def _import_ag_contact_rels(self):
-        """Step 23: hr.rfid.access.group.contact.rel — exact copy from source."""
+        """Step 23: hr.rfid.access.group.contact.rel - exact copy from source."""
         start = time.time()
         model = 'hr.rfid.access.group.contact.rel'
         source_fields_info = self.b._get_source_fields(model)
@@ -274,7 +263,8 @@ class AccessImporter:
         if 'permited_visits' in source_fields_info and 'permitted_visits' not in source_fields_info:
             fields_to_read.append('permited_visits')
 
-        source_records = self.b._search_read(model, [], fields_to_read)
+        source_records = self.b._search_read(
+            model, self.b._scoped_domain('access_group_id'), fields_to_read)
         imported = 0
         skipped = 0
         prefix = model.replace('.', '_')
@@ -325,13 +315,13 @@ class AccessImporter:
             else:
                 skipped += 1
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, 0, skipped,
             duration=time.time() - start,
         ))
 
     def _import_cards(self):
-        """Step 24: hr.rfid.card — with EXACT active state from source.
+        """Step 24: hr.rfid.card - with EXACT active state from source.
 
         Chain: update_card_rels → get_potential_access_doors → AG rels (from step 22/23)
               → AG door rels (from step 21) → check_relevance_fast → card_ready()
@@ -439,13 +429,13 @@ class AccessImporter:
             else:
                 skipped += 1
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, linked, skipped,
             duration=time.time() - start,
         ))
 
     def _department_second_pass(self):
-        """Step 25: hr.department SECOND PASS — update AG back-references.
+        """Step 25: hr.department SECOND PASS - update AG back-references.
 
         Sets hr_rfid_default_access_group and hr_rfid_allowed_access_groups
         which point from department to access groups.
@@ -490,7 +480,7 @@ class AccessImporter:
                 updated += 1
 
         if updated:
-            self.results.append(self._make_result(
+            self.results.append(self.b._make_result(
                 f'{model} (AG refs)', len(source_records), updated,
                 duration=time.time() - start,
             ))

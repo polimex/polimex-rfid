@@ -22,7 +22,7 @@ class HrRfidOdooImportConflict(models.TransientModel):
     )
     source_name = fields.Char(
         string='Source Record', readonly=True,
-        help="Display name of the record on the source instance — shown so the operator can identify it.",
+        help="Display name of the record on the source instance - shown so the operator can identify it.",
     )
     source_ref = fields.Char(
         string='Unique Key', readonly=True,
@@ -34,7 +34,7 @@ class HrRfidOdooImportConflict(models.TransientModel):
     )
     target_name = fields.Char(
         string='Existing in Target', readonly=True,
-        help="Display name of the existing target record — operator decides whether to keep it (Link) or create a new one (Create).",
+        help="Display name of the existing target record - operator decides whether to keep it (Link) or create a new one (Create).",
     )
     conflict_field = fields.Char(
         string='Conflict Field', readonly=True,
@@ -47,7 +47,7 @@ class HrRfidOdooImportConflict(models.TransientModel):
             ('skip', 'Skip this record'),
         ],
         string='Resolution', default='link', required=True,
-        help="What to do with this conflict during the import — Link: re-use the existing target record (default, safest). Create: import anyway as a second record. Skip: do not import this row at all.",
+        help="What to do with this conflict during the import - Link: re-use the existing target record (default, safest). Create: import anyway as a second record. Skip: do not import this row at all.",
     )
 
 
@@ -81,6 +81,10 @@ class HrRfidOdooImportLog(models.TransientModel):
         string='Skipped', readonly=True,
         help="Number of records skipped (operator chose Skip in conflicts, or validation rejected them).",
     )
+    rejected_count = fields.Integer(
+        string='Rejected', readonly=True,
+        help="Number of records the database refused because another record already holds the same unique value. Unlike Skipped, these were meant to come across - any figure above zero means data did not arrive and the run needs a look. A missing required value is a different case: it fails the whole step, which shows up as Error.",
+    )
     linked_count = fields.Integer(
         string='Linked', readonly=True,
         help="Number of source records mapped to an existing target record instead of being created anew.",
@@ -93,7 +97,7 @@ class HrRfidOdooImportLog(models.TransientModel):
             ('skipped', 'Skipped'),
         ],
         string='Status', default='pending', readonly=True,
-        help="Outcome of this phase — Pending: not yet executed. Done: completed without error. Error: failed (see Error column). Skipped: operator unchecked the relevant import_* toggle.",
+        help="Outcome of this phase - Pending: not yet started. Done: finished without error. Error: failed, see the Error column. Skipped: nothing to do here, either because the option was left unticked or because the source system does not have this kind of record at all.",
     )
     duration = fields.Float(
         string='Duration (s)', readonly=True,
@@ -101,7 +105,7 @@ class HrRfidOdooImportLog(models.TransientModel):
     )
     error_message = fields.Text(
         string='Error', readonly=True,
-        help="Error message captured if the phase status is Error — full traceback for debugging.",
+        help="Error message captured if the phase status is Error - full traceback for debugging.",
     )
 
 
@@ -117,11 +121,11 @@ class HrRfidOdooImportCompanyLine(models.TransientModel):
     )
     source_id = fields.Integer(
         string='Source Company ID', readonly=True,
-        help="res.company ID on the source instance — the natural key used to match across instances.",
+        help="res.company ID on the source instance - the natural key used to match across instances.",
     )
     source_name = fields.Char(
         string='Source Company', readonly=True,
-        help="Display name of the company on the source instance — shown for operator cross-check.",
+        help="Display name of the company on the source instance - shown for operator cross-check.",
     )
     do_import = fields.Boolean(
         string='Import', default=True,

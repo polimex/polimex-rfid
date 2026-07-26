@@ -27,39 +27,39 @@ class ServiceImporter:
         self._import_service_sales()
         return self.results
 
-    def _make_result(self, model, source_count, imported_count, linked_count=0,
-                     skipped_count=0, duration=0, status='done', error=''):
-        return {
-            'model': model,
-            'source_count': source_count,
-            'imported_count': imported_count,
-            'linked_count': linked_count,
-            'skipped_count': skipped_count,
-            'duration': duration,
-            'status': status,
-            'error': error,
-        }
-
     def _import_service_tags(self):
-        """Step 38: rfid.service.tags — ORM create."""
+        """Step 38: rfid.service.tags - ORM create."""
         start = time.time()
         model = 'rfid.service.tags'
         if not self.b._has_model(model):
+            self.results.append(self.b._make_result(model, 0, 0, status='skipped'))
             return
-        source_records = self.b._search_read(model, [], ['name', 'color'])
+        # Tags carry their own company; a global read created every tenant's
+        # tag inside the operator's company (the target default) and then
+        # matched them back by name across tenants.
+        source_records = self.b._search_read(
+            model, self.b._company_domain(), ['name', 'color', 'company_id'])
         imported = 0
         linked = 0
+        skipped = 0
         prefix = model.replace('.', '_')
 
         for rec in source_records:
-            existing = self.env[model].search([
-                ('name', '=', rec['name'])
+            target_company_id = self.b._map_company(rec.get('company_id'))
+            if not target_company_id:
+                skipped += 1
+                continue
+            # sudo: must see an existing tag even when the operator is not a
+            # member of the target company, or a duplicate is created.
+            existing = self.env[model].sudo().search([
+                ('name', '=', rec['name']),
+                ('company_id', 'in', [target_company_id, False]),
             ], limit=1)
             if existing:
                 self.b._set_target_id(model, rec['id'], existing.id)
                 linked += 1
             else:
-                vals = {'name': rec['name']}
+                vals = {'name': rec['name'], 'company_id': target_company_id}
                 if rec.get('color'):
                     vals['color'] = rec['color']
                 data_list = [{
@@ -71,21 +71,26 @@ class ServiceImporter:
                 if created:
                     self.b._set_target_id(model, rec['id'], created.id)
                     imported += 1
+                else:
+                    skipped += 1
 
-        self.results.append(self._make_result(
-            model, len(source_records), imported, linked,
+        self.results.append(self.b._make_result(
+            model, len(source_records), imported, linked, skipped,
             duration=time.time() - start,
         ))
 
     def _import_services(self):
-        """Step 39: rfid.service — depends on AG, zone, partner, card_type, tags."""
+        """Step 39: rfid.service - depends on AG, zone, partner, card_type, tags."""
         start = time.time()
         model = 'rfid.service'
         if not self.b._has_model(model):
+            self.results.append(self.b._make_result(model, 0, 0, status='skipped'))
             return
 
         source_fields_info = self.b._get_source_fields(model)
-        target_fields = set(self.env[model]._fields.keys())
+        # Real columns only - a non-stored field in a raw INSERT is an
+        # UndefinedColumn that kills the whole step.
+        target_fields = self.b._target_columns(model)
 
         fields_to_read = ['name', 'tag_ids', 'access_group_id', 'zone_id',
                           'card_type', 'company_id']
@@ -135,7 +140,7 @@ class ServiceImporter:
                 if ct_target:
                     vals['card_type'] = ct_target
 
-            # mail_template_id / print_template_id — match by xml_id
+            # mail_template_id / print_template_id - match by xml_id
             for template_field in ['mail_template_id', 'print_template_id']:
                 if rec.get(template_field):
                     template_target = self._resolve_template_by_xmlid(
@@ -160,7 +165,7 @@ class ServiceImporter:
                 self.b._set_target_id(model, rec['id'], created.id)
                 imported += 1
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported,
             duration=time.time() - start,
         ))
@@ -182,7 +187,12 @@ class ServiceImporter:
                 if target_rec:
                     return target_rec.id
         except Exception:
-            pass
+            # An RPC/auth failure must not read like "the template is simply
+            # not there" - keep the traceback so the two can be told apart.
+            _logger.warning(
+                "Lookup of %s template ID %s failed on the source; the "
+                "template is left unset", model, source_val, exc_info=True)
+            return False
         _logger.warning(
             "Could not resolve %s template ID %s by xml_id. Setting to False.",
             model, source_val,
@@ -190,30 +200,43 @@ class ServiceImporter:
         return False
 
     def _import_service_sales(self):
-        """Step 40: rfid.service.sale — Direct SQL batch."""
+        """Step 40: rfid.service.sale - Direct SQL batch."""
         start = time.time()
         model = 'rfid.service.sale'
         table = 'rfid_service_sale'
 
         if not self.b._has_model(model):
+            self.results.append(self.b._make_result(model, 0, 0, status='skipped'))
             return
 
         source_fields_info = self.b._get_source_fields(model)
-        target_fields = set(self.env[model]._fields.keys())
+        # Real columns only - a non-stored field in a raw INSERT is an
+        # UndefinedColumn that kills the whole step.
+        target_fields = self.b._target_columns(model)
 
+        # `access_group_contact_rel` (no _id suffix) is the real column in both
+        # versions; the old probe never matched, so the link that drives the
+        # visit counter and cancellation was dropped on every sale. `name` is
+        # the human sale reference - the bulk path bypasses its ir.sequence
+        # default, so it has to be carried over explicitly.
         fields_to_read = ['service_id', 'partner_id', 'card_id', 'create_date']
-        for f in ['state', 'start_date', 'end_date', 'visits_count',
-                   'access_group_contact_rel_id']:
+        for f in ['name', 'state', 'start_date', 'end_date',
+                  'access_group_contact_rel']:
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
 
-        source_records = self.b._read_all(model, [], fields_to_read, batch_size=2000)
+        # A sale belongs to the company that owns its service.
+        source_records = self.b._read_all(
+            model, self.b._scoped_domain('service_id'), fields_to_read,
+            batch_size=2000)
         imported = 0
         already = 0
+        rejected = 0
+        skipped = 0
 
         columns = ['service_id', 'partner_id', 'card_id', 'create_date']
-        for f in ['state', 'start_date', 'end_date', 'visits_count',
-                   'access_group_contact_rel_id']:
+        for f in ['name', 'state', 'start_date', 'end_date',
+                  'access_group_contact_rel']:
             if f in fields_to_read:
                 columns.append(f)
 
@@ -222,6 +245,7 @@ class ServiceImporter:
         for rec in source_records:
             service_target = self.b._map_m2o('rfid.service', rec.get('service_id'))
             if not service_target:
+                skipped += 1
                 continue
             partner_target = self.b._map_m2o('res.partner', rec.get('partner_id'))
             card_target = self.b._map_m2o('hr.rfid.card', rec.get('card_id'))
@@ -233,7 +257,7 @@ class ServiceImporter:
                 rec.get('create_date'),
             ]
             for f in columns[4:]:
-                if f == 'access_group_contact_rel_id':
+                if f == 'access_group_contact_rel':
                     rel_target = self.b._map_m2o(
                         'hr.rfid.access.group.contact.rel', rec.get(f)
                     )
@@ -247,18 +271,18 @@ class ServiceImporter:
         if rows:
             try:
                 with self.env.cr.savepoint():
-                    imported, already = self.b._direct_sql_insert_tracked(
+                    imported, already, rejected = self.b._direct_sql_insert_tracked(
                         table, columns, rows, model, src_ids)
             except Exception as e:
-                _logger.error("Failed to insert service events: %s", e)
-                self.results.append(self._make_result(
+                _logger.error("Failed to insert service sales: %s", e, exc_info=True)
+                self.results.append(self.b._make_result(
                     model, len(source_records), 0, 0, len(source_records),
                     duration=time.time() - start,
                     status='error', error=str(e)[:500],
                 ))
                 return
 
-        self.results.append(self._make_result(
-            model, len(source_records), imported, already,
-            duration=time.time() - start,
+        self.results.append(self.b._make_result(
+            model, len(source_records), imported, already, skipped,
+            duration=time.time() - start, rejected_count=rejected,
         ))

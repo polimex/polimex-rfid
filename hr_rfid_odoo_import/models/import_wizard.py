@@ -24,7 +24,7 @@ class HrRfidOdooImportWiz(models.TransientModel):
             ('done', 'Done'),
         ],
         string='State', default='connection', required=True, readonly=True,
-        help="Step the wizard is currently on — Connection: enter source URL + creds. Configure: pick what to import. Confirm: review preview + conflicts. Importing: run in progress. Done: results shown.",
+        help="Step the wizard is currently on - Connection: enter source URL + creds. Configure: pick what to import. Confirm: review preview + conflicts. Importing: run in progress. Done: results shown.",
     )
 
     # ── Step 1: Connection ─────────────────────────────────────
@@ -36,7 +36,7 @@ class HrRfidOdooImportWiz(models.TransientModel):
     source_db = fields.Char(
         string='Source Database',
         help=(
-            'Leave empty if the source server hosts a single database — it will '
+            'Leave empty if the source server hosts a single database - it will '
             'be auto-detected. If the source has multiple databases, enter the '
             'exact database name here.'
         ),
@@ -45,7 +45,7 @@ class HrRfidOdooImportWiz(models.TransientModel):
         string='Username',
         default='admin',
         required=True,
-        help="Login of an admin-level user on the source Odoo instance — the user must have read access to every model the import will fetch.",
+        help="Login of an admin-level user on the source Odoo instance - the user must have read access to every model the import will fetch.",
     )
     source_password = fields.Char(
         string='Password',
@@ -120,7 +120,7 @@ class HrRfidOdooImportWiz(models.TransientModel):
     import_user_events = fields.Boolean(
         string='Import user events',
         default=False,
-        help="Include the historical hr.rfid.event.user log. Can be large — disable for first pass, re-run separately later if needed.",
+        help="Include the historical hr.rfid.event.user log. Can be large - disable for first pass, re-run separately later if needed.",
     )
     import_system_events = fields.Boolean(
         string='Import system events',
@@ -135,6 +135,14 @@ class HrRfidOdooImportWiz(models.TransientModel):
     event_date_from = fields.Date(
         string='Events from date',
         help='Only import events newer than this date. Leave empty for all events.',
+    )
+    orphan_event_cutoff = fields.Date(
+        string='Module-only events from date',
+        help="Some system events are recorded against the communication module alone, "
+             "with no controller attached (power-on, module connected). They are usually "
+             "the bulk of the log. Set a date to bring across only the recent ones and "
+             "leave the older noise behind; leave empty to bring all of them. "
+             "Events that do name a controller are always imported in full.",
     )
     import_vending = fields.Boolean(
         string='Import vending data',
@@ -175,7 +183,7 @@ class HrRfidOdooImportWiz(models.TransientModel):
     )
     target_has_vending = fields.Boolean(
         compute='_compute_target_modules',
-        help="This (target) instance has hr_rfid_vending installed — the related import_vending toggle is only meaningful when both source and target have it.",
+        help="This (target) instance has hr_rfid_vending installed - the related import_vending toggle is only meaningful when both source and target have it.",
     )
     target_has_attendance = fields.Boolean(
         compute='_compute_target_modules',
@@ -220,7 +228,7 @@ class HrRfidOdooImportWiz(models.TransientModel):
     )
     progress_percent = fields.Float(
         string='Progress %', readonly=True,
-        help="Estimated completion percentage. Driven by the phase log — useful for the operator to gauge runtime.",
+        help="Estimated completion percentage. Driven by the phase log - useful for the operator to gauge runtime.",
     )
 
     # ── Step 5: Results ────────────────────────────────────────
@@ -294,7 +302,7 @@ class HrRfidOdooImportWiz(models.TransientModel):
             for mod_name, field_name, src_field, tgt_field in module_checks:
                 if getattr(wiz, src_field) and not getattr(wiz, tgt_field):
                     if getattr(wiz, field_name):
-                        # User wants to import but target module is missing — block
+                        # User wants to import but target module is missing - block
                         warnings[f'missing_{mod_name}'] = {
                             'level': 'danger',
                             'message': _(
@@ -714,6 +722,7 @@ class HrRfidOdooImportWiz(models.TransientModel):
             'import_system_events': self.import_system_events,
             'import_th_logs': self.import_th_logs,
             'event_date_from': str(self.event_date_from) if self.event_date_from else False,
+            'orphan_event_cutoff': str(self.orphan_event_cutoff) if self.orphan_event_cutoff else False,
             'import_vending': self.import_vending and self.source_has_vending and self.target_has_vending,
             'import_attendance': self.import_attendance and self.source_has_attendance and self.target_has_attendance,
             'import_attendance_extra': self.import_attendance_extra and self.source_has_attendance_late and self.target_has_attendance_late,
@@ -762,12 +771,23 @@ class HrRfidOdooImportWiz(models.TransientModel):
                 PeopleImporter(importer), 30, 45,
             )
 
+        # Phase 3b: Zones & Notifications - deliberately AFTER People, because
+        # zone membership and notification recipients are employees/partners
+        # that Phase 2 creates. Running them with the hardware left every list
+        # empty, permanently (the records are written noupdate=True).
+        if options.get('import_hardware'):
+            from .importers.core_importer import ZoneImporter
+            self._run_phase(
+                'Phase 3b', 'Zones & Notifications',
+                ZoneImporter(importer), 45, 47,
+            )
+
         # Phase 4: Access Control
         if options['import_access']:
             from .importers.access_importer import AccessImporter
             self._run_phase(
                 'Phase 4', 'Access Control',
-                AccessImporter(importer), 45, 60,
+                AccessImporter(importer), 47, 60,
             )
 
         # Phase 5: Events
@@ -809,7 +829,7 @@ class HrRfidOdooImportWiz(models.TransientModel):
         """Execute a single import phase with logging.
 
         Each phase runs inside a savepoint. If a phase fails, only that
-        phase's work is rolled back — previous phases are preserved.
+        phase's work is rolled back - previous phases are preserved.
         """
         self._append_progress(_("\n--- %s: %s ---", phase_id, phase_name))
         self.progress_percent = pct_start
@@ -830,17 +850,19 @@ class HrRfidOdooImportWiz(models.TransientModel):
                     'source_count': result.get('source_count', 0),
                     'imported_count': result.get('imported_count', 0),
                     'skipped_count': result.get('skipped_count', 0),
+                    'rejected_count': result.get('rejected_count', 0),
                     'linked_count': result.get('linked_count', 0),
                     'status': result.get('status', 'done'),
                     'duration': result.get('duration', duration),
                     'error_message': result.get('error', ''),
                 })
                 self._append_progress(
-                    "  %s: %d imported, %d linked, %d skipped",
+                    "  %s: %d imported, %d linked, %d skipped, %d rejected",
                     result.get('model', '?'),
                     result.get('imported_count', 0),
                     result.get('linked_count', 0),
                     result.get('skipped_count', 0),
+                    result.get('rejected_count', 0),
                 )
 
             self.progress_percent = pct_end
@@ -848,7 +870,7 @@ class HrRfidOdooImportWiz(models.TransientModel):
         except Exception as e:
             duration = time.time() - start_time
             _logger.error("Phase %s failed: %s", phase_id, e, exc_info=True)
-            # Savepoint auto-rolled back — transaction is still clean
+            # Savepoint auto-rolled back - transaction is still clean
             self.env['hr.rfid.odoo.import.log'].create({
                 'wizard_id': self.id,
                 'phase': phase_id,

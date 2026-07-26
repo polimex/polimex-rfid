@@ -29,21 +29,8 @@ class PeopleImporter:
         self._import_employees()
         return self.results
 
-    def _make_result(self, model, source_count, imported_count, linked_count=0,
-                     skipped_count=0, duration=0, status='done', error=''):
-        return {
-            'model': model,
-            'source_count': source_count,
-            'imported_count': imported_count,
-            'linked_count': linked_count,
-            'skipped_count': skipped_count,
-            'duration': duration,
-            'status': status,
-            'error': error,
-        }
-
     def _import_partners(self):
-        """Step 5: res.partner — scope depends on user choice."""
+        """Step 5: res.partner - scope depends on user choice."""
         start = time.time()
         model = 'res.partner'
         co_domain = self.b._company_domain()
@@ -61,7 +48,7 @@ class PeopleImporter:
                 if r.get('contact_id')
             ))
             if not partner_ids:
-                self.results.append(self._make_result(
+                self.results.append(self.b._make_result(
                     model, 0, 0, duration=time.time() - start,
                 ))
                 return
@@ -179,13 +166,13 @@ class PeopleImporter:
                         target_id, parent_target, e,
                     )
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, linked,
             duration=time.time() - start,
         ))
 
     def _import_users(self):
-        """Step 6: res.users — optional, match by login."""
+        """Step 6: res.users - optional, match by login."""
         start = time.time()
         model = 'res.users'
         co_domain = self.b._company_domain()
@@ -199,7 +186,7 @@ class PeopleImporter:
             if e.get('user_id')
         ))
         if not user_ids:
-            self.results.append(self._make_result(
+            self.results.append(self.b._make_result(
                 model, 0, 0, duration=time.time() - start,
             ))
             return
@@ -207,10 +194,11 @@ class PeopleImporter:
         source_records = self.b._search_read(
             model,
             [('id', 'in', user_ids)],
-            ['name', 'login', 'partner_id', 'groups_id', 'active'],
+            ['name', 'login', 'partner_id', 'groups_id', 'active', 'company_id'],
         )
         imported = 0
         linked = 0
+        skipped = 0
         prefix = model.replace('.', '_')
 
         for rec in source_records:
@@ -223,6 +211,15 @@ class PeopleImporter:
                 linked += 1
                 continue
 
+            # res.users.company_id/company_ids both default to env.company.
+            # Left to the default, a tenant's staff account is created inside
+            # whichever company the operator happens to be in - an internal
+            # user who can read THAT company and cannot see their own.
+            target_company_id = self.b._map_company(rec.get('company_id'))
+            if not target_company_id:
+                skipped += 1
+                continue
+
             # Create new user
             partner_target_id = self.b._map_m2o('res.partner', rec.get('partner_id'))
             vals = {
@@ -230,6 +227,8 @@ class PeopleImporter:
                 'login': rec['login'],
                 'active': rec.get('active', True),
                 'password': 'ChangeMe123!',
+                'company_id': target_company_id,
+                'company_ids': [(6, 0, [target_company_id])],
             }
             if partner_target_id:
                 vals['partner_id'] = partner_target_id
@@ -249,10 +248,12 @@ class PeopleImporter:
                     if self.b.options.get('import_user_groups') and rec.get('groups_id'):
                         self._transfer_groups(created, rec['groups_id'])
             except Exception as e:
-                _logger.warning("Failed to create user %s: %s", rec['login'], e)
+                skipped += 1
+                _logger.warning("Failed to create user %s: %s", rec['login'], e,
+                                exc_info=True)
 
-        self.results.append(self._make_result(
-            model, len(source_records), imported, linked,
+        self.results.append(self.b._make_result(
+            model, len(source_records), imported, linked, skipped,
             duration=time.time() - start,
         ))
 
@@ -272,7 +273,10 @@ class PeopleImporter:
                 if target_group:
                     target_group_ids.append(target_group.id)
             except Exception:
-                pass
+                _logger.warning(
+                    "Could not resolve source group %s for user %s - the "
+                    "group is not transferred", xml_id, user.login,
+                    exc_info=True)
 
         if target_group_ids:
             user.with_context(**IMPORT_CONTEXT).write({
@@ -280,7 +284,7 @@ class PeopleImporter:
             })
 
     def _import_employees(self):
-        """Step 7: hr.employee — scope depends on user choice."""
+        """Step 7: hr.employee - scope depends on user choice."""
         start = time.time()
         model = 'hr.employee'
         co_domain = self.b._company_domain()
@@ -298,7 +302,7 @@ class PeopleImporter:
                 if r.get('employee_id')
             ))
             if not emp_ids:
-                self.results.append(self._make_result(
+                self.results.append(self.b._make_result(
                     model, 0, 0, duration=time.time() - start,
                 ))
                 return
@@ -401,7 +405,7 @@ class PeopleImporter:
                 self.b._set_target_id(model, rec['id'], created.id)
                 imported += 1
 
-        self.results.append(self._make_result(
+        self.results.append(self.b._make_result(
             model, len(source_records), imported, linked, skipped,
             duration=time.time() - start,
         ))

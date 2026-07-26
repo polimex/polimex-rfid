@@ -2,9 +2,7 @@
 import logging
 import time
 
-from odoo import _
-from odoo.exceptions import UserError
-from .base_importer import BaseImporter, IMPORT_CONTEXT
+from .base_importer import BaseImporter
 
 _logger = logging.getLogger(__name__)
 
@@ -28,27 +26,16 @@ class AttendanceImporter:
             self._import_attendance_extra()
         return self.results
 
-    def _make_result(self, model, source_count, imported_count, linked_count=0,
-                     skipped_count=0, duration=0, status='done', error=''):
-        return {
-            'model': model,
-            'source_count': source_count,
-            'imported_count': imported_count,
-            'linked_count': linked_count,
-            'skipped_count': skipped_count,
-            'duration': duration,
-            'status': status,
-            'error': error,
-        }
-
     def _import_attendance(self):
-        """Step 36: hr.attendance — Direct SQL batch."""
+        """Step 36: hr.attendance - Direct SQL batch."""
         start = time.time()
         model = 'hr.attendance'
         table = 'hr_attendance'
 
         source_fields_info = self.b._get_source_fields(model)
-        target_fields = set(self.env[model]._fields.keys())
+        # Real columns only - a non-stored field in a raw INSERT is an
+        # UndefinedColumn that kills the whole step.
+        target_fields = self.b._target_columns(model)
 
         fields_to_read = ['employee_id', 'check_in', 'check_out']
         # in_zone_id added by rfid_service module
@@ -57,9 +44,17 @@ class AttendanceImporter:
         if 'out_zone_id' in source_fields_info and 'out_zone_id' in target_fields:
             fields_to_read.append('out_zone_id')
 
-        source_records = self.b._read_all(model, [], fields_to_read, batch_size=5000)
+        # Attendance belongs to the employee's company. Reading globally and
+        # dropping foreign rows in the loop reported the WHOLE source as this
+        # company's source_count, so "no attendance for this client" and
+        # "every row was dropped" looked identical in the protocol.
+        source_records = self.b._read_all(
+            model, self.b._scoped_domain('employee_id'), fields_to_read,
+            batch_size=5000)
         imported = 0
         already = 0
+        rejected = 0
+        skipped = 0
 
         # date is a stored computed field in v19 (from check_in + tz)
         # We must include it in SQL INSERT since it's required
@@ -77,6 +72,7 @@ class AttendanceImporter:
         for rec in source_records:
             emp_target = self.b._map_m2o('hr.employee', rec.get('employee_id'))
             if not emp_target:
+                skipped += 1
                 continue
 
             check_in = rec['check_in']
@@ -102,24 +98,24 @@ class AttendanceImporter:
         if rows:
             try:
                 with self.env.cr.savepoint():
-                    imported, already = self.b._direct_sql_insert_tracked(
+                    imported, already, rejected = self.b._direct_sql_insert_tracked(
                         table, columns, rows, model, src_ids)
             except Exception as e:
-                _logger.error("Failed to insert attendance: %s", e)
-                self.results.append(self._make_result(
+                _logger.error("Failed to insert attendance: %s", e, exc_info=True)
+                self.results.append(self.b._make_result(
                     model, len(source_records), 0, 0, len(source_records),
                     duration=time.time() - start,
                     status='error', error=str(e)[:500],
                 ))
                 return
 
-        self.results.append(self._make_result(
-            model, len(source_records), imported, already,
-            duration=time.time() - start,
+        self.results.append(self.b._make_result(
+            model, len(source_records), imported, already, skipped,
+            duration=time.time() - start, rejected_count=rejected,
         ))
 
     def _import_attendance_extra(self):
-        """Step 37: hr.attendance.extra — Direct SQL batch.
+        """Step 37: hr.attendance.extra - Direct SQL batch.
 
         Model from hr_attendance_late module (NOT hr_attendance_multi_rfid!).
         """
@@ -128,22 +124,28 @@ class AttendanceImporter:
         table = 'hr_attendance_extra'
 
         source_fields_info = self.b._get_source_fields(model)
-        target_fields = set(self.env[model]._fields.keys())
+        # Real columns only - a non-stored field in a raw INSERT is an
+        # UndefinedColumn that kills the whole step.
+        target_fields = self.b._target_columns(model)
 
         fields_to_read = ['employee_id', 'department_id']
-        # 'for_date' is NOT NULL in the target — it must be read and written,
+        # 'for_date' is NOT NULL in the target - it must be read and written,
         # otherwise every batch is rejected and no extra record migrates at all.
         for f in ['for_date', 'check_in', 'check_out', 'late_minutes',
                    'early_leave_minutes', 'overtime_minutes', 'worked_hours']:
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
 
-        source_records = self.b._read_all(model, [], fields_to_read, batch_size=5000)
+        source_records = self.b._read_all(
+            model, self.b._scoped_domain('employee_id'), fields_to_read,
+            batch_size=5000)
         imported = 0
         already = 0
+        rejected = 0
+        skipped = 0
 
         columns = ['employee_id', 'department_id']
-        # 'for_date' is NOT NULL in the target — it must be read and written,
+        # 'for_date' is NOT NULL in the target - it must be read and written,
         # otherwise every batch is rejected and no extra record migrates at all.
         for f in ['for_date', 'check_in', 'check_out', 'late_minutes',
                    'early_leave_minutes', 'overtime_minutes', 'worked_hours']:
@@ -155,6 +157,7 @@ class AttendanceImporter:
         for rec in source_records:
             emp_target = self.b._map_m2o('hr.employee', rec.get('employee_id'))
             if not emp_target:
+                skipped += 1
                 continue
             dept_target = self.b._map_m2o('hr.department', rec.get('department_id'))
 
@@ -168,18 +171,18 @@ class AttendanceImporter:
         if rows:
             try:
                 with self.env.cr.savepoint():
-                    imported, already = self.b._direct_sql_insert_tracked(
+                    imported, already, rejected = self.b._direct_sql_insert_tracked(
                         table, columns, rows, model, src_ids)
             except Exception as e:
-                _logger.error("Failed to insert attendance extra: %s", e)
-                self.results.append(self._make_result(
+                _logger.error("Failed to insert attendance extra: %s", e, exc_info=True)
+                self.results.append(self.b._make_result(
                     model, len(source_records), 0, 0, len(source_records),
                     duration=time.time() - start,
                     status='error', error=str(e)[:500],
                 ))
                 return
 
-        self.results.append(self._make_result(
-            model, len(source_records), imported, already,
-            duration=time.time() - start,
+        self.results.append(self.b._make_result(
+            model, len(source_records), imported, already, skipped,
+            duration=time.time() - start, rejected_count=rejected,
         ))

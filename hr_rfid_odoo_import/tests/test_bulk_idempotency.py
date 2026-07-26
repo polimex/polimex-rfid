@@ -16,7 +16,7 @@ class TestBulkIdempotency(TransactionCase):
     ``ir.model.data`` external ID that makes the ORM import idempotent.
     ``_direct_sql_insert_tracked`` restores that guarantee: it writes an
     external ID per row (same convention as the ORM path) and skips source
-    records that already have one — so a second run inserts nothing.
+    records that already have one - so a second run inserts nothing.
 
     No network access: ``BaseImporter`` only builds a lazy ServerProxy, and
     these tests exercise the bulk write path exclusively.
@@ -29,7 +29,7 @@ class TestBulkIdempotency(TransactionCase):
 
     @classmethod
     def _new_importer(cls):
-        """A fresh importer — empty id_map, like a resumed run in a new process."""
+        """A fresh importer - empty id_map, like a resumed run in a new process."""
         return BaseImporter(
             env=cls.env, source_url="http://localhost:1", source_db=SRC_DB,
             source_uid=1, source_password="x", company_map={}, options={},
@@ -57,19 +57,19 @@ class TestBulkIdempotency(TransactionCase):
     # ── core idempotency ──────────────────────────────────────
     def test_second_run_inserts_nothing(self):
         source_ids = [900001, 900002, 900003]
-        self.assertEqual(self._insert(source_ids), (3, 0))
+        self.assertEqual(self._insert(source_ids), (3, 0, 0))
         self.assertEqual(self._row_count(), 3)
         self.assertEqual(len(self._xmlids()), 3)
 
-        # Same source records again — nothing new may be written.
-        self.assertEqual(self._insert(source_ids), (0, 3))
+        # Same source records again - nothing new may be written.
+        self.assertEqual(self._insert(source_ids), (0, 3, 0))
         self.assertEqual(self._row_count(), 3, "re-run duplicated bulk rows")
         self.assertEqual(len(self._xmlids()), 3)
 
     def test_partial_rerun_inserts_only_new_records(self):
-        self.assertEqual(self._insert([900010, 900011]), (2, 0))
+        self.assertEqual(self._insert([900010, 900011]), (2, 0, 0))
         # Two already-imported + one new.
-        self.assertEqual(self._insert([900010, 900011, 900012]), (1, 2))
+        self.assertEqual(self._insert([900010, 900011, 900012]), (1, 2, 0))
         self.assertEqual(self._row_count(), 3)
         self.assertEqual(len(self._xmlids()), 3)
 
@@ -116,7 +116,7 @@ class TestBulkIdempotency(TransactionCase):
 
         self.assertEqual(self.importer.already_imported(MODEL, [900050]), {},
                          "orphan external ID must not count as imported")
-        inserted, already = self._insert([900050], importer=self._new_importer())
+        inserted, already, _ = self._insert([900050], importer=self._new_importer())
         self.assertEqual((inserted, already), (1, 0), "row must be re-imported")
 
     # ── bookkeeping ───────────────────────────────────────────
@@ -134,7 +134,7 @@ class TestBulkIdempotency(TransactionCase):
     def test_empty_input_is_a_noop(self):
         self.assertEqual(
             self.importer._direct_sql_insert_tracked(TABLE, ["timestamp"], [], MODEL, []),
-            (0, 0))
+            (0, 0, 0))
 
 
 @tagged("post_install", "-at_install", "rfid_odoo_import")
@@ -180,14 +180,20 @@ class TestBulkConstraintRejection(TransactionCase):
         cols = ["service_id", "start_date", "end_date", "partner_id"]
         row = (service.id, "2001-01-01", "2001-01-02", partner.id)
 
-        first, _ = self.importer._direct_sql_insert_tracked(
+        first, _, first_rejected = self.importer._direct_sql_insert_tracked(
             self.TABLE, cols, [row], self.MODEL, [910001])
         self.assertEqual(first, 1)
+        self.assertEqual(first_rejected, 0)
 
         # Same business key, different source id -> the DB rejects the row.
-        second, _ = self.importer._direct_sql_insert_tracked(
+        second, _, rejected = self.importer._direct_sql_insert_tracked(
             self.TABLE, cols, [row], self.MODEL, [910002])
         self.assertEqual(second, 0, "rejected row must not be counted as imported")
+        self.assertEqual(
+            rejected, 1,
+            "a row the database refused must be reported, not only logged - "
+            "otherwise the operator reads 'imported 0' and cannot tell whether "
+            "there was nothing to do or everything was refused")
 
         self.env.cr.execute(
             "SELECT count(*) FROM ir_model_data WHERE module = %s AND model = %s "

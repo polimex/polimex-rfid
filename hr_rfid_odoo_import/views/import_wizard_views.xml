@@ -81,6 +81,8 @@
                                 <field name="import_th_logs"/>
                                 <field name="event_date_from"
                                        invisible="not import_user_events and not import_system_events and not import_th_logs"/>
+                                <field name="orphan_event_cutoff"
+                                       invisible="not import_system_events"/>
                             </group>
 
                             <group string="Optional Modules" col="4">
@@ -175,6 +177,8 @@
                                         <field name="imported_count" sum="Total"/>
                                         <field name="linked_count" sum="Total"/>
                                         <field name="skipped_count" sum="Total"/>
+                                        <field name="rejected_count" sum="Total"
+                                               decoration-danger="rejected_count &gt; 0"/>
                                         <field name="status"
                                                decoration-success="status == 'done'"
                                                decoration-danger="status == 'error'"
