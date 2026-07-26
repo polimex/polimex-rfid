@@ -835,6 +835,14 @@ class HrRfidOdooImportWiz(models.TransientModel):
         self.progress_percent = pct_start
         start_time = time.time()
 
+        # id_map живее в паметта и НЕ се откатва със savepoint-а. Без снимка,
+        # една паднала фаза оставя мапинги към записи, които вече не
+        # съществуват, и всяка СЛЕДВАЩА фаза пише FK към тях: наблюдавано на
+        # живо - Phase 2 падна с hr_employee_user_uniq, а фази 3b/4/5/6a/6b
+        # после гръмнаха една по една с ForeignKeyViolation. По-опасният случай
+        # е тих: освободеният id може да бъде преизползван от друг запис.
+        id_map_snapshot = {m: dict(v) for m, v in phase_importer.b.id_map.items()}
+
         try:
             with self.env.cr.savepoint():
                 results = phase_importer.run(self)
@@ -870,7 +878,11 @@ class HrRfidOdooImportWiz(models.TransientModel):
         except Exception as e:
             duration = time.time() - start_time
             _logger.error("Phase %s failed: %s", phase_id, e, exc_info=True)
-            # Savepoint auto-rolled back - transaction is still clean
+            # Savepoint auto-rolled back - transaction is still clean. Върни и
+            # id_map-а към състоянието отпреди фазата, за да не сочи към
+            # изтрити записи.
+            phase_importer.b.id_map.clear()
+            phase_importer.b.id_map.update(id_map_snapshot)
             self.env['hr.rfid.odoo.import.log'].create({
                 'wizard_id': self.id,
                 'phase': phase_id,

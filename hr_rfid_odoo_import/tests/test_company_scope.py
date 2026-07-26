@@ -446,6 +446,41 @@ class TestCompanyScope(TransactionCase):
         self.assertEqual(vals[0].get('company_id'), self.mine.id)
         self.assertNotIn('number', vals[0])
 
+    def test_failed_phase_does_not_leave_stale_ids_behind(self):
+        """id_map живее в паметта и не се откатва със savepoint-а.
+
+        Наблюдавано на живо: Phase 2 падна с hr_employee_user_uniq, а фази
+        3b/4/5/6a/6b после гръмнаха една по една с ForeignKeyViolation, защото
+        id_map още сочеше към откатнатите служители. По-опасният вариант е
+        тих - освободеният id може да бъде преизползван от друг запис и FK-ът
+        да сочи към ЧУЖДИ данни, без никаква грешка.
+        """
+        wiz = self.env['hr.rfid.odoo.import.wiz'].create({
+            'source_url': 'http://localhost:1', 'source_login': 'x',
+            'source_password': 'x',
+        })
+        base = self._importer({})
+        base._set_target_id('hr.employee', 1, 111)   # отпреди фазата - остава
+
+        class _Boom:
+            def __init__(self, b):
+                self.b = b
+
+            def run(self, wizard):
+                # фазата мапва нещо и после пада
+                self.b._set_target_id('hr.employee', 2, 222)
+                raise ValueError("phase blew up")
+
+        wiz._run_phase('Phase X', 'Broken', _Boom(base), 0, 1)
+
+        self.assertEqual(
+            base._get_target_id('hr.employee', 1), 111,
+            "мапингите отпреди фазата трябва да оцелеят")
+        self.assertFalse(
+            base._get_target_id('hr.employee', 2),
+            "мапинг, направен във фаза, която се е откатила, НЕ бива да остане - "
+            "иначе следващите фази пишат FK към несъществуващ запис")
+
     def test_scoped_domain_builds_direct_and_chained_restrictions(self):
         base = self._importer({})
         self.assertEqual(base._scoped_domain(),

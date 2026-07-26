@@ -280,7 +280,10 @@ class PeopleImporter:
 
         if target_group_ids:
             user.with_context(**IMPORT_CONTEXT).write({
-                'groups_id': [(4, gid) for gid in target_group_ids]
+                # v19 преименува res.users.groups_id -> group_ids. Източникът
+                # (о15) още го чете като groups_id - преименуването е само от
+                # страната на записа.
+                'group_ids': [(4, gid) for gid in target_group_ids]
             })
 
     def _import_employees(self):
@@ -288,6 +291,10 @@ class PeopleImporter:
         start = time.time()
         model = 'hr.employee'
         co_domain = self.b._company_domain()
+        # Потребителите, които вече са заети от служител В ЦЕЛТА (заварени +
+        # създадени в този прогон). v19 налага един служител на потребител.
+        claimed_users = set(self.env['hr.employee'].sudo().with_context(
+            active_test=False).search([('user_id', '!=', False)]).mapped('user_id').ids)
 
         if self.b.options.get('import_all_employees'):
             domain = co_domain
@@ -371,11 +378,20 @@ class PeopleImporter:
                 if dept_target:
                     vals['department_id'] = dept_target
 
-            # User
+            # User. v19 налага UNIQUE(user_id) на hr.employee, а източникът
+            # НЕ го налага - admin (uid 2) виси на служители в две различни
+            # фирми. Взимаме връзката само ако потребителят е свободен; иначе
+            # служителят се внася без нея, вместо цялата фаза да падне.
             if rec.get('user_id'):
                 user_target = self.b._map_m2o('res.users', rec['user_id'])
-                if user_target:
+                if user_target and user_target not in claimed_users:
                     vals['user_id'] = user_target
+                    claimed_users.add(user_target)
+                elif user_target:
+                    _logger.info(
+                        "Служител %s не е свързан с потребител %s - вече е зает "
+                        "от друг служител (v19 позволява един)",
+                        rec.get('name'), user_target)
 
             # Simple fields
             for f in ['job_title', 'work_phone', 'work_email', 'barcode', 'pin',
