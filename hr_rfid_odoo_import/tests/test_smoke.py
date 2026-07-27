@@ -3,7 +3,7 @@ from odoo.tests.common import TransactionCase, tagged
 
 @tagged("post_install", "-at_install", "rfid_odoo_import")
 class TestOdooImportSmoke(TransactionCase):
-    """Smoke coverage — checks the import wizard registers, accepts the
+    """Smoke coverage - checks the import wizard registers, accepts the
     minimum required fields, and the auxiliary log/conflict models can
     be created. Network-dependent flows (action_test_connection,
     action_import) are not exercised here."""

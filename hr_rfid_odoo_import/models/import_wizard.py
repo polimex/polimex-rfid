@@ -556,104 +556,173 @@ class HrRfidOdooImportWiz(models.TransientModel):
 
         return self._keep_open()
 
+    # Реалните УНИКАЛНИ ограничения в целта - единственото основание за конфликт.
+    # Ключът е ПЪЛЕН: съпоставяне по ЧАСТ от него измисля конфликти там, където
+    # базата няма нищо против. Измерено на живо (сесия 9): детекторът търсеше
+    # `hr.rfid.ctrl` само по `serial_number`, а ограничението е
+    # (serial_number, hw_version) - два контролера на РАЗЛИЧНИ клиенти със сериен
+    # 868 и hw 11/17 не се сблъскват изобщо, но бяха обявени за един и същ уред.
+    # `company_scoped=True` => ограничението е per company, тоест същата стойност
+    # при друг наемател е ЗАКОННА, не конфликт.
+    _CONFLICT_KEYS = {
+        'hr.rfid.webstack': {
+            'fields': ('serial',),
+            'company_scoped': False,   # UNIQUE(serial)
+        },
+        'hr.rfid.ctrl': {
+            'fields': ('serial_number', 'hw_version'),
+            'company_scoped': False,   # UNIQUE(serial_number, hw_version)
+        },
+        'hr.rfid.card': {
+            'fields': ('number',),
+            'company_scoped': True,    # UNIQUE(number, company_id)
+        },
+    }
+
+    def _source_scan_domain(self, model, company_ids):
+        """Обхватът на сканирането в ИЗТОЧНИКА - винаги по фирмите на прогона.
+
+        `hr.rfid.ctrl` няма собствен `company_id`; оста му е през webstack-а.
+        Празен домейн (сканиране на целия източник) е дефект: докарва конфликти
+        за чужди наематели в прогон, който не ги мигрира.
+        """
+        if model == 'hr.rfid.ctrl':
+            return [('webstack_id.company_id', 'in', company_ids)]
+        return [('company_id', 'in', company_ids)]
+
+    def _ledger_target_id(self, importer, model, source_id):
+        """Идентичността на вече мигриран запис - САМО от ledger-а."""
+        return importer._resolve_from_imd(model, source_id)
+
+    def _target_company_map(self):
+        """{source company id: target company id} за фирмите в този прогон.
+
+        Празен `target_company_id` значи "фирмата ще се създаде" - тогава в целта
+        още няма нищо, с което да се сблъскаме.
+        """
+        return {
+            line.source_id: line.target_company_id.id
+            for line in self.company_line_ids.filtered('do_import')
+            if line.target_company_id
+        }
+
+    def _conflict_probe_importer(self, company_ids):
+        """Лек `BaseImporter` само за ledger справки при откриване на конфликти.
+
+        Ползва се единствено `_resolve_from_imd` (четене на `ir.model.data`);
+        нищо не се внася на този етап.
+        """
+        from .importers.base_importer import BaseImporter
+        company_map = self._target_company_map()
+        return BaseImporter(
+            env=self.env,
+            source_url=self.source_url,
+            source_db=self.source_db,
+            source_uid=self.source_uid,
+            source_password=self.source_password,
+            company_map={cid: company_map.get(cid) for cid in company_ids},
+            options={},
+        )
+
     def _detect_conflicts(self, models_proxy, company_ids):
-        """Scan source records against target for potential conflicts."""
+        """Открий РЕАЛНИТЕ сблъсъци с уникалните ограничения на целта.
+
+        Дисциплина (`identity-by-id-never-by-text`): идентичността на запис идва
+        ЕДИНСТВЕНО от source id-то през ledger-а. Съвпадащ надпис - сериен номер,
+        номер на карта - НЕ е идентичност; той е само повод базата да откаже реда.
+
+        Затова тук:
+          1. Вече ледгернат източников запис = НЕ е конфликт (това е повторен
+             прогон; картата source->target вече съществува и печели).
+          2. Конфликт се вдига само когато целта ДЕЙСТВИТЕЛНО държи ПЪЛНИЯ ключ
+             на ограничението, в правилния обхват (per company там, където
+             ограничението е per company).
+          3. Конфликтът се ДОКЛАДВА, не се разрешава мълчаливо: `resolution`
+             остава празна и прогонът е блокиран, докато операторът не реши.
+             Автоматичното "link" сливаше РАЗЛИЧНИ обекти - на живо закачи
+             четците и вратите на един клиент за контролера на друг и повлече
+             1 964 негови събития в чужда фирма.
+        """
         self.conflict_ids.unlink()
         conflicts = []
+        importer = self._conflict_probe_importer(company_ids)
 
-        co_domain = [('company_id', 'in', company_ids)] if len(company_ids) > 1 \
-            else [('company_id', '=', company_ids[0])]
+        for model, key in self._CONFLICT_KEYS.items():
+            try:
+                conflicts.extend(self._detect_model_conflicts(
+                    models_proxy, importer, model, key, company_ids))
+            except Exception:
+                # Пропуснат детектор значи прогон БЕЗ защитата, която той дава -
+                # това е WARNING, не диагностика. Не е блокиращо, защото
+                # ограничението, което детекторът предугажда, пак се налага от
+                # базата: сблъсъкът ще гръмне при записа на реда, силно и видимо.
+                # Загубата е удобството да се разбере ПРЕДИ прогона, не тихо
+                # изтичане на данни.
+                _logger.warning(
+                    "Проверката за сблъсък по %s не можа да се изпълни - "
+                    "прогонът продължава без нея", model, exc_info=True)
 
-        # Webstacks: match by serial
-        try:
-            source_ws = models_proxy.execute_kw(
-                self.source_db, self.source_uid, self.source_password,
-                'hr.rfid.webstack', 'search_read',
-                [co_domain],
-                {'fields': ['name', 'serial']}
-            )
-            for ws in source_ws:
-                if not ws.get('serial'):
-                    continue
-                existing = self.env['hr.rfid.webstack'].search([
-                    ('serial', '=', ws['serial'])
-                ], limit=1)
-                if existing:
-                    conflicts.append({
-                        'wizard_id': self.id,
-                        'source_model': 'hr.rfid.webstack',
-                        'source_id': ws['id'],
-                        'source_name': ws['name'],
-                        'source_ref': ws['serial'],
-                        'target_id': existing.id,
-                        'target_name': existing.display_name,
-                        'conflict_field': 'serial',
-                        'resolution': 'link',
-                    })
-        except Exception as e:
-            _logger.warning("Error detecting webstack conflicts: %s", e)
-
-        # Cards: match by number
-        try:
-            source_cards = models_proxy.execute_kw(
-                self.source_db, self.source_uid, self.source_password,
-                'hr.rfid.card', 'search_read',
-                [co_domain],
-                {'fields': ['name', 'number']}
-            )
-            for card in source_cards:
-                if not card.get('number'):
-                    continue
-                existing = self.env['hr.rfid.card'].search([
-                    ('number', '=', card['number'])
-                ], limit=1)
-                if existing:
-                    conflicts.append({
-                        'wizard_id': self.id,
-                        'source_model': 'hr.rfid.card',
-                        'source_id': card['id'],
-                        'source_name': card.get('name', card['number']),
-                        'source_ref': card['number'],
-                        'target_id': existing.id,
-                        'target_name': existing.display_name,
-                        'conflict_field': 'number',
-                        'resolution': 'link',
-                    })
-        except Exception as e:
-            _logger.warning("Error detecting card conflicts: %s", e)
-
-        # Controllers: match by serial_number
-        try:
-            source_ctrls = models_proxy.execute_kw(
-                self.source_db, self.source_uid, self.source_password,
-                'hr.rfid.ctrl', 'search_read',
-                [[]],
-                {'fields': ['name', 'serial_number']}
-            )
-            for ctrl in source_ctrls:
-                if not ctrl.get('serial_number'):
-                    continue
-                existing = self.env['hr.rfid.ctrl'].search([
-                    ('serial_number', '=', ctrl['serial_number'])
-                ], limit=1)
-                if existing:
-                    conflicts.append({
-                        'wizard_id': self.id,
-                        'source_model': 'hr.rfid.ctrl',
-                        'source_id': ctrl['id'],
-                        'source_name': ctrl['name'],
-                        'source_ref': str(ctrl['serial_number']),
-                        'target_id': existing.id,
-                        'target_name': existing.display_name,
-                        'conflict_field': 'serial_number',
-                        'resolution': 'link',
-                    })
-        except Exception as e:
-            _logger.warning("Error detecting controller conflicts: %s", e)
-
-        # Create conflict records
         if conflicts:
             self.env['hr.rfid.odoo.import.conflict'].create(conflicts)
+
+    def _detect_model_conflicts(self, models_proxy, importer, model, key,
+                                company_ids):
+        """Конфликтите за един модел. Виж `_detect_conflicts` за дисциплината."""
+        fields_to_read = ['display_name', *key['fields']]
+        if key['company_scoped']:
+            fields_to_read.append('company_id')
+        source_records = models_proxy.execute_kw(
+            self.source_db, self.source_uid, self.source_password,
+            model, 'search_read',
+            [self._source_scan_domain(model, company_ids)],
+            {'fields': fields_to_read},
+        )
+
+        Target = self.env[model].sudo().with_context(active_test=False)
+        company_map = self._target_company_map()
+        out = []
+        for rec in source_records:
+            # 1. Ледгерът е идентичността. Има ли ред - това НЕ е конфликт.
+            if self._ledger_target_id(importer, model, rec['id']):
+                continue
+            # 2. Пълният ключ на ограничението, в правилния обхват.
+            domain = []
+            incomplete = False
+            for f in key['fields']:
+                value = rec.get(f)
+                if not value:
+                    # Празна част от ключа - PostgreSQL UNIQUE не хваща NULL,
+                    # значи сблъсък няма как да има.
+                    incomplete = True
+                    break
+                domain.append((f, '=', value))
+            if incomplete:
+                continue
+            if key['company_scoped']:
+                source_company = rec.get('company_id')
+                source_company = (source_company[0]
+                                  if isinstance(source_company, (list, tuple))
+                                  else source_company)
+                target_company = company_map.get(source_company)
+                if not target_company:
+                    continue
+                domain.append(('company_id', '=', target_company))
+            existing = Target.search(domain, limit=1)
+            if not existing:
+                continue
+            out.append({
+                'wizard_id': self.id,
+                'source_model': model,
+                'source_id': rec['id'],
+                'source_name': rec.get('display_name') or str(rec['id']),
+                'source_ref': ' / '.join(str(rec[f]) for f in key['fields']),
+                'target_id': existing.id,
+                'target_name': existing.display_name,
+                'conflict_field': ', '.join(key['fields']),
+                # Празна резолюция = блокира прогона до решение на оператора.
+                'resolution': False,
+            })
+        return out
 
     def action_back(self):
         """Navigate back one step."""
@@ -702,10 +771,11 @@ class HrRfidOdooImportWiz(models.TransientModel):
         """Execute the full import process."""
         from .importers.base_importer import BaseImporter
 
-        # Build company map
-        company_map = {}
-        for line in self.company_line_ids.filtered('do_import'):
-            company_map[line.source_id] = line.target_company_id.id
+        # Build company map (същият източник като при откриването на конфликти)
+        company_map = {
+            line.source_id: line.target_company_id.id
+            for line in self.company_line_ids.filtered('do_import')
+        }
 
         # Build options dict
         options = {
@@ -743,7 +813,11 @@ class HrRfidOdooImportWiz(models.TransientModel):
         # Apply conflict resolutions
         for conflict in self.conflict_ids:
             if conflict.resolution == 'link':
-                importer._set_target_id(
+                # `link_existing`, не само `_set_target_id`: одобреното от
+                # оператора съответствие трябва да ОЦЕЛЕЕ прогона. External ID-то
+                # Е картата source->target - без реда сверката отчита класа като
+                # липсващ, макар данните да са налице и правилно мапнати.
+                importer.link_existing(
                     conflict.source_model,
                     conflict.source_id,
                     conflict.target_id,

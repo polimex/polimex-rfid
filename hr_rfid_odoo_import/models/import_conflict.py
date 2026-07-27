@@ -46,9 +46,15 @@ class HrRfidOdooImportConflict(models.TransientModel):
             ('create', 'Create new'),
             ('skip', 'Skip this record'),
         ],
-        string='Resolution', default='link', required=True,
-        help="What to do with this conflict during the import - Link: re-use the existing target record (default, safest). Create: import anyway as a second record. Skip: do not import this row at all.",
+        string='Resolution',
+        help="What to do with this conflict during the import - Link: treat the existing record here as the same thing and re-use it. Create: bring the record over as a separate one. Skip: leave it out of the import. Left empty the import will not start, so nothing is merged behind your back.",
     )
+    # Умишлено БЕЗ default и БЕЗ required: празната стойност е "операторът още не
+    # е решил" и блокира прогона (виж `_compute_warnings` -> unresolved_conflicts).
+    # Докато полето беше `required=True, default='link'`, конфликт не можеше да
+    # остане неразрешен, блокиращата проверка беше мъртъв код, а всяко съвпадение
+    # по текст се сливаше мълчаливо. На живо това закачи четците и вратите на
+    # един клиент за контролера на друг (1 970 записа при чужд наемател).
 
 
 class HrRfidOdooImportLog(models.TransientModel):

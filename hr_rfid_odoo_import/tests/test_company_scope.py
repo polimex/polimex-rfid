@@ -490,3 +490,107 @@ class TestCompanyScope(TransactionCase):
         self.assertEqual(
             base._scoped_domain('door_id.controller_id.webstack_id'),
             [('door_id.controller_id.webstack_id.company_id', 'in', [101])])
+
+
+class _RecordingProxy:
+    """Captures the kwargs each source call was made with."""
+
+    def __init__(self):
+        self.calls = []
+
+    def execute_kw(self, db, uid, password, model, method, args, kwargs=None):
+        self.calls.append({'model': model, 'method': method,
+                           'domain': args[0] if args else None,
+                           'kwargs': kwargs or {}})
+        if method == 'fields_get':
+            # door/reader carry no `active` field in the source - exactly the
+            # models the archived-chain defect hit.
+            return {} if model in ('hr.rfid.door', 'hr.rfid.reader') else {'active': {}}
+        if method == 'search':
+            return [7, 3, 9]          # deliberately NOT sorted
+        if method == 'read':
+            return [{'id': 3, 'name': 'c'}, {'id': 9, 'name': 'i'},
+                    {'id': 7, 'name': 'g'}]   # and returned in yet another order
+        return 0
+
+
+@tagged("post_install", "-at_install", "rfid_odoo_import", "rfid_import_scope")
+class TestSourceReadsIncludeArchivedChain(TransactionCase):
+    """An archived record must not hide everything hanging off it.
+
+    Measured on the live source (company 1): the scoped domain
+    ``controller_id.webstack_id.company_id`` returned 21 doors and 25 readers,
+    but 22 and 29 with ``active_test=False`` - one door and four readers sat
+    under two archived webstacks, and 143 of their events were dropped after
+    them. The ``('active', 'in', [True, False])`` leaf could never have caught
+    it: it only covers the model being read, and neither door nor reader even
+    HAS an ``active`` field. The ORM applies ``active_test`` to the
+    INTERMEDIATE models of a chained domain.
+    """
+
+    def _importer(self):
+        base = BaseImporter.__new__(BaseImporter)
+        base.env = self.env
+        base.source_db = 'src'
+        base.source_uid = 1
+        base.source_password = 'x'
+        base.company_map = {101: self.env.company.id}
+        base.id_map = {}
+        base.options = {}
+        base._field_cache = {}
+        base.rpc_models = _RecordingProxy()
+        return base
+
+    def test_search_read_disables_active_test_on_both_calls(self):
+        """search AND read must carry the context.
+
+        The source's own record rule is a dotted company check, so with
+        active_test on it cannot see a record under an archived webstack and
+        DENIES it. A single search_read raised AccessError on exactly that
+        record; the split call, with the context on both halves, returns it.
+        """
+        base = self._importer()
+        base._search_read('hr.rfid.reader',
+                          [('controller_id.webstack_id.company_id', 'in', [101])],
+                          ['name'])
+        methods = [c['method'] for c in base.rpc_models.calls]
+        self.assertNotIn(
+            'search_read', methods,
+            "search_read evaluates the source record rule in a context that "
+            "cannot see archived intermediates - use search + read",
+        )
+        for method in ('search', 'read'):
+            call = [c for c in base.rpc_models.calls if c['method'] == method][0]
+            self.assertFalse(
+                call['kwargs'].get('context', {}).get('active_test', True),
+                "%s must pass active_test=False, otherwise an archived webstack "
+                "hides its controllers, doors, readers and events" % method,
+            )
+
+    def test_search_read_preserves_the_searched_order(self):
+        """_read_all paginates on the last id seen - order cannot be left to read()."""
+        base = self._importer()
+        rows = base._search_read('hr.rfid.reader', [('id', '>', 0)], ['name'])
+        self.assertEqual(
+            [r['id'] for r in rows], [7, 3, 9],
+            "rows must come back in the order search returned them, not the "
+            "order read() happened to produce",
+        )
+
+    def test_search_count_uses_the_same_axis_as_the_read(self):
+        """The preview count must not promise more than the import delivers."""
+        base = self._importer()
+        base._search_count('hr.rfid.reader',
+                           [('controller_id.webstack_id.company_id', 'in', [101])])
+        call = [c for c in base.rpc_models.calls if c['method'] == 'search_count'][0]
+        self.assertFalse(
+            call['kwargs'].get('context', {}).get('active_test', True),
+            "count and read must use the same axis or the operator is shown a "
+            "number the import will not deliver",
+        )
+
+    def test_active_leaf_still_added_when_the_model_has_the_field(self):
+        base = self._importer()
+        base._search_read('hr.rfid.card', [('company_id', 'in', [101])], ['name'])
+        call = [c for c in base.rpc_models.calls if c['method'] == 'search'][0]
+        self.assertIn(('active', 'in', [True, False]), call['domain'])

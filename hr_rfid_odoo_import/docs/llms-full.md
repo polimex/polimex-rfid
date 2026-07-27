@@ -123,7 +123,16 @@ Features
 
 * **Deduplication** via ``ir.model.data`` with ``__import__`` prefix
 * **Hardware command suppression** — no commands sent to controllers during import
-* **Conflict detection** — warns about duplicate cards, employees, etc.
+* **Identity by source ID, never by text** — a record is matched to its target
+  through the ``ir.model.data`` ledger (source id) alone. A matching name, serial
+  or card number is NOT identity: it merges different objects that happen to share
+  a label, and splits one object whose label drifted by a character.
+* **Conflict detection** — reports records that would violate a real unique
+  constraint of the target, using the FULL constraint key in the right scope
+  (``hr.rfid.webstack``: serial, global; ``hr.rfid.ctrl``: serial_number +
+  hw_version, global; ``hr.rfid.card``: number, per company). A conflict is
+  reported for the operator to decide - it is never auto-linked, and an undecided
+  one blocks the run.
 * **Direct SQL batch insert** for large datasets (events, attendance, balance history)
 * **Progress tracking** with real-time status updates
 
@@ -191,7 +200,7 @@ Python class `HrRfidOdooImportConflict` in `models/import_conflict.py:5`.  Trans
 | `target_id` | Integer | Target ID |  | ✓ | Database ID of the matching record on this (target) instance. |
 | `target_name` | Char | Existing in Target |  | ✓ | Display name of the existing target record — operator decides whether to keep it |
 | `conflict_field` | Char | Conflict Field |  | ✓ | Field on which the two records collide (typically the unique constraint that fir |
-| `resolution` | Selection | Resolution | ✓ | ✓ | What to do with this conflict during the import — Link: re-use the existing targ |
+| `resolution` | Selection | Resolution |  | ✓ | What to do with this conflict during the import - Link / Create / Skip. Deliberat |
 
 ### `hr.rfid.odoo.import.log` <a id='model-hr-rfid-odoo-import-log'></a>
 Python class `HrRfidOdooImportLog` in `models/import_conflict.py:54`.  TransientModel (wizard).  Description: *RFID Odoo Import Log*.

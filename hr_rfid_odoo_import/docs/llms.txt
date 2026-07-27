@@ -63,7 +63,16 @@ Features
 
 * **Deduplication** via ``ir.model.data`` with ``__import__`` prefix
 * **Hardware command suppression** — no commands sent to controllers during import
-* **Conflict detection** — warns about duplicate cards, employees, etc.
+* **Identity by source ID, never by text** — a record is matched to its target
+  through the ``ir.model.data`` ledger (source id) alone. A matching name, serial
+  or card number is NOT identity: it merges different objects that happen to share
+  a label, and splits one object whose label drifted by a character.
+* **Conflict detection** — reports records that would violate a real unique
+  constraint of the target, using the FULL constraint key in the right scope
+  (``hr.rfid.webstack``: serial, global; ``hr.rfid.ctrl``: serial_number +
+  hw_version, global; ``hr.rfid.card``: number, per company). A conflict is
+  reported for the operator to decide - it is never auto-linked, and an undecided
+  one blocks the run.
 * **Direct SQL batch insert** for large datasets (events, attendance, balance history)
 * **Progress tracking** with real-time status updates
 

@@ -52,27 +52,65 @@ class BaseImporter:
 
     # ── Source reading (XML-RPC) ──────────────────────────────
 
+    #: Context for every source read. ``active_test=False`` is REQUIRED, not a
+    #: nicety: the ``('active', 'in', [True, False])`` leaf below only covers the
+    #: model being read, while a scoped domain walks a CHAIN
+    #: (``controller_id.webstack_id.company_id``) and the ORM applies
+    #: ``active_test`` to the INTERMEDIATE models. An archived device therefore
+    #: hides everything hanging off it, silently and with no count to notice it
+    #: by. Measured against the live source: company 1 returned 21 doors and 25
+    #: readers with the leaf alone, 22 and 29 with this context - one door and
+    #: four readers lived under two archived webstacks, and 143 of their events
+    #: were dropped after them. Neither door nor reader even HAS an ``active``
+    #: field, so no leaf could ever have saved them.
+    SOURCE_READ_CONTEXT = {'active_test': False}
+
     def _search_read(self, model, domain, fields, order='id asc', limit=0,
                      include_archived=True):
-        """Read records from source via XML-RPC.
+        """Read records from source via XML-RPC, as ``search`` + ``read``.
 
-        By default includes archived records (active=False) for models
-        that have an 'active' field, to ensure complete data transfer.
+        Includes archived records (the model's own and any along a chained
+        domain) so the transfer is complete - see ``SOURCE_READ_CONTEXT``.
+
+        The two calls are NOT a stylistic choice. The source's own record rule
+        is ``[('webstack_id.company_id', 'in', company_ids)]``, and with
+        ``active_test`` on, that dotted check cannot see a record whose webstack
+        is archived - so the source DENIES a record that by its own data belongs
+        to the company. A single ``search_read`` raises AccessError on it (the
+        run died on two tenants); ``search`` then ``read``, both carrying the
+        context, returns it. Verified against the live source: door id 1 of
+        company 1, under an archived webstack.
         """
         read_domain = list(domain)
-        if include_archived and self._has_field(model, 'active'):
-            # Add explicit domain instead of context to avoid
-            # security issues in older Odoo versions
-            if not any(d[0] == 'active' for d in read_domain if isinstance(d, (list, tuple)) and len(d) >= 1):
-                read_domain.append(('active', 'in', [True, False]))
+        context = {}
+        if include_archived:
+            context = dict(self.SOURCE_READ_CONTEXT)
+            if self._has_field(model, 'active'):
+                # Kept next to the context on purpose: it states the intent on
+                # the model being read even if a caller passes its own context.
+                if not any(d[0] == 'active' for d in read_domain if isinstance(d, (list, tuple)) and len(d) >= 1):
+                    read_domain.append(('active', 'in', [True, False]))
 
-        kwargs = {'fields': fields, 'order': order}
+        search_kwargs = {'order': order}
         if limit:
-            kwargs['limit'] = limit
-        return self.rpc_models.execute_kw(
+            search_kwargs['limit'] = limit
+        if context:
+            search_kwargs['context'] = dict(context)
+        ids = self.rpc_models.execute_kw(
             self.source_db, self.source_uid, self.source_password,
-            model, 'search_read', [read_domain], kwargs
+            model, 'search', [read_domain], search_kwargs,
         )
+        if not ids:
+            return []
+        read_kwargs = {'context': dict(context)} if context else {}
+        records = self.rpc_models.execute_kw(
+            self.source_db, self.source_uid, self.source_password,
+            model, 'read', [ids, fields], read_kwargs,
+        )
+        # `read()` does not promise the searched order, and `_read_all` paginates
+        # on the LAST id it saw - an unordered page would skip or repeat rows.
+        by_id = {r['id']: r for r in records}
+        return [by_id[i] for i in ids if i in by_id]
 
     def _read_all(self, model, domain, fields, batch_size=1000):
         """ID-based pagination for large datasets."""
@@ -90,14 +128,19 @@ class BaseImporter:
         return all_records
 
     def _search_count(self, model, domain):
-        """Count records in source (including archived)."""
+        """Count records in source (including archived - see SOURCE_READ_CONTEXT).
+
+        The preview count MUST use the same axis as the read that follows it,
+        or the operator is shown a number the import will not deliver.
+        """
         count_domain = list(domain)
         if self._has_field(model, 'active'):
             if not any(d[0] == 'active' for d in count_domain if isinstance(d, (list, tuple)) and len(d) >= 1):
                 count_domain.append(('active', 'in', [True, False]))
         return self.rpc_models.execute_kw(
             self.source_db, self.source_uid, self.source_password,
-            model, 'search_count', [count_domain]
+            model, 'search_count', [count_domain],
+            {'context': dict(self.SOURCE_READ_CONTEXT)},
         )
 
     def _has_field(self, model, field_name):

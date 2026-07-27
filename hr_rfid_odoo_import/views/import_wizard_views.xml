@@ -136,7 +136,11 @@
                                         <field name="target_name" readonly="1"/>
                                         <field name="conflict_field" readonly="1"
                                                optional="hide"/>
-                                        <field name="resolution" required="1"/>
+                                        <!-- Умишлено БЕЗ required: празно значи
+                                             "още не е решено" и спира импорта с
+                                             обяснимо предупреждение, вместо с
+                                             "невалидно поле". -->
+                                        <field name="resolution"/>
                                     </list>
                                 </field>
                             </group>
