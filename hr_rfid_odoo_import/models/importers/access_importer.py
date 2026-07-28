@@ -2,7 +2,7 @@
 import logging
 import time
 
-from odoo import _
+from odoo import _, fields
 from odoo.exceptions import UserError
 from .base_importer import BaseImporter, IMPORT_CONTEXT
 
@@ -182,6 +182,9 @@ class AccessImporter:
 
         Chain: _compute_state → _activate → update_card_rels
         But employees have no cards yet → chain stops at _activate.
+
+        Rows the ORM path refuses are copied verbatim instead of being dropped
+        (D41) - see :meth:`_copy_ag_employee_rels_verbatim`.
         """
         start = time.time()
         model = 'hr.rfid.access.group.employee.rel'
@@ -199,6 +202,7 @@ class AccessImporter:
         imported = 0
         skipped = 0
         prefix = model.replace('.', '_')
+        refused = []
 
         for rec in source_records:
             ag_target = self.b._map_m2o(
@@ -239,12 +243,104 @@ class AccessImporter:
                 self.b._set_target_id(model, rec['id'], created.id)
                 imported += 1
             else:
-                skipped += 1
+                refused.append((rec['id'], vals))
+
+        copied = self._copy_ag_rels_verbatim(model, 'employee_id', refused)
+        skipped += len(refused) - copied
 
         self.results.append(self.b._make_result(
-            model, len(source_records), imported, 0, skipped,
+            model, len(source_records), imported + copied, 0, skipped,
             duration=time.time() - start,
         ))
+
+    # Written by the ORM, so a verbatim row must carry exactly these columns
+    # (plus the owner FK, which differs per relation class).
+    _AG_REL_COLUMNS = (
+        'access_group_id', 'state', 'internal_state', 'activate_on',
+        'expiration', 'visits_counting', 'permitted_visits', 'visits_counter',
+    )
+
+    def _copy_ag_rels_verbatim(self, model, owner_column, refused):
+        """Copy memberships the v19 model layer refuses to create (D41).
+
+        Both relation classes hold legacy rows that today's model layer would
+        no longer accept - the check is word for word identical in v15, so the
+        source could not recreate them either. Measured on the o15 cloud:
+
+        * employees - ``hr.employee.check_access_group`` demands the access
+          group be one of those allowed on the employee's DEPARTMENT, so an
+          employee with no department matches an empty set and every group is
+          rejected. 234 rows for one tenant: 210 active employees, 176 holding
+          a live card, 2 120 card→door permissions. Dropping them means those
+          people lose access at cutover.
+        * contacts - ``_check_constrains_contacts`` rejects overlapping active
+          periods for the same group. 3 rows, all expired service periods,
+          two of them with an expiration BEFORE the activation.
+
+        A migration copies, it does not clean (D15). The row is inserted
+        exactly as the source holds it and the derived card→door permissions
+        are then built by the MODULE'S OWN ``_activate`` - no reimplemented
+        logic. Only the Python-level check is bypassed; every database
+        constraint still applies, so a genuinely broken row is still rejected
+        and reported rather than forced in.
+        """
+        if not refused:
+            return 0
+        Model = self.env[model]
+        value_columns = list(self._AG_REL_COLUMNS) + [owner_column]
+        # The model's OWN defaults for whatever the source did not carry, so a
+        # verbatim row is indistinguishable from an ORM-created one except for
+        # the check that was skipped.
+        defaults = Model.default_get(value_columns)
+        columns = value_columns + [
+            'create_uid', 'write_uid', 'create_date', 'write_date']
+        now = fields.Datetime.now()
+        rows, source_ids = [], []
+        for source_id, vals in refused:
+            # Core does the Python->column conversion. Writing the raw values
+            # would send a v14 selection string ('active') into a v19 Boolean
+            # column - the ORM path coerces it silently, SQL does not.
+            row = [
+                Model._fields[c].convert_to_column_insert(
+                    vals[c] if c in vals else defaults.get(c), Model)
+                for c in value_columns
+            ]
+            rows.append(tuple(row + [self.env.uid, self.env.uid, now, now]))
+            source_ids.append(source_id)
+
+        # Isolated: these rows are inserted precisely BECAUSE the model layer
+        # objected, so a failure here must cost the phase nothing. A rollback
+        # takes the ledger entries with it, so the next run retries cleanly.
+        try:
+            with self.env.cr.savepoint():
+                inserted, already, rejected = self.b._direct_sql_insert_tracked(
+                    Model._table, columns, rows, model, source_ids)
+                copied = inserted + already
+                if not copied:
+                    return 0
+                # The module's own activation builds the card→door permissions.
+                # It is a no-op while the tenant's cards are still unimported
+                # (they follow in step 24) - the card import then picks the rows
+                # up like any other.
+                target_ids = [
+                    tid for tid in
+                    (self.b._get_target_id(model, sid) for sid in source_ids) if tid]
+                if target_ids:
+                    Model.browse(target_ids).with_context(**IMPORT_CONTEXT)._activate()
+        except Exception:
+            for sid in source_ids:
+                self.b.id_map.get(model, {}).pop(sid, None)
+            _logger.warning(
+                "%s: the verbatim copy of %d refused membership(s) failed - "
+                "they stay unmigrated and are reported as skipped",
+                model, len(refused), exc_info=True)
+            return 0
+
+        _logger.warning(
+            "%s: %d membership(s) the v19 model layer refuses were copied "
+            "verbatim from the source (D41); %d rejected by the database",
+            model, copied, rejected)
+        return copied
 
     def _import_ag_contact_rels(self):
         """Step 23: hr.rfid.access.group.contact.rel - exact copy from source."""
@@ -266,6 +362,7 @@ class AccessImporter:
         imported = 0
         skipped = 0
         prefix = model.replace('.', '_')
+        refused = []
 
         for rec in source_records:
             ag_target = self.b._map_m2o(
@@ -311,10 +408,13 @@ class AccessImporter:
                 self.b._set_target_id(model, rec['id'], created.id)
                 imported += 1
             else:
-                skipped += 1
+                refused.append((rec['id'], vals))
+
+        copied = self._copy_ag_rels_verbatim(model, 'contact_id', refused)
+        skipped += len(refused) - copied
 
         self.results.append(self.b._make_result(
-            model, len(source_records), imported, 0, skipped,
+            model, len(source_records), imported + copied, 0, skipped,
             duration=time.time() - start,
         ))
 

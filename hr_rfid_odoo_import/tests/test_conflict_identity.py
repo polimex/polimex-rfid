@@ -61,8 +61,12 @@ class TestConflictIdentity(TransactionCase):
         })
         # The target controller that the buggy detector latched onto: same
         # serial as the source one below, DIFFERENT hw_version.
+        # The serial is deliberately synthetic: `UNIQUE(serial_number,
+        # hw_version)` is global, so a fixture using the real 868 passes on an
+        # empty database and fails on a migration clone - which is the only
+        # database where this suite is actually worth running.
         cls.ctrl_other = cls.env["hr.rfid.ctrl"].create({
-            "name": "B ctrl", "ctrl_id": 29, "serial_number": "868",
+            "name": "B ctrl", "ctrl_id": 29, "serial_number": "T868",
             "hw_version": "11", "webstack_id": cls.ws_other.id,
         })
         # A card must carry exactly one owner (hr.rfid.card CHECK constraint).
@@ -107,7 +111,7 @@ class TestConflictIdentity(TransactionCase):
         """
         wiz = self._wizard()
         self._detect(wiz, {"hr.rfid.ctrl": [
-            {"id": 125, "display_name": "Garage", "serial_number": "868",
+            {"id": 125, "display_name": "Garage", "serial_number": "T868",
              "hw_version": "17"},
         ]})
         self.assertFalse(
@@ -120,7 +124,7 @@ class TestConflictIdentity(TransactionCase):
         """A real constraint collision is reported AND left undecided."""
         wiz = self._wizard()
         self._detect(wiz, {"hr.rfid.ctrl": [
-            {"id": 126, "display_name": "Clash", "serial_number": "868",
+            {"id": 126, "display_name": "Clash", "serial_number": "T868",
              "hw_version": "11"},
         ]})
         self.assertEqual(len(wiz.conflict_ids), 1)
@@ -167,7 +171,7 @@ class TestConflictIdentity(TransactionCase):
                 "hr.rfid.ctrl"].browse(1).id,
         ):
             self._detect(wiz, {"hr.rfid.ctrl": [
-                {"id": 126, "display_name": "Clash", "serial_number": "868",
+                {"id": 126, "display_name": "Clash", "serial_number": "T868",
                  "hw_version": "11"},
             ]})
         self.assertFalse(
