@@ -41,6 +41,19 @@ class HrRfidOdooImportWiz(models.TransientModel):
             'exact database name here.'
         ),
     )
+    ledger_slug = fields.Char(
+        string='Ledger Identity',
+        help=(
+            "Which SOURCE SYSTEM the external IDs belong to. Leave empty and it "
+            "follows the source database name, which is right for a one-shot "
+            "import.\n\n"
+            "Set it when the same source is read from more than one place - a "
+            "restored backup for the bulk load, then the live server for the "
+            "delta. The external ID is the migration's source->target map; keyed "
+            "on the database NAME it would treat the live server as a different "
+            "system and import everything a second time."
+        ),
+    )
     source_login = fields.Char(
         string='Username',
         default='admin',
@@ -622,6 +635,7 @@ class HrRfidOdooImportWiz(models.TransientModel):
             source_password=self.source_password,
             company_map={cid: company_map.get(cid) for cid in company_ids},
             options={},
+            ledger_slug=self.ledger_slug,
         )
 
     def _detect_conflicts(self, models_proxy, company_ids):
@@ -808,6 +822,7 @@ class HrRfidOdooImportWiz(models.TransientModel):
             source_password=self.source_password,
             company_map=company_map,
             options=options,
+            ledger_slug=self.ledger_slug,
         )
 
         # Apply conflict resolutions

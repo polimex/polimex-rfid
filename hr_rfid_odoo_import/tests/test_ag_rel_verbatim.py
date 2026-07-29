@@ -30,6 +30,9 @@ class _FakeSource(BaseImporter):
     def __init__(self, env, company_map, data):
         self.env = env
         self.source_db = SRC_DB
+        # Двойникът не минава през `super().__init__` - идентичността на
+        # ледгера трябва да се зададе изрично, иначе `_xml_id` гърми.
+        self.ledger_slug = SRC_DB
         self.source_url = "http://localhost:1"
         self.source_uid = 1
         self.source_password = "x"
@@ -231,3 +234,44 @@ class TestAccessGroupRelVerbatim(TransactionCase):
         res = self._result(importer, model)
         self.assertEqual(res["imported_count"], 2)
         self.assertEqual(res["skipped_count"], 0)
+
+
+@tagged("post_install", "-at_install", "rfid_odoo_import", "rfid_import_ledger")
+class TestLedgerIdentity(TransactionCase):
+    """Външният ИД ключира ИЗТОЧНИКА, не файла, от който е четен.
+
+    Пълният внос чете възстановен бекъп, делтата - живия сървър. Това са две
+    различни имена на база за ЕДНА И СЪЩА система. Ключиран по името на базата,
+    ледгерът би обявил живия сървър за нов източник и би внесъл всичко втори
+    път - за о15 облака това са 298 937 събития в дубликат.
+    """
+
+    def _importer(self, source_db, ledger_slug=None):
+        return BaseImporter(
+            env=self.env, source_url="http://localhost:1", source_db=source_db,
+            source_uid=1, source_password="x", company_map={}, options={},
+            ledger_slug=ledger_slug,
+        )
+
+    def test_same_source_read_from_two_places_shares_one_ledger(self):
+        backup = self._importer("15_cloud_src", ledger_slug="15_cloud_src")
+        live = self._importer("15_polimex.cloud", ledger_slug="15_cloud_src")
+        self.assertEqual(backup._xml_id_name("hr_rfid_event_user", 42),
+                         live._xml_id_name("hr_rfid_event_user", 42))
+
+    def test_without_the_override_the_two_diverge(self):
+        """Точно този разрив прави делтата дублираща - затова се заковава."""
+        backup = self._importer("15_cloud_src")
+        live = self._importer("15_polimex.cloud")
+        self.assertNotEqual(backup._xml_id_name("hr_rfid_card", 7),
+                            live._xml_id_name("hr_rfid_card", 7))
+
+    def test_default_follows_the_database_name(self):
+        imp = self._importer("15_cloud_src")
+        self.assertEqual(imp._xml_id_name("hr_employee", 5),
+                         "rfid_import_15_cloud_src_hr_employee_5")
+
+    def test_dots_and_dashes_are_normalised(self):
+        imp = self._importer("x", ledger_slug="15_polimex.cloud-eu")
+        self.assertEqual(imp._xml_id_name("hr_employee", 1),
+                         "rfid_import_15_polimex_cloud_eu_hr_employee_1")

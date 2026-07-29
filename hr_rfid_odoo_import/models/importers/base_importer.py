@@ -32,11 +32,17 @@ class BaseImporter:
     """
 
     def __init__(self, env, source_url, source_db, source_uid, source_password,
-                 company_map, options):
+                 company_map, options, ledger_slug=None):
         self.env = env
         # XML-RPC connection (source - read only)
         self.source_url = source_url
         self.source_db = source_db
+        # Identity of the SOURCE SYSTEM in the external IDs. Defaults to the
+        # database name (right for a one-shot import); set explicitly when the
+        # same source is read from more than one place - backup for the bulk,
+        # live server for the delta - so both write ONE ledger.
+        self.ledger_slug = (ledger_slug or source_db or '').replace(
+            '-', '_').replace('.', '_')
         self.source_uid = source_uid
         self.source_password = source_password
         self.rpc_models = xmlrpc.client.ServerProxy(
@@ -435,8 +441,7 @@ class BaseImporter:
         Includes source_db slug to prevent collisions between different sources.
         Format: rfid_import_{db_slug}_{model_prefix}_{source_id}
         """
-        db_slug = self.source_db.replace('-', '_').replace('.', '_')
-        return f'rfid_import_{db_slug}_{model_prefix}_{source_id}'
+        return f'rfid_import_{self.ledger_slug}_{model_prefix}_{source_id}'
 
     def _xml_id(self, model_prefix, source_id):
         """Full XML ID for ir.model.data.

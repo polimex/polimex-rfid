@@ -40,6 +40,9 @@ class _FakeSource(BaseImporter):
     def __init__(self, env, company_map, options, data):
         self.env = env
         self.source_db = SRC_DB
+        # Двойникът не минава през `super().__init__` - идентичността на
+        # ледгера трябва да се зададе изрично, иначе `_xml_id` гърми.
+        self.ledger_slug = SRC_DB
         self.source_url = "http://localhost:1"
         self.source_uid = 1
         self.source_password = "x"
