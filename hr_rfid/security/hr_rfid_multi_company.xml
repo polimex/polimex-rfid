@@ -5,7 +5,6 @@
         <record id="ir_rule_hr_rfid_card_multi_company" model="ir.rule">
             <field name="name">HR RFID Card: Multi Company</field>
             <field name="model_id" ref="model_hr_rfid_card"/>
-            <field name="model_id" ref="model_hr_rfid_card"/>
             <field name="global" eval="True"/>
             <field name="domain_force">[('company_id', 'in', company_ids)]</field>
             <field name="perm_read" eval="True"/>
@@ -51,6 +50,12 @@
             <field name="name">HR RFID Webstack: Multi Company</field>
             <field name="model_id" ref="model_hr_rfid_webstack"/>
             <field name="global" eval="True"/>
+            <!-- Owner only, ALL operations: this record carries the device
+                 credentials (key, module password, last IP) that authenticate
+                 the hardware on the public /hr/rfid/event route. Sharing is
+                 expressed on the dependent records (controllers, doors,
+                 readers, events) - a sharing company never needs the module
+                 record itself. -->
             <field name="domain_force">[('company_id', 'in', company_ids)]</field>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -62,8 +67,22 @@
             <field name="name">HR RFID Controllers: Multi Company</field>
             <field name="model_id" ref="model_hr_rfid_ctrl"/>
             <field name="global" eval="True"/>
-            <field name="domain_force">[('webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="domain_force">['|', ('webstack_id.company_id', 'in', company_ids), ('webstack_id.shared_company_ids', 'in', company_ids)]</field>
             <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Changing the hardware itself stays with the owner: without this
+             split a sharing company could move the controllers onto its own
+             module (hr.rfid.ctrl.webstack_id) and take the doors with them. -->
+        <record id="ir_rule_hr_rfid_controllers_multi_company_write" model="ir.rule">
+            <field name="name">HR RFID Controllers: Multi Company (change)</field>
+            <field name="model_id" ref="model_hr_rfid_ctrl"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="False"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
             <field name="perm_unlink" eval="True"/>
@@ -84,8 +103,19 @@
             <field name="name">HR RFID Doors: Multi Company</field>
             <field name="model_id" ref="model_hr_rfid_door"/>
             <field name="global" eval="True"/>
-            <field name="domain_force">[('company_id', 'in', company_ids + [False])]</field>
+            <field name="domain_force">['|', ('company_id', 'in', company_ids + [False]), ('webstack_id.shared_company_ids', 'in', company_ids)]</field>
             <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="ir_rule_hr_rfid_door_multi_company_write" model="ir.rule">
+            <field name="name">HR RFID Doors: Multi Company (change)</field>
+            <field name="model_id" ref="model_hr_rfid_door"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('company_id', 'in', company_ids + [False])]</field>
+            <field name="perm_read" eval="False"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
             <field name="perm_unlink" eval="True"/>
@@ -95,8 +125,19 @@
             <field name="name">HR RFID Readers: Multi Company</field>
             <field name="model_id" ref="model_hr_rfid_reader"/>
             <field name="global" eval="True"/>
-            <field name="domain_force">['|', '|', ('controller_id', '=', False), ('webstack_id.company_id', '=', False), ('webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="domain_force">['|', '|', '|', ('controller_id', '=', False), ('webstack_id.company_id', '=', False), ('webstack_id.company_id', 'in', company_ids), ('webstack_id.shared_company_ids', 'in', company_ids)]</field>
             <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="ir_rule_hr_rfid_reader_multi_company_write" model="ir.rule">
+            <field name="name">HR RFID Readers: Multi Company (change)</field>
+            <field name="model_id" ref="model_hr_rfid_reader"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', '|', ('controller_id', '=', False), ('webstack_id.company_id', '=', False), ('webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="False"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
             <field name="perm_unlink" eval="True"/>
@@ -106,8 +147,19 @@
             <field name="name">HR RFID Alarm Lines: Multi Company</field>
             <field name="model_id" ref="model_hr_rfid_ctrl_alarm"/>
             <field name="global" eval="True"/>
-            <field name="domain_force">[('controller_id.webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="domain_force">['|', ('controller_id.webstack_id.company_id', 'in', company_ids), ('controller_id.webstack_id.shared_company_ids', 'in', company_ids)]</field>
             <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="ir_rule_hr_rfid_alarm_line_multi_company_write" model="ir.rule">
+            <field name="name">HR RFID Alarm Lines: Multi Company (change)</field>
+            <field name="model_id" ref="model_hr_rfid_ctrl_alarm"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('controller_id.webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="False"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
             <field name="perm_unlink" eval="True"/>
@@ -117,8 +169,19 @@
             <field name="name">HR RFID Temperature and Humidity: Multi Company</field>
             <field name="model_id" ref="model_hr_rfid_ctrl_th"/>
             <field name="global" eval="True"/>
-            <field name="domain_force">[('controller_id.webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="domain_force">['|', ('controller_id.webstack_id.company_id', 'in', company_ids), ('controller_id.webstack_id.shared_company_ids', 'in', company_ids)]</field>
             <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="ir_rule_hr_rfid_th_multi_company_write" model="ir.rule">
+            <field name="name">HR RFID Temperature and Humidity: Multi Company (change)</field>
+            <field name="model_id" ref="model_hr_rfid_ctrl_th"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('controller_id.webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="False"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
             <field name="perm_unlink" eval="True"/>
@@ -128,8 +191,19 @@
             <field name="name">HR RFID Temperature and Humidity Log: Multi Company</field>
             <field name="model_id" ref="model_hr_rfid_ctrl_th_log"/>
             <field name="global" eval="True"/>
-            <field name="domain_force">[('th_id.controller_id.webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="domain_force">['|', ('th_id.controller_id.webstack_id.company_id', 'in', company_ids), ('th_id.controller_id.webstack_id.shared_company_ids', 'in', company_ids)]</field>
             <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="ir_rule_hr_rfid_th_log_multi_company_write" model="ir.rule">
+            <field name="name">HR RFID Temperature and Humidity Log: Multi Company (change)</field>
+            <field name="model_id" ref="model_hr_rfid_ctrl_th_log"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[('th_id.controller_id.webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="False"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
             <field name="perm_unlink" eval="True"/>
@@ -156,8 +230,19 @@
             <field name="name">HR RFID System Events: Multi Company</field>
             <field name="model_id" ref="model_hr_rfid_event_system"/>
             <field name="global" eval="True"/>
-            <field name="domain_force">['|', '|', ('controller_id', '=', False), ('controller_id.webstack_id.company_id', '=', False), ('controller_id.webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="domain_force">['|', '|', '|', ('controller_id', '=', False), ('controller_id.webstack_id.company_id', '=', False), ('controller_id.webstack_id.company_id', 'in', company_ids), ('controller_id.webstack_id.shared_company_ids', 'in', company_ids)]</field>
             <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="ir_rule_hr_rfid_event_system_multi_company_write" model="ir.rule">
+            <field name="name">HR RFID System Events: Multi Company (change)</field>
+            <field name="model_id" ref="model_hr_rfid_event_system"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', '|', ('controller_id', '=', False), ('controller_id.webstack_id.company_id', '=', False), ('controller_id.webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="False"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
             <field name="perm_unlink" eval="True"/>
@@ -167,18 +252,11 @@
             <field name="name">HR RFID Commands: Multi Company</field>
             <field name="model_id" ref="model_hr_rfid_command"/>
             <field name="global" eval="True"/>
+            <!-- Owner only: a command row carries the owner's card numbers and
+                 PIN codes, and creating one sends it straight to the physical
+                 controller. A sharing company's grants are delivered by the
+                 server itself, so it never needs the queue. -->
             <field name="domain_force">[('webstack_id.company_id', 'in', company_ids)]</field>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
-        </record>
-
-        <record id="ir_rule_hr_rfid_alarms_multi_company" model="ir.rule">
-            <field name="name">HR RFID Alarm line: Multi Company</field>
-            <field name="model_id" ref="model_hr_rfid_ctrl_alarm"/>
-            <field name="global" eval="True"/>
-            <field name="domain_force">[('controller_id.webstack_id.company_id', 'in', company_ids)]</field>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
@@ -207,6 +285,55 @@
             <field name="perm_unlink" eval="True"/>
         </record>
 
+        <!-- The relation models had NO multi-company rule at all: any internal
+             user could enumerate every card-door grant in the database. Scope
+             them to: my company's card / my company's (or shared-with-me) door.
+             The owner company keeps seeing every grant on its own hardware. -->
+        <record id="ir_rule_hr_rfid_card_door_rel_multi_company" model="ir.rule">
+            <field name="name">HR RFID Card-Door Relations: Multi Company</field>
+            <field name="model_id" ref="model_hr_rfid_card_door_rel"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', ('card_id.company_id', 'in', company_ids), '|', ('door_id.company_id', 'in', company_ids + [False]), ('door_id.webstack_id.shared_company_ids', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="ir_rule_hr_rfid_card_door_rel_multi_company_write" model="ir.rule">
+            <field name="name">HR RFID Card-Door Relations: Multi Company (change)</field>
+            <field name="model_id" ref="model_hr_rfid_card_door_rel"/>
+            <field name="global" eval="True"/>
+            <!-- A sharing company manages the grants of its OWN cards; only the door owner may touch the grants made by others. -->
+            <field name="domain_force">['|', ('card_id.company_id', 'in', company_ids), ('door_id.company_id', 'in', company_ids + [False])]</field>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="ir_rule_hr_rfid_access_group_door_rel_multi_company" model="ir.rule">
+            <field name="name">HR RFID Access Group-Door Relations: Multi Company</field>
+            <field name="model_id" ref="model_hr_rfid_access_group_door_rel"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', ('access_group_id.company_id', 'in', company_ids), '|', ('door_id.company_id', 'in', company_ids + [False]), ('door_id.webstack_id.shared_company_ids', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="ir_rule_hr_rfid_access_group_door_rel_multi_company_write" model="ir.rule">
+            <field name="name">HR RFID Access Group-Door Relations: Multi Company (change)</field>
+            <field name="model_id" ref="model_hr_rfid_access_group_door_rel"/>
+            <field name="global" eval="True"/>
+            <!-- A sharing company manages the grants of its OWN access groups; only the door owner may remove the grants of others. -->
+            <field name="domain_force">['|', ('access_group_id.company_id', 'in', company_ids), ('door_id.company_id', 'in', company_ids + [False])]</field>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
 
     </data>
 </odoo>

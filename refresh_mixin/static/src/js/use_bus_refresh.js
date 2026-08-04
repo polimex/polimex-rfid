@@ -63,8 +63,10 @@ export function useBusRefresh({resModel, model, reloadOnAnyChange = false}) {
         if (!isAlive()) {
             return;
         }
+        const allowed =
+            payload.company_ids || (payload.company_id ? [payload.company_id] : []);
         const sameCompany =
-            !payload.company_id || user.activeCompany?.id === payload.company_id;
+            !allowed.length || allowed.includes(user.activeCompany?.id);
         if (sameCompany) {
             reload();
         }

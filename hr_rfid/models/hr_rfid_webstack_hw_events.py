@@ -36,12 +36,31 @@ class HrRfidWebstackHwEvents(models.Model):
         """
         raise NotImplementedError('Not implemented')
 
+    def _hw_resolve_workcode(self, event_dict, dt, card_id):
+        """Fill the work code of a card event into ``event_dict``.
+
+        Work codes belong to a company (the code value itself is globally
+        unique). On a shared module the badging person may belong to a
+        sharing company, so codes of the card owner's company are accepted
+        alongside the module owner's.
+        """
+        companies = self.company_id
+        if card_id:
+            companies |= card_id.company_id
+        wc = self.env['hr.rfid.workcode'].sudo().with_user(SUPERUSER_ID).search([
+            ('workcode', '=', dt),
+            ('company_id', 'in', companies.ids),
+        ], limit=1)
+        if wc:
+            event_dict['workcode_id'] = wc.id
+        else:
+            event_dict['workcode'] = dt
+
     def _hw_parse_event(self, post_data: dict):
         self.ensure_one()
         # Helpers
         ctrl_env = self.env['hr.rfid.ctrl'].sudo().with_user(SUPERUSER_ID)
         card_env = self.env['hr.rfid.card'].sudo().with_user(SUPERUSER_ID)
-        workcodes_env = self.env['hr.rfid.workcode'].sudo().with_user(SUPERUSER_ID)
         ev_env = self.env['hr.rfid.event.user'].sudo().with_user(SUPERUSER_ID)
 
         # Find Controller — (ctrl_id, webstack_id) is logically unique,
@@ -61,16 +80,41 @@ class HrRfidWebstackHwEvents(models.Model):
             # EXIT New controller and we need setup information first
             return command.send_command(400)
 
-        # Find the Card
+        # Find the Card. The module may be shared with other companies, so the
+        # card can belong to the owner OR to any company in the sharing list.
         card_num = post_data['event']['card']
         is_card_event = card_num != '0000000000'
         if is_card_event:
+            # sudo on the M2M: its read is filtered by the env's company
+            # visibility (this path normally runs as superuser anyway).
+            allowed_company_ids = (self.company_id | self.sudo().shared_company_ids).ids
             card_id = card_env.with_context(active_test=False).search([
                 ('internal_number', '=', post_data['event']['card']),
-                ('company_id', '=', self.company_id.id)
+                ('company_id', 'in', allowed_company_ids),
             ])
             if len(card_id) > 1:
-                _logger.error(f'More than one card with the same number {card_num}')
+                # Cards are unique per (internal_number, company), so this only
+                # happens when sharing companies hold the same number. Granted
+                # duplicates are blocked at grant time, so at most one of these
+                # can open doors here - pick deterministically: granted on this
+                # controller wins, then the owner company, then the first one.
+                granted = card_id.filtered(
+                    lambda c: controller_id in c.door_rel_ids.door_id.controller_id)
+                if len(granted) > 1:
+                    # The collision guard makes this impossible for data
+                    # created after it shipped - legacy rows can still carry
+                    # two granted twins, and the [:1] pick below would then
+                    # attribute events by record id. Loud, but cannot flood:
+                    # healthy data never reaches this branch.
+                    _logger.warning(
+                        'Two granted cards share number %s on shared module %s; '
+                        'attributing to the first one. Review the grants of the '
+                        'sharing companies.', card_num, self.name)
+                owned = card_id.filtered(lambda c: c.company_id == self.company_id)
+                card_id = (granted or owned or card_id)[:1]
+                _logger.debug(
+                    'Card %s exists in several companies of the shared module %s; '
+                    'attributed the event to card %s', card_num, self.name, card_id.id)
         else:
             card_id = None
 
@@ -168,14 +212,7 @@ class HrRfidWebstackHwEvents(models.Model):
                 }
 
                 if reader_id.mode == '03' and not controller_id.is_vending_ctrl():  # Card and workcode
-                    wc = workcodes_env.search([
-                        ('workcode', '=', dt),
-                        ('company_id', '=', self.company_id.id)
-                    ])
-                    if len(wc) == 0:
-                        event_dict['workcode'] = dt
-                    else:
-                        event_dict['workcode_id'] = wc.id
+                    self._hw_resolve_workcode(event_dict, dt, card_id)
 
                 card_id.get_owner(event_dict)
                 event = ev_env.create(event_dict)
@@ -344,14 +381,7 @@ class HrRfidWebstackHwEvents(models.Model):
                 }
 
                 if reader_id.mode == '03' and not controller_id.is_vending_ctrl():  # Card and workcode
-                    wc = workcodes_env.search([
-                        ('workcode', '=', dt),
-                        ('company_id', '=', self.company_id.id)
-                    ])
-                    if len(wc) == 0:
-                        event_dict['workcode'] = dt
-                    else:
-                        event_dict['workcode_id'] = wc.id
+                    self._hw_resolve_workcode(event_dict, dt, card_id)
 
                 ev_env.create(event_dict)
                 return self.check_for_unsent_cmd(200)
@@ -390,14 +420,7 @@ class HrRfidWebstackHwEvents(models.Model):
                 }
 
                 if reader_id.mode == '03' and not controller_id.is_vending_ctrl():  # Card and workcode
-                    wc = workcodes_env.search([
-                        ('workcode', '=', dt),
-                        ('company_id', '=', self.company_id.id)
-                    ])
-                    if len(wc) == 0:
-                        event_dict['workcode'] = dt
-                    else:
-                        event_dict['workcode_id'] = wc.id
+                    self._hw_resolve_workcode(event_dict, dt, card_id)
 
                 # card_id.get_owner(event_dict)
                 event = ev_env.create(event_dict)

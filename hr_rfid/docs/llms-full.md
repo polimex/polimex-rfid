@@ -1939,6 +1939,85 @@ Python class `HrPartnerMassAccGrsWiz` in `models/res_partner.py:460`.  Transient
 - **`remove_acc_grs(self)`** — decorators: —
 
 
+## Module Sharing Between Companies <a id='sharing'></a>
+
+One physical webstack can serve several companies at once (v19.0.2.24.0+,
+mirrors the legacy Laravel `customer_web_stack` capability).
+
+- **Field**: `hr.rfid.webstack.shared_company_ids` (Many2many `res.company`,
+  relation `hr_rfid_webstack_shared_company_rel`, tracked). `company_id`
+  remains the single OWNER; sharing never transfers ownership.
+- **Record rules** (`security/hr_rfid_multi_company.xml`) - the shared branch
+  `('...webstack_id.shared_company_ids', 'in', company_ids)` grants READ ONLY.
+  Every affected rule is split in two global rules: `<id>` (perm_read, owner |
+  shared) and `<id>_write` (write/create/unlink, owner only) - Odoo picks the
+  rules matching the operation, so the split IS the boundary. Applies to ctrl,
+  door, reader, event.system, ctrl.alarm, ctrl.th(+log) and both rel models.
+  NOT shared at all (owner-only, all operations):
+  - `hr.rfid.webstack` - the record carries the device credentials (`key`
+    delegated from `polimex.ws.endpoint`, `module_password`, `last_ip`) that
+    authenticate the hardware on the public `auth='none'` `/hr/rfid/event`
+    route; with them anyone can forge events or drain the command queue.
+    Note that inherited/related fields are computed in superuser mode, so
+    read access to the row IS read access to the delegated key.
+  - `hr.rfid.command` - the payload carries the owner's card numbers and PIN
+    codes, and creating a row sends an arbitrary command to the physical
+    controller. A sharing company's grants are queued by the server itself
+    (`_create_add_card_command` / `_create_remove_card_command` run as
+    SUPERUSER), so it never needs the queue.
+  `hr.rfid.card.door.rel` and `hr.rfid.access.group.door.rel` now have their
+  own multi-company rules (they previously had NONE - any internal user could
+  read and delete every grant in the database); the sharing company manages
+  the grants of its own cards/groups, the door owner manages the rest.
+  `polimex_ip_cam` OVERRIDES the reader and event.system rules by xml_id - its
+  copies carry every base branch AND mirror the read/write split; keep them in
+  sync when touching either.
+  These boundaries are backed by adversarial tests (controller takeover,
+  controller deletion, door reconfiguration, raw command injection, credential
+  read, removing the owner's grants) - all were empirically exploitable before
+  the split.
+- **User events stay per person**: `hr.rfid.event.user` visibility follows the
+  employee/contact company (unchanged) - each company sees only its own
+  people's events on a shared door.
+- **Ownership guard** (`HrRfidWebstack._check_owner_only_change`): changing
+  `company_id`/`shared_company_ids` or unlinking the webstack is allowed only
+  for users of the owner company (or `base.group_system`). Removing a company
+  from the sharing list triggers `_revoke_shared_company_access` - it unlinks
+  that company's `hr.rfid.access.group.door.rel` rows on the module's doors
+  (cascade drops card rels and queues remove-card commands) and posts a
+  chatter note.
+- **Card-number collision guard**
+  (`HrRfidCardDoorRel._check_shared_module_card_collision`, also invoked from
+  `hr.rfid.card` number/input-type changes and from the webstack share
+  constraint): on a shared module, granted cards must not duplicate
+  `internal_number` across the sharing companies - the controller stores bare
+  numbers, so a duplicate would make attribution ambiguous.
+- **Foreign grants are TS-0 only**
+  (`HrRfidAccessGroupDoorRel._check_shared_module_grant`): a sharing company
+  may link a shared door to its own access group only with time schedule
+  number 0 (24/7). Controller TS slots (0-15) belong to the owner; a foreign
+  slot write would overwrite the owner's programming (`write_ts_id` no-ops
+  for number 0 by design).
+- **Inbound attribution** (`_hw_parse_event`): the card lookup spans
+  `company_id | shared_company_ids`. On multiple matches the pick is
+  deterministic: granted on this controller > owner company > first. Work
+  codes resolve in the badging card's company with owner fallback
+  (`_hw_resolve_workcode`; code VALUES are globally unique).
+- **Realtime refresh**: `refresh.mixin.get_company_ids()` (multi-company,
+  backward-compatible default = `get_company_id()`); payload carries
+  `company_ids` next to the legacy `company_id`; `hr_rfid_refresh_views`
+  overrides notify owner + sharing companies.
+- **CRITICAL implementation invariant**: a Many2many READ is filtered by the
+  reader's company visibility, so every INTERNAL read of
+  `shared_company_ids` (guards, diffs, refresh) goes through `sudo()`.
+  Adding a company to the share list requires a user who can read that
+  company; removing needs no such access.
+- **Retention**: event GC keeps running per the OWNER company's settings -
+  the owner's retention governs the shared module's trail.
+- **Tests**: `tests/test_webstack_sharing.py` (tags `rfid_sharing`,
+  `rfid_sharing_e2e`) - visibility matrix, guards, unshare revocation, full
+  HTTP device lifecycle.
+
 ## Module Constants <a id='constants'></a>
 
 UPPER_CASE module-level assignments — rates, mappings, priority tables, status maps. Answer 'what values does the module hard-code?' here.

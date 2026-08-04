@@ -14,3 +14,6 @@ class HrRfidDoor(models.Model):
 
     def get_company_id(self):
         return self.webstack_id.company_id
+
+    def get_company_ids(self):
+        return self.webstack_id.get_company_ids()

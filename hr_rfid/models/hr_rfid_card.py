@@ -272,6 +272,15 @@ class HrRfidCard(models.Model):
             if not card.number.isdigit() and card.card_type != self.env.ref('hr_rfid.hr_rfid_card_type_8'):
                 raise exceptions.ValidationError('Card number digits must be from 0 to 9')
 
+    @api.constrains('number', 'card_input_type', 'company_id')
+    def _check_shared_module_collisions(self):
+        # A number change on a card already granted on a shared module may
+        # collide with another sharing company's card - same rule as at grant
+        # time (see hr.rfid.card.door.rel).
+        for card in self:
+            if card.door_rel_ids:
+                card.door_rel_ids._check_shared_module_card_collision()
+
 
     @api.depends('card_reference', 'number')
     def _compute_card_name(self):

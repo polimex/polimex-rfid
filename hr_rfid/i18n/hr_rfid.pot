@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-11 08:11+0000\n"
-"PO-Revision-Date: 2026-07-11 08:11+0000\n"
+"POT-Creation-Date: 2026-08-03 18:42+0000\n"
+"PO-Revision-Date: 2026-08-03 18:42+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -109,14 +109,6 @@ msgid ""
 "4-digit PIN code for secure door access. Used in combination with RFID cards"
 " for two-factor authentication. Default '0000' means no PIN required. The "
 "PIN must be entered on door readers when accessing restricted areas."
-msgstr ""
-
-#. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__key
-msgid ""
-"4-digit security key for module authentication. Change this from the default"
-" \"0000\" to secure your module. The module must have the same key "
-"configured."
 msgstr ""
 
 #. module: hr_rfid
@@ -423,6 +415,13 @@ msgstr ""
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
 msgid "<i class=\"fa fa-door-open me-1\" title=\"Door\"/>"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
+msgid ""
+"<i class=\"fa fa-fw fa-building\" title=\"Shared with other companies\"/>\n"
+"                                                Shared"
 msgstr ""
 
 #. module: hr_rfid
@@ -832,8 +831,20 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
+msgid ""
+"Accept a new security key from this module on its next check-in? Use this "
+"only after you changed the key on the device itself."
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_res_config_settings__save_new_webstacks
 msgid "Accept new Modules"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
+msgid "Accept new key"
 msgstr ""
 
 #. module: hr_rfid
@@ -2062,6 +2073,14 @@ msgid "Card list"
 msgstr ""
 
 #. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_door.py:0
+msgid ""
+"Card number %(number)s is already in use on this shared module by another "
+"company (door \"%(door)s\"). Use a different card number for this person."
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_card_card_uniq
 msgid "Card number already exists!"
 msgstr ""
@@ -2214,11 +2233,6 @@ msgstr ""
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_department_def_acc_gr_wiz
 msgid "Change and Apply for Everyone"
-msgstr ""
-
-#. module: hr_rfid
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_token
-msgid "Channel Token"
 msgstr ""
 
 #. module: hr_rfid
@@ -4417,15 +4431,6 @@ msgid "Enable real-time"
 msgstr ""
 
 #. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_enabled
-msgid ""
-"Enable the permanent real-time connection for this module. Commands reach "
-"the module within seconds instead of waiting for its next check-in. The "
-"module keeps working the classic way whenever the real-time connection is "
-"not available."
-msgstr ""
-
-#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_sys_wiz__active
 msgid ""
 "Enable this card immediately. Uncheck to create an inactive card that can be"
@@ -5980,13 +5985,6 @@ msgid "Is Follower"
 msgstr ""
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
-msgid ""
-"Issue a new secret token for this module? The module switches to it "
-"automatically within a few minutes and stays connected."
-msgstr ""
-
-#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__key
 msgid "Key"
 msgstr ""
@@ -6145,7 +6143,7 @@ msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_last_seen
-msgid "Last time the module sent anything over the real-time connection."
+msgid "Last time the device sent anything over the real-time link."
 msgstr ""
 
 #. module: hr_rfid
@@ -6719,6 +6717,11 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_needs_provisioning
+msgid "Needs provisioning"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_add_def_acc_grs__acc_gr
 msgid "New Access Group"
 msgstr ""
@@ -7239,6 +7242,15 @@ msgid "On Delay"
 msgstr ""
 
 #. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+msgid ""
+"On a shared module your access group can only use the unrestricted (24/7) "
+"schedule for now. Time-limited access on shared modules is set up by the "
+"owner company."
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_onboarding_onboarding
 msgid "Onboarding"
 msgstr ""
@@ -7268,6 +7280,14 @@ msgstr ""
 #. module: hr_rfid
 #: model:res.groups,name:hr_rfid.hr_view_own_department
 msgid "Only show employees from own department"
+msgstr ""
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+msgid ""
+"Only the company that owns the module \"%s\" can change its owner or "
+"sharing, or delete it."
 msgstr ""
 
 #. module: hr_rfid
@@ -7396,6 +7416,15 @@ msgid ""
 "inherited groups. For example, \"Manager Access\" might inherit from "
 "\"Employee Access\" to include all employee doors plus additional manager-"
 "only doors."
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__shared_company_ids
+msgid ""
+"Other companies that use this module together with the owner company. They "
+"can see its controllers, doors and readers and grant access to their own "
+"people with their own access groups. Setting up the module and its hardware,"
+" and how long its events are kept, stay with the owner company."
 msgstr ""
 
 #. module: hr_rfid
@@ -7756,13 +7785,6 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__hb_card_present
 msgid "Present card in reader"
-msgstr ""
-
-#. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_token_old
-msgid ""
-"Previous channel token, kept only during the short rotation grace window so "
-"the module never misses a message while switching channels."
 msgstr ""
 
 #. module: hr_rfid
@@ -8387,26 +8409,13 @@ msgid "Real-time Online"
 msgstr ""
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_webstack_ws.py:0
-msgid "Real-time channel disabled."
-msgstr ""
-
-#. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_webstack_ws.py:0
-msgid "Real-time channel enabled."
-msgstr ""
-
-#. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_webstack_ws.py:0
-msgid "Real-time channel token rotated."
-msgstr ""
-
-#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "Real-time connection"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__endpoint_id
+msgid "Real-time endpoint"
 msgstr ""
 
 #. module: hr_rfid
@@ -8427,8 +8436,7 @@ msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_proto
-msgid ""
-"Real-time protocol version the module negotiated on its last connection."
+msgid "Real-time protocol version negotiated on the last connection."
 msgstr ""
 
 #. module: hr_rfid
@@ -8772,11 +8780,6 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid
-#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
-msgid "Rotate token"
-msgstr ""
-
-#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_webstack__module_username__sdk
 msgid "SDK"
 msgstr ""
@@ -8841,14 +8844,6 @@ msgid "Scan for RFID controllers connected to your module."
 msgstr ""
 
 #. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_token
-msgid ""
-"Secret token of the real-time channel. It is generated automatically and "
-"delivered to the module on its next check-in. Use \"Rotate token\" if you "
-"suspect it leaked."
-msgstr ""
-
-#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "Security"
 msgstr ""
@@ -8877,6 +8872,14 @@ msgid ""
 "• People can only exit if they're currently inside the zone\n"
 "• Prevents using the same card twice to enter without exiting first\n"
 "This helps maintain accurate occupancy counts and prevents unauthorized access."
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__key
+msgid ""
+"Security key for device authentication - the channel credential the device "
+"presents on the real-time connection. Blank or 0000 = not securely "
+"provisioned."
 msgstr ""
 
 #. module: hr_rfid
@@ -9235,6 +9238,24 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Setup the Module"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__shared_company_ids
+msgid "Shared With"
+msgstr ""
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.webstack_view_search
+msgid "Shared modules"
+msgstr ""
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+msgid ""
+"Sharing removed for %s. Their access to the doors of this module was "
+"revoked."
 msgstr ""
 
 #. module: hr_rfid
@@ -9726,6 +9747,12 @@ msgid "The Module contacted us and activated."
 msgstr ""
 
 #. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/controllers/main.py:0
+msgid "The Module was re-keyed from the insecure default."
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__pin_code
 msgid ""
 "The PIN code associated with this card's owner. Used for doors that require "
@@ -9970,9 +9997,43 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_needs_provisioning
+msgid ""
+"The device has no secure key yet (blank or the insecure 0000 placeholder). "
+"Re-key it so it presents a real generated credential."
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_online
+msgid ""
+"The device is currently connected in real time (activity within the last two"
+" heartbeat intervals)."
+msgstr ""
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+msgid ""
+"The door \"%(door)s\" belongs to another company and its module is not "
+"shared with yours."
+msgstr ""
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_door.py:0
+msgid "The door is closing."
+msgstr ""
+
+#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
 msgid "The door is opened by force/key"
+msgstr ""
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_door.py:0
+msgid "The door is opening."
 msgstr ""
 
 #. module: hr_rfid
@@ -10100,13 +10161,6 @@ msgid "The module does not be behind NAT!"
 msgstr ""
 
 #. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_online
-msgid ""
-"The module is currently connected in real time (it reported activity within "
-"the last two heartbeat intervals)."
-msgstr ""
-
-#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid ""
 "The module receives its access keys and commands within seconds, even behind"
@@ -10222,8 +10276,7 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_provision_pending
 msgid ""
-"The real-time settings changed and will be delivered to the module on its "
-"next check-in."
+"The real-time settings changed and will be delivered on the next check-in."
 msgstr ""
 
 #. module: hr_rfid
@@ -11321,11 +11374,6 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_token_rotated_at
-msgid "When the channel token was last rotated."
-msgstr ""
-
-#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th__active
 msgid ""
 "When unchecked, this sensor will be hidden and stop recording data. You can "
@@ -11349,6 +11397,11 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_notification.py:0
 msgid "Where: %s"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_enabled
+msgid "Whether the permanent real-time connection is enabled for this device."
 msgstr ""
 
 #. module: hr_rfid
@@ -11519,13 +11572,8 @@ msgid "Ws Auth Fail Since"
 msgstr ""
 
 #. module: hr_rfid
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_token_old
-msgid "Ws Token Old"
-msgstr ""
-
-#. module: hr_rfid
-#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_token_rotated_at
-msgid "Ws Token Rotated At"
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_last_n
+msgid "Ws Last N"
 msgstr ""
 
 #. module: hr_rfid

@@ -15,7 +15,7 @@ class HrRfidDoor(models.Model):
         help="ANPR camera bound to this door's reader (inherited via the reader). When set, card-to-door assignments are mirrored to the camera's whitelist automatically.",
     )
 
-    @api.depends('webstack_id', 'camera_id')
+    @api.depends('webstack_id', 'webstack_id.company_id', 'camera_id', 'camera_id.company_id')
     def compute_company_id(self):
         for door in self:
             if door.camera_id:

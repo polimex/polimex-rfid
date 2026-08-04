@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-14 08:21+0000\n"
-"PO-Revision-Date: 2026-07-14 11:22\n"
+"POT-Creation-Date: 2026-08-03 18:42+0000\n"
+"PO-Revision-Date: 2026-08-03 21:25\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -124,16 +124,6 @@ msgstr ""
 "карти за двуфакторна автентикация. По подразбиране '0000' означава, че не се "
 "изисква ПИН. ПИН кодът трябва да се въведе на четците на вратите при достъп "
 "до ограничени зони."
-
-#. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__key
-msgid ""
-"4-digit security key for module authentication. Change this from the default "
-"\"0000\" to secure your module. The module must have the same key configured."
-msgstr ""
-"4-цифров ключ за сигурност за автентикация на модула. Променете го от "
-"стойността по подразбиране \"0000\", за да защитите модула си. Модулът "
-"трябва да има конфигуриран същия ключ."
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_ctrl_action
@@ -601,6 +591,15 @@ msgstr "<i class=\"fa fa-check-circle me-1\"/>TS не е празен"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_view_kanban
 msgid "<i class=\"fa fa-door-open me-1\" title=\"Door\"/>"
 msgstr "<i class=\"fa fa-door-open me-1\" title=\"Врата\"/>"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
+msgid ""
+"<i class=\"fa fa-fw fa-building\" title=\"Shared with other companies\"/>\n"
+"                                                Shared"
+msgstr ""
+"<i class=\"fa fa-fw fa-building\" title=\"Споделено с други фирми\"/>\n"
+"                                                Споделено"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_kanban
@@ -2461,6 +2460,16 @@ msgstr "Вътрешният номер на картата вече същес�
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_card_type_view_form
 msgid "Card list"
 msgstr "Списък с карти"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_door.py:0
+msgid ""
+"Card number %(number)s is already in use on this shared module by another "
+"company (door \"%(door)s\"). Use a different card number for this person."
+msgstr ""
+"Номер на картата %(number)s вече се използва в този споделен модул от друга "
+"фирма (врата \"%(door)s\"). Използвайте друг номер на карта за това лице."
 
 #. module: hr_rfid
 #: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_card_card_uniq
@@ -5184,19 +5193,6 @@ msgid "Enable real-time"
 msgstr "Активиране на реално време"
 
 #. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_enabled
-msgid ""
-"Enable the permanent real-time connection for this module. Commands reach "
-"the module within seconds instead of waiting for its next check-in. The "
-"module keeps working the classic way whenever the real-time connection is "
-"not available."
-msgstr ""
-"Активиране на постоянната връзка в реално време за този модул. Командите "
-"достигат до модула за секунди, вместо да чакат следващата му проверка. "
-"Модулът продължава да работи по класическия начин, когато връзката в реално "
-"време не е налична."
-
-#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_sys_wiz__active
 msgid ""
 "Enable this card immediately. Uncheck to create an inactive card that can be "
@@ -7113,7 +7109,7 @@ msgstr "Последно регистрирано събитие"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_last_seen
-msgid "Last time the module sent anything over the real-time connection."
+msgid "Last time the device sent anything over the real-time link."
 msgstr ""
 "Последният път, в който модулът е изпратил нещо през връзката в реално време."
 
@@ -7766,6 +7762,11 @@ msgstr ""
 "управлява тази група."
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_needs_provisioning
+msgid "Needs provisioning"
+msgstr "Нуждае се от конфигуриране"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_add_def_acc_grs__acc_gr
 msgid "New Access Group"
 msgstr "Нова група достъп"
@@ -8354,6 +8355,18 @@ msgid "On Delay"
 msgstr "Забавяне при включване"
 
 #. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+msgid ""
+"On a shared module your access group can only use the unrestricted (24/7) "
+"schedule for now. Time-limited access on shared modules is set up by the "
+"owner company."
+msgstr ""
+"В споделен модул вашата група за достъп може да използва само неограничения "
+"(24/7) времеви график засега. Ограничен във времето достъп в споделени "
+"модули се настройва от фирмата-собственик."
+
+#. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_onboarding_onboarding
 msgid "Onboarding"
 msgstr "Въвеждане в длъжност"
@@ -8386,6 +8399,16 @@ msgstr "Показвай само данни от собствения отде�
 #: model:res.groups,name:hr_rfid.hr_view_own_department
 msgid "Only show employees from own department"
 msgstr "Показвай само служители от собствения отдел"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+msgid ""
+"Only the company that owns the module \"%s\" can change its owner or "
+"sharing, or delete it."
+msgstr ""
+"Само фирмата, която притежава модула \"%s\", може да променя собственика или "
+"споделянето му, или да го изтрие."
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__state__open
@@ -8538,6 +8561,19 @@ msgstr ""
 "наследените групи. Например, \"Достъп за мениджъри\" може да наследява от "
 "\"Достъп за служители\", за да включи всички врати за служители плюс "
 "допълнителни врати само за мениджъри."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__shared_company_ids
+msgid ""
+"Other companies that use this module together with the owner company. They "
+"can see its controllers, doors and readers and grant access to their own "
+"people with their own access groups. Setting up the module and its hardware, "
+"and how long its events are kept, stay with the owner company."
+msgstr ""
+"Други фирми, които използват този модул заедно с фирмата-собственик. Те "
+"виждат неговите контролери, врати и четци и могат да предоставят достъп на "
+"своите служители със собствени групи за достъп. Собствеността, настройките "
+"на модула и съхранението на събитията остават при фирмата-собственик."
 
 #. module: hr_rfid
 #. odoo-python
@@ -9624,30 +9660,14 @@ msgid "Real-time Online"
 msgstr "Онлайн в реално време"
 
 #. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_webstack_ws.py:0
-msgid "Real-time channel disabled."
-msgstr "Каналът за реално време е деактивиран."
-
-#. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_webstack_ws.py:0
-msgid "Real-time channel enabled."
-msgstr "Каналът за реално време е активиран."
-
-#. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_webstack_ws.py:0
-msgid ""
-"Real-time channel re-key armed: the next module check-in sets the new key."
-msgstr ""
-"Смяната на ключа за реалновремевия канал е активирана: следващото включване "
-"на модула ще зададе новия ключ."
-
-#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "Real-time connection"
 msgstr "Връзка в реално време"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__endpoint_id
+msgid "Real-time endpoint"
+msgstr "Крайна точка в реално време"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone__employee_ids
@@ -9675,8 +9695,7 @@ msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_proto
-msgid ""
-"Real-time protocol version the module negotiated on its last connection."
+msgid "Real-time protocol version negotiated on the last connection."
 msgstr ""
 "Версия на протокола за реално време, договорена от модула при последната му "
 "връзка."
@@ -10192,6 +10211,17 @@ msgstr ""
 "неоторизиран достъп."
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__key
+msgid ""
+"Security key for device authentication - the channel credential the device "
+"presents on the real-time connection. Blank or 0000 = not securely "
+"provisioned."
+msgstr ""
+"4-цифров ключ за сигурност за автентикация на модула. Променете го от "
+"стойността по подразбиране \"0000\", за да защитите модула си. Модулът "
+"трябва да има конфигуриран същия ключ."
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__armed
 msgid ""
 "Security status of this alarm line:\n"
@@ -10631,6 +10661,25 @@ msgstr "Настройка на модула за този Odoo"
 #: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
 msgid "Setup the Module"
 msgstr "Настрой модула"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__shared_company_ids
+msgid "Shared With"
+msgstr "Споделено с"
+
+#. module: hr_rfid
+#: model_terms:ir.ui.view,arch_db:hr_rfid.webstack_view_search
+msgid "Shared modules"
+msgstr "Споделени модули"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_webstack.py:0
+msgid ""
+"Sharing removed for %s. Their access to the doors of this module was revoked."
+msgstr ""
+"Споделянето за %s беше премахнато. Техният достъп до вратите на този модул "
+"беше отнет."
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_alarm__state__short
@@ -11180,6 +11229,12 @@ msgid "The Module contacted us and activated."
 msgstr "Модулът се свърза с нас и е активиран."
 
 #. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/controllers/main.py:0
+msgid "The Module was re-keyed from the insecure default."
+msgstr "Ключът на модула беше сменен от несигурния по подразбиране."
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__pin_code
 msgid ""
 "The PIN code associated with this card's owner. Used for doors that require "
@@ -11490,6 +11545,34 @@ msgstr ""
 "периоди. Оставете празно за карти, които не трябва да изтичат."
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_needs_provisioning
+msgid ""
+"The device has no secure key yet (blank or the insecure 0000 placeholder). "
+"Re-key it so it presents a real generated credential."
+msgstr ""
+"Устройството все още няма сигурен ключ (празен или несигурният плейсхолдър "
+"0000). Сменете ключа, за да представя реален генериран идентификатор."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_online
+msgid ""
+"The device is currently connected in real time (activity within the last two "
+"heartbeat intervals)."
+msgstr ""
+"Модулът в момента е свързан в реално време (отчел е активност в последните "
+"два интервала на пулс)."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+msgid ""
+"The door \"%(door)s\" belongs to another company and its module is not "
+"shared with yours."
+msgstr ""
+"Вратата \"%(door)s\" принадлежи на друга фирма и нейният модул не е споделен "
+"с вашата."
+
+#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "The door is closing."
@@ -11666,15 +11749,6 @@ msgid "The module does not be behind NAT!"
 msgstr "Модулът не трябва да е зад NAT!"
 
 #. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_online
-msgid ""
-"The module is currently connected in real time (it reported activity within "
-"the last two heartbeat intervals)."
-msgstr ""
-"Модулът в момента е свързан в реално време (отчел е активност в последните "
-"два интервала на пулс)."
-
-#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid ""
 "The module receives its access keys and commands within seconds, even behind "
@@ -11822,8 +11896,7 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_provision_pending
 msgid ""
-"The real-time settings changed and will be delivered to the module on its "
-"next check-in."
+"The real-time settings changed and will be delivered on the next check-in."
 msgstr ""
 "Настройките за реално време са променени и ще бъдат предадени на модула при "
 "следващата му проверка."
@@ -13169,6 +13242,15 @@ msgstr "Къде"
 #: code:addons/hr_rfid/models/hr_rfid_notification.py:0
 msgid "Where: %s"
 msgstr "Къде: %s"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_enabled
+msgid "Whether the permanent real-time connection is enabled for this device."
+msgstr ""
+"Активиране на постоянната връзка в реално време за този модул. Командите "
+"достигат до модула за секунди, вместо да чакат следващата му проверка. "
+"Модулът продължава да работи по класическия начин, когато връзката в реално "
+"време не е налична."
 
 #. module: hr_rfid
 #. odoo-python

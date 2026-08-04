@@ -29,3 +29,17 @@ class HRRFIDEvent(models.AbstractModel):
                 if company:
                     return company
         return False
+
+    def get_company_ids(self):
+        # An event on a shared module concerns the company of the person/card
+        # (the authoritative owner) AND every company using the module.
+        companies = self.get_company_id() or self.env['res.company']
+        webstack = self.env['hr.rfid.webstack']
+        if 'webstack_id' in self._fields:
+            webstack = self.webstack_id
+        if not webstack and 'door_id' in self._fields:
+            webstack = self.door_id.webstack_id
+        # sudo: the M2M read is filtered by the reader's company visibility.
+        if webstack.sudo().shared_company_ids:
+            companies |= webstack.get_company_ids()
+        return companies

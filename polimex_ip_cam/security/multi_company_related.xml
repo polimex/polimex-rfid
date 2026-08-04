@@ -15,14 +15,31 @@
             <field name="perm_unlink" eval="True"/>
         </record>
 
+        <!-- These records OVERRIDE the base hr_rfid rules (same xml_id): each
+             must carry EVERY branch of the base domain - the camera branch is an
+             ADDITION, not a replacement. That means the broken-chain /
+             NULL-company branches AND the shared-module branch, or installing
+             this module would silently revoke visibility hr_rfid grants.
+             hr_rfid splits these rules per operation (a sharing company only
+             READS the owner's hardware), so the overrides mirror the split:
+             the shared branch appears in the read rule only. -->
         <record id="hr_rfid.ir_rule_hr_rfid_reader_multi_company" model="ir.rule">
             <field name="name">HR RFID Readers Camera: Multi Company</field>
             <field name="model_id" ref="model_hr_rfid_reader"/>
             <field name="global" eval="True"/>
-            <field name="domain_force">['|', ('camera_id.company_id', 'in', company_ids), ('webstack_id.company_id',
-                'in', company_ids)]
-            </field>
+            <field name="domain_force">['|', '|', '|', '|', ('camera_id.company_id', 'in', company_ids), ('controller_id', '=', False), ('webstack_id.company_id', '=', False), ('webstack_id.company_id', 'in', company_ids), ('webstack_id.shared_company_ids', 'in', company_ids)]</field>
             <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="hr_rfid.ir_rule_hr_rfid_reader_multi_company_write" model="ir.rule">
+            <field name="name">HR RFID Readers Camera: Multi Company (change)</field>
+            <field name="model_id" ref="model_hr_rfid_reader"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', '|', '|', ('camera_id.company_id', 'in', company_ids), ('controller_id', '=', False), ('webstack_id.company_id', '=', False), ('webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="False"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
             <field name="perm_unlink" eval="True"/>
@@ -32,8 +49,19 @@
             <field name="name">HR RFID System Events Camera: Multi Company</field>
             <field name="model_id" ref="model_hr_rfid_event_system"/>
             <field name="global" eval="True"/>
-            <field name="domain_force">['|', ('camera_id.company_id', 'in', company_ids), ('controller_id.webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="domain_force">['|', '|', '|', '|', ('camera_id.company_id', 'in', company_ids), ('controller_id', '=', False), ('controller_id.webstack_id.company_id', '=', False), ('controller_id.webstack_id.company_id', 'in', company_ids), ('controller_id.webstack_id.shared_company_ids', 'in', company_ids)]</field>
             <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="hr_rfid.ir_rule_hr_rfid_event_system_multi_company_write" model="ir.rule">
+            <field name="name">HR RFID System Events Camera: Multi Company (change)</field>
+            <field name="model_id" ref="model_hr_rfid_event_system"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', '|', '|', ('camera_id.company_id', 'in', company_ids), ('controller_id', '=', False), ('controller_id.webstack_id.company_id', '=', False), ('controller_id.webstack_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="False"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
             <field name="perm_unlink" eval="True"/>

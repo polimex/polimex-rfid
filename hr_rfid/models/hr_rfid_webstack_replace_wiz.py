@@ -65,6 +65,12 @@ class HrRfidWebstackReplaceWiz(models.TransientModel):
         if self.replace_existing:
             self.destination_webstack_id.controllers.unlink()
         self.source_controller_ids.write({'webstack_id': self.destination_webstack_id.id})
+        # A replacement device keeps serving the same companies as the old one.
+        # sudo on the M2M reads: they are filtered by the operator's company
+        # visibility, so an incomplete list would be carried over silently.
+        shared_companies = self.source_webstack_id.sudo().shared_company_ids
+        if shared_companies and not self.destination_webstack_id.sudo().shared_company_ids:
+            self.destination_webstack_id.shared_company_ids = [(6, 0, shared_companies.ids)]
         self.source_webstack_id.active = False
         self.destination_webstack_id.active = self.destination_active_state
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')

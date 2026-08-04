@@ -6,8 +6,10 @@ import {
     asyncStep,
     mockService,
     mountWithCleanup,
+    patchWithCleanup,
     waitForSteps,
 } from "@web/../tests/web_test_helpers";
+import {user} from "@web/core/user";
 import {useBusRefresh} from "@refresh_mixin/js/use_bus_refresh";
 
 class FakeModel {
@@ -92,6 +94,31 @@ test("record_created skips when payload company_id differs", async () => {
         company_id: 99999,
     });
     expect(model.loadCount).toBe(0);
+});
+
+test("record_created honours the multi-company list of a shared record", async () => {
+    mockBusService();
+    patchWithCleanup(user, {activeCompany: {id: 7}});
+    const model = new FakeModel();
+    const env = await mountWithCleanup(HostComponent, {
+        props: {resModel: "hr.rfid.card", model},
+    });
+
+    // The record concerns other companies only -> no reload.
+    env.services.bus_service._dispatch("polimex.hr.rfid.card.record_created", {
+        company_id: 5,
+        company_ids: [5, 6],
+    });
+    expect(model.loadCount).toBe(0);
+
+    // Shared with the active company -> reload, even though the legacy
+    // single company_id points elsewhere.
+    env.services.bus_service._dispatch("polimex.hr.rfid.card.record_created", {
+        company_id: 5,
+        company_ids: [5, 7],
+    });
+    await waitForSteps(["load"]);
+    expect(model.loadCount).toBe(1);
 });
 
 test("reloadOnAnyChange forces reload regardless of visible ids", async () => {

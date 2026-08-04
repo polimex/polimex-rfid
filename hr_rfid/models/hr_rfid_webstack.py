@@ -76,6 +76,19 @@ class HrRfidWebstack(models.Model):
                                  string='Company',
                                  help='Select which company this module belongs to. Controllers and access rights will be managed within this company context.',
                                  default=lambda self: self.env.company)
+    shared_company_ids = fields.Many2many(
+        comodel_name='res.company',
+        relation='hr_rfid_webstack_shared_company_rel',
+        column1='webstack_id',
+        column2='company_id',
+        string='Shared With',
+        help='Other companies that use this module together with the owner company. '
+             'They can see its controllers, doors and readers and grant access to '
+             'their own people with their own access groups. Setting up the module '
+             'and its hardware, and how long its events are kept, stay with the '
+             'owner company.',
+        tracking=True,
+    )
     tz = fields.Selection(
         _tz_get,
         string='Timezone',
@@ -560,24 +573,85 @@ class HrRfidWebstack(models.Model):
             else:
                 record.http_link = ''
 
+    def _check_owner_only_change(self):
+        """Ownership, sharing and deletion of a module are reserved for the
+        owner company. Without this guard a manager of a company the module is
+        merely shared with could re-own the device (write company_id), drop
+        the owner from it or delete it altogether."""
+        if self.env.su or self.env.user.has_group('base.group_system'):
+            return
+        for ws in self:
+            if ws.company_id and ws.company_id not in self.env.user.company_ids:
+                raise exceptions.AccessError(self.env._(
+                    'Only the company that owns the module "%s" can change its '
+                    'owner or sharing, or delete it.', ws.name))
+
+    def _revoke_shared_company_access(self, companies):
+        """A company removed from the sharing list loses every grant its
+        access groups hold on this module's doors. The unlink cascade drops
+        the card-door relations and queues the remove-card commands."""
+        self.ensure_one()
+        self.env['hr.rfid.access.group.door.rel'].sudo().search([
+            ('door_id.webstack_id', '=', self.id),
+            ('access_group_id.company_id', 'in', companies.ids),
+        ]).unlink()
+        # Post-condition sweep: the cascade above skips cards that are not
+        # "ready" right now (e.g. expired but not yet deactivated by the cron)
+        # and stale grant rows without a covering access-group link. Their
+        # unlink() queues the remove-card commands itself.
+        self.env['hr.rfid.card.door.rel'].sudo().search([
+            ('door_id.webstack_id', '=', self.id),
+            ('card_id.company_id', 'in', companies.ids),
+        ]).unlink()
+        # sudo: the acting user may be an owner-company manager who cannot
+        # read the removed company's record; the note must still name it.
+        self.message_post(body=self.env._(
+            'Sharing removed for %s. Their access to the doors of this module '
+            'was revoked.', ', '.join(companies.sudo().mapped('name'))))
+
+    @api.constrains('shared_company_ids')
+    def _check_shared_card_number_collisions(self):
+        # Defence in depth: the per-grant check lives on hr.rfid.card.door.rel;
+        # this catches a sharing change that would legalise an already
+        # conflicting grant set (e.g. re-adding a company via import paths).
+        # NB: a Many2many READ is filtered by the reader's company visibility,
+        # so every internal read of shared_company_ids goes through sudo.
+        for ws in self:
+            if ws.sudo().shared_company_ids:
+                ws.controllers.door_ids.card_rel_ids._check_shared_module_card_collision()
+
     def write(self, vals):
-        if 'tz' not in vals:
-            return super(HrRfidWebstack, self).write(vals)
+        if 'company_id' in vals or 'shared_company_ids' in vals:
+            self._check_owner_only_change()
+        # Snapshot what the post-write reactions need to compare against.
+        # sudo on the M2M: its read is filtered by the reader's company
+        # visibility, so an owner manager who cannot see the removed company
+        # would otherwise compute an empty diff and skip the revocation.
+        old_shared = ({ws: ws.sudo().shared_company_ids for ws in self}
+                      if 'shared_company_ids' in vals else {})
+        old_tz = {ws: ws.tz for ws in self} if 'tz' in vals else {}
+
+        res = super(HrRfidWebstack, self).write(vals)
 
         commands_env = self.env['hr.rfid.command']
+        for ws, tz in old_tz.items():
+            if tz == ws.tz:
+                continue
+            for ctrl in ws.controllers:
+                commands_env.create([{
+                    'webstack_id': ctrl.webstack_id.id,
+                    'controller_id': ctrl.id,
+                    'cmd': 'D7',
+                }])
+        for ws, shared in old_shared.items():
+            removed = shared - ws.sudo().shared_company_ids
+            if removed:
+                ws._revoke_shared_company_access(removed)
+        return res
 
-        for ws in self:
-            old_tz = ws.tz
-            super(HrRfidWebstack, ws).write(vals)
-            new_tz = ws.tz
-
-            if old_tz != new_tz:
-                for ctrl in ws.controllers:
-                    commands_env.create([{
-                        'webstack_id': ctrl.webstack_id.id,
-                        'controller_id': ctrl.id,
-                        'cmd': 'D7',
-                    }])
+    def unlink(self):
+        self._check_owner_only_change()
+        return super(HrRfidWebstack, self).unlink()
 
     # Commands to all controllers in webstack
     def _sync_clocks(self):

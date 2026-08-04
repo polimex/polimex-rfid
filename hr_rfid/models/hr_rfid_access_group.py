@@ -489,6 +489,28 @@ class HrRfidAccessGroupDoorRel(models.Model):
         required=True
     )
 
+    @api.constrains('access_group_id', 'door_id', 'time_schedule_id')
+    def _check_shared_module_grant(self):
+        """A company the module is shared with may include its doors in its
+        own access groups, but only with the unrestricted schedule: the
+        controller's schedule slots belong to the owner company, and writing a
+        foreign schedule into a slot would overwrite the owner's programming."""
+        for rel in self:
+            ag_company = rel.access_group_id.company_id
+            door_company = rel.door_id.company_id
+            if not ag_company or not door_company or ag_company == door_company:
+                continue
+            # sudo: the M2M read is filtered by the reader's company visibility.
+            if ag_company not in rel.door_id.webstack_id.sudo().shared_company_ids:
+                raise exceptions.ValidationError(self.env._(
+                    'The door "%(door)s" belongs to another company and its module '
+                    'is not shared with yours.', door=rel.door_id.name))
+            if rel.time_schedule_id.number != 0:
+                raise exceptions.ValidationError(self.env._(
+                    'On a shared module your access group can only use the '
+                    'unrestricted (24/7) schedule for now. Time-limited access on '
+                    'shared modules is set up by the owner company.'))
+
     @api.model
     def check_for_ts_inconsistencies(self, rels1, rels2):
         for door_rel in rels1:
@@ -522,7 +544,11 @@ class HrRfidAccessGroupDoorRel(models.Model):
             super(HrRfidAccessGroupDoorRel, rel).unlink()
             door_id.controller_id.delete_ts_id(ts_id)
             for card, ts, alarm_right in cards:
-                self.env['hr.rfid.card.door.rel'].check_relevance_slow(card, door_id, alarm_right)
+                # NB: the third positional parameter of check_relevance_slow is
+                # ts_id (an optimisation only) - passing alarm_right there made
+                # the "This should never happen" guard fire whenever a card
+                # kept access to the door through ANOTHER group.
+                self.env['hr.rfid.card.door.rel'].check_relevance_slow(card, door_id)
 
 
 def _check_overlap(ranges):

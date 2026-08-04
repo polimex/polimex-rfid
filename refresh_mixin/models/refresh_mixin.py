@@ -35,6 +35,14 @@ class RefreshMixin(models.AbstractModel):
             return self.company_id
         return False
 
+    def get_company_ids(self):
+        """Every company that should receive the realtime refresh for these
+        records. Defaults to the single company from :meth:`get_company_id`;
+        override when a record concerns more than one company (e.g. hardware
+        shared between companies)."""
+        company_id = self.get_company_id()
+        return company_id or self.env['res.company']
+
     def _get_refresh_payload_extra(self):
         """
         Override this method in models to add extra data to the bus payload.
@@ -61,27 +69,33 @@ class RefreshMixin(models.AbstractModel):
         Args:
             operation (str): 'create' or 'write'
         """
-        # Resolve the company that owns these records. An empty result is
+        # Resolve the companies these records concern. An empty result is
         # expected control flow — a global record, or an event whose
         # company-bearing relations are all empty — for which the realtime
         # refresh is simply skipped. That is not an operator-actionable
         # problem, so it is logged at debug (silent by default) rather than
         # flooding the log with a WARNING on every such create/write.
-        company_id = self.get_company_id()
-        if not company_id:
+        companies = self.get_company_ids()
+        if not companies:
             _logger.debug(
                 'No company resolved for %s %s; skipping realtime refresh',
                 self._name, self.ids)
             return
 
-        # Check if company has realtime refresh enabled
-        if not company_id.realtime_refresh:
-            return  # Do not send notice if company is not in realtime mode
+        # Notify only the companies that have realtime refresh enabled.
+        # sudo: a shared record legitimately concerns companies the acting
+        # user is not allowed to read (res.company is restricted to the
+        # user's own companies), and reading their flag must not raise.
+        companies = companies.sudo().filtered('realtime_refresh')
+        if not companies:
+            return
 
-        # Build base payload
+        # Build base payload. `company_id` stays for backward compatibility
+        # with clients that predate the multi-company `company_ids` list.
         payload = {
             'record_ids': self.ids,
-            'company_id': company_id.id,
+            'company_id': companies[0].id,
+            'company_ids': companies.ids,
             'model': self._name,
             'operation': operation,
         }

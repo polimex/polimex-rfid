@@ -81,6 +81,8 @@
                                 <field name="tz_offset" invisible="1" groups="base.group_no_one"/>
                                 <field name="behind_nat" widget="boolean_toggle"/>
                                 <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="shared_company_ids" widget="many2many_tags"
+                                       groups="base.group_multi_company"/>
                             </group>
                             <p class="text-muted" colspan="2">
                                 <i class="fa fa-lightbulb-o" role="img"/>
@@ -144,6 +146,8 @@
                     <field name="active" invisible="1"/>
                     <field name="last_update" invisible="1"/>
                     <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="shared_company_ids" widget="many2many_tags" optional="hide"
+                           groups="base.group_multi_company"/>
                 </list>
             </field>
         </record>
@@ -160,6 +164,9 @@
                     <field name="updated_at"/>
                     <filter string="Show all" name="showall"
                             domain="['|',('active', '=', False),('active', '=', True)]"/>
+                    <filter string="Shared modules" name="shared_modules"
+                            domain="[('shared_company_ids', '!=', False)]"
+                            groups="base.group_multi_company"/>
                     <searchpanel>
                         <field name="available" icon="fa-info-circle" color="#875A7B"/>
                     </searchpanel>
@@ -174,6 +181,7 @@
                 <kanban create="0" group_create="false" default_order='active desc' sample="1">
                     <field name="id"/>
                     <field name="active"/>
+                    <field name="shared_company_ids"/>
                     <field name="last_update"/>
                     <field name="controllers_count"/>
                     <field name="system_event_count"/>
@@ -228,6 +236,11 @@
                                 <div class="oe_kanban_footer">
                                     <div class="o_kanban_record_bottom d-flex justify-content-between align-items-center">
                                         <div class="oe_kanban_bottom_left">
+                                            <span t-if="record.shared_company_ids.raw_value.length > 0"
+                                                  class="badge rounded-pill text-bg-info me-1">
+                                                <i class="fa fa-fw fa-building" title="Shared with other companies"/>
+                                                Shared
+                                            </span>
                                             <span t-if="record.controllers_count.value > 0"
                                                   class="badge rounded-pill me-1">
                                                 <a name="return_action_to_open" type="object"

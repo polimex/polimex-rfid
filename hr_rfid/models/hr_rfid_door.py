@@ -226,7 +226,7 @@ class HrRfidDoor(models.Model):
         help='Total number of system events (alarms, errors, configuration changes) for this door. Click to view system logs.'
     )
 
-    @api.depends('webstack_id')
+    @api.depends('webstack_id', 'webstack_id.company_id')
     def compute_company_id(self):
         for door in self:
             door.company_id = door.webstack_id.company_id if door.webstack_id else False
@@ -865,6 +865,33 @@ class HrRfidCardDoorRel(models.Model):
             if len(rel.door_id.access_group_ids) == 0:
                 raise exceptions.ValidationError('Door must be part of an access group!')
 
+    @api.constrains('card_id', 'door_id')
+    def _check_shared_module_card_collision(self):
+        """On a module shared between companies the controller stores bare
+        card numbers with no company attached, so two granted cards carrying
+        the same number would make events impossible to attribute. Block the
+        duplicate at grant time - this runs for every creation path,
+        including the superuser-driven ones."""
+        for rel in self:
+            webstack = rel.door_id.webstack_id
+            # sudo: the M2M read is filtered by the reader's company
+            # visibility - the guard must see the REAL sharing list, or an
+            # owner-side grant would silently skip the collision check.
+            if not webstack or not webstack.sudo().shared_company_ids:
+                continue
+            twin = self.sudo().search([
+                ('door_id.webstack_id', '=', webstack.id),
+                ('card_id', '!=', rel.card_id.id),
+                ('card_id.internal_number', '=', rel.card_id.internal_number),
+                ('card_id.company_id', '!=', rel.card_id.company_id.id),
+            ], limit=1)
+            if twin:
+                raise exceptions.ValidationError(self.env._(
+                    'Card number %(number)s is already in use on this shared module '
+                    'by another company (door "%(door)s"). Use a different card '
+                    'number for this person.',
+                    number=rel.card_id.number, door=twin.door_id.name))
+
     @api.model_create_multi
     def create(self, vals_list):
         records = self.env['hr.rfid.card.door.rel']
@@ -899,5 +926,11 @@ class HrRfidCardDoorRel(models.Model):
         if create_cmd:
             for rel in self:
                 if rel.door_id.controller_id:
-                    rel._create_remove_card_command()
+                    # Delivering the change to the controller is a server-side
+                    # effect of dropping the grant, not a user operation on the
+                    # queue - mirror the SUPERUSER handling of the add-card
+                    # command in create(). On a shared module the queue belongs
+                    # to the owner company, so a sharing company revoking its
+                    # own grant would otherwise be denied.
+                    rel.with_user(SUPERUSER_ID)._create_remove_card_command()
         return super().unlink()

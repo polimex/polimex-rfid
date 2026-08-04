@@ -67,6 +67,42 @@ Requirement: the server must be reachable over HTTPS in production and run
 with a websocket (gevent) port - see the technical reference for deployment
 notes.
 
+### Sharing a module between companies
+
+One physical module can serve two (or more) companies at the same time - for
+example two schools sharing one building entrance. The module always has ONE
+owner company; the "Shared With" field on the module form lists the other
+companies that use it.
+
+- **What the sharing companies get**: they SEE the controllers, doors and
+  readers of the module, and can add its doors to their OWN access groups to
+  give access to their OWN people. System events of the module (forced door,
+  power loss, unknown card) are visible to every company using it. They cannot
+  change the hardware itself - configuring, moving or deleting controllers and
+  doors, and the command queue, stay with the owner company (the queue lists
+  the owner's card numbers and PIN codes).
+- **The module record stays private to the owner**: it holds the device
+  credentials that let the hardware sign in, so it is never shown to the
+  sharing companies. They work with the doors and readers instead.
+- **What stays private**: cards, access groups, schedules, work codes and
+  people are never shared. Each company sees only its own people's access
+  events - even on a shared door.
+- **Ownership stays with the owner**: only the owner company (or a system
+  administrator) can change the owner, change the sharing list or delete the
+  module.
+- **Setting it up**: adding a company to "Shared With" requires a user who can
+  see both companies (typically the administrator serving both). The owner
+  company can always REMOVE a company from the list on its own - the removed
+  company's access rights on the module's doors are revoked automatically.
+- **Card numbers on a shared module**: people from the sharing companies must
+  carry different card numbers on the shared doors - the hardware stores only
+  the number, so a duplicate would make the events ambiguous. The system
+  refuses such a duplicate at the moment access is granted and tells you which
+  number collides.
+- **Time schedules**: a sharing company grants access with the unrestricted
+  (24/7) schedule. Time-limited access on a shared module is configured by the
+  owner company.
+
 
 ### HR RFID Access Control
 
