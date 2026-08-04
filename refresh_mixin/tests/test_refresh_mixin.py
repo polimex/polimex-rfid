@@ -20,19 +20,34 @@ class TestRefreshMixin(common.TransactionCase):
         return patch.object(bus_cls, "_sendone")
 
     def _make_stub(self, *, has_company=True, realtime_refresh=True,
-                   ids=(1, 2), extra_payload=None):
+                   ids=(1, 2), extra_payload=None, companies=None):
+        """Stub a recordset shape for send_notice().
+
+        The company is a REAL res.company recordset: send_notice works on
+        recordsets (sudo/filtered/ids), so a duck-typed object would test a
+        contract nobody implements. `companies` overrides get_company_ids to
+        cover a consumer whose record concerns several companies (shared
+        hardware); by default the stub exercises the mixin's own single-company
+        delegation.
+        """
         Mixin = self.env["refresh.mixin"]
 
-        company = SimpleNamespace(id=99, realtime_refresh=realtime_refresh)
+        company = self.env.company
+        company.realtime_refresh = realtime_refresh
         stub = SimpleNamespace(
             _name=Mixin._name,
             _fields=({"company_id": object()} if has_company else {}),
             ids=list(ids),
             company_id=company if has_company else False,
             env=self.env,
-            get_company_id=lambda: (company if has_company else False),
+            get_company_id=lambda: (company if has_company else self.env["res.company"]),
             _get_refresh_payload_extra=lambda: (extra_payload or {}),
         )
+        stub.get_company_ids = (
+            (lambda: companies) if companies is not None
+            else (lambda: Mixin.get_company_ids.__func__(stub))
+        )
+        self.company = company
         return stub, Mixin
 
     def test_send_notice_emits_record_changed_for_write(self):
@@ -45,7 +60,8 @@ class TestRefreshMixin(common.TransactionCase):
         self.assertEqual(notif_type, "polimex.refresh.mixin.record_changed")
         self.assertEqual(payload["operation"], "write")
         self.assertEqual(payload["record_ids"], [1, 2])
-        self.assertEqual(payload["company_id"], 99)
+        self.assertEqual(payload["company_id"], self.company.id)
+        self.assertEqual(payload["company_ids"], [self.company.id])
 
     def test_send_notice_emits_record_created_for_create(self):
         stub, Mixin = self._make_stub()
@@ -88,3 +104,30 @@ class TestRefreshMixin(common.TransactionCase):
         _, _, payload = mock_send.call_args.args[:3]
         self.assertTrue(payload["is_alert"])
         self.assertEqual(payload["priority"], 5)
+
+    def test_payload_lists_every_company_concerned(self):
+        """A record shared between companies (e.g. one access-control module
+        serving two tenants) must reach the screens of ALL of them: the payload
+        carries the full list, and `company_id` stays for older clients."""
+        second = self.env["res.company"].create({"name": "Refresh Mixin Co 2"})
+        second.realtime_refresh = True
+        stub, Mixin = self._make_stub()
+        both = self.env.company | second
+        stub.get_company_ids = lambda: both
+        with self._patch_bus() as mock_send:
+            Mixin.send_notice.__func__(stub, "write")
+        _, _, payload = mock_send.call_args.args[:3]
+        self.assertEqual(set(payload["company_ids"]), set(both.ids))
+        self.assertIn(payload["company_id"], both.ids)
+
+    def test_only_companies_with_realtime_refresh_are_notified(self):
+        """A company that switched realtime off is dropped from the list even
+        when it shares the record."""
+        quiet = self.env["res.company"].create({"name": "Refresh Mixin Quiet"})
+        quiet.realtime_refresh = False
+        stub, Mixin = self._make_stub()
+        stub.get_company_ids = lambda: self.env.company | quiet
+        with self._patch_bus() as mock_send:
+            Mixin.send_notice.__func__(stub, "write")
+        _, _, payload = mock_send.call_args.args[:3]
+        self.assertEqual(payload["company_ids"], [self.company.id])
