@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="False">
+    <!-- noupdate="1" mirrors what Odoo core passes for demo files
+         (modules/loading.py: convert_file(..., noupdate=kind == 'demo')).
+         An explicit "False" opts out and turns every record here into a
+         deletion candidate for ir.model.data._process_end on any database
+         that no longer reloads demo data. -->
+    <data noupdate="1">
         <record id="demo_user_event_1" model="hr.rfid.event.user">
             <field name="event_action">1</field>    <!-- Access Granted-->
             <field name="employee_id" ref="hr.employee_admin"/>

@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="False">
+    <!-- noupdate="1" is what Odoo core already passes for every demo file
+         (modules/loading.py: convert_file(..., noupdate=kind == 'demo')).
+         Spelling noupdate="False" here OPTED OUT of that protection, and the
+         opt-out is what breaks production upgrades: once a database stops
+         reloading demo (the flag is cleared whenever a demo load fails), every
+         xml id of this file looks removed-from-the-module to
+         ir.model.data._process_end, which then deletes the records. Sales
+         reference a service with ondelete RESTRICT, so the delete raises and
+         the WHOLE registry load is rolled back - the module cannot upgrade at
+         all. Demo records are user-touchable data; they are never rewritten
+         nor garbage-collected on -u. -->
+    <data noupdate="1">
         <record id="base.user_demo" model="res.users">
             <field name="group_ids" eval="[(4, ref('rfid_service_base.group_card_manager'))]"/>
         </record>
