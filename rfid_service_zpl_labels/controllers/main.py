@@ -11,13 +11,13 @@ class RfidLabelPreviewController(http.Controller):
         sale = request.env['rfid.service.sale'].browse(sale_id)
         
         if not sale.exists():
-            return request.not_found()
+            raise request.not_found()
         
         # Check access rights
         try:
             sale.check_access('read')
         except Exception:
-            return request.not_found()
+            raise request.not_found()
         
         # Generate ZPL content using the sale's centralized method
         # This ensures consistency across all methods
@@ -48,13 +48,13 @@ class RfidLabelPreviewController(http.Controller):
         service = request.env['rfid.service'].browse(service_id)
         
         if not service.exists():
-            return request.not_found()
+            raise request.not_found()
         
         # Check access rights
         try:
             service.check_access('read')
         except Exception:
-            return request.not_found()
+            raise request.not_found()
         
         # Get the service's configured template or default
         if service.label_template_id:

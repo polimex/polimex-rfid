@@ -92,10 +92,10 @@ class IpcamController(Controller):
         files = request.httprequest.files
         if not files:
             _logger.error("No files uploaded.")
-            return request.not_found()
+            raise request.not_found()
 
         if not self.validate_files(files):
-            return request.not_found()
+            raise request.not_found()
 
         files_data = {}
         for file_key, file_storage in files.items():
@@ -109,7 +109,7 @@ class IpcamController(Controller):
                     files_data[file_base_name] = parsed_xml
                 except etree.XMLSyntaxError as e:
                     _logger.error(f"Invalid XML content in {file_storage.filename}: {e}")
-                    return request.not_found()
+                    raise request.not_found()
             elif file_storage.filename.endswith('.jpg'):
                 image_base64 = base64.b64encode(file_content).decode('utf-8')
                 files_data[file_storage.filename] = f'data:image/jpeg;base64,{image_base64}'
@@ -135,13 +135,13 @@ class IpcamController(Controller):
             if not camera_id:
                 _logger.error("ANPR event (token=%s, deviceUUID=%s) from %s matched no camera.",
                               camera_token, device_uuid, src_ip)
-                return request.not_found()
+                raise request.not_found()
             # SECURITY: when the camera is identified by its URL token the token
             # IS the authentication and works behind NAT, so the source-IP check
             # (which fails behind NAT) is skipped. Without a token, fall back to
             # verifying the request's source IP as before.
             if not token_camera and not self._verify_camera_source(camera_id):
-                return request.not_found()
+                raise request.not_found()
             # The body-reported IP is never trusted for identification or for
             # repointing outbound calls (SSRF guard). It frequently differs from
             # the real address (stale camera config / NAT) — log at debug only;
