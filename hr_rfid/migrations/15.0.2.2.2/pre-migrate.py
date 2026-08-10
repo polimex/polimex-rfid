@@ -12,9 +12,13 @@ def migrate(cr, version):
     """
     _logger.info("Starting hr_rfid pre-migration 15.0.2.2.2")
 
-    # Drop the constraint if it exists
+    # Drop the constraint if it exists. IF EXISTS on the TABLE as well:
+    # pre-migrate runs before the ORM creates tables, so on databases
+    # upgrading from a version older than the hr.rfid.notification model
+    # the table does not exist yet and a bare ALTER TABLE would crash the
+    # whole registry load (caught on a client deploy, 2026-08-10).
     cr.execute("""
-        ALTER TABLE hr_rfid_notification
+        ALTER TABLE IF EXISTS hr_rfid_notification
         DROP CONSTRAINT IF EXISTS hr_rfid_notification_no_notification_recipients
     """)
 
