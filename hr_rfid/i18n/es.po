@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-03 18:42+0000\n"
-"PO-Revision-Date: 2026-08-03 21:42\n"
+"POT-Creation-Date: 2026-08-11 14:23+0000\n"
+"PO-Revision-Date: 2026-08-11 17:24\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -3085,8 +3085,8 @@ msgstr "Eventos del Contacto"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__last_update
-msgid "Contacted in last 10 min"
-msgstr "Contactado en los últimos 10 min"
+msgid "Contacted recently"
+msgstr "Наскоро осъществен контакт"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__contact_ids
@@ -5857,6 +5857,11 @@ msgid "HR RFID: Check card activation status"
 msgstr "HR RFID: Verificar estado de activación de tarjeta"
 
 #. module: hr_rfid
+#: model:ir.actions.server,name:hr_rfid.hr_rfid_check_module_presence_cron_ir_actions_server
+msgid "HR RFID: Check module presence"
+msgstr "HR RFID: Проверка за наличност на модул"
+
+#. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.hr_rfid_read_ctrl_status_cron_ir_actions_server
 msgid "HR RFID: Read controller statuses"
 msgstr "HR RFID: Leer estados de controladores"
@@ -6066,6 +6071,17 @@ msgstr ""
 "válida (en segundos). Valores habituales: 3-5 segundos para puertas "
 "normales, 10-15 segundos para acceso de personas con discapacidad. "
 "Establezca 0 para desbloqueo permanente (no recomendado)."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__presence_misses
+msgid ""
+"How many presence scans in a row found this module silent. Reset by the next"
+" contact; the module is reported as dark only once the count reaches its "
+"limit."
+msgstr ""
+"Колко последователни сканирания за присъствие са установили, че този модул "
+"мълчи. Нулира се от следващия контакт; модулът се отчита като неактивен едва"
+" когато броят достигне своя лимит."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.card_barcode_report_template_foldable_badge
@@ -6443,16 +6459,6 @@ msgid ""
 msgstr ""
 "Indica si la sirena de alarma está actualmente activa. Cuando está marcado, "
 "la sirena está sonando. Esto se controla a nivel del controlador."
-
-#. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__last_update
-msgid ""
-"Indicates if the module has communicated with Odoo in the last 10 minutes. "
-"Used to determine if the module is currently online and functioning."
-msgstr ""
-"Indica si el módulo se ha comunicado con Odoo en los últimos 10 minutos. Se "
-"utiliza para determinar si el módulo está actualmente en línea y en "
-"funcionamiento."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group_contact_rel__state
@@ -7430,6 +7436,11 @@ msgstr "Error de entrega de mensaje"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__message_ids
 msgid "Messages"
 msgstr "Mensajes"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__presence_misses
+msgid "Missed presence checks"
+msgstr "Пропуснати проверки за присъствие"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_ctrl_alarm_group_view_kanban
@@ -13054,6 +13065,17 @@ msgstr "Dónde"
 #: code:addons/hr_rfid/models/hr_rfid_notification.py:0
 msgid "Where: %s"
 msgstr "Dónde: %s"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__last_update
+msgid ""
+"Whether the module is currently reachable. Set when it checks in and cleared"
+" by the presence scan once it has been silent for too long - a module that "
+"goes dark cannot report it itself."
+msgstr ""
+"Дали модулът е достъпен в момента. Задава се, когато той се регистрира, и се"
+" изчиства от сканирането за наличност, след като е бил в мълчание твърде "
+"дълго - модул, който прекъсне връзка, не може сам да го докладва."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_enabled

@@ -67,6 +67,34 @@ Requirement: the server must be reachable over HTTPS in production and run
 with a websocket (gevent) port - see the technical reference for deployment
 notes.
 
+### When the screens update, and when they stay quiet
+
+The monitoring screens refresh by themselves when something happens that an
+operator would act on: a badge at a door, a zone in alarm, a refused command, a
+module that went dark or came back, or any change someone makes in Odoo.
+
+They deliberately do NOT refresh for device housekeeping. A module checks in
+about once a minute and a controller reports its status every five minutes;
+those messages repeat the same picture, and repainting the screen for each of
+them was the single largest source of traffic in the system - on a 176-module
+site, roughly half a million updates a day, enough to overwhelm the real-time
+connection. The data is still recorded; only the pointless refresh is dropped.
+
+**Module presence.** A module that stops reporting cannot tell anyone - so the
+system checks for itself every five minutes. A module that has been silent for
+more than ten minutes counts as a miss, and after three misses in a row it is
+reported as no longer reachable: the list and the cards turn from green to
+orange. The tolerance exists because only modules Odoo set up itself are
+guaranteed to report every minute - one configured by hand on the device may
+report more slowly, and a single missed check-in must not paint it orange.
+Coming back is not delayed by any of this: the very first check-in turns it
+green again at once. Modules on the real-time connection are judged by that
+connection, not by the older check-in timestamp, so a healthy real-time module
+is never reported as dark.
+
+Note this corrects a long-standing defect: until now the indicator only ever
+turned green and never back, so a module that had gone dark still looked healthy.
+
 ### Sharing a module between companies
 
 One physical module can serve two (or more) companies at the same time - for

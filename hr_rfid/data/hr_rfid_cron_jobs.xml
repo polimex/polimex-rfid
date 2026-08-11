@@ -47,6 +47,18 @@
             <field name="priority">10</field>
         </record>
 
+        <!-- Runs every 5 minutes to notice modules that stopped reporting
+             (the rationale lives on _cron_check_presence). -->
+        <record id="hr_rfid_check_module_presence_cron" model="ir.cron">
+            <field name="name">HR RFID: Check module presence</field>
+            <field name="model_id" ref="model_hr_rfid_webstack"/>
+            <field name="code">model._cron_check_presence()</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">5</field>
+            <field name="interval_type">minutes</field>
+            <field name="priority">10</field>
+        </record>
+
 
         <!-- Real-time channel: re-publish commands that got no response
              while their module is connected (lost bus message / device

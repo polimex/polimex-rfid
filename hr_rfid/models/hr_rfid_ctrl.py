@@ -959,13 +959,13 @@ class HrRfidController(models.Model):
 
             new_dict = {}
             if 't' in data_dict:
-                new_dict.update({'temperature': data_dict['t']})
-                # if sensor_number == 0:
-                c.temperature = data_dict['t']
+                new_dict['temperature'] = data_dict['t']
             if 'h' in data_dict:
-                new_dict.update({'humidity': data_dict['h']})
-                # if sensor_number == 0:
-                c.humidity = data_dict['h']
+                new_dict['humidity'] = data_dict['h']
+            # One write, not one per reading: each assignment is a separate
+            # write() and the controller mirrors these on every 5-minute poll.
+            if new_dict:
+                c.write(new_dict)
             if new_dict:
                 th_id.write(new_dict)
                 return th_id

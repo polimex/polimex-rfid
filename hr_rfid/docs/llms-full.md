@@ -1939,6 +1939,67 @@ Python class `HrPartnerMassAccGrsWiz` in `models/res_partner.py:460`.  Transient
 - **`remove_acc_grs(self)`** — decorators: —
 
 
+## Realtime Refresh: the telemetry gate <a id='telemetry-gate'></a>
+
+`refresh.mixin` pushes one `bus.bus` row per public `write()` on the seven
+models `hr_rfid_refresh_views` attaches it to. Derived from a live fleet (176
+modules, 60 s heartbeat): **549 552 rows/day, of which 92% was device
+housekeeping**. `refresh_mixin` 19.0.1.5.0 added `_refresh_ignore_fields`; a
+write is silent only when **every** key of `vals` is listed.
+
+- **`hr.rfid.webstack`** ignores `updated_at`, `last_ip` and the delegated
+  `ws_last_seen` / `ws_last_n` / `ws_auth_fail_*` (they reach this model through
+  the `_inherits` to `polimex.ws.endpoint`, so they hit this `write()` too).
+- **`hr.rfid.ctrl`** ignores the analog readings `system_voltage`,
+  `input_voltage`, `temperature`, `humidity`, plus `cards_count` / `read_b3_cmd`.
+- **Write-on-change is required alongside the list**, not instead of it:
+  `parse_heartbeat` writes `version` only when it changed (compare against the
+  value TRUNCATED to the field's `size`, or the guard silently degrades), and
+  the B3 handler writes only the state fields that actually moved - otherwise
+  they ride along and the write stops being ignorable.
+- `Field.__set__` has **no** equality short-circuit (`odoo/orm/fields.py`), so
+  `self.x = same_value` is a full `write()` and a full broadcast. Consecutive
+  assignments are separate writes; prefer one `write()` with a dict.
+- **NOT gated:** `hr.rfid.event.*` (the signal), `hr.rfid.command` (measured at
+  4% before the gate; the intermediate-vs-terminal distinction is by VALUE, not
+  by field, so `_refresh_ignore_fields` cannot express it - separate iteration),
+  and the Package A WS command channel.
+
+### Module presence (`last_update`)
+
+`last_update` used to be a stored compute over `updated_at`, recomputed only
+when that column was written - and every such write set it True. Nothing wrote
+while a module was silent, so **a dark module stayed green forever**. It is now
+a plain stored Boolean with exactly two writers:
+
+- `_cron_check_presence` (`hr_rfid_check_module_presence_cron`, 5 min) clears it
+  after `PRESENCE_MISSES_BEFORE_DARK` consecutive scans that each found more
+  than `PRESENCE_WINDOW_MINUTES` of silence. The hysteresis is not optional: the
+  60 s beat is only guaranteed for modules Odoo provisioned itself
+  (`_setup_module`, `'thb': 60`); a behind-NAT module is configured by hand and
+  a slower interval would flip the indicator on every pass. The tolerance
+  counter (`presence_misses`) is itself ignored by the gate, and nothing at all
+  is written once a module is already reported dark. Absence cannot be announced by the
+  device, so the scan is the producer - the shape core uses in
+  `hr_attendance._cron_absence_detection`. Per-record savepoint: one bad module
+  must not freeze the fleet's state.
+- `_touch_from_device` (called by the device controller) sets it on the first
+  check-in after a dark period. This is deliberate: the stamps in that write are
+  ignored, so without adding a non-ignored key the recovery would never reach
+  the screens - the scan would find the module already reachable.
+
+`_is_reachable` is transport-aware (`ws_online` OR a recent `updated_at`); the
+WS path never writes `updated_at`, so a check on that column alone would report
+every healthy real-time module as dark. `_notify_inactive` uses the same
+predicate at a 24-hour window and still excludes modules that have NEVER checked
+in (an unfinished installation is not a communication failure, and that scan
+rides the one-minute cron).
+
+Tests: `hr_rfid/tests/test_telemetry_bus.py` (presence + write-on-change, plus a
+test that the cron RECORD exists and resolves) and
+`hr_rfid_refresh_views/tests/test_telemetry_bus.py` (what reaches the bus,
+driven through the real `/hr/rfid/event` endpoint).
+
 ## Module Sharing Between Companies <a id='sharing'></a>
 
 One physical webstack can serve several companies at once (v19.0.2.24.0+,

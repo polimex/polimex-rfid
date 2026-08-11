@@ -545,9 +545,21 @@ class TestSharedModuleE2E(SharedModuleCase, HttpCase):
         self.assertFalse(self.env['hr.rfid.ctrl'].with_user(self.manager_b)
                          .search([('id', '=', self.c_110.id)]))
 
-        # Final invariant - C never saw anything at any point.
-        for model in ('hr.rfid.webstack', 'hr.rfid.ctrl', 'hr.rfid.door',
-                      'hr.rfid.reader', 'hr.rfid.command',
-                      'hr.rfid.card.door.rel', 'hr.rfid.access.group.door.rel'):
-            self.assertFalse(self.env[model].with_user(self.manager_c).search([]),
-                             'C must see no %s records at all' % model)
+        # Final invariant - C never saw any of THIS module's hardware. Scoped
+        # to the records this test created: a database with demo data also
+        # holds controller-less readers and company-less rows that a pre-existing
+        # rule branch shows to everyone, which has nothing to do with sharing
+        # and would make this sweep fail for the wrong reason.
+        webstack = self.test_webstack_10_3_id
+        for model, domain in (
+            ('hr.rfid.webstack', [('id', '=', webstack.id)]),
+            ('hr.rfid.ctrl', [('webstack_id', '=', webstack.id)]),
+            ('hr.rfid.door', [('controller_id.webstack_id', '=', webstack.id)]),
+            ('hr.rfid.reader', [('controller_id.webstack_id', '=', webstack.id)]),
+            ('hr.rfid.command', [('webstack_id', '=', webstack.id)]),
+            ('hr.rfid.card.door.rel', [('door_id.controller_id.webstack_id', '=', webstack.id)]),
+            ('hr.rfid.access.group.door.rel', [('door_id.controller_id.webstack_id', '=', webstack.id)]),
+        ):
+            self.assertFalse(
+                self.env[model].with_user(self.manager_c).search(domain),
+                'C must see no %s of the shared module' % model)

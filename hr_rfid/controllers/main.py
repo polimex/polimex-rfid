@@ -228,7 +228,7 @@ class WebRfidController(http.Controller):
             return webstack, self._make_response({'status': 400})
 
         if not webstack.active:
-            webstack.write(_ws_db_update_dict())
+            webstack._touch_from_device(_ws_db_update_dict())
             webstack.report_sys_ev('Webstack is not active', post_data=post_data)
             return webstack, self._make_response({'status': 400})
 
@@ -290,7 +290,7 @@ class WebRfidController(http.Controller):
             if not post and 'cmd' in result:
                 result = {'cmd': result['cmd']}
             result = webstack_id._ws_provision_payload(result)
-            webstack_id.write(_ws_db_update_dict())
+            webstack_id._touch_from_device(_ws_db_update_dict())
             return self._make_response(result)
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
                 exceptions.MissingError, exceptions.ValidationError,

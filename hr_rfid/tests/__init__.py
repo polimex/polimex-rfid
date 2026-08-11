@@ -23,3 +23,4 @@ from . import test_ws_dispatch
 from . import test_ws_commands
 from . import test_system_event_dedup
 from . import test_webstack_sharing
+from . import test_telemetry_bus

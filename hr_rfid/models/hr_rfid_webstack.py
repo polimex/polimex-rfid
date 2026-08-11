@@ -22,6 +22,19 @@ _logger = logging.getLogger(__name__)
 # SDK), so a larger list is never a real bus and is ignored wholesale.
 MAX_DETECTED_CONTROLLERS = 64
 
+# How long a module may stay silent before a presence scan counts it as a miss.
+# Comfortably above the 60 s heartbeat Odoo provisions (`_setup_module`,
+# 'thb': 60), so a single dropped check-in is never enough on its own.
+PRESENCE_WINDOW_MINUTES = 10
+
+# ...and how many scans in a row must miss before the operator is told the
+# module is dark. Only Odoo-provisioned modules are guaranteed to beat every
+# minute: a module behind NAT is configured by hand on the device itself, and
+# one whose interval exceeds the window would otherwise flip green/orange on
+# every pass - an indicator nobody would trust. Coming back is not delayed by
+# this: the first check-in clears it immediately.
+PRESENCE_MISSES_BEFORE_DARK = 3
+
 # put POSIX 'Etc/*' entries at the end to avoid confusing users - see bug 1086728
 _tzs = [(tz, tz) for tz in sorted(pytz.all_timezones, key=lambda tz: tz if not tz.startswith('Etc/') else '_')]
 
@@ -195,11 +208,21 @@ class HrRfidWebstack(models.Model):
         default='u',
     )
 
+    presence_misses = fields.Integer(
+        string='Missed presence checks',
+        readonly=True,
+        default=0,
+        help='How many presence scans in a row found this module silent. '
+             'Reset by the next contact; the module is reported as dark only '
+             'once the count reaches its limit.',
+    )
+
     last_update = fields.Boolean(
-        string='Contacted in last 10 min',
-        compute='_compute_last_update',
-        store=True,
-        help='Indicates if the module has communicated with Odoo in the last 10 minutes. Used to determine if the module is currently online and functioning.',
+        string='Contacted recently',
+        readonly=True,
+        help='Whether the module is currently reachable. Set when it checks in '
+             'and cleared by the presence scan once it has been silent for too '
+             'long - a module that goes dark cannot report it itself.',
     )
 
     commands_count = fields.Char(
@@ -223,6 +246,87 @@ class HrRfidWebstack(models.Model):
         'Serial number for Module must be unique!'
     )
 
+    def _is_reachable(self, window_minutes=PRESENCE_WINDOW_MINUTES):
+        """Has this module been heard from within the window?
+
+        Transport-aware on purpose: a module on the real-time channel never
+        writes ``updated_at`` (the websocket ingress stamps ``ws_last_seen``
+        instead), so a check on the HTTP timestamp alone would report every
+        healthy real-time module as dead.
+        """
+        self.ensure_one()
+        if self.ws_online:
+            return True
+        deadline = fields.Datetime.subtract(fields.Datetime.now(), minutes=window_minutes)
+        return bool(self.updated_at and self.updated_at > deadline)
+
+    def _touch_from_device(self, vals):
+        """Record a check-in, and announce it only if the module was dark.
+
+        The stamps in ``vals`` are telemetry and deliberately do not reach the
+        monitoring screens. But a module coming BACK is news, and it is news
+        nobody else can deliver: the presence scan below would find the module
+        already reachable and have nothing to write. So the up-transition rides
+        along on this very write, as a field the gate does not ignore.
+        """
+        self.ensure_one()
+        if not self.last_update:
+            vals = dict(vals, last_update=True)
+        if self.presence_misses:
+            # Start the tolerance from scratch, or a module that flaps twice in
+            # a row would be declared dark on its first miss the second time.
+            vals = dict(vals, presence_misses=0)
+        return self.write(vals)
+
+    @api.model
+    def _cron_check_presence(self):
+        """Turn the ABSENCE of device traffic into something the operator sees.
+
+        No bus message can announce silence: the device that should send it is
+        precisely the one that stopped talking. Hence a server-side scan, the
+        same shape core uses for unjustified absence
+        (``hr_attendance._cron_absence_detection``).
+
+        Only real changes are written, so a healthy fleet costs zero writes and
+        zero bus rows. One module failing must not leave the rest of the fleet
+        on a stale state until someone notices, so each is isolated.
+        """
+        for module in self.search([('active', '=', True)]):
+            try:
+                with self.env.cr.savepoint():
+                    module._apply_presence_check()
+            except Exception:
+                _logger.warning(
+                    'Presence check failed for module %s (id=%s); its state is '
+                    'left as it was and the scan continues with the rest',
+                    module.name, module.id, exc_info=True)
+
+    def _apply_presence_check(self):
+        """One module's verdict for this pass.
+
+        Going dark needs `PRESENCE_MISSES_BEFORE_DARK` misses in a row, so a
+        module whose check-in interval is longer than the window is tolerated
+        instead of flapping. Coming back needs nothing: any contact clears both
+        the counter and the flag. Once a module IS reported dark nothing more is
+        written, so a site that is off for a week costs one write, not one per
+        scan.
+        """
+        self.ensure_one()
+        if self._is_reachable():
+            vals = {}
+            if self.presence_misses:
+                vals['presence_misses'] = 0
+            if not self.last_update:
+                vals['last_update'] = True
+            if vals:
+                self.write(vals)
+        elif self.last_update:
+            misses = self.presence_misses + 1
+            vals = {'presence_misses': misses}
+            if misses >= PRESENCE_MISSES_BEFORE_DARK:
+                vals['last_update'] = False
+            self.write(vals)
+
     @api.model
     def _notify_inactive(self):
         """
@@ -234,11 +338,16 @@ class HrRfidWebstack(models.Model):
         """
         todo_activity_type = self.env.ref('mail.mail_activity_data_todo')
 
-        # Get all records of the model
-        all_records = self.search([
-            ('active', '=', True),
-            ('updated_at', '<', fields.Datetime.now() - relativedelta(days=1)),
-        ])
+        # Get all records of the model. Reachability is checked per record
+        # rather than in the domain because a real-time module reports over the
+        # websocket and never writes updated_at - selecting on that column alone
+        # would raise a daily Todo for every healthy module on the WS fleet.
+        # A module that has NEVER checked in is not a communication failure -
+        # it is an unfinished installation, and the old SQL domain excluded it
+        # for free (NULL < x is never true). Keep that, or every module created
+        # by the discovery wizard would nag its followers within the minute.
+        all_records = self.search([('active', '=', True), ('updated_at', '!=', False)]).filtered(
+            lambda m: not m._is_reachable(window_minutes=24 * 60))
 
         for record in all_records:
             todo_activity = record.activity_ids.filtered(lambda a: a.activity_type_id == todo_activity_type)
@@ -305,15 +414,6 @@ class HrRfidWebstack(models.Model):
             )
             return res
         return False
-
-    @api.depends('updated_at')
-    def _compute_last_update(self):
-        for r in self:
-            if not r.updated_at:
-                r.last_update = False
-                continue
-            ten_min_delay = fields.Datetime.subtract(fields.Datetime.now(), minutes=10)
-            r.last_update = r.updated_at > ten_min_delay
 
     def toggle_ws_active(self):
         for rec in self:
@@ -989,7 +1089,18 @@ class HrRfidWebstack(models.Model):
 
     def parse_heartbeat(self, post_data: dict):
         self.ensure_one()
-        self.version = str(post_data['FW'])
+        # Write the firmware version only when it actually changed. The value is
+        # the same string on every heartbeat, but the assignment still goes
+        # through Field.__set__ -> write() (odoo/orm/fields.py), so an
+        # unconditional write broadcasts a dashboard refresh once per module per
+        # heartbeat - measured at 92% of all the bus traffic this module set
+        # produces. A firmware CHANGE is genuine news and still notifies.
+        # Compare like with like: the field truncates at its size, so an
+        # untruncated payload would never equal the stored value and the guard
+        # would silently degrade back into a write on every heartbeat.
+        version = str(post_data['FW'])[:self._fields['version'].size]
+        if self.version != version:
+            self.version = version
         # New firmware reports the controllers it currently detects on the bus in
         # the heartbeat. Pre-provision any we don't have locally yet so their
         # setup (F0) is queued proactively, before their first event, instead of
@@ -1300,9 +1411,14 @@ class HrRfidWebstack(models.Model):
             input_voltage += (uin[1] & 0x0F)
             input_voltage = (input_voltage * 8) / 500
 
-            controller.write({
-                'system_voltage': sys_voltage,
-                'input_voltage': input_voltage,
+            # The status poll runs every 5 minutes for the lifetime of the
+            # installation. Its analog readings (voltages) differ on every read
+            # and are declared telemetry, but the state it carries alongside -
+            # inputs, outputs, alarm zones - is exactly what a monitoring
+            # dispatcher watches. Write only what CHANGED, so an uneventful poll
+            # carries telemetry alone and stays off the bus, while a real state
+            # change still announces itself immediately.
+            state = {
                 'input_states': input_states,
                 'output_states': output_states,
                 'alarm_line_states': "{:02x}".format(Z1) + "{:02x}".format(Z2) + "{:02x}".format(Z3) + "{:02x}".format(
@@ -1310,8 +1426,12 @@ class HrRfidWebstack(models.Model):
                 'hotel_readers': hotel[0],
                 'hotel_readers_card_presence': hotel[1],
                 'hotel_readers_buttons_pressed': hotel[2],
-                'read_b3_cmd': controller.read_b3_cmd or temperature != 0 or humidity != 0 or controller.enabled_alarm_lines()
-            })
+                'read_b3_cmd': bool(controller.read_b3_cmd or temperature != 0 or humidity != 0
+                                    or controller.enabled_alarm_lines()),
+            }
+            telemetry = {'system_voltage': sys_voltage, 'input_voltage': input_voltage}
+            changed = {name: value for name, value in state.items() if controller[name] != value}
+            controller.write({**changed, **telemetry})
             if temperature != 0 or humidity != 0:
                 controller.update_th(sensor_number=0, data_dict={
                     't': temperature,

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-03 18:42+0000\n"
-"PO-Revision-Date: 2026-08-03 18:42+0000\n"
+"POT-Creation-Date: 2026-08-11 14:23+0000\n"
+"PO-Revision-Date: 2026-08-11 14:23+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -2701,7 +2701,7 @@ msgstr ""
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__last_update
-msgid "Contacted in last 10 min"
+msgid "Contacted recently"
 msgstr ""
 
 #. module: hr_rfid
@@ -5132,6 +5132,11 @@ msgid "HR RFID: Check card activation status"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.actions.server,name:hr_rfid.hr_rfid_check_module_presence_cron_ir_actions_server
+msgid "HR RFID: Check module presence"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.actions.server,name:hr_rfid.hr_rfid_read_ctrl_status_cron_ir_actions_server
 msgid "HR RFID: Read controller statuses"
 msgstr ""
@@ -5318,6 +5323,14 @@ msgid ""
 "How long the door stays unlocked after a valid card is presented (in "
 "seconds). Common values: 3-5 seconds for normal doors, 10-15 seconds for "
 "disabled access. Set to 0 for permanent unlock (not recommended)."
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__presence_misses
+msgid ""
+"How many presence scans in a row found this module silent. Reset by the next"
+" contact; the module is reported as dark only once the count reaches its "
+"limit."
 msgstr ""
 
 #. module: hr_rfid
@@ -5665,13 +5678,6 @@ msgstr ""
 msgid ""
 "Indicates if the alarm siren is currently active. When checked, the siren is"
 " sounding. This is controlled at the controller level."
-msgstr ""
-
-#. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__last_update
-msgid ""
-"Indicates if the module has communicated with Odoo in the last 10 minutes. "
-"Used to determine if the module is currently online and functioning."
 msgstr ""
 
 #. module: hr_rfid
@@ -6538,6 +6544,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__message_ids
 msgid "Messages"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__presence_misses
+msgid "Missed presence checks"
 msgstr ""
 
 #. module: hr_rfid
@@ -11397,6 +11408,14 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_notification.py:0
 msgid "Where: %s"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__last_update
+msgid ""
+"Whether the module is currently reachable. Set when it checks in and cleared"
+" by the presence scan once it has been silent for too long - a module that "
+"goes dark cannot report it itself."
 msgstr ""
 
 #. module: hr_rfid
