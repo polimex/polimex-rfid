@@ -131,3 +131,76 @@ class TestRefreshMixin(common.TransactionCase):
             Mixin.send_notice.__func__(stub, "write")
         _, _, payload = mock_send.call_args.args[:3]
         self.assertEqual(payload["company_ids"], [self.company.id])
+
+    # --- _refresh_ignore_fields: telemetry writes must stay off the bus ---
+
+    def _notice_required(self, vals, *, ignore=frozenset(), on_write=True):
+        Mixin = self.env["refresh.mixin"]
+        stub = SimpleNamespace(
+            _refresh_on_write=on_write,
+            _refresh_ignore_fields=ignore,
+        )
+        return Mixin._refresh_notice_required.__func__(stub, vals)
+
+    def test_telemetry_only_write_is_silent(self):
+        """A device reporting 'still alive' every minute must not persist a
+        bus row per report - that is what flooded bus_bus on VIP Security
+        (~200K rows/day). A write touching ONLY ignored fields is silent."""
+        self.assertFalse(self._notice_required(
+            {"last_heartbeat": "2026-08-10 10:00:00"},
+            ignore=frozenset({"last_heartbeat"}),
+        ))
+
+    def test_real_change_still_notifies_even_with_telemetry_aboard(self):
+        """The dispatcher must learn IMMEDIATELY when a guard's phone loses
+        GPS - a write mixing telemetry with a real state change notifies."""
+        self.assertTrue(self._notice_required(
+            {"last_heartbeat": "2026-08-10 10:00:00", "app_gps": False},
+            ignore=frozenset({"last_heartbeat"}),
+        ))
+
+    def test_models_without_ignore_fields_keep_notifying(self):
+        """Every existing consumer (hr_rfid doors, events, areas...) declares
+        no ignore set - their behavior must not change."""
+        self.assertTrue(self._notice_required({"name": "Door 1"}))
+
+    def test_refresh_on_write_false_stays_silent(self):
+        """A model that opted out of write notifications entirely
+        (_refresh_on_write = False, e.g. NFC tags) must stay silent no
+        matter what is written."""
+        self.assertFalse(self._notice_required(
+            {"name": "Tag"}, on_write=False))
+
+    def test_empty_write_keeps_notifying(self):
+        """Deliberately pinned boundary: write({}) notified before this
+        change and still does - the ignore set only silences writes that
+        actually name ignored fields."""
+        self.assertTrue(self._notice_required(
+            {}, ignore=frozenset({"last_heartbeat"})))
+
+    def test_write_consults_the_gate_on_a_real_consumer(self):
+        """Wire-level proof in THIS repo: write() must ask
+        _refresh_notice_required and honor its verdict. A merge that
+        reverts write() to the unconditional `if self._refresh_on_write`
+        form keeps every stub test green - only this test catches it."""
+        MixinCls = type(self.env["refresh.mixin"])
+        consumer = next(
+            (name for name in self.env.registry
+             if name != "refresh.mixin"
+             and issubclass(self.env.registry[name], MixinCls)
+             and not self.env[name]._abstract),
+            None)
+        if consumer is None:
+            self.skipTest("no refresh.mixin consumer model installed")
+        cls = type(self.env[consumer])
+        with patch.object(cls, "_refresh_notice_required",
+                          return_value=False) as gate, \
+                patch.object(cls, "send_notice") as notice:
+            self.env[consumer].browse().write({})
+        gate.assert_called_once_with({})
+        notice.assert_not_called()
+        with patch.object(cls, "_refresh_notice_required",
+                          return_value=True), \
+                patch.object(cls, "send_notice") as notice:
+            self.env[consumer].browse().write({})
+        notice.assert_called_once_with("write")

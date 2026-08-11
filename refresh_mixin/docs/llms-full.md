@@ -497,8 +497,16 @@ Python class `RefreshMixin` in `models/refresh_mixin.py:6`.  AbstractModel.  Des
   - Send bus notification for dashboard refresh.
   - effects: `log_debug`, `log_warn`
   - touches: `bus.bus`
+- **`_refresh_notice_required(self, vals)`** - decorators: -
+  - Gate for write-triggered notifications. Consumers declare high-frequency
+    telemetry fields (e.g. a per-heartbeat timestamp) in the class attribute
+    `_refresh_ignore_fields` (frozenset, default empty): a write touching ONLY
+    those fields is silent - no `bus.bus` row is persisted - while a write
+    containing any other field notifies as usual. Prevents device-telemetry
+    workloads from flooding the `bus_bus` table (VIP Security production,
+    2026-08-10: ~200K rows/day from heartbeats).
 - **`write(self, vals)`** — decorators: —
-  - calls `super() `write``
+  - calls `super() `write``; notifies only when `_refresh_notice_required(vals)`
 - **`create(self, vals_list)`** — decorators: `@api.model_create_multi`
   - calls `super() `create``
 

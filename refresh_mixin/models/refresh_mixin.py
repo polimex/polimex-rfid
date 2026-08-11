@@ -20,6 +20,12 @@ class RefreshMixin(models.AbstractModel):
             _refresh_on_create = True  # Send bus notification on create
             _refresh_on_write = True   # Send bus notification on write (default)
 
+            # Optional: telemetry fields whose (exclusive) write must NOT
+            # trigger a refresh - e.g. a per-heartbeat timestamp. A write
+            # touching ONLY these fields is silent; a write containing any
+            # other field still notifies.
+            _refresh_ignore_fields = frozenset({'last_heartbeat'})
+
             # Optional: Override to add custom payload data
             def _get_refresh_payload_extra(self):
                 return {'is_alert': self.is_urgent, 'priority': self.priority}
@@ -28,6 +34,7 @@ class RefreshMixin(models.AbstractModel):
     _description = 'Model Refresh Mixin'
     _refresh_on_create = False
     _refresh_on_write = True
+    _refresh_ignore_fields = frozenset()
 
     def get_company_id(self):
         """Get company_id for the record(s). Returns first company if multiple records."""
@@ -120,9 +127,25 @@ class RefreshMixin(models.AbstractModel):
         self.env['bus.bus']._sendone(channel, notification_type, payload)
         _logger.debug('Refresh notification sent: %s -> %s', notification_type, payload)
 
+    def _refresh_notice_required(self, vals):
+        """Does a write of ``vals`` warrant a realtime refresh?
+
+        High-frequency telemetry writes (device heartbeats and the like)
+        carry no information the dashboards need per occurrence - persisting
+        a bus message for each one floods the ``bus_bus`` table (hundreds of
+        thousands of rows a day on a fleet of devices). Models declare such
+        fields in :attr:`_refresh_ignore_fields`; a write touching ONLY those
+        fields is silent, any other write notifies as usual.
+        """
+        if not self._refresh_on_write:
+            return False
+        if vals and all(name in self._refresh_ignore_fields for name in vals):
+            return False
+        return True
+
     def write(self, vals):
         res = super().write(vals)
-        if self._refresh_on_write:
+        if self._refresh_notice_required(vals):
             self.send_notice('write')
         return res
 
