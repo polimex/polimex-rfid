@@ -55,6 +55,7 @@ class BaseImporter:
         self.options = options              # wizard options dict
         # Cache
         self._field_cache = {}             # {model: {field_name: field_info}}
+        self._readable_cache = {}          # {(model, fields): proven-readable}
         #: Optional callable answering "is my time up?". Set by a background
         #: run so a long read can stop between pages instead of running past
         #: the worker's time limit and taking the server down with it.
@@ -174,9 +175,82 @@ class BaseImporter:
             self._field_cache[model] = self.rpc_models.execute_kw(
                 self.source_db, self.source_uid, self.source_password,
                 model, 'fields_get', [],
-                {'attributes': ['type', 'relation', 'required']}
+                {'attributes': ['type', 'relation', 'required', 'store']}
             )
         return field_name in self._field_cache[model]
+
+    def _has_stored_field(self, model, field_name):
+        """Whether the source can actually READ that field back.
+
+        Presence in ``fields_get`` is not enough. It also lists computed
+        fields that were never stored, and asking for one of those in a
+        ``read`` makes the source raise UndefinedColumn - which takes the whole
+        phase down. Measured against a live Odoo 15: hr.rfid.event.user
+        advertises department_id, and selecting it fails because the column
+        does not exist there.
+
+        Older sources may not report the attribute at all; treat that as
+        stored, which is the pre-existing behaviour.
+        """
+        fields_info = self._get_source_fields(model)
+        if field_name not in fields_info:
+            return False
+        return (fields_info[field_name] or {}).get('store', True)
+
+    def _readable_fields(self, model, candidates):
+        """The subset of ``candidates`` this source can actually hand over.
+
+        Asked outright, the source can be wrong about itself. Measured against
+        a live Odoo 15: ``hr.rfid.event.user.department_id`` is declared
+        ``store=True`` (it is a stored related field) and the column does not
+        exist in the database - the model and the schema had drifted apart
+        there long before this migration. Selecting it raises UndefinedColumn
+        and takes the whole step down.
+
+        So the set is PROVEN, not trusted: one cheap read of a single row. If
+        that fails, the fields are tried one at a time and the offenders are
+        left out, with a warning naming them - a column the source cannot
+        produce is worth knowing about even though the transfer goes on.
+        """
+        wanted = [f for f in candidates if self._has_stored_field(model, f)]
+        if not wanted:
+            return []
+        cache_key = (model, tuple(wanted))
+        if cache_key in self._readable_cache:
+            return self._readable_cache[cache_key]
+
+        if self._can_read_fields(model, wanted):
+            self._readable_cache[cache_key] = wanted
+            return wanted
+
+        usable, refused = [], []
+        for field in wanted:
+            (usable if self._can_read_fields(model, [field]) else refused).append(field)
+        if refused:
+            _logger.warning(
+                "%s: the other system cannot return %s - those columns are "
+                "missing there. Carrying on without them.",
+                model, ', '.join(refused))
+        self._readable_cache[cache_key] = usable
+        return usable
+
+    def _can_read_fields(self, model, fields):
+        """Whether one row of ``model`` can be read with exactly these fields."""
+        if not getattr(self, 'rpc_models', None):
+            # Nothing to ask (a stand-in source in the tests). Take the
+            # declaration at face value, which is the behaviour that was there
+            # before the probe existed.
+            return True
+        try:
+            self.rpc_models.execute_kw(
+                self.source_db, self.source_uid, self.source_password,
+                model, 'search_read', [[]],
+                {'fields': list(fields), 'limit': 1,
+                 'context': dict(self.SOURCE_READ_CONTEXT)},
+            )
+            return True
+        except xmlrpc.client.Fault:
+            return False
 
     def _get_source_fields(self, model):
         """Get all source fields metadata (cached)."""
@@ -613,19 +687,30 @@ class BaseImporter:
         """Map Many2one field: [id, name] or id → target_id or False.
 
         Does NOT fail hard - use _require_target_id for mandatory fields.
+
+        Falls back to the ledger, exactly as ``_require_target_id`` does. The
+        in-memory map does not survive the process: a transfer that continues
+        in a later pass starts with it empty, every link resolves to False and
+        the row is counted as skipped. The protocol then reads as a clean run
+        while whole phases of relations are missing.
         """
         if not source_val:
             return False
         source_id = source_val[0] if isinstance(source_val, (list, tuple)) else source_val
         target_id = self._get_target_id(model, source_id)
         if target_id is None:
-            return False  # skipped
+            return False  # deliberately skipped by the operator
+        if not target_id:
+            target_id = self._resolve_from_imd(model, source_id)
         return target_id or False
 
     def _map_m2m(self, model, source_ids):
         """Map Many2many field: [id1, id2, ...] → [(6, 0, [target_ids])]."""
         if not source_ids:
             return [(6, 0, [])]
+        # One query for the whole list rather than one per miss.
+        self.warm_up_ledger(model, [
+            s for s in source_ids if not self._get_target_id(model, s)])
         target_ids = []
         for sid in source_ids:
             tid = self._get_target_id(model, sid)
@@ -670,6 +755,21 @@ class BaseImporter:
         "every row was dropped" - the operator cannot tell a clean run from
         a broken one.
         """
+        landed = imported_count + linked_count
+        if status == 'done' and source_count and not landed:
+            # The source holds records of this kind and not one arrived. That
+            # is not "there was nothing to move" - it is "all of it fell
+            # through", and from the numbers alone the two look identical.
+            # Calling this done is how a broken transfer reads as a clean one.
+            status = 'error'
+            error = error or self.env._(
+                "The other system holds %(count)s record(s) of this kind and "
+                "none of them came across. Look at the step before this one - "
+                "what these records point at is probably missing.",
+                count=source_count,
+            )
+        elif status == 'done' and source_count and landed < source_count:
+            status = 'partial'
         return {
             'model': model,
             'source_count': source_count,

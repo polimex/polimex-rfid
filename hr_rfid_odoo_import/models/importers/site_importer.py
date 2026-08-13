@@ -20,7 +20,7 @@ import time
 
 from odoo.exceptions import AccessError, UserError
 
-from .base_importer import BaseImporter
+from .base_importer import IMPORT_CONTEXT, BaseImporter
 from .phase import PhaseImporter
 
 _logger = logging.getLogger(__name__)
@@ -174,7 +174,8 @@ class SiteImporter(PhaseImporter):
                 site_id = self.b._map_m2o('hr.rfid.site', rec.get('site_id'))
                 if not target_id or not site_id:
                     continue
-                self.env[model].browse(target_id).write({'site_id': site_id})
+                self.env[model].with_context(**IMPORT_CONTEXT).browse(
+                    target_id).write({'site_id': site_id})
                 updated += 1
 
         self.results.append(self.b._make_result(
@@ -197,10 +198,15 @@ class SiteImporter(PhaseImporter):
             target_id = self.b._get_target_id(model, rec['id'])
             if not target_id:
                 continue
-            site_ids = self.b._map_m2m('hr.rfid.site', rec.get('site_ids') or [])
-            if not site_ids[0][2]:
+            mapped = self.b._map_m2m('hr.rfid.site', rec.get('site_ids') or [])
+            if not mapped[0][2]:
                 continue
-            self.env[model].browse(target_id).write({'site_ids': site_ids})
+            # Add, never replace. Two sources can write one ledger (see
+            # ledger_slug), and a replace would wipe the sites the first
+            # transfer established, counted as a successful update.
+            site_ids = [(4, sid) for sid in mapped[0][2]]
+            self.env[model].with_context(**IMPORT_CONTEXT).browse(
+                target_id).write({'site_ids': site_ids})
             updated += 1
 
         self.results.append(self.b._make_result(
@@ -238,7 +244,7 @@ class SiteGroupImporter(PhaseImporter):
             if not target_id:
                 skipped += 1
                 continue
-            site = self.env[model].browse(target_id)
+            site = self.env[model].with_context(**IMPORT_CONTEXT).browse(target_id)
             if site.access_group_ids:
                 # The source's own group already claimed this site - turning
                 # the flag on now would add a second one beside it.

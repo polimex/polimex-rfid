@@ -149,7 +149,21 @@ class HrRfidOdooImportRun(models.Model):
                           order='create_date asc', limit=1)
         if not run:
             return
-        run._process_pass()
+        try:
+            run._process_pass()
+        except Exception as exc:
+            # Without this the transfer stays queued forever and, because it is
+            # the oldest, it is picked again on every wake-up - blocking every
+            # later transfer behind it. The scheduler only runs daily, so that
+            # is a queue nobody notices is stuck.
+            _logger.error("Transfer %s could not be worked on: %s",
+                          run.id, exc, exc_info=True)
+            self.env.cr.rollback()
+            run._finish('failed', self.env._(
+                "The transfer stopped because of a problem outside the steps "
+                "themselves: %(problem)s", problem=str(exc)[:300],
+            ))
+            self.env.cr.commit()
 
     def _process_pass(self):
         """Work through as many steps as fit in this pass."""
@@ -179,7 +193,8 @@ class HrRfidOdooImportRun(models.Model):
             if skip_reason:
                 self._log_phase(cls, status='skipped', message=skip_reason)
                 done_phases.add(cls.PHASE_ID)
-                self._save_progress(done_phases, cls)
+                self._save_progress(done_phases, cls,
+                                    remaining=len(plan) - len(done_phases))
                 continue
 
             self.current_phase = cls.NAME
@@ -187,7 +202,8 @@ class HrRfidOdooImportRun(models.Model):
             complete = self._run_one_phase(phase, cls)
             if complete:
                 done_phases.add(cls.PHASE_ID)
-            self._save_progress(done_phases, cls)
+            self._save_progress(done_phases, cls,
+                                remaining=len(plan) - len(done_phases))
 
             if time.monotonic() > deadline:
                 # Out of time. Whatever is left waits for the next pass; the
@@ -195,19 +211,55 @@ class HrRfidOdooImportRun(models.Model):
                 self._wake_the_worker()
                 return
 
-        self._finish('done', self.env._("The transfer has finished."))
+        self._finish_reporting_failures()
+
+    def _finish_reporting_failures(self):
+        """End the run, saying plainly whether anything did not come across.
+
+        Telling the operator "finished" over a transfer that lost a whole step
+        is worse than telling them nothing: they close the page and find out
+        weeks later.
+        """
+        broken = self.log_ids.filtered(lambda l: l.status == 'error')
+        partial = self.log_ids.filtered(lambda l: l.status == 'partial')
+        if broken:
+            self._finish('failed', self.env._(
+                "The transfer stopped with %(count)s part(s) that did not come "
+                "across: %(parts)s. Everything else is here. Look at the list "
+                "below, put the cause right, and start the transfer again.",
+                count=len(broken),
+                parts=", ".join(broken.mapped('model')[:8]),
+            ))
+        elif partial:
+            self._finish('done', self.env._(
+                "The transfer has finished, but %(count)s part(s) came across "
+                "only in part. The list below says which.",
+                count=len(partial),
+            ))
+        else:
+            self._finish('done', self.env._("The transfer has finished."))
 
     def _run_one_phase(self, phase, cls):
         """Run one step. Returns whether it got all the way through."""
         phase.b.stopped_early = False
+        # The savepoint below throws away the rows a failing step wrote, but
+        # the source->target map it filled lives in memory and survives. The
+        # next step would then write links to ids that no longer exist - or,
+        # worse, to ids the database has since handed to somebody else's
+        # record. The synchronous path has guarded against this since a live
+        # incident; the background one must too.
+        id_map_snapshot = {m: dict(v) for m, v in phase.b.id_map.items()}
         try:
             with self.env.cr.savepoint():
                 results = phase.run(self)
             for result in (results or []):
-                self._log_phase(cls, result=result)
+                self._log_phase(cls, result=result,
+                                partial=phase.b.stopped_early)
             return not phase.b.stopped_early
         except Exception as exc:
             _logger.error("Transfer step %s failed: %s", cls.NAME, exc, exc_info=True)
+            phase.b.id_map.clear()
+            phase.b.id_map.update(id_map_snapshot)
             # Recorded in its own transaction: the savepoint above has already
             # thrown away everything this step wrote, and a failure nobody can
             # read afterwards is the same as no failure at all.
@@ -218,9 +270,12 @@ class HrRfidOdooImportRun(models.Model):
                 step=cls.NAME, problem=str(exc)[:300],
             ))
             self.env.cr.commit()
-            return True  # do not retry the same failing step forever
+            # Considered finished so the same failure does not loop forever -
+            # but if the step had only read part of the source, saying so would
+            # throw the rest away without a trace.
+            return not phase.b.stopped_early
 
-    def _save_progress(self, done_phases, cls):
+    def _save_progress(self, done_phases, cls, remaining=None):
         self.write({
             'done_phases_json': json.dumps(sorted(done_phases)),
             'done_count': len(done_phases),
@@ -228,14 +283,25 @@ class HrRfidOdooImportRun(models.Model):
         # Commits, records how far we got, and tells the scheduler how much
         # time is left. Called outside the savepoint above on purpose:
         # committing inside an open savepoint destroys it.
-        self.env['ir.cron']._commit_progress(processed=1)
+        # Passing what is left lets core reschedule itself immediately. Without
+        # it core computes zero remaining, calls the job fully done, and the
+        # next attempt waits for the daily interval - leaving the manual wake-up
+        # below as the only thing keeping the transfer moving.
+        self.env['ir.cron']._commit_progress(processed=1, remaining=remaining)
 
-    def _log_phase(self, cls, result=None, status=None, message=None):
+    def _log_phase(self, cls, result=None, status=None, message=None,
+                   partial=False):
+        outcome = status or (result or {}).get('status', 'done')
+        if partial and outcome == 'done':
+            # Read only part of the source before running out of time. Marking
+            # it done would make the row read as a completed step and quietly
+            # make the reconciliation totals meaningless.
+            outcome = 'partial'
         values = {
             'run_id': self.id,
             'phase': cls.PHASE_ID,
             'model': (result or {}).get('model') or cls.NAME,
-            'status': status or (result or {}).get('status', 'done'),
+            'status': outcome,
             'error_message': message or (result or {}).get('error', ''),
         }
         if result:

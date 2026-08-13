@@ -50,6 +50,7 @@ class _FakeSource(BaseImporter):
         self.id_map = {}
         self.options = options
         self._field_cache = {}
+        self._readable_cache = {}
         self._data = data
         self.domains = {}
         self.bulk_calls = []

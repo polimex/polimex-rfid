@@ -69,26 +69,38 @@ class EventImporter(PhaseImporter):
         down with UndefinedColumn.
         """
         return [f for f in ('camera_id', 'license_plate', 'anpr_confidence')
-                if f in source_fields and f in target_fields]
+                if f in source_fields and f in target_fields
+                and self.b._has_stored_field(model, f)]
 
-    def _report_camera_events(self, model, imported_total):
+    def _report_camera_events(self, model, camera_rows):
         """Count the camera events on the source and say so in the protocol.
 
         Without a count taken from the other side, "no plates arrived" cannot
         be told apart from "there were none to begin with" - which is how this
         went unnoticed.
+
+        Takes the number of CAMERA rows that landed, not the total for the
+        model: comparing a few thousand camera events against a few hundred
+        thousand events of every kind is always favourable, and the check
+        would be a permanent green light.
         """
         if not self.b._has_field(model, 'camera_id'):
             return
+        if self.b.stopped_early:
+            # Only part of the source was read; a shortfall here is expected
+            # and flagging it would train the operator to ignore red rows.
+            return
         expected = self.b._search_count(
             model, [('camera_id', '!=', False)] + self.b._scoped_domain('camera_id'))
+        if not expected:
+            return
         self.results.append(self.b._make_result(
-            '%s (cameras)' % model, expected, imported_total,
-            skipped=max(expected - imported_total, 0),
-            status='done' if imported_total >= expected else 'error',
-            error='' if imported_total >= expected else self.env._(
-                "%(missing)s camera event(s) did not come across.",
-                missing=expected - imported_total,
+            '%s (cameras)' % model, expected, camera_rows,
+            skipped=max(expected - camera_rows, 0),
+            status='done' if camera_rows >= expected else 'error',
+            error='' if camera_rows >= expected else self.env._(
+                "%(missing)s recognised plate event(s) did not come across.",
+                missing=expected - camera_rows,
             ),
         ))
 
@@ -118,17 +130,22 @@ class EventImporter(PhaseImporter):
         # Required fields
         fields_to_read = ['event_time']
         # Optional fields (check source availability)
-        for f in ['event_action', 'door_id', 'reader_id', 'card_id',
-                  'employee_id', 'contact_id', 'controller_id', 'input_js',
-                  'card_number', 'department_id', 'alarm_line_id'] + camera_fields:
-            if f in source_fields_info:
-                fields_to_read.append(f)
+        # Stored fields only. fields_get also lists computed fields that were
+        # never stored, and asking the source to read one of those raises
+        # UndefinedColumn there, taking the whole step down. Measured against a
+        # live Odoo 15: hr.rfid.event.user advertises department_id and cannot
+        # select it.
+        fields_to_read += self.b._readable_fields(model, [
+            'event_action', 'door_id', 'reader_id', 'card_id',
+            'employee_id', 'contact_id', 'controller_id', 'input_js',
+            'card_number', 'department_id', 'alarm_line_id'] + camera_fields)
 
         source_records = self.b._read_all(model, domain, fields_to_read, batch_size=2000)
         imported = 0
         already = 0
         rejected = 0
         skipped = 0
+        camera_rows = 0
 
         # Target columns for SQL INSERT - only include columns available in target
         columns = ['event_time']
@@ -181,6 +198,8 @@ class EventImporter(PhaseImporter):
                 continue
             rows.append(tuple(row))
             src_ids.append(rec['id'])
+            if rec.get('camera_id'):
+                camera_rows += 1
 
         if rows:
             try:
@@ -200,7 +219,7 @@ class EventImporter(PhaseImporter):
             model, len(source_records), imported, already, skipped,
             duration=time.time() - start, rejected_count=rejected,
         ))
-        self._report_camera_events(model, imported + already)
+        self._report_camera_events(model, camera_rows)
 
     def _import_system_events(self):
         """Step 27: hr.rfid.event.system - Direct SQL batch.
@@ -253,17 +272,17 @@ class EventImporter(PhaseImporter):
             model, source_fields_info, target_fields)
 
         fields_to_read = [source_time_field, 'webstack_id']
-        for f in ['event_action', 'door_id', 'controller_id', 'alarm_line_id',
-                  'error_description', 'input_js', 'card_number', 'siren',
-                  'occurrences', 'last_occurrence'] + camera_fields:
-            if f in source_fields_info:
-                fields_to_read.append(f)
+        fields_to_read += self.b._readable_fields(model, [
+            'event_action', 'door_id', 'controller_id', 'alarm_line_id',
+            'error_description', 'input_js', 'card_number', 'siren',
+            'occurrences', 'last_occurrence'] + camera_fields)
 
         source_records = self.b._read_all(model, domain, fields_to_read, batch_size=2000)
         imported = 0
         already = 0
         rejected = 0
         skipped = 0
+        camera_rows = 0
 
         columns = [target_time_field]
         # webstack_id carries the company attribution - without it every row
@@ -349,7 +368,7 @@ class EventImporter(PhaseImporter):
             model, len(source_records), imported, already, skipped,
             duration=time.time() - start, rejected_count=rejected,
         ))
-        self._report_camera_events(model, imported + already)
+        self._report_camera_events(model, camera_rows)
 
     def _import_th_logs(self):
         """Step 28: hr.rfid.ctrl.th.log - Direct SQL batch."""
@@ -374,6 +393,7 @@ class EventImporter(PhaseImporter):
         already = 0
         rejected = 0
         skipped = 0
+        camera_rows = 0
 
         # Determine time column name in target
         time_col = 'event_time' if 'event_time' in target_fields else 'log_date'

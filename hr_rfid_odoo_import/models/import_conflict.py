@@ -111,11 +111,12 @@ class HrRfidOdooImportLog(models.Model):
         [
             ('pending', 'Pending'),
             ('done', 'Done'),
+            ('partial', 'Partly'),
             ('error', 'Error'),
             ('skipped', 'Skipped'),
         ],
         string='Status', default='pending', readonly=True,
-        help="Outcome of this phase - Pending: not yet started. Done: finished without error. Error: failed, see the Error column. Skipped: nothing to do here, either because the option was left unticked or because the source system does not have this kind of record at all.",
+        help="How this step ended. Done: everything the other system had came across. Partly: some records did not - the Error column says how many. Error: nothing came across, or the step could not run. Skipped: there was nothing to do, either because the option was left unticked or because the other system does not keep this kind of record.",
     )
     duration = fields.Float(
         string='Duration (s)', readonly=True,
