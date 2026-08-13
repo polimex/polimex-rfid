@@ -4,6 +4,8 @@ import logging
 import time
 import xmlrpc.client
 
+from markupsafe import Markup
+
 from odoo import fields, models, api, _
 from odoo.exceptions import UserError, ValidationError
 
@@ -217,6 +219,22 @@ class HrRfidOdooImportWiz(models.TransientModel):
         compute='_compute_warnings',
         help="Pre-flight warnings calculated from the configuration (e.g. asked to import vending but target doesn't have the module). Shown on the confirm page.",
     )
+    has_blocking = fields.Boolean(
+        compute='_compute_warning_render',
+        help="True while something must be sorted out before the transfer can start.",
+    )
+    has_advisory = fields.Boolean(
+        compute='_compute_warning_render',
+        help="True when there is something worth knowing that does not stop the transfer.",
+    )
+    blocking_html = fields.Html(
+        compute='_compute_warning_render', sanitize=False,
+        help="What must be sorted out first, written for the operator to read.",
+    )
+    advisory_html = fields.Html(
+        compute='_compute_warning_render', sanitize=False,
+        help="What is worth knowing before starting, written for the operator to read.",
+    )
     preview_text = fields.Text(
         string='Preview',
         readonly=True,
@@ -276,7 +294,55 @@ class HrRfidOdooImportWiz(models.TransientModel):
                 ('name', '=', 'rfid_service_base'), ('state', '=', 'installed')
             ], limit=1))
 
-    @api.depends('state', 'company_line_ids.do_import', 'conflict_ids')
+    #: Internal module name -> the thing the operator actually recognises.
+    #: Warning text is read by the person moving the system, not by a
+    #: developer; "hr_attendance_late" tells them nothing.
+    _FEATURE_LABELS = {
+        'hr_rfid_vending': lambda env: env._("vending machines"),
+        'hr_attendance_multi_rfid': lambda env: env._("attendance"),
+        'hr_attendance_late': lambda env: env._("working time reports"),
+        'rfid_service_base': lambda env: env._("visitor services"),
+    }
+
+    def _feature_label(self, module_name):
+        """Human name of a feature, for text the operator reads."""
+        maker = self._FEATURE_LABELS.get(module_name)
+        return maker(self.env) if maker else module_name
+
+    @api.depends('warnings')
+    def _compute_warning_render(self):
+        """Render the warnings as something a person can read.
+
+        ``warnings`` stays the machine-readable source - the gate in
+        ``action_import`` and the tests read its structure. These fields are
+        derived from it purely for display, so nothing depends on the markup.
+        """
+        for wiz in self:
+            entries = wiz.warnings or {}
+            blocking = [v.get('message', '') for v in entries.values()
+                        if v.get('level') == 'danger']
+            advisory = [v.get('message', '') for v in entries.values()
+                        if v.get('level') != 'danger']
+            wiz.has_blocking = bool(blocking)
+            wiz.has_advisory = bool(advisory)
+            wiz.blocking_html = wiz._render_notice_list(blocking)
+            wiz.advisory_html = wiz._render_notice_list(advisory)
+
+    @staticmethod
+    def _render_notice_list(messages):
+        if not messages:
+            return False
+        return Markup('<ul class="mb-0">%s</ul>') % Markup('').join(
+            Markup('<li>%s</li>') % m for m in messages
+        )
+
+    @api.depends('state',
+                 'company_line_ids.do_import', 'company_line_ids.target_company_id',
+                 'conflict_ids', 'conflict_ids.resolution',
+                 'import_vending', 'import_attendance',
+                 'import_attendance_extra', 'import_service',
+                 'source_has_vending', 'source_has_attendance',
+                 'source_has_attendance_late', 'source_has_service')
     def _compute_warnings(self):
         for wiz in self:
             if wiz.state != 'confirm':
@@ -314,24 +380,26 @@ class HrRfidOdooImportWiz(models.TransientModel):
             ]
             for mod_name, field_name, src_field, tgt_field in module_checks:
                 if getattr(wiz, src_field) and not getattr(wiz, tgt_field):
+                    feature = wiz._feature_label(mod_name)
                     if getattr(wiz, field_name):
                         # User wants to import but target module is missing - block
                         warnings[f'missing_{mod_name}'] = {
                             'level': 'danger',
-                            'message': _(
-                                "Source has '%s' installed but it's not installed in target. "
-                                "Install it first or disable this import option.",
-                                mod_name,
+                            'message': self.env._(
+                                "This system cannot take over %(feature)s yet. "
+                                "Add that capability here first, or leave it out "
+                                "of the transfer.",
+                                feature=feature,
                             ),
                         }
                     else:
                         # Informational: source has module, target doesn't
                         warnings[f'info_missing_{mod_name}'] = {
                             'level': 'warning',
-                            'message': _(
-                                "Source has '%s' installed but it's not installed in target. "
-                                "Data for this module will not be imported.",
-                                mod_name,
+                            'message': self.env._(
+                                "The other system keeps %(feature)s, which this one "
+                                "does not have. That data will stay behind.",
+                                feature=feature,
                             ),
                         }
 

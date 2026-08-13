@@ -15,9 +15,19 @@
                                options="{'clickable': false}"/>
                     </header>
                     <sheet>
-                        <!-- Warnings (step 3) -->
-                        <div invisible="state != 'confirm' or not warnings">
-                            <field name="warnings" widget="actionable_errors"/>
+                        <!-- Warnings (step 3). Rendered here rather than with a
+                             widget: the only widget that fits lives in another
+                             module, and when that module is absent the field
+                             falls back to printing its raw contents. -->
+                        <div class="alert alert-danger" role="alert"
+                             invisible="state != 'confirm' or not has_blocking">
+                            <strong>Sort this out before starting</strong>
+                            <field name="blocking_html" nolabel="1" readonly="1"/>
+                        </div>
+                        <div class="alert alert-warning" role="alert"
+                             invisible="state != 'confirm' or not has_advisory">
+                            <strong>Worth knowing</strong>
+                            <field name="advisory_html" nolabel="1" readonly="1"/>
                         </div>
 
                         <!-- ══ Step 1: Connection ══════════════════ -->
