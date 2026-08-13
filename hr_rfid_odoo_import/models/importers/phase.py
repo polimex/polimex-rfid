@@ -137,7 +137,7 @@ def build_registry():
       Access and that path mirrors into the camera plate lists. The order is
       the second line of defence; the first is the guard in polimex_ip_cam.
     """
-    from .core_importer import CoreImporter, ZoneImporter
+    from .core_importer import CoreImporter, IoTableImporter, ZoneImporter
     from .people_importer import PeopleImporter
     from .access_importer import AccessImporter
     from .camera_importer import CameraImporter
@@ -158,6 +158,7 @@ def build_registry():
         VendingImporter,
         AttendanceImporter,
         ServiceImporter,
+        IoTableImporter,
     ]
 
 

@@ -1071,3 +1071,59 @@ class ZoneImporter(CoreImporter):
             self._import_zones()
             self._import_notifications()
         return self.results
+
+
+class IoTableImporter(PhaseImporter):
+    """Ask the migrated controllers to send their IO table over.
+
+    The table is not migrated, on purpose: the controller is the authority on
+    what its own inputs and outputs do. The catch is that the controller only
+    volunteers it when it is FIRST seen (hr_rfid_ctrl.py:1078 is reached from
+    the "controller is new" branch), and a migrated controller is never new -
+    it arrives already existing. So without this the table stays empty for
+    good, and the operator sees a controller that appears to do nothing.
+
+    A separate step because it is the only part of the transfer that needs the
+    hardware to be reachable. It is safe to repeat: it asks, it does not write.
+    """
+
+    PHASE_ID = 'Phase 8'
+    NAME = 'Controller IO tables'
+    REQUIRES_SOURCE = ('hr_rfid',)
+    REQUIRES_TARGET = (('hr.rfid.ctrl', 'io_table'),)
+    OPTION = 'import_hardware'
+    WEIGHT = 1
+
+    def run(self, wizard):
+        start = time.time()
+        model = 'hr.rfid.ctrl'
+        target_ids = [tid for tid in self.b.id_map.get(model, {}).values() if tid]
+        controllers = self.env[model].browse(target_ids).exists()
+        asked = 0
+        for ctrl in controllers:
+            if ctrl.io_table:
+                # Already knows its table; nothing to ask for.
+                continue
+            try:
+                with self.env.cr.savepoint():
+                    ctrl.read_io_table_cmd()
+                asked += 1
+            except Exception:
+                # One unreachable controller must not stop the others. The
+                # step can simply be run again once it is back.
+                _logger.warning(
+                    "Could not ask controller %s for its IO table", ctrl.id,
+                    exc_info=True)
+
+        note = ''
+        if asked:
+            note = self.env._(
+                "%(count)s controller(s) were asked to send their input/output "
+                "table. It arrives when they next report in; run this again if "
+                "any of them were switched off.", count=asked)
+        self.results.append(self.b._make_result(
+            self.env._("Controller IO tables"), len(controllers), asked,
+            skipped_count=len(controllers) - asked,
+            duration=time.time() - start, error=note,
+        ))
+        return self.results

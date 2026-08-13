@@ -5,107 +5,86 @@ module: hr_rfid_odoo_import
 doc_type: user_guide
 audience:
 - user
-summary: Import RFID access control data from older Odoo instances (v14-v18)
-last_updated: '2026-05-14'
-source_digest: sha256:86334d3d301325831b66950d340668e21d02ad47b8ffe17b5d658ec29db2f443
+summary: Bring RFID access control data across from another Odoo system (v14-v18)
+last_updated: '2026-08-13'
+source_digest: sha256:917a8495e4d3f76aea18007dd5c7c5e09340956d24d5542f5ee1be846b81d7b7
 companion_doc: llms-full.md
 ---
 
 
 # RFID Odoo Data Import
 
-> Import RFID access control data from older Odoo instances (v14-v18)
+> Bring RFID access control data across from another Odoo system into this one.
 
 
 ## What this module does
 
-Import RFID access control data from older Odoo instances (v14-v18).
+It copies an access control installation from another Odoo system into this
+one: the equipment, the people, the cards and access groups, the cameras and
+the sites, and as much of the history as you ask for.
 
-This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
+Two things shape how it behaves, and both are deliberate.
+
+**It never speaks to the hardware.** While a transfer runs, no controller and
+no camera receives a single command. The site stays guarded throughout. The
+consequence is that afterwards each camera still holds the plate list it held
+before - the transfer tells you so and asks you to refresh them.
+
+**It says what it could not do.** A part of the data that cannot be brought
+across is recorded with the reason, rather than leaving a gap you would find
+weeks later. If the other system holds records of some kind and none of them
+arrive, that is reported as a fault, not as a finished step.
 
 
 ## How to use it
 
-========================
-RFID Odoo Data Import
-========================
-
-..
-   :target: https://polimex.co
-   :alt: License: AGPL-3
-
-Import RFID access control data from older Odoo instances (v14—v18) into Odoo 19
-via XML-RPC API.
-
-Overview
-========
-
-This module provides a multi-step wizard for migrating RFID access control data
-from older Odoo instances into Odoo 19. It connects to the source Odoo via
-XML-RPC API, reads configuration and historical data, and recreates it in the
-target database.
-
-Features
-========
-
-* **XML-RPC connection** — works with any Odoo instance (local or remote, v14—v18)
-* **Dynamic schema discovery** — automatically detects source fields via ``fields_get()``
-* **Multi-company support** — select which company to import
-* **Phased import** with savepoint isolation per phase:
-
-  - Phase 1+3: Hardware (webstacks, controllers, doors, readers, zones, time schedules)
-  - Phase 2: People (employees, partners, departments, categories)
-  - Phase 4: Access (access groups, relations, cards → automatic card-door regeneration)
-  - Phase 5: Events (user events, system events, temperature/humidity logs)
-  - Phase 6a: Vending (rows, events, balance history, auto-refill)
-  - Phase 6b: Attendance (hr.attendance, hr.attendance.extra)
-  - Phase 6c: Services (rfid.service, rfid.service.sale, tags)
-
-* **Deduplication** via ``ir.model.data`` with ``__import__`` prefix
-* **Hardware command suppression** — no commands sent to controllers during import
-* **Identity by source ID, never by text** — a record is matched to its target
-  through the ``ir.model.data`` ledger (source id) alone. A matching name, serial
-  or card number is NOT identity: it merges different objects that happen to share
-  a label, and splits one object whose label drifted by a character.
-* **Conflict detection** — reports records that would violate a real unique
-  constraint of the target, using the FULL constraint key in the right scope
-  (``hr.rfid.webstack``: serial, global; ``hr.rfid.ctrl``: serial_number +
-  hw_version, global; ``hr.rfid.card``: number, per company). A conflict is
-  reported for the operator to decide - it is never auto-linked, and an undecided
-  one blocks the run.
-* **Direct SQL batch insert** for large datasets (events, attendance, balance history)
-* **Progress tracking** with real-time status updates
-
-Configuration
-=============
-
-No special configuration is needed. The module adds a menu entry under
-**RFID → Import → Import from Odoo**.
-
-Usage
-=====
-
-1. Go to **RFID → Import → Import from Odoo**
-2. Enter the source Odoo connection details (URL, database, login, password)
-3. Click **Check Connection** to verify connectivity
-4. Select the source company to import
-5. Choose which optional data to include (events, vending, attendance, services)
-6. Click **Start Import** and monitor progress
-7. Review the import log for results and any warnings
+1. Go to **RFID -> Import from Odoo**.
+2. Enter the address of the other system and an account that can read it. That
+   account needs to be able to see everything you want moved - including the
+   camera passwords, if you have cameras.
+3. Press **Check Connection**. The wizard then lists the companies it found.
+4. Pick which company to bring across and which company here it becomes.
+5. Choose what to include. Anything the other system does not keep, or this one
+   cannot receive, is shown with the reason and cannot be ticked.
+6. Review the summary. Records that would clash with something already here are
+   listed for you to decide about; the transfer will not start until you have.
+7. Press **Start Import**. The transfer opens on its own page and continues in
+   the background - close the page whenever you like.
+8. Come back to **RFID -> Data Transfers** to see how far it got and, line by
+   line, what it moved and what it did not.
 
 
-### Available actions
+## What it brings across
 
-- **Test connection** — Step 1 → Step 2: Test connection and load companies.
-- **Preview** — Step 2 → Step 3: Generate preview with counts and detect conflicts.
-- **Back** — Navigate back one step.
-- **Import** — Step 3 → Step 4 → Step 5: Execute the import.
+- Equipment: communication modules, controllers, doors, readers, working times
+- People: employees, contacts, departments, tags
+- Zones, and who belongs to them
+- Sites: the whole tree, the equipment on it, the contacts in it
+- Access groups and their door, employee and contact assignments
+- Cards, including vehicle plates
+- Cameras: their settings, the serial numbers they are recognised by, their
+  readers and doors, and their plate lists
+- History: card events, system events, recognised plates, temperature logs
+- Vending, attendance and visitor services, when both systems have them
 
 
-## Common questions and errors
+## Common questions
 
-Actions in this list display a message dialog when something is wrong (missing data, invalid configuration, server unreachable, etc.). If an action fails, read the dialog message and check the configuration described above.
+**Can I run it twice?** Yes. Everything that already came across is recognised
+and left alone, so a second run only brings what is missing.
 
-- **Test connection** (on `hr.rfid.odoo.import.wiz`) — Step 1 → Step 2: Test connection and load companies.
-- **Preview** (on `hr.rfid.odoo.import.wiz`) — Step 2 → Step 3: Generate preview with counts and detect conflicts.
-- **Import** (on `hr.rfid.odoo.import.wiz`) — Step 3 → Step 4 → Step 5: Execute the import.
+**What if it is interrupted?** It carries on from where it stopped. A transfer
+that has not moved for half an hour is closed automatically and its stored
+credentials are cleared; start a new one and it will pick up the remainder.
+
+**Why does a step say "Partly"?** Some of the records of that kind did not
+arrive - usually because what they point at was left out of this transfer. The
+line says how many.
+
+**Do the cameras start working straight away?** They keep working throughout,
+but they still hold their old plate lists. Refresh each camera's list once the
+transfer is done.
+
+**Nothing at all came across for one kind of record.** That is shown as a
+fault. Look at the step just above it: what those records point at is probably
+missing.
