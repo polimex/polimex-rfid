@@ -94,9 +94,11 @@ class HrRfidOdooImportRun(models.Model):
     @api.depends('source_url', 'source_db')
     def _compute_name(self):
         for run in self:
+            # Not named "source": that is the first parameter of Environment._
+            # itself, so passing it as a keyword collides with it.
             run.name = self.env._(
-                "Transfer from %(source)s",
-                source=run.source_db or run.source_url or '?',
+                "Transfer from %(system)s",
+                system=run.source_db or run.source_url or '?',
             )
 
     @api.depends('done_count', 'total_count')
