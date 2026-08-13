@@ -64,10 +64,23 @@ class CoreImporter(PhaseImporter):
         imported = 0
         linked = 0
 
+        # Card types are shipped WITH the modules on both sides, each carrying
+        # the same external id. Creating them again produces a second "License
+        # Plate" that is not the one the application refers to - and
+        # hr.rfid.card compares against the shipped one by external id, so a
+        # plate number lands on a type the validation does not recognise as
+        # plates and is refused for "digits must be from 0 to 9". Every plate
+        # in the transfer was lost this way, and with them every link to a
+        # camera. Shipped reference data is matched on its external id, not
+        # created.
+        shipped = self.b._match_by_external_id(model, [r['id'] for r in source_records])
+
         for rec in source_records:
             # Идентичност САМО по source id (ledger). Текстът е втора
             # проверка на вече намерения запис, не ключ за търсене.
             existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
+            if not existing and rec['id'] in shipped:
+                existing = self.env[model].browse(shipped[rec['id']])
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1

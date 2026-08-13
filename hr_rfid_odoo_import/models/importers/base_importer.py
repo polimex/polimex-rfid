@@ -364,6 +364,42 @@ class BaseImporter:
                 found[by_name[name]] = res_id
         return found
 
+    def _match_by_external_id(self, model, source_ids):
+        """Map source records to the SAME records shipped with our modules.
+
+        For reference data that both systems get from the same module - card
+        types, and anything else defined in module data - the external id is a
+        stable code shared by both sides. Bringing such a record across as a
+        new row creates a second one that the application does not recognise
+        as the original, because the code refers to the shipped one.
+
+        Returns {source_id: target_id} for those that exist on both sides.
+        """
+        if not source_ids:
+            return {}
+        try:
+            rows = self._search_read(
+                'ir.model.data',
+                [('model', '=', model), ('res_id', 'in', list(source_ids))],
+                ['module', 'name', 'res_id'],
+            )
+        except Exception:
+            _logger.warning(
+                "Could not read the external ids of %s from the other system; "
+                "records that ship with the modules may be duplicated instead "
+                "of matched", model, exc_info=True)
+            return {}
+        matched = {}
+        for row in rows:
+            if row['module'].startswith('__'):
+                # Written by an import on the source side, not shipped data.
+                continue
+            target = self.env.ref('%s.%s' % (row['module'], row['name']),
+                                  raise_if_not_found=False)
+            if target and target._name == model:
+                matched[row['res_id']] = target.id
+        return matched
+
     def warm_up_ledger(self, model, source_ids):
         """Load what a previous pass already imported into the in-memory map.
 

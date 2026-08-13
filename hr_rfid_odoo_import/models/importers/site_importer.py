@@ -196,7 +196,7 @@ class SiteImporter(PhaseImporter):
             )
         self.results.append(self.b._make_result(
             'hr.rfid.site (equipment)', total, updated,
-            skipped=total - updated, duration=time.time() - start, error=note,
+            skipped_count=total - updated, duration=time.time() - start, error=note,
         ))
 
     def _link_sites_to_partners(self):
@@ -229,7 +229,7 @@ class SiteImporter(PhaseImporter):
 
         self.results.append(self.b._make_result(
             'res.partner (sites)', len(records), updated,
-            skipped=len(records) - updated, duration=time.time() - start,
+            skipped_count=len(records) - updated, duration=time.time() - start,
         ))
 
 
@@ -273,6 +273,6 @@ class SiteGroupImporter(PhaseImporter):
 
         self.results.append(self.b._make_result(
             'hr.rfid.site (own group)', len(wanted), restored,
-            skipped=skipped, duration=time.time() - start,
+            skipped_count=skipped, duration=time.time() - start,
         ))
         return self.results

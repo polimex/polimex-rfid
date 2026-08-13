@@ -96,7 +96,7 @@ class EventImporter(PhaseImporter):
             return
         self.results.append(self.b._make_result(
             '%s (cameras)' % model, expected, camera_rows,
-            skipped=max(expected - camera_rows, 0),
+            skipped_count=max(expected - camera_rows, 0),
             status='done' if camera_rows >= expected else 'error',
             error='' if camera_rows >= expected else self.env._(
                 "%(missing)s recognised plate event(s) did not come across.",
@@ -349,6 +349,8 @@ class EventImporter(PhaseImporter):
                 continue
             rows.append(tuple(row))
             src_ids.append(rec['id'])
+            if rec.get('camera_id'):
+                camera_rows += 1
 
         if rows:
             try:
