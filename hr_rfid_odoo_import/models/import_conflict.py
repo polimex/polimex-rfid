@@ -57,15 +57,27 @@ class HrRfidOdooImportConflict(models.TransientModel):
     # един клиент за контролера на друг (1 970 записа при чужд наемател).
 
 
-class HrRfidOdooImportLog(models.TransientModel):
+class HrRfidOdooImportLog(models.Model):
+    """What happened, step by step - kept, not cleaned away.
+
+    This used to be transient, which was fine while a transfer lasted one
+    screenful of time. A background transfer runs for hours, and the cleaner
+    would remove the record of it halfway through - the operator would be
+    left with a finished job and no account of what it did.
+    """
+
     _name = 'hr.rfid.odoo.import.log'
     _description = 'RFID Odoo Import Log'
+    _order = 'id'
 
-    wizard_id = fields.Many2one(
-        'hr.rfid.odoo.import.wiz',
-        required=True,
+    # No link back to the wizard: that one is transient, and a kept record may
+    # not point at something the cleaner will remove. The transfer record is
+    # what these lines belong to anyway.
+    run_id = fields.Many2one(
+        'hr.rfid.odoo.import.run',
         ondelete='cascade',
-        help="Parent import-run wizard this log entry belongs to.",
+        index=True,
+        help="The transfer this line belongs to.",
     )
     phase = fields.Char(
         string='Phase', readonly=True,

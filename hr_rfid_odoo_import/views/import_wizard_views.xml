@@ -184,27 +184,11 @@
                                  class="alert alert-success text-center" role="status">
                                 <strong>Import completed successfully!</strong>
                             </div>
-                            <group string="Import Results">
-                                <field name="log_ids" readonly="1" nolabel="1" colspan="2">
-                                    <list>
-                                        <field name="phase"/>
-                                        <field name="model"/>
-                                        <field name="source_count" sum="Total"/>
-                                        <field name="imported_count" sum="Total"/>
-                                        <field name="linked_count" sum="Total"/>
-                                        <field name="skipped_count" sum="Total"/>
-                                        <field name="rejected_count" sum="Total"
-                                               decoration-danger="rejected_count &gt; 0"/>
-                                        <field name="status"
-                                               decoration-success="status == 'done'"
-                                               decoration-danger="status == 'error'"
-                                               decoration-muted="status == 'skipped'"
-                                               widget="badge"/>
-                                        <field name="duration" widget="float_time"/>
-                                        <field name="error_message" optional="hide"/>
-                                    </list>
-                                </field>
-                            </group>
+                            <div class="alert alert-info" role="status">
+                                The transfer now runs in the background. Its progress
+                                and the account of what it moved are on the
+                                Data Transfers page.
+                            </div>
                         </div>
                     </sheet>
 

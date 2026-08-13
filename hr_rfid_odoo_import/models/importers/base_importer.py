@@ -55,6 +55,13 @@ class BaseImporter:
         self.options = options              # wizard options dict
         # Cache
         self._field_cache = {}             # {model: {field_name: field_info}}
+        #: Optional callable answering "is my time up?". Set by a background
+        #: run so a long read can stop between pages instead of running past
+        #: the worker's time limit and taking the server down with it.
+        self.time_is_up = None
+        #: True once a read stopped early. The phase is then incomplete, not
+        #: finished, and the run knows to come back to it.
+        self.stopped_early = False
 
     # ── Source reading (XML-RPC) ──────────────────────────────
 
@@ -119,7 +126,13 @@ class BaseImporter:
         return [by_id[i] for i in ids if i in by_id]
 
     def _read_all(self, model, domain, fields, batch_size=1000):
-        """ID-based pagination for large datasets."""
+        """ID-based pagination for large datasets.
+
+        Stops between pages when the caller's time is up. The phase then works
+        with what it has read so far and is re-run later; because every record
+        carries an external ID, the next pass skips whatever already arrived,
+        so stopping costs a page of reading and never a duplicate row.
+        """
         all_records = []
         last_id = 0
         while True:
@@ -131,6 +144,12 @@ class BaseImporter:
                 break
             all_records.extend(records)
             last_id = records[-1]['id']
+            if self.time_is_up and self.time_is_up():
+                self.stopped_early = True
+                _logger.info(
+                    "%s: stopping after %d records - out of time for this pass",
+                    model, len(all_records))
+                break
         return all_records
 
     def _search_count(self, model, domain):
@@ -270,6 +289,23 @@ class BaseImporter:
             for name, res_id in self.env.cr.fetchall():
                 found[by_name[name]] = res_id
         return found
+
+    def warm_up_ledger(self, model, source_ids):
+        """Load what a previous pass already imported into the in-memory map.
+
+        ``id_map`` lives in memory (see __init__). A new process - the next
+        cron cycle, or another worker picking the job up - starts with it
+        empty, so every relation resolves to False and the row is counted as
+        skipped. The protocol then looks perfectly normal while the data is
+        not there. The ledger is the durable half of that map; this reads it
+        back in one query instead of one per lookup.
+        """
+        if not source_ids:
+            return 0
+        found = self.already_imported(model, source_ids)
+        for source_id, target_id in found.items():
+            self._set_target_id(model, source_id, target_id)
+        return len(found)
 
     def find_by_ledger(self, model, source_id, expect_text=None, text_field='name'):
         """Единствената допустима идентичност: source id, през ledger-а.

@@ -26,7 +26,7 @@ class TestOdooImportSmoke(TransactionCase):
 
     def test_log_record_persists(self):
         log = self.env["hr.rfid.odoo.import.log"].create({
-            "wizard_id": self.wizard.id,
+            "run_id": False,
         })
         self.assertTrue(log.id)
 

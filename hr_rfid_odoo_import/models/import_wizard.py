@@ -273,12 +273,6 @@ class HrRfidOdooImportWiz(models.TransientModel):
     )
 
     # ── Step 5: Results ────────────────────────────────────────
-    log_ids = fields.One2many(
-        'hr.rfid.odoo.import.log',
-        'wizard_id',
-        string='Import Log',
-        help="Per-phase result rows (counts of imported / skipped / linked, plus any error). The Results step renders this list.",
-    )
     error_message = fields.Text(
         string='Error', readonly=True,
         help="Top-level error captured if the run aborted mid-way. Individual phase errors are also stored on their log rows.",
@@ -847,32 +841,52 @@ class HrRfidOdooImportWiz(models.TransientModel):
                     len(danger_warnings),
                 ))
 
-        self.state = 'importing'
-        self.progress_percent = 0.0
-        self.progress_text = _("Starting import...\n")
-
-        try:
-            self._do_import()
-            self.state = 'done'
-        except Exception as e:
-            _logger.error("Import error: %s", e, exc_info=True)
-            self.error_message = str(e)
-            self.state = 'done'
-
-        return self._keep_open()
-
-    def _do_import(self):
-        """Execute the full import process."""
-        from .importers.base_importer import BaseImporter
-
-        # Build company map (същият източник като при откриването на конфликти)
-        company_map = {
-            line.source_id: line.target_company_id.id
-            for line in self.company_line_ids.filtered('do_import')
+        run = self._queue_run()
+        # Doing the work here would put it inside the HTTP request, which is
+        # cut off after limit_time_real seconds - far less than a real site
+        # takes. The request only records what to do and wakes the worker.
+        return {
+            'type': 'ir.actions.act_window',
+            'name': self.env._("Data Transfer"),
+            'res_model': 'hr.rfid.odoo.import.run',
+            'res_id': run.id,
+            'view_mode': 'form',
+            'target': 'current',
         }
 
-        # Build options dict
-        options = {
+    def _queue_run(self):
+        """Hand the work over to a record that outlives this dialog."""
+        self.ensure_one()
+        run = self.env['hr.rfid.odoo.import.run'].create({
+            'source_url': self.source_url,
+            'source_db': self.source_db,
+            'source_login': self.source_login,
+            'source_password': self.source_password,
+            'source_uid': self.source_uid,
+            'ledger_slug': self.ledger_slug,
+            'installed_modules_json': self.installed_modules_json,
+            'options_json': json.dumps(self._build_options()),
+            'company_map_json': json.dumps({
+                str(line.source_id): line.target_company_id.id
+                for line in self.company_line_ids.filtered('do_import')
+            }),
+            'resolution_json': json.dumps([
+                {
+                    'model': c.source_model,
+                    'source_id': c.source_id,
+                    'target_id': c.target_id,
+                    'resolution': c.resolution,
+                }
+                for c in self.conflict_ids if c.resolution
+            ]),
+        })
+        run.action_start()
+        return run
+
+    def _build_options(self):
+        """What the operator chose, in the form the phases read."""
+        self.ensure_one()
+        return {
             'import_hardware': self.import_hardware,
             'import_people': self.import_people,
             'import_access': self.import_access,
@@ -894,6 +908,21 @@ class HrRfidOdooImportWiz(models.TransientModel):
             'import_attendance_extra': self.import_attendance_extra and self.source_has_attendance_late and self.target_has_attendance_late,
             'import_service': self.import_service and self.source_has_service and self.target_has_service,
         }
+
+    def _do_import(self):
+        """Run everything in one go, in this transaction.
+
+        Kept for tests and for a source small enough to finish inside a single
+        request. The operator's path goes through the background transfer,
+        which is the only one that can survive a real workload.
+        """
+        from .importers.base_importer import BaseImporter
+
+        company_map = {
+            line.source_id: line.target_company_id.id
+            for line in self.company_line_ids.filtered('do_import')
+        }
+        options = self._build_options()
 
         # Initialize base importer
         importer = BaseImporter(
@@ -957,7 +986,6 @@ class HrRfidOdooImportWiz(models.TransientModel):
         weeks later.
         """
         self.env['hr.rfid.odoo.import.log'].create({
-            'wizard_id': self.id,
             'phase': cls.PHASE_ID,
             'model': cls.NAME,
             'status': 'skipped',
@@ -992,7 +1020,6 @@ class HrRfidOdooImportWiz(models.TransientModel):
             # Create log entries from results
             for result in (results or []):
                 self.env['hr.rfid.odoo.import.log'].create({
-                    'wizard_id': self.id,
                     'phase': phase_id,
                     'model': result.get('model', ''),
                     'source_count': result.get('source_count', 0),
@@ -1024,7 +1051,6 @@ class HrRfidOdooImportWiz(models.TransientModel):
             phase_importer.b.id_map.clear()
             phase_importer.b.id_map.update(id_map_snapshot)
             self.env['hr.rfid.odoo.import.log'].create({
-                'wizard_id': self.id,
                 'phase': phase_id,
                 'model': phase_name,
                 'status': 'error',

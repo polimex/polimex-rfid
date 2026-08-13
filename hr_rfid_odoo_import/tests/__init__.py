@@ -7,3 +7,4 @@ from . import test_warnings_render
 from . import test_phase_registry
 from . import test_camera_phase
 from . import test_site_phase
+from . import test_background_run
