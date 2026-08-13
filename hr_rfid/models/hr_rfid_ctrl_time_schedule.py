@@ -104,6 +104,25 @@ class HrRfidTimeSchedule(models.Model):
     # Installation helpers
 
     @api.model
+    def _default_for_company(self, company=None):
+        """The working time to offer, from the right company.
+
+        An unfiltered search returns whichever tenant's schedule sorts first,
+        so on a multi-company database a form would open with another
+        company's working hours already filled in - and taking [0] of an empty
+        result raised IndexError instead of saying what was missing.
+        """
+        company = company or self.env.company
+        schedule = self.search(
+            [('company_id', 'in', [company.id, False])], limit=1, order='number')
+        if not schedule:
+            raise exceptions.UserError(self.env._(
+                "No working time has been defined yet. Create one before "
+                "granting access to doors."
+            ))
+        return schedule
+
+    @api.model
     def set_company_ts(self):
         # .with_context(force_company=vals['company_id'])
         for company_id in self.env['res.company'].sudo().search([]):

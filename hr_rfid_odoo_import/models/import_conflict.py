@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from odoo import fields, models, _
+from datetime import timedelta
+
+from odoo import api, fields, models, _
 
 
 class HrRfidOdooImportConflict(models.TransientModel):
@@ -127,6 +129,26 @@ class HrRfidOdooImportLog(models.Model):
         help="Error message captured if the phase status is Error - full traceback for debugging.",
     )
 
+    #: Rows removed per vacuum pass. Bounded on purpose: deleting a year of
+    #: migration history in one transaction locks the table and times out.
+    GC_LIMIT = 1000
+    #: Kept long enough to answer "what did that migration actually move?"
+    #: months later, which is exactly when the question gets asked.
+    GC_DAYS = 365
+
+    @api.autovacuum
+    def _gc_import_logs(self):
+        """Clear out the account of transfers nobody will ask about again.
+
+        The table used to be transient and cleaned itself. Now that it is
+        kept - so a multi-hour transfer still has its report at the end - it
+        would otherwise grow forever on a machine that runs migrations often.
+        """
+        cutoff = fields.Datetime.now() - timedelta(days=self.GC_DAYS)
+        stale = self.search([('create_date', '<', cutoff)], limit=self.GC_LIMIT)
+        count = len(stale)
+        stale.unlink()
+        return count, count == self.GC_LIMIT
 
 class HrRfidOdooImportCompanyLine(models.TransientModel):
     _name = 'hr.rfid.odoo.import.company.line'

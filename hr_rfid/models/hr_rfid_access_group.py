@@ -195,16 +195,9 @@ class HrRfidAccessGroup(models.Model):
             # rights of one company were written with another company's working
             # hours. Global schedules (no company) stay eligible - they apply
             # everywhere by design.
-            company = self.company_id or door_ids[:1].company_id
-            domain = [('company_id', 'in', [company.id, False])] if company else []
-            time_schedule = self.env['hr.rfid.time.schedule'].search(
-                domain, limit=1, order='number',
-            )
-            if not time_schedule:
-                raise exceptions.UserError(self.env._(
-                    "No working time has been defined yet. Create one before "
-                    "granting access to doors."
-                ))
+            company = self.company_id or door_ids[:1].company_id or self.env.company
+            time_schedule = self.env['hr.rfid.time.schedule']._default_for_company(
+                company)
 
         for door in door_ids:
             res = self.env['hr.rfid.access.group.door.rel'].search([
@@ -494,7 +487,7 @@ class HrRfidAccessGroupDoorRel(models.Model):
         'hr.rfid.time.schedule',
         string='Time schedule',
         help='Defines when this door can be accessed by this group. For example: "Monday-Friday 8AM-6PM" or "24/7 Access". Different doors in the same group can have different schedules.',
-        default=lambda self: self.env['hr.rfid.time.schedule'].search([], limit=1, order='number')[0].id,
+        default=lambda self: self.env['hr.rfid.time.schedule']._default_for_company().id,
         required=True,
         ondelete='cascade',
     )
@@ -965,7 +958,7 @@ class HrRfidAccessGroupWizard(models.TransientModel):
         string='Time Schedule',
         help='Select when these doors can be accessed. This schedule will apply to all selected doors. Common schedules include "Business Hours", "24/7 Access", or custom schedules for specific needs.',
         required=True,
-        default=lambda self: self.env['hr.rfid.time.schedule'].search([], limit=1, order='number')[0].id,
+        default=lambda self: self.env['hr.rfid.time.schedule']._default_for_company().id,
     )
 
     alarm_rights = fields.Boolean(

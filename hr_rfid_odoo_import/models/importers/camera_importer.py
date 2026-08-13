@@ -50,11 +50,13 @@ class CameraImporter(PhaseImporter):
     IDENTITY_FIELDS = ('model', 'serial_number', 'sub_serial_number', 'firmware')
 
     def run(self, wizard):
+        self._cameras_without_password = 0
         self._check_credentials_are_readable()
         self._import_cameras()
         self._import_camera_readers()
         self._import_camera_doors()
         self._import_plate_links()
+        self._say_what_is_left_to_do()
         return self.results
 
     # ── Pre-flight ────────────────────────────────────────────
@@ -67,19 +69,19 @@ class CameraImporter(PhaseImporter):
         quietly produce cameras nobody can connect to - discovered only when
         someone opens one and presses Check Connection, long after the move.
         """
-        cameras = self.b._search_read(
-            'cctv.camera', self.b._company_domain(), ['name', 'password'],
-            limit=5,
-        )
-        if not cameras:
+        total = self.b._search_count('cctv.camera', self.b._company_domain())
+        if not total:
             return
-        if all(not c.get('password') for c in cameras):
+        with_password = self.b._search_count(
+            'cctv.camera', self.b._company_domain() + [('password', '!=', False)])
+        if not with_password:
             raise UserError(self.env._(
-                "The cameras came across without their access details. The "
-                "account used to read the other system is not allowed to see "
-                "them. Give that account camera-manager rights there and run "
-                "the transfer again."
+                "The cameras cannot be brought across with their access "
+                "details: the account used to read the other system is not "
+                "allowed to see them. Give that account camera-manager rights "
+                "there and start the transfer again."
             ))
+        self._cameras_without_password = total - with_password
 
     # ── Cameras ───────────────────────────────────────────────
 
@@ -203,7 +205,7 @@ class CameraImporter(PhaseImporter):
             ['camera_id', 'reader_ids'] + wanted,
         )
 
-        imported = linked = skipped = 0
+        imported = linked = skipped = lost_card_type = 0
         prefix = model.replace('.', '_')
         for rec in source_records:
             if not self.b._map_m2o('cctv.camera', rec.get('camera_id')):
@@ -219,7 +221,11 @@ class CameraImporter(PhaseImporter):
                 vals['card_type'] = self.b._map_m2o(
                     'hr.rfid.card.type', rec['card_type']) or False
                 if not vals['card_type']:
+                    # Falls back to the default kind of card. On an ANPR
+                    # barrier that is the difference between a plate and a
+                    # badge, so it is reported rather than dropped quietly.
                     vals.pop('card_type')
+                    lost_card_type += 1
             if 'active' in wanted:
                 vals['active'] = bool(rec.get('active'))
             vals['reader_ids'] = self.b._map_m2m(
@@ -235,9 +241,15 @@ class CameraImporter(PhaseImporter):
             else:
                 skipped += 1
 
+        note = ''
+        if lost_card_type:
+            note = self.env._(
+                "%(count)s door(s) arrived without the kind of card they "
+                "accept, because that kind is not here. Set it on each door "
+                "before the barrier is used again.", count=lost_card_type)
         self.results.append(self.b._make_result(
             model, len(source_records), imported, linked, skipped,
-            duration=time.time() - start,
+            duration=time.time() - start, error=note,
         ))
 
     # ── Plate lists ───────────────────────────────────────────
@@ -299,4 +311,35 @@ class CameraImporter(PhaseImporter):
         self.results.append(self.b._make_result(
             model, len(source_records), imported, linked, skipped,
             duration=time.time() - start, error=note,
+        ))
+
+    def _say_what_is_left_to_do(self):
+        """Tell the operator what the transfer deliberately did NOT do.
+
+        Nothing was sent to the cameras while this ran, on purpose - the site
+        stayed guarded throughout. The consequence is that each camera still
+        holds the list it held before, which is not necessarily the list
+        recorded here: plates from an unrecognised bucket were moved to the
+        deny list on this side only, and anything the operator changes now
+        exists only here until the camera is told. Nobody would find that out
+        on their own until a vehicle was refused, or let through.
+        """
+        cameras = len(self.b.id_map.get('cctv.camera', {}))
+        if not cameras:
+            return
+        notes = [self.env._(
+            "Nothing was sent to the cameras while the transfer ran, so the "
+            "site stayed guarded. Each camera still holds the plate list it "
+            "had before. Open the cameras and refresh their plate lists so "
+            "they match what is recorded here."
+        )]
+        if self._cameras_without_password:
+            notes.append(self.env._(
+                "%(count)s camera(s) arrived without a password and cannot be "
+                "reached until one is entered.",
+                count=self._cameras_without_password,
+            ))
+        self.results.append(self.b._make_result(
+            self.env._("Cameras - still to be done"), 0, 0,
+            status='skipped', error=' '.join(notes),
         ))

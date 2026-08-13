@@ -160,27 +160,43 @@ class SiteImporter(PhaseImporter):
     def _link_sites_to_hardware(self):
         """Fill site_id on the equipment that was imported before the sites."""
         start = time.time()
-        total = updated = 0
+        total = updated = missing_equipment = missing_site = 0
         for model in self.SITE_LINKED_MODELS:
             if model not in self.env or 'site_id' not in self.env[model]._fields:
                 continue
             if not self.b._has_field(model, 'site_id'):
                 continue
+            # Scoped like every other read. Without it the counts include
+            # other tenants' equipment, which reads as "skipped" and hides the
+            # genuine misses among them.
             records = self.b._read_all(
-                model, [('site_id', '!=', False)], ['site_id'])
+                model,
+                [('site_id', '!=', False)] + self.b._scoped_domain('site_id'),
+                ['site_id'])
             total += len(records)
             for rec in records:
                 target_id = self.b._get_target_id(model, rec['id'])
+                if not target_id:
+                    missing_equipment += 1
+                    continue
                 site_id = self.b._map_m2o('hr.rfid.site', rec.get('site_id'))
-                if not target_id or not site_id:
+                if not site_id:
+                    missing_site += 1
                     continue
                 self.env[model].with_context(**IMPORT_CONTEXT).browse(
                     target_id).write({'site_id': site_id})
                 updated += 1
 
+        note = ''
+        if missing_equipment or missing_site:
+            note = self.env._(
+                "%(equipment)s piece(s) of equipment had not arrived yet and "
+                "%(sites)s pointed at a site that is not here.",
+                equipment=missing_equipment, sites=missing_site,
+            )
         self.results.append(self.b._make_result(
             'hr.rfid.site (equipment)', total, updated,
-            skipped=total - updated, duration=time.time() - start,
+            skipped=total - updated, duration=time.time() - start, error=note,
         ))
 
     def _link_sites_to_partners(self):
@@ -192,7 +208,9 @@ class SiteImporter(PhaseImporter):
                 'res.partner (sites)', 0, 0, status='skipped'))
             return
 
-        records = self.b._read_all(model, [('site_ids', '!=', False)], ['site_ids'])
+        records = self.b._read_all(
+            model, [('site_ids', '!=', False)] + self.b._company_domain(),
+            ['site_ids'])
         updated = 0
         for rec in records:
             target_id = self.b._get_target_id(model, rec['id'])
