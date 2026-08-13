@@ -6,3 +6,4 @@ from . import test_ag_rel_verbatim
 from . import test_warnings_render
 from . import test_phase_registry
 from . import test_camera_phase
+from . import test_site_phase

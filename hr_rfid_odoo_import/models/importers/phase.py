@@ -129,6 +129,10 @@ def build_registry():
       are the people Phase 2 creates. Running zones with the hardware left
       every membership list empty, and those rows are written noupdate, so a
       later run could not repair them.
+    - Sites after the hardware (they have equipment to hold) and before Access
+      (the access groups point back at them), with their own access groups
+      restored only AFTER Access, so a site does not build a group beside the
+      one arriving from the source.
     - Cameras after Access, because the card-to-door rights regenerate during
       Access and that path mirrors into the camera plate lists. The order is
       the second line of defence; the first is the guard in polimex_ip_cam.
@@ -137,6 +141,7 @@ def build_registry():
     from .people_importer import PeopleImporter
     from .access_importer import AccessImporter
     from .camera_importer import CameraImporter
+    from .site_importer import SiteGroupImporter, SiteImporter
     from .event_importer import EventImporter
     from .vending_importer import VendingImporter
     from .attendance_importer import AttendanceImporter
@@ -145,7 +150,9 @@ def build_registry():
         CoreImporter,
         PeopleImporter,
         ZoneImporter,
+        SiteImporter,
         AccessImporter,
+        SiteGroupImporter,
         CameraImporter,
         EventImporter,
         VendingImporter,

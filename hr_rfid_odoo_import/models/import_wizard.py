@@ -107,6 +107,11 @@ class HrRfidOdooImportWiz(models.TransientModel):
         string='Import Cards', default=True,
         help="Include hr.rfid.card records, including their owner and access-group memberships.",
     )
+    import_sites = fields.Boolean(
+        string='Import sites', default=True,
+        help="Include the tree of sites, the equipment assigned to them and "
+             "the contacts that belong to them.",
+    )
     import_cameras = fields.Boolean(
         string='Import cameras', default=True,
         help="Include ANPR cameras, the readers and doors that belong to them, "
@@ -872,6 +877,7 @@ class HrRfidOdooImportWiz(models.TransientModel):
             'import_people': self.import_people,
             'import_access': self.import_access,
             'import_cameras': self.import_cameras,
+            'import_sites': self.import_sites,
             'import_cards': self.import_cards,
             'import_all_partners': self.import_all_partners,
             'import_all_employees': self.import_all_employees,
