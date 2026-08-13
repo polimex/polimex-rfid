@@ -16,6 +16,7 @@ lives on the permanent account.move.sending_data.
 import json
 import logging
 import time
+from datetime import timedelta
 
 from odoo import api, fields, models
 from odoo.http import request
@@ -28,6 +29,11 @@ _logger = logging.getLogger(__name__)
 #: overruns does not just fail - it brings the server down with it, so this
 #: is a safety parameter, not a tuning knob.
 PASS_SECONDS = 5.0
+
+#: A transfer untouched for this long is treated as dead. Long enough that a
+#: slow pass is never mistaken for a stalled one, short enough that the stored
+#: credentials do not outlive the job by a working day.
+STALLED_MINUTES = 30
 
 
 class HrRfidOdooImportRun(models.Model):
@@ -145,6 +151,7 @@ class HrRfidOdooImportRun(models.Model):
         if request:
             self.env['hr.rfid.odoo.import.run']._wake_the_worker()
             return
+        self._abandon_stalled_runs()
         run = self.search([('state', 'in', ('queued', 'running'))],
                           order='create_date asc', limit=1)
         if not run:
@@ -164,6 +171,32 @@ class HrRfidOdooImportRun(models.Model):
                 "themselves: %(problem)s", problem=str(exc)[:300],
             ))
             self.env.cr.commit()
+
+    @api.model
+    def _abandon_stalled_runs(self):
+        """End transfers that stopped being worked on, and drop their password.
+
+        A pass that dies outright - the process is killed, the server restarts
+        mid-step - leaves the transfer sitting in "running" for good. Two things
+        follow from that, and the second is the reason this exists: the queue is
+        blocked behind it, and the other system's password stays in the database
+        indefinitely, long after anyone would think the job was over.
+        """
+        cutoff = fields.Datetime.now() - timedelta(minutes=STALLED_MINUTES)
+        stalled = self.search([
+            ('state', '=', 'running'),
+            ('write_date', '<', cutoff),
+        ])
+        for run in stalled:
+            _logger.warning(
+                "Transfer %s has not moved since %s - abandoning it and "
+                "clearing the stored credentials", run.id, run.write_date)
+            run._finish('failed', self.env._(
+                "This transfer stopped without finishing and has been closed. "
+                "The access details it held have been cleared. Start a new one "
+                "when you are ready - what already came across will not be "
+                "brought over twice."
+            ))
 
     def _process_pass(self):
         """Work through as many steps as fit in this pass."""
