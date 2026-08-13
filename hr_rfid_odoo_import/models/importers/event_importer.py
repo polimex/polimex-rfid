@@ -47,6 +47,51 @@ class EventImporter(PhaseImporter):
             return [(field, '>=', date_from)]
         return []
 
+    def _with_camera_branch(self, model, domain):
+        """Add the camera-side events to a controller-scoped domain.
+
+        A camera's events hang off the camera, not off a controller: its
+        readers have no controller_id and its system events have no webstack.
+        A dotted domain compiles to EXISTS, so the controller-scoped read
+        cannot see a single one of them - and the only visible sign is a
+        smaller number, which reads exactly like "this customer has no
+        cameras". Every recognised plate in the history was lost this way.
+        """
+        if not self.b._has_field(model, 'camera_id'):
+            return domain
+        return ['|'] + domain + self.b._scoped_domain('camera_id')
+
+    def _camera_event_fields(self, model, source_fields, target_fields):
+        """The camera columns worth carrying over, when both sides have them.
+
+        ``snapshot`` is deliberately absent: it is an attachment field with no
+        column of its own, and naming it in a raw INSERT takes the whole step
+        down with UndefinedColumn.
+        """
+        return [f for f in ('camera_id', 'license_plate', 'anpr_confidence')
+                if f in source_fields and f in target_fields]
+
+    def _report_camera_events(self, model, imported_total):
+        """Count the camera events on the source and say so in the protocol.
+
+        Without a count taken from the other side, "no plates arrived" cannot
+        be told apart from "there were none to begin with" - which is how this
+        went unnoticed.
+        """
+        if not self.b._has_field(model, 'camera_id'):
+            return
+        expected = self.b._search_count(
+            model, [('camera_id', '!=', False)] + self.b._scoped_domain('camera_id'))
+        self.results.append(self.b._make_result(
+            '%s (cameras)' % model, expected, imported_total,
+            skipped=max(expected - imported_total, 0),
+            status='done' if imported_total >= expected else 'error',
+            error='' if imported_total >= expected else self.env._(
+                "%(missing)s camera event(s) did not come across.",
+                missing=expected - imported_total,
+            ),
+        ))
+
     def _import_user_events(self):
         """Step 26: hr.rfid.event.user - Direct SQL batch."""
         start = time.time()
@@ -58,19 +103,24 @@ class EventImporter(PhaseImporter):
         # A dotted domain is an EXISTS, so a nullable link would silently drop
         # rows. Both chains yield the same 292685 rows on this source, but only
         # this one is guaranteed by a constraint rather than by luck.
-        domain = (self.b._scoped_domain('reader_id.controller_id.webstack_id')
-                  + self._event_date_domain())
         source_fields_info = self.b._get_source_fields(model)
         # Real columns only - a non-stored field in a raw INSERT is an
         # UndefinedColumn that kills the whole step.
         target_fields = self.b._target_columns(model)
+
+        domain = self._with_camera_branch(
+            model, self.b._scoped_domain('reader_id.controller_id.webstack_id'),
+        ) + self._event_date_domain()
+
+        camera_fields = self._camera_event_fields(
+            model, source_fields_info, target_fields)
 
         # Required fields
         fields_to_read = ['event_time']
         # Optional fields (check source availability)
         for f in ['event_action', 'door_id', 'reader_id', 'card_id',
                   'employee_id', 'contact_id', 'controller_id', 'input_js',
-                  'card_number', 'department_id', 'alarm_line_id']:
+                  'card_number', 'department_id', 'alarm_line_id'] + camera_fields:
             if f in source_fields_info:
                 fields_to_read.append(f)
 
@@ -84,7 +134,8 @@ class EventImporter(PhaseImporter):
         columns = ['event_time']
         for f in ['event_action', 'door_id', 'reader_id', 'card_id',
                   'employee_id', 'contact_id', 'controller_id',
-                  'department_id', 'alarm_line_id', 'input_js', 'card_number']:
+                  'department_id', 'alarm_line_id', 'input_js',
+                  'card_number'] + camera_fields:
             if f in target_fields and f in fields_to_read:
                 columns.append(f)
 
@@ -99,6 +150,10 @@ class EventImporter(PhaseImporter):
             'contact_id': ('res.partner', False),
             'department_id': ('hr.department', False),
             'alarm_line_id': ('hr.rfid.ctrl.alarm', False),
+            # Soft: an event whose camera is out of scope keeps its plate and
+            # its timestamp; losing the whole event would be worse than losing
+            # the link back to a camera this run is not moving.
+            'camera_id': ('cctv.camera', False),
         }
 
         rows = []
@@ -145,6 +200,7 @@ class EventImporter(PhaseImporter):
             model, len(source_records), imported, already, skipped,
             duration=time.time() - start, rejected_count=rejected,
         ))
+        self._report_camera_events(model, imported + already)
 
     def _import_system_events(self):
         """Step 27: hr.rfid.event.system - Direct SQL batch.
@@ -179,7 +235,11 @@ class EventImporter(PhaseImporter):
         if 'timestamp' not in target_fields:
             target_time_field = 'event_time'
 
-        domain = self.b._scoped_domain('webstack_id')
+        # A camera's system events name no webstack at all, so the scope above
+        # cannot reach them - an unrecognised plate, a camera going offline,
+        # every one of them was dropped without a trace.
+        domain = self._with_camera_branch(
+            model, self.b._scoped_domain('webstack_id'))
         orphan_cutoff = self.b.options.get('orphan_event_cutoff')
         if orphan_cutoff:
             # Keep every controller-bound event; take the module-only ones
@@ -189,10 +249,13 @@ class EventImporter(PhaseImporter):
                                (source_time_field, '>=', orphan_cutoff)]
         domain += self._event_date_domain(source_time_field)
 
+        camera_fields = self._camera_event_fields(
+            model, source_fields_info, target_fields)
+
         fields_to_read = [source_time_field, 'webstack_id']
         for f in ['event_action', 'door_id', 'controller_id', 'alarm_line_id',
                   'error_description', 'input_js', 'card_number', 'siren',
-                  'occurrences', 'last_occurrence']:
+                  'occurrences', 'last_occurrence'] + camera_fields:
             if f in source_fields_info:
                 fields_to_read.append(f)
 
@@ -210,15 +273,20 @@ class EventImporter(PhaseImporter):
             if f in target_fields and f in fields_to_read:
                 columns.append(f)
         for f in ['input_js', 'card_number', 'siren', 'occurrences',
-                  'last_occurrence']:
+                  'last_occurrence'] + camera_fields:
             if f in target_fields and f in fields_to_read:
                 columns.append(f)
 
         m2o_models = {
-            'webstack_id': ('hr.rfid.webstack', True),
+            # Soft, not hard: a camera's system event names no webstack at all,
+            # and dropping every row without one is precisely what made the
+            # camera history disappear. Rows that name neither a webstack nor a
+            # camera are still skipped, just below.
+            'webstack_id': ('hr.rfid.webstack', False),
             'door_id': ('hr.rfid.door', False),
             'controller_id': ('hr.rfid.ctrl', False),
             'alarm_line_id': ('hr.rfid.ctrl.alarm', False),
+            'camera_id': ('cctv.camera', False),
         }
         # Bulk SQL bypasses the ORM, so Python-side field defaults never run.
         # Anything the model declares a default for must be supplied here, or
@@ -252,6 +320,11 @@ class EventImporter(PhaseImporter):
                     row.append(sql_defaults[col] if value in (False, None) else value)
                 else:
                     row.append(rec.get(col, '') or None)
+            if not skip_row and not rec.get('webstack_id') and not rec.get('camera_id'):
+                # Belongs to neither a module nor a camera, so there is nothing
+                # to attribute it to. This replaces the blanket "no webstack =
+                # drop it", which also threw away every camera event.
+                skip_row = True
             if skip_row:
                 skipped += 1
                 continue
@@ -276,6 +349,7 @@ class EventImporter(PhaseImporter):
             model, len(source_records), imported, already, skipped,
             duration=time.time() - start, rejected_count=rejected,
         ))
+        self._report_camera_events(model, imported + already)
 
     def _import_th_logs(self):
         """Step 28: hr.rfid.ctrl.th.log - Direct SQL batch."""
