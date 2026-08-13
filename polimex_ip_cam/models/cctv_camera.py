@@ -249,6 +249,13 @@ class CctvCamera(models.Model):
         new_records = self.env['cctv.camera']
         for vals in vals_list:
             new_record = super().create(vals)
+            if self.env.context.get('no_hardware_commands'):
+                # A migrated camera gets its readers and door from the source,
+                # each carrying its own origin. Manufacturing them here would
+                # leave two sets in the target with no way to tell which one
+                # the historical events belong to.
+                new_records += new_record
+                continue
             reader_in_id = self.env['hr.rfid.reader'].sudo().create([{
                 'name': _('In Reader %s', new_record.name),
                 'reader_type': '0', # In reader

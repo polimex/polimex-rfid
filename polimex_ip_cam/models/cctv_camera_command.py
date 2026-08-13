@@ -72,6 +72,13 @@ class CctvCameraCommand(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         records = super().create(vals_list)
+        if self.env.context.get('no_hardware_commands'):
+            # Defence in depth. queue_send registers a postcommit hook, and a
+            # postcommit hook SURVIVES a savepoint rollback: rollback() calls
+            # cr.clear() (sql_db.py:137-140) and clear() only drops precommit
+            # callbacks (sql_db.py:188-193). Guarding just the callers would
+            # still let a rolled-back import phase fire at the hardware.
+            return records
         # Ensure that no other command is in progress for the same camera.
         for vals in vals_list:
             camera_id = vals.get('camera_id')

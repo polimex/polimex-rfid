@@ -65,6 +65,13 @@ class CctvCameraRfidRel(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         records = super().create(vals_list)
+        if self.env.context.get('no_hardware_commands'):
+            # Migration writes the picture as it already is on the camera - it
+            # must not talk to the device. Same convention as hr_rfid
+            # (hr_rfid_door.py:840): without it, moving a few hundred plates
+            # fires a few hundred HTTP requests at cameras that are guarding a
+            # live site.
+            return records
         # For each created relation, create an "add_plate" command
         cmd_env = self.env['cctv.camera.command'].sudo()
         for rec in records:
@@ -81,6 +88,8 @@ class CctvCameraRfidRel(models.Model):
         return records
 
     def unlink(self):
+        if self.env.context.get('no_hardware_commands'):
+            return super().unlink()
         # Before deletion, for each relation, create a "remove_plate" command if applicable.
         cmd_env = self.env['cctv.camera.command'].sudo()
         for rec in self:
