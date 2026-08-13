@@ -189,7 +189,22 @@ class HrRfidAccessGroup(models.Model):
     def add_doors(self, door_ids, time_schedule=None, alarm_rights=False):
         self.ensure_one()
         if time_schedule is None:
-            time_schedule = self.env['hr.rfid.time.schedule'].search([], limit=1, order='number')[0]
+            # The working time belongs to the group's company (or the door's,
+            # for a company-less group). An unfiltered search returns whichever
+            # tenant's schedule sorts first, so on a multi-company database the
+            # rights of one company were written with another company's working
+            # hours. Global schedules (no company) stay eligible - they apply
+            # everywhere by design.
+            company = self.company_id or door_ids[:1].company_id
+            domain = [('company_id', 'in', [company.id, False])] if company else []
+            time_schedule = self.env['hr.rfid.time.schedule'].search(
+                domain, limit=1, order='number',
+            )
+            if not time_schedule:
+                raise exceptions.UserError(self.env._(
+                    "No working time has been defined yet. Create one before "
+                    "granting access to doors."
+                ))
 
         for door in door_ids:
             res = self.env['hr.rfid.access.group.door.rel'].search([
