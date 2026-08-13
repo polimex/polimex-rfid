@@ -5,20 +5,23 @@ import time
 from odoo import _
 from odoo.exceptions import UserError
 from .base_importer import BaseImporter, IMPORT_CONTEXT
+from .phase import PhaseImporter
 
 _logger = logging.getLogger(__name__)
 
 
-class ServiceImporter:
+class ServiceImporter(PhaseImporter):
     """Phase 6c: Service data.
 
     Steps: rfid.service.tags, rfid.service, rfid.service.sale
     """
 
-    def __init__(self, base: BaseImporter):
-        self.b = base
-        self.env = base.env
-        self.results = []
+    PHASE_ID = 'Phase 6c'
+    NAME = 'Service'
+    REQUIRES_SOURCE = ('rfid_service_base',)
+    REQUIRES_TARGET = ('rfid.service', 'rfid.service.sale')
+    OPTION = 'import_service'
+    WEIGHT = 6
 
     def run(self, wizard):
         """Execute Phase 6c."""

@@ -5,11 +5,12 @@ import time
 from odoo import _
 from odoo.exceptions import UserError
 from .base_importer import BaseImporter, IMPORT_CONTEXT
+from .phase import PhaseImporter
 
 _logger = logging.getLogger(__name__)
 
 
-class CoreImporter:
+class CoreImporter(PhaseImporter):
     """Phase 1 + Phase 3: Foundation + Hardware.
 
     Phase 1: card_type, employee.category, department (two passes),
@@ -18,10 +19,12 @@ class CoreImporter:
              door, reader, input.mask, output.ts, alarm, th, zone, notification
     """
 
-    def __init__(self, base: BaseImporter):
-        self.b = base
-        self.env = base.env
-        self.results = []
+    PHASE_ID = 'Phase 1+3'
+    NAME = 'Core & Hardware'
+    REQUIRES_SOURCE = ('hr_rfid',)
+    REQUIRES_TARGET = ('hr.rfid.webstack', 'hr.rfid.ctrl', 'hr.rfid.door')
+    OPTION = 'import_hardware'
+    WEIGHT = 30
 
     def run(self, wizard):
         """Execute Phase 1 + Phase 3."""
@@ -1039,6 +1042,16 @@ class ZoneImporter(CoreImporter):
     importing them alongside the hardware left every membership list silently
     empty - and ``noupdate=True`` meant no later run ever repaired it.
     """
+
+    # Overridden deliberately: this class inherits CoreImporter, so without
+    # its own metadata it would carry the hardware phase's identity, weight
+    # and log label into the registry.
+    PHASE_ID = 'Phase 3b'
+    NAME = 'Zones'
+    REQUIRES_SOURCE = ('hr_rfid',)
+    REQUIRES_TARGET = ('hr.rfid.zone',)
+    OPTION = 'import_hardware'
+    WEIGHT = 2
 
     def run(self, wizard):
         if self.b.options.get('import_hardware'):

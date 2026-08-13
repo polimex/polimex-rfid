@@ -5,11 +5,12 @@ import time
 from odoo import _, fields
 from odoo.exceptions import UserError
 from .base_importer import BaseImporter, IMPORT_CONTEXT
+from .phase import PhaseImporter
 
 _logger = logging.getLogger(__name__)
 
 
-class AccessImporter:
+class AccessImporter(PhaseImporter):
     """Phase 4: Access Control.
 
     Steps: access.group (two passes for inherited_ids),
@@ -18,10 +19,12 @@ class AccessImporter:
            department second pass for AG back-references.
     """
 
-    def __init__(self, base: BaseImporter):
-        self.b = base
-        self.env = base.env
-        self.results = []
+    PHASE_ID = 'Phase 4'
+    NAME = 'Access Control'
+    REQUIRES_SOURCE = ('hr_rfid',)
+    REQUIRES_TARGET = ('hr.rfid.access.group', 'hr.rfid.card')
+    OPTION = 'import_access'
+    WEIGHT = 13
 
     def run(self, wizard):
         """Execute Phase 4."""

@@ -5,21 +5,24 @@ import time
 from odoo import _
 from odoo.exceptions import UserError
 from .base_importer import BaseImporter, IMPORT_CONTEXT
+from .phase import PhaseImporter
 
 _logger = logging.getLogger(__name__)
 
 
-class PeopleImporter:
+class PeopleImporter(PhaseImporter):
     """Phase 2: People (res.partner, res.users, hr.employee).
 
     Import order follows Odoo 19 auto-creation chain:
       res.partner → res.users (optional) → hr.employee
     """
 
-    def __init__(self, base: BaseImporter):
-        self.b = base
-        self.env = base.env
-        self.results = []
+    PHASE_ID = 'Phase 2'
+    NAME = 'People'
+    REQUIRES_SOURCE = ('hr_rfid',)
+    REQUIRES_TARGET = ('hr.employee', 'res.partner')
+    OPTION = 'import_people'
+    WEIGHT = 15
 
     def run(self, wizard):
         """Execute Phase 2."""

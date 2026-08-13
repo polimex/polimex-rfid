@@ -1,0 +1,153 @@
+# -*- coding: utf-8 -*-
+"""The phases of a transfer, and the rule for which of them can run.
+
+Each phase declares what it needs. The registry is the single source of truth
+for both the order and the list of features probed on the source: a hardcoded
+list kept somewhere else falls behind silently, and that is exactly how the
+cameras went missing - the wizard asked the source about six module names, none
+of which was the camera one, so the operator got a clean-looking run with no
+camera data and no warning either.
+"""
+
+
+def _target_available(env, requirement):
+    """Whether this system can receive that kind of data.
+
+    ``requirement`` is a model name, or a (model, field) pair.
+
+    Presence of the model is not enough, for two separate reasons. An abstract
+    model resolves in the registry but owns no table, so a gate keyed on the
+    name alone would report a capability that cannot store a single row. And a
+    model whose schema differs between versions carries the name but not the
+    column the bulk insert will name, which fails as UndefinedColumn halfway
+    through the phase rather than before it starts.
+    """
+    name, field = requirement if isinstance(requirement, tuple) else (requirement, None)
+    if name not in env:
+        return False
+    model = env[name]
+    if getattr(model, '_abstract', False) or getattr(model, '_transient', False):
+        return False
+    if field and field not in model._fields:
+        return False
+    return True
+
+
+class PhaseImporter:
+    """What every phase of the transfer has in common.
+
+    The metadata below used to live as literals in the wizard's import loop.
+    Moving it onto the phase is what lets the wizard stop knowing the name of
+    any particular feature.
+    """
+
+    #: Label used in the transfer log, e.g. 'Phase 4'.
+    PHASE_ID = ''
+    #: Name shown to the operator.
+    NAME = ''
+    #: Modules that must be installed on the SOURCE for this phase to mean anything.
+    REQUIRES_SOURCE = ()
+    #: Models (or (model, field) pairs) this system needs in order to receive the data.
+    REQUIRES_TARGET = ()
+    #: Key in the options dict; the phase runs only when it is set.
+    OPTION = ''
+    #: Several keys, any one of which is enough. For phases that cover more
+    #: than one kind of data (events: user, system, temperature) and gate each
+    #: kind internally. Without this the phase would start whenever the module
+    #: is present, do nothing, and report success - which reads exactly like
+    #: "there was no data".
+    OPTION_ANY = ()
+    #: Relative share of the progress bar.
+    WEIGHT = 1
+
+    def __init__(self, base):
+        self.b = base
+        self.env = base.env
+        self.results = []
+
+    def run(self, wizard):
+        raise NotImplementedError
+
+
+def registry():
+    """The phases, built on first use.
+
+    Lazily, because the phase modules import ``PhaseImporter`` from here: doing
+    the work at import time makes the two files import each other and the whole
+    module fails to load.
+    """
+    global _REGISTRY
+    if _REGISTRY is None:
+        _REGISTRY = build_registry()
+    return _REGISTRY
+
+
+def _skip_reason(env, cls, options, source_modules):
+    """Why this phase will not run, in words the operator can act on."""
+    if cls.OPTION and not options.get(cls.OPTION):
+        return env._("Left out of this transfer.")
+    if cls.OPTION_ANY and not any(options.get(o) for o in cls.OPTION_ANY):
+        return env._("Left out of this transfer.")
+    if any(m not in source_modules for m in cls.REQUIRES_SOURCE):
+        return env._("The other system does not keep this kind of data.")
+    if any(not _target_available(env, r) for r in cls.REQUIRES_TARGET):
+        return env._(
+            "This system cannot take over that data yet. Add the capability "
+            "here first, then run the transfer again."
+        )
+    return None
+
+
+def phase_plan(env, options, source_modules):
+    """[(phase class, reason it is skipped or None)] in execution order.
+
+    A pure function: no network, no writes. That is deliberate - the order, the
+    gates and the reasons are the part most likely to drift, and they should be
+    checkable in a fast test rather than only observable after a real run.
+    """
+    return [
+        (cls, _skip_reason(env, cls, options, source_modules))
+        for cls in registry()
+    ]
+
+
+def source_probe_modules():
+    """Every module the source is asked about, derived from the phases."""
+    return sorted({m for cls in registry() for m in cls.REQUIRES_SOURCE})
+
+
+def total_weight():
+    """Sum of the phase weights, for turning them into a progress range."""
+    return sum(cls.WEIGHT for cls in registry()) or 1
+
+
+def build_registry():
+    """The phases, in the order they must run.
+
+    The order carries meaning and is asserted by a test, not by a comment:
+    - People before Zones, because zone membership and notification recipients
+      are the people Phase 2 creates. Running zones with the hardware left
+      every membership list empty, and those rows are written noupdate, so a
+      later run could not repair them.
+    """
+    from .core_importer import CoreImporter, ZoneImporter
+    from .people_importer import PeopleImporter
+    from .access_importer import AccessImporter
+    from .event_importer import EventImporter
+    from .vending_importer import VendingImporter
+    from .attendance_importer import AttendanceImporter
+    from .service_importer import ServiceImporter
+    return [
+        CoreImporter,
+        PeopleImporter,
+        ZoneImporter,
+        AccessImporter,
+        EventImporter,
+        VendingImporter,
+        AttendanceImporter,
+        ServiceImporter,
+    ]
+
+
+#: Filled by :func:`registry` on first use - never at import time.
+_REGISTRY = None

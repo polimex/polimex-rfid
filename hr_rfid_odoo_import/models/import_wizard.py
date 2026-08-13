@@ -482,15 +482,17 @@ class HrRfidOdooImportWiz(models.TransientModel):
             )
             version = base_mod[0]['latest_version'] if base_mod else 'unknown'
 
-            # Detect installed RFID modules
+            # Which features the source keeps. The list is DERIVED from the
+            # phases (phase.py) rather than written here: a list maintained
+            # separately falls behind whenever a phase is added, and the phase
+            # then reports "the other system does not keep this" about data
+            # that is sitting right there.
+            from .importers.phase import source_probe_modules
+            probe_modules = source_probe_modules()
             rfid_modules = models_proxy.execute_kw(
                 self.source_db, uid, self.source_password,
                 'ir.module.module', 'search_read',
-                [[('name', 'in', [
-                    'hr_rfid', 'hr_rfid_vending', 'hr_attendance_multi_rfid',
-                    'hr_attendance_late', 'rfid_service_base',
-                    'hr_rfid_vertical_elections',
-                ]), ('state', '=', 'installed')]],
+                [[('name', 'in', probe_modules), ('state', '=', 'installed')]],
                 {'fields': ['name']}
             )
             installed = [m['name'] for m in rfid_modules]
@@ -913,74 +915,43 @@ class HrRfidOdooImportWiz(models.TransientModel):
                     None,
                 )
 
-        # Phase 1+3: Core (foundation + hardware)
-        from .importers.core_importer import CoreImporter
-        self._run_phase(
-            'Phase 1+3', 'Core & Hardware',
-            CoreImporter(importer), 0, 30,
-        )
+        from .importers.phase import phase_plan, total_weight
 
-        # Phase 2: People
-        if options['import_people']:
-            from .importers.people_importer import PeopleImporter
-            self._run_phase(
-                'Phase 2', 'People',
-                PeopleImporter(importer), 30, 45,
-            )
+        source_modules = set(json.loads(self.installed_modules_json or '[]'))
+        weight_total = total_weight()
+        done_weight = 0
 
-        # Phase 3b: Zones & Notifications - deliberately AFTER People, because
-        # zone membership and notification recipients are employees/partners
-        # that Phase 2 creates. Running them with the hardware left every list
-        # empty, permanently (the records are written noupdate=True).
-        if options.get('import_hardware'):
-            from .importers.core_importer import ZoneImporter
-            self._run_phase(
-                'Phase 3b', 'Zones & Notifications',
-                ZoneImporter(importer), 45, 47,
-            )
-
-        # Phase 4: Access Control
-        if options['import_access']:
-            from .importers.access_importer import AccessImporter
-            self._run_phase(
-                'Phase 4', 'Access Control',
-                AccessImporter(importer), 47, 60,
-            )
-
-        # Phase 5: Events
-        if any([options['import_user_events'], options['import_system_events'], options['import_th_logs']]):
-            from .importers.event_importer import EventImporter
-            self._run_phase(
-                'Phase 5', 'Events',
-                EventImporter(importer), 60, 75,
-            )
-
-        # Phase 6a: Vending
-        if options['import_vending']:
-            from .importers.vending_importer import VendingImporter
-            self._run_phase(
-                'Phase 6a', 'Vending',
-                VendingImporter(importer), 75, 85,
-            )
-
-        # Phase 6b: Attendance
-        if options['import_attendance'] or options['import_attendance_extra']:
-            from .importers.attendance_importer import AttendanceImporter
-            self._run_phase(
-                'Phase 6b', 'Attendance',
-                AttendanceImporter(importer), 85, 92,
-            )
-
-        # Phase 6c: Service
-        if options['import_service']:
-            from .importers.service_importer import ServiceImporter
-            self._run_phase(
-                'Phase 6c', 'Service',
-                ServiceImporter(importer), 92, 98,
-            )
+        for cls, skip_reason in phase_plan(self.env, options, source_modules):
+            pct_start = done_weight * 100.0 / weight_total
+            done_weight += cls.WEIGHT
+            pct_end = done_weight * 100.0 / weight_total
+            if skip_reason:
+                self._log_skipped_phase(cls, skip_reason)
+                self.progress_percent = pct_end
+                continue
+            self._run_phase(cls.PHASE_ID, cls.NAME, cls(importer),
+                            pct_start, pct_end)
 
         self.progress_percent = 100.0
         self._append_progress(_("Import completed successfully!"))
+
+    def _log_skipped_phase(self, cls, reason):
+        """Record what was left out, and why.
+
+        A phase that is skipped without a line in the log looks exactly like a
+        phase that ran and found nothing: the operator sees an empty result in
+        both cases and has no way to tell them apart. That is how missing
+        capabilities went unnoticed until someone checked the data by hand
+        weeks later.
+        """
+        self.env['hr.rfid.odoo.import.log'].create({
+            'wizard_id': self.id,
+            'phase': cls.PHASE_ID,
+            'model': cls.NAME,
+            'status': 'skipped',
+            'error_message': reason,
+        })
+        self._append_progress("  %s: %s", cls.NAME, reason)
 
     def _run_phase(self, phase_id, phase_name, phase_importer, pct_start, pct_end):
         """Execute a single import phase with logging.

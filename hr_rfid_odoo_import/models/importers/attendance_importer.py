@@ -3,20 +3,24 @@ import logging
 import time
 
 from .base_importer import BaseImporter
+from .phase import PhaseImporter
 
 _logger = logging.getLogger(__name__)
 
 
-class AttendanceImporter:
+class AttendanceImporter(PhaseImporter):
     """Phase 6b: Attendance data.
 
     Steps: hr.attendance (Direct SQL), hr.attendance.extra (Direct SQL).
     """
 
-    def __init__(self, base: BaseImporter):
-        self.b = base
-        self.env = base.env
-        self.results = []
+    PHASE_ID = 'Phase 6b'
+    NAME = 'Attendance'
+    REQUIRES_SOURCE = ('hr_attendance_multi_rfid',)
+    REQUIRES_TARGET = ('hr.attendance',)
+    OPTION = ''
+    OPTION_ANY = ('import_attendance', 'import_attendance_extra')
+    WEIGHT = 7
 
     def run(self, wizard):
         """Execute Phase 6b."""

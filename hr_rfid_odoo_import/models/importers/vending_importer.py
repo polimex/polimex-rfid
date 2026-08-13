@@ -5,11 +5,12 @@ import time
 from odoo import _
 from odoo.exceptions import UserError
 from .base_importer import BaseImporter, IMPORT_CONTEXT
+from .phase import PhaseImporter
 
 _logger = logging.getLogger(__name__)
 
 
-class VendingImporter:
+class VendingImporter(PhaseImporter):
     """Phase 6a: Vending data.
 
     Steps: product.template, vending.row, vending.settings,
@@ -17,10 +18,12 @@ class VendingImporter:
            employee vending fields.
     """
 
-    def __init__(self, base: BaseImporter):
-        self.b = base
-        self.env = base.env
-        self.results = []
+    PHASE_ID = 'Phase 6a'
+    NAME = 'Vending'
+    REQUIRES_SOURCE = ('hr_rfid_vending',)
+    REQUIRES_TARGET = ('hr.rfid.vending.event', 'hr.rfid.ctrl.vending.row')
+    OPTION = 'import_vending'
+    WEIGHT = 10
 
     def run(self, wizard):
         """Execute Phase 6a: Vending."""

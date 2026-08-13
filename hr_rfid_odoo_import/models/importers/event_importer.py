@@ -3,11 +3,12 @@ import logging
 import time
 
 from .base_importer import BaseImporter
+from .phase import PhaseImporter
 
 _logger = logging.getLogger(__name__)
 
 
-class EventImporter:
+class EventImporter(PhaseImporter):
     """Phase 5: Events - Direct SQL batch for performance.
 
     Steps: event.user, event.system, th.log
@@ -21,10 +22,13 @@ class EventImporter:
     row count as this company's source count.
     """
 
-    def __init__(self, base: BaseImporter):
-        self.b = base
-        self.env = base.env
-        self.results = []
+    PHASE_ID = 'Phase 5'
+    NAME = 'Events'
+    REQUIRES_SOURCE = ('hr_rfid',)
+    REQUIRES_TARGET = ('hr.rfid.event.user', 'hr.rfid.event.system')
+    OPTION = ''
+    OPTION_ANY = ('import_user_events', 'import_system_events', 'import_th_logs')
+    WEIGHT = 15
 
     def run(self, wizard):
         """Execute Phase 5."""
