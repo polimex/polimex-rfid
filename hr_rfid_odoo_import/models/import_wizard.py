@@ -7,7 +7,7 @@ import xmlrpc.client
 from markupsafe import Markup
 
 from odoo import fields, models, api, _
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import RedirectWarning, UserError, ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -43,17 +43,17 @@ class HrRfidOdooImportWiz(models.TransientModel):
             'exact database name here.'
         ),
     )
-    ledger_slug = fields.Char(
-        string='Ledger Identity',
+    source_slug = fields.Char(
+        string='Source Identity',
         help=(
-            "Which SOURCE SYSTEM the external IDs belong to. Leave empty and it "
-            "follows the source database name, which is right for a one-shot "
-            "import.\n\n"
-            "Set it when the same source is read from more than one place - a "
-            "restored backup for the bulk load, then the live server for the "
-            "delta. The external ID is the migration's source->target map; keyed "
-            "on the database NAME it would treat the live server as a different "
-            "system and import everything a second time."
+            "Which system the records come from. Leave it empty and it follows "
+            "the name of the database being read, which is right for a one-off "
+            "transfer.\n\n"
+            "Fill it in when the same system is read from more than one place - "
+            "a restored backup for the bulk of it, then the live server for what "
+            "changed since. Both transfers must carry the SAME identity here, or "
+            "the second one treats the live server as a different system and "
+            "brings everything across a second time."
         ),
     )
     source_login = fields.Char(
@@ -343,6 +343,7 @@ class HrRfidOdooImportWiz(models.TransientModel):
     @api.depends('state',
                  'company_line_ids.do_import', 'company_line_ids.target_company_id',
                  'conflict_ids', 'conflict_ids.resolution',
+                 'source_db', 'source_slug',
                  'import_vending', 'import_attendance',
                  'import_attendance_extra', 'import_service',
                  'source_has_vending', 'source_has_attendance',
@@ -407,6 +408,12 @@ class HrRfidOdooImportWiz(models.TransientModel):
                             ),
                         }
 
+            # Check: something here already came from a DIFFERENT system
+            warnings.update(wiz._warn_about_other_source_identity())
+
+            # Always said out loud: a repeat transfer refreshes from the source
+            warnings.update(wiz._warn_about_refresh_on_rerun())
+
             # Check: unresolved conflicts
             unresolved = wiz.conflict_ids.filtered(lambda c: not c.resolution)
             if unresolved:
@@ -419,6 +426,180 @@ class HrRfidOdooImportWiz(models.TransientModel):
                 }
 
             wiz.warnings = warnings if warnings else False
+
+    # ══════════════════════════════════════════════════════════
+    # Which system are we transferring from
+    # ══════════════════════════════════════════════════════════
+
+    #: How many systems to name in the warning before it stops listing.
+    OTHER_SOURCE_NAMES_SHOWN = 3
+
+    def _effective_source_identity(self):
+        """The identity this transfer will record its records against."""
+        self.ensure_one()
+        from .importers.base_importer import normalise_source_slug
+        return normalise_source_slug(self.source_slug or self.source_db)
+
+    @staticmethod
+    def _escape_for_like(value):
+        """A literal string, safe to use as the start of a LIKE pattern."""
+        return (value.replace('\\', '\\\\')
+                     .replace('_', r'\_')
+                     .replace('%', r'\%'))
+
+    def _identities_this_transfer_has_read(self):
+        """Every system a transfer started here has read, under the name it used.
+
+        This is what tells our own transfers apart from the other import tools.
+        All three of them - this one, the Andromeda import and the old cloud
+        import - record what they bring in the same way, so the records
+        themselves cannot say which tool put them here. The question can be put
+        the other way round: this module keeps a permanent account of every
+        transfer ever started in this database, and each one names the system it
+        read. A name that is not in that account belongs to another tool, which
+        reads something this transfer cannot read at all - so its records can
+        neither be recognised nor copied a second time by the transfer being
+        prepared now, and warning about them would stop a first transfer over a
+        system the operator never chose.
+        """
+        self.ensure_one()
+        from .importers.base_importer import normalise_source_slug
+        runs = self.env['hr.rfid.odoo.import.run'].sudo().search_read(
+            [], ['source_slug', 'source_db'])
+        names = {
+            normalise_source_slug(run['source_slug'] or run['source_db'] or '')
+            for run in runs
+        }
+        names.discard('')
+        return names
+
+    def _holds_records_from(self, identity):
+        """Whether anything that system brought over is still here."""
+        self.ensure_one()
+        from .importers.base_importer import (
+            EXTERNAL_ID_MODULE, EXTERNAL_ID_PREFIX,
+        )
+        # Not readable by everyone who may run a transfer, and which systems
+        # this database already holds is not private to them.
+        return bool(self.env['ir.model.data'].sudo().search_count(
+            [
+                ('module', '=', EXTERNAL_ID_MODULE),
+                ('name', '=like', self._escape_for_like(
+                    '%s%s_' % (EXTERNAL_ID_PREFIX, identity)) + '%'),
+            ],
+            limit=1,
+        ))
+
+    def _other_source_identities(self):
+        """Systems already transferred into this database, other than ours.
+
+        Asked one system at a time, rather than by reading a sample of what is
+        already here: a sample answers with whichever records it meets first, so
+        in a database that also holds a large import from another tool the one
+        name that matters can fall outside it and the warning never appears.
+        """
+        self.ensure_one()
+        ours = self._effective_source_identity()
+        if not ours:
+            return []
+        return [
+            identity
+            for identity in sorted(self._identities_this_transfer_has_read() - {ours})
+            if self._holds_records_from(identity)
+        ]
+
+    def _warn_about_other_source_identity(self):
+        """Warn when this transfer would file its records under a new name.
+
+        The identity is part of how every transferred record is recognised on
+        the next run. Read a restored backup once and the live server the next
+        time, leaving the box empty both times, and the two are two different
+        names for one system: nothing matches, and every person, door, zone,
+        membership and event arrives a second time. Measured on the o15 cloud,
+        that is 298 937 duplicated events alone.
+
+        Blocking while the box is empty, because then nobody has decided
+        anything. Filling it in IS the decision - the operator names the system
+        and the transfer goes ahead on their word.
+        """
+        self.ensure_one()
+        others = self._other_source_identities()
+        if not others:
+            return {}
+        current = self._effective_source_identity()
+        shown = others[:self.OTHER_SOURCE_NAMES_SHOWN]
+        existing = ', '.join('"%s"' % name for name in shown)
+        if len(others) > len(shown):
+            existing = self.env._(
+                "%(names)s and others", names=existing)
+
+        if self.source_slug:
+            # The operator has named the system themselves - taken as meant.
+            return {'other_source_identity': {
+                'level': 'warning',
+                'message': self.env._(
+                    "Records from %(existing)s are already here, and this "
+                    "transfer is filed under \"%(current)s\". You have named "
+                    "the system yourself, so the two are kept apart: anything "
+                    "they both hold will end up here twice.",
+                    existing=existing, current=current,
+                ),
+            }}
+        return {'other_source_identity': {
+            'level': 'danger',
+            'message': self.env._(
+                "Records from %(existing)s are already here. This transfer "
+                "would file its own under \"%(current)s\", so the two would be "
+                "treated as separate systems and everything they both hold "
+                "would come across a second time - the same people, the same "
+                "doors, the same events. If this is the system you transferred "
+                "from before, put its name in the Source identity box on the "
+                "first page. If it really is a different system, put "
+                "\"%(current)s\" in that same box to say so, and start again.",
+                existing=existing, current=current,
+            ),
+        }}
+
+    def _warn_about_refresh_on_rerun(self):
+        """Say plainly what a repeat transfer does to what is already here.
+
+        Every word here has to be true of the code, because the operator
+        decides whether to start on the strength of it. A repeat transfer does
+        NOT do one single thing to everything it brought over, and the text has
+        to say both halves:
+
+        * The equipment and the cards go back to what the other system holds.
+          They are written again every time (``_load_records``, and the time
+          schedules explicitly), so a card switched off here comes back on and
+          a door renamed here gets its old name back.
+        * People, contacts, departments, staff tags, card types, access groups
+          and sites are recognised by their external ID and left exactly as they
+          are - the write is never reached for them - so a correction made here
+          survives every later transfer.
+        * Lists are a third case. One the other system keeps as a whole - the
+          departments and the groups an access group inherits, the doors a
+          reader serves - is written back whole, so an entry added here is
+          taken out again. The example has to be one of those: the DOORS of an
+          access group are not a list but permissions of their own, and those
+          are only ever added, never taken away. Zone membership is only added
+          to as well.
+
+        The behaviour itself is the owner's decision and stays as it is; only
+        the promise had to be brought into line with it.
+        """
+        self.ensure_one()
+        return {'refresh_on_rerun': {
+            'level': 'warning',
+            'message': self.env._(
+                "Running this transfer again later puts the equipment and the "
+                "cards back to what the other system holds - a card switched "
+                "off here comes back on, a door renamed here gets its old name "
+                "back. People, contacts, departments and access groups keep the "
+                "details corrected here. A list the other system keeps is "
+                "rebuilt from it, so a department added here to an access group "
+                "is taken out of it again. No record is deleted."
+            ),
+        }}
 
     # ══════════════════════════════════════════════════════════
     # Actions
@@ -677,8 +858,8 @@ class HrRfidOdooImportWiz(models.TransientModel):
             return [('webstack_id.company_id', 'in', company_ids)]
         return [('company_id', 'in', company_ids)]
 
-    def _ledger_target_id(self, importer, model, source_id):
-        """Идентичността на вече мигриран запис - САМО от ledger-а."""
+    def _external_id_target_id(self, importer, model, source_id):
+        """Идентичността на вече мигриран запис - САМО от външния ИД."""
         return importer._resolve_from_imd(model, source_id)
 
     def _target_company_map(self):
@@ -694,7 +875,7 @@ class HrRfidOdooImportWiz(models.TransientModel):
         }
 
     def _conflict_probe_importer(self, company_ids):
-        """Лек `BaseImporter` само за ledger справки при откриване на конфликти.
+        """Лек `BaseImporter` само за справки по външен ИД при конфликтите.
 
         Ползва се единствено `_resolve_from_imd` (четене на `ir.model.data`);
         нищо не се внася на този етап.
@@ -709,19 +890,19 @@ class HrRfidOdooImportWiz(models.TransientModel):
             source_password=self.source_password,
             company_map={cid: company_map.get(cid) for cid in company_ids},
             options={},
-            ledger_slug=self.ledger_slug,
+            source_slug=self.source_slug,
         )
 
     def _detect_conflicts(self, models_proxy, company_ids):
         """Открий РЕАЛНИТЕ сблъсъци с уникалните ограничения на целта.
 
         Дисциплина (`identity-by-id-never-by-text`): идентичността на запис идва
-        ЕДИНСТВЕНО от source id-то през ledger-а. Съвпадащ надпис - сериен номер,
+        ЕДИНСТВЕНО от source id-то през външния ИД. Съвпадащ надпис - сериен номер,
         номер на карта - НЕ е идентичност; той е само повод базата да откаже реда.
 
         Затова тук:
-          1. Вече ледгернат източников запис = НЕ е конфликт (това е повторен
-             прогон; картата source->target вече съществува и печели).
+          1. Източников запис, който вече има външен ИД = НЕ е конфликт (това е
+             повторен прогон; картата source->target вече съществува и печели).
           2. Конфликт се вдига само когато целта ДЕЙСТВИТЕЛНО държи ПЪЛНИЯ ключ
              на ограничението, в правилния обхват (per company там, където
              ограничението е per company).
@@ -770,8 +951,8 @@ class HrRfidOdooImportWiz(models.TransientModel):
         company_map = self._target_company_map()
         out = []
         for rec in source_records:
-            # 1. Ледгерът е идентичността. Има ли ред - това НЕ е конфликт.
-            if self._ledger_target_id(importer, model, rec['id']):
+            # 1. Външният ИД е идентичността. Има ли ред - това НЕ е конфликт.
+            if self._external_id_target_id(importer, model, rec['id']):
                 continue
             # 2. Пълният ключ на ограничението, в правилния обхват.
             domain = []
@@ -854,16 +1035,50 @@ class HrRfidOdooImportWiz(models.TransientModel):
             'target': 'current',
         }
 
+    def _check_background_worker_available(self):
+        """Refuse rather than accept a transfer nothing will ever pick up.
+
+        A scheduled job that has been switched off is never run, not even when
+        something asks for it: the trigger is dropped without a word
+        (odoo/addons/base/models/ir_cron.py:774-776). The transfer would sit
+        there reading "waiting to start" for ever, and the operator would press
+        the button beside it again and again with nothing happening.
+        """
+        cron = self.env.ref('hr_rfid_odoo_import.ir_cron_import_run',
+                            raise_if_not_found=False)
+        if cron and cron.sudo().active:
+            return
+        if cron and self.env.user.has_group('base.group_system'):
+            raise RedirectWarning(
+                self.env._(
+                    "The transfer cannot start: the scheduled task that does "
+                    "the work is switched off. Switch it back on and try "
+                    "again."),
+                {
+                    'type': 'ir.actions.act_window',
+                    'res_model': 'ir.cron',
+                    'res_id': cron.id,
+                    'views': [(False, 'form')],
+                    'target': 'current',
+                },
+                self.env._("Open the scheduled task"),
+            )
+        raise UserError(self.env._(
+            "The transfer cannot start: the scheduled task that does the work "
+            "is switched off. Please ask your system administrator to switch "
+            "it back on."))
+
     def _queue_run(self):
         """Hand the work over to a record that outlives this dialog."""
         self.ensure_one()
+        self._check_background_worker_available()
         run = self.env['hr.rfid.odoo.import.run'].create({
             'source_url': self.source_url,
             'source_db': self.source_db,
             'source_login': self.source_login,
             'source_password': self.source_password,
             'source_uid': self.source_uid,
-            'ledger_slug': self.ledger_slug,
+            'source_slug': self.source_slug,
             'installed_modules_json': self.installed_modules_json,
             'options_json': json.dumps(self._build_options()),
             'company_map_json': json.dumps({
@@ -933,14 +1148,14 @@ class HrRfidOdooImportWiz(models.TransientModel):
             source_password=self.source_password,
             company_map=company_map,
             options=options,
-            ledger_slug=self.ledger_slug,
+            source_slug=self.source_slug,
         )
 
         # Apply conflict resolutions
         for conflict in self.conflict_ids:
             if conflict.resolution == 'link':
                 # `link_existing`, не само `_set_target_id`: одобреното от
-                # оператора съответствие трябва да ОЦЕЛЕЕ прогона. External ID-то
+                # оператора съответствие трябва да ОЦЕЛЕЕ прогона. Външният ИД
                 # Е картата source->target - без реда сверката отчита класа като
                 # липсващ, макар данните да са налице и правилно мапнати.
                 importer.link_existing(

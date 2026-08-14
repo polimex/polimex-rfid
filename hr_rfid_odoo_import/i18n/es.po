@@ -6,11 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-26 19:26+0000\n"
-"PO-Revision-Date: 2026-07-26 22:30\n"
+"POT-Creation-Date: 2026-08-14 16:06+0000\n"
+"PO-Revision-Date: 2026-08-14 19:06\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: bg\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -51,6 +51,77 @@ msgstr ""
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "  ERROR: %s"
 msgstr "  ERROR: %s"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/camera_importer.py:0
+msgid ""
+"%(count)s camera(s) arrived without a password and cannot be reached until "
+"one is entered."
+msgstr ""
+"%(count)s cámara(s) llegaron sin contraseña y no se puede acceder a ellas "
+"hasta que se introduzca una."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/core_importer.py:0
+msgid ""
+"%(count)s controller(s) were asked to send their input/output table. It "
+"arrives when they next report in; run this again if any of them were "
+"switched off."
+msgstr ""
+"Se solicitó a %(count)s controlador(es) que enviaran su tabla de entradas/"
+"salidas. Llegará cuando vuelvan a reportarse; ejecute esto de nuevo si "
+"alguno de ellos estaba apagado."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/camera_importer.py:0
+msgid ""
+"%(count)s door(s) arrived without the kind of card they accept, because that "
+"kind is not here. Set it on each door before the barrier is used again."
+msgstr ""
+"%(count)s puerta(s) llegaron sin el tipo de tarjeta que aceptan, porque ese "
+"tipo no está aquí. Configúrelo en cada puerta antes de volver a usar la "
+"barrera."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/camera_importer.py:0
+msgid ""
+"%(count)s plate(s) came from an unrecognised list and were placed in the "
+"deny list."
+msgstr ""
+"%(count)s matrícula(s) provinieron de una lista no reconocida y se colocaron "
+"en la lista de denegados."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/site_importer.py:0
+msgid ""
+"%(equipment)s piece(s) of equipment had not arrived yet and %(sites)s "
+"pointed at a site that is not here."
+msgstr ""
+"%(equipment)s equipo(s) aún no habían llegado y %(sites)s apuntaban a un "
+"sitio que no está aquí."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/event_importer.py:0
+msgid "%(missing)s recognised plate event(s) did not come across."
+msgstr "%(missing)s evento(s) de matrícula reconocida no llegaron."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/hr_employee.py:0
+msgid "%(names)s and %(others)s more"
+msgstr "%(names)s y %(others)s más"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "%(names)s and others"
+msgstr "%(names)s y otros"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -138,15 +209,66 @@ msgid "<strong>No conflicts detected.</strong>"
 msgstr "<strong>Sin conflictos detectados.</strong>"
 
 #. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "<strong>Sort this out before starting</strong>"
+msgstr "<strong>Resuelva esto antes de empezar</strong>"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "<strong>Worth knowing</strong>"
+msgstr "<strong>Vale la pena saber</strong>"
+
+#. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "=== Import Preview ===\n"
 msgstr "=== Vista previa de Importación ===\n"
 
 #. module: hr_rfid_odoo_import
+#: model_terms:ir.actions.act_window,help:hr_rfid_odoo_import.hr_rfid_odoo_import_run_action
+msgid ""
+"A transfer copies access control data from another Odoo system\n"
+"                    into this one - the equipment, the people, the cards and "
+"the\n"
+"                    history. Start one from Import from Odoo; it will appear "
+"here\n"
+"                    and keep going in the background."
+msgstr ""
+"Una transferencia copia los datos de control de acceso de otro sistema Odoo\n"
+"                    a este: el equipo, las personas, las tarjetas y el\n"
+"                    historial. Inicie una desde Importar desde Odoo; "
+"aparecerá aquí\n"
+"                    y continuará en segundo plano."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__source_login
+msgid "Account used to read it."
+msgstr "Cuenta utilizada para leerlo."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_needaction
+msgid "Action Needed"
+msgstr "Acción Necesaria"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__source_url
+msgid "Address of the system being read."
+msgstr "Dirección del sistema que se está leyendo."
+
+#. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "Advanced"
 msgstr "Avanzado"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__advisory_html
+msgid "Advisory Html"
+msgstr "Html Informativo"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_attachment_count
+msgid "Attachment Count"
+msgstr "Cantidad de Adjuntos"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -160,12 +282,23 @@ msgid "Back"
 msgstr "Atrás"
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__blocking_html
+msgid "Blocking Html"
+msgstr "Html de Bloqueo"
+
+#. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
 msgid "Bulk import bug: %(rows)d rows but %(ids)d source ids for %(model)s."
 msgstr ""
-"Грешка при пакетен импорт: %(rows)d редове, но %(ids)d изходни ID за "
+"Error de importación masiva: %(rows)d filas pero %(ids)d ids de origen para "
 "%(model)s."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/camera_importer.py:0
+msgid "Cameras - still to be done"
+msgstr "Cámaras - pendientes"
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
@@ -211,6 +344,11 @@ msgid "Company '%s' is selected but has no target company assigned."
 msgstr ""
 "La empresa '%s' está seleccionada pero no tiene una empresa de destino "
 "asignada."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__company_map_json
+msgid "Company Map Json"
+msgstr "Json de Mapa de Compañías"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__company_line_ids
@@ -267,6 +405,12 @@ msgid "Connection error: %s"
 msgstr "Error de conexión: %s"
 
 #. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/core_importer.py:0
+msgid "Controller IO tables"
+msgstr "Tablas de E/S de controladores"
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_user_groups
 msgid "Copy security group assignments from source users (matched by xml_id)."
 msgstr ""
@@ -301,6 +445,7 @@ msgstr "Crear usuarios"
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__create_uid
 msgid "Created by"
 msgstr "Creado por"
@@ -309,24 +454,55 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__create_date
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__create_date
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__create_date
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__create_date
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__create_date
 msgid "Created on"
 msgstr "Creado en"
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__current_phase
+msgid "Current Phase"
+msgstr "Fase Actual"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_run_form
+msgid "Data Transfer"
+msgstr "Transferencia de Datos"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.actions.act_window,name:hr_rfid_odoo_import.hr_rfid_odoo_import_run_action
+#: model:ir.ui.menu,name:hr_rfid_odoo_import.hr_rfid_odoo_import_run_menu
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_run_list
+msgid "Data Transfers"
+msgstr "Transferencias de Datos"
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__target_id
 msgid "Database ID of the matching record on this (target) instance."
-msgstr "ID в базата данни на съответстващия запис в тази (целева) система."
+msgstr ""
+"ID de base de datos del registro correspondiente en esta instancia (destino)."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__source_id
 msgid "Database ID of the record on the source instance."
-msgstr "ID в базата данни на записа в изходната система."
+msgstr "ID de base de datos del registro en la instancia de origen."
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__resolution_json
+msgid ""
+"Decisions the operator made about records that clash with existing ones."
+msgstr ""
+"Decisiones que tomó el operador sobre los registros que entran en conflicto "
+"con los existentes."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_employee__display_name
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__display_name
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__display_name
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__display_name
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__display_name
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__display_name
 msgid "Display Name"
 msgstr "Nombre a Mostrar"
@@ -337,8 +513,8 @@ msgid ""
 "Display name of the company on the source instance - shown for operator "
 "cross-check."
 msgstr ""
-"Показвано име на фирмата в изходната система - показва се за кръстосана "
-"проверка от оператора."
+"Nombre visible de la compañía en la instancia de origen - se muestra para "
+"verificación cruzada del operador."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__target_name
@@ -346,8 +522,8 @@ msgid ""
 "Display name of the existing target record - operator decides whether to "
 "keep it (Link) or create a new one (Create)."
 msgstr ""
-"Показвано име на съществуващия целеви запис - операторът решава дали да го "
-"запази (Свързване) или да създаде нов (Създаване)."
+"Nombre visible del registro de destino existente - el operador decide si "
+"mantenerlo (Vincular) o crear uno nuevo (Crear)."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__source_name
@@ -355,8 +531,8 @@ msgid ""
 "Display name of the record on the source instance - shown so the operator "
 "can identify it."
 msgstr ""
-"Показвано име на записа в изходната система - показва се, за да може "
-"операторът да го идентифицира."
+"Nombre visible del registro en la instancia de origen - se muestra para que "
+"el operador pueda identificarlo."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_log__status__done
@@ -365,9 +541,24 @@ msgid "Done"
 msgstr "Completado"
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__done_count
+msgid "Done Count"
+msgstr "Cantidad Completada"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__done_phases_json
+msgid "Done Phases Json"
+msgstr "Json de Fases Completadas"
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__duration
 msgid "Duration (s)"
 msgstr "Duración (s)"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model,name:hr_rfid_odoo_import.model_hr_employee
+msgid "Employee"
+msgstr "Empleado"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__error_message
@@ -382,8 +573,8 @@ msgid ""
 "Error message captured if the phase status is Error - full traceback for "
 "debugging."
 msgstr ""
-"Съобщение за грешка, записано при статус на фазата Грешка - пълен traceback "
-"за отстраняване на проблеми."
+"Mensaje de error capturado si el estado de la fase es Error - traza completa "
+"para depuración."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__progress_percent
@@ -391,8 +582,8 @@ msgid ""
 "Estimated completion percentage. Driven by the phase log - useful for the "
 "operator to gauge runtime."
 msgstr ""
-"Приблизителен процент завършеност. Определя се от дневника на фазата - "
-"полезно за оператора при оценка на времето за изпълнение."
+"Porcentaje estimado de finalización. Determinado por el registro de fases - "
+"útil para que el operador calcule el tiempo de ejecución."
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
@@ -403,6 +594,15 @@ msgstr "Eventos e Historial"
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__event_date_from
 msgid "Events from date"
 msgstr "Eventos desde la fecha"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.actions.act_window,help:hr_rfid_odoo_import.hr_rfid_odoo_import_run_action
+msgid ""
+"Every transfer keeps an account of what it moved and, just as\n"
+"                    importantly, what it could not."
+msgstr ""
+"Cada transferencia lleva un registro de lo que movió y, igual de\n"
+"                    importante, lo que no pudo mover."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__dry_run
@@ -421,8 +621,8 @@ msgid ""
 "Existing res.company on this instance to merge the source data into. Leave "
 "empty to create a fresh company with the source name."
 msgstr ""
-"Съществуваща res.company в тази система, в която да се слеят изходните "
-"данни. Оставете празно за създаване на нова фирма с изходното име."
+"res.company existente en esta instancia con el cual fusionar los datos de "
+"origen. Déjelo vacío para crear una compañía nueva con el nombre de origen."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__conflict_field
@@ -430,13 +630,29 @@ msgid ""
 "Field on which the two records collide (typically the unique constraint that "
 "fired)."
 msgstr ""
-"Поле, на което се сблъскват двата записа (обикновено уникалното ограничение, "
-"което е задействано)."
+"Campo en el que los dos registros entran en conflicto (normalmente la "
+"restricción única que se activó)."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_run__state__done
+msgid "Finished"
+msgstr "Finalizado"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_follower_ids
+msgid "Followers"
+msgstr "Seguidores"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Seguidores (Contactos)"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_url
 msgid "Full URL of the source Odoo server, e.g. https://erp.example.com"
-msgstr "Пълен URL на изходния Odoo сървър, напр. https://erp.example.com"
+msgstr ""
+"URL completa del servidor Odoo de origen, p. ej. https://erp.example.com"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__dry_run
@@ -444,21 +660,78 @@ msgid "Full dry-run"
 msgstr "Simulación Completa"
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__has_advisory
+msgid "Has Advisory"
+msgstr "Tiene Aviso"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__has_blocking
+msgid "Has Blocking"
+msgstr "Tiene Bloqueo"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__has_message
+msgid "Has Message"
+msgstr "Tiene Mensaje"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__progress
+msgid "How far along the transfer is."
+msgstr "Grado de avance de la transferencia."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__read_cursors_json
+msgid ""
+"How far each long read got, so the next pass carries on instead of reading "
+"the same records again."
+msgstr ""
+"Hasta dónde llegó cada lectura larga, para que la siguiente pasada continúe "
+"en lugar de volver a leer los mismos registros."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__status
+msgid ""
+"How this step ended. Done: everything the other system had came across. "
+"Partly: some records did not - the Error column says how many. Error: "
+"nothing came across, or the step could not run. Skipped: there was nothing "
+"to do, either because the option was left unticked or because the other "
+"system does not keep this kind of record."
+msgstr ""
+"Cómo terminó este paso. Completado: todo lo que tenía el otro sistema se "
+"transfirió. Parcial: algunos registros no lo hicieron - la columna Error "
+"indica cuántos. Error: nada se transfirió, o el paso no pudo ejecutarse. "
+"Omitido: no había nada que hacer, ya sea porque la opción se dejó desmarcada "
+"o porque el otro sistema no guarda este tipo de registro."
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__preview_text
 msgid ""
 "Human-readable summary of what will be created/linked if the operator "
 "confirms. Filled by the dry-run preview."
 msgstr ""
-"Разбираемо за човек резюме на това, което ще бъде създадено/свързано, ако "
-"операторът потвърди. Попълва се от прегледа при пробно изпълнение."
+"Resumen legible de lo que se creará/vinculará si el operador confirma. Se "
+"rellena mediante la vista previa de simulación."
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_employee__id
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__id
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__id
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__id
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__id
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__id
 msgid "ID"
 msgstr "ID"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Si está marcado, los mensajes nuevos requieren su atención."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_has_error
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Si está marcado, algunos mensajes tienen un error de entrega."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__do_import
@@ -481,11 +754,6 @@ msgid "Import Hardware"
 msgstr "Importar Hardware"
 
 #. module: hr_rfid_odoo_import
-#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__log_ids
-msgid "Import Log"
-msgstr "Registro de Importación"
-
-#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_people
 msgid "Import People"
 msgstr "Importar Personas"
@@ -500,11 +768,6 @@ msgstr "Vista previa de Importación"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "Import RFID Data from Odoo"
 msgstr "Importar Datos RFID desde Odoo"
-
-#. module: hr_rfid_odoo_import
-#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
-msgid "Import Results"
-msgstr "Resultados de Importación"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_all_employees
@@ -542,6 +805,11 @@ msgid "Import attendance extra"
 msgstr "Importar asistencia adicional"
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_cameras
+msgid "Import cameras"
+msgstr "Importar cámaras"
+
+#. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "Import completed successfully!"
@@ -568,6 +836,11 @@ msgstr "Importar fotos"
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_service
 msgid "Import service data"
 msgstr "Importar datos de servicio"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_sites
+msgid "Import sites"
+msgstr "Importar sitios"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_system_events
@@ -600,11 +873,25 @@ msgid "Importing"
 msgstr "Importando"
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_run__state__running
+msgid "In progress"
+msgstr "En curso"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_cameras
+msgid ""
+"Include ANPR cameras, the readers and doors that belong to them, and the "
+"plate lists they hold."
+msgstr ""
+"Incluye las cámaras ANPR, los lectores y puertas que les pertenecen, y las "
+"listas de matrículas que contienen."
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_access
 msgid "Include access groups (and their door/department bindings) and zones."
 msgstr ""
-"Включва групи за достъп (и свързаните с тях обвързвания с врати/отдели) и "
-"зони."
+"Incluye los grupos de acceso (y sus vínculos con puertas/departamentos) y "
+"las zonas."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_people
@@ -612,13 +899,13 @@ msgid ""
 "Include employees and partner contacts referenced by the imported access "
 "groups and cards."
 msgstr ""
-"Включва служители и партньорски контакти, посочени в импортираните групи за "
-"достъп и карти."
+"Incluye empleados y contactos referenciados por los grupos de acceso y "
+"tarjetas importados."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_attendance
 msgid "Include hr.attendance records linked to RFID events."
-msgstr "Включва записи от hr.attendance, свързани със RFID събития."
+msgstr "Incluye los registros hr.attendance vinculados a eventos RFID."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_cards
@@ -626,15 +913,16 @@ msgid ""
 "Include hr.rfid.card records, including their owner and access-group "
 "memberships."
 msgstr ""
-"Включва записи от hr.rfid.card, включително собственика им и членствата в "
-"групи за достъп."
+"Incluye los registros hr.rfid.card, incluyendo su propietario y las "
+"pertenencias a grupos de acceso."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_service
 msgid ""
 "Include rfid.service catalog and rfid.service.sale records from the source."
 msgstr ""
-"Включва каталога rfid.service и записите rfid.service.sale от източника."
+"Incluye el catálogo rfid.service y los registros rfid.service.sale del "
+"origen."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_th_logs
@@ -642,8 +930,9 @@ msgid ""
 "Include temperature-controller log records. Disable unless the source "
 "actually used temperature controllers."
 msgstr ""
-"Включва записи от дневника на температурния контролер. Изключете, освен ако "
-"източникът действително е използвал температурни контролери."
+"Incluye los registros de bitácora de controladores de temperatura. Desactive "
+"esta opción salvo que el origen realmente utilizara controladores de "
+"temperatura."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_attendance_extra
@@ -651,8 +940,8 @@ msgid ""
 "Include the daily roll-ups produced by hr_attendance_late (late/overtime/"
 "extra time)."
 msgstr ""
-"Включва дневните обобщения, изготвяни от <strong>hr_attendance_late</strong> "
-"(закъснения/извънреден труд/допълнително време)."
+"Incluye los resúmenes diarios generados por hr_attendance_late (tardanza/"
+"horas extra/tiempo adicional)."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_system_events
@@ -660,8 +949,8 @@ msgid ""
 "Include the historical hr.rfid.event.system log (controller power loss, "
 "tamper, etc.)."
 msgstr ""
-"Включва историческия дневник hr.rfid.event.system (загуба на захранване на "
-"контролера, взломяване и др.)."
+"Incluye el registro histórico hr.rfid.event.system (pérdida de energía del "
+"controlador, manipulación, etc.)."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_user_events
@@ -669,8 +958,18 @@ msgid ""
 "Include the historical hr.rfid.event.user log. Can be large - disable for "
 "first pass, re-run separately later if needed."
 msgstr ""
-"Включва историческия дневник hr.rfid.event.user. Може да е голям - изключете "
-"при първото изпълнение, при нужда пуснете отделно по-късно."
+"Incluye el registro histórico hr.rfid.event.user. Puede ser grande - "
+"desactívelo en la primera pasada y vuelva a ejecutarlo aparte más adelante "
+"si es necesario."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_sites
+msgid ""
+"Include the tree of sites, the equipment assigned to them and the contacts "
+"that belong to them."
+msgstr ""
+"Incluye el árbol de sitios, el equipo asignado a ellos y los contactos que "
+"les pertenecen."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_vending
@@ -678,13 +977,13 @@ msgid ""
 "Include vending balances, history and events. Only visible if both source "
 "and target have hr_rfid_vending installed."
 msgstr ""
-"Включва вендинг баланси, история и събития. Видимо е само ако и в източника, "
-"и в целта е инсталиран <strong>hr_rfid_vending</strong>."
+"Incluye saldos, historial y eventos de venta automática. Solo visible si "
+"tanto el origen como el destino tienen instalado hr_rfid_vending."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_hardware
 msgid "Include webstacks, controllers, doors, readers and time schedules."
-msgstr "Включва уебстекове, контролери, врати, четци и часови графици."
+msgstr "Incluye webstacks, controladores, puertas, lectores y horarios."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__installed_modules_json
@@ -692,14 +991,30 @@ msgid "Installed Modules (JSON)"
 msgstr "Módulos Instalados (JSON)"
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__installed_modules_json
+msgid "Installed Modules Json"
+msgstr "Json de Módulos Instalados"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__source_uid
+msgid "Internal id of that account, from the login."
+msgstr "Id interno de esa cuenta, a partir del inicio de sesión."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_is_follower
+msgid "Is Follower"
+msgstr "Es Seguidor"
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__installed_modules_json
 msgid "JSON list of installed modules on the source instance."
-msgstr "JSON списък с инсталираните модули в изходната система."
+msgstr "Lista JSON de los módulos instalados en la instancia de origen."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__write_uid
 msgid "Last Updated by"
 msgstr "Última actualización por"
@@ -708,6 +1023,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__write_date
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__write_date
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__write_date
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__write_date
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__write_date
 msgid "Last Updated on"
 msgstr "Última actualización en"
@@ -719,9 +1035,15 @@ msgid ""
 "detected. If the source has multiple databases, enter the exact database "
 "name here."
 msgstr ""
-"Оставете празно, ако изходният сървър съдържа само една база данни - тя ще "
-"бъде открита автоматично. Ако източникът има няколко бази данни, въведете "
-"тук точното име на базата данни."
+"Déjelo vacío si el servidor de origen aloja una sola base de datos - se "
+"detectará automáticamente. Si el origen tiene varias bases de datos, indique "
+"aquí el nombre exacto de la base de datos."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/phase.py:0
+msgid "Left out of this transfer."
+msgstr "Excluido de esta transferencia."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_conflict__resolution__link
@@ -739,8 +1061,8 @@ msgid ""
 "Live status of the running import job (current phase, processed records). "
 "Updated by the worker that performs the import."
 msgstr ""
-"Текущ статус на изпълняваната задача по импорт (текуща фаза, обработени "
-"записи). Актуализира се от работния процес, извършващ импорта."
+"Estado en vivo del trabajo de importación en ejecución (fase actual, "
+"registros procesados). Actualizado por el proceso que realiza la importación."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_login
@@ -748,9 +1070,14 @@ msgid ""
 "Login of an admin-level user on the source Odoo instance - the user must "
 "have read access to every model the import will fetch."
 msgstr ""
-"Потребителско име на потребител с администраторски права в изходната Odoo "
-"система - потребителят трябва да има права за четене на всеки модел, който "
-"импортът ще извлича."
+"Usuario de nivel administrador en la instancia Odoo de origen - el usuario "
+"debe tener acceso de lectura a todos los modelos que la importación "
+"consultará."
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_run_form
+msgid "Look again"
+msgstr "Volver a comprobar"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_version
@@ -758,8 +1085,18 @@ msgid ""
 "Major Odoo version detected on the source instance (e.g. '14.0', '15.0'). "
 "Used to dispatch the right importer per phase."
 msgstr ""
-"Основна версия на Odoo, открита в изходната система (напр. „14.0“, „15.0“). "
-"Използва се за избор на правилния импортер за всяка фаза."
+"Versión mayor de Odoo detectada en la instancia de origen (p. ej. '14.0', "
+"'15.0'). Se usa para asignar el importador correcto en cada fase."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_has_error
+msgid "Message Delivery error"
+msgstr "Error de Entrega de Mensaje"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_ids
+msgid "Messages"
+msgstr "Mensajes"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__source_model
@@ -770,7 +1107,12 @@ msgstr "Modelo"
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__orphan_event_cutoff
 msgid "Module-only events from date"
-msgstr "Само модулни събития от дата"
+msgstr "Eventos solo del módulo desde la fecha"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__name
+msgid "Name"
+msgstr "Nombre"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -779,15 +1121,53 @@ msgid "No companies selected for import."
 msgstr "Ninguna empresa seleccionada para importación."
 
 #. module: hr_rfid_odoo_import
+#: model_terms:ir.actions.act_window,help:hr_rfid_odoo_import.hr_rfid_odoo_import_run_action
+msgid "No data has been transferred here yet"
+msgstr "Aún no se ha transferido ningún dato aquí"
+
+#. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "No databases found on the source server."
-msgstr "Не са намерени бази данни на изходния сървър."
+msgstr "No se encontraron bases de datos en el servidor de origen."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/camera_importer.py:0
+msgid ""
+"Nothing was sent to the cameras while the transfer ran, so the site stayed "
+"guarded. Each camera still holds the plate list it had before. Open the "
+"cameras and refresh their plate lists so they match what is recorded here."
+msgstr ""
+"No se envió nada a las cámaras mientras se ejecutaba la transferencia, por "
+"lo que el sitio se mantuvo protegido. Cada cámara todavía conserva la lista "
+"de matrículas que tenía antes. Abra las cámaras y actualice sus listas de "
+"matrículas para que coincidan con lo registrado aquí."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Número de Acciones"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_has_error_counter
+msgid "Number of errors"
+msgstr "Número de errores"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Número de mensajes que requieren acción"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Número de mensajes con error de entrega"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__imported_count
 msgid "Number of records actually created in the target during this phase."
-msgstr "Брой записи, реално създадени в целта през тази фаза."
+msgstr "Número de registros realmente creados en el destino durante esta fase."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__skipped_count
@@ -795,8 +1175,8 @@ msgid ""
 "Number of records skipped (operator chose Skip in conflicts, or validation "
 "rejected them)."
 msgstr ""
-"Брой пропуснати записи (операторът е избрал Пропусни при конфликти, или "
-"проверката за валидност ги е отхвърлила)."
+"Número de registros omitidos (el operador eligió Omitir en los conflictos, o "
+"la validación los rechazó)."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__rejected_count
@@ -807,17 +1187,17 @@ msgid ""
 "missing required value is a different case: it fails the whole step, which "
 "shows up as Error."
 msgstr ""
-"Брой записи, отхвърлени от базата данни, защото друг запис вече съдържа "
-"същата уникална стойност. За разлика от Пропуснатите, тези записи е трябвало "
-"да бъдат пренесени - всяка стойност над нула означава, че данни не са "
-"пристигнали и изпълнението трябва да бъде проверено. Липсваща задължителна "
-"стойност е друг случай: тя проваля цялата стъпка, което се отразява като "
-"Грешка."
+"Número de registros que la base de datos rechazó porque otro registro ya "
+"tenía el mismo valor único. A diferencia de Omitidos, estos debían haberse "
+"transferido - cualquier cifra por encima de cero significa que los datos no "
+"llegaron y hay que revisar la ejecución. Un valor requerido faltante es un "
+"caso distinto: hace fallar todo el paso, lo cual se refleja como Error."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__source_count
 msgid "Number of records the source instance reported for this model+phase."
-msgstr "Брой записи, отчетени от изходната система за този модел и фаза."
+msgstr ""
+"Número de registros que la instancia de origen reportó para este modelo+fase."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__linked_count
@@ -825,20 +1205,35 @@ msgid ""
 "Number of source records mapped to an existing target record instead of "
 "being created anew."
 msgstr ""
-"Брой изходни записи, съпоставени със съществуващ целеви запис, вместо да "
-"бъдат създадени наново."
+"Número de registros de origen vinculados a un registro de destino existente "
+"en lugar de crearse de nuevo."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__source_model
 msgid ""
 "Odoo model name of the conflicting record (e.g. hr.rfid.card, res.partner)."
 msgstr ""
-"Име на Odoo модела на конфликтния запис (напр. hr.rfid.card, res.partner)."
+"Nombre del modelo Odoo del registro en conflicto (p. ej. hr.rfid.card, res."
+"partner)."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__model
 msgid "Odoo model processed during this phase."
-msgstr "Odoo модел, обработван по време на тази фаза."
+msgstr "Modelo Odoo procesado durante esta fase."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__log_ids
+msgid "One line per step, with what came across and what did not."
+msgstr "Una línea por paso, con lo que se transfirió y lo que no."
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_run_form
+msgid ""
+"One line per step. \"Skipped\" lines say why that\n"
+"                                    kind of data was left behind."
+msgstr ""
+"Una línea por paso. Las líneas «Omitido» indican por qué\n"
+"                                    se dejó atrás ese tipo de dato."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__company_line_ids
@@ -846,8 +1241,8 @@ msgid ""
 "One row per company discovered on the source. Operator picks which to import "
 "and which existing target company to merge into."
 msgstr ""
-"Един ред за всяка фирма, открита в източника. Операторът избира кои да "
-"импортира и в коя съществуваща целева фирма да ги слее."
+"Una fila por compañía descubierta en el origen. El operador elige cuáles "
+"importar y en qué compañía de destino existente fusionarlas."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__event_date_from
@@ -857,43 +1252,38 @@ msgstr ""
 "todos los eventos."
 
 #. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Open the scheduled task"
+msgstr "Abrir la tarea programada"
+
+#. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "Optional Modules"
 msgstr "Módulos Opcionales"
 
 #. module: hr_rfid_odoo_import
-#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__status
-msgid ""
-"Outcome of this phase - Pending: not yet started. Done: finished without "
-"error. Error: failed, see the Error column. Skipped: nothing to do here, "
-"either because the option was left unticked or because the source system "
-"does not have this kind of record at all."
-msgstr ""
-"Резултат от тази фаза - Изчакващ: все още не е започнала. Завършена: "
-"приключила без грешка. Грешка: неуспешна, вижте колоната Грешка. Пропусната: "
-"няма нищо за правене тук, защото опцията е останала неотметната или защото "
-"изходната система изобщо няма такъв вид записи."
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__options_json
+msgid "Options Json"
+msgstr "Json de Opciones"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__wizard_id
 msgid "Parent import-run wizard this company mapping belongs to."
 msgstr ""
-"Родителски помощник за изпълнение на импорт, към който принадлежи това "
-"съпоставяне на фирма."
+"Asistente de ejecución de importación padre al que pertenece este mapeo de "
+"compañía."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__wizard_id
 msgid "Parent import-run wizard this conflict belongs to."
 msgstr ""
-"Родителски помощник за изпълнение на импорт, към който принадлежи този "
-"конфликт."
+"Asistente de ejecución de importación padre al que pertenece este conflicto."
 
 #. module: hr_rfid_odoo_import
-#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__wizard_id
-msgid "Parent import-run wizard this log entry belongs to."
-msgstr ""
-"Родителски помощник за изпълнение на импорт, към който принадлежи този запис "
-"в дневника."
+#: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_log__status__partial
+msgid "Partly"
+msgstr "Parcial"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_password
@@ -901,14 +1291,22 @@ msgid "Password"
 msgstr "Contraseña"
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__source_password
+msgid ""
+"Password for that account. Kept only while the transfer runs and cleared the "
+"moment it ends."
+msgstr ""
+"Contraseña de esa cuenta. Se conserva solo mientras se ejecuta la "
+"transferencia y se elimina en cuanto finaliza."
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_password
 msgid ""
 "Password for the source user above. Use an API key if the source enforces "
 "2FA. Stored only for the wizard's lifetime."
 msgstr ""
-"Парола за посочения по-горе изходен потребител. Използвайте API ключ, ако "
-"източникът изисква двуфакторна автентикация. Съхранява се само за времето на "
-"работа на помощника."
+"Contraseña del usuario de origen indicado arriba. Use una clave API si el "
+"origen exige 2FA. Se almacena solo durante la vida del asistente."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_log__status__pending
@@ -921,22 +1319,14 @@ msgid "People Options"
 msgstr "Opciones de Personas"
 
 #. module: hr_rfid_odoo_import
-#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__log_ids
-msgid ""
-"Per-phase result rows (counts of imported / skipped / linked, plus any "
-"error). The Results step renders this list."
-msgstr ""
-"Редове с резултати за всяка фаза (брой импортирани / пропуснати / свързани, "
-"плюс евентуална грешка). Стъпката Резултати показва този списък."
-
-#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__conflict_ids
 msgid ""
 "Per-record collisions detected against the target. Operator must pick a "
 "resolution (Link / Create / Skip) before running the import."
 msgstr ""
-"Открити конфликти на ниво запис спрямо целта. Операторът трябва да избере "
-"разрешение (Свързване / Създаване / Пропускане) преди изпълнение на импорта."
+"Conflictos por registro detectados contra el destino. El operador debe "
+"elegir una resolución (Vincular / Crear / Omitir) antes de ejecutar la "
+"importación."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__phase
@@ -961,9 +1351,9 @@ msgid ""
 "Pre-flight warnings calculated from the configuration (e.g. asked to import "
 "vending but target doesn't have the module). Shown on the confirm page."
 msgstr ""
-"Предварителни предупреждения, изчислени въз основа на конфигурацията (напр. "
-"поискан е импорт на вендинг, но целта няма модула). Показват се на "
-"страницата за потвърждение."
+"Advertencias previas calculadas a partir de la configuración (p. ej. se "
+"solicitó importar venta automática pero el destino no tiene el módulo). Se "
+"muestran en la página de confirmación."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__preview_text
@@ -978,6 +1368,7 @@ msgid "Preview error: %s"
 msgstr "Error de vista previa: %s"
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__progress
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__progress_text
 msgid "Progress"
 msgstr "Progreso"
@@ -986,6 +1377,11 @@ msgstr "Progreso"
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__progress_percent
 msgid "Progress %"
 msgstr "Progreso %"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model,name:hr_rfid_odoo_import.model_hr_rfid_odoo_import_run
+msgid "RFID Data Transfer"
+msgstr "Transferencia de Datos RFID"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model,name:hr_rfid_odoo_import.model_hr_rfid_odoo_import_company_line
@@ -1003,14 +1399,63 @@ msgid "RFID Odoo Import Log"
 msgstr "Registro de Importación RFID Odoo"
 
 #. module: hr_rfid_odoo_import
+#: model:ir.actions.server,name:hr_rfid_odoo_import.ir_cron_import_run_ir_actions_server
+msgid "RFID: continue data transfers"
+msgstr "RFID: continuar transferencias de datos"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__read_cursors_json
+msgid "Read Cursors Json"
+msgstr "Json de Cursores de Lectura"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid ""
+"Records from %(existing)s are already here, and this transfer is filed under "
+"\"%(current)s\". You have named the system yourself, so the two are kept "
+"apart: anything they both hold will end up here twice."
+msgstr ""
+"Los registros de %(existing)s ya están aquí, y esta transferencia está "
+"archivada bajo \"%(current)s\". Usted mismo ha nombrado el sistema, por lo "
+"que ambos se mantienen separados: todo lo que ambos contengan terminará aquí "
+"duplicado."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid ""
+"Records from %(existing)s are already here. This transfer would file its own "
+"under \"%(current)s\", so the two would be treated as separate systems and "
+"everything they both hold would come across a second time - the same people, "
+"the same doors, the same events. If this is the system you transferred from "
+"before, put its name in the Source identity box on the first page. If it "
+"really is a different system, put \"%(current)s\" in that same box to say "
+"so, and start again."
+msgstr ""
+"Los registros de %(existing)s ya están aquí. Esta transferencia archivaría "
+"los suyos bajo \"%(current)s\", por lo que ambos se tratarían como sistemas "
+"separados y todo lo que ambos contengan se transferiría una segunda vez - "
+"las mismas personas, las mismas puertas, los mismos eventos. Si este es el "
+"sistema desde el que transfirió anteriormente, indique su nombre en el campo "
+"Identidad de Origen de la primera página. Si realmente es un sistema "
+"distinto, indique \"%(current)s\" en ese mismo campo para señalarlo, y "
+"empiece de nuevo."
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__rejected_count
 msgid "Rejected"
-msgstr "Отхвърлен"
+msgstr "Rechazado"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__resolution
 msgid "Resolution"
 msgstr "Resolución"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__resolution_json
+msgid "Resolution Json"
+msgstr "Json de Resolución"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -1019,6 +1464,41 @@ msgid "Review the conflicts table below and choose a resolution for each."
 msgstr ""
 "Revisa la tabla de conflictos a continuación y elige una resolución para "
 "cada uno."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__run_id
+msgid "Run"
+msgstr "Ejecutar"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid ""
+"Running this transfer again later puts the equipment and the cards back to "
+"what the other system holds - a card switched off here comes back on, a door "
+"renamed here gets its old name back. People, contacts, departments and "
+"access groups keep the details corrected here. A list the other system keeps "
+"is rebuilt from it, so a department added here to an access group is taken "
+"out of it again. No record is deleted."
+msgstr ""
+"Ejecutar esta transferencia de nuevo más adelante devuelve el equipo y las "
+"tarjetas al estado que tiene el otro sistema - una tarjeta desactivada aquí "
+"se reactiva, una puerta renombrada aquí recupera su nombre anterior. Las "
+"personas, contactos, departamentos y grupos de acceso conservan los detalles "
+"corregidos aquí. Una lista que mantiene el otro sistema se reconstruye a "
+"partir de ella, por lo que un departamento añadido aquí a un grupo de acceso "
+"se vuelve a quitar de este. No se elimina ningún registro."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Error de Entrega de SMS"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__name
+msgid "Short label of this transfer, built from the source it reads."
+msgstr ""
+"Etiqueta corta de esta transferencia, generada a partir del origen que lee."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_conflict__resolution__skip
@@ -1040,12 +1520,12 @@ msgid ""
 "the older noise behind; leave empty to bring all of them. Events that do "
 "name a controller are always imported in full."
 msgstr ""
-"Някои системни събития се записват само за комуникационния модул, без "
-"прикачен контролер (включване на захранването, свързан модул). Обикновено те "
-"съставляват по-голямата част от дневника. Задайте дата, за да пренесете само "
-"последните и да оставите по-стария шум зад гърба си; оставете празно за "
-"пренасяне на всички. Събитията, при които е посочен контролер, винаги се "
-"импортират изцяло."
+"Algunos eventos del sistema se registran solo contra el módulo de "
+"comunicación, sin ningún controlador asociado (encendido, módulo conectado). "
+"Suelen ser la mayor parte del registro. Establezca una fecha para traer solo "
+"los recientes y dejar atrás el ruido antiguo; déjelo vacío para traerlos "
+"todos. Los eventos que sí nombran un controlador siempre se importan por "
+"completo."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__source_name
@@ -1065,6 +1545,11 @@ msgstr "Cantidad de Origen"
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_db
 msgid "Source Database"
+msgstr "Base de Datos de Origen"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__source_db
+msgid "Source Db"
 msgstr "Base de Datos de Origen"
 
 #. module: hr_rfid_odoo_import
@@ -1093,6 +1578,16 @@ msgid "Source ID"
 msgstr "ID de Origen"
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_slug
+msgid "Source Identity"
+msgstr "Identidad de Origen"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__source_login
+msgid "Source Login"
+msgstr "Usuario de Origen"
+
+#. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "Source Odoo Connection"
 msgstr "Conexión Odoo de Origen"
@@ -1103,9 +1598,19 @@ msgid "Source Odoo Version"
 msgstr "Versión Odoo de Origen"
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__source_password
+msgid "Source Password"
+msgstr "Contraseña de Origen"
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__source_name
 msgid "Source Record"
 msgstr "Registro de Origen"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__source_slug
+msgid "Source Slug"
+msgstr "Slug de Origen"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_uid
@@ -1118,40 +1623,29 @@ msgid "Source URL"
 msgstr "URL de Origen"
 
 #. module: hr_rfid_odoo_import
-#. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
-msgid ""
-"Source has '%s' installed but it's not installed in target. Data for this "
-"module will not be imported."
-msgstr ""
-"El origen tiene '%s' instalado pero no está instalado en el destino. Los "
-"datos para este módulo no serán importados."
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__source_uid
+msgid "Source Uid"
+msgstr "Uid de Origen"
 
 #. module: hr_rfid_odoo_import
-#. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
-msgid ""
-"Source has '%s' installed but it's not installed in target. Install it first "
-"or disable this import option."
-msgstr ""
-"El origen tiene '%s' instalado pero no está instalado en el destino. "
-"Instálalo primero o deshabilita esta opción de importación."
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__source_url
+msgid "Source Url"
+msgstr "URL de Origen"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_has_attendance_late
 msgid "Source instance has hr_attendance_late installed."
-msgstr "Изходната система има инсталиран <strong>hr_attendance_late</strong>."
+msgstr "La instancia de origen tiene instalado hr_attendance_late."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_has_attendance
 msgid "Source instance has hr_attendance_multi_rfid installed."
-msgstr ""
-"Изходната система има инсталиран <strong>hr_attendance_multi_rfid</strong>."
+msgstr "La instancia de origen tiene instalado hr_attendance_multi_rfid."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_has_service
 msgid "Source instance has rfid_service_base installed."
-msgstr "Изходната система има инсталиран <strong>rfid_service_base</strong>."
+msgstr "La instancia de origen tiene instalado rfid_service_base."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_has_vending
@@ -1159,8 +1653,8 @@ msgid ""
 "Source instance has the hr_rfid_vending module installed (detected from Test "
 "Connection)."
 msgstr ""
-"Изходната система има инсталиран модула <strong>hr_rfid_vending</strong> "
-"(открит при Тест на връзката)."
+"La instancia de origen tiene instalado el módulo hr_rfid_vending (detectado "
+"desde Probar Conexión)."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -1169,8 +1663,8 @@ msgid ""
 "Source server does not expose the database list (list_db=False). Please "
 "enter the database name manually."
 msgstr ""
-"Изходният сървър не предоставя списък с бази данни (list_db=False). Моля, "
-"въведете името на базата данни ръчно."
+"El servidor de origen no expone la lista de bases de datos (list_db=False). "
+"Introduzca el nombre de la base de datos manualmente."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -1178,8 +1672,8 @@ msgstr ""
 msgid ""
 "Source server hosts multiple databases: %s. Please specify which one to use."
 msgstr ""
-"Изходният сървър съдържа няколко бази данни: %s. Моля, посочете коя да се "
-"използва."
+"El servidor de origen aloja varias bases de datos: %s. Indique cuál desea "
+"utilizar."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__phase
@@ -1187,8 +1681,9 @@ msgid ""
 "Stage of the import pipeline (e.g. 'companies', 'access_groups', 'users', "
 "'events'). Used to group log rows for the operator."
 msgstr ""
-"Етап от процеса на импорт (напр. „companies“, „access_groups“, „users“, "
-"„events“). Използва се за групиране на редовете в дневника за оператора."
+"Etapa del proceso de importación (p. ej. 'companies', 'access_groups', "
+"'users', 'events'). Se usa para agrupar las filas del registro para el "
+"operador."
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
@@ -1196,12 +1691,12 @@ msgid "Start Import"
 msgstr "Iniciar Importación"
 
 #. module: hr_rfid_odoo_import
-#. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
-msgid "Starting import...\n"
-msgstr "Iniciando importación...\n"
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__user_id
+msgid "Started by"
+msgstr "Iniciado por"
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__state
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__state
 msgid "State"
 msgstr "Estado"
@@ -1218,10 +1713,25 @@ msgid ""
 "Configure: pick what to import. Confirm: review preview + conflicts. "
 "Importing: run in progress. Done: results shown."
 msgstr ""
-"Стъпка, на която се намира помощникът в момента - Връзка: въвеждане на URL и "
-"данни за достъп на източника. Конфигуриране: избор какво да се импортира. "
-"Потвърждение: преглед на прегледа и конфликтите. Импортиране: изпълнението е "
-"в ход. Завършено: показани са резултатите."
+"Paso en el que se encuentra actualmente el asistente - Conexión: introduzca "
+"la URL de origen y las credenciales. Configurar: elija qué importar. "
+"Confirmar: revise la vista previa y los conflictos. Importando: ejecución en "
+"curso. Finalizado: se muestran los resultados."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__done_count
+msgid "Steps finished."
+msgstr "Pasos finalizados."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__total_count
+msgid "Steps in total."
+msgstr "Pasos en total."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_run__state__failed
+msgid "Stopped by a problem"
+msgstr "Detenido por un problema"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__target_company_id
@@ -1259,26 +1769,204 @@ msgid "Test Connection"
 msgstr "Probar Conexión"
 
 #. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_run.py:0
+msgid ""
+"The account used to read the other system is not allowed to see: %(fields)s. "
+"Everything else about these records came across. If those details matter, "
+"widen that account's access rights over there and run the transfer again."
+msgstr ""
+"La cuenta usada para leer el otro sistema no tiene permiso para ver: "
+"%(fields)s. Todo lo demás sobre estos registros se transfirió correctamente. "
+"Si esos datos son importantes, amplíe los permisos de acceso de esa cuenta "
+"allí y ejecute la transferencia de nuevo."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/camera_importer.py:0
+msgid ""
+"The cameras cannot be brought across with their access details: the account "
+"used to read the other system is not allowed to see them. Give that account "
+"camera-manager rights there and start the transfer again."
+msgstr ""
+"Las cámaras no se pueden traer con sus datos de acceso: la cuenta usada para "
+"leer el otro sistema no tiene permiso para verlos. Otorgue a esa cuenta "
+"permisos de administrador de cámaras allí y vuelva a iniciar la "
+"transferencia."
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__source_ref
 msgid ""
 "The natural key that triggered the conflict (e.g. card number, EGN). Both "
 "sides match on this value."
 msgstr ""
-"Естественият ключ, който е предизвикал конфликта (напр. номер на карта, "
-"ЕГН). Двете страни съвпадат по тази стойност."
+"La clave natural que originó el conflicto (p. ej. número de tarjeta, EGN). "
+"Ambos lados coinciden en este valor."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
+msgid ""
+"The other system does not give departments a default access group, so there "
+"was nothing to carry over."
+msgstr ""
+"El otro sistema no asigna un grupo de acceso predeterminado a los "
+"departamentos, por lo que no había nada que traer."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/phase.py:0
+msgid "The other system does not keep this kind of data."
+msgstr "El otro sistema no guarda este tipo de datos."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"The other system holds %(count)s record(s) of this kind and none of them "
+"came across. Look at the step before this one - what these records point at "
+"is probably missing."
+msgstr ""
+"El otro sistema tiene %(count)s registro(s) de este tipo y ninguno de ellos "
+"se transfirió. Revise el paso anterior a este - probablemente falte aquello "
+"a lo que apuntan estos registros."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid ""
+"The other system keeps %(feature)s, which this one does not have. That data "
+"will stay behind."
+msgstr ""
+"El otro sistema mantiene %(feature)s, que este no tiene. Esos datos se "
+"quedarán atrás."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/vending_importer.py:0
+msgid ""
+"The other system keeps no vending balances on its people, so there was "
+"nothing to carry over."
+msgstr ""
+"El otro sistema no guarda saldos de venta automática en sus personas, por lo "
+"que no había nada que traer."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_run.py:0
+msgid "The step \"%(step)s\" could not be completed: %(problem)s"
+msgstr "El paso \"%(step)s\" no se pudo completar: %(problem)s"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__current_phase
+msgid "The step being worked on right now."
+msgstr "El paso que se está procesando en este momento."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid ""
+"The transfer cannot start: the scheduled task that does the work is switched "
+"off. Please ask your system administrator to switch it back on."
+msgstr ""
+"La transferencia no puede iniciarse: la tarea programada que realiza el "
+"trabajo está desactivada. Solicite a su administrador del sistema que la "
+"vuelva a activar."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid ""
+"The transfer cannot start: the scheduled task that does the work is switched "
+"off. Switch it back on and try again."
+msgstr ""
+"La transferencia no puede iniciarse: la tarea programada que realiza el "
+"trabajo está desactivada. Actívela de nuevo e inténtelo otra vez."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_run.py:0
+msgid ""
+"The transfer has finished, but %(count)s part(s) came across only in part. "
+"The list below says which."
+msgstr ""
+"La transferencia ha finalizado, pero %(count)s parte(s) se transfirieron "
+"solo parcialmente. La lista de abajo indica cuáles."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_run.py:0
+msgid "The transfer has finished."
+msgstr "La transferencia ha finalizado."
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid ""
+"The transfer now runs in the background. Its progress\n"
+"                                and the account of what it moved are on the\n"
+"                                Data Transfers page."
+msgstr ""
+"La transferencia ahora se ejecuta en segundo plano. Su progreso\n"
+"                                y el registro de lo que movió están en la\n"
+"                                página de Transferencias de Datos."
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_run_form
+msgid ""
+"The transfer runs on its own, a piece at a time, and\n"
+"                            carries on if the server restarts. You can close "
+"this\n"
+"                            page and come back to it. The figures here are "
+"from the\n"
+"                            moment the page was opened - press Look again to "
+"see\n"
+"                            how far it has got."
+msgstr ""
+"La transferencia se ejecuta de forma autónoma, por partes, y\n"
+"                            continúa aunque el servidor se reinicie. Puede "
+"cerrar esta\n"
+"                            página y volver a ella más tarde. Las cifras "
+"mostradas corresponden al\n"
+"                            momento en que se abrió la página; pulse Volver "
+"a comprobar para ver\n"
+"                            cuánto ha avanzado."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_run.py:0
+msgid ""
+"The transfer stopped because of a problem outside the steps themselves: "
+"%(problem)s"
+msgstr ""
+"La transferencia se detuvo debido a un problema ajeno a los pasos en sí: "
+"%(problem)s"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_run.py:0
+msgid ""
+"The transfer stopped with %(count)s part(s) that did not come across: "
+"%(parts)s. Everything else is here. Look at the list below, put the cause "
+"right, and start the transfer again."
+msgstr ""
+"La transferencia se detuvo con %(count)s parte(s) que no se transfirieron: "
+"%(parts)s. Todo lo demás está aquí. Revise la lista de abajo, corrija la "
+"causa y vuelva a iniciar la transferencia."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__run_id
+msgid "The transfer this line belongs to."
+msgstr "La transferencia a la que pertenece esta línea."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__target_has_attendance_late
 msgid "This (target) instance has hr_attendance_late installed."
-msgstr ""
-"Тази (целева) система има инсталиран <strong>hr_attendance_late</strong>."
+msgstr "Esta instancia (destino) tiene instalado hr_attendance_late."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__target_has_attendance
 msgid "This (target) instance has hr_attendance_multi_rfid installed."
-msgstr ""
-"Тази (целева) система има инсталиран <strong>hr_attendance_multi_rfid</"
-"strong>."
+msgstr "Esta instancia (destino) tiene instalado hr_attendance_multi_rfid."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__target_has_vending
@@ -1286,15 +1974,80 @@ msgid ""
 "This (target) instance has hr_rfid_vending installed - the related "
 "import_vending toggle is only meaningful when both source and target have it."
 msgstr ""
-"Тази (целева) система има инсталиран <strong>hr_rfid_vending</strong> - "
-"свързаният превключвател import_vending има значение само когато и "
-"източникът, и целта го имат."
+"Esta instancia (destino) tiene instalado hr_rfid_vending - la opción "
+"import_vending relacionada solo tiene sentido cuando tanto el origen como el "
+"destino lo tienen."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__target_has_service
 msgid "This (target) instance has rfid_service_base installed."
+msgstr "Esta instancia (destino) tiene instalado rfid_service_base."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/hr_employee.py:0
+msgid ""
+"This attendance was brought over from another system and cannot be "
+"recalculated here.\n"
+"\n"
+"%(records)s attendance records of %(who)s are a copy of what the old system "
+"recorded. They cannot be worked out again from the door events, and "
+"recalculating them would break the link with the old system: the next "
+"transfer would no longer recognise them and would bring them over a second "
+"time.\n"
+"\n"
+"To refresh this data, run the transfer again. To recalculate the rest, "
+"choose a period without these records, or leave these people out."
 msgstr ""
-"Тази (целева) система има инсталиран <strong>rfid_service_base</strong>."
+"Esta asistencia se trajo de otro sistema y no se puede recalcular aquí.\n"
+"\n"
+"%(records)s registros de asistencia de %(who)s son una copia de lo que "
+"registró el sistema anterior. No se pueden volver a calcular a partir de los "
+"eventos de puerta, y recalcularlos rompería el vínculo con el sistema "
+"anterior: la próxima transferencia ya no los reconocería y los traería una "
+"segunda vez.\n"
+"\n"
+"Para actualizar estos datos, ejecute la transferencia de nuevo. Para "
+"recalcular el resto, elija un periodo sin estos registros, o excluya a estas "
+"personas."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/phase.py:0
+msgid "This part could not be read from the other system: %(problem)s"
+msgstr "Esta parte no se pudo leer del otro sistema: %(problem)s"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid ""
+"This system cannot take over %(feature)s yet. Add that capability here "
+"first, or leave it out of the transfer."
+msgstr ""
+"Este sistema aún no puede asumir %(feature)s. Añada esa capacidad aquí "
+"primero, o excluya esto de la transferencia."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/phase.py:0
+msgid ""
+"This system cannot take over that data yet. Add the capability here first, "
+"then run the transfer again."
+msgstr ""
+"Este sistema aún no puede asumir esos datos. Añada la capacidad aquí primero "
+"y vuelva a ejecutar la transferencia."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_run.py:0
+msgid ""
+"This transfer stopped without finishing and has been closed. The access "
+"details it held have been cleared. Start a new one when you are ready - what "
+"already came across will not be brought over twice."
+msgstr ""
+"Esta transferencia se detuvo sin finalizar y se ha cerrado. Los datos de "
+"acceso que contenía se han borrado. Inicie una nueva cuando esté listo - lo "
+"que ya se transfirió no se volverá a traer dos veces."
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
@@ -1307,18 +2060,40 @@ msgid ""
 "Top-level error captured if the run aborted mid-way. Individual phase errors "
 "are also stored on their log rows."
 msgstr ""
-"Обща грешка, записана при прекъсване на изпълнението по средата. Отделните "
-"грешки по фази също се съхраняват в съответните редове на дневника."
+"Error de nivel superior capturado si la ejecución se interrumpió a mitad de "
+"camino. Los errores de cada fase individual también se almacenan en sus "
+"filas de registro."
 
 #. module: hr_rfid_odoo_import
-#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
-msgid "Total"
-msgstr "Total"
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__total_count
+msgid "Total Count"
+msgstr "Cantidad Total"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_run.py:0
+msgid "Transfer from %(system)s"
+msgstr "Transferencia desde %(system)s"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_user_groups
 msgid "Transfer user groups"
 msgstr "Transferir grupos de usuario"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__has_advisory
+msgid ""
+"True when there is something worth knowing that does not stop the transfer."
+msgstr ""
+"Verdadero cuando hay algo que vale la pena saber que no detiene la "
+"transferencia."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__has_blocking
+msgid "True while something must be sorted out before the transfer can start."
+msgstr ""
+"Verdadero mientras haya algo que deba resolverse antes de que pueda "
+"iniciarse la transferencia."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__source_ref
@@ -1331,8 +2106,8 @@ msgid ""
 "Untick to skip this source company entirely. Useful when you only want to "
 "migrate one tenant out of a multi-company source."
 msgstr ""
-"Отметнете, за да пропуснете тази изходна фирма изцяло. Полезно, когато "
-"желаете да мигрирате само един наемател от многофирмен източник."
+"Desmarque para omitir esta compañía de origen por completo. Útil cuando solo "
+"desea migrar un inquilino de un origen multiempresa."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_login
@@ -1340,18 +2115,62 @@ msgid "Username"
 msgstr "Nombre de usuario"
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_run__state__queued
+msgid "Waiting to start"
+msgstr "Esperando para iniciar"
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__duration
 msgid ""
 "Wall-clock seconds this phase took. Useful to spot slow phases for the next "
 "run."
 msgstr ""
-"Реално изминали секунди за тази фаза. Полезно за откриване на бавни фази при "
-"следващото изпълнение."
+"Segundos de reloj que tomó esta fase. Útil para detectar fases lentas de "
+"cara a la próxima ejecución."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__warnings
 msgid "Warnings"
 msgstr "Advertencias"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__website_message_ids
+msgid "Website Messages"
+msgstr "Mensajes del Sitio Web"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__website_message_ids
+msgid "Website communication history"
+msgstr "Historial de comunicación del sitio web"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__log_ids
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_run_form
+msgid "What happened"
+msgstr "Lo que ocurrió"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__advisory_html
+msgid ""
+"What is worth knowing before starting, written for the operator to read."
+msgstr ""
+"Lo que vale la pena saber antes de empezar, redactado para que lo lea el "
+"operador."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__blocking_html
+msgid "What must be sorted out first, written for the operator to read."
+msgstr "Lo que debe resolverse primero, redactado para que lo lea el operador."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__options_json
+msgid "What the operator chose to bring across."
+msgstr "Lo que el operador eligió traer."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__installed_modules_json
+msgid "What the other system was found to keep."
+msgstr "Lo que se determinó que mantenía el otro sistema."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__resolution
@@ -1361,16 +2180,83 @@ msgid ""
 "as a separate one. Skip: leave it out of the import. Left empty the import "
 "will not start, so nothing is merged behind your back."
 msgstr ""
-"Какво да се направи с този конфликт при импорта - Свързване: третиране на "
-"съществуващия запис тук като същото нещо и повторно използване. Създаване: "
-"пренасяне на записа като отделен. Пропускане: изключване от импорта. Ако е "
-"оставено празно, импортът не ще стартира, за да не бъде извършено сливане "
-"без вашето знание."
+"Qué hacer con este conflicto durante la importación - Vincular: tratar el "
+"registro existente aquí como lo mismo y reutilizarlo. Crear: traer el "
+"registro como uno independiente. Omitir: excluirlo de la importación. Si se "
+"deja vacío, la importación no se iniciará, para que nada se fusione sin su "
+"conocimiento."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__state
+msgid ""
+"Where this transfer has got to. It continues on its own; you can close the "
+"page."
+msgstr ""
+"Hasta dónde ha llegado esta transferencia. Continúa por su cuenta; puede "
+"cerrar la página."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__company_map_json
+msgid "Which company on the other side becomes which here."
+msgstr "Qué compañía del otro lado se convierte en cuál aquí."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__source_db
+msgid "Which database on that system."
+msgstr "Qué base de datos en ese sistema."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__source_slug
+msgid ""
+"Which source system these records are recorded against. Left empty it "
+"follows the database name of the system being read."
+msgstr ""
+"A qué sistema de origen se registran estos datos. Si se deja vacío, sigue el "
+"nombre de la base de datos del sistema que se está leyendo."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__done_phases_json
+msgid ""
+"Which steps have already finished, so a resumed transfer does not repeat "
+"them."
+msgstr ""
+"Qué pasos ya han finalizado, para que una transferencia reanudada no los "
+"repita."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_slug
+msgid ""
+"Which system the records come from. Leave it empty and it follows the name "
+"of the database being read, which is right for a one-off transfer.\n"
+"\n"
+"Fill it in when the same system is read from more than one place - a "
+"restored backup for the bulk of it, then the live server for what changed "
+"since. Both transfers must carry the SAME identity here, or the second one "
+"treats the live server as a different system and brings everything across a "
+"second time."
+msgstr ""
+"De qué sistema provienen los registros. Déjelo vacío y seguirá el nombre de "
+"la base de datos que se está leyendo, lo cual es correcto para una "
+"transferencia puntual.\n"
+"\n"
+"Complételo cuando el mismo sistema se lea desde más de un lugar - una copia "
+"de seguridad restaurada para la mayor parte, y luego el servidor en vivo "
+"para lo que cambió desde entonces. Ambas transferencias deben llevar la "
+"MISMA identidad aquí, o la segunda tratará el servidor en vivo como un "
+"sistema diferente y traerá todo por segunda vez."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__user_id
+msgid ""
+"Who started the transfer. The work runs in the background, so this is who "
+"gets told when it finishes."
+msgstr ""
+"Quién inició la transferencia. El trabajo se ejecuta en segundo plano, por "
+"lo que es a esta persona a quien se avisa cuando finaliza."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__wizard_id
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__wizard_id
-#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__wizard_id
 msgid "Wizard"
 msgstr "Asistente"
 
@@ -1381,9 +2267,32 @@ msgid "XML-RPC error: %s"
 msgstr "Error XML-RPC: %s"
 
 #. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/site_importer.py:0
+msgid ""
+"You are not allowed to create sites here, so the sites and everything "
+"attached to them cannot be brought across. Ask an administrator for the "
+"rights to manage sites, then run the transfer again."
+msgstr ""
+"No tiene permiso para crear sitios aquí, por lo que los sitios y todo lo que "
+"tienen asociado no se pueden transferir. Pida a un administrador los "
+"permisos para gestionar sitios y vuelva a ejecutar la transferencia."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "attendance"
+msgstr "asistencia"
+
+#. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "https://erp.example.com"
 msgstr "https://erp.example.com"
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "leave empty for a one-off transfer"
+msgstr "déjelo vacío para una transferencia puntual"
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
@@ -1396,16 +2305,34 @@ msgid ""
 "res.company ID on the source instance - the natural key used to match across "
 "instances."
 msgstr ""
-"ID на res.company в изходната система - естественият ключ, използван за "
-"съпоставяне между системите."
+"ID de res.company en la instancia de origen - la clave natural usada para "
+"hacer coincidencias entre instancias."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_uid
 msgid ""
 "res.users ID of the connected source user. Cached after Test Connection."
 msgstr ""
-"ID на res.users на свързания изходен потребител. Кешира се след Тест на "
-"връзката."
+"ID de res.users del usuario de origen conectado. Almacenado en caché tras "
+"Probar Conexión."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "vending machines"
+msgstr "máquinas expendedoras"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "visitor services"
+msgstr "servicios de visitantes"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "working time reports"
+msgstr "informes de horario laboral"
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form

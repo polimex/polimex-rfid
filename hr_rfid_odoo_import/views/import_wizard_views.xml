@@ -45,6 +45,16 @@
                                     <field name="source_login"/>
                                     <field name="source_password" password="True"/>
                                 </group>
+                                <!-- The blocking warning about a second source
+                                     tells the operator to name the system here.
+                                     Without the field on screen that warning is
+                                     an instruction nobody can follow, and a
+                                     genuinely different source can never be
+                                     transferred at all. -->
+                                <group>
+                                    <field name="source_slug"
+                                           placeholder="leave empty for a one-off transfer"/>
+                                </group>
                             </group>
                         </div>
 

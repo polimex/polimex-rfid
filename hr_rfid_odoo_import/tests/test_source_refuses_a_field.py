@@ -1,0 +1,170 @@
+# -*- coding: utf-8 -*-
+"""Източник с орязани права не спира прехвърлянето.
+
+Бизнес твърдение (собственик, жива миграция на 2026-08-14): клиентски източник,
+чийто администратор няма право над ЕДНО поле, пак се мигрира целият. На живо
+`company_id` на аварийните групи (видимо само за мултифирмената група, а базата
+е еднофирмена) събори цялата хардуерна фаза - нула контролери, нула врати, 697
+карти и 20 851 събития без нищо, за което да се закачат.
+
+Правото над полето е на ИЗТОЧНИКА и операторът на целта не може да го поправи
+оттук; съдържанието му е без значение (фирмата се решава от съответствието в
+съветника). Затова: полето отпада, записите идват, а какво е изпуснато се пише
+в протокола - тихото изпускане е точно дефектът, който този модул съществува
+да избягва.
+
+Всички досегашни E2E прогони четяха с пълноправен администратор - класът
+"източник с орязани права" нямаше нито един тест и точно през него мина живият
+провал.
+"""
+import xmlrpc.client
+
+from odoo.tests.common import TransactionCase, tagged
+
+from ..models.importers.base_importer import BaseImporter
+
+
+class _RestrictedRpc:
+    """Източник, който отказва определени полета - как отказва реален Odoo.
+
+    Отказът е с fault code 4 (AccessError - odoo18
+    addons/base/controllers/rpc.py:28), а текстът е нарочно на език, който
+    кодът не разбира: засичането трябва да е по кода, не по думите.
+    """
+
+    def __init__(self, records, refused_fields, refuse_everything=False):
+        self.records = records
+        self.refused = set(refused_fields)
+        self.refuse_everything = refuse_everything
+        self.read_calls = 0
+
+    def execute_kw(self, db, uid, pwd, model, method, args, kwargs=None):
+        if method == 'search':
+            return [r['id'] for r in self.records]
+        if method == 'read':
+            self.read_calls += 1
+            if self.refuse_everything:
+                raise xmlrpc.client.Fault(4, 'nicht erlaubt')
+            ids, fields = args
+            if self.refused & set(fields):
+                raise xmlrpc.client.Fault(4, 'nicht erlaubt: company_id')
+            return [
+                {k: r[k] for k in ['id'] + list(fields) if k in r}
+                for r in self.records if r['id'] in ids
+            ]
+        raise AssertionError('unexpected RPC method %r' % method)
+
+
+def _importer(env, rpc):
+    """BaseImporter с реалното четене, но с подменен транспорт."""
+    imp = BaseImporter.__new__(BaseImporter)
+    imp.env = env
+    imp.source_db = 'src'
+    imp.source_uid = 1
+    imp.source_password = 'x'
+    imp.rpc_models = rpc
+    imp.refused_fields = {}
+    imp.time_is_up = None
+    imp.stopped_early = False
+    imp.read_cursors = {}
+    imp._field_cache = {}
+    # Пробата за 'active' пита източника за полетата му - тук не е на фокус.
+    imp._has_field = lambda model, field: False
+    return imp
+
+
+@tagged('post_install', '-at_install', 'rfid_odoo_import', 'rfid_import_rights')
+class TestSourceRefusesAField(TransactionCase):
+
+    def test_a_field_the_source_hides_does_not_cost_the_records(self):
+        """Скрито поле = изпуснато поле, никога изпуснати записи."""
+        rpc = _RestrictedRpc(
+            [{'id': 7, 'name': 'Fire brigade', 'company_id': 1},
+             {'id': 8, 'name': 'Guards', 'company_id': 1}],
+            refused_fields={'company_id'},
+        )
+        imp = _importer(self.env, rpc)
+
+        records = imp._search_read(
+            'hr.rfid.ctrl.emergency.group', [], ['name', 'company_id'])
+
+        self.assertEqual(
+            [r['name'] for r in records], ['Fire brigade', 'Guards'],
+            "Записите трябва да дойдат въпреки скритото поле")
+        self.assertNotIn('company_id', records[0],
+                         "Скритото поле не бива да се преструва на прочетено")
+        self.assertEqual(
+            imp.refused_fields, {'hr.rfid.ctrl.emergency.group': {'company_id'}},
+            "Изпуснатото трябва да е записано, за да стигне до протокола")
+
+    def test_later_pages_do_not_probe_again(self):
+        """Веднъж намерено, скритото поле не струва нови проби на всяка
+        страница - при 20 851 събития това са хиляди излишни запитвания."""
+        rpc = _RestrictedRpc(
+            [{'id': 7, 'name': 'Fire brigade', 'company_id': 1}],
+            refused_fields={'company_id'},
+        )
+        imp = _importer(self.env, rpc)
+
+        imp._search_read('m', [], ['name', 'company_id'])
+        first = rpc.read_calls
+        imp._search_read('m', [], ['name', 'company_id'])
+
+        self.assertLessEqual(
+            rpc.read_calls - first, 2,
+            "Втората страница трябва да чете направо без полето, без да "
+            "преоткрива отказа поле по поле")
+
+    def test_a_source_that_refuses_the_records_still_fails_loudly(self):
+        """Отказани САМИТЕ записи (а не поле) не се преглъщат - стъпката пада
+        и изолацията ѝ го записва. Иначе 'няма права изобщо' би заприличало
+        на 'няма данни'."""
+        rpc = _RestrictedRpc([{'id': 7, 'name': 'x'}], refused_fields=set(),
+                             refuse_everything=True)
+        imp = _importer(self.env, rpc)
+
+        with self.assertRaises(xmlrpc.client.Fault):
+            imp._search_read('m', [], ['name'])
+
+    def test_other_faults_are_not_swallowed(self):
+        """Паднала връзка или счупен източник не е 'скрито поле' - минава
+        нагоре веднага, без проби."""
+        class _Broken(_RestrictedRpc):
+            def execute_kw(self, db, uid, pwd, model, method, args, kwargs=None):
+                if method == 'search':
+                    return [7]
+                raise xmlrpc.client.Fault(1, 'boom')
+
+        imp = _importer(self.env, _Broken([], set()))
+        with self.assertRaises(xmlrpc.client.Fault):
+            imp._search_read('m', [], ['name'])
+
+
+@tagged('post_install', '-at_install', 'rfid_odoo_import', 'rfid_import_rights')
+class TestProtocolLinesDoNotPileUp(TransactionCase):
+    """Пас, който продължава фаза, заменя нейните редове, не ги трупа."""
+
+    def test_a_resumed_phase_replaces_its_own_lines_only(self):
+        run = self.env['hr.rfid.odoo.import.run'].create({
+            'source_url': 'http://localhost:1',
+            'source_login': 'admin',
+            'source_password': 'x',
+        })
+        Log = self.env['hr.rfid.odoo.import.log']
+        for phase, model in [('Phase 5', 'hr.rfid.event.user'),
+                             ('Phase 5', 'hr.rfid.event.system'),
+                             ('Phase 2', 'res.partner')]:
+            Log.create({'run_id': run.id, 'phase': phase, 'model': model,
+                        'status': 'partial'})
+
+        class _Phase5:
+            PHASE_ID = 'Phase 5'
+
+        run._drop_stale_phase_lines(_Phase5)
+
+        self.assertFalse(
+            run.log_ids.filtered(lambda l: l.phase == 'Phase 5'),
+            "Редовете на подновената фаза трябва да изчезнат преди новите")
+        self.assertEqual(
+            run.log_ids.mapped('model'), ['res.partner'],
+            "Редовете на другите фази не бива да пострадат")

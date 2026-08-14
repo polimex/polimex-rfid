@@ -3,8 +3,8 @@
 
 Every case here corresponds to a cross-tenant leak measured on the real Odoo 15
 cloud migration (session 9). The conflict detector ran BEFORE the import and
-pre-seeded the source->target map by matching TEXT, which overrode the ledger
-for the whole run:
+pre-seeded the source->target map by matching TEXT, which overrode the
+external IDs for the whole run:
 
 * controllers were scanned with an EMPTY domain - the whole source table, in a
   run migrating a single tenant;
@@ -160,13 +160,13 @@ class TestConflictIdentity(TransactionCase):
             "controller scan is not restricted by company: %r" % (domain,),
         )
 
-    # -- identity comes from the ledger --------------------------------
+    # -- identity comes from the external ID ---------------------------
 
-    def test_ledgered_record_is_never_a_conflict(self):
-        """A source id already in the ledger IS the identity - no text match."""
+    def test_record_with_an_external_id_is_never_a_conflict(self):
+        """A source id that already has an external ID IS the identity."""
         wiz = self._wizard()
         with patch.object(
-            type(wiz), "_ledger_target_id",
+            type(wiz), "_external_id_target_id",
             lambda self, importer, model, source_id: self.env[  # noqa: ARG005
                 "hr.rfid.ctrl"].browse(1).id,
         ):
@@ -176,7 +176,8 @@ class TestConflictIdentity(TransactionCase):
             ]})
         self.assertFalse(
             wiz.conflict_ids,
-            "a ledgered record is a re-run, not a collision",
+            "a record that already has an external ID is a re-run, not a "
+            "collision",
         )
 
     # -- per-company constraints ---------------------------------------

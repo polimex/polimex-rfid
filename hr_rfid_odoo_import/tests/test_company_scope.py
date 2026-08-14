@@ -41,8 +41,8 @@ class _FakeSource(BaseImporter):
         self.env = env
         self.source_db = SRC_DB
         # Двойникът не минава през `super().__init__` - идентичността на
-        # ледгера трябва да се зададе изрично, иначе `_xml_id` гърми.
-        self.ledger_slug = SRC_DB
+        # източника трябва да се зададе изрично, иначе `_xml_id` гърми.
+        self.source_slug = SRC_DB
         self.source_url = "http://localhost:1"
         self.source_uid = 1
         self.source_password = "x"
@@ -150,8 +150,7 @@ class TestCompanyScope(TransactionCase):
         """The reproduced leak: a tenant owning no zones got everyone else's.
 
         On the pilot, importing a client with zero zones created all nine
-        zones of the other clients inside company 1, permanently (the records
-        are written with noupdate=True).
+        zones of the other clients inside company 1.
         """
         base = self._importer({'hr.rfid.zone': [
             {'id': 1, 'name': 'Zone of tenant A', 'company_id': [101, 'A']},
@@ -544,6 +543,7 @@ class TestSourceReadsIncludeArchivedChain(TransactionCase):
         base.options = {}
         base._field_cache = {}
         base.rpc_models = _RecordingProxy()
+        base.refused_fields = {}
         return base
 
     def test_search_read_disables_active_test_on_both_calls(self):

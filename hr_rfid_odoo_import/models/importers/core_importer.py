@@ -78,9 +78,10 @@ class CoreImporter(PhaseImporter):
         shipped = self.b._match_by_external_id(model, [r['id'] for r in source_records])
 
         for rec in source_records:
-            # Идентичност САМО по source id (ledger). Текстът е втора
-            # проверка на вече намерения запис, не ключ за търсене.
-            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
+            # Identity comes ONLY from the source id, through its external
+            # ID. The text is a second check on the record already found, not
+            # a key to search by.
+            existing = self.b.find_by_external_id(model, rec['id'], rec.get('name'))
             if not existing and rec['id'] in shipped:
                 existing = self.env[model].browse(shipped[rec['id']])
             if existing:
@@ -117,9 +118,10 @@ class CoreImporter(PhaseImporter):
         linked = 0
 
         for rec in source_records:
-            # Идентичност САМО по source id (ledger). Текстът е втора
-            # проверка на вече намерения запис, не ключ за търсене.
-            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
+            # Identity comes ONLY from the source id, through its external
+            # ID. The text is a second check on the record already found, not
+            # a key to search by.
+            existing = self.b.find_by_external_id(model, rec['id'], rec.get('name'))
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
@@ -165,9 +167,10 @@ class CoreImporter(PhaseImporter):
             if not target_company_id:
                 continue
 
-            # Идентичност САМО по source id (ledger). Текстът е втора
-            # проверка на вече намерения запис, не ключ за търсене.
-            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
+            # Identity comes ONLY from the source id, through its external
+            # ID. The text is a second check on the record already found, not
+            # a key to search by.
+            existing = self.b.find_by_external_id(model, rec['id'], rec.get('name'))
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
@@ -195,7 +198,12 @@ class CoreImporter(PhaseImporter):
         for rec in source_records:
             if not rec.get('parent_id'):
                 continue
-            target_id = self.b._get_target_id(model, rec['id'])
+            # _map_m2o, not the in-memory map alone: a later pass builds a
+            # fresh importer whose map starts empty, and the record of
+            # finished steps stops pass 1 from filling it again. Read
+            # straight from the map it would find nothing and do nothing,
+            # silently.
+            target_id = self.b._map_m2o(model, rec['id'])
             if not target_id:
                 continue
             parent_target_id = self.b._map_m2o(model, rec['parent_id'])
@@ -232,9 +240,10 @@ class CoreImporter(PhaseImporter):
             if not target_company_id:
                 continue
 
-            # Идентичност САМО по source id (ledger). Текстът е втора
-            # проверка на вече намерения запис, не ключ за търсене.
-            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
+            # Identity comes ONLY from the source id, through its external
+            # ID. The text is a second check on the record already found, not
+            # a key to search by.
+            existing = self.b.find_by_external_id(model, rec['id'], rec.get('name'))
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
@@ -277,9 +286,10 @@ class CoreImporter(PhaseImporter):
             if not target_company_id:
                 continue
 
-            # Идентичност САМО по source id (ledger). Текстът е втора
-            # проверка на вече намерения запис, не ключ за търсене.
-            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
+            # Identity comes ONLY from the source id, through its external
+            # ID. The text is a second check on the record already found, not
+            # a key to search by.
+            existing = self.b.find_by_external_id(model, rec['id'], rec.get('name'))
             if existing:
                 # Update ts_data and name from source for linked records
                 update_vals = {}
@@ -359,7 +369,9 @@ class CoreImporter(PhaseImporter):
         for rec in source_records:
             if not rec.get('parent_id'):
                 continue
-            target_id = self.b._get_target_id(model, rec['id'])
+            # Through _map_m2o so a later pass, whose in-memory map starts
+            # empty, still finds the group by its external ID.
+            target_id = self.b._map_m2o(model, rec['id'])
             parent_target_id = self.b._map_m2o(model, rec['parent_id'])
             if target_id and parent_target_id:
                 self.env[model].browse(target_id).with_context(
@@ -912,7 +924,7 @@ class CoreImporter(PhaseImporter):
         without it let the target-side default (``env.company``) claim every
         other tenant's zone: a pilot that imported a client owning ZERO zones
         still created all nine zones of the other clients inside the
-        operator's company, and ``noupdate=True`` made that permanent.
+        operator's company.
         """
         start = time.time()
         model = 'hr.rfid.zone'
@@ -959,7 +971,12 @@ class CoreImporter(PhaseImporter):
             # Map M2M fields (only if they were read and exist in target)
             for m2m_field, m2m_model in m2m_models.items():
                 if rec.get(m2m_field) and m2m_field in target_fields:
-                    vals[m2m_field] = self.b._map_m2m(m2m_model, rec[m2m_field])
+                    mapped = self.b._map_m2m(m2m_model, rec[m2m_field])
+                    # Add, never replace - the same shape as the sites use
+                    # (site_importer.py:225). A replace is a whole-list write,
+                    # so a second run would remove everybody put into the zone
+                    # here since the last one, and report it as a success.
+                    vals[m2m_field] = [(4, tid) for tid in mapped[0][2]]
 
             data_list = [{
                 'xml_id': self.b._xml_id(prefix, rec['id']),
@@ -1055,7 +1072,9 @@ class ZoneImporter(CoreImporter):
     Zones carry M2M links to employees and contacts, and notifications point
     at partners. Those target ids only exist once Phase 2 has run, so
     importing them alongside the hardware left every membership list silently
-    empty - and ``noupdate=True`` meant no later run ever repaired it.
+    empty. A later run does refresh what it already brought over, but it would
+    have taken a second transfer to notice; running the step in the right
+    order is what makes the lists right the first time.
     """
 
     # Overridden deliberately: this class inherits CoreImporter, so without

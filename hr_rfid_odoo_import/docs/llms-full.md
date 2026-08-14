@@ -11,7 +11,7 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: Import RFID access control data from older Odoo instances (v14-v18)
-last_updated: '2026-08-13'
+last_updated: '2026-08-14'
 source_digest: sha256:4d8f8551927ad0bb4e338792941413e2537158e211256d3f41f5176285fdb380
 depends:
 - hr_rfid
@@ -109,49 +109,58 @@ Features
 ========
 
 * **XML-RPC connection** - works with any Odoo instance (local or remote, v14-v18)
-* **Dynamic schema discovery** - automatically detects source fields via ``fields_get()``
+* **Version-tolerant reads** - each phase names the fields it wants and checks
+  them against the source with ``fields_get()``, so a field that only exists in
+  some versions is used where present and skipped where absent
 * **Multi-company support** - select which company to import
-* **Phased import** with savepoint isolation per phase:
+* **Runs in the background** - the transfer is handed to a scheduled job and
+  continues after the dialog is closed. A real site carries tens of thousands of
+  events, which is far more than a single web request is allowed to spend. Work
+  is done in committed pieces; an interrupted transfer continues where it
+  stopped instead of starting over.
+* **Phases, each declaring what it needs** - a phase states which feature the
+  source must have and which models this system must provide. A phase that
+  cannot run is recorded with the reason, rather than leaving a silent gap:
 
-  - Phase 1+3: Hardware (webstacks, controllers, doors, readers, zones, time schedules)
-  - Phase 2: People (employees, partners, departments, categories)
-  - Phase 4: Access (access groups, relations, cards → automatic card-door regeneration)
-  - Phase 5: Events (user events, system events, temperature/humidity logs)
-  - Phase 6a: Vending (rows, events, balance history, auto-refill)
-  - Phase 6b: Attendance (hr.attendance, hr.attendance.extra)
-  - Phase 6c: Services (rfid.service, rfid.service.sale, tags)
+  - Core & Hardware (webstacks, controllers, doors, readers, time schedules)
+  - People (employees, partners, departments, categories)
+  - Zones (after People - membership lists are the people)
+  - Sites (the tree of locations, the equipment on it, the contacts in it)
+  - Access Control (access groups, relations, cards -> card-door regeneration)
+  - Site Groups (a site's own access group, restored after the real ones)
+  - Cameras (ANPR cameras, their readers and doors, their plate lists)
+  - Events (user events, system events, temperature/humidity logs)
+  - Vending (rows, events, balance history, auto-refill)
+  - Attendance (hr.attendance, hr.attendance.extra)
+  - Services (rfid.service, rfid.service.sale, tags)
 
 * **Deduplication** via ``ir.model.data`` with ``__import__`` prefix
-* **Hardware command suppression** - no commands sent to controllers during import
-* **Identity by source ID, never by text** - a record is matched to its target
-  through the ``ir.model.data`` ledger (source id) alone. A matching name, serial
-  or card number is NOT identity: it merges different objects that happen to share
-  a label, and splits one object whose label drifted by a character.
-* **Conflict detection** - reports records that would violate a real unique
-  constraint of the target, using the FULL constraint key in the right scope
-  (``hr.rfid.webstack``: serial, global; ``hr.rfid.ctrl``: serial_number +
-  hw_version, global; ``hr.rfid.card``: number, per company). A conflict is
-  reported for the operator to decide - it is never auto-linked, and an undecided
-  one blocks the run.
+* **Nothing is said to the hardware** - no controller and no camera receives a
+  command while a transfer is running. The site stays guarded throughout.
+* **Conflict detection** - a record that would break an existing unique
+  constraint is reported for the operator to decide, never merged silently
 * **Direct SQL batch insert** for large datasets (events, attendance, balance history)
-* **Progress tracking** with real-time status updates
+* **An account of what happened** - one line per step, including what was left
+  behind and why
 
 Configuration
 =============
 
 No special configuration is needed. The module adds a menu entry under
-**RFID → Import → Import from Odoo**.
+**RFID -> Import -> Import from Odoo**.
 
 Usage
 =====
 
-1. Go to **RFID → Import → Import from Odoo**
+1. Go to **RFID -> Import -> Import from Odoo**
 2. Enter the source Odoo connection details (URL, database, login, password)
 3. Click **Check Connection** to verify connectivity
 4. Select the source company to import
 5. Choose which optional data to include (events, vending, attendance, services)
 6. Click **Start Import** and monitor progress
-7. Review the import log for results and any warnings
+7. The transfer opens on its own page and continues in the background. Close it
+   whenever you like; come back to **RFID -> Data Transfers** to see how far it
+   has got and what it moved.
 
 Requirements
 ============
@@ -243,6 +252,7 @@ Python class `HrRfidOdooImportWiz` in `models/import_wizard.py:13`.  TransientMo
 | `state` | Selection | State | ✓ | ✓ | Step the wizard is currently on - Connection: enter source URL + creds. Configur |
 | `source_url` | Char | Source URL | ✓ | ✓ | Full URL of the source Odoo server, e.g. https://erp.example.com |
 | `source_db` | Char | Source Database |  | ✓ | Leave empty if the source server hosts a single database - it will be auto-detec |
+| `source_slug` | Char | Source Identity |  | ✓ | Which system the records come from, inside their external IDs. Empty = the source database name. Set it when the SAME system is read from two places (backup, then live) - both transfers must carry the same value or everything arrives twice. See "Identity of a transferred record". |
 | `source_login` | Char | Username | ✓ | ✓ | Login of an admin-level user on the source Odoo instance - the user must have re |
 | `source_password` | Char | Password | ✓ | ✓ | Password for the source user above. Use an API key if the source enforces 2FA. S |
 | `source_version` | Char | Source Odoo Version |  | ✓ | Major Odoo version detected on the source instance (e.g. '14.0', '15.0'). Used t |
@@ -298,6 +308,38 @@ Python class `HrRfidOdooImportWiz` in `models/import_wizard.py:13`.  TransientMo
 - **`action_import(self)`** - decorators: -
   - Step 3 → Step 4 → Step 5: Execute the import.
   - effects: `log_error`, `raise:UserError`
+- **`_effective_source_identity(self)`** - decorators: -
+  - `normalise_source_slug(source_slug or source_db)` - the name this transfer
+    will file its records under. Everything that compares identities must go
+    through it, or it compares one spelling with another.
+- **`_identities_this_transfer_has_read(self)`** / **`_holds_records_from(self, identity)`** / **`_other_source_identities(self)`** - decorators: -
+  - The other-source check, asked per identity rather than by sampling what is
+    already here. See "Recognising another system's records".
+- **`_warn_about_other_source_identity(self)`** / **`_warn_about_refresh_on_rerun(self)`** - decorators: -
+  - The two warnings whose wording is load-bearing: the operator decides
+    whether to start on the strength of them, so every clause has to be true of
+    the code (and is covered by a behaviour test).
+
+### `hr.rfid.odoo.import.run` <a id='model-hr-rfid-odoo-import-run'></a>
+Python class `HrRfidOdooImportRun` in `models/import_run.py:39`.  Model.  Inherits: `mail.thread`.  Description: *RFID Data Transfer*.  Default order: `create_date desc`.
+
+The permanent record of a transfer - the wizard is transient and would take the
+job with it. It carries what the work needs to continue in another process:
+the connection (`source_url`, `source_db`, `source_login`, `source_password`,
+`source_uid`), the identity (`source_slug`), the operator's choices
+(`options_json`, `company_map_json`, `resolution_json`), and the cursors
+(`done_phases_json`, `read_cursors_json`, `current_phase`, `done_count`,
+`total_count`). `state` is `queued` / `running` / `done` / `failed`; `log_ids`
+is one line per phase, and a phase that stopped early is `partial` ("Partly"),
+not `done`.
+
+`hr_attendance_multi_rfid.hr.attendance.recalc.run` is deliberately the same
+shape - one pattern for long jobs in this codebase, not two.
+
+Key methods: `action_start`, `_cron_process` (one pass; closes stalled runs and
+COMMITS that before starting a pass), `_process_pass`, `_run_one_phase`,
+`_save_progress` (`ir.cron._commit_progress`), `_abandon_stalled_runs` (returns
+what it closed; clears the stored credentials), `_finish_reporting_failures`.
 
 
 ## Module Constants <a id='constants'></a>
@@ -307,7 +349,21 @@ UPPER_CASE module-level assignments - rates, mappings, priority tables, status m
 
 ### `models/importers/base_importer.py`
 
-- **`IMPORT_CONTEXT`** *(collection)* = `{'no_hardware_commands': True, 'tracking_disable': True, 'mail_create_nolog': True, 'mail_create_nosubscribe': True, 'mail_activity_automation_skip': True, 'no_reset_password': True}`  - line 12
+- **`IMPORT_CONTEXT`** *(collection)* = `{'no_hardware_commands': True, 'tracking_disable': True, 'mail_create_nolog': True, 'mail_create_nosubscribe': True, 'mail_activity_automation_skip': True, 'no_reset_password': True}`
+- **`EXTERNAL_ID_MODULE`** = `'__import__'` - the `ir.model.data` module every
+  transferred record is registered under, the same one core's own
+  `BaseModel.load()` writes.
+- **`EXTERNAL_ID_PREFIX`** = `'rfid_import_'` - start of every external-ID name
+  this transfer writes. Read by anything that has to recognise a transferred
+  record (`models/hr_employee.py` builds its pattern from it).
+
+### `models/hr_employee.py`
+
+- **`ATTENDANCE_MODEL`** = `'hr.attendance'`
+- **`EXTERNAL_ID_NAME_PATTERN`** = `'rfid_import_%_hr_attendance_%'` (built from
+  the two constants above, source installation wildcarded)
+- **`NAMES_SHOWN`** = `3`, **`DEFAULT_LOOKBACK_DAYS`** = `30` (the same window
+  the rebuild starts from when no date is given)
 
 
 ## Module Helpers & Hooks <a id='helpers'></a>
@@ -727,14 +783,117 @@ and the phase is marked `partial` rather than done.
 
 Resuming safely rests on two things:
 
-- every write path is ledger-backed, so a repeated read imports nothing twice;
+- every write path goes through an external ID, so a repeated read creates
+  nothing twice;
 - `_map_m2o` falls back to `ir.model.data` when the in-memory map is empty,
   which it always is in a new process. Without that fallback every relation in
   every later pass resolves to nothing and is counted as skipped - a transfer
   that loses its data and reports success.
 
 A run untouched for `STALLED_MINUTES` is closed automatically and its stored
-credentials cleared.
+credentials cleared. `_abandon_stalled_runs()` RETURNS what it closed and
+`_cron_process` commits that before starting the next pass: a pass rolls the
+transaction back when it fails, which would otherwise undo exactly the closures
+that unblock the queue, leaving the same dead runs in the way on every wake-up.
+
+## Identity of a transferred record
+
+**A record is recognised by its source id, carried in Odoo's own external-ID
+metadata (`ir.model.data`) - never by name, serial, e-mail or card number.**
+There is no separate register: the "ledger" of earlier versions was always
+`ir.model.data`, and the word has been dropped because it named a thing that
+does not exist.
+
+| Piece | Where | Value |
+|---|---|---|
+| `EXTERNAL_ID_MODULE` | `models/importers/base_importer.py` | `'__import__'` - what core's own `BaseModel.load()` writes for imported rows |
+| `EXTERNAL_ID_PREFIX` | same | `'rfid_import_'` |
+| `_xml_id_name(model_prefix, source_id)` | `BaseImporter` | `rfid_import_{source_slug}_{model_prefix}_{source_id}` |
+| `normalise_source_slug(value)` | module-level function | `-` and `.` to `_`; an external-ID name may not carry dots, so every producer and every reader must apply the SAME rule or a check answers about one spelling while the transfer writes another |
+
+`source_slug` is the identity of the SOURCE SYSTEM. It defaults to the source
+database name and is overridable on the wizard (`source_slug`, "Source
+Identity") for the case that made it necessary: the same installation read from
+two places - a restored backup for the bulk, then the live server for the
+delta - must write ONE set of ids. Two names for one system means nothing
+matches and everything arrives twice; measured on the o15 cloud, 298 937
+duplicated events alone.
+
+Helpers (renamed from the `*_ledger` names, same behaviour):
+
+- `find_by_external_id(model, source_id, expect_text=None, text_field='name')` -
+  the only identity lookup. `expect_text` is a SECOND check on the record
+  already found by id: a mismatch is reported, never used to search elsewhere.
+  `find_by_ledger` remains as a temporary alias for the camera, people and
+  service importers, which have not been renamed yet.
+- `prefetch_external_ids(model, source_ids)` - reads the durable half of the
+  in-memory map back in one query. A new process starts with `id_map` empty, so
+  without this every relation resolves to False and the row is counted as
+  skipped while the protocol reads as a clean run.
+- `link_existing`, `_bulk_insert_with_xmlid`, `_match_by_external_id` - all
+  write or read the same names.
+
+### What a second run does
+
+`_load_records` looks the external ID up first and WRITES to the record it
+names, so a second run **refreshes from the source**. The `'noupdate': True`
+carried in `data_list` is recorded on the metadata row but changes nothing
+here: core honours it only when called with `update=True`
+(`if not (update and d_noupdate)`), and this call does not. That is the owner's
+decision, not an accident - so the wizard says it out loud before the start
+(`_warn_about_refresh_on_rerun`), in three parts that are each true of the code:
+
+- equipment and cards are written again (put back to the source's version);
+- people, contacts, departments, staff tags, card types, access groups and
+  sites are recognised and left alone (the write is never reached);
+- a list the source keeps as a whole - an access group's DEPARTMENTS, the
+  groups it inherits, the doors a reader serves - is written back whole, so an
+  entry added here is taken out again. The DOORS of an access group are not
+  such a list: they are permissions of their own and are only ever added.
+
+Regression tests for each clause:
+`tests/test_second_run_changes_nothing.py`.
+
+### Recognising another system's records
+
+`_warn_about_other_source_identity` asks the question the only way that can be
+answered: for each identity a transfer started IN THIS DATABASE has read
+(`hr.rfid.odoo.import.run` is the permanent account of that), is anything from
+it still here (`_holds_records_from`, one `=like` per identity). It does NOT
+sample what is already present - a sample answers with whichever rows it meets
+first, so in a database that also holds a large import from another tool the
+one name that matters can fall outside it. Reading a sample also cannot tell
+this module's records from the Andromeda or old-cloud imports, which write the
+same module with names of their own; asking "which systems have WE read" can.
+
+Empty box + records from another identity = `danger`, which blocks the start.
+Filling the box IS the decision, so it drops to `warning` and the transfer
+proceeds.
+
+## Attendance brought over is never rebuilt
+
+`models/hr_employee.py` implements `hr.employee._check_recalc_allowed` (the
+hook declared in `hr_rfid`) and refuses when the requested window holds
+attendance carrying this transfer's external ID.
+
+- Detection is ONE query: the external IDs are used as a sub-select
+  (`ir.model.data` has no link back to attendance), matched on
+  `EXTERNAL_ID_NAME_PATTERN` = `rfid_import_%_hr_attendance_%` - the module
+  alone would also match an ordinary spreadsheet import.
+- The window comes from the rebuild itself (`_recalc_window`), so the two
+  cannot drift; people are grouped by timezone to keep it to one query.
+- The `ir.model.data` side is read `sudo()` (not readable by whoever runs a
+  rebuild); the attendance side is read with the CALLER's rights, so the
+  refusal is about exactly the records the rebuild would have deleted and no
+  name from another company leaks into the message.
+- Why refuse at all: the rebuild deletes the record together with its metadata
+  row, so the next transfer no longer recognises the row it already brought
+  over and adds it a second time. The message tells the operator to run the
+  transfer again instead.
+
+Tests: `tests/test_recalc_guard.py` - refused at the wizard button with nothing
+queued, and a run driven through `_cron_process` ending `refused` with the
+attendance AND its `ir.model.data` row untouched.
 
 ## Reference data vs migrated data
 

@@ -25,20 +25,32 @@
             <field name="arch" type="xml">
                 <form string="Data Transfer" create="0">
                     <header>
-                        <!-- Refresh, because the bar does not move on its own.
-                             Without it people conclude the transfer has stalled
-                             and start it again. -->
-                        <button name="action_start" type="object"
-                                string="Continue now" class="btn-primary"
+                        <!-- The bar does not move on its own, so there has to
+                             be a way to look again. It must not be the primary
+                             button and it must not be called "Continue":
+                             operators read that as "run it now, in front of
+                             me", press it on a transfer that is already
+                             running, and the request collides with the worker.
+                             It shows what has happened; it does not do the
+                             work. -->
+                        <button name="action_refresh" type="object"
+                                string="Look again"
                                 invisible="state in ('done', 'failed')"/>
                         <field name="state" widget="statusbar"
                                statusbar_visible="queued,running,done"/>
                     </header>
                     <sheet>
+                        <!-- Shown while the transfer is waiting as well as
+                             while it runs. Waiting with no explanation and a
+                             button beside it is what made operators press the
+                             button to "get it going". -->
                         <div class="alert alert-info" role="status"
-                             invisible="state != 'running'">
-                            The transfer continues in the background. You can close
-                            this page; press Continue now to refresh what you see.
+                             invisible="state not in ('queued', 'running')">
+                            The transfer runs on its own, a piece at a time, and
+                            carries on if the server restarts. You can close this
+                            page and come back to it. The figures here are from the
+                            moment the page was opened - press Look again to see
+                            how far it has got.
                         </div>
                         <div class="oe_title">
                             <h1><field name="name" readonly="1"/></h1>

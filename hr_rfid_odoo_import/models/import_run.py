@@ -72,7 +72,10 @@ class HrRfidOdooImportRun(models.Model):
              "cleared the moment it ends.",
     )
     source_uid = fields.Integer(help="Internal id of that account, from the login.")
-    ledger_slug = fields.Char(help="Which source system the records are recorded against.")
+    source_slug = fields.Char(
+        help="Which source system these records are recorded against. Left "
+             "empty it follows the database name of the system being read.",
+    )
     installed_modules_json = fields.Text(help="What the other system was found to keep.")
     options_json = fields.Text(help="What the operator chose to bring across.")
     company_map_json = fields.Text(help="Which company on the other side becomes which here.")
@@ -120,11 +123,45 @@ class HrRfidOdooImportRun(models.Model):
     # ── Lifecycle ─────────────────────────────────────────────
 
     def action_start(self):
-        """Ask for the work to begin. Returns at once."""
+        """Ask for the work to begin. Returns at once.
+
+        Called once, by the wizard, on a transfer that has just been written
+        down and that nobody is working on yet.
+        """
         self.ensure_one()
         self.state = 'queued'
         self._wake_the_worker()
         return True
+
+    def action_refresh(self):
+        """Show what the worker has done since the page was opened.
+
+        This writes NOTHING to the transfer, and that is the whole point.
+
+        It used to call action_start, which set the state - on the same row the
+        worker rewrites at every phase. Odoo runs at REPEATABLE READ
+        (odoo/sql_db.py:373), so updating a row another transaction has changed
+        and committed since our snapshot raises SerializationFailure; Odoo then
+        replays the whole request up to five times
+        (odoo/service/model.py:29-30, :185), each attempt colliding again with
+        a worker that commits every phase. The operator sat waiting while a
+        request thread burned through all five, and was then shown a red server
+        error - on a transfer that was running perfectly well.
+
+        Waking the scheduler is only meaningful when nothing is working on this
+        transfer yet; a running one already has a worker, and poking it can
+        only start a second pass that finds the row locked.
+        """
+        self.ensure_one()
+        if self.state == 'queued':
+            self._wake_the_worker()
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': self._name,
+            'res_id': self.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
 
     def _wake_the_worker(self):
         cron = self.env.ref('hr_rfid_odoo_import.ir_cron_import_run',
@@ -156,7 +193,18 @@ class HrRfidOdooImportRun(models.Model):
         if request:
             self.env['hr.rfid.odoo.import.run']._wake_the_worker()
             return
-        self._abandon_stalled_runs()
+        if self._abandon_stalled_runs():
+            # Closing the dead transfers is a finished piece of work in its own
+            # right, so it is kept before the next one is started. The pass
+            # below rolls the transaction back when it fails - and that would
+            # otherwise undo exactly the closures that unblock the queue,
+            # leaving the same dead transfers in the way on every wake-up, and
+            # the other system's password in the database with them. Core keeps
+            # each completed unit before beginning the next the same way
+            # (odoo/addons/mail/models/fetchmail.py:340), and so does the
+            # attendance rebuild this worker is modelled on
+            # (hr_attendance_multi_rfid/models/attendance_recalc_run.py:211-219).
+            self.env.cr.commit()
         run = self.search([('state', 'in', ('queued', 'running'))],
                           order='create_date asc', limit=1)
         if not run:
@@ -186,6 +234,9 @@ class HrRfidOdooImportRun(models.Model):
         follow from that, and the second is the reason this exists: the queue is
         blocked behind it, and the other system's password stays in the database
         indefinitely, long after anyone would think the job was over.
+
+        :return: the transfers that were closed, so the caller knows there is
+            something worth keeping before it starts the next pass
         """
         cutoff = fields.Datetime.now() - timedelta(minutes=STALLED_MINUTES)
         stalled = self.search([
@@ -202,6 +253,7 @@ class HrRfidOdooImportRun(models.Model):
                 "when you are ready - what already came across will not be "
                 "brought over twice."
             ))
+        return stalled
 
     def _process_pass(self):
         """Work through as many steps as fit in this pass."""
@@ -237,6 +289,7 @@ class HrRfidOdooImportRun(models.Model):
                 continue
 
             self.current_phase = cls.NAME
+            self._drop_stale_phase_lines(cls)
             phase = cls(importer)
             complete = self._run_one_phase(phase, cls)
             if complete:
@@ -247,11 +300,47 @@ class HrRfidOdooImportRun(models.Model):
 
             if time.monotonic() > deadline:
                 # Out of time. Whatever is left waits for the next pass; the
-                # ledger makes re-reading safe, so nothing is duplicated.
+                # external IDs make re-reading safe, so nothing is duplicated.
                 self._wake_the_worker()
                 return
 
+        self._report_refused_fields(importer)
         self._finish_reporting_failures()
+
+    def _drop_stale_phase_lines(self, cls):
+        """Replace, never pile up, the protocol lines of a re-entered phase.
+
+        A phase runs again only when the last pass stopped it mid-way (out of
+        time). Its half-written lines describe work this pass is about to redo
+        and re-count; left in place they accumulate one copy per pass - a live
+        protocol held SEVEN copies of the events lines, and the operator read
+        "20 851 missing events" seven times over as seven separate problems.
+        """
+        self.ensure_one()
+        self.log_ids.filtered(lambda l: l.phase == cls.PHASE_ID).unlink()
+
+    def _report_refused_fields(self, importer):
+        """Every field the source declined to hand over, in the protocol.
+
+        The transfer carries on without such a field - that is the fix for a
+        live migration where one refused field cost the whole hardware phase -
+        but carrying on SILENTLY would turn the fix into a hole: the operator
+        must see what was left behind and decide whether it matters.
+        """
+        for model, fields_ in sorted((importer.refused_fields or {}).items()):
+            self.env['hr.rfid.odoo.import.log'].create({
+                'run_id': self.id,
+                'phase': 'fields',
+                'model': model,
+                'status': 'partial',
+                'error_message': self.env._(
+                    "The account used to read the other system is not allowed "
+                    "to see: %(fields)s. Everything else about these records "
+                    "came across. If those details matter, widen that "
+                    "account's access rights over there and run the transfer "
+                    "again.", fields=", ".join(sorted(fields_)),
+                ),
+            })
 
     def _finish_reporting_failures(self):
         """End the run, saying plainly whether anything did not come across.
@@ -300,10 +389,12 @@ class HrRfidOdooImportRun(models.Model):
             _logger.error("Transfer step %s failed: %s", cls.NAME, exc, exc_info=True)
             phase.b.id_map.clear()
             phase.b.id_map.update(id_map_snapshot)
-            # Recorded in its own transaction: the savepoint above has already
-            # thrown away everything this step wrote, and a failure nobody can
-            # read afterwards is the same as no failure at all.
-            self.env.cr.rollback()
+            # The savepoint has already undone everything this phase wrote and
+            # cleared the cache with it (_FlushingSavepoint.rollback,
+            # odoo/sql_db.py:137-140). Nothing more may be undone here: a plain
+            # cr.rollback() goes back to the last COMMIT and takes the pass's
+            # own bookkeeping with it - the same defect cost the attendance
+            # rebuild its fixture and every already-finished person of a pass.
             self._log_phase(cls, status='error', message=str(exc)[:500])
             self.message_post(body=self.env._(
                 "The step \"%(step)s\" could not be completed: %(problem)s",
@@ -371,7 +462,7 @@ class HrRfidOdooImportRun(models.Model):
             company_map={int(k): v for k, v in
                          json.loads(self.company_map_json or '{}').items()},
             options=options,
-            ledger_slug=self.ledger_slug,
+            source_slug=self.source_slug,
         )
         importer.read_cursors = json.loads(self.read_cursors_json or '{}')
         self._apply_resolutions(importer)

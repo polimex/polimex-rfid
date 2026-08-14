@@ -6,7 +6,7 @@ doc_type: user_guide
 audience:
 - user
 summary: Bring RFID access control data across from another Odoo system (v14-v18)
-last_updated: '2026-08-13'
+last_updated: '2026-08-14'
 source_digest: sha256:917a8495e4d3f76aea18007dd5c7c5e09340956d24d5542f5ee1be846b81d7b7
 companion_doc: llms-full.md
 ---
@@ -42,6 +42,18 @@ arrive, that is reported as a fault, not as a finished step.
 2. Enter the address of the other system and an account that can read it. That
    account needs to be able to see everything you want moved - including the
    camera passwords, if you have cameras.
+   - **Source identity** on the same page is normally left empty: the transfer
+     then files everything under the name of the database it read, which is
+     right for a one-off move. Fill it in when you read the SAME system from
+     two places - a restored backup for the bulk of it, then the live server
+     for what changed since. Both transfers must carry the same identity, or
+     the second one treats the live server as a different system and brings
+     everything across a second time.
+   - If this database already holds records from another system, you are told
+     so before you start, with the name that system was filed under. Leave the
+     box empty and the transfer will not start: put the earlier name in it if
+     it is the same system, or type a name of your own to say it is a
+     different one.
 3. Press **Check Connection**. The wizard then lists the companies it found.
 4. Pick which company to bring across and which company here it becomes.
 5. Choose what to include. Anything the other system does not keep, or this one
@@ -70,8 +82,15 @@ arrive, that is reported as a fault, not as a finished step.
 
 ## Common questions
 
-**Can I run it twice?** Yes. Everything that already came across is recognised
-and left alone, so a second run only brings what is missing.
+**Can I run it twice?** Yes, as often as you like - nothing is ever brought
+across a second time. What a repeat transfer does to what is already here is
+not the same for everything, and the summary page says so before you start:
+the equipment and the cards are put back to what the other system holds, so a
+card switched off here comes back on and a door renamed here gets its old name
+back. People, contacts, departments and access groups keep the details
+corrected here. A list the other system keeps - the departments of an access
+group, the doors a reader serves - is rebuilt from it, so an entry added here
+is taken out again. No record is deleted.
 
 **What if it is interrupted?** It carries on from where it stopped. A transfer
 that has not moved for half an hour is closed automatically and its stored
@@ -88,3 +107,13 @@ transfer is done.
 **Nothing at all came across for one kind of record.** That is shown as a
 fault. Look at the step just above it: what those records point at is probably
 missing.
+
+**Can I rebuild the attendance that came across?** No, and the attempt is
+refused rather than half done. Attendance brought over is a copy of what the
+other system recorded: it cannot be worked out again from door events here -
+those events may not have come along, and the old system may have been
+corrected by hand - and rebuilding it would break the link that lets a later
+transfer recognise it, so the next transfer would bring it over a second time.
+To refresh that data, run the transfer again. Attendance recorded HERE is
+rebuilt as normal; the refusal names the people it concerns, so you can rebuild
+a period, or a set of people, that does not include them.

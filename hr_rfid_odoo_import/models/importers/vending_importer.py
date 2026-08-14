@@ -68,9 +68,10 @@ class VendingImporter(PhaseImporter):
         prefix = model.replace('.', '_')
 
         for rec in source_records:
-            # Идентичност САМО по source id (ledger). Текстът е втора
-            # проверка на вече намерения запис, не ключ за търсене.
-            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
+            # Identity comes ONLY from the source id, through its external
+            # ID. The text is a second check on the record already found, not
+            # a key to search by.
+            existing = self.b.find_by_external_id(model, rec['id'], rec.get('name'))
 
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
@@ -434,9 +435,16 @@ class VendingImporter(PhaseImporter):
         ))
 
     def _update_employee_vending_fields(self):
-        """Step 35: Update employees with vending balance fields."""
+        """Step 35: Update employees with vending balance fields.
+
+        Always reports a line, even when there was nothing to set. Without one,
+        "nobody over there has a vending balance" and "this step never ran"
+        look exactly alike in the protocol - and the second is what happens
+        when a later pass finds the map in memory empty.
+        """
         start = time.time()
         co_domain = self.b._company_domain()
+        label = 'hr.employee (vending fields)'
 
         vending_fields = [
             'hr_rfid_vending_in_attendance', 'hr_rfid_vending_limit',
@@ -456,18 +464,25 @@ class VendingImporter(PhaseImporter):
         ]
 
         if len(fields_to_read) <= 1:
-            return  # No vending fields to import
+            self.results.append(self.b._make_result(
+                label, 0, 0, status='skipped',
+                error=self.env._(
+                    "The other system keeps no vending balances on its people, "
+                    "so there was nothing to carry over."),
+                duration=time.time() - start,
+            ))
+            return
 
         source_records = self.b._search_read(
             'hr.employee', co_domain, fields_to_read,
         )
+        # Counted against the people who actually carry vending values, not
+        # against everyone: someone with nothing to set is not a miss, while
+        # someone who HAS a balance and did not get it is.
+        expected = 0
         updated = 0
 
         for rec in source_records:
-            emp_target = self.b._get_target_id('hr.employee', rec['id'])
-            if not emp_target:
-                continue
-
             vals = {}
             for f in fields_to_read:
                 if f == 'id':
@@ -483,14 +498,25 @@ class VendingImporter(PhaseImporter):
                     else:
                         vals[f] = rec[f]
 
-            if vals:
-                self.env['hr.employee'].browse(emp_target).with_context(
-                    **IMPORT_CONTEXT
-                ).write(vals)
-                updated += 1
+            if not vals:
+                continue
+            expected += 1
 
-        if updated:
-            self.results.append(self.b._make_result(
-                'hr.employee (vending fields)', len(source_records), updated,
-                duration=time.time() - start,
-            ))
+            # _map_m2o, not the in-memory map alone: a later pass builds a
+            # fresh importer whose map starts empty, and the record of
+            # finished steps stops the people step from filling it again. Read
+            # straight from the map this found nobody and left every balance
+            # behind, silently.
+            emp_target = self.b._map_m2o('hr.employee', rec['id'])
+            if not emp_target:
+                continue
+
+            self.env['hr.employee'].browse(emp_target).with_context(
+                **IMPORT_CONTEXT
+            ).write(vals)
+            updated += 1
+
+        self.results.append(self.b._make_result(
+            label, expected, updated, skipped_count=expected - updated,
+            duration=time.time() - start,
+        ))

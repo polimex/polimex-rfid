@@ -65,9 +65,10 @@ class AccessImporter(PhaseImporter):
             if not target_company_id:
                 continue
 
-            # Идентичност САМО по source id (ledger). Текстът е втора
-            # проверка на вече намерения запис, не ключ за търсене.
-            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
+            # Identity comes ONLY from the source id, through its external
+            # ID. The text is a second check on the record already found, not
+            # a key to search by.
+            existing = self.b.find_by_external_id(model, rec['id'], rec.get('name'))
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
@@ -96,7 +97,11 @@ class AccessImporter(PhaseImporter):
 
         # Pass 2: Update inherited_ids + department_ids
         for rec in source_records:
-            target_id = self.b._get_target_id(model, rec['id'])
+            # _map_m2o, not the in-memory map alone: a later pass builds a
+            # fresh importer whose map starts empty, and the record of
+            # finished steps stops pass 1 from filling it again. Read straight
+            # from the map it would find nothing and do nothing, silently.
+            target_id = self.b._map_m2o(model, rec['id'])
             if not target_id:
                 continue
             update_vals = {}
@@ -136,10 +141,26 @@ class AccessImporter(PhaseImporter):
         source_records = self.b._search_read(
             model, self.b._scoped_domain('access_group_id'), fields_to_read)
         imported = 0
+        linked = 0
         skipped = 0
         prefix = model.replace('.', '_')
 
         for rec in source_records:
+            # A door permission that is already here is recognised and left
+            # alone. It cannot be refreshed even in principle: the model
+            # forbids writing to it outright (hr_rfid_access_group.py, write()
+            # raises), because a changed permission has to be taken away and
+            # granted again for the doors to be told. Without this, every
+            # repeat transfer tried the refused write on every permission,
+            # ended the step with nothing landed, and reported the whole
+            # transfer as stopped by a problem - over data that was already
+            # correctly in place.
+            existing = self.b.find_by_external_id(model, rec['id'])
+            if existing:
+                self.b.link_existing(model, rec['id'], existing.id)
+                linked += 1
+                continue
+
             ag_target = self.b._map_m2o(
                 'hr.rfid.access.group', rec.get('access_group_id')
             )
@@ -176,7 +197,7 @@ class AccessImporter(PhaseImporter):
                 skipped += 1
 
         self.results.append(self.b._make_result(
-            model, len(source_records), imported, 0, skipped,
+            model, len(source_records), imported, linked, skipped,
             duration=time.time() - start,
         ))
 
@@ -313,7 +334,7 @@ class AccessImporter(PhaseImporter):
 
         # Isolated: these rows are inserted precisely BECAUSE the model layer
         # objected, so a failure here must cost the phase nothing. A rollback
-        # takes the ledger entries with it, so the next run retries cleanly.
+        # takes the external IDs with it, so the next run retries cleanly.
         try:
             with self.env.cr.savepoint():
                 inserted, already, rejected = self.b._direct_sql_insert_tracked(
@@ -321,15 +342,21 @@ class AccessImporter(PhaseImporter):
                 copied = inserted + already
                 if not copied:
                     return 0
-                # The module's own activation builds the card→door permissions.
-                # It is a no-op while the tenant's cards are still unimported
-                # (they follow in step 24) - the card import then picks the rows
-                # up like any other.
-                target_ids = [
-                    tid for tid in
-                    (self.b._get_target_id(model, sid) for sid in source_ids) if tid]
-                if target_ids:
-                    Model.browse(target_ids).with_context(**IMPORT_CONTEXT)._activate()
+                if inserted:
+                    # The module's own activation builds the card→door
+                    # permissions. It is a no-op while the tenant's cards are
+                    # still unimported (they follow in step 24) - the card
+                    # import then picks the rows up like any other.
+                    #
+                    # Only for rows this run actually inserted. Rows that were
+                    # already here have been activated once and would come out
+                    # the same; at one customer that is 2 120 permissions
+                    # rebuilt on every later run for nothing.
+                    target_ids = [
+                        tid for tid in
+                        (self.b._get_target_id(model, sid) for sid in source_ids) if tid]
+                    if target_ids:
+                        Model.browse(target_ids).with_context(**IMPORT_CONTEXT)._activate()
         except Exception:
             for sid in source_ids:
                 self.b.id_map.get(model, {}).pop(sid, None)
@@ -339,10 +366,16 @@ class AccessImporter(PhaseImporter):
                 model, len(refused), exc_info=True)
             return 0
 
-        _logger.warning(
-            "%s: %d membership(s) the v19 model layer refuses were copied "
-            "verbatim from the source (D41); %d rejected by the database",
-            model, copied, rejected)
+        if inserted or rejected:
+            _logger.warning(
+                "%s: %d membership(s) the v19 model layer refuses were copied "
+                "verbatim from the source (D41); %d rejected by the database",
+                model, inserted, rejected)
+        else:
+            # Every one of them was already here - a re-run over correct data,
+            # not something an operator needs to be told about again.
+            _logger.debug("%s: %d refused membership(s) already copied earlier",
+                          model, already)
         return copied
 
     def _import_ag_contact_rels(self):
@@ -540,27 +573,39 @@ class AccessImporter(PhaseImporter):
 
         Sets hr_rfid_default_access_group and hr_rfid_allowed_access_groups
         which point from department to access groups.
+
+        Always reports a line, even when there was nothing to set. Without one,
+        "the other system keeps no default groups" and "this step never ran"
+        look exactly alike in the protocol - and the second is what happens
+        when a later pass finds the map in memory empty.
         """
         start = time.time()
         model = 'hr.department'
+        label = f'{model} (AG refs)'
         co_domain = self.b._company_domain()
         source_fields_info = self.b._get_source_fields(model)
-        target_fields = set(self.env[model]._fields.keys())
 
         if 'hr_rfid_default_access_group' not in source_fields_info:
-            return  # Nothing to update
+            self.results.append(self.b._make_result(
+                label, 0, 0, status='skipped',
+                error=self.env._(
+                    "The other system does not give departments a default "
+                    "access group, so there was nothing to carry over."),
+                duration=time.time() - start,
+            ))
+            return
 
         source_records = self.b._search_read(
             model, co_domain,
             ['hr_rfid_default_access_group', 'hr_rfid_allowed_access_groups'],
         )
+        # Counted against the departments that actually carry a group, not
+        # against every department: a department with nothing to set is not a
+        # miss, while a department that HAS one and did not get it is.
+        expected = 0
         updated = 0
 
         for rec in source_records:
-            target_id = self.b._get_target_id(model, rec['id'])
-            if not target_id:
-                continue
-
             update_vals = {}
             if rec.get('hr_rfid_default_access_group'):
                 ag_target = self.b._map_m2o(
@@ -574,14 +619,27 @@ class AccessImporter(PhaseImporter):
                     'hr.rfid.access.group', rec['hr_rfid_allowed_access_groups']
                 )
 
-            if update_vals:
-                self.env[model].browse(target_id).with_context(
-                    **IMPORT_CONTEXT
-                ).write(update_vals)
-                updated += 1
+            if not (rec.get('hr_rfid_default_access_group')
+                    or rec.get('hr_rfid_allowed_access_groups')):
+                continue
+            expected += 1
 
-        if updated:
-            self.results.append(self.b._make_result(
-                f'{model} (AG refs)', len(source_records), updated,
-                duration=time.time() - start,
-            ))
+            # _map_m2o, not the in-memory map alone: a later pass builds a
+            # fresh importer whose map starts empty, and the record of
+            # finished steps stops the department step from filling it again.
+            # Read straight from the map this found nothing and left every
+            # department without its default access group, silently.
+            target_id = self.b._map_m2o(model, rec['id'])
+            if not target_id or not update_vals:
+                continue
+
+            self.env[model].browse(target_id).with_context(
+                **IMPORT_CONTEXT
+            ).write(update_vals)
+            updated += 1
+
+        self.results.append(self.b._make_result(
+            label, expected, updated,
+            skipped_count=expected - updated,
+            duration=time.time() - start,
+        ))

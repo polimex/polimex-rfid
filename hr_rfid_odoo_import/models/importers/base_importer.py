@@ -11,7 +11,23 @@ _logger = logging.getLogger(__name__)
 # ir.model.data module used for every imported record's external ID.
 # Matches the standard Odoo import convention (odoo/orm/models.py load():
 # context.get('module', '__import__')), so imports stay idempotent on re-run.
-LEDGER_MODULE = '__import__'
+EXTERNAL_ID_MODULE = '__import__'
+
+# Every external ID this transfer writes starts with this, followed by the
+# source identity - see _xml_id_name(). Read by anything that has to recognise
+# a record this transfer brought over.
+EXTERNAL_ID_PREFIX = 'rfid_import_'
+
+
+def normalise_source_slug(value):
+    """The source identity as it appears inside an external ID.
+
+    An external ID name may not carry dots, so the same rule has to be applied
+    everywhere the identity is built or compared - otherwise a check answers
+    about one spelling while the transfer writes another.
+    """
+    return (value or '').replace('-', '_').replace('.', '_')
+
 
 # Context flags for suppressing side-effects during import
 IMPORT_CONTEXT = {
@@ -32,7 +48,7 @@ class BaseImporter:
     """
 
     def __init__(self, env, source_url, source_db, source_uid, source_password,
-                 company_map, options, ledger_slug=None):
+                 company_map, options, source_slug=None):
         self.env = env
         # XML-RPC connection (source - read only)
         self.source_url = source_url
@@ -40,9 +56,8 @@ class BaseImporter:
         # Identity of the SOURCE SYSTEM in the external IDs. Defaults to the
         # database name (right for a one-shot import); set explicitly when the
         # same source is read from more than one place - backup for the bulk,
-        # live server for the delta - so both write ONE ledger.
-        self.ledger_slug = (ledger_slug or source_db or '').replace(
-            '-', '_').replace('.', '_')
+        # live server for the delta - so both write the SAME external IDs.
+        self.source_slug = normalise_source_slug(source_slug or source_db)
         self.source_uid = source_uid
         self.source_password = source_password
         self.rpc_models = xmlrpc.client.ServerProxy(
@@ -67,6 +82,10 @@ class BaseImporter:
         #: than starting the same read from the beginning. Persisted by the
         #: run record between passes.
         self.read_cursors = {}
+        #: {model: {field, ...}} the source refused to hand over (field-level
+        #: groups= on the source side). Remembered so later pages skip the
+        #: probing, and reported so nothing is left behind silently.
+        self.refused_fields = {}
 
     # ── Source reading (XML-RPC) ──────────────────────────────
 
@@ -132,14 +151,85 @@ class BaseImporter:
         read_kwargs = {'load': '_classic_write'}
         if context:
             read_kwargs['context'] = dict(context)
-        records = self.rpc_models.execute_kw(
-            self.source_db, self.source_uid, self.source_password,
-            model, 'read', [ids, fields], read_kwargs,
-        )
+        records = self._read_dropping_refused_fields(
+            model, ids, fields, read_kwargs)
         # `read()` does not promise the searched order, and `_read_all` paginates
         # on the LAST id it saw - an unordered page would skip or repeat rows.
         by_id = {r['id']: r for r in records}
         return [by_id[i] for i in ids if i in by_id]
+
+    #: xmlrpc fault code the source raises for AccessError - the same constant
+    #: on every version we read (odoo18 addons/base/controllers/rpc.py:28,
+    #: RPC_FAULT_CODE_ACCESS_ERROR = 4; historically in service/wsgi_server.py).
+    #: Matching the CODE, never the message: the message arrives in whatever
+    #: language the source speaks.
+    RPC_FAULT_ACCESS_ERROR = 4
+
+    def _read_dropping_refused_fields(self, model, ids, fields, read_kwargs):
+        """Read, and when the source refuses a FIELD, leave the field - never
+        the records.
+
+        A field can carry its own groups= restriction. hr_rfid ships exactly
+        one that bites here: company_id on the emergency-signal groups is
+        readable only by the multi-company group, and on a single-company
+        source the admin account is not in it. The refusal of that one field
+        took the whole hardware phase down at a live migration (192.168.0.99,
+        2026-08-14) - no controllers, no doors, no cards, 20 851 events with
+        nothing to attach to. On a single-company source the CONTENT of such a
+        field is worthless anyway: which company records land in is decided by
+        the operator's company mapping, not by the source.
+
+        The refused fields are found by probing one field at a time against a
+        single record - only after a refusal, so the happy path stays two RPC
+        calls. Dropped fields are remembered per model and reported in the
+        protocol, because data left behind silently is the defect this module
+        exists to avoid.
+        """
+        known = self.refused_fields.get(model)
+        if known:
+            # Later pages of the same model skip both the doomed attempt and
+            # the field-by-field probing - at 20 851 events that would be
+            # thousands of pointless round trips.
+            fields = [f for f in fields if f not in known]
+        try:
+            return self.rpc_models.execute_kw(
+                self.source_db, self.source_uid, self.source_password,
+                model, 'read', [ids, fields], read_kwargs,
+            )
+        except xmlrpc.client.Fault as fault:
+            if fault.faultCode != self.RPC_FAULT_ACCESS_ERROR:
+                raise
+        refused = []
+        for field in fields:
+            try:
+                self.rpc_models.execute_kw(
+                    self.source_db, self.source_uid, self.source_password,
+                    model, 'read', [ids[:1], [field]], read_kwargs,
+                )
+            except xmlrpc.client.Fault as fault:
+                if fault.faultCode != self.RPC_FAULT_ACCESS_ERROR:
+                    raise
+                refused.append(field)
+        if not refused:
+            # The refusal was not about a field after all (a record rule that
+            # denies the rows themselves, say) - nothing to drop, so the
+            # original failure stands and the step's own isolation records it.
+            return self.rpc_models.execute_kw(
+                self.source_db, self.source_uid, self.source_password,
+                model, 'read', [ids, fields], read_kwargs,
+            )
+        newly = set(refused) - self.refused_fields.setdefault(model, set())
+        if newly:
+            self.refused_fields[model].update(newly)
+            _logger.warning(
+                "%s: the source refuses to hand over field(s) %s - reading "
+                "without them; records still come across in full otherwise",
+                model, ', '.join(sorted(newly)))
+        kept = [f for f in fields if f not in self.refused_fields[model]]
+        return self.rpc_models.execute_kw(
+            self.source_db, self.source_uid, self.source_password,
+            model, 'read', [ids, kept], read_kwargs,
+        )
 
     #: Marks a read that has reached the end of the source.
     CURSOR_FINISHED = -1
@@ -305,7 +395,20 @@ class BaseImporter:
     # ── Target writing (ORM) ──────────────────────────────────
 
     def _load_records(self, model_name, data_list):
-        """Use Odoo 19 _load_records() for batch create + XML ID.
+        """Create by external ID, or refresh what that external ID already names.
+
+        A record is never created twice: the external ID is looked up first and
+        an existing one is written to instead (odoo/orm/models.py:5150-5169).
+
+        A SECOND RUN THEREFORE REFRESHES FROM THE SOURCE. That is the intended
+        behaviour, decided by the owner. The ``'noupdate': True`` carried in
+        ``data_list`` is recorded on the metadata row but changes nothing here:
+        core only honours it when it is called with ``update=True``
+        (``if not (update and d_noupdate)``, odoo/orm/models.py:5165), and this
+        call does not. So anything altered here since the last transfer - a
+        corrected name, a card switched off - is put back to what the other
+        system holds. The operator is told this before starting; see the
+        wizard's warnings.
 
         Args:
             model_name: Target model name (e.g. 'hr.rfid.webstack')
@@ -391,7 +494,7 @@ class BaseImporter:
                 f"SELECT d.name, d.res_id FROM ir_model_data d "
                 f'JOIN "{table}" t ON t.id = d.res_id '
                 f"WHERE d.module = %s AND d.model = %s AND d.name = ANY(%s)",
-                (LEDGER_MODULE, model, chunk),
+                (EXTERNAL_ID_MODULE, model, chunk),
             )
             for name, res_id in self.env.cr.fetchall():
                 found[by_name[name]] = res_id
@@ -433,15 +536,15 @@ class BaseImporter:
                 matched[row['res_id']] = target.id
         return matched
 
-    def warm_up_ledger(self, model, source_ids):
+    def prefetch_external_ids(self, model, source_ids):
         """Load what a previous pass already imported into the in-memory map.
 
         ``id_map`` lives in memory (see __init__). A new process - the next
         cron cycle, or another worker picking the job up - starts with it
         empty, so every relation resolves to False and the row is counted as
         skipped. The protocol then looks perfectly normal while the data is
-        not there. The ledger is the durable half of that map; this reads it
-        back in one query instead of one per lookup.
+        not there. The external IDs are the durable half of that map; this
+        reads them back in one query instead of one per lookup.
         """
         if not source_ids:
             return 0
@@ -450,22 +553,25 @@ class BaseImporter:
             self._set_target_id(model, source_id, target_id)
         return len(found)
 
-    def find_by_ledger(self, model, source_id, expect_text=None, text_field='name'):
-        """Единствената допустима идентичност: source id, през ledger-а.
+    def find_by_external_id(self, model, source_id, expect_text=None,
+                            text_field='name'):
+        """The only identity allowed: the source id, through its external ID.
 
-        Съпоставянето по ТЕКСТ (име, имейл, номер) слива РАЗЛИЧНИ обекти, които
-        случайно носят еднакъв надпис, и разделя един обект на два, когато
-        надписът се е разминал с един знак. И двете са тихи. Измерено на живо:
-        възилото съпоставяше служители по `name` и от 1059 души на един клиент
-        в целта влязоха 1022 - точно броят на различните имена; изчезналите се
-        сляха със съименниците си заедно с картите и събитията си.
+        Matching by TEXT (name, e-mail, number) merges DIFFERENT things that
+        happen to read alike, and splits one thing in two when the text drifts
+        by a single character. Both are silent. Measured live: this transfer
+        matched employees by ``name`` and 1059 people at one customer arrived
+        as 1022 - exactly the number of distinct names; the missing ones were
+        merged into their namesakes together with their cards and events.
 
-        `expect_text` е ВТОРА проверка на вече намерения по ИД запис - потвърждава,
-        че сме попаднали на правилния. Разминаване НЕ праща търсенето другаде;
-        то се докладва, защото значи, че ледгерът или данните са мръднали.
+        ``expect_text`` is a SECOND check on the record already found by id -
+        it confirms we landed on the right one. A mismatch does NOT send the
+        search elsewhere; it is reported, because it means either the record
+        metadata or the data itself has moved.
 
         Returns:
-            recordset - намереният запис, или празен ако ледгерът мълчи (=> НОВ).
+            recordset - the record found, or empty when no external ID names
+            it (=> NEW).
         """
         Model = self.env[model].sudo().with_context(active_test=False)
         target_id = self._get_target_id(model, source_id)
@@ -478,11 +584,16 @@ class BaseImporter:
             actual = rec[text_field] or ''
             if actual.strip().lower() != (expect_text or '').strip().lower():
                 _logger.warning(
-                    "%s source=%s: ледгерът сочи запис %s с %s=%r, а източникът "
-                    "казва %r - съвпадението по ИД се запазва, но разминаването "
-                    "иска преглед",
+                    "%s source=%s: the external ID points at record %s whose "
+                    "%s is %r while the source says %r - the match by id "
+                    "stands, but the difference needs a look",
                     model, source_id, rec.id, text_field, actual, expect_text)
         return rec
+
+    #: Temporary bridge under the old name. The camera, people and service
+    #: importers still call it and are outside the scope of this change;
+    #: remove once those three have been renamed too.
+    find_by_ledger = find_by_external_id
 
     def link_existing(self, model, source_id, target_id):
         """Record a source->target mapping for a record we did NOT create.
@@ -501,7 +612,7 @@ class BaseImporter:
             "VALUES (%s, %s, %s, %s, TRUE, now() at time zone \'UTC\', "
             "now() at time zone \'UTC\') "
             "ON CONFLICT (module, name) DO NOTHING",
-            (LEDGER_MODULE, self._xml_id_name(model.replace('.', '_'), source_id),
+            (EXTERNAL_ID_MODULE, self._xml_id_name(model.replace('.', '_'), source_id),
              model, target_id),
         )
 
@@ -510,7 +621,7 @@ class BaseImporter:
         """Idempotent bulk INSERT: SQL speed + ``ir.model.data`` external ID.
 
         This is the bulk counterpart of the standard Odoo import: every row gets
-        an external ID (``__import__.rfid_import_{db_slug}_{model}_{source_id}``)
+        an external ID (``__import__.rfid_import_{source_slug}_{model}_{source_id}``)
         exactly like ORM-loaded records, so a second run skips what is already
         there instead of duplicating it.
 
@@ -583,7 +694,7 @@ class BaseImporter:
             if len(accepted) != len(batch):
                 rejected += len(batch) - len(accepted)
                 _logger.warning(
-                    "%s: %d of %d rows rejected by a constraint - not ledgered "
+                    "%s: %d of %d rows rejected by a constraint - no external ID "
                     "(they will be retried on the next run)",
                     model, len(batch) - len(accepted), len(batch),
                 )
@@ -596,7 +707,7 @@ class BaseImporter:
                 "(module, name, model, res_id, noupdate, create_date, write_date) "
                 "VALUES %s ON CONFLICT (module, name) DO NOTHING",
                 [
-                    (LEDGER_MODULE, self._xml_id_name(prefix, sid), model, nid, True)
+                    (EXTERNAL_ID_MODULE, self._xml_id_name(prefix, sid), model, nid, True)
                     for nid, sid in accepted
                 ],
                 template="(%s, %s, %s, %s, %s, now() at time zone 'UTC', now() at time zone 'UTC')",
@@ -617,17 +728,19 @@ class BaseImporter:
     def _xml_id_name(self, model_prefix, source_id):
         """Name part of the external ID (without the module prefix).
 
-        Includes source_db slug to prevent collisions between different sources.
-        Format: rfid_import_{db_slug}_{model_prefix}_{source_id}
+        Carries the source identity so that records from different systems
+        cannot collide - and so that the SAME system read from two places
+        (a restored backup, then the live server) writes one set of ids.
+        Format: rfid_import_{source_slug}_{model_prefix}_{source_id}
         """
-        return f'rfid_import_{self.ledger_slug}_{model_prefix}_{source_id}'
+        return f'{EXTERNAL_ID_PREFIX}{self.source_slug}_{model_prefix}_{source_id}'
 
     def _xml_id(self, model_prefix, source_id):
         """Full XML ID for ir.model.data.
 
-        Format: __import__.rfid_import_{db_slug}_{model_prefix}_{source_id}
+        Format: __import__.rfid_import_{source_slug}_{model_prefix}_{source_id}
         """
-        return f'{LEDGER_MODULE}.{self._xml_id_name(model_prefix, source_id)}'
+        return f'{EXTERNAL_ID_MODULE}.{self._xml_id_name(model_prefix, source_id)}'
 
     def _get_target_id(self, model, source_id):
         """Get target ID from previously imported record.
@@ -684,7 +797,7 @@ class BaseImporter:
         prefix = model.replace('.', '_')
         name = self._xml_id_name(prefix, source_id)
         imd = self.env['ir.model.data'].sudo().search([
-            ('module', '=', LEDGER_MODULE),
+            ('module', '=', EXTERNAL_ID_MODULE),
             ('name', '=', name),
             ('model', '=', model),
         ], limit=1)
@@ -757,7 +870,7 @@ class BaseImporter:
 
         Does NOT fail hard - use _require_target_id for mandatory fields.
 
-        Falls back to the ledger, exactly as ``_require_target_id`` does. The
+        Falls back to the external ID, exactly as ``_require_target_id`` does. The
         in-memory map does not survive the process: a transfer that continues
         in a later pass starts with it empty, every link resolves to False and
         the row is counted as skipped. The protocol then reads as a clean run
@@ -778,7 +891,7 @@ class BaseImporter:
         if not source_ids:
             return [(6, 0, [])]
         # One query for the whole list rather than one per miss.
-        self.warm_up_ledger(model, [
+        self.prefetch_external_ids(model, [
             s for s in source_ids if not self._get_target_id(model, s)])
         target_ids = []
         for sid in source_ids:

@@ -118,7 +118,7 @@ class SiteImporter(PhaseImporter):
             if not target_company_id:
                 skipped += 1
                 continue
-            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
+            existing = self.b.find_by_external_id(model, rec['id'], rec.get('name'))
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
@@ -175,7 +175,12 @@ class SiteImporter(PhaseImporter):
                 ['site_id'])
             total += len(records)
             for rec in records:
-                target_id = self.b._get_target_id(model, rec['id'])
+                # _map_m2o, not the in-memory map alone: a later pass builds a
+                # fresh importer whose map starts empty, and the record of
+                # finished steps stops the hardware step from filling it
+                # again. Read straight from the map this found nothing and
+                # left every piece of equipment without its site.
+                target_id = self.b._map_m2o(model, rec['id'])
                 if not target_id:
                     missing_equipment += 1
                     continue
@@ -219,9 +224,9 @@ class SiteImporter(PhaseImporter):
             mapped = self.b._map_m2m('hr.rfid.site', rec.get('site_ids') or [])
             if not mapped[0][2]:
                 continue
-            # Add, never replace. Two sources can write one ledger (see
-            # ledger_slug), and a replace would wipe the sites the first
-            # transfer established, counted as a successful update.
+            # Add, never replace. Two sources can write into one target (see
+            # the source identity), and a replace would wipe the sites the
+            # first transfer established, counted as a successful update.
             site_ids = [(4, sid) for sid in mapped[0][2]]
             self.env[model].with_context(**IMPORT_CONTEXT).browse(
                 target_id).write({'site_ids': site_ids})
@@ -258,7 +263,10 @@ class SiteGroupImporter(PhaseImporter):
 
         restored = skipped = 0
         for rec in wanted:
-            target_id = self.b._get_target_id(model, rec['id'])
+            # Through _map_m2o so this pass, whose in-memory map starts empty,
+            # still finds the site by its external ID. Read straight from the
+            # map it found nothing and no site ever got its own group back.
+            target_id = self.b._map_m2o(model, rec['id'])
             if not target_id:
                 skipped += 1
                 continue

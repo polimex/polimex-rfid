@@ -1,5 +1,6 @@
 from . import test_smoke
 from . import test_bulk_idempotency
+from . import test_second_run_changes_nothing
 from . import test_company_scope
 from . import test_conflict_identity
 from . import test_ag_rel_verbatim
@@ -8,4 +9,7 @@ from . import test_phase_registry
 from . import test_camera_phase
 from . import test_site_phase
 from . import test_background_run
+from . import test_recalc_guard
+from . import test_later_pass_finishes_the_job
+from . import test_source_refuses_a_field
 from . import test_tours

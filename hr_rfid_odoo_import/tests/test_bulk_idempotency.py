@@ -1,6 +1,6 @@
 from odoo.tests.common import TransactionCase, tagged
 
-from ..models.importers.base_importer import LEDGER_MODULE, BaseImporter
+from ..models.importers.base_importer import EXTERNAL_ID_MODULE, BaseImporter
 
 MODEL = "hr.rfid.event.system"
 TABLE = "hr_rfid_event_system"
@@ -50,7 +50,7 @@ class TestBulkIdempotency(TransactionCase):
         self.env.cr.execute(
             "SELECT name, res_id FROM ir_model_data "
             "WHERE module = %s AND model = %s AND name LIKE %s ORDER BY name",
-            (LEDGER_MODULE, MODEL, f"rfid_import_{SRC_DB}_hr_rfid_event_system_%"),
+            (EXTERNAL_ID_MODULE, MODEL, f"rfid_import_{SRC_DB}_hr_rfid_event_system_%"),
         )
         return self.env.cr.fetchall()
 
@@ -141,7 +141,7 @@ class TestBulkIdempotency(TransactionCase):
 class TestBulkConstraintRejection(TransactionCase):
     """A row the database refuses must NOT get an external ID.
 
-    Otherwise the ledger claims the record was imported while the row is
+    Otherwise the external ID claims the record was imported while the row is
     missing: it is lost silently, counted as imported, and skipped forever on
     every later run. rfid.service.sale carries a real unique constraint, so it
     is used here to force a rejection.
@@ -198,7 +198,7 @@ class TestBulkConstraintRejection(TransactionCase):
         self.env.cr.execute(
             "SELECT count(*) FROM ir_model_data WHERE module = %s AND model = %s "
             "AND name = %s",
-            (LEDGER_MODULE, self.MODEL,
+            (EXTERNAL_ID_MODULE, self.MODEL,
              f"rfid_import_{SRC_DB}_rfid_service_sale_910002"),
         )
         self.assertEqual(self.env.cr.fetchone()[0], 0,
