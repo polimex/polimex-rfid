@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-05 16:23+0000\n"
-"PO-Revision-Date: 2026-03-06 16:42\n"
+"POT-Creation-Date: 2026-08-14 13:55+0000\n"
+"PO-Revision-Date: 2026-08-14 17:23\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ro\n"
@@ -19,7 +19,25 @@ msgstr ""
 #. module: hr_rfid_vertical_elections
 #: model:ir.actions.report,print_report_name:hr_rfid_vertical_elections.action_report_voting_session
 msgid "('Vote Protocol - %s' % (object.name))"
+msgstr "('Proces-verbal de vot - %s' % (object.name))"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid ""
+"/\n"
+"                                            Abstain:"
 msgstr ""
+"/\n"
+"                                            Abținere:"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid ""
+"/\n"
+"                                            No:"
+msgstr ""
+"/\n"
+"                                            Nu:"
 
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
@@ -50,61 +68,150 @@ msgstr ""
 
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
-msgid ""
-"/ \n"
-"                                                Abstain:"
-msgstr ""
-"/ \n"
-"                                                Abținere:"
-
-#. module: hr_rfid_vertical_elections
-#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
-msgid ""
-"/ \n"
-"                                                No:"
-msgstr ""
-"/ \n"
-"                                                Nu:"
-
-#. module: hr_rfid_vertical_elections
-#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
-msgid ""
-"<i class=\"fa fa-hand-o-up me-1\"/>\n"
-"                                                Yes:"
-msgstr ""
-"<i class=\"fa fa-hand-o-up me-1\"/>\n"
-"                                                Da:"
-
-#. module: hr_rfid_vertical_elections
-#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
 msgid "<i class=\"fa fa-long-arrow-right mx-1\" title=\"Until\"/>"
 msgstr "<i class=\"fa fa-long-arrow-right mx-1\" title=\"Până la\"/>"
 
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
-msgid "<span class=\"text-muted\">Display:</span>"
-msgstr "<span class=\"text-muted\">Afișaj:</span>"
+msgid ""
+"<span style=\"font-weight:bold;\" class=\"mt4 text-danger\">\n"
+"                                                    <strong>Final Vote:</"
+"strong>\n"
+"                                                </span>"
+msgstr ""
+"<span style=\"font-weight:bold;\" class=\"mt4 text-danger\">\n"
+"                                                    <strong>Vot final:</"
+"strong>\n"
+"                                                </span>"
 
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
-msgid "<span class=\"text-muted\">Planned for:</span>"
-msgstr "<span class=\"text-muted\">Planificat pentru:</span>"
+msgid ""
+"<span style=\"font-weight:bold;\" class=\"mt4 text-success\">\n"
+"                                                    <strong>Final Vote:</"
+"strong>\n"
+"                                                </span>"
+msgstr ""
+"<span style=\"font-weight:bold;\" class=\"mt4 text-success\">\n"
+"                                                    <strong>Vot final:</"
+"strong>\n"
+"                                                </span>"
 
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
-msgid "<span>Final Vote: </span>"
-msgstr "<span>Vot final: </span>"
+msgid ""
+"<span style=\"font-weight:bold;\" class=\"mt4 text-warning\">\n"
+"                                                    <strong>Final Vote:</"
+"strong>\n"
+"                                                </span>"
+msgstr ""
+"<span style=\"font-weight:bold;\" class=\"mt4 text-warning\">\n"
+"                                                    <strong>Vot final:</"
+"strong>\n"
+"                                                </span>"
 
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
-msgid "<span>State: </span>"
-msgstr "<span>Stare: </span>"
+msgid "<strong>Display:</strong>"
+msgstr "<strong>Afișaj:</strong>"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
+msgid "<strong>Planned for:</strong>"
+msgstr "<strong>Programat pentru:</strong>"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.actions.act_window,help:hr_rfid_vertical_elections.vote_session_action
+msgid ""
+"<strong>Prerequisite:</strong> at least one voting display, one participants "
+"list and one voting item must exist first."
+msgstr ""
+"<strong>Precondiție:</strong> trebuie să existe mai întâi cel puțin un ecran "
+"de votare, o listă de participanți și un element de vot."
+
+#. module: hr_rfid_vertical_elections
+#: model:onboarding.onboarding.step,description:hr_rfid_vertical_elections.onboarding_step_voting_participants
+#: model_terms:ir.actions.act_window,help:hr_rfid_vertical_elections.voting_participants_action
+msgid ""
+"A participants record groups the people eligible to vote in a session. Add "
+"the contacts that may cast a ballot and the RFID terminals through which "
+"they will identify themselves."
+msgstr ""
+"O înregistrare de participanți grupează persoanele eligibile să voteze într-"
+"o sesiune. Adăugați contactele care pot vota și terminalele RFID prin care "
+"se vor identifica."
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.actions.act_window,help:hr_rfid_vertical_elections.vote_session_action
+msgid ""
+"A session bundles a display (kiosk page), a participants list and the voting "
+"items, plus the start and end times during which ballots are accepted. Once "
+"the session moves to Open, the kiosk URL starts collecting votes."
+msgstr ""
+"O sesiune reunește un afișaj (pagina chioșcului de vot), o listă de "
+"participanți și elementele de vot, precum și orele de început și de sfârșit "
+"în care sunt acceptate voturile. Odată ce sesiunea trece în starea Deschisă, "
+"URL-ul chioșcului de vot începe să colecteze voturi."
+
+#. module: hr_rfid_vertical_elections
+#: model:onboarding.onboarding.step,description:hr_rfid_vertical_elections.onboarding_step_voting_session
+msgid ""
+"A session bundles a display, a participants list and the voting items, plus "
+"the start and end times during which ballots are accepted. Once the session "
+"state changes to open, the kiosk URL starts collecting votes."
+msgstr ""
+"O sesiune reunește un afișaj, o listă de participanți și elementele de vot, "
+"precum și orele de început și de sfârșit în care sunt acceptate voturile. "
+"Odată ce starea sesiunii devine deschisă, URL-ul chioșcului de vot începe să "
+"colecteze voturi."
+
+#. module: hr_rfid_vertical_elections
+#: model:onboarding.onboarding.step,description:hr_rfid_vertical_elections.onboarding_step_voting_display
+#: model_terms:ir.actions.act_window,help:hr_rfid_vertical_elections.voting_display_action
+msgid ""
+"A voting display is the public kiosk page where eligible voters cast their "
+"ballot. Each display has a short code and an access token that secure the "
+"public URL. You need at least one display before opening a session."
+msgstr ""
+"Un ecran de votare este pagina publică a chioșcului de vot pe care votanții "
+"eligibili își exprimă votul. Fiecare afișaj are un cod scurt și un token de "
+"acces care securizează URL-ul public. Aveți nevoie de cel puțin un afișaj "
+"înainte de a deschide o sesiune."
+
+#. module: hr_rfid_vertical_elections
+#: model:onboarding.onboarding.step,description:hr_rfid_vertical_elections.onboarding_step_voting_items
+msgid ""
+"A voting item is a question or motion presented to voters. Each item carries "
+"a short description and an optional HTML document with the full text. A "
+"session needs at least one item."
+msgstr ""
+"Un element de vot este o întrebare sau o moțiune prezentată votanților. "
+"Fiecare element are o descriere scurtă și un document HTML opțional cu "
+"textul integral. O sesiune are nevoie de cel puțin un element."
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.actions.act_window,help:hr_rfid_vertical_elections.voting_item_action
+msgid ""
+"A voting item is a question or motion presented to voters. Each item carries "
+"a short description and an optional HTML document with the full text. A "
+"voting session needs at least one item before it can open."
+msgstr ""
+"Un element de vot este o întrebare sau o moțiune prezentată votanților. "
+"Fiecare element are o descriere scurtă și un document HTML opțional cu "
+"textul integral. O sesiune de vot are nevoie de cel puțin un element înainte "
+"de a putea fi deschisă."
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__vote_abstain
 #: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_vote__vote__abstain
 msgid "Abstain"
 msgstr "Abținere"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Abstain:"
+msgstr "Abținere:"
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__access_token
@@ -144,14 +251,40 @@ msgid "Activity Type Icon"
 msgstr "Pictogramă tip activitate"
 
 #. module: hr_rfid_vertical_elections
+#: model:onboarding.onboarding.step,step_image_alt:hr_rfid_vertical_elections.onboarding_step_voting_items
+#: model:onboarding.onboarding.step,title:hr_rfid_vertical_elections.onboarding_step_voting_items
+msgid "Add voting items"
+msgstr "Adăugați elemente de vot"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.actions.act_window,help:hr_rfid_vertical_elections.voting_item_action
+msgid "Add your first voting item"
+msgstr "Adăugați primul element de vot"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__final_vote
+msgid ""
+"Aggregate outcome computed from the running tally. Yes if Yes > No; No "
+"otherwise; No Vote if no ballots were cast."
+msgstr ""
+"Rezultat agregat calculat din numărătoarea curentă. Da dacă Da > Nu; Nu în "
+"caz contrar; Fără vot dacă nu a fost exprimat niciun vot."
+
+#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__vote_total
 msgid "All Votes"
 msgstr "Toate voturile"
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__description
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_form
 msgid "Announcements"
 msgstr "Anunțuri"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_form
+msgid "Appearance"
+msgstr "Aspect"
 
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_form
@@ -172,8 +305,27 @@ msgid "Background Image"
 msgstr "Imagine de fundal"
 
 #. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__vote_ids
+msgid ""
+"Ballots cast for this item across all sessions. Useful for historical "
+"analysis of how the same motion fared over time."
+msgstr ""
+"Voturi exprimate pentru acest element în toate sesiunile. Util pentru "
+"analiza istorică a evoluției aceleiași moțiuni în timp."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__planned_date
+msgid ""
+"Calendar date the session is planned for. Used by filters and the calendar "
+"view; the actual start/end timestamps below are filled in when the session "
+"opens."
+msgstr ""
+"Data calendaristică pentru care este programată sesiunea. Utilizată de "
+"filtre și de vizualizarea calendar; orele efective de început/sfârșit de mai "
+"jos sunt completate la deschiderea sesiunii."
+
+#. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
-#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
 msgid "Close Voting"
 msgstr "Închidere votare"
 
@@ -184,12 +336,71 @@ msgid "Closed"
 msgstr "Închis"
 
 #. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_form
+msgid ""
+"Colours and background shown on the kiosk page. Switching between voting and "
+"non-voting modes uses the two background colours below."
+msgstr ""
+"Culori și fundal afișate pe pagina chioșcului de vot. Comutarea între "
+"modurile de vot și cele fără vot folosește cele două culori de fundal de mai "
+"jos."
+
+#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__company_id
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__company_id
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__company_id
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__company_id
 msgid "Company"
 msgstr "Companie"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__company_id
+msgid "Company that owns the display. Displays are isolated per company."
+msgstr "Compania care deține afișajul. Afișajele sunt izolate per companie."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_participants__company_id
+msgid ""
+"Company that owns the participants list. Participants are isolated per "
+"company."
+msgstr ""
+"Compania care deține lista de participanți. Participanții sunt izolați per "
+"companie."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__company_id
+msgid ""
+"Company that owns the session. Sessions are isolated per company; users only "
+"see sessions of their allowed companies."
+msgstr ""
+"Compania care deține sesiunea. Sesiunile sunt izolate per companie; "
+"utilizatorii văd doar sesiunile companiilor lor permise."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__company_id
+msgid "Company that owns the voting item. Items are isolated per company."
+msgstr ""
+"Compania care deține elementul de vot. Elementele sunt izolate per companie."
+
+#. module: hr_rfid_vertical_elections
+#: model:onboarding.onboarding.step,step_image_alt:hr_rfid_vertical_elections.onboarding_step_voting_display
+#: model:onboarding.onboarding.step,title:hr_rfid_vertical_elections.onboarding_step_voting_display
+msgid "Configure a voting display"
+msgstr "Configurați un ecran de votare"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.actions.act_window,help:hr_rfid_vertical_elections.voting_display_action
+msgid "Configure your first voting display"
+msgstr "Configurați primul ecran de votare"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_participants__participant_ids
+msgid ""
+"Contacts allowed to vote. Each participant identifies themselves at the "
+"kiosk by tapping their RFID card on one of the configured terminals."
+msgstr ""
+"Contacte autorizate să voteze. Fiecare participant se identifică la chioșcul "
+"de vot atingând cardul RFID pe unul dintre terminalele configurate."
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__create_uid
@@ -210,22 +421,31 @@ msgid "Created on"
 msgstr "Creat la"
 
 #. module: hr_rfid_vertical_elections
+#: model_terms:ir.actions.act_window,help:hr_rfid_vertical_elections.voting_participants_action
+msgid "Define a participants group"
+msgstr "Definiți un grup de participanți"
+
+#. module: hr_rfid_vertical_elections
+#: model:onboarding.onboarding.step,step_image_alt:hr_rfid_vertical_elections.onboarding_step_voting_participants
+#: model:onboarding.onboarding.step,title:hr_rfid_vertical_elections.onboarding_step_voting_participants
+msgid "Define the participants list"
+msgstr "Definiți lista de participanți"
+
+#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,help:hr_rfid_vertical_elections.field_hr_rfid_workcode__user_action
 msgid ""
 "Defines what type of time tracking action this workcode represents:\n"
 "• Start: Records the beginning of a work shift (clock in)\n"
 "• Break: Records when an employee goes on break (lunch, rest, etc.)\n"
-"• Stop: Records the end of an action (returning from break, leaving work, etc.)"
+"• Stop: Records the end of an action (returning from break, leaving work, "
+"etc.)"
 msgstr ""
-"Definește tipul de acțiune de urmărire a timpului pe care îl reprezintă acest cod de lucru:\n"
+"Definește tipul de acțiune de urmărire a timpului pe care îl reprezintă "
+"acest cod de lucru:\n"
 "• Start: Înregistrează începutul unui schimb de lucru (pontare intrare)\n"
 "• Pauză: Înregistrează când un angajat intră în pauză (prânz, odihnă etc.)\n"
-"• Stop: Înregistrează sfârșitul unei acțiuni (revenire din pauză, plecare de la lucru etc.)"
-
-#. module: hr_rfid_vertical_elections
-#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
-msgid "Delete"
-msgstr "Șterge"
+"• Stop: Înregistrează sfârșitul unei acțiuni (revenire din pauză, plecare de "
+"la lucru etc.)"
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__description
@@ -238,14 +458,15 @@ msgid "Description of the voting Group"
 msgstr "Descrierea grupului de votare"
 
 #. module: hr_rfid_vertical_elections
-#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__description
-msgid "Description of the voting Session"
-msgstr "Descrierea sesiunii de vot"
-
-#. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
 msgid "Description:"
 msgstr "Descriere:"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Discussions"
+msgstr "Discuții"
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__display_id
@@ -255,6 +476,8 @@ msgstr "Afișaj"
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_hr_rfid_event_user__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_hr_rfid_workcode__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_onboarding_onboarding__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_onboarding_onboarding_step__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__display_name
@@ -262,6 +485,11 @@ msgstr "Afișaj"
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__display_name
 msgid "Display Name"
 msgstr "Nume afișat"
+
+#. module: hr_rfid_vertical_elections
+#: model:onboarding.onboarding.step,done_text:hr_rfid_vertical_elections.onboarding_step_voting_display
+msgid "Display configured!"
+msgstr "Afișaj configurat!"
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.ui.menu,name:hr_rfid_vertical_elections.voting_display_menu
@@ -305,11 +533,6 @@ msgid "E.g. Vote for new rules"
 msgstr "Ex. Vot pentru reguli noi"
 
 #. module: hr_rfid_vertical_elections
-#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
-msgid "Edit"
-msgstr "Editare"
-
-#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__end_datetime
 msgid "End Datetime"
 msgstr "Dată și oră sfârșit"
@@ -317,8 +540,7 @@ msgstr "Dată și oră sfârșit"
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_vote__vote_time
 msgid ""
-"Exact date and time when the access event occurred at the reader. Used for "
-"attendance tracking and security logs."
+"Exact moment the voter tapped their card (read from the linked RFID event)."
 msgstr ""
 "Data și ora exactă la care s-a produs evenimentul de acces la cititor. "
 "Utilizat pentru urmărirea prezenței și jurnalele de securitate."
@@ -329,24 +551,14 @@ msgid "Final Vote"
 msgstr "Vot final"
 
 #. module: hr_rfid_vertical_elections
-#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
-msgid "Final Vote:"
-msgstr "Vot final:"
-
-#. module: hr_rfid_vertical_elections
-#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
-msgid "Final Vote: <i class=\"fa fa-frown-o\"/>"
-msgstr "Vot final: <i class=\"fa fa-frown-o\"/>"
-
-#. module: hr_rfid_vertical_elections
-#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
-msgid "Final Vote: <i class=\"fa fa-smile-o\"/>"
-msgstr "Vot final: <i class=\"fa fa-smile-o\"/>"
-
-#. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
 msgid "Final vote:"
 msgstr "Vot final:"
+
+#. module: hr_rfid_vertical_elections
+#: model:onboarding.onboarding.step,done_text:hr_rfid_vertical_elections.onboarding_step_voting_session
+msgid "First session ready!"
+msgstr "Prima sesiune este pregătită!"
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_follower_ids
@@ -371,6 +583,25 @@ msgid "Font awesome icon e.g. fa-tasks"
 msgstr "Pictogramă Font Awesome ex. fa-tasks"
 
 #. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__display_url
+msgid ""
+"Full public URL of the kiosk page. Open this on the device that voters "
+"interact with."
+msgstr ""
+"URL-ul public complet al paginii chioșcului de vot. Deschideți-l pe "
+"dispozitivul cu care interacționează votanții."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__document
+msgid ""
+"Full text of the motion shown on the kiosk when the voter taps Read more. "
+"Use it for the legal wording, attached PDFs, or background information."
+msgstr ""
+"Textul integral al moțiunii afișat pe chioșc când votantul atinge Citește "
+"mai mult. Utilizați-l pentru textul juridic, PDF-uri atașate sau informații "
+"de fundal."
+
+#. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_form
 msgid "Generate a new URL"
 msgstr "Generați un URL nou"
@@ -381,6 +612,24 @@ msgid "Groups"
 msgstr "Grupuri"
 
 #. module: hr_rfid_vertical_elections
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_form
+msgid ""
+"HTML content rendered on the kiosk while no session is open. Use it for "
+"rules, opening hours, or a welcome message."
+msgstr ""
+"Conținut HTML afișat pe chioșc cât timp nu este deschisă nicio sesiune. "
+"Utilizați-l pentru reguli, program de funcționare sau un mesaj de bun venit."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__description
+msgid ""
+"HTML content shown on the kiosk while no session is open. Use it for rules, "
+"opening hours, or a welcome message."
+msgstr ""
+"Conținut HTML afișat pe chioșc cât timp nu este deschisă nicio sesiune. "
+"Utilizați-l pentru reguli, program de funcționare sau un mesaj de bun venit."
+
+#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__has_message
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__has_message
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__has_message
@@ -389,8 +638,27 @@ msgid "Has Message"
 msgstr "Are mesaj"
 
 #. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__no_voting_background_color
+msgid ""
+"Hex colour for the kiosk background when no session is active (default: "
+"teal)."
+msgstr ""
+"Culoare hexazecimală pentru fundalul chioșcului de vot atunci când nicio "
+"sesiune nu este activă (implicit: turcoaz)."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__voting_background_color
+msgid ""
+"Hex colour for the kiosk background while a session is open (default: red)."
+msgstr ""
+"Culoare hexazecimală pentru fundalul chioșcului de vot cât timp o sesiune "
+"este deschisă (implicit: roșu)."
+
+#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_hr_rfid_event_user__id
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_hr_rfid_workcode__id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_onboarding_onboarding__id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_onboarding_onboarding_step__id
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__id
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__id
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__id
@@ -432,12 +700,60 @@ msgid "If checked, some messages have a delivery error."
 msgstr "Dacă este bifat, unele mesaje au o eroare de livrare."
 
 #. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__old_session_id
+msgid ""
+"If this session is itself a re-vote, this links back to the original session "
+"whose results were superseded."
+msgstr ""
+"Dacă această sesiune este ea însăși un revot, aceasta face legătura către "
+"sesiunea originală ale cărei rezultate au fost înlocuite."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__new_session_id
+msgid ""
+"If this session was re-voted, this is the replacement session that carries "
+"the new ballots. Set automatically by the Re-Vote button."
+msgstr ""
+"Dacă această sesiune a fost revotată, aceasta este sesiunea de înlocuire "
+"care preia noile voturi. Este setată automat de butonul Revotare."
+
+#. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_form
 msgid ""
 "If your address is compromised, you can refresh it to generate a new one."
 msgstr ""
 "Dacă adresa dumneavoastră este compromisă, o puteți actualiza pentru a "
 "genera una nouă."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__vote_ids
+msgid ""
+"Individual ballots cast in this session. Each row links a participant (or "
+"anonymous slot) to the voting item and their answer."
+msgstr ""
+"Voturile individuale exprimate în această sesiune. Fiecare rând leagă un "
+"participant (sau un slot anonim) de elementul de vot și de răspunsul "
+"acestuia."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__access_token
+msgid ""
+"Internal UUID used by the bus to route real-time events to this display. Not "
+"shown in the URL; rotate via Regenerate Display Key."
+msgstr ""
+"UUID intern folosit de bus pentru a direcționa evenimentele în timp real "
+"către acest afișaj. Nu este afișat în URL; se rotește prin Regenerare cheie "
+"afișaj."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__name
+msgid ""
+"Internal name of the kiosk display (e.g. 'Main Hall Kiosk', 'Board Room "
+"Tablet'). Not shown publicly — the kiosk page uses the session title instead."
+msgstr ""
+"Numele intern al afișajului chioșcului de vot (de ex. „Chioșc Sala "
+"Principală”, „Tabletă Sală de Consiliu”). Nu este afișat public - pagina "
+"chioșcului folosește în schimb titlul sesiunii."
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_is_follower
@@ -451,6 +767,20 @@ msgstr "Este urmăritor"
 #: model:ir.ui.menu,name:hr_rfid_vertical_elections.voting_item_menu
 msgid "Items"
 msgstr "Puncte"
+
+#. module: hr_rfid_vertical_elections
+#: model:onboarding.onboarding.step,done_text:hr_rfid_vertical_elections.onboarding_step_voting_items
+msgid "Items ready!"
+msgstr "Elemente pregătite!"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_participants__name
+msgid ""
+"Label for this participants list (e.g. 'Board of Directors', 'Shareholders "
+"Class A'). Reused across multiple sessions."
+msgstr ""
+"Eticheta acestei liste de participanți (de ex. „Consiliu de Administrație”, "
+"„Acționari Clasa A”). Reutilizată în mai multe sesiuni."
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__write_uid
@@ -469,6 +799,33 @@ msgstr "Ultima actualizare de"
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__write_date
 msgid "Last Updated on"
 msgstr "Ultima actualizare la"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__state
+msgid ""
+"Lifecycle of the session — Draft: not yet open, voters cannot cast ballots. "
+"Open: kiosk is accepting votes. Closed: results frozen. Re-Voted: this "
+"session was superseded by a new one (the kiosk shows the new one instead)."
+msgstr ""
+"Ciclul de viață al sesiunii - Ciornă: încă nedeschisă, votanții nu pot vota. "
+"Deschisă: chioșcul acceptă voturi. Închisă: rezultatele sunt fixate. "
+"Revotată: această sesiune a fost înlocuită de una nouă (chioșcul afișează în "
+"schimb pe cea nouă)."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__vote_abstain
+msgid "Live count of Abstain ballots in this session."
+msgstr "Numărătoarea în timp real a voturilor de Abținere în această sesiune."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__vote_no
+msgid "Live count of No ballots in this session."
+msgstr "Numărătoarea în timp real a voturilor de Nu în această sesiune."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__vote_yes
+msgid "Live count of Yes ballots in this session."
+msgstr "Numărătoarea în timp real a voturilor de Da în această sesiune."
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_has_error
@@ -531,6 +888,12 @@ msgid "New Session"
 msgstr "Sesiune nouă"
 
 #. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_calendar_event_id
+#: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr "Următorul eveniment din calendarul de activități"
+
+#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_date_deadline
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_date_deadline
 msgid "Next Activity Deadline"
@@ -566,6 +929,29 @@ msgid "No Voting Background Color"
 msgstr "Culoare de fundal pentru votul Nu"
 
 #. module: hr_rfid_vertical_elections
+#: model_terms:ir.actions.act_window,help:hr_rfid_vertical_elections.voting_vote_action
+msgid "No ballots cast yet"
+msgstr "Niciun vot exprimat încă"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "No scheduled voting sessions"
+msgstr "Nicio sesiune de vot programată"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "No voting session is currently open"
+msgstr "Nicio sesiune de vot nu este deschisă în prezent"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "No:"
+msgstr "Nu:"
+
+#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__message_needaction_counter
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__message_needaction_counter
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__message_needaction_counter
@@ -598,9 +984,35 @@ msgid "Number of messages with delivery error"
 msgstr "Număr de mesaje cu eroare de livrare"
 
 #. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__voting_sessions_count
+msgid "Number of sessions ever hosted on this display. Updated automatically."
+msgstr ""
+"Numărul de sesiuni găzduite vreodată pe acest afișaj. Actualizat automat."
+
+#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__old_session_id
 msgid "Old Session"
 msgstr "Sesiune veche"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model,name:hr_rfid_vertical_elections.model_onboarding_onboarding
+msgid "Onboarding"
+msgstr "Înrolare"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model,name:hr_rfid_vertical_elections.model_onboarding_onboarding_step
+msgid "Onboarding Step"
+msgstr "Pas de înrolare"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__item_ids
+msgid ""
+"One or more questions presented to voters in this session. Items are shown "
+"sequentially on the kiosk; each voter casts one ballot per item."
+msgstr ""
+"Una sau mai multe întrebări prezentate votanților în această sesiune. "
+"Elementele sunt afișate secvențial pe chioșc; fiecare votant votează câte o "
+"dată pentru fiecare element."
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_session__state__open
@@ -609,15 +1021,70 @@ msgid "Open"
 msgstr "Deschis"
 
 #. module: hr_rfid_vertical_elections
+#: model:onboarding.onboarding.step,button_text:hr_rfid_vertical_elections.onboarding_step_voting_participants
+msgid "Open Participants"
+msgstr "Deschide participanții"
+
+#. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
-#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
 msgid "Open Voting"
 msgstr "Deschidere votare"
+
+#. module: hr_rfid_vertical_elections
+#: model:onboarding.onboarding.step,button_text:hr_rfid_vertical_elections.onboarding_step_voting_display
+msgid "Open Voting Displays"
+msgstr "Deschide ecranele de votare"
+
+#. module: hr_rfid_vertical_elections
+#: model:onboarding.onboarding.step,button_text:hr_rfid_vertical_elections.onboarding_step_voting_items
+msgid "Open Voting Items"
+msgstr "Deschide elementele de vot"
+
+#. module: hr_rfid_vertical_elections
+#: model:onboarding.onboarding.step,button_text:hr_rfid_vertical_elections.onboarding_step_voting_session
+msgid "Open Voting Sessions"
+msgstr "Deschide sesiunile de vot"
 
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_display_view_form
 msgid "Open display"
 msgstr "Deschidere afișaj"
+
+#. module: hr_rfid_vertical_elections
+#: model:onboarding.onboarding.step,step_image_alt:hr_rfid_vertical_elections.onboarding_step_voting_session
+#: model:onboarding.onboarding.step,title:hr_rfid_vertical_elections.onboarding_step_voting_session
+msgid "Open the first voting session"
+msgstr "Deschideți prima sesiune de vot"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.actions.act_window,help:hr_rfid_vertical_elections.vote_session_action
+msgid "Open your first voting session"
+msgstr "Deschideți prima dvs. sesiune de vot"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__display_background_image
+msgid ""
+"Optional image displayed behind the kiosk content. Falls back to the colour "
+"fields above when empty."
+msgstr ""
+"Imagine opțională afișată în spatele conținutului chioșcului. Dacă lipsește, "
+"se revine la câmpurile de culoare de mai sus."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__description
+msgid ""
+"Optional long-form description of the session shown on the kiosk between "
+"voting items."
+msgstr "Descrierea sesiunii de vot"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_participants__description
+msgid ""
+"Optional notes about who this group represents — useful as context when "
+"assigning the group to a session."
+msgstr ""
+"Note opționale despre cine reprezintă acest grup - utile ca context la "
+"atribuirea grupului unei sesiuni."
 
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
@@ -630,14 +1097,43 @@ msgid "Participant Group"
 msgstr "Grup de participanți"
 
 #. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_vote__voter_id
+msgid ""
+"Participant who cast this ballot. Uniqueness is enforced — one ballot per "
+"voter per session."
+msgstr ""
+"Participantul care a exprimat acest vot. Unicitatea este impusă - un singur "
+"vot per votant per sesiune."
+
+#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_participants__participant_ids
 msgid "Participants"
 msgstr "Participanți"
 
 #. module: hr_rfid_vertical_elections
+#: model:onboarding.onboarding.step,done_text:hr_rfid_vertical_elections.onboarding_step_voting_participants
+msgid "Participants ready!"
+msgstr "Participanți pregătiți!"
+
+#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__planned_date
 msgid "Planned Vote Date"
 msgstr "Data planificată a votului"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Please vote on"
+msgstr "Vă rugăm să votați pentru"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__name
+msgid ""
+"Public title of the session shown on the kiosk header and in audit reports "
+"(e.g. '2026 Annual General Meeting')."
+msgstr ""
+"Titlul public al sesiunii afișat în antetul chioșcului și în rapoartele de "
+"audit (de ex. „Adunarea Generală Anuală 2026”)."
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model,name:hr_rfid_vertical_elections.model_hr_rfid_event_user
@@ -655,20 +1151,31 @@ msgid "RFID Workcode for Time Tracking"
 msgstr "Cod de lucru RFID pentru urmărirea timpului"
 
 #. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_participants__terminal_ids
+msgid ""
+"RFID readers participants will tap to identify themselves before casting a "
+"ballot. Multiple terminals let voters spread across separate queues."
+msgstr ""
+"Cititoare RFID pe care participanții le vor atinge pentru a se identifica "
+"înainte de a vota. Mai multe terminale permit distribuirea votanților pe "
+"cozi separate."
+
+#. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
 msgid "Re Voting"
 msgstr "Revotare"
-
-#. module: hr_rfid_vertical_elections
-#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
-msgid "Re-Voting"
-msgstr "Re-votare"
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__activity_user_id
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__activity_user_id
 msgid "Responsible User"
 msgstr "Utilizator responsabil"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Result:"
+msgstr "Rezultat:"
 
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
@@ -694,6 +1201,17 @@ msgid "SMS Delivery error"
 msgstr "Eroare de livrare SMS"
 
 #. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_vote__voting_session_id
+msgid ""
+"Session in which the ballot was cast. New ballots can only be created "
+"against an Open session; if the session is deleted, its ballots cascade-"
+"delete with it."
+msgstr ""
+"Sesiunea în care a fost exprimat votul. Voturi noi pot fi create doar pentru "
+"o sesiune Deschisă; dacă sesiunea este ștearsă, voturile sale sunt șterse în "
+"cascadă odată cu ea."
+
+#. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_search
 msgid "Session name"
 msgstr "Numele sesiunii"
@@ -710,9 +1228,38 @@ msgid "Sessions for %s"
 msgstr "Sesiuni pentru %s"
 
 #. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__voting_session_ids
+msgid ""
+"Sessions that have been hosted on this display. Used by the Sessions smart "
+"button on the form."
+msgstr ""
+"Sesiunile care au fost găzduite pe acest afișaj. Utilizate de butonul "
+"inteligent Sesiuni din formular."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__voting_session_id
+msgid ""
+"Sessions that include this item. Read-only — managed from the session's "
+"Items list."
+msgstr ""
+"Sesiunile care includ acest element. Doar în citire - gestionate din lista "
+"de elemente a sesiunii."
+
+#. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
 msgid "Settings"
 msgstr "Setări"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_display__short_code
+msgid ""
+"Short 8-character public identifier that appears in the kiosk URL (`/"
+"voting_display/<short_code>/voting`). Regenerate it to invalidate any "
+"printed/QR-coded links."
+msgstr ""
+"Identificator public scurt din 8 caractere care apare în URL-ul chioșcului "
+"(`/voting_display/<short_code>/voting`). Regenerați-l pentru a invalida "
+"orice legături tipărite sau coduri QR."
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_display__short_code
@@ -723,6 +1270,15 @@ msgstr "Cod scurt"
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__short_description
 msgid "Short Description"
 msgstr "Descriere scurtă"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__short_description
+msgid ""
+"Short summary of the question shown beside the title on the kiosk. Keep it "
+"under two sentences — the full motion goes into the Document field."
+msgstr ""
+"Rezumat scurt al întrebării afișat lângă titlu pe chioșc. Păstrați-l sub "
+"două propoziții - moțiunea completă se introduce în câmpul Document."
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__start_datetime
@@ -754,6 +1310,15 @@ msgid "Terminals"
 msgstr "Terminale"
 
 #. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_vote__vote_event_id
+msgid ""
+"The RFID Granted event recorded when the voter tapped their card on the "
+"terminal. Anchors the ballot to a physical action for audit purposes."
+msgstr ""
+"Evenimentul RFID Acces permis înregistrat când votantul și-a atins cardul pe "
+"terminal. Ancorează votul de o acțiune fizică în scopuri de audit."
+
+#. module: hr_rfid_vertical_elections
 #: model:ir.model.constraint,message:hr_rfid_vertical_elections.constraint_voting_display_uniq_access_token
 msgid "The access token must be unique"
 msgstr "Token-ul de acces trebuie să fie unic"
@@ -761,29 +1326,53 @@ msgstr "Token-ul de acces trebuie să fie unic"
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
 msgid ""
-"The final vote for this voting is \n"
-"                                <strong>NO</strong>\n"
-"                                . The item is rejected."
+"The final vote for this voting is <strong>NO</strong>. The item is rejected."
 msgstr ""
-"Votul final pentru această votare este \n"
-"                                <strong>NU</strong>\n"
-"                                . Punctul este respins."
+"Votul final pentru acest vot este <strong>NU</strong>. Elementul este "
+"respins."
 
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_form
 msgid ""
-"The final vote for this voting is \n"
-"                                <strong>YES</strong>\n"
-"                                . The item is accepted."
+"The final vote for this voting is <strong>YES</strong>. The item is accepted."
 msgstr ""
-"Votul final pentru această votare este \n"
-"                                <strong>DA</strong>\n"
-"                                . Punctul este acceptat."
+"Votul final pentru acest vot este <strong>DA</strong>. Elementul este "
+"acceptat."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__display_id
+msgid ""
+"The kiosk display that hosts this session. Only one session at a time may be "
+"Open for a given display — the framework enforces this on save."
+msgstr ""
+"Afișajul chioșcului de vot care găzduiește această sesiune. O singură "
+"sesiune poate fi Deschisă la un moment dat pentru un anumit afișaj - acest "
+"lucru este impus de sistem la salvare."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__participant_group_id
+msgid ""
+"The participants list defining who can vote in this session. The same group "
+"can be reused across multiple sessions."
+msgstr ""
+"Lista de participanți care definește cine poate vota în această sesiune. "
+"Același grup poate fi reutilizat în mai multe sesiuni."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_vote__voting_item_id
+msgid "The question or motion this ballot answers."
+msgstr "Întrebarea sau moțiunea la care răspunde acest vot."
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.constraint,message:hr_rfid_vertical_elections.constraint_voting_display_uniq_short_code
 msgid "The short code must be unique."
 msgstr "Codul scurt trebuie să fie unic."
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "There are currently no voting sessions scheduled."
+msgstr "În prezent nu există sesiuni de vot programate."
 
 #. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
@@ -801,6 +1390,33 @@ msgid "Time in seconds for voting"
 msgstr "Timp în secunde pentru votare"
 
 #. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__start_datetime
+msgid ""
+"Timestamp the session was actually opened. Set automatically when an admin "
+"clicks Open Session."
+msgstr ""
+"Data și ora la care sesiunea a fost efectiv deschisă. Setată automat când un "
+"administrator apasă Deschide sesiunea."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__end_datetime
+msgid ""
+"Timestamp the session was closed. Set automatically when an admin clicks "
+"Close Session."
+msgstr ""
+"Data și ora la care sesiunea a fost închisă. Setată automat când un "
+"administrator apasă Închide sesiunea."
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__name
+msgid ""
+"Title of the question or motion (e.g. 'Approve 2026 budget'). Shown on the "
+"kiosk and on the audit report."
+msgstr ""
+"Titlul întrebării sau moțiunii (de ex. „Aprobarea bugetului 2026”). Afișat "
+"pe chioșc și în raportul de audit."
+
+#. module: hr_rfid_vertical_elections
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_search
 msgid "Today Sessions"
 msgstr "Sesiuni de astăzi"
@@ -809,6 +1425,18 @@ msgstr "Sesiuni de astăzi"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_vote_view_search
 msgid "Today Votes"
 msgstr "Voturi de astăzi"
+
+#. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_session__vote_total
+msgid "Total number of ballots cast in this session (Yes + No + Abstain)."
+msgstr ""
+"Numărul total de voturi exprimate în această sesiune (Da + Nu + Abținere)."
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Total votes:"
+msgstr "Total voturi:"
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_item__activity_exception_decoration
@@ -899,6 +1527,11 @@ msgid "Voter"
 msgstr "Votant"
 
 #. module: hr_rfid_vertical_elections
+#: model:ir.model.fields,help:hr_rfid_vertical_elections.field_voting_vote__vote
+msgid "Voter's answer."
+msgstr "Răspunsul votantului."
+
+#. module: hr_rfid_vertical_elections
 #: model:ir.actions.act_window,name:hr_rfid_vertical_elections.voting_vote_action
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_item__vote_ids
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_session__vote_ids
@@ -907,6 +1540,17 @@ msgstr "Votant"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.voting_vote_view_search
 msgid "Votes"
 msgstr "Voturi"
+
+#. module: hr_rfid_vertical_elections
+#: model_terms:ir.actions.act_window,help:hr_rfid_vertical_elections.voting_vote_action
+msgid ""
+"Votes appear here as participants tap their RFID terminal on the kiosk "
+"during an open session. The default grouping shows the running tally per "
+"voting item."
+msgstr ""
+"Voturile apar aici pe măsură ce participanții își ating terminalul RFID pe "
+"chioșc în timpul unei sesiuni deschise. Gruparea implicită arată "
+"numărătoarea curentă pentru fiecare element de vot."
 
 #. module: hr_rfid_vertical_elections
 #: model:res.groups.privilege,name:hr_rfid_vertical_elections.res_groups_privilege_voting
@@ -960,6 +1604,11 @@ msgid "Voting Sessions Count"
 msgstr "Număr de sesiuni de vot"
 
 #. module: hr_rfid_vertical_elections
+#: model:onboarding.onboarding,name:hr_rfid_vertical_elections.onboarding_voting_setup
+msgid "Voting Setup"
+msgstr "Configurare vot"
+
+#. module: hr_rfid_vertical_elections
 #: model:ir.module.category,name:hr_rfid_vertical_elections.hr_rfid_voting_category
 msgid "Voting System"
 msgstr "Sistem de votare"
@@ -985,6 +1634,12 @@ msgid "Voting Vote"
 msgstr "Înregistrare vot"
 
 #. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Voting ended for"
+msgstr "Votarea s-a încheiat pentru"
+
+#. module: hr_rfid_vertical_elections
 #: model:ir.model.fields,field_description:hr_rfid_vertical_elections.field_voting_vote__voting_item_id
 msgid "Voting for"
 msgstr "Votare pentru"
@@ -993,6 +1648,12 @@ msgstr "Votare pentru"
 #: model:ir.actions.act_window,name:hr_rfid_vertical_elections.voting_participants_action
 msgid "Voting groups"
 msgstr "Grupuri de votare"
+
+#. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
+msgid "Voting in progress ..."
+msgstr "Votare în curs ..."
 
 #. module: hr_rfid_vertical_elections
 #: model:ir.actions.report,name:hr_rfid_vertical_elections.action_report_voting_session
@@ -1028,7 +1689,10 @@ msgid "Yes"
 msgstr "Da"
 
 #. module: hr_rfid_vertical_elections
+#. odoo-javascript
+#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.report_voting_session
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vertical_elections.vote_session_view_kanban
 msgid "Yes:"
 msgstr "Da:"
 
@@ -1036,81 +1700,3 @@ msgstr "Da:"
 #: model:ir.model.fields.selection,name:hr_rfid_vertical_elections.selection__voting_session__state__revoted
 msgid "re-Voted"
 msgstr "Re-votat"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-msgid "В момента няма планирани сесии за гласуване."
-msgstr "În prezent nu există sesiuni de vot planificate."
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-msgid "Въздържал се:"
-msgstr "Abținere:"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-msgid "Въздържали се:"
-msgstr "Abțineri:"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-msgid "Да:"
-msgstr "Da:"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-msgid "Дискусии"
-msgstr "Discuții"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-msgid "Завърши гласуването за"
-msgstr "Votarea s-a încheiat pentru"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-msgid "Моля гласувайте за"
-msgstr "Vă rugăm să votați pentru"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-msgid "Не:"
-msgstr "Nu:"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-msgid "Няма открито гласуване в момента"
-msgstr "Nu există nicio votare deschisă în acest moment"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-msgid "Няма планирани гласувания"
-msgstr "Nu există votări planificate"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-msgid "Общо гласували:"
-msgstr "Total votanți:"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-msgid "Резултат:"
-msgstr "Rezultat:"
-
-#. module: hr_rfid_vertical_elections
-#. odoo-javascript
-#: code:addons/hr_rfid_vertical_elections/static/src/display/display_view/display_view.xml:0
-msgid "Тече гласуване ..."
-msgstr "Votare în desfășurare ..."

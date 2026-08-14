@@ -15,8 +15,14 @@ class TestAttendanceLateTours(HttpCase):
         super().setUpClass()
         cls.company = cls.env.company
 
+        # Only the timezone is pinned. The interface language is NOT pinned on
+        # purpose: it follows the languages installed on the database (a
+        # customer instance typically runs in Bulgarian only), and writing a
+        # language that is not installed is silently replaced by the company's
+        # one. The tours below therefore assert on data and on values, never on
+        # translated wording or on a locale-formatted number.
         admin = cls.env["res.users"].search([("login", "=", "admin")], limit=1)
-        admin.write({"lang": "en_US", "tz": "Europe/Sofia"})
+        admin.write({"tz": "Europe/Sofia"})
 
         # Fixture for the self-leave tour: a daily roll-up with an early
         # departure. early_leave_time is a plain stored field (populated by the
@@ -39,7 +45,10 @@ class TestAttendanceLateTours(HttpCase):
         })
 
     def test_legal_rate_edit_tour(self):
-        """Process: HR manager overrides a dated legal rate inline."""
+        """An HR manager corrects a wrong legal coefficient in the list, sees
+        the corrected value on that rate afterwards, and the correction lands
+        on the rate they opened - without leaving a second row for that code.
+        """
         self.start_tour(
             "/odoo/action-hr_attendance_late.hr_legal_rate_action",
             "hr_legal_rate_edit_tour",
@@ -48,7 +57,14 @@ class TestAttendanceLateTours(HttpCase):
         self.rate.invalidate_recordset(["value"])
         self.assertEqual(
             self.rate.value, 1.85,
-            "The tour should have written the new coefficient",
+            "The manager's correction must reach the rate they opened",
+        )
+        # Correcting a coefficient is not a statutory change: it must not leave
+        # a second dated row behind, which would make the lookup for that code
+        # depend on which row wins.
+        self.assertEqual(
+            self.env["hr.legal.rate"].search_count([("code", "=", "zz_tour_rate")]), 1,
+            "Correcting a rate must not create a second row for the same code",
         )
 
     def test_self_leave_review_tour(self):

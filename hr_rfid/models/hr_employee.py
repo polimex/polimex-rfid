@@ -110,6 +110,36 @@ class HrEmployee(models.Model):
         for e in self:
             e.in_zone_ids = self.env['hr.rfid.zone'].search([]).filtered(lambda z: e in z.employee_ids)
 
+    def _check_recalc_allowed(self, start_date, end_date):
+        """The one place an add-on can object to rebuilding attendance.
+
+        Allows everything by itself. It is declared here, in the module that
+        every RFID add-on already builds on, so that an add-on holding
+        records which must not be rebuilt - because they were brought over
+        from another system and cannot be worked out again - has a single
+        place to say so.
+
+        Declaring it here is what makes the objection reliable. Odoo builds
+        one class per model out of the classes of every add-on that extends
+        it, the last one loaded ending up outermost
+        (odoo/orm/model_classes.py:193). Two add-ons that do not build on
+        each other are therefore in no fixed order: if each of them declared
+        this method, whichever happened to load last would decide - and an
+        add-on that only allows would silently cancel the one that refuses,
+        with nothing raised and nothing logged. A method declared in the
+        module they both build on sits underneath both of them and cannot be
+        cancelled that way.
+
+        An override MUST call ``super()`` before anything else, or the
+        objections of every add-on underneath it are lost. Raise
+        ``UserError`` to refuse the rebuild - with a message that tells the
+        operator which records are protected and why. Return to allow it.
+
+        :param start_date: first day of the period about to be rebuilt
+        :param end_date: last day of the period about to be rebuilt
+        """
+        return
+
     def add_acc_gr(self, access_groups, expiration=None):
         """
         Add access groups to employees with optional expiration date.

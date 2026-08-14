@@ -11,7 +11,7 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: Module for managing IP cameras via manufacturers integration integration
-last_updated: '2026-06-19'
+last_updated: '2026-08-14'
 source_digest: sha256:5e04b818dc6208b79c78ff5b149171c2e492a40285ced080a2dc7bc91fc9ee86
 depends:
 - hr_rfid
@@ -1311,3 +1311,40 @@ Commit `5613cc9c06` (2025-03-28): Fix typo in method name for danger balloon not
 - Source digest: `sha256:5e04b818dc6208b79c78ff5b149171c2e492a40285ced080a2dc7bc91fc9ee86`
 - Generated at: `2026-06-19T17:55:54+00:00`
 - Generator: `polimex_module_knowledge` (see `~/.claude/lib/polimex_module_knowledge/`)
+
+## Silence during a data transfer <a id='no-hardware-commands'></a>
+
+`hr_rfid_odoo_import` carries `no_hardware_commands=True` in its
+`IMPORT_CONTEXT` for every write it makes. This module honours it in FOUR
+places, and all four are needed:
+
+| Where | Without the guard |
+|---|---|
+| `cctv.camera.rfid.rel.create` | every plate brought across queues an `add_plate` at the camera - a few hundred HTTP requests at cameras that are guarding a live site |
+| `cctv.camera.rfid.rel.unlink` | the same, as `remove_plate` |
+| `cctv.camera.create` | two readers and a door are manufactured here, while the transfer also brings the source's own - two sets in the target and no way to tell which one the historical events belong to |
+| `cctv.camera.command.create` | see below |
+
+The guard on the COMMAND itself is not belt-and-braces. `queue_send` registers
+a **postcommit** hook, and a postcommit hook SURVIVES a savepoint rollback:
+`rollback()` calls `cr.clear()` (`odoo/sql_db.py`), and `clear()` drops only
+the PREcommit callbacks. Guarding just the callers would still let a phase that
+was rolled back fire at the hardware.
+
+`hr.rfid.card.door.rel._mirrors_to_camera()` is the fifth guard, on the mirror
+that pushes card-to-door changes into a camera's plate list. It is switched off
+under the same context for a second reason as well as the traffic: the mirror
+CREATES `cctv.camera.rfid.rel` rows of its own, which carry no source id, and
+those collide with the ones the transfer brings across - afterwards nobody can
+say which link is the real one.
+
+This is `hr_rfid`'s own convention (`hr_rfid_door.py`), and **any new write in
+an importer must carry the context**. The site phase originally did not, and
+its access-group cascade reached live cameras through three separate paths.
+
+Consequence, stated in both guides: after a transfer each camera still holds
+the plate list it held before, and the operator has to reload them.
+
+Tests: `tests/test_import_guards.py` - no commands during a transfer, none on
+removal either, no manufactured readers, no invented card-camera links, and the
+reverse: ordinary use still sends its commands unchanged.

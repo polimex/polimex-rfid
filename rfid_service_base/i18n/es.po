@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-06 13:24+0000\n"
-"PO-Revision-Date: 2026-03-06 15:47\n"
+"POT-Creation-Date: 2026-08-14 13:55+0000\n"
+"PO-Revision-Date: 2026-08-14 17:18\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -15,6 +15,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
+msgid ""
+"<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
+"                                Tip: turn Fixed Time on to make every card "
+"expire at the same wall-clock cut-off (for example \"all day passes end at "
+"18:00\"). Leave it off for rolling windows (e.g. \"4 hours from check-in\")."
+msgstr ""
+"<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
+"                                Consejo: active Hora fija para que todas las "
+"tarjetas caduquen en el mismo límite horario (por ejemplo, «todos los pases "
+"de un día terminan a las 18:00»). Déjelo desactivado para ventanas móviles "
+"(por ejemplo, «4 horas desde el registro de entrada»)."
 
 #. module: rfid_service_base
 #. odoo-python
@@ -35,8 +49,10 @@ msgstr "<span class=\"fa fa-clock-o mr-2\" title=\"Inicio\"/>"
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
-msgid "<span class=\"fa fa-envelope-o mr-2\" aria-label=\"Group\" title=\"Group\"/>"
-msgstr "<span class=\"fa fa-envelope-o mr-2\" aria-label=\"Grupo\" title=\"Grupo\"/>"
+msgid ""
+"<span class=\"fa fa-envelope-o mr-2\" aria-label=\"Group\" title=\"Group\"/>"
+msgstr ""
+"<span class=\"fa fa-envelope-o mr-2\" aria-label=\"Grupo\" title=\"Grupo\"/>"
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
@@ -159,7 +175,6 @@ msgstr "Cantidad de archivos adjuntos"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__generate_barcode_card
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__generate_barcode_card
 msgid ""
 "Automatically create barcode-based cards instead of RFID cards.\n"
 "        \n"
@@ -168,16 +183,21 @@ msgid ""
 "• Use cases: Mobile-first access, temporary visitors, events\n"
 "• Card type: Automatically changes to barcode card type when enabled\n"
 "        \n"
-"Barcode cards can be scanned with mobile devices and don't require physical RFID cards."
+"Barcode cards can be scanned with mobile devices and don't require physical "
+"RFID cards."
 msgstr ""
-"Crear automáticamente tarjetas basadas en código de barras en lugar de tarjetas RFID.\n"
+"Crear automáticamente tarjetas basadas en código de barras en lugar de "
+"tarjetas RFID.\n"
 "        \n"
-"• Cuando está activado: El sistema genera tarjetas QR/código de barras para escaneo móvil\n"
+"• Cuando está activado: El sistema genera tarjetas QR/código de barras para "
+"escaneo móvil\n"
 "• Cuando está desactivado: Se utilizan tarjetas RFID tradicionales\n"
 "• Casos de uso: Acceso mobile-first, visitantes temporales, eventos\n"
-"• Tipo de tarjeta: Cambia automáticamente al tipo de tarjeta de código de barras cuando está activado\n"
+"• Tipo de tarjeta: Cambia automáticamente al tipo de tarjeta de código de "
+"barras cuando está activado\n"
 "        \n"
-"Las tarjetas de código de barras pueden escanearse con dispositivos móviles y no requieren tarjetas RFID físicas."
+"Las tarjetas de código de barras pueden escanearse con dispositivos móviles "
+"y no requieren tarjetas RFID físicas."
 
 #. module: rfid_service_base
 #: model:ir.model,name:rfid_service_base.model_rfid_service_sale_wiz
@@ -210,25 +230,43 @@ msgid "Card Type"
 msgstr "Tipo de tarjeta"
 
 #. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__service_id
+msgid ""
+"Catalog entry from which the card inherits its access group, time window and "
+"card type. Set automatically when the wizard is opened from a service."
+msgstr ""
+"Entrada de catálogo de la cual la tarjeta hereda su grupo de acceso, ventana "
+"horaria y tipo de tarjeta. Se establece automáticamente cuando el asistente "
+"se abre desde un servicio."
+
+#. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__tag_ids
 msgid ""
 "Categorization tags for organizing and filtering services.\n"
 "        \n"
-"• Organization: Group related services together (e.g., 'VIP', 'Visitor', 'Staff')\n"
-"• Filtering: Use in search panels and reports to find specific service types\n"
+"• Organization: Group related services together (e.g., 'VIP', 'Visitor', "
+"'Staff')\n"
+"• Filtering: Use in search panels and reports to find specific service "
+"types\n"
 "• Color coding: Tags have colors for visual identification\n"
-"• Multiple tags: Services can have multiple tags for flexible categorization\n"
+"• Multiple tags: Services can have multiple tags for flexible "
+"categorization\n"
 "        \n"
 "Use tags to create logical groupings that match your business needs."
 msgstr ""
 "Etiquetas de categorización para organizar y filtrar servicios.\n"
 "        \n"
-"• Organización: Agrupa servicios relacionados (p. ej., «VIP», «Visitante», «Personal»)\n"
-"• Filtrado: Úsalas en paneles de búsqueda e informes para encontrar tipos de servicios específicos\n"
-"• Codificación por colores: Las etiquetas tienen colores para identificación visual\n"
-"• Etiquetas múltiples: Los servicios pueden tener múltiples etiquetas para una categorización flexible\n"
+"• Organización: Agrupa servicios relacionados (p. ej., «VIP», «Visitante», "
+"«Personal»)\n"
+"• Filtrado: Úsalas en paneles de búsqueda e informes para encontrar tipos de "
+"servicios específicos\n"
+"• Codificación por colores: Las etiquetas tienen colores para identificación "
+"visual\n"
+"• Etiquetas múltiples: Los servicios pueden tener múltiples etiquetas para "
+"una categorización flexible\n"
 "        \n"
-"Usa etiquetas para crear agrupaciones lógicas que se adapten a las necesidades de tu negocio."
+"Usa etiquetas para crear agrupaciones lógicas que se adapten a las "
+"necesidades de tu negocio."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__color
@@ -248,11 +286,14 @@ msgid ""
 "        \n"
 "Colors improve visual organization when managing multiple services."
 msgstr ""
-"Codificación por colores para identificación visual en vistas kanban y otras.\n"
+"Codificación por colores para identificación visual en vistas kanban y "
+"otras.\n"
 "        \n"
 "• Organización visual: Ayuda a distinguir los diferentes tipos de servicios\n"
-"• Interfaz de usuario: Se usa en tarjetas kanban y visualizaciones de servicios\n"
-"• Personalización: Elige colores que coincidan con la identidad corporativa de tu organización\n"
+"• Interfaz de usuario: Se usa en tarjetas kanban y visualizaciones de "
+"servicios\n"
+"• Personalización: Elige colores que coincidan con la identidad corporativa "
+"de tu organización\n"
 "• Predeterminado: El sistema asigna colores aleatorios si no se especifican\n"
 "        \n"
 "Los colores mejoran la organización visual al gestionar múltiples servicios."
@@ -269,14 +310,20 @@ msgid ""
 "        \n"
 "Colors improve visual organization when managing multiple service categories."
 msgstr ""
-"Color para la identificación visual de esta etiqueta en listas y vistas kanban.\n"
+"Color para la identificación visual de esta etiqueta en listas y vistas "
+"kanban.\n"
 "        \n"
-"• Organización visual: Ayuda a identificar rápidamente las diferentes categorías de etiquetas\n"
-"• Interfaz de usuario: Se muestra en los widgets de etiquetas y tarjetas de servicio\n"
-"• Predeterminado aleatorio: El sistema asigna colores aleatorios a las nuevas etiquetas\n"
-"• Personalización: Elige colores que coincidan con el esquema de colores de tu organización\n"
+"• Organización visual: Ayuda a identificar rápidamente las diferentes "
+"categorías de etiquetas\n"
+"• Interfaz de usuario: Se muestra en los widgets de etiquetas y tarjetas de "
+"servicio\n"
+"• Predeterminado aleatorio: El sistema asigna colores aleatorios a las "
+"nuevas etiquetas\n"
+"• Personalización: Elige colores que coincidan con el esquema de colores de "
+"tu organización\n"
 "        \n"
-"Los colores mejoran la organización visual al gestionar múltiples categorías de servicios."
+"Los colores mejoran la organización visual al gestionar múltiples categorías "
+"de servicios."
 
 #. module: rfid_service_base
 #: model:ir.model,name:rfid_service_base.model_res_company
@@ -289,6 +336,35 @@ msgstr "Compañías"
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_tags__company_id
 msgid "Company"
 msgstr "Empresa"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__company_id
+msgid ""
+"Company that owns this sale — inherited from the underlying service. Used "
+"for multi-company record-rule scoping."
+msgstr ""
+"Compañía propietaria de esta venta, heredada del servicio subyacente. Se "
+"utiliza para el alcance de las reglas de registro multiempresa."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__company_id
+msgid ""
+"Company that owns this service template. Services are isolated per company — "
+"users only see services of their allowed companies."
+msgstr ""
+"Compañía propietaria de esta plantilla de servicio. Los servicios están "
+"aislados por compañía; los usuarios solo ven los servicios de las compañías "
+"permitidas."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_tags__company_id
+msgid ""
+"Company that owns this tag. Tags are isolated per company so each tenant can "
+"build its own catalog taxonomy."
+msgstr ""
+"Compañía propietaria de esta etiqueta. Las etiquetas están aisladas por "
+"compañía para que cada inquilino pueda construir su propia taxonomía de "
+"catálogo."
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
@@ -304,6 +380,18 @@ msgstr "Contacto"
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__displayed_image_id
 msgid "Cover Image"
 msgstr "Imagen de portada"
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding.step,description:rfid_service_base.onboarding_step_service_define
+msgid ""
+"Create the catalog entry for the access type you want to issue (for example: "
+"day pass, weekly visitor, contractor card). Each service binds an access "
+"group, a time window, and a card type."
+msgstr ""
+"Cree la entrada de catálogo para el tipo de acceso que desea emitir (por "
+"ejemplo: pase de un día, visitante semanal, tarjeta de contratista). Cada "
+"servicio vincula un grupo de acceso, una ventana horaria y un tipo de "
+"tarjeta."
 
 #. module: rfid_service_base
 #: model_terms:ir.actions.act_window,help:rfid_service_base.hr_rfid_service_action
@@ -336,16 +424,19 @@ msgid ""
 "• Finished: Service period has ended or all visits have been used\n"
 "• Canceled: Service was manually canceled before completion\n"
 "        \n"
-"Status is automatically calculated based on dates, visits, and access permissions."
+"Status is automatically calculated based on dates, visits, and access "
+"permissions."
 msgstr ""
 "Estado actual de esta venta de servicio.\n"
 "        \n"
 "• Registrado: Venta creada pero el período de servicio aún no ha comenzado\n"
 "• Activo: El servicio está activo actualmente y el cliente tiene acceso\n"
-"• Finalizado: El período de servicio ha concluido o todas las visitas han sido utilizadas\n"
+"• Finalizado: El período de servicio ha concluido o todas las visitas han "
+"sido utilizadas\n"
 "• Cancelado: El servicio fue cancelado manualmente antes de su finalización\n"
 "        \n"
-"El estado se calcula automáticamente en función de las fechas, visitas y permisos de acceso."
+"El estado se calcula automáticamente en función de las fechas, visitas y "
+"permisos de acceso."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__partner_id
@@ -362,16 +453,21 @@ msgid ""
 "• Communication: Used for sending emails and printing badges\n"
 "• Tracking: Links all service sales to the same customer for history\n"
 "        \n"
-"This is the person who will receive access and communications about the service."
+"This is the person who will receive access and communications about the "
+"service."
 msgstr ""
 "Cliente que adquirió este servicio.\n"
 "        \n"
 "• Individual: Debe ser una persona, no un contacto de empresa\n"
-"• Creación: Puede crearse automáticamente durante el proceso de venta del servicio\n"
-"• Comunicación: Se utiliza para el envío de correos electrónicos e impresión de credenciales\n"
-"• Seguimiento: Vincula todas las ventas de servicio al mismo cliente para el historial\n"
+"• Creación: Puede crearse automáticamente durante el proceso de venta del "
+"servicio\n"
+"• Comunicación: Se utiliza para el envío de correos electrónicos e impresión "
+"de credenciales\n"
+"• Seguimiento: Vincula todas las ventas de servicio al mismo cliente para el "
+"historial\n"
 "        \n"
-"Es la persona que recibirá el acceso y las comunicaciones relacionadas con el servicio."
+"Es la persona que recibirá el acceso y las comunicaciones relacionadas con "
+"el servicio."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__time_interval_end
@@ -385,14 +481,17 @@ msgid ""
 "        \n"
 "Must be later than Access Start Time to create a valid time window."
 msgstr ""
-"Hora de fin diaria a partir de la cual el acceso ya no está permitido (formato 24 horas).\n"
+"Hora de fin diaria a partir de la cual el acceso ya no está permitido "
+"(formato 24 horas).\n"
 "        \n"
 "• Formato: Horas y minutos (p. ej., 17.0 = 17:00, 23.5 = 23:30)\n"
-"• Propósito: Restringir automáticamente el acceso fuera del horario de atención\n"
+"• Propósito: Restringir automáticamente el acceso fuera del horario de "
+"atención\n"
 "• 00:00 significa: Sin restricción horaria (acceso permitido todo el día)\n"
 "• Seguridad: Impide el acceso fuera de horario incluso con tarjetas válidas\n"
 "        \n"
-"Debe ser posterior a la hora de inicio de acceso para crear una ventana de tiempo válida."
+"Debe ser posterior a la hora de inicio de acceso para crear una ventana de "
+"tiempo válida."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__time_interval_start
@@ -406,18 +505,19 @@ msgid ""
 "        \n"
 "Combine with Access End Time to create daily access windows."
 msgstr ""
-"Hora de inicio diaria a partir de la cual el acceso está permitido (formato 24 horas).\n"
+"Hora de inicio diaria a partir de la cual el acceso está permitido (formato "
+"24 horas).\n"
 "        \n"
 "• Formato: Horas y minutos (p. ej., 9.0 = 9:00, 14.5 = 14:30)\n"
 "• Propósito: Restringir el acceso a horas específicas del día\n"
 "• 00:00 significa: Sin restricción horaria (acceso permitido todo el día)\n"
-"• Casos de uso: Horario de oficina, horario de gimnasio, períodos de acceso restringido\n"
+"• Casos de uso: Horario de oficina, horario de gimnasio, períodos de acceso "
+"restringido\n"
 "        \n"
 "Combinar con la hora de fin de acceso para crear ventanas de acceso diarias."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__start_date
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__ext_start_date
 msgid ""
 "Date and time when customer access begins.\n"
 "        \n"
@@ -426,20 +526,23 @@ msgid ""
 "• Timezone: Interpreted according to user's timezone settings\n"
 "• Calculation: Combined with service duration to determine end date\n"
 "        \n"
-"Customer will be able to access designated areas starting from this date/time."
+"Customer will be able to access designated areas starting from this date/"
+"time."
 msgstr ""
 "Fecha y hora en que comienza el acceso del cliente.\n"
 "        \n"
 "• Activación: La tarjeta del cliente se activa en esta fecha/hora\n"
-"• Programación: Puede configurarse para activación futura (reservas anticipadas)\n"
-"• Zona horaria: Se interpreta según la configuración de zona horaria del usuario\n"
-"• Cálculo: Se combina con la duración del servicio para determinar la fecha de fin\n"
+"• Programación: Puede configurarse para activación futura (reservas "
+"anticipadas)\n"
+"• Zona horaria: Se interpreta según la configuración de zona horaria del "
+"usuario\n"
+"• Cálculo: Se combina con la duración del servicio para determinar la fecha "
+"de fin\n"
 "        \n"
 "El cliente podrá acceder a las áreas designadas a partir de esta fecha/hora."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__end_date
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__ext_end_date
 msgid ""
 "Date and time when customer access expires.\n"
 "        \n"
@@ -453,11 +556,14 @@ msgstr ""
 "Fecha y hora en que expira el acceso del cliente.\n"
 "        \n"
 "• Vencimiento: La tarjeta del cliente queda inactiva en esta fecha/hora\n"
-"• Cálculo: Normalmente se calcula a partir de la fecha de inicio más la duración del servicio\n"
-"• Ajuste manual: Puede ajustarse manualmente para períodos de servicio personalizados\n"
+"• Cálculo: Normalmente se calcula a partir de la fecha de inicio más la "
+"duración del servicio\n"
+"• Ajuste manual: Puede ajustarse manualmente para períodos de servicio "
+"personalizados\n"
 "• Seguridad: El acceso se revoca automáticamente después de esta fecha/hora\n"
 "        \n"
-"El cliente perderá el acceso a las áreas designadas después de esta fecha/hora."
+"El cliente perderá el acceso a las áreas designadas después de esta fecha/"
+"hora."
 
 #. module: rfid_service_base
 #: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service__time_interval_type__days
@@ -470,7 +576,26 @@ msgid "Default Access Rights"
 msgstr "Derechos de acceso predeterminados"
 
 #. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
+msgid ""
+"Default access rights and tagging for the service. The access group is "
+"inherited by every card issued from this service, and tags help filter the "
+"catalog."
+msgstr ""
+"Derechos de acceso predeterminados y etiquetado del servicio. El grupo de "
+"acceso se hereda en cada tarjeta emitida desde este servicio, y las "
+"etiquetas ayudan a filtrar el catálogo."
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding.step,step_image_alt:rfid_service_base.onboarding_step_service_define
+#: model:onboarding.onboarding.step,title:rfid_service_base.onboarding_step_service_define
+msgid "Define a visitor service"
+msgstr "Definir un servicio de visitante"
+
+#. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_hr_rfid_access_group_contact_rel__display_name
+#: model:ir.model.fields,field_description:rfid_service_base.field_onboarding_onboarding__display_name
+#: model:ir.model.fields,field_description:rfid_service_base.field_onboarding_onboarding_step__display_name
 #: model:ir.model.fields,field_description:rfid_service_base.field_res_company__display_name
 #: model:ir.model.fields,field_description:rfid_service_base.field_res_partner__display_name
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__display_name
@@ -512,20 +637,27 @@ msgid ""
 "Email template used when sending badges/cards to customers.\n"
 "        \n"
 "• Purpose: Customize the email content and appearance sent to customers\n"
-"• Content: Can include card details, access instructions, and company branding\n"
+"• Content: Can include card details, access instructions, and company "
+"branding\n"
 "• Automation: Template is used when clicking 'Email Card' in sales process\n"
 "• Default: Uses system default badge email template if not specified\n"
 "        \n"
 "Customize the template to match your organization's communication style."
 msgstr ""
-"Plantilla de correo electrónico utilizada al enviar credenciales/tarjetas a los clientes.\n"
+"Plantilla de correo electrónico utilizada al enviar credenciales/tarjetas a "
+"los clientes.\n"
 "        \n"
-"• Propósito: Personalizar el contenido y la apariencia del correo electrónico enviado a los clientes\n"
-"• Contenido: Puede incluir detalles de la tarjeta, instrucciones de acceso e imagen corporativa\n"
-"• Automatización: La plantilla se usa al hacer clic en «Enviar tarjeta por correo» durante el proceso de ventas\n"
-"• Predeterminado: Usa la plantilla de correo de credencial predeterminada del sistema si no se especifica\n"
+"• Propósito: Personalizar el contenido y la apariencia del correo "
+"electrónico enviado a los clientes\n"
+"• Contenido: Puede incluir detalles de la tarjeta, instrucciones de acceso e "
+"imagen corporativa\n"
+"• Automatización: La plantilla se usa al hacer clic en «Enviar tarjeta por "
+"correo» durante el proceso de ventas\n"
+"• Predeterminado: Usa la plantilla de correo de credencial predeterminada "
+"del sistema si no se especifica\n"
 "        \n"
-"Personaliza la plantilla para que coincida con el estilo de comunicación de tu organización."
+"Personaliza la plantilla para que coincida con el estilo de comunicación de "
+"tu organización."
 
 #. module: rfid_service_base
 #. odoo-python
@@ -548,6 +680,11 @@ msgstr "Ampliar servicio"
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
 msgid "Finished"
 msgstr "Finalizado"
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding.step,done_text:rfid_service_base.onboarding_step_service_first_sale
+msgid "First visitor card issued!"
+msgstr "¡Primera tarjeta de visitante emitida!"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__fixed_time
@@ -607,14 +744,19 @@ msgid ""
 msgstr ""
 "Cómo este servicio controla la duración y el uso del acceso del cliente.\n"
 "    \n"
-"• Basado en tiempo: Acceso válido durante un período de tiempo específico (días, semanas, meses)\n"
-"• Basado en visitas: Acceso limitado por número de entradas (p. ej., 5 visitas)\n"
-"• Tiempo y visitas: Se aplican restricciones tanto de período de tiempo como de número de visitas\n"
+"• Basado en tiempo: Acceso válido durante un período de tiempo específico "
+"(días, semanas, meses)\n"
+"• Basado en visitas: Acceso limitado por número de entradas (p. ej., 5 "
+"visitas)\n"
+"• Tiempo y visitas: Se aplican restricciones tanto de período de tiempo como "
+"de número de visitas\n"
 "    \n"
 "Elige según cómo deseas limitar y cobrar el servicio."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_hr_rfid_access_group_contact_rel__id
+#: model:ir.model.fields,field_description:rfid_service_base.field_onboarding_onboarding__id
+#: model:ir.model.fields,field_description:rfid_service_base.field_onboarding_onboarding_step__id
 #: model:ir.model.fields,field_description:rfid_service_base.field_res_company__id
 #: model:ir.model.fields,field_description:rfid_service_base.field_res_partner__id
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__id
@@ -665,6 +807,25 @@ msgid "Is Follower"
 msgstr "Es seguidor"
 
 #. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form
+msgid ""
+"Issue or extend a visitor service. Scan the card, pick the visitor, and "
+"adjust the validity window if the defaults don't match. Encode Card creates "
+"the contact and activates access; Share Card also emails or texts the "
+"credentials."
+msgstr ""
+"Emita o extienda un servicio de visitante. Escanee la tarjeta, seleccione el "
+"visitante y ajuste la ventana de validez si los valores predeterminados no "
+"coinciden. Codificar tarjeta crea el contacto y activa el acceso; Compartir "
+"tarjeta también envía las credenciales por correo electrónico o SMS."
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding.step,step_image_alt:rfid_service_base.onboarding_step_service_first_sale
+#: model:onboarding.onboarding.step,title:rfid_service_base.onboarding_step_service_first_sale
+msgid "Issue the first visitor card"
+msgstr "Emitir la primera tarjeta de visitante"
+
+#. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__write_uid
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__write_uid
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__write_uid
@@ -693,25 +854,30 @@ msgstr "Servicio cancelado manualmente"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__visits
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__visits
 msgid ""
 "Maximum number of times a customer can access with this service.\n"
 "        \n"
 "• Purpose: Limit usage for visit-based or combined service types\n"
 "• Tracking: System automatically counts and decreases available visits\n"
 "• Zero means: Unlimited visits (only for time-based services)\n"
-"• Examples: 5 visits for \"Weekly Gym Pass\", 1 visit for \"Single Day Access\"\n"
+"• Examples: 5 visits for \"Weekly Gym Pass\", 1 visit for \"Single Day "
+"Access\"\n"
 "        \n"
 "Only applies to 'Visits based' and 'Time and Visits based' service types."
 msgstr ""
 "Número máximo de veces que un cliente puede acceder con este servicio.\n"
 "        \n"
-"• Propósito: Limitar el uso para tipos de servicio basados en visitas o combinados\n"
-"• Seguimiento: El sistema cuenta y descuenta automáticamente las visitas disponibles\n"
-"• Cero significa: Visitas ilimitadas (solo para servicios basados en tiempo)\n"
-"• Ejemplos: 5 visitas para «Pase semanal de gimnasio», 1 visita para «Acceso de un día»\n"
+"• Propósito: Limitar el uso para tipos de servicio basados en visitas o "
+"combinados\n"
+"• Seguimiento: El sistema cuenta y descuenta automáticamente las visitas "
+"disponibles\n"
+"• Cero significa: Visitas ilimitadas (solo para servicios basados en "
+"tiempo)\n"
+"• Ejemplos: 5 visitas para «Pase semanal de gimnasio», 1 visita para «Acceso "
+"de un día»\n"
 "        \n"
-"Solo aplica a los tipos de servicio «Basado en visitas» y «Basado en tiempo y visitas»."
+"Solo aplica a los tipos de servicio «Basado en visitas» y «Basado en tiempo "
+"y visitas»."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__message_has_error
@@ -731,9 +897,88 @@ msgid "Minutes"
 msgstr "Minutos"
 
 #. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__generate_barcode_card
+msgid ""
+"Mirrors the service flag — when true, the wizard auto-generates a printable "
+"barcode instead of expecting a scanned RFID number."
+msgstr ""
+"Crear automáticamente tarjetas basadas en código de barras en lugar de "
+"tarjetas RFID.\n"
+"        \n"
+"• Cuando está activado: El sistema genera tarjetas QR/código de barras para "
+"escaneo móvil\n"
+"• Cuando está desactivado: Se utilizan tarjetas RFID tradicionales\n"
+"• Casos de uso: Acceso mobile-first, visitantes temporales, eventos\n"
+"• Tipo de tarjeta: Cambia automáticamente al tipo de tarjeta de código de "
+"barras cuando está activado\n"
+"        \n"
+"Las tarjetas de código de barras pueden escanearse con dispositivos móviles "
+"y no requieren tarjetas RFID físicas."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__fixed_time
+msgid ""
+"Mirrors the service's Fixed Time flag — when true, the end date snaps to a "
+"fixed daily cut-off instead of a rolling interval."
+msgstr ""
+"Indica si los horarios del servicio son fijos o pueden personalizarse por "
+"venta.\n"
+"        \n"
+"• Fijo (activado): Todas las ventas usan los mismos horarios de inicio/fin "
+"definidos en el servicio\n"
+"• Flexible (desactivado): El personal puede personalizar los horarios de "
+"inicio/fin para cada venta individual\n"
+"• Casos de uso: Fijo para servicios estándar, flexible para reservas "
+"personalizadas\n"
+"• Control: Determina si los operadores pueden modificar el horario del "
+"servicio durante las ventas\n"
+"        \n"
+"Activa para servicios estandarizados, desactiva para acceso personalizado o "
+"basado en eventos."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__visits
+msgid ""
+"Mirrors the visits-per-card limit from the service template — informational "
+"only, the wizard does not let you override it."
+msgstr ""
+"Número máximo de veces que un cliente puede acceder con este servicio.\n"
+"        \n"
+"• Propósito: Limitar el uso para tipos de servicio basados en visitas o "
+"combinados\n"
+"• Seguimiento: El sistema cuenta y descuenta automáticamente las visitas "
+"disponibles\n"
+"• Cero significa: Visitas ilimitadas (solo para servicios basados en "
+"tiempo)\n"
+"• Ejemplos: 5 visitas para «Pase semanal de gimnasio», 1 visita para «Acceso "
+"de un día»\n"
+"        \n"
+"Solo aplica a los tipos de servicio «Basado en visitas» y «Basado en tiempo "
+"y visitas»."
+
+#. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__mobile
 msgid "Mobile"
 msgstr "Móvil"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__start_date
+msgid ""
+"Moment the card becomes active. Defaults to a calculated start based on the "
+"service's time interval, but you can override it."
+msgstr ""
+"Momento en que la tarjeta se activa. Por defecto, se calcula un inicio "
+"basado en el intervalo de tiempo del servicio, pero puede sobrescribirlo."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__end_date
+msgid ""
+"Moment the card stops working. Calculated from start + the service's time "
+"interval; for Fixed Time services it snaps to the daily cut-off."
+msgstr ""
+"Momento en que la tarjeta deja de funcionar. Se calcula a partir del inicio "
+"más el intervalo de tiempo del servicio; para los servicios de Hora fija, se "
+"ajusta al límite horario diario."
 
 #. module: rfid_service_base
 #: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service__time_interval_type__months
@@ -764,13 +1009,19 @@ msgstr ""
 "• Uso: Se utiliza en filtros de búsqueda y organización de servicios\n"
 "• Unicidad: Los nombres de etiquetas deben ser únicos en todo el sistema\n"
 "        \n"
-"Usa nombres claros y descriptivos que ayuden a organizar tus ofertas de servicios."
+"Usa nombres claros y descriptivos que ayuden a organizar tus ofertas de "
+"servicios."
 
 #. module: rfid_service_base
 #. odoo-python
 #: code:addons/rfid_service_base/models/rfid_service.py:0
 msgid "New Sale - %s"
 msgstr "Nueva venta - %s"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr "Evento de calendario de la próxima actividad"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_date_deadline
@@ -823,6 +1074,17 @@ msgid "Number of messages with delivery error"
 msgstr "Número de mensajes con error de entrega"
 
 #. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_res_partner__partner_rfid_sales_count
+#: model:ir.model.fields,help:rfid_service_base.field_res_users__partner_rfid_sales_count
+msgid ""
+"Number of visitor service sales registered against this contact across all "
+"services. Used by the smart button to drive the user to the sales history."
+msgstr ""
+"Número de ventas de servicios de visitante registradas para este contacto en "
+"todos los servicios. Utilizado por el botón inteligente para dirigir al "
+"usuario al historial de ventas."
+
+#. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__visits
 msgid ""
 "Number of visits remaining for this service (for visit-based services).\n"
@@ -830,18 +1092,25 @@ msgid ""
 "• Purpose: Shows how many times customer can still access with this service\n"
 "• Countdown: Automatically decreases each time customer uses their card\n"
 "• Zero means: No more visits remaining (service access blocked)\n"
-"• Unlimited: Visit-based services show actual count, time-based services may show 0\n"
+"• Unlimited: Visit-based services show actual count, time-based services may "
+"show 0\n"
 "\n"
 "Only relevant for 'Visits based' and 'Time and Visits based' service types."
 msgstr ""
-"Número de visitas restantes para este servicio (para servicios basados en visitas).\n"
+"Número de visitas restantes para este servicio (para servicios basados en "
+"visitas).\n"
 "\n"
-"• Propósito: Muestra cuántas veces más puede acceder el cliente con este servicio\n"
-"• Cuenta regresiva: Disminuye automáticamente cada vez que el cliente usa su tarjeta\n"
-"• Cero significa: No quedan más visitas disponibles (acceso al servicio bloqueado)\n"
-"• Ilimitado: Los servicios basados en visitas muestran el recuento real; los basados en tiempo pueden mostrar 0\n"
+"• Propósito: Muestra cuántas veces más puede acceder el cliente con este "
+"servicio\n"
+"• Cuenta regresiva: Disminuye automáticamente cada vez que el cliente usa su "
+"tarjeta\n"
+"• Cero significa: No quedan más visitas disponibles (acceso al servicio "
+"bloqueado)\n"
+"• Ilimitado: Los servicios basados en visitas muestran el recuento real; los "
+"basados en tiempo pueden mostrar 0\n"
 "\n"
-"Solo relevante para los tipos de servicio «Basado en visitas» y «Basado en tiempo y visitas»."
+"Solo relevante para los tipos de servicio «Basado en visitas» y «Basado en "
+"tiempo y visitas»."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__time_interval_number
@@ -855,11 +1124,13 @@ msgid ""
 "        \n"
 "Set to 1 for single-unit periods (1 day, 1 week, etc.)."
 msgstr ""
-"Parte numérica de la duración del servicio (combinada con la unidad de duración).\n"
+"Parte numérica de la duración del servicio (combinada con la unidad de "
+"duración).\n"
 "        \n"
 "• Propósito: Definir cuánto tiempo permanece válido el acceso al servicio\n"
 "• Ejemplos: 7 días, 1 mes, 2 semanas, 30 minutos\n"
-"• Cálculo: Se combina con la unidad de duración para crear el período total del servicio\n"
+"• Cálculo: Se combina con la unidad de duración para crear el período total "
+"del servicio\n"
 "• Precio: Las duraciones más largas suelen tener precios más altos\n"
 "        \n"
 "Establece 1 para períodos de una sola unidad (1 día, 1 semana, etc.)."
@@ -875,10 +1146,42 @@ msgid "Old start"
 msgstr "Inicio anterior"
 
 #. module: rfid_service_base
+#: model:ir.model,name:rfid_service_base.model_onboarding_onboarding
+msgid "Onboarding"
+msgstr "Incorporación"
+
+#. module: rfid_service_base
+#: model:ir.model,name:rfid_service_base.model_onboarding_onboarding_step
+msgid "Onboarding Step"
+msgstr "Paso de incorporación"
+
+#. module: rfid_service_base
 #: model:ir.model.constraint,message:rfid_service_base.constraint_rfid_service_sale_check_duplicates
 msgid "Only one service for same period for given Customer!"
 msgstr ""
 "¡Solo se permite un servicio por el mismo período para el cliente indicado!"
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding.step,button_text:rfid_service_base.onboarding_step_service_first_sale
+msgid "Open Service Sales"
+msgstr "Abrir ventas de servicio"
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding.step,description:rfid_service_base.onboarding_step_service_first_sale
+msgid ""
+"Open Service Sales to issue a card to a visitor. Pick the service from the "
+"catalog, scan or type the card number, and the start/end dates. The visitor "
+"gains access immediately within the time window you set."
+msgstr ""
+"Abra Ventas de servicio para emitir una tarjeta a un visitante. Seleccione "
+"el servicio del catálogo, escanee o escriba el número de tarjeta, y las "
+"fechas de inicio/fin. El visitante obtiene acceso inmediatamente dentro de "
+"la ventana de tiempo que establezca."
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding.step,button_text:rfid_service_base.onboarding_step_service_define
+msgid "Open Services"
+msgstr "Abrir servicios"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__zone_id
@@ -892,14 +1195,53 @@ msgid ""
 "        \n"
 "Useful for understanding customer behavior and facility utilization."
 msgstr ""
-"Zona opcional para el seguimiento de la presencia y el comportamiento del cliente.\n"
+"Zona opcional para el seguimiento de la presencia y el comportamiento del "
+"cliente.\n"
 "        \n"
-"• Propósito: Supervisar cuándo y cuánto tiempo permanecen los clientes en áreas específicas\n"
-"• Análisis: Generar informes sobre el uso de zonas y los patrones de los clientes\n"
-"• Integración: Funciona con sistemas de seguimiento de asistencia y presencia\n"
+"• Propósito: Supervisar cuándo y cuánto tiempo permanecen los clientes en "
+"áreas específicas\n"
+"• Análisis: Generar informes sobre el uso de zonas y los patrones de los "
+"clientes\n"
+"• Integración: Funciona con sistemas de seguimiento de asistencia y "
+"presencia\n"
 "• Opcional: Dejar vacío si no se necesita seguimiento de zona\n"
 "        \n"
-"Útil para comprender el comportamiento del cliente y el uso de las instalaciones."
+"Útil para comprender el comportamiento del cliente y el uso de las "
+"instalaciones."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__ext_end_date
+msgid ""
+"Original end date of the sale being extended (shown for reference). The new "
+"end below replaces it on confirmation."
+msgstr ""
+"Fecha y hora en que expira el acceso del cliente.\n"
+"        \n"
+"• Vencimiento: La tarjeta del cliente queda inactiva en esta fecha/hora\n"
+"• Cálculo: Normalmente se calcula a partir de la fecha de inicio más la "
+"duración del servicio\n"
+"• Ajuste manual: Puede ajustarse manualmente para períodos de servicio "
+"personalizados\n"
+"• Seguridad: El acceso se revoca automáticamente después de esta fecha/hora\n"
+"        \n"
+"El cliente perderá el acceso a las áreas designadas después de esta fecha/"
+"hora."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__ext_start_date
+msgid "Original start date of the sale being extended (shown for reference)."
+msgstr ""
+"Fecha y hora en que comienza el acceso del cliente.\n"
+"        \n"
+"• Activación: La tarjeta del cliente se activa en esta fecha/hora\n"
+"• Programación: Puede configurarse para activación futura (reservas "
+"anticipadas)\n"
+"• Zona horaria: Se interpreta según la configuración de zona horaria del "
+"usuario\n"
+"• Cálculo: Se combina con la duración del servicio para determinar la fecha "
+"de fin\n"
+"        \n"
+"El cliente podrá acceder a las áreas designadas a partir de esta fecha/hora."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__parent_id
@@ -909,25 +1251,47 @@ msgstr "Cliente principal"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__parent_id
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__parent_id
 msgid ""
-"Parent company or organization that all service customers will be linked to.\n"
+"Parent company or organization that all service customers will be linked "
+"to.\n"
 "        \n"
 "• Purpose: Group individual customers under a parent organization\n"
 "• Hierarchy: Creates customer hierarchy for reporting and management\n"
 "• Billing: Useful for corporate accounts or group bookings\n"
-"• Optional: Leave empty for individual customers without parent organization\n"
+"• Optional: Leave empty for individual customers without parent "
+"organization\n"
 "        \n"
 "Example: Link all conference attendees to the hosting company."
 msgstr ""
-"Empresa u organización principal a la que se vincularán todos los clientes del servicio.\n"
+"Empresa u organización principal a la que se vincularán todos los clientes "
+"del servicio.\n"
 "        \n"
 "• Propósito: Agrupar clientes individuales bajo una organización principal\n"
 "• Jerarquía: Crea una jerarquía de clientes para informes y gestión\n"
 "• Facturación: Útil para cuentas corporativas o reservas grupales\n"
-"• Opcional: Dejar vacío para clientes individuales sin organización principal\n"
+"• Opcional: Dejar vacío para clientes individuales sin organización "
+"principal\n"
 "        \n"
-"Ejemplo: Vincular todos los asistentes a una conferencia con la empresa organizadora."
+"Ejemplo: Vincular todos los asistentes a una conferencia con la empresa "
+"organizadora."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__parent_id
+msgid ""
+"Parent partner the new visitor contact will be filed under (inherited from "
+"the service template)."
+msgstr ""
+"Empresa u organización principal a la que se vincularán todos los clientes "
+"del servicio.\n"
+"        \n"
+"• Propósito: Agrupar clientes individuales bajo una organización principal\n"
+"• Jerarquía: Crea una jerarquía de clientes para informes y gestión\n"
+"• Facturación: Útil para cuentas corporativas o reservas grupales\n"
+"• Opcional: Dejar vacío para clientes individuales sin organización "
+"principal\n"
+"        \n"
+"Ejemplo: Vincular todos los asistentes a una conferencia con la empresa "
+"organizadora."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__partner_id
@@ -960,9 +1324,12 @@ msgid ""
 msgstr ""
 "Tarjeta física o digital asignada al cliente para el acceso.\n"
 "        \n"
-"• Método de acceso: Tarjeta que el cliente utiliza para obtener acceso físico\n"
-"• Tipos de tarjeta: Puede ser tarjeta RFID, tarjeta de código de barras o credencial móvil\n"
-"• Creación: Se crea automáticamente durante el proceso de venta del servicio\n"
+"• Método de acceso: Tarjeta que el cliente utiliza para obtener acceso "
+"físico\n"
+"• Tipos de tarjeta: Puede ser tarjeta RFID, tarjeta de código de barras o "
+"credencial móvil\n"
+"• Creación: Se crea automáticamente durante el proceso de venta del "
+"servicio\n"
 "• Seguridad: Se activa/desactiva según el período del servicio\n"
 "        \n"
 "Es el token físico/digital que el cliente usa para acceder a las áreas."
@@ -1054,20 +1421,26 @@ msgid ""
 "RFID access group that defines which doors customers can access.\n"
 "        \n"
 "• Purpose: Controls physical access permissions for service customers\n"
-"• Door mapping: Determines which doors/areas this service provides access to\n"
+"• Door mapping: Determines which doors/areas this service provides access "
+"to\n"
 "• Security: Customers only get access to doors included in this group\n"
 "• Configuration: Must be set up before selling services\n"
 "        \n"
-"Choose the access group that matches the physical areas this service should provide."
+"Choose the access group that matches the physical areas this service should "
+"provide."
 msgstr ""
 "Grupo de acceso RFID que define a qué puertas pueden acceder los clientes.\n"
 "        \n"
-"• Propósito: Controla los permisos de acceso físico para los clientes del servicio\n"
-"• Mapeo de puertas: Determina a qué puertas/áreas proporciona acceso este servicio\n"
-"• Seguridad: Los clientes solo tienen acceso a las puertas incluidas en este grupo\n"
+"• Propósito: Controla los permisos de acceso físico para los clientes del "
+"servicio\n"
+"• Mapeo de puertas: Determina a qué puertas/áreas proporciona acceso este "
+"servicio\n"
+"• Seguridad: Los clientes solo tienen acceso a las puertas incluidas en este "
+"grupo\n"
 "• Configuración: Debe configurarse antes de vender los servicios\n"
 "        \n"
-"Elige el grupo de acceso que corresponda a las áreas físicas que debe proporcionar este servicio."
+"Elige el grupo de acceso que corresponda a las áreas físicas que debe "
+"proporcionar este servicio."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__service_id
@@ -1075,7 +1448,8 @@ msgid ""
 "RFID service that was sold to the customer.\n"
 "        \n"
 "• Purpose: Links this sale to the specific service offering\n"
-"• Configuration: Inherits all service settings (duration, access rights, etc.)\n"
+"• Configuration: Inherits all service settings (duration, access rights, "
+"etc.)\n"
 "• Pricing: Service determines access permissions and time limits\n"
 "• Required: Every sale must be linked to a service\n"
 "        \n"
@@ -1084,8 +1458,10 @@ msgstr ""
 "Servicio RFID vendido al cliente.\n"
 "        \n"
 "• Propósito: Vincula esta venta a la oferta de servicio específica\n"
-"• Configuración: Hereda todos los ajustes del servicio (duración, derechos de acceso, etc.)\n"
-"• Precio: El servicio determina los permisos de acceso y los límites de tiempo\n"
+"• Configuración: Hereda todos los ajustes del servicio (duración, derechos "
+"de acceso, etc.)\n"
+"• Precio: El servicio determina los permisos de acceso y los límites de "
+"tiempo\n"
 "• Obligatorio: Cada venta debe estar vinculada a un servicio\n"
 "        \n"
 "El servicio define el acceso y la duración que recibe el cliente."
@@ -1093,25 +1469,37 @@ msgstr ""
 #. module: rfid_service_base
 #: model_terms:ir.actions.act_window,help:rfid_service_base.hr_rfid_service_action
 msgid ""
-"RFID services define access packages that you can sell to customers and visitors.\n"
+"RFID services define access packages that you can sell to customers and "
+"visitors.\n"
 "                    <br><br>\n"
 "                    Service types:\n"
-"                    • <b>Time-based:</b> Access valid for specific periods (daily, weekly, monthly)\n"
-"                    • <b>Visit-based:</b> Access limited by number of entries\n"
-"                    • <b>Combined:</b> Both time and visit restrictions apply\n"
+"                    • <b>Time-based:</b> Access valid for specific periods "
+"(daily, weekly, monthly)\n"
+"                    • <b>Visit-based:</b> Access limited by number of "
+"entries\n"
+"                    • <b>Combined:</b> Both time and visit restrictions "
+"apply\n"
 "                    <br><br>\n"
-"                    Each service includes access permissions, duration, pricing, and card type settings.\n"
-"                    Perfect for visitor management, membership sales, and event access control."
+"                    Each service includes access permissions, duration, "
+"pricing, and card type settings.\n"
+"                    Perfect for visitor management, membership sales, and "
+"event access control."
 msgstr ""
-"Los servicios RFID definen paquetes de acceso que puedes vender a clientes y visitantes.\n"
+"Los servicios RFID definen paquetes de acceso que puedes vender a clientes y "
+"visitantes.\n"
 "                    <br><br>\n"
 "                    Tipos de servicio:\n"
-"                    • <b>Basado en tiempo:</b> Acceso válido para períodos específicos (diario, semanal, mensual)\n"
-"                    • <b>Basado en visitas:</b> Acceso limitado por número de entradas\n"
-"                    • <b>Combinado:</b> Se aplican restricciones de tiempo y de visitas\n"
+"                    • <b>Basado en tiempo:</b> Acceso válido para períodos "
+"específicos (diario, semanal, mensual)\n"
+"                    • <b>Basado en visitas:</b> Acceso limitado por número "
+"de entradas\n"
+"                    • <b>Combinado:</b> Se aplican restricciones de tiempo y "
+"de visitas\n"
 "                    <br><br>\n"
-"                    Cada servicio incluye permisos de acceso, duración, precio y configuración del tipo de tarjeta.\n"
-"                    Ideal para la gestión de visitantes, venta de membresías y control de acceso a eventos."
+"                    Cada servicio incluye permisos de acceso, duración, "
+"precio y configuración del tipo de tarjeta.\n"
+"                    Ideal para la gestión de visitantes, venta de membresías "
+"y control de acceso a eventos."
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form
@@ -1145,20 +1533,27 @@ msgid ""
 "Report template used when printing physical badges/cards for customers.\n"
 "        \n"
 "• Purpose: Define the layout and content of printed badges\n"
-"• Customization: Can include logos, QR codes, access information, and design elements\n"
+"• Customization: Can include logos, QR codes, access information, and design "
+"elements\n"
 "• Usage: Template is used when clicking 'Print Card' in sales process\n"
 "• Default: Uses system default foldable badge template if not specified\n"
 "        \n"
-"Customize to create professional badges that match your organization's branding."
+"Customize to create professional badges that match your organization's "
+"branding."
 msgstr ""
-"Plantilla de informe utilizada al imprimir credenciales/tarjetas físicas para clientes.\n"
+"Plantilla de informe utilizada al imprimir credenciales/tarjetas físicas "
+"para clientes.\n"
 "        \n"
 "• Propósito: Definir el diseño y el contenido de las credenciales impresas\n"
-"• Personalización: Puede incluir logotipos, códigos QR, información de acceso y elementos de diseño\n"
-"• Uso: La plantilla se usa al hacer clic en «Imprimir tarjeta» durante el proceso de ventas\n"
-"• Predeterminado: Usa la plantilla de credencial plegable predeterminada del sistema si no se especifica\n"
+"• Personalización: Puede incluir logotipos, códigos QR, información de "
+"acceso y elementos de diseño\n"
+"• Uso: La plantilla se usa al hacer clic en «Imprimir tarjeta» durante el "
+"proceso de ventas\n"
+"• Predeterminado: Usa la plantilla de credencial plegable predeterminada del "
+"sistema si no se especifica\n"
 "        \n"
-"Personaliza la plantilla para crear credenciales profesionales que coincidan con la identidad corporativa de tu organización."
+"Personaliza la plantilla para crear credenciales profesionales que coincidan "
+"con la identidad corporativa de tu organización."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_user_id
@@ -1273,6 +1668,11 @@ msgid "Service Type"
 msgstr "Tipo de servicio"
 
 #. module: rfid_service_base
+#: model:onboarding.onboarding.step,done_text:rfid_service_base.onboarding_step_service_define
+msgid "Service defined!"
+msgstr "¡Servicio definido!"
+
+#. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__end_date
 msgid "Service end"
 msgstr "Fin del servicio"
@@ -1357,9 +1757,11 @@ msgid ""
 msgstr ""
 "Vínculo técnico entre el cliente y el grupo de acceso que otorga permisos.\n"
 "        \n"
-"• Propósito: Registro del sistema que otorga efectivamente acceso a puertas/áreas\n"
+"• Propósito: Registro del sistema que otorga efectivamente acceso a puertas/"
+"áreas\n"
 "• Temporización: Controla cuándo comienza y termina el acceso\n"
-"• Visitas: Realiza el seguimiento de las visitas restantes para servicios basados en visitas\n"
+"• Visitas: Realiza el seguimiento de las visitas restantes para servicios "
+"basados en visitas\n"
 "• Automático: Creado y gestionado automáticamente por el sistema\n"
 "        \n"
 "Es el registro técnico que habilita el acceso físico para el cliente."
@@ -1368,6 +1770,17 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
 msgid "Templates"
 msgstr "Plantillas"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__card_number
+msgid ""
+"The RFID number or generated barcode the visitor will carry. For RFID "
+"services, type or scan the printed number; for barcode services, the value "
+"is generated automatically."
+msgstr ""
+"El número RFID o el código de barras generado que llevará el visitante. Para "
+"los servicios RFID, escriba o escanee el número impreso; para los servicios "
+"de código de barras, el valor se genera automáticamente."
 
 #. module: rfid_service_base
 #. odoo-python
@@ -1450,22 +1863,33 @@ msgid ""
 "This view tracks all RFID service sales and customer access grants.\n"
 "                    <br><br>\n"
 "                    Monitor and manage:\n"
-"                    • <b>Customer access:</b> Track who has access and when it expires\n"
-"                    • <b>Service usage:</b> Monitor active, expired, and upcoming services\n"
-"                    • <b>Sales analytics:</b> Analyze service performance and customer patterns\n"
-"                    • <b>Customer communication:</b> Send badges and access information\n"
+"                    • <b>Customer access:</b> Track who has access and when "
+"it expires\n"
+"                    • <b>Service usage:</b> Monitor active, expired, and "
+"upcoming services\n"
+"                    • <b>Sales analytics:</b> Analyze service performance "
+"and customer patterns\n"
+"                    • <b>Customer communication:</b> Send badges and access "
+"information\n"
 "                    <br><br>\n"
-"                    Use the calendar view to see service periods and the pivot view for sales analysis."
+"                    Use the calendar view to see service periods and the "
+"pivot view for sales analysis."
 msgstr ""
-"Esta vista realiza el seguimiento de todas las ventas de servicios RFID y los accesos otorgados a clientes.\n"
+"Esta vista realiza el seguimiento de todas las ventas de servicios RFID y "
+"los accesos otorgados a clientes.\n"
 "                    <br><br>\n"
 "                    Supervisar y gestionar:\n"
-"                    • <b>Acceso del cliente:</b> Controla quién tiene acceso y cuándo vence\n"
-"                    • <b>Uso del servicio:</b> Supervisa los servicios activos, vencidos y próximos\n"
-"                    • <b>Análisis de ventas:</b> Analiza el rendimiento del servicio y los patrones de los clientes\n"
-"                    • <b>Comunicación con el cliente:</b> Envía credenciales e información de acceso\n"
+"                    • <b>Acceso del cliente:</b> Controla quién tiene acceso "
+"y cuándo vence\n"
+"                    • <b>Uso del servicio:</b> Supervisa los servicios "
+"activos, vencidos y próximos\n"
+"                    • <b>Análisis de ventas:</b> Analiza el rendimiento del "
+"servicio y los patrones de los clientes\n"
+"                    • <b>Comunicación con el cliente:</b> Envía credenciales "
+"e información de acceso\n"
 "                    <br><br>\n"
-"                    Usa la vista de calendario para ver los períodos de servicio y la vista dinámica para el análisis de ventas."
+"                    Usa la vista de calendario para ver los períodos de "
+"servicio y la vista dinámica para el análisis de ventas."
 
 #. module: rfid_service_base
 #: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service__service_type__time_count
@@ -1491,7 +1915,8 @@ msgid ""
 "        \n"
 "Choose the unit that best matches your service offering period."
 msgstr ""
-"Unidad de tiempo para la duración del servicio (combinada con el número de duración).\n"
+"Unidad de tiempo para la duración del servicio (combinada con el número de "
+"duración).\n"
 "        \n"
 "• Minutos: Acceso muy breve (salas de reuniones, acceso temporal)\n"
 "• Horas: Acceso a corto plazo (pases diarios, eventos)\n"
@@ -1513,19 +1938,25 @@ msgid ""
 "        \n"
 "• Purpose: Defines the physical/technical card characteristics\n"
 "• Compatibility: Must match your RFID readers and system setup\n"
-"• Automatic: Changes to barcode type when 'Generate Barcode Cards' is enabled\n"
+"• Automatic: Changes to barcode type when 'Generate Barcode Cards' is "
+"enabled\n"
 "• Default: Uses system default card type if not specified\n"
 "        \n"
-"Ensure the card type is compatible with your hardware and security requirements."
+"Ensure the card type is compatible with your hardware and security "
+"requirements."
 msgstr ""
 "Tipo de tarjeta RFID emitida a los clientes para este servicio.\n"
 "        \n"
 "• Propósito: Define las características físicas/técnicas de la tarjeta\n"
-"• Compatibilidad: Debe coincidir con tus lectores RFID y la configuración del sistema\n"
-"• Automático: Cambia al tipo de código de barras cuando «Generar tarjetas de código de barras» está activado\n"
-"• Predeterminado: Usa el tipo de tarjeta predeterminado del sistema si no se especifica\n"
+"• Compatibilidad: Debe coincidir con tus lectores RFID y la configuración "
+"del sistema\n"
+"• Automático: Cambia al tipo de código de barras cuando «Generar tarjetas de "
+"código de barras» está activado\n"
+"• Predeterminado: Usa el tipo de tarjeta predeterminado del sistema si no se "
+"especifica\n"
 "        \n"
-"Asegúrate de que el tipo de tarjeta sea compatible con tu hardware y los requisitos de seguridad."
+"Asegúrate de que el tipo de tarjeta sea compatible con tu hardware y los "
+"requisitos de seguridad."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__activity_exception_decoration
@@ -1551,9 +1982,11 @@ msgid ""
 msgstr ""
 "Identificador único de esta transacción de venta de servicio.\n"
 "        \n"
-"• Propósito: Realizar el seguimiento y referenciar ventas de servicios individuales\n"
+"• Propósito: Realizar el seguimiento y referenciar ventas de servicios "
+"individuales\n"
 "• Generación: Se genera automáticamente usando la secuencia del sistema\n"
-"• Uso: Se utiliza en comunicaciones con clientes, informes y seguimiento interno\n"
+"• Uso: Se utiliza en comunicaciones con clientes, informes y seguimiento "
+"interno\n"
 "• Formato: Sigue la secuencia de numeración configurada por la empresa\n"
 "        \n"
 "Este número de referencia identifica la venta específica en el sistema."
@@ -1580,18 +2013,23 @@ msgid ""
 "User-friendly name for this RFID service offering.\n"
 "        \n"
 "• Purpose: Identify the service for staff and customers\n"
-"• Examples: \"Daily Visitor Pass\", \"Monthly Gym Access\", \"Conference Badge\"\n"
+"• Examples: \"Daily Visitor Pass\", \"Monthly Gym Access\", \"Conference "
+"Badge\"\n"
 "• Usage: Displayed on service cards, reports, and customer communications\n"
-"• Best practice: Use clear, descriptive names that explain the service purpose\n"
+"• Best practice: Use clear, descriptive names that explain the service "
+"purpose\n"
 "        \n"
 "This name appears throughout the system and on printed badges."
 msgstr ""
 "Nombre descriptivo para esta oferta de servicio RFID.\n"
 "        \n"
 "• Propósito: Identificar el servicio para el personal y los clientes\n"
-"• Ejemplos: «Pase diario para visitantes», «Acceso mensual al gimnasio», «Credencial de conferencia»\n"
-"• Uso: Se muestra en tarjetas de servicio, informes y comunicaciones con clientes\n"
-"• Buenas prácticas: Usa nombres claros y descriptivos que expliquen el propósito del servicio\n"
+"• Ejemplos: «Pase diario para visitantes», «Acceso mensual al gimnasio», "
+"«Credencial de conferencia»\n"
+"• Uso: Se muestra en tarjetas de servicio, informes y comunicaciones con "
+"clientes\n"
+"• Buenas prácticas: Usa nombres claros y descriptivos que expliquen el "
+"propósito del servicio\n"
 "        \n"
 "Este nombre aparece en todo el sistema y en las credenciales impresas."
 
@@ -1599,6 +2037,43 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
 msgid "Visit based"
 msgstr "Basado en visitas"
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding,name:rfid_service_base.onboarding_service_setup
+msgid "Visitor Services Setup"
+msgstr "Configuración de servicios de visitante"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__email
+msgid ""
+"Visitor email address. Pre-filled from the selected partner; editing here "
+"also updates the partner record on confirmation."
+msgstr ""
+"Dirección de correo electrónico del visitante. Se rellena previamente desde "
+"el contacto seleccionado; editarla aquí también actualiza el registro del "
+"contacto al confirmar."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__mobile
+msgid ""
+"Visitor mobile/phone number. Pre-filled from the selected partner; editing "
+"here also updates the partner's phone field on confirmation (in Odoo 19 "
+"mobile was merged into phone)."
+msgstr ""
+"Número de móvil/teléfono del visitante. Se rellena previamente desde el "
+"contacto seleccionado; editarlo aquí también actualiza el campo de teléfono "
+"del contacto al confirmar (en Odoo 19 el móvil se fusionó con el teléfono)."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_hr_rfid_access_group_contact_rel__rfid_service_sale_id
+msgid ""
+"Visitor service sales backed by this contact-to-access-group binding. Used "
+"to cascade state changes to all related sales when the underlying relation "
+"activates or expires."
+msgstr ""
+"Ventas de servicios de visitante respaldadas por esta vinculación contacto-"
+"grupo de acceso. Se utiliza para propagar cambios de estado a todas las "
+"ventas relacionadas cuando la relación subyacente se activa o expira."
 
 #. module: rfid_service_base
 #: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service__service_type__count
@@ -1617,14 +2092,18 @@ msgid ""
 "        \n"
 "A good cover image helps customers quickly identify the service they need."
 msgstr ""
-"Imagen visual que se muestra en las tarjetas de servicio y materiales promocionales.\n"
+"Imagen visual que se muestra en las tarjetas de servicio y materiales "
+"promocionales.\n"
 "        \n"
 "• Propósito: Identificación visual y atractivo de marketing\n"
-"• Visualización: Se muestra en la vista kanban, tarjetas de servicio y portales de clientes\n"
+"• Visualización: Se muestra en la vista kanban, tarjetas de servicio y "
+"portales de clientes\n"
 "• Formato: Admite formatos de imagen comunes (PNG, JPG, etc.)\n"
-"• Imagen corporativa: Usa logotipos, fotos o gráficos que representen el servicio\n"
+"• Imagen corporativa: Usa logotipos, fotos o gráficos que representen el "
+"servicio\n"
 "        \n"
-"Una buena imagen de portada ayuda a los clientes a identificar rápidamente el servicio que necesitan."
+"Una buena imagen de portada ayuda a los clientes a identificar rápidamente "
+"el servicio que necesitan."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__website_message_ids
@@ -1644,26 +2123,44 @@ msgid "Weeks"
 msgstr "Semanas"
 
 #. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__extend_sale_id
+msgid ""
+"When set, the wizard runs in Extend mode — it adds time to the linked sale "
+"instead of creating a new one. Populated automatically from the Extend "
+"action on the existing sale."
+msgstr ""
+"Cuando está activado, el asistente se ejecuta en modo Extender; añade tiempo "
+"a la venta vinculada en lugar de crear una nueva. Se completa "
+"automáticamente desde la acción Extender en la venta existente."
+
+#. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__fixed_time
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__fixed_time
 msgid ""
 "Whether service times are fixed or can be customized per sale.\n"
 "        \n"
-"• Fixed (enabled): All sales use the same start/end times defined in service\n"
-"• Flexible (disabled): Staff can customize start/end times for each individual sale\n"
+"• Fixed (enabled): All sales use the same start/end times defined in "
+"service\n"
+"• Flexible (disabled): Staff can customize start/end times for each "
+"individual sale\n"
 "• Use cases: Fixed for standard services, flexible for custom bookings\n"
 "• Control: Determines if operators can modify service timing during sales\n"
 "        \n"
 "Enable for standardized services, disable for custom or event-based access."
 msgstr ""
-"Indica si los horarios del servicio son fijos o pueden personalizarse por venta.\n"
+"Indica si los horarios del servicio son fijos o pueden personalizarse por "
+"venta.\n"
 "        \n"
-"• Fijo (activado): Todas las ventas usan los mismos horarios de inicio/fin definidos en el servicio\n"
-"• Flexible (desactivado): El personal puede personalizar los horarios de inicio/fin para cada venta individual\n"
-"• Casos de uso: Fijo para servicios estándar, flexible para reservas personalizadas\n"
-"• Control: Determina si los operadores pueden modificar el horario del servicio durante las ventas\n"
+"• Fijo (activado): Todas las ventas usan los mismos horarios de inicio/fin "
+"definidos en el servicio\n"
+"• Flexible (desactivado): El personal puede personalizar los horarios de "
+"inicio/fin para cada venta individual\n"
+"• Casos de uso: Fijo para servicios estándar, flexible para reservas "
+"personalizadas\n"
+"• Control: Determina si los operadores pueden modificar el horario del "
+"servicio durante las ventas\n"
 "        \n"
-"Activa para servicios estandarizados, desactiva para acceso personalizado o basado en eventos."
+"Activa para servicios estandarizados, desactiva para acceso personalizado o "
+"basado en eventos."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__active
@@ -1680,11 +2177,14 @@ msgstr ""
 "Indica si este servicio está actualmente disponible para nuevas ventas.\n"
 "        \n"
 "• Activo: El servicio puede venderse y nuevos clientes pueden registrarse\n"
-"• Inactivo: El servicio está archivado y no está disponible para nuevas ventas\n"
+"• Inactivo: El servicio está archivado y no está disponible para nuevas "
+"ventas\n"
 "• Ventas existentes: Continúa funcionando para clientes ya registrados\n"
-"• Caso de uso: Deshabilitar temporalmente servicios o archivar ofertas antiguas\n"
+"• Caso de uso: Deshabilitar temporalmente servicios o archivar ofertas "
+"antiguas\n"
 "        \n"
-"Desactiva para detener nuevas ventas mientras se preserva el acceso de los clientes existentes."
+"Desactiva para detener nuevas ventas mientras se preserva el acceso de los "
+"clientes existentes."
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form

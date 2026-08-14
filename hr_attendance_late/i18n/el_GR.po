@@ -3,11 +3,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-05 16:53+0000\n"
-"PO-Revision-Date: 2026-06-03 13:41\n"
+"POT-Creation-Date: 2026-08-14 13:55+0000\n"
+"PO-Revision-Date: 2026-08-14 17:27\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: bg\n"
+"Language: el_GR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -17,33 +17,44 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_legal_rate_view_form
 msgid ""
 "<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
-"                            Tip: when the law changes, add a NEW row with the new\n"
-"                            Valid From date — do not edit the old one. Past worked\n"
-"                            days keep their historical coefficient, and the new\n"
-"                            value applies only from its effective date onward.\n"
-"                            Leave Company empty for a national rate that applies\n"
+"                            Tip: when the law changes, add a NEW row with "
+"the new\n"
+"                            Valid From date — do not edit the old one. Past "
+"worked\n"
+"                            days keep their historical coefficient, and the "
+"new\n"
+"                            value applies only from its effective date "
+"onward.\n"
+"                            Leave Company empty for a national rate that "
+"applies\n"
 "                            everywhere."
 msgstr ""
 "<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
-"                            Съвет: когато законът се промени, добавете НОВ ред с новата\n"
-"                            дата Валидна от — не редактирайте стария. Минали отработени\n"
-"                            дни запазват историческия си коефициент, а новата\n"
-"                            стойност се прилага само от датата на влизане в сила нататък.\n"
-"                            Оставете Фирма празно за национална ставка, приложима\n"
-"                            навсякъде."
+"                            Συμβουλή: όταν αλλάζει ο νόμος, προσθέστε μια "
+"ΝΕΑ γραμμή με τη νέα\n"
+"                            ημερομηνία Ισχύει Από - μην επεξεργάζεστε την "
+"παλιά. Οι παρελθούσες\n"
+"                            εργάσιμες ημέρες διατηρούν τον ιστορικό τους "
+"συντελεστή, και η νέα\n"
+"                            τιμή ισχύει μόνο από την ημερομηνία ισχύος και "
+"εφεξής.\n"
+"                            Αφήστε την Εταιρεία κενή για εθνικό συντελεστή "
+"που ισχύει\n"
+"                            παντού."
 
 #. module: hr_attendance_late
 #: model:ir.model.constraint,message:hr_attendance_late.constraint_hr_legal_rate_unique_global_rate
 msgid "A global legal rate already exists for this code and effective date."
 msgstr ""
-"Вече съществува глобална законова ставка за този код и дата на влизане в "
-"сила."
+"Υπάρχει ήδη καθολικός νόμιμος συντελεστής για αυτόν τον κωδικό και "
+"ημερομηνία ισχύος."
 
 #. module: hr_attendance_late
 #: model:ir.model.constraint,message:hr_attendance_late.constraint_hr_legal_rate_unique_company_rate
 msgid "A legal rate already exists for this code, effective date and company."
 msgstr ""
-"Вече съществува законова ставка за този код, дата на влизане в сила и фирма."
+"Υπάρχει ήδη νόμιμος συντελεστής για αυτόν τον κωδικό, ημερομηνία ισχύος και "
+"εταιρεία."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__actual_work_time_day
@@ -65,19 +76,24 @@ msgstr "Πραγματικός Χρόνος Εργασίας"
 msgid ""
 "Additional hours worked beyond the scheduled work time.\n"
 "        \n"
-"        • Calculation: Actual work time minus theoretical work time (when positive)\n"
+"        • Calculation: Actual work time minus theoretical work time (when "
+"positive)\n"
 "        • Format: Hours in decimal format (e.g., 2.0 = 2 hours overtime)\n"
 "        • Compensation: Usually paid at premium rate (1.5x or 2x base rate)\n"
 "        \n"
-"        Note: Overtime calculation may vary based on daily vs. weekly limits and labor agreements."
+"        Note: Overtime calculation may vary based on daily vs. weekly limits "
+"and labor agreements."
 msgstr ""
 "Επιπλέον ώρες εργασίας πέραν του προγραμματισμένου χρόνου εργασίας.\n"
 "        \n"
-"        • Υπολογισμός: Πραγματικός χρόνος εργασίας μείον θεωρητικός χρόνος εργασίας (όταν είναι θετικός)\n"
+"        • Υπολογισμός: Πραγματικός χρόνος εργασίας μείον θεωρητικός χρόνος "
+"εργασίας (όταν είναι θετικός)\n"
 "        • Μορφή: Ώρες σε δεκαδική μορφή (π.χ., 2.0 = 2 ώρες υπερωρίας)\n"
-"        • Αποζημίωση: Συνήθως καταβάλλεται με προσαύξηση (1.5x ή 2x βασική αμοιβή)\n"
+"        • Αποζημίωση: Συνήθως καταβάλλεται με προσαύξηση (1.5x ή 2x βασική "
+"αμοιβή)\n"
 "        \n"
-"        Σημείωση: Ο υπολογισμός υπερωριών ενδέχεται να διαφέρει ανάλογα με τα ημερήσια ή εβδομαδιαία όρια και τις εργασιακές συμβάσεις."
+"        Σημείωση: Ο υπολογισμός υπερωριών ενδέχεται να διαφέρει ανάλογα με "
+"τα ημερήσια ή εβδομαδιαία όρια και τις εργασιακές συμβάσεις."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__extra_time
@@ -88,15 +104,21 @@ msgid ""
 "        • Examples: Weekend work, holiday work, or special project hours\n"
 "        • Compensation: May have different pay rate than regular overtime\n"
 "        \n"
-"        Note: Classification depends on labor agreements and local regulations."
+"        Note: Classification depends on labor agreements and local "
+"regulations."
 msgstr ""
-"Επιπλέον χρόνος εργασίας που δεν πληροί τις προϋποθέσεις για τυπική υπερωρία.\n"
+"Επιπλέον χρόνος εργασίας που δεν πληροί τις προϋποθέσεις για τυπική "
+"υπερωρία.\n"
 "        \n"
-"        • Διαφορά: Ο επιπλέον χρόνος έναντι της υπερωρίας εξαρτάται από την πολιτική της εταιρείας\n"
-"        • Παραδείγματα: Εργασία Σαββατοκύριακου, εργασία κατά αργίες ή ώρες ειδικών έργων\n"
-"        • Αποζημίωση: Ενδέχεται να ισχύει διαφορετική αμοιβή σε σχέση με την κανονική υπερωρία\n"
+"        • Διαφορά: Ο επιπλέον χρόνος έναντι της υπερωρίας εξαρτάται από την "
+"πολιτική της εταιρείας\n"
+"        • Παραδείγματα: Εργασία Σαββατοκύριακου, εργασία κατά αργίες ή ώρες "
+"ειδικών έργων\n"
+"        • Αποζημίωση: Ενδέχεται να ισχύει διαφορετική αμοιβή σε σχέση με την "
+"κανονική υπερωρία\n"
 "        \n"
-"        Σημείωση: Η κατηγοριοποίηση εξαρτάται από τις εργασιακές συμβάσεις και την ισχύουσα τοπική νομοθεσία."
+"        Σημείωση: Η κατηγοριοποίηση εξαρτάται από τις εργασιακές συμβάσεις "
+"και την ισχύουσα τοπική νομοθεσία."
 
 #. module: hr_attendance_late
 #: model:ir.model,name:hr_attendance_late.model_hr_attendance
@@ -137,32 +159,39 @@ msgstr "Ακύρωση"
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_legal_rate__code
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_legal_rate_view_search
 msgid "Code"
-msgstr "Код"
+msgstr "Κωδικός"
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_legal_rate__company_id
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_legal_rate_view_search
 msgid "Company"
-msgstr "Фирма"
+msgstr "Εταιρεία"
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra_wizard__overwrite_existing
 msgid ""
 "Control how existing attendance calculations are handled.\n"
 "        \n"
-"        • When enabled: Recalculates and overwrites all existing attendance extra records\n"
-"        • When disabled: Only creates calculations for dates that don't have records yet\n"
+"        • When enabled: Recalculates and overwrites all existing attendance "
+"extra records\n"
+"        • When disabled: Only creates calculations for dates that don't have "
+"records yet\n"
 "        • Effect: Determines whether to update or skip existing data\n"
 "        \n"
-"        Note: Enable this to fix calculation errors or update after policy changes."
+"        Note: Enable this to fix calculation errors or update after policy "
+"changes."
 msgstr ""
 "Ελέγξτε τον τρόπο διαχείρισης των υφιστάμενων υπολογισμών παρουσίας.\n"
 "        \n"
-"        • Όταν είναι ενεργοποιημένο: Επανυπολογίζει και αντικαθιστά όλες τις υπάρχουσες εγγραφές επιπλέον παρουσίας\n"
-"        • Όταν είναι απενεργοποιημένο: Δημιουργεί υπολογισμούς μόνο για ημερομηνίες χωρίς υπάρχουσες εγγραφές\n"
-"        • Αποτέλεσμα: Καθορίζει εάν θα ενημερωθούν ή θα παραλειφθούν τα υπάρχοντα δεδομένα\n"
+"        • Όταν είναι ενεργοποιημένο: Επανυπολογίζει και αντικαθιστά όλες τις "
+"υπάρχουσες εγγραφές επιπλέον παρουσίας\n"
+"        • Όταν είναι απενεργοποιημένο: Δημιουργεί υπολογισμούς μόνο για "
+"ημερομηνίες χωρίς υπάρχουσες εγγραφές\n"
+"        • Αποτέλεσμα: Καθορίζει εάν θα ενημερωθούν ή θα παραλειφθούν τα "
+"υπάρχοντα δεδομένα\n"
 "        \n"
-"        Σημείωση: Ενεργοποιήστε αυτήν την επιλογή για να διορθώσετε σφάλματα υπολογισμού ή να ενημερώσετε μετά από αλλαγές πολιτικής."
+"        Σημείωση: Ενεργοποιήστε αυτήν την επιλογή για να διορθώσετε σφάλματα "
+"υπολογισμού ή να ενημερώσετε μετά από αλλαγές πολιτικής."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__create_uid
@@ -181,7 +210,7 @@ msgstr "Δημιουργήθηκε στις"
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_legal_rate__currency_id
 msgid "Currency"
-msgstr "Валута"
+msgstr "Νόμισμα"
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_resource_calendar__daily_ranges_are_shifts
@@ -195,10 +224,10 @@ msgid ""
 "deductions. Records are generated by the Recompute Extra Attendance wizard "
 "or the nightly cron once the attendance logs for a day are closed."
 msgstr ""
-"Дневно обобщение по служител с минути закъснение, извънреден труд и "
-"изчислени удръжки. Записите се генерират от съветника за преизчисляване на "
-"допълнително присъствие или нощното автоматично задание, след като "
-"дневниците за присъствие за деня са затворени."
+"Ημερήσια συγκεντρωτική εγγραφή ανά υπάλληλο με λεπτά καθυστέρησης, υπερωρίες "
+"και υπολογισμένες κρατήσεις. Οι εγγραφές δημιουργούνται από τον οδηγό "
+"Επανυπολογισμού Πρόσθετης Παρουσίας ή από τη νυχτερινή προγραμματισμένη "
+"εργασία (cron) μόλις κλείσουν τα αρχεία παρουσίας μιας ημέρας."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_employee__attendance_extra_ids
@@ -207,10 +236,10 @@ msgid ""
 "Attendance wizard or the nightly cron — late minutes, overtime, extra time "
 "per working day."
 msgstr ""
-"Дневни обобщени записи, изчислени за този служител от съветника за "
-"преизчисляване на допълнително присъствие или нощното автоматично задание — "
-"минути закъснение, извънреден труд, допълнително работно време за работен "
-"ден."
+"Ημερήσιες συγκεντρωτικές εγγραφές που υπολογίστηκαν για αυτόν τον υπάλληλο "
+"από τον οδηγό Επανυπολογισμού Πρόσθετης Παρουσίας ή από τη νυχτερινή "
+"προγραμματισμένη εργασία (cron) - λεπτά καθυστέρησης, υπερωρίες, πρόσθετος "
+"χρόνος ανά εργάσιμη ημέρα."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__for_date
@@ -225,33 +254,38 @@ msgid ""
 "uses the value with the latest Valid From on or before that day, so past "
 "periods are never recalculated with a newer coefficient."
 msgstr ""
-"Датата, от която тази стойност влиза в законна сила. Изчисляването на "
-"себестойността за отработен ден използва стойността с най-новата дата "
-"Валидна от, на или преди съответния ден — така минали периоди никога не се "
-"преизчисляват с по-нов коефициент."
+"Ημερομηνία κατά την οποία η τιμή αυτή τίθεται σε νομική ισχύ. Ο υπολογισμός "
+"κόστους για μια εργάσιμη ημέρα χρησιμοποιεί την τιμή με την πιο πρόσφατη "
+"ημερομηνία Ισχύει Από, έως και συμπεριλαμβανομένης εκείνης της ημέρας, ώστε "
+"οι παρελθούσες περίοδοι να μην επανυπολογίζονται ποτέ με νεότερο συντελεστή."
 
 #. module: hr_attendance_late
 #: model:ir.model,name:hr_attendance_late.model_hr_legal_rate
 msgid "Dated Legal Rate / Coefficient"
-msgstr "Датирана законова ставка / коефициент"
+msgstr "Νόμιμος Συντελεστής / Συντελεστής με Ημερομηνία"
 
 #. module: hr_attendance_late
 #: model_terms:ir.actions.act_window,help:hr_attendance_late.hr_attendance_self_leave_action
 msgid ""
 "Days where an employee left before their scheduled end\n"
-"                    (beyond the department tolerance). Use the date filters and\n"
-"                    group by employee or department to review unaccounted early\n"
+"                    (beyond the department tolerance). Use the date filters "
+"and\n"
+"                    group by employee or department to review unaccounted "
+"early\n"
 "                    departures for a period."
 msgstr ""
-"Дни, в които служител е напуснал преди плановия край\n"
-"                    (извън допустимото отклонение за отдела). Използвайте филтрите по дата и\n"
-"                    групирайте по служител или отдел, за да прегледате неотчетените ранни\n"
-"                    напускания за период."
+"Ημέρες κατά τις οποίες ένας υπάλληλος αποχώρησε πριν από την "
+"προγραμματισμένη ώρα λήξης\n"
+"                    (πέραν της ανοχής του τμήματος). Χρησιμοποιήστε τα "
+"φίλτρα ημερομηνίας και\n"
+"                    ομαδοποιήστε ανά υπάλληλο ή τμήμα για να εξετάσετε τις "
+"αδικαιολόγητες\n"
+"                    πρόωρες αποχωρήσεις για μια περίοδο."
 
 #. module: hr_attendance_late
 #: model_terms:ir.actions.act_window,help:hr_attendance_late.hr_legal_rate_action
 msgid "Define your first dated legal rate"
-msgstr "Определете първата си датирана законова ставка"
+msgstr "Ορίστε τον πρώτο σας νόμιμο συντελεστή με ημερομηνία"
 
 #. module: hr_attendance_late
 #: model:ir.model,name:hr_attendance_late.model_hr_department
@@ -289,14 +323,20 @@ msgstr ""
 #: model_terms:ir.actions.act_window,help:hr_attendance_late.hr_legal_rate_action
 msgid ""
 "Each rate carries a <b>Valid From</b> date. When the law\n"
-"                    changes, add a new row with the new effective date; worked\n"
-"                    days before it keep the old coefficient. This is filled by\n"
-"                    the Bulgarian localisation module — edit only to override."
+"                    changes, add a new row with the new effective date; "
+"worked\n"
+"                    days before it keep the old coefficient. This is filled "
+"by\n"
+"                    the Bulgarian localisation module — edit only to "
+"override."
 msgstr ""
-"Всяка ставка има дата <b>Важи от</b>. Когато законът\n"
-"                    се промени, добавете нов ред с новата дата на влизане в сила;\n"
-"                    отработените дни преди нея запазват стария коефициент. Попълва се от\n"
-"                    модула за българска локализация — редактирайте само за отмяна."
+"Κάθε συντελεστής φέρει ημερομηνία <b>Ισχύει Από</b>. Όταν αλλάζει\n"
+"                    ο νόμος, προσθέστε μια νέα γραμμή με τη νέα ημερομηνία "
+"ισχύος· οι εργάσιμες\n"
+"                    ημέρες πριν από αυτήν διατηρούν τον παλιό συντελεστή. "
+"Αυτό συμπληρώνεται από\n"
+"                    το άρθρωμα βουλγαρικής τοπικοποίησης - τροποποιήστε το "
+"μόνο για παράκαμψη."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__early_come_time
@@ -362,9 +402,11 @@ msgstr ""
 "        \n"
 "        • Εύρος: Τελική ημερομηνία της περιόδου υπολογισμού\n"
 "        • Προεπιλογή: Σήμερα ή συγκεκριμένη ημερομηνία από το πλαίσιο\n"
-"        • Αποτέλεσμα: Όλες οι εγγραφές παρουσίας έως αυτήν την ημερομηνία θα υποβληθούν σε επεξεργασία\n"
+"        • Αποτέλεσμα: Όλες οι εγγραφές παρουσίας έως αυτήν την ημερομηνία θα "
+"υποβληθούν σε επεξεργασία\n"
 "        \n"
-"        Σημείωση: Μελλοντικές ημερομηνίες θα αγνοηθούν ακόμα και αν επιλεγούν."
+"        Σημείωση: Μελλοντικές ημερομηνίες θα αγνοηθούν ακόμα και αν "
+"επιλεγούν."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__theoretical_work_time
@@ -373,17 +415,23 @@ msgid ""
 "        \n"
 "        • Source: Based on employee's resource calendar for this date\n"
 "        • Format: Hours in decimal format (e.g., 8.0 = 8 hours)\n"
-"        • Purpose: Baseline for calculating overtime, late arrivals, and early departures\n"
+"        • Purpose: Baseline for calculating overtime, late arrivals, and "
+"early departures\n"
 "        \n"
-"        Note: This is the scheduled work time, not necessarily what was actually worked."
+"        Note: This is the scheduled work time, not necessarily what was "
+"actually worked."
 msgstr ""
-"Αναμενόμενες ώρες εργασίας σύμφωνα με το πρόγραμμα εργασίας του εργαζομένου.\n"
+"Αναμενόμενες ώρες εργασίας σύμφωνα με το πρόγραμμα εργασίας του "
+"εργαζομένου.\n"
 "        \n"
-"        • Πηγή: Βάσει του ημερολογίου πόρων του εργαζομένου για αυτήν την ημερομηνία\n"
+"        • Πηγή: Βάσει του ημερολογίου πόρων του εργαζομένου για αυτήν την "
+"ημερομηνία\n"
 "        • Μορφή: Ώρες σε δεκαδική μορφή (π.χ., 8.0 = 8 ώρες)\n"
-"        • Σκοπός: Βάση για τον υπολογισμό υπερωριών, καθυστερήσεων και πρόωρων αποχωρήσεων\n"
+"        • Σκοπός: Βάση για τον υπολογισμό υπερωριών, καθυστερήσεων και "
+"πρόωρων αποχωρήσεων\n"
 "        \n"
-"        Σημείωση: Αυτός είναι ο προγραμματισμένος χρόνος εργασίας, όχι απαραίτητα ο χρόνος που εργάστηκε πραγματικά."
+"        Σημείωση: Αυτός είναι ο προγραμματισμένος χρόνος εργασίας, όχι "
+"απαραίτητα ο χρόνος που εργάστηκε πραγματικά."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__extra_night
@@ -427,76 +475,102 @@ msgstr "Υπολογισμοί Επιπλέον Χρόνου Εργασίας"
 msgid ""
 "Extra work time performed during night shift hours.\n"
 "        \n"
-"        • Period: Night hours (typically 22:00-06:00) for special assignments\n"
+"        • Period: Night hours (typically 22:00-06:00) for special "
+"assignments\n"
 "        • Premium: May include both extra time and night shift bonuses\n"
 "        • Format: Hours in decimal format\n"
 "        \n"
-"        Note: Used for weekend night work, holiday night shifts, or emergency calls."
+"        Note: Used for weekend night work, holiday night shifts, or "
+"emergency calls."
 msgstr ""
-"Επιπλέον χρόνος εργασίας που πραγματοποιείται κατά τη διάρκεια ωρών νυχτερινής βάρδιας.\n"
+"Επιπλέον χρόνος εργασίας που πραγματοποιείται κατά τη διάρκεια ωρών "
+"νυχτερινής βάρδιας.\n"
 "        \n"
-"        • Περίοδος: Νυχτερινές ώρες (συνήθως 22:00-06:00) για ειδικές αναθέσεις\n"
-"        • Προσαύξηση: Ενδέχεται να περιλαμβάνει τόσο επιπλέον χρόνο όσο και επιδόματα νυχτερινής βάρδιας\n"
+"        • Περίοδος: Νυχτερινές ώρες (συνήθως 22:00-06:00) για ειδικές "
+"αναθέσεις\n"
+"        • Προσαύξηση: Ενδέχεται να περιλαμβάνει τόσο επιπλέον χρόνο όσο και "
+"επιδόματα νυχτερινής βάρδιας\n"
 "        • Μορφή: Ώρες σε δεκαδική μορφή\n"
 "        \n"
-"        Σημείωση: Χρησιμοποιείται για νυχτερινή εργασία Σαββατοκύριακου, νυχτερινές βάρδιες κατά αργίες ή επείγουσες κλήσεις."
+"        Σημείωση: Χρησιμοποιείται για νυχτερινή εργασία Σαββατοκύριακου, "
+"νυχτερινές βάρδιες κατά αργίες ή επείγουσες κλήσεις."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__first_in
+msgid "First In"
+msgstr "Πρώτη Είσοδος"
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__early_come_time
 msgid ""
 "Hours the employee arrived before scheduled start time.\n"
 "        \n"
-"        • Calculation: Time between actual first check-in and scheduled start\n"
+"        • Calculation: Time between actual first check-in and scheduled "
+"start\n"
 "        • Format: Hours in decimal format (e.g., 0.25 = 15 minutes early)\n"
 "        • Recognition: Shows employee punctuality and dedication\n"
 "        \n"
-"        Note: Early arrivals may qualify for recognition but typically don't count as overtime."
+"        Note: Early arrivals may qualify for recognition but typically don't "
+"count as overtime."
 msgstr ""
-"Ώρες κατά τις οποίες ο εργαζόμενος έφθασε πριν από την προγραμματισμένη ώρα έναρξης.\n"
+"Ώρες κατά τις οποίες ο εργαζόμενος έφθασε πριν από την προγραμματισμένη ώρα "
+"έναρξης.\n"
 "        \n"
-"        • Υπολογισμός: Χρόνος μεταξύ της πραγματικής πρώτης καταγραφής εισόδου και της προγραμματισμένης έναρξης\n"
+"        • Υπολογισμός: Χρόνος μεταξύ της πραγματικής πρώτης καταγραφής "
+"εισόδου και της προγραμματισμένης έναρξης\n"
 "        • Μορφή: Ώρες σε δεκαδική μορφή (π.χ., 0.25 = 15 λεπτά νωρίτερα)\n"
 "        • Αναγνώριση: Αποδεικνύει συνέπεια και αφοσίωση του εργαζομένου\n"
 "        \n"
-"        Σημείωση: Οι πρόωρες αφίξεις ενδέχεται να αναγνωρίζονται, αλλά συνήθως δεν προσμετρώνται ως υπερωρία."
+"        Σημείωση: Οι πρόωρες αφίξεις ενδέχεται να αναγνωρίζονται, αλλά "
+"συνήθως δεν προσμετρώνται ως υπερωρία."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__late_time
 msgid ""
 "Hours the employee arrived late to work.\n"
 "        \n"
-"        • Calculation: Time between scheduled start and actual first check-in\n"
+"        • Calculation: Time between scheduled start and actual first check-"
+"in\n"
 "        • Format: Hours in decimal format (e.g., 0.25 = 15 minutes late)\n"
 "        • Threshold: Based on department's late arrival tolerance settings\n"
 "        \n"
-"        Note: May affect attendance bonuses or result in deductions depending on company policy."
+"        Note: May affect attendance bonuses or result in deductions "
+"depending on company policy."
 msgstr ""
 "Ώρες κατά τις οποίες ο εργαζόμενος έφθασε καθυστερημένα στην εργασία.\n"
 "        \n"
-"        • Υπολογισμός: Χρόνος μεταξύ της προγραμματισμένης έναρξης και της πραγματικής πρώτης καταγραφής εισόδου\n"
+"        • Υπολογισμός: Χρόνος μεταξύ της προγραμματισμένης έναρξης και της "
+"πραγματικής πρώτης καταγραφής εισόδου\n"
 "        • Μορφή: Ώρες σε δεκαδική μορφή (π.χ., 0.25 = 15 λεπτά καθυστέρηση)\n"
-"        • Κατώφλι: Βάσει των ρυθμίσεων ανοχής καθυστέρησης άφιξης του τμήματος\n"
+"        • Κατώφλι: Βάσει των ρυθμίσεων ανοχής καθυστέρησης άφιξης του "
+"τμήματος\n"
 "        \n"
-"        Σημείωση: Ενδέχεται να επηρεάσει τα επιδόματα παρουσίας ή να οδηγήσει σε κρατήσεις ανάλογα με την πολιτική της εταιρείας."
+"        Σημείωση: Ενδέχεται να επηρεάσει τα επιδόματα παρουσίας ή να "
+"οδηγήσει σε κρατήσεις ανάλογα με την πολιτική της εταιρείας."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__early_leave_time
 msgid ""
 "Hours the employee left work early.\n"
 "        \n"
-"        • Calculation: Time between actual last check-out and scheduled end time\n"
+"        • Calculation: Time between actual last check-out and scheduled end "
+"time\n"
 "        • Format: Hours in decimal format (e.g., 0.5 = 30 minutes early)\n"
 "        • Impact: May result in reduced pay or attendance penalties\n"
 "        \n"
-"        Note: Early departures without approval may affect performance evaluations."
+"        Note: Early departures without approval may affect performance "
+"evaluations."
 msgstr ""
 "Ώρες κατά τις οποίες ο εργαζόμενος αποχώρησε νωρίτερα από την εργασία.\n"
 "        \n"
-"        • Υπολογισμός: Χρόνος μεταξύ της πραγματικής τελευταίας καταγραφής εξόδου και της προγραμματισμένης ώρας λήξης\n"
+"        • Υπολογισμός: Χρόνος μεταξύ της πραγματικής τελευταίας καταγραφής "
+"εξόδου και της προγραμματισμένης ώρας λήξης\n"
 "        • Μορφή: Ώρες σε δεκαδική μορφή (π.χ., 0.5 = 30 λεπτά νωρίτερα)\n"
-"        • Επίπτωση: Ενδέχεται να οδηγήσει σε μειωμένες αποδοχές ή κυρώσεις παρουσίας\n"
+"        • Επίπτωση: Ενδέχεται να οδηγήσει σε μειωμένες αποδοχές ή κυρώσεις "
+"παρουσίας\n"
 "        \n"
-"        Σημείωση: Πρόωρες αποχωρήσεις χωρίς έγκριση ενδέχεται να επηρεάσουν τις αξιολογήσεις απόδοσης."
+"        Σημείωση: Πρόωρες αποχωρήσεις χωρίς έγκριση ενδέχεται να επηρεάσουν "
+"τις αξιολογήσεις απόδοσης."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__actual_work_time_night
@@ -507,15 +581,18 @@ msgid ""
 "        • Period: Typically 22:00-06:00 (configurable per company)\n"
 "        • Premium: Usually paid at higher rate than day hours\n"
 "        \n"
-"        Note: Night hours often qualify for additional compensation per labor agreements."
+"        Note: Night hours often qualify for additional compensation per "
+"labor agreements."
 msgstr ""
 "Ώρες εργασίας κατά τη διάρκεια της νυχτερινής βάρδιας.\n"
 "        \n"
 "        • Μορφή: Ώρες σε δεκαδική μορφή (π.χ., 1.0 = 1 ώρα)\n"
 "        • Περίοδος: Συνήθως 22:00-06:00 (διαμορφώσιμο ανά εταιρεία)\n"
-"        • Προσαύξηση: Συνήθως αμείβεται με υψηλότερο ποσοστό από τις ημερήσιες ώρες\n"
+"        • Προσαύξηση: Συνήθως αμείβεται με υψηλότερο ποσοστό από τις "
+"ημερήσιες ώρες\n"
 "        \n"
-"        Σημείωση: Οι νυχτερινές ώρες συχνά δικαιούνται πρόσθετη αποζημίωση σύμφωνα με εργασιακές συμβάσεις."
+"        Σημείωση: Οι νυχτερινές ώρες συχνά δικαιούνται πρόσθετη αποζημίωση "
+"σύμφωνα με εργασιακές συμβάσεις."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__actual_work_time_day
@@ -524,26 +601,31 @@ msgid ""
 "        \n"
 "        • Format: Hours in decimal format (e.g., 7.5 = 7 hours 30 minutes)\n"
 "        • Period: Typically 06:00-22:00 (configurable per company)\n"
-"        • Purpose: Separate day hours from night hours for different pay rates\n"
+"        • Purpose: Separate day hours from night hours for different pay "
+"rates\n"
 "        \n"
-"        Note: Used for calculating regular pay rates vs. night shift premiums."
+"        Note: Used for calculating regular pay rates vs. night shift "
+"premiums."
 msgstr ""
 "Ώρες εργασίας κατά τη διάρκεια της τυπικής ημερήσιας περιόδου.\n"
 "        \n"
 "        • Μορφή: Ώρες σε δεκαδική μορφή (π.χ., 7.5 = 7 ώρες 30 λεπτά)\n"
 "        • Περίοδος: Συνήθως 06:00-22:00 (διαμορφώσιμο ανά εταιρεία)\n"
-"        • Σκοπός: Διαχωρισμός ημερήσιων ωρών από νυχτερινές για διαφορετικές αμοιβές\n"
+"        • Σκοπός: Διαχωρισμός ημερήσιων ωρών από νυχτερινές για διαφορετικές "
+"αμοιβές\n"
 "        \n"
-"        Σημείωση: Χρησιμοποιείται για τον υπολογισμό κανονικών αμοιβών έναντι προσαυξήσεων νυχτερινής βάρδιας."
+"        Σημείωση: Χρησιμοποιείται για τον υπολογισμό κανονικών αμοιβών "
+"έναντι προσαυξήσεων νυχτερινής βάρδιας."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_legal_rate__name
 msgid ""
-"Human label for this coefficient, shown in the settings list (e.g. 'Overtime"
-" — rest day'). Optional; the code is the key."
+"Human label for this coefficient, shown in the settings list (e.g. 'Overtime "
+"— rest day'). Optional; the code is the key."
 msgstr ""
-"Четимо наименование на коефициента, показвано в списъка с настройки (напр. "
-"'Извънреден труд — почивен ден'). Незадължително; кодът е ключът."
+"Περιγραφική ετικέτα για αυτόν τον συντελεστή, εμφανίζεται στη λίστα "
+"ρυθμίσεων (π.χ. 'Υπερωρία - ημέρα ανάπαυσης'). Προαιρετικό· ο κωδικός "
+"αποτελεί το κλειδί."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__id
@@ -566,7 +648,8 @@ msgid ""
 "        • Aggregation: Counts distinct shifts for reporting\n"
 "        • Usage: Useful for companies with multiple daily shifts\n"
 "        \n"
-"        Note: Helps track shift patterns and identify shift-specific attendance issues."
+"        Note: Helps track shift patterns and identify shift-specific "
+"attendance issues."
 msgstr ""
 "Αναγνωριστικό για τη βάρδια εργασίας σε αυτήν την ημερομηνία.\n"
 "        \n"
@@ -574,7 +657,8 @@ msgstr ""
 "        • Συγκέντρωση: Καταμετρά τις διακριτές βάρδιες για υποβολή αναφορών\n"
 "        • Χρήση: Χρήσιμο για εταιρείες με πολλαπλές ημερήσιες βάρδιες\n"
 "        \n"
-"        Σημείωση: Βοηθά στην παρακολούθηση προτύπων βαρδιών και στον εντοπισμό προβλημάτων παρουσίας ανά βάρδια."
+"        Σημείωση: Βοηθά στην παρακολούθηση προτύπων βαρδιών και στον "
+"εντοπισμό προβλημάτων παρουσίας ανά βάρδια."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_department__ignore_early_come_time
@@ -607,12 +691,14 @@ msgid ""
 "Include a 'Count of employees who arrived early today' KPI in the digest "
 "email."
 msgstr ""
-"Включва KPI 'Брой служители, пристигнали рано днес' в имейла за обобщение."
+"Συμπερίληψη δείκτη KPI 'Πλήθος υπαλλήλων που έφτασαν νωρίς σήμερα' στο email "
+"digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_leave
 msgid "Include a 'Count of employees who left early' KPI in the digest email."
-msgstr "Включва KPI 'Брой служители, напуснали рано' в имейла за обобщение."
+msgstr ""
+"Συμπερίληψη δείκτη KPI 'Πλήθος υπαλλήλων που έφυγαν νωρίς' στο email digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_overtime
@@ -620,17 +706,17 @@ msgid ""
 "Include a 'Count of employees who stayed past contract hours' KPI in the "
 "digest email."
 msgstr ""
-"Включва KPI 'Брой служители, останали след договорното работно време' в "
-"имейла за обобщение."
+"Συμπερίληψη δείκτη KPI 'Πλήθος υπαλλήλων που παρέμειναν πέραν του συμβατικού "
+"ωραρίου' στο email digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_no_show
 msgid ""
-"Include a 'Count of employees who were scheduled but did not show up' KPI in"
-" the digest email."
+"Include a 'Count of employees who were scheduled but did not show up' KPI in "
+"the digest email."
 msgstr ""
-"Включва KPI 'Брой служители, планирани по график, но неявили се' в имейла за"
-" обобщение."
+"Συμπερίληψη δείκτη KPI 'Πλήθος υπαλλήλων που ήταν προγραμματισμένοι αλλά δεν "
+"εμφανίστηκαν' στο email digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_extra
@@ -638,13 +724,14 @@ msgid ""
 "Include a 'Count of employees with extra unrecorded time' KPI in the digest "
 "email."
 msgstr ""
-"Включва KPI 'Брой служители с допълнително незаписано работно време' в "
-"имейла за обобщение."
+"Συμπερίληψη δείκτη KPI 'Πλήθος υπαλλήλων με πρόσθετο μη καταγεγραμμένο "
+"χρόνο' στο email digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_late
 msgid "Include a 'Count of late arrivals' KPI in the digest email."
-msgstr "Включва KPI 'Брой закъснения' в имейла за обобщение."
+msgstr ""
+"Συμπερίληψη δείκτη KPI 'Πλήθος καθυστερημένων αφίξεων' στο email digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_early_come_value
@@ -669,12 +756,17 @@ msgstr "Τιμή KPI Πρόωρης Αποχώρησης Παρουσίας HR R
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_no_show_value
 msgid "Kpi Hr Rfid Att No Show Value"
-msgstr "Стойност на KPI за неявяване"
+msgstr "Kpi Hr Rfid Att No Show Value"
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_overtime_value
 msgid "Kpi Hr Rfid Att Overtime Value"
 msgstr "Τιμή KPI Υπερωρίας Παρουσίας HR RFID"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__last_out
+msgid "Last Out"
+msgstr "Τελευταία Έξοδος"
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__write_uid
@@ -712,13 +804,14 @@ msgid ""
 "Leave empty for a national/global rate that applies to every company. Set a "
 "company only to override the statutory value for that company specifically."
 msgstr ""
-"Оставете празно за национална/глобална ставка, приложима за всяка фирма. "
-"Задайте фирма само за да замените законовата стойност конкретно за нея."
+"Αφήστε κενό για εθνικό/καθολικό συντελεστή που ισχύει για κάθε εταιρεία. "
+"Ορίστε εταιρεία μόνο για να παρακάμψετε τη νόμιμη τιμή ειδικά για αυτήν την "
+"εταιρεία."
 
 #. module: hr_attendance_late
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_legal_rate_view_form
 msgid "Legal Rate"
-msgstr "Законова ставка"
+msgstr "Νόμιμος Συντελεστής"
 
 #. module: hr_attendance_late
 #: model:ir.actions.act_window,name:hr_attendance_late.hr_legal_rate_action
@@ -726,27 +819,30 @@ msgstr "Законова ставка"
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_legal_rate_view_list
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_legal_rate_view_search
 msgid "Legal Rates"
-msgstr "Законови ставки"
+msgstr "Νόμιμοι Συντελεστές"
 
 #. module: hr_attendance_late
 #: model_terms:ir.actions.act_window,help:hr_attendance_late.hr_legal_rate_action
 msgid ""
 "Legal rates are the statutory coefficients used when costing\n"
-"                    attendance — overtime multipliers (rest day, public holiday)\n"
+"                    attendance — overtime multipliers (rest day, public "
+"holiday)\n"
 "                    and the night-shift supplement per hour."
 msgstr ""
-"Законовите ставки са нормативните коефициенти, използвани при остойностяване\n"
-"                    на присъствието — множители за извънреден труд (почивен ден, официален празник)\n"
-"                    и добавката за нощна смяна на час."
+"Οι νόμιμοι συντελεστές είναι οι θεσμοθετημένοι συντελεστές που "
+"χρησιμοποιούνται για την κοστολόγηση\n"
+"                    της παρουσίας - πολλαπλασιαστές υπερωριών (ημέρα "
+"ανάπαυσης, δημόσια αργία)\n"
+"                    και το επίδομα νυχτερινής βάρδιας ανά ώρα."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_late_value
 msgid ""
-"Live count of employees who checked in after their schedule start during the"
-" digest window."
+"Live count of employees who checked in after their schedule start during the "
+"digest window."
 msgstr ""
-"Текущ брой служители, отбелязали присъствие след началото на графика си в "
-"рамките на периода на обобщението."
+"Ζωντανό πλήθος υπαλλήλων που έκαναν είσοδο μετά την προγραμματισμένη έναρξη "
+"κατά τη διάρκεια του διαστήματος του digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_early_come_value
@@ -754,33 +850,33 @@ msgid ""
 "Live count of employees who checked in before their schedule start during "
 "the digest window."
 msgstr ""
-"Текущ брой служители, отбелязали присъствие преди началото на графика си в "
-"рамките на периода на обобщението."
+"Ζωντανό πλήθος υπαλλήλων που έκαναν είσοδο πριν την προγραμματισμένη έναρξη "
+"κατά τη διάρκεια του διαστήματος του digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_leave_value
 msgid ""
-"Live count of employees who checked out before their schedule end during the"
-" digest window."
+"Live count of employees who checked out before their schedule end during the "
+"digest window."
 msgstr ""
-"Текущ брой служители, отбелязали напускане преди края на графика си в "
-"рамките на периода на обобщението."
+"Ζωντανό πλήθος υπαλλήλων που έκαναν έξοδο πριν την προγραμματισμένη λήξη "
+"κατά τη διάρκεια του διαστήματος του digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_extra_value
 msgid ""
 "Live count of employees with extra unrecorded time during the digest window."
 msgstr ""
-"Текущ брой служители с допълнително незаписано работно време в рамките на "
-"периода на обобщението."
+"Ζωντανό πλήθος υπαλλήλων με πρόσθετο μη καταγεγραμμένο χρόνο κατά τη "
+"διάρκεια του διαστήματος του digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_overtime_value
 msgid ""
 "Live count of employees with recorded overtime during the digest window."
 msgstr ""
-"Текущ брой служители с регистриран извънреден труд в рамките на периода на "
-"обобщението."
+"Ζωντανό πλήθος υπαλλήλων με καταγεγραμμένη υπερωρία κατά τη διάρκεια του "
+"διαστήματος του digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_no_show_value
@@ -788,13 +884,13 @@ msgid ""
 "Live count of scheduled employees with no attendance (no-show) during the "
 "digest window."
 msgstr ""
-"Текущ брой планирани служители без регистрирано присъствие (неявяване) в "
-"рамките на периода на обобщението."
+"Ζωντανό πλήθος προγραμματισμένων υπαλλήλων χωρίς παρουσία (μη εμφάνιση) κατά "
+"τη διάρκεια του διαστήματος του digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_legal_rate__name
 msgid "Name"
-msgstr "Наименование"
+msgstr "Όνομα"
 
 #. module: hr_attendance_late
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
@@ -819,17 +915,17 @@ msgstr "Ώρες Νυχτερινής Υπερωρίας"
 #. module: hr_attendance_late
 #: model_terms:ir.actions.act_window,help:hr_attendance_late.hr_attendance_extra_action
 msgid "No extra-attendance calculations yet"
-msgstr "Все още няма изчисления за допълнително присъствие"
+msgstr "Δεν υπάρχουν ακόμη υπολογισμοί πρόσθετης παρουσίας"
 
 #. module: hr_attendance_late
 #: model_terms:ir.actions.act_window,help:hr_attendance_late.hr_attendance_self_leave_action
 msgid "No self-leaves in this period"
-msgstr "Няма самоотлъчки за този период"
+msgstr "Δεν υπάρχουν αυτοάδειες σε αυτήν την περίοδο"
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_no_show
 msgid "No-show"
-msgstr "Неявяване"
+msgstr "Μη Εμφάνιση"
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__attendance_count
@@ -840,7 +936,8 @@ msgid ""
 "        • Format: Text showing count (e.g., \"4 records\")\n"
 "        • Purpose: Quick overview of attendance activity\n"
 "        \n"
-"        Note: Multiple records indicate breaks, lunch periods, or multiple shifts."
+"        Note: Multiple records indicate breaks, lunch periods, or multiple "
+"shifts."
 msgstr ""
 "Αριθμός εγγραφών εισόδου/εξόδου για αυτήν την ημερομηνία.\n"
 "        \n"
@@ -848,18 +945,20 @@ msgstr ""
 "        • Μορφή: Κείμενο που εμφανίζει το πλήθος (π.χ., \"4 εγγραφές\")\n"
 "        • Σκοπός: Γρήγορη επισκόπηση της δραστηριότητας παρουσίας\n"
 "        \n"
-"        Σημείωση: Πολλαπλές εγγραφές υποδηλώνουν διαλείμματα, ώρες γεύματος ή πολλαπλές βάρδιες."
+"        Σημείωση: Πολλαπλές εγγραφές υποδηλώνουν διαλείμματα, ώρες γεύματος "
+"ή πολλαπλές βάρδιες."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_legal_rate__value
 msgid ""
-"Numeric coefficient. For overtime classes this is a multiplier of the hourly"
-" rate (1.5 = 150%, i.e. +50%); for additive supplements (night work) it is "
-"an amount per hour in the currency below."
+"Numeric coefficient. For overtime classes this is a multiplier of the hourly "
+"rate (1.5 = 150%, i.e. +50%); for additive supplements (night work) it is an "
+"amount per hour in the currency below."
 msgstr ""
-"Числов коефициент. За класове извънреден труд това е множител на часовата "
-"ставка (1,5 = 150%, т.е. +50%); за добавъчни надбавки (нощен труд) е сума на"
-" час в посочената по-долу валута."
+"Αριθμητικός συντελεστής. Για κατηγορίες υπερωριών πρόκειται για "
+"πολλαπλασιαστή της ωριαίας αμοιβής (1.5 = 150%, δηλ. +50%)· για προσθετικά "
+"επιδόματα (νυχτερινή εργασία) πρόκειται για ποσό ανά ώρα στο παρακάτω "
+"νόμισμα."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_overtime
@@ -882,19 +981,25 @@ msgstr "Ώρες Υπερωρίας"
 msgid ""
 "Overtime hours worked during night shift period.\n"
 "        \n"
-"        • Period: Night hours (typically 22:00-06:00) that exceed scheduled time\n"
-"        • Premium: Often paid at highest rate (night premium + overtime premium)\n"
+"        • Period: Night hours (typically 22:00-06:00) that exceed scheduled "
+"time\n"
+"        • Premium: Often paid at highest rate (night premium + overtime "
+"premium)\n"
 "        • Format: Hours in decimal format (e.g., 1.5 = 1 hour 30 minutes)\n"
 "        \n"
-"        Note: Double premium may apply - both overtime and night shift bonuses."
+"        Note: Double premium may apply - both overtime and night shift "
+"bonuses."
 msgstr ""
 "Ώρες υπερωρίας που πραγματοποιούνται κατά τη διάρκεια νυχτερινής βάρδιας.\n"
 "        \n"
-"        • Περίοδος: Νυχτερινές ώρες (συνήθως 22:00-06:00) που υπερβαίνουν τον προγραμματισμένο χρόνο\n"
-"        • Προσαύξηση: Συχνά αμείβεται με το υψηλότερο ποσοστό (νυχτερινή προσαύξηση + προσαύξηση υπερωρίας)\n"
+"        • Περίοδος: Νυχτερινές ώρες (συνήθως 22:00-06:00) που υπερβαίνουν "
+"τον προγραμματισμένο χρόνο\n"
+"        • Προσαύξηση: Συχνά αμείβεται με το υψηλότερο ποσοστό (νυχτερινή "
+"προσαύξηση + προσαύξηση υπερωρίας)\n"
 "        • Μορφή: Ώρες σε δεκαδική μορφή (π.χ., 1.5 = 1 ώρα 30 λεπτά)\n"
 "        \n"
-"        Σημείωση: Ενδέχεται να ισχύει διπλή προσαύξηση — τόσο για υπερωρία όσο και για νυχτερινή βάρδια."
+"        Σημείωση: Ενδέχεται να ισχύει διπλή προσαύξηση - τόσο για υπερωρία "
+"όσο και για νυχτερινή βάρδια."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra_wizard__overwrite_existing
@@ -924,8 +1029,8 @@ msgid ""
 "Relevant only for additive amount coefficients (e.g. the night-shift "
 "supplement per hour). Multipliers ignore it."
 msgstr ""
-"Приложимо само за коефициенти с добавъчна сума (напр. надбавката за нощна "
-"смяна на час). Множителите не го вземат предвид."
+"Αφορά μόνο τους προσθετικούς συντελεστές ποσού (π.χ. το επίδομα νυχτερινής "
+"βάρδιας ανά ώρα). Οι πολλαπλασιαστές το αγνοούν."
 
 #. module: hr_attendance_late
 #: model:ir.ui.menu,name:hr_attendance_late.menu_hr_attendance_report
@@ -948,7 +1053,8 @@ msgid ""
 "Select employees for attendance calculation recalculation.\n"
 "        \n"
 "        • Selection: Choose one or multiple employees\n"
-"        • Effect: Recalculates overtime, late arrivals, and extra time for selected employees\n"
+"        • Effect: Recalculates overtime, late arrivals, and extra time for "
+"selected employees\n"
 "        • Default: Pre-selected based on current context\n"
 "        \n"
 "        Note: Large employee selections may take longer to process."
@@ -956,20 +1062,22 @@ msgstr ""
 "Επιλέξτε εργαζόμενους για επανυπολογισμό παρουσίας.\n"
 "        \n"
 "        • Επιλογή: Επιλέξτε έναν ή περισσότερους εργαζόμενους\n"
-"        • Αποτέλεσμα: Επανυπολογίζει υπερωρίες, καθυστερήσεις και επιπλέον χρόνο για τους επιλεγμένους εργαζόμενους\n"
+"        • Αποτέλεσμα: Επανυπολογίζει υπερωρίες, καθυστερήσεις και επιπλέον "
+"χρόνο για τους επιλεγμένους εργαζόμενους\n"
 "        • Προεπιλογή: Προεπιλεγμένο βάσει του τρέχοντος πλαισίου\n"
 "        \n"
-"        Σημείωση: Η επιλογή μεγάλου αριθμού εργαζομένων ενδέχεται να απαιτεί περισσότερο χρόνο επεξεργασίας."
+"        Σημείωση: Η επιλογή μεγάλου αριθμού εργαζομένων ενδέχεται να απαιτεί "
+"περισσότερο χρόνο επεξεργασίας."
 
 #. module: hr_attendance_late
 #: model:ir.ui.menu,name:hr_attendance_late.menu_hr_attendance_self_leave
 msgid "Self-leave"
-msgstr "Самоотлъчка"
+msgstr "Αυτοάδεια"
 
 #. module: hr_attendance_late
 #: model:ir.actions.act_window,name:hr_attendance_late.hr_attendance_self_leave_action
 msgid "Self-leave (Early Departures)"
-msgstr "Самоотлъчка (ранни напускания)"
+msgstr "Αυτοάδεια (Πρόωρες Αποχωρήσεις)"
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__shift_number
@@ -984,10 +1092,10 @@ msgid ""
 "'night_supplement', 'min_wage'. Free text so localisation modules can add "
 "their own coefficients."
 msgstr ""
-"Стабилен идентификатор, използван от изчисляването на разходите, напр. "
+"Σταθερό αναγνωριστικό στο οποίο παραπέμπει ο υπολογισμός κόστους, π.χ. "
 "'overtime_workday', 'overtime_weekend', 'overtime_holiday', "
-"'night_supplement', 'min_wage'. Свободен текст, така че модулите за "
-"локализация могат да добавят свои собствени коефициенти."
+"'night_supplement', 'min_wage'. Ελεύθερο κείμενο ώστε τα αρθρώματα "
+"τοπικοποίησης να μπορούν να προσθέτουν δικούς τους συντελεστές."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra_wizard__start_date
@@ -1001,17 +1109,22 @@ msgid ""
 "        \n"
 "        • Range: Beginning of the date range to recalculate\n"
 "        • Default: 30 days ago or specific date from context\n"
-"        • Effect: All attendance records from this date forward will be processed\n"
+"        • Effect: All attendance records from this date forward will be "
+"processed\n"
 "        \n"
-"        Note: Earlier dates will include more historical data in the calculation."
+"        Note: Earlier dates will include more historical data in the "
+"calculation."
 msgstr ""
 "Ημερομηνία έναρξης για την περίοδο υπολογισμού παρουσίας.\n"
 "        \n"
 "        • Εύρος: Αρχή του χρονικού διαστήματος για επανυπολογισμό\n"
-"        • Προεπιλογή: 30 ημέρες πριν ή συγκεκριμένη ημερομηνία από το πλαίσιο\n"
-"        • Αποτέλεσμα: Όλες οι εγγραφές παρουσίας από αυτήν την ημερομηνία και μετά θα υποβληθούν σε επεξεργασία\n"
+"        • Προεπιλογή: 30 ημέρες πριν ή συγκεκριμένη ημερομηνία από το "
+"πλαίσιο\n"
+"        • Αποτέλεσμα: Όλες οι εγγραφές παρουσίας από αυτήν την ημερομηνία "
+"και μετά θα υποβληθούν σε επεξεργασία\n"
 "        \n"
-"        Σημείωση: Προγενέστερες ημερομηνίες θα συμπεριλάβουν περισσότερα ιστορικά δεδομένα στον υπολογισμό."
+"        Σημείωση: Προγενέστερες ημερομηνίες θα συμπεριλάβουν περισσότερα "
+"ιστορικά δεδομένα στον υπολογισμό."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__department_id
@@ -1019,18 +1132,23 @@ msgid ""
 "The department of the employee (automatically filled).\n"
 "        \n"
 "        • Source: Copied from employee's department\n"
-"        • Purpose: Used for department-specific attendance reports and calculations\n"
-"        • Read-only: Updates automatically when employee's department changes\n"
+"        • Purpose: Used for department-specific attendance reports and "
+"calculations\n"
+"        • Read-only: Updates automatically when employee's department "
+"changes\n"
 "        \n"
 "        Note: Stored for faster reporting and filtering by department."
 msgstr ""
 "Το τμήμα του εργαζομένου (συμπληρώνεται αυτόματα).\n"
 "        \n"
 "        • Πηγή: Αντιγράφεται από το τμήμα του εργαζομένου\n"
-"        • Σκοπός: Χρησιμοποιείται για αναφορές και υπολογισμούς παρουσίας ανά τμήμα\n"
-"        • Μόνο ανάγνωση: Ενημερώνεται αυτόματα όταν αλλάζει το τμήμα του εργαζομένου\n"
+"        • Σκοπός: Χρησιμοποιείται για αναφορές και υπολογισμούς παρουσίας "
+"ανά τμήμα\n"
+"        • Μόνο ανάγνωση: Ενημερώνεται αυτόματα όταν αλλάζει το τμήμα του "
+"εργαζομένου\n"
 "        \n"
-"        Σημείωση: Αποθηκεύεται για ταχύτερη δημιουργία αναφορών και φιλτράρισμα ανά τμήμα."
+"        Σημείωση: Αποθηκεύεται για ταχύτερη δημιουργία αναφορών και "
+"φιλτράρισμα ανά τμήμα."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__employee_id
@@ -1041,15 +1159,18 @@ msgid ""
 "        • Effect: All time calculations are specific to this employee\n"
 "        • Cascade: Record is deleted if employee is deleted\n"
 "        \n"
-"        Note: Used to link attendance data with employee work schedules and department settings."
+"        Note: Used to link attendance data with employee work schedules and "
+"department settings."
 msgstr ""
 "Ο εργαζόμενος για τον οποίο πραγματοποιούνται οι υπολογισμοί παρουσίας.\n"
 "        \n"
 "        • Απαιτείται: Πρέπει να επιλεγεί εργαζόμενος\n"
-"        • Αποτέλεσμα: Όλοι οι υπολογισμοί χρόνου αφορούν αποκλειστικά αυτόν τον εργαζόμενο\n"
+"        • Αποτέλεσμα: Όλοι οι υπολογισμοί χρόνου αφορούν αποκλειστικά αυτόν "
+"τον εργαζόμενο\n"
 "        • Κλιμάκωση: Η εγγραφή διαγράφεται εάν διαγραφεί ο εργαζόμενος\n"
 "        \n"
-"        Σημείωση: Χρησιμοποιείται για τη σύνδεση δεδομένων παρουσίας με τα προγράμματα εργασίας και τις ρυθμίσεις τμήματος του εργαζομένου."
+"        Σημείωση: Χρησιμοποιείται για τη σύνδεση δεδομένων παρουσίας με τα "
+"προγράμματα εργασίας και τις ρυθμίσεις τμήματος του εργαζομένου."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__for_date
@@ -1058,22 +1179,70 @@ msgid ""
 "\n"
 "        • Format: YYYY-MM-DD\n"
 "        • Purpose: Groups all attendance records for a single working day\n"
-"        • Effect: All time calculations are based on this date's attendance records\n"
+"        • Effect: All time calculations are based on this date's attendance "
+"records\n"
 "\n"
-"        Note: This is the primary date used for reporting and time calculations."
+"        Note: This is the primary date used for reporting and time "
+"calculations."
 msgstr ""
-"Η συγκεκριμένη ημερομηνία για την οποία πραγματοποιούνται οι υπολογισμοί παρουσίας.\n"
+"Η συγκεκριμένη ημερομηνία για την οποία πραγματοποιούνται οι υπολογισμοί "
+"παρουσίας.\n"
 "\n"
 "        • Μορφή: YYYY-MM-DD\n"
-"        • Σκοπός: Ομαδοποιεί όλες τις εγγραφές παρουσίας μιας εργάσιμης ημέρας\n"
-"        • Αποτέλεσμα: Όλοι οι υπολογισμοί χρόνου βασίζονται στις εγγραφές παρουσίας αυτής της ημερομηνίας\n"
+"        • Σκοπός: Ομαδοποιεί όλες τις εγγραφές παρουσίας μιας εργάσιμης "
+"ημέρας\n"
+"        • Αποτέλεσμα: Όλοι οι υπολογισμοί χρόνου βασίζονται στις εγγραφές "
+"παρουσίας αυτής της ημερομηνίας\n"
 "\n"
-"        Σημείωση: Αυτή είναι η κύρια ημερομηνία που χρησιμοποιείται για αναφορές και υπολογισμούς χρόνου."
+"        Σημείωση: Αυτή είναι η κύρια ημερομηνία που χρησιμοποιείται για "
+"αναφορές και υπολογισμούς χρόνου."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__theoretical_work_time
 msgid "Theoretical Work Time"
 msgstr "Θεωρητικός Χρόνος Εργασίας"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__first_in
+msgid ""
+"Time of the first badge-in for the day, in the employee's local time.\n"
+"\n"
+"        • Format: Hour as a decimal (e.g., 8.25 = 08:15)\n"
+"        • Source: The earliest check-in of the day's attendance records\n"
+"        • Usage: The classic \"came at / left at\" column on daily and "
+"monthly\n"
+"          working-time reports, and averages on the Working Time dashboard."
+msgstr ""
+"Ώρα της πρώτης εισόδου (badge-in) για την ημέρα, στην τοπική ώρα του "
+"υπαλλήλου.\n"
+"\n"
+"        • Μορφή: Ώρα ως δεκαδικός αριθμός (π.χ. 8.25 = 08:15)\n"
+"        • Πηγή: Η νωρίτερη είσοδος από τις εγγραφές παρουσίας της ημέρας\n"
+"        • Χρήση: Η κλασική στήλη \"ήρθε στις / έφυγε στις\" στις ημερήσιες "
+"και μηνιαίες\n"
+"          αναφορές χρόνου εργασίας, καθώς και οι μέσοι όροι στον πίνακα "
+"ελέγχου Χρόνου Εργασίας."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__last_out
+msgid ""
+"Time of the last badge-out for the day, in the employee's local time.\n"
+"\n"
+"        • Format: Hour as a decimal (e.g., 17.5 = 17:30)\n"
+"        • Source: The latest check-out of the day's attendance records\n"
+"        • Usage: The classic \"came at / left at\" column on daily and "
+"monthly\n"
+"          working-time reports, and averages on the Working Time dashboard."
+msgstr ""
+"Ώρα της τελευταίας εξόδου (badge-out) για την ημέρα, στην τοπική ώρα του "
+"υπαλλήλου.\n"
+"\n"
+"        • Μορφή: Ώρα ως δεκαδικός αριθμός (π.χ. 17.5 = 17:30)\n"
+"        • Πηγή: Η αργότερη έξοδος από τις εγγραφές παρουσίας της ημέρας\n"
+"        • Χρήση: Η κλασική στήλη \"ήρθε στις / έφυγε στις\" στις ημερήσιες "
+"και μηνιαίες\n"
+"          αναφορές χρόνου εργασίας, καθώς και οι μέσοι όροι στον πίνακα "
+"ελέγχου Χρόνου Εργασίας."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_department__ignore_early_come_time
@@ -1082,8 +1251,7 @@ msgstr "Θεωρητικός Χρόνος Εργασίας"
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_department__ignore_late_time
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_department__ignore_overtime
 msgid ""
-"Times smaller than this will be ignored in the calculations on a daily "
-"basis."
+"Times smaller than this will be ignored in the calculations on a daily basis."
 msgstr ""
 "Χρόνοι μικρότεροι από αυτήν την τιμή θα αγνοούνται στους υπολογισμούς σε "
 "ημερήσια βάση."
@@ -1099,47 +1267,61 @@ msgid ""
 "Total hours actually worked on this date (including day and night time).\n"
 "        \n"
 "        • Format: Hours in decimal format (e.g., 8.5 = 8 hours 30 minutes)\n"
-"        • Calculation: Sum of all work periods between check-in and check-out\n"
+"        • Calculation: Sum of all work periods between check-in and check-"
+"out\n"
 "        • Includes: Both regular hours and overtime periods\n"
 "        \n"
-"        Note: This is the total productive time, excluding breaks and non-work periods."
+"        Note: This is the total productive time, excluding breaks and non-"
+"work periods."
 msgstr ""
-"Συνολικές ώρες που εργάστηκε πραγματικά ο εργαζόμενος αυτήν την ημερομηνία (συμπεριλαμβανομένων ημερήσιων και νυχτερινών ωρών).\n"
+"Συνολικές ώρες που εργάστηκε πραγματικά ο εργαζόμενος αυτήν την ημερομηνία "
+"(συμπεριλαμβανομένων ημερήσιων και νυχτερινών ωρών).\n"
 "        \n"
 "        • Μορφή: Ώρες σε δεκαδική μορφή (π.χ., 8.5 = 8 ώρες 30 λεπτά)\n"
-"        • Υπολογισμός: Άθροισμα όλων των περιόδων εργασίας μεταξύ καταγραφών εισόδου και εξόδου\n"
+"        • Υπολογισμός: Άθροισμα όλων των περιόδων εργασίας μεταξύ καταγραφών "
+"εισόδου και εξόδου\n"
 "        • Περιλαμβάνει: Τόσο κανονικές ώρες όσο και περιόδους υπερωρίας\n"
 "        \n"
-"        Σημείωση: Αυτός είναι ο συνολικός παραγωγικός χρόνος, εξαιρουμένων διαλειμμάτων και περιόδων μη εργασίας."
+"        Σημείωση: Αυτός είναι ο συνολικός παραγωγικός χρόνος, εξαιρουμένων "
+"διαλειμμάτων και περιόδων μη εργασίας."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_resource_calendar__daily_ranges_are_shifts
 msgid ""
-"Treat each daily time range as a separate shift for attendance calculations.\n"
+"Treat each daily time range as a separate shift for attendance "
+"calculations.\n"
 "        \n"
-"        • When enabled: Each time range (e.g., 9-12, 13-17) is considered a separate shift\n"
-"        • When disabled: All time ranges for a day are treated as one continuous work period\n"
+"        • When enabled: Each time range (e.g., 9-12, 13-17) is considered a "
+"separate shift\n"
+"        • When disabled: All time ranges for a day are treated as one "
+"continuous work period\n"
 "        • Effect: Affects overtime and break calculations\n"
 "        \n"
-"        Note: Enable this for companies with formal shift systems or split work schedules."
+"        Note: Enable this for companies with formal shift systems or split "
+"work schedules."
 msgstr ""
-"Αντιμετωπίστε κάθε ημερήσιο χρονικό διάστημα ως ξεχωριστή βάρδια για τους υπολογισμούς παρουσίας.\n"
+"Αντιμετωπίστε κάθε ημερήσιο χρονικό διάστημα ως ξεχωριστή βάρδια για τους "
+"υπολογισμούς παρουσίας.\n"
 "        \n"
-"        • Όταν είναι ενεργοποιημένο: Κάθε χρονικό διάστημα (π.χ., 9-12, 13-17) θεωρείται ξεχωριστή βάρδια\n"
-"        • Όταν είναι απενεργοποιημένο: Όλα τα χρονικά διαστήματα μιας ημέρας αντιμετωπίζονται ως μία ενιαία περίοδος εργασίας\n"
-"        • Αποτέλεσμα: Επηρεάζει τους υπολογισμούς υπερωριών και διαλειμμάτων\n"
+"        • Όταν είναι ενεργοποιημένο: Κάθε χρονικό διάστημα (π.χ., 9-12, "
+"13-17) θεωρείται ξεχωριστή βάρδια\n"
+"        • Όταν είναι απενεργοποιημένο: Όλα τα χρονικά διαστήματα μιας ημέρας "
+"αντιμετωπίζονται ως μία ενιαία περίοδος εργασίας\n"
+"        • Αποτέλεσμα: Επηρεάζει τους υπολογισμούς υπερωριών και "
+"διαλειμμάτων\n"
 "        \n"
-"        Σημείωση: Ενεργοποιήστε αυτό για εταιρείες με επίσημα συστήματα βαρδιών ή διαιρεμένα προγράμματα εργασίας."
+"        Σημείωση: Ενεργοποιήστε αυτό για εταιρείες με επίσημα συστήματα "
+"βαρδιών ή διαιρεμένα προγράμματα εργασίας."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_legal_rate__date_from
 msgid "Valid From"
-msgstr "Важи от"
+msgstr "Ισχύει Από"
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_legal_rate__value
 msgid "Value"
-msgstr "Стойност"
+msgstr "Τιμή"
 
 #. module: hr_attendance_late
 #: model:ir.model,name:hr_attendance_late.model_hr_attendance_extra_wizard
@@ -1154,24 +1336,24 @@ msgstr "Χθες"
 #. module: hr_attendance_late
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_legal_rate_view_form
 msgid "e.g. Overtime — rest day"
-msgstr "напр. Извънреден труд — почивен ден"
+msgstr "π.χ. Υπερωρία - ημέρα ανάπαυσης"
 
 #. module: hr_attendance_late
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_legal_rate_view_form
 msgid "e.g. overtime_weekend"
-msgstr "напр. overtime_weekend"
+msgstr "π.χ. overtime_weekend"
 
 #. module: hr_attendance_late
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_form
 msgid "hr_attendance_extra_form"
-msgstr "Допълнително присъствие"
+msgstr "hr_attendance_extra_form"
 
 #. module: hr_attendance_late
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_tree
 msgid "hr_attendance_extra_tree"
-msgstr "Допълнително присъствие"
+msgstr "hr_attendance_extra_tree"
 
 #. module: hr_attendance_late
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
 msgid "string"
-msgstr "Текст"
+msgstr "string"

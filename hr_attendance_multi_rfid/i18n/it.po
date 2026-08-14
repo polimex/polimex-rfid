@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-05 16:23+0000\n"
-"PO-Revision-Date: 2026-03-06 17:18\n"
+"POT-Creation-Date: 2026-08-14 13:55+0000\n"
+"PO-Revision-Date: 2026-08-14 17:14\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it\n"
@@ -17,9 +17,40 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"%(count)s other person(s) had no door events between the dates you chose, so "
+"their attendance was left as it was."
+msgstr ""
+"%(count)s altre persone non hanno avuto eventi di accesso tra le date "
+"scelte, pertanto le loro presenze sono state lasciate invariate."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"%(count)s person(s) had door events that made no attendance at all, so their "
+"attendance for that period was cleared and nothing was put back: %(people)s."
+msgstr ""
+"%(count)s persone hanno avuto eventi di accesso che non hanno generato "
+"alcuna presenza, pertanto la loro presenza per quel periodo è stata "
+"cancellata e non è stato ripristinato nulla: %(people)s."
+
+#. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.rfid_hr_employee_view_search
 msgid "Absent Employees"
 msgstr "Dipendenti assenti"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_needaction
+msgid "Action Needed"
+msgstr "Azione richiesta"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_attachment_count
+msgid "Attachment Count"
+msgstr "Numero allegati"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model,name:hr_attendance_multi_rfid.model_hr_attendance
@@ -32,9 +63,99 @@ msgid "Attendance"
 msgstr "Presenza"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model,name:hr_attendance_multi_rfid.model_hr_attendance_recalc_run
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
+msgid "Attendance Rebuild"
+msgstr "Ricostruzione presenze"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model,name:hr_attendance_multi_rfid.model_hr_attendance_recalc_log
+msgid "Attendance Rebuild Line"
+msgstr "Riga ricostruzione presenze"
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/wizards/hr_recalc_attendance_wizard.py:0
+#: model:ir.actions.act_window,name:hr_attendance_multi_rfid.hr_attendance_recalc_run_action
+#: model:ir.ui.menu,name:hr_attendance_multi_rfid.hr_attendance_recalc_run_menu
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_list
+msgid "Attendance Rebuilds"
+msgstr "Ricostruzioni presenze"
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/wizards/hr_recalc_attendance_wizard.py:0
+msgid ""
+"Attendance cannot be rebuilt right now: the scheduled task that does the "
+"work is switched off. Please ask your system administrator to switch it back "
+"on."
+msgstr ""
+"Al momento non è possibile ricostruire le presenze: l'attività pianificata "
+"che esegue l'operazione è disattivata. Chiedere all'amministratore di "
+"sistema di riattivarla."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/wizards/hr_recalc_attendance_wizard.py:0
+msgid ""
+"Attendance cannot be rebuilt right now: the scheduled task that does the "
+"work is switched off. Switch it back on and try again."
+msgstr ""
+"Al momento non è possibile ricostruire le presenze: l'attività pianificata "
+"che esegue l'operazione è disattivata. Riattivarla e riprovare."
+
+#. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_rfid_view_user_ev_form_inherit_hr_attendance_multi_rfid
 msgid "Attendance data"
 msgstr "Dati presenze"
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/wizards/hr_recalc_attendance_wizard.py:0
+msgid ""
+"Attendance for %(count)s person(s) is being rebuilt in the background. You "
+"can carry on working - this page shows how far it has got."
+msgstr ""
+"La presenza di %(count)s persone è in fase di ricostruzione in background. È "
+"possibile continuare a lavorare: questa pagina mostra a che punto è arrivata "
+"l'operazione."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"Attendance for %(count)s person(s) is not for this system to rebuild and was "
+"left untouched: %(people)s. The line below for each of them says why, and "
+"what to do instead - asking for the same rebuild again will get the same "
+"answer."
+msgstr ""
+"La presenza di %(count)s persone non può essere ricostruita da questo "
+"sistema ed è stata lasciata invariata: %(people)s. La riga sottostante per "
+"ciascuna di esse indica il motivo e cosa fare invece: richiedere di nuovo la "
+"stessa ricostruzione produrrà lo stesso risultato."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"Attendance for %(person)s could not be rebuilt and was left exactly as it "
+"was. Your system administrator can see what went wrong."
+msgstr ""
+"Non è stato possibile ricostruire la presenza di %(person)s, che è stata "
+"lasciata esattamente com'era. L'amministratore di sistema può verificare "
+"cosa è andato storto."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"Attendance for %(person)s was not rebuilt.\n"
+"\n"
+"%(reason)s"
+msgstr ""
+"La presenza di %(person)s non è stata ricostruita.\n"
+"\n"
+"%(reason)s"
 
 #. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_view_filter_inherit
@@ -48,9 +169,37 @@ msgid "Attendance for {}"
 msgstr "Presenze per {}"
 
 #. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid "Attendance has been rebuilt for %(count)s person(s)."
+msgstr "La presenza è stata ricostruita per %(count)s persone."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__date_from
+msgid "Attendance is rebuilt from this day onwards."
+msgstr "La presenza viene ricostruita a partire da questo giorno."
+
+#. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_rfid_view_zone_form_inherit_hr_attendance_multi_rfid
 msgid "Attendance options"
 msgstr "Opzioni presenze"
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid "Attendance rebuild"
+msgstr "Ricostruzione presenze"
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid "Attendance rebuild %(start)s - %(end)s"
+msgstr "Ricostruzione presenze %(start)s - %(end)s"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__attendance_count
+msgid "Attendance records"
+msgstr "Registrazioni presenze"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__auto_close_time_for_zone
@@ -60,8 +209,8 @@ msgstr "Chiusura automatica ore lavorate"
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_zone__delete_attendance_if_late_more_than
 msgid ""
-"Automatically delete attendance records if the employee is late by more than"
-" this many hours. This helps maintain data quality by removing likely "
+"Automatically delete attendance records if the employee is late by more than "
+"this many hours. This helps maintain data quality by removing likely "
 "erroneous entries. Set to 0 to disable this feature. Example: Set to 4 to "
 "delete attendance if someone is more than 4 hours late."
 msgstr ""
@@ -109,11 +258,31 @@ msgid "Check Out"
 msgstr "Uscita"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_log__status__no_result
+msgid "Cleared, nothing put back"
+msgstr "Cancellata, nulla ripristinato"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__company_id
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__company_id
+msgid "Company"
+msgstr "Azienda"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
+msgid "Continue now"
+msgstr "Continua ora"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__create_uid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__create_uid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__create_uid
 msgid "Created by"
 msgstr "Creato da"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__create_date
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__create_date
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__create_date
 msgid "Created on"
 msgstr "Creato il"
@@ -126,14 +295,14 @@ msgid ""
 "managers."
 msgstr ""
 "Data e ora in cui il dipendente ha effettuato la timbratura entrata. Viene "
-"registrata automaticamente all'ingresso in una zona presenze RFID oppure può"
-" essere impostata manualmente dai responsabili HR."
+"registrata automaticamente all'ingresso in una zona presenze RFID oppure può "
+"essere impostata manualmente dai responsabili HR."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance__check_out
 msgid ""
-"Date and time when the employee checked out from work. This is automatically"
-" recorded when leaving an RFID attendance zone or can be manually set by HR "
+"Date and time when the employee checked out from work. This is automatically "
+"recorded when leaving an RFID attendance zone or can be manually set by HR "
 "managers."
 msgstr ""
 "Data e ora in cui il dipendente ha effettuato la timbratura uscita. Viene "
@@ -157,6 +326,8 @@ msgstr "Reparti"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__display_name
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__display_name
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__display_name
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__display_name
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_employee__display_name
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_event_user__display_name
@@ -165,12 +336,18 @@ msgid "Display Name"
 msgstr "Nome visualizzato"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__event_count
+msgid "Door events"
+msgstr "Eventi di accesso"
+
+#. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_rfid_view_user_ev_form_inherit_hr_attendance_multi_rfid
 msgid "Emlpoyee's Attendance"
 msgstr "Presenze del dipendente"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model,name:hr_attendance_multi_rfid.model_hr_employee
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__employee_id
 msgid "Employee"
 msgstr "Dipendente"
 
@@ -181,11 +358,12 @@ msgid ""
 "stored to maintain historical accuracy even if the employee later changes "
 "departments."
 msgstr ""
-"Reparto del dipendente al momento della registrazione della presenza. Questo"
-" campo viene memorizzato per garantire l'accuratezza storica anche qualora "
-"il dipendente cambi reparto in seguito."
+"Reparto del dipendente al momento della registrazione della presenza. Questo "
+"campo viene memorizzato per garantire l'accuratezza storica anche qualora il "
+"dipendente cambi reparto in seguito."
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__employee_ids
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__employee_ids
 msgid "Employees"
 msgstr "Dipendenti"
@@ -218,12 +396,76 @@ msgstr ""
 "corrisponde alla data odierna."
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_run__state__done
+msgid "Finished"
+msgstr "Completato"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_follower_ids
+msgid "Followers"
+msgstr "Follower"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Follower (Partner)"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__date_from
+msgid "From"
+msgstr "Da"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.actions.server,name:hr_attendance_multi_rfid.hr_attendance_multi_rfid_autoclose_cron_ir_actions_server
 msgid "HR RFID Multi Attendance: Auto-close incomplete attendances"
 msgstr "HR RFID Multi Presenze: Chiusura automatica presenze incomplete"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.actions.server,name:hr_attendance_multi_rfid.hr_attendance_multi_rfid_recalc_cron_ir_actions_server
+msgid "HR RFID Multi Attendance: Continue attendance rebuilds"
+msgstr "HR RFID Multi Attendance: Continua le ricostruzioni delle presenze"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__has_message
+msgid "Has Message"
+msgstr "Ha un messaggio"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__progress
+msgid "How far along the rebuild is."
+msgstr "A che punto è la ricostruzione."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__attendance_count
+msgid "How many attendance records came out of them."
+msgstr "Quante registrazioni di presenza ne sono derivate."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__event_count
+msgid "How many door events were replayed for this person."
+msgstr "Quanti eventi di accesso sono stati riprodotti per questa persona."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__done_count
+msgid ""
+"How many of the people on the list the rebuild has got through so far - "
+"whether or not there was anything to rebuild for them, and whether or not it "
+"worked. What came of each one is on the list below."
+msgstr ""
+"Quante delle persone nell'elenco sono state finora elaborate dalla "
+"ricostruzione, indipendentemente dal fatto che ci fosse qualcosa da "
+"ricostruire per loro e che l'operazione sia riuscita. L'esito per ciascuna "
+"di esse è riportato nell'elenco sottostante."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__total_count
+msgid "How many people this rebuild covers."
+msgstr "Quante persone riguarda questa ricostruzione."
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__id
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__id
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__id
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__id
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_employee__id
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_event_user__id
@@ -232,38 +474,74 @@ msgid "ID"
 msgstr "ID"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Se selezionato, i nuovi messaggi richiedono la tua attenzione."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_has_error
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Se selezionato, alcuni messaggi presentano un errore di consegna."
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__in_zone_id
 msgid "In Zone"
 msgstr "Nella zona"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_run__state__running
+msgid "In progress"
+msgstr "In corso"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_event_user__in_or_out
 msgid ""
-"Indicates whether this RFID event was processed as attendance check-in or check-out.\n"
+"Indicates whether this RFID event was processed as attendance check-in or "
+"check-out.\n"
 "\n"
 "• Check In: Employee entered an attendance zone\n"
 "• Check Out: Employee left an attendance zone  \n"
-"• No Info: Event not processed for attendance (may be non-attendance zone or error)\n"
+"• No Info: Event not processed for attendance (may be non-attendance zone or "
+"error)\n"
 "\n"
-"This field is automatically set when recalculating attendance from RFID events."
+"This field is automatically set when recalculating attendance from RFID "
+"events."
 msgstr ""
-"Indica se questo evento RFID è stato elaborato come timbratura entrata o timbratura uscita.\n"
+"Indica se questo evento RFID è stato elaborato come timbratura entrata o "
+"timbratura uscita.\n"
 "\n"
 "• Check In: il dipendente è entrato in una zona presenze\n"
 "• Check Out: il dipendente ha lasciato una zona presenze\n"
-"• Nessuna informazione: evento non elaborato per le presenze (zona non presenze o errore)\n"
+"• Nessuna informazione: evento non elaborato per le presenze (zona non "
+"presenze o errore)\n"
 "\n"
-"Questo campo viene impostato automaticamente durante il ricalcolo delle presenze dagli eventi RFID."
+"Questo campo viene impostato automaticamente durante il ricalcolo delle "
+"presenze dagli eventi RFID."
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_is_follower
+msgid "Is Follower"
+msgstr "È Follower"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__write_uid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__write_uid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__write_uid
 msgid "Last Updated by"
 msgstr "Ultimo aggiornamento da"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__write_date
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__write_date
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__write_date
 msgid "Last Updated on"
 msgstr "Ultimo aggiornamento il"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__date_to
+msgid "Last day the rebuild covers."
+msgstr "Ultimo giorno coperto dalla ricostruzione."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__max_time_in_zone
@@ -278,17 +556,161 @@ msgid ""
 "excessively long attendance records. Set to 0 to disable automatic closure. "
 "Example: 12 hours for a standard work day."
 msgstr ""
-"Numero massimo di ore che un dipendente può trascorrere nella zona prima che"
-" la presenza venga chiusa automaticamente. Questo evita che le timbrature "
-"uscita dimenticate generino registrazioni di presenza eccessivamente lunghe."
-" Impostare a 0 per disabilitare la chiusura automatica. Esempio: 12 ore per "
+"Numero massimo di ore che un dipendente può trascorrere nella zona prima che "
+"la presenza venga chiusa automaticamente. Questo evita che le timbrature "
+"uscita dimenticate generino registrazioni di presenza eccessivamente lunghe. "
+"Impostare a 0 per disabilitare la chiusura automatica. Esempio: 12 ore per "
 "una giornata lavorativa standard."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_has_error
+msgid "Message Delivery error"
+msgstr "Errore di consegna messaggio"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_ids
+msgid "Messages"
+msgstr "Messaggi"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__name
+msgid "Name"
+msgstr "Nome"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__in_or_out__no_info
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_vending_event__in_or_out__no_info
 msgid "No Info"
 msgstr "Nessuna informazione"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.actions.act_window,help:hr_attendance_multi_rfid.hr_attendance_recalc_run_action
+msgid "No attendance has been rebuilt yet"
+msgstr "Nessuna presenza è stata ancora ricostruita"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
+msgid ""
+"No attendance was rebuilt. Read the message below\n"
+"                            for what happened - most often nobody on this "
+"list\n"
+"                            had a door event between the dates chosen, "
+"which\n"
+"                            means no area is set to count towards attendance."
+msgstr ""
+"Nessuna presenza è stata ricostruita. Leggere il messaggio sottostante per "
+"sapere cosa è successo - il caso più comune è che nessuna delle persone in "
+"elenco abbia avuto un evento di accesso tra le date scelte, il che significa "
+"che nessuna area è impostata per essere conteggiata ai fini della presenza."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_log__status__no_events
+msgid "No door events"
+msgstr "Nessun evento di accesso"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_log__status__error
+msgid "Not rebuilt"
+msgstr "Non ricostruita"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_run__state__nothing
+msgid "Nothing to rebuild"
+msgstr "Niente da ricostruire"
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"Nothing was rebuilt. %(count)s person(s) did have door events between the "
+"dates you chose, but those events did not make a single attendance record: "
+"%(people)s. Their attendance for that period was cleared and nothing was put "
+"back. This normally means the doors those events came from have no reader "
+"set as the way in. Check the readers on those doors, then start the rebuild "
+"again."
+msgstr ""
+"Non è stato ricostruito nulla. %(count)s persone hanno avuto eventi di "
+"accesso tra le date scelte, ma tali eventi non hanno generato alcuna "
+"registrazione di presenza: %(people)s. La loro presenza per quel periodo è "
+"stata cancellata e non è stato ripristinato nulla. Questo normalmente "
+"significa che le porte da cui provengono tali eventi non hanno un lettore "
+"impostato come ingresso. Controllare i lettori su quelle porte, quindi "
+"avviare di nuovo la ricostruzione."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"Nothing was rebuilt: none of the %(count)s person(s) had a single door event "
+"between the dates you chose, so their attendance was left exactly as it was. "
+"The usual reason is that no area is set to count towards attendance, which "
+"leaves no doors to read; otherwise nobody passed those doors in that period. "
+"Check the areas, then start the rebuild again."
+msgstr ""
+"Non è stato ricostruito nulla: nessuna delle %(count)s persone ha avuto un "
+"solo evento di accesso tra le date scelte, pertanto la loro presenza è stata "
+"lasciata esattamente com'era. Il motivo più comune è che nessuna area è "
+"impostata per essere conteggiata ai fini della presenza, il che non lascia "
+"porte da leggere; in alternativa nessuno è passato da quelle porte in quel "
+"periodo. Controllare le aree, quindi avviare di nuovo la ricostruzione."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Numero di azioni"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_has_error_counter
+msgid "Number of errors"
+msgstr "Numero di errori"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Numero di messaggi che richiedono un'azione"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Numero di messaggi con errore di consegna"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__log_ids
+msgid "One line per person, with what was rebuilt and what was not."
+msgstr ""
+"Una riga per persona, con l'indicazione di cosa è stato ricostruito e cosa "
+"no."
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
+msgid ""
+"One line per person. \"No door events\" means\n"
+"                                    there was nothing to replay in the "
+"period,\n"
+"                                    so their attendance was left as it was.\n"
+"                                    \"Cleared, nothing put back\" means the "
+"door\n"
+"                                    events made no attendance at all, so "
+"that\n"
+"                                    period is now empty for them. "
+"\"Refused\"\n"
+"                                    means their attendance is not for this\n"
+"                                    system to rebuild - the reason says what "
+"to\n"
+"                                    do instead."
+msgstr ""
+"Una riga per persona. \"Nessun evento di accesso\" significa che non c'era "
+"nulla da riprodurre nel periodo, pertanto la loro presenza è stata lasciata "
+"invariata. \"Cancellata, nulla ripristinato\" significa che gli eventi di "
+"accesso non hanno generato alcuna presenza, pertanto quel periodo ora è "
+"vuoto per loro. \"Rifiutata\" significa che la loro presenza non è "
+"ricostruibile da questo sistema - il motivo indica cosa fare invece."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/wizards/hr_recalc_attendance_wizard.py:0
+msgid "Open the scheduled task"
+msgstr "Apri l'attività pianificata"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__overwrite_check_in
@@ -301,9 +723,34 @@ msgid "Overwrite check-out"
 msgstr "Sovrascrivi timbratura uscita"
 
 #. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
+msgid "People"
+msgstr "Persone"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__done_count
+msgid "People dealt with"
+msgstr "Persone elaborate"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__total_count
+msgid "People in total"
+msgstr "Totale persone"
+
+#. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.rfid_hr_employee_view_search
 msgid "Present Employees"
 msgstr "Dipendenti presenti"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__processed_employee_id
+msgid "Processed Employee"
+msgstr "Dipendente elaborato"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__progress
+msgid "Progress"
+msgstr "Avanzamento"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model,name:hr_attendance_multi_rfid.model_hr_rfid_event_user
@@ -322,14 +769,79 @@ msgid "Re-create Attendance records"
 msgstr "Ricrea registrazioni di presenza"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__error_message
+msgid "Reason"
+msgstr "Motivo"
+
+#. module: hr_attendance_multi_rfid
 #: model_terms:ir.actions.act_window,help:hr_attendance_multi_rfid.act_wizard_recompute_attendance_records
 msgid "Rebuild attendance records from RFID events"
 msgstr "Ricostruisci le registrazioni di presenza dagli eventi RFID"
 
 #. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/wizards/hr_recalc_attendance_wizard.py:0
+msgid "Rebuilding attendance"
+msgstr "Ricostruzione presenze in corso"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.actions.act_window,help:hr_attendance_multi_rfid.hr_attendance_recalc_run_action
+msgid ""
+"Rebuilding replays the door events of a period and puts the\n"
+"                    attendance back the way those events say it happened. "
+"Start\n"
+"                    one from an employee list - Re-create Attendance records "
+"-\n"
+"                    and it will appear here."
+msgstr ""
+"La ricostruzione riproduce gli eventi di accesso di un periodo e ripristina "
+"la presenza nel modo in cui tali eventi indicano che è avvenuta. Avviane una "
+"da un elenco dipendenti - Ricrea registrazioni presenze - e apparirà qui."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_log__status__done
+msgid "Rebuilt"
+msgstr "Ricostruita"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__status
+msgid ""
+"Rebuilt: their attendance was replayed from the door events. No door events: "
+"there was nothing in the period to replay, so their attendance was left "
+"alone. Cleared, nothing put back: there were door events, but they made no "
+"attendance at all - the period is now empty for this person. Refused: their "
+"attendance is not for this system to rebuild, and the reason says what to do "
+"instead. Not rebuilt: something went wrong and their attendance is as it was."
+msgstr ""
+"Ricostruita: la loro presenza è stata riprodotta dagli eventi di accesso. "
+"Nessun evento di accesso: non c'era nulla nel periodo da riprodurre, "
+"pertanto la loro presenza è stata lasciata invariata. Cancellata, nulla "
+"ripristinato: c'erano eventi di accesso, ma non hanno generato alcuna "
+"presenza - il periodo ora è vuoto per questa persona. Rifiutata: la loro "
+"presenza non è ricostruibile da questo sistema, e il motivo indica cosa fare "
+"invece. Non ricostruita: qualcosa è andato storto e la loro presenza è "
+"rimasta com'era."
+
+#. module: hr_attendance_multi_rfid
 #: model_terms:ir.actions.act_window,help:hr_attendance_multi_rfid.recreate_attendance_records_action
 msgid "Recalculate attendance for selected employees"
 msgstr "Ricalcola le presenze per i dipendenti selezionati"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_log__status__refused
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_run__state__refused
+msgid "Refused"
+msgstr "Rifiutata"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__run_id
+msgid "Run"
+msgstr "Esegui"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Errore di consegna SMS"
 
 #. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.view_hr_attendance_records_recompute_wizard
@@ -339,26 +851,56 @@ msgstr "Seleziona intervallo di date"
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__employee_ids
 msgid ""
-"Select employees whose attendance records will be recalculated from RFID events.\n"
+"Select employees whose attendance records will be recalculated from RFID "
+"events.\n"
 "        \n"
 "• Process: Existing auto-generated attendance will be deleted and recreated\n"
 "• Manual attendance: Records created manually by HR will be preserved\n"
-"• RFID events: System will analyze all RFID door events to rebuild attendance\n"
+"• RFID events: System will analyze all RFID door events to rebuild "
+"attendance\n"
 "\n"
-"Use this when attendance data seems incorrect or after changing zone settings."
+"Use this when attendance data seems incorrect or after changing zone "
+"settings."
 msgstr ""
-"Seleziona i dipendenti le cui registrazioni di presenza verranno ricalcolate dagli eventi RFID.\n"
+"Seleziona i dipendenti le cui registrazioni di presenza verranno ricalcolate "
+"dagli eventi RFID.\n"
 "        \n"
-"• Elaborazione: le presenze generate automaticamente verranno eliminate e ricreate\n"
-"• Presenze manuali: le registrazioni create manualmente dall'HR verranno conservate\n"
-"• Eventi RFID: il sistema analizzerà tutti gli eventi RFID degli accessi per ricostruire le presenze\n"
+"• Elaborazione: le presenze generate automaticamente verranno eliminate e "
+"ricreate\n"
+"• Presenze manuali: le registrazioni create manualmente dall'HR verranno "
+"conservate\n"
+"• Eventi RFID: il sistema analizzerà tutti gli eventi RFID degli accessi per "
+"ricostruire le presenze\n"
 "\n"
-"Utilizzare questa funzione quando i dati delle presenze sembrano errati o dopo aver modificato le impostazioni della zona."
+"Utilizzare questa funzione quando i dati delle presenze sembrano errati o "
+"dopo aver modificato le impostazioni della zona."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__name
+msgid "Short label of this rebuild, built from the period it covers."
+msgstr ""
+"Etichetta breve di questa ricostruzione, generata dal periodo che copre."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"Something went wrong while this person was being rebuilt. Their attendance "
+"was put back the way it was. Your system administrator can see what happened."
+msgstr ""
+"Qualcosa è andato storto durante la ricostruzione per questa persona. La "
+"loro presenza è stata ripristinata come era. L'amministratore di sistema può "
+"verificare cosa è successo."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__start_date
 msgid "Start Date"
 msgstr "Data di inizio"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__user_id
+msgid "Started by"
+msgstr "Avviata da"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__start_date
@@ -372,6 +914,21 @@ msgstr ""
 "predefinita corrisponde a 30 giorni fa per coprire il periodo recente."
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__state
+msgid "State"
+msgstr "Stato"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__status
+msgid "Status"
+msgstr "Stato"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_run__state__failed
+msgid "Stopped by a problem"
+msgstr "Interrotta da un problema"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance__in_zone_id
 msgid ""
 "The RFID zone where this attendance session is taking place. Set when "
@@ -383,9 +940,99 @@ msgstr ""
 "tracciare in quale area il dipendente sta lavorando."
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__company_id
+msgid "The company the rebuild was started for."
+msgstr "L'azienda per cui è stata avviata la ricostruzione."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__company_id
+msgid "The company this rebuild was started for."
+msgstr "L'azienda per cui è stata avviata questa ricostruzione."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__employee_ids
+msgid ""
+"The people whose attendance is being rebuilt, as chosen when the rebuild was "
+"asked for. Somebody taken on afterwards is not added to it. If this list is "
+"changed while the rebuild is under way, the change applies from the next "
+"person onwards - anybody already finished is not done a second time."
+msgstr ""
+"Le persone la cui presenza è in fase di ricostruzione, così come scelte al "
+"momento della richiesta di ricostruzione. Chi viene assunto in seguito non "
+"viene aggiunto all'elenco. Se questo elenco viene modificato mentre la "
+"ricostruzione è in corso, la modifica si applica a partire dalla persona "
+"successiva: chi è già stato elaborato non viene elaborato una seconda volta."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__current_employee_id
+msgid "The person being rebuilt right now."
+msgstr "La persona la cui presenza è attualmente in fase di ricostruzione."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__employee_id
+msgid "The person this line is about."
+msgstr "La persona a cui si riferisce questa riga."
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
+msgid ""
+"The rebuild carries on in the background, one person\n"
+"                            at a time. You can close this page - press "
+"Continue\n"
+"                            now to refresh what you see."
+msgstr ""
+"La ricostruzione prosegue in background, una persona alla volta. È possibile "
+"chiudere questa pagina - premere Continua ora per aggiornare quanto "
+"visualizzato."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"The rebuild finished, but attendance for %(count)s person(s) could not be "
+"rebuilt: %(people)s. Everybody else is done. Look at the list below, put the "
+"cause right, and start a rebuild for those people again."
+msgstr ""
+"La ricostruzione è terminata, ma la presenza di %(count)s persone non è "
+"stato possibile ricostruirla: %(people)s. Tutti gli altri sono stati "
+"completati. Consultare l'elenco sottostante, correggere la causa e avviare "
+"di nuovo una ricostruzione per quelle persone."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"The rebuild stopped because of a problem in the system itself, and not with "
+"any of the people on the list. Nothing was changed by this attempt. Start it "
+"again; if it stops a second time, your system administrator can see what "
+"went wrong."
+msgstr ""
+"La ricostruzione si è interrotta a causa di un problema nel sistema stesso, "
+"e non in relazione a nessuna delle persone in elenco. Questo tentativo non "
+"ha modificato nulla. Avviarla di nuovo; se si interrompe una seconda volta, "
+"l'amministratore di sistema può verificare cosa è andato storto."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__run_id
+msgid "The rebuild this line belongs to."
+msgstr "La ricostruzione a cui appartiene questa riga."
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.actions.act_window,help:hr_attendance_multi_rfid.hr_attendance_recalc_run_action
+msgid ""
+"The work is done in the background, person by person, so a\n"
+"                    long rebuild does not hold up the screen. Every rebuild\n"
+"                    keeps an account of who was done and who was not."
+msgstr ""
+"Il lavoro viene svolto in background, persona per persona, in modo che una "
+"ricostruzione lunga non blocchi la schermata. Ogni ricostruzione mantiene un "
+"resoconto di chi è stato elaborato e chi no."
+
+#. module: hr_attendance_multi_rfid
 #: model_terms:ir.actions.act_window,help:hr_attendance_multi_rfid.recreate_attendance_records_action
 msgid ""
-"This action allows HR managers to rebuild attendance records based on RFID events.\n"
+"This action allows HR managers to rebuild attendance records based on RFID "
+"events.\n"
 "                    <br>\n"
 "                    <br>\n"
 "                Use cases:\n"
@@ -394,14 +1041,53 @@ msgid ""
 "                • After importing historical RFID events\n"
 "                • To sync attendance with actual door access events"
 msgstr ""
-"Questa azione consente ai responsabili HR di ricostruire le registrazioni di presenza in base agli eventi RFID.\n"
+"Questa azione consente ai responsabili HR di ricostruire le registrazioni di "
+"presenza in base agli eventi RFID.\n"
 "                    <br>\n"
 "                    <br>\n"
 "                Casi d'uso:\n"
-"                • Dopo aver modificato le impostazioni di presenza della zona\n"
+"                • Dopo aver modificato le impostazioni di presenza della "
+"zona\n"
 "                • Quando i dati delle presenze risultano errati\n"
 "                • Dopo aver importato eventi RFID storici\n"
-"                • Per sincronizzare le presenze con gli eventi effettivi di accesso alle porte"
+"                • Per sincronizzare le presenze con gli eventi effettivi di "
+"accesso alle porte"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
+msgid ""
+"This attendance is not for this system to rebuild.\n"
+"                            The list below says why for each person, and "
+"what\n"
+"                            to do instead. Asking for the same rebuild "
+"again\n"
+"                            will give the same answer."
+msgstr ""
+"Questa presenza non è ricostruibile da questo sistema. L'elenco sottostante "
+"indica il motivo per ciascuna persona e cosa fare invece. Richiedere di "
+"nuovo la stessa ricostruzione darà lo stesso risultato."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"This rebuild cannot be carried out: the account that asked for it is no "
+"longer in use. Ask for it again from an active account."
+msgstr ""
+"Questa ricostruzione non può essere eseguita: l'account che l'ha richiesta "
+"non è più in uso. Richiederla di nuovo da un account attivo."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"This rebuild stopped without finishing and has been closed. The people it "
+"had already done keep their rebuilt attendance. Start a new one for the rest "
+"when you are ready."
+msgstr ""
+"Questa ricostruzione si è interrotta senza terminare ed è stata chiusa. Le "
+"persone già elaborate mantengono la presenza ricostruita. Avviarne una nuova "
+"per le restanti quando si è pronti."
 
 #. module: hr_attendance_multi_rfid
 #: model_terms:ir.actions.act_window,help:hr_attendance_multi_rfid.act_wizard_recompute_attendance_records
@@ -411,28 +1097,59 @@ msgid ""
 "                    <br>\n"
 "                    <br>\n"
 "                Key features:\n"
-"                • Deletes auto-generated attendance records in the date range\n"
+"                • Deletes auto-generated attendance records in the date "
+"range\n"
 "                • Preserves manually created attendance records\n"
 "                • Rebuilds attendance from RFID zone entry/exit events\n"
 "                • Handles zone-specific attendance settings and overrides"
 msgstr ""
-"Questa procedura guidata ricalcola le registrazioni di presenza analizzando gli eventi RFID delle porte \n"
+"Questa procedura guidata ricalcola le registrazioni di presenza analizzando "
+"gli eventi RFID delle porte \n"
 "                per i dipendenti e l'intervallo di date selezionati.\n"
 "                    <br>\n"
 "                    <br>\n"
 "                Funzionalità principali:\n"
-"                • Elimina le registrazioni di presenza generate automaticamente nell'intervallo di date\n"
+"                • Elimina le registrazioni di presenza generate "
+"automaticamente nell'intervallo di date\n"
 "                • Conserva le registrazioni di presenza create manualmente\n"
-"                • Ricostruisce le presenze dagli eventi di ingresso/uscita della zona RFID\n"
-"                • Gestisce le impostazioni di presenza specifiche della zona e le relative sostituzioni"
+"                • Ricostruisce le presenze dagli eventi di ingresso/uscita "
+"della zona RFID\n"
+"                • Gestisce le impostazioni di presenza specifiche della zona "
+"e le relative sostituzioni"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__date_to
+msgid "To"
+msgstr "A"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_run__state__queued
+msgid "Waiting to start"
+msgstr "In attesa di avvio"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__website_message_ids
+msgid "Website Messages"
+msgstr "Messaggi del sito web"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__website_message_ids
+msgid "Website communication history"
+msgstr "Cronologia comunicazioni del sito web"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__log_ids
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
+msgid "What happened"
+msgstr "Cosa è successo"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_zone__auto_close_time_for_zone
 msgid ""
 "When attendance is automatically closed (due to max_time_in_zone), this "
-"value will be recorded as the actual worked hours. For example, if max is 12"
-" hours but this is set to 7, the system will record 7 hours of work when "
-"auto-closing."
+"value will be recorded as the actual worked hours. For example, if max is 12 "
+"hours but this is set to 7, the system will record 7 hours of work when auto-"
+"closing."
 msgstr ""
 "Quando la presenza viene chiusa automaticamente (a causa di "
 "max_time_in_zone), questo valore verrà registrato come ore effettive "
@@ -446,8 +1163,8 @@ msgid ""
 "their check-out time will be updated to the current time. Useful for "
 "ensuring the last zone exit is recorded as the actual work end time."
 msgstr ""
-"Se attivata, quando un dipendente che ha già effettuato la timbratura uscita"
-" lascia questa zona, l'orario di uscita verrà aggiornato all'ora corrente. "
+"Se attivata, quando un dipendente che ha già effettuato la timbratura uscita "
+"lascia questa zona, l'orario di uscita verrà aggiornato all'ora corrente. "
 "Utile per garantire che l'ultima uscita dalla zona sia registrata come "
 "orario effettivo di fine lavoro."
 
@@ -460,9 +1177,45 @@ msgid ""
 "time."
 msgstr ""
 "Se attivata, quando un dipendente già in timbratura entrata accede a questa "
-"zona, l'orario di entrata verrà aggiornato all'ora corrente. Utile quando si"
-" desidera che l'ingresso più recente nella zona sia considerato come orario "
+"zona, l'orario di entrata verrà aggiornato all'ora corrente. Utile quando si "
+"desidera che l'ingresso più recente nella zona sia considerato come orario "
 "effettivo di inizio lavoro."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__state
+msgid ""
+"Where this rebuild has got to. It continues on its own; you can close the "
+"page."
+msgstr ""
+"A che punto è arrivata questa ricostruzione. Prosegue autonomamente; è "
+"possibile chiudere la pagina."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__processed_employee_id
+msgid ""
+"Where to carry on from. The work is done one person at a time, and this is "
+"the last one finished - so a rebuild that was interrupted picks up instead "
+"of starting again."
+msgstr ""
+"Da dove riprendere. Il lavoro viene svolto una persona alla volta, e questa "
+"è l'ultima completata - in questo modo una ricostruzione interrotta riprende "
+"invece di ricominciare da capo."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__user_id
+msgid ""
+"Who asked for the rebuild. The work runs in the background, so this is who "
+"gets told when it finishes."
+msgstr ""
+"Chi ha richiesto la ricostruzione. Il lavoro viene eseguito in background, "
+"quindi è questa la persona che viene avvisata al termine."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__error_message
+msgid "Why this person's attendance was not rebuilt, and what to do about it."
+msgstr ""
+"Perché la presenza di questa persona non è stata ricostruita, e cosa fare al "
+"riguardo."
 
 #. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_view_filter_inherit
@@ -473,8 +1226,13 @@ msgstr "Con timbratura uscita"
 #: model:ir.model,name:hr_attendance_multi_rfid.model_hr_attendance_recalc_wizard
 msgid "Wizard for re-create attendance records based on RFID events"
 msgstr ""
-"Procedura guidata per la ricreazione delle registrazioni di presenza in base"
-" agli eventi RFID"
+"Procedura guidata per la ricreazione delle registrazioni di presenza in base "
+"agli eventi RFID"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__current_employee_id
+msgid "Working on"
+msgstr "In elaborazione"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model,name:hr_attendance_multi_rfid.model_hr_rfid_zone

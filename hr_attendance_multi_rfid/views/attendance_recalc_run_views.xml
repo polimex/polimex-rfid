@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_attendance_recalc_run_list" model="ir.ui.view">
+            <field name="name">hr.attendance.recalc.run.list</field>
+            <field name="model">hr.attendance.recalc.run</field>
+            <field name="arch" type="xml">
+                <list string="Attendance Rebuilds" create="0" sample="1">
+                    <field name="name"/>
+                    <field name="user_id"/>
+                    <field name="create_date"/>
+                    <field name="current_employee_id" optional="show"/>
+                    <field name="done_count" optional="hide"/>
+                    <field name="total_count" optional="hide"/>
+                    <field name="progress" widget="progressbar"/>
+                    <field name="state" widget="badge"
+                           decoration-success="state == 'done'"
+                           decoration-warning="state == 'nothing'"
+                           decoration-muted="state == 'refused'"
+                           decoration-danger="state == 'failed'"
+                           decoration-info="state == 'running'"/>
+                    <field name="company_id" column_invisible="True"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="hr_attendance_recalc_run_form" model="ir.ui.view">
+            <field name="name">hr.attendance.recalc.run.form</field>
+            <field name="model">hr.attendance.recalc.run</field>
+            <field name="arch" type="xml">
+                <form string="Attendance Rebuild" create="0">
+                    <header>
+                        <!-- Refresh, because the bar does not move on its own.
+                             Without it people conclude the rebuild has stalled
+                             and start another one. -->
+                        <button name="action_start" type="object"
+                                string="Continue now" class="btn-primary"
+                                invisible="state in ('done', 'nothing', 'refused', 'failed')"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="queued,running,done"/>
+                    </header>
+                    <sheet>
+                        <div class="alert alert-info" role="status"
+                             invisible="state not in ('queued', 'running')">
+                            The rebuild carries on in the background, one person
+                            at a time. You can close this page - press Continue
+                            now to refresh what you see.
+                        </div>
+                        <!-- A rebuild that replayed nothing looks finished
+                             unless it says so. The commonest cause is a
+                             setting the operator can put right at once. -->
+                        <div class="alert alert-warning" role="alert"
+                             invisible="state != 'nothing'">
+                            No attendance was rebuilt. Read the message below
+                            for what happened - most often nobody on this list
+                            had a door event between the dates chosen, which
+                            means no area is set to count towards attendance.
+                        </div>
+                        <!-- Not a failure and not something to try again:
+                             saying so on the record stops the operator from
+                             starting the same rebuild a second time and
+                             getting the same answer. -->
+                        <div class="alert alert-info" role="alert"
+                             invisible="state != 'refused'">
+                            This attendance is not for this system to rebuild.
+                            The list below says why for each person, and what
+                            to do instead. Asking for the same rebuild again
+                            will give the same answer.
+                        </div>
+                        <div class="oe_title">
+                            <h1><field name="name" readonly="1"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="user_id" readonly="1"/>
+                                <field name="company_id" readonly="1" groups="base.group_multi_company"/>
+                                <field name="date_from" readonly="1"/>
+                                <field name="date_to" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="current_employee_id" readonly="1"/>
+                                <field name="progress" widget="progressbar" readonly="1"/>
+                                <field name="done_count" readonly="1"/>
+                                <field name="total_count" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="What happened" name="log">
+                                <p class="text-muted">
+                                    One line per person. "No door events" means
+                                    there was nothing to replay in the period,
+                                    so their attendance was left as it was.
+                                    "Cleared, nothing put back" means the door
+                                    events made no attendance at all, so that
+                                    period is now empty for them. "Refused"
+                                    means their attendance is not for this
+                                    system to rebuild - the reason says what to
+                                    do instead.
+                                </p>
+                                <field name="log_ids" nolabel="1" readonly="1">
+                                    <list create="0" delete="0">
+                                        <field name="employee_id"/>
+                                        <field name="event_count"/>
+                                        <field name="attendance_count"/>
+                                        <field name="status" widget="badge"
+                                               decoration-danger="status == 'error'"
+                                               decoration-warning="status in ('no_events', 'no_result')"
+                                               decoration-info="status == 'refused'"/>
+                                        <field name="error_message"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="People" name="employees">
+                                <field name="employee_ids" nolabel="1" readonly="1"
+                                       widget="many2many_tags"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_attendance_recalc_run_action" model="ir.actions.act_window">
+            <field name="name">Attendance Rebuilds</field>
+            <field name="res_model">hr.attendance.recalc.run</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No attendance has been rebuilt yet
+                </p>
+                <p>
+                    Rebuilding replays the door events of a period and puts the
+                    attendance back the way those events say it happened. Start
+                    one from an employee list - Re-create Attendance records -
+                    and it will appear here.
+                </p>
+                <p>
+                    The work is done in the background, person by person, so a
+                    long rebuild does not hold up the screen. Every rebuild
+                    keeps an account of who was done and who was not.
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="hr_attendance_recalc_run_menu"
+                  name="Attendance Rebuilds"
+                  parent="hr_attendance.menu_hr_attendance_root"
+                  action="hr_attendance_recalc_run_action"
+                  groups="hr_attendance.group_hr_attendance_manager"
+                  sequence="50"/>
+    </data>
+</odoo>

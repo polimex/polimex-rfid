@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-05 16:23+0000\n"
-"PO-Revision-Date: 2026-03-06 17:19\n"
+"POT-Creation-Date: 2026-08-14 13:55+0000\n"
+"PO-Revision-Date: 2026-08-14 17:18\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it\n"
@@ -40,6 +40,27 @@ msgstr ""
 "Sei sicuro di voler avviare l'importazione di TUTTI I RECORD ESISTENTI?"
 
 #. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__url_token
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__url_token
+msgid ""
+"Bearer token that authenticates this Odoo instance with the legacy cloud's "
+"REST API. Generate one from your account on the source cloud (My account → "
+"API Keys) and paste it here."
+msgstr ""
+"Token Bearer che autentica questa istanza Odoo con la REST API del cloud "
+"legacy. Generane uno dal tuo account sul cloud sorgente (Il mio account → "
+"Chiavi API) e incollalo qui."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__import_as
+msgid ""
+"Bulk-applied default for the per-row Import As column. Changing this "
+"rewrites every users_ids row."
+msgstr ""
+"Valore predefinito applicato in blocco per la colonna Importa come per ogni "
+"riga. Modificandolo si riscrive ogni riga di users_ids."
+
+#. module: hr_rfid_old_cloud_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_welcome_wizard_form
 msgid "Cancel"
@@ -65,6 +86,15 @@ msgstr "ID Azienda"
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__c_name
 msgid "Company Name"
 msgstr "Nome Azienda"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__c_name
+msgid ""
+"Company display name from the source cloud — shown here for human cross-"
+"check."
+msgstr ""
+"Nome visualizzato dell'azienda dal cloud sorgente - mostrato qui per "
+"verifica incrociata manuale."
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__connection_checked
@@ -125,11 +155,29 @@ msgid "Department Name"
 msgstr "Nome Reparto"
 
 #. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__d_name
+msgid ""
+"Department display name from the source cloud — shown here for human cross-"
+"check."
+msgstr ""
+"Nome visualizzato del dipartimento dal cloud sorgente - mostrato qui per "
+"verifica incrociata manuale."
+
+#. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__display_name
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__display_name
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__display_name
 msgid "Display Name"
 msgstr "Nome visualizzato"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_name
+msgid ""
+"Display name as stored in the source cloud — used as Odoo record name when "
+"the structured first/second/last name fields are empty."
+msgstr ""
+"Nome visualizzato come memorizzato nel cloud sorgente - usato come nome del "
+"record Odoo quando i campi strutturati nome/secondo nome/cognome sono vuoti."
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__do_import
@@ -161,9 +209,27 @@ msgid "Existing doors in Old Cloud: %s"
 msgstr "Porte esistenti nel vecchio Cloud: %s"
 
 #. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_code
+msgid ""
+"External / facility user code from the source cloud (often the RFID card "
+"number)."
+msgstr ""
+"Codice utente esterno / della struttura proveniente dal cloud sorgente "
+"(spesso il numero della tessera RFID)."
+
+#. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_fname
 msgid "First Name"
 msgstr "Nome"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_fname
+msgid ""
+"First name field from the source cloud. Maps to res.partner.firstname / hr."
+"employee personal name."
+msgstr ""
+"Campo nome dal cloud sorgente. Corrisponde a res.partner.firstname / nome "
+"personale di hr.employee."
 
 #. module: hr_rfid_old_cloud_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
@@ -200,17 +266,43 @@ msgstr ""
 #. module: hr_rfid_old_cloud_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_welcome_wizard_form
 msgid ""
-"From here you can import all important data from existing Old Cloud Access control\n"
+"From here you can import all important data from existing Old Cloud Access "
+"control\n"
 "                                    system.\n"
-"                                    To do it you have to provide your access token to system. More information"
+"                                    To do it you have to provide your access "
+"token to system. More information"
 msgstr ""
-"Da qui è possibile importare tutti i dati importanti dal sistema di controllo accessi Old Cloud esistente.\n"
-"                                    Per farlo è necessario fornire il proprio token di accesso al sistema. Ulteriori informazioni"
+"Da qui è possibile importare tutti i dati importanti dal sistema di "
+"controllo accessi Old Cloud esistente.\n"
+"                                    Per farlo è necessario fornire il "
+"proprio token di accesso al sistema. Ulteriori informazioni"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__json_data
+msgid ""
+"Full raw JSON record from the source cloud, kept for audit and for replay if "
+"the import needs to be re-run after a mapping fix."
+msgstr ""
+"Record JSON grezzo completo dal cloud sorgente, conservato per audit e per "
+"la riesecuzione se l'importazione deve essere ripetuta dopo una correzione "
+"della mappatura."
 
 #. module: hr_rfid_old_cloud_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_welcome_wizard_form
 msgid "Here"
 msgstr "Qui"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__default_import_as
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__default_import_as
+msgid ""
+"How users from the source cloud become Odoo records — Employees: imported "
+"into hr.employee (full HR profile); Contacts: imported into res.partner "
+"(lighter, suitable for visitors)."
+msgstr ""
+"Come gli utenti del cloud sorgente diventano record Odoo - Dipendenti: "
+"importati in hr.employee (profilo HR completo); Contatti: importati in res."
+"partner (più leggero, adatto per i visitatori)."
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__id
@@ -285,9 +377,66 @@ msgid "Imported from Old Cloud Access Control System"
 msgstr "Importato dal sistema di controllo accessi Old Cloud"
 
 #. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__import_access_groups
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__import_access_groups
+msgid "Include access groups and their door bindings in the import."
+msgstr ""
+"Includi i gruppi di accesso e le relative associazioni con le porte "
+"nell'importazione."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__import_events
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__import_events
+msgid ""
+"Include the historical access-event log. May be large — disable for a faster "
+"first import and re-run separately later."
+msgstr ""
+"Includi il registro storico degli eventi di accesso. Può essere voluminoso - "
+"disabilitalo per una prima importazione più rapida e rieseguilo "
+"separatamente in seguito."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__import_users
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__import_users
+msgid ""
+"Include users (employees or contacts depending on Default Import As) and "
+"their card assignments."
+msgstr ""
+"Includi gli utenti (dipendenti o contatti a seconda di Importa come "
+"predefinito) e le loro assegnazioni di tessere."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__import_hardware
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__import_hardware
+msgid "Include webstacks, controllers, doors and readers in the import."
+msgstr "Includi webstack, controller, porte e lettori nell'importazione."
+
+#. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_id
 msgid "Internal ID"
 msgstr "ID interno"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__ag_dict
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__ag_dict
+msgid ""
+"Internal mapping JSON (source-cloud access-group ID → local hr.rfid.access."
+"group ID) cached after Test Connection. Not user-editable."
+msgstr ""
+"JSON di mappatura interno (ID gruppo di accesso del cloud sorgente → ID hr."
+"rfid.access.group locale) memorizzato in cache dopo Verifica connessione. "
+"Non modificabile dall'utente."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__company_dict
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__company_dict
+msgid ""
+"Internal mapping JSON (source-cloud company ID → local res.company ID) "
+"cached after Test Connection. Not user-editable."
+msgstr ""
+"JSON di mappatura interno (ID azienda del cloud sorgente → ID res.company "
+"locale) memorizzato in cache dopo Verifica connessione. Non modificabile "
+"dall'utente."
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__json_data
@@ -314,10 +463,64 @@ msgid "Last Updated on"
 msgstr "Ultimo aggiornamento il"
 
 #. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_lname
+msgid "Last name / surname field from the source cloud."
+msgstr "Campo cognome dal cloud sorgente."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__select_all
+msgid ""
+"Master toggle that ticks/un-ticks the do_import flag on every users_ids row."
+msgstr ""
+"Interruttore principale che seleziona/deseleziona il flag do_import su ogni "
+"riga di users_ids."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_sname
+msgid "Middle / second name field from the source cloud."
+msgstr "Campo secondo nome dal cloud sorgente."
+
+#. module: hr_rfid_old_cloud_import
 #. odoo-python
 #: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
 msgid "Missing data: Partner AND Employee"
 msgstr "Dati mancanti: Partner E Dipendente"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__users_count
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__users_count
+msgid ""
+"Number of users discovered in the source cloud after Test Connection — "
+"informational, used to estimate import volume."
+msgstr ""
+"Numero di utenti rilevati nel cloud sorgente dopo Verifica connessione - "
+"informativo, usato per stimare il volume dell'importazione."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__c_id
+msgid ""
+"Numeric company ID from the source cloud. Translated to a local res.company "
+"via company_dict."
+msgstr ""
+"ID numerico dell'azienda dal cloud sorgente. Tradotto in un res.company "
+"locale tramite company_dict."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__d_id
+msgid ""
+"Numeric department ID from the source cloud. Translated to a local hr."
+"department via the welcome-wizard mapping."
+msgstr ""
+"ID numerico del dipartimento dal cloud sorgente. Tradotto in un hr."
+"department locale tramite la mappatura del wizard di benvenuto."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_id
+msgid ""
+"Numeric user ID in the source cloud. Used as the dedup key during import."
+msgstr ""
+"ID numerico dell'utente nel cloud sorgente. Usato come chiave di "
+"deduplicazione durante l'importazione."
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.actions.act_window,name:hr_rfid_old_cloud_import.old_cloud_import_wizard_action
@@ -344,6 +547,25 @@ msgstr "Benvenuto nell'importazione Old Polimex Cloud"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
 msgid "Operations"
 msgstr "Operazioni"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__import_id
+msgid ""
+"Parent import-run wizard this user row belongs to. Set automatically when "
+"the wizard fetches the user list."
+msgstr ""
+"Wizard di importazione principale a cui appartiene questa riga utente. "
+"Impostato automaticamente quando il wizard recupera l'elenco utenti."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__user_data
+msgid ""
+"Raw payload received from the source cloud's user list endpoint, kept for "
+"diagnostics if the row-level parse misbehaves."
+msgstr ""
+"Payload grezzo ricevuto dall'endpoint dell'elenco utenti del cloud sorgente, "
+"conservato per diagnostica in caso di malfunzionamento dell'analisi a "
+"livello di riga."
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_sname
@@ -374,6 +596,25 @@ msgstr ""
 #: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
 msgid "The process finish successful! "
 msgstr "Il processo è terminato con successo! "
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__do_import
+msgid ""
+"Tick the user to include them in the import run. Auto-set to True when you "
+"change Import As."
+msgstr ""
+"Seleziona l'utente per includerlo nell'importazione. Impostato "
+"automaticamente su Vero quando modifichi Importa come."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__connection_checked
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__connection_checked
+msgid ""
+"True after Test Connection succeeded and the mapping dictionaries are "
+"populated. Gates the Import button."
+msgstr ""
+"Vero dopo che Verifica connessione ha avuto successo e i dizionari di "
+"mappatura sono popolati. Condiziona il pulsante Importa."
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__url_domain
@@ -418,6 +659,15 @@ msgid "Users Count"
 msgstr "Numero utenti"
 
 #. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__users_ids
+msgid ""
+"Users discovered in the source cloud. Operator picks per-row which ones to "
+"import and as what (contact vs employee)."
+msgstr ""
+"Utenti rilevati nel cloud sorgente. L'operatore sceglie riga per riga quali "
+"importare e come (contatto o dipendente)."
+
+#. module: hr_rfid_old_cloud_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_welcome_wizard_form
 msgid "Welcome to Old Cloud Import"
@@ -432,8 +682,27 @@ msgstr "Benvenuto nella procedura guidata di importazione Old Cloud"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
 msgid "Welcome to Old Cloud platform Import Wizard"
 msgstr ""
-"Benvenuto nella procedura guidata di importazione della piattaforma Old "
-"Cloud"
+"Benvenuto nella procedura guidata di importazione della piattaforma Old Cloud"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__import_as
+msgid ""
+"Whether this particular user becomes an hr.employee or a res.partner in "
+"Odoo. Defaults from the welcome wizard's Default Import As; override per row."
+msgstr ""
+"Se questo particolare utente diventa un hr.employee o un res.partner in "
+"Odoo. Predefinito da Importa come predefinito del wizard di benvenuto; "
+"sovrascrivibile per riga."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__url_domain
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__url_domain
+msgid ""
+"Which legacy cloud to import from — the public Polimex cloud or the School "
+"Safety variant. Determines the API base URL used by the wizard."
+msgstr ""
+"Da quale cloud legacy importare - il cloud pubblico Polimex o la variante "
+"School Safety. Determina l'URL base API usato dal wizard."
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields.selection,name:hr_rfid_old_cloud_import.selection__hr_rfid_old_cloud_import_wiz__url_domain__pc

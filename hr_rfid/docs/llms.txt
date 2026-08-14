@@ -6,7 +6,7 @@ doc_type: user_guide
 audience:
 - user
 summary: Manage employee access control
-last_updated: '2026-07-11'
+last_updated: '2026-08-14'
 source_digest: sha256:18a5bc33f9e3eeafc8e2df0aa02b1848dbaa0d1cd812b22cb324be4e0271183a
 companion_doc: llms-full.md
 ---
@@ -40,6 +40,22 @@ Open **Settings → General Settings** and look for the section named after this
 
 
 ## How to use it
+
+### The setup checklist
+
+Until the system is set up, a checklist appears above the list of user events
+(**Events -> User Events**): the settings, then add a module, find its
+controllers, make an access group, register a first card. Each step opens the
+screen where it is done, and the last four tick themselves off as soon as the
+system can see the thing exists - there is nothing to mark by hand.
+
+Close it with the **X** and it is gone for good, for everybody in the company;
+you are asked to confirm first. The other parts of the suite - visitor
+services, hotel rooms, voting - each show their own checklist over their own
+screen in the same way.
+
+If the checklist never appears, it has been closed already. Nothing else in the
+system depends on it.
 
 ### Real-time connection (instant commands)
 
@@ -374,7 +390,6 @@ For more information, visit [polimex.co](https://polimex.co)
 - **Set webstack settings** — Set webstack settings for the module.
 - **Check if ws available**
 - **Close panel rfid setup**
-- **Fetch rfid onboarding** — Fetch RFID onboarding step data for the frontend banner.
 - **Open step rfid settings**
 - **Open step add webstack**
 - **Open step scan controllers**

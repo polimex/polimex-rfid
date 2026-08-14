@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-03 07:59+0000\n"
-"PO-Revision-Date: 2026-06-03 07:59+0000\n"
+"POT-Creation-Date: 2026-08-14 14:13+0000\n"
+"PO-Revision-Date: 2026-08-14 14:13+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -370,6 +370,11 @@ msgid ""
 msgstr ""
 
 #. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__first_in
+msgid "First In"
+msgstr ""
+
+#. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__early_come_time
 msgid ""
 "Hours the employee arrived before scheduled start time.\n"
@@ -551,6 +556,11 @@ msgstr ""
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_overtime_value
 msgid "Kpi Hr Rfid Att Overtime Value"
+msgstr ""
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__last_out
+msgid "Last Out"
 msgstr ""
 
 #. module: hr_attendance_late
@@ -875,6 +885,28 @@ msgstr ""
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__theoretical_work_time
 msgid "Theoretical Work Time"
+msgstr ""
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__first_in
+msgid ""
+"Time of the first badge-in for the day, in the employee's local time.\n"
+"\n"
+"        • Format: Hour as a decimal (e.g., 8.25 = 08:15)\n"
+"        • Source: The earliest check-in of the day's attendance records\n"
+"        • Usage: The classic \"came at / left at\" column on daily and monthly\n"
+"          working-time reports, and averages on the Working Time dashboard."
+msgstr ""
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__last_out
+msgid ""
+"Time of the last badge-out for the day, in the employee's local time.\n"
+"\n"
+"        • Format: Hour as a decimal (e.g., 17.5 = 17:30)\n"
+"        • Source: The latest check-out of the day's attendance records\n"
+"        • Usage: The classic \"came at / left at\" column on daily and monthly\n"
+"          working-time reports, and averages on the Working Time dashboard."
 msgstr ""
 
 #. module: hr_attendance_late

@@ -58,7 +58,6 @@
         <field name="model">voting.session</field>
         <field name="arch" type="xml">
             <kanban sample="1" default_group_by="state"
-                    js_class="onboarding_kanban"
                     records_draggable="false"
                     group_create="false"
                     quick_create="false">

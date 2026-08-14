@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-05 16:53+0000\n"
-"PO-Revision-Date: 2026-03-06 16:05\n"
+"POT-Creation-Date: 2026-08-14 13:55+0000\n"
+"PO-Revision-Date: 2026-08-14 17:26\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: el_GR\n"
@@ -41,6 +41,27 @@ msgstr ""
 "ΕΓΓΡΑΦΩΝ;"
 
 #. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__url_token
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__url_token
+msgid ""
+"Bearer token that authenticates this Odoo instance with the legacy cloud's "
+"REST API. Generate one from your account on the source cloud (My account → "
+"API Keys) and paste it here."
+msgstr ""
+"Διακριτικό-φορέα (Bearer token) που πιστοποιεί αυτό το στιγμιότυπο Odoo στο "
+"REST API του παλαιού συστήματος cloud. Δημιουργήστε ένα από τον λογαριασμό "
+"σας στο σύστημα προέλευσης (My account → API Keys) και επικολλήστε το εδώ."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__import_as
+msgid ""
+"Bulk-applied default for the per-row Import As column. Changing this "
+"rewrites every users_ids row."
+msgstr ""
+"Προεπιλογή που εφαρμόζεται μαζικά στη στήλη Εισαγωγή ως ανά γραμμή. Η αλλαγή "
+"της επανεγγράφει κάθε γραμμή του users_ids."
+
+#. module: hr_rfid_old_cloud_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_welcome_wizard_form
 msgid "Cancel"
@@ -66,6 +87,15 @@ msgstr "Company ID"
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__c_name
 msgid "Company Name"
 msgstr "Όνομα Εταιρείας"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__c_name
+msgid ""
+"Company display name from the source cloud — shown here for human cross-"
+"check."
+msgstr ""
+"Επωνυμία εταιρείας από το σύστημα προέλευσης - εμφανίζεται εδώ για οπτικό "
+"έλεγχο."
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__connection_checked
@@ -126,11 +156,30 @@ msgid "Department Name"
 msgstr "Όνομα Τμήματος"
 
 #. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__d_name
+msgid ""
+"Department display name from the source cloud — shown here for human cross-"
+"check."
+msgstr ""
+"Ονομασία τμήματος από το σύστημα προέλευσης - εμφανίζεται εδώ για οπτικό "
+"έλεγχο."
+
+#. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__display_name
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__display_name
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__display_name
 msgid "Display Name"
 msgstr "Εμφανιζόμενο Όνομα"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_name
+msgid ""
+"Display name as stored in the source cloud — used as Odoo record name when "
+"the structured first/second/last name fields are empty."
+msgstr ""
+"Εμφανιζόμενο όνομα όπως αποθηκεύεται στο σύστημα προέλευσης - "
+"χρησιμοποιείται ως όνομα εγγραφής στο Odoo όταν τα δομημένα πεδία μικρού/"
+"δεύτερου/επωνύμου είναι κενά."
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__do_import
@@ -162,9 +211,27 @@ msgid "Existing doors in Old Cloud: %s"
 msgstr "Υπάρχουσες πόρτες στο Old Cloud: %s"
 
 #. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_code
+msgid ""
+"External / facility user code from the source cloud (often the RFID card "
+"number)."
+msgstr ""
+"Εξωτερικός κωδικός χρήστη / εγκατάστασης από το σύστημα προέλευσης (συχνά ο "
+"αριθμός κάρτας RFID)."
+
+#. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_fname
 msgid "First Name"
 msgstr "Όνομα"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_fname
+msgid ""
+"First name field from the source cloud. Maps to res.partner.firstname / hr."
+"employee personal name."
+msgstr ""
+"Πεδίο μικρού ονόματος από το σύστημα προέλευσης. Αντιστοιχίζεται στο res."
+"partner.firstname / προσωπικό όνομα hr.employee."
 
 #. module: hr_rfid_old_cloud_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
@@ -201,17 +268,43 @@ msgstr ""
 #. module: hr_rfid_old_cloud_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_welcome_wizard_form
 msgid ""
-"From here you can import all important data from existing Old Cloud Access control\n"
+"From here you can import all important data from existing Old Cloud Access "
+"control\n"
 "                                    system.\n"
-"                                    To do it you have to provide your access token to system. More information"
+"                                    To do it you have to provide your access "
+"token to system. More information"
 msgstr ""
-"Από εδώ μπορείτε να εισαγάγετε όλα τα σημαντικά δεδομένα από το υπάρχον σύστημα Ελέγχου Πρόσβασης Old Cloud.\n"
-"                                    Για να το πραγματοποιήσετε, πρέπει να παρέχετε το access token σας στο σύστημα. Περισσότερες πληροφορίες"
+"Από εδώ μπορείτε να εισαγάγετε όλα τα σημαντικά δεδομένα από το υπάρχον "
+"σύστημα Ελέγχου Πρόσβασης Old Cloud.\n"
+"                                    Για να το πραγματοποιήσετε, πρέπει να "
+"παρέχετε το access token σας στο σύστημα. Περισσότερες πληροφορίες"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__json_data
+msgid ""
+"Full raw JSON record from the source cloud, kept for audit and for replay if "
+"the import needs to be re-run after a mapping fix."
+msgstr ""
+"Πλήρης ακατέργαστη εγγραφή JSON από το σύστημα προέλευσης, διατηρείται για "
+"έλεγχο και για επανάληψη σε περίπτωση που η εισαγωγή χρειαστεί να "
+"επαναληφθεί μετά από διόρθωση αντιστοίχισης."
 
 #. module: hr_rfid_old_cloud_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_welcome_wizard_form
 msgid "Here"
 msgstr "Εδώ"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__default_import_as
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__default_import_as
+msgid ""
+"How users from the source cloud become Odoo records — Employees: imported "
+"into hr.employee (full HR profile); Contacts: imported into res.partner "
+"(lighter, suitable for visitors)."
+msgstr ""
+"Πώς οι χρήστες από το σύστημα προέλευσης γίνονται εγγραφές Odoo - Υπάλληλοι: "
+"εισάγονται στο hr.employee (πλήρες προφίλ HR)· Επαφές: εισάγονται στο res."
+"partner (πιο ελαφρύ, κατάλληλο για επισκέπτες)."
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__id
@@ -286,9 +379,66 @@ msgid "Imported from Old Cloud Access Control System"
 msgstr "Εισήχθη από το Σύστημα Ελέγχου Πρόσβασης Old Cloud"
 
 #. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__import_access_groups
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__import_access_groups
+msgid "Include access groups and their door bindings in the import."
+msgstr ""
+"Συμπερίληψη ομάδων πρόσβασης και των αντίστοιχων συνδέσεων θυρών στην "
+"εισαγωγή."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__import_events
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__import_events
+msgid ""
+"Include the historical access-event log. May be large — disable for a faster "
+"first import and re-run separately later."
+msgstr ""
+"Συμπερίληψη του ιστορικού καταγραφής συμβάντων πρόσβασης. Ενδέχεται να είναι "
+"μεγάλο - απενεργοποιήστε το για ταχύτερη πρώτη εισαγωγή και επαναλάβετε "
+"ξεχωριστά αργότερα."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__import_users
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__import_users
+msgid ""
+"Include users (employees or contacts depending on Default Import As) and "
+"their card assignments."
+msgstr ""
+"Συμπερίληψη χρηστών (υπαλλήλων ή επαφών ανάλογα με την Προεπιλεγμένη "
+"εισαγωγή ως) και των αναθέσεων κάρτας τους."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__import_hardware
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__import_hardware
+msgid "Include webstacks, controllers, doors and readers in the import."
+msgstr "Συμπερίληψη webstacks, ελεγκτών, θυρών και αναγνωστών στην εισαγωγή."
+
+#. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_id
 msgid "Internal ID"
 msgstr "Εσωτερικό ID"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__ag_dict
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__ag_dict
+msgid ""
+"Internal mapping JSON (source-cloud access-group ID → local hr.rfid.access."
+"group ID) cached after Test Connection. Not user-editable."
+msgstr ""
+"Εσωτερικό JSON αντιστοίχισης (ID ομάδας πρόσβασης του συστήματος προέλευσης "
+"→ τοπικό ID hr.rfid.access.group) που αποθηκεύεται στην κρυφή μνήμη μετά τον "
+"Έλεγχο σύνδεσης. Δεν είναι επεξεργάσιμο από τον χρήστη."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__company_dict
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__company_dict
+msgid ""
+"Internal mapping JSON (source-cloud company ID → local res.company ID) "
+"cached after Test Connection. Not user-editable."
+msgstr ""
+"Εσωτερικό JSON αντιστοίχισης (ID εταιρείας του συστήματος προέλευσης → "
+"τοπικό ID res.company) που αποθηκεύεται στην κρυφή μνήμη μετά τον Έλεγχο "
+"σύνδεσης. Δεν είναι επεξεργάσιμο από τον χρήστη."
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__json_data
@@ -315,10 +465,64 @@ msgid "Last Updated on"
 msgstr "Τελευταία Ενημέρωση στις"
 
 #. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_lname
+msgid "Last name / surname field from the source cloud."
+msgstr "Πεδίο επωνύμου από το σύστημα προέλευσης."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__select_all
+msgid ""
+"Master toggle that ticks/un-ticks the do_import flag on every users_ids row."
+msgstr ""
+"Κύριος διακόπτης που επισημαίνει/αποεπισημαίνει τη σημαία do_import σε κάθε "
+"γραμμή του users_ids."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_sname
+msgid "Middle / second name field from the source cloud."
+msgstr "Πεδίο δεύτερου/μεσαίου ονόματος από το σύστημα προέλευσης."
+
+#. module: hr_rfid_old_cloud_import
 #. odoo-python
 #: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
 msgid "Missing data: Partner AND Employee"
 msgstr "Λείπουν δεδομένα: Συνεργάτης ΚΑΙ Υπάλληλος"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__users_count
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__users_count
+msgid ""
+"Number of users discovered in the source cloud after Test Connection — "
+"informational, used to estimate import volume."
+msgstr ""
+"Αριθμός χρηστών που εντοπίστηκαν στο σύστημα προέλευσης μετά τον Έλεγχο "
+"σύνδεσης - ενημερωτικό, χρησιμοποιείται για εκτίμηση όγκου εισαγωγής."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__c_id
+msgid ""
+"Numeric company ID from the source cloud. Translated to a local res.company "
+"via company_dict."
+msgstr ""
+"Αριθμητικό ID εταιρείας από το σύστημα προέλευσης. Μεταφράζεται σε τοπικό "
+"res.company μέσω του company_dict."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__d_id
+msgid ""
+"Numeric department ID from the source cloud. Translated to a local hr."
+"department via the welcome-wizard mapping."
+msgstr ""
+"Αριθμητικό ID τμήματος από το σύστημα προέλευσης. Μεταφράζεται σε τοπικό hr."
+"department μέσω της αντιστοίχισης του οδηγού καλωσορίσματος."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_id
+msgid ""
+"Numeric user ID in the source cloud. Used as the dedup key during import."
+msgstr ""
+"Αριθμητικό ID χρήστη στο σύστημα προέλευσης. Χρησιμοποιείται ως κλειδί "
+"αποφυγής διπλοεγγραφών κατά την εισαγωγή."
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.actions.act_window,name:hr_rfid_old_cloud_import.old_cloud_import_wizard_action
@@ -345,6 +549,25 @@ msgstr "Καλώς Ορίσατε στην Εισαγωγή Old Polimex Cloud"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
 msgid "Operations"
 msgstr "Λειτουργίες"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__import_id
+msgid ""
+"Parent import-run wizard this user row belongs to. Set automatically when "
+"the wizard fetches the user list."
+msgstr ""
+"Ο γονικός οδηγός εισαγωγής στον οποίο ανήκει αυτή η γραμμή χρήστη. Ορίζεται "
+"αυτόματα όταν ο οδηγός ανακτά τη λίστα χρηστών."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__user_data
+msgid ""
+"Raw payload received from the source cloud's user list endpoint, kept for "
+"diagnostics if the row-level parse misbehaves."
+msgstr ""
+"Ακατέργαστο περιεχόμενο που ελήφθη από το endpoint λίστας χρηστών του "
+"συστήματος προέλευσης, διατηρείται για διαγνωστικούς σκοπούς σε περίπτωση "
+"εσφαλμένης ανάλυσης σε επίπεδο γραμμής."
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__u_sname
@@ -375,6 +598,25 @@ msgstr ""
 #: code:addons/hr_rfid_old_cloud_import/models/import_wizard.py:0
 msgid "The process finish successful! "
 msgstr "Η διαδικασία ολοκληρώθηκε επιτυχώς! "
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__do_import
+msgid ""
+"Tick the user to include them in the import run. Auto-set to True when you "
+"change Import As."
+msgstr ""
+"Επισημάνετε τον χρήστη για να συμπεριληφθεί στην εκτέλεση εισαγωγής. "
+"Ορίζεται αυτόματα σε True όταν αλλάζετε το Εισαγωγή ως."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__connection_checked
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__connection_checked
+msgid ""
+"True after Test Connection succeeded and the mapping dictionaries are "
+"populated. Gates the Import button."
+msgstr ""
+"True αφού ο Έλεγχος σύνδεσης πετύχει και τα λεξικά αντιστοίχισης έχουν "
+"συμπληρωθεί. Ελέγχει το κουμπί Εισαγωγή."
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields,field_description:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__url_domain
@@ -421,6 +663,15 @@ msgid "Users Count"
 msgstr "Αριθμός Χρηστών"
 
 #. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__users_ids
+msgid ""
+"Users discovered in the source cloud. Operator picks per-row which ones to "
+"import and as what (contact vs employee)."
+msgstr ""
+"Χρήστες που εντοπίστηκαν στο σύστημα προέλευσης. Ο χειριστής επιλέγει ανά "
+"γραμμή ποιους θα εισάγει και ως τι (επαφή ή υπάλληλος)."
+
+#. module: hr_rfid_old_cloud_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_welcome_wizard_form
 msgid "Welcome to Old Cloud Import"
@@ -435,6 +686,27 @@ msgstr "Καλώς Ορίσατε στον Οδηγό Εισαγωγής Old Clo
 #: model_terms:ir.ui.view,arch_db:hr_rfid_old_cloud_import.old_cloud_import_wizard_form
 msgid "Welcome to Old Cloud platform Import Wizard"
 msgstr "Καλώς Ορίσατε στον Οδηγό Εισαγωγής Πλατφόρμας Old Cloud"
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_users__import_as
+msgid ""
+"Whether this particular user becomes an hr.employee or a res.partner in "
+"Odoo. Defaults from the welcome wizard's Default Import As; override per row."
+msgstr ""
+"Αν αυτός ο συγκεκριμένος χρήστης γίνεται hr.employee ή res.partner στο Odoo. "
+"Προεπιλογή από το Προεπιλεγμένη εισαγωγή ως του οδηγού καλωσορίσματος· "
+"παρακάμπτεται ανά γραμμή."
+
+#. module: hr_rfid_old_cloud_import
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_import_wiz__url_domain
+#: model:ir.model.fields,help:hr_rfid_old_cloud_import.field_hr_rfid_old_cloud_welcome_wiz__url_domain
+msgid ""
+"Which legacy cloud to import from — the public Polimex cloud or the School "
+"Safety variant. Determines the API base URL used by the wizard."
+msgstr ""
+"Από ποιο παλαιό σύστημα cloud θα γίνει η εισαγωγή - το δημόσιο σύστημα cloud "
+"Polimex ή την παραλλαγή School Safety. Καθορίζει το βασικό URL του API που "
+"χρησιμοποιεί ο οδηγός."
 
 #. module: hr_rfid_old_cloud_import
 #: model:ir.model.fields.selection,name:hr_rfid_old_cloud_import.selection__hr_rfid_old_cloud_import_wiz__url_domain__pc

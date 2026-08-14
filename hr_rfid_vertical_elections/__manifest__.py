@@ -8,7 +8,7 @@
     'author': "Polimex Dev Team",
     'website': "https://polimex.co",
     'category': 'Human Resources',
-    'version': '19.0.1.8.2',
+    'version': '19.0.1.8.3',
     'license': 'AGPL-3',
     'depends': ['hr_rfid', 'bus', 'onboarding'],
     'data': [

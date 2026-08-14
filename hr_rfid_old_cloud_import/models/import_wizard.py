@@ -9,6 +9,31 @@ import json
 
 _logger = logging.getLogger(__name__)
 
+# ir.model.data module every record created by this import is registered under.
+# '__import__' is what Odoo core itself writes for imported rows
+# (odoo/odoo/orm/models.py:915, BaseModel.load()), so a second run recognises
+# what the first run created exactly the way core would.
+LEDGER_MODULE = '__import__'
+
+# Identity of the source system inside the external ID. The two legacy clouds
+# are separate installations with their own record numbering, so each one gets
+# its own slug and the same numbers can never be taken for the same people.
+SOURCE_SLUG_BY_DOMAIN = {
+    'pc': 'old_cloud_pc',
+    'ss': 'old_cloud_ss',
+}
+DEFAULT_SOURCE_DOMAIN = 'pc'
+
+# Source table tokens. Holders and customers both land in res.partner, so the
+# source record reference has to say which of them the id belongs to.
+SRC_USER = 'u'
+SRC_COMPANY = 'c'
+SRC_DEPARTMENT = 'd'
+SRC_ACCESS_GROUP = 'ag'
+SRC_TAG = 'tag'
+SRC_AG_USER = 'agu'
+SRC_PLACEHOLDER_AG = 'placeholder'
+
 
 class OldCloudImportusers(models.TransientModel):
     _name = 'hr.rfid.old.cloud.import.users'
@@ -87,7 +112,8 @@ class OldCloudImportusers(models.TransientModel):
             f"User Code: {self.u_code or ''} User Name:{self.u_name or ''} Department:{self.d_name or ''} Company:{self.c_name or ''}").strip()
 
     def import_row(self):
-        print(self.u_fname)
+        for row in self:
+            _logger.debug('Old cloud import row selected: %s', row.u_fname)
 
 
 class OldCloudImportWiz(models.TransientModel):
@@ -168,11 +194,7 @@ class OldCloudImportWiz(models.TransientModel):
             users = self._holders(domain=self.env.context.get('defs', {})['url_domain'],
                                   token=self.env.context.get('defs', {})['url_token'])
             res['default_user_data'] = json.dumps(users)
-            existing_user = self.sudo().env['ir.model.data'].search([
-                ('module', '=', '__export__'),
-                ('name', 'like', 'old_cloud_u_id_')
-            ])
-            existing_user_ids = [int(l[15:]) for l in existing_user.mapped('name')]
+            existing_user_ids = self._already_imported_user_ids()
             users = list(filter(lambda u: (u['id'] not in existing_user_ids), users))
             user_ids = self.env['hr.rfid.old.cloud.import.users'].create(
                 [self.get_user_data_as_dict(user, self.id, default_import_as) for user in users]
@@ -190,6 +212,69 @@ class OldCloudImportWiz(models.TransientModel):
         if field in select.keys() and select[field]:
             return select[field]
         return []
+
+    # -- Import ledger -----------------------------------------------------
+    # Every record this wizard creates is registered with an external ID that
+    # names the source cloud, the target model and the source record. That
+    # register is what makes a second run of the same import find what the
+    # first run created instead of creating it again.
+
+    def _source_slug(self):
+        """Identity of the cloud this run reads from."""
+        domain = self.url_domain or self.get_context_list('url_domain') \
+            or DEFAULT_SOURCE_DOMAIN
+        return SOURCE_SLUG_BY_DOMAIN.get(domain, 'old_cloud_%s' % domain)
+
+    def _xml_id_name(self, model, source_ref):
+        """Name part of the external ID of one imported record."""
+        return 'rfid_import_%s_%s_%s' % (
+            self._source_slug(), model.replace('.', '_'), source_ref,
+        )
+
+    def _xml_id(self, model, source_ref):
+        return '%s.%s' % (LEDGER_MODULE, self._xml_id_name(model, source_ref))
+
+    def _find_imported(self, model, source_ref):
+        """The record a previous run created for this source record, if any."""
+        return self.env.ref(
+            self._xml_id(model, source_ref), raise_if_not_found=False,
+        )
+
+    def _mark_imported(self, record, source_ref):
+        """Register a freshly created record against its source record."""
+        self.sudo().env['ir.model.data'].create({
+            'model': record._name,
+            'res_id': record.id,
+            'module': LEDGER_MODULE,
+            'name': self._xml_id_name(record._name, source_ref),
+        })
+        return record
+
+    def _already_imported_user_ids(self):
+        """Source user ids that a previous run already brought in.
+
+        A user can have landed either as an employee or as a contact, so both
+        target models are looked up. Customers also live in res.partner - the
+        source table token in the reference keeps them out.
+        """
+        prefixes = [
+            self._xml_id_name(model, '%s_' % SRC_USER)
+            for model in ('hr.employee', 'res.partner')
+        ]
+        domain = ['|'] * (len(prefixes) - 1)
+        domain += [('name', '=like', '%s%%' % prefix) for prefix in prefixes]
+        imported = self.sudo().env['ir.model.data'].search(
+            [('module', '=', LEDGER_MODULE)] + domain,
+        )
+        user_ids = set()
+        for name in imported.mapped('name'):
+            for prefix in prefixes:
+                if name.startswith(prefix):
+                    source_id = name[len(prefix):]
+                    if source_id.isdigit():
+                        user_ids.add(int(source_id))
+                    break
+        return user_ids
 
     @api.model
     def get_user_data_as_dict(self, u_data, import_id, import_as):
@@ -210,18 +295,14 @@ class OldCloudImportWiz(models.TransientModel):
         }
 
     def create_res_partner_company(self, user_id):
-        company_id = self.env.ref(f'__export__.old_cloud_c_id_{user_id.c_id}', raise_if_not_found=False)
+        source_ref = f'{SRC_COMPANY}_{user_id.c_id}'
+        company_id = self._find_imported('res.partner', source_ref)
         if not company_id:
             company_id = self.env['res.partner'].with_context({'mail_create_nolog': True}).create([{
                 'name': user_id.c_name,
                 'is_company': True,
             }])
-            self.sudo().env['ir.model.data'].create({
-                'model': 'res.partner',
-                'res_id': company_id.id,
-                'module': '__export__',
-                'name': 'old_cloud_c_id_%d' % user_id.c_id,
-            })
+            self._mark_imported(company_id, source_ref)
             company_id.message_post(
                 body=_('Imported from %s Access Control System') % self._cloud_url()
             )
@@ -235,7 +316,8 @@ class OldCloudImportWiz(models.TransientModel):
         else:
             parent_id = self.default_company
 
-        partner_id = self.env.ref(f'__export__.old_cloud_u_id_{user_id.u_id}', raise_if_not_found=False)
+        source_ref = f'{SRC_USER}_{user_id.u_id}'
+        partner_id = self._find_imported('res.partner', source_ref)
         if not partner_id:
             partner_id = self.env['res.partner'].with_context({'mail_create_nolog': True}).create([{
                 'name': user_id.get_full_name(),
@@ -244,12 +326,7 @@ class OldCloudImportWiz(models.TransientModel):
                 'type': 'contact',
                 'comment': user_id.get_record_for_note()
             }])
-            self.sudo().env['ir.model.data'].create({
-                'model': 'res.partner',
-                'res_id': partner_id.id,
-                'module': '__export__',
-                'name': 'old_cloud_u_id_%d' % user_id.u_id,
-            })
+            self._mark_imported(partner_id, source_ref)
             partner_id.message_post(
                 body=_('Imported from %s Access Control System') % self._cloud_url()
             )
@@ -259,36 +336,28 @@ class OldCloudImportWiz(models.TransientModel):
         return partner_id
 
     def create_department(self, d_id, d_name):
-        department_id = self.env.ref(f'__export__.old_cloud_d_id_{d_id}', raise_if_not_found=False)
+        source_ref = f'{SRC_DEPARTMENT}_{d_id}'
+        department_id = self._find_imported('hr.department', source_ref)
         if not department_id:
             department_id = self.env['hr.department'].with_context({'mail_create_nolog': True}).create([{
                 'name': d_name,
             }])
-            self.sudo().env['ir.model.data'].create({
-                'model': 'hr.department',
-                'res_id': department_id.id,
-                'module': '__export__',
-                'name': 'old_cloud_d_id_%d' % d_id,
-            })
+            self._mark_imported(department_id, source_ref)
             department_id.message_post(
                 body=_('Imported from %s Access Control System') % self._cloud_url()
             )
         return department_id
 
     def create_employee(self, user_id, department_id):
-        employee = self.env.ref(f'__export__.old_cloud_u_id_{user_id.u_id}', raise_if_not_found=False)
+        source_ref = f'{SRC_USER}_{user_id.u_id}'
+        employee = self._find_imported('hr.employee', source_ref)
         if not employee:
             employee = self.env['hr.employee'].with_context({'mail_create_nolog': True}).create([{
                 'name': user_id.get_full_name(),
                 'identification_id': user_id.u_code,
                 'department_id': department_id and department_id.id or None,
             }])
-            self.sudo().env['ir.model.data'].create({
-                'model': 'hr.employee',
-                'res_id': employee.id,
-                'module': '__export__',
-                'name': 'old_cloud_u_id_%d' % user_id.u_id,
-            })
+            self._mark_imported(employee, source_ref)
             employee.message_post(
                 body=_('Imported from %s Access Control System') % self._cloud_url()
             )
@@ -297,7 +366,8 @@ class OldCloudImportWiz(models.TransientModel):
     def create_tags(self, user_id, employee_id=None, partner_id=None):
         tags = json.loads(user_id.json_data)['tags']
         for tag in tags:
-            card_id = self.env.ref('__export__.old_cloud_tag_id_%d' % tag['id'], raise_if_not_found=False)
+            source_ref = '%s_%s' % (SRC_TAG, tag['id'])
+            card_id = self._find_imported('hr.rfid.card', source_ref)
             if not card_id:
                 card_dict = {
                     'number': tag['number'],
@@ -312,16 +382,77 @@ class OldCloudImportWiz(models.TransientModel):
                     raise exceptions.ValidationError(
                         _('Tag have no employee or contact. Something is wrong with data. Check the log'))
                 card_id = self.env['hr.rfid.card'].with_context({'mail_create_nolog': True}).create([card_dict])
-                self.sudo().env['ir.model.data'].create({
-                    'model': 'hr.rfid.card',
-                    'res_id': card_id.id,
-                    'module': '__export__',
-                    'name': 'old_cloud_tag_id_%d' % tag['id'],
-                })
+                self._mark_imported(card_id, source_ref)
                 card_id.message_post(
                     body=_('Imported from %s Access Control System') % self._cloud_url()
                 )
         return employee_id and employee_id.hr_rfid_card_ids or partner_id and partner_id.hr_rfid_card_ids
+
+    def _get_placeholder_access_group(self, source_ag_id):
+        """Placeholder group a department gets when it has no default one.
+
+        Registered against the source access group that made it necessary, so
+        a second run reuses it instead of leaving another one behind.
+        """
+        source_ref = '%s_%s' % (SRC_PLACEHOLDER_AG, source_ag_id)
+        placeholder = self._find_imported('hr.rfid.access.group', source_ref)
+        if not placeholder:
+            placeholder = self.env['hr.rfid.access.group'].create([{
+                'name': 'Dummy default group %s' % source_ag_id,
+            }])
+            self._mark_imported(placeholder, source_ref)
+        return placeholder
+
+    def _add_ag_membership(self, user_id, source_ag_id, access_group_id,
+                           membership_vals, employee_id=None, partner_id=None):
+        """Give one person one access group, once.
+
+        Two guards, on purpose. The external ID is what makes a re-run skip a
+        membership this import created. The (person, access group) lookup
+        covers memberships made before external IDs were written at all -
+        without it the first run after this change would duplicate every one
+        of them, because nothing in the database says they came from here.
+        """
+        if employee_id:
+            owner, owner_field = employee_id, 'employee_id'
+            rel_model = 'hr.rfid.access.group.employee.rel'
+        else:
+            owner, owner_field = partner_id, 'contact_id'
+            rel_model = 'hr.rfid.access.group.contact.rel'
+
+        source_ref = '%s_%s_%s' % (SRC_AG_USER, user_id.u_id, source_ag_id)
+        if self._find_imported(rel_model, source_ref):
+            return self.env[rel_model]
+
+        already = self.env[rel_model].search([
+            (owner_field, '=', owner.id),
+            ('access_group_id', '=', access_group_id.id),
+        ], limit=1)
+        if already:
+            _logger.debug(
+                'Access group %s is already given to %s - not given again',
+                access_group_id.id, owner.display_name,
+            )
+            return already
+
+        before = owner.hr_rfid_access_group_ids
+        owner.write({
+            'hr_rfid_access_group_ids': [(0, 0, dict(
+                membership_vals,
+                access_group_id=access_group_id.id,
+                **{owner_field: owner.id},
+            ))],
+        })
+        created = owner.hr_rfid_access_group_ids - before
+        if len(created) == 1:
+            self._mark_imported(created, source_ref)
+        else:
+            _logger.warning(
+                'Could not register the access group %s given to %s; a later '
+                'import run may offer it a second time',
+                access_group_id.id, owner.display_name,
+            )
+        return created
 
     def create_user_ag_relation(self, user_id, employee_id=None, partner_id=None):
         if not employee_id and not partner_id:
@@ -329,13 +460,19 @@ class OldCloudImportWiz(models.TransientModel):
 
         ag_users = json.loads(user_id.json_data)['access_groups']
         for ag in ag_users:
-            access_group_id = self.env.ref('__export__.old_cloud_ag_id_%d' % ag['id'], raise_if_not_found=False)
+            access_group_id = self._find_imported(
+                'hr.rfid.access.group', '%s_%s' % (SRC_ACCESS_GROUP, ag['id']),
+            )
             if not access_group_id:
                 _logger.info('Ignoring old cloud access group %s' % ag['name'])
                 continue
+            membership_vals = {
+                'activate_on': ag['pivot']['start'] or fields.Datetime.now(),
+                'expiration': ag['pivot']['end'],
+            }
             if employee_id:
                 if not employee_id.department_id.hr_rfid_default_access_group:
-                    dummy_ag_id = self.env['hr.rfid.access.group'].create([{'name': 'Dummy default group %d' % ag['id']}])
+                    dummy_ag_id = self._get_placeholder_access_group(ag['id'])
                     employee_id.department_id.write({
                         'hr_rfid_default_access_group': dummy_ag_id.id,
                         'hr_rfid_allowed_access_groups': [(4, dummy_ag_id.id, 0)]
@@ -344,23 +481,15 @@ class OldCloudImportWiz(models.TransientModel):
                     employee_id.department_id.write({
                         'hr_rfid_allowed_access_groups': [(4, access_group_id.id, 0)]
                     })
-                employee_id.write({
-                    'hr_rfid_access_group_ids': [(0, 0, {
-                        'access_group_id': access_group_id.id,
-                        'employee_id': employee_id.id,
-                        'activate_on': ag['pivot']['start'] or fields.Datetime.now(),
-                        'expiration': ag['pivot']['end']
-                    })]
-                })
+                self._add_ag_membership(
+                    user_id, ag['id'], access_group_id, membership_vals,
+                    employee_id=employee_id,
+                )
             elif partner_id:
-                partner_id.write({
-                    'hr_rfid_access_group_ids': [(0, 0, {
-                        'access_group_id': access_group_id.id,
-                        'contact_id': partner_id.id,
-                        'activate_on': ag['pivot']['start'] or fields.Datetime.now(),
-                        'expiration': ag['pivot']['end']
-                    })]
-                })
+                self._add_ag_membership(
+                    user_id, ag['id'], access_group_id, membership_vals,
+                    partner_id=partner_id,
+                )
 
     def do_import_user_as_employee(self, user_id):
         if self.force_default_department:
@@ -390,17 +519,13 @@ class OldCloudImportWiz(models.TransientModel):
     def import_ags(self):
         ags = self._access_groups(self.get_context_list('url_domain'), self.get_context_list('url_token'))
         for ag in ags:
-            nag = self.env.ref('__export__.old_cloud_ag_id_%d' % ag['id'], raise_if_not_found=False)
+            source_ref = '%s_%s' % (SRC_ACCESS_GROUP, ag['id'])
+            nag = self._find_imported('hr.rfid.access.group', source_ref)
             if not nag:
                 nag = self.env['hr.rfid.access.group'].with_context({'mail_create_nolog': True}).create([{
                     'name': ag['name']
                 }])
-                self.sudo().env['ir.model.data'].create({
-                    'model': 'hr.rfid.access.group',
-                    'res_id': nag.id,
-                    'module': '__export__',
-                    'name': 'old_cloud_ag_id_%d' % ag['id'],
-                })
+                self._mark_imported(nag, source_ref)
                 nag.message_post(
                     subject=_('Imported from Old Cloud Access Control System'),
                     body=_("Existing doors in Old Cloud: %s", 'See in the old system!')

@@ -6,15 +6,29 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-05 16:53+0000\n"
-"PO-Revision-Date: 2026-03-08 16:22\n"
+"POT-Creation-Date: 2026-08-14 13:55+0000\n"
+"PO-Revision-Date: 2026-08-14 17:28\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: el\n"
+"Language: el_GR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
+msgid ""
+"<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
+"                                Tip: turn Fixed Time on to make every card "
+"expire at the same wall-clock cut-off (for example \"all day passes end at "
+"18:00\"). Leave it off for rolling windows (e.g. \"4 hours from check-in\")."
+msgstr ""
+"<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
+"                                Συμβουλή: ενεργοποιήστε το Καθορισμένη Ώρα "
+"για να λήγουν όλες οι κάρτες την ίδια καθορισμένη ώρα (για παράδειγμα «όλα "
+"τα ημερήσια πάσα λήγουν στις 18:00»). Αφήστε το ανενεργό για κυλιόμενα "
+"χρονικά παράθυρα (π.χ. «4 ώρες από το check-in»)."
 
 #. module: rfid_service_base
 #. odoo-python
@@ -31,17 +45,19 @@ msgstr ""
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
 msgid "<span class=\"fa fa-clock-o mr-2\" title=\"Start\"/>"
-msgstr ""
+msgstr "<span class=\"fa fa-clock-o mr-2\" title=\"Έναρξη\"/>"
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
-msgid "<span class=\"fa fa-envelope-o mr-2\" aria-label=\"Group\" title=\"Group\"/>"
+msgid ""
+"<span class=\"fa fa-envelope-o mr-2\" aria-label=\"Group\" title=\"Group\"/>"
 msgstr ""
+"<span class=\"fa fa-envelope-o mr-2\" aria-label=\"Ομάδα\" title=\"Ομάδα\"/>"
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
 msgid "<span class=\"fa fa-user mr-2\" aria-label=\"Type\" title=\"Type\"/>"
-msgstr ""
+msgstr "<span class=\"fa fa-user mr-2\" aria-label=\"Τύπος\" title=\"Τύπος\"/>"
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
@@ -51,7 +67,7 @@ msgstr "<span class=\"o_label\">Νέα πώληση</span>"
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
 msgid "<span class=\"oe_inline oe_read_only\">-</span>"
-msgstr ""
+msgstr "<span class=\"oe_inline oe_read_only\">-</span>"
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
@@ -139,8 +155,7 @@ msgstr "Αρχειοθετημένο"
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
 msgid "Are you sure? This will stop the execution of the current service."
-msgstr ""
-"Είστε σίγουροι; Αυτό θα διακόψει την εκτέλεση της τρέχουσας υπηρεσίας."
+msgstr "Είστε σίγουροι; Αυτό θα διακόψει την εκτέλεση της τρέχουσας υπηρεσίας."
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
@@ -160,7 +175,6 @@ msgstr "Αριθμός Συνημμένων"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__generate_barcode_card
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__generate_barcode_card
 msgid ""
 "Automatically create barcode-based cards instead of RFID cards.\n"
 "        \n"
@@ -169,16 +183,21 @@ msgid ""
 "• Use cases: Mobile-first access, temporary visitors, events\n"
 "• Card type: Automatically changes to barcode card type when enabled\n"
 "        \n"
-"Barcode cards can be scanned with mobile devices and don't require physical RFID cards."
+"Barcode cards can be scanned with mobile devices and don't require physical "
+"RFID cards."
 msgstr ""
 "Αυτόματη δημιουργία καρτών με γραμμικό κώδικα αντί για κάρτες RFID.\n"
 "        \n"
-"• Όταν είναι ενεργοποιημένο: Το σύστημα δημιουργεί κάρτες QR/γραμμικού κώδικα για σάρωση από κινητό\n"
+"• Όταν είναι ενεργοποιημένο: Το σύστημα δημιουργεί κάρτες QR/γραμμικού "
+"κώδικα για σάρωση από κινητό\n"
 "• Όταν είναι απενεργοποιημένο: Χρησιμοποιούνται παραδοσιακές κάρτες RFID\n"
-"• Περιπτώσεις χρήσης: Πρόσβαση μέσω κινητού, προσωρινοί επισκέπτες, εκδηλώσεις\n"
-"• Τύπος κάρτας: Αλλάζει αυτόματα σε τύπο κάρτας γραμμικού κώδικα όταν ενεργοποιείται\n"
+"• Περιπτώσεις χρήσης: Πρόσβαση μέσω κινητού, προσωρινοί επισκέπτες, "
+"εκδηλώσεις\n"
+"• Τύπος κάρτας: Αλλάζει αυτόματα σε τύπο κάρτας γραμμικού κώδικα όταν "
+"ενεργοποιείται\n"
 "        \n"
-"Οι κάρτες γραμμικού κώδικα μπορούν να σαρωθούν με κινητές συσκευές και δεν απαιτούν φυσικές κάρτες RFID."
+"Οι κάρτες γραμμικού κώδικα μπορούν να σαρωθούν με κινητές συσκευές και δεν "
+"απαιτούν φυσικές κάρτες RFID."
 
 #. module: rfid_service_base
 #: model:ir.model,name:rfid_service_base.model_rfid_service_sale_wiz
@@ -211,25 +230,42 @@ msgid "Card Type"
 msgstr "Τύπος Κάρτας"
 
 #. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__service_id
+msgid ""
+"Catalog entry from which the card inherits its access group, time window and "
+"card type. Set automatically when the wizard is opened from a service."
+msgstr ""
+"Εγγραφή καταλόγου από την οποία η κάρτα κληρονομεί την ομάδα πρόσβασης, το "
+"χρονικό παράθυρο και τον τύπο κάρτας. Ορίζεται αυτόματα όταν ο οδηγός "
+"ανοίγει από μια υπηρεσία."
+
+#. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__tag_ids
 msgid ""
 "Categorization tags for organizing and filtering services.\n"
 "        \n"
-"• Organization: Group related services together (e.g., 'VIP', 'Visitor', 'Staff')\n"
-"• Filtering: Use in search panels and reports to find specific service types\n"
+"• Organization: Group related services together (e.g., 'VIP', 'Visitor', "
+"'Staff')\n"
+"• Filtering: Use in search panels and reports to find specific service "
+"types\n"
 "• Color coding: Tags have colors for visual identification\n"
-"• Multiple tags: Services can have multiple tags for flexible categorization\n"
+"• Multiple tags: Services can have multiple tags for flexible "
+"categorization\n"
 "        \n"
 "Use tags to create logical groupings that match your business needs."
 msgstr ""
 "Ετικέτες κατηγοριοποίησης για οργάνωση και φιλτράρισμα υπηρεσιών.\n"
 "        \n"
-"• Οργάνωση: Ομαδοποίηση σχετικών υπηρεσιών (π.χ. 'VIP', 'Επισκέπτης', 'Προσωπικό')\n"
-"• Φιλτράρισμα: Χρήση σε πίνακες αναζήτησης και αναφορές για εύρεση συγκεκριμένων τύπων υπηρεσίας\n"
+"• Οργάνωση: Ομαδοποίηση σχετικών υπηρεσιών (π.χ. 'VIP', 'Επισκέπτης', "
+"'Προσωπικό')\n"
+"• Φιλτράρισμα: Χρήση σε πίνακες αναζήτησης και αναφορές για εύρεση "
+"συγκεκριμένων τύπων υπηρεσίας\n"
 "• Χρωματική κωδικοποίηση: Οι ετικέτες έχουν χρώματα για οπτική αναγνώριση\n"
-"• Πολλαπλές ετικέτες: Οι υπηρεσίες μπορούν να έχουν πολλαπλές ετικέτες για ευέλικτη κατηγοριοποίηση\n"
+"• Πολλαπλές ετικέτες: Οι υπηρεσίες μπορούν να έχουν πολλαπλές ετικέτες για "
+"ευέλικτη κατηγοριοποίηση\n"
 "        \n"
-"Χρησιμοποιήστε ετικέτες για τη δημιουργία λογικών ομαδοποιήσεων που ανταποκρίνονται στις επιχειρηματικές σας ανάγκες."
+"Χρησιμοποιήστε ετικέτες για τη δημιουργία λογικών ομαδοποιήσεων που "
+"ανταποκρίνονται στις επιχειρηματικές σας ανάγκες."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__color
@@ -249,14 +285,17 @@ msgid ""
 "        \n"
 "Colors improve visual organization when managing multiple services."
 msgstr ""
-"Χρωματική κωδικοποίηση για οπτική αναγνώριση στην προβολή kanban και σε άλλες προβολές.\n"
+"Χρωματική κωδικοποίηση για οπτική αναγνώριση στην προβολή kanban και σε "
+"άλλες προβολές.\n"
 "        \n"
 "• Οπτική οργάνωση: Βοηθά στη διάκριση διαφορετικών τύπων υπηρεσίας\n"
-"• Διεπαφή χρήστη: Χρησιμοποιείται σε κάρτες kanban και παρουσιάσεις υπηρεσιών\n"
+"• Διεπαφή χρήστη: Χρησιμοποιείται σε κάρτες kanban και παρουσιάσεις "
+"υπηρεσιών\n"
 "• Προσαρμογή: Επιλέξτε χρώματα που ταιριάζουν με το εταιρικό σας branding\n"
 "• Προεπιλογή: Το σύστημα αναθέτει τυχαία χρώματα αν δεν οριστεί κάποιο\n"
 "        \n"
-"Τα χρώματα βελτιώνουν την οπτική οργάνωση κατά τη διαχείριση πολλαπλών υπηρεσιών."
+"Τα χρώματα βελτιώνουν την οπτική οργάνωση κατά τη διαχείριση πολλαπλών "
+"υπηρεσιών."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service_tags__color
@@ -270,14 +309,18 @@ msgid ""
 "        \n"
 "Colors improve visual organization when managing multiple service categories."
 msgstr ""
-"Χρώμα για οπτική αναγνώριση αυτής της ετικέτας σε λίστες και προβολές kanban.\n"
+"Χρώμα για οπτική αναγνώριση αυτής της ετικέτας σε λίστες και προβολές "
+"kanban.\n"
 "        \n"
-"• Οπτική οργάνωση: Βοηθά στην άμεση αναγνώριση διαφορετικών κατηγοριών ετικετών\n"
+"• Οπτική οργάνωση: Βοηθά στην άμεση αναγνώριση διαφορετικών κατηγοριών "
+"ετικετών\n"
 "• Διεπαφή χρήστη: Εμφανίζεται σε widgets ετικετών και κάρτες υπηρεσιών\n"
 "• Τυχαία προεπιλογή: Το σύστημα αναθέτει τυχαία χρώματα σε νέες ετικέτες\n"
-"• Προσαρμογή: Επιλέξτε χρώματα που ταιριάζουν με το χρωματικό σχέδιο του οργανισμού σας\n"
+"• Προσαρμογή: Επιλέξτε χρώματα που ταιριάζουν με το χρωματικό σχέδιο του "
+"οργανισμού σας\n"
 "        \n"
-"Τα χρώματα βελτιώνουν την οπτική οργάνωση κατά τη διαχείριση πολλαπλών κατηγοριών υπηρεσιών."
+"Τα χρώματα βελτιώνουν την οπτική οργάνωση κατά τη διαχείριση πολλαπλών "
+"κατηγοριών υπηρεσιών."
 
 #. module: rfid_service_base
 #: model:ir.model,name:rfid_service_base.model_res_company
@@ -290,6 +333,36 @@ msgstr "Εταιρίες"
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_tags__company_id
 msgid "Company"
 msgstr "Εταιρεία"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__company_id
+msgid ""
+"Company that owns this sale — inherited from the underlying service. Used "
+"for multi-company record-rule scoping."
+msgstr ""
+"Εταιρεία που κατέχει αυτήν την πώληση - κληρονομείται από την υποκείμενη "
+"υπηρεσία. Χρησιμοποιείται για τον καθορισμό εμβέλειας κανόνων εγγραφών "
+"πολλαπλών εταιρειών."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__company_id
+msgid ""
+"Company that owns this service template. Services are isolated per company — "
+"users only see services of their allowed companies."
+msgstr ""
+"Εταιρεία που κατέχει αυτό το πρότυπο υπηρεσίας. Οι υπηρεσίες απομονώνονται "
+"ανά εταιρεία - οι χρήστες βλέπουν μόνο υπηρεσίες των εταιρειών που τους "
+"επιτρέπονται."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_tags__company_id
+msgid ""
+"Company that owns this tag. Tags are isolated per company so each tenant can "
+"build its own catalog taxonomy."
+msgstr ""
+"Εταιρεία που κατέχει αυτήν την ετικέτα. Οι ετικέτες απομονώνονται ανά "
+"εταιρεία ώστε κάθε πελάτης να μπορεί να δημιουργήσει τη δική του ταξινομία "
+"καταλόγου."
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
@@ -305,6 +378,18 @@ msgstr "Επαφή"
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__displayed_image_id
 msgid "Cover Image"
 msgstr "Εικόνα Εξωφύλλου"
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding.step,description:rfid_service_base.onboarding_step_service_define
+msgid ""
+"Create the catalog entry for the access type you want to issue (for example: "
+"day pass, weekly visitor, contractor card). Each service binds an access "
+"group, a time window, and a card type."
+msgstr ""
+"Δημιουργήστε την εγγραφή καταλόγου για τον τύπο πρόσβασης που θέλετε να "
+"εκδώσετε (για παράδειγμα: ημερήσιο πάσο, εβδομαδιαίος επισκέπτης, κάρτα "
+"εργολάβου). Κάθε υπηρεσία συνδέει μια ομάδα πρόσβασης, ένα χρονικό παράθυρο "
+"και έναν τύπο κάρτας."
 
 #. module: rfid_service_base
 #: model_terms:ir.actions.act_window,help:rfid_service_base.hr_rfid_service_action
@@ -337,16 +422,20 @@ msgid ""
 "• Finished: Service period has ended or all visits have been used\n"
 "• Canceled: Service was manually canceled before completion\n"
 "        \n"
-"Status is automatically calculated based on dates, visits, and access permissions."
+"Status is automatically calculated based on dates, visits, and access "
+"permissions."
 msgstr ""
 "Τρέχουσα κατάσταση αυτής της πώλησης υπηρεσίας.\n"
 "        \n"
-"• Εγγεγραμμένο: Η πώληση δημιουργήθηκε αλλά η περίοδος υπηρεσίας δεν έχει ξεκινήσει ακόμα\n"
+"• Εγγεγραμμένο: Η πώληση δημιουργήθηκε αλλά η περίοδος υπηρεσίας δεν έχει "
+"ξεκινήσει ακόμα\n"
 "• Ενεργό: Η υπηρεσία είναι ενεργή και ο πελάτης έχει πρόσβαση\n"
-"• Ολοκληρωμένο: Η περίοδος υπηρεσίας έχει λήξει ή έχουν χρησιμοποιηθεί όλες οι επισκέψεις\n"
+"• Ολοκληρωμένο: Η περίοδος υπηρεσίας έχει λήξει ή έχουν χρησιμοποιηθεί όλες "
+"οι επισκέψεις\n"
 "• Ακυρωμένο: Η υπηρεσία ακυρώθηκε χειροκίνητα πριν από την ολοκλήρωσή της\n"
 "        \n"
-"Η κατάσταση υπολογίζεται αυτόματα βάσει ημερομηνιών, επισκέψεων και αδειών πρόσβασης."
+"Η κατάσταση υπολογίζεται αυτόματα βάσει ημερομηνιών, επισκέψεων και αδειών "
+"πρόσβασης."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__partner_id
@@ -363,16 +452,21 @@ msgid ""
 "• Communication: Used for sending emails and printing badges\n"
 "• Tracking: Links all service sales to the same customer for history\n"
 "        \n"
-"This is the person who will receive access and communications about the service."
+"This is the person who will receive access and communications about the "
+"service."
 msgstr ""
 "Πελάτης που αγόρασε αυτή την υπηρεσία.\n"
 "        \n"
 "• Φυσικό πρόσωπο: Πρέπει να είναι φυσικό πρόσωπο, όχι εταιρική επαφή\n"
-"• Δημιουργία: Μπορεί να δημιουργηθεί αυτόματα κατά τη διαδικασία πώλησης υπηρεσίας\n"
-"• Επικοινωνία: Χρησιμοποιείται για αποστολή email και εκτύπωση σήματος ταυτότητας\n"
-"• Παρακολούθηση: Συνδέει όλες τις πωλήσεις υπηρεσιών στον ίδιο πελάτη για ιστορικό\n"
+"• Δημιουργία: Μπορεί να δημιουργηθεί αυτόματα κατά τη διαδικασία πώλησης "
+"υπηρεσίας\n"
+"• Επικοινωνία: Χρησιμοποιείται για αποστολή email και εκτύπωση σήματος "
+"ταυτότητας\n"
+"• Παρακολούθηση: Συνδέει όλες τις πωλήσεις υπηρεσιών στον ίδιο πελάτη για "
+"ιστορικό\n"
 "        \n"
-"Αυτό είναι το πρόσωπο που θα λάβει πρόσβαση και επικοινωνίες σχετικά με την υπηρεσία."
+"Αυτό είναι το πρόσωπο που θα λάβει πρόσβαση και επικοινωνίες σχετικά με την "
+"υπηρεσία."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__time_interval_end
@@ -386,14 +480,18 @@ msgid ""
 "        \n"
 "Must be later than Access Start Time to create a valid time window."
 msgstr ""
-"Ημερήσια ώρα λήξης κατά την οποία η πρόσβαση δεν επιτρέπεται πλέον (24ωρη μορφή).\n"
+"Ημερήσια ώρα λήξης κατά την οποία η πρόσβαση δεν επιτρέπεται πλέον (24ωρη "
+"μορφή).\n"
 "        \n"
 "• Μορφή: Ώρες και λεπτά (π.χ. 17.0 = 5:00 μ.μ., 23.5 = 11:30 μ.μ.)\n"
 "• Σκοπός: Αυτόματος περιορισμός πρόσβασης μετά το πέρας των εργάσιμων ωρών\n"
-"• 00:00 σημαίνει: Χωρίς χρονικό περιορισμό (η πρόσβαση επιτρέπεται όλη την ημέρα)\n"
-"• Ασφάλεια: Αποτρέπει την πρόσβαση εκτός ωραρίου ακόμα και με έγκυρες κάρτες\n"
+"• 00:00 σημαίνει: Χωρίς χρονικό περιορισμό (η πρόσβαση επιτρέπεται όλη την "
+"ημέρα)\n"
+"• Ασφάλεια: Αποτρέπει την πρόσβαση εκτός ωραρίου ακόμα και με έγκυρες "
+"κάρτες\n"
 "        \n"
-"Πρέπει να είναι μεταγενέστερη από την Ώρα Έναρξης Πρόσβασης για τη δημιουργία έγκυρου χρονικού παραθύρου."
+"Πρέπει να είναι μεταγενέστερη από την Ώρα Έναρξης Πρόσβασης για τη "
+"δημιουργία έγκυρου χρονικού παραθύρου."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__time_interval_start
@@ -411,14 +509,16 @@ msgstr ""
 "        \n"
 "• Μορφή: Ώρες και λεπτά (π.χ. 9.0 = 9:00 π.μ., 14.5 = 2:30 μ.μ.)\n"
 "• Σκοπός: Περιορισμός πρόσβασης σε συγκεκριμένες ώρες της ημέρας\n"
-"• 00:00 σημαίνει: Χωρίς χρονικό περιορισμό (η πρόσβαση επιτρέπεται όλη την ημέρα)\n"
-"• Περιπτώσεις χρήσης: Γραφειακές ώρες, ώρες γυμναστηρίου, περίοδοι περιορισμένης πρόσβασης\n"
+"• 00:00 σημαίνει: Χωρίς χρονικό περιορισμό (η πρόσβαση επιτρέπεται όλη την "
+"ημέρα)\n"
+"• Περιπτώσεις χρήσης: Γραφειακές ώρες, ώρες γυμναστηρίου, περίοδοι "
+"περιορισμένης πρόσβασης\n"
 "        \n"
-"Συνδυάστε με την Ώρα Λήξης Πρόσβασης για τη δημιουργία ημερήσιων παραθύρων πρόσβασης."
+"Συνδυάστε με την Ώρα Λήξης Πρόσβασης για τη δημιουργία ημερήσιων παραθύρων "
+"πρόσβασης."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__start_date
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__ext_start_date
 msgid ""
 "Date and time when customer access begins.\n"
 "        \n"
@@ -427,20 +527,23 @@ msgid ""
 "• Timezone: Interpreted according to user's timezone settings\n"
 "• Calculation: Combined with service duration to determine end date\n"
 "        \n"
-"Customer will be able to access designated areas starting from this date/time."
+"Customer will be able to access designated areas starting from this date/"
+"time."
 msgstr ""
 "Ημερομηνία και ώρα έναρξης πρόσβασης του πελάτη.\n"
 "        \n"
 "• Ενεργοποίηση: Η κάρτα του πελάτη ενεργοποιείται την ημερομηνία/ώρα αυτή\n"
-"• Προγραμματισμός: Μπορεί να οριστεί για μελλοντική ενεργοποίηση (προκαταβολικές κρατήσεις)\n"
+"• Προγραμματισμός: Μπορεί να οριστεί για μελλοντική ενεργοποίηση "
+"(προκαταβολικές κρατήσεις)\n"
 "• Ζώνη ώρας: Ερμηνεύεται σύμφωνα με τις ρυθμίσεις ζώνης ώρας του χρήστη\n"
-"• Υπολογισμός: Συνδυάζεται με τη διάρκεια υπηρεσίας για τον προσδιορισμό της ημερομηνίας λήξης\n"
+"• Υπολογισμός: Συνδυάζεται με τη διάρκεια υπηρεσίας για τον προσδιορισμό της "
+"ημερομηνίας λήξης\n"
 "        \n"
-"Ο πελάτης θα μπορεί να έχει πρόσβαση στους καθορισμένους χώρους από αυτή την ημερομηνία/ώρα."
+"Ο πελάτης θα μπορεί να έχει πρόσβαση στους καθορισμένους χώρους από αυτή την "
+"ημερομηνία/ώρα."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__end_date
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__ext_end_date
 msgid ""
 "Date and time when customer access expires.\n"
 "        \n"
@@ -454,11 +557,14 @@ msgstr ""
 "Ημερομηνία και ώρα λήξης πρόσβασης του πελάτη.\n"
 "        \n"
 "• Λήξη: Η κάρτα του πελάτη απενεργοποιείται την ημερομηνία/ώρα αυτή\n"
-"• Υπολογισμός: Συνήθως υπολογίζεται από την ημερομηνία έναρξης + διάρκεια υπηρεσίας\n"
-"• Χειροκίνητη παράκαμψη: Μπορεί να προσαρμοστεί χειροκίνητα για προσαρμοσμένες περιόδους υπηρεσίας\n"
+"• Υπολογισμός: Συνήθως υπολογίζεται από την ημερομηνία έναρξης + διάρκεια "
+"υπηρεσίας\n"
+"• Χειροκίνητη παράκαμψη: Μπορεί να προσαρμοστεί χειροκίνητα για "
+"προσαρμοσμένες περιόδους υπηρεσίας\n"
 "• Ασφάλεια: Η πρόσβαση ανακαλείται αυτόματα μετά την ημερομηνία/ώρα αυτή\n"
 "        \n"
-"Ο πελάτης θα χάσει πρόσβαση στους καθορισμένους χώρους μετά την ημερομηνία/ώρα αυτή."
+"Ο πελάτης θα χάσει πρόσβαση στους καθορισμένους χώρους μετά την ημερομηνία/"
+"ώρα αυτή."
 
 #. module: rfid_service_base
 #: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service__time_interval_type__days
@@ -471,7 +577,26 @@ msgid "Default Access Rights"
 msgstr "Προεπιλεγμένα Δικαιώματα Πρόσβασης"
 
 #. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
+msgid ""
+"Default access rights and tagging for the service. The access group is "
+"inherited by every card issued from this service, and tags help filter the "
+"catalog."
+msgstr ""
+"Προεπιλεγμένα δικαιώματα πρόσβασης και επισήμανση για την υπηρεσία. Η ομάδα "
+"πρόσβασης κληρονομείται από κάθε κάρτα που εκδίδεται από αυτήν την υπηρεσία, "
+"και οι ετικέτες βοηθούν στο φιλτράρισμα του καταλόγου."
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding.step,step_image_alt:rfid_service_base.onboarding_step_service_define
+#: model:onboarding.onboarding.step,title:rfid_service_base.onboarding_step_service_define
+msgid "Define a visitor service"
+msgstr "Ορισμός υπηρεσίας επισκέπτη"
+
+#. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_hr_rfid_access_group_contact_rel__display_name
+#: model:ir.model.fields,field_description:rfid_service_base.field_onboarding_onboarding__display_name
+#: model:ir.model.fields,field_description:rfid_service_base.field_onboarding_onboarding_step__display_name
 #: model:ir.model.fields,field_description:rfid_service_base.field_res_company__display_name
 #: model:ir.model.fields,field_description:rfid_service_base.field_res_partner__display_name
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__display_name
@@ -513,20 +638,27 @@ msgid ""
 "Email template used when sending badges/cards to customers.\n"
 "        \n"
 "• Purpose: Customize the email content and appearance sent to customers\n"
-"• Content: Can include card details, access instructions, and company branding\n"
+"• Content: Can include card details, access instructions, and company "
+"branding\n"
 "• Automation: Template is used when clicking 'Email Card' in sales process\n"
 "• Default: Uses system default badge email template if not specified\n"
 "        \n"
 "Customize the template to match your organization's communication style."
 msgstr ""
-"Πρότυπο email που χρησιμοποιείται κατά την αποστολή σημάτων ταυτότητας/καρτών σε πελάτες.\n"
+"Πρότυπο email που χρησιμοποιείται κατά την αποστολή σημάτων ταυτότητας/"
+"καρτών σε πελάτες.\n"
 "        \n"
-"• Σκοπός: Προσαρμογή του περιεχομένου και της εμφάνισης του email που αποστέλλεται σε πελάτες\n"
-"• Περιεχόμενο: Μπορεί να περιλαμβάνει στοιχεία κάρτας, οδηγίες πρόσβασης και εταιρικό branding\n"
-"• Αυτοματισμός: Το πρότυπο χρησιμοποιείται κατά την επιλογή 'Αποστολή Κάρτας μέσω Email' στη διαδικασία πωλήσεων\n"
-"• Προεπιλογή: Χρησιμοποιεί το προεπιλεγμένο πρότυπο email σήματος ταυτότητας αν δεν οριστεί κάποιο\n"
+"• Σκοπός: Προσαρμογή του περιεχομένου και της εμφάνισης του email που "
+"αποστέλλεται σε πελάτες\n"
+"• Περιεχόμενο: Μπορεί να περιλαμβάνει στοιχεία κάρτας, οδηγίες πρόσβασης και "
+"εταιρικό branding\n"
+"• Αυτοματισμός: Το πρότυπο χρησιμοποιείται κατά την επιλογή 'Αποστολή Κάρτας "
+"μέσω Email' στη διαδικασία πωλήσεων\n"
+"• Προεπιλογή: Χρησιμοποιεί το προεπιλεγμένο πρότυπο email σήματος ταυτότητας "
+"αν δεν οριστεί κάποιο\n"
 "        \n"
-"Προσαρμόστε το πρότυπο ώστε να ταιριάζει με το επικοινωνιακό ύφος του οργανισμού σας."
+"Προσαρμόστε το πρότυπο ώστε να ταιριάζει με το επικοινωνιακό ύφος του "
+"οργανισμού σας."
 
 #. module: rfid_service_base
 #. odoo-python
@@ -549,6 +681,11 @@ msgstr "Παράταση Υπηρεσίας"
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
 msgid "Finished"
 msgstr "Ολοκληρωμένο"
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding.step,done_text:rfid_service_base.onboarding_step_service_first_sale
+msgid "First visitor card issued!"
+msgstr "Πρώτη κάρτα επισκέπτη εκδόθηκε!"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__fixed_time
@@ -606,16 +743,23 @@ msgid ""
 "    \n"
 "Choose based on how you want to limit and charge for the service."
 msgstr ""
-"Τρόπος με τον οποίο αυτή η υπηρεσία ελέγχει τη διάρκεια και τη χρήση πρόσβασης του πελάτη.\n"
+"Τρόπος με τον οποίο αυτή η υπηρεσία ελέγχει τη διάρκεια και τη χρήση "
+"πρόσβασης του πελάτη.\n"
 "    \n"
-"• Βάσει χρόνου: Η πρόσβαση ισχύει για συγκεκριμένη χρονική περίοδο (ημέρες, εβδομάδες, μήνες)\n"
-"• Βάσει επισκέψεων: Η πρόσβαση περιορίζεται από αριθμό εισόδων (π.χ. 5 επισκέψεις)\n"
-"• Χρόνος και Επισκέψεις: Ισχύουν και οι δύο περιορισμοί, χρονικής περιόδου ΚΑΙ αριθμού επισκέψεων\n"
+"• Βάσει χρόνου: Η πρόσβαση ισχύει για συγκεκριμένη χρονική περίοδο (ημέρες, "
+"εβδομάδες, μήνες)\n"
+"• Βάσει επισκέψεων: Η πρόσβαση περιορίζεται από αριθμό εισόδων (π.χ. 5 "
+"επισκέψεις)\n"
+"• Χρόνος και Επισκέψεις: Ισχύουν και οι δύο περιορισμοί, χρονικής περιόδου "
+"ΚΑΙ αριθμού επισκέψεων\n"
 "    \n"
-"Επιλέξτε βάσει του τρόπου με τον οποίο θέλετε να περιορίσετε και να χρεώσετε την υπηρεσία."
+"Επιλέξτε βάσει του τρόπου με τον οποίο θέλετε να περιορίσετε και να χρεώσετε "
+"την υπηρεσία."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_hr_rfid_access_group_contact_rel__id
+#: model:ir.model.fields,field_description:rfid_service_base.field_onboarding_onboarding__id
+#: model:ir.model.fields,field_description:rfid_service_base.field_onboarding_onboarding_step__id
 #: model:ir.model.fields,field_description:rfid_service_base.field_res_company__id
 #: model:ir.model.fields,field_description:rfid_service_base.field_res_partner__id
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__id
@@ -647,8 +791,7 @@ msgstr "Εάν είναι επιλεγμένο, τα νέα μηνύματα α�
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__message_has_error
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
-msgstr ""
-"Εάν είναι επιλεγμένο, ορισμένα μηνύματα παρουσιάζουν σφάλμα παράδοσης."
+msgstr "Εάν είναι επιλεγμένο, ορισμένα μηνύματα παρουσιάζουν σφάλμα παράδοσης."
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form
@@ -665,6 +808,26 @@ msgstr "Εάν θέλετε να αποστείλετε PDF"
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__message_is_follower
 msgid "Is Follower"
 msgstr "Είναι Ακόλουθος"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form
+msgid ""
+"Issue or extend a visitor service. Scan the card, pick the visitor, and "
+"adjust the validity window if the defaults don't match. Encode Card creates "
+"the contact and activates access; Share Card also emails or texts the "
+"credentials."
+msgstr ""
+"Εκδώστε ή παρατείνετε μια υπηρεσία επισκέπτη. Σαρώστε την κάρτα, επιλέξτε "
+"τον επισκέπτη και προσαρμόστε το χρονικό παράθυρο ισχύος αν οι προεπιλογές "
+"δεν ταιριάζουν. Η Κωδικοποίηση Κάρτας δημιουργεί την επαφή και ενεργοποιεί "
+"την πρόσβαση· η Κοινοποίηση Κάρτας στέλνει επίσης τα διαπιστευτήρια με email "
+"ή SMS."
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding.step,step_image_alt:rfid_service_base.onboarding_step_service_first_sale
+#: model:onboarding.onboarding.step,title:rfid_service_base.onboarding_step_service_first_sale
+msgid "Issue the first visitor card"
+msgstr "Εκδώστε την πρώτη κάρτα επισκέπτη"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__write_uid
@@ -695,25 +858,30 @@ msgstr "Χειροκίνητα ακυρωμένη υπηρεσία"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__visits
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__visits
 msgid ""
 "Maximum number of times a customer can access with this service.\n"
 "        \n"
 "• Purpose: Limit usage for visit-based or combined service types\n"
 "• Tracking: System automatically counts and decreases available visits\n"
 "• Zero means: Unlimited visits (only for time-based services)\n"
-"• Examples: 5 visits for \"Weekly Gym Pass\", 1 visit for \"Single Day Access\"\n"
+"• Examples: 5 visits for \"Weekly Gym Pass\", 1 visit for \"Single Day "
+"Access\"\n"
 "        \n"
 "Only applies to 'Visits based' and 'Time and Visits based' service types."
 msgstr ""
-"Μέγιστος αριθμός φορών που ένας πελάτης μπορεί να έχει πρόσβαση με αυτή την υπηρεσία.\n"
+"Μέγιστος αριθμός φορών που ένας πελάτης μπορεί να έχει πρόσβαση με αυτή την "
+"υπηρεσία.\n"
 "        \n"
-"• Σκοπός: Περιορισμός χρήσης για τύπους υπηρεσίας βάσει επισκέψεων ή συνδυαστικούς\n"
-"• Παρακολούθηση: Το σύστημα μετρά αυτόματα και μειώνει τις διαθέσιμες επισκέψεις\n"
+"• Σκοπός: Περιορισμός χρήσης για τύπους υπηρεσίας βάσει επισκέψεων ή "
+"συνδυαστικούς\n"
+"• Παρακολούθηση: Το σύστημα μετρά αυτόματα και μειώνει τις διαθέσιμες "
+"επισκέψεις\n"
 "• Μηδέν σημαίνει: Απεριόριστες επισκέψεις (μόνο για υπηρεσίες βάσει χρόνου)\n"
-"• Παραδείγματα: 5 επισκέψεις για \"Εβδομαδιαίο Πάσο Γυμναστηρίου\", 1 επίσκεψη για \"Πρόσβαση Μιας Ημέρας\"\n"
+"• Παραδείγματα: 5 επισκέψεις για \"Εβδομαδιαίο Πάσο Γυμναστηρίου\", 1 "
+"επίσκεψη για \"Πρόσβαση Μιας Ημέρας\"\n"
 "        \n"
-"Ισχύει μόνο για τύπους υπηρεσίας 'Βάσει επισκέψεων' και 'Βάσει χρόνου και επισκέψεων'."
+"Ισχύει μόνο για τύπους υπηρεσίας 'Βάσει επισκέψεων' και 'Βάσει χρόνου και "
+"επισκέψεων'."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__message_has_error
@@ -733,9 +901,89 @@ msgid "Minutes"
 msgstr "Λεπτά"
 
 #. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__generate_barcode_card
+msgid ""
+"Mirrors the service flag — when true, the wizard auto-generates a printable "
+"barcode instead of expecting a scanned RFID number."
+msgstr ""
+"Αυτόματη δημιουργία καρτών με γραμμικό κώδικα αντί για κάρτες RFID.\n"
+"        \n"
+"• Όταν είναι ενεργοποιημένο: Το σύστημα δημιουργεί κάρτες QR/γραμμικού "
+"κώδικα για σάρωση από κινητό\n"
+"• Όταν είναι απενεργοποιημένο: Χρησιμοποιούνται παραδοσιακές κάρτες RFID\n"
+"• Περιπτώσεις χρήσης: Πρόσβαση μέσω κινητού, προσωρινοί επισκέπτες, "
+"εκδηλώσεις\n"
+"• Τύπος κάρτας: Αλλάζει αυτόματα σε τύπο κάρτας γραμμικού κώδικα όταν "
+"ενεργοποιείται\n"
+"        \n"
+"Οι κάρτες γραμμικού κώδικα μπορούν να σαρωθούν με κινητές συσκευές και δεν "
+"απαιτούν φυσικές κάρτες RFID."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__fixed_time
+msgid ""
+"Mirrors the service's Fixed Time flag — when true, the end date snaps to a "
+"fixed daily cut-off instead of a rolling interval."
+msgstr ""
+"Καθορίζει εάν οι ώρες υπηρεσίας είναι σταθερές ή μπορούν να προσαρμοστούν "
+"ανά πώληση.\n"
+"        \n"
+"• Σταθερές (ενεργοποιημένο): Όλες οι πωλήσεις χρησιμοποιούν τις ίδιες ώρες "
+"έναρξης/λήξης που ορίζονται στην υπηρεσία\n"
+"• Ευέλικτες (απενεργοποιημένο): Το προσωπικό μπορεί να προσαρμόσει τις ώρες "
+"έναρξης/λήξης για κάθε μεμονωμένη πώληση\n"
+"• Περιπτώσεις χρήσης: Σταθερές για τυποποιημένες υπηρεσίες, ευέλικτες για "
+"προσαρμοσμένες κρατήσεις\n"
+"• Έλεγχος: Καθορίζει εάν οι χειριστές μπορούν να τροποποιούν τον χρονισμό "
+"υπηρεσίας κατά τις πωλήσεις\n"
+"        \n"
+"Ενεργοποιήστε για τυποποιημένες υπηρεσίες, απενεργοποιήστε για προσαρμοσμένη "
+"ή εκδηλωσιακή πρόσβαση."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__visits
+msgid ""
+"Mirrors the visits-per-card limit from the service template — informational "
+"only, the wizard does not let you override it."
+msgstr ""
+"Μέγιστος αριθμός φορών που ένας πελάτης μπορεί να έχει πρόσβαση με αυτή την "
+"υπηρεσία.\n"
+"        \n"
+"• Σκοπός: Περιορισμός χρήσης για τύπους υπηρεσίας βάσει επισκέψεων ή "
+"συνδυαστικούς\n"
+"• Παρακολούθηση: Το σύστημα μετρά αυτόματα και μειώνει τις διαθέσιμες "
+"επισκέψεις\n"
+"• Μηδέν σημαίνει: Απεριόριστες επισκέψεις (μόνο για υπηρεσίες βάσει χρόνου)\n"
+"• Παραδείγματα: 5 επισκέψεις για \"Εβδομαδιαίο Πάσο Γυμναστηρίου\", 1 "
+"επίσκεψη για \"Πρόσβαση Μιας Ημέρας\"\n"
+"        \n"
+"Ισχύει μόνο για τύπους υπηρεσίας 'Βάσει επισκέψεων' και 'Βάσει χρόνου και "
+"επισκέψεων'."
+
+#. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__mobile
 msgid "Mobile"
 msgstr "Κινητό"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__start_date
+msgid ""
+"Moment the card becomes active. Defaults to a calculated start based on the "
+"service's time interval, but you can override it."
+msgstr ""
+"Στιγμή κατά την οποία η κάρτα ενεργοποιείται. Προεπιλέγεται σε μια "
+"υπολογισμένη έναρξη βάσει του χρονικού διαστήματος της υπηρεσίας, αλλά "
+"μπορείτε να την αντικαταστήσετε."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__end_date
+msgid ""
+"Moment the card stops working. Calculated from start + the service's time "
+"interval; for Fixed Time services it snaps to the daily cut-off."
+msgstr ""
+"Στιγμή κατά την οποία η κάρτα παύει να λειτουργεί. Υπολογίζεται από την "
+"έναρξη + το χρονικό διάστημα της υπηρεσίας· για υπηρεσίες Καθορισμένης Ώρας "
+"προσαρμόζεται στην ημερήσια οριακή ώρα."
 
 #. module: rfid_service_base
 #: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service__time_interval_type__months
@@ -762,17 +1010,24 @@ msgstr ""
 "Όνομα ετικέτας υπηρεσίας για κατηγοριοποίηση και φιλτράρισμα.\n"
 "        \n"
 "• Σκοπός: Δημιουργία λογικών ομαδοποιήσεων σχετικών υπηρεσιών\n"
-"• Παραδείγματα: 'VIP', 'Επισκέπτης', 'Προσωπικό', 'Premium', 'Βασικό', 'Εκδήλωση'\n"
+"• Παραδείγματα: 'VIP', 'Επισκέπτης', 'Προσωπικό', 'Premium', 'Βασικό', "
+"'Εκδήλωση'\n"
 "• Χρήση: Χρησιμοποιείται σε φίλτρα αναζήτησης και οργάνωση υπηρεσιών\n"
 "• Μοναδικότητα: Τα ονόματα ετικετών πρέπει να είναι μοναδικά στο σύστημα\n"
 "        \n"
-"Χρησιμοποιήστε σαφή, περιγραφικά ονόματα που βοηθούν στην οργάνωση των προσφορών υπηρεσιών σας."
+"Χρησιμοποιήστε σαφή, περιγραφικά ονόματα που βοηθούν στην οργάνωση των "
+"προσφορών υπηρεσιών σας."
 
 #. module: rfid_service_base
 #. odoo-python
 #: code:addons/rfid_service_base/models/rfid_service.py:0
 msgid "New Sale - %s"
 msgstr "Νέα Πώληση - %s"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr "Επόμενο Συμβάν Ημερολογίου Δραστηριότητας"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_date_deadline
@@ -825,6 +1080,17 @@ msgid "Number of messages with delivery error"
 msgstr "Αριθμός μηνυμάτων με σφάλμα παράδοσης"
 
 #. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_res_partner__partner_rfid_sales_count
+#: model:ir.model.fields,help:rfid_service_base.field_res_users__partner_rfid_sales_count
+msgid ""
+"Number of visitor service sales registered against this contact across all "
+"services. Used by the smart button to drive the user to the sales history."
+msgstr ""
+"Αριθμός πωλήσεων υπηρεσιών επισκέπτη που έχουν καταχωρηθεί για αυτήν την "
+"επαφή σε όλες τις υπηρεσίες. Χρησιμοποιείται από το έξυπνο κουμπί για να "
+"οδηγήσει τον χρήστη στο ιστορικό πωλήσεων."
+
+#. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__visits
 msgid ""
 "Number of visits remaining for this service (for visit-based services).\n"
@@ -832,18 +1098,25 @@ msgid ""
 "• Purpose: Shows how many times customer can still access with this service\n"
 "• Countdown: Automatically decreases each time customer uses their card\n"
 "• Zero means: No more visits remaining (service access blocked)\n"
-"• Unlimited: Visit-based services show actual count, time-based services may show 0\n"
+"• Unlimited: Visit-based services show actual count, time-based services may "
+"show 0\n"
 "\n"
 "Only relevant for 'Visits based' and 'Time and Visits based' service types."
 msgstr ""
-"Αριθμός επισκέψεων που απομένουν για αυτή την υπηρεσία (για υπηρεσίες βάσει επισκέψεων).\n"
+"Αριθμός επισκέψεων που απομένουν για αυτή την υπηρεσία (για υπηρεσίες βάσει "
+"επισκέψεων).\n"
 "\n"
-"• Σκοπός: Εμφανίζει πόσες φορές ο πελάτης μπορεί ακόμα να έχει πρόσβαση με αυτή την υπηρεσία\n"
-"• Αντίστροφη μέτρηση: Μειώνεται αυτόματα κάθε φορά που ο πελάτης χρησιμοποιεί την κάρτα του\n"
-"• Μηδέν σημαίνει: Δεν απομένουν άλλες επισκέψεις (η πρόσβαση στην υπηρεσία αποκλείεται)\n"
-"• Απεριόριστο: Οι υπηρεσίες βάσει επισκέψεων εμφανίζουν τον πραγματικό αριθμό, οι υπηρεσίες βάσει χρόνου μπορεί να εμφανίζουν 0\n"
+"• Σκοπός: Εμφανίζει πόσες φορές ο πελάτης μπορεί ακόμα να έχει πρόσβαση με "
+"αυτή την υπηρεσία\n"
+"• Αντίστροφη μέτρηση: Μειώνεται αυτόματα κάθε φορά που ο πελάτης "
+"χρησιμοποιεί την κάρτα του\n"
+"• Μηδέν σημαίνει: Δεν απομένουν άλλες επισκέψεις (η πρόσβαση στην υπηρεσία "
+"αποκλείεται)\n"
+"• Απεριόριστο: Οι υπηρεσίες βάσει επισκέψεων εμφανίζουν τον πραγματικό "
+"αριθμό, οι υπηρεσίες βάσει χρόνου μπορεί να εμφανίζουν 0\n"
 "\n"
-"Ισχύει μόνο για τύπους υπηρεσίας 'Βάσει επισκέψεων' και 'Βάσει χρόνου και επισκέψεων'."
+"Ισχύει μόνο για τύπους υπηρεσίας 'Βάσει επισκέψεων' και 'Βάσει χρόνου και "
+"επισκέψεων'."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__time_interval_number
@@ -857,11 +1130,13 @@ msgid ""
 "        \n"
 "Set to 1 for single-unit periods (1 day, 1 week, etc.)."
 msgstr ""
-"Αριθμητικό τμήμα της διάρκειας υπηρεσίας (σε συνδυασμό με τη Μονάδα Διάρκειας).\n"
+"Αριθμητικό τμήμα της διάρκειας υπηρεσίας (σε συνδυασμό με τη Μονάδα "
+"Διάρκειας).\n"
 "        \n"
 "• Σκοπός: Ορισμός της χρονικής διάρκειας ισχύος της πρόσβασης στην υπηρεσία\n"
 "• Παραδείγματα: 7 ημέρες, 1 μήνας, 2 εβδομάδες, 30 λεπτά\n"
-"• Υπολογισμός: Συνδυάζεται με τη Μονάδα Διάρκειας για τη δημιουργία της συνολικής περιόδου υπηρεσίας\n"
+"• Υπολογισμός: Συνδυάζεται με τη Μονάδα Διάρκειας για τη δημιουργία της "
+"συνολικής περιόδου υπηρεσίας\n"
 "• Τιμολόγηση: Οι μεγαλύτερες διάρκειες έχουν συνήθως υψηλότερες τιμές\n"
 "        \n"
 "Ορίστε σε 1 για περιόδους μίας μονάδας (1 ημέρα, 1 εβδομάδα κ.λπ.)."
@@ -877,11 +1152,43 @@ msgid "Old start"
 msgstr "Παλαιά έναρξη"
 
 #. module: rfid_service_base
+#: model:ir.model,name:rfid_service_base.model_onboarding_onboarding
+msgid "Onboarding"
+msgstr "Εισαγωγή"
+
+#. module: rfid_service_base
+#: model:ir.model,name:rfid_service_base.model_onboarding_onboarding_step
+msgid "Onboarding Step"
+msgstr "Βήμα Εγγραφής"
+
+#. module: rfid_service_base
 #: model:ir.model.constraint,message:rfid_service_base.constraint_rfid_service_sale_check_duplicates
 msgid "Only one service for same period for given Customer!"
 msgstr ""
 "Επιτρέπεται μόνο μία υπηρεσία για την ίδια περίοδο για τον συγκεκριμένο "
 "Πελάτη!"
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding.step,button_text:rfid_service_base.onboarding_step_service_first_sale
+msgid "Open Service Sales"
+msgstr "Άνοιγμα Πωλήσεων Υπηρεσιών"
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding.step,description:rfid_service_base.onboarding_step_service_first_sale
+msgid ""
+"Open Service Sales to issue a card to a visitor. Pick the service from the "
+"catalog, scan or type the card number, and the start/end dates. The visitor "
+"gains access immediately within the time window you set."
+msgstr ""
+"Ανοίξτε τις Πωλήσεις Υπηρεσιών για να εκδώσετε μια κάρτα σε έναν επισκέπτη. "
+"Επιλέξτε την υπηρεσία από τον κατάλογο, σαρώστε ή πληκτρολογήστε τον αριθμό "
+"κάρτας και τις ημερομηνίες έναρξης/λήξης. Ο επισκέπτης αποκτά άμεση πρόσβαση "
+"εντός του χρονικού παραθύρου που ορίσατε."
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding.step,button_text:rfid_service_base.onboarding_step_service_define
+msgid "Open Services"
+msgstr "Άνοιγμα Υπηρεσιών"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__zone_id
@@ -897,12 +1204,48 @@ msgid ""
 msgstr ""
 "Προαιρετική ζώνη για παρακολούθηση παρουσίας και συμπεριφοράς πελατών.\n"
 "        \n"
-"• Σκοπός: Παρακολούθηση του πότε και για πόσο χρόνο οι πελάτες παραμένουν σε συγκεκριμένους χώρους\n"
+"• Σκοπός: Παρακολούθηση του πότε και για πόσο χρόνο οι πελάτες παραμένουν σε "
+"συγκεκριμένους χώρους\n"
 "• Αναλυτικά στοιχεία: Δημιουργία αναφορών χρήσης ζωνών και προτύπων πελατών\n"
 "• Ενσωμάτωση: Λειτουργεί με συστήματα παρακολούθησης παρουσίας\n"
 "• Προαιρετικό: Αφήστε κενό εάν δεν απαιτείται παρακολούθηση ζωνών\n"
 "        \n"
-"Χρήσιμο για κατανόηση της συμπεριφοράς πελατών και της αξιοποίησης των εγκαταστάσεων."
+"Χρήσιμο για κατανόηση της συμπεριφοράς πελατών και της αξιοποίησης των "
+"εγκαταστάσεων."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__ext_end_date
+msgid ""
+"Original end date of the sale being extended (shown for reference). The new "
+"end below replaces it on confirmation."
+msgstr ""
+"Ημερομηνία και ώρα λήξης πρόσβασης του πελάτη.\n"
+"        \n"
+"• Λήξη: Η κάρτα του πελάτη απενεργοποιείται την ημερομηνία/ώρα αυτή\n"
+"• Υπολογισμός: Συνήθως υπολογίζεται από την ημερομηνία έναρξης + διάρκεια "
+"υπηρεσίας\n"
+"• Χειροκίνητη παράκαμψη: Μπορεί να προσαρμοστεί χειροκίνητα για "
+"προσαρμοσμένες περιόδους υπηρεσίας\n"
+"• Ασφάλεια: Η πρόσβαση ανακαλείται αυτόματα μετά την ημερομηνία/ώρα αυτή\n"
+"        \n"
+"Ο πελάτης θα χάσει πρόσβαση στους καθορισμένους χώρους μετά την ημερομηνία/"
+"ώρα αυτή."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__ext_start_date
+msgid "Original start date of the sale being extended (shown for reference)."
+msgstr ""
+"Ημερομηνία και ώρα έναρξης πρόσβασης του πελάτη.\n"
+"        \n"
+"• Ενεργοποίηση: Η κάρτα του πελάτη ενεργοποιείται την ημερομηνία/ώρα αυτή\n"
+"• Προγραμματισμός: Μπορεί να οριστεί για μελλοντική ενεργοποίηση "
+"(προκαταβολικές κρατήσεις)\n"
+"• Ζώνη ώρας: Ερμηνεύεται σύμφωνα με τις ρυθμίσεις ζώνης ώρας του χρήστη\n"
+"• Υπολογισμός: Συνδυάζεται με τη διάρκεια υπηρεσίας για τον προσδιορισμό της "
+"ημερομηνίας λήξης\n"
+"        \n"
+"Ο πελάτης θα μπορεί να έχει πρόσβαση στους καθορισμένους χώρους από αυτή την "
+"ημερομηνία/ώρα."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__parent_id
@@ -912,25 +1255,45 @@ msgstr "Μητρικός Πελάτης"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__parent_id
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__parent_id
 msgid ""
-"Parent company or organization that all service customers will be linked to.\n"
+"Parent company or organization that all service customers will be linked "
+"to.\n"
 "        \n"
 "• Purpose: Group individual customers under a parent organization\n"
 "• Hierarchy: Creates customer hierarchy for reporting and management\n"
 "• Billing: Useful for corporate accounts or group bookings\n"
-"• Optional: Leave empty for individual customers without parent organization\n"
+"• Optional: Leave empty for individual customers without parent "
+"organization\n"
 "        \n"
 "Example: Link all conference attendees to the hosting company."
 msgstr ""
-"Μητρική εταιρεία ή οργανισμός στον οποίο θα συνδεθούν όλοι οι πελάτες υπηρεσίας.\n"
+"Μητρική εταιρεία ή οργανισμός στον οποίο θα συνδεθούν όλοι οι πελάτες "
+"υπηρεσίας.\n"
 "        \n"
 "• Σκοπός: Ομαδοποίηση μεμονωμένων πελατών υπό έναν μητρικό οργανισμό\n"
 "• Ιεραρχία: Δημιουργεί ιεραρχία πελατών για αναφορές και διαχείριση\n"
 "• Τιμολόγηση: Χρήσιμο για εταιρικούς λογαριασμούς ή ομαδικές κρατήσεις\n"
 "• Προαιρετικό: Αφήστε κενό για μεμονωμένους πελάτες χωρίς μητρικό οργανισμό\n"
 "        \n"
-"Παράδειγμα: Συνδέστε όλους τους συμμετέχοντες συνεδρίου με την εταιρεία υποδοχής."
+"Παράδειγμα: Συνδέστε όλους τους συμμετέχοντες συνεδρίου με την εταιρεία "
+"υποδοχής."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__parent_id
+msgid ""
+"Parent partner the new visitor contact will be filed under (inherited from "
+"the service template)."
+msgstr ""
+"Μητρική εταιρεία ή οργανισμός στον οποίο θα συνδεθούν όλοι οι πελάτες "
+"υπηρεσίας.\n"
+"        \n"
+"• Σκοπός: Ομαδοποίηση μεμονωμένων πελατών υπό έναν μητρικό οργανισμό\n"
+"• Ιεραρχία: Δημιουργεί ιεραρχία πελατών για αναφορές και διαχείριση\n"
+"• Τιμολόγηση: Χρήσιμο για εταιρικούς λογαριασμούς ή ομαδικές κρατήσεις\n"
+"• Προαιρετικό: Αφήστε κενό για μεμονωμένους πελάτες χωρίς μητρικό οργανισμό\n"
+"        \n"
+"Παράδειγμα: Συνδέστε όλους τους συμμετέχοντες συνεδρίου με την εταιρεία "
+"υποδοχής."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__partner_id
@@ -964,11 +1327,14 @@ msgstr ""
 "Φυσική ή ψηφιακή κάρτα που εκχωρείται στον πελάτη για πρόσβαση.\n"
 "        \n"
 "• Μέθοδος πρόσβασης: Κάρτα που ο πελάτης χρησιμοποιεί για φυσική πρόσβαση\n"
-"• Τύποι κάρτας: Μπορεί να είναι κάρτα RFID, κάρτα γραμμικού κώδικα ή ψηφιακό σήμα ταυτότητας\n"
+"• Τύποι κάρτας: Μπορεί να είναι κάρτα RFID, κάρτα γραμμικού κώδικα ή ψηφιακό "
+"σήμα ταυτότητας\n"
 "• Δημιουργία: Δημιουργείται αυτόματα κατά τη διαδικασία πώλησης υπηρεσίας\n"
-"• Ασφάλεια: Ενεργοποιείται/απενεργοποιείται σύμφωνα με την περίοδο υπηρεσίας\n"
+"• Ασφάλεια: Ενεργοποιείται/απενεργοποιείται σύμφωνα με την περίοδο "
+"υπηρεσίας\n"
 "        \n"
-"Αυτό είναι το φυσικό/ψηφιακό μέσο που ο πελάτης χρησιμοποιεί για πρόσβαση στους χώρους."
+"Αυτό είναι το φυσικό/ψηφιακό μέσο που ο πελάτης χρησιμοποιεί για πρόσβαση "
+"στους χώρους."
 
 #. module: rfid_service_base
 #. odoo-python
@@ -1057,20 +1423,27 @@ msgid ""
 "RFID access group that defines which doors customers can access.\n"
 "        \n"
 "• Purpose: Controls physical access permissions for service customers\n"
-"• Door mapping: Determines which doors/areas this service provides access to\n"
+"• Door mapping: Determines which doors/areas this service provides access "
+"to\n"
 "• Security: Customers only get access to doors included in this group\n"
 "• Configuration: Must be set up before selling services\n"
 "        \n"
-"Choose the access group that matches the physical areas this service should provide."
+"Choose the access group that matches the physical areas this service should "
+"provide."
 msgstr ""
-"Ομάδα πρόσβασης RFID που ορίζει σε ποιες πόρτες μπορούν να έχουν πρόσβαση οι πελάτες.\n"
+"Ομάδα πρόσβασης RFID που ορίζει σε ποιες πόρτες μπορούν να έχουν πρόσβαση οι "
+"πελάτες.\n"
 "        \n"
-"• Σκοπός: Ελέγχει τα δικαιώματα φυσικής πρόσβασης για τους πελάτες υπηρεσίας\n"
-"• Αντιστοίχιση πορτών: Καθορίζει σε ποιες πόρτες/χώρους παρέχει πρόσβαση αυτή η υπηρεσία\n"
-"• Ασφάλεια: Οι πελάτες έχουν πρόσβαση μόνο στις πόρτες που περιλαμβάνονται σε αυτή την ομάδα\n"
+"• Σκοπός: Ελέγχει τα δικαιώματα φυσικής πρόσβασης για τους πελάτες "
+"υπηρεσίας\n"
+"• Αντιστοίχιση πορτών: Καθορίζει σε ποιες πόρτες/χώρους παρέχει πρόσβαση "
+"αυτή η υπηρεσία\n"
+"• Ασφάλεια: Οι πελάτες έχουν πρόσβαση μόνο στις πόρτες που περιλαμβάνονται "
+"σε αυτή την ομάδα\n"
 "• Διαμόρφωση: Πρέπει να ρυθμιστεί πριν από την πώληση υπηρεσιών\n"
 "        \n"
-"Επιλέξτε την ομάδα πρόσβασης που αντιστοιχεί στους φυσικούς χώρους που πρέπει να παρέχει αυτή η υπηρεσία."
+"Επιλέξτε την ομάδα πρόσβασης που αντιστοιχεί στους φυσικούς χώρους που "
+"πρέπει να παρέχει αυτή η υπηρεσία."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__service_id
@@ -1078,7 +1451,8 @@ msgid ""
 "RFID service that was sold to the customer.\n"
 "        \n"
 "• Purpose: Links this sale to the specific service offering\n"
-"• Configuration: Inherits all service settings (duration, access rights, etc.)\n"
+"• Configuration: Inherits all service settings (duration, access rights, "
+"etc.)\n"
 "• Pricing: Service determines access permissions and time limits\n"
 "• Required: Every sale must be linked to a service\n"
 "        \n"
@@ -1087,8 +1461,10 @@ msgstr ""
 "Υπηρεσία RFID που πωλήθηκε στον πελάτη.\n"
 "        \n"
 "• Σκοπός: Συνδέει αυτή την πώληση με τη συγκεκριμένη προσφορά υπηρεσίας\n"
-"• Διαμόρφωση: Κληρονομεί όλες τις ρυθμίσεις υπηρεσίας (διάρκεια, δικαιώματα πρόσβασης κ.λπ.)\n"
-"• Τιμολόγηση: Η υπηρεσία καθορίζει τα δικαιώματα πρόσβασης και τα χρονικά όρια\n"
+"• Διαμόρφωση: Κληρονομεί όλες τις ρυθμίσεις υπηρεσίας (διάρκεια, δικαιώματα "
+"πρόσβασης κ.λπ.)\n"
+"• Τιμολόγηση: Η υπηρεσία καθορίζει τα δικαιώματα πρόσβασης και τα χρονικά "
+"όρια\n"
 "• Υποχρεωτικό: Κάθε πώληση πρέπει να είναι συνδεδεμένη με μία υπηρεσία\n"
 "        \n"
 "Η υπηρεσία ορίζει ποια πρόσβαση και διάρκεια λαμβάνει ο πελάτης."
@@ -1096,25 +1472,37 @@ msgstr ""
 #. module: rfid_service_base
 #: model_terms:ir.actions.act_window,help:rfid_service_base.hr_rfid_service_action
 msgid ""
-"RFID services define access packages that you can sell to customers and visitors.\n"
+"RFID services define access packages that you can sell to customers and "
+"visitors.\n"
 "                    <br><br>\n"
 "                    Service types:\n"
-"                    • <b>Time-based:</b> Access valid for specific periods (daily, weekly, monthly)\n"
-"                    • <b>Visit-based:</b> Access limited by number of entries\n"
-"                    • <b>Combined:</b> Both time and visit restrictions apply\n"
+"                    • <b>Time-based:</b> Access valid for specific periods "
+"(daily, weekly, monthly)\n"
+"                    • <b>Visit-based:</b> Access limited by number of "
+"entries\n"
+"                    • <b>Combined:</b> Both time and visit restrictions "
+"apply\n"
 "                    <br><br>\n"
-"                    Each service includes access permissions, duration, pricing, and card type settings.\n"
-"                    Perfect for visitor management, membership sales, and event access control."
+"                    Each service includes access permissions, duration, "
+"pricing, and card type settings.\n"
+"                    Perfect for visitor management, membership sales, and "
+"event access control."
 msgstr ""
-"Οι υπηρεσίες RFID ορίζουν πακέτα πρόσβασης που μπορείτε να πουλήσετε σε πελάτες και επισκέπτες.\n"
+"Οι υπηρεσίες RFID ορίζουν πακέτα πρόσβασης που μπορείτε να πουλήσετε σε "
+"πελάτες και επισκέπτες.\n"
 "                    <br><br>\n"
 "                    Τύποι υπηρεσιών:\n"
-"                    • <b>Βάσει χρόνου:</b> Πρόσβαση ισχύουσα για συγκεκριμένες περιόδους (ημερήσια, εβδομαδιαία, μηνιαία)\n"
-"                    • <b>Βάσει επισκέψεων:</b> Πρόσβαση περιορισμένη βάσει αριθμού εισόδων\n"
-"                    • <b>Συνδυαστική:</b> Ισχύουν και οι δύο περιορισμοί χρόνου και επισκέψεων\n"
+"                    • <b>Βάσει χρόνου:</b> Πρόσβαση ισχύουσα για "
+"συγκεκριμένες περιόδους (ημερήσια, εβδομαδιαία, μηνιαία)\n"
+"                    • <b>Βάσει επισκέψεων:</b> Πρόσβαση περιορισμένη βάσει "
+"αριθμού εισόδων\n"
+"                    • <b>Συνδυαστική:</b> Ισχύουν και οι δύο περιορισμοί "
+"χρόνου και επισκέψεων\n"
 "                    <br><br>\n"
-"                    Κάθε υπηρεσία περιλαμβάνει ρυθμίσεις αδειών πρόσβασης, διάρκειας, τιμολόγησης και τύπου κάρτας.\n"
-"                    Ιδανικό για διαχείριση επισκεπτών, πωλήσεις συνδρομών και έλεγχο πρόσβασης σε εκδηλώσεις."
+"                    Κάθε υπηρεσία περιλαμβάνει ρυθμίσεις αδειών πρόσβασης, "
+"διάρκειας, τιμολόγησης και τύπου κάρτας.\n"
+"                    Ιδανικό για διαχείριση επισκεπτών, πωλήσεις συνδρομών "
+"και έλεγχο πρόσβασης σε εκδηλώσεις."
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form
@@ -1148,20 +1536,28 @@ msgid ""
 "Report template used when printing physical badges/cards for customers.\n"
 "        \n"
 "• Purpose: Define the layout and content of printed badges\n"
-"• Customization: Can include logos, QR codes, access information, and design elements\n"
+"• Customization: Can include logos, QR codes, access information, and design "
+"elements\n"
 "• Usage: Template is used when clicking 'Print Card' in sales process\n"
 "• Default: Uses system default foldable badge template if not specified\n"
 "        \n"
-"Customize to create professional badges that match your organization's branding."
+"Customize to create professional badges that match your organization's "
+"branding."
 msgstr ""
-"Πρότυπο αναφοράς που χρησιμοποιείται κατά την εκτύπωση φυσικών σημάτων ταυτότητας/καρτών για πελάτες.\n"
+"Πρότυπο αναφοράς που χρησιμοποιείται κατά την εκτύπωση φυσικών σημάτων "
+"ταυτότητας/καρτών για πελάτες.\n"
 "        \n"
-"• Σκοπός: Ορισμός της διάταξης και του περιεχομένου των εκτυπωμένων σημάτων ταυτότητας\n"
-"• Προσαρμογή: Μπορεί να περιλαμβάνει λογότυπα, κωδικούς QR, πληροφορίες πρόσβασης και στοιχεία σχεδιασμού\n"
-"• Χρήση: Το πρότυπο χρησιμοποιείται κατά την επιλογή 'Εκτύπωση Κάρτας' στη διαδικασία πωλήσεων\n"
-"• Προεπιλογή: Χρησιμοποιεί το προεπιλεγμένο πρότυπο αναδιπλούμενου σήματος ταυτότητας αν δεν οριστεί κάποιο\n"
+"• Σκοπός: Ορισμός της διάταξης και του περιεχομένου των εκτυπωμένων σημάτων "
+"ταυτότητας\n"
+"• Προσαρμογή: Μπορεί να περιλαμβάνει λογότυπα, κωδικούς QR, πληροφορίες "
+"πρόσβασης και στοιχεία σχεδιασμού\n"
+"• Χρήση: Το πρότυπο χρησιμοποιείται κατά την επιλογή 'Εκτύπωση Κάρτας' στη "
+"διαδικασία πωλήσεων\n"
+"• Προεπιλογή: Χρησιμοποιεί το προεπιλεγμένο πρότυπο αναδιπλούμενου σήματος "
+"ταυτότητας αν δεν οριστεί κάποιο\n"
 "        \n"
-"Προσαρμόστε για τη δημιουργία επαγγελματικών σημάτων ταυτότητας που ταιριάζουν με το εταιρικό σας branding."
+"Προσαρμόστε για τη δημιουργία επαγγελματικών σημάτων ταυτότητας που "
+"ταιριάζουν με το εταιρικό σας branding."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_user_id
@@ -1276,6 +1672,11 @@ msgid "Service Type"
 msgstr "Τύπος Υπηρεσίας"
 
 #. module: rfid_service_base
+#: model:onboarding.onboarding.step,done_text:rfid_service_base.onboarding_step_service_define
+msgid "Service defined!"
+msgstr "Υπηρεσία ορίστηκε!"
+
+#. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__end_date
 msgid "Service end"
 msgstr "Λήξη υπηρεσίας"
@@ -1358,19 +1759,34 @@ msgid ""
 "        \n"
 "This is the technical record that enables physical access for the customer."
 msgstr ""
-"Τεχνικός σύνδεσμος μεταξύ πελάτη και ομάδας πρόσβασης που χορηγεί δικαιώματα.\n"
+"Τεχνικός σύνδεσμος μεταξύ πελάτη και ομάδας πρόσβασης που χορηγεί "
+"δικαιώματα.\n"
 "        \n"
-"• Σκοπός: Εγγραφή συστήματος που χορηγεί πραγματικά πρόσβαση σε πόρτες/χώρους\n"
+"• Σκοπός: Εγγραφή συστήματος που χορηγεί πραγματικά πρόσβαση σε πόρτες/"
+"χώρους\n"
 "• Χρονισμός: Ελέγχει πότε ξεκινά και λήγει η πρόσβαση\n"
-"• Επισκέψεις: Παρακολουθεί τις υπόλοιπες επισκέψεις για υπηρεσίες βάσει επισκέψεων\n"
+"• Επισκέψεις: Παρακολουθεί τις υπόλοιπες επισκέψεις για υπηρεσίες βάσει "
+"επισκέψεων\n"
 "• Αυτόματο: Δημιουργείται και διαχειρίζεται αυτόματα από το σύστημα\n"
 "        \n"
-"Αυτή είναι η τεχνική εγγραφή που ενεργοποιεί τη φυσική πρόσβαση για τον πελάτη."
+"Αυτή είναι η τεχνική εγγραφή που ενεργοποιεί τη φυσική πρόσβαση για τον "
+"πελάτη."
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
 msgid "Templates"
 msgstr "Πρότυπα"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__card_number
+msgid ""
+"The RFID number or generated barcode the visitor will carry. For RFID "
+"services, type or scan the printed number; for barcode services, the value "
+"is generated automatically."
+msgstr ""
+"Ο αριθμός RFID ή ο δημιουργημένος barcode που θα φέρει ο επισκέπτης. Για "
+"υπηρεσίες RFID, πληκτρολογήστε ή σαρώστε τον τυπωμένο αριθμό· για υπηρεσίες "
+"barcode, η τιμή δημιουργείται αυτόματα."
 
 #. module: rfid_service_base
 #. odoo-python
@@ -1453,22 +1869,33 @@ msgid ""
 "This view tracks all RFID service sales and customer access grants.\n"
 "                    <br><br>\n"
 "                    Monitor and manage:\n"
-"                    • <b>Customer access:</b> Track who has access and when it expires\n"
-"                    • <b>Service usage:</b> Monitor active, expired, and upcoming services\n"
-"                    • <b>Sales analytics:</b> Analyze service performance and customer patterns\n"
-"                    • <b>Customer communication:</b> Send badges and access information\n"
+"                    • <b>Customer access:</b> Track who has access and when "
+"it expires\n"
+"                    • <b>Service usage:</b> Monitor active, expired, and "
+"upcoming services\n"
+"                    • <b>Sales analytics:</b> Analyze service performance "
+"and customer patterns\n"
+"                    • <b>Customer communication:</b> Send badges and access "
+"information\n"
 "                    <br><br>\n"
-"                    Use the calendar view to see service periods and the pivot view for sales analysis."
+"                    Use the calendar view to see service periods and the "
+"pivot view for sales analysis."
 msgstr ""
-"Αυτή η προβολή παρακολουθεί όλες τις πωλήσεις υπηρεσίας RFID και τις χορηγήσεις πρόσβασης πελατών.\n"
+"Αυτή η προβολή παρακολουθεί όλες τις πωλήσεις υπηρεσίας RFID και τις "
+"χορηγήσεις πρόσβασης πελατών.\n"
 "                    <br><br>\n"
 "                    Παρακολούθηση και διαχείριση:\n"
-"                    • <b>Πρόσβαση πελατών:</b> Παρακολουθήστε ποιος έχει πρόσβαση και πότε λήγει\n"
-"                    • <b>Χρήση υπηρεσίας:</b> Παρακολουθήστε ενεργές, ληγμένες και επερχόμενες υπηρεσίες\n"
-"                    • <b>Αναλυτικά πωλήσεων:</b> Αναλύστε την απόδοση υπηρεσίας και τα πρότυπα πελατών\n"
-"                    • <b>Επικοινωνία πελατών:</b> Αποστολή σημάτων ταυτότητας και πληροφοριών πρόσβασης\n"
+"                    • <b>Πρόσβαση πελατών:</b> Παρακολουθήστε ποιος έχει "
+"πρόσβαση και πότε λήγει\n"
+"                    • <b>Χρήση υπηρεσίας:</b> Παρακολουθήστε ενεργές, "
+"ληγμένες και επερχόμενες υπηρεσίες\n"
+"                    • <b>Αναλυτικά πωλήσεων:</b> Αναλύστε την απόδοση "
+"υπηρεσίας και τα πρότυπα πελατών\n"
+"                    • <b>Επικοινωνία πελατών:</b> Αποστολή σημάτων "
+"ταυτότητας και πληροφοριών πρόσβασης\n"
 "                    <br><br>\n"
-"                    Χρησιμοποιήστε την προβολή ημερολογίου για εμφάνιση περιόδων υπηρεσίας και την προβολή pivot για ανάλυση πωλήσεων."
+"                    Χρησιμοποιήστε την προβολή ημερολογίου για εμφάνιση "
+"περιόδων υπηρεσίας και την προβολή pivot για ανάλυση πωλήσεων."
 
 #. module: rfid_service_base
 #: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service__service_type__time_count
@@ -1494,7 +1921,8 @@ msgid ""
 "        \n"
 "Choose the unit that best matches your service offering period."
 msgstr ""
-"Μονάδα χρόνου για τη διάρκεια υπηρεσίας (σε συνδυασμό με τον Αριθμό Διάρκειας).\n"
+"Μονάδα χρόνου για τη διάρκεια υπηρεσίας (σε συνδυασμό με τον Αριθμό "
+"Διάρκειας).\n"
 "        \n"
 "• Λεπτά: Πολύ σύντομη πρόσβαση (αίθουσες συσκέψεων, προσωρινή πρόσβαση)\n"
 "• Ώρες: Βραχυπρόθεσμη πρόσβαση (ημερήσια πάσα, εκδηλώσεις)\n"
@@ -1502,7 +1930,8 @@ msgstr ""
 "• Εβδομάδες: Μεσοπρόθεσμη πρόσβαση (εβδομαδιαίες συνδρομές)\n"
 "• Μήνες: Μακροπρόθεσμες υπηρεσίες (μηνιαίες συνδρομές)\n"
 "        \n"
-"Επιλέξτε τη μονάδα που ταιριάζει καλύτερα με την περίοδο προσφοράς υπηρεσίας σας."
+"Επιλέξτε τη μονάδα που ταιριάζει καλύτερα με την περίοδο προσφοράς υπηρεσίας "
+"σας."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__zone_id
@@ -1516,19 +1945,25 @@ msgid ""
 "        \n"
 "• Purpose: Defines the physical/technical card characteristics\n"
 "• Compatibility: Must match your RFID readers and system setup\n"
-"• Automatic: Changes to barcode type when 'Generate Barcode Cards' is enabled\n"
+"• Automatic: Changes to barcode type when 'Generate Barcode Cards' is "
+"enabled\n"
 "• Default: Uses system default card type if not specified\n"
 "        \n"
-"Ensure the card type is compatible with your hardware and security requirements."
+"Ensure the card type is compatible with your hardware and security "
+"requirements."
 msgstr ""
 "Τύπος κάρτας RFID που εκδίδεται σε πελάτες για αυτή την υπηρεσία.\n"
 "        \n"
 "• Σκοπός: Ορίζει τα φυσικά/τεχνικά χαρακτηριστικά της κάρτας\n"
-"• Συμβατότητα: Πρέπει να ταιριάζει με τους αναγνώστες RFID και τη ρύθμιση του συστήματος\n"
-"• Αυτόματο: Αλλάζει σε τύπο γραμμικού κώδικα όταν ενεργοποιείται η 'Δημιουργία Καρτών Γραμμικού Κώδικα'\n"
-"• Προεπιλογή: Χρησιμοποιεί τον προεπιλεγμένο τύπο κάρτας συστήματος αν δεν οριστεί κάποιος\n"
+"• Συμβατότητα: Πρέπει να ταιριάζει με τους αναγνώστες RFID και τη ρύθμιση "
+"του συστήματος\n"
+"• Αυτόματο: Αλλάζει σε τύπο γραμμικού κώδικα όταν ενεργοποιείται η "
+"'Δημιουργία Καρτών Γραμμικού Κώδικα'\n"
+"• Προεπιλογή: Χρησιμοποιεί τον προεπιλεγμένο τύπο κάρτας συστήματος αν δεν "
+"οριστεί κάποιος\n"
 "        \n"
-"Βεβαιωθείτε ότι ο τύπος κάρτας είναι συμβατός με το υλικό και τις απαιτήσεις ασφαλείας σας."
+"Βεβαιωθείτε ότι ο τύπος κάρτας είναι συμβατός με το υλικό και τις απαιτήσεις "
+"ασφαλείας σας."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__activity_exception_decoration
@@ -1556,7 +1991,8 @@ msgstr ""
 "        \n"
 "• Σκοπός: Παρακολούθηση και αναφορά μεμονωμένων πωλήσεων υπηρεσίας\n"
 "• Δημιουργία: Δημιουργείται αυτόματα με χρήση ακολουθίας συστήματος\n"
-"• Χρήση: Χρησιμοποιείται σε επικοινωνίες πελατών, αναφορές και εσωτερική παρακολούθηση\n"
+"• Χρήση: Χρησιμοποιείται σε επικοινωνίες πελατών, αναφορές και εσωτερική "
+"παρακολούθηση\n"
 "• Μορφή: Ακολουθεί τη διαμορφωμένη αριθμητική ακολουθία της εταιρείας\n"
 "        \n"
 "Αυτός ο αριθμός αναφοράς αναγνωρίζει τη συγκεκριμένη πώληση στο σύστημα."
@@ -1584,25 +2020,68 @@ msgid ""
 "User-friendly name for this RFID service offering.\n"
 "        \n"
 "• Purpose: Identify the service for staff and customers\n"
-"• Examples: \"Daily Visitor Pass\", \"Monthly Gym Access\", \"Conference Badge\"\n"
+"• Examples: \"Daily Visitor Pass\", \"Monthly Gym Access\", \"Conference "
+"Badge\"\n"
 "• Usage: Displayed on service cards, reports, and customer communications\n"
-"• Best practice: Use clear, descriptive names that explain the service purpose\n"
+"• Best practice: Use clear, descriptive names that explain the service "
+"purpose\n"
 "        \n"
 "This name appears throughout the system and on printed badges."
 msgstr ""
 "Φιλικό προς τον χρήστη όνομα για αυτή την προσφορά υπηρεσίας RFID.\n"
 "        \n"
 "• Σκοπός: Αναγνώριση της υπηρεσίας από το προσωπικό και τους πελάτες\n"
-"• Παραδείγματα: \"Ημερήσιο Πάσο Επισκεπτών\", \"Μηνιαία Πρόσβαση Γυμναστηρίου\", \"Σήμα Ταυτότητας Συνεδρίου\"\n"
+"• Παραδείγματα: \"Ημερήσιο Πάσο Επισκεπτών\", \"Μηνιαία Πρόσβαση "
+"Γυμναστηρίου\", \"Σήμα Ταυτότητας Συνεδρίου\"\n"
 "• Χρήση: Εμφανίζεται σε κάρτες υπηρεσίας, αναφορές και επικοινωνίες πελατών\n"
-"• Βέλτιστη πρακτική: Χρησιμοποιήστε σαφή, περιγραφικά ονόματα που εξηγούν τον σκοπό της υπηρεσίας\n"
+"• Βέλτιστη πρακτική: Χρησιμοποιήστε σαφή, περιγραφικά ονόματα που εξηγούν "
+"τον σκοπό της υπηρεσίας\n"
 "        \n"
-"Αυτό το όνομα εμφανίζεται σε όλο το σύστημα και στα εκτυπωμένα σήματα ταυτότητας."
+"Αυτό το όνομα εμφανίζεται σε όλο το σύστημα και στα εκτυπωμένα σήματα "
+"ταυτότητας."
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
 msgid "Visit based"
 msgstr "Βάσει επίσκεψης"
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding,name:rfid_service_base.onboarding_service_setup
+msgid "Visitor Services Setup"
+msgstr "Ρύθμιση Υπηρεσιών Επισκεπτών"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__email
+msgid ""
+"Visitor email address. Pre-filled from the selected partner; editing here "
+"also updates the partner record on confirmation."
+msgstr ""
+"Διεύθυνση email επισκέπτη. Προσυμπληρώνεται από τον επιλεγμένο συνεργάτη· η "
+"επεξεργασία εδώ ενημερώνει επίσης την εγγραφή του συνεργάτη κατά την "
+"επιβεβαίωση."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__mobile
+msgid ""
+"Visitor mobile/phone number. Pre-filled from the selected partner; editing "
+"here also updates the partner's phone field on confirmation (in Odoo 19 "
+"mobile was merged into phone)."
+msgstr ""
+"Αριθμός κινητού/τηλεφώνου επισκέπτη. Προσυμπληρώνεται από τον επιλεγμένο "
+"συνεργάτη· η επεξεργασία εδώ ενημερώνει επίσης το πεδίο τηλεφώνου του "
+"συνεργάτη κατά την επιβεβαίωση (στο Odoo 19 το κινητό συγχωνεύτηκε με το "
+"τηλέφωνο)."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_hr_rfid_access_group_contact_rel__rfid_service_sale_id
+msgid ""
+"Visitor service sales backed by this contact-to-access-group binding. Used "
+"to cascade state changes to all related sales when the underlying relation "
+"activates or expires."
+msgstr ""
+"Πωλήσεις υπηρεσιών επισκέπτη που υποστηρίζονται από αυτήν τη σύνδεση επαφής-"
+"ομάδας πρόσβασης. Χρησιμοποιείται για τη διάδοση αλλαγών κατάστασης σε όλες "
+"τις σχετικές πωλήσεις όταν η υποκείμενη σχέση ενεργοποιείται ή λήγει."
 
 #. module: rfid_service_base
 #: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service__service_type__count
@@ -1624,11 +2103,14 @@ msgstr ""
 "Οπτική εικόνα που εμφανίζεται σε κάρτες υπηρεσίας και διαφημιστικό υλικό.\n"
 "        \n"
 "• Σκοπός: Οπτική αναγνώριση και εμπορική ελκυστικότητα\n"
-"• Εμφάνιση: Εμφανίζεται σε προβολή kanban, κάρτες υπηρεσίας και πύλες πελατών\n"
+"• Εμφάνιση: Εμφανίζεται σε προβολή kanban, κάρτες υπηρεσίας και πύλες "
+"πελατών\n"
 "• Μορφή: Υποστηρίζει κοινές μορφές εικόνας (PNG, JPG κ.λπ.)\n"
-"• Εταιρική ταυτότητα: Χρησιμοποιήστε λογότυπα, φωτογραφίες ή γραφικά που αντιπροσωπεύουν την υπηρεσία\n"
+"• Εταιρική ταυτότητα: Χρησιμοποιήστε λογότυπα, φωτογραφίες ή γραφικά που "
+"αντιπροσωπεύουν την υπηρεσία\n"
 "        \n"
-"Μια καλή εικόνα εξωφύλλου βοηθά τους πελάτες να αναγνωρίσουν γρήγορα την υπηρεσία που χρειάζονται."
+"Μια καλή εικόνα εξωφύλλου βοηθά τους πελάτες να αναγνωρίσουν γρήγορα την "
+"υπηρεσία που χρειάζονται."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__website_message_ids
@@ -1648,26 +2130,44 @@ msgid "Weeks"
 msgstr "Εβδομάδες"
 
 #. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__extend_sale_id
+msgid ""
+"When set, the wizard runs in Extend mode — it adds time to the linked sale "
+"instead of creating a new one. Populated automatically from the Extend "
+"action on the existing sale."
+msgstr ""
+"Όταν οριστεί, ο οδηγός εκτελείται σε λειτουργία Παράτασης - προσθέτει χρόνο "
+"στη συνδεδεμένη πώληση αντί να δημιουργεί νέα. Συμπληρώνεται αυτόματα από "
+"την ενέργεια Παράταση στην υπάρχουσα πώληση."
+
+#. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__fixed_time
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__fixed_time
 msgid ""
 "Whether service times are fixed or can be customized per sale.\n"
 "        \n"
-"• Fixed (enabled): All sales use the same start/end times defined in service\n"
-"• Flexible (disabled): Staff can customize start/end times for each individual sale\n"
+"• Fixed (enabled): All sales use the same start/end times defined in "
+"service\n"
+"• Flexible (disabled): Staff can customize start/end times for each "
+"individual sale\n"
 "• Use cases: Fixed for standard services, flexible for custom bookings\n"
 "• Control: Determines if operators can modify service timing during sales\n"
 "        \n"
 "Enable for standardized services, disable for custom or event-based access."
 msgstr ""
-"Καθορίζει εάν οι ώρες υπηρεσίας είναι σταθερές ή μπορούν να προσαρμοστούν ανά πώληση.\n"
+"Καθορίζει εάν οι ώρες υπηρεσίας είναι σταθερές ή μπορούν να προσαρμοστούν "
+"ανά πώληση.\n"
 "        \n"
-"• Σταθερές (ενεργοποιημένο): Όλες οι πωλήσεις χρησιμοποιούν τις ίδιες ώρες έναρξης/λήξης που ορίζονται στην υπηρεσία\n"
-"• Ευέλικτες (απενεργοποιημένο): Το προσωπικό μπορεί να προσαρμόσει τις ώρες έναρξης/λήξης για κάθε μεμονωμένη πώληση\n"
-"• Περιπτώσεις χρήσης: Σταθερές για τυποποιημένες υπηρεσίες, ευέλικτες για προσαρμοσμένες κρατήσεις\n"
-"• Έλεγχος: Καθορίζει εάν οι χειριστές μπορούν να τροποποιούν τον χρονισμό υπηρεσίας κατά τις πωλήσεις\n"
+"• Σταθερές (ενεργοποιημένο): Όλες οι πωλήσεις χρησιμοποιούν τις ίδιες ώρες "
+"έναρξης/λήξης που ορίζονται στην υπηρεσία\n"
+"• Ευέλικτες (απενεργοποιημένο): Το προσωπικό μπορεί να προσαρμόσει τις ώρες "
+"έναρξης/λήξης για κάθε μεμονωμένη πώληση\n"
+"• Περιπτώσεις χρήσης: Σταθερές για τυποποιημένες υπηρεσίες, ευέλικτες για "
+"προσαρμοσμένες κρατήσεις\n"
+"• Έλεγχος: Καθορίζει εάν οι χειριστές μπορούν να τροποποιούν τον χρονισμό "
+"υπηρεσίας κατά τις πωλήσεις\n"
 "        \n"
-"Ενεργοποιήστε για τυποποιημένες υπηρεσίες, απενεργοποιήστε για προσαρμοσμένη ή εκδηλωσιακή πρόσβαση."
+"Ενεργοποιήστε για τυποποιημένες υπηρεσίες, απενεργοποιήστε για προσαρμοσμένη "
+"ή εκδηλωσιακή πρόσβαση."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__active
@@ -1683,12 +2183,17 @@ msgid ""
 msgstr ""
 "Καθορίζει εάν αυτή η υπηρεσία είναι διαθέσιμη για νέες πωλήσεις.\n"
 "        \n"
-"• Ενεργό: Η υπηρεσία μπορεί να πωληθεί και νέοι πελάτες μπορούν να εγγραφούν\n"
-"• Ανενεργό: Η υπηρεσία είναι αρχειοθετημένη και μη διαθέσιμη για νέες πωλήσεις\n"
-"• Υπάρχουσες πωλήσεις: Συνεχίζει να λειτουργεί για ήδη εγγεγραμμένους πελάτες\n"
-"• Περίπτωση χρήσης: Προσωρινή απενεργοποίηση υπηρεσιών ή αρχειοθέτηση παλαιών προσφορών\n"
+"• Ενεργό: Η υπηρεσία μπορεί να πωληθεί και νέοι πελάτες μπορούν να "
+"εγγραφούν\n"
+"• Ανενεργό: Η υπηρεσία είναι αρχειοθετημένη και μη διαθέσιμη για νέες "
+"πωλήσεις\n"
+"• Υπάρχουσες πωλήσεις: Συνεχίζει να λειτουργεί για ήδη εγγεγραμμένους "
+"πελάτες\n"
+"• Περίπτωση χρήσης: Προσωρινή απενεργοποίηση υπηρεσιών ή αρχειοθέτηση "
+"παλαιών προσφορών\n"
 "        \n"
-"Απενεργοποιήστε για διακοπή νέων πωλήσεων διατηρώντας παράλληλα την πρόσβαση υφιστάμενων πελατών."
+"Απενεργοποιήστε για διακοπή νέων πωλήσεων διατηρώντας παράλληλα την πρόσβαση "
+"υφιστάμενων πελατών."
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form

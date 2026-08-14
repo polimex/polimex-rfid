@@ -11,7 +11,7 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: Manage employee attendance
-last_updated: '2026-04-29'
+last_updated: '2026-08-14'
 source_digest: sha256:fba71369265be1500bbdcac39b04096b2b03bc6204a695e6fa698151e653a08d
 depends:
 - hr_rfid
@@ -23,6 +23,8 @@ entities:
   - hr.rfid.event.user
   - hr.rfid.zone
   - hr.attendance.recalc.wizard
+  - hr.attendance.recalc.run
+  - hr.attendance.recalc.log
 keywords:
 - attendance
 - employee
@@ -41,11 +43,11 @@ installable: true
 application: false
 auto_install: false
 counts:
-  models: 5
-  views: 9
-  access_rules: 3
-  record_rules: 1
-  crons: 1
+  models: 7
+  views: 11
+  access_rules: 7
+  record_rules: 3
+  crons: 2
   images: 2
 images:
 - path: static/description/icon.png
@@ -382,9 +384,40 @@ Python class `HrEmployee` in `models/hr_employee.py:11`.  Model.  Inherits: `hr.
   - effects: `log_warn`, `raise:UserError`, `with_context`
   - touches: `hr.attendance`
 - **`recalc_attendance(self, from_date=None, to_date=None)`** — decorators: —
-  - Recalculate attendance records from RFID events.
+  - Rebuild attendance for this recordset in ONE transaction. Calls
+    `_check_recalc_allowed` once (the chokepoint every caller passes through),
+    then `_recalc_attendance_one` per employee. Anything larger than a handful
+    of people belongs on `hr.attendance.recalc.run` instead.
   - effects: `log_warn`, `with_context`
   - touches: `hr.attendance`, `hr.rfid.event.user`, `hr.rfid.zone`
+- **`_recalc_attendance_one(self, from_date, to_date, ctx)`** - decorators: -
+  - One employee, the smallest piece that can be committed on its own: the
+    period is cleared and replayed as a whole. Asks `_check_recalc_allowed`
+    again, because the background job calls this directly and a rebuild may
+    have become forbidden while it was queued. Returns
+    `{'event_count': N, 'attendance_count': M}` - the numbers the rebuild
+    reports per person.
+  - touches: `hr.attendance`, `hr.rfid.event.user`
+- **`_recalc_attendance_context(self)`** - decorators: `@api.model`
+  - Resolves once what counts as an attendance door: `{'zones', 'doors',
+    'in_readers', 'out_readers'}`. Passed to every `_recalc_attendance_one` of
+    a run so the same searches are not repeated per person.
+- **`_recalc_window(self, from_date, to_date)`** - decorators: -
+  - The two chosen DAYS as the two naive-UTC MOMENTS bounding them, in the
+    employee's own timezone, last day included whole (bound is "before", not
+    "up to"). Both the events replayed and the attendance deleted are cut to
+    this window, so no day is cleared that is not also replayed.
+- **`_recalc_clear_domain(self, period_start, period_end)`** - decorators: -
+  - **Extension point.** Which of this person's attendance a rebuild may
+    remove. Default: everything the system made in the window, never what a
+    person typed in - it asks only for records carrying no reason, or the one
+    from `_recalc_manual_attendance_reason`.
+- **`_recalc_manual_attendance_reason(self)`** - decorators: -
+  - **Extension point.** The reason this system puts on attendance it closed
+    itself, read from `res.company.hr_attendance_autoclose_reason` when an
+    add-on provides that field. Returns `False` where nothing records the
+    reason - a typed-in record then cannot be told from a made one, the whole
+    period is cleared, and the loss is logged rather than passed over.
 
 ### `hr.rfid.event.user` <a id='model-hr-rfid-event-user'></a>
 Python class `HrRfidUserEvent` in `models/hr_rfid_event_user.py:6`.  Model.  Inherits: `hr.rfid.event.user`.
@@ -441,12 +474,125 @@ Python class `WizardHrRecalcAttendanceEmployee` in `wizards/hr_recalc_attendance
 
 #### Notable methods
 
-- **`execute(self)`** — decorators: —
+- **`execute(self)`** - decorators: -
+  - Writes the request down and hands the screen back: asks
+    `_check_recalc_allowed` (so a refusal is shown on the screen the operator
+    is looking at, not in a report they must go and find), checks the
+    scheduled task is switched on, creates one `hr.attendance.recalc.run` and
+    triggers it. Returns a `display_notification` whose `next` opens that run.
+  - effects: `raise:UserError`, `raise:RedirectWarning`
+  - touches: `hr.attendance.recalc.run`
+- **`_check_background_worker_available(self)`** - decorators: -
+  - Refuses rather than accepting a request nothing will ever pick up: an
+    inactive `ir.cron` drops triggers silently
+    (`odoo/addons/base/models/ir_cron.py`), so the run would sit queued for
+    ever. `RedirectWarning` to the cron form for `base.group_system`, plain
+    `UserError` for anybody else.
+
+### `hr.attendance.recalc.run` <a id='model-hr-attendance-recalc-run'></a>
+Python class `HrAttendanceRecalcRun` in `models/attendance_recalc_run.py:55`.  Model.  Inherits: `mail.thread`.  Description: *Attendance Rebuild*.  Default order: `create_date desc`.
+
+The permanent half of a rebuild. The wizard is transient and the vacuum removes
+it within the hour, which would take the job with it; core splits the same way
+(`account.move.send.batch.wizard` transient, `account.move.sending_data`
+permanent). Deliberately the same shape as
+`hr_rfid_odoo_import/models/import_run.py` - one pattern for long jobs, not two.
+
+#### Fields
+
+| Name | Type | Label | Required | Store | Help |
+|---|---|---|---|---|---|
+| `name` | Char |  |  | ✓ | Computed from the period (`_compute_name`). |
+| `state` | Selection |  | ✓ | ✓ | `queued` / `running` / `done` / `nothing` / `refused` / `failed`. Tracked, indexed. |
+| `user_id` | Many2one → \`res.users\` | Started by | ✓ | ✓ | Whose rights the work runs with, and who is notified when it ends. |
+| `company_id` | Many2one → \`res.company\` | Company | ✓ | ✓ | The company the work runs for (decides which attendance is cleared). |
+| `date_from` | Date | From | ✓ | ✓ | First day rebuilt. |
+| `date_to` | Date | To | ✓ | ✓ | Last day rebuilt, included whole. |
+| `employee_ids` | Many2many → \`hr.employee\` | Employees | ✓ | ✓ | The list as chosen; changing it mid-run applies from the next person on. |
+| `processed_employee_id` | Integer |  |  | ✓ | Resume cursor - the last id finished. Monotone, index-backed. |
+| `current_employee_id` | Many2one → \`hr.employee\` | Working on |  | ✓ | Who is being rebuilt right now. |
+| `done_count` | Integer | People dealt with |  | ✓ | Everybody got through, INCLUDING no-op and failed people - not "succeeded". |
+| `total_count` | Integer | People in total |  | ✓ | Size of the list. |
+| `progress` | Integer |  |  | - | `done_count * 100 / total_count`. |
+| `log_ids` | One2many → \`hr.attendance.recalc.log\` | What happened |  | ✓ | One line per person. |
+
+#### Notable methods
+
+- **`action_start(self)`** - the "Continue now" button; sets `queued` and wakes the cron.
+- **`_cron_process(self)`** - decorators: `@api.model`
+  - One pass. Called from a request (the button) it only re-triggers the cron -
+    doing the work inside the HTTP request would hit `limit_time_real`. Closes
+    stalled runs first and **commits that** before starting a pass, because the
+    pass rolls back on failure and would otherwise undo exactly the closures
+    that unblock the queue. A pass that raises is caught, rolled back and the
+    run ends `failed` - otherwise the oldest run is picked again on every
+    wake-up and blocks every later one.
+- **`_process_pass(self)`** - takes `try_lock_for_update()` and READS the result
+  (an empty return means another worker holds the run), resumes at
+  `id > processed_employee_id`, and stops at `PASS_SECONDS` or when
+  `ir.cron._commit_progress` reports no time left.
+- **`_run_one_employee(self, employee, ctx)`** - asks `_check_recalc_allowed`
+  FIRST and on its own, then splits by exception TYPE: `AccessError` is a
+  breakdown, `UserError` is the documented refusal. Never by message text -
+  that stops working the moment it is translated. The rebuild itself runs in a
+  `cr.savepoint()`; a plain `cr.rollback()` here would discard every person
+  already committed in the pass.
+- **`_outcome_of(result)`** (static) - three outcomes, not two: `done`
+  (attendance written), `no_result` (events but nothing written - the period
+  was cleared and left empty), `no_events` (nothing to replay).
+- **`_finish_reporting_outcome(self)`** - picks the closing state and message;
+  `_also_cleared` / `_also_left_alone` / `_also_refused` add the people the
+  chosen sentence does not already account for.
+- **`_abandon_stalled_runs(self)`** - decorators: `@api.model`
+  - Closes runs untouched for `STALLED_MINUTES` and RETURNS them, so the caller
+    knows there is something worth committing.
+- **`_as_the_operator_would(self)`** - `hr.employee` `with_user(user_id)` +
+  `with_company(company_id)`; `None` when the account is archived - except the
+  superuser, which is archived by design and is the account every rebuild
+  started outside a browser runs under.
+- **`_tell_the_operator(self, state, message)`** - `_bus_send('simple_notification')`
+  to `user_id`, green only for `done`, sticky for everything else.
+- **`_for_the_operator(self)`** - the record in `user_id.lang`; the work runs as
+  the scheduler's user, so without it every message reaches the operator in
+  somebody else's language.
+- **`_gc_recalc_runs(self)`** - decorators: `@api.autovacuum`
+  - Deletes finished runs (`FINISHED_STATES`) older than `GC_DAYS`, at most
+    `GC_LIMIT` per pass, returning `(count, count == GC_LIMIT)` so the vacuum
+    re-queues itself.
+
+### `hr.attendance.recalc.log` <a id='model-hr-attendance-recalc-log'></a>
+Python class `HrAttendanceRecalcLog` in `models/attendance_recalc_run.py:668`.  Model.  Description: *Attendance Rebuild Line*.  Default order: `id`.
+
+#### Fields
+
+| Name | Type | Label | Required | Store | Help |
+|---|---|---|---|---|---|
+| `run_id` | Many2one → \`hr.attendance.recalc.run\` |  | ✓ | ✓ | `ondelete='cascade'`, indexed. |
+| `company_id` | Many2one → \`res.company\` | Company |  | ✓ | `related='run_id.company_id'`, stored - the record rule needs it in SQL. |
+| `employee_id` | Many2one → \`hr.employee\` | Employee | ✓ | ✓ | `ondelete='cascade'`. |
+| `status` | Selection |  | ✓ | ✓ | `done` / `no_events` / `no_result` / `refused` / `error`. |
+| `event_count` | Integer | Door events |  | ✓ | How many events were replayed. |
+| `attendance_count` | Integer | Attendance records |  | ✓ | How many records came out of them. |
+| `error_message` | Text | Reason |  | ✓ | Kept WHOLE for a refusal - the refusing add-on wrote it for the operator. |
 
 
 ## Module Constants <a id='constants'></a>
 
-No module-level UPPER_CASE constants are declared by this module.
+UPPER_CASE module-level assignments - tuning and safety parameters.
+
+### `models/attendance_recalc_run.py`
+
+- **`PASS_SECONDS`** = `5.0` - how long one pass may spend rebuilding. A safety
+  parameter, not a tuning knob: `limit_time_real_cron` only replaces the limit
+  when positive, and overrunning restarts the server rather than failing the job.
+- **`STALLED_MINUTES`** = `30` - after this a run is treated as dead and closed.
+- **`NAMES_SHOWN`** = `8` - people named in a summary before it switches to a count.
+- **`FINISHED_STATES`** = `('done', 'nothing', 'refused', 'failed')` - drives the
+  vacuum and the "Continue now" / banner visibility. Anything else is still on
+  its way and must never be tidied away.
+- **`HrAttendanceRecalcRun.GC_LIMIT`** = `500`, **`GC_DAYS`** = `90` (class
+  attributes) - bounded deletion; a year of history in one transaction locks
+  the table.
 
 
 ## Module Helpers & Hooks <a id='helpers'></a>
@@ -468,6 +614,75 @@ Top-level functions that sit outside any Odoo model class. Use this section to a
   - touches: `hr.rfid.access.group.wizard`, `hr.rfid.zone`
 
 
+## Rebuilding attendance: the background job <a id='recalc-run'></a>
+
+### Why it is a job and not a click
+
+Rebuilding one person means deleting their attendance for a period and
+replaying every door event in it; a site has hundreds of people. Inside the
+request the operator pressed, that is cut off at `limit_time_real` (120 s by
+default), leaving attendance half deleted and never rebuilt. The scheduler
+thread is NOT exempt: `limit_time_real_cron` only replaces the limit when it is
+positive, and exceeding it **restarts the server** rather than merely stopping
+the job. Hence `PASS_SECONDS` - a safety parameter.
+
+One employee is the unit of work because the clear-and-replay is only
+consistent as a whole. Each person ends in `_save_progress`, which writes the
+resume cursor and calls `ir.cron._commit_progress(processed=1, remaining=N)` -
+committing, and telling core how much is left so it reschedules itself instead
+of computing zero remaining and calling the job done.
+
+### Refusing a rebuild: `hr.employee._check_recalc_allowed`
+
+The hook is DECLARED in `hr_rfid` (`models/hr_employee.py`), not here, and that
+placement is load-bearing: Odoo composes one class per model from every add-on
+that extends it, last loaded outermost, and two unrelated add-ons that both
+declared the method would be in no fixed order - the one that only allows would
+silently cancel the one that refuses. Declared in the module underneath both,
+it cannot be cancelled that way.
+
+- An override MUST call `super()` FIRST, or every objection underneath is lost.
+- Raise `UserError` with an operator-readable reason to refuse; return to allow.
+- It is asked at three points, deliberately: in the wizard (so a refusal lands
+  on the screen the operator is looking at), in `_run_one_employee` (so one
+  refused person does not stop the rest), and again inside
+  `_recalc_attendance_one` (a rebuild may become forbidden while it is queued,
+  and every programmatic caller passes through there).
+
+`hr_rfid_odoo_import` is the implementer: attendance carrying the transfer's
+external ID cannot be worked out again here, and rebuilding would delete the
+record together with the metadata row that identifies it, so the next transfer
+would no longer recognise it and would bring it over a second time.
+
+A refusal is NOT a failure and the two are told apart by exception TYPE, never
+by message text (which stops working the moment it is translated):
+`AccessError` -> `error` line + `failed`; `UserError` -> `refused` line, logged
+at INFO with no traceback, reason kept whole and posted through
+`plaintext2html` so its paragraphs survive.
+
+### Five outcomes, not two
+
+`done`, `no_events`, `no_result`, `refused`, `error` per person; `done`,
+`nothing`, `refused`, `failed` for the run. `no_result` exists because a period
+that was cleared and produced no attendance reads as "Rebuilt" under a two-way
+status and is never looked at again - the operator finds out at the end of the
+month when payroll does not add up.
+
+`done_count` counts everybody got through, including no-ops and failures; the
+number actually rebuilt is in the closing message. The label says so ("People
+dealt with") rather than the counter being narrowed, because a progress bar
+whose numerator counted only successes would sit at 67% for ever on a finished
+run.
+
+### Tests
+
+`tests/test_recalc_background.py` (lifecycle, resume, outcomes),
+`tests/test_recalc_security.py` (officer vs manager, company isolation),
+`hr_rfid/tests/test_recalc_hook.py` (the hook allows by default),
+`hr_rfid_odoo_import/tests/test_recalc_guard.py` (the refusal, driven through
+the wizard button and through `_cron_process`).
+
+
 ## Views & Inheritance <a id='views'></a>
 
 List of `ir.ui.view` records created or extended by this module.
@@ -483,6 +698,15 @@ List of `ir.ui.view` records created or extended by this module.
 | `hr_rfid_view_zone_form_inherit_hr_attendance_multi_rfid` | `hr.rfid.zone` | — | hr_rfid.hr_rfid_zone_view_form | `views/hr_rfid_webstack_views.xml` |
 | `hr_rfid_view_zone_tree_inherit_hr_attendance_multi_rfid` | `hr.rfid.zone` | — | hr_rfid.hr_rfid_zone_view_list | `views/hr_rfid_webstack_views.xml` |
 | `hr_rfid_user_ev_view_search_inherit_hr_attendance_multi_rfid` | `hr.rfid.event.user` | — | hr_rfid.hr_rfid_user_ev_view_search | `views/hr_rfid_webstack_views.xml` |
+| `hr_attendance_recalc_run_list` | `hr.attendance.recalc.run` | list | | `views/attendance_recalc_run_views.xml` |
+| `hr_attendance_recalc_run_form` | `hr.attendance.recalc.run` | form | | `views/attendance_recalc_run_views.xml` |
+
+Plus `hr_attendance_recalc_run_action` and the menu **Attendance -> Attendance
+Rebuilds** (`hr_attendance.group_hr_attendance_manager`). The form has no
+`create` and no auto-refresh; the header carries **Continue now**
+(`action_start`) because a progress bar that never moves reads as a stalled job
+and the operator starts a second rebuild. Three banners spell out the endings
+that are neither success nor failure (`nothing`, `refused`).
 
 #### Sample XPath operations
 
@@ -519,14 +743,33 @@ Who can do what. Answer access-related questions from this section.
 
 | `access_hr_attendance_recalc_wizard` | `model_hr_attendance_recalc_wizard` | `hr_attendance.group_hr_attendance_manager` | ✓ | ✓ | ✓ |  |
 
+| `access_hr_attendance_recalc_run_officer` | `model_hr_attendance_recalc_run` | `hr_attendance.group_hr_attendance_officer` | ✓ |  |  |  |
+
+| `access_hr_attendance_recalc_run_manager` | `model_hr_attendance_recalc_run` | `hr_attendance.group_hr_attendance_manager` | ✓ | ✓ | ✓ | ✓ |
+
+| `access_hr_attendance_recalc_log_officer` | `model_hr_attendance_recalc_log` | `hr_attendance.group_hr_attendance_officer` | ✓ |  |  |  |
+
+| `access_hr_attendance_recalc_log_manager` | `model_hr_attendance_recalc_log` | `hr_attendance.group_hr_attendance_manager` | ✓ | ✓ | ✓ | ✓ |
+
 | `access_resource_calendar_hr_attendance_manager` | `resource.model_resource_calendar` | `hr_attendance.group_hr_attendance_manager` | ✓ | ✓ | ✓ | ✓ |
 
 | `access_resource_calendar_attendance_hr_attendance_manager` | `resource.model_resource_calendar_attendance` | `hr_attendance.group_hr_attendance_manager` | ✓ | ✓ | ✓ | ✓ |
 
+An officer READS rebuilds and their lines and nothing more: they cannot create
+the wizard, write a run directly, restart a finished one, edit a line or delete
+a run. Asserted in `tests/test_recalc_security.py`, from a restricted user - a
+security test that runs as superuser proves nothing, because
+`ir.model.access.check` returns True on its first line.
 
 ### Record rules (ir.rule)
 
-- **`ir_rule_hr_rfid_card_multi_company`** on `resource.model_resource_calendar` — perms=`R`, groups=`global`, domain=`[('company_id', 'in', company_ids)]`
+- **`ir_rule_hr_rfid_card_multi_company`** on `resource.model_resource_calendar` - perms=`R`, groups=`global`, domain=`[('company_id', 'in', company_ids)]`
+- **`ir_rule_hr_attendance_recalc_run_multi_company`** on `model_hr_attendance_recalc_run` - groups=`global`, domain=`['|', ('company_id', 'in', company_ids), ('company_id', '=', False)]`
+- **`ir_rule_hr_attendance_recalc_log_multi_company`** on `model_hr_attendance_recalc_log` - groups=`global`, same domain; the line carries `company_id` as a STORED related of its run, because a record rule is evaluated in SQL.
+
+The `('company_id', '=', False)` branch is deliberate (same form as
+`hr_rfid_leave_block`): a record without a company must stay visible rather
+than disappear from everybody.
 
 
 ## Data & Automation <a id='data'></a>
@@ -537,10 +780,17 @@ XML records seeded at install and scheduled actions.
 ### Cron jobs
 
 - **`hr_attendance_multi_rfid_autoclose_cron`** (HR RFID Multi Attendance: Auto-close incomplete attendances) on `model_hr_attendance`, runs every 1 minutes, active=True
+- **`hr_attendance_multi_rfid_recalc_cron`** (HR RFID Multi Attendance: Continue attendance rebuilds) on `model_hr_attendance_recalc_run`, code `model._cron_process()`, runs every 1 days, priority 20, active=True, `noupdate="1"`.
+  - The daily interval is a floor, not the cadence: every request for a rebuild
+    triggers it (`ir.cron._trigger()`), and each pass that runs out of time
+    triggers the next. It ships ACTIVE because an inactive cron drops triggers
+    silently, which is why the wizard refuses when it is off.
+  - Priority is below the auto-close cron (5, every minute) on purpose: a long
+    rebuild must never hold up the job that closes people's open attendance.
 
 ### Data records summary
 
-- `ir.cron`: 1 record(s)
+- `ir.cron`: 2 record(s)
 
 
 ## UI & Frontend <a id='assets'></a>

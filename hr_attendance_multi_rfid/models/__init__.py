@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-hr_attendance_multi_rfid
 
+from . import attendance_recalc_run
 from . import hr_attendance
 from . import hr_employee
 from . import hr_rfid_event_user

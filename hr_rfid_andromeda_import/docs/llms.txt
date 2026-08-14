@@ -6,7 +6,7 @@ doc_type: user_guide
 audience:
 - user
 summary: Import access control data from Polimex Andromeda Database
-last_updated: '2026-05-14'
+last_updated: '2026-08-14'
 source_digest: sha256:9a0e8b6e25c272594255feed587e0df8df2ebd5e5e4c2dfe30478ad01813c719
 companion_doc: llms-full.md
 ---
@@ -33,3 +33,27 @@ This module extends the RFID Access Control (hr_rfid) module, allowing it to imp
 * Import all Users and cards.
 * Import All Access Control Groups.
 * Import all Access Users Rights.
+
+
+## Running the import again
+
+The import can be run as often as you like. Everything it creates is marked
+with the Andromeda record it came from, so a later run finds that work instead
+of doing it a second time:
+
+- Somebody already imported is not offered in the list again.
+- A company, a department, a person or a card that is already here is used as
+  it is - no second copy is made.
+- An access group somebody already has is not given to them again.
+- A card that was switched off in Andromeda is not handed out again as a
+  working one.
+
+Nothing is deleted and nothing already corrected here is overwritten: a name
+you have put right in Odoo stays as you left it.
+
+**One thing to check first.** Databases filled by a version of this import from
+before August 2026 were marked in a different way, which the current version
+does not read. On such a database the people imported back then are offered
+again and would come in as new records. If you are not sure which case you are
+in, import one person first and see whether a second copy appears before doing
+the rest.

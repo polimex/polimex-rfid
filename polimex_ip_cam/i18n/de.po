@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-19 13:15+0000\n"
-"PO-Revision-Date: 2026-06-19 16:16\n"
+"POT-Creation-Date: 2026-08-14 13:55+0000\n"
+"PO-Revision-Date: 2026-08-14 17:21\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: de\n"
@@ -15,13 +15,17 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.5\n"
 
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "%s Readers"
 msgstr "%s Lesegeräte"
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "<span>Last online: </span>"
+msgstr "<span>Zuletzt online: </span>"
 
 #. module: polimex_ip_cam
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_hr_rfid_user_ev_form_anpr_ext
@@ -125,8 +129,8 @@ msgid ""
 msgstr ""
 "ANPR-Kamera hinzufügen, indem IP-Adresse, Port, Zeitzone und die Bediener-"
 "Anmeldedaten aus der Web-Oberfläche der Kamera angegeben werden. Nach der "
-"Verbindung sendet die Kamera Kennzeichenerkennungsereignisse an Odoo und die"
-" Zugriffslisten können von hier aus verwaltet werden."
+"Verbindung sendet die Kamera Kennzeichenerkennungsereignisse an Odoo und die "
+"Zugriffslisten können von hier aus verwaltet werden."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__description
@@ -1894,10 +1898,10 @@ msgid ""
 "command."
 msgstr ""
 "Prüfprotokoll der Befehle, die Odoo an die Kameras gesendet hat (Whitelist-"
-"Synchronisierung, Neukonfiguration des Push-Servers usw.). Die Ansicht zeigt"
-" standardmäßig die heutige Charge; erweitern Sie den Datumsfilter, um den "
-"vollständigen Verlauf zu sehen. Verwenden Sie „Senden neu starten“, um einen"
-" fehlgeschlagenen Befehl zu wiederholen."
+"Synchronisierung, Neukonfiguration des Push-Servers usw.). Die Ansicht zeigt "
+"standardmäßig die heutige Charge; erweitern Sie den Datumsfilter, um den "
+"vollständigen Verlauf zu sehen. Verwenden Sie „Senden neu starten“, um einen "
+"fehlgeschlagenen Befehl zu wiederholen."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/act
@@ -2096,7 +2100,7 @@ msgstr "CCTV-Kamera"
 #. module: polimex_ip_cam
 #: model:ir.model,name:polimex_ip_cam.model_cctv_camera_rfid_rel
 msgid "CCTV Camera - RFID Card Relation"
-msgstr "CCTV-Kamera – RFID-Karten-Zuordnung"
+msgstr "CCTV-Kamera - RFID-Karten-Zuordnung"
 
 #. module: polimex_ip_cam
 #: model:ir.model,name:polimex_ip_cam.model_cctv_camera
@@ -2165,20 +2169,6 @@ msgid "Camera IP address"
 msgstr "Kamera-IP-Adresse"
 
 #. module: polimex_ip_cam
-#. odoo-python
-#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
-msgid ""
-"Camera Info: Name: %(name)s, Type: %(type)s, ID: %(devid)s, Model: "
-"%(model)s, Serial: %(serial)s, Firmware: %(firmware)s (Date: "
-"%(firmwaredate)s), Hardware: %(hardware)s, Beep: %(supportBeep)s, Video "
-"Loss: %(supportVideoLoss)s"
-msgstr ""
-"Kamerainfo: Name: %(name)s, Typ: %(type)s, ID: %(devid)s, Modell: %(model)s,"
-" Seriennummer: %(serial)s, Firmware: %(firmware)s (Datum: %(firmwaredate)s),"
-" Hardware: %(hardware)s, Signalton: %(supportBeep)s, Videoverlust: "
-"%(supportVideoLoss)s"
-
-#. module: polimex_ip_cam
 #: model:ir.ui.menu,name:polimex_ip_cam.menu_cctv_camera_action
 msgid "Camera Manager"
 msgstr "Kamera-Manager"
@@ -2200,7 +2190,7 @@ msgid ""
 "an attacker would need; do not expose it to plain CCTV users or in shared "
 "exports."
 msgstr ""
-"Kamerazugriffspasswort. Nur für CCTV-Manager zugänglich – dies sind die "
+"Kamerazugriffspasswort. Nur für CCTV-Manager zugänglich - dies sind die "
 "Anmeldedaten, die ein Angreifer benötigen würde; nicht für einfache CCTV-"
 "Benutzer oder in gemeinsamen Exporten freigeben."
 
@@ -2218,7 +2208,7 @@ msgid ""
 "features."
 msgstr ""
 "Kameramarke. 'ONVIF (generic)' wird bei der Netzwerkerkennung für ein Nicht-"
-"Hikvision-Gerät gesetzt, das auf ONVIF geantwortet hat – es unterstützt die "
+"Hikvision-Gerät gesetzt, das auf ONVIF geantwortet hat - es unterstützt die "
 "ONVIF-Standardoberfläche (Video, Geräteinformationen), jedoch nicht die "
 "Hikvision-spezifischen ANPR-/Kennzeichenlisten-Funktionen."
 
@@ -2249,6 +2239,22 @@ msgid "Camera name for easy identification"
 msgstr "Kameraname zur einfachen Identifikation"
 
 #. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"Camera not reachable. Check that it is powered on, the network cable, and "
+"that the IP address is correct."
+msgstr ""
+"Kamera nicht erreichbar. Prüfen Sie, ob sie eingeschaltet ist, das "
+"Netzwerkkabel und ob die IP-Adresse korrekt ist."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Camera online"
+msgstr "Kamera online"
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__port
 msgid "Camera port (usually 80 or 8000)"
 msgstr "Kamera-Port (normalerweise 80 oder 8000)"
@@ -2274,8 +2280,8 @@ msgid ""
 "Camera this command targets. If the camera is deleted, queued commands "
 "cascade-delete with it."
 msgstr ""
-"Kamera, auf die dieser Befehl abzielt. Wenn die Kamera gelöscht wird, werden"
-" wartende Befehle kaskadierend mitgelöscht."
+"Kamera, auf die dieser Befehl abzielt. Wenn die Kamera gelöscht wird, werden "
+"wartende Befehle kaskadierend mitgelöscht."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_system__camera_id
@@ -2312,13 +2318,17 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_discovery_form
 msgid ""
 "Cameras found on your local network (Hikvision SADP and ONVIF).\n"
-"                    Remove the ones you do not want, rename the rest if you like, then\n"
-"                    click Add Cameras. Connection details are completed afterwards with\n"
+"                    Remove the ones you do not want, rename the rest if you "
+"like, then\n"
+"                    click Add Cameras. Connection details are completed "
+"afterwards with\n"
 "                    Check Connection on each new camera."
 msgstr ""
 "Im lokalen Netzwerk gefundene Kameras (Hikvision SADP und ONVIF).\n"
-"                    Entfernen Sie die nicht benötigten, benennen Sie die übrigen nach Wunsch um, und\n"
-"                    klicken Sie dann auf Kameras hinzufügen. Verbindungsdetails werden anschließend mit\n"
+"                    Entfernen Sie die nicht benötigten, benennen Sie die "
+"übrigen nach Wunsch um, und\n"
+"                    klicken Sie dann auf Kameras hinzufügen. "
+"Verbindungsdetails werden anschließend mit\n"
 "                    Verbindung prüfen bei jeder neuen Kamera vervollständigt."
 
 #. module: polimex_ip_cam
@@ -2429,8 +2439,8 @@ msgstr "Unternehmen"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__company_id
 msgid ""
-"Company that owns the camera. Cameras are isolated per company; record rules"
-" prevent users seeing devices outside their allowed companies."
+"Company that owns the camera. Cameras are isolated per company; record rules "
+"prevent users seeing devices outside their allowed companies."
 msgstr ""
 "Unternehmen, dem die Kamera gehört. Kameras sind je Unternehmen isoliert; "
 "Datensatzregeln verhindern, dass Benutzer Geräte außerhalb ihrer "
@@ -2444,9 +2454,9 @@ msgid "Confidence Level"
 msgstr "Konfidenzgrad"
 
 #. module: polimex_ip_cam
-#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__connection_status__connected
-msgid "Connected"
-msgstr "Verbunden"
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__connection_message
+msgid "Connection Details"
+msgstr "Verbindungsdetails"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__connection_status
@@ -2456,18 +2466,32 @@ msgstr "Verbindungsstatus"
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
-msgid "Connection check failed"
-msgstr "Verbindungsprüfung fehlgeschlagen"
+msgid "Connection check"
+msgstr "Verbindungsprüfung"
 
 #. module: polimex_ip_cam
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
 msgid ""
-"Connection details Odoo uses to reach the camera. Authentication is the same"
-" operator account configured on the camera's web UI."
+"Connection details Odoo uses to reach the camera. Authentication is the same "
+"operator account configured on the camera's web UI."
 msgstr ""
 "Verbindungsdetails, die Odoo verwendet, um die Kamera zu erreichen. Die "
 "Authentifizierung erfolgt über dasselbe Bediener-Konto, das in der Web-"
 "Oberfläche der Kamera konfiguriert ist."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Connection error — see the technical details below."
+msgstr "Verbindungsfehler - siehe technische Details unten."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Connection failed. Run “Check Connection” for an updated diagnosis."
+msgstr ""
+"Verbindung fehlgeschlagen. Führen Sie „Verbindung prüfen“ für eine aktuelle "
+"Diagnose aus."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__create_uid
@@ -2501,8 +2525,8 @@ msgstr "Dahua"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_command__request_data
 msgid ""
-"Data sent to the camera as part of the command, e.g. in param=value per line"
-" format."
+"Data sent to the camera as part of the command, e.g. in param=value per line "
+"format."
 msgstr ""
 "An die Kamera gesendete Daten als Teil des Befehls, z. B. im Format "
 "param=Wert pro Zeile."
@@ -2658,6 +2682,7 @@ msgid "Entrance configuration set successfully."
 msgstr "Einfahrtkonfiguration erfolgreich gesetzt."
 
 #. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__connection_status__error
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__state__error
 msgid "Error"
 msgstr "Fehler"
@@ -3328,7 +3353,7 @@ msgstr "HTTP/ISAPI-Port, auf dem das Gerät antwortet (Standard: 80)."
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__mac_address
 msgid "Hardware (MAC) address — stable identity across DHCP changes."
-msgstr "Hardware-(MAC-)Adresse – stabile Kennung bei DHCP-Änderungen."
+msgstr "Hardware-(MAC-)Adresse - stabile Kennung bei DHCP-Änderungen."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__model
@@ -3354,8 +3379,8 @@ msgid ""
 "devices are still factory-default and need activation first."
 msgstr ""
 "Hikvision-Kameras müssen vor der Nutzung aktiviert (Passwort gesetzt) "
-"werden. Nicht markierte Geräte befinden sich noch im Werkszustand und müssen"
-" zuerst aktiviert werden."
+"werden. Nicht markierte Geräte befinden sich noch im Werkszustand und müssen "
+"zuerst aktiviert werden."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__hongkong
@@ -3368,7 +3393,7 @@ msgid ""
 "How many times this command has been retried. Capped at 5 — beyond that the "
 "command stays in Error state and must be re-sent manually."
 msgstr ""
-"Anzahl der Wiederholungsversuche für diesen Befehl. Maximal 5 – danach "
+"Anzahl der Wiederholungsversuche für diesen Befehl. Maximal 5 - danach "
 "bleibt der Befehl im Fehlerstatus und muss manuell erneut gesendet werden."
 
 #. module: polimex_ip_cam
@@ -3551,6 +3576,11 @@ msgid "Last Heartbeat"
 msgstr "Letzter Heartbeat"
 
 #. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__last_seen
+msgid "Last Seen Online"
+msgstr "Zuletzt online gesehen"
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__write_uid
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__write_uid
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery__write_uid
@@ -3619,10 +3649,10 @@ msgid ""
 "(see Response Data). Use the Restart Sending server action to requeue an "
 "Error command."
 msgstr ""
-"Lebenszyklus des Befehls — Neu: in der Warteschlange, noch nicht gesendet. "
+"Lebenszyklus des Befehls - Neu: in der Warteschlange, noch nicht gesendet. "
 "In Bearbeitung: Handler liefert gerade aus. Erledigt: von der Kamera "
-"bestätigt. Fehler: Zustellung fehlgeschlagen (siehe Antwortdaten). Verwenden"
-" Sie die Serveraktion „Senden neu starten“, um einen fehlerhaften Befehl "
+"bestätigt. Fehler: Zustellung fehlgeschlagen (siehe Antwortdaten). Verwenden "
+"Sie die Serveraktion „Senden neu starten“, um einen fehlerhaften Befehl "
 "erneut in die Warteschlange zu stellen."
 
 #. module: polimex_ip_cam
@@ -3657,8 +3687,8 @@ msgstr ""
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__rfid_whitelist_count
 msgid ""
-"Live count of plates classified as Whitelist (auto-grant). Used by the smart"
-" button on the form."
+"Live count of plates classified as Whitelist (auto-grant). Used by the smart "
+"button on the form."
 msgstr ""
 "Aktuelle Anzahl der als Whitelist eingestuften Kennzeichen (automatische "
 "Gewährung). Wird vom Smart-Button im Formular verwendet."
@@ -3725,8 +3755,7 @@ msgstr "Erforderlicher Parameter 'plateNum' für den Befehl add_plate fehlt."
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera_command.py:0
 msgid "Missing required parameter 'plateNum' for remove_plate command."
-msgstr ""
-"Erforderlicher Parameter 'plateNum' für den Befehl remove_plate fehlt."
+msgstr "Erforderlicher Parameter 'plateNum' für den Befehl remove_plate fehlt."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__model
@@ -3759,8 +3788,8 @@ msgstr "Name"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__name
 msgid ""
-"Name the camera will be created with. Pre-filled from the model and address;"
-" edit it to something meaningful before adopting."
+"Name the camera will be created with. Pre-filled from the model and address; "
+"edit it to something meaningful before adopting."
 msgstr ""
 "Name, mit dem die Kamera erstellt wird. Aus Modell und Adresse "
 "vorausgefüllt; vor der Übernahme auf einen aussagekräftigen Namen ändern."
@@ -3813,6 +3842,12 @@ msgid "Next Activity Type"
 msgstr "Nächster Aktivitätstyp"
 
 #. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "No camera API for brand '%s'."
+msgstr "Keine Kamera-API für Marke '%s'."
+
+#. module: polimex_ip_cam
 #: model_terms:ir.actions.act_window,help:polimex_ip_cam.action_cctv_camera_command
 msgid "No camera commands sent today"
 msgstr "Heute keine Kamerabefehle gesendet"
@@ -3821,12 +3856,16 @@ msgstr "Heute keine Kamerabefehle gesendet"
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_discovery_form
 msgid ""
 "No cameras answered on this network segment. Make sure Odoo runs on\n"
-"                    the same LAN as the cameras (discovery does not cross routers), then\n"
+"                    the same LAN as the cameras (discovery does not cross "
+"routers), then\n"
 "                    try again — or add a camera manually."
 msgstr ""
-"Keine Kameras haben auf diesem Netzwerksegment geantwortet. Stellen Sie sicher, dass Odoo im\n"
-"                    selben LAN wie die Kameras betrieben wird (die Erkennung überquert keine Router), und\n"
-"                    versuchen Sie es erneut – oder fügen Sie eine Kamera manuell hinzu."
+"Keine Kameras haben auf diesem Netzwerksegment geantwortet. Stellen Sie "
+"sicher, dass Odoo im\n"
+"                    selben LAN wie die Kameras betrieben wird (die Erkennung "
+"überquert keine Router), und\n"
+"                    versuchen Sie es erneut - oder fügen Sie eine Kamera "
+"manuell hinzu."
 
 #. module: polimex_ip_cam
 #: model_terms:ir.actions.act_window,help:polimex_ip_cam.action_cctv_camera_blacklist
@@ -3837,6 +3876,22 @@ msgstr "Keine Kennzeichen auf der Blacklist dieser Kamera"
 #: model_terms:ir.actions.act_window,help:polimex_ip_cam.action_cctv_camera_whitelist
 msgid "No plates whitelisted on this camera"
 msgstr "Keine Kennzeichen auf der Whitelist dieser Kamera"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__connection_status__unknown
+msgid "Not checked yet"
+msgstr "Unbekannt"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Not checked yet. Use “Check Connection” to test."
+msgstr "Noch nicht geprüft. Verwenden Sie „Verbindung prüfen“ zum Testen."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__connection_status__unreachable
+msgid "Not reachable"
+msgstr "Nicht erreichbar"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_card__camera_count
@@ -3876,6 +3931,17 @@ msgstr "Anzahl der Nachrichten mit Zustellfehler"
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_discovery_line__brand__onvif_generic
 msgid "ONVIF (generic)"
 msgstr "ONVIF (generic)"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__connection_status__connected
+msgid "Online"
+msgstr "Verbunden"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Online — the camera is reachable and responding."
+msgstr "Online - die Kamera ist erreichbar und antwortet."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__command_type__other
@@ -4126,14 +4192,22 @@ msgstr "Kennwort"
 #. module: polimex_ip_cam
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
 msgid ""
-"Per-entrance parameters (lane direction, allowed list, snapshot mode) pulled"
-" from the camera. Use Get to read the current configuration; Set writes any "
+"Per-entrance parameters (lane direction, allowed list, snapshot mode) pulled "
+"from the camera. Use Get to read the current configuration; Set writes any "
 "local changes back to the device."
 msgstr ""
 "Parameter pro Einfahrt (Fahrspurrichtung, zugelassene Liste, "
 "Schnappschussmodus), die von der Kamera abgerufen werden. Verwenden Sie "
 "„Abrufen“, um die aktuelle Konfiguration zu lesen; „Setzen“ schreibt lokale "
 "Änderungen zurück auf das Gerät."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__connection_message
+msgid ""
+"Plain-language explanation of the latest connection status and what to do "
+"about it."
+msgstr ""
+"Verständliche Erklärung des aktuellen Verbindungsstatus und was zu tun ist."
 
 #. module: polimex_ip_cam
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.cctv_camera_rfid_rel_view_tree
@@ -4230,8 +4304,8 @@ msgstr "RFID-Benutzerereignis"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__door_id
 msgid ""
-"RFID doors whose readers are wired to this camera. Card assignments on these"
-" doors are mirrored to the camera's plate whitelist automatically."
+"RFID doors whose readers are wired to this camera. Card assignments on these "
+"doors are mirrored to the camera's plate whitelist automatically."
 msgstr ""
 "RFID-Türen, deren Lesegeräte mit dieser Kamera verbunden sind. "
 "Kartenzuweisungen an diesen Türen werden automatisch in der Kennzeichen-"
@@ -4251,6 +4325,15 @@ msgstr "ROC"
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__rok
 msgid "ROK"
 msgstr "ROK"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__connection_error_detail
+msgid ""
+"Raw error returned by the last failed connection check (for support/"
+"diagnostics)."
+msgstr ""
+"Rohfehler der letzten fehlgeschlagenen Verbindungsprüfung (für Support/"
+"Diagnose)."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_command__response_data
@@ -4379,8 +4462,8 @@ msgstr "Einstellungen"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__sub_serial_number
 msgid ""
-"Short device serial the camera reports as 'deviceUUID' in ANPR events (ISAPI"
-" subSerialNumber). Incoming plate events are matched to this camera by this "
+"Short device serial the camera reports as 'deviceUUID' in ANPR events (ISAPI "
+"subSerialNumber). Incoming plate events are matched to this camera by this "
 "value. Filled automatically on Check Connection, or learned from the first "
 "event received from the camera's IP."
 msgstr ""
@@ -4457,6 +4540,20 @@ msgid "Take Snapshot"
 msgstr "Schnappschuss aufnehmen"
 
 #. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__connection_error_detail
+msgid "Technical Details"
+msgstr "Technische Details"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The camera answered but in an unexpected format (wrong model or firmware?)."
+msgstr ""
+"Die Kamera hat geantwortet, aber in einem unerwarteten Format (falsches "
+"Modell oder falsche Firmware?)."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_system__anpr_confidence
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_user__anpr_confidence
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_vending_event__anpr_confidence
@@ -4480,11 +4577,14 @@ msgstr "Der Schnappschuss der Kamera"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__tz
 msgid ""
-"The timezone of the camera. Used to display dates and times in the correct timezone.\n"
-"The plates are sent to camera with data and time in this timezone."
+"The timezone of the camera's location. The camera's on-screen clock (burned "
+"onto recordings) and the plate timestamps are set in this timezone; Odoo "
+"stores everything in UTC and converts."
 msgstr ""
-"Die Zeitzone der Kamera. Wird verwendet, um Datum und Uhrzeit in der richtigen Zeitzone anzuzeigen.\n"
-"Die Kennzeichen werden mit Datum und Uhrzeit in dieser Zeitzone an die Kamera gesendet."
+"Die Zeitzone der Kamera. Wird verwendet, um Datum und Uhrzeit in der "
+"richtigen Zeitzone anzuzeigen.\n"
+"Die Kennzeichen werden mit Datum und Uhrzeit in dieser Zeitzone an die "
+"Kamera gesendet."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_rfid_rel__list_category
@@ -4616,19 +4716,19 @@ msgid ""
 "Uncheck to archive the camera. Inactive cameras no longer receive commands "
 "or accept push events; existing plate-list records remain for history."
 msgstr ""
-"Deaktivieren, um die Kamera zu archivieren. Inaktive Kameras empfangen keine"
-" Befehle mehr und akzeptieren keine Push-Ereignisse; vorhandene "
+"Deaktivieren, um die Kamera zu archivieren. Inaktive Kameras empfangen keine "
+"Befehle mehr und akzeptieren keine Push-Ereignisse; vorhandene "
 "Kennzeichenlisteneinträge bleiben zur Protokollierung erhalten."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__connection_status__protocol_error
+msgid "Unexpected response"
+msgstr "Unerwartete Antwort"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__universal
 msgid "Universal"
 msgstr "Universal"
-
-#. module: polimex_ip_cam
-#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__connection_status__unknown
-msgid "Unknown"
-msgstr "Unbekannt"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__command_type__update_list
@@ -4673,14 +4773,21 @@ msgid "Website communication history"
 msgstr "Website-Kommunikationsverlauf"
 
 #. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__last_seen
+msgid "When the camera last answered a connection check successfully."
+msgstr ""
+"Wann die Kamera zuletzt erfolgreich auf eine Verbindungsprüfung geantwortet "
+"hat."
+
+#. module: polimex_ip_cam
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
 msgid ""
 "Where the camera pushes ANPR events to. Use Get to read the current push "
 "target from the camera, then Set to redirect it to this Odoo endpoint."
 msgstr ""
-"Das Ziel, an das die Kamera ANPR-Ereignisse sendet. Verwenden Sie „Abrufen“,"
-" um das aktuelle Push-Ziel von der Kamera zu lesen, dann „Setzen“, um es auf"
-" diesen Odoo-Endpunkt umzuleiten."
+"Das Ziel, an das die Kamera ANPR-Ereignisse sendet. Verwenden Sie „Abrufen“, "
+"um das aktuelle Push-Ziel von der Kamera zu lesen, dann „Setzen“, um es auf "
+"diesen Odoo-Endpunkt umzuleiten."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__discovery_method
@@ -4712,6 +4819,21 @@ msgstr ""
 "Auf der Whitelist eingetragene Kennzeichen werden bei Erkennung automatisch "
 "gewährt. Zeile hinzufügen, indem eine Karte ausgewählt wird, deren Nummer "
 "dem von der Kamera zu akzeptierenden Kennzeichen entspricht."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__connection_status__auth_failed
+msgid "Wrong credentials"
+msgstr "Falsche Anmeldedaten"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"Wrong username or password for the camera. Update the credentials and check "
+"again."
+msgstr ""
+"Falscher Benutzername oder falsches Passwort für die Kamera. Aktualisieren "
+"Sie die Anmeldedaten und prüfen Sie erneut."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__zulu

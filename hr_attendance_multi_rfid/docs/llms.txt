@@ -6,7 +6,7 @@ doc_type: user_guide
 audience:
 - user
 summary: Manage employee attendance
-last_updated: '2026-04-29'
+last_updated: '2026-08-14'
 source_digest: sha256:fba71369265be1500bbdcac39b04096b2b03bc6204a695e6fa698151e653a08d
 companion_doc: llms-full.md
 ---
@@ -22,6 +22,85 @@ companion_doc: llms-full.md
 Manage employee attendance.
 
 This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
+
+
+## Rebuilding attendance from door events
+
+When attendance for a past period is wrong - an area was only set to count
+towards attendance afterwards, a reader was on the wrong side of a door, a
+batch of events arrived late - it can be built again from the door events of
+that period.
+
+### How to start one
+
+1. Open the employee list, tick the people concerned and choose **Re-create
+   Attendance records**.
+2. Give the first and the last day. The last day is included whole, and a day
+   ends where midnight passes for the person, not in London.
+3. Press **Re-Create**. You are told at once that the work has started and
+   taken to the page that shows it.
+
+Only an attendance manager can start a rebuild.
+
+### It runs in the background
+
+A rebuild is not done while you wait. The people are worked through one at a
+time, each finished before the next is begun, so a rebuild covering a whole
+site is not cut short halfway. You can close the page and carry on working;
+come back through **Attendance -> Attendance Rebuilds** at any time.
+
+- The bar does not move by itself. **Continue now** refreshes what you see.
+- An interrupted rebuild picks up where it stopped - nobody is done twice.
+- A rebuild that has not moved for half an hour is closed by itself, so it
+  cannot hold up the ones asked for after it. Everybody it had already done
+  keeps their rebuilt attendance; start a new one for the rest.
+- If the scheduled task that does the work has been switched off, the rebuild
+  is refused on the spot rather than accepted and never done. An administrator
+  is offered the task to switch back on; anyone else is told to ask for it.
+
+### What it does to existing attendance
+
+For each person, the attendance the system made in that period is removed and
+the door events of that period are replayed in its place. **What somebody
+typed in by hand is left alone** wherever the site records why an attendance
+exists. Where nothing records that, a typed-in record cannot be told from a
+made one and the whole period is replaced - so on such a site, check that
+nothing was entered by hand before rebuilding a period.
+
+### How it ends, and what each ending means
+
+| Result | What it means |
+|---|---|
+| **Finished** | The attendance of everybody on the list was replayed. |
+| **Nothing to rebuild** | Nothing was put back. Either nobody had a door event between those dates - usually because no area is set to count towards attendance, which leaves no doors to read - or the events made no attendance at all, which normally means the doors they came from have no reader set as the way in. Read the message: it says which of the two it was and who it concerns. |
+| **Refused** | Their attendance is not for this system to rebuild - see below. |
+| **Stopped by a problem** | At least one person could not be rebuilt. Their attendance was put back exactly as it was; everybody else is done. The line for that person says so, and your administrator can see what went wrong. |
+
+Whoever asked for the rebuild is told the result on screen when it ends, and
+the same account stays on the rebuild itself. Under **What happened** there is
+one line per person: how many door events were read, how much attendance came
+out of them, and, where nothing did, why.
+
+Note that **People dealt with** counts everybody the rebuild has got through -
+including people who had nothing to rebuild and people it failed on. How many
+were actually rebuilt is in the closing message.
+
+### Attendance that came from somewhere else
+
+Attendance brought into this system by a data transfer is a copy of what the
+old system recorded. It cannot be worked out again here, so a rebuild that
+would touch it is refused, and the records are left untouched. The refusal
+names the people concerned and says what to do instead: run the transfer again
+to refresh that data, or choose a period - or a set of people - without it.
+
+A refusal is not a breakdown and nothing is wrong: asking for the same rebuild
+again gets the same answer.
+
+### Old rebuilds
+
+A rebuild is kept for three months after it ends, which is long enough to
+answer "who rebuilt this month's attendance, and what did it do?". One still
+waiting or under way is never tidied away, however long ago it was asked for.
 
 
 ## How to use it

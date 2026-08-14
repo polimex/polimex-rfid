@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-05 16:23+0000\n"
-"PO-Revision-Date: 2026-03-08 16:12\n"
+"POT-Creation-Date: 2026-08-14 13:55+0000\n"
+"PO-Revision-Date: 2026-08-14 17:22\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ro\n"
@@ -15,6 +15,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
+msgid ""
+"<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
+"                                Tip: turn Fixed Time on to make every card "
+"expire at the same wall-clock cut-off (for example \"all day passes end at "
+"18:00\"). Leave it off for rolling windows (e.g. \"4 hours from check-in\")."
+msgstr ""
+"<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
+"                                Sfat: activați Ora fixă pentru a face ca "
+"fiecare card să expire la aceeași oră limită (de exemplu, „toate permisele "
+"de o zi se termină la ora 18:00”). Lăsați-o dezactivată pentru ferestre "
+"glisante (de exemplu, „4 ore de la check-in”)."
 
 #. module: rfid_service_base
 #. odoo-python
@@ -35,8 +49,10 @@ msgstr "<span class=\"fa fa-clock-o mr-2\" title=\"Start\"/>"
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
-msgid "<span class=\"fa fa-envelope-o mr-2\" aria-label=\"Group\" title=\"Group\"/>"
-msgstr "<span class=\"fa fa-envelope-o mr-2\" aria-label=\"Group\" title=\"Group\"/>"
+msgid ""
+"<span class=\"fa fa-envelope-o mr-2\" aria-label=\"Group\" title=\"Group\"/>"
+msgstr ""
+"<span class=\"fa fa-envelope-o mr-2\" aria-label=\"Group\" title=\"Group\"/>"
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
@@ -159,7 +175,6 @@ msgstr "Număr atașamente"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__generate_barcode_card
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__generate_barcode_card
 msgid ""
 "Automatically create barcode-based cards instead of RFID cards.\n"
 "        \n"
@@ -168,16 +183,20 @@ msgid ""
 "• Use cases: Mobile-first access, temporary visitors, events\n"
 "• Card type: Automatically changes to barcode card type when enabled\n"
 "        \n"
-"Barcode cards can be scanned with mobile devices and don't require physical RFID cards."
+"Barcode cards can be scanned with mobile devices and don't require physical "
+"RFID cards."
 msgstr ""
 "Creează automat cartele bazate pe cod de bare în locul cartelelor RFID.\n"
 "        \n"
-"• Când este activat: Sistemul generează cartele QR/cod de bare pentru scanare mobilă\n"
+"• Când este activat: Sistemul generează cartele QR/cod de bare pentru "
+"scanare mobilă\n"
 "• Când este dezactivat: Se utilizează cartele RFID tradiționale\n"
 "• Cazuri de utilizare: Acces mobile-first, vizitatori temporari, evenimente\n"
-"• Tip cartelă: Se schimbă automat la tipul de cartelă cod de bare când este activat\n"
+"• Tip cartelă: Se schimbă automat la tipul de cartelă cod de bare când este "
+"activat\n"
 "        \n"
-"Cartelele cu cod de bare pot fi scanate cu dispozitive mobile și nu necesită cartele RFID fizice."
+"Cartelele cu cod de bare pot fi scanate cu dispozitive mobile și nu necesită "
+"cartele RFID fizice."
 
 #. module: rfid_service_base
 #: model:ir.model,name:rfid_service_base.model_rfid_service_sale_wiz
@@ -210,25 +229,42 @@ msgid "Card Type"
 msgstr "Tip cartelă"
 
 #. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__service_id
+msgid ""
+"Catalog entry from which the card inherits its access group, time window and "
+"card type. Set automatically when the wizard is opened from a service."
+msgstr ""
+"Înregistrare din catalog din care cardul moștenește grupul de acces, "
+"fereastra de timp și tipul de card. Se setează automat când asistentul este "
+"deschis dintr-un serviciu."
+
+#. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__tag_ids
 msgid ""
 "Categorization tags for organizing and filtering services.\n"
 "        \n"
-"• Organization: Group related services together (e.g., 'VIP', 'Visitor', 'Staff')\n"
-"• Filtering: Use in search panels and reports to find specific service types\n"
+"• Organization: Group related services together (e.g., 'VIP', 'Visitor', "
+"'Staff')\n"
+"• Filtering: Use in search panels and reports to find specific service "
+"types\n"
 "• Color coding: Tags have colors for visual identification\n"
-"• Multiple tags: Services can have multiple tags for flexible categorization\n"
+"• Multiple tags: Services can have multiple tags for flexible "
+"categorization\n"
 "        \n"
 "Use tags to create logical groupings that match your business needs."
 msgstr ""
 "Etichete de categorizare pentru organizarea și filtrarea serviciilor.\n"
 "        \n"
-"• Organizare: Grupați serviciile înrudite (de ex., 'VIP', 'Vizitator', 'Personal')\n"
-"• Filtrare: Utilizați în panourile de căutare și rapoarte pentru a găsi tipuri specifice de servicii\n"
+"• Organizare: Grupați serviciile înrudite (de ex., 'VIP', 'Vizitator', "
+"'Personal')\n"
+"• Filtrare: Utilizați în panourile de căutare și rapoarte pentru a găsi "
+"tipuri specifice de servicii\n"
 "• Codificare prin culori: Etichetele au culori pentru identificare vizuală\n"
-"• Etichete multiple: Serviciile pot avea mai multe etichete pentru categorizare flexibilă\n"
+"• Etichete multiple: Serviciile pot avea mai multe etichete pentru "
+"categorizare flexibilă\n"
 "        \n"
-"Utilizați etichete pentru a crea grupări logice care corespund nevoilor afacerii dvs."
+"Utilizați etichete pentru a crea grupări logice care corespund nevoilor "
+"afacerii dvs."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__color
@@ -248,11 +284,14 @@ msgid ""
 "        \n"
 "Colors improve visual organization when managing multiple services."
 msgstr ""
-"Codificare prin culori pentru identificare vizuală în vizualizarea kanban și altele.\n"
+"Codificare prin culori pentru identificare vizuală în vizualizarea kanban și "
+"altele.\n"
 "        \n"
 "• Organizare vizuală: Ajută la distingerea diferitelor tipuri de servicii\n"
-"• Interfață utilizator: Utilizată în cartelele kanban și afișările de servicii\n"
-"• Personalizare: Alegeți culori care corespund brandingului organizației dvs.\n"
+"• Interfață utilizator: Utilizată în cartelele kanban și afișările de "
+"servicii\n"
+"• Personalizare: Alegeți culori care corespund brandingului organizației "
+"dvs.\n"
 "• Implicit: Sistemul atribuie culori aleatorii dacă nu sunt specificate\n"
 "        \n"
 "Culorile îmbunătățesc organizarea vizuală la gestionarea mai multor servicii."
@@ -269,14 +308,19 @@ msgid ""
 "        \n"
 "Colors improve visual organization when managing multiple service categories."
 msgstr ""
-"Culoare pentru identificarea vizuală a acestei etichete în liste și vizualizări kanban.\n"
+"Culoare pentru identificarea vizuală a acestei etichete în liste și "
+"vizualizări kanban.\n"
 "        \n"
-"• Organizare vizuală: Ajută la identificarea rapidă a diferitelor categorii de etichete\n"
-"• Interfață utilizator: Afișată în widget-urile de etichete și cartelele de servicii\n"
+"• Organizare vizuală: Ajută la identificarea rapidă a diferitelor categorii "
+"de etichete\n"
+"• Interfață utilizator: Afișată în widget-urile de etichete și cartelele de "
+"servicii\n"
 "• Implicit aleatoriu: Sistemul atribuie culori aleatorii etichetelor noi\n"
-"• Personalizare: Alegeți culori care corespund schemei de culori a organizației dvs.\n"
+"• Personalizare: Alegeți culori care corespund schemei de culori a "
+"organizației dvs.\n"
 "        \n"
-"Culorile îmbunătățesc organizarea vizuală la gestionarea mai multor categorii de servicii."
+"Culorile îmbunătățesc organizarea vizuală la gestionarea mai multor "
+"categorii de servicii."
 
 #. module: rfid_service_base
 #: model:ir.model,name:rfid_service_base.model_res_company
@@ -289,6 +333,33 @@ msgstr "Companii"
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_tags__company_id
 msgid "Company"
 msgstr "Companie"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__company_id
+msgid ""
+"Company that owns this sale — inherited from the underlying service. Used "
+"for multi-company record-rule scoping."
+msgstr ""
+"Compania care deține această vânzare - moștenită din serviciul de bază. "
+"Utilizată pentru limitarea regulilor de înregistrare multi-companie."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__company_id
+msgid ""
+"Company that owns this service template. Services are isolated per company — "
+"users only see services of their allowed companies."
+msgstr ""
+"Compania care deține acest șablon de serviciu. Serviciile sunt izolate per "
+"companie - utilizatorii văd doar serviciile companiilor la care au acces."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_tags__company_id
+msgid ""
+"Company that owns this tag. Tags are isolated per company so each tenant can "
+"build its own catalog taxonomy."
+msgstr ""
+"Compania care deține această etichetă. Etichetele sunt izolate per companie, "
+"astfel încât fiecare client își poate construi propria taxonomie de catalog."
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_kanban
@@ -304,6 +375,18 @@ msgstr "Contact"
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__displayed_image_id
 msgid "Cover Image"
 msgstr "Imagine de copertă"
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding.step,description:rfid_service_base.onboarding_step_service_define
+msgid ""
+"Create the catalog entry for the access type you want to issue (for example: "
+"day pass, weekly visitor, contractor card). Each service binds an access "
+"group, a time window, and a card type."
+msgstr ""
+"Creați înregistrarea din catalog pentru tipul de acces pe care doriți să îl "
+"emiteți (de exemplu: permis de o zi, vizitator săptămânal, card pentru "
+"contractor). Fiecare serviciu asociază un grup de acces, o fereastră de timp "
+"și un tip de card."
 
 #. module: rfid_service_base
 #: model_terms:ir.actions.act_window,help:rfid_service_base.hr_rfid_service_action
@@ -336,16 +419,19 @@ msgid ""
 "• Finished: Service period has ended or all visits have been used\n"
 "• Canceled: Service was manually canceled before completion\n"
 "        \n"
-"Status is automatically calculated based on dates, visits, and access permissions."
+"Status is automatically calculated based on dates, visits, and access "
+"permissions."
 msgstr ""
 "Starea curentă a acestei vânzări de serviciu.\n"
 "        \n"
 "• Înregistrat: Vânzare creată, dar perioada de serviciu nu a început încă\n"
 "• Activ: Serviciul este activ în prezent și clientul are acces\n"
-"• Finalizat: Perioada de serviciu s-a încheiat sau toate vizitele au fost utilizate\n"
+"• Finalizat: Perioada de serviciu s-a încheiat sau toate vizitele au fost "
+"utilizate\n"
 "• Anulat: Serviciul a fost anulat manual înainte de finalizare\n"
 "        \n"
-"Starea este calculată automat pe baza datelor, vizitelor și permisiunilor de acces."
+"Starea este calculată automat pe baza datelor, vizitelor și permisiunilor de "
+"acces."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__partner_id
@@ -362,14 +448,18 @@ msgid ""
 "• Communication: Used for sending emails and printing badges\n"
 "• Tracking: Links all service sales to the same customer for history\n"
 "        \n"
-"This is the person who will receive access and communications about the service."
+"This is the person who will receive access and communications about the "
+"service."
 msgstr ""
 "Clientul care a achiziționat acest serviciu.\n"
 "        \n"
 "• Individual: Trebuie să fie o persoană, nu un contact de companie\n"
-"• Creare: Poate fi creat automat în timpul procesului de vânzare a serviciului\n"
-"• Comunicare: Utilizat pentru trimiterea de e-mailuri și tipărirea ecusoanelor\n"
-"• Urmărire: Leagă toate vânzările de servicii de același client pentru istoric\n"
+"• Creare: Poate fi creat automat în timpul procesului de vânzare a "
+"serviciului\n"
+"• Comunicare: Utilizat pentru trimiterea de e-mailuri și tipărirea "
+"ecusoanelor\n"
+"• Urmărire: Leagă toate vânzările de servicii de același client pentru "
+"istoric\n"
 "        \n"
 "Aceasta este persoana care va primi acces și comunicări despre serviciu."
 
@@ -385,14 +475,17 @@ msgid ""
 "        \n"
 "Must be later than Access Start Time to create a valid time window."
 msgstr ""
-"Ora zilnică de sfârșit după care accesul nu mai este permis (format 24 de ore).\n"
+"Ora zilnică de sfârșit după care accesul nu mai este permis (format 24 de "
+"ore).\n"
 "        \n"
 "• Format: Ore și minute (de ex., 17.0 = 17:00, 23.5 = 23:30)\n"
 "• Scop: Restricționează automat accesul după orele de program\n"
 "• 00:00 înseamnă: Nicio restricție de oră (acces permis toată ziua)\n"
-"• Securitate: Previne accesul în afara orelor de program chiar și cu cartele valide\n"
+"• Securitate: Previne accesul în afara orelor de program chiar și cu cartele "
+"valide\n"
 "        \n"
-"Trebuie să fie mai târziu decât Ora început acces pentru a crea un interval orar valid."
+"Trebuie să fie mai târziu decât Ora început acces pentru a crea un interval "
+"orar valid."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__time_interval_start
@@ -411,13 +504,13 @@ msgstr ""
 "• Format: Ore și minute (de ex., 9.0 = 9:00, 14.5 = 14:30)\n"
 "• Scop: Restricționați accesul la anumite ore ale zilei\n"
 "• 00:00 înseamnă: Nicio restricție de oră (acces permis toată ziua)\n"
-"• Cazuri de utilizare: Ore de birou, ore de sală de sport, perioade de acces restricționat\n"
+"• Cazuri de utilizare: Ore de birou, ore de sală de sport, perioade de acces "
+"restricționat\n"
 "        \n"
 "Combinați cu Ora sfârșit acces pentru a crea intervale de acces zilnice."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__start_date
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__ext_start_date
 msgid ""
 "Date and time when customer access begins.\n"
 "        \n"
@@ -426,12 +519,14 @@ msgid ""
 "• Timezone: Interpreted according to user's timezone settings\n"
 "• Calculation: Combined with service duration to determine end date\n"
 "        \n"
-"Customer will be able to access designated areas starting from this date/time."
+"Customer will be able to access designated areas starting from this date/"
+"time."
 msgstr ""
 "Data și ora la care începe accesul clientului.\n"
 "        \n"
 "• Activare: Cartela clientului devine activă la această dată/oră\n"
-"• Planificare: Poate fi setată pentru activare viitoare (rezervări în avans)\n"
+"• Planificare: Poate fi setată pentru activare viitoare (rezervări în "
+"avans)\n"
 "• Fus orar: Interpretat conform setărilor de fus orar ale utilizatorului\n"
 "• Calcul: Combinat cu durata serviciului pentru a determina data de sfârșit\n"
 "        \n"
@@ -439,7 +534,6 @@ msgstr ""
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__end_date
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__ext_end_date
 msgid ""
 "Date and time when customer access expires.\n"
 "        \n"
@@ -454,7 +548,8 @@ msgstr ""
 "        \n"
 "• Expirare: Cartela clientului devine inactivă la această dată/oră\n"
 "• Calcul: De obicei calculată din data de început + durata serviciului\n"
-"• Modificare manuală: Poate fi ajustată manual pentru perioade de serviciu personalizate\n"
+"• Modificare manuală: Poate fi ajustată manual pentru perioade de serviciu "
+"personalizate\n"
 "• Securitate: Accesul este revocat automat după această dată/oră\n"
 "        \n"
 "Clientul va pierde accesul la zonele desemnate după această dată/oră."
@@ -470,7 +565,26 @@ msgid "Default Access Rights"
 msgstr "Drepturi de acces implicite"
 
 #. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
+msgid ""
+"Default access rights and tagging for the service. The access group is "
+"inherited by every card issued from this service, and tags help filter the "
+"catalog."
+msgstr ""
+"Drepturile de acces implicite și etichetarea pentru serviciu. Grupul de "
+"acces este moștenit de fiecare card emis din acest serviciu, iar etichetele "
+"ajută la filtrarea catalogului."
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding.step,step_image_alt:rfid_service_base.onboarding_step_service_define
+#: model:onboarding.onboarding.step,title:rfid_service_base.onboarding_step_service_define
+msgid "Define a visitor service"
+msgstr "Definiți un serviciu pentru vizitatori"
+
+#. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_hr_rfid_access_group_contact_rel__display_name
+#: model:ir.model.fields,field_description:rfid_service_base.field_onboarding_onboarding__display_name
+#: model:ir.model.fields,field_description:rfid_service_base.field_onboarding_onboarding_step__display_name
 #: model:ir.model.fields,field_description:rfid_service_base.field_res_company__display_name
 #: model:ir.model.fields,field_description:rfid_service_base.field_res_partner__display_name
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__display_name
@@ -512,20 +626,26 @@ msgid ""
 "Email template used when sending badges/cards to customers.\n"
 "        \n"
 "• Purpose: Customize the email content and appearance sent to customers\n"
-"• Content: Can include card details, access instructions, and company branding\n"
+"• Content: Can include card details, access instructions, and company "
+"branding\n"
 "• Automation: Template is used when clicking 'Email Card' in sales process\n"
 "• Default: Uses system default badge email template if not specified\n"
 "        \n"
 "Customize the template to match your organization's communication style."
 msgstr ""
-"Șablon de e-mail utilizat la trimiterea ecusoanelor/cartelelor către clienți.\n"
+"Șablon de e-mail utilizat la trimiterea ecusoanelor/cartelelor către "
+"clienți.\n"
 "        \n"
 "• Scop: Personalizați conținutul și aspectul e-mailului trimis clienților\n"
-"• Conținut: Poate include detalii despre cartelă, instrucțiuni de acces și branding-ul companiei\n"
-"• Automatizare: Șablonul este utilizat la apăsarea 'Trimite cartelă prin e-mail' în procesul de vânzare\n"
-"• Implicit: Utilizează șablonul de e-mail implicit al sistemului pentru ecusoane dacă nu este specificat\n"
+"• Conținut: Poate include detalii despre cartelă, instrucțiuni de acces și "
+"branding-ul companiei\n"
+"• Automatizare: Șablonul este utilizat la apăsarea 'Trimite cartelă prin e-"
+"mail' în procesul de vânzare\n"
+"• Implicit: Utilizează șablonul de e-mail implicit al sistemului pentru "
+"ecusoane dacă nu este specificat\n"
 "        \n"
-"Personalizați șablonul pentru a corespunde stilului de comunicare al organizației dvs."
+"Personalizați șablonul pentru a corespunde stilului de comunicare al "
+"organizației dvs."
 
 #. module: rfid_service_base
 #. odoo-python
@@ -548,6 +668,11 @@ msgstr "Extinde serviciul"
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.hr_rfid_service_sale_form
 msgid "Finished"
 msgstr "Finalizat"
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding.step,done_text:rfid_service_base.onboarding_step_service_first_sale
+msgid "First visitor card issued!"
+msgstr "Primul card de vizitator emis!"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__fixed_time
@@ -605,16 +730,23 @@ msgid ""
 "    \n"
 "Choose based on how you want to limit and charge for the service."
 msgstr ""
-"Modul în care acest serviciu controlează durata și utilizarea accesului clientului.\n"
+"Modul în care acest serviciu controlează durata și utilizarea accesului "
+"clientului.\n"
 "    \n"
-"• Bazat pe timp: Accesul este valid pentru o perioadă de timp specificată (zile, săptămâni, luni)\n"
-"• Bazat pe vizite: Accesul este limitat prin numărul de intrări (de ex., 5 vizite)\n"
-"• Timp și vizite: Se aplică atât restricțiile de perioadă de timp, CÂT ȘI cele de număr de vizite\n"
+"• Bazat pe timp: Accesul este valid pentru o perioadă de timp specificată "
+"(zile, săptămâni, luni)\n"
+"• Bazat pe vizite: Accesul este limitat prin numărul de intrări (de ex., 5 "
+"vizite)\n"
+"• Timp și vizite: Se aplică atât restricțiile de perioadă de timp, CÂT ȘI "
+"cele de număr de vizite\n"
 "    \n"
-"Alegeți în funcție de modul în care doriți să limitați și să facturați serviciul."
+"Alegeți în funcție de modul în care doriți să limitați și să facturați "
+"serviciul."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_hr_rfid_access_group_contact_rel__id
+#: model:ir.model.fields,field_description:rfid_service_base.field_onboarding_onboarding__id
+#: model:ir.model.fields,field_description:rfid_service_base.field_onboarding_onboarding_step__id
 #: model:ir.model.fields,field_description:rfid_service_base.field_res_company__id
 #: model:ir.model.fields,field_description:rfid_service_base.field_res_partner__id
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__id
@@ -665,6 +797,25 @@ msgid "Is Follower"
 msgstr "Este urmăritor"
 
 #. module: rfid_service_base
+#: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form
+msgid ""
+"Issue or extend a visitor service. Scan the card, pick the visitor, and "
+"adjust the validity window if the defaults don't match. Encode Card creates "
+"the contact and activates access; Share Card also emails or texts the "
+"credentials."
+msgstr ""
+"Emiteți sau prelungiți un serviciu pentru vizitatori. Scanați cardul, "
+"alegeți vizitatorul și ajustați fereastra de valabilitate dacă valorile "
+"implicite nu corespund. Codificare card creează contactul și activează "
+"accesul; Partajare card trimite de asemenea acreditările prin e-mail sau SMS."
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding.step,step_image_alt:rfid_service_base.onboarding_step_service_first_sale
+#: model:onboarding.onboarding.step,title:rfid_service_base.onboarding_step_service_first_sale
+msgid "Issue the first visitor card"
+msgstr "Emiteți primul card de vizitator"
+
+#. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__write_uid
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__write_uid
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__write_uid
@@ -693,25 +844,28 @@ msgstr "Serviciu anulat manual"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__visits
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__visits
 msgid ""
 "Maximum number of times a customer can access with this service.\n"
 "        \n"
 "• Purpose: Limit usage for visit-based or combined service types\n"
 "• Tracking: System automatically counts and decreases available visits\n"
 "• Zero means: Unlimited visits (only for time-based services)\n"
-"• Examples: 5 visits for \"Weekly Gym Pass\", 1 visit for \"Single Day Access\"\n"
+"• Examples: 5 visits for \"Weekly Gym Pass\", 1 visit for \"Single Day "
+"Access\"\n"
 "        \n"
 "Only applies to 'Visits based' and 'Time and Visits based' service types."
 msgstr ""
 "Numărul maxim de ori în care un client poate accesa cu acest serviciu.\n"
 "        \n"
-"• Scop: Limitați utilizarea pentru tipurile de servicii bazate pe vizite sau combinate\n"
+"• Scop: Limitați utilizarea pentru tipurile de servicii bazate pe vizite sau "
+"combinate\n"
 "• Urmărire: Sistemul numără automat și scade vizitele disponibile\n"
 "• Zero înseamnă: Vizite nelimitate (doar pentru serviciile bazate pe timp)\n"
-"• Exemple: 5 vizite pentru \"Abonament săptămânal sală\", 1 vizită pentru \"Acces o singură zi\"\n"
+"• Exemple: 5 vizite pentru \"Abonament săptămânal sală\", 1 vizită pentru "
+"\"Acces o singură zi\"\n"
 "        \n"
-"Se aplică doar tipurilor de servicii 'Bazat pe vizite' și 'Bazat pe timp și vizite'."
+"Se aplică doar tipurilor de servicii 'Bazat pe vizite' și 'Bazat pe timp și "
+"vizite'."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__message_has_error
@@ -731,9 +885,84 @@ msgid "Minutes"
 msgstr "Minute"
 
 #. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__generate_barcode_card
+msgid ""
+"Mirrors the service flag — when true, the wizard auto-generates a printable "
+"barcode instead of expecting a scanned RFID number."
+msgstr ""
+"Creează automat cartele bazate pe cod de bare în locul cartelelor RFID.\n"
+"        \n"
+"• Când este activat: Sistemul generează cartele QR/cod de bare pentru "
+"scanare mobilă\n"
+"• Când este dezactivat: Se utilizează cartele RFID tradiționale\n"
+"• Cazuri de utilizare: Acces mobile-first, vizitatori temporari, evenimente\n"
+"• Tip cartelă: Se schimbă automat la tipul de cartelă cod de bare când este "
+"activat\n"
+"        \n"
+"Cartelele cu cod de bare pot fi scanate cu dispozitive mobile și nu necesită "
+"cartele RFID fizice."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__fixed_time
+msgid ""
+"Mirrors the service's Fixed Time flag — when true, the end date snaps to a "
+"fixed daily cut-off instead of a rolling interval."
+msgstr ""
+"Dacă orele serviciului sunt fixe sau pot fi personalizate per vânzare.\n"
+"        \n"
+"• Fix (activat): Toate vânzările utilizează aceleași ore de început/sfârșit "
+"definite în serviciu\n"
+"• Flexibil (dezactivat): Personalul poate personaliza orele de început/"
+"sfârșit pentru fiecare vânzare individuală\n"
+"• Cazuri de utilizare: Fix pentru servicii standard, flexibil pentru "
+"rezervări personalizate\n"
+"• Control: Determină dacă operatorii pot modifica programarea serviciului în "
+"timpul vânzărilor\n"
+"        \n"
+"Activați pentru servicii standardizate, dezactivați pentru acces "
+"personalizat sau bazat pe evenimente."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__visits
+msgid ""
+"Mirrors the visits-per-card limit from the service template — informational "
+"only, the wizard does not let you override it."
+msgstr ""
+"Numărul maxim de ori în care un client poate accesa cu acest serviciu.\n"
+"        \n"
+"• Scop: Limitați utilizarea pentru tipurile de servicii bazate pe vizite sau "
+"combinate\n"
+"• Urmărire: Sistemul numără automat și scade vizitele disponibile\n"
+"• Zero înseamnă: Vizite nelimitate (doar pentru serviciile bazate pe timp)\n"
+"• Exemple: 5 vizite pentru \"Abonament săptămânal sală\", 1 vizită pentru "
+"\"Acces o singură zi\"\n"
+"        \n"
+"Se aplică doar tipurilor de servicii 'Bazat pe vizite' și 'Bazat pe timp și "
+"vizite'."
+
+#. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__mobile
 msgid "Mobile"
 msgstr "Mobil"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__start_date
+msgid ""
+"Moment the card becomes active. Defaults to a calculated start based on the "
+"service's time interval, but you can override it."
+msgstr ""
+"Momentul în care cardul devine activ. Implicit este calculat pe baza "
+"intervalului de timp al serviciului, dar poate fi suprascris."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__end_date
+msgid ""
+"Moment the card stops working. Calculated from start + the service's time "
+"interval; for Fixed Time services it snaps to the daily cut-off."
+msgstr ""
+"Momentul în care cardul încetează să funcționeze. Calculat din început + "
+"intervalul de timp al serviciului; pentru serviciile cu Oră fixă, se "
+"aliniază la ora limită zilnică."
 
 #. module: rfid_service_base
 #: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service__time_interval_type__months
@@ -760,17 +989,24 @@ msgstr ""
 "Denumirea etichetei de serviciu pentru categorizare și filtrare.\n"
 "        \n"
 "• Scop: Creați grupări logice ale serviciilor înrudite\n"
-"• Exemple: 'VIP', 'Vizitator', 'Personal', 'Premium', 'De bază', 'Eveniment'\n"
+"• Exemple: 'VIP', 'Vizitator', 'Personal', 'Premium', 'De bază', "
+"'Eveniment'\n"
 "• Utilizare: Utilizată în filtrele de căutare și organizarea serviciilor\n"
 "• Unicitate: Denumirile etichetelor trebuie să fie unice în sistem\n"
 "        \n"
-"Utilizați denumiri clare și descriptive care ajută la organizarea ofertelor de servicii."
+"Utilizați denumiri clare și descriptive care ajută la organizarea ofertelor "
+"de servicii."
 
 #. module: rfid_service_base
 #. odoo-python
 #: code:addons/rfid_service_base/models/rfid_service.py:0
 msgid "New Sale - %s"
 msgstr "Vânzare nouă - %s"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr "Eveniment calendar activitate următoare"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_date_deadline
@@ -823,6 +1059,17 @@ msgid "Number of messages with delivery error"
 msgstr "Număr de mesaje cu eroare de livrare"
 
 #. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_res_partner__partner_rfid_sales_count
+#: model:ir.model.fields,help:rfid_service_base.field_res_users__partner_rfid_sales_count
+msgid ""
+"Number of visitor service sales registered against this contact across all "
+"services. Used by the smart button to drive the user to the sales history."
+msgstr ""
+"Numărul de vânzări de servicii pentru vizitatori înregistrate pentru acest "
+"contact, în toate serviciile. Utilizat de butonul inteligent pentru a "
+"direcționa utilizatorul către istoricul vânzărilor."
+
+#. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__visits
 msgid ""
 "Number of visits remaining for this service (for visit-based services).\n"
@@ -830,18 +1077,24 @@ msgid ""
 "• Purpose: Shows how many times customer can still access with this service\n"
 "• Countdown: Automatically decreases each time customer uses their card\n"
 "• Zero means: No more visits remaining (service access blocked)\n"
-"• Unlimited: Visit-based services show actual count, time-based services may show 0\n"
+"• Unlimited: Visit-based services show actual count, time-based services may "
+"show 0\n"
 "\n"
 "Only relevant for 'Visits based' and 'Time and Visits based' service types."
 msgstr ""
-"Numărul de vizite rămase pentru acest serviciu (pentru serviciile bazate pe vizite).\n"
+"Numărul de vizite rămase pentru acest serviciu (pentru serviciile bazate pe "
+"vizite).\n"
 "\n"
 "• Scop: Arată de câte ori mai poate accesa clientul cu acest serviciu\n"
-"• Numărătoare inversă: Scade automat de fiecare dată când clientul utilizează cartela\n"
-"• Zero înseamnă: Nu mai rămân vizite disponibile (accesul la serviciu este blocat)\n"
-"• Nelimitat: Serviciile bazate pe vizite afișează numărul real, serviciile bazate pe timp pot afișa 0\n"
+"• Numărătoare inversă: Scade automat de fiecare dată când clientul "
+"utilizează cartela\n"
+"• Zero înseamnă: Nu mai rămân vizite disponibile (accesul la serviciu este "
+"blocat)\n"
+"• Nelimitat: Serviciile bazate pe vizite afișează numărul real, serviciile "
+"bazate pe timp pot afișa 0\n"
 "\n"
-"Relevant doar pentru tipurile de servicii 'Bazat pe vizite' și 'Bazat pe timp și vizite'."
+"Relevant doar pentru tipurile de servicii 'Bazat pe vizite' și 'Bazat pe "
+"timp și vizite'."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__time_interval_number
@@ -859,7 +1112,8 @@ msgstr ""
 "        \n"
 "• Scop: Definiți cât timp rămâne valabil accesul la serviciu\n"
 "• Exemple: 7 zile, 1 lună, 2 săptămâni, 30 de minute\n"
-"• Calcul: Combinată cu Unitatea de durată pentru a crea perioada totală a serviciului\n"
+"• Calcul: Combinată cu Unitatea de durată pentru a crea perioada totală a "
+"serviciului\n"
 "• Prețuri: Duratele mai lungi au de obicei prețuri mai mari\n"
 "        \n"
 "Setați la 1 pentru perioade de o singură unitate (1 zi, 1 săptămână etc.)."
@@ -875,9 +1129,41 @@ msgid "Old start"
 msgstr "Început anterior"
 
 #. module: rfid_service_base
+#: model:ir.model,name:rfid_service_base.model_onboarding_onboarding
+msgid "Onboarding"
+msgstr "Înrolare"
+
+#. module: rfid_service_base
+#: model:ir.model,name:rfid_service_base.model_onboarding_onboarding_step
+msgid "Onboarding Step"
+msgstr "Pas de înrolare"
+
+#. module: rfid_service_base
 #: model:ir.model.constraint,message:rfid_service_base.constraint_rfid_service_sale_check_duplicates
 msgid "Only one service for same period for given Customer!"
 msgstr "Un singur serviciu per perioadă pentru clientul dat!"
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding.step,button_text:rfid_service_base.onboarding_step_service_first_sale
+msgid "Open Service Sales"
+msgstr "Deschide vânzările de servicii"
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding.step,description:rfid_service_base.onboarding_step_service_first_sale
+msgid ""
+"Open Service Sales to issue a card to a visitor. Pick the service from the "
+"catalog, scan or type the card number, and the start/end dates. The visitor "
+"gains access immediately within the time window you set."
+msgstr ""
+"Deschideți Vânzări servicii pentru a emite un card unui vizitator. Alegeți "
+"serviciul din catalog, scanați sau introduceți numărul cardului, precum și "
+"datele de început/sfârșit. Vizitatorul obține acces imediat în fereastra de "
+"timp stabilită."
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding.step,button_text:rfid_service_base.onboarding_step_service_define
+msgid "Open Services"
+msgstr "Deschide serviciile"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__zone_id
@@ -894,11 +1180,44 @@ msgstr ""
 "Zonă opțională pentru urmărirea prezenței și comportamentului clientului.\n"
 "        \n"
 "• Scop: Monitorizați când și cât timp stau clienții în zone specifice\n"
-"• Analitiică: Generați rapoarte privind utilizarea zonei și comportamentul clienților\n"
-"• Integrare: Funcționează cu sistemele de urmărire a prezenței și participării\n"
+"• Analitiică: Generați rapoarte privind utilizarea zonei și comportamentul "
+"clienților\n"
+"• Integrare: Funcționează cu sistemele de urmărire a prezenței și "
+"participării\n"
 "• Opțional: Lăsați gol dacă urmărirea zonei nu este necesară\n"
 "        \n"
-"Util pentru înțelegerea comportamentului clienților și utilizarea facilităților."
+"Util pentru înțelegerea comportamentului clienților și utilizarea "
+"facilităților."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__ext_end_date
+msgid ""
+"Original end date of the sale being extended (shown for reference). The new "
+"end below replaces it on confirmation."
+msgstr ""
+"Data și ora la care expiră accesul clientului.\n"
+"        \n"
+"• Expirare: Cartela clientului devine inactivă la această dată/oră\n"
+"• Calcul: De obicei calculată din data de început + durata serviciului\n"
+"• Modificare manuală: Poate fi ajustată manual pentru perioade de serviciu "
+"personalizate\n"
+"• Securitate: Accesul este revocat automat după această dată/oră\n"
+"        \n"
+"Clientul va pierde accesul la zonele desemnate după această dată/oră."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__ext_start_date
+msgid "Original start date of the sale being extended (shown for reference)."
+msgstr ""
+"Data și ora la care începe accesul clientului.\n"
+"        \n"
+"• Activare: Cartela clientului devine activă la această dată/oră\n"
+"• Planificare: Poate fi setată pentru activare viitoare (rezervări în "
+"avans)\n"
+"• Fus orar: Interpretat conform setărilor de fus orar ale utilizatorului\n"
+"• Calcul: Combinat cu durata serviciului pentru a determina data de sfârșit\n"
+"        \n"
+"Clientul va putea accesa zonele desemnate începând de la această dată/oră."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__parent_id
@@ -908,18 +1227,36 @@ msgstr "Client părinte"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__parent_id
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__parent_id
 msgid ""
-"Parent company or organization that all service customers will be linked to.\n"
+"Parent company or organization that all service customers will be linked "
+"to.\n"
 "        \n"
 "• Purpose: Group individual customers under a parent organization\n"
 "• Hierarchy: Creates customer hierarchy for reporting and management\n"
 "• Billing: Useful for corporate accounts or group bookings\n"
-"• Optional: Leave empty for individual customers without parent organization\n"
+"• Optional: Leave empty for individual customers without parent "
+"organization\n"
 "        \n"
 "Example: Link all conference attendees to the hosting company."
 msgstr ""
-"Compania sau organizația părinte la care vor fi asociați toți clienții de servicii.\n"
+"Compania sau organizația părinte la care vor fi asociați toți clienții de "
+"servicii.\n"
+"        \n"
+"• Scop: Grupați clienți individuali sub o organizație părinte\n"
+"• Ierarhie: Creează o ierarhie a clienților pentru raportare și management\n"
+"• Facturare: Util pentru conturi corporative sau rezervări de grup\n"
+"• Opțional: Lăsați gol pentru clienți individuali fără organizație părinte\n"
+"        \n"
+"Exemplu: Asociați toți participanții la conferință companiei gazdă."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__parent_id
+msgid ""
+"Parent partner the new visitor contact will be filed under (inherited from "
+"the service template)."
+msgstr ""
+"Compania sau organizația părinte la care vor fi asociați toți clienții de "
+"servicii.\n"
 "        \n"
 "• Scop: Grupați clienți individuali sub o organizație părinte\n"
 "• Ierarhie: Creează o ierarhie a clienților pentru raportare și management\n"
@@ -959,12 +1296,15 @@ msgid ""
 msgstr ""
 "Cartelă fizică sau digitală atribuită clientului pentru acces.\n"
 "        \n"
-"• Metodă de acces: Cartela pe care clientul o utilizează pentru a obține acces fizic\n"
-"• Tipuri de cartele: Poate fi cartelă RFID, cartelă cu cod de bare sau ecuson mobil\n"
+"• Metodă de acces: Cartela pe care clientul o utilizează pentru a obține "
+"acces fizic\n"
+"• Tipuri de cartele: Poate fi cartelă RFID, cartelă cu cod de bare sau "
+"ecuson mobil\n"
 "• Creare: Creată automat în timpul procesului de vânzare a serviciului\n"
 "• Securitate: Activată/dezactivată conform perioadei de serviciu\n"
 "        \n"
-"Acesta este token-ul fizic/digital pe care clientul îl utilizează pentru a accesa zonele."
+"Acesta este token-ul fizic/digital pe care clientul îl utilizează pentru a "
+"accesa zonele."
 
 #. module: rfid_service_base
 #. odoo-python
@@ -1053,11 +1393,13 @@ msgid ""
 "RFID access group that defines which doors customers can access.\n"
 "        \n"
 "• Purpose: Controls physical access permissions for service customers\n"
-"• Door mapping: Determines which doors/areas this service provides access to\n"
+"• Door mapping: Determines which doors/areas this service provides access "
+"to\n"
 "• Security: Customers only get access to doors included in this group\n"
 "• Configuration: Must be set up before selling services\n"
 "        \n"
-"Choose the access group that matches the physical areas this service should provide."
+"Choose the access group that matches the physical areas this service should "
+"provide."
 msgstr ""
 "Grupul de acces RFID care definește la ce uși pot accesa clienții.\n"
 "        \n"
@@ -1066,7 +1408,8 @@ msgstr ""
 "• Securitate: Clienții au acces doar la ușile incluse în acest grup\n"
 "• Configurare: Trebuie configurat înainte de vânzarea serviciilor\n"
 "        \n"
-"Alegeți grupul de acces care corespunde zonelor fizice pe care acest serviciu ar trebui să le ofere."
+"Alegeți grupul de acces care corespunde zonelor fizice pe care acest "
+"serviciu ar trebui să le ofere."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__service_id
@@ -1074,7 +1417,8 @@ msgid ""
 "RFID service that was sold to the customer.\n"
 "        \n"
 "• Purpose: Links this sale to the specific service offering\n"
-"• Configuration: Inherits all service settings (duration, access rights, etc.)\n"
+"• Configuration: Inherits all service settings (duration, access rights, "
+"etc.)\n"
 "• Pricing: Service determines access permissions and time limits\n"
 "• Required: Every sale must be linked to a service\n"
 "        \n"
@@ -1083,7 +1427,8 @@ msgstr ""
 "Serviciul RFID care a fost vândut clientului.\n"
 "        \n"
 "• Scop: Leagă această vânzare de oferta de serviciu specifică\n"
-"• Configurare: Moștenește toate setările serviciului (durată, drepturi de acces etc.)\n"
+"• Configurare: Moștenește toate setările serviciului (durată, drepturi de "
+"acces etc.)\n"
 "• Prețuri: Serviciul determină permisiunile de acces și limitele de timp\n"
 "• Obligatoriu: Fiecare vânzare trebuie să fie legată de un serviciu\n"
 "        \n"
@@ -1092,25 +1437,37 @@ msgstr ""
 #. module: rfid_service_base
 #: model_terms:ir.actions.act_window,help:rfid_service_base.hr_rfid_service_action
 msgid ""
-"RFID services define access packages that you can sell to customers and visitors.\n"
+"RFID services define access packages that you can sell to customers and "
+"visitors.\n"
 "                    <br><br>\n"
 "                    Service types:\n"
-"                    • <b>Time-based:</b> Access valid for specific periods (daily, weekly, monthly)\n"
-"                    • <b>Visit-based:</b> Access limited by number of entries\n"
-"                    • <b>Combined:</b> Both time and visit restrictions apply\n"
+"                    • <b>Time-based:</b> Access valid for specific periods "
+"(daily, weekly, monthly)\n"
+"                    • <b>Visit-based:</b> Access limited by number of "
+"entries\n"
+"                    • <b>Combined:</b> Both time and visit restrictions "
+"apply\n"
 "                    <br><br>\n"
-"                    Each service includes access permissions, duration, pricing, and card type settings.\n"
-"                    Perfect for visitor management, membership sales, and event access control."
+"                    Each service includes access permissions, duration, "
+"pricing, and card type settings.\n"
+"                    Perfect for visitor management, membership sales, and "
+"event access control."
 msgstr ""
-"Serviciile RFID definesc pachete de acces pe care le puteți vinde clienților și vizitatorilor.\n"
+"Serviciile RFID definesc pachete de acces pe care le puteți vinde clienților "
+"și vizitatorilor.\n"
 "                    <br><br>\n"
 "                    Tipuri de servicii:\n"
-"                    • <b>Bazat pe timp:</b> Acces valid pentru perioade specifice (zilnic, săptămânal, lunar)\n"
-"                    • <b>Bazat pe vizite:</b> Acces limitat prin numărul de intrări\n"
-"                    • <b>Combinat:</b> Se aplică atât restricțiile de timp, cât și cele de vizite\n"
+"                    • <b>Bazat pe timp:</b> Acces valid pentru perioade "
+"specifice (zilnic, săptămânal, lunar)\n"
+"                    • <b>Bazat pe vizite:</b> Acces limitat prin numărul de "
+"intrări\n"
+"                    • <b>Combinat:</b> Se aplică atât restricțiile de timp, "
+"cât și cele de vizite\n"
 "                    <br><br>\n"
-"                    Fiecare serviciu include permisiuni de acces, durată, prețuri și setări de tip cartelă.\n"
-"                    Ideal pentru managementul vizitatorilor, vânzări de abonamente și controlul accesului la evenimente."
+"                    Fiecare serviciu include permisiuni de acces, durată, "
+"prețuri și setări de tip cartelă.\n"
+"                    Ideal pentru managementul vizitatorilor, vânzări de "
+"abonamente și controlul accesului la evenimente."
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form
@@ -1144,20 +1501,27 @@ msgid ""
 "Report template used when printing physical badges/cards for customers.\n"
 "        \n"
 "• Purpose: Define the layout and content of printed badges\n"
-"• Customization: Can include logos, QR codes, access information, and design elements\n"
+"• Customization: Can include logos, QR codes, access information, and design "
+"elements\n"
 "• Usage: Template is used when clicking 'Print Card' in sales process\n"
 "• Default: Uses system default foldable badge template if not specified\n"
 "        \n"
-"Customize to create professional badges that match your organization's branding."
+"Customize to create professional badges that match your organization's "
+"branding."
 msgstr ""
-"Șablon de raport utilizat la tipărirea ecusoanelor/cartelelor fizice pentru clienți.\n"
+"Șablon de raport utilizat la tipărirea ecusoanelor/cartelelor fizice pentru "
+"clienți.\n"
 "        \n"
 "• Scop: Definiți aspectul și conținutul ecusoanelor tipărite\n"
-"• Personalizare: Poate include logo-uri, coduri QR, informații de acces și elemente de design\n"
-"• Utilizare: Șablonul este utilizat la apăsarea 'Tipărește cartelă' în procesul de vânzare\n"
-"• Implicit: Utilizează șablonul implicit al sistemului pentru ecusoane pliabile dacă nu este specificat\n"
+"• Personalizare: Poate include logo-uri, coduri QR, informații de acces și "
+"elemente de design\n"
+"• Utilizare: Șablonul este utilizat la apăsarea 'Tipărește cartelă' în "
+"procesul de vânzare\n"
+"• Implicit: Utilizează șablonul implicit al sistemului pentru ecusoane "
+"pliabile dacă nu este specificat\n"
 "        \n"
-"Personalizați pentru a crea ecusoane profesionale care corespund brandingului organizației dvs."
+"Personalizați pentru a crea ecusoane profesionale care corespund "
+"brandingului organizației dvs."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_user_id
@@ -1272,6 +1636,11 @@ msgid "Service Type"
 msgstr "Tip serviciu"
 
 #. module: rfid_service_base
+#: model:onboarding.onboarding.step,done_text:rfid_service_base.onboarding_step_service_define
+msgid "Service defined!"
+msgstr "Serviciu definit!"
+
+#. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__end_date
 msgid "Service end"
 msgstr "Sfârșit serviciu"
@@ -1369,6 +1738,17 @@ msgid "Templates"
 msgstr "Șabloane"
 
 #. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__card_number
+msgid ""
+"The RFID number or generated barcode the visitor will carry. For RFID "
+"services, type or scan the printed number; for barcode services, the value "
+"is generated automatically."
+msgstr ""
+"Numărul RFID sau codul de bare generat pe care îl va purta vizitatorul. "
+"Pentru serviciile RFID, introduceți sau scanați numărul imprimat; pentru "
+"serviciile cu cod de bare, valoarea este generată automat."
+
+#. module: rfid_service_base
 #. odoo-python
 #: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0
 msgid ""
@@ -1449,22 +1829,33 @@ msgid ""
 "This view tracks all RFID service sales and customer access grants.\n"
 "                    <br><br>\n"
 "                    Monitor and manage:\n"
-"                    • <b>Customer access:</b> Track who has access and when it expires\n"
-"                    • <b>Service usage:</b> Monitor active, expired, and upcoming services\n"
-"                    • <b>Sales analytics:</b> Analyze service performance and customer patterns\n"
-"                    • <b>Customer communication:</b> Send badges and access information\n"
+"                    • <b>Customer access:</b> Track who has access and when "
+"it expires\n"
+"                    • <b>Service usage:</b> Monitor active, expired, and "
+"upcoming services\n"
+"                    • <b>Sales analytics:</b> Analyze service performance "
+"and customer patterns\n"
+"                    • <b>Customer communication:</b> Send badges and access "
+"information\n"
 "                    <br><br>\n"
-"                    Use the calendar view to see service periods and the pivot view for sales analysis."
+"                    Use the calendar view to see service periods and the "
+"pivot view for sales analysis."
 msgstr ""
-"Această vizualizare urmărește toate vânzările de servicii RFID și acordurile de acces ale clienților.\n"
+"Această vizualizare urmărește toate vânzările de servicii RFID și acordurile "
+"de acces ale clienților.\n"
 "                    <br><br>\n"
 "                    Monitorizați și gestionați:\n"
-"                    • <b>Accesul clienților:</b> Urmăriți cine are acces și când expiră\n"
-"                    • <b>Utilizarea serviciilor:</b> Monitorizați serviciile active, expirate și viitoare\n"
-"                    • <b>Analitiică vânzări:</b> Analizați performanța serviciilor și comportamentul clienților\n"
-"                    • <b>Comunicare cu clienții:</b> Trimiteți ecusoane și informații de acces\n"
+"                    • <b>Accesul clienților:</b> Urmăriți cine are acces și "
+"când expiră\n"
+"                    • <b>Utilizarea serviciilor:</b> Monitorizați serviciile "
+"active, expirate și viitoare\n"
+"                    • <b>Analitiică vânzări:</b> Analizați performanța "
+"serviciilor și comportamentul clienților\n"
+"                    • <b>Comunicare cu clienții:</b> Trimiteți ecusoane și "
+"informații de acces\n"
 "                    <br><br>\n"
-"                    Utilizați vizualizarea calendar pentru a vedea perioadele de serviciu și vizualizarea pivot pentru analiza vânzărilor."
+"                    Utilizați vizualizarea calendar pentru a vedea "
+"perioadele de serviciu și vizualizarea pivot pentru analiza vânzărilor."
 
 #. module: rfid_service_base
 #: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service__service_type__time_count
@@ -1490,7 +1881,8 @@ msgid ""
 "        \n"
 "Choose the unit that best matches your service offering period."
 msgstr ""
-"Unitatea de timp pentru durata serviciului (combinată cu Numărul de durată).\n"
+"Unitatea de timp pentru durata serviciului (combinată cu Numărul de "
+"durată).\n"
 "        \n"
 "• Minute: Acces de foarte scurtă durată (săli de ședințe, acces temporar)\n"
 "• Ore: Acces pe termen scurt (permise zilnice, evenimente)\n"
@@ -1498,7 +1890,8 @@ msgstr ""
 "• Săptămâni: Acces pe termen mediu (abonamente săptămânale)\n"
 "• Luni: Servicii pe termen lung (abonamente lunare)\n"
 "        \n"
-"Alegeți unitatea care corespunde cel mai bine perioadei ofertei dvs. de servicii."
+"Alegeți unitatea care corespunde cel mai bine perioadei ofertei dvs. de "
+"servicii."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__zone_id
@@ -1512,19 +1905,25 @@ msgid ""
 "        \n"
 "• Purpose: Defines the physical/technical card characteristics\n"
 "• Compatibility: Must match your RFID readers and system setup\n"
-"• Automatic: Changes to barcode type when 'Generate Barcode Cards' is enabled\n"
+"• Automatic: Changes to barcode type when 'Generate Barcode Cards' is "
+"enabled\n"
 "• Default: Uses system default card type if not specified\n"
 "        \n"
-"Ensure the card type is compatible with your hardware and security requirements."
+"Ensure the card type is compatible with your hardware and security "
+"requirements."
 msgstr ""
 "Tipul de cartelă RFID emis clienților pentru acest serviciu.\n"
 "        \n"
 "• Scop: Definește caracteristicile fizice/tehnice ale cartelei\n"
-"• Compatibilitate: Trebuie să corespundă cititorului RFID și configurației sistemului\n"
-"• Automat: Se schimbă la tipul cod de bare când este activată opțiunea 'Generează cartele cu cod de bare'\n"
-"• Implicit: Utilizează tipul de cartelă implicit al sistemului dacă nu este specificat\n"
+"• Compatibilitate: Trebuie să corespundă cititorului RFID și configurației "
+"sistemului\n"
+"• Automat: Se schimbă la tipul cod de bare când este activată opțiunea "
+"'Generează cartele cu cod de bare'\n"
+"• Implicit: Utilizează tipul de cartelă implicit al sistemului dacă nu este "
+"specificat\n"
 "        \n"
-"Asigurați-vă că tipul de cartelă este compatibil cu cerințele hardware și de securitate."
+"Asigurați-vă că tipul de cartelă este compatibil cu cerințele hardware și de "
+"securitate."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__activity_exception_decoration
@@ -1552,7 +1951,8 @@ msgstr ""
 "        \n"
 "• Scop: Urmăriți și referențiați vânzările individuale de servicii\n"
 "• Generare: Generat automat folosind secvența sistemului\n"
-"• Utilizare: Utilizat în comunicările cu clienții, rapoarte și urmărire internă\n"
+"• Utilizare: Utilizat în comunicările cu clienții, rapoarte și urmărire "
+"internă\n"
 "• Format: Urmează secvența de numerotare configurată a companiei\n"
 "        \n"
 "Acest număr de referință identifică vânzarea specifică în sistem."
@@ -1579,18 +1979,23 @@ msgid ""
 "User-friendly name for this RFID service offering.\n"
 "        \n"
 "• Purpose: Identify the service for staff and customers\n"
-"• Examples: \"Daily Visitor Pass\", \"Monthly Gym Access\", \"Conference Badge\"\n"
+"• Examples: \"Daily Visitor Pass\", \"Monthly Gym Access\", \"Conference "
+"Badge\"\n"
 "• Usage: Displayed on service cards, reports, and customer communications\n"
-"• Best practice: Use clear, descriptive names that explain the service purpose\n"
+"• Best practice: Use clear, descriptive names that explain the service "
+"purpose\n"
 "        \n"
 "This name appears throughout the system and on printed badges."
 msgstr ""
 "Denumire prietenoasă pentru această ofertă de serviciu RFID.\n"
 "        \n"
 "• Scop: Identificați serviciul pentru personal și clienți\n"
-"• Exemple: \"Permis zilnic vizitator\", \"Acces lunar sală de sport\", \"Ecuson conferință\"\n"
-"• Utilizare: Afișată pe cartelele de servicii, rapoarte și comunicările cu clienții\n"
-"• Recomandare: Utilizați denumiri clare și descriptive care explică scopul serviciului\n"
+"• Exemple: \"Permis zilnic vizitator\", \"Acces lunar sală de sport\", "
+"\"Ecuson conferință\"\n"
+"• Utilizare: Afișată pe cartelele de servicii, rapoarte și comunicările cu "
+"clienții\n"
+"• Recomandare: Utilizați denumiri clare și descriptive care explică scopul "
+"serviciului\n"
 "        \n"
 "Această denumire apare în întregul sistem și pe ecusoanele tipărite."
 
@@ -1598,6 +2003,43 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.services_form
 msgid "Visit based"
 msgstr "Bazat pe vizite"
+
+#. module: rfid_service_base
+#: model:onboarding.onboarding,name:rfid_service_base.onboarding_service_setup
+msgid "Visitor Services Setup"
+msgstr "Configurare servicii pentru vizitatori"
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__email
+msgid ""
+"Visitor email address. Pre-filled from the selected partner; editing here "
+"also updates the partner record on confirmation."
+msgstr ""
+"Adresa de e-mail a vizitatorului. Precompletată din partenerul selectat; "
+"editarea aici actualizează și înregistrarea partenerului la confirmare."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__mobile
+msgid ""
+"Visitor mobile/phone number. Pre-filled from the selected partner; editing "
+"here also updates the partner's phone field on confirmation (in Odoo 19 "
+"mobile was merged into phone)."
+msgstr ""
+"Numărul de telefon mobil/fix al vizitatorului. Precompletat din partenerul "
+"selectat; editarea aici actualizează și câmpul de telefon al partenerului la "
+"confirmare (în Odoo 19, câmpul mobil a fost unificat cu telefon)."
+
+#. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_hr_rfid_access_group_contact_rel__rfid_service_sale_id
+msgid ""
+"Visitor service sales backed by this contact-to-access-group binding. Used "
+"to cascade state changes to all related sales when the underlying relation "
+"activates or expires."
+msgstr ""
+"Vânzările de servicii pentru vizitatori susținute de această asociere "
+"contact-grup de acces. Utilizată pentru a propaga modificările de stare "
+"către toate vânzările asociate atunci când relația de bază se activează sau "
+"expiră."
 
 #. module: rfid_service_base
 #: model:ir.model.fields.selection,name:rfid_service_base.selection__rfid_service__service_type__count
@@ -1616,14 +2058,18 @@ msgid ""
 "        \n"
 "A good cover image helps customers quickly identify the service they need."
 msgstr ""
-"Imagine vizuală afișată pe cartelele de servicii și materialele promoționale.\n"
+"Imagine vizuală afișată pe cartelele de servicii și materialele "
+"promoționale.\n"
 "        \n"
 "• Scop: Identificare vizuală și atractivitate de marketing\n"
-"• Afișare: Vizibilă în vizualizarea kanban, cartelele de servicii și portalurile clienților\n"
+"• Afișare: Vizibilă în vizualizarea kanban, cartelele de servicii și "
+"portalurile clienților\n"
 "• Format: Suportă formate comune de imagine (PNG, JPG etc.)\n"
-"• Branding: Utilizați logo-uri, fotografii sau grafice care reprezintă serviciul\n"
+"• Branding: Utilizați logo-uri, fotografii sau grafice care reprezintă "
+"serviciul\n"
 "        \n"
-"O imagine de copertă bună ajută clienții să identifice rapid serviciul de care au nevoie."
+"O imagine de copertă bună ajută clienții să identifice rapid serviciul de "
+"care au nevoie."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__website_message_ids
@@ -1643,13 +2089,25 @@ msgid "Weeks"
 msgstr "Săptămâni"
 
 #. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__extend_sale_id
+msgid ""
+"When set, the wizard runs in Extend mode — it adds time to the linked sale "
+"instead of creating a new one. Populated automatically from the Extend "
+"action on the existing sale."
+msgstr ""
+"Când este setat, asistentul rulează în modul Prelungire - adaugă timp la "
+"vânzarea asociată în loc să creeze una nouă. Se completează automat din "
+"acțiunea Prelungire de pe vânzarea existentă."
+
+#. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__fixed_time
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__fixed_time
 msgid ""
 "Whether service times are fixed or can be customized per sale.\n"
 "        \n"
-"• Fixed (enabled): All sales use the same start/end times defined in service\n"
-"• Flexible (disabled): Staff can customize start/end times for each individual sale\n"
+"• Fixed (enabled): All sales use the same start/end times defined in "
+"service\n"
+"• Flexible (disabled): Staff can customize start/end times for each "
+"individual sale\n"
 "• Use cases: Fixed for standard services, flexible for custom bookings\n"
 "• Control: Determines if operators can modify service timing during sales\n"
 "        \n"
@@ -1657,12 +2115,17 @@ msgid ""
 msgstr ""
 "Dacă orele serviciului sunt fixe sau pot fi personalizate per vânzare.\n"
 "        \n"
-"• Fix (activat): Toate vânzările utilizează aceleași ore de început/sfârșit definite în serviciu\n"
-"• Flexibil (dezactivat): Personalul poate personaliza orele de început/sfârșit pentru fiecare vânzare individuală\n"
-"• Cazuri de utilizare: Fix pentru servicii standard, flexibil pentru rezervări personalizate\n"
-"• Control: Determină dacă operatorii pot modifica programarea serviciului în timpul vânzărilor\n"
+"• Fix (activat): Toate vânzările utilizează aceleași ore de început/sfârșit "
+"definite în serviciu\n"
+"• Flexibil (dezactivat): Personalul poate personaliza orele de început/"
+"sfârșit pentru fiecare vânzare individuală\n"
+"• Cazuri de utilizare: Fix pentru servicii standard, flexibil pentru "
+"rezervări personalizate\n"
+"• Control: Determină dacă operatorii pot modifica programarea serviciului în "
+"timpul vânzărilor\n"
 "        \n"
-"Activați pentru servicii standardizate, dezactivați pentru acces personalizat sau bazat pe evenimente."
+"Activați pentru servicii standardizate, dezactivați pentru acces "
+"personalizat sau bazat pe evenimente."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__active
@@ -1680,10 +2143,13 @@ msgstr ""
 "        \n"
 "• Activ: Serviciul poate fi vândut și clienții noi se pot înregistra\n"
 "• Inactiv: Serviciul este arhivat și indisponibil pentru vânzări noi\n"
-"• Vânzări existente: Continuă să funcționeze pentru clienții deja înregistrați\n"
-"• Caz de utilizare: Dezactivați temporar serviciile sau arhivați ofertele vechi\n"
+"• Vânzări existente: Continuă să funcționeze pentru clienții deja "
+"înregistrați\n"
+"• Caz de utilizare: Dezactivați temporar serviciile sau arhivați ofertele "
+"vechi\n"
 "        \n"
-"Dezactivați pentru a opri vânzările noi, păstrând în același timp accesul clienților existenți."
+"Dezactivați pentru a opri vânzările noi, păstrând în același timp accesul "
+"clienților existenți."
 
 #. module: rfid_service_base
 #: model_terms:ir.ui.view,arch_db:rfid_service_base.sale_wiz_form

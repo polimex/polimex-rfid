@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-04 16:25+0000\n"
-"PO-Revision-Date: 2026-03-08 12:09\n"
+"POT-Creation-Date: 2026-08-14 13:55+0000\n"
+"PO-Revision-Date: 2026-08-14 17:16\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: \n"
 "Language: es\n"
@@ -15,17 +15,22 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.6\n"
-
-#. module: hr_rfid_andromeda_import
-#: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_welcome_wizard_form
-msgid "192.168.10.10"
-msgstr "192.168.10.10"
 
 #. module: hr_rfid_andromeda_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
 msgid "< Go Back"
 msgstr "< Volver"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__database_path
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__database_path
+msgid ""
+"Absolute path to the Andromeda.fdb file as seen by the Firebird server "
+"(Windows path on a Windows host). Default points to a typical install."
+msgstr ""
+"Ruta absoluta al archivo Andromeda.fdb tal como la ve el servidor Firebird "
+"(ruta de Windows en un host Windows). El valor por defecto apunta a una "
+"instalación típica."
 
 #. module: hr_rfid_andromeda_import
 #: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__ag_dict
@@ -61,6 +66,15 @@ msgstr ""
 "¿Está seguro de iniciar la importación de TODOS LOS REGISTROS EXISTENTES?"
 
 #. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__import_as
+msgid ""
+"Bulk-applied default for the per-row Import As column. Changing this "
+"rewrites every users_ids row."
+msgstr ""
+"Valor por defecto aplicado en bloque para la columna Importar Como de cada "
+"fila. Cambiar esto reescribe todas las filas de users_ids."
+
+#. module: hr_rfid_andromeda_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_welcome_wizard_form
 msgid "C:\\Program Files (x86)\\Polimex\\Andromeda\\Database\\Andromeda.fdb"
 msgstr "C:\\Program Files (x86)\\Polimex\\Andromeda\\Database\\Andromeda.fdb"
@@ -85,15 +99,18 @@ msgid ""
 "        • Employee: Creates an employee record with HR functionality\n"
 "        • Default: Set by the wizard's global import type\n"
 "        \n"
-"        Note: Employee import includes HR features like attendance and access groups."
+"        Note: Employee import includes HR features like attendance and "
+"access groups."
 msgstr ""
 "Elija cómo importar este usuario en Odoo.\n"
 "        \n"
 "        • Contacto: Crea un registro de contacto/socio\n"
 "        • Empleado: Crea un registro de empleado con funcionalidad de RRHH\n"
-"        • Predeterminado: Establecido por el tipo de importación global del asistente\n"
+"        • Predeterminado: Establecido por el tipo de importación global del "
+"asistente\n"
 "        \n"
-"        Nota: La importación de empleados incluye funciones de RRHH como asistencia y grupos de acceso."
+"        Nota: La importación de empleados incluye funciones de RRHH como "
+"asistencia y grupos de acceso."
 
 #. module: hr_rfid_andromeda_import
 #: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__company_dict
@@ -115,6 +132,13 @@ msgstr "Lista de empresas"
 #: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__c_name
 msgid "Company Name"
 msgstr "Nombre de la empresa"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__c_name
+msgid "Company display name from Andromeda — shown for human cross-check."
+msgstr ""
+"Nombre de la empresa mostrado desde Andromeda - se muestra para verificación "
+"manual cruzada."
 
 #. module: hr_rfid_andromeda_import
 #: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__connection_checked
@@ -181,6 +205,13 @@ msgid "Department Name"
 msgstr "Nombre del departamento"
 
 #. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__d_name
+msgid "Department display name from Andromeda — shown for human cross-check."
+msgstr ""
+"Nombre del departamento mostrado desde Andromeda - se muestra para "
+"verificación manual cruzada."
+
+#. module: hr_rfid_andromeda_import
 #: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__display_name
 #: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__display_name
 #: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__display_name
@@ -209,6 +240,15 @@ msgstr "Puertas existentes en Andromeda: %s"
 #: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_fname
 msgid "First Name"
 msgstr "Nombre"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_fname
+msgid ""
+"First name field from the Andromeda DB. Maps to the Odoo record's structured "
+"name."
+msgstr ""
+"Campo de nombre desde la base de datos de Andromeda. Se corresponde con el "
+"nombre estructurado del registro de Odoo."
 
 #. module: hr_rfid_andromeda_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
@@ -240,19 +280,22 @@ msgstr ""
 #: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__force_default_department
 msgid "Force use only this department for selected import"
 msgstr ""
-"Forzar el uso exclusivo de este departamento para la importación "
-"seleccionada"
+"Forzar el uso exclusivo de este departamento para la importación seleccionada"
 
 #. module: hr_rfid_andromeda_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_welcome_wizard_form
 msgid ""
-"From here you can import all important data from existing Andromeda Access control\n"
+"From here you can import all important data from existing Andromeda Access "
+"control\n"
 "                                    system.\n"
-"                                    To do it you have to provide the IP address and Database path of the system"
+"                                    To do it you have to provide the IP "
+"address and Database path of the system"
 msgstr ""
-"Desde aquí puede importar todos los datos importantes del sistema de Control de Acceso\n"
+"Desde aquí puede importar todos los datos importantes del sistema de Control "
+"de Acceso\n"
 "                                    Andromeda existente.\n"
-"                                    Para ello, debe proporcionar la dirección IP y la ruta de la base de datos del sistema"
+"                                    Para ello, debe proporcionar la "
+"dirección IP y la ruta de la base de datos del sistema"
 
 #. module: hr_rfid_andromeda_import
 #: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__id
@@ -266,6 +309,17 @@ msgstr "ID"
 #: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__ip_address
 msgid "IP address"
 msgstr "Dirección IP"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__ip_address
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__ip_address
+msgid ""
+"IP address of the Windows host running the Andromeda Firebird DB engine. "
+"Reachable from this Odoo box on the Firebird port (3050)."
+msgstr ""
+"Dirección IP del host Windows que ejecuta el motor de base de datos Firebird "
+"de Andromeda. Debe ser accesible desde este servidor Odoo por el puerto de "
+"Firebird (3050)."
 
 #. module: hr_rfid_andromeda_import
 #: model:ir.model,name:hr_rfid_andromeda_import.model_hr_rfid_andromeda_import_wiz
@@ -330,9 +384,47 @@ msgstr ""
 "Datos de Andromeda: ToDo"
 
 #. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__import_access_groups
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__import_access_groups
+msgid "Include Andromeda access groups and their door bindings in the import."
+msgstr ""
+"Incluir los grupos de control de acceso de Andromeda y sus asociaciones de "
+"puertas en la importación."
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__import_users
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__import_users
+msgid ""
+"Include Andromeda users (with cards) in the import. Disable to import only "
+"structure first."
+msgstr ""
+"Incluir los usuarios de Andromeda (con tarjetas) en la importación. "
+"Desactivar para importar primero solo la estructura."
+
+#. module: hr_rfid_andromeda_import
 #: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_id
 msgid "Internal ID"
 msgstr "ID interno"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__ag_dict
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__ag_dict
+msgid ""
+"Internal JSON mapping (Andromeda access group → Odoo hr.rfid.access.group) "
+"populated after Test Connection. Not user-editable."
+msgstr ""
+"Mapeo JSON interno (grupo de control de acceso de Andromeda → hr.rfid.access."
+"group de Odoo) generado tras Comprobar Conexión. No editable por el usuario."
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__company_dict
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__company_dict
+msgid ""
+"Internal JSON mapping (Andromeda company ID → Odoo res.company ID) populated "
+"after Test Connection. Not user-editable."
+msgstr ""
+"Mapeo JSON interno (ID de empresa de Andromeda → ID de res.company de Odoo) "
+"generado tras Comprobar Conexión. No editable por el usuario."
 
 #. module: hr_rfid_andromeda_import
 #: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_lname
@@ -354,9 +446,64 @@ msgid "Last Updated on"
 msgstr "Última actualización el"
 
 #. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_lname
+msgid "Last name from the Andromeda DB."
+msgstr "Apellido desde la base de datos de Andromeda."
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__select_all
+msgid ""
+"Master toggle that ticks/un-ticks the do_import flag on every users_ids row."
+msgstr ""
+"Interruptor maestro que marca/desmarca el indicador do_import en todas las "
+"filas de users_ids."
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_sname
+msgid "Middle / second name from the Andromeda DB."
+msgstr "Segundo nombre desde la base de datos de Andromeda."
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__users_count
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__users_count
+msgid ""
+"Number of users discovered in the Andromeda DB after Test Connection — "
+"informational, used to size the import."
+msgstr ""
+"Número de usuarios encontrados en la base de datos de Andromeda tras "
+"Comprobar Conexión - informativo, se usa para dimensionar la importación."
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__c_id
+msgid ""
+"Numeric company ID from Andromeda. Translated to a local res.company via "
+"company_dict."
+msgstr ""
+"ID numérico de la empresa en Andromeda. Se traduce a un res.company local "
+"mediante company_dict."
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__d_id
+msgid ""
+"Numeric department ID from Andromeda. Translated to a local hr.department "
+"through the welcome-wizard mapping."
+msgstr ""
+"ID numérico del departamento en Andromeda. Se traduce a un hr.department "
+"local mediante el mapeo del asistente de bienvenida."
+
+#. module: hr_rfid_andromeda_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
 msgid "Operations"
 msgstr "Operaciones"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__import_id
+msgid ""
+"Parent import-run wizard this user row belongs to. Set automatically when "
+"the wizard fetches the user list."
+msgstr ""
+"Asistente de importación padre al que pertenece esta fila de usuario. Se "
+"establece automáticamente cuando el asistente obtiene la lista de usuarios."
 
 #. module: hr_rfid_andromeda_import
 #: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_sname
@@ -377,15 +524,18 @@ msgid ""
 "        • When disabled: User will be skipped during import\n"
 "        • Bulk control: Use 'Select All' to toggle all users at once\n"
 "        \n"
-"        Note: Only selected users will be imported from the Andromeda database."
+"        Note: Only selected users will be imported from the Andromeda "
+"database."
 msgstr ""
 "Seleccione si desea importar este usuario específico.\n"
 "        \n"
 "        • Activado: el usuario se incluirá en el proceso de importación\n"
 "        • Desactivado: el usuario se omitirá durante la importación\n"
-"        • Control masivo: use 'Seleccionar todo' para alternar todos los usuarios a la vez\n"
+"        • Control masivo: use 'Seleccionar todo' para alternar todos los "
+"usuarios a la vez\n"
 "        \n"
-"        Nota: Solo los usuarios seleccionados serán importados de la base de datos de Andromeda."
+"        Nota: Solo los usuarios seleccionados serán importados de la base de "
+"datos de Andromeda."
 
 #. module: hr_rfid_andromeda_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
@@ -408,6 +558,16 @@ msgid "The process finish successful! "
 msgstr "¡El proceso finalizó correctamente! "
 
 #. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__connection_checked
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__connection_checked
+msgid ""
+"True after a successful Firebird login and structural probe. Gates the "
+"Import button."
+msgstr ""
+"Verdadero tras un inicio de sesión correcto en Firebird y una comprobación "
+"estructural exitosa. Habilita el botón Importar."
+
+#. module: hr_rfid_andromeda_import
 #: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_id
 msgid ""
 "Unique user identifier from Andromeda system.\n"
@@ -416,15 +576,18 @@ msgid ""
 "        • Purpose: Links imported records back to original system\n"
 "        • Reference: Used for avoiding duplicate imports\n"
 "        \n"
-"        Note: This ID is used to track which users have already been imported."
+"        Note: This ID is used to track which users have already been "
+"imported."
 msgstr ""
 "Identificador único de usuario del sistema Andromeda.\n"
 "        \n"
 "        • Origen: ID de usuario de la base de datos de Andromeda\n"
-"        • Propósito: vincula los registros importados con el sistema original\n"
+"        • Propósito: vincula los registros importados con el sistema "
+"original\n"
 "        • Referencia: se utiliza para evitar importaciones duplicadas\n"
 "        \n"
-"        Nota: Este ID se usa para rastrear qué usuarios ya han sido importados."
+"        Nota: Este ID se usa para rastrear qué usuarios ya han sido "
+"importados."
 
 #. module: hr_rfid_andromeda_import
 #: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__default_company
@@ -434,8 +597,7 @@ msgstr "Usar esta empresa si el contacto no tiene empresa ni departamento"
 #. module: hr_rfid_andromeda_import
 #: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__default_department
 msgid "Use this department if Employee have no Company and Department"
-msgstr ""
-"Usar este departamento si el empleado no tiene empresa ni departamento"
+msgstr "Usar este departamento si el empleado no tiene empresa ni departamento"
 
 #. module: hr_rfid_andromeda_import
 #: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_code
@@ -456,10 +618,12 @@ msgstr ""
 "Código de identificación de usuario del sistema Andromeda.\n"
 "        \n"
 "        • Uso: número de credencial o código de identificación del empleado\n"
-"        • Importación: se convierte en identification_id del empleado o referencia de tarjeta\n"
+"        • Importación: se convierte en identification_id del empleado o "
+"referencia de tarjeta\n"
 "        • Formato: código alfanumérico único por usuario\n"
 "        \n"
-"        Nota: Este código suele coincidir con los números físicos de tarjetas RFID."
+"        Nota: Este código suele coincidir con los números físicos de "
+"tarjetas RFID."
 
 #. module: hr_rfid_andromeda_import
 #: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_users__u_name
@@ -475,15 +639,18 @@ msgid ""
 "        • Reference: Used for cross-system identification\n"
 "        • Display: Shown for administrator reference\n"
 "        \n"
-"        Note: May differ from the person's actual name - often a login identifier."
+"        Note: May differ from the person's actual name - often a login "
+"identifier."
 msgstr ""
 "Nombre de usuario del sistema de control de acceso Andromeda.\n"
 "        \n"
-"        • Inicio de sesión: nombre de inicio de sesión original en Andromeda\n"
+"        • Inicio de sesión: nombre de inicio de sesión original en "
+"Andromeda\n"
 "        • Referencia: se usa para la identificación entre sistemas\n"
 "        • Visualización: mostrado como referencia para el administrador\n"
 "        \n"
-"        Nota: Puede diferir del nombre real de la persona; suele ser un identificador de inicio de sesión."
+"        Nota: Puede diferir del nombre real de la persona; suele ser un "
+"identificador de inicio de sesión."
 
 #. module: hr_rfid_andromeda_import
 #: model:ir.model.fields,field_description:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__users_ids
@@ -497,6 +664,15 @@ msgid "Users Count"
 msgstr "Cantidad de usuarios"
 
 #. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__users_ids
+msgid ""
+"Users discovered in the Andromeda DB. Operator picks per-row which ones to "
+"import and as what (contact vs employee)."
+msgstr ""
+"Usuarios encontrados en la base de datos de Andromeda. El operador "
+"selecciona por fila cuáles importar y como qué (contacto o empleado)."
+
+#. module: hr_rfid_andromeda_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_import_wizard_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_welcome_wizard_form
 msgid "Welcome to Andromeda Import"
@@ -507,3 +683,13 @@ msgstr "Bienvenida a la importación de Andromeda"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_andromeda_import.andromeda_welcome_wizard_form
 msgid "Welcome to Andromeda Import Wizard"
 msgstr "Bienvenida al asistente de importación de Andromeda"
+
+#. module: hr_rfid_andromeda_import
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_import_wiz__default_import_as
+#: model:ir.model.fields,help:hr_rfid_andromeda_import.field_hr_rfid_andromeda_welcome_wiz__default_import_as
+msgid ""
+"Where Andromeda users land in Odoo by default — hr.employee for staff, res."
+"partner for external contacts."
+msgstr ""
+"Dónde se ubican los usuarios de Andromeda en Odoo por defecto - hr.employee "
+"para personal, res.partner para contactos externos."

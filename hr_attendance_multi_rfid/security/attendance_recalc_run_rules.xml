@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Company isolation, in the form used by hr_rfid_leave_block
+             (security/hr_rfid_leave_block_rules.xml): the False branch is
+             deliberate - a record without a company must stay visible rather
+             than disappear from everybody. -->
+        <record id="ir_rule_hr_attendance_recalc_run_multi_company" model="ir.rule">
+            <field name="name">Attendance rebuild: Multi Company</field>
+            <field name="model_id" ref="model_hr_attendance_recalc_run"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[
+                '|', ('company_id', 'in', company_ids),
+                ('company_id', '=', False),
+                ]
+            </field>
+        </record>
+
+        <record id="ir_rule_hr_attendance_recalc_log_multi_company" model="ir.rule">
+            <field name="name">Attendance rebuild line: Multi Company</field>
+            <field name="model_id" ref="model_hr_attendance_recalc_log"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[
+                '|', ('company_id', 'in', company_ids),
+                ('company_id', '=', False),
+                ]
+            </field>
+        </record>
+    </data>
+</odoo>

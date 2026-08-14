@@ -25,3 +25,5 @@ from . import test_system_event_dedup
 from . import test_webstack_sharing
 from . import test_telemetry_bus
 from . import test_access_group_add_doors
+from . import test_onboarding_panel_errors
+from . import test_recalc_hook

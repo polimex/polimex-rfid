@@ -6,7 +6,7 @@ doc_type: user_guide
 audience:
 - user
 summary: Enhances employee attendance tracking with additional work time calculations
-last_updated: '2026-06-03'
+last_updated: '2026-08-14'
 source_digest: sha256:303b98f12ea9cad9d131646a584c3bf41855bcb139a9b3c26272a01c0fbb341b
 companion_doc: llms-full.md
 ---
@@ -22,6 +22,37 @@ companion_doc: llms-full.md
 Enhances employee attendance tracking with additional work time calculations.
 
 This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
+
+
+## Legal coefficients (Legal Rates)
+
+**Attendance -> Configuration -> Legal Rates** holds the statutory
+coefficients used when attendance is costed: the overtime multipliers (working
+day, rest day, public holiday) and the night-shift supplement per hour. An
+attendance manager may edit them; they are grouped by code, and each one
+carries a **Valid From** date.
+
+**These are normally filled by the localisation module for your country - edit
+them only to override.**
+
+Two different things, which must not be confused:
+
+- **The law changed.** Add a NEW row with the new Valid From date. A worked day
+  is always costed with the coefficient in force on that day, so past periods
+  keep what they were worth and nothing is recalculated behind your back.
+- **The figure is simply wrong.** Correct it in place, on the row you already
+  have. Do not add a second row for the same code and the same date - correcting
+  is not a change in the law, and two rows would only make it unclear which one
+  applies.
+
+A coefficient is a multiplier of the hourly rate (1.5 = 150%, that is +50%).
+The night supplement is not a multiplier but an amount per hour, in the
+currency named on the row. It is shown to four decimal places, in the number
+format of your language - 1,85 or 1.85 for the same figure.
+
+A row without a company is the national one and applies everywhere; give it a
+company only to override that company's figure. If nothing is configured for a
+code, the cost calculation reads it as no premium at all rather than guessing.
 
 
 ## How to use it

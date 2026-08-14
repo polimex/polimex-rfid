@@ -6,20 +6,51 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-05 16:53+0000\n"
-"PO-Revision-Date: 2026-03-08 16:08\n"
+"POT-Creation-Date: 2026-08-14 13:55+0000\n"
+"PO-Revision-Date: 2026-08-14 17:20\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: el\n"
+"Language: el_GR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
 #. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"%(count)s other person(s) had no door events between the dates you chose, so "
+"their attendance was left as it was."
+msgstr ""
+"%(count)s άλλο(-α) άτομο(-α) δεν είχε(-αν) συμβάντα πόρτας μεταξύ των "
+"ημερομηνιών που επιλέξατε, επομένως η παρουσία τους παρέμεινε όπως ήταν."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"%(count)s person(s) had door events that made no attendance at all, so their "
+"attendance for that period was cleared and nothing was put back: %(people)s."
+msgstr ""
+"%(count)s άτομο(-α) είχε(-αν) συμβάντα πόρτας που δεν προέκυψε καθόλου "
+"παρουσία, επομένως η παρουσία τους για αυτήν την περίοδο διαγράφηκε και δεν "
+"επανατοποθετήθηκε τίποτα: %(people)s."
+
+#. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.rfid_hr_employee_view_search
 msgid "Absent Employees"
 msgstr "Απόντες Υπάλληλοι"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_needaction
+msgid "Action Needed"
+msgstr "Απαιτείται Ενέργεια"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_attachment_count
+msgid "Attachment Count"
+msgstr "Αριθμός Συνημμένων"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model,name:hr_attendance_multi_rfid.model_hr_attendance
@@ -32,9 +63,100 @@ msgid "Attendance"
 msgstr "Παρουσίες"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model,name:hr_attendance_multi_rfid.model_hr_attendance_recalc_run
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
+msgid "Attendance Rebuild"
+msgstr "Ανακατασκευή Παρουσίας"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model,name:hr_attendance_multi_rfid.model_hr_attendance_recalc_log
+msgid "Attendance Rebuild Line"
+msgstr "Γραμμή Ανακατασκευής Παρουσίας"
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/wizards/hr_recalc_attendance_wizard.py:0
+#: model:ir.actions.act_window,name:hr_attendance_multi_rfid.hr_attendance_recalc_run_action
+#: model:ir.ui.menu,name:hr_attendance_multi_rfid.hr_attendance_recalc_run_menu
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_list
+msgid "Attendance Rebuilds"
+msgstr "Ανακατασκευές Παρουσίας"
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/wizards/hr_recalc_attendance_wizard.py:0
+msgid ""
+"Attendance cannot be rebuilt right now: the scheduled task that does the "
+"work is switched off. Please ask your system administrator to switch it back "
+"on."
+msgstr ""
+"Η παρουσία δεν μπορεί να ανακατασκευαστεί αυτή τη στιγμή: η προγραμματισμένη "
+"εργασία που εκτελεί τη διαδικασία είναι απενεργοποιημένη. Παρακαλούμε "
+"ζητήστε από τον διαχειριστή του συστήματός σας να την ενεργοποιήσει ξανά."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/wizards/hr_recalc_attendance_wizard.py:0
+msgid ""
+"Attendance cannot be rebuilt right now: the scheduled task that does the "
+"work is switched off. Switch it back on and try again."
+msgstr ""
+"Η παρουσία δεν μπορεί να ανακατασκευαστεί αυτή τη στιγμή: η προγραμματισμένη "
+"εργασία που εκτελεί τη διαδικασία είναι απενεργοποιημένη. Ενεργοποιήστε την "
+"ξανά και δοκιμάστε πάλι."
+
+#. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_rfid_view_user_ev_form_inherit_hr_attendance_multi_rfid
 msgid "Attendance data"
 msgstr "Δεδομένα παρουσίας"
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/wizards/hr_recalc_attendance_wizard.py:0
+msgid ""
+"Attendance for %(count)s person(s) is being rebuilt in the background. You "
+"can carry on working - this page shows how far it has got."
+msgstr ""
+"Η παρουσία για %(count)s άτομο(-α) ανακατασκευάζεται στο παρασκήνιο. "
+"Μπορείτε να συνεχίσετε να εργάζεστε - αυτή η σελίδα δείχνει σε ποιο σημείο "
+"έχει φτάσει."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"Attendance for %(count)s person(s) is not for this system to rebuild and was "
+"left untouched: %(people)s. The line below for each of them says why, and "
+"what to do instead - asking for the same rebuild again will get the same "
+"answer."
+msgstr ""
+"Η παρουσία για %(count)s άτομο(-α) δεν προορίζεται για ανακατασκευή από αυτό "
+"το σύστημα και παρέμεινε ανέπαφη: %(people)s. Η γραμμή παρακάτω για καθένα "
+"από αυτά αναφέρει τον λόγο και τι πρέπει να γίνει αντ' αυτού - η επανάληψη "
+"του ίδιου αιτήματος ανακατασκευής θα δώσει την ίδια απάντηση."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"Attendance for %(person)s could not be rebuilt and was left exactly as it "
+"was. Your system administrator can see what went wrong."
+msgstr ""
+"Η παρουσία για %(person)s δεν μπόρεσε να ανακατασκευαστεί και παρέμεινε "
+"ακριβώς όπως ήταν. Ο διαχειριστής του συστήματός σας μπορεί να δει τι πήγε "
+"στραβά."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"Attendance for %(person)s was not rebuilt.\n"
+"\n"
+"%(reason)s"
+msgstr ""
+"Η παρουσία για %(person)s δεν ανακατασκευάστηκε.\n"
+"\n"
+"%(reason)s"
 
 #. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_view_filter_inherit
@@ -48,9 +170,37 @@ msgid "Attendance for {}"
 msgstr "Παρουσία για {}"
 
 #. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid "Attendance has been rebuilt for %(count)s person(s)."
+msgstr "Η παρουσία ανακατασκευάστηκε για %(count)s άτομο(-α)."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__date_from
+msgid "Attendance is rebuilt from this day onwards."
+msgstr "Η παρουσία ανακατασκευάζεται από αυτήν την ημέρα και έπειτα."
+
+#. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_rfid_view_zone_form_inherit_hr_attendance_multi_rfid
 msgid "Attendance options"
 msgstr "Επιλογές παρουσίας"
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid "Attendance rebuild"
+msgstr "Ανακατασκευή παρουσίας"
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid "Attendance rebuild %(start)s - %(end)s"
+msgstr "Ανακατασκευή παρουσίας %(start)s - %(end)s"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__attendance_count
+msgid "Attendance records"
+msgstr "Εγγραφές παρουσίας"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__auto_close_time_for_zone
@@ -60,16 +210,16 @@ msgstr "Αυτόματο κλείσιμο ωρών εργασίας"
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_zone__delete_attendance_if_late_more_than
 msgid ""
-"Automatically delete attendance records if the employee is late by more than"
-" this many hours. This helps maintain data quality by removing likely "
+"Automatically delete attendance records if the employee is late by more than "
+"this many hours. This helps maintain data quality by removing likely "
 "erroneous entries. Set to 0 to disable this feature. Example: Set to 4 to "
 "delete attendance if someone is more than 4 hours late."
 msgstr ""
 "Αυτόματη διαγραφή εγγραφών παρουσίας εάν ο υπάλληλος καθυστερεί περισσότερο "
 "από τις καθορισμένες ώρες. Συμβάλλει στη διατήρηση της ποιότητας δεδομένων "
-"αφαιρώντας πιθανώς εσφαλμένες εγγραφές. Ορίστε σε 0 για απενεργοποίηση αυτής"
-" της λειτουργίας. Παράδειγμα: Ορίστε σε 4 για διαγραφή παρουσίας εάν κάποιος"
-" καθυστερεί περισσότερο από 4 ώρες."
+"αφαιρώντας πιθανώς εσφαλμένες εγγραφές. Ορίστε σε 0 για απενεργοποίηση αυτής "
+"της λειτουργίας. Παράδειγμα: Ορίστε σε 4 για διαγραφή παρουσίας εάν κάποιος "
+"καθυστερεί περισσότερο από 4 ώρες."
 
 #. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.view_hr_attendance_records_recompute_wizard
@@ -109,11 +259,31 @@ msgid "Check Out"
 msgstr "Έξοδος"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_log__status__no_result
+msgid "Cleared, nothing put back"
+msgstr "Διαγράφηκε, δεν επανατοποθετήθηκε τίποτα"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__company_id
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__company_id
+msgid "Company"
+msgstr "Εταιρεία"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
+msgid "Continue now"
+msgstr "Συνέχεια τώρα"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__create_uid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__create_uid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__create_uid
 msgid "Created by"
 msgstr "Δημιουργήθηκε από"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__create_date
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__create_date
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__create_date
 msgid "Created on"
 msgstr "Δημιουργήθηκε στις"
@@ -132,8 +302,8 @@ msgstr ""
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance__check_out
 msgid ""
-"Date and time when the employee checked out from work. This is automatically"
-" recorded when leaving an RFID attendance zone or can be manually set by HR "
+"Date and time when the employee checked out from work. This is automatically "
+"recorded when leaving an RFID attendance zone or can be manually set by HR "
 "managers."
 msgstr ""
 "Ημερομηνία και ώρα κατά την οποία ο υπάλληλος πραγματοποίησε έξοδο από την "
@@ -157,6 +327,8 @@ msgstr "Τμήματα"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__display_name
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__display_name
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__display_name
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__display_name
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_employee__display_name
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_event_user__display_name
@@ -165,12 +337,18 @@ msgid "Display Name"
 msgstr "Εμφάνιση Ονόματος"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__event_count
+msgid "Door events"
+msgstr "Συμβάντα πόρτας"
+
+#. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_rfid_view_user_ev_form_inherit_hr_attendance_multi_rfid
 msgid "Emlpoyee's Attendance"
 msgstr "Παρουσία Υπαλλήλου"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model,name:hr_attendance_multi_rfid.model_hr_employee
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__employee_id
 msgid "Employee"
 msgstr "Υπάλληλος"
 
@@ -182,10 +360,11 @@ msgid ""
 "departments."
 msgstr ""
 "Τμήμα του υπαλλήλου κατά τον χρόνο αυτής της εγγραφής παρουσίας. Το πεδίο "
-"αποθηκεύεται για τη διατήρηση ιστορικής ακρίβειας, ακόμη και εάν ο υπάλληλος"
-" αλλάξει τμήμα αργότερα."
+"αποθηκεύεται για τη διατήρηση ιστορικής ακρίβειας, ακόμη και εάν ο υπάλληλος "
+"αλλάξει τμήμα αργότερα."
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__employee_ids
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__employee_ids
 msgid "Employees"
 msgstr "Υπάλληλοι"
@@ -218,13 +397,76 @@ msgstr ""
 "είναι η σημερινή ημερομηνία."
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_run__state__done
+msgid "Finished"
+msgstr "Ολοκληρώθηκε"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_follower_ids
+msgid "Followers"
+msgstr "Ακόλουθοι"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Ακόλουθοι (Συνεργάτες)"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__date_from
+msgid "From"
+msgstr "Από"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.actions.server,name:hr_attendance_multi_rfid.hr_attendance_multi_rfid_autoclose_cron_ir_actions_server
 msgid "HR RFID Multi Attendance: Auto-close incomplete attendances"
 msgstr ""
 "HR RFID Πολλαπλή Παρουσία: Αυτόματο κλείσιμο ημιτελών εγγραφών παρουσίας"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.actions.server,name:hr_attendance_multi_rfid.hr_attendance_multi_rfid_recalc_cron_ir_actions_server
+msgid "HR RFID Multi Attendance: Continue attendance rebuilds"
+msgstr "HR RFID Multi Attendance: Συνέχεια ανακατασκευών παρουσίας"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__has_message
+msgid "Has Message"
+msgstr "Έχει Μήνυμα"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__progress
+msgid "How far along the rebuild is."
+msgstr "Πόσο έχει προχωρήσει η ανακατασκευή."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__attendance_count
+msgid "How many attendance records came out of them."
+msgstr "Πόσες εγγραφές παρουσίας προέκυψαν από αυτά."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__event_count
+msgid "How many door events were replayed for this person."
+msgstr "Πόσα συμβάντα πόρτας αναπαράχθηκαν για αυτό το άτομο."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__done_count
+msgid ""
+"How many of the people on the list the rebuild has got through so far - "
+"whether or not there was anything to rebuild for them, and whether or not it "
+"worked. What came of each one is on the list below."
+msgstr ""
+"Πόσα από τα άτομα στη λίστα έχει επεξεργαστεί η ανακατασκευή μέχρι στιγμής - "
+"είτε υπήρχε κάτι προς ανακατασκευή για αυτά είτε όχι, και είτε πέτυχε είτε "
+"όχι. Το αποτέλεσμα για καθένα βρίσκεται στη λίστα παρακάτω."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__total_count
+msgid "How many people this rebuild covers."
+msgstr "Πόσα άτομα καλύπτει αυτή η ανακατασκευή."
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__id
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__id
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__id
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__id
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_employee__id
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_event_user__id
@@ -233,38 +475,74 @@ msgid "ID"
 msgstr "Κωδικός"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Εάν είναι επιλεγμένο, τα νέα μηνύματα απαιτούν την προσοχή σας."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_has_error
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Εάν είναι επιλεγμένο, ορισμένα μηνύματα έχουν σφάλμα παράδοσης."
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__in_zone_id
 msgid "In Zone"
 msgstr "Εντός ζώνης"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_run__state__running
+msgid "In progress"
+msgstr "Σε εξέλιξη"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_event_user__in_or_out
 msgid ""
-"Indicates whether this RFID event was processed as attendance check-in or check-out.\n"
+"Indicates whether this RFID event was processed as attendance check-in or "
+"check-out.\n"
 "\n"
 "• Check In: Employee entered an attendance zone\n"
 "• Check Out: Employee left an attendance zone  \n"
-"• No Info: Event not processed for attendance (may be non-attendance zone or error)\n"
+"• No Info: Event not processed for attendance (may be non-attendance zone or "
+"error)\n"
 "\n"
-"This field is automatically set when recalculating attendance from RFID events."
+"This field is automatically set when recalculating attendance from RFID "
+"events."
 msgstr ""
-"Υποδεικνύει εάν αυτό το συμβάν RFID υπολογίστηκε ως είσοδος ή έξοδος παρουσίας.\n"
+"Υποδεικνύει εάν αυτό το συμβάν RFID υπολογίστηκε ως είσοδος ή έξοδος "
+"παρουσίας.\n"
 "\n"
 "• Είσοδος: Ο υπάλληλος εισήλθε σε ζώνη παρουσίας\n"
 "• Έξοδος: Ο υπάλληλος αποχώρησε από ζώνη παρουσίας  \n"
-"• Χωρίς πληροφορίες: Το συμβάν δεν υπολογίστηκε για παρουσία (πιθανώς μη ζώνη παρουσίας ή σφάλμα)\n"
+"• Χωρίς πληροφορίες: Το συμβάν δεν υπολογίστηκε για παρουσία (πιθανώς μη "
+"ζώνη παρουσίας ή σφάλμα)\n"
 "\n"
-"Το πεδίο αυτό ορίζεται αυτόματα κατά τον επανυπολογισμό παρουσίας από συμβάντα RFID."
+"Το πεδίο αυτό ορίζεται αυτόματα κατά τον επανυπολογισμό παρουσίας από "
+"συμβάντα RFID."
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_is_follower
+msgid "Is Follower"
+msgstr "Είναι Ακόλουθος"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__write_uid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__write_uid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__write_uid
 msgid "Last Updated by"
 msgstr "Τελευταία ενημέρωση από"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__write_date
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__write_date
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__write_date
 msgid "Last Updated on"
 msgstr "Τελευταία ενημέρωση στις"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__date_to
+msgid "Last day the rebuild covers."
+msgstr "Τελευταία ημέρα που καλύπτει η ανακατασκευή."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__max_time_in_zone
@@ -282,14 +560,168 @@ msgstr ""
 "Μέγιστες ώρες που μπορεί να παραμείνει ένας υπάλληλος στη ζώνη πριν η "
 "παρουσία κλείσει αυτόματα. Αποτρέπει τη δημιουργία υπερβολικά μακρών "
 "εγγραφών παρουσίας λόγω ξεχασμένων εξόδων. Ορίστε σε 0 για απενεργοποίηση "
-"του αυτόματου κλεισίματος. Παράδειγμα: 12 ώρες για μια τυπική εργάσιμη "
-"ημέρα."
+"του αυτόματου κλεισίματος. Παράδειγμα: 12 ώρες για μια τυπική εργάσιμη ημέρα."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_has_error
+msgid "Message Delivery error"
+msgstr "Σφάλμα Παράδοσης Μηνύματος"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_ids
+msgid "Messages"
+msgstr "Μηνύματα"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__name
+msgid "Name"
+msgstr "Όνομα"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__in_or_out__no_info
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_vending_event__in_or_out__no_info
 msgid "No Info"
 msgstr "Χωρίς πληροφορίες"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.actions.act_window,help:hr_attendance_multi_rfid.hr_attendance_recalc_run_action
+msgid "No attendance has been rebuilt yet"
+msgstr "Δεν έχει ανακατασκευαστεί ακόμη καμία παρουσία"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
+msgid ""
+"No attendance was rebuilt. Read the message below\n"
+"                            for what happened - most often nobody on this "
+"list\n"
+"                            had a door event between the dates chosen, "
+"which\n"
+"                            means no area is set to count towards attendance."
+msgstr ""
+"Δεν ανακατασκευάστηκε καμία παρουσία. Διαβάστε το μήνυμα παρακάτω\n"
+"                            για το τι συνέβη - συνήθως κανείς σε αυτή τη "
+"λίστα\n"
+"                            δεν είχε συμβάν πόρτας μεταξύ των επιλεγμένων "
+"ημερομηνιών, κάτι που\n"
+"                            σημαίνει ότι καμία περιοχή δεν έχει οριστεί ώστε "
+"να προσμετράται στην παρουσία."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_log__status__no_events
+msgid "No door events"
+msgstr "Χωρίς συμβάντα πόρτας"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_log__status__error
+msgid "Not rebuilt"
+msgstr "Δεν ανακατασκευάστηκε"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_run__state__nothing
+msgid "Nothing to rebuild"
+msgstr "Τίποτα προς ανακατασκευή"
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"Nothing was rebuilt. %(count)s person(s) did have door events between the "
+"dates you chose, but those events did not make a single attendance record: "
+"%(people)s. Their attendance for that period was cleared and nothing was put "
+"back. This normally means the doors those events came from have no reader "
+"set as the way in. Check the readers on those doors, then start the rebuild "
+"again."
+msgstr ""
+"Δεν ανακατασκευάστηκε τίποτα. %(count)s άτομο(-α) είχε(-αν) πράγματι "
+"συμβάντα πόρτας μεταξύ των ημερομηνιών που επιλέξατε, αλλά αυτά τα συμβάντα "
+"δεν προέκυψαν σε ούτε μία εγγραφή παρουσίας: %(people)s. Η παρουσία τους για "
+"αυτήν την περίοδο διαγράφηκε και δεν επανατοποθετήθηκε τίποτα. Αυτό συνήθως "
+"σημαίνει ότι οι πόρτες από τις οποίες προήλθαν αυτά τα συμβάντα δεν έχουν "
+"αναγνώστη ορισμένο ως τρόπο εισόδου. Ελέγξτε τους αναγνώστες σε αυτές τις "
+"πόρτες και ξεκινήστε ξανά την ανακατασκευή."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"Nothing was rebuilt: none of the %(count)s person(s) had a single door event "
+"between the dates you chose, so their attendance was left exactly as it was. "
+"The usual reason is that no area is set to count towards attendance, which "
+"leaves no doors to read; otherwise nobody passed those doors in that period. "
+"Check the areas, then start the rebuild again."
+msgstr ""
+"Δεν ανακατασκευάστηκε τίποτα: κανένα από τα %(count)s άτομο(-α) δεν είχε "
+"ούτε ένα συμβάν πόρτας μεταξύ των ημερομηνιών που επιλέξατε, επομένως η "
+"παρουσία τους παρέμεινε ακριβώς όπως ήταν. Ο συνήθης λόγος είναι ότι καμία "
+"περιοχή δεν έχει οριστεί ώστε να προσμετράται στην παρουσία, με αποτέλεσμα "
+"να μην υπάρχουν πόρτες προς ανάγνωση· διαφορετικά, κανείς δεν πέρασε από "
+"αυτές τις πόρτες σε αυτήν την περίοδο. Ελέγξτε τις περιοχές και ξεκινήστε "
+"ξανά την ανακατασκευή."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Αριθμός Ενεργειών"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_has_error_counter
+msgid "Number of errors"
+msgstr "Αριθμός σφαλμάτων"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Αριθμός μηνυμάτων που απαιτούν ενέργεια"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Αριθμός μηνυμάτων με σφάλμα παράδοσης"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__log_ids
+msgid "One line per person, with what was rebuilt and what was not."
+msgstr "Μία γραμμή ανά άτομο, με το τι ανακατασκευάστηκε και τι όχι."
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
+msgid ""
+"One line per person. \"No door events\" means\n"
+"                                    there was nothing to replay in the "
+"period,\n"
+"                                    so their attendance was left as it was.\n"
+"                                    \"Cleared, nothing put back\" means the "
+"door\n"
+"                                    events made no attendance at all, so "
+"that\n"
+"                                    period is now empty for them. "
+"\"Refused\"\n"
+"                                    means their attendance is not for this\n"
+"                                    system to rebuild - the reason says what "
+"to\n"
+"                                    do instead."
+msgstr ""
+"Μία γραμμή ανά άτομο. Το \"Χωρίς συμβάντα πόρτας\" σημαίνει\n"
+"                                    ότι δεν υπήρχε τίποτα προς αναπαραγωγή "
+"στην περίοδο,\n"
+"                                    επομένως η παρουσία τους παρέμεινε όπως "
+"ήταν.\n"
+"                                    Το \"Διαγράφηκε, δεν επανατοποθετήθηκε "
+"τίποτα\" σημαίνει ότι τα συμβάντα\n"
+"                                    πόρτας δεν προέκυψαν καθόλου σε "
+"παρουσία, επομένως αυτή η\n"
+"                                    περίοδος είναι πλέον κενή για αυτούς. Το "
+"\"Απορρίφθηκε\"\n"
+"                                    σημαίνει ότι η παρουσία τους δεν "
+"προορίζεται για ανακατασκευή από αυτό το\n"
+"                                    σύστημα - ο λόγος αναφέρει τι πρέπει να "
+"γίνει αντ' αυτού."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/wizards/hr_recalc_attendance_wizard.py:0
+msgid "Open the scheduled task"
+msgstr "Άνοιγμα της προγραμματισμένης εργασίας"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__overwrite_check_in
@@ -302,9 +734,34 @@ msgid "Overwrite check-out"
 msgstr "Αντικατάσταση εξόδου"
 
 #. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
+msgid "People"
+msgstr "Άτομα"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__done_count
+msgid "People dealt with"
+msgstr "Άτομα που διεκπεραιώθηκαν"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__total_count
+msgid "People in total"
+msgstr "Σύνολο ατόμων"
+
+#. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.rfid_hr_employee_view_search
 msgid "Present Employees"
 msgstr "Παρόντες Υπάλληλοι"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__processed_employee_id
+msgid "Processed Employee"
+msgstr "Επεξεργασμένος Εργαζόμενος"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__progress
+msgid "Progress"
+msgstr "Πρόοδος"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model,name:hr_attendance_multi_rfid.model_hr_rfid_event_user
@@ -323,14 +780,83 @@ msgid "Re-create Attendance records"
 msgstr "Επαναδημιουργία εγγραφών παρουσίας"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__error_message
+msgid "Reason"
+msgstr "Λόγος"
+
+#. module: hr_attendance_multi_rfid
 #: model_terms:ir.actions.act_window,help:hr_attendance_multi_rfid.act_wizard_recompute_attendance_records
 msgid "Rebuild attendance records from RFID events"
 msgstr "Ανακατασκευή εγγραφών παρουσίας από συμβάντα RFID"
 
 #. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/wizards/hr_recalc_attendance_wizard.py:0
+msgid "Rebuilding attendance"
+msgstr "Ανακατασκευή παρουσίας"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.actions.act_window,help:hr_attendance_multi_rfid.hr_attendance_recalc_run_action
+msgid ""
+"Rebuilding replays the door events of a period and puts the\n"
+"                    attendance back the way those events say it happened. "
+"Start\n"
+"                    one from an employee list - Re-create Attendance records "
+"-\n"
+"                    and it will appear here."
+msgstr ""
+"Η ανακατασκευή αναπαράγει τα συμβάντα πόρτας μιας περιόδου και επαναφέρει "
+"την\n"
+"                    παρουσία με τον τρόπο που δείχνουν αυτά τα συμβάντα ότι "
+"συνέβη. Ξεκινήστε\n"
+"                    μία από μια λίστα εργαζομένων - Επαναδημιουργία εγγραφών "
+"Παρουσίας -\n"
+"                    και θα εμφανιστεί εδώ."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_log__status__done
+msgid "Rebuilt"
+msgstr "Ανακατασκευάστηκε"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__status
+msgid ""
+"Rebuilt: their attendance was replayed from the door events. No door events: "
+"there was nothing in the period to replay, so their attendance was left "
+"alone. Cleared, nothing put back: there were door events, but they made no "
+"attendance at all - the period is now empty for this person. Refused: their "
+"attendance is not for this system to rebuild, and the reason says what to do "
+"instead. Not rebuilt: something went wrong and their attendance is as it was."
+msgstr ""
+"Ανακατασκευάστηκε: η παρουσία τους αναπαράχθηκε από τα συμβάντα πόρτας. "
+"Χωρίς συμβάντα πόρτας: δεν υπήρχε τίποτα στην περίοδο προς αναπαραγωγή, "
+"επομένως η παρουσία τους παρέμεινε ανέπαφη. Διαγράφηκε, δεν "
+"επανατοποθετήθηκε τίποτα: υπήρχαν συμβάντα πόρτας, αλλά δεν προέκυψε καθόλου "
+"παρουσία από αυτά - η περίοδος είναι πλέον κενή για αυτό το άτομο. "
+"Απορρίφθηκε: η παρουσία τους δεν προορίζεται για ανακατασκευή από αυτό το "
+"σύστημα, και ο λόγος αναφέρει τι πρέπει να γίνει αντ' αυτού. Δεν "
+"ανακατασκευάστηκε: κάτι πήγε στραβά και η παρουσία τους παραμένει όπως ήταν."
+
+#. module: hr_attendance_multi_rfid
 #: model_terms:ir.actions.act_window,help:hr_attendance_multi_rfid.recreate_attendance_records_action
 msgid "Recalculate attendance for selected employees"
 msgstr "Επανυπολογισμός παρουσίας για επιλεγμένους υπαλλήλους"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_log__status__refused
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_run__state__refused
+msgid "Refused"
+msgstr "Απορρίφθηκε"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__run_id
+msgid "Run"
+msgstr "Εκτέλεση"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Σφάλμα Παράδοσης SMS"
 
 #. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.view_hr_attendance_records_recompute_wizard
@@ -340,26 +866,56 @@ msgstr "Επιλογή εύρους ημερομηνιών"
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__employee_ids
 msgid ""
-"Select employees whose attendance records will be recalculated from RFID events.\n"
+"Select employees whose attendance records will be recalculated from RFID "
+"events.\n"
 "        \n"
 "• Process: Existing auto-generated attendance will be deleted and recreated\n"
 "• Manual attendance: Records created manually by HR will be preserved\n"
-"• RFID events: System will analyze all RFID door events to rebuild attendance\n"
+"• RFID events: System will analyze all RFID door events to rebuild "
+"attendance\n"
 "\n"
-"Use this when attendance data seems incorrect or after changing zone settings."
+"Use this when attendance data seems incorrect or after changing zone "
+"settings."
 msgstr ""
-"Επιλέξτε υπαλλήλους των οποίων οι εγγραφές παρουσίας θα επανυπολογιστούν από συμβάντα RFID.\n"
+"Επιλέξτε υπαλλήλους των οποίων οι εγγραφές παρουσίας θα επανυπολογιστούν από "
+"συμβάντα RFID.\n"
 "        \n"
-"• Διαδικασία: Οι υπάρχουσες αυτόματα δημιουργημένες εγγραφές παρουσίας θα διαγραφούν και θα επαναδημιουργηθούν\n"
-"• Χειροκίνητη παρουσία: Οι εγγραφές που δημιουργήθηκαν χειροκίνητα από το τμήμα HR θα διατηρηθούν\n"
-"• Συμβάντα RFID: Το σύστημα θα αναλύσει όλα τα συμβάντα πόρτας RFID για ανακατασκευή παρουσίας\n"
+"• Διαδικασία: Οι υπάρχουσες αυτόματα δημιουργημένες εγγραφές παρουσίας θα "
+"διαγραφούν και θα επαναδημιουργηθούν\n"
+"• Χειροκίνητη παρουσία: Οι εγγραφές που δημιουργήθηκαν χειροκίνητα από το "
+"τμήμα HR θα διατηρηθούν\n"
+"• Συμβάντα RFID: Το σύστημα θα αναλύσει όλα τα συμβάντα πόρτας RFID για "
+"ανακατασκευή παρουσίας\n"
 "\n"
-"Χρησιμοποιήστε αυτή τη λειτουργία όταν τα δεδομένα παρουσίας φαίνονται εσφαλμένα ή μετά την αλλαγή ρυθμίσεων ζώνης."
+"Χρησιμοποιήστε αυτή τη λειτουργία όταν τα δεδομένα παρουσίας φαίνονται "
+"εσφαλμένα ή μετά την αλλαγή ρυθμίσεων ζώνης."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__name
+msgid "Short label of this rebuild, built from the period it covers."
+msgstr ""
+"Σύντομη ετικέτα αυτής της ανακατασκευής, βασισμένη στην περίοδο που καλύπτει."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"Something went wrong while this person was being rebuilt. Their attendance "
+"was put back the way it was. Your system administrator can see what happened."
+msgstr ""
+"Κάτι πήγε στραβά κατά την ανακατασκευή για αυτό το άτομο. Η παρουσία τους "
+"επανήλθε όπως ήταν. Ο διαχειριστής του συστήματός σας μπορεί να δει τι "
+"συνέβη."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__start_date
 msgid "Start Date"
 msgstr "Ημερομηνία έναρξης"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__user_id
+msgid "Started by"
+msgstr "Ξεκίνησε από"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__start_date
@@ -373,6 +929,21 @@ msgstr ""
 "ημέρες πριν για κάλυψη της πρόσφατης περιόδου."
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__state
+msgid "State"
+msgstr "Κατάσταση"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__status
+msgid "Status"
+msgstr "Κατάσταση"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_run__state__failed
+msgid "Stopped by a problem"
+msgstr "Διακόπηκε λόγω προβλήματος"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance__in_zone_id
 msgid ""
 "The RFID zone where this attendance session is taking place. Set when "
@@ -384,9 +955,101 @@ msgstr ""
 "παρακολούθηση της περιοχής εργασίας του υπαλλήλου."
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__company_id
+msgid "The company the rebuild was started for."
+msgstr "Η εταιρεία για την οποία ξεκίνησε η ανακατασκευή."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__company_id
+msgid "The company this rebuild was started for."
+msgstr "Η εταιρεία για την οποία ξεκίνησε αυτή η ανακατασκευή."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__employee_ids
+msgid ""
+"The people whose attendance is being rebuilt, as chosen when the rebuild was "
+"asked for. Somebody taken on afterwards is not added to it. If this list is "
+"changed while the rebuild is under way, the change applies from the next "
+"person onwards - anybody already finished is not done a second time."
+msgstr ""
+"Τα άτομα των οποίων η παρουσία ανακατασκευάζεται, όπως επιλέχθηκαν όταν "
+"ζητήθηκε η ανακατασκευή. Κάποιος που προσλήφθηκε μετά δεν προστίθεται σε "
+"αυτήν. Εάν αυτή η λίστα αλλάξει ενόσω η ανακατασκευή βρίσκεται σε εξέλιξη, η "
+"αλλαγή ισχύει από το επόμενο άτομο και έπειτα - όποιος έχει ήδη ολοκληρωθεί "
+"δεν επεξεργάζεται ξανά."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__current_employee_id
+msgid "The person being rebuilt right now."
+msgstr "Το άτομο που ανακατασκευάζεται αυτή τη στιγμή."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__employee_id
+msgid "The person this line is about."
+msgstr "Το άτομο στο οποίο αναφέρεται αυτή η γραμμή."
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
+msgid ""
+"The rebuild carries on in the background, one person\n"
+"                            at a time. You can close this page - press "
+"Continue\n"
+"                            now to refresh what you see."
+msgstr ""
+"Η ανακατασκευή συνεχίζεται στο παρασκήνιο, ένα άτομο\n"
+"                            τη φορά. Μπορείτε να κλείσετε αυτήν τη σελίδα - "
+"πατήστε Συνέχεια\n"
+"                            τώρα για να ανανεώσετε αυτό που βλέπετε."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"The rebuild finished, but attendance for %(count)s person(s) could not be "
+"rebuilt: %(people)s. Everybody else is done. Look at the list below, put the "
+"cause right, and start a rebuild for those people again."
+msgstr ""
+"Η ανακατασκευή ολοκληρώθηκε, αλλά η παρουσία για %(count)s άτομο(-α) δεν "
+"μπόρεσε να ανακατασκευαστεί: %(people)s. Όλοι οι υπόλοιποι έχουν "
+"ολοκληρωθεί. Δείτε τη λίστα παρακάτω, διορθώστε την αιτία και ξεκινήστε ξανά "
+"μια ανακατασκευή για αυτά τα άτομα."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"The rebuild stopped because of a problem in the system itself, and not with "
+"any of the people on the list. Nothing was changed by this attempt. Start it "
+"again; if it stops a second time, your system administrator can see what "
+"went wrong."
+msgstr ""
+"Η ανακατασκευή διακόπηκε λόγω προβλήματος στο ίδιο το σύστημα, και όχι σε "
+"κάποιο από τα άτομα της λίστας. Δεν άλλαξε τίποτα από αυτήν την προσπάθεια. "
+"Ξεκινήστε την ξανά· εάν διακοπεί και δεύτερη φορά, ο διαχειριστής του "
+"συστήματός σας μπορεί να δει τι πήγε στραβά."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__run_id
+msgid "The rebuild this line belongs to."
+msgstr "Η ανακατασκευή στην οποία ανήκει αυτή η γραμμή."
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.actions.act_window,help:hr_attendance_multi_rfid.hr_attendance_recalc_run_action
+msgid ""
+"The work is done in the background, person by person, so a\n"
+"                    long rebuild does not hold up the screen. Every rebuild\n"
+"                    keeps an account of who was done and who was not."
+msgstr ""
+"Η εργασία εκτελείται στο παρασκήνιο, άτομο προς άτομο, ώστε μια\n"
+"                    μεγάλη ανακατασκευή να μην καθυστερεί την οθόνη. Κάθε "
+"ανακατασκευή\n"
+"                    τηρεί καταγραφή για το ποιοι ολοκληρώθηκαν και ποιοι όχι."
+
+#. module: hr_attendance_multi_rfid
 #: model_terms:ir.actions.act_window,help:hr_attendance_multi_rfid.recreate_attendance_records_action
 msgid ""
-"This action allows HR managers to rebuild attendance records based on RFID events.\n"
+"This action allows HR managers to rebuild attendance records based on RFID "
+"events.\n"
 "                    <br>\n"
 "                    <br>\n"
 "                Use cases:\n"
@@ -395,14 +1058,55 @@ msgid ""
 "                • After importing historical RFID events\n"
 "                • To sync attendance with actual door access events"
 msgstr ""
-"Αυτή η ενέργεια επιτρέπει στους διαχειριστές HR να ανακατασκευάσουν εγγραφές παρουσίας βάσει συμβάντων RFID.\n"
+"Αυτή η ενέργεια επιτρέπει στους διαχειριστές HR να ανακατασκευάσουν εγγραφές "
+"παρουσίας βάσει συμβάντων RFID.\n"
 "                    <br>\n"
 "                    <br>\n"
 "                Περιπτώσεις χρήσης:\n"
 "                • Μετά την αλλαγή ρυθμίσεων παρουσίας ζώνης\n"
 "                • Όταν τα δεδομένα παρουσίας φαίνονται εσφαλμένα\n"
 "                • Μετά την εισαγωγή ιστορικών συμβάντων RFID\n"
-"                • Για συγχρονισμό παρουσίας με πραγματικά συμβάντα πρόσβασης πόρτας"
+"                • Για συγχρονισμό παρουσίας με πραγματικά συμβάντα πρόσβασης "
+"πόρτας"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
+msgid ""
+"This attendance is not for this system to rebuild.\n"
+"                            The list below says why for each person, and "
+"what\n"
+"                            to do instead. Asking for the same rebuild "
+"again\n"
+"                            will give the same answer."
+msgstr ""
+"Αυτή η παρουσία δεν προορίζεται για ανακατασκευή από αυτό το σύστημα.\n"
+"                            Η λίστα παρακάτω αναφέρει τον λόγο για κάθε "
+"άτομο, και τι\n"
+"                            πρέπει να γίνει αντ' αυτού. Η επανάληψη του "
+"ίδιου αιτήματος ανακατασκευής\n"
+"                            θα δώσει την ίδια απάντηση."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"This rebuild cannot be carried out: the account that asked for it is no "
+"longer in use. Ask for it again from an active account."
+msgstr ""
+"Αυτή η ανακατασκευή δεν μπορεί να εκτελεστεί: ο λογαριασμός που τη ζήτησε "
+"δεν χρησιμοποιείται πλέον. Ζητήστε την ξανά από έναν ενεργό λογαριασμό."
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
+msgid ""
+"This rebuild stopped without finishing and has been closed. The people it "
+"had already done keep their rebuilt attendance. Start a new one for the rest "
+"when you are ready."
+msgstr ""
+"Αυτή η ανακατασκευή διακόπηκε χωρίς να ολοκληρωθεί και έχει κλείσει. Τα "
+"άτομα που είχαν ήδη ολοκληρωθεί διατηρούν την ανακατασκευασμένη παρουσία "
+"τους. Ξεκινήστε μια νέα για τους υπόλοιπους όταν είστε έτοιμοι."
 
 #. module: hr_attendance_multi_rfid
 #: model_terms:ir.actions.act_window,help:hr_attendance_multi_rfid.act_wizard_recompute_attendance_records
@@ -412,28 +1116,58 @@ msgid ""
 "                    <br>\n"
 "                    <br>\n"
 "                Key features:\n"
-"                • Deletes auto-generated attendance records in the date range\n"
+"                • Deletes auto-generated attendance records in the date "
+"range\n"
 "                • Preserves manually created attendance records\n"
 "                • Rebuilds attendance from RFID zone entry/exit events\n"
 "                • Handles zone-specific attendance settings and overrides"
 msgstr ""
-"Αυτός ο οδηγός επανυπολογίζει τις εγγραφές παρουσίας αναλύοντας τα συμβάντα πόρτας RFID \n"
+"Αυτός ο οδηγός επανυπολογίζει τις εγγραφές παρουσίας αναλύοντας τα συμβάντα "
+"πόρτας RFID \n"
 "                για τους επιλεγμένους υπαλλήλους και το εύρος ημερομηνιών.\n"
 "                    <br>\n"
 "                    <br>\n"
 "                Βασικά χαρακτηριστικά:\n"
-"                • Διαγραφή αυτόματα δημιουργημένων εγγραφών παρουσίας εντός του εύρους ημερομηνιών\n"
+"                • Διαγραφή αυτόματα δημιουργημένων εγγραφών παρουσίας εντός "
+"του εύρους ημερομηνιών\n"
 "                • Διατήρηση χειροκίνητα δημιουργημένων εγγραφών παρουσίας\n"
-"                • Ανακατασκευή παρουσίας από συμβάντα εισόδου/εξόδου ζώνης RFID\n"
+"                • Ανακατασκευή παρουσίας από συμβάντα εισόδου/εξόδου ζώνης "
+"RFID\n"
 "                • Διαχείριση ρυθμίσεων παρουσίας ανά ζώνη και παρακάμψεων"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__date_to
+msgid "To"
+msgstr "Έως"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_run__state__queued
+msgid "Waiting to start"
+msgstr "Αναμονή έναρξης"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__website_message_ids
+msgid "Website Messages"
+msgstr "Μηνύματα Ιστότοπου"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__website_message_ids
+msgid "Website communication history"
+msgstr "Ιστορικό επικοινωνίας ιστότοπου"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__log_ids
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
+msgid "What happened"
+msgstr "Τι συνέβη"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_zone__auto_close_time_for_zone
 msgid ""
 "When attendance is automatically closed (due to max_time_in_zone), this "
-"value will be recorded as the actual worked hours. For example, if max is 12"
-" hours but this is set to 7, the system will record 7 hours of work when "
-"auto-closing."
+"value will be recorded as the actual worked hours. For example, if max is 12 "
+"hours but this is set to 7, the system will record 7 hours of work when auto-"
+"closing."
 msgstr ""
 "Όταν η παρουσία κλείνει αυτόματα (λόγω max_time_in_zone), αυτή η τιμή θα "
 "καταγραφεί ως οι πραγματικές ώρες εργασίας. Για παράδειγμα, εάν το μέγιστο "
@@ -466,6 +1200,42 @@ msgstr ""
 "θεωρείται ως η πραγματική ώρα έναρξης εργασίας."
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__state
+msgid ""
+"Where this rebuild has got to. It continues on its own; you can close the "
+"page."
+msgstr ""
+"Σε ποιο σημείο έχει φτάσει αυτή η ανακατασκευή. Συνεχίζεται αυτόνομα· "
+"μπορείτε να κλείσετε τη σελίδα."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__processed_employee_id
+msgid ""
+"Where to carry on from. The work is done one person at a time, and this is "
+"the last one finished - so a rebuild that was interrupted picks up instead "
+"of starting again."
+msgstr ""
+"Από πού να συνεχιστεί. Η εργασία εκτελείται ένα άτομο τη φορά, και αυτό "
+"είναι το τελευταίο που ολοκληρώθηκε - έτσι μια ανακατασκευή που διακόπηκε "
+"συνεχίζεται αντί να ξεκινήσει από την αρχή."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__user_id
+msgid ""
+"Who asked for the rebuild. The work runs in the background, so this is who "
+"gets told when it finishes."
+msgstr ""
+"Ποιος ζήτησε την ανακατασκευή. Η εργασία εκτελείται στο παρασκήνιο, οπότε "
+"αυτός είναι που ενημερώνεται όταν ολοκληρωθεί."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__error_message
+msgid "Why this person's attendance was not rebuilt, and what to do about it."
+msgstr ""
+"Γιατί δεν ανακατασκευάστηκε η παρουσία αυτού του ατόμου, και τι πρέπει να "
+"γίνει σχετικά."
+
+#. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_view_filter_inherit
 msgid "With Check Out"
 msgstr "Με Έξοδο"
@@ -474,6 +1244,11 @@ msgstr "Με Έξοδο"
 #: model:ir.model,name:hr_attendance_multi_rfid.model_hr_attendance_recalc_wizard
 msgid "Wizard for re-create attendance records based on RFID events"
 msgstr "Οδηγός επαναδημιουργίας εγγραφών παρουσίας βάσει συμβάντων RFID"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__current_employee_id
+msgid "Working on"
+msgstr "Επεξεργασία σε εξέλιξη"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model,name:hr_attendance_multi_rfid.model_hr_rfid_zone

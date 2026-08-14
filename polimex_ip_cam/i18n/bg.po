@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-24 14:34+0000\n"
-"PO-Revision-Date: 2026-06-24 17:39\n"
+"POT-Creation-Date: 2026-08-14 13:55+0000\n"
+"PO-Revision-Date: 2026-08-14 16:58\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: bg\n"
@@ -15,7 +15,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.5\n"
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -2132,6 +2131,7 @@ msgstr "CST6CDT"
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_event_system__camera_id
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_event_user__camera_id
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_reader__camera_id
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_vending_event__camera_id
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_filter
 msgid "Camera"
 msgstr "Камера"
@@ -2190,7 +2190,7 @@ msgid ""
 "an attacker would need; do not expose it to plain CCTV users or in shared "
 "exports."
 msgstr ""
-"Парола за достъп до камерата. Ограничена до CCTV мениджъри — това е "
+"Парола за достъп до камерата. Ограничена до CCTV мениджъри - това е "
 "идентификационните данни, от които би се нуждаел нападател; не я излагайте "
 "на обикновени CCTV потребители или в споделени експортирания."
 
@@ -2208,7 +2208,7 @@ msgid ""
 "features."
 msgstr ""
 "Марка на камерата. 'ONVIF (generic)' се задава от мрежовото търсене за "
-"устройство, което не е Hikvision, но е отговорило на ONVIF — поддържа "
+"устройство, което не е Hikvision, но е отговорило на ONVIF - поддържа "
 "стандартния ONVIF интерфейс (видео, информация за устройството), но не и "
 "функциите, специфични за Hikvision (ANPR/списъци с табели)."
 
@@ -2287,6 +2287,7 @@ msgstr ""
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_system__camera_id
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_user__camera_id
+#: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_vending_event__camera_id
 msgid "Camera to use"
 msgstr "Камера за използване"
 
@@ -2449,6 +2450,7 @@ msgstr ""
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_event_system__anpr_confidence
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_event_user__anpr_confidence
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_vending_event__anpr_confidence
 msgid "Confidence Level"
 msgstr "Ниво на достоверност"
 
@@ -2482,13 +2484,15 @@ msgstr ""
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "Connection error — see the technical details below."
-msgstr "Грешка при връзката — вижте техническите детайли по-долу."
+msgstr "Грешка при връзката - вижте техническите детайли по-долу."
 
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "Connection failed. Run “Check Connection” for an updated diagnosis."
 msgstr ""
+"Връзката е неуспешна. Стартирайте „Проверка на връзката“ за актуална "
+"диагностика."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__create_uid
@@ -3350,7 +3354,7 @@ msgstr "HTTP/ISAPI порт, на който работи устройствот
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__mac_address
 msgid "Hardware (MAC) address — stable identity across DHCP changes."
-msgstr "Хардуерен (MAC) адрес — стабилна идентичност при смяна на DHCP."
+msgstr "Хардуерен (MAC) адрес - стабилна идентичност при смяна на DHCP."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__model
@@ -3390,7 +3394,7 @@ msgid ""
 "How many times this command has been retried. Capped at 5 — beyond that the "
 "command stays in Error state and must be re-sent manually."
 msgstr ""
-"Брой повторни опити за тази команда. Ограничен до 5 — след това командата "
+"Брой повторни опити за тази команда. Ограничен до 5 - след това командата "
 "остава в състояние Грешка и трябва да бъде изпратена отново ръчно."
 
 #. module: polimex_ip_cam
@@ -3613,6 +3617,7 @@ msgstr "Либия"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_event_system__license_plate
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_event_user__license_plate
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_vending_event__license_plate
 msgid "License Plate"
 msgstr "Регистрационен номер"
 
@@ -3645,7 +3650,7 @@ msgid ""
 "(see Response Data). Use the Restart Sending server action to requeue an "
 "Error command."
 msgstr ""
-"Жизнен цикъл на командата — Нова: на опашка, още неизпратена. В процес: "
+"Жизнен цикъл на командата - Нова: на опашка, още неизпратена. В процес: "
 "обработчикът я доставя в момента. Готова: камерата потвърди. Грешка: "
 "доставката е неуспешна (вижте „Данни от отговора“). Използвайте сървърното "
 "действие „Рестартирай изпращането“, за да поставите отново на опашка команда "
@@ -3709,12 +3714,6 @@ msgstr "MST7MDT"
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__mac_address
 msgid "Mac Address"
 msgstr "MAC адрес"
-
-#. module: polimex_ip_cam
-#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__activity_main_partner_id
-#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__activity_main_partner_id
-msgid "Main Contact"
-msgstr "Основен контакт"
 
 #. module: polimex_ip_cam
 #: model:res.groups,name:polimex_ip_cam.group_cctv_manager
@@ -3867,7 +3866,7 @@ msgstr ""
 "работи в\n"
 "                    същата LAN мрежа като камерите (търсенето не преминава "
 "през рутери), след което\n"
-"                    опитайте отново — или добавете камера ръчно."
+"                    опитайте отново - или добавете камера ръчно."
 
 #. module: polimex_ip_cam
 #: model_terms:ir.actions.act_window,help:polimex_ip_cam.action_cctv_camera_blacklist
@@ -3889,6 +3888,7 @@ msgstr "Неизвестен"
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "Not checked yet. Use “Check Connection” to test."
 msgstr ""
+"Все още не е проверено. Използвайте „Проверка на връзката“, за да тествате."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__connection_status__unreachable
@@ -3943,7 +3943,7 @@ msgstr "Свързан"
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "Online — the camera is reachable and responding."
-msgstr "Онлайн — камерата е достъпна и отговаря."
+msgstr "Онлайн - камерата е достъпна и отговаря."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__command_type__other
@@ -4486,6 +4486,7 @@ msgstr "Сингапур"
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__snapshot
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_event_system__snapshot
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_event_user__snapshot
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_vending_event__snapshot
 msgid "Snapshot"
 msgstr "Снимка"
 
@@ -4557,18 +4558,21 @@ msgstr "Камерата отговори, но в неочакван форма
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_system__anpr_confidence
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_user__anpr_confidence
+#: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_vending_event__anpr_confidence
 msgid "The confidence level of the event"
 msgstr "Ниво на доверие на събитието"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_system__license_plate
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_user__license_plate
+#: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_vending_event__license_plate
 msgid "The license plate recognized by the camera"
 msgstr "Разпознатият от камерата регистрационен номер"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_system__snapshot
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_user__snapshot
+#: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_vending_event__snapshot
 msgid "The snapshot of the camera"
 msgstr "Снимката от камерата"
 

@@ -6,7 +6,7 @@ doc_type: user_guide
 audience:
 - user
 summary: Import access control data from my.polimex.online and schoolsafety.online
-last_updated: '2026-05-14'
+last_updated: '2026-08-14'
 source_digest: sha256:61c60e35dab22043928dd3d728caa520f35f9ff7d7ce1688e1497337f988d006
 companion_doc: llms-full.md
 ---
@@ -39,3 +39,26 @@ https://schoolsafety.online
 * Import All Access Control Groups.
 * Import all Access Users Rights.
 * Import all User Events.
+
+
+## Running the import again
+
+The import can be run as often as you like. Everything it creates is marked
+with the cloud record it came from, so a later run finds that work instead of
+doing it a second time:
+
+- Somebody already imported is not offered in the list again.
+- A customer, a department, a person or a card that is already here is used as
+  it is - no second copy is made.
+- An access group somebody already has is not given to them again.
+
+The two clouds are kept apart, so the same record number on
+my.polimex.online and on schoolsafety.online is never taken for the same
+person. Nothing is deleted, and nothing already corrected here is overwritten.
+
+**One thing to check first.** Databases filled by a version of this import from
+before August 2026 were marked in a different way, which the current version
+does not read. On such a database the people imported back then are offered
+again and would come in as new records. If you are not sure which case you are
+in, import one person first and see whether a second copy appears before doing
+the rest.

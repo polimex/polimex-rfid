@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!--
+        Extension mode on purpose: the banner has to survive whatever js_class
+        the view already carries, so it cannot live in a view class of its own.
+        Core does the same to a stock template in
+        addons/transifex/static/src/views/fields/translation_dialog.xml:4.
+
+        The banner sits inside the controller root - the element that carries
+        o_list_view / o_kanban_view - and above the Layout, so it reads as a
+        header over the records rather than a floating block.
+    -->
+
+    <t t-inherit="web.ListView" t-inherit-mode="extension">
+        <xpath expr="//Layout" position="before">
+            <OnboardingBanner t-if="props.context.onboarding_route_name"
+                              routeName="props.context.onboarding_route_name"/>
+        </xpath>
+    </t>
+
+    <t t-inherit="web.KanbanView" t-inherit-mode="extension">
+        <xpath expr="//Layout" position="before">
+            <OnboardingBanner t-if="props.context.onboarding_route_name"
+                              routeName="props.context.onboarding_route_name"/>
+        </xpath>
+    </t>
+
+</templates>

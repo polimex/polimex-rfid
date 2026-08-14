@@ -3,11 +3,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-05 16:23+0000\n"
-"PO-Revision-Date: 2026-06-03 13:31\n"
+"POT-Creation-Date: 2026-08-14 13:55+0000\n"
+"PO-Revision-Date: 2026-08-14 17:21\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: bg\n"
+"Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -17,33 +17,45 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_legal_rate_view_form
 msgid ""
 "<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
-"                            Tip: when the law changes, add a NEW row with the new\n"
-"                            Valid From date — do not edit the old one. Past worked\n"
-"                            days keep their historical coefficient, and the new\n"
-"                            value applies only from its effective date onward.\n"
-"                            Leave Company empty for a national rate that applies\n"
+"                            Tip: when the law changes, add a NEW row with "
+"the new\n"
+"                            Valid From date — do not edit the old one. Past "
+"worked\n"
+"                            days keep their historical coefficient, and the "
+"new\n"
+"                            value applies only from its effective date "
+"onward.\n"
+"                            Leave Company empty for a national rate that "
+"applies\n"
 "                            everywhere."
 msgstr ""
 "<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
-"                            Съвет: когато законът се промени, добавете НОВ ред с новата\n"
-"                            дата Валидно от — не редактирайте стария. Минали отработени\n"
-"                            дни запазват историческия си коефициент, а новата\n"
-"                            стойност се прилага само от датата на влизане в сила нататък.\n"
-"                            Оставете Фирма празно за национална ставка, приложима\n"
-"                            навсякъде."
+"                            Sfat: când legea se modifică, adăugați un rând "
+"NOU cu\n"
+"                            noua dată de intrare în vigoare - nu editați "
+"rândul\n"
+"                            vechi. Zilele lucrate anterior păstrează "
+"coeficientul\n"
+"                            istoric, iar noua valoare se aplică doar "
+"începând cu\n"
+"                            data sa de intrare în vigoare. Lăsați câmpul "
+"Companie\n"
+"                            gol pentru o rată națională care se aplică peste "
+"tot."
 
 #. module: hr_attendance_late
 #: model:ir.model.constraint,message:hr_attendance_late.constraint_hr_legal_rate_unique_global_rate
 msgid "A global legal rate already exists for this code and effective date."
 msgstr ""
-"Вече съществува глобална законова ставка за този код и дата на влизане в "
-"сила."
+"Există deja o rată legală globală pentru acest cod și această dată de "
+"intrare în vigoare."
 
 #. module: hr_attendance_late
 #: model:ir.model.constraint,message:hr_attendance_late.constraint_hr_legal_rate_unique_company_rate
 msgid "A legal rate already exists for this code, effective date and company."
 msgstr ""
-"Вече съществува законова ставка за този код, дата на влизане в сила и фирма."
+"Există deja o rată legală pentru acest cod, această dată de intrare în "
+"vigoare și această companie."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__actual_work_time_day
@@ -65,19 +77,24 @@ msgstr "Timp efectiv lucrat"
 msgid ""
 "Additional hours worked beyond the scheduled work time.\n"
 "        \n"
-"        • Calculation: Actual work time minus theoretical work time (when positive)\n"
+"        • Calculation: Actual work time minus theoretical work time (when "
+"positive)\n"
 "        • Format: Hours in decimal format (e.g., 2.0 = 2 hours overtime)\n"
 "        • Compensation: Usually paid at premium rate (1.5x or 2x base rate)\n"
 "        \n"
-"        Note: Overtime calculation may vary based on daily vs. weekly limits and labor agreements."
+"        Note: Overtime calculation may vary based on daily vs. weekly limits "
+"and labor agreements."
 msgstr ""
 "Ore lucrate peste programul de lucru planificat.\n"
 "        \n"
-"        • Calcul: Timp efectiv lucrat minus timp teoretic de lucru (când rezultatul este pozitiv)\n"
+"        • Calcul: Timp efectiv lucrat minus timp teoretic de lucru (când "
+"rezultatul este pozitiv)\n"
 "        • Format: Ore în format zecimal (ex.: 2,0 = 2 ore suplimentare)\n"
-"        • Compensare: De obicei plătite la tarif majorat (1,5x sau 2x tariful de bază)\n"
+"        • Compensare: De obicei plătite la tarif majorat (1,5x sau 2x "
+"tariful de bază)\n"
 "        \n"
-"        Notă: Calculul orelor suplimentare poate varia în funcție de limitele zilnice sau săptămânale și de acordurile colective de muncă."
+"        Notă: Calculul orelor suplimentare poate varia în funcție de "
+"limitele zilnice sau săptămânale și de acordurile colective de muncă."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__extra_time
@@ -88,15 +105,21 @@ msgid ""
 "        • Examples: Weekend work, holiday work, or special project hours\n"
 "        • Compensation: May have different pay rate than regular overtime\n"
 "        \n"
-"        Note: Classification depends on labor agreements and local regulations."
+"        Note: Classification depends on labor agreements and local "
+"regulations."
 msgstr ""
-"Timp de lucru suplimentar care nu se califică drept ore suplimentare standard.\n"
+"Timp de lucru suplimentar care nu se califică drept ore suplimentare "
+"standard.\n"
 "        \n"
-"        • Diferență: Timpul suplimentar față de orele suplimentare depinde de politica companiei\n"
-"        • Exemple: Lucru în weekend, de sărbători legale sau ore dedicate proiectelor speciale\n"
-"        • Compensare: Poate fi remunerată la o rată diferită față de orele suplimentare obișnuite\n"
+"        • Diferență: Timpul suplimentar față de orele suplimentare depinde "
+"de politica companiei\n"
+"        • Exemple: Lucru în weekend, de sărbători legale sau ore dedicate "
+"proiectelor speciale\n"
+"        • Compensare: Poate fi remunerată la o rată diferită față de orele "
+"suplimentare obișnuite\n"
 "        \n"
-"        Notă: Clasificarea depinde de acordurile colective de muncă și de reglementările locale."
+"        Notă: Clasificarea depinde de acordurile colective de muncă și de "
+"reglementările locale."
 
 #. module: hr_attendance_late
 #: model:ir.model,name:hr_attendance_late.model_hr_attendance
@@ -137,32 +160,39 @@ msgstr "Anulează"
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_legal_rate__code
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_legal_rate_view_search
 msgid "Code"
-msgstr "Код"
+msgstr "Cod"
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_legal_rate__company_id
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_legal_rate_view_search
 msgid "Company"
-msgstr "Фирма"
+msgstr "Companie"
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra_wizard__overwrite_existing
 msgid ""
 "Control how existing attendance calculations are handled.\n"
 "        \n"
-"        • When enabled: Recalculates and overwrites all existing attendance extra records\n"
-"        • When disabled: Only creates calculations for dates that don't have records yet\n"
+"        • When enabled: Recalculates and overwrites all existing attendance "
+"extra records\n"
+"        • When disabled: Only creates calculations for dates that don't have "
+"records yet\n"
 "        • Effect: Determines whether to update or skip existing data\n"
 "        \n"
-"        Note: Enable this to fix calculation errors or update after policy changes."
+"        Note: Enable this to fix calculation errors or update after policy "
+"changes."
 msgstr ""
 "Controlează modul în care sunt gestionate calculele de prezență existente.\n"
 "        \n"
-"        • Activat: Recalculează și suprascrie toate înregistrările de prezență suplimentară existente\n"
-"        • Dezactivat: Creează calcule doar pentru datele care nu au încă înregistrări\n"
-"        • Efect: Determină dacă datele existente vor fi actualizate sau omise\n"
+"        • Activat: Recalculează și suprascrie toate înregistrările de "
+"prezență suplimentară existente\n"
+"        • Dezactivat: Creează calcule doar pentru datele care nu au încă "
+"înregistrări\n"
+"        • Efect: Determină dacă datele existente vor fi actualizate sau "
+"omise\n"
 "        \n"
-"        Notă: Activați această opțiune pentru a corecta erori de calcul sau pentru a actualiza datele după modificări de politică."
+"        Notă: Activați această opțiune pentru a corecta erori de calcul sau "
+"pentru a actualiza datele după modificări de politică."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__create_uid
@@ -181,7 +211,7 @@ msgstr "Creat la"
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_legal_rate__currency_id
 msgid "Currency"
-msgstr "Валута"
+msgstr "Monedă"
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_resource_calendar__daily_ranges_are_shifts
@@ -195,10 +225,10 @@ msgid ""
 "deductions. Records are generated by the Recompute Extra Attendance wizard "
 "or the nightly cron once the attendance logs for a day are closed."
 msgstr ""
-"Дневно обобщение по служител с минути закъснение, извънреден труд и "
-"изчислени удръжки. Записите се генерират от съветника за преизчисляване на "
-"допълнително присъствие или нощния планировчик, след като журналите за "
-"присъствие за деня са затворени."
+"Centralizare zilnică per angajat cu minute de întârziere, ore suplimentare "
+"și deduceri calculate. Înregistrările sunt generate de asistentul "
+"Recalculează prezența suplimentară sau de cron-ul nocturn, după ce jurnalele "
+"de prezență pentru o zi sunt închise."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_employee__attendance_extra_ids
@@ -207,9 +237,9 @@ msgid ""
 "Attendance wizard or the nightly cron — late minutes, overtime, extra time "
 "per working day."
 msgstr ""
-"Дневни обобщени записи, изчислени за този служител от съветника за "
-"преизчисляване на допълнително присъствие или нощния планировчик — минути "
-"закъснение, извънреден труд, допълнително работно време за работен ден."
+"Înregistrări de centralizare zilnică calculate pentru acest angajat de "
+"asistentul Recalculează prezența suplimentară sau de cron-ul nocturn - "
+"minute de întârziere, ore suplimentare, timp suplimentar pe zi lucrătoare."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__for_date
@@ -224,33 +254,35 @@ msgid ""
 "uses the value with the latest Valid From on or before that day, so past "
 "periods are never recalculated with a newer coefficient."
 msgstr ""
-"Дата, от която тази стойност влиза в законова сила. Изчисляването на "
-"себестойността за отработен ден използва стойността с най-новата дата "
-"Валидно от на или преди съответния ден, така че минали периоди никога не се "
-"преизчисляват с по-нов коефициент."
+"Data la care această valoare intră în vigoare din punct de vedere legal. "
+"Calculul costului pentru o zi lucrată utilizează valoarea cu cea mai recentă "
+"dată de intrare în vigoare aflată la sau înainte de acea zi, astfel încât "
+"perioadele trecute nu sunt niciodată recalculate cu un coeficient mai nou."
 
 #. module: hr_attendance_late
 #: model:ir.model,name:hr_attendance_late.model_hr_legal_rate
 msgid "Dated Legal Rate / Coefficient"
-msgstr "Датирана законова ставка / коефициент"
+msgstr "Rată legală datată / Coeficient"
 
 #. module: hr_attendance_late
 #: model_terms:ir.actions.act_window,help:hr_attendance_late.hr_attendance_self_leave_action
 msgid ""
 "Days where an employee left before their scheduled end\n"
-"                    (beyond the department tolerance). Use the date filters and\n"
-"                    group by employee or department to review unaccounted early\n"
+"                    (beyond the department tolerance). Use the date filters "
+"and\n"
+"                    group by employee or department to review unaccounted "
+"early\n"
 "                    departures for a period."
 msgstr ""
-"Дни, в които служител е напуснал преди планирания край\n"
-"                    (извън толеранса на отдела). Използвайте филтрите за дата и\n"
-"                    групирайте по служител или отдел, за да прегледате неотчетените\n"
-"                    ранни напускания за даден период."
+"Zile în care un angajat a plecat înainte de ora de sfârșit programată (peste "
+"toleranța departamentului). Utilizați filtrele de dată și gruparea după "
+"angajat sau departament pentru a analiza plecările timpurii nejustificate "
+"pentru o perioadă."
 
 #. module: hr_attendance_late
 #: model_terms:ir.actions.act_window,help:hr_attendance_late.hr_legal_rate_action
 msgid "Define your first dated legal rate"
-msgstr "Дефинирайте първата си датирана законова ставка"
+msgstr "Definiți prima rată legală datată"
 
 #. module: hr_attendance_late
 #: model:ir.model,name:hr_attendance_late.model_hr_department
@@ -288,14 +320,17 @@ msgstr ""
 #: model_terms:ir.actions.act_window,help:hr_attendance_late.hr_legal_rate_action
 msgid ""
 "Each rate carries a <b>Valid From</b> date. When the law\n"
-"                    changes, add a new row with the new effective date; worked\n"
-"                    days before it keep the old coefficient. This is filled by\n"
-"                    the Bulgarian localisation module — edit only to override."
+"                    changes, add a new row with the new effective date; "
+"worked\n"
+"                    days before it keep the old coefficient. This is filled "
+"by\n"
+"                    the Bulgarian localisation module — edit only to "
+"override."
 msgstr ""
-"Всяка ставка носи дата <b>Валидно от</b>. Когато законът\n"
-"                    се промени, добавете нов ред с новата дата на влизане в сила;\n"
-"                    отработените дни преди нея запазват стария коефициент. Попълва се\n"
-"                    от модула за българска локализация — редактирайте само при необходимост от замяна."
+"Fiecare rată are o dată <b>Valabil de la</b>. Când legea se modifică, "
+"adăugați un rând nou cu noua dată de intrare în vigoare; zilele lucrate "
+"înainte de aceasta păstrează coeficientul vechi. Acest câmp este completat "
+"de modulul de localizare bulgară - editați doar pentru a suprascrie."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__early_come_time
@@ -361,7 +396,8 @@ msgstr ""
 "        \n"
 "        • Interval: Data finală a perioadei de calcul\n"
 "        • Implicit: Astăzi sau o dată specifică din context\n"
-"        • Efect: Toate înregistrările de prezență până la această dată vor fi procesate\n"
+"        • Efect: Toate înregistrările de prezență până la această dată vor "
+"fi procesate\n"
 "        \n"
 "        Notă: Datele viitoare vor fi ignorate chiar dacă sunt selectate."
 
@@ -372,17 +408,22 @@ msgid ""
 "        \n"
 "        • Source: Based on employee's resource calendar for this date\n"
 "        • Format: Hours in decimal format (e.g., 8.0 = 8 hours)\n"
-"        • Purpose: Baseline for calculating overtime, late arrivals, and early departures\n"
+"        • Purpose: Baseline for calculating overtime, late arrivals, and "
+"early departures\n"
 "        \n"
-"        Note: This is the scheduled work time, not necessarily what was actually worked."
+"        Note: This is the scheduled work time, not necessarily what was "
+"actually worked."
 msgstr ""
 "Orele de lucru așteptate conform programului de lucru al angajatului.\n"
 "        \n"
-"        • Sursă: Bazat pe calendarul de resurse al angajatului pentru această dată\n"
+"        • Sursă: Bazat pe calendarul de resurse al angajatului pentru "
+"această dată\n"
 "        • Format: Ore în format zecimal (ex.: 8,0 = 8 ore)\n"
-"        • Scop: Referință pentru calculul orelor suplimentare, întârzierilor și plecărilor anticipate\n"
+"        • Scop: Referință pentru calculul orelor suplimentare, întârzierilor "
+"și plecărilor anticipate\n"
 "        \n"
-"        Notă: Acesta reprezintă programul de lucru planificat, nu neapărat timpul efectiv lucrat."
+"        Notă: Acesta reprezintă programul de lucru planificat, nu neapărat "
+"timpul efectiv lucrat."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__extra_night
@@ -426,76 +467,101 @@ msgstr "Calcule timp suplimentar de lucru"
 msgid ""
 "Extra work time performed during night shift hours.\n"
 "        \n"
-"        • Period: Night hours (typically 22:00-06:00) for special assignments\n"
+"        • Period: Night hours (typically 22:00-06:00) for special "
+"assignments\n"
 "        • Premium: May include both extra time and night shift bonuses\n"
 "        • Format: Hours in decimal format\n"
 "        \n"
-"        Note: Used for weekend night work, holiday night shifts, or emergency calls."
+"        Note: Used for weekend night work, holiday night shifts, or "
+"emergency calls."
 msgstr ""
 "Timp suplimentar de lucru efectuat în orele turei de noapte.\n"
 "        \n"
-"        • Perioadă: Ore de noapte (de obicei 22:00-06:00) pentru misiuni speciale\n"
-"        • Majorare: Poate include atât timp suplimentar, cât și sporuri pentru tura de noapte\n"
+"        • Perioadă: Ore de noapte (de obicei 22:00-06:00) pentru misiuni "
+"speciale\n"
+"        • Majorare: Poate include atât timp suplimentar, cât și sporuri "
+"pentru tura de noapte\n"
 "        • Format: Ore în format zecimal\n"
 "        \n"
-"        Notă: Utilizat pentru lucrul de noapte în weekend, ture de noapte în sărbători legale sau intervenții de urgență."
+"        Notă: Utilizat pentru lucrul de noapte în weekend, ture de noapte în "
+"sărbători legale sau intervenții de urgență."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__first_in
+msgid "First In"
+msgstr "Prima intrare"
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__early_come_time
 msgid ""
 "Hours the employee arrived before scheduled start time.\n"
 "        \n"
-"        • Calculation: Time between actual first check-in and scheduled start\n"
+"        • Calculation: Time between actual first check-in and scheduled "
+"start\n"
 "        • Format: Hours in decimal format (e.g., 0.25 = 15 minutes early)\n"
 "        • Recognition: Shows employee punctuality and dedication\n"
 "        \n"
-"        Note: Early arrivals may qualify for recognition but typically don't count as overtime."
+"        Note: Early arrivals may qualify for recognition but typically don't "
+"count as overtime."
 msgstr ""
 "Orele cu care angajatul a sosit înaintea orei de începere planificate.\n"
 "        \n"
-"        • Calcul: Timpul dintre primul check-in efectiv și ora de începere planificată\n"
+"        • Calcul: Timpul dintre primul check-in efectiv și ora de începere "
+"planificată\n"
 "        • Format: Ore în format zecimal (ex.: 0,25 = 15 minute mai devreme)\n"
 "        • Recunoaștere: Reflectă punctualitatea și dedicarea angajatului\n"
 "        \n"
-"        Notă: Sosirile anticipate pot fi recunoscute, dar de obicei nu se contorizează ca ore suplimentare."
+"        Notă: Sosirile anticipate pot fi recunoscute, dar de obicei nu se "
+"contorizează ca ore suplimentare."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__late_time
 msgid ""
 "Hours the employee arrived late to work.\n"
 "        \n"
-"        • Calculation: Time between scheduled start and actual first check-in\n"
+"        • Calculation: Time between scheduled start and actual first check-"
+"in\n"
 "        • Format: Hours in decimal format (e.g., 0.25 = 15 minutes late)\n"
 "        • Threshold: Based on department's late arrival tolerance settings\n"
 "        \n"
-"        Note: May affect attendance bonuses or result in deductions depending on company policy."
+"        Note: May affect attendance bonuses or result in deductions "
+"depending on company policy."
 msgstr ""
 "Orele cu care angajatul a întârziat la locul de muncă.\n"
 "        \n"
-"        • Calcul: Timpul dintre ora de începere planificată și primul check-in efectiv\n"
+"        • Calcul: Timpul dintre ora de începere planificată și primul check-"
+"in efectiv\n"
 "        • Format: Ore în format zecimal (ex.: 0,25 = 15 minute întârziere)\n"
-"        • Prag: Bazat pe setările de toleranță la întârziere ale departamentului\n"
+"        • Prag: Bazat pe setările de toleranță la întârziere ale "
+"departamentului\n"
 "        \n"
-"        Notă: Poate afecta bonusurile de prezență sau poate genera rețineri salariale, în funcție de politica companiei."
+"        Notă: Poate afecta bonusurile de prezență sau poate genera rețineri "
+"salariale, în funcție de politica companiei."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__early_leave_time
 msgid ""
 "Hours the employee left work early.\n"
 "        \n"
-"        • Calculation: Time between actual last check-out and scheduled end time\n"
+"        • Calculation: Time between actual last check-out and scheduled end "
+"time\n"
 "        • Format: Hours in decimal format (e.g., 0.5 = 30 minutes early)\n"
 "        • Impact: May result in reduced pay or attendance penalties\n"
 "        \n"
-"        Note: Early departures without approval may affect performance evaluations."
+"        Note: Early departures without approval may affect performance "
+"evaluations."
 msgstr ""
 "Orele cu care angajatul a plecat mai devreme de la locul de muncă.\n"
 "        \n"
-"        • Calcul: Timpul dintre ultimul check-out efectiv și ora de încheiere planificată\n"
-"        • Format: Ore în format zecimal (ex.: 0,5 = 30 de minute mai devreme)\n"
-"        • Impact: Poate duce la reducerea salariului sau la penalizări de prezență\n"
+"        • Calcul: Timpul dintre ultimul check-out efectiv și ora de "
+"încheiere planificată\n"
+"        • Format: Ore în format zecimal (ex.: 0,5 = 30 de minute mai "
+"devreme)\n"
+"        • Impact: Poate duce la reducerea salariului sau la penalizări de "
+"prezență\n"
 "        \n"
-"        Notă: Plecările anticipate neaprobate pot afecta evaluările de performanță."
+"        Notă: Plecările anticipate neaprobate pot afecta evaluările de "
+"performanță."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__actual_work_time_night
@@ -506,7 +572,8 @@ msgid ""
 "        • Period: Typically 22:00-06:00 (configurable per company)\n"
 "        • Premium: Usually paid at higher rate than day hours\n"
 "        \n"
-"        Note: Night hours often qualify for additional compensation per labor agreements."
+"        Note: Night hours often qualify for additional compensation per "
+"labor agreements."
 msgstr ""
 "Ore lucrate în perioada turei de noapte.\n"
 "        \n"
@@ -514,7 +581,8 @@ msgstr ""
 "        • Perioadă: De obicei 22:00-06:00 (configurabil per companie)\n"
 "        • Majorare: De obicei plătite la o rată mai mare decât orele de zi\n"
 "        \n"
-"        Notă: Orele de noapte beneficiază adesea de compensații suplimentare conform acordurilor colective de muncă."
+"        Notă: Orele de noapte beneficiază adesea de compensații suplimentare "
+"conform acordurilor colective de muncă."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__actual_work_time_day
@@ -523,26 +591,30 @@ msgid ""
 "        \n"
 "        • Format: Hours in decimal format (e.g., 7.5 = 7 hours 30 minutes)\n"
 "        • Period: Typically 06:00-22:00 (configurable per company)\n"
-"        • Purpose: Separate day hours from night hours for different pay rates\n"
+"        • Purpose: Separate day hours from night hours for different pay "
+"rates\n"
 "        \n"
-"        Note: Used for calculating regular pay rates vs. night shift premiums."
+"        Note: Used for calculating regular pay rates vs. night shift "
+"premiums."
 msgstr ""
 "Ore lucrate în perioada standard de zi.\n"
 "        \n"
 "        • Format: Ore în format zecimal (ex.: 7,5 = 7 ore și 30 de minute)\n"
 "        • Perioadă: De obicei 06:00-22:00 (configurabil per companie)\n"
-"        • Scop: Separarea orelor de zi de orele de noapte pentru tarife de plată diferite\n"
+"        • Scop: Separarea orelor de zi de orele de noapte pentru tarife de "
+"plată diferite\n"
 "        \n"
-"        Notă: Utilizat pentru calculul tarifelor obișnuite față de sporurile pentru tura de noapte."
+"        Notă: Utilizat pentru calculul tarifelor obișnuite față de sporurile "
+"pentru tura de noapte."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_legal_rate__name
 msgid ""
-"Human label for this coefficient, shown in the settings list (e.g. 'Overtime"
-" — rest day'). Optional; the code is the key."
+"Human label for this coefficient, shown in the settings list (e.g. 'Overtime "
+"— rest day'). Optional; the code is the key."
 msgstr ""
-"Потребителско наименование на коефициента, показвано в списъка с настройки "
-"(напр. 'Извънреден труд — почивен ден'). По избор; кодът е ключовото поле."
+"Etichetă pentru acest coeficient, afișată în lista de setări (de ex. „Ore "
+"suplimentare - zi de repaus”). Opțional; codul este cheia."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__id
@@ -565,7 +637,8 @@ msgid ""
 "        • Aggregation: Counts distinct shifts for reporting\n"
 "        • Usage: Useful for companies with multiple daily shifts\n"
 "        \n"
-"        Note: Helps track shift patterns and identify shift-specific attendance issues."
+"        Note: Helps track shift patterns and identify shift-specific "
+"attendance issues."
 msgstr ""
 "Identificatorul turei de lucru pentru această dată.\n"
 "        \n"
@@ -573,7 +646,8 @@ msgstr ""
 "        • Agregare: Numără turele distincte în scopul raportării\n"
 "        • Utilizare: Util pentru companiile cu mai multe ture zilnice\n"
 "        \n"
-"        Notă: Ajută la urmărirea tiparelor de ture și la identificarea problemelor de prezență specifice fiecărei ture."
+"        Notă: Ajută la urmărirea tiparelor de ture și la identificarea "
+"problemelor de prezență specifice fiecărei ture."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_department__ignore_early_come_time
@@ -606,14 +680,15 @@ msgid ""
 "Include a 'Count of employees who arrived early today' KPI in the digest "
 "email."
 msgstr ""
-"Включва KPI 'Брой служители, пристигнали по-рано днес' в обобщението по "
-"имейл."
+"Include un KPI „Numărul de angajați care au sosit devreme astăzi” în e-"
+"mailul digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_leave
 msgid "Include a 'Count of employees who left early' KPI in the digest email."
 msgstr ""
-"Включва KPI 'Брой служители, напуснали по-рано' в обобщението по имейл."
+"Include un KPI „Numărul de angajați care au plecat devreme” în e-mailul "
+"digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_overtime
@@ -621,17 +696,17 @@ msgid ""
 "Include a 'Count of employees who stayed past contract hours' KPI in the "
 "digest email."
 msgstr ""
-"Включва KPI 'Брой служители, останали след договорното работно време' в "
-"обобщението по имейл."
+"Include un KPI „Numărul de angajați care au rămas peste orele de contract” "
+"în e-mailul digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_no_show
 msgid ""
-"Include a 'Count of employees who were scheduled but did not show up' KPI in"
-" the digest email."
+"Include a 'Count of employees who were scheduled but did not show up' KPI in "
+"the digest email."
 msgstr ""
-"Включва KPI 'Брой служители по график, които не са се явили' в обобщението "
-"по имейл."
+"Include un KPI „Numărul de angajați programați care nu s-au prezentat” în e-"
+"mailul digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_extra
@@ -639,13 +714,13 @@ msgid ""
 "Include a 'Count of employees with extra unrecorded time' KPI in the digest "
 "email."
 msgstr ""
-"Включва KPI 'Брой служители с допълнително незаписано работно време' в "
-"обобщението по имейл."
+"Include un KPI „Numărul de angajați cu timp suplimentar neînregistrat” în e-"
+"mailul digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_late
 msgid "Include a 'Count of late arrivals' KPI in the digest email."
-msgstr "Включва KPI 'Брой закъснения' в обобщението по имейл."
+msgstr "Include un KPI „Numărul de sosiri întârziate” în e-mailul digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_early_come_value
@@ -670,12 +745,17 @@ msgstr "Valoare KPI HR RFID Prezență Plecare Anticipată"
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_no_show_value
 msgid "Kpi Hr Rfid Att No Show Value"
-msgstr "Стойност на KPI за неявяване (RFID присъствие)"
+msgstr "Valoare KPI Neprezentare Prezență HR RFID"
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_overtime_value
 msgid "Kpi Hr Rfid Att Overtime Value"
 msgstr "Valoare KPI HR RFID Prezență Ore Suplimentare"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__last_out
+msgid "Last Out"
+msgstr "Ultima ieșire"
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__write_uid
@@ -713,14 +793,14 @@ msgid ""
 "Leave empty for a national/global rate that applies to every company. Set a "
 "company only to override the statutory value for that company specifically."
 msgstr ""
-"Оставете празно за национална/глобална ставка, приложима за всяка фирма. "
-"Задайте фирма само за да замените законовата стойност специфично за тази "
-"фирма."
+"Lăsați gol pentru o rată națională/globală care se aplică tuturor "
+"companiilor. Setați o companie doar pentru a suprascrie valoarea legală "
+"pentru acea companie în mod specific."
 
 #. module: hr_attendance_late
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_legal_rate_view_form
 msgid "Legal Rate"
-msgstr "Законова ставка"
+msgstr "Rată legală"
 
 #. module: hr_attendance_late
 #: model:ir.actions.act_window,name:hr_attendance_late.hr_legal_rate_action
@@ -728,27 +808,28 @@ msgstr "Законова ставка"
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_legal_rate_view_list
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_legal_rate_view_search
 msgid "Legal Rates"
-msgstr "Законови ставки"
+msgstr "Rate legale"
 
 #. module: hr_attendance_late
 #: model_terms:ir.actions.act_window,help:hr_attendance_late.hr_legal_rate_action
 msgid ""
 "Legal rates are the statutory coefficients used when costing\n"
-"                    attendance — overtime multipliers (rest day, public holiday)\n"
+"                    attendance — overtime multipliers (rest day, public "
+"holiday)\n"
 "                    and the night-shift supplement per hour."
 msgstr ""
-"Законовите ставки са нормативните коефициенти, използвани при изчисляване\n"
-"                    на себестойността на присъствието — множители за извънреден труд (почивен ден, официален празник)\n"
-"                    и надбавката за нощна смяна на час."
+"Ratele legale sunt coeficienții statutari utilizați la calculul costului "
+"prezenței - multiplicatorii orelor suplimentare (zi de repaus, sărbătoare "
+"legală) și sporul pentru muncă de noapte pe oră."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_late_value
 msgid ""
-"Live count of employees who checked in after their schedule start during the"
-" digest window."
+"Live count of employees who checked in after their schedule start during the "
+"digest window."
 msgstr ""
-"Текущ брой служители, регистрирали присъствие след началото на своя график в"
-" периода на обобщение."
+"Numărul curent de angajați care au înregistrat sosirea după ora de început "
+"programată în intervalul digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_early_come_value
@@ -756,32 +837,33 @@ msgid ""
 "Live count of employees who checked in before their schedule start during "
 "the digest window."
 msgstr ""
-"Текущ брой служители, регистрирали присъствие преди началото на своя график "
-"в периода на обобщение."
+"Numărul curent de angajați care au înregistrat sosirea înainte de ora de "
+"început programată în intervalul digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_leave_value
 msgid ""
-"Live count of employees who checked out before their schedule end during the"
-" digest window."
+"Live count of employees who checked out before their schedule end during the "
+"digest window."
 msgstr ""
-"Текущ брой служители, регистрирали напускане преди края на своя график в "
-"периода на обобщение."
+"Numărul curent de angajați care au înregistrat plecarea înainte de ora de "
+"sfârșit programată în intervalul digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_extra_value
 msgid ""
 "Live count of employees with extra unrecorded time during the digest window."
 msgstr ""
-"Текущ брой служители с допълнително незаписано работно време в периода на "
-"обобщение."
+"Numărul curent de angajați cu timp suplimentar neînregistrat în intervalul "
+"digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_overtime_value
 msgid ""
 "Live count of employees with recorded overtime during the digest window."
 msgstr ""
-"Текущ брой служители с регистриран извънреден труд в периода на обобщение."
+"Numărul curent de angajați cu ore suplimentare înregistrate în intervalul "
+"digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_no_show_value
@@ -789,13 +871,13 @@ msgid ""
 "Live count of scheduled employees with no attendance (no-show) during the "
 "digest window."
 msgstr ""
-"Текущ брой служители по график без регистрирано присъствие (неявяване) в "
-"периода на обобщение."
+"Numărul curent de angajați programați fără prezență (neprezentare) în "
+"intervalul digest."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_legal_rate__name
 msgid "Name"
-msgstr "Наименование"
+msgstr "Nume"
 
 #. module: hr_attendance_late
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
@@ -820,17 +902,17 @@ msgstr "Ore suplimentare noapte"
 #. module: hr_attendance_late
 #: model_terms:ir.actions.act_window,help:hr_attendance_late.hr_attendance_extra_action
 msgid "No extra-attendance calculations yet"
-msgstr "Все още няма изчисления за допълнително присъствие"
+msgstr "Încă nu există calcule de prezență suplimentară"
 
 #. module: hr_attendance_late
 #: model_terms:ir.actions.act_window,help:hr_attendance_late.hr_attendance_self_leave_action
 msgid "No self-leaves in this period"
-msgstr "Няма самоотлъчки в този период"
+msgstr "Nu există auto-învoiri în această perioadă"
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_no_show
 msgid "No-show"
-msgstr "Неявяване"
+msgstr "Neprezentare"
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__attendance_count
@@ -841,26 +923,29 @@ msgid ""
 "        • Format: Text showing count (e.g., \"4 records\")\n"
 "        • Purpose: Quick overview of attendance activity\n"
 "        \n"
-"        Note: Multiple records indicate breaks, lunch periods, or multiple shifts."
+"        Note: Multiple records indicate breaks, lunch periods, or multiple "
+"shifts."
 msgstr ""
 "Numărul înregistrărilor de check-in/check-out pentru această dată.\n"
 "        \n"
 "        • Calcul: Calculat automat din înregistrările hr.attendance\n"
-"        • Format: Text afișând numărul de înregistrări (ex.: \"4 înregistrări\")\n"
+"        • Format: Text afișând numărul de înregistrări (ex.: \"4 "
+"înregistrări\")\n"
 "        • Scop: Prezentare rapidă a activității de prezență\n"
 "        \n"
-"        Notă: Înregistrările multiple indică pauze, perioade de prânz sau ture multiple."
+"        Notă: Înregistrările multiple indică pauze, perioade de prânz sau "
+"ture multiple."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_legal_rate__value
 msgid ""
-"Numeric coefficient. For overtime classes this is a multiplier of the hourly"
-" rate (1.5 = 150%, i.e. +50%); for additive supplements (night work) it is "
-"an amount per hour in the currency below."
+"Numeric coefficient. For overtime classes this is a multiplier of the hourly "
+"rate (1.5 = 150%, i.e. +50%); for additive supplements (night work) it is an "
+"amount per hour in the currency below."
 msgstr ""
-"Числов коефициент. За класовете извънреден труд това е множител на часовата "
-"ставка (1,5 = 150%, т.е. +50%); за адитивни надбавки (нощен труд) е сума на "
-"час в посочената по-долу валута."
+"Coeficient numeric. Pentru clasele de ore suplimentare, acesta este un "
+"multiplicator al ratei orare (1,5 = 150%, adică +50%); pentru sporurile "
+"aditive (muncă de noapte), este o sumă pe oră în moneda de mai jos."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_digest_digest__kpi_hr_rfid_att_overtime
@@ -883,19 +968,25 @@ msgstr "Ore suplimentare"
 msgid ""
 "Overtime hours worked during night shift period.\n"
 "        \n"
-"        • Period: Night hours (typically 22:00-06:00) that exceed scheduled time\n"
-"        • Premium: Often paid at highest rate (night premium + overtime premium)\n"
+"        • Period: Night hours (typically 22:00-06:00) that exceed scheduled "
+"time\n"
+"        • Premium: Often paid at highest rate (night premium + overtime "
+"premium)\n"
 "        • Format: Hours in decimal format (e.g., 1.5 = 1 hour 30 minutes)\n"
 "        \n"
-"        Note: Double premium may apply - both overtime and night shift bonuses."
+"        Note: Double premium may apply - both overtime and night shift "
+"bonuses."
 msgstr ""
 "Ore suplimentare lucrate în perioada turei de noapte.\n"
 "        \n"
-"        • Perioadă: Ore de noapte (de obicei 22:00-06:00) care depășesc timpul de lucru planificat\n"
-"        • Majorare: De obicei plătite la cea mai ridicată rată (spor noapte + spor ore suplimentare)\n"
+"        • Perioadă: Ore de noapte (de obicei 22:00-06:00) care depășesc "
+"timpul de lucru planificat\n"
+"        • Majorare: De obicei plătite la cea mai ridicată rată (spor noapte "
+"+ spor ore suplimentare)\n"
 "        • Format: Ore în format zecimal (ex.: 1,5 = 1 oră și 30 de minute)\n"
 "        \n"
-"        Notă: Poate fi aplicat un dublu spor — atât pentru ore suplimentare, cât și pentru tura de noapte."
+"        Notă: Poate fi aplicat un dublu spor - atât pentru ore suplimentare, "
+"cât și pentru tura de noapte."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra_wizard__overwrite_existing
@@ -925,8 +1016,8 @@ msgid ""
 "Relevant only for additive amount coefficients (e.g. the night-shift "
 "supplement per hour). Multipliers ignore it."
 msgstr ""
-"Приложимо само за коефициенти с адитивна сума (напр. надбавката за нощна "
-"смяна на час). Множителите го игнорират."
+"Relevant doar pentru coeficienții de tip sumă aditivă (de ex. sporul pentru "
+"muncă de noapte pe oră). Multiplicatorii îl ignoră."
 
 #. module: hr_attendance_late
 #: model:ir.ui.menu,name:hr_attendance_late.menu_hr_attendance_report
@@ -949,7 +1040,8 @@ msgid ""
 "Select employees for attendance calculation recalculation.\n"
 "        \n"
 "        • Selection: Choose one or multiple employees\n"
-"        • Effect: Recalculates overtime, late arrivals, and extra time for selected employees\n"
+"        • Effect: Recalculates overtime, late arrivals, and extra time for "
+"selected employees\n"
 "        • Default: Pre-selected based on current context\n"
 "        \n"
 "        Note: Large employee selections may take longer to process."
@@ -957,20 +1049,22 @@ msgstr ""
 "Selectați angajații pentru recalcularea prezenței.\n"
 "        \n"
 "        • Selecție: Alegeți unul sau mai mulți angajați\n"
-"        • Efect: Recalculează orele suplimentare, întârzierile și timpul suplimentar pentru angajații selectați\n"
+"        • Efect: Recalculează orele suplimentare, întârzierile și timpul "
+"suplimentar pentru angajații selectați\n"
 "        • Implicit: Preselectat în funcție de contextul curent\n"
 "        \n"
-"        Notă: Selecțiile cu un număr mare de angajați pot necesita mai mult timp de procesare."
+"        Notă: Selecțiile cu un număr mare de angajați pot necesita mai mult "
+"timp de procesare."
 
 #. module: hr_attendance_late
 #: model:ir.ui.menu,name:hr_attendance_late.menu_hr_attendance_self_leave
 msgid "Self-leave"
-msgstr "Самоотлъчка"
+msgstr "Auto-învoire"
 
 #. module: hr_attendance_late
 #: model:ir.actions.act_window,name:hr_attendance_late.hr_attendance_self_leave_action
 msgid "Self-leave (Early Departures)"
-msgstr "Самоотлъчка (ранни напускания)"
+msgstr "Auto-învoire (Plecări timpurii)"
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__shift_number
@@ -985,10 +1079,10 @@ msgid ""
 "'night_supplement', 'min_wage'. Free text so localisation modules can add "
 "their own coefficients."
 msgstr ""
-"Стабилен идентификатор, референциран от изчислението на себестойността, "
-"напр. 'overtime_workday', 'overtime_weekend', 'overtime_holiday', "
-"'night_supplement', 'min_wage'. Свободен текст, за да могат модулите за "
-"локализация да добавят свои коефициенти."
+"Identificator stabil la care face referire calculul costului, de ex. "
+"„overtime_workday”, „overtime_weekend”, „overtime_holiday”, "
+"„night_supplement”, „min_wage”. Text liber, astfel încât modulele de "
+"localizare să își poată adăuga propriii coeficienți."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra_wizard__start_date
@@ -1002,15 +1096,18 @@ msgid ""
 "        \n"
 "        • Range: Beginning of the date range to recalculate\n"
 "        • Default: 30 days ago or specific date from context\n"
-"        • Effect: All attendance records from this date forward will be processed\n"
+"        • Effect: All attendance records from this date forward will be "
+"processed\n"
 "        \n"
-"        Note: Earlier dates will include more historical data in the calculation."
+"        Note: Earlier dates will include more historical data in the "
+"calculation."
 msgstr ""
 "Data de început a perioadei de calcul a prezenței.\n"
 "        \n"
 "        • Interval: Începutul intervalului de date pentru recalculare\n"
 "        • Implicit: Cu 30 de zile în urmă sau o dată specifică din context\n"
-"        • Efect: Toate înregistrările de prezență de la această dată înainte vor fi procesate\n"
+"        • Efect: Toate înregistrările de prezență de la această dată înainte "
+"vor fi procesate\n"
 "        \n"
 "        Notă: Datele mai vechi includ mai multe date istorice în calcul."
 
@@ -1020,16 +1117,20 @@ msgid ""
 "The department of the employee (automatically filled).\n"
 "        \n"
 "        • Source: Copied from employee's department\n"
-"        • Purpose: Used for department-specific attendance reports and calculations\n"
-"        • Read-only: Updates automatically when employee's department changes\n"
+"        • Purpose: Used for department-specific attendance reports and "
+"calculations\n"
+"        • Read-only: Updates automatically when employee's department "
+"changes\n"
 "        \n"
 "        Note: Stored for faster reporting and filtering by department."
 msgstr ""
 "Departamentul angajatului (completat automat).\n"
 "        \n"
 "        • Sursă: Preluat din departamentul angajatului\n"
-"        • Scop: Utilizat pentru rapoarte și calcule de prezență specifice departamentului\n"
-"        • Doar citire: Se actualizează automat când se schimbă departamentul angajatului\n"
+"        • Scop: Utilizat pentru rapoarte și calcule de prezență specifice "
+"departamentului\n"
+"        • Doar citire: Se actualizează automat când se schimbă departamentul "
+"angajatului\n"
 "        \n"
 "        Notă: Stocat pentru raportare mai rapidă și filtrare pe departament."
 
@@ -1042,7 +1143,8 @@ msgid ""
 "        • Effect: All time calculations are specific to this employee\n"
 "        • Cascade: Record is deleted if employee is deleted\n"
 "        \n"
-"        Note: Used to link attendance data with employee work schedules and department settings."
+"        Note: Used to link attendance data with employee work schedules and "
+"department settings."
 msgstr ""
 "Angajatul pentru care se efectuează calculele de prezență.\n"
 "        \n"
@@ -1050,7 +1152,8 @@ msgstr ""
 "        • Efect: Toate calculele de timp sunt specifice acestui angajat\n"
 "        • Cascadă: Înregistrarea este ștearsă dacă angajatul este șters\n"
 "        \n"
-"        Notă: Utilizat pentru a lega datele de prezență de programul de lucru și setările de departament ale angajatului."
+"        Notă: Utilizat pentru a lega datele de prezență de programul de "
+"lucru și setările de departament ale angajatului."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__for_date
@@ -1059,22 +1162,67 @@ msgid ""
 "\n"
 "        • Format: YYYY-MM-DD\n"
 "        • Purpose: Groups all attendance records for a single working day\n"
-"        • Effect: All time calculations are based on this date's attendance records\n"
+"        • Effect: All time calculations are based on this date's attendance "
+"records\n"
 "\n"
-"        Note: This is the primary date used for reporting and time calculations."
+"        Note: This is the primary date used for reporting and time "
+"calculations."
 msgstr ""
 "Data specifică pentru care se efectuează calculele de prezență.\n"
 "\n"
 "        • Format: YYYY-MM-DD\n"
-"        • Scop: Grupează toate înregistrările de prezență pentru o singură zi lucrătoare\n"
-"        • Efect: Toate calculele de timp se bazează pe înregistrările de prezență ale acestei date\n"
+"        • Scop: Grupează toate înregistrările de prezență pentru o singură "
+"zi lucrătoare\n"
+"        • Efect: Toate calculele de timp se bazează pe înregistrările de "
+"prezență ale acestei date\n"
 "\n"
-"        Notă: Aceasta este data principală utilizată pentru raportare și calculele de timp."
+"        Notă: Aceasta este data principală utilizată pentru raportare și "
+"calculele de timp."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_attendance_extra__theoretical_work_time
 msgid "Theoretical Work Time"
 msgstr "Timp teoretic de lucru"
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__first_in
+msgid ""
+"Time of the first badge-in for the day, in the employee's local time.\n"
+"\n"
+"        • Format: Hour as a decimal (e.g., 8.25 = 08:15)\n"
+"        • Source: The earliest check-in of the day's attendance records\n"
+"        • Usage: The classic \"came at / left at\" column on daily and "
+"monthly\n"
+"          working-time reports, and averages on the Working Time dashboard."
+msgstr ""
+"Ora primei intrări (badge-in) din zi, în ora locală a angajatului.\n"
+"\n"
+"        • Format: Oră ca zecimală (de ex., 8.25 = 08:15)\n"
+"        • Sursă: Prima intrare din înregistrările de prezență ale zilei\n"
+"        • Utilizare: Coloana clasică „a venit la / a plecat la” din "
+"rapoartele\n"
+"          zilnice și lunare de timp de lucru, precum și mediile din tabloul\n"
+"          de bord Timp de lucru."
+
+#. module: hr_attendance_late
+#: model:ir.model.fields,help:hr_attendance_late.field_hr_attendance_extra__last_out
+msgid ""
+"Time of the last badge-out for the day, in the employee's local time.\n"
+"\n"
+"        • Format: Hour as a decimal (e.g., 17.5 = 17:30)\n"
+"        • Source: The latest check-out of the day's attendance records\n"
+"        • Usage: The classic \"came at / left at\" column on daily and "
+"monthly\n"
+"          working-time reports, and averages on the Working Time dashboard."
+msgstr ""
+"Ora ultimei ieșiri (badge-out) din zi, în ora locală a angajatului.\n"
+"\n"
+"        • Format: Oră ca zecimală (de ex., 17.5 = 17:30)\n"
+"        • Sursă: Ultima ieșire din înregistrările de prezență ale zilei\n"
+"        • Utilizare: Coloana clasică „a venit la / a plecat la” din "
+"rapoartele\n"
+"          zilnice și lunare de timp de lucru, precum și mediile din tabloul\n"
+"          de bord Timp de lucru."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_department__ignore_early_come_time
@@ -1083,8 +1231,7 @@ msgstr "Timp teoretic de lucru"
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_department__ignore_late_time
 #: model:ir.model.fields,help:hr_attendance_late.field_hr_department__ignore_overtime
 msgid ""
-"Times smaller than this will be ignored in the calculations on a daily "
-"basis."
+"Times smaller than this will be ignored in the calculations on a daily basis."
 msgstr "Duratele mai mici decât aceasta vor fi ignorate în calculele zilnice."
 
 #. module: hr_attendance_late
@@ -1098,47 +1245,60 @@ msgid ""
 "Total hours actually worked on this date (including day and night time).\n"
 "        \n"
 "        • Format: Hours in decimal format (e.g., 8.5 = 8 hours 30 minutes)\n"
-"        • Calculation: Sum of all work periods between check-in and check-out\n"
+"        • Calculation: Sum of all work periods between check-in and check-"
+"out\n"
 "        • Includes: Both regular hours and overtime periods\n"
 "        \n"
-"        Note: This is the total productive time, excluding breaks and non-work periods."
+"        Note: This is the total productive time, excluding breaks and non-"
+"work periods."
 msgstr ""
 "Total ore efectiv lucrate în această zi (inclusiv timp zi și timp noapte).\n"
 "        \n"
 "        • Format: Ore în format zecimal (ex.: 8,5 = 8 ore și 30 de minute)\n"
-"        • Calcul: Suma tuturor perioadelor de lucru dintre check-in și check-out\n"
-"        • Include: Atât orele obișnuite, cât și perioadele de ore suplimentare\n"
+"        • Calcul: Suma tuturor perioadelor de lucru dintre check-in și check-"
+"out\n"
+"        • Include: Atât orele obișnuite, cât și perioadele de ore "
+"suplimentare\n"
 "        \n"
-"        Notă: Acesta reprezintă timpul productiv total, excluzând pauzele și perioadele de non-lucru."
+"        Notă: Acesta reprezintă timpul productiv total, excluzând pauzele și "
+"perioadele de non-lucru."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,help:hr_attendance_late.field_resource_calendar__daily_ranges_are_shifts
 msgid ""
-"Treat each daily time range as a separate shift for attendance calculations.\n"
+"Treat each daily time range as a separate shift for attendance "
+"calculations.\n"
 "        \n"
-"        • When enabled: Each time range (e.g., 9-12, 13-17) is considered a separate shift\n"
-"        • When disabled: All time ranges for a day are treated as one continuous work period\n"
+"        • When enabled: Each time range (e.g., 9-12, 13-17) is considered a "
+"separate shift\n"
+"        • When disabled: All time ranges for a day are treated as one "
+"continuous work period\n"
 "        • Effect: Affects overtime and break calculations\n"
 "        \n"
-"        Note: Enable this for companies with formal shift systems or split work schedules."
+"        Note: Enable this for companies with formal shift systems or split "
+"work schedules."
 msgstr ""
-"Tratează fiecare interval orar zilnic ca o tură separată pentru calculele de prezență.\n"
+"Tratează fiecare interval orar zilnic ca o tură separată pentru calculele de "
+"prezență.\n"
 "        \n"
-"        • Activat: Fiecare interval orar (ex.: 9-12, 13-17) este considerat o tură separată\n"
-"        • Dezactivat: Toate intervalele orare ale zilei sunt tratate ca o singură perioadă continuă de lucru\n"
+"        • Activat: Fiecare interval orar (ex.: 9-12, 13-17) este considerat "
+"o tură separată\n"
+"        • Dezactivat: Toate intervalele orare ale zilei sunt tratate ca o "
+"singură perioadă continuă de lucru\n"
 "        • Efect: Afectează calculele orelor suplimentare și ale pauzelor\n"
 "        \n"
-"        Notă: Activați această opțiune pentru companiile cu sisteme formale de ture sau programe de lucru divizate."
+"        Notă: Activați această opțiune pentru companiile cu sisteme formale "
+"de ture sau programe de lucru divizate."
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_legal_rate__date_from
 msgid "Valid From"
-msgstr "Валидно от"
+msgstr "Valabil de la"
 
 #. module: hr_attendance_late
 #: model:ir.model.fields,field_description:hr_attendance_late.field_hr_legal_rate__value
 msgid "Value"
-msgstr "Стойност"
+msgstr "Valoare"
 
 #. module: hr_attendance_late
 #: model:ir.model,name:hr_attendance_late.model_hr_attendance_extra_wizard
@@ -1153,24 +1313,24 @@ msgstr "Ieri"
 #. module: hr_attendance_late
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_legal_rate_view_form
 msgid "e.g. Overtime — rest day"
-msgstr "напр. Извънреден труд — почивен ден"
+msgstr "de ex. Ore suplimentare - zi de repaus"
 
 #. module: hr_attendance_late
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_legal_rate_view_form
 msgid "e.g. overtime_weekend"
-msgstr "напр. overtime_weekend"
+msgstr "de ex. overtime_weekend"
 
 #. module: hr_attendance_late
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_form
 msgid "hr_attendance_extra_form"
-msgstr "Форма за допълнително присъствие"
+msgstr "hr_attendance_extra_form"
 
 #. module: hr_attendance_late
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_tree
 msgid "hr_attendance_extra_tree"
-msgstr "Списък за допълнително присъствие"
+msgstr "hr_attendance_extra_tree"
 
 #. module: hr_attendance_late
 #: model_terms:ir.ui.view,arch_db:hr_attendance_late.hr_attendance_extra_view_search
 msgid "string"
-msgstr "Текст"
+msgstr "string"

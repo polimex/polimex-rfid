@@ -6,7 +6,7 @@ doc_type: user_guide
 audience:
 - user
 summary: Module for managing IP cameras via manufacturers integration integration
-last_updated: '2026-06-19'
+last_updated: '2026-08-14'
 source_digest: sha256:5e04b818dc6208b79c78ff5b149171c2e492a40285ced080a2dc7bc91fc9ee86
 companion_doc: llms-full.md
 ---
@@ -179,6 +179,22 @@ Bug Tracker
 Bugs are tracked on the GitHub Issues page:
 `https://github.com/polimex/polimex-rfid/issues <https://github.com/polimex/polimex-rfid/issues>`_
 
+
+### While data is being brought over from another system
+
+A data transfer says nothing to the cameras. No plate is added or removed on a
+camera, no barrier is moved, and no readers or door are made up for a camera
+that is being brought across - it arrives with the ones the other system had,
+so its history keeps pointing at the right door.
+
+The consequence is that each camera still holds the plate list it held before
+the transfer. **Refresh each camera's list once the transfer has finished**
+(Reload whitelist on the camera). The transfer says so on its own page as well.
+
+The cameras keep watching and keep letting people through throughout: only the
+writing of new lists is held back, and that is the point - a transfer of a few
+hundred plates would otherwise fire a few hundred requests at cameras that are
+guarding a live site.
 
 ### Available actions
 

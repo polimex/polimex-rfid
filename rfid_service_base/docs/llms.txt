@@ -6,7 +6,7 @@ doc_type: user_guide
 audience:
 - user
 summary: "\n        Base module for visitor management and temporary RFID access control\n    "
-last_updated: '2026-05-14'
+last_updated: '2026-08-14'
 source_digest: sha256:836d6ead9b8933e24830e8a54e25e71f4612c24c0dc237191d7a92ab0114708d
 companion_doc: llms-full.md
 ---
@@ -26,6 +26,17 @@ companion_doc: llms-full.md
     .
 
 This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
+
+
+## The setup checklist
+
+Until visitor services are set up, a checklist appears above the services
+(**Services**): define a visitor service, then issue the first visitor card.
+Each step opens the screen where it is done, and ticks itself off as soon as
+the thing exists - there is nothing to mark by hand.
+
+Close it with the **X** (you are asked to confirm) and it is gone for good for
+everybody in the company. It has no effect on anything else.
 
 
 ## How to use it

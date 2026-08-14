@@ -11,7 +11,7 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: Manage employee access control
-last_updated: '2026-06-04'
+last_updated: '2026-08-14'
 source_digest: sha256:18a5bc33f9e3eeafc8e2df0aa02b1848dbaa0d1cd812b22cb324be4e0271183a
 depends:
 - hr
@@ -539,6 +539,10 @@ Python class `HrEmployee` in `models/hr_employee.py:7`.  Model.  Inherits: `hr.e
 - **`check_access_group(self)`** — decorators: `@api.constrains`
   - effects: `raise:ValidationError`
   - touches: `hr.rfid.door`
+- **`_check_recalc_allowed(self, start_date, end_date)`** - decorators: -
+  - **Extension point. Allows everything by itself.** The single place an
+    add-on can object to rebuilding attendance for a period - see "Refusing an
+    attendance rebuild" below. Raise `UserError` to refuse; return to allow.
 - **`_check_pin_code(self)`** — decorators: `@api.constrains`
   - effects: `raise:ValidationError`
 - **`generate_random_barcode_card(self)`** — decorators: —
@@ -1827,11 +1831,37 @@ Python class `OnboardingOnboarding` in `models/onboarding_onboarding.py:8`.  Mod
 
 #### Notable methods
 
-- **`action_close_panel_rfid_setup(self)`** — decorators: `@api.model`
+- **`action_close_panel_rfid_setup(self)`** - decorators: `@api.model`
   - effects: `sudo`
-- **`action_fetch_rfid_onboarding(self)`** — decorators: `@api.model`
-  - Fetch RFID onboarding step data for the frontend banner.
-  - effects: `log_debug`, `sudo`
+- **`get_onboarding_panel_html(self, route_name)`** - decorators: `@api.model`
+  - The banner's only read. Renders core's own `onboarding.onboarding_panel`
+    QWeb template for the onboarding whose `route_name` matches, and returns
+    the HTML (`Markup`) or `False` when there is no such onboarding, it is
+    closed, or the panel could not be produced. Every module in the family
+    calls this one method - there is no per-onboarding fetch.
+  - effects: `sudo`, `log_warn`
+- **`close_onboarding_panel(self, route_name)`** - decorators: `@api.model`
+  - Generic counterpart: closes the onboarding identified by its route, so no
+    per-onboarding close action is needed.
+  - effects: `sudo`
+- **`_rfid_ensure_onboarding_progress(self)`** - decorators: -
+  - Makes sure the progress record behind the panel is readable here, and says
+    whether it is. Two first-time tabs both insert one and the second hits the
+    unique index on (onboarding, company); this takes a
+    `pg_try_advisory_xact_lock` on a key of the same shape, so the loser does
+    not insert at all - the collision is prevented, not cleaned up (the shape
+    core uses in `mail_thread._routing_check_route`). The insert is still
+    wrapped in a savepoint with `mute_logger('odoo.sql_db')` for the request
+    that finished a moment before the lock was asked for, exactly as core mutes
+    its own may-lose-a-race inserts.
+- **`_rfid_initial_rendering_values(self)`** - decorators: -
+  - Panel content for a first run whose progress record belongs to another
+    request. Same keys as core `_prepare_rendering_values`, rebuilt here
+    because that one goes through the progress record. Writes nothing - and
+    emits no `onboarding_state`, so the "all done" overlay stays hidden.
+- **`_prepare_rendering_values(self)`** - decorators: -
+  - Auto-completes the RFID steps from what is already configured (a module, a
+    controller, an access group with a door, a card) before delegating to core.
 
 ### `onboarding.onboarding.step` <a id='model-onboarding-onboarding-step'></a>
 Python class `OnboardingOnboardingStep` in `models/onboarding_onboarding_step.py:4`.  Model.  Inherits: `onboarding.onboarding.step`.
@@ -2078,6 +2108,117 @@ mirrors the legacy Laravel `customer_web_stack` capability).
 - **Tests**: `tests/test_webstack_sharing.py` (tags `rfid_sharing`,
   `rfid_sharing_e2e`) - visibility matrix, guards, unshare revocation, full
   HTTP device lifecycle.
+
+## The onboarding banner, on any list or kanban <a id='onboarding-banner'></a>
+
+This module hosts the onboarding banner for the whole RFID family. Six modules
+(`hr_rfid`, `rfid_pms_base`, `rfid_service_base`,
+`hr_rfid_vertical_elections`, and the localisation add-ons that follow the same
+shape) show a setup checklist above a list or a kanban; all of them use the one
+component and the two server methods here.
+
+### How a module attaches one
+
+Put the onboarding's `route_name` in the CONTEXT of the action:
+
+```xml
+<field name="context">{'onboarding_route_name': 'rfid_service_base_setup'}</field>
+```
+
+That is the entire integration. No view class, no template of your own, no
+Python. The banner renders itself from `onboarding.onboarding` records the
+module already ships, and stays inert on every action that does not carry the
+key.
+
+### Why the context and not a view class
+
+It used to be a view class (`js_class="onboarding_list"`). **A view carries
+exactly ONE `js_class`**, so the moment a second module wanted one on the same
+view the banner lost: `hr_rfid_refresh_views` inherits the User Events list and
+writes `js_class="list_refresh_view"` over it, and that module is
+`auto_install` - so it is on nearly every database. The component was then
+never created at all: no error, no request, no banner, and the server side
+rendering perfectly all the while.
+
+The current form extends the stock `web.ListView` and `web.KanbanView`
+templates and registers `OnboardingBanner` on the stock controllers
+(`ListController.components` / `KanbanController.components`), so a view can
+carry any `js_class` it likes and still show the banner. This departs from
+core's own habit - core `sale` ships `sale_onboarding_list` as a `js_class` and
+composes by chaining view classes - because chaining works while one module
+owns the view and does not scale to a banner shared by six.
+
+### Server side
+
+- `onboarding.onboarding.get_onboarding_panel_html(route_name)` renders core's
+  own `onboarding.onboarding_panel` template, so the banner is pixel-identical
+  to Odoo's native one, translated server-side and overflow-safe through the
+  core SCSS.
+- `onboarding.onboarding.close_onboarding_panel(route_name)` hides it. The
+  close control is intercepted in the component and confirmed through OWL's
+  `ConfirmationDialog` - the core template's Bootstrap modal is not reliably
+  wired in the OWL backend.
+- Step buttons are delegated to core's `useActionLinks` hook, with a `reload`
+  that re-fetches when the step's action closes, so completion shows at once.
+  The hook needs `env.keepLast`, which the host View provides.
+
+### Failure policy (deliberate, and not "catch everything")
+
+`get_onboarding_panel_html` is non-critical UI and hides itself rather than
+breaking the host list - but **database errors are re-raised**:
+
+```python
+except (psycopg2.Error, ConcurrencyError):
+    raise
+```
+
+`psycopg2.DatabaseError` covers `ProgrammingError`, `DataError` and
+`InternalError` as well as the two Odoo retries on, and a transaction
+PostgreSQL has already refused to continue cannot be "hidden for this load" -
+swallowing it returns `False` on a doomed transaction and logs a warning that
+misdescribes what happened. Core takes the same position in a best-effort
+handler over the database (`mail.mail`: "chances are that the cursor is
+unusable, causing further errors"). Everything else is caught, logged at
+WARNING with `exc_info=True`, and the banner is dropped for that page load.
+
+Tests: `tests/test_onboarding.py`, `tests/test_onboarding_panel_errors.py`
+(each database error class travels on; the non-database failure hides the
+banner AND names it in the log), `static/tests/onboarding_in_any_view.test.js`
+(shown when the action asks for it, absent on a screen that never asked and on
+one already put away, and - the regression that started all this - still shown
+when another module claims the view class).
+
+## Refusing an attendance rebuild <a id='recalc-hook'></a>
+
+`hr.employee._check_recalc_allowed(start_date, end_date)` is declared here and
+allows everything. It exists so that an add-on holding attendance which must
+NOT be rebuilt - records brought over from another system, which cannot be
+worked out again - has one place to say so.
+
+Declaring it in `hr_rfid` is what makes the objection reliable. Odoo builds one
+class per model from the classes of every add-on that extends it, the last one
+loaded ending up outermost (`odoo/orm/model_classes.py`). Two add-ons that do
+not build on each other are in no fixed order: if each declared this method,
+whichever loaded last would decide, and an add-on that only allows would
+silently cancel the one that refuses - nothing raised, nothing logged. Declared
+in the module they both build on, it sits underneath both and cannot be
+cancelled that way.
+
+Contract for an override:
+
+- call `super()` FIRST, or every objection underneath is lost;
+- raise `UserError` to refuse, with a message written for the operator: which
+  records are protected, why, and what to do instead;
+- return to allow.
+
+Callers: `hr_attendance_multi_rfid` asks it in the rebuild wizard, once per
+person in the background job, and again in `_recalc_attendance_one`.
+Implementer: `hr_rfid_odoo_import`. A refusal (`UserError`) and a breakdown
+(`AccessError`) are told apart by TYPE, never by message text.
+
+Tests: `tests/test_recalc_hook.py` here (the default allows, and an override
+underneath is not cancelled), the refusal itself in
+`hr_rfid_odoo_import/tests/test_recalc_guard.py`.
 
 ## Module Constants <a id='constants'></a>
 
@@ -3134,16 +3275,21 @@ XML records seeded at install and scheduled actions.
 JavaScript, SCSS, OWL components and QWeb templates shipped by this module.
 
 
-**OWL components**: `RfidOnboardingBanner`
+**OWL components**: `OnboardingBanner`
 
 
-**JS files** (2): `static/src/components/onboarding/onboarding.js`, `static/src/views/rfid_onboarding_list/rfid_onboarding_list_view.js`
+**JS files** (2): `static/src/components/onboarding/onboarding.js`, `static/src/views/onboarding_anywhere/onboarding_anywhere.js`
 
 
 **SCSS files** (4): `static/src/scss/_variables.scss`, `static/src/scss/card_foldable_badge_report.scss`, `static/src/scss/card_full_page_ticket_report.scss`, `static/src/scss/card_full_page_ticket_report_pdf.scss`
 
 
-**QWeb templates** (2): `static/src/components/onboarding/onboarding.xml`, `static/src/views/rfid_onboarding_list/rfid_onboarding_list_renderer.xml`
+**QWeb templates** (2): `static/src/components/onboarding/onboarding.xml`, `static/src/views/onboarding_anywhere/onboarding_anywhere.xml`
+
+Both bundles are loaded by glob (`hr_rfid/static/src/components/**/*` and
+`hr_rfid/static/src/views/**/*`), so a new file under either is picked up
+without touching the manifest. Unit tests:
+`static/tests/onboarding_in_any_view.test.js`.
 
 
 

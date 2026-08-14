@@ -1,7 +1,8 @@
-from datetime import timedelta
+from datetime import datetime, time, timedelta
 
 from odoo import models, exceptions, _, api, fields
 from dateutil.relativedelta import relativedelta
+from pytz import timezone, utc
 
 import logging
 
@@ -113,117 +114,234 @@ class HrEmployee(models.Model):
               'by human resources.') % {'empl_name': self.name}
         )
 
+    def _recalc_window(self, from_date, to_date):
+        """The two days the operator chose, as the moments that bound them.
+
+        The operator picks days; door events and attendance records are
+        moments. A day is only a day somewhere, so it is measured where the
+        person works: their last day ends when midnight passes for them, not
+        when it passes in London. Core reads an employee's day off their own
+        timezone the same way
+        (odoo/addons/hr_attendance/models/hr_attendance.py:273), and turns a
+        chosen day into a moment the same way
+        (odoo/addons/hr_holidays/wizard/hr_leave_generate_multi_wizard.py:77-78).
+
+        The chosen last day is included whole, so the window ends where the
+        next day begins and the bound is "before", not "up to".
+
+        :return: (start, end) - naive UTC datetimes, as stored in the database
+        """
+        self.ensure_one()
+        from_date = fields.Date.to_date(from_date) or fields.Date.today()
+        to_date = fields.Date.to_date(to_date) or fields.Date.today()
+        tz = timezone(self.tz or self.env.user.tz or 'UTC')
+        start = tz.localize(datetime.combine(from_date, time.min))
+        end = tz.localize(datetime.combine(to_date + timedelta(days=1), time.min))
+        return (start.astimezone(utc).replace(tzinfo=None),
+                end.astimezone(utc).replace(tzinfo=None))
+
+    def _recalc_manual_attendance_reason(self):
+        """The reason this system puts on attendance it closed by itself.
+
+        A site that records WHY an attendance exists can tell what the system
+        made from what a person typed in by hand. Where nothing records that,
+        there is nothing to tell them apart by, and the answer is nothing.
+        """
+        company = self.env.company
+        if not company._fields.get('hr_attendance_autoclose_reason', False):
+            return False
+        return company.hr_attendance_autoclose_reason.id or False
+
+    def _recalc_clear_domain(self, period_start, period_end):
+        """Which of this person's attendance a rebuild is asking to remove.
+
+        What the system made for the period, inside it and nothing outside it
+        - never what somebody typed in. On a site that records the reason an
+        attendance exists, that difference is real and this keeps it: only
+        records carrying no reason at all, or the one this system puts on what
+        it closed itself, are asked for. A person's own entry survives the
+        rebuild, which is the whole point - it cannot be worked out again from
+        the door events, so deleting it loses it for good.
+
+        Where nothing records the reason, a typed-in record cannot be told
+        from a made one and the whole period goes. That is a real loss and it
+        is said out loud in the log rather than passed over.
+        """
+        self.ensure_one()
+        domain = [
+            ('check_in', '>=', period_start),
+            ('check_in', '<', period_end),
+            ('employee_id', '=', self.id),
+        ]
+        auto_close_reason = self._recalc_manual_attendance_reason()
+        if not auto_close_reason:
+            _logger.warning('No Attendance reason module found - removing all attendance records')
+            return domain
+        return domain + [
+            '|',
+            ('attendance_reason_ids', '=', False),
+            ('attendance_reason_ids', '=', auto_close_reason),
+        ]
+
+    @api.model
+    def _recalc_attendance_context(self):
+        """Resolve, once, what counts as an attendance door.
+
+        Every employee in a rebuild is measured against the same zones and the
+        same readers; reading them again for each person would repeat the same
+        searches for nothing.
+        """
+        att_zone_ids = self.env['hr.rfid.zone'].search([('attendance', "=", True)])
+        doors_with_attendance = att_zone_ids.mapped('door_ids')
+        readers_ids = doors_with_attendance.mapped('reader_ids')
+        return {
+            'zones': att_zone_ids,
+            'doors': doors_with_attendance,
+            'in_readers': readers_ids.filtered(lambda r: r.reader_type == '0'),
+            'out_readers': readers_ids.filtered(lambda r: r.reader_type == '1'),
+        }
+
     def recalc_attendance(self, from_date=None, to_date=None):
         """Recalculate attendance records from RFID events.
-        
+
         This method processes RFID events to recreate attendance records,
         handling out-of-order events and various edge cases.
-        
+
+        Everything is done in one transaction here. A rebuild covering more
+        than a handful of people belongs in the background - see
+        hr.attendance.recalc.run, which drives the same per-employee work one
+        committed person at a time.
+
         :param from_date: Start date for recalculation (default: 30 days ago)
         :param to_date: End date for recalculation (default: today)
         """
         if from_date is None:
             from_date = fields.Date.today() - timedelta(days=30)
         to_date = to_date or fields.Date.today()
-        
-        # Find all zones configured for attendance
-        att_zone_ids = self.env['hr.rfid.zone'].search([('attendance', "=", True)])
-        doors_with_attendance = att_zone_ids.mapped('door_ids')
-        readers_ids = doors_with_attendance.mapped('reader_ids')
-        in_readers_ids = readers_ids.filtered(lambda r: r.reader_type == '0')
-        out_readers_ids = readers_ids.filtered(lambda r: r.reader_type == '1')
 
+        # The real chokepoint: every caller passes through here, so this is
+        # where a module that forbids rebuilding gets its say. The hook itself
+        # is declared in hr_rfid, which every module in this family depends on,
+        # so no load order can leave a do-nothing version of it in front of the
+        # one that actually refuses.
+        self._check_recalc_allowed(from_date, to_date)
+
+        ctx = self._recalc_attendance_context()
         for employee_id in self:
-            # Get all relevant events for this employee
-            event_ids = self.env['hr.rfid.event.user'].search([
-                ('employee_id', '=', employee_id.id),
-                ('door_id', 'in', doors_with_attendance.mapped('id')),
-                ('event_time', '>=', from_date),
-                ('event_action', '=', '1')  # Only granted access events
-            ], order='event_time')
+            employee_id._recalc_attendance_one(from_date, to_date, ctx)
 
-            if not event_ids:  # no events for processing
+    def _recalc_attendance_one(self, from_date, to_date, ctx):
+        """Rebuild attendance for ONE employee, from the events in the period.
+
+        Split out of recalc_attendance unchanged, so the background job can do
+        one person, commit, and carry on. Deleting the period and replaying it
+        is only consistent as a whole, which makes one person the smallest
+        piece of work that can safely be committed on its own.
+
+        :param ctx: the zones and readers from _recalc_attendance_context()
+        :return: what was done, for the rebuild's report
+        """
+        self.ensure_one()
+        # Asked again here: the background job calls this method directly, and
+        # a rebuild that became forbidden while it was queued must not run.
+        self._check_recalc_allowed(from_date, to_date)
+
+        att_zone_ids = ctx['zones']
+        doors_with_attendance = ctx['doors']
+        in_readers_ids = ctx['in_readers']
+        out_readers_ids = ctx['out_readers']
+        # Kept under its old name so the rebuilding code below reads exactly as
+        # it did when it was the body of a loop over several employees.
+        employee_id = self
+        attendance_count = 0
+
+        # The period the operator asked for, and nothing outside it. Both the
+        # events replayed and the attendance deleted are cut to the same two
+        # moments: anything else would delete a day it never replays, or
+        # replay a day it never cleared.
+        period_start, period_end = self._recalc_window(from_date, to_date)
+
+        # Get all relevant events for this employee
+        event_ids = self.env['hr.rfid.event.user'].search([
+            ('employee_id', '=', employee_id.id),
+            ('door_id', 'in', doors_with_attendance.mapped('id')),
+            ('event_time', '>=', period_start),
+            ('event_time', '<', period_end),
+            ('event_action', '=', '1')  # Only granted access events
+        ], order='event_time')
+
+        if not event_ids:  # no events for processing
+            return {'event_count': 0, 'attendance_count': 0}
+
+        # Remove the attendance this system made for the period, and only
+        # that - what a person typed in by hand is theirs, not ours to replay.
+        self.env['hr.attendance'].search(
+            self._recalc_clear_domain(period_start, period_end)).unlink()
+
+        # Get remaining manual attendance records
+        manual_att_ids = self.env['hr.attendance'].search([
+            ('check_in', '>=', period_start),
+            ('check_in', '<', period_end),
+            ('employee_id', '=', employee_id.id),
+        ])
+
+        # Process events to create attendance records
+        presence = [None, None]  # [check_in, check_out]
+        in_zone = None
+        previous_attendance_id = None
+        previous_event_id = None
+
+        for e in event_ids:
+            # Skip events that are already recorded in manual attendance
+            if manual_att_ids.filtered(lambda a: a.check_in == e.event_time or a.check_out == e.event_time):
                 continue
 
-            # Remove all auto-generated attendance records for the period
-            # Keep manual attendance records based on attendance reasons
-            auto_close_reason = False
-            if self.env.company._fields.get('hr_attendance_autoclose_reason', False):
-                auto_close_reason = self.env.company.hr_attendance_autoclose_reason and self.env.company.hr_attendance_autoclose_reason.id or False
-            
-            search_domain = [
-                ('check_in', '>=', from_date),
-                ('employee_id', '=', employee_id.id),
-            ]
-            if auto_close_reason:
-                # Keep manual attendance records (those without auto-close reason)
-                search_domain.append('|')
-                search_domain.append(('attendance_reason_ids', '=', False))
-                search_domain.append(('attendance_reason_ids', '=', auto_close_reason))
-            else:
-                _logger.warning('No Attendance reason module found - removing all attendance records')
-            
-            self.env['hr.attendance'].search(search_domain).unlink()
-            
-            # Get remaining manual attendance records
-            manual_att_ids = self.env['hr.attendance'].search([
-                ('check_in', '>=', from_date),
-                ('employee_id', '=', employee_id.id),
-            ])
-            
-            # Process events to create attendance records
-            presence = [None, None]  # [check_in, check_out]
-            in_zone = None
-            previous_attendance_id = None
-            previous_event_id = None
-            
-            for e in event_ids:
-                # Skip events that are already recorded in manual attendance
-                if manual_att_ids.filtered(lambda a: a.check_in == e.event_time or a.check_out == e.event_time):
-                    continue
-                
-                e.in_or_out = 'no_info'
-                
-                # Handle check-in events (entry readers)
-                if e.reader_id in in_readers_ids:
-                    # Create new check-in or override existing based on zone settings
-                    if not presence[0] or (presence[0] and in_zone.overwrite_check_in):
-                        if presence[0] and in_zone.overwrite_check_in and previous_event_id:
-                            previous_event_id.in_or_out = 'no_info'
-                        presence[0] = e.event_time
-                        e.in_or_out = 'in'
-                        in_zone = att_zone_ids.filtered(lambda z: e.door_id in z.door_ids)
-                
-                # Handle check-out events (exit readers)
-                if e.reader_id in out_readers_ids:
-                    if presence[0]:
-                        # Normal check-out for open attendance
-                        presence[1] = e.event_time
-                        e.in_or_out = 'out'
-                    elif not presence[0] and previous_attendance_id:
-                        # Out-of-order check-out - update previous attendance if allowed
-                        in_zone = att_zone_ids.filtered(lambda z: e.door_id in z.door_ids)
-                        if in_zone.overwrite_check_out and previous_attendance_id.check_out and (
-                                e.event_time - previous_attendance_id.check_out) < timedelta(hours=8):
-                            previous_attendance_id.with_context(no_validity_check=True).check_out = e.event_time
-                            e.in_or_out = 'out'
-                
-                # Create attendance record when we have both check-in and check-out
-                if all(presence):
-                    previous_attendance_id = self.env['hr.attendance'].with_context(no_validity_check=True).create({
-                        'check_in': presence[0],
-                        'check_out': presence[1],
-                        'employee_id': employee_id.id,
-                        'in_zone_id': in_zone and in_zone.id,
-                    })
-                    presence = [None, None]
-                
-                previous_event_id = e
+            e.in_or_out = 'no_info'
 
-            # Handle last open attendance (check-in without check-out)
-            if presence[0] and not presence[1]:
-                self.env['hr.attendance'].create({
+            # Handle check-in events (entry readers)
+            if e.reader_id in in_readers_ids:
+                # Create new check-in or override existing based on zone settings
+                if not presence[0] or (presence[0] and in_zone.overwrite_check_in):
+                    if presence[0] and in_zone.overwrite_check_in and previous_event_id:
+                        previous_event_id.in_or_out = 'no_info'
+                    presence[0] = e.event_time
+                    e.in_or_out = 'in'
+                    in_zone = att_zone_ids.filtered(lambda z: e.door_id in z.door_ids)
+
+            # Handle check-out events (exit readers)
+            if e.reader_id in out_readers_ids:
+                if presence[0]:
+                    # Normal check-out for open attendance
+                    presence[1] = e.event_time
+                    e.in_or_out = 'out'
+                elif not presence[0] and previous_attendance_id:
+                    # Out-of-order check-out - update previous attendance if allowed
+                    in_zone = att_zone_ids.filtered(lambda z: e.door_id in z.door_ids)
+                    if in_zone.overwrite_check_out and previous_attendance_id.check_out and (
+                            e.event_time - previous_attendance_id.check_out) < timedelta(hours=8):
+                        previous_attendance_id.with_context(no_validity_check=True).check_out = e.event_time
+                        e.in_or_out = 'out'
+
+            # Create attendance record when we have both check-in and check-out
+            if all(presence):
+                previous_attendance_id = self.env['hr.attendance'].with_context(no_validity_check=True).create({
                     'check_in': presence[0],
-                    'in_zone_id': in_zone and in_zone.id,
+                    'check_out': presence[1],
                     'employee_id': employee_id.id,
+                    'in_zone_id': in_zone and in_zone.id,
                 })
+                attendance_count += 1
+                presence = [None, None]
+
+            previous_event_id = e
+
+        # Handle last open attendance (check-in without check-out)
+        if presence[0] and not presence[1]:
+            self.env['hr.attendance'].create({
+                'check_in': presence[0],
+                'in_zone_id': in_zone and in_zone.id,
+                'employee_id': employee_id.id,
+            })
+            attendance_count += 1
+
+        return {'event_count': len(event_ids), 'attendance_count': attendance_count}

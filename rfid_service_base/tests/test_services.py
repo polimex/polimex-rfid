@@ -16,13 +16,30 @@ from odoo.tools.safe_eval import pytz
 
 _logger = logging.getLogger(__name__)
 
-# Pinned wall clock for the whole test (UTC). 13:30 local in Europe/Sofia —
-# the tz forced by the RFIDController scaffolding — i.e. mid-day, away from
-# the midnight hour-wrap and from DST transition days. The service window the
-# test derives as [hour(now-1h):00, hour(now+1h):00] local therefore always
-# contains the frozen "now", so the sale state is deterministically 'progress'
-# at assert time regardless of the machine's wall clock or timezone.
-FROZEN_NOW = "2026-06-15 10:30:00"
+
+def _pinned_now():
+    """The wall clock the whole test runs on (naive UTC).
+
+    Mid-day - 12:30 or 13:30 in Europe/Sofia, the timezone the scaffolding
+    forces - so the service window the test derives as
+    [hour(now-1h):00, hour(now+1h):00] local always contains "now" and the
+    sale is deterministically 'progress' at assert time, whatever the
+    machine's clock and timezone. 10:30 UTC is also many hours away from any
+    DST switch, which happens overnight.
+
+    The instant is DERIVED from the real clock and never a fixed calendar
+    date. The shared fixtures - the partner's card and his membership of the
+    access group - are created by setUpClass at the real wall clock and carry
+    "valid from" stamps of that moment. Pinning the test to a date in the
+    past would put those stamps in the future: the card would not be usable
+    yet, so adding the doors to the group would grant the partner nothing and
+    the controller would receive no command at all. Tomorrow is always after
+    the fixtures, so the partner starts the scenario holding a card that
+    works and a membership that is already running.
+    """
+    return (fields.Datetime.now() + timedelta(days=1)).replace(
+        hour=10, minute=30, second=0, microsecond=0
+    )
 
 
 @tagged('rfid_service')
@@ -36,7 +53,7 @@ class RFIDServices(RFIDController, HttpCase):
         # the wizard's start/end calculation) use fields.Datetime.now() /
         # datetime.now(), which freezegun pins process-wide, including the
         # HttpCase server thread that handles /hr/rfid/event.
-        freezer = freeze_time(FROZEN_NOW)
+        freezer = freeze_time(_pinned_now())
         freezer.start()
         self.addCleanup(freezer.stop)
         super().setUp()

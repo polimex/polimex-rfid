@@ -11,7 +11,7 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: "\n        Base module for visitor management and temporary RFID access control\n    "
-last_updated: '2026-05-14'
+last_updated: '2026-08-14'
 source_digest: sha256:836d6ead9b8933e24830e8a54e25e71f4612c24c0dc237191d7a92ab0114708d
 depends:
 - hr_rfid
@@ -958,3 +958,34 @@ Commit `3c84986ac4` (2023-07-24): v2.1 Added portal functionality, barcode gener
 - Source digest: `sha256:836d6ead9b8933e24830e8a54e25e71f4612c24c0dc237191d7a92ab0114708d`
 - Generated at: `2026-05-14T11:16:43+00:00`
 - Generator: `polimex_module_knowledge` (see `~/.claude/lib/polimex_module_knowledge/`)
+
+## The setup checklist (onboarding banner) <a id='onboarding-banner'></a>
+
+The banner is NOT a view class of this module. It is attached by putting the
+onboarding's `route_name` in the CONTEXT of the action:
+
+```xml
+<field name="context">{'onboarding_route_name': 'rfid_service_base_setup'}</field>
+```
+
+on ``hr_rfid_service_action` (Services, kanban/list/form)` (`views/rfid_service.xml`). That is the whole integration on this side.
+
+Everything else lives in `hr_rfid`: the `OnboardingBanner` OWL component, the
+extension of the stock `web.ListView` / `web.KanbanView` templates, and the two
+server methods `onboarding.onboarding.get_onboarding_panel_html(route_name)` /
+`close_onboarding_panel(route_name)` - which render and close core's own
+`onboarding.onboarding_panel` template, so the banner is identical to Odoo's
+native one and translated server-side.
+
+**Do not go back to `js_class`.** It was one until August 2026, and a view
+carries exactly ONE `js_class`: `hr_rfid_refresh_views` (auto_install, so on
+nearly every database) writes its own over the view it inherits, and the banner
+component was then never created at all - no error, no request, no banner, with
+the server side rendering perfectly the whole time. Keying on the action context
+removes the conflict: the view can carry any `js_class` and still show the
+banner.
+
+This module's own part is `models/onboarding_onboarding.py`:
+`_prepare_rendering_values` auto-completes its two steps (a `rfid.service` exists; a `rfid.service.sale` exists) for the CURRENT company
+before delegating to core, and `action_close_panel_service_setup` is the close action named on the
+onboarding record. Nothing here has to know how the banner is drawn.
