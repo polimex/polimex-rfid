@@ -27,15 +27,15 @@ class AccessImporter(PhaseImporter):
     WEIGHT = 13
 
     def run(self, wizard):
-        """Execute Phase 4."""
-        self._import_access_groups()
-        self._import_ag_door_rels()
-        self._import_ag_employee_rels()
-        self._import_ag_contact_rels()
-        if self.b.options.get('import_cards'):
-            self._import_cards()
-        self._department_second_pass()
-        return self.results
+        """Execute Phase 4. Each step stands on its own."""
+        return self.steps(
+            self._import_access_groups,
+            self._import_ag_door_rels,
+            self._import_ag_employee_rels,
+            self._import_ag_contact_rels,
+            self._import_cards,
+            self._department_second_pass,
+        )
 
     def _import_access_groups(self):
         """Step 20: hr.rfid.access.group - TWO PASSES (inherited_ids M2M self-ref).

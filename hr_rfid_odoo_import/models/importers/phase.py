@@ -8,6 +8,9 @@ cameras went missing - the wizard asked the source about six module names, none
 of which was the camera one, so the operator got a clean-looking run with no
 camera data and no warning either.
 """
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 def _target_available(env, requirement):
@@ -67,6 +70,36 @@ class PhaseImporter:
 
     def run(self, wizard):
         raise NotImplementedError
+
+    def steps(self, *steps):
+        """Run the steps of this phase, each one on its own.
+
+        One step failing must not take the rest of the phase with it. The case
+        that forced this is ordinary rather than exotic: the account used to
+        read the other system is often not allowed to see every model - a real
+        customer's Odoo 17 refused the emergency-signal groups outright - and
+        the whole hardware phase died on it, so the controllers, doors, readers
+        and everything after them never arrived either.
+
+        A step that cannot run is recorded with what went wrong and the phase
+        carries on. Nothing is hidden: the line says the step failed.
+        """
+        for step in steps:
+            name = step.__name__.lstrip('_').replace('_', ' ')
+            try:
+                with self.env.cr.savepoint():
+                    step()
+            except Exception as exc:
+                _logger.warning("Step %s could not be completed: %s",
+                                name, exc, exc_info=True)
+                self.results.append(self.b._make_result(
+                    name, 0, 0, status='error',
+                    error=self.env._(
+                        "This part could not be read from the other system: "
+                        "%(problem)s", problem=str(exc)[:200],
+                    ),
+                ))
+        return self.results
 
 
 def registry():

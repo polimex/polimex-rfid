@@ -28,27 +28,29 @@ class CoreImporter(PhaseImporter):
 
     def run(self, wizard):
         """Execute Phase 1 + Phase 3."""
-        # Phase 1: Foundation
-        self._import_card_types()
-        self._import_employee_categories()
-        self._import_departments()
-        self._import_workcodes()
-        self._import_time_schedules()
-
-        # Phase 3: Hardware
+        # Each step stands on its own: a model the other system refuses to
+        # hand over must not take the rest of the hardware with it.
+        steps = [
+            self._import_card_types,
+            self._import_employee_categories,
+            self._import_departments,
+            self._import_workcodes,
+            self._import_time_schedules,
+        ]
         if self.b.options.get('import_hardware'):
-            self._import_alarm_groups()
-            self._import_emergency_groups()
-            self._import_webstacks()
-            self._import_controllers()
-            self._import_doors()
-            self._import_readers()
-            self._import_input_masks()
-            self._import_output_ts()
-            self._import_alarms()
-            self._import_th_sensors()
-
-        return self.results
+            steps += [
+                self._import_alarm_groups,
+                self._import_emergency_groups,
+                self._import_webstacks,
+                self._import_controllers,
+                self._import_doors,
+                self._import_readers,
+                self._import_input_masks,
+                self._import_output_ts,
+                self._import_alarms,
+                self._import_th_sensors,
+            ]
+        return self.steps(*steps)
 
     # ══════════════════════════════════════════════════════════
     # Phase 1: Foundation
