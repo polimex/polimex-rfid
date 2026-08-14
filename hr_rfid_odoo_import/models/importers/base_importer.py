@@ -63,6 +63,10 @@ class BaseImporter:
         #: True once a read stopped early. The phase is then incomplete, not
         #: finished, and the run knows to come back to it.
         self.stopped_early = False
+        #: Where each paged read got to, so the next pass carries on rather
+        #: than starting the same read from the beginning. Persisted by the
+        #: run record between passes.
+        self.read_cursors = {}
 
     # ── Source reading (XML-RPC) ──────────────────────────────
 
@@ -116,7 +120,18 @@ class BaseImporter:
         )
         if not ids:
             return []
-        read_kwargs = {'context': dict(context)} if context else {}
+        # ``_classic_write`` returns a Many2one as a bare id instead of
+        # [id, display_name]. The names are of no use here - every mapping goes
+        # through the id - and asking for them makes the SOURCE compute
+        # display_name for each one. On a real Odoo 17 that raised outright:
+        # reading hr.rfid.door failed because the controller's display_name
+        # touches a field that database no longer has, and with the doors gone
+        # every reader, every access right and all 44 756 events had nothing to
+        # attach to. Not asking for what we do not need makes the read immune
+        # to whatever the other system's display names depend on.
+        read_kwargs = {'load': '_classic_write'}
+        if context:
+            read_kwargs['context'] = dict(context)
         records = self.rpc_models.execute_kw(
             self.source_db, self.source_uid, self.source_password,
             model, 'read', [ids, fields], read_kwargs,
@@ -126,30 +141,48 @@ class BaseImporter:
         by_id = {r['id']: r for r in records}
         return [by_id[i] for i in ids if i in by_id]
 
-    def _read_all(self, model, domain, fields, batch_size=1000):
+    #: Marks a read that has reached the end of the source.
+    CURSOR_FINISHED = -1
+
+    def _read_all(self, model, domain, fields, batch_size=1000, cursor_key=None):
         """ID-based pagination for large datasets.
 
-        Stops between pages when the caller's time is up. The phase then works
-        with what it has read so far and is re-run later; because every record
-        carries an external ID, the next pass skips whatever already arrived,
-        so stopping costs a page of reading and never a duplicate row.
+        Stops between pages when the caller's time is up, and REMEMBERS where
+        it stopped when given a ``cursor_key``. Without that memory the next
+        pass starts from the first page again: on a real customer with 44 756
+        events, each pass re-read the same opening pages, ran out of time in
+        the same place, and the transfer never advanced - measured, 29 passes
+        that moved nothing. Skipping already-imported rows is not enough,
+        because the cost is the reading, not the writing.
+
+        The cursor is kept by the caller (the run record) so it survives the
+        process, and is set to CURSOR_FINISHED once the source is exhausted, so
+        a completed read is not repeated at all.
         """
+        if cursor_key and self.read_cursors.get(cursor_key) == self.CURSOR_FINISHED:
+            return []
+
         all_records = []
-        last_id = 0
+        last_id = self.read_cursors.get(cursor_key, 0) if cursor_key else 0
         while True:
             batch_domain = [('id', '>', last_id)] + domain
             records = self._search_read(
                 model, batch_domain, fields, order='id asc', limit=batch_size
             )
             if not records:
+                if cursor_key:
+                    self.read_cursors[cursor_key] = self.CURSOR_FINISHED
                 break
             all_records.extend(records)
             last_id = records[-1]['id']
+            if cursor_key:
+                self.read_cursors[cursor_key] = last_id
             if self.time_is_up and self.time_is_up():
                 self.stopped_early = True
                 _logger.info(
-                    "%s: stopping after %d records - out of time for this pass",
-                    model, len(all_records))
+                    "%s: read %d records up to id %s - out of time for this "
+                    "pass, will carry on from there",
+                    model, len(all_records), last_id)
                 break
         return all_records
 

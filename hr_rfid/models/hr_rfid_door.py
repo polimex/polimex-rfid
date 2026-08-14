@@ -544,7 +544,13 @@ class HrRfidDoor(models.Model):
             if old_card_type != door.card_type:
                 rel_env.update_door_rels(door)
 
-            if old_apb_mode != door.apb_mode:
+            if old_apb_mode != door.apb_mode and not self.env.context.get(
+                    'no_hardware_commands'):
+                # Guarded like every other command path here: bringing doors
+                # across from another system changes this field on the way in,
+                # and the controller must not be told about it mid-transfer.
+                # Caught on a real Odoo 17 migration - one stray command in an
+                # otherwise silent run.
                 cmd_data = 0
                 for door2 in door.controller_id.door_ids:
                     if door2.apb_mode and len(door2.reader_ids) > 1:

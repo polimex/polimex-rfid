@@ -54,7 +54,7 @@ class AttendanceImporter(PhaseImporter):
         # "every row was dropped" looked identical in the protocol.
         source_records = self.b._read_all(
             model, self.b._scoped_domain('employee_id'), fields_to_read,
-            batch_size=5000)
+            batch_size=5000, cursor_key='attendance:%s' % model)
         imported = 0
         already = 0
         rejected = 0
@@ -142,7 +142,7 @@ class AttendanceImporter(PhaseImporter):
 
         source_records = self.b._read_all(
             model, self.b._scoped_domain('employee_id'), fields_to_read,
-            batch_size=5000)
+            batch_size=5000, cursor_key='attendance:%s' % model)
         imported = 0
         already = 0
         rejected = 0

@@ -140,7 +140,9 @@ class EventImporter(PhaseImporter):
             'employee_id', 'contact_id', 'controller_id', 'input_js',
             'card_number', 'department_id', 'alarm_line_id'] + camera_fields)
 
-        source_records = self.b._read_all(model, domain, fields_to_read, batch_size=2000)
+        source_records = self.b._read_all(model, domain, fields_to_read,
+                                          batch_size=2000,
+                                          cursor_key='events:%s' % model)
         imported = 0
         already = 0
         rejected = 0
@@ -277,7 +279,9 @@ class EventImporter(PhaseImporter):
             'error_description', 'input_js', 'card_number', 'siren',
             'occurrences', 'last_occurrence'] + camera_fields)
 
-        source_records = self.b._read_all(model, domain, fields_to_read, batch_size=2000)
+        source_records = self.b._read_all(model, domain, fields_to_read,
+                                          batch_size=2000,
+                                          cursor_key='events:%s' % model)
         imported = 0
         already = 0
         rejected = 0

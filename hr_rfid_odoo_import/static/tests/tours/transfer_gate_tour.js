@@ -51,5 +51,12 @@ registry.category("web_tour.tours").add("rfid_transfer_gate_tour", {
             trigger: ".modal-footer button.btn-secondary:not([name])",
             run: "click",
         },
+        {
+            // Wait for it to actually be gone. Ending while the dialog is
+            // still open leaves an unsaved form, which the browser then saves
+            // on unload - stray writes that the next test inherits.
+            content: "The dialog is gone and nothing was left half-filled",
+            trigger: "body:not(:has(.modal))",
+        },
     ],
 });

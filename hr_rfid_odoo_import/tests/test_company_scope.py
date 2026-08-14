@@ -51,6 +51,7 @@ class _FakeSource(BaseImporter):
         self.options = options
         self._field_cache = {}
         self._readable_cache = {}
+        self.read_cursors = {}
         self._data = data
         self.domains = {}
         self.bulk_calls = []
@@ -74,7 +75,7 @@ class _FakeSource(BaseImporter):
         self.domains[model] = domain
         return [dict(rec) for rec in self._data.get(model, [])]
 
-    def _read_all(self, model, domain, fields, batch_size=1000):
+    def _read_all(self, model, domain, fields, batch_size=1000, cursor_key=None):
         return self._search_read(model, domain, fields)
 
     # -- capture the bulk contract without touching the DB -------------
