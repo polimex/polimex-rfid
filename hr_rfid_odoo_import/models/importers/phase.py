@@ -173,7 +173,7 @@ def build_registry():
     from .core_importer import CoreImporter, IoTableImporter, ZoneImporter
     from .people_importer import PeopleImporter
     from .leave_importer import LeaveImporter
-    from .access_importer import AccessImporter
+    from .access_importer import AccessImporter, DoorRelFinisher
     from .camera_importer import CameraImporter
     from .site_importer import SiteGroupImporter, SiteImporter
     from .event_importer import EventImporter
@@ -189,6 +189,7 @@ def build_registry():
         AccessImporter,
         SiteGroupImporter,
         CameraImporter,
+        DoorRelFinisher,
         EventImporter,
         VendingImporter,
         AttendanceImporter,

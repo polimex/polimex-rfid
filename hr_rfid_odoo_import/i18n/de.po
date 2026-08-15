@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 12:20+0000\n"
-"PO-Revision-Date: 2026-08-15 15:20\n"
+"POT-Creation-Date: 2026-08-15 13:39+0000\n"
+"PO-Revision-Date: 2026-08-15 16:39\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -2470,6 +2470,16 @@ msgstr "Anwesenheit"
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
 msgid ""
+"door №%(num)s \"%(name)s\" belongs to camera \"%(cam)s\" - it is attached "
+"again right after the cameras come across"
+msgstr ""
+"Tür Nr. %(num)s \"%(name)s\" gehört zu Kamera \"%(cam)s\" - sie wird direkt "
+"nach den Kameras erneut zugeordnet"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
 "door №%(num)s \"%(name)s\" belongs to company \"%(company)s\", which is not "
 "included in this transfer - add that company on the first page to bring its "
 "doors"
@@ -2636,6 +2646,17 @@ msgid ""
 msgstr ""
 "das andere System hat Tür Nr. %(num)s nicht mehr - die Berechtigung verweist "
 "auf eine dort gelöschte Tür"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"the other system refused the part of the filter that goes through %(field)s "
+"- records reachable only that way were not read this time"
+msgstr ""
+"das andere System hat den Teil des Filters, der über %(field)s läuft, "
+"abgelehnt - Datensätze, die nur auf diesem Weg erreichbar sind, wurden "
+"diesmal nicht gelesen"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python

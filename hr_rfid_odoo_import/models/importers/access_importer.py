@@ -673,3 +673,29 @@ class AccessImporter(PhaseImporter):
             skipped_count=expected - updated,
             duration=time.time() - start,
         ))
+
+
+class DoorRelFinisher(PhaseImporter):
+    """Phase 7c: the door permissions that had to wait for the cameras.
+
+    The access step runs BEFORE the cameras by design (the rights it creates
+    mirror into the plate lists, so the cameras must come after). But a
+    permission pointing at a CAMERA door then has nothing to attach to yet -
+    on a live migration all four camera-door permissions sat red through
+    every run. This pass re-runs the same idempotent step once the camera
+    doors exist: everything already attached is recognised and left alone,
+    only the waiting ones land.
+    """
+
+    PHASE_ID = 'Phase 7c'
+    NAME = 'Door permissions (after cameras)'
+    REQUIRES_SOURCE = ('hr_rfid',)
+    REQUIRES_TARGET = ('hr.rfid.access.group',)
+    OPTION = 'import_access'
+    WEIGHT = 2
+
+    def run(self, wizard):
+        worker = AccessImporter(self.b)
+        results = worker.steps(worker._import_ag_door_rels)
+        self.results.extend(results)
+        return self.results

@@ -99,3 +99,47 @@ class TestImportAdoptsAutomationBornHardware(TransactionCase):
             ('module', '=', EXTERNAL_ID_MODULE),
             ('model', '=', 'hr.rfid.door'), ('res_id', '=', self.door.id)])
         self.assertEqual(imd, 1)
+
+
+@tagged('post_install', '-at_install', 'rfid_odoo_import', 'rfid_import_adopt')
+class TestCameraDoorPermissionsWaitForTheCameras(TransactionCase):
+    """Правото към камерна врата чака камерите - по ред, не по късмет.
+
+    Живата миграция го показа: фаза 4 (права) върви преди фаза 7 (камери)
+    по проект, затова право към камерна врата няма какво да закачи В МОМЕНТА
+    - и три протокола го писаха червено. Отлагане + втори пас след камерите.
+    """
+
+    def test_a_camera_door_permission_is_deferred_not_an_error(self):
+        from .test_source_refuses_a_field import _RestrictedRpc, _importer
+        imp = _importer(self.env, _RestrictedRpc([], set()))
+        imp.company_map = {101: self.env.company.id}
+
+        def _search_read(model, domain, fields, **kw):
+            data = {
+                'hr.rfid.door': [{'id': 5, 'name': 'Врата ВХОД',
+                                  'controller_id': False}],
+                'cctv.camera': [{'id': 3, 'name': 'ВХОД', 'company_id': 101}],
+            }
+            rows = data.get(model, [])
+            if domain and domain[0][0] == 'id':
+                rows = [r for r in rows if r['id'] == domain[0][2]]
+            return [dict(r) for r in rows]
+        imp._search_read = _search_read
+        imp._has_model = lambda m: True
+
+        sentence, is_real = imp.describe_unmatched_door(5)
+
+        self.assertFalse(is_real,
+                         "Чакащото камерата е отложено, не грешка")
+        self.assertIn('ВХОД', sentence,
+                      "Редът назовава камерата, за която се чака")
+
+    def test_the_second_pass_runs_after_the_cameras(self):
+        from ..models.importers.phase import registry
+        names = [c.PHASE_ID for c in registry()]
+        self.assertIn('Phase 7c', names)
+        self.assertGreater(names.index('Phase 7c'), names.index('Phase 7'),
+                           "Довършването на правата идва СЛЕД камерите")
+        self.assertLess(names.index('Phase 4'), names.index('Phase 7'),
+                        "А правата по принцип остават преди камерите")

@@ -194,9 +194,6 @@ class BaseImporter:
                 model, 'search', [dom], search_kwargs,
             )
 
-        known = self.refused_fields.get(model)
-        if known:
-            domain = self._domain_without_fields(domain, known)
         try:
             return _search(domain)
         except xmlrpc.client.Fault as fault:
@@ -204,6 +201,13 @@ class BaseImporter:
                 raise
         # Which filtered field is the refused one? Try the domain without each
         # in turn - domains here carry a handful of leaves at most.
+        #
+        # Two hard lessons are encoded here. The dropped leg is NOT remembered:
+        # an early fault once marked camera_id refused for the whole run, every
+        # later read silently lost the camera side of its OR-domain, and 20 851
+        # recognised plates became invisible while the protocol read clean.
+        # And the drop is SAID OUT LOUD in the protocol, because rows that a
+        # dropped filter can no longer reach are rows left behind.
         for field in self._domain_fields(domain):
             try:
                 ids = _search(self._domain_without_fields(domain, {field}))
@@ -211,10 +215,14 @@ class BaseImporter:
                 if fault.faultCode != self.RPC_FAULT_ACCESS_ERROR:
                     raise
                 continue
-            self.refused_fields.setdefault(model, set()).add(field)
             _logger.warning(
-                "%s: the source refuses filtering by %r - reading without "
-                "that filter; its own access rules still apply", model, field)
+                "%s: the source refuses filtering by %r - THIS read ran "
+                "without that filter; records reachable only through it are "
+                "not seen", model, field)
+            self.note_skip_reason(self.env._(
+                "the other system refused the part of the filter that goes "
+                "through %(field)s - records reachable only that way were "
+                "not read this time", field=field))
             return ids
         # No single field explains it (the rows themselves are refused, say):
         # the original failure stands and the step isolation records it.
@@ -1067,6 +1075,17 @@ class BaseImporter:
                     ['name', 'company_id'])
                 if cams:
                     company_id = self._m2o_id(cams[0].get('company_id'))
+                    if company_id in self.company_map:
+                        # A camera door: it is CREATED by the camera step,
+                        # which by design runs after the access step. Not an
+                        # error - the permission waits for its second pass.
+                        return self.env._(
+                            "door №%(num)s \"%(name)s\" belongs to camera "
+                            "\"%(cam)s\" - it is attached again right after "
+                            "the cameras come across",
+                            num=source_id, name=door.get('name') or '?',
+                            cam=cams[0].get('name') or '?',
+                        ), False
             if company_id and company_id not in self.company_map:
                 names = self._search_read(
                     'res.company', [('id', '=', company_id)], ['name'])

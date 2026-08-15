@@ -205,10 +205,16 @@ class TestSourceRefusesAFilter(TransactionCase):
 
         self.assertEqual([r['name'] for r in records], ['Fire brigade'],
                          "Филтър по скрито поле не бива да спира записите")
-        self.assertIn(
+        # Отказът се ДОКЛАДВА в протоколния ред, но НЕ се помни: запомнянето
+        # веднъж отряза камерния крак на всяко следващо четене и 20 851
+        # разпознати номера станаха невидими при чист протокол.
+        result = imp._make_result('m', 1, 1)
+        self.assertIn('company_id', result['error'],
+                      "Редът казва кой клон на филтъра е отказан")
+        self.assertNotIn(
             'company_id',
             imp.refused_fields.get('hr.rfid.ctrl.emergency.group', set()),
-            "Отказът от филтъра също се помни и се докладва")
+            "И не се запомня - следващото четене пробва пълния филтър")
 
     def test_the_m2o_shape_from_the_source_never_crashes_the_reader(self):
         """Живата миграция: 'int' object is not subscriptable свали цялата
