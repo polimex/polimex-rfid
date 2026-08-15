@@ -254,11 +254,46 @@ action = {'type': 'ir.actions.client', 'tag': 'reload'}
         </field>
     </record>
 
+
+    <!-- Kanban: the operator's overview. A camera IS its picture - the
+         snapshot the model already holds (owner: "просто я използвай").
+         Card idiom copied from fleet_vehicle_views.xml:294 (aside image +
+         main), v19 t-name="card". -->
+    <record id="cctv_camera_view_kanban" model="ir.ui.view">
+        <field name="name">cctv.camera.kanban</field>
+        <field name="model">cctv.camera</field>
+        <field name="arch" type="xml">
+            <kanban sample="1">
+                <templates>
+                    <t t-name="card" class="flex-row">
+                        <aside class="d-flex align-items-center me-2">
+                            <field name="snapshot" widget="image"
+                                   options="{'img_class': 'object-fit-cover'}"/>
+                        </aside>
+                        <main>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <field class="fw-bolder fs-5" name="name"/>
+                                <field name="connection_status" widget="badge"/>
+                            </div>
+                            <div class="text-muted small">
+                                <field name="ip_address"/> - <field name="model"/>
+                            </div>
+                            <footer class="text-muted small pt-1"
+                                    t-if="record.last_seen.raw_value">
+                                <field name="last_seen"/>
+                            </footer>
+                        </main>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
     <!-- Menu and Action for CCTV Camera Management -->
     <record id="action_cctv_camera" model="ir.actions.act_window">
         <field name="name">CCTV Cameras</field>
         <field name="res_model">cctv.camera</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">kanban,list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">Register your first CCTV camera</p>
             <p>

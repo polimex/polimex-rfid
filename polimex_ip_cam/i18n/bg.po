@@ -54,9 +54,9 @@ msgid ""
 "set, card-to-door assignments are mirrored to the camera's whitelist "
 "automatically."
 msgstr ""
-"ANPR камера, свързана с четеца на тази врата (наследена чрез четеца). Когато "
-"е зададена, назначенията карта-врата се отразяват автоматично в белия списък "
-"на камерата."
+"ANPR камера, свързана с четеца на тази врата (наследена чрез четеца). Когато"
+" е зададена, назначенията карта-врата се отразяват автоматично в белия "
+"списък на камерата."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__message_needaction
@@ -1897,8 +1897,8 @@ msgid ""
 "date filter to see the full history. Use Restart Sending to retry a failed "
 "command."
 msgstr ""
-"Одитна следа на командите, които Odoo е изпратил към камерите (синхронизация "
-"на белия списък, преконфигуриране на push-сървъра и др.). Изгледът показва "
+"Одитна следа на командите, които Odoo е изпратил към камерите (синхронизация"
+" на белия списък, преконфигуриране на push-сървъра и др.). Изгледът показва "
 "по подразбиране днешната партида; разширете филтъра по дата, за да видите "
 "цялата история. Използвайте „Рестартирай изпращането“, за да повторите "
 "неуспешна команда."
@@ -2319,17 +2319,13 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_discovery_form
 msgid ""
 "Cameras found on your local network (Hikvision SADP and ONVIF).\n"
-"                    Remove the ones you do not want, rename the rest if you "
-"like, then\n"
-"                    click Add Cameras. Connection details are completed "
-"afterwards with\n"
+"                    Remove the ones you do not want, rename the rest if you like, then\n"
+"                    click Add Cameras. Connection details are completed afterwards with\n"
 "                    Check Connection on each new camera."
 msgstr ""
 "Намерени камери в локалната ви мрежа (Hikvision SADP и ONVIF).\n"
-"                    Премахнете тези, които не желаете, преименувайте "
-"останалите ако желаете, след което\n"
-"                    натиснете Добави камери. Данните за връзката се допълват "
-"след това с\n"
+"                    Премахнете тези, които не желаете, преименувайте останалите ако желаете, след което\n"
+"                    натиснете Добави камери. Данните за връзката се допълват след това с\n"
 "                    Проверка на връзката за всяка нова камера."
 
 #. module: polimex_ip_cam
@@ -2440,8 +2436,8 @@ msgstr "Компания"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__company_id
 msgid ""
-"Company that owns the camera. Cameras are isolated per company; record rules "
-"prevent users seeing devices outside their allowed companies."
+"Company that owns the camera. Cameras are isolated per company; record rules"
+" prevent users seeing devices outside their allowed companies."
 msgstr ""
 "Фирмата, собственик на камерата. Камерите са изолирани по фирма; правилата "
 "за записи не позволяват на потребителите да виждат устройства извън "
@@ -2473,8 +2469,8 @@ msgstr "Проверка на връзката"
 #. module: polimex_ip_cam
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
 msgid ""
-"Connection details Odoo uses to reach the camera. Authentication is the same "
-"operator account configured on the camera's web UI."
+"Connection details Odoo uses to reach the camera. Authentication is the same"
+" operator account configured on the camera's web UI."
 msgstr ""
 "Данни за връзка, използвани от Odoo за достъп до камерата. Удостоверяването "
 "се извършва чрез същия операторски акаунт, конфигуриран в уеб интерфейса на "
@@ -2526,8 +2522,8 @@ msgstr "Dahua"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_command__request_data
 msgid ""
-"Data sent to the camera as part of the command, e.g. in param=value per line "
-"format."
+"Data sent to the camera as part of the command, e.g. in param=value per line"
+" format."
 msgstr ""
 "Данни, изпратени на камерата като част от командата, например във формат "
 "param=стойност на ред."
@@ -3653,8 +3649,8 @@ msgstr ""
 "Жизнен цикъл на командата - Нова: на опашка, още неизпратена. В процес: "
 "обработчикът я доставя в момента. Готова: камерата потвърди. Грешка: "
 "доставката е неуспешна (вижте „Данни от отговора“). Използвайте сървърното "
-"действие „Рестартирай изпращането“, за да поставите отново на опашка команда "
-"с грешка."
+"действие „Рестартирай изпращането“, за да поставите отново на опашка команда"
+" с грешка."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_rfid_rel__card_id
@@ -3689,8 +3685,8 @@ msgstr ""
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__rfid_whitelist_count
 msgid ""
-"Live count of plates classified as Whitelist (auto-grant). Used by the smart "
-"button on the form."
+"Live count of plates classified as Whitelist (auto-grant). Used by the smart"
+" button on the form."
 msgstr ""
 "Текущ брой табели, класифицирани като бял списък (автоматично разрешение). "
 "Използва се от интелигентния бутон във формуляра."
@@ -3790,11 +3786,11 @@ msgstr "Име"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__name
 msgid ""
-"Name the camera will be created with. Pre-filled from the model and address; "
-"edit it to something meaningful before adopting."
+"Name the camera will be created with. Pre-filled from the model and address;"
+" edit it to something meaningful before adopting."
 msgstr ""
-"Името, с което ще бъде създадена камерата. Предварително попълнено от модела "
-"и адреса; редактирайте го на нещо смислено преди добавяне."
+"Името, с което ще бъде създадена камерата. Предварително попълнено от модела"
+" и адреса; редактирайте го на нещо смислено преди добавяне."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__navajo
@@ -3858,14 +3854,11 @@ msgstr "Няма изпратени команди към камери днес"
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_discovery_form
 msgid ""
 "No cameras answered on this network segment. Make sure Odoo runs on\n"
-"                    the same LAN as the cameras (discovery does not cross "
-"routers), then\n"
+"                    the same LAN as the cameras (discovery does not cross routers), then\n"
 "                    try again — or add a camera manually."
 msgstr ""
-"Никоя камера не е отговорила в този мрежов сегмент. Уверете се, че Odoo "
-"работи в\n"
-"                    същата LAN мрежа като камерите (търсенето не преминава "
-"през рутери), след което\n"
+"Никоя камера не е отговорила в този мрежов сегмент. Уверете се, че Odoo работи в\n"
+"                    същата LAN мрежа като камерите (търсенето не преминава през рутери), след което\n"
 "                    опитайте отново - или добавете камера ръчно."
 
 #. module: polimex_ip_cam
@@ -3901,8 +3894,8 @@ msgid ""
 "Number of ANPR cameras this card (license plate) is registered with. Drives "
 "the Cameras smart button on the card form."
 msgstr ""
-"Брой ANPR камери, с които е регистрирана тази карта (регистрационна табела). "
-"Захранва смарт бутона „Камери“ във формата на картата."
+"Брой ANPR камери, с които е регистрирана тази карта (регистрационна табела)."
+" Захранва смарт бутона „Камери“ във формата на картата."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__message_needaction_counter
@@ -4194,8 +4187,8 @@ msgstr "Парола"
 #. module: polimex_ip_cam
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
 msgid ""
-"Per-entrance parameters (lane direction, allowed list, snapshot mode) pulled "
-"from the camera. Use Get to read the current configuration; Set writes any "
+"Per-entrance parameters (lane direction, allowed list, snapshot mode) pulled"
+" from the camera. Use Get to read the current configuration; Set writes any "
 "local changes back to the device."
 msgstr ""
 "Параметри за всеки вход (посока на лентата, разрешен списък, режим на "
@@ -4307,11 +4300,11 @@ msgstr "RFID потребителско събитие"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__door_id
 msgid ""
-"RFID doors whose readers are wired to this camera. Card assignments on these "
-"doors are mirrored to the camera's plate whitelist automatically."
+"RFID doors whose readers are wired to this camera. Card assignments on these"
+" doors are mirrored to the camera's plate whitelist automatically."
 msgstr ""
-"RFID врати, чиито четци са свързани с тази камера. Назначенията на карти към "
-"тези врати се отразяват автоматично в белия списък с табели на камерата."
+"RFID врати, чиито четци са свързани с тази камера. Назначенията на карти към"
+" тези врати се отразяват автоматично в белия списък с табели на камерата."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__reader_ids
@@ -4331,8 +4324,8 @@ msgstr "ROK"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__connection_error_detail
 msgid ""
-"Raw error returned by the last failed connection check (for support/"
-"diagnostics)."
+"Raw error returned by the last failed connection check (for "
+"support/diagnostics)."
 msgstr ""
 "Необработена грешка от последната неуспешна проверка на връзката (за "
 "поддръжка/диагностика)."
@@ -4466,8 +4459,8 @@ msgstr "Настройки"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__sub_serial_number
 msgid ""
-"Short device serial the camera reports as 'deviceUUID' in ANPR events (ISAPI "
-"subSerialNumber). Incoming plate events are matched to this camera by this "
+"Short device serial the camera reports as 'deviceUUID' in ANPR events (ISAPI"
+" subSerialNumber). Incoming plate events are matched to this camera by this "
 "value. Filled automatically on Check Connection, or learned from the first "
 "event received from the camera's IP."
 msgstr ""
@@ -4583,8 +4576,7 @@ msgid ""
 "onto recordings) and the plate timestamps are set in this timezone; Odoo "
 "stores everything in UTC and converts."
 msgstr ""
-"Часовата зона на камерата. Използва се за показване на дати и часове в "
-"правилния часови пояс.\n"
+"Часовата зона на камерата. Използва се за показване на дати и часове в правилния часови пояс.\n"
 "Номерата се изпращат към камерата с данни и време в този часови пояс."
 
 #. module: polimex_ip_cam
@@ -4603,8 +4595,8 @@ msgid ""
 "Timestamp the command was successfully delivered to the camera. Empty while "
 "the command is queued or has failed."
 msgstr ""
-"Времеви печат на успешната доставка на командата до камерата. Празно, докато "
-"командата е в опашката или е неуспешна."
+"Времеви печат на успешната доставка на командата до камерата. Празно, докато"
+" командата е в опашката или е неуспешна."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__tz
