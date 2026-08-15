@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 10:35+0000\n"
-"PO-Revision-Date: 2026-08-15 13:35\n"
+"POT-Creation-Date: 2026-08-15 10:55+0000\n"
+"PO-Revision-Date: 2026-08-15 13:55\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -2462,6 +2462,19 @@ msgstr ""
 #. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"door №%(num)s \"%(name)s\" is part of this transfer; a door with the same "
+"name exists here (№%(target)s) but under a different transfer identity, so "
+"they are not recognised as one - send this protocol to support"
+msgstr ""
+"Tür №%(num)s „%(name)s“ ist Teil dieser Übertragung; hier existiert eine Tür "
+"mit demselben Namen (№%(target)s), jedoch unter einer anderen "
+"Übertragungsidentität, sodass sie nicht als dieselbe erkannt werden - senden "
+"Sie dieses Protokoll an den Support"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
 msgid "door №%(num)s from the other system has no match here"
 msgstr "Tür Nr. %(num)s aus dem anderen System hat hier keine Entsprechung"
 
@@ -2568,6 +2581,22 @@ msgid ""
 msgstr ""
 "das Ereignis benennt weder ein Kommunikationsmodul noch eine Kamera, daher "
 "gibt es hier nichts, woran es angehängt werden könnte"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/event_importer.py:0
+msgid ""
+"the other system holds %(total)s event(s) in the chosen period, but the "
+"transfer's filter matched none of them: %(module)s reach it through a "
+"communication module and %(camera)s through a camera. Numbers that do not "
+"add up mean the events hang off equipment outside the selected companies - "
+"send this protocol to support."
+msgstr ""
+"Das andere System enthält %(total)s Ereignis(se) im gewählten Zeitraum, aber "
+"der Filter der Übertragung hat keines davon erfasst: %(module)s erreichen es "
+"über ein Kommunikationsmodul und %(camera)s über eine Kamera. Wenn die "
+"Zahlen nicht übereinstimmen, hängen die Ereignisse an Geräten außerhalb der "
+"ausgewählten Unternehmen - senden Sie dieses Protokoll an den Support."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python

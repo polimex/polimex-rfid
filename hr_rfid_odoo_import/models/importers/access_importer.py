@@ -292,7 +292,7 @@ class AccessImporter(PhaseImporter):
                 'values': vals,
                 'noupdate': True,
             }]
-            created = self.b._try_load_records(model, data_list)
+            created = self.b._try_load_records(model, data_list, note=False)
             if created:
                 self.b._set_target_id(model, rec['id'], created.id)
                 imported += 1
@@ -469,7 +469,7 @@ class AccessImporter(PhaseImporter):
                 'values': vals,
                 'noupdate': True,
             }]
-            created = self.b._try_load_records(model, data_list)
+            created = self.b._try_load_records(model, data_list, note=False)
             if created:
                 self.b._set_target_id(model, rec['id'], created.id)
                 imported += 1

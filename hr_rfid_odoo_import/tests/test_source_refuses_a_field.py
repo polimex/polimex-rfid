@@ -64,6 +64,9 @@ def _importer(env, rpc):
     imp.source_password = 'x'
     imp.rpc_models = rpc
     imp.refused_fields = {}
+    # Всеки двойник носи идентичност на източника: резолюцията и диагнозата
+    # строят външни идентификатори от нея.
+    imp.source_slug = 'srcdb'
     imp.time_is_up = None
     imp.stopped_early = False
     imp.read_cursors = {}

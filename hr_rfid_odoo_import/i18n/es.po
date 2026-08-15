@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 10:35+0000\n"
-"PO-Revision-Date: 2026-08-15 13:35\n"
+"POT-Creation-Date: 2026-08-15 10:55+0000\n"
+"PO-Revision-Date: 2026-08-15 13:55\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -2464,6 +2464,19 @@ msgstr ""
 #. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"door №%(num)s \"%(name)s\" is part of this transfer; a door with the same "
+"name exists here (№%(target)s) but under a different transfer identity, so "
+"they are not recognised as one - send this protocol to support"
+msgstr ""
+"la puerta n.º%(num)s \"%(name)s\" forma parte de esta transferencia; existe "
+"aquí una puerta con el mismo nombre (n.º%(target)s) pero con una identidad "
+"de transferencia diferente, por lo que no se reconocen como la misma - envíe "
+"este protocolo a soporte"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
 msgid "door №%(num)s from the other system has no match here"
 msgstr "la puerta n.º %(num)s del otro sistema no tiene coincidencia aquí"
 
@@ -2570,6 +2583,23 @@ msgid ""
 msgstr ""
 "el evento no nombra ni un módulo de comunicación ni una cámara, por lo que "
 "no hay nada a lo que adjuntarlo aquí"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/event_importer.py:0
+msgid ""
+"the other system holds %(total)s event(s) in the chosen period, but the "
+"transfer's filter matched none of them: %(module)s reach it through a "
+"communication module and %(camera)s through a camera. Numbers that do not "
+"add up mean the events hang off equipment outside the selected companies - "
+"send this protocol to support."
+msgstr ""
+"el otro sistema contiene %(total)s evento(s) en el período seleccionado, "
+"pero el filtro de la transferencia no coincidió con ninguno de ellos: "
+"%(module)s llegan a través de un módulo de comunicación y %(camera)s a "
+"través de una cámara. Si los números no cuadran, significa que los eventos "
+"dependen de equipos fuera de las empresas seleccionadas - envíe este "
+"protocolo a soporte."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python

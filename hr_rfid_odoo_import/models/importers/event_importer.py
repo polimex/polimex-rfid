@@ -182,6 +182,33 @@ class EventImporter(PhaseImporter):
         source_records = self.b._read_all(model, domain, fields_to_read,
                                           batch_size=2000,
                                           cursor_key='events:%s' % model)
+        if not source_records and not self.b.stopped_early:
+            # A read that matches NOTHING while the reconciliation below knows
+            # the source holds thousands is the last place the protocol still
+            # said only "0". Ask the source which leg of the filter is empty,
+            # so the next protocol names the cause instead of the number.
+            leg_module = self.b._search_count(
+                model, self.b._scoped_domain('reader_id.controller_id.webstack_id')
+                + self._event_date_domain())
+            leg_camera = 0
+            if self.b._has_field(model, 'camera_id'):
+                leg_camera = self.b._search_count(
+                    model, self.b._scoped_domain('camera_id')
+                    + self._event_date_domain())
+            total = self.b._search_count(model, self._event_date_domain())
+            if total:
+                self.b.note_skip_reason(self.env._(
+                    "the other system holds %(total)s event(s) in the chosen "
+                    "period, but the transfer's filter matched none of them: "
+                    "%(module)s reach it through a communication module and "
+                    "%(camera)s through a camera. Numbers that do not add up "
+                    "mean the events hang off equipment outside the selected "
+                    "companies - send this protocol to support.",
+                    total=total, module=leg_module, camera=leg_camera,
+                ))
+                _logger.warning(
+                    "%s: read matched 0; total=%s module-leg=%s camera-leg=%s "
+                    "domain=%r", model, total, leg_module, leg_camera, domain)
         imported = 0
         already = 0
         rejected = 0

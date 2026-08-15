@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 10:35+0000\n"
-"PO-Revision-Date: 2026-08-15 13:35\n"
+"POT-Creation-Date: 2026-08-15 10:55+0000\n"
+"PO-Revision-Date: 2026-08-15 13:55\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: el\n"
@@ -2465,6 +2465,19 @@ msgstr ""
 #. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"door №%(num)s \"%(name)s\" is part of this transfer; a door with the same "
+"name exists here (№%(target)s) but under a different transfer identity, so "
+"they are not recognised as one - send this protocol to support"
+msgstr ""
+"θύρα №%(num)s \"%(name)s\" αποτελεί μέρος αυτής της μεταφοράς· υπάρχει εδώ "
+"θύρα με το ίδιο όνομα (№%(target)s) αλλά με διαφορετική ταυτότητα μεταφοράς, "
+"οπότε δεν αναγνωρίζονται ως η ίδια - αποστείλατε αυτό το πρωτόκολλο στην "
+"υποστήριξη"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
 msgid "door №%(num)s from the other system has no match here"
 msgstr "η θύρα №%(num)s από το άλλο σύστημα δεν έχει αντιστοιχία εδώ"
 
@@ -2569,6 +2582,22 @@ msgid ""
 msgstr ""
 "το συμβάν δεν αναφέρει ούτε ενότητα επικοινωνίας ούτε κάμερα, οπότε δεν "
 "υπάρχει τίποτα εδώ για να συνδεθεί"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/event_importer.py:0
+msgid ""
+"the other system holds %(total)s event(s) in the chosen period, but the "
+"transfer's filter matched none of them: %(module)s reach it through a "
+"communication module and %(camera)s through a camera. Numbers that do not "
+"add up mean the events hang off equipment outside the selected companies - "
+"send this protocol to support."
+msgstr ""
+"Το άλλο σύστημα διαθέτει %(total)s συμβάν(τα) στην επιλεγμένη περίοδο, αλλά "
+"το φίλτρο της μεταφοράς δεν αντιστοίχισε κανένα από αυτά: %(module)s φτάνουν "
+"σε αυτό μέσω ενότητας επικοινωνίας και %(camera)s μέσω κάμερας. Αριθμοί που "
+"δεν συμφωνούν σημαίνουν ότι τα συμβάντα ανήκουν σε εξοπλισμό εκτός των "
+"επιλεγμένων εταιρειών - αποστείλατε αυτό το πρωτόκολλο στην υποστήριξη."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python

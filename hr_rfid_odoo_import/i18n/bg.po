@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 10:35+0000\n"
-"PO-Revision-Date: 2026-08-15 13:35\n"
+"POT-Creation-Date: 2026-08-15 10:55+0000\n"
+"PO-Revision-Date: 2026-08-15 13:55\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -2428,6 +2428,19 @@ msgstr ""
 #. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"door №%(num)s \"%(name)s\" is part of this transfer; a door with the same "
+"name exists here (№%(target)s) but under a different transfer identity, so "
+"they are not recognised as one - send this protocol to support"
+msgstr ""
+"врата №%(num)s „%(name)s“ е част от този трансфер; тук съществува врата със "
+"същото име (№%(target)s), но с различна идентичност за трансфер, поради "
+"което не се разпознават като една и съща - изпратете този протокол на "
+"поддръжката"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
 msgid "door №%(num)s from the other system has no match here"
 msgstr "врата №%(num)s от другата система няма съответствие тук"
 
@@ -2532,6 +2545,22 @@ msgid ""
 msgstr ""
 "събитието не сочи нито комуникационен модул, нито камера, така че няма към "
 "какво да бъде прикачено тук"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/event_importer.py:0
+msgid ""
+"the other system holds %(total)s event(s) in the chosen period, but the "
+"transfer's filter matched none of them: %(module)s reach it through a "
+"communication module and %(camera)s through a camera. Numbers that do not "
+"add up mean the events hang off equipment outside the selected companies - "
+"send this protocol to support."
+msgstr ""
+"другата система съдържа %(total)s събитие(я) в избрания период, но филтърът "
+"на трансфера не намери съвпадение с нито едно от тях: %(module)s достигат до "
+"нея чрез комуникационен модул, а %(camera)s - чрез камера. Числа, които не "
+"се събират, означават, че събитията са свързани с оборудване извън избраните "
+"фирми - изпратете този протокол на поддръжката."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python

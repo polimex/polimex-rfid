@@ -510,7 +510,7 @@ class BaseImporter:
         Model = self.env[model_name].with_context(**IMPORT_CONTEXT)
         return Model._load_records(data_list)
 
-    def _try_load_records(self, model_name, data_list):
+    def _try_load_records(self, model_name, data_list, note=True):
         """Load records with savepoint - skip silently on failure.
 
         Use this for records that may have incompatible schemas between versions
@@ -528,7 +528,12 @@ class BaseImporter:
             _logger.warning("Skipped %s create: %s", model_name, e)
             # The refusal reaches the protocol line, not only the server log -
             # UserError/ValidationError texts are already written for people.
-            self.note_skip_reason(str(e).split('\n')[0][:160])
+            # note=False is for callers with their own recovery: the verbatim
+            # membership copy lands exactly these rows a moment later, and a
+            # live protocol read "done - Cannot change the employee, 64 rows"
+            # over a step that had in fact delivered all sixty-four.
+            if note:
+                self.note_skip_reason(str(e).split('\n')[0][:160])
             return self.env[model_name]
 
     def _direct_sql_insert(self, table, columns, rows, batch_size=5000):
@@ -1010,6 +1015,26 @@ class BaseImporter:
                     num=source_id, name=door.get('name') or '?',
                     company=(names and names[0].get('name')) or company_id,
                 ), False
+            # In scope and still missing: before blaming the hardware step,
+            # say what the TARGET side holds - the identity searched for, and
+            # whether a door of the same name arrived under another identity.
+            # Three live protocols dead-ended exactly here.
+            expected = self._xml_id_name('hr_rfid_door', source_id)
+            _logger.warning(
+                "door %s is in scope but unmatched; searched %s.%s",
+                source_id, EXTERNAL_ID_MODULE, expected)
+            twin = self.env['hr.rfid.door'].sudo().with_context(
+                active_test=False).search(
+                [('name', '=', door.get('name'))], limit=1)
+            if twin:
+                return self.env._(
+                    "door №%(num)s \"%(name)s\" is part of this transfer; a "
+                    "door with the same name exists here (№%(target)s) but "
+                    "under a different transfer identity, so they are not "
+                    "recognised as one - send this protocol to support",
+                    num=source_id, name=door.get('name') or '?',
+                    target=twin.id,
+                ), True
             return self.env._(
                 "door №%(num)s \"%(name)s\" is part of this transfer and "
                 "still did not arrive - look at the hardware step above",
