@@ -36,7 +36,22 @@ class OnboardingOnboarding(models.Model):
                 step = self.env.ref(step_xmlid, raise_if_not_found=False)
                 if step and step.current_step_state == 'not_done':
                     if self.env[model_name].search_count(domain, limit=1):
-                        step.action_set_just_done()
+                        # The other half of the first-load race. Guarding only
+                        # the progress record was a guard over half the
+                        # mechanism: two parallel renders both read the step as
+                        # not done and both INSERT its progress-step row -
+                        # unique on (step_id, company) - and on a fresh
+                        # database the loser surfaced to the operator as a red
+                        # "cannot be completed" dialog. The winner has already
+                        # recorded exactly what we wanted recorded, so losing
+                        # this race IS success: re-read and move on.
+                        try:
+                            with mute_logger('odoo.sql_db'), \
+                                    self.env.cr.savepoint():
+                                step.action_set_just_done()
+                                self.env.flush_all()
+                        except pgerrors.UniqueViolation:
+                            step.invalidate_recordset()
         return super()._prepare_rendering_values()
 
     @api.model

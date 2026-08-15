@@ -72,7 +72,8 @@ class EventImporter(PhaseImporter):
                 if f in source_fields and f in target_fields
                 and self.b._has_stored_field(model, f)]
 
-    def _report_camera_events(self, model, camera_rows):
+    def _report_camera_events(self, model, camera_rows, wanted=True,
+                              date_domain=None):
         """Count the camera events on the source and say so in the protocol.
 
         Without a count taken from the other side, "no plates arrived" cannot
@@ -90,9 +91,28 @@ class EventImporter(PhaseImporter):
             # Only part of the source was read; a shortfall here is expected
             # and flagging it would train the operator to ignore red rows.
             return
+        # The reconciliation must count what THIS run was asked to bring:
+        # against a live protocol it flagged "20 851 did not come across" in
+        # red when the operator had deliberately left the events out, and
+        # counted plate events from before the chosen date against a read
+        # that honoured it. A deliberate choice is never an error.
         expected = self.b._search_count(
-            model, [('camera_id', '!=', False)] + self.b._scoped_domain('camera_id'))
+            model, [('camera_id', '!=', False)] + (list(date_domain or []))
+            + self.b._scoped_domain('camera_id'))
         if not expected:
+            return
+        if not wanted:
+            self.results.append(self.b._make_result(
+                '%s (cameras)' % model, expected, 0,
+                skipped_count=expected,
+                status='skipped',
+                error=self.env._(
+                    "%(missing)s recognised plate event(s) stayed behind "
+                    "because events were left out of this transfer. Run it "
+                    "again with events switched on to bring them.",
+                    missing=expected,
+                ),
+            ))
             return
         if 'cctv.camera' not in self.env:
             # The target has no camera capability AT ALL, so these events are
@@ -240,7 +260,8 @@ class EventImporter(PhaseImporter):
             model, len(source_records), imported, already, skipped,
             duration=time.time() - start, rejected_count=rejected,
         ))
-        self._report_camera_events(model, camera_rows)
+        self._report_camera_events(
+            model, camera_rows, date_domain=self._event_date_domain())
 
     def _import_system_events(self):
         """Step 27: hr.rfid.event.system - Direct SQL batch.
@@ -393,7 +414,9 @@ class EventImporter(PhaseImporter):
             model, len(source_records), imported, already, skipped,
             duration=time.time() - start, rejected_count=rejected,
         ))
-        self._report_camera_events(model, camera_rows)
+        self._report_camera_events(
+            model, camera_rows,
+            date_domain=self._event_date_domain(source_time_field))
 
     def _import_th_logs(self):
         """Step 28: hr.rfid.ctrl.th.log - Direct SQL batch."""

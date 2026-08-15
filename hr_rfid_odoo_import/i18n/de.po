@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 09:33+0000\n"
-"PO-Revision-Date: 2026-08-15 12:34\n"
+"POT-Creation-Date: 2026-08-15 09:58+0000\n"
+"PO-Revision-Date: 2026-08-15 12:58\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -117,6 +117,17 @@ msgstr ""
 #: code:addons/hr_rfid_odoo_import/models/importers/event_importer.py:0
 msgid "%(missing)s recognised plate event(s) did not come across."
 msgstr "%(missing)s erkannte(s) Kennzeichen-Ereignis(se) kamen nicht an."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/event_importer.py:0
+msgid ""
+"%(missing)s recognised plate event(s) stayed behind because events were left "
+"out of this transfer. Run it again with events switched on to bring them."
+msgstr ""
+"%(missing)s Ereignis(se) für erkannte Kennzeichen wurden zurückgelassen, da "
+"Ereignisse bei dieser Übertragung ausgeschlossen waren. Führen Sie den "
+"Import erneut mit aktivierten Ereignissen aus, um diese zu übernehmen."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
