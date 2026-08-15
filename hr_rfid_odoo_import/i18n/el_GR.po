@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 09:08+0000\n"
-"PO-Revision-Date: 2026-08-15 12:08\n"
+"POT-Creation-Date: 2026-08-15 09:22+0000\n"
+"PO-Revision-Date: 2026-08-15 12:23\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: el\n"
@@ -104,6 +104,16 @@ msgid ""
 msgstr ""
 "%(equipment)s τεμάχια εξοπλισμού δεν είχαν φτάσει ακόμα και %(sites)s "
 "παρέπεμπαν σε εγκατάσταση που δεν υπάρχει εδώ."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/event_importer.py:0
+msgid ""
+"%(missing)s recognised plate event(s) are waiting for the camera capability. "
+"Add it here, then run the transfer again."
+msgstr ""
+"%(missing)s αναγνωρισμένο(α) συμβάν(τα) πινακίδας αναμένουν τη δυνατότητα "
+"κάμερας. Προσθέστε την εδώ και εκτελέστε ξανά τη μεταφορά."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2284,9 +2294,21 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
+msgid "access group"
+msgstr "ομάδα πρόσβασης"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "attendance"
 msgstr "παρουσία"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
+msgid "door"
+msgstr "θύρα"
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
@@ -2302,6 +2324,14 @@ msgstr "αφήστε κενό για εφάπαξ μεταφορά"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "my_database"
 msgstr "my_database"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
+msgid ""
+"permission %(rel)s: %(what)s №%(src)s from the other system has no match here"
+msgstr ""
+"άδεια %(rel)s: %(what)s №%(src)s από το άλλο σύστημα δεν έχει αντιστοιχία εδώ"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__source_id

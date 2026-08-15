@@ -143,6 +143,7 @@ class AccessImporter(PhaseImporter):
         imported = 0
         linked = 0
         skipped = 0
+        unmapped = []
         prefix = model.replace('.', '_')
 
         for rec in source_records:
@@ -167,6 +168,20 @@ class AccessImporter(PhaseImporter):
             door_target = self.b._map_m2o('hr.rfid.door', rec.get('door_id'))
             if not ag_target or not door_target:
                 skipped += 1
+                # The row must carry its own diagnosis (owner's rule,
+                # 2026-08-15): a live protocol showed "4 skipped" and could not
+                # say WHICH pointer failed for WHICH source record - the
+                # operator had to ship the protocol out for a guess.
+                unmapped.append(self.env._(
+                    "permission %(rel)s: %(what)s №%(src)s from the other "
+                    "system has no match here",
+                    rel=rec['id'],
+                    what=(self.env._("door")
+                          if ag_target else self.env._("access group")),
+                    src=self.b._m2o_id(
+                        rec.get('door_id') if ag_target
+                        else rec.get('access_group_id')),
+                ))
                 continue
 
             ts_target = False
@@ -199,6 +214,7 @@ class AccessImporter(PhaseImporter):
         self.results.append(self.b._make_result(
             model, len(source_records), imported, linked, skipped,
             duration=time.time() - start,
+            error='; '.join(unmapped[:8]),
         ))
 
     def _import_ag_employee_rels(self):

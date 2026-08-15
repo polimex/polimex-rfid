@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 09:08+0000\n"
-"PO-Revision-Date: 2026-08-15 12:08\n"
+"POT-Creation-Date: 2026-08-15 09:22+0000\n"
+"PO-Revision-Date: 2026-08-15 12:22\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -104,6 +104,17 @@ msgid ""
 msgstr ""
 "%(equipment)s единица(и) оборудване все още не бяха пристигнали, а %(sites)s "
 "сочеха към обект, който не е тук."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/event_importer.py:0
+msgid ""
+"%(missing)s recognised plate event(s) are waiting for the camera capability. "
+"Add it here, then run the transfer again."
+msgstr ""
+"%(missing)s разпознато(и) събитие(я) за регистрационен номер чакат "
+"функционалност на камерата. Добавете я тук, след което стартирайте трансфера "
+"отново."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2249,9 +2260,21 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
+msgid "access group"
+msgstr "група за достъп"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "attendance"
 msgstr "присъствие"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
+msgid "door"
+msgstr "врата"
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
@@ -2267,6 +2290,15 @@ msgstr "оставете празно за еднократен трансфер
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "my_database"
 msgstr "my_database"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
+msgid ""
+"permission %(rel)s: %(what)s №%(src)s from the other system has no match here"
+msgstr ""
+"разрешение %(rel)s: %(what)s №%(src)s от другата система няма съответствие "
+"тук"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__source_id

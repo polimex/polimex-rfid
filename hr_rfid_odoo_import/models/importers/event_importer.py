@@ -94,6 +94,25 @@ class EventImporter(PhaseImporter):
             model, [('camera_id', '!=', False)] + self.b._scoped_domain('camera_id'))
         if not expected:
             return
+        if 'cctv.camera' not in self.env:
+            # The target has no camera capability AT ALL, so these events are
+            # not lost - they are waiting, exactly like the Cameras phase row
+            # above them says. Reporting them as an error turned a deliberate,
+            # explained gap into a failed transfer: a live migration could not
+            # go green before the operator was ready to install the camera
+            # module. Deliberate = skipped; error stays reserved for records
+            # that SHOULD have come across and did not.
+            self.results.append(self.b._make_result(
+                '%s (cameras)' % model, expected, camera_rows,
+                skipped_count=expected,
+                status='skipped',
+                error=self.env._(
+                    "%(missing)s recognised plate event(s) are waiting for the "
+                    "camera capability. Add it here, then run the transfer "
+                    "again.", missing=expected,
+                ),
+            ))
+            return
         self.results.append(self.b._make_result(
             '%s (cameras)' % model, expected, camera_rows,
             skipped_count=max(expected - camera_rows, 0),

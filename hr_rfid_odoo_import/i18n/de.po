@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 09:08+0000\n"
-"PO-Revision-Date: 2026-08-15 12:08\n"
+"POT-Creation-Date: 2026-08-15 09:22+0000\n"
+"PO-Revision-Date: 2026-08-15 12:22\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -104,6 +104,16 @@ msgid ""
 msgstr ""
 "%(equipment)s Ausrüstungsteil(e) waren noch nicht eingetroffen, und "
 "%(sites)s verwiesen auf einen Standort, der hier nicht vorhanden ist."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/event_importer.py:0
+msgid ""
+"%(missing)s recognised plate event(s) are waiting for the camera capability. "
+"Add it here, then run the transfer again."
+msgstr ""
+"%(missing)s erkannte Kennzeichen-Ereignis(se) warten auf die Kamera-"
+"Fähigkeit. Fügen Sie diese hier hinzu und starten Sie die Übertragung erneut."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2278,9 +2288,21 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
+msgid "access group"
+msgstr "Zugangsgruppe"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "attendance"
 msgstr "Anwesenheit"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
+msgid "door"
+msgstr "Tür"
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
@@ -2296,6 +2318,15 @@ msgstr "für eine einmalige Migration leer lassen"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "my_database"
 msgstr "my_database"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
+msgid ""
+"permission %(rel)s: %(what)s №%(src)s from the other system has no match here"
+msgstr ""
+"Berechtigung %(rel)s: %(what)s Nr. %(src)s aus dem anderen System hat hier "
+"keine Entsprechung"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__source_id

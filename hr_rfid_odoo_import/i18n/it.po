@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 09:08+0000\n"
-"PO-Revision-Date: 2026-08-15 12:08\n"
+"POT-Creation-Date: 2026-08-15 09:23+0000\n"
+"PO-Revision-Date: 2026-08-15 12:23\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it\n"
@@ -104,6 +104,16 @@ msgid ""
 msgstr ""
 "%(equipment)s apparecchiatura/e non era/erano ancora arrivata/e e %(sites)s "
 "puntava/puntavano a un sito non presente qui."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/event_importer.py:0
+msgid ""
+"%(missing)s recognised plate event(s) are waiting for the camera capability. "
+"Add it here, then run the transfer again."
+msgstr ""
+"%(missing)s evento/i di targa riconosciuta in attesa della funzionalità "
+"telecamera. Aggiungila qui, poi ripeti il trasferimento."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2274,9 +2284,21 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
+msgid "access group"
+msgstr "gruppo di accesso"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "attendance"
 msgstr "presenze"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
+msgid "door"
+msgstr "porta"
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
@@ -2292,6 +2314,15 @@ msgstr "lasciare vuoto per un trasferimento una tantum"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "my_database"
 msgstr "my_database"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
+msgid ""
+"permission %(rel)s: %(what)s №%(src)s from the other system has no match here"
+msgstr ""
+"permesso %(rel)s: %(what)s n°%(src)s dell'altro sistema non trova "
+"corrispondenza qui"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__source_id
