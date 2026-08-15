@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 11:18+0000\n"
-"PO-Revision-Date: 2026-08-15 14:19\n"
+"POT-Creation-Date: 2026-08-15 11:25+0000\n"
+"PO-Revision-Date: 2026-08-15 14:25\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: el\n"
@@ -928,6 +928,11 @@ msgid "Import from Odoo"
 msgstr "Εισαγωγή από Odoo"
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_leaves
+msgid "Import leaves"
+msgstr "Εισαγωγή αδειών"
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_images
 msgid "Import photos"
 msgstr "Εισαγωγή φωτογραφιών"
@@ -1015,6 +1020,17 @@ msgid ""
 msgstr ""
 "Συμπεριλάβετε εγγραφές hr.rfid.card, συμπεριλαμβανομένου του κατόχου τους "
 "και των συμμετοχών σε ομάδες πρόσβασης."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_leaves
+msgid ""
+"Include leave types, approved allocations and the absences themselves "
+"(approved or awaiting approval). They come across quietly - no approval "
+"emails are sent again."
+msgstr ""
+"Περιλαμβάνει τύπους αδειών, εγκεκριμένες κατανομές και τις ίδιες τις "
+"απουσίες (εγκεκριμένες ή σε αναμονή έγκρισης). Μεταφέρονται αθόρυβα - δεν "
+"αποστέλλονται ξανά emails έγκρισης."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_service

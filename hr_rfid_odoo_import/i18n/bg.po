@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 11:18+0000\n"
-"PO-Revision-Date: 2026-08-15 14:18\n"
+"POT-Creation-Date: 2026-08-15 11:25+0000\n"
+"PO-Revision-Date: 2026-08-15 14:25\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -929,6 +929,11 @@ msgid "Import from Odoo"
 msgstr "Импорт от Odoo"
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_leaves
+msgid "Import leaves"
+msgstr "Импорт на отпуски"
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_images
 msgid "Import photos"
 msgstr "Импорт на снимки"
@@ -1014,6 +1019,17 @@ msgid ""
 msgstr ""
 "Включва записи от hr.rfid.card, включително техния собственик и членство в "
 "групи за достъп."
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_leaves
+msgid ""
+"Include leave types, approved allocations and the absences themselves "
+"(approved or awaiting approval). They come across quietly - no approval "
+"emails are sent again."
+msgstr ""
+"Включва типове отпуск, одобрени разпределения и самите отсъствия (одобрени "
+"или чакащи одобрение). Те се пренасят тихо – не се изпращат повторно имейли "
+"за одобрение."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_service

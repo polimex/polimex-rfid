@@ -117,6 +117,13 @@ class HrRfidOdooImportWiz(models.TransientModel):
         help="Include ANPR cameras, the readers and doors that belong to them, "
              "and the plate lists they hold.",
     )
+    import_leaves = fields.Boolean(
+        string='Import leaves',
+        default=True,
+        help="Include leave types, approved allocations and the absences "
+             "themselves (approved or awaiting approval). They come across "
+             "quietly - no approval emails are sent again.",
+    )
     import_all_partners = fields.Boolean(
         string='Import all partners',
         default=False,
@@ -1132,6 +1139,7 @@ class HrRfidOdooImportWiz(models.TransientModel):
         return {
             'import_hardware': self.import_hardware,
             'import_people': self.import_people,
+            'import_leaves': self.import_leaves,
             'import_access': self.import_access,
             'import_cameras': self.import_cameras,
             'import_sites': self.import_sites,

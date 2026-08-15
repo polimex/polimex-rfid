@@ -172,6 +172,7 @@ def build_registry():
     """
     from .core_importer import CoreImporter, IoTableImporter, ZoneImporter
     from .people_importer import PeopleImporter
+    from .leave_importer import LeaveImporter
     from .access_importer import AccessImporter
     from .camera_importer import CameraImporter
     from .site_importer import SiteGroupImporter, SiteImporter
@@ -182,6 +183,7 @@ def build_registry():
     return [
         CoreImporter,
         PeopleImporter,
+        LeaveImporter,
         ZoneImporter,
         SiteImporter,
         AccessImporter,

@@ -536,6 +536,23 @@ class BaseImporter:
                 self.note_skip_reason(str(e).split('\n')[0][:160])
             return self.env[model_name]
 
+    def _try_load_records_quiet_env(self, model_env, data_list):
+        """_try_load_records on a caller-prepared environment.
+
+        The leaves enter through core's own import contexts
+        (leave_fast_create / leave_skip_state_check) - the caller builds that
+        environment; the savepoint and the reason-noting stay the same here.
+        """
+        if not data_list:
+            return model_env
+        try:
+            with self.env.cr.savepoint():
+                return model_env._load_records(data_list)
+        except Exception as e:
+            _logger.warning("Skipped %s create: %s", model_env._name, e)
+            self.note_skip_reason(str(e).split('\n')[0][:160])
+            return model_env.browse()
+
     def _direct_sql_insert(self, table, columns, rows, batch_size=5000):
         """Direct SQL INSERT into target DB - bypass ORM.
 
