@@ -777,18 +777,19 @@ class HrRfidOdooImportWiz(models.TransientModel):
                 else [('company_id', '=', company_ids[0])]
 
             preview_lines = []
-            preview_lines.append(_("=== Import Preview ===\n"))
 
-            # Count source records for key models
+            # Count source records for key models. Labels are the words the
+            # operator uses, translated - not model names: this page is read
+            # by the person deciding whether to press Start.
             count_models = [
-                ('hr.rfid.webstack', co_domain, 'Webstacks'),
-                ('hr.rfid.ctrl', [], 'Controllers'),
-                ('hr.rfid.door', [], 'Doors'),
-                ('hr.rfid.card', co_domain, 'Cards'),
-                ('hr.employee', co_domain, 'Employees'),
-                ('res.partner', co_domain, 'Partners'),
-                ('hr.rfid.access.group', co_domain, 'Access Groups'),
-                ('hr.rfid.zone', [], 'Zones'),
+                ('hr.rfid.webstack', co_domain, self.env._('Communication modules')),
+                ('hr.rfid.ctrl', [], self.env._('Controllers')),
+                ('hr.rfid.door', [], self.env._('Doors')),
+                ('hr.rfid.card', co_domain, self.env._('Cards')),
+                ('hr.employee', co_domain, self.env._('Employees')),
+                ('res.partner', co_domain, self.env._('Contacts')),
+                ('hr.rfid.access.group', co_domain, self.env._('Access groups')),
+                ('hr.rfid.zone', [], self.env._('Zones')),
             ]
 
             for model, domain, label in count_models:
@@ -797,20 +798,23 @@ class HrRfidOdooImportWiz(models.TransientModel):
                         self.source_db, self.source_uid, self.source_password,
                         model, 'search_count', [domain]
                     )
-                    preview_lines.append(f"  {label}: {count}")
+                    preview_lines.append('%s: %s' % (label, count))
                 except Exception:
-                    preview_lines.append(f"  {label}: (error reading)")
+                    preview_lines.append(self.env._('%(kind)s: could not be counted', kind=label))
 
             # Event counts
             if self.import_user_events or self.import_system_events or self.import_th_logs:
-                preview_lines.append(_("\n--- Events ---"))
                 event_models = []
                 if self.import_user_events:
-                    event_models.append(('hr.rfid.event.user', 'User Events'))
+                    event_models.append(
+                        ('hr.rfid.event.user', self.env._('Access events')))
                 if self.import_system_events:
-                    event_models.append(('hr.rfid.event.system', 'System Events'))
+                    event_models.append(
+                        ('hr.rfid.event.system', self.env._('System events')))
                 if self.import_th_logs:
-                    event_models.append(('hr.rfid.ctrl.th.log', 'TH Logs'))
+                    event_models.append(
+                        ('hr.rfid.ctrl.th.log',
+                         self.env._('Temperature and humidity readings')))
 
                 for model, label in event_models:
                     ev_domain = []
@@ -821,20 +825,19 @@ class HrRfidOdooImportWiz(models.TransientModel):
                             self.source_db, self.source_uid, self.source_password,
                             model, 'search_count', [ev_domain]
                         )
-                        preview_lines.append(f"  {label}: {count}")
+                        preview_lines.append('%s: %s' % (label, count))
                     except Exception:
-                        preview_lines.append(f"  {label}: (error reading)")
+                        preview_lines.append(self.env._('%(kind)s: could not be counted', kind=label))
 
             # Detect conflicts
             self._detect_conflicts(models_proxy, company_ids)
 
             if self.conflict_ids:
-                preview_lines.append(_(
-                    "\n--- %d Conflicts Detected ---",
-                    len(self.conflict_ids),
-                ))
-                preview_lines.append(_(
-                    "Review the conflicts table below and choose a resolution for each.",
+                preview_lines.append('')
+                preview_lines.append(self.env._(
+                    "%(count)s record(s) clash with ones already here - "
+                    "decide about each of them in the list below before "
+                    "starting.", count=len(self.conflict_ids),
                 ))
 
             self.write({

@@ -148,10 +148,27 @@
 
                         <!-- ══ Step 3: Confirm / Preview ═══════════ -->
                         <div invisible="state != 'confirm'">
-                            <group string="Import Preview">
-                                <field name="preview_text" readonly="1"
-                                       widget="text" nolabel="1" colspan="2"/>
-                            </group>
+                            <!-- Written for the person deciding whether to
+                                 press Start: an intro sentence, then plain
+                                 "what: how many" lines - no monospace dump,
+                                 no ASCII frames (odoo-wizard-guide: the long
+                                 generated text sits below the decisions;
+                                 odoo-ux-standards #18: wizards open with a
+                                 conversational intro). -->
+                            <p>
+                                Here is what the other system holds for the
+                                companies you picked. Nothing has been touched
+                                yet - the transfer starts only when you press
+                                the button below, and then runs on its own.
+                            </p>
+                            <separator string="What will come across"/>
+                            <field name="preview_text" readonly="1"
+                                   widget="text" nolabel="1"/>
+                            <p class="text-muted">
+                                <i class="fa fa-lightbulb-o" role="img"/>
+                                Records that are already here are recognised
+                                and will not be duplicated.
+                            </p>
 
                             <separator string="Conflicts Found"
                                        invisible="not conflict_ids"/>
@@ -258,6 +275,6 @@
                   parent="hr_rfid.hr_rfid_root_menu_hardware_manager"
                   action="hr_rfid_odoo_import_wiz_action"
                   groups="base.group_system"
-                  sequence="8"/>
+                  sequence="85"/>
     </data>
 </odoo>

@@ -271,5 +271,6 @@ action = {'type': 'ir.actions.client', 'tag': 'reload'}
               name="Camera Manager"
               parent="hr_rfid.hr_rfid_root_menu_hardware_manager"
               groups="polimex_ip_cam.group_cctv_user"
-              action="action_cctv_camera"/>
+              action="action_cctv_camera"
+                  sequence="50"/>
 </odoo>

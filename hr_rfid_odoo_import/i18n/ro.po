@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 09:27+0000\n"
-"PO-Revision-Date: 2026-08-15 12:27\n"
+"POT-Creation-Date: 2026-08-15 09:34+0000\n"
+"PO-Revision-Date: 2026-08-15 12:34\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ro\n"
@@ -21,30 +21,10 @@ msgstr ""
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid ""
 "\n"
-"--- %d Conflicts Detected ---"
-msgstr ""
-"\n"
-"--- %d conflicte detectate ---"
-
-#. module: hr_rfid_odoo_import
-#. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
-msgid ""
-"\n"
 "--- %s: %s ---"
 msgstr ""
 "\n"
 "--- %s: %s ---"
-
-#. module: hr_rfid_odoo_import
-#. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
-msgid ""
-"\n"
-"--- Events ---"
-msgstr ""
-"\n"
-"--- Evenimente ---"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -97,6 +77,17 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid ""
+"%(count)s record(s) clash with ones already here - decide about each of them "
+"in the list below before starting."
+msgstr ""
+"%(count)s înregistrare(înregistrări) intră în conflict cu cele deja "
+"existente aici - decideți pentru fiecare dintre ele în lista de mai jos "
+"înainte de a începe."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/site_importer.py:0
 msgid ""
 "%(equipment)s piece(s) of equipment had not arrived yet and %(sites)s "
@@ -104,6 +95,12 @@ msgid ""
 msgstr ""
 "%(equipment)s echipament(e) nu sosise(ră) încă, iar %(sites)s indicau o "
 "locație care nu este aici."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "%(kind)s: could not be counted"
+msgstr "%(kind)s: nu a putut fi numărat(ă)"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -187,6 +184,19 @@ msgstr ""
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid ""
+"<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
+"                                Records that are already here are "
+"recognised\n"
+"                                and will not be duplicated."
+msgstr ""
+"<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
+"                                Înregistrările deja existente aici sunt "
+"recunoscute\n"
+"                                și nu vor fi duplicate."
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid ""
 "<span class=\"spinner-border spinner-border-sm me-2\"/>\n"
 "                                <strong>Import in progress...</strong>"
 msgstr ""
@@ -228,12 +238,6 @@ msgid "<strong>Worth knowing</strong>"
 msgstr "<strong>Bine de știut</strong>"
 
 #. module: hr_rfid_odoo_import
-#. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
-msgid "=== Import Preview ===\n"
-msgstr "=== Previzualizare import ===\n"
-
-#. module: hr_rfid_odoo_import
 #: model_terms:ir.actions.act_window,help:hr_rfid_odoo_import.hr_rfid_odoo_import_run_action
 msgid ""
 "A transfer copies access control data from another Odoo system\n"
@@ -248,6 +252,18 @@ msgstr ""
 "                    istoricul. Porniți unul din Import din Odoo; va apărea "
 "aici\n"
 "                    și va continua în fundal."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Access events"
+msgstr "Evenimente de acces"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Access groups"
+msgstr "Grupuri de acces"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__source_login
@@ -341,9 +357,21 @@ msgstr ""
 "de mai sus."
 
 #. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Cards"
+msgstr "Carduri"
+
+#. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "Close"
 msgstr "Închide"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Communication modules"
+msgstr "Module de comunicație"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -411,9 +439,21 @@ msgstr "Eroare de conexiune: %s"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Contacts"
+msgstr "Contacte"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/core_importer.py:0
 msgid "Controller IO tables"
 msgstr "Tabele I/O ale controlerelor"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Controllers"
+msgstr "Controlere"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_user_groups
@@ -556,6 +596,12 @@ msgid "Done Phases Json"
 msgstr "Done Phases Json"
 
 #. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Doors"
+msgstr "Uși"
+
+#. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_run_form
 msgid "Download the protocol"
 msgstr "Descarcă protocolul"
@@ -569,6 +615,12 @@ msgstr "Durată (s)"
 #: model:ir.model,name:hr_rfid_odoo_import.model_hr_employee
 msgid "Employee"
 msgstr "Angajat"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Employees"
+msgstr "Angajați"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__error_message
@@ -683,6 +735,20 @@ msgid "Has Message"
 msgstr "Are mesaj"
 
 #. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid ""
+"Here is what the other system holds for the\n"
+"                                companies you picked. Nothing has been "
+"touched\n"
+"                                yet - the transfer starts only when you "
+"press\n"
+"                                the button below, and then runs on its own."
+msgstr ""
+"Iată ce deține celălalt sistem pentru companiile selectate. Nimic nu a fost "
+"modificat încă - transferul începe doar când apăsați butonul de mai jos, iar "
+"apoi rulează de unul singur."
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__progress
 msgid "How far along the transfer is."
 msgstr "Cât de avansat este transferul."
@@ -765,11 +831,6 @@ msgstr "Importă hardware"
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_people
 msgid "Import People"
 msgstr "Importă persoane"
-
-#. module: hr_rfid_odoo_import
-#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
-msgid "Import Preview"
-msgstr "Previzualizare import"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model,name:hr_rfid_odoo_import.model_hr_rfid_odoo_import_wiz
@@ -1456,12 +1517,6 @@ msgid "Resolution Json"
 msgstr "Resolution Json"
 
 #. module: hr_rfid_odoo_import
-#. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
-msgid "Review the conflicts table below and choose a resolution for each."
-msgstr "Examinați conflictele și alegeți o rezoluție pentru fiecare."
-
-#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__run_id
 msgid "Run"
 msgstr "Rulează"
@@ -1729,6 +1784,12 @@ msgid "Stopped by a problem"
 msgstr "Oprit din cauza unei probleme"
 
 #. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "System events"
+msgstr "Evenimente de sistem"
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__target_company_id
 msgid "Target Company"
 msgstr "Companie destinație"
@@ -1757,6 +1818,12 @@ msgstr "Destinația are vending"
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__target_id
 msgid "Target ID"
 msgstr "ID destinație"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Temperature and humidity readings"
+msgstr "Citiri de temperatură și umiditate"
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
@@ -2190,6 +2257,11 @@ msgstr ""
 "știrea dumneavoastră."
 
 #. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "What will come across"
+msgstr "Ce va fi transferat"
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__state
 msgid ""
 "Where this transfer has got to. It continues on its own; you can close the "
@@ -2280,6 +2352,12 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Zones"
+msgstr "Zone"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
 msgid "access group"
 msgstr "grup de acces"
@@ -2295,6 +2373,42 @@ msgstr "prezență"
 #: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
 msgid "door"
 msgstr "ușă"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "hr.employee"
+msgstr "hr.employee"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "hr.rfid.access.group"
+msgstr "hr.rfid.access.group"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "hr.rfid.card"
+msgstr "hr.rfid.card"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "hr.rfid.ctrl"
+msgstr "hr.rfid.ctrl"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "hr.rfid.door"
+msgstr "hr.rfid.door"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "hr.rfid.zone"
+msgstr "hr.rfid.zone"
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
@@ -2328,6 +2442,12 @@ msgid ""
 msgstr ""
 "ID-ul res.company pe instanța sursă - cheia naturală folosită pentru "
 "potrivire între instanțe."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "res.partner"
+msgstr "res.partner"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_uid
