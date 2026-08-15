@@ -163,6 +163,46 @@ class HrRfidOdooImportRun(models.Model):
             'target': 'current',
         }
 
+    def action_download_protocol(self):
+        """The whole protocol as one plain-text file the operator can send.
+
+        Reading a long protocol through list-view truncation loses exactly the
+        part that matters - the error texts. One file, every line in full,
+        downloadable and pasteable into a support conversation.
+        """
+        self.ensure_one()
+        header = [
+            self.name or '',
+            '%s / %s / %s' % (self.source_url or '', self.source_db or '',
+                              self.source_slug or ''),
+            'state: %s  done: %s/%s  phase: %s' % (
+                self.state, self.done_count, self.total_count,
+                self.current_phase or '-'),
+            '-' * 78,
+            'phase | model | source | imported | linked | skipped | rejected | status | error',
+            '-' * 78,
+        ]
+        rows = [
+            '%s | %s | %s | %s | %s | %s | %s | %s | %s' % (
+                l.phase, l.model, l.source_count, l.imported_count,
+                l.linked_count, l.skipped_count, l.rejected_count, l.status,
+                (l.error_message or '').replace('\n', ' '),
+            )
+            for l in self.log_ids.sorted('id')
+        ]
+        attachment = self.env['ir.attachment'].create({
+            'name': 'transfer-%s-protocol.txt' % self.id,
+            'raw': '\n'.join(header + rows).encode('utf-8'),
+            'res_model': self._name,
+            'res_id': self.id,
+            'mimetype': 'text/plain',
+        })
+        return {
+            'type': 'ir.actions.act_url',
+            'url': '/web/content/%s?download=true' % attachment.id,
+            'target': 'self',
+        }
+
     def _wake_the_worker(self):
         cron = self.env.ref('hr_rfid_odoo_import.ir_cron_import_run',
                             raise_if_not_found=False)

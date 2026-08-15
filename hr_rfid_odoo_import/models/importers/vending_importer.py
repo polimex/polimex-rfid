@@ -52,7 +52,7 @@ class VendingImporter(PhaseImporter):
             ['product_id'],
         )
         product_ids = list(set(
-            r['product_id'][0] for r in vending_rows
+            self.b._m2o_id(r['product_id']) for r in vending_rows
             if r.get('product_id')
         ))
         if not product_ids:

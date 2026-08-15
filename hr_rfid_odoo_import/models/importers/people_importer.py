@@ -47,7 +47,7 @@ class PeopleImporter(PhaseImporter):
                 ['contact_id']
             )
             partner_ids = list(set(
-                r['contact_id'][0] for r in card_partner_ids
+                self.b._m2o_id(r['contact_id']) for r in card_partner_ids
                 if r.get('contact_id')
             ))
             if not partner_ids:
@@ -203,7 +203,7 @@ class PeopleImporter(PhaseImporter):
             'hr.employee', co_domain, ['user_id']
         )
         user_ids = list(set(
-            e['user_id'][0] for e in source_employees
+            self.b._m2o_id(e['user_id']) for e in source_employees
             if e.get('user_id')
         ))
         if not user_ids:
@@ -340,7 +340,7 @@ class PeopleImporter(PhaseImporter):
                 ['employee_id']
             )
             emp_ids = list(set(
-                r['employee_id'][0] for r in card_emp_ids
+                self.b._m2o_id(r['employee_id']) for r in card_emp_ids
                 if r.get('employee_id')
             ))
             if not emp_ids:

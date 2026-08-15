@@ -36,6 +36,10 @@
                         <button name="action_refresh" type="object"
                                 string="Look again"
                                 invisible="state in ('done', 'failed')"/>
+                        <!-- The full protocol, untruncated, as one file the
+                             operator can attach to a support conversation. -->
+                        <button name="action_download_protocol" type="object"
+                                string="Download the protocol"/>
                         <field name="state" widget="statusbar"
                                statusbar_visible="queued,running,done"/>
                     </header>

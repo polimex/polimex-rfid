@@ -168,3 +168,50 @@ class TestProtocolLinesDoNotPileUp(TransactionCase):
         self.assertEqual(
             run.log_ids.mapped('model'), ['res.partner'],
             "Редовете на другите фази не бива да пострадат")
+
+
+@tagged('post_install', '-at_install', 'rfid_odoo_import', 'rfid_import_rights')
+class TestSourceRefusesAFilter(TransactionCase):
+    """Отказът може да дойде и от ФИЛТЪРА, не само от четенето.
+
+    Живата миграция падна втори път точно така: полето вече отпадаше при
+    четене, но стъпката ФИЛТРИРА по същото поле - и отказът дойде от
+    търсенето. На еднофирмен източник филтърът по фирма без друго избира
+    всичко, а правата на самия акаунт продължават да важат.
+    """
+
+    def test_a_hidden_field_in_the_filter_does_not_stop_the_search(self):
+        class _Rpc(_RestrictedRpc):
+            def execute_kw(self, db, uid, pwd, model, method, args, kwargs=None):
+                if method == 'search':
+                    domain = args[0]
+                    if any(isinstance(l, (list, tuple)) and l
+                           and str(l[0]).split('.')[0] in self.refused
+                           for l in domain):
+                        raise xmlrpc.client.Fault(4, 'verboten: company_id')
+                    return [r['id'] for r in self.records]
+                return super().execute_kw(db, uid, pwd, model, method, args, kwargs)
+
+        rpc = _Rpc([{'id': 7, 'name': 'Fire brigade'}],
+                   refused_fields={'company_id'})
+        imp = _importer(self.env, rpc)
+
+        records = imp._search_read(
+            'hr.rfid.ctrl.emergency.group',
+            [('company_id', 'in', [1])], ['name'])
+
+        self.assertEqual([r['name'] for r in records], ['Fire brigade'],
+                         "Филтър по скрито поле не бива да спира записите")
+        self.assertIn(
+            'company_id',
+            imp.refused_fields.get('hr.rfid.ctrl.emergency.group', set()),
+            "Отказът от филтъра също се помни и се докладва")
+
+    def test_the_m2o_shape_from_the_source_never_crashes_the_reader(self):
+        """Живата миграция: 'int' object is not subscriptable свали цялата
+        фаза Хора - четенето връща голо число, кодът индексираше [0]."""
+        base = _importer(self.env, _RestrictedRpc([], set()))
+        self.assertEqual(base._m2o_id(13), 13)
+        self.assertEqual(base._m2o_id([13, 'Name']), 13)
+        self.assertEqual(base._m2o_id(False), False)
+        self.assertEqual(base._m2o_id([]), False)

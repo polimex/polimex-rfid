@@ -133,10 +133,8 @@ class BaseImporter:
             search_kwargs['limit'] = limit
         if context:
             search_kwargs['context'] = dict(context)
-        ids = self.rpc_models.execute_kw(
-            self.source_db, self.source_uid, self.source_password,
-            model, 'search', [read_domain], search_kwargs,
-        )
+        ids = self._search_dropping_refused_filters(
+            model, read_domain, search_kwargs)
         if not ids:
             return []
         # ``_classic_write`` returns a Many2one as a bare id instead of
@@ -164,6 +162,83 @@ class BaseImporter:
     #: Matching the CODE, never the message: the message arrives in whatever
     #: language the source speaks.
     RPC_FAULT_ACCESS_ERROR = 4
+
+    def _search_dropping_refused_filters(self, model, domain, search_kwargs):
+        """Search, and when the source refuses a FIELD used in the filter,
+        drop that filter - never the whole step.
+
+        The read half of this pair was not enough: the live migration that
+        forced it (company_id on the emergency-signal groups, readable only by
+        the multi-company group) failed AGAIN on the re-run, because the step
+        filters BY that same field - the refusal now came from the search call.
+        Dropping the filter is sound where it matters: on a single-company
+        source a company filter selects everything anyway, and the source's own
+        record rules still bound what this account may see.
+        """
+        def _search(dom):
+            return self.rpc_models.execute_kw(
+                self.source_db, self.source_uid, self.source_password,
+                model, 'search', [dom], search_kwargs,
+            )
+
+        known = self.refused_fields.get(model)
+        if known:
+            domain = self._domain_without_fields(domain, known)
+        try:
+            return _search(domain)
+        except xmlrpc.client.Fault as fault:
+            if fault.faultCode != self.RPC_FAULT_ACCESS_ERROR:
+                raise
+        # Which filtered field is the refused one? Try the domain without each
+        # in turn - domains here carry a handful of leaves at most.
+        for field in self._domain_fields(domain):
+            try:
+                ids = _search(self._domain_without_fields(domain, {field}))
+            except xmlrpc.client.Fault as fault:
+                if fault.faultCode != self.RPC_FAULT_ACCESS_ERROR:
+                    raise
+                continue
+            self.refused_fields.setdefault(model, set()).add(field)
+            _logger.warning(
+                "%s: the source refuses filtering by %r - reading without "
+                "that filter; its own access rules still apply", model, field)
+            return ids
+        # No single field explains it (the rows themselves are refused, say):
+        # the original failure stands and the step isolation records it.
+        return _search(domain)
+
+    @staticmethod
+    def _domain_fields(domain):
+        """Field names a domain filters by, dotted paths by their first hop."""
+        seen = []
+        for leaf in domain:
+            if isinstance(leaf, (list, tuple)) and len(leaf) == 3:
+                root = str(leaf[0]).split('.')[0]
+                if root not in seen:
+                    seen.append(root)
+        return seen
+
+    @staticmethod
+    def _domain_without_fields(domain, fields_):
+        """The same domain minus every leaf on the given fields.
+
+        Operators ('|', '&', '!') are rebuilt by dropping one prefix operator
+        per removed leaf - the shapes used in this module (plain AND lists and
+        a leading OR pair) survive that; anything more exotic would need a real
+        polish-notation rewrite and does not occur here.
+        """
+        kept = []
+        removed = 0
+        for leaf in domain:
+            if (isinstance(leaf, (list, tuple)) and len(leaf) == 3
+                    and str(leaf[0]).split('.')[0] in fields_):
+                removed += 1
+            else:
+                kept.append(leaf)
+        while removed and kept and kept[0] in ('|', '&'):
+            kept.pop(0)
+            removed -= 1
+        return kept
 
     def _read_dropping_refused_fields(self, model, ids, fields, read_kwargs):
         """Read, and when the source refuses a FIELD, leave the field - never
@@ -864,6 +939,21 @@ class BaseImporter:
         return list(self.company_map.keys())
 
     # ── Utility ───────────────────────────────────────────────
+
+    @staticmethod
+    def _m2o_id(value):
+        """Bare id of a Many2one value, whichever shape the read returned.
+
+        Reads run with load='_classic_write', which hands a Many2one back as a
+        bare integer - and every ``value[0]`` written for the [id, name] shape
+        then dies with "'int' object is not subscriptable". It took the People
+        phase of a live migration with it, and cards and memberships cascaded
+        after. One shape-tolerant accessor, used everywhere, instead of four
+        copies of the same indexing.
+        """
+        if isinstance(value, (list, tuple)):
+            return value[0] if value else False
+        return value or False
 
     def _map_m2o(self, model, source_val):
         """Map Many2one field: [id, name] or id → target_id or False.
