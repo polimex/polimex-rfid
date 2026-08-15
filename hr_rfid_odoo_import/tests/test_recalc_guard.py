@@ -32,7 +32,7 @@ class TestRecalcGuard(TransactionCase):
         if 'hr.attendance' not in cls.env:
             raise cls.skipTest(cls, 'hr_attendance not installed')
         cls.Attendance = cls.env['hr.attendance']
-        # The naming of the ledger entry is taken from the transfer itself, so
+        # The naming of the external ID entry is taken from the transfer itself, so
         # this test fails if the transfer ever renames what it writes.
         cls.importer = BaseImporter(
             cls.env, 'https://example.invalid', SRC_DB, 1, 'x', {}, {},

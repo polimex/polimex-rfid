@@ -104,7 +104,7 @@ class CameraImporter(PhaseImporter):
             if not target_company_id:
                 skipped += 1
                 continue
-            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
+            existing = self.b.find_by_external_id(model, rec['id'], rec.get('name'))
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
@@ -162,11 +162,23 @@ class CameraImporter(PhaseImporter):
             if not camera_id:
                 skipped += 1
                 continue
-            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
+            existing = self.b.find_by_external_id(model, rec['id'], rec.get('name'))
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
                 continue
+            # Adopt the reader the camera module fabricated for its camera -
+            # matched through the camera (the identity) and the device number.
+            # Pass-through adoption - see the doors above.
+            if not self.b._resolve_from_imd(model, rec['id']):
+                twin = self.env[model].sudo().with_context(
+                    active_test=False).search(
+                    [('camera_id', '=', camera_id)]
+                    + ([('number', '=', rec['number'])] if rec.get('number') else []),
+                    limit=1)
+                if twin and not self.b.adopt_existing(model, rec['id'], twin):
+                    skipped += 1
+                    continue
             vals = {f: rec.get(f) for f in wanted if rec.get(f) not in (None, False)}
             vals['camera_id'] = camera_id
             if 'active' in wanted:
@@ -208,14 +220,31 @@ class CameraImporter(PhaseImporter):
         imported = linked = skipped = lost_card_type = 0
         prefix = model.replace('.', '_')
         for rec in source_records:
-            if not self.b._map_m2o('cctv.camera', rec.get('camera_id')):
+            cam_target = self.b._map_m2o('cctv.camera', rec.get('camera_id'))
+            if not cam_target:
                 skipped += 1
                 continue
-            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
+            existing = self.b.find_by_external_id(model, rec['id'], rec.get('name'))
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
                 continue
+            # The camera module fabricates a door for its camera by itself.
+            # The camera IS the identity here: its target twin's door is this
+            # source door's counterpart - adopt it instead of planting a twin
+            # (four live camera doors did exactly that; the access-group
+            # permissions could then never find them).
+            # Pass-through adoption: gain the identity, then continue down
+            # the normal path so the refresh semantics still apply.
+            if not self.b._resolve_from_imd(model, rec['id']):
+                twin = self.env[model].sudo().with_context(
+                    active_test=False).search(
+                    [('camera_id', '=', cam_target)]
+                    + ([('number', '=', rec['number'])] if rec.get('number') else []),
+                    limit=1)
+                if twin and not self.b.adopt_existing(model, rec['id'], twin):
+                    skipped += 1
+                    continue
             vals = {f: rec.get(f) for f in wanted if rec.get(f) not in (None, False)}
             if 'card_type' in wanted and rec.get('card_type'):
                 vals['card_type'] = self.b._map_m2o(
@@ -272,7 +301,7 @@ class CameraImporter(PhaseImporter):
             if not camera_id or not card_id:
                 skipped += 1
                 continue
-            existing = self.b.find_by_ledger(model, rec['id'])
+            existing = self.b.find_by_external_id(model, rec['id'])
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1

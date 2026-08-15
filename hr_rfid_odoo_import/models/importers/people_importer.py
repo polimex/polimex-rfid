@@ -79,9 +79,9 @@ class PeopleImporter(PhaseImporter):
         for rec in source_records:
             target_company_id = self.b._map_company(rec.get('company_id'))
 
-            # Идентичност САМО по source id (ledger). Текстът е втора
+            # Идентичност САМО по source id (external ID). Текстът е втора
             # проверка на вече намерения запис, не ключ за търсене.
-            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
+            existing = self.b.find_by_external_id(model, rec['id'], rec.get('name'))
 
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
@@ -223,15 +223,15 @@ class PeopleImporter(PhaseImporter):
         prefix = model.replace('.', '_')
 
         for rec in source_records:
-            # Идентичност САМО по source id (ledger). Текстът е втора
+            # Идентичност САМО по source id (external ID). Текстът е втора
             # проверка на вече намерения запис, не ключ за търсене.
-            existing = self.b.find_by_ledger(model, rec['id'], rec.get('login'), 'login')
+            existing = self.b.find_by_external_id(model, rec['id'], rec.get('login'), 'login')
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1
                 continue
 
-            # Няма ледгер => НОВ потребител. Ако login-ът вече е зает в целта,
+            # Няма външния идентификатор => НОВ потребител. Ако login-ът вече е зает в целта,
             # това е КОНФЛИКТ за докладване, не покана за сливане: login-ът е
             # credential, не идентичност. Най-честият случай е системният
             # потребител на източника (admin), закачен за служител - целта си
@@ -242,7 +242,7 @@ class PeopleImporter(PhaseImporter):
                 skipped += 1
                 _logger.warning(
                     "Потребител %s от източника не е внесен: login-ът вече е зает "
-                    "от %s в целта, а ледгерът не сочи към него - изисква решение "
+                    "от %s в целта, а външния идентификатор не сочи към него - изисква решение "
                     "на оператора, не автоматично сливане", rec['login'], clash.id)
                 continue
 
@@ -383,7 +383,7 @@ class PeopleImporter(PhaseImporter):
             # Идентичност САМО по source id. Съпоставянето по име сля
             # съименници: от 1059 души на един клиент в целта влязоха 1022
             # (точно броят различни имена), заедно с картите и събитията им.
-            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
+            existing = self.b.find_by_external_id(model, rec['id'], rec.get('name'))
 
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)

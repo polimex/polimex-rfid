@@ -689,7 +689,7 @@ class BaseImporter:
     #: Temporary bridge under the old name. The camera, people and service
     #: importers still call it and are outside the scope of this change;
     #: remove once those three have been renamed too.
-    find_by_ledger = find_by_external_id
+    find_by_external_id = find_by_external_id
 
     def link_existing(self, model, source_id, target_id):
         """Record a source->target mapping for a record we did NOT create.
@@ -958,6 +958,52 @@ class BaseImporter:
         return False
 
     # ── Company mapping ───────────────────────────────────────
+
+    def adopt_existing(self, model, source_id, record):
+        """Attach the transfer identity to a record the TARGET's own automation
+        created - instead of building a twin next to it.
+
+        The access-control module creates hardware by itself: a heartbeat
+        provisions missing controllers, the F0 reply builds their doors and
+        readers, a camera fabricates its own door. When the live equipment
+        talks to the target before (or between) transfer runs, those records
+        exist WITHOUT a transfer identity - and creating our own copy either
+        trips a unique constraint (controllers) or plants silent twins (doors
+        and readers carry no constraint at all; four camera doors did exactly
+        that on a live migration). The owner's instruction: manual hardware
+        creation must be precise - so the import adopts what the automation
+        made, matched by the SAME device key the automation itself uses,
+        never by name.
+
+        Returns True when adopted (and mapped), False when the record already
+        carries a DIFFERENT transfer identity - that is a conflict to report,
+        not to merge over.
+        """
+        if not record:
+            return False
+        Imd = self.env['ir.model.data'].sudo()
+        expected = self._xml_id_name(model.replace('.', '_'), source_id)
+        carried = Imd.search([
+            ('model', '=', model), ('res_id', '=', record.id),
+            ('module', '=', EXTERNAL_ID_MODULE),
+            ('name', '=like', EXTERNAL_ID_PREFIX + self.source_slug + '_%'),
+        ], limit=1)
+        if carried:
+            if carried.name == expected:
+                self._set_target_id(model, source_id, record.id)
+                return True
+            self.note_skip_reason(self.env._(
+                "an existing record here already belongs to a different "
+                "record of the other system, so the two were not merged"))
+            return False
+        Imd.create({
+            'module': EXTERNAL_ID_MODULE, 'name': expected,
+            'model': model, 'res_id': record.id, 'noupdate': True,
+        })
+        self._set_target_id(model, source_id, record.id)
+        _logger.info("%s: adopted target record %s as source %s (%s)",
+                     model, record.id, source_id, expected)
+        return True
 
     def describe_unmatched_door(self, source_id):
         """One sentence from the SOURCE about a door we could not match.

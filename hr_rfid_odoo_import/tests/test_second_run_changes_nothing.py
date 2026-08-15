@@ -15,7 +15,7 @@ count the operator reads; it is visible at the door.
 So this runs the WHOLE chain of phases, in the order the wizard runs it, three
 times over one and the same source, and counts the rows of every model the
 phases touch - the entities, the relations, the children, and the external-ID
-ledger itself - before and after.
+external ID itself - before and after.
 
 The other system is answered from a dict rather than over the network. Only the
 reading side is stood in for: every write is the real one, through the real
@@ -189,7 +189,7 @@ class _StubbedSource(BaseImporter):
 
     Every method that would reach for XML-RPC is answered here and nothing
     else is replaced, so the whole receiving side - the ORM writes, the
-    module's own side effects, the external-ID ledger - is the real one.
+    module's own side effects, the external-ID external ID - is the real one.
     """
 
     def __init__(self, env, data, company_map, options):
@@ -437,7 +437,7 @@ class TestSecondRunChangesNothing(TransactionCase):
         A pass gets a NEW reader, with the in-memory source-to-target map
         empty. That is the honest shape of a second run: it happens in another
         process - the next cron cycle, another worker - and everything it needs
-        to recognise has to come back from the external-ID ledger.
+        to recognise has to come back from the external-ID external ID.
 
         Every step reports what became of it, and those reports are read here
         on EVERY pass. A phase does not stop at a step that breaks: it records
@@ -743,7 +743,7 @@ class TestSecondRunChangesNothing(TransactionCase):
         )
 
     def test_the_external_id_ledger_does_not_grow_on_a_second_run(self):
-        """The ledger is the map from the other system to this one.
+        """The external ID is the map from the other system to this one.
 
         A second entry for one source record means the map answers with
         whichever row happens to be found first, so the next pass attaches the

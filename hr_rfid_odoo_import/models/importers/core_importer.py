@@ -536,6 +536,25 @@ class CoreImporter(PhaseImporter):
                 skipped += 1
                 continue
 
+            # The target's own automation may have provisioned this controller
+            # already (heartbeat / lazy onboard) - matched by the SAME device
+            # key that automation uses, (webstack, ctrl_id). Creating our own
+            # would trip UNIQUE(serial_number, hw_version) and orphan the
+            # whole chain below it.
+            # Adoption is PASS-THROUGH: the record gains the transfer
+            # identity and then continues down the normal path, so the
+            # owner's refresh semantics still apply to it. Stopping here
+            # froze a renamed door on its local name - a test caught it.
+            if not self.b._resolve_from_imd(model, rec['id']):
+                twin = self.env['hr.rfid.ctrl'].sudo().with_context(
+                    active_test=False).search([
+                        ('webstack_id', '=', ws_target_id),
+                        ('ctrl_id', '=', rec.get('ctrl_id')),
+                ], limit=1)
+                if twin and not self.b.adopt_existing(model, rec['id'], twin):
+                    skipped += 1
+                    continue
+
             vals = {
                 'name': rec['name'],
                 'ctrl_id': rec.get('ctrl_id', 0),
@@ -592,6 +611,7 @@ class CoreImporter(PhaseImporter):
         source_records = self.b._search_read(
             model, self.b._scoped_domain('controller_id.webstack_id'), fields_to_read)
         imported = 0
+        linked = 0
         skipped = 0
         prefix = model.replace('.', '_')
 
@@ -600,6 +620,24 @@ class CoreImporter(PhaseImporter):
             if not ctrl_target_id:
                 skipped += 1
                 continue
+
+            # The F0 reply builds a controller's doors by itself, reusing rows
+            # by POSITION under the controller - so a door made by the live
+            # equipment carries no transfer identity and no unique constraint
+            # protects against a twin. Adopt by the same key F0 uses.
+            # Adoption is PASS-THROUGH: the record gains the transfer
+            # identity and then continues down the normal path, so the
+            # owner's refresh semantics still apply to it. Stopping here
+            # froze a renamed door on its local name - a test caught it.
+            if not self.b._resolve_from_imd(model, rec['id']):
+                twin = self.env[model].sudo().with_context(
+                    active_test=False).search([
+                        ('controller_id', '=', ctrl_target_id),
+                        ('number', '=', rec.get('number', 0)),
+                ], limit=1)
+                if twin and not self.b.adopt_existing(model, rec['id'], twin):
+                    skipped += 1
+                    continue
 
             card_type_target = False
             if rec.get('card_type'):
@@ -628,7 +666,7 @@ class CoreImporter(PhaseImporter):
                 imported += 1
 
         self.results.append(self.b._make_result(
-            model, len(source_records), imported, 0, skipped,
+            model, len(source_records), imported, linked, skipped,
             duration=time.time() - start,
         ))
 
@@ -649,6 +687,7 @@ class CoreImporter(PhaseImporter):
         source_records = self.b._search_read(
             model, self.b._scoped_domain('controller_id.webstack_id'), fields_to_read)
         imported = 0
+        linked = 0
         skipped = 0
         prefix = model.replace('.', '_')
 
@@ -657,6 +696,22 @@ class CoreImporter(PhaseImporter):
             if not ctrl_target_id:
                 skipped += 1
                 continue
+
+            # Same adoption as the doors: F0 builds readers positionally under
+            # the controller, so (controller, number) is their device key.
+            # Adoption is PASS-THROUGH: the record gains the transfer
+            # identity and then continues down the normal path, so the
+            # owner's refresh semantics still apply to it. Stopping here
+            # froze a renamed door on its local name - a test caught it.
+            if not self.b._resolve_from_imd(model, rec['id']):
+                twin = self.env[model].sudo().with_context(
+                    active_test=False).search([
+                        ('controller_id', '=', ctrl_target_id),
+                        ('number', '=', rec.get('number', 0)),
+                ], limit=1)
+                if twin and not self.b.adopt_existing(model, rec['id'], twin):
+                    skipped += 1
+                    continue
 
             vals = {
                 'name': rec['name'],
@@ -683,7 +738,7 @@ class CoreImporter(PhaseImporter):
                 imported += 1
 
         self.results.append(self.b._make_result(
-            model, len(source_records), imported, 0, skipped,
+            model, len(source_records), imported, linked, skipped,
             duration=time.time() - start,
         ))
 

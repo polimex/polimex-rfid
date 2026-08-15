@@ -52,9 +52,9 @@ class ServiceImporter(PhaseImporter):
             if not target_company_id:
                 skipped += 1
                 continue
-            # Идентичност САМО по source id (ledger). Текстът е втора
+            # Идентичност САМО по source id (external ID). Текстът е втора
             # проверка на вече намерения запис, не ключ за търсене.
-            existing = self.b.find_by_ledger(model, rec['id'], rec.get('name'))
+            existing = self.b.find_by_external_id(model, rec['id'], rec.get('name'))
             if existing:
                 self.b.link_existing(model, rec['id'], existing.id)
                 linked += 1

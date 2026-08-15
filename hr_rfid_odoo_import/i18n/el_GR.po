@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 10:55+0000\n"
-"PO-Revision-Date: 2026-08-15 13:55\n"
+"POT-Creation-Date: 2026-08-15 11:18+0000\n"
+"PO-Revision-Date: 2026-08-15 14:19\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: el\n"
@@ -2427,6 +2427,16 @@ msgstr "Ζώνες"
 msgid "access group №%(src)s from the other system has no match here"
 msgstr ""
 "η ομάδα πρόσβασης №%(src)s από το άλλο σύστημα δεν έχει αντιστοιχία εδώ"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"an existing record here already belongs to a different record of the other "
+"system, so the two were not merged"
+msgstr ""
+"μια υπάρχουσα εγγραφή εδώ ανήκει ήδη σε διαφορετική εγγραφή του άλλου "
+"συστήματος, επομένως οι δύο δεν συγχωνεύθηκαν"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
