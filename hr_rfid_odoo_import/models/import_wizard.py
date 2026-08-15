@@ -408,6 +408,31 @@ class HrRfidOdooImportWiz(models.TransientModel):
                             ),
                         }
 
+            # Check: data the source keeps but this system cannot take over.
+            # Derived from the phase registry - the hand-kept list above stays
+            # for its four modules, but it is exactly how the cameras were
+            # missed: a live migration learnt about the missing camera
+            # capability AFTER the run, from the protocol, instead of here.
+            from .importers.phase import capabilities_the_target_lacks
+            source_modules = set(json.loads(wiz.installed_modules_json or '[]'))
+            options = wiz._build_options() if wiz.installed_modules_json else {}
+            for cls, wanted in capabilities_the_target_lacks(
+                    self.env, options, source_modules):
+                key = 'missing_capability_%s' % cls.PHASE_ID
+                if any(k.endswith(m) for m in (cls.REQUIRES_SOURCE or ())
+                       for k in warnings):
+                    continue  # already said by the module check above
+                warnings[key] = {
+                    'level': 'danger' if wanted else 'warning',
+                    'message': self.env._(
+                        "The other system keeps %(feature)s, but this system "
+                        "cannot take that data over yet. Add the capability "
+                        "here first and run the transfer again - otherwise "
+                        "those records will be left waiting.",
+                        feature=cls.NAME,
+                    ),
+                }
+
             # Check: something here already came from a DIFFERENT system
             warnings.update(wiz._warn_about_other_source_identity())
 

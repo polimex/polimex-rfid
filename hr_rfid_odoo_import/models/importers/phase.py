@@ -197,3 +197,29 @@ def build_registry():
 
 #: Filled by :func:`registry` on first use - never at import time.
 _REGISTRY = None
+
+
+def capabilities_the_target_lacks(env, options, source_modules):
+    """[(phase class, wanted)] - data the source keeps but this system cannot
+    take over yet.
+
+    Derived from the phase registry, never from a hand-kept list: the wizard
+    carried exactly such a list (vending, attendance, service) and the cameras
+    were not on it - so a live migration learnt about the missing camera
+    capability from the protocol AFTER the run, instead of from a warning
+    before it. ``wanted`` says whether the operator has actually switched that
+    data on, so the caller can block (wanted) or merely inform (not wanted).
+    """
+    out = []
+    for cls in registry():
+        if not cls.REQUIRES_SOURCE:
+            continue
+        if any(m not in source_modules for m in cls.REQUIRES_SOURCE):
+            continue
+        if all(_target_available(env, r) for r in cls.REQUIRES_TARGET):
+            continue
+        wanted = ((not cls.OPTION or bool(options.get(cls.OPTION)))
+                  and (not cls.OPTION_ANY
+                       or any(options.get(o) for o in cls.OPTION_ANY)))
+        out.append((cls, wanted))
+    return out

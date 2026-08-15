@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 09:22+0000\n"
-"PO-Revision-Date: 2026-08-15 12:23\n"
+"POT-Creation-Date: 2026-08-15 09:26+0000\n"
+"PO-Revision-Date: 2026-08-15 12:26\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: el\n"
@@ -1838,6 +1838,19 @@ msgstr ""
 "Το άλλο σύστημα κατέχει %(count)s εγγραφές αυτού του τύπου και καμία από "
 "αυτές δεν μεταφέρθηκε. Ελέγξτε το προηγούμενο βήμα - αυτό στο οποίο "
 "παραπέμπουν αυτές οι εγγραφές πιθανώς λείπει."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid ""
+"The other system keeps %(feature)s, but this system cannot take that data "
+"over yet. Add the capability here first and run the transfer again - "
+"otherwise those records will be left waiting."
+msgstr ""
+"Το άλλο σύστημα διατηρεί %(feature)s, αλλά το παρόν σύστημα δεν μπορεί ακόμη "
+"να αναλάβει αυτά τα δεδομένα. Προσθέστε πρώτα αυτή τη δυνατότητα εδώ και "
+"εκτελέστε ξανά τη μεταφορά - διαφορετικά αυτές οι εγγραφές θα παραμείνουν σε "
+"αναμονή."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
