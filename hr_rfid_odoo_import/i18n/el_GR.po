@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 10:18+0000\n"
-"PO-Revision-Date: 2026-08-15 13:18\n"
+"POT-Creation-Date: 2026-08-15 10:29+0000\n"
+"PO-Revision-Date: 2026-08-15 13:29\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: el\n"
@@ -97,6 +97,12 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "%(kind)s №%(num)s from the other system has no match here"
+msgstr "%(kind)s №%(num)s από το άλλο σύστημα δεν έχει αντιστοιχία εδώ"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "%(kind)s: could not be counted"
 msgstr "%(kind)s: δεν ήταν δυνατή η καταμέτρηση"
@@ -139,6 +145,12 @@ msgstr "%(names)s και %(others)s ακόμη"
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "%(names)s and others"
 msgstr "%(names)s και άλλοι"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "%(what)s - %(count)s row(s)"
+msgstr "%(what)s - %(count)s γραμμή(ές)"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2406,6 +2418,12 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "and %(more)s more reason(s)"
+msgstr "και %(more)s ακόμη λόγο(-ους)"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "attendance"
 msgstr "παρουσία"
@@ -2485,6 +2503,12 @@ msgid "leave empty for a one-off transfer"
 msgstr "αφήστε κενό για εφάπαξ μεταφορά"
 
 #. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "left out by the operator's own choice"
+msgstr "εξαιρέθηκε με δική του επιλογή από τον χειριστή"
+
+#. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "my_database"
 msgstr "my_database"
@@ -2517,6 +2541,16 @@ msgid ""
 msgstr ""
 "Αναγνωριστικό res.users του συνδεδεμένου χρήστη προέλευσης. Αποθηκεύεται "
 "προσωρινά μετά τη Δοκιμή Σύνδεσης."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/event_importer.py:0
+msgid ""
+"the event names neither a communication module nor a camera, so there is "
+"nothing here to attach it to"
+msgstr ""
+"το συμβάν δεν αναφέρει ούτε ενότητα επικοινωνίας ούτε κάμερα, οπότε δεν "
+"υπάρχει τίποτα εδώ για να συνδεθεί"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python

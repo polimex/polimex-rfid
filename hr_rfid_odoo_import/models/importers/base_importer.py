@@ -86,6 +86,13 @@ class BaseImporter:
         #: groups= on the source side). Remembered so later pages skip the
         #: probing, and reported so nothing is left behind silently.
         self.refused_fields = {}
+        #: {(model, source_id) | (None, text): count} - why rows were left
+        #: behind since the last protocol line. Filled by the mapping
+        #: chokepoints themselves, so every step reports its reasons without
+        #: each of the fifty-nine skip sites having to remember to write them.
+        #: Drained by _make_result into the line being written (owner's rule,
+        #: 2026-08-15: the log carries the real picture, nobody guesses).
+        self._pending_skips = {}
 
     # ── Source reading (XML-RPC) ──────────────────────────────
 
@@ -958,7 +965,10 @@ class BaseImporter:
         if not source_company_id:
             return False
         sid = source_company_id[0] if isinstance(source_company_id, (list, tuple)) else source_company_id
-        return self.company_map.get(sid, False)
+        target = self.company_map.get(sid, False)
+        if not target:
+            self.note_skip('res.company', sid)
+        return target
 
     def _company_domain(self):
         """Return domain filter for source companies being imported."""
@@ -1041,9 +1051,14 @@ class BaseImporter:
         source_id = source_val[0] if isinstance(source_val, (list, tuple)) else source_val
         target_id = self._get_target_id(model, source_id)
         if target_id is None:
-            return False  # deliberately skipped by the operator
+            # Deliberately skipped by the operator - said so in the protocol.
+            self.note_skip_reason(self.env._(
+                "left out by the operator's own choice"))
+            return False
         if not target_id:
             target_id = self._resolve_from_imd(model, source_id)
+        if not target_id:
+            self.note_skip(model, source_id)
         return target_id or False
 
     def _map_m2m(self, model, source_ids):
@@ -1085,6 +1100,51 @@ class BaseImporter:
         }
         return (set(source_fields.keys()) & target_fields) - exclude
 
+    def note_skip(self, model, source_id, count=1):
+        """Remember why a row was left behind, for the current protocol line.
+
+        Tolerant of test doubles built without __init__ - the same convention
+        _can_read_fields already follows for rpc_models.
+        """
+        pending = getattr(self, '_pending_skips', None)
+        if pending is None:
+            pending = self._pending_skips = {}
+        key = (model, source_id)
+        pending[key] = pending.get(key, 0) + count
+
+    def note_skip_reason(self, text, count=1):
+        """Free-text variant for causes that are not a missing record."""
+        pending = getattr(self, '_pending_skips', None)
+        if pending is None:
+            pending = self._pending_skips = {}
+        key = (None, text)
+        pending[key] = pending.get(key, 0) + count
+
+    def _drain_skip_summary(self):
+        """The reasons collected since the last line, as one sentence."""
+        pending = getattr(self, '_pending_skips', {})
+        self._pending_skips = {}
+        if not pending:
+            return ''
+        parts = []
+        for (model, ident), count in sorted(
+                pending.items(), key=lambda kv: -kv[1])[:8]:
+            if model is None:
+                what = ident
+            else:
+                label = (self.env[model]._description
+                         if model in self.env else model)
+                what = self.env._(
+                    "%(kind)s №%(num)s from the other system has no match "
+                    "here", kind=label, num=ident)
+            parts.append(
+                self.env._("%(what)s - %(count)s row(s)",
+                           what=what, count=count))
+        more = len(pending) - 8
+        if more > 0:
+            parts.append(self.env._("and %(more)s more reason(s)", more=more))
+        return "; ".join(parts)
+
     def _make_result(self, model, source_count, imported_count, linked_count=0,
                      skipped_count=0, duration=0, status='done', error='',
                      rejected_count=0):
@@ -1097,6 +1157,9 @@ class BaseImporter:
         "every row was dropped" - the operator cannot tell a clean run from
         a broken one.
         """
+        reasons = self._drain_skip_summary()
+        if reasons:
+            error = ("%s | %s" % (error, reasons)) if error else reasons
         landed = imported_count + linked_count
         if status == 'done' and source_count and not landed:
             # The source holds records of this kind and not one arrived. That

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 10:18+0000\n"
-"PO-Revision-Date: 2026-08-15 13:18\n"
+"POT-Creation-Date: 2026-08-15 10:29+0000\n"
+"PO-Revision-Date: 2026-08-15 13:29\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -97,6 +97,12 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "%(kind)s №%(num)s from the other system has no match here"
+msgstr "%(kind)s n.º%(num)s del otro sistema no tiene coincidencia aquí"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "%(kind)s: could not be counted"
 msgstr "%(kind)s: no se pudo contar"
@@ -139,6 +145,12 @@ msgstr "%(names)s y %(others)s más"
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "%(names)s and others"
 msgstr "%(names)s y otros"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "%(what)s - %(count)s row(s)"
+msgstr "%(what)s - %(count)s fila(s)"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2404,6 +2416,12 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "and %(more)s more reason(s)"
+msgstr "y %(more)s motivo(s) más"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "attendance"
 msgstr "asistencia"
@@ -2483,6 +2501,12 @@ msgid "leave empty for a one-off transfer"
 msgstr "déjelo vacío para una transferencia puntual"
 
 #. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "left out by the operator's own choice"
+msgstr "excluido por decisión propia del operador"
+
+#. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "my_database"
 msgstr "my_database"
@@ -2515,6 +2539,16 @@ msgid ""
 msgstr ""
 "ID de res.users del usuario de origen conectado. Almacenado en caché tras "
 "Probar Conexión."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/event_importer.py:0
+msgid ""
+"the event names neither a communication module nor a camera, so there is "
+"nothing here to attach it to"
+msgstr ""
+"el evento no nombra ni un módulo de comunicación ni una cámara, por lo que "
+"no hay nada a lo que adjuntarlo aquí"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python

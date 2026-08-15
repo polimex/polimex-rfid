@@ -270,3 +270,48 @@ class TestUnmatchedDoorIsDiagnosedFromTheSource(TransactionCase):
         sentence, is_real = imp.describe_unmatched_door(5)
         self.assertTrue(is_real, "Врата в обхват без съответствие е дефект")
         self.assertIn("hardware step", sentence)
+
+
+@tagged('post_install', '-at_install', 'rfid_odoo_import', 'rfid_import_rights')
+class TestEveryLeftBehindRowNamesItsReason(TransactionCase):
+    """Никой не гадае по протокола: всеки оставен ред казва защо.
+
+    Собственикът (2026-08-15): "искам точен лог какво има за прехвърляне и
+    причината защо не си могъл - В ЛОГА". Отчитането е в самите канали за
+    съпоставяне, затова важи за всяка стъпка, без 59-те места за пропуск да
+    трябва да си го спомнят поотделно.
+    """
+
+    def _imp(self):
+        imp = _importer(self.env, _RestrictedRpc([], set()))
+        imp.company_map = {101: self.env.company.id}
+        imp.id_map = {}
+        imp._pending_skips = {}
+        # Резолюцията по външен идентификатор чете source_slug - двойникът
+        # без __init__ трябва да си го носи, както прави и _FakeSource.
+        imp.source_slug = 'srcdb'
+        return imp
+
+    def test_a_missing_pointer_is_named_with_its_number(self):
+        imp = self._imp()
+        self.assertFalse(imp._map_m2o('hr.rfid.door', 5))
+        self.assertFalse(imp._map_m2o('hr.rfid.door', 5))
+        result = imp._make_result('x', 2, 0, 0, 2)
+        self.assertIn('№5', result['error'],
+                      "Редът трябва да назове номера от източника")
+        self.assertIn('2', result['error'],
+                      "И колко реда е коствал този пропуск")
+
+    def test_an_excluded_company_is_a_named_reason_not_a_mystery(self):
+        imp = self._imp()
+        self.assertFalse(imp._map_company(202))
+        result = imp._make_result('x', 1, 0, 0, 1)
+        self.assertIn('№202', result['error'])
+
+    def test_reasons_do_not_leak_into_the_next_line(self):
+        imp = self._imp()
+        imp._map_m2o('hr.rfid.door', 5)
+        imp._make_result('x', 1, 0, 0, 1)
+        clean = imp._make_result('y', 3, 3, 0, 0)
+        self.assertFalse(clean['error'],
+                         "Причините принадлежат на СВОЯ ред, не на следващия")

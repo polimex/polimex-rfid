@@ -388,6 +388,9 @@ class EventImporter(PhaseImporter):
                 # to attribute it to. This replaces the blanket "no webstack =
                 # drop it", which also threw away every camera event.
                 skip_row = True
+                self.b.note_skip_reason(self.env._(
+                    "the event names neither a communication module nor a "
+                    "camera, so there is nothing here to attach it to"))
             if skip_row:
                 skipped += 1
                 continue
