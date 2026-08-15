@@ -66,17 +66,22 @@
                                 | UID: <field name="source_uid" class="d-inline" readonly="1"/>
                             </div>
 
-                            <group string="Company Mapping">
-                                <field name="company_line_ids" nolabel="1">
-                                    <list editable="bottom">
-                                        <field name="source_name" readonly="1"/>
-                                        <field name="source_id" readonly="1" optional="hide"/>
-                                        <field name="do_import"/>
-                                        <field name="target_company_id"
-                                               options="{'no_create': True}"/>
-                                    </list>
-                                </field>
-                            </group>
+                            <!-- The list is the DECISION of this step, so it
+                                 takes the dialog's full width. Inside a <group>
+                                 it lands in one cell of a two-column grid - a
+                                 quarter of the dialog, with every header
+                                 truncated (odoo-wizard-guide: the choice sits
+                                 outside groups; count and size the columns). -->
+                            <separator string="Company Mapping"/>
+                            <field name="company_line_ids" nolabel="1">
+                                <list editable="bottom">
+                                    <field name="do_import" width="40px"/>
+                                    <field name="source_name" readonly="1"/>
+                                    <field name="source_id" readonly="1" optional="hide"/>
+                                    <field name="target_company_id"
+                                           options="{'no_create': True}"/>
+                                </list>
+                            </field>
 
                             <group string="Core Import Options" col="4">
                                 <field name="import_hardware"/>
@@ -148,9 +153,10 @@
                                        widget="text" nolabel="1" colspan="2"/>
                             </group>
 
-                            <group string="Conflicts Found"
-                                   invisible="not conflict_ids">
-                                <field name="conflict_ids" nolabel="1" colspan="2">
+                            <separator string="Conflicts Found"
+                                       invisible="not conflict_ids"/>
+                            <div invisible="not conflict_ids">
+                                <field name="conflict_ids" nolabel="1">
                                     <list editable="bottom">
                                         <field name="source_model" readonly="1"/>
                                         <field name="source_name" readonly="1"/>
@@ -165,7 +171,7 @@
                                         <field name="resolution"/>
                                     </list>
                                 </field>
-                            </group>
+                            </div>
                             <div invisible="conflict_ids" class="text-success text-center mb-3">
                                 <strong>No conflicts detected.</strong>
                             </div>
