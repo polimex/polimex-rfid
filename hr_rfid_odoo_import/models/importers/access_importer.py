@@ -145,6 +145,7 @@ class AccessImporter(PhaseImporter):
         skipped = 0
         unmapped = []
         prefix = model.replace('.', '_')
+        genuinely_broken = False
 
         for rec in source_records:
             # A door permission that is already here is recognised and left
@@ -169,19 +170,25 @@ class AccessImporter(PhaseImporter):
             if not ag_target or not door_target:
                 skipped += 1
                 # The row must carry its own diagnosis (owner's rule,
-                # 2026-08-15): a live protocol showed "4 skipped" and could not
-                # say WHICH pointer failed for WHICH source record - the
-                # operator had to ship the protocol out for a guess.
+                # 2026-08-15) - and after three protocols of "no match here"
+                # the diagnosis now comes from the SOURCE itself, read live:
+                # a deleted door, a door of a company left out of the
+                # transfer, and a door that genuinely failed to arrive are
+                # three different situations needing three different actions.
+                if ag_target:
+                    src_id = self.b._m2o_id(rec.get('door_id'))
+                    sentence, is_real = self.b.describe_unmatched_door(src_id)
+                else:
+                    sentence = self.env._(
+                        "access group №%(src)s from the other system has no "
+                        "match here",
+                        src=self.b._m2o_id(rec.get('access_group_id')))
+                    is_real = True
                 unmapped.append(self.env._(
-                    "permission %(rel)s: %(what)s №%(src)s from the other "
-                    "system has no match here",
-                    rel=rec['id'],
-                    what=(self.env._("door")
-                          if ag_target else self.env._("access group")),
-                    src=self.b._m2o_id(
-                        rec.get('door_id') if ag_target
-                        else rec.get('access_group_id')),
-                ))
+                    "permission %(rel)s: %(what)s", rel=rec['id'],
+                    what=sentence))
+                if is_real:
+                    genuinely_broken = True
                 continue
 
             ts_target = False
@@ -211,9 +218,16 @@ class AccessImporter(PhaseImporter):
             else:
                 skipped += 1
 
+        # A permission pointing at a deleted door, or at a company the
+        # operator left out, is a diagnosed and final outcome - not a red
+        # row. Red stays reserved for a door that should have arrived.
+        outcome = 'done'
+        if unmapped:
+            outcome = 'error' if genuinely_broken else 'skipped'
         self.results.append(self.b._make_result(
             model, len(source_records), imported, linked, skipped,
             duration=time.time() - start,
+            status=outcome,
             error='; '.join(unmapped[:8]),
         ))
 

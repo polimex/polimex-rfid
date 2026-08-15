@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 09:58+0000\n"
-"PO-Revision-Date: 2026-08-15 12:58\n"
+"POT-Creation-Date: 2026-08-15 10:18+0000\n"
+"PO-Revision-Date: 2026-08-15 13:18\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -2364,8 +2364,8 @@ msgstr "Зони"
 #. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
-msgid "access group"
-msgstr "група за достъп"
+msgid "access group №%(src)s from the other system has no match here"
+msgstr "групата за достъп №%(src)s от другата система няма съответствие тук"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2375,9 +2375,31 @@ msgstr "присъствие"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
-msgid "door"
-msgstr "врата"
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"door №%(num)s \"%(name)s\" belongs to company \"%(company)s\", which is not "
+"included in this transfer - add that company on the first page to bring its "
+"doors"
+msgstr ""
+"врата №%(num)s \"%(name)s\" принадлежи на фирма \"%(company)s\", която не е "
+"включена в този трансфер - добавете тази фирма на първата страница, за да "
+"пренесете вратите ѝ"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"door №%(num)s \"%(name)s\" is part of this transfer and still did not arrive "
+"- look at the hardware step above"
+msgstr ""
+"врата №%(num)s \"%(name)s\" е част от този трансфер и все още не е "
+"пристигнала - вижте стъпката с хардуера по-горе"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "door №%(num)s from the other system has no match here"
+msgstr "врата №%(num)s от другата система няма съответствие тук"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2433,11 +2455,8 @@ msgstr "my_database"
 #. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
-msgid ""
-"permission %(rel)s: %(what)s №%(src)s from the other system has no match here"
-msgstr ""
-"разрешение %(rel)s: %(what)s №%(src)s от другата система няма съответствие "
-"тук"
+msgid "permission %(rel)s: %(what)s"
+msgstr "разрешение %(rel)s: %(what)s"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__source_id
@@ -2461,6 +2480,16 @@ msgid ""
 msgstr ""
 "ID на res.users на свързания потребител от източника. Кешира се след Тест на "
 "връзката."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"the other system no longer has door №%(num)s - the permission points at a "
+"door deleted over there"
+msgstr ""
+"другата система вече няма врата №%(num)s - разрешението сочи към врата, "
+"изтрита там"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python

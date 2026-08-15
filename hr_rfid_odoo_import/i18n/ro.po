@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 09:58+0000\n"
-"PO-Revision-Date: 2026-08-15 12:58\n"
+"POT-Creation-Date: 2026-08-15 10:18+0000\n"
+"PO-Revision-Date: 2026-08-15 13:19\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ro\n"
@@ -2370,8 +2370,8 @@ msgstr "Zone"
 #. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
-msgid "access group"
-msgstr "grup de acces"
+msgid "access group №%(src)s from the other system has no match here"
+msgstr "grupul de acces №%(src)s din celălalt sistem nu are corespondent aici"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2381,9 +2381,31 @@ msgstr "prezență"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
-msgid "door"
-msgstr "ușă"
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"door №%(num)s \"%(name)s\" belongs to company \"%(company)s\", which is not "
+"included in this transfer - add that company on the first page to bring its "
+"doors"
+msgstr ""
+"ușa №%(num)s \"%(name)s\" aparține companiei \"%(company)s\", care nu este "
+"inclusă în acest transfer - adăugați acea companie pe prima pagină pentru a-"
+"i aduce ușile"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"door №%(num)s \"%(name)s\" is part of this transfer and still did not arrive "
+"- look at the hardware step above"
+msgstr ""
+"ușa №%(num)s \"%(name)s\" face parte din acest transfer și încă nu a sosit - "
+"verificați pasul de hardware de mai sus"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "door №%(num)s from the other system has no match here"
+msgstr "ușa №%(num)s din celălalt sistem nu are corespondent aici"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2439,11 +2461,8 @@ msgstr "my_database"
 #. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
-msgid ""
-"permission %(rel)s: %(what)s №%(src)s from the other system has no match here"
-msgstr ""
-"permisiune %(rel)s: %(what)s №%(src)s din celălalt sistem nu are "
-"corespondent aici"
+msgid "permission %(rel)s: %(what)s"
+msgstr "permisiune %(rel)s: %(what)s"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__source_id
@@ -2467,6 +2486,16 @@ msgid ""
 msgstr ""
 "ID-ul res.users al utilizatorului sursă conectat. Memorat în cache după "
 "Testare conexiune."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"the other system no longer has door №%(num)s - the permission points at a "
+"door deleted over there"
+msgstr ""
+"celălalt sistem nu mai are ușa №%(num)s - permisiunea indică o ușă ștearsă "
+"acolo"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python

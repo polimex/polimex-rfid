@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 09:58+0000\n"
-"PO-Revision-Date: 2026-08-15 12:58\n"
+"POT-Creation-Date: 2026-08-15 10:18+0000\n"
+"PO-Revision-Date: 2026-08-15 13:18\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -2398,8 +2398,9 @@ msgstr "Zonas"
 #. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
-msgid "access group"
-msgstr "grupo de acceso"
+msgid "access group №%(src)s from the other system has no match here"
+msgstr ""
+"el grupo de acceso n.º %(src)s del otro sistema no tiene coincidencia aquí"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2409,9 +2410,31 @@ msgstr "asistencia"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
-msgid "door"
-msgstr "puerta"
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"door №%(num)s \"%(name)s\" belongs to company \"%(company)s\", which is not "
+"included in this transfer - add that company on the first page to bring its "
+"doors"
+msgstr ""
+"la puerta n.º %(num)s \"%(name)s\" pertenece a la empresa \"%(company)s\", "
+"que no está incluida en esta transferencia - agregue esa empresa en la "
+"primera página para traer sus puertas"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"door №%(num)s \"%(name)s\" is part of this transfer and still did not arrive "
+"- look at the hardware step above"
+msgstr ""
+"la puerta n.º %(num)s \"%(name)s\" forma parte de esta transferencia y "
+"todavía no llegó - revise el paso de equipo anterior"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "door №%(num)s from the other system has no match here"
+msgstr "la puerta n.º %(num)s del otro sistema no tiene coincidencia aquí"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2467,11 +2490,8 @@ msgstr "my_database"
 #. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
-msgid ""
-"permission %(rel)s: %(what)s №%(src)s from the other system has no match here"
-msgstr ""
-"permiso %(rel)s: %(what)s №%(src)s del otro sistema no tiene coincidencia "
-"aquí"
+msgid "permission %(rel)s: %(what)s"
+msgstr "permiso %(rel)s: %(what)s"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__source_id
@@ -2495,6 +2515,16 @@ msgid ""
 msgstr ""
 "ID de res.users del usuario de origen conectado. Almacenado en caché tras "
 "Probar Conexión."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"the other system no longer has door №%(num)s - the permission points at a "
+"door deleted over there"
+msgstr ""
+"el otro sistema ya no tiene la puerta n.º %(num)s - el permiso apunta a una "
+"puerta eliminada allí"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python

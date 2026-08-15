@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 09:58+0000\n"
-"PO-Revision-Date: 2026-08-15 12:58\n"
+"POT-Creation-Date: 2026-08-15 10:18+0000\n"
+"PO-Revision-Date: 2026-08-15 13:18\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -2396,8 +2396,9 @@ msgstr "Zonen"
 #. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
-msgid "access group"
-msgstr "Zugangsgruppe"
+msgid "access group №%(src)s from the other system has no match here"
+msgstr ""
+"Zugangsgruppe Nr. %(src)s aus dem anderen System hat hier keine Entsprechung"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2407,9 +2408,31 @@ msgstr "Anwesenheit"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
-msgid "door"
-msgstr "Tür"
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"door №%(num)s \"%(name)s\" belongs to company \"%(company)s\", which is not "
+"included in this transfer - add that company on the first page to bring its "
+"doors"
+msgstr ""
+"Tür Nr. %(num)s \"%(name)s\" gehört zu Unternehmen \"%(company)s\", das "
+"nicht in diese Übertragung einbezogen ist - fügen Sie dieses Unternehmen auf "
+"der ersten Seite hinzu, um dessen Türen zu übernehmen"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"door №%(num)s \"%(name)s\" is part of this transfer and still did not arrive "
+"- look at the hardware step above"
+msgstr ""
+"Tür Nr. %(num)s \"%(name)s\" ist Teil dieser Übertragung und ist noch nicht "
+"eingetroffen - siehe Hardware-Schritt oben"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "door №%(num)s from the other system has no match here"
+msgstr "Tür Nr. %(num)s aus dem anderen System hat hier keine Entsprechung"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2465,11 +2488,8 @@ msgstr "my_database"
 #. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
-msgid ""
-"permission %(rel)s: %(what)s №%(src)s from the other system has no match here"
-msgstr ""
-"Berechtigung %(rel)s: %(what)s Nr. %(src)s aus dem anderen System hat hier "
-"keine Entsprechung"
+msgid "permission %(rel)s: %(what)s"
+msgstr "Berechtigung %(rel)s: %(what)s"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__source_id
@@ -2493,6 +2513,16 @@ msgid ""
 msgstr ""
 "res.users-ID des verbundenen Quellbenutzers. Nach Verbindungstest "
 "zwischengespeichert."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"the other system no longer has door №%(num)s - the permission points at a "
+"door deleted over there"
+msgstr ""
+"das andere System hat Tür Nr. %(num)s nicht mehr - die Berechtigung verweist "
+"auf eine dort gelöschte Tür"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python

@@ -883,6 +883,76 @@ class BaseImporter:
 
     # ── Company mapping ───────────────────────────────────────
 
+    def describe_unmatched_door(self, source_id):
+        """One sentence from the SOURCE about a door we could not match.
+
+        Read live at diagnosis time. Three protocols in a row said only
+        "door N has no match here" and the operator had to guess which of
+        three very different situations that was - the log has to carry the
+        real picture by itself (owner's rule, 2026-08-15):
+
+        - the door was DELETED on the other system -> the permission points at
+          nothing and never will; skipping it is the correct final outcome;
+        - the door belongs to a COMPANY not included in this transfer -> the
+          operator decides: add the company, or accept the skip;
+        - the door is in scope and still did not arrive -> a real defect in
+          the hardware step, and only then is the row a genuine error.
+
+        Returns (sentence, is_a_real_problem).
+        """
+        try:
+            doors = self._search_read(
+                'hr.rfid.door', [('id', '=', source_id)],
+                ['name', 'controller_id'])
+            if not doors:
+                return self.env._(
+                    "the other system no longer has door №%(num)s - the "
+                    "permission points at a door deleted over there",
+                    num=source_id,
+                ), False
+            door = doors[0]
+            company_id = False
+            ctrl_id = self._m2o_id(door.get('controller_id'))
+            if ctrl_id:
+                ctrls = self._search_read(
+                    'hr.rfid.ctrl', [('id', '=', ctrl_id)], ['webstack_id'])
+                ws_id = ctrls and self._m2o_id(ctrls[0].get('webstack_id'))
+                if ws_id:
+                    wss = self._search_read(
+                        'hr.rfid.webstack', [('id', '=', ws_id)],
+                        ['company_id'])
+                    company_id = wss and self._m2o_id(wss[0].get('company_id'))
+            elif self._has_model('cctv.camera'):
+                cams = self._search_read(
+                    'cctv.camera', [('door_id', '=', source_id)],
+                    ['name', 'company_id'])
+                if cams:
+                    company_id = self._m2o_id(cams[0].get('company_id'))
+            if company_id and company_id not in self.company_map:
+                names = self._search_read(
+                    'res.company', [('id', '=', company_id)], ['name'])
+                return self.env._(
+                    "door №%(num)s \"%(name)s\" belongs to company "
+                    "\"%(company)s\", which is not included in this "
+                    "transfer - add that company on the first page to bring "
+                    "its doors",
+                    num=source_id, name=door.get('name') or '?',
+                    company=(names and names[0].get('name')) or company_id,
+                ), False
+            return self.env._(
+                "door №%(num)s \"%(name)s\" is part of this transfer and "
+                "still did not arrive - look at the hardware step above",
+                num=source_id, name=door.get('name') or '?',
+            ), True
+        except Exception:
+            _logger.warning(
+                "Could not ask the source about door %s while writing the "
+                "protocol", source_id, exc_info=True)
+            return self.env._(
+                "door №%(num)s from the other system has no match here",
+                num=source_id,
+            ), True
+
     def _map_company(self, source_company_id):
         """Map source company ID to target company ID."""
         if not source_company_id:

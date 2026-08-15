@@ -215,3 +215,58 @@ class TestSourceRefusesAFilter(TransactionCase):
         self.assertEqual(base._m2o_id([13, 'Name']), 13)
         self.assertEqual(base._m2o_id(False), False)
         self.assertEqual(base._m2o_id([]), False)
+
+
+@tagged('post_install', '-at_install', 'rfid_odoo_import', 'rfid_import_rights')
+class TestUnmatchedDoorIsDiagnosedFromTheSource(TransactionCase):
+    """Ред за несъпоставена врата казва КАКВО е тя, попитал източника на живо.
+
+    Собственикът, след три протокола с "no match here" (2026-08-15): при
+    грешка логът сам носи детайла, за да се разбере какво се е случило.
+    Трите случая искат три различни действия - изтрита врата (окончателно,
+    не е грешка), врата на невключена фирма (операторът решава), врата в
+    обхват, която не е дошла (истинска грешка).
+    """
+
+    def _base(self, records_by_model):
+        rpc = _RestrictedRpc([], set())
+        imp = _importer(self.env, rpc)
+        def _search_read(model, domain, fields, **kw):
+            rows = records_by_model.get(model, [])
+            if domain and domain[0][0] == 'id':
+                rows = [r for r in rows if r['id'] == domain[0][2]]
+            elif domain and domain[0][0] == 'door_id':
+                rows = [r for r in rows if r.get('door_id') == domain[0][2]]
+            return [dict(r) for r in rows]
+        imp._search_read = _search_read
+        imp._has_model = lambda m: 'cctv.camera' in records_by_model
+        imp.company_map = {101: self.env.company.id}
+        return imp
+
+    def test_a_deleted_door_is_final_not_an_error(self):
+        imp = self._base({'hr.rfid.door': []})
+        sentence, is_real = imp.describe_unmatched_door(5)
+        self.assertFalse(is_real, "Изтритата врата е окончателен изход")
+        self.assertIn("deleted", sentence)
+
+    def test_a_door_of_an_excluded_company_names_the_company(self):
+        imp = self._base({
+            'hr.rfid.door': [{'id': 5, 'name': 'Barrier', 'controller_id': 9}],
+            'hr.rfid.ctrl': [{'id': 9, 'webstack_id': 3}],
+            'hr.rfid.webstack': [{'id': 3, 'company_id': 202}],
+            'res.company': [{'id': 202, 'name': 'Other Tenant'}],
+        })
+        sentence, is_real = imp.describe_unmatched_door(5)
+        self.assertFalse(is_real, "Невключена фирма е решение на оператора")
+        self.assertIn("Other Tenant", sentence,
+                      "Редът трябва да назове фирмата, не да остави гадаене")
+
+    def test_a_door_in_scope_that_did_not_arrive_stays_a_real_error(self):
+        imp = self._base({
+            'hr.rfid.door': [{'id': 5, 'name': 'Front', 'controller_id': 9}],
+            'hr.rfid.ctrl': [{'id': 9, 'webstack_id': 3}],
+            'hr.rfid.webstack': [{'id': 3, 'company_id': 101}],
+        })
+        sentence, is_real = imp.describe_unmatched_door(5)
+        self.assertTrue(is_real, "Врата в обхват без съответствие е дефект")
+        self.assertIn("hardware step", sentence)

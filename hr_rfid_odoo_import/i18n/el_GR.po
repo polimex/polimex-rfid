@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 09:58+0000\n"
-"PO-Revision-Date: 2026-08-15 12:58\n"
+"POT-Creation-Date: 2026-08-15 10:18+0000\n"
+"PO-Revision-Date: 2026-08-15 13:18\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: el\n"
@@ -2400,8 +2400,9 @@ msgstr "Ζώνες"
 #. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
-msgid "access group"
-msgstr "ομάδα πρόσβασης"
+msgid "access group №%(src)s from the other system has no match here"
+msgstr ""
+"η ομάδα πρόσβασης №%(src)s από το άλλο σύστημα δεν έχει αντιστοιχία εδώ"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2411,9 +2412,31 @@ msgstr "παρουσία"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
-msgid "door"
-msgstr "θύρα"
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"door №%(num)s \"%(name)s\" belongs to company \"%(company)s\", which is not "
+"included in this transfer - add that company on the first page to bring its "
+"doors"
+msgstr ""
+"η θύρα №%(num)s \"%(name)s\" ανήκει στην εταιρεία \"%(company)s\", η οποία "
+"δεν περιλαμβάνεται σε αυτή τη μεταφορά - προσθέστε αυτή την εταιρεία στην "
+"πρώτη σελίδα για να συμπεριληφθούν οι θύρες της"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"door №%(num)s \"%(name)s\" is part of this transfer and still did not arrive "
+"- look at the hardware step above"
+msgstr ""
+"η θύρα №%(num)s \"%(name)s\" αποτελεί μέρος αυτής της μεταφοράς και δεν έχει "
+"φτάσει ακόμα - ελέγξτε το βήμα εξοπλισμού παραπάνω"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "door №%(num)s from the other system has no match here"
+msgstr "η θύρα №%(num)s από το άλλο σύστημα δεν έχει αντιστοιχία εδώ"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2469,10 +2492,8 @@ msgstr "my_database"
 #. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
-msgid ""
-"permission %(rel)s: %(what)s №%(src)s from the other system has no match here"
-msgstr ""
-"άδεια %(rel)s: %(what)s №%(src)s από το άλλο σύστημα δεν έχει αντιστοιχία εδώ"
+msgid "permission %(rel)s: %(what)s"
+msgstr "δικαίωμα πρόσβασης %(rel)s: %(what)s"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__source_id
@@ -2496,6 +2517,16 @@ msgid ""
 msgstr ""
 "Αναγνωριστικό res.users του συνδεδεμένου χρήστη προέλευσης. Αποθηκεύεται "
 "προσωρινά μετά τη Δοκιμή Σύνδεσης."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"the other system no longer has door №%(num)s - the permission points at a "
+"door deleted over there"
+msgstr ""
+"το άλλο σύστημα δεν διαθέτει πλέον τη θύρα №%(num)s - το δικαίωμα πρόσβασης "
+"παραπέμπει σε θύρα που έχει διαγραφεί εκεί"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
