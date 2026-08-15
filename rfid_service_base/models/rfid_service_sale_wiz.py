@@ -318,7 +318,15 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         if not self.card_number:
             raise UserError(_('Please scan a card'))
         if self.end_date < fields.Datetime.now():
-            raise UserError(_('The period for this sale finish in the past. Please check details again!'))
+            raise UserError(_(
+                'The period for this sale ends in the past: it runs until '
+                '%(end)s, and it is now %(now)s (%(tz)s). Check the dates '
+                'and try again.',
+                end=fields.Datetime.context_timestamp(self, self.end_date),
+                now=fields.Datetime.context_timestamp(
+                    self, fields.Datetime.now()),
+                tz=self.env.user.tz or 'UTC',
+            ))
         if not self.sudo().service_id.access_group_id.door_ids:
             raise UserError(_('The access group for this service have no any doors. Please fix it and try again!'))
         # if not self.partner_id:

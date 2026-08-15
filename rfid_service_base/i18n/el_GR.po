@@ -6,11 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-14 13:55+0000\n"
-"PO-Revision-Date: 2026-08-14 17:28\n"
+"POT-Creation-Date: 2026-08-15 12:12+0000\n"
+"PO-Revision-Date: 2026-08-15 15:12\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: el_GR\n"
+"Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -1831,10 +1831,11 @@ msgstr "Ο συνεργάτης έχει έγκυρη υπηρεσία για α
 #. odoo-python
 #: code:addons/rfid_service_base/models/rfid_service_sale_wiz.py:0
 msgid ""
-"The period for this sale finish in the past. Please check details again!"
+"The period for this sale ends in the past: it runs until %(end)s, and it is "
+"now %(now)s (%(tz)s). Check the dates and try again."
 msgstr ""
-"Η περίοδος για αυτή την πώληση έχει λήξει στο παρελθόν. Παρακαλώ ελέγξτε "
-"ξανά τα στοιχεία!"
+"Η περίοδος για αυτήν την πώληση λήγει στο παρελθόν: διαρκεί έως %(end)s, ενώ "
+"τώρα είναι %(now)s (%(tz)s). Ελέγξτε τις ημερομηνίες και δοκιμάστε ξανά."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale_wiz__partner_id
