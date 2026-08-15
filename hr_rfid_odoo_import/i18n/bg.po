@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 13:39+0000\n"
-"PO-Revision-Date: 2026-08-15 16:39\n"
+"POT-Creation-Date: 2026-08-15 16:17+0000\n"
+"PO-Revision-Date: 2026-08-15 19:17\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -1591,6 +1591,15 @@ msgstr ""
 "изтрива."
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__step_totals_json
+msgid ""
+"Running totals of the resumable steps. A pass counts only the slice it read "
+"itself; the protocol reports the whole transfer."
+msgstr ""
+"Текущи суми на стъпките с възможност за възобновяване. Всяко изпълнение "
+"отчита само прочетената от него част; протоколът отразява целия трансфер."
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_has_sms_error
 msgid "SMS Delivery error"
 msgstr "Грешка при доставка на SMS"
@@ -1805,6 +1814,11 @@ msgstr "Състояние"
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__status
 msgid "Status"
 msgstr "Статус"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__step_totals_json
+msgid "Step Totals Json"
+msgstr "JSON с общи суми по стъпки"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__state

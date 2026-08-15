@@ -11,6 +11,7 @@ from . import test_site_phase
 from . import test_background_run
 from . import test_recalc_guard
 from . import test_later_pass_finishes_the_job
+from . import test_run_totals_survive_the_passes
 from . import test_adoption_of_auto_hardware
 from . import test_leaves_phase
 from . import test_source_refuses_a_field

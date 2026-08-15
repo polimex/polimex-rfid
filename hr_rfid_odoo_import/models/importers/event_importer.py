@@ -65,7 +65,10 @@ class EventImporter(PhaseImporter):
                 model, module_domain + date_domain, fields_to_read,
                 batch_size=2000, cursor_key='%s:module' % cursor_prefix):
             by_id[rec['id']] = rec
-        if self.b._has_field(model, 'camera_id'):
+        # A leg that exhausted the pass's time already set stopped_early;
+        # starting the second leg then would blow past the worker's limit.
+        # The next pass picks it up from its own cursor.
+        if not self.b.stopped_early and self.b._has_field(model, 'camera_id'):
             for rec in self.b._read_all(
                     model,
                     [('camera_id', '!=', False)]
@@ -100,9 +103,28 @@ class EventImporter(PhaseImporter):
                 if f in source_fields and f in target_fields
                 and self.b._has_stored_field(model, f)]
 
-    def _report_camera_events(self, model, camera_rows, wanted=True,
-                              date_domain=None):
-        """Count the camera events on the source and say so in the protocol.
+    def _camera_expected(self, model, date_domain=None):
+        """How many camera events the source holds for this run's scope.
+
+        The reconciliation must count what THIS run was asked to bring:
+        against a live protocol it flagged "20 851 did not come across" in
+        red when the operator had deliberately left the events out, and
+        counted plate events from before the chosen date against a read
+        that honoured it. A deliberate choice is never an error.
+
+        Deliberately a separate call so the step can take the count BEFORE
+        its insert: it is an RPC to the other system, and a count that
+        fails AFTER a successful insert would roll the whole step back over
+        a reporting question.
+        """
+        if not self.b._has_field(model, 'camera_id'):
+            return None
+        return self.b._search_count(
+            model, [('camera_id', '!=', False)] + (list(date_domain or []))
+            + self.b._scoped_domain('camera_id'))
+
+    def _report_camera_events(self, model, camera_rows, expected, wanted=True):
+        """Say in the protocol how the camera events fared, against ``expected``.
 
         Without a count taken from the other side, "no plates arrived" cannot
         be told apart from "there were none to begin with" - which is how this
@@ -113,20 +135,12 @@ class EventImporter(PhaseImporter):
         thousand events of every kind is always favourable, and the check
         would be a permanent green light.
         """
-        if not self.b._has_field(model, 'camera_id'):
+        if expected is None:
             return
         if self.b.stopped_early:
             # Only part of the source was read; a shortfall here is expected
             # and flagging it would train the operator to ignore red rows.
             return
-        # The reconciliation must count what THIS run was asked to bring:
-        # against a live protocol it flagged "20 851 did not come across" in
-        # red when the operator had deliberately left the events out, and
-        # counted plate events from before the chosen date against a read
-        # that honoured it. A deliberate choice is never an error.
-        expected = self.b._search_count(
-            model, [('camera_id', '!=', False)] + (list(date_domain or []))
-            + self.b._scoped_domain('camera_id'))
         if not expected:
             return
         if not wanted:
@@ -210,33 +224,6 @@ class EventImporter(PhaseImporter):
         source_records = self._read_both_legs(
             model, self.b._scoped_domain('reader_id.controller_id.webstack_id'),
             fields_to_read, 'events:%s' % model)
-        if not source_records and not self.b.stopped_early:
-            # A read that matches NOTHING while the reconciliation below knows
-            # the source holds thousands is the last place the protocol still
-            # said only "0". Ask the source which leg of the filter is empty,
-            # so the next protocol names the cause instead of the number.
-            leg_module = self.b._search_count(
-                model, self.b._scoped_domain('reader_id.controller_id.webstack_id')
-                + self._event_date_domain())
-            leg_camera = 0
-            if self.b._has_field(model, 'camera_id'):
-                leg_camera = self.b._search_count(
-                    model, self.b._scoped_domain('camera_id')
-                    + self._event_date_domain())
-            total = self.b._search_count(model, self._event_date_domain())
-            if total:
-                self.b.note_skip_reason(self.env._(
-                    "the other system holds %(total)s event(s) in the chosen "
-                    "period, but the transfer's filter matched none of them: "
-                    "%(module)s reach it through a communication module and "
-                    "%(camera)s through a camera. Numbers that do not add up "
-                    "mean the events hang off equipment outside the selected "
-                    "companies - send this protocol to support.",
-                    total=total, module=leg_module, camera=leg_camera,
-                ))
-                _logger.warning(
-                    "%s: read matched 0; total=%s module-leg=%s camera-leg=%s "
-                    "domain=%r", model, total, leg_module, leg_camera, domain)
         imported = 0
         already = 0
         rejected = 0
@@ -297,6 +284,11 @@ class EventImporter(PhaseImporter):
             if rec.get('camera_id'):
                 camera_rows += 1
 
+        # An RPC to the other system, taken BEFORE the insert on purpose -
+        # see _camera_expected.
+        expected_cameras = self._camera_expected(
+            model, self._event_date_domain())
+
         if rows:
             try:
                 with self.env.cr.savepoint():
@@ -304,6 +296,8 @@ class EventImporter(PhaseImporter):
                         table, columns, rows, model, src_ids)
             except Exception as e:
                 _logger.error("Failed to insert user events: %s", e, exc_info=True)
+                self.b.rewind_cursors('events:%s:module' % model,
+                                      'events:%s:camera' % model)
                 self.results.append(self.b._make_result(
                     model, len(source_records), 0, 0, len(source_records),
                     duration=time.time() - start,
@@ -311,12 +305,48 @@ class EventImporter(PhaseImporter):
                 ))
                 return
 
+        totals = self.b.accumulate(
+            'events:%s' % model, source=len(source_records),
+            imported=imported, linked=already, skipped=skipped,
+            rejected=rejected, camera=camera_rows)
+        if not totals.get('source') and not self.b.stopped_early:
+            # The RUN - not just this pass - has read NOTHING, while the
+            # reconciliation below knows the source holds thousands. Ask the
+            # source which leg of the filter is empty, so the protocol names
+            # the cause instead of the number. Gated on the run's totals: a
+            # resumed run whose earlier passes did the work reads zero on its
+            # final pass by DESIGN, and this note would cry wolf over it.
+            leg_module = self.b._search_count(
+                model, self.b._scoped_domain('reader_id.controller_id.webstack_id')
+                + self._event_date_domain())
+            leg_camera = 0
+            if self.b._has_field(model, 'camera_id'):
+                leg_camera = self.b._search_count(
+                    model, self.b._scoped_domain('camera_id')
+                    + self._event_date_domain())
+            total = self.b._search_count(model, self._event_date_domain())
+            if total:
+                self.b.note_skip_reason(self.env._(
+                    "the other system holds %(total)s event(s) in the chosen "
+                    "period, but the transfer's filter matched none of them: "
+                    "%(module)s reach it through a communication module and "
+                    "%(camera)s through a camera. Numbers that do not add up "
+                    "mean the events hang off equipment outside the selected "
+                    "companies - send this protocol to support.",
+                    total=total, module=leg_module, camera=leg_camera,
+                ))
+                _logger.warning(
+                    "%s: read matched 0; total=%s module-leg=%s camera-leg=%s "
+                    "domain=%r", model, total, leg_module, leg_camera, domain)
+
         self.results.append(self.b._make_result(
-            model, len(source_records), imported, already, skipped,
-            duration=time.time() - start, rejected_count=rejected,
+            model, totals.get('source', 0), totals.get('imported', 0),
+            totals.get('linked', 0), totals.get('skipped', 0),
+            duration=time.time() - start,
+            rejected_count=totals.get('rejected', 0),
         ))
         self._report_camera_events(
-            model, camera_rows, date_domain=self._event_date_domain())
+            model, totals.get('camera', 0), expected_cameras)
 
     def _import_system_events(self):
         """Step 27: hr.rfid.event.system - Direct SQL batch.
@@ -454,6 +484,11 @@ class EventImporter(PhaseImporter):
             if rec.get('camera_id'):
                 camera_rows += 1
 
+        # An RPC to the other system, taken BEFORE the insert on purpose -
+        # see _camera_expected.
+        expected_cameras = self._camera_expected(
+            model, self._event_date_domain(source_time_field))
+
         if rows:
             try:
                 with self.env.cr.savepoint():
@@ -461,6 +496,8 @@ class EventImporter(PhaseImporter):
                         table, columns, rows, model, src_ids)
             except Exception as e:
                 _logger.error("Failed to insert system events: %s", e, exc_info=True)
+                self.b.rewind_cursors('events:%s:module' % model,
+                                      'events:%s:camera' % model)
                 self.results.append(self.b._make_result(
                     model, len(source_records), 0, 0, len(source_records),
                     duration=time.time() - start,
@@ -468,13 +505,18 @@ class EventImporter(PhaseImporter):
                 ))
                 return
 
+        totals = self.b.accumulate(
+            'events:%s' % model, source=len(source_records),
+            imported=imported, linked=already, skipped=skipped,
+            rejected=rejected, camera=camera_rows)
         self.results.append(self.b._make_result(
-            model, len(source_records), imported, already, skipped,
-            duration=time.time() - start, rejected_count=rejected,
+            model, totals.get('source', 0), totals.get('imported', 0),
+            totals.get('linked', 0), totals.get('skipped', 0),
+            duration=time.time() - start,
+            rejected_count=totals.get('rejected', 0),
         ))
         self._report_camera_events(
-            model, camera_rows,
-            date_domain=self._event_date_domain(source_time_field))
+            model, totals.get('camera', 0), expected_cameras)
 
     def _import_th_logs(self):
         """Step 28: hr.rfid.ctrl.th.log - Direct SQL batch."""

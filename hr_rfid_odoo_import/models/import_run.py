@@ -91,6 +91,11 @@ class HrRfidOdooImportRun(models.Model):
         help="How far each long read got, so the next pass carries on instead "
              "of reading the same records again.",
     )
+    step_totals_json = fields.Text(
+        default='{}',
+        help="Running totals of the resumable steps. A pass counts only the "
+             "slice it read itself; the protocol reports the whole transfer.",
+    )
     current_phase = fields.Char(
         readonly=True, help="The step being worked on right now.",
     )
@@ -455,6 +460,10 @@ class HrRfidOdooImportRun(models.Model):
             # Where each long read got to. Without this the next pass starts
             # the same read from the beginning and the transfer never advances.
             values['read_cursors_json'] = json.dumps(importer.read_cursors)
+            # Their running totals travel WITH the cursors - a cursor that
+            # advanced whose rows were never counted (or the reverse) makes
+            # the final protocol lie about a transfer that worked.
+            values['step_totals_json'] = json.dumps(importer.step_totals)
         self.write(values)
         # Commits, records how far we got, and tells the scheduler how much
         # time is left. Called outside the savepoint above on purpose:
@@ -505,6 +514,7 @@ class HrRfidOdooImportRun(models.Model):
             source_slug=self.source_slug,
         )
         importer.read_cursors = json.loads(self.read_cursors_json or '{}')
+        importer.step_totals = json.loads(self.step_totals_json or '{}')
         self._apply_resolutions(importer)
         return importer
 

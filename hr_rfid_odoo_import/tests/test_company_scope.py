@@ -52,6 +52,9 @@ class _FakeSource(BaseImporter):
         self._field_cache = {}
         self._readable_cache = {}
         self.read_cursors = {}
+        self.step_totals = {}
+        self.stopped_early = False
+        self.time_is_up = None
         self._data = data
         self.domains = {}
         self.bulk_calls = []

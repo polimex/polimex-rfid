@@ -88,6 +88,16 @@ class BaseImporter:
         #: than starting the same read from the beginning. Persisted by the
         #: run record between passes.
         self.read_cursors = {}
+        #: Running totals per resumable step, kept for the whole RUN and
+        #: persisted next to the cursors - the two only mean anything
+        #: together. A resumed step reads only what its cursor has not
+        #: covered yet, so the numbers of one pass are the numbers of one
+        #: SLICE; the protocol line is rebuilt every pass, and built from
+        #: the slice alone it reports the FINAL pass only. Measured at a
+        #: live client: 20 851 plate events imported over several passes,
+        #: and the last pass - nothing left to read - reported "0 imported,
+        #: 20 851 did not come across" over a complete transfer.
+        self.step_totals = {}
         #: {model: {field, ...}} the source refused to hand over (field-level
         #: groups= on the source side). Remembered so later pages skip the
         #: probing, and reported so nothing is left behind silently.
@@ -371,6 +381,30 @@ class BaseImporter:
                     model, len(all_records), last_id)
                 break
         return all_records
+
+    def accumulate(self, key, **counts):
+        """Add this pass's slice to the step's running totals; return them.
+
+        Call it only AFTER the pass's rows are safely written: the totals are
+        persisted with the cursors, and counting rows a savepoint later threw
+        away would overstate the transfer forever.
+        """
+        totals = self.step_totals.setdefault(key, {})
+        for name, value in counts.items():
+            totals[name] = int(totals.get(name, 0)) + int(value or 0)
+        return totals
+
+    def rewind_cursors(self, *cursor_keys):
+        """Forget where the named reads got to, so they start over.
+
+        For the step that reads pages and then fails to WRITE them: the
+        savepoint takes the rows back, but the cursors have already moved
+        past them - and the next pass would then skip exactly the records
+        that never landed. Re-reading is safe (external IDs deduplicate);
+        losing rows is not.
+        """
+        for key in cursor_keys:
+            self.read_cursors.pop(key, None)
 
     def _search_count(self, model, domain):
         """Count records in source (including archived - see SOURCE_READ_CONTEXT).

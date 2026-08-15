@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 13:39+0000\n"
-"PO-Revision-Date: 2026-08-15 16:40\n"
+"POT-Creation-Date: 2026-08-15 16:17+0000\n"
+"PO-Revision-Date: 2026-08-15 19:17\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: el\n"
@@ -1604,6 +1604,16 @@ msgstr ""
 "μια ομάδα πρόσβασης αφαιρείται ξανά από αυτήν. Καμία εγγραφή δεν διαγράφεται."
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__step_totals_json
+msgid ""
+"Running totals of the resumable steps. A pass counts only the slice it read "
+"itself; the protocol reports the whole transfer."
+msgstr ""
+"Τρέχοντα αθροίσματα των βημάτων που υποστηρίζουν επανάληψη. Κάθε πέρασμα "
+"μετρά μόνο το τμήμα που διάβασε το ίδιο· το πρωτόκολλο αναφέρει ολόκληρη τη "
+"μεταφορά."
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_has_sms_error
 msgid "SMS Delivery error"
 msgstr "Σφάλμα Παράδοσης SMS"
@@ -1822,6 +1832,11 @@ msgstr "Κατάσταση"
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__status
 msgid "Status"
 msgstr "Κατάσταση"
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__step_totals_json
+msgid "Step Totals Json"
+msgstr "Json Αθροισμάτων Βημάτων"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__state
