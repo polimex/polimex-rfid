@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 11:26+0000\n"
-"PO-Revision-Date: 2026-08-15 14:26\n"
+"POT-Creation-Date: 2026-08-15 12:21+0000\n"
+"PO-Revision-Date: 2026-08-15 15:21\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ro\n"
@@ -1948,12 +1948,13 @@ msgstr ""
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid ""
 "The other system keeps %(feature)s, but this system cannot take that data "
-"over yet. Add the capability here first and run the transfer again - "
-"otherwise those records will be left waiting."
+"over yet. Add the capability here and run the transfer again to bring it - "
+"or simply continue if there is nothing worth bringing."
 msgstr ""
 "Celălalt sistem păstrează %(feature)s, dar acest sistem nu poate prelua încă "
-"acele date. Adăugați mai întâi această capabilitate aici și rulați din nou "
-"transferul - altfel acele înregistrări vor rămâne în așteptare."
+"aceste date. Adăugați această capabilitate aici și rulați din nou transferul "
+"pentru a le aduce - sau continuați pur și simplu dacă nu există nimic de "
+"adus."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2144,11 +2145,13 @@ msgstr "Această parte nu a putut fi citită din celălalt sistem: %(problem)s"
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid ""
-"This system cannot take over %(feature)s yet. Add that capability here "
-"first, or leave it out of the transfer."
+"This system cannot take over %(feature)s yet. Add that capability here and "
+"run the transfer again to bring that data - or simply continue if there is "
+"none worth bringing."
 msgstr ""
-"Acest sistem nu poate prelua încă %(feature)s. Adăugați mai întâi acea "
-"capacitate aici, sau excludeți-o din transfer."
+"Acest sistem nu poate prelua încă %(feature)s. Adăugați această capabilitate "
+"aici și rulați din nou transferul pentru a aduce aceste date - sau "
+"continuați pur și simplu dacă nu există niciuna de adus."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python

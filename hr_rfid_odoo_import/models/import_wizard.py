@@ -394,13 +394,16 @@ class HrRfidOdooImportWiz(models.TransientModel):
                 if getattr(wiz, src_field) and not getattr(wiz, tgt_field):
                     feature = wiz._feature_label(mod_name)
                     if getattr(wiz, field_name):
-                        # User wants to import but target module is missing - block
+                        # The operator decides (owner, 2026-08-15): sometimes
+                        # the other system keeps none of that data and the
+                        # note is safely ignored. Advisory, never blocking.
                         warnings[f'missing_{mod_name}'] = {
-                            'level': 'danger',
+                            'level': 'warning',
                             'message': self.env._(
                                 "This system cannot take over %(feature)s yet. "
-                                "Add that capability here first, or leave it out "
-                                "of the transfer.",
+                                "Add that capability here and run the transfer "
+                                "again to bring that data - or simply continue "
+                                "if there is none worth bringing.",
                                 feature=feature,
                             ),
                         }
@@ -430,12 +433,15 @@ class HrRfidOdooImportWiz(models.TransientModel):
                        for k in warnings):
                     continue  # already said by the module check above
                 warnings[key] = {
-                    'level': 'danger' if wanted else 'warning',
+                    # Advisory on purpose: the operator decides. There are
+                    # sites where the other system keeps none of that data
+                    # and the note is rightly ignored (owner, 2026-08-15).
+                    'level': 'warning',
                     'message': self.env._(
                         "The other system keeps %(feature)s, but this system "
                         "cannot take that data over yet. Add the capability "
-                        "here first and run the transfer again - otherwise "
-                        "those records will be left waiting.",
+                        "here and run the transfer again to bring it - or "
+                        "simply continue if there is nothing worth bringing.",
                         feature=cls.NAME,
                     ),
                 }

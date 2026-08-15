@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 11:25+0000\n"
-"PO-Revision-Date: 2026-08-15 14:26\n"
+"POT-Creation-Date: 2026-08-15 12:20+0000\n"
+"PO-Revision-Date: 2026-08-15 15:20\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -1971,12 +1971,13 @@ msgstr ""
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid ""
 "The other system keeps %(feature)s, but this system cannot take that data "
-"over yet. Add the capability here first and run the transfer again - "
-"otherwise those records will be left waiting."
+"over yet. Add the capability here and run the transfer again to bring it - "
+"or simply continue if there is nothing worth bringing."
 msgstr ""
-"El otro sistema mantiene %(feature)s, pero este sistema todavía no puede "
-"recibir esos datos. Agregue primero esa funcionalidad aquí y ejecute la "
-"transferencia de nuevo; de lo contrario, esos registros quedarán pendientes."
+"El otro sistema conserva %(feature)s, pero este sistema todavía no puede "
+"importar esos datos. Agregue esta capacidad aquí y ejecute la transferencia "
+"nuevamente para traerlos, o simplemente continúe si no hay nada que valga la "
+"pena traer."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2168,11 +2169,13 @@ msgstr "Esta parte no se pudo leer del otro sistema: %(problem)s"
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid ""
-"This system cannot take over %(feature)s yet. Add that capability here "
-"first, or leave it out of the transfer."
+"This system cannot take over %(feature)s yet. Add that capability here and "
+"run the transfer again to bring that data - or simply continue if there is "
+"none worth bringing."
 msgstr ""
-"Este sistema aún no puede asumir %(feature)s. Añada esa capacidad aquí "
-"primero, o excluya esto de la transferencia."
+"Este sistema todavía no puede importar %(feature)s. Agregue esta capacidad "
+"aquí y ejecute la transferencia nuevamente para traer esos datos, o "
+"simplemente continúe si no hay ninguno que valga la pena traer."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
