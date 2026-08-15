@@ -4,6 +4,7 @@ import time
 import xmlrpc.client
 
 from odoo import _
+from odoo.tools import mute_logger
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
@@ -17,6 +18,11 @@ EXTERNAL_ID_MODULE = '__import__'
 # source identity - see _xml_id_name(). Read by anything that has to recognise
 # a record this transfer brought over.
 EXTERNAL_ID_PREFIX = 'rfid_import_'
+
+# How many rows refused by a database constraint are probed one-by-one to name
+# the exact constraint in the protocol. Rejections are rare (a handful per
+# run); the cap only guards against a pathological source.
+MAX_REJECT_PROBES = 10
 
 
 def normalise_source_slug(value):
@@ -520,6 +526,9 @@ class BaseImporter:
                 return self._load_records(model_name, data_list)
         except Exception as e:
             _logger.warning("Skipped %s create: %s", model_name, e)
+            # The refusal reaches the protocol line, not only the server log -
+            # UserError/ValidationError texts are already written for people.
+            self.note_skip_reason(str(e).split('\n')[0][:160])
             return self.env[model_name]
 
     def _direct_sql_insert(self, table, columns, rows, batch_size=5000):
@@ -774,12 +783,15 @@ class BaseImporter:
             accepted = [(nid, sid) for nid, (_row, sid) in zip(new_ids, batch)
                         if nid in accepted_ids]
             if len(accepted) != len(batch):
-                rejected += len(batch) - len(accepted)
+                refused = [(row, sid) for nid, (row, sid)
+                           in zip(new_ids, batch) if nid not in accepted_ids]
+                rejected += len(refused)
                 _logger.warning(
                     "%s: %d of %d rows rejected by a constraint - no external ID "
                     "(they will be retried on the next run)",
-                    model, len(batch) - len(accepted), len(batch),
+                    model, len(refused), len(batch),
                 )
+                self._explain_refused_rows(table, columns, model, refused)
             if not accepted:
                 continue
 
@@ -806,6 +818,58 @@ class BaseImporter:
         return inserted, len(done), rejected
 
     # ── ID Mapping ────────────────────────────────────────────
+
+    def _explain_refused_rows(self, table, columns, model, refused):
+        """Name the exact constraint behind every refused row, in the protocol.
+
+        ON CONFLICT DO NOTHING skips a row without saying which constraint
+        stopped it - the protocol showed "1 rejected" and nothing else, and
+        the owner's rule stands: the log carries the cause, nobody guesses.
+        Each refused row (they are rare - capped by MAX_REJECT_PROBES) is
+        retried alone inside a savepoint WITHOUT the conflict clause; the
+        database then names the constraint and the colliding values itself,
+        and the attempt is rolled back either way.
+        """
+        from psycopg2 import IntegrityError, errors as pg_errors
+        by_cause = {}
+        for row, sid in refused[:MAX_REJECT_PROBES]:
+            try:
+                with mute_logger('odoo.sql_db'), self.env.cr.savepoint():
+                    self.env.cr.execute(
+                        "INSERT INTO %s (%s) VALUES (%s)" % (
+                            table, ', '.join(columns),
+                            ', '.join(['%s'] * len(columns))),
+                        tuple(row),
+                    )
+                    # It went in this time (the collision was with a row of
+                    # the same batch, say) - still refused: keep behaviour
+                    # identical and let the next run take it.
+                    raise pg_errors.UniqueViolation()
+            except IntegrityError as exc:
+                diag = getattr(exc, 'diag', None)
+                cause = (getattr(diag, 'message_detail', '')
+                         or getattr(diag, 'constraint_name', '')
+                         or str(exc).split('\n')[0])
+                by_cause.setdefault(cause, []).append(sid)
+            except Exception:
+                _logger.warning("Could not probe refused %s row %s",
+                                model, sid, exc_info=True)
+        for cause, sids in by_cause.items():
+            shown = ', '.join(self.env._("№%(num)s", num=x) for x in sids[:3])
+            if len(sids) > 3:
+                shown = self.env._(
+                    "%(first)s and %(more)s more", first=shown,
+                    more=len(sids) - 3)
+            self.note_skip_reason(self.env._(
+                "record(s) %(which)s were refused by the database: %(cause)s",
+                which=shown, cause=cause,
+            ), count=len(sids))
+        left = len(refused) - MAX_REJECT_PROBES
+        if left > 0:
+            self.note_skip_reason(self.env._(
+                "%(count)s more refused row(s) were not examined one by one",
+                count=left,
+            ), count=left)
 
     def _xml_id_name(self, model_prefix, source_id):
         """Name part of the external ID (without the module prefix).

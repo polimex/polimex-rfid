@@ -203,3 +203,60 @@ class TestBulkConstraintRejection(TransactionCase):
         )
         self.assertEqual(self.env.cr.fetchone()[0], 0,
                          "a rejected row must not leave a dangling external ID")
+
+    def test_a_refused_row_names_the_constraint_that_refused_it(self):
+        """Собственикът (2026-08-15): "1 rejected" без причина е гатанка.
+
+        Отхвърленият ред се пробва поединично без ON CONFLICT и базата сама
+        назовава ограничението и стойностите; протоколният ред го носи.
+        """
+        access_group = self.env["hr.rfid.access.group"].create({"name": "D36 AG"})
+        service = self.env["rfid.service"].create({
+            "name": "D36 reason probe",
+            "access_group_id": access_group.id,
+        })
+        partner = self.env["res.partner"].create({"name": "D36 partner"})
+        cols = ["service_id", "start_date", "end_date", "partner_id"]
+        row = (service.id, "2002-01-01", "2002-01-02", partner.id)
+
+        self.importer._direct_sql_insert_tracked(
+            self.TABLE, cols, [row], self.MODEL, [920001])
+        self.importer._make_result(self.MODEL, 1, 1)  # чист ред, дренира
+
+        _, _, rejected = self.importer._direct_sql_insert_tracked(
+            self.TABLE, cols, [row], self.MODEL, [920002])
+        self.assertEqual(rejected, 1)
+        result = self.importer._make_result(self.MODEL, 1, 0, 0, 0,
+                                            rejected_count=1)
+        self.assertIn("№920002", result["error"],
+                      "Редът назовава номера от източника")
+        self.assertTrue(
+            "already exists" in result["error"]
+            or any(name in result["error"] for name, _d in self.unique_defs),
+            "И причината от самата база: %r" % result["error"])
+
+    def test_probing_the_refusal_leaves_no_row_behind(self):
+        """Пробата е диагноза, не втори опит: базата остава както е била."""
+        access_group = self.env["hr.rfid.access.group"].create({"name": "D37 AG"})
+        service = self.env["rfid.service"].create({
+            "name": "D37 no-side-effects",
+            "access_group_id": access_group.id,
+        })
+        partner = self.env["res.partner"].create({"name": "D37 partner"})
+        cols = ["service_id", "start_date", "end_date", "partner_id"]
+        row = (service.id, "2003-01-01", "2003-01-02", partner.id)
+
+        self.importer._direct_sql_insert_tracked(
+            self.TABLE, cols, [row], self.MODEL, [930001])
+        self.env.cr.execute(
+            "SELECT count(*) FROM rfid_service_sale WHERE service_id = %s",
+            (service.id,))
+        before = self.env.cr.fetchone()[0]
+
+        self.importer._direct_sql_insert_tracked(
+            self.TABLE, cols, [row], self.MODEL, [930002])
+        self.env.cr.execute(
+            "SELECT count(*) FROM rfid_service_sale WHERE service_id = %s",
+            (service.id,))
+        self.assertEqual(self.env.cr.fetchone()[0], before,
+                         "Диагностичната проба не бива да вкарва реда")

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 10:30+0000\n"
-"PO-Revision-Date: 2026-08-15 13:30\n"
+"POT-Creation-Date: 2026-08-15 10:35+0000\n"
+"PO-Revision-Date: 2026-08-15 13:35\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ro\n"
@@ -67,6 +67,12 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "%(count)s more refused row(s) were not examined one by one"
+msgstr "Încă %(count)s rând(uri) refuzat(e) nu au fost examinate individual"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/camera_importer.py:0
 msgid ""
 "%(count)s plate(s) came from an unrecognised list and were placed in the "
@@ -95,6 +101,12 @@ msgid ""
 msgstr ""
 "%(equipment)s echipament(e) nu sosise(ră) încă, iar %(sites)s indicau o "
 "locație care nu este aici."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "%(first)s and %(more)s more"
+msgstr "%(first)s și încă %(more)s"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2489,6 +2501,13 @@ msgid "permission %(rel)s: %(what)s"
 msgstr "permisiune %(rel)s: %(what)s"
 
 #. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "record(s) %(which)s were refused by the database: %(cause)s"
+msgstr ""
+"înregistrarea(ile) %(which)s au fost refuzate de baza de date: %(cause)s"
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__source_id
 msgid ""
 "res.company ID on the source instance - the natural key used to match across "
@@ -2553,3 +2572,9 @@ msgstr "rapoarte de timp de lucru"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "| UID:"
 msgstr "| UID:"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "№%(num)s"
+msgstr "№%(num)s"
