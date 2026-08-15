@@ -47,6 +47,34 @@ class EventImporter(PhaseImporter):
             return [(field, '>=', date_from)]
         return []
 
+    def _read_both_legs(self, model, module_domain, fields_to_read,
+                        cursor_prefix, date_field='event_time'):
+        """Two plain reads - one per attribution leg - merged by id.
+
+        The single OR-domain read looked clever and failed silently on a live
+        source: the count probe saw 20 851 camera events, the OR read matched
+        ZERO of them, and no error anywhere said why. Rather than keep
+        divining what that source's domain compiler does to the OR shape, the
+        read is split into two straight-line queries - equipment leg and
+        camera leg - each with its own resume cursor. The external IDs make
+        any overlap harmless, and a dict merge drops it here anyway.
+        """
+        date_domain = self._event_date_domain(date_field)
+        by_id = {}
+        for rec in self.b._read_all(
+                model, module_domain + date_domain, fields_to_read,
+                batch_size=2000, cursor_key='%s:module' % cursor_prefix):
+            by_id[rec['id']] = rec
+        if self.b._has_field(model, 'camera_id'):
+            for rec in self.b._read_all(
+                    model,
+                    [('camera_id', '!=', False)]
+                    + self.b._scoped_domain('camera_id') + date_domain,
+                    fields_to_read,
+                    batch_size=2000, cursor_key='%s:camera' % cursor_prefix):
+                by_id[rec['id']] = rec
+        return list(by_id.values())
+
     def _with_camera_branch(self, model, domain):
         """Add the camera-side events to a controller-scoped domain.
 
@@ -179,9 +207,9 @@ class EventImporter(PhaseImporter):
             'employee_id', 'contact_id', 'controller_id', 'input_js',
             'card_number', 'department_id', 'alarm_line_id'] + camera_fields)
 
-        source_records = self.b._read_all(model, domain, fields_to_read,
-                                          batch_size=2000,
-                                          cursor_key='events:%s' % model)
+        source_records = self._read_both_legs(
+            model, self.b._scoped_domain('reader_id.controller_id.webstack_id'),
+            fields_to_read, 'events:%s' % model)
         if not source_records and not self.b.stopped_early:
             # A read that matches NOTHING while the reconciliation below knows
             # the source holds thousands is the last place the protocol still
@@ -326,16 +354,16 @@ class EventImporter(PhaseImporter):
         # A camera's system events name no webstack at all, so the scope above
         # cannot reach them - an unrecognised plate, a camera going offline,
         # every one of them was dropped without a trace.
-        domain = self._with_camera_branch(
-            model, self.b._scoped_domain('webstack_id'))
+        module_domain = self.b._scoped_domain('webstack_id')
         orphan_cutoff = self.b.options.get('orphan_event_cutoff')
         if orphan_cutoff:
             # Keep every controller-bound event; take the module-only ones
-            # from the cutoff onwards. The prefix operator binds the two
-            # leaves that follow it; the scope leaf above stays ANDed.
-            domain = domain + ['|', ('controller_id', '!=', False),
-                               (source_time_field, '>=', orphan_cutoff)]
-        domain += self._event_date_domain(source_time_field)
+            # from the cutoff onwards. Applies to the EQUIPMENT leg only -
+            # a camera's events are neither module-only noise nor
+            # controller-bound, so the cutoff has no business there.
+            module_domain = module_domain + [
+                '|', ('controller_id', '!=', False),
+                (source_time_field, '>=', orphan_cutoff)]
 
         camera_fields = self._camera_event_fields(
             model, source_fields_info, target_fields)
@@ -346,9 +374,9 @@ class EventImporter(PhaseImporter):
             'error_description', 'input_js', 'card_number', 'siren',
             'occurrences', 'last_occurrence'] + camera_fields)
 
-        source_records = self.b._read_all(model, domain, fields_to_read,
-                                          batch_size=2000,
-                                          cursor_key='events:%s' % model)
+        source_records = self._read_both_legs(
+            model, module_domain, fields_to_read, 'events:%s' % model,
+            date_field=source_time_field)
         imported = 0
         already = 0
         rejected = 0
