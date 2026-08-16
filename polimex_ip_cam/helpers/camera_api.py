@@ -968,6 +968,43 @@ class HikvisionCamera(BaseCamera):
                 })
         return records, total
 
+    def probe_vcl_capabilities(self):
+        """SAFE read-only probe of the legacy VCL capabilities, kept verbatim.
+
+        The self-test wants the camera's literal answer, not our
+        interpretation of it: on a live site the routing probe
+        (:meth:`_uses_lp_audit_api`) condensed this very answer into one
+        boolean and the reason a mechanism was chosen became invisible.
+        """
+        url = f"http://{self.ip_address}:{self.port}/ISAPI/ITC/Entrance/VCL/capabilities"
+        try:
+            response = requests.get(url, auth=HTTPDigestAuth(self.username, self.password),
+                                    timeout=self.timeout)
+            return {"status": "success", "status_code": response.status_code,
+                    "body": (response.text or "")[:1000]}
+        except Exception as e:
+            return {"status": "failed", "error": str(e)}
+
+    def export_lp_list_xml(self):
+        """SAFE read-only export of the plate list as the camera's own XML.
+
+        GET /ISAPI/Traffic/channels/1/licensePlateAuditData?fileType=xml is the
+        documented export half of the list import/export pair, so the document
+        it returns is written in EXACTLY the schema this firmware's import
+        accepts. When a write is being refused as malformed, this is the
+        ground truth to compare against - taken from the device itself, not
+        from a manual for some other firmware.
+        """
+        url = (f"http://{self.ip_address}:{self.port}"
+               f"/ISAPI/Traffic/channels/{LP_AUDIT_CHANNEL}/licensePlateAuditData?fileType=xml")
+        try:
+            response = requests.get(url, auth=HTTPDigestAuth(self.username, self.password),
+                                    timeout=self.timeout)
+            return {"status": "success", "status_code": response.status_code,
+                    "body": (response.text or "")[:1500]}
+        except Exception as e:
+            return {"status": "failed", "error": str(e)}
+
     def barrier_gate_control(self, operation, gate_num):
         """
         Управлява бариерната врата чрез изпращане на команда към камерата.

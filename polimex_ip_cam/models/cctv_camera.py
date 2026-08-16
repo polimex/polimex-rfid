@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 
 import pytz
+from markupsafe import Markup
 
 from odoo import models, fields, api, _, Command, SUPERUSER_ID
 import logging
@@ -1110,6 +1111,292 @@ class CctvCamera(models.Model):
                     except Exception as e:
                         _logger.error("Error creating add_plate command for relation ID %s: %s", rel.id, e)
         return True
+
+    # ── Self-test ──────────────────────────────────────────────
+    #
+    # The map of everything this module uses from the camera, exercised in one
+    # go. Read-only except for one round-trip with a marked test plate, so a
+    # WORKING camera is never disturbed:
+    #
+    #   used by the module                  | tested how
+    #   ------------------------------------+----------------------------------
+    #   identity (System/deviceInfo)        | read + serial compared to record
+    #   snapshot (Streaming picture)        | read
+    #   clock (System/time)                 | read + drift vs Odoo (never set)
+    #   event push (Event/httpHosts)        | read + is it aimed at this Odoo
+    #   plate list, read (LP-audit search)  | read + count vs the list here
+    #   plate list, schema (fileType=xml)   | read - the camera's own export
+    #   plate list, legacy VCL capabilities | read - the routing probe, verbatim
+    #   plate list, write                   | one test plate added then removed
+    #   barrier (Entrance/barrierGateCtrl)  | NOT tested - it would move the gate
+    #   camera -> Odoo events               | read from our own records
+    DIAG_TEST_PLATE = 'TEST0001'
+
+    def action_camera_diagnostics(self):
+        """Full self-test: every problem first, every detail below it."""
+        self.ensure_one()
+        if self.brand != 'hikvision':
+            return self.balloon_danger_sticky(
+                title=self.env._("Camera self-test"),
+                message=self.env._("The self-test currently supports Hikvision cameras only."))
+        problems, details = self._run_camera_diagnostics()
+        lines = []
+        if problems:
+            lines.append(self.env._("PROBLEMS FOUND (%(count)s):", count=len(problems)))
+            lines += ['  ! %s' % p for p in problems]
+        else:
+            lines.append(self.env._("No problems found - everything the module needs answered correctly."))
+        lines.append('')
+        lines += details
+        text = '\n'.join(lines)
+        self.message_post(body=Markup('<pre style="white-space:pre-wrap">%s</pre>') % text)
+        wizard = self.env['cctv.camera.diagnostic'].create({
+            'camera_id': self.id, 'report': text,
+        })
+        return {
+            'type': 'ir.actions.act_window',
+            'name': self.env._("Camera self-test"),
+            'res_model': 'cctv.camera.diagnostic',
+            'res_id': wizard.id,
+            'view_mode': 'form',
+            'target': 'new',
+        }
+
+    def _run_camera_diagnostics(self):
+        """Run every check; a check that blows up becomes a problem line,
+        never an aborted test. Returns (problems, detail_lines)."""
+        self.ensure_one()
+        problems, details = [], []
+
+        def section(title, fn):
+            details.append(title)
+            try:
+                fn()
+            except Exception as e:  # noqa: BLE001 - a diagnostic must survive anything
+                problems.append('%s: %s' % (title, e))
+                details.append('  %s' % self.env._("check failed: %(error)s", error=e))
+            details.append('')
+
+        with self.get_api() as cam:
+            def identity():
+                info = cam.check_connection()
+                if info.get('status') != 'connected':
+                    problems.append(self.env._(
+                        "The camera did not answer as expected: %(status)s %(error)s",
+                        status=info.get('status'), error=info.get('error', '')))
+                    details.append('  %s' % info)
+                    return
+                for key in ('name', 'model', 'serial', 'subserial',
+                            'firmware', 'firmwaredate', 'hardware'):
+                    details.append('  %s: %s' % (key, info.get(key) or '-'))
+                stored = (self.serial_number or '').strip()
+                answered = (info.get('serial') or '').strip()
+                if stored and answered and stored not in (answered, info.get('subserial') or ''):
+                    problems.append(self.env._(
+                        "A DIFFERENT device answers at this address: it reports "
+                        "serial %(got)s, this record says %(want)s.",
+                        got=answered, want=stored))
+                sub_stored = (self.sub_serial_number or '').strip()
+                if sub_stored and (info.get('subserial') or '').strip() not in ('', sub_stored):
+                    problems.append(self.env._(
+                        "The short serial differs: the camera reports %(got)s, "
+                        "this record says %(want)s.",
+                        got=info.get('subserial'), want=sub_stored))
+
+            def snapshot():
+                result = cam.get_snapshot()
+                if isinstance(result, dict) and result.get('status') == 'failed':
+                    problems.append(self.env._(
+                        "No picture: %(error)s", error=result.get('error')))
+                    details.append('  %s' % result)
+                else:
+                    size = len(result.get('image_data', b'') or b'') if isinstance(result, dict) else 0
+                    details.append('  %s' % self.env._(
+                        "picture received (%(size)s bytes)", size=size))
+
+            def clock():
+                result = cam.get_time_config()
+                if result.get('status') != 'success':
+                    problems.append(self.env._(
+                        "The clock cannot be read: %(error)s", error=result.get('error')))
+                    return
+                details.append('  timeMode: %s' % (result.get('timeMode') or '-'))
+                details.append('  timeZone: %s' % (result.get('timeZone') or '-'))
+                details.append('  localTime: %s' % (result.get('localTime') or '-'))
+                local_time = result.get('localTime')
+                if local_time:
+                    try:
+                        reported = datetime.fromisoformat(local_time)
+                        if reported.tzinfo is None:
+                            # The camera reports wall-clock time; anchor it in
+                            # the camera's own zone, exactly as the heartbeat
+                            # clock check does (re-anchor to camera.tz, never
+                            # trust the inverted Hikvision offset).
+                            tz = pytz.timezone(self.tz or 'UTC')
+                            reported = tz.localize(reported)
+                        drift = abs((reported.astimezone(timezone.utc)
+                                     - datetime.now(timezone.utc)).total_seconds())
+                        details.append('  %s' % self.env._(
+                            "difference from the server clock: about %(sec)s second(s)",
+                            sec=int(drift)))
+                        if drift > 120:
+                            problems.append(self.env._(
+                                "The camera clock is off by about %(sec)s seconds - "
+                                "recognitions will carry the wrong time.", sec=int(drift)))
+                    except (ValueError, pytz.UnknownTimeZoneError):
+                        details.append('  %s' % self.env._(
+                            "the reported time could not be compared"))
+
+            def event_push():
+                result = cam.get_http_host()
+                if result.get('status') != 'success':
+                    problems.append(self.env._(
+                        "The event destination cannot be read: %(error)s",
+                        error=result.get('error')))
+                    return
+                host = result.get('response') or {}
+                for key in ('ipAddress', 'hostName', 'portNo', 'url',
+                            'protocolType', 'heartbeat'):
+                    if host.get(key) not in (None, ''):
+                        details.append('  %s: %s' % (key, host.get(key)))
+                if not (host.get('ipAddress') or host.get('hostName')):
+                    problems.append(self.env._(
+                        "The camera has NO event destination configured - "
+                        "recognitions never reach this system. Run the camera "
+                        "setup again."))
+
+            def list_read():
+                result = cam.search_lp_audit(max_results=5)
+                if result.get('status') != 'success':
+                    problems.append(self.env._(
+                        "The plate list on the camera cannot be read: %(error)s",
+                        error=result.get('error')))
+                    return
+                on_camera = result.get('total', 0)
+                here = len(self.rfid_rel_ids)
+                details.append('  %s' % self.env._(
+                    "plates on the camera: %(cam)s / recorded here: %(odoo)s",
+                    cam=on_camera, odoo=here))
+                if result.get('records'):
+                    details.append('  %s' % self.env._("first record as the camera stores it:"))
+                    details.append('    %s' % result['records'][0])
+                if on_camera != here:
+                    problems.append(self.env._(
+                        "The camera holds %(cam)s plate(s) while this system "
+                        "records %(odoo)s - refresh the plate list once the "
+                        "write path works.", cam=on_camera, odoo=here))
+
+            def list_schema():
+                vcl = cam.probe_vcl_capabilities()
+                details.append('  VCL capabilities: HTTP %s' % vcl.get('status_code', vcl.get('error')))
+                export = cam.export_lp_list_xml()
+                code = export.get('status_code')
+                details.append('  list export (fileType=xml): HTTP %s' % (code or export.get('error')))
+                if code == 200 and export.get('body'):
+                    details.append('  %s' % self.env._(
+                        "beginning of the camera's own export (its exact import format):"))
+                    details.append('    %s' % export['body'][:600].replace('\n', '\n    '))
+
+            def try_write(label, entry):
+                """One write attempt with the test plate, cleaned up on
+                success. Returns True when the camera accepted it."""
+                added = cam.add_plate_to_list([entry])
+                shape = ', '.join(sorted(k for k in entry if k != 'plateNum')) or 'plateNum'
+                if added.get('status') != 'success':
+                    details.append('  %s' % self.env._(
+                        "%(label)s (fields: %(shape)s): REFUSED - %(error)s",
+                        label=label, shape=shape, error=added.get('error')))
+                    return False
+                details.append('  %s' % self.env._(
+                    "%(label)s (fields: %(shape)s): accepted",
+                    label=label, shape=shape))
+                removed = cam.delete_plate_from_list([entry])
+                if removed.get('status') != 'success':
+                    problems.append(self.env._(
+                        "The test plate %(plate)s could not be removed afterwards: "
+                        "%(error)s - remove it from the camera's white list by hand.",
+                        plate=self.DIAG_TEST_PLATE, error=removed.get('error')))
+                return True
+
+            def list_write():
+                minimal = {'plateNum': self.DIAG_TEST_PLATE, 'listType': '0'}
+                minimal_ok = try_write(self.env._("minimal record"), minimal)
+                if not minimal_ok:
+                    problems.append(self.env._(
+                        "Writing to the plate list FAILS even for a minimal "
+                        "record - the write mechanism itself is refused. The "
+                        "camera's exact answer is in the details."))
+
+                # Now the shape the REAL records travel in: the first
+                # whitelist entry's own request data, with only the plate
+                # swapped for the test one. This is what a lab test never
+                # covers - the lab has no linked cards and no validity dates.
+                rel = self.rfid_rel_ids.filtered(
+                    lambda r: r.list_category == 'whitelist')[:1]
+                real_data = rel and rel._hv_get_request_data()
+                if not real_data:
+                    return
+                real = self.env['cctv.camera.command']._parse_request_data(real_data)
+                real['plateNum'] = self.DIAG_TEST_PLATE
+                if set(real) == set(minimal):
+                    details.append('  %s' % self.env._(
+                        "your real records carry the same fields as the "
+                        "minimal one - nothing further to compare"))
+                    return
+                if try_write(self.env._("record shaped like your real data"), real):
+                    return
+                if not minimal_ok:
+                    return
+                # Minimal passes, the real shape fails: bisect which part the
+                # camera objects to, one aspect at a time.
+                problems.append(self.env._(
+                    "The camera accepts a minimal record but REFUSES one "
+                    "shaped like your real data - the verdict below names "
+                    "the part it objects to."))
+                variants = []
+                if 'cardNo' in real:
+                    without = dict(real)
+                    without.pop('cardNo', None)
+                    variants.append((self.env._("without the linked card number"), without))
+                if any(str(real.get(k, '')).endswith('Z') for k in ('startTime', 'endTime')):
+                    unz = dict(real)
+                    for k in ('startTime', 'endTime'):
+                        if str(unz.get(k, '')).endswith('Z'):
+                            unz[k] = str(unz[k])[:-1]
+                    variants.append((self.env._("with the validity times not marked as UTC (no 'Z')"), unz))
+                if 'startTime' in real or 'endTime' in real:
+                    undated = {k: v for k, v in real.items()
+                               if k not in ('startTime', 'endTime')}
+                    variants.append((self.env._("without validity times"), undated))
+                for label, variant in variants:
+                    if try_write(label, variant):
+                        problems.append(self.env._(
+                            "VERDICT: the record passes %(label)s. That part of "
+                            "the data is what this firmware refuses.", label=label))
+                        return
+                problems.append(self.env._(
+                    "None of the simplified variants passed either - send this "
+                    "report to support."))
+
+            section(self.env._("[1] Identity (who answers at %(ip)s)", ip=self.ip_address), identity)
+            section(self.env._("[2] Picture"), snapshot)
+            section(self.env._("[3] Clock"), clock)
+            section(self.env._("[4] Where the camera sends its events"), event_push)
+            section(self.env._("[5] Plate list - reading"), list_read)
+            section(self.env._("[6] Plate list - what the camera itself speaks"), list_schema)
+            section(self.env._("[7] Plate list - writing (one test plate, removed after)"), list_write)
+
+        details.append(self.env._("[8] Barrier - deliberately NOT tested (it would move the gate)"))
+        details.append('')
+        details.append(self.env._("[9] Events arriving FROM the camera"))
+        last_event = self.env['hr.rfid.event.user'].search(
+            [('camera_id', '=', self.id)], order='event_time desc', limit=1)
+        details.append('  %s' % self.env._(
+            "last recognition recorded here: %(when)s",
+            when=last_event.event_time or self.env._("never")))
+        details.append('  %s' % self.env._(
+            "last sign of life (heartbeat): %(when)s", when=self.last_seen or self.env._("never")))
+        return problems, details
 
 
 

@@ -1,6 +1,6 @@
 {
     'name': "IP Camera Management",
-    'version': '19.0.1.12.3',
+    'version': '19.0.1.13.0',
     'summary': "Module for managing IP cameras via manufacturers integration integration",
     'author': "Polimex Dev Team",
     'website': "https://polimex.co",
@@ -21,6 +21,7 @@
         'views/hr_rfid_event_user.xml',
         'views/hr_rfid_event_system.xml',
         'views/hr_rfid_reader.xml',
+        'views/cctv_camera_diagnostic.xml',
     ],
     # 'images': ['static/images/main_screenshot.png'],
 

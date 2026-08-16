@@ -211,6 +211,24 @@ guarding a live site.
 - **Create cameras** — Create a cctv.camera per remaining line, then open the camera list
 
 
+## Camera self-test
+
+Open a camera and press "Self-Test" (managers only). One run checks
+everything this system uses from the camera and shows every problem first,
+every detail below: who answers at the address (model, serial, firmware),
+the picture, the clock difference, where the camera sends its recognitions,
+how many plates it holds against how many are recorded here, and whether a
+plate can be written to it. The write check uses one test plate (TEST0001)
+that is added and removed again - a working camera is left exactly as it
+was, and the barrier is deliberately never touched. When writing fails, the
+test also tries a record shaped like your real data and names the exact
+part the camera refuses, quoting the camera's own answer - send that report
+to support. Every report is kept in the camera's log for comparison.
+
+If a plate-list reload keeps failing, the queue stops itself after three
+identical refusals from the same camera and marks the remaining commands
+with one explanation, instead of repeating the same error for every plate.
+
 ## Common questions and errors
 
 Actions in this list display a message dialog when something is wrong (missing data, invalid configuration, server unreachable, etc.). If an action fails, read the dialog message and check the configuration described above.

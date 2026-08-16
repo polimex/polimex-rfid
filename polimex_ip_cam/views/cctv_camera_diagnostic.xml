@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="cctv_camera_diagnostic_view_form" model="ir.ui.view">
+        <field name="name">cctv.camera.diagnostic.form</field>
+        <field name="model">cctv.camera.diagnostic</field>
+        <field name="arch" type="xml">
+            <form string="Camera self-test">
+                <sheet>
+                    <p class="text-muted">
+                        Problems come first, details below them. The same
+                        report is saved in the camera's log, so runs can be
+                        compared over time.
+                    </p>
+                    <field name="report" nolabel="1" readonly="1"
+                           class="font-monospace"/>
+                </sheet>
+                <footer>
+                    <button string="Close" special="cancel" class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

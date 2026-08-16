@@ -127,14 +127,36 @@ class CctvCameraCommand(models.Model):
             gate_num = 1
         return cam_api.barrier_gate_control(operation, gate_num)
 
+    #: How many identical consecutive refusals from one camera stop the rest
+    #: of its plate commands in the same batch. Reloading a 1394-plate list
+    #: against a camera that rejects the very MECHANISM produced 1394
+    #: identical ERROR lines - the operator read one failure a thousand
+    #: times over, and the camera absorbed a thousand pointless requests.
+    PLATE_FAILURE_STREAK_LIMIT = 3
+
     def action_execute(self):
         """
         Изпълнява командата. Методът променя състоянието на командата на 'in_progress',
         записва времето на изпълнение и извиква съответния API метод според command_type.
         При успех, състоянието се задава на 'done', в противен случай - 'error'.
         """
+        streaks = {}       # camera_id -> [last_error, count]
+        stopped = {}       # camera_id -> the error that repeated
+        plate_types = ('add_plate', 'remove_plate')
         for rec in self:
             if rec.state != 'new':
+                continue
+            if rec.command_type in plate_types and rec.camera_id.id in stopped:
+                # The camera is refusing the mechanism itself, not this
+                # particular plate - hammering it with the rest of the batch
+                # would repeat the same refusal per record.
+                rec.state = 'error'
+                rec.response_data = _(
+                    "Not sent: the camera refused %(limit)s identical plate "
+                    "commands in a row, so the rest of this batch was stopped. "
+                    "First answer: %(error)s",
+                    limit=self.PLATE_FAILURE_STREAK_LIMIT,
+                    error=stopped[rec.camera_id.id])
                 continue
             rec.state = 'in_progress'
             rec.execution_time = fields.Datetime.now()
@@ -168,4 +190,20 @@ class CctvCameraCommand(models.Model):
                 rec.response_data = str(e)
                 rec.state = "error"
                 _logger.error("Error executing command %s: %s", rec.name, e)
+            if rec.command_type in plate_types:
+                cam_id = rec.camera_id.id
+                if rec.state == 'error':
+                    error_text = rec.response_data or ''
+                    streak = streaks.setdefault(cam_id, [None, 0])
+                    streak[1] = streak[1] + 1 if streak[0] == error_text else 1
+                    streak[0] = error_text
+                    if streak[1] >= self.PLATE_FAILURE_STREAK_LIMIT:
+                        stopped[cam_id] = error_text[:300]
+                        _logger.error(
+                            "Camera %s refuses its plate commands with the same "
+                            "answer %s time(s) in a row; stopping the rest of "
+                            "this batch. Answer: %s",
+                            rec.camera_id.display_name, streak[1], streak[0])
+                else:
+                    streaks.pop(cam_id, None)
         return True

@@ -6,15 +6,27 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-14 13:55+0000\n"
-"PO-Revision-Date: 2026-08-14 17:32\n"
+"POT-Creation-Date: 2026-08-16 08:03+0000\n"
+"PO-Revision-Date: 2026-08-16 11:05\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
-"Language: el_GR\n"
+"Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "%(label)s (fields: %(shape)s): REFUSED - %(error)s"
+msgstr "%(label)s (πεδία: %(shape)s): ΑΠΟΡΡΙΦΘΗΚΕ - %(error)s"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "%(label)s (fields: %(shape)s): accepted"
+msgstr "%(label)s (πεδία: %(shape)s): αποδεκτό"
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -26,6 +38,16 @@ msgstr "%s Αναγνώστες"
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
 msgid "<span>Last online: </span>"
 msgstr "<span>Τελευταία σύνδεση: </span>"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"A DIFFERENT device answers at this address: it reports serial %(got)s, this "
+"record says %(want)s."
+msgstr ""
+"Μια ΔΙΑΦΟΡΕΤΙΚΗ συσκευή απαντά σε αυτή τη διεύθυνση: αναφέρει σειριακό "
+"αριθμό %(got)s, ενώ αυτή η εγγραφή αναφέρει %(want)s."
 
 #. module: polimex_ip_cam
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_hr_rfid_user_ev_form_anpr_ext
@@ -1897,11 +1919,11 @@ msgid ""
 "date filter to see the full history. Use Restart Sending to retry a failed "
 "command."
 msgstr ""
-"Ιστορικό ελέγχου εντολών που έχει στείλει το Odoo στις κάμερες (συγχρονισμός "
-"Λευκής Λίστας, επαναδιαμόρφωση push-server κ.λπ.). Η προβολή εμφανίζει εξ "
+"Ιστορικό ελέγχου εντολών που έχει στείλει το Odoo στις κάμερες (συγχρονισμός"
+" Λευκής Λίστας, επαναδιαμόρφωση push-server κ.λπ.). Η προβολή εμφανίζει εξ "
 "ορισμού τις εντολές της τρέχουσας ημέρας· επεκτείνετε το φίλτρο ημερομηνίας "
-"για να δείτε το πλήρες ιστορικό. Χρησιμοποιήστε «Επανεκκίνηση Αποστολής» για "
-"να επαναστείλετε μια αποτυχημένη εντολή."
+"για να δείτε το πλήρες ιστορικό. Χρησιμοποιήστε «Επανεκκίνηση Αποστολής» για"
+" να επαναστείλετε μια αποτυχημένη εντολή."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__australia/act
@@ -2126,6 +2148,7 @@ msgstr "CST6CDT"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__camera_id
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_diagnostic__camera_id
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__camera_id
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_door__camera_id
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_event_system__camera_id
@@ -2184,14 +2207,19 @@ msgid "Camera Relations"
 msgstr "Σχέσεις κάμερας"
 
 #. module: polimex_ip_cam
+#: model:ir.model,name:polimex_ip_cam.model_cctv_camera_diagnostic
+msgid "Camera Self-Test Report"
+msgstr "Αναφορά Αυτοδιάγνωσης Κάμερας"
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__password
 msgid ""
 "Camera access password. Restricted to CCTV managers — it is the credential "
 "an attacker would need; do not expose it to plain CCTV users or in shared "
 "exports."
 msgstr ""
-"Κωδικός πρόσβασης κάμερας. Προσβάσιμος μόνο από διαχειριστές CCTV - αποτελεί "
-"το διαπιστευτήριο που θα χρειαζόταν ένας εισβολέας· μην το εκθέτετε σε "
+"Κωδικός πρόσβασης κάμερας. Προσβάσιμος μόνο από διαχειριστές CCTV - αποτελεί"
+" το διαπιστευτήριο που θα χρειαζόταν ένας εισβολέας· μην το εκθέτετε σε "
 "απλούς χρήστες CCTV ή σε κοινόχρηστες εξαγωγές."
 
 #. module: polimex_ip_cam
@@ -2260,6 +2288,13 @@ msgid "Camera port (usually 80 or 8000)"
 msgstr "Θύρα κάμερας (συνήθως 80 ή 8000)"
 
 #. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.cctv_camera_diagnostic_view_form
+msgid "Camera self-test"
+msgstr "Αυτοδιάγνωση κάμερας"
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__serial_number
 msgid "Camera serial number"
 msgstr "Σειριακός αριθμός κάμερας"
@@ -2318,17 +2353,13 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_discovery_form
 msgid ""
 "Cameras found on your local network (Hikvision SADP and ONVIF).\n"
-"                    Remove the ones you do not want, rename the rest if you "
-"like, then\n"
-"                    click Add Cameras. Connection details are completed "
-"afterwards with\n"
+"                    Remove the ones you do not want, rename the rest if you like, then\n"
+"                    click Add Cameras. Connection details are completed afterwards with\n"
 "                    Check Connection on each new camera."
 msgstr ""
 "Κάμερες που βρέθηκαν στο τοπικό δίκτυο (Hikvision SADP και ONVIF).\n"
-"                    Αφαιρέστε αυτές που δεν θέλετε, μετονομάστε τις "
-"υπόλοιπες αν θέλετε, και στη συνέχεια\n"
-"                    κάντε κλικ στο Προσθήκη Καμερών. Τα στοιχεία σύνδεσης "
-"συμπληρώνονται αργότερα με\n"
+"                    Αφαιρέστε αυτές που δεν θέλετε, μετονομάστε τις υπόλοιπες αν θέλετε, και στη συνέχεια\n"
+"                    κάντε κλικ στο Προσθήκη Καμερών. Τα στοιχεία σύνδεσης συμπληρώνονται αργότερα με\n"
 "                    Έλεγχο Σύνδεσης σε κάθε νέα κάμερα."
 
 #. module: polimex_ip_cam
@@ -2397,6 +2428,20 @@ msgid "Check Connection"
 msgstr "Έλεγχος σύνδεσης"
 
 #. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid ""
+"Checks everything this system uses from the camera - identity, picture, "
+"clock, event delivery, the plate list - and reports every problem in one "
+"place. Safe to run on a working camera: it only reads, apart from one test "
+"plate that is added and removed again."
+msgstr ""
+"Ελέγχει ό,τι χρησιμοποιεί αυτό το σύστημα από την κάμερα - ταυτότητα, "
+"εικόνα, ρολόι, παράδοση συμβάντων, τη λίστα πινακίδων - και αναφέρει κάθε "
+"πρόβλημα σε ένα σημείο. Είναι ασφαλές να εκτελεστεί σε λειτουργική κάμερα: "
+"μόνο διαβάζει, εκτός από μία δοκιμαστική πινακίδα που προστίθεται και "
+"αφαιρείται ξανά."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__chile/continental
 msgid "Chile/Continental"
 msgstr "Chile/Continental"
@@ -2405,6 +2450,11 @@ msgstr "Chile/Continental"
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__chile/easterisland
 msgid "Chile/EasterIsland"
 msgstr "Chile/EasterIsland"
+
+#. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.cctv_camera_diagnostic_view_form
+msgid "Close"
+msgstr "Κλείσιμο"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__name
@@ -2439,12 +2489,12 @@ msgstr "Εταιρεία"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__company_id
 msgid ""
-"Company that owns the camera. Cameras are isolated per company; record rules "
-"prevent users seeing devices outside their allowed companies."
+"Company that owns the camera. Cameras are isolated per company; record rules"
+" prevent users seeing devices outside their allowed companies."
 msgstr ""
 "Εταιρεία στην οποία ανήκει η κάμερα. Οι κάμερες απομονώνονται ανά εταιρεία· "
-"οι κανόνες εγγραφών αποτρέπουν τους χρήστες από το να βλέπουν συσκευές εκτός "
-"των επιτρεπόμενων εταιρειών τους."
+"οι κανόνες εγγραφών αποτρέπουν τους χρήστες από το να βλέπουν συσκευές εκτός"
+" των επιτρεπόμενων εταιρειών τους."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_hr_rfid_event_system__anpr_confidence
@@ -2472,8 +2522,8 @@ msgstr "Έλεγχος σύνδεσης"
 #. module: polimex_ip_cam
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
 msgid ""
-"Connection details Odoo uses to reach the camera. Authentication is the same "
-"operator account configured on the camera's web UI."
+"Connection details Odoo uses to reach the camera. Authentication is the same"
+" operator account configured on the camera's web UI."
 msgstr ""
 "Στοιχεία σύνδεσης που χρησιμοποιεί το Odoo για να επικοινωνήσει με την "
 "κάμερα. Ο έλεγχος ταυτότητας γίνεται με τον ίδιο λογαριασμό χειριστή που "
@@ -2495,6 +2545,7 @@ msgstr ""
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__create_uid
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__create_uid
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_diagnostic__create_uid
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery__create_uid
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__create_uid
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__create_uid
@@ -2504,6 +2555,7 @@ msgstr "Δημιουργήθηκε από"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__create_date
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__create_date
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_diagnostic__create_date
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery__create_date
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__create_date
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__create_date
@@ -2524,8 +2576,8 @@ msgstr "Dahua"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_command__request_data
 msgid ""
-"Data sent to the camera as part of the command, e.g. in param=value per line "
-"format."
+"Data sent to the camera as part of the command, e.g. in param=value per line"
+" format."
 msgstr ""
 "Δεδομένα που αποστέλλονται στην κάμερα ως μέρος της εντολής, π.χ. σε μορφή "
 "param=value ανά γραμμή."
@@ -2585,6 +2637,7 @@ msgstr "Εκτέλεση ανακάλυψης που εντόπισε αυτή �
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__display_name
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__display_name
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_diagnostic__display_name
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery__display_name
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__display_name
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__display_name
@@ -3182,6 +3235,15 @@ msgid "Europe/Zurich"
 msgstr "Europe/Zurich"
 
 #. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_diagnostic__report
+msgid ""
+"Every problem found first, then every detail the camera reported. The same "
+"text is kept in the camera's chatter."
+msgstr ""
+"Πρώτα κάθε πρόβλημα που εντοπίστηκε, έπειτα κάθε λεπτομέρεια που ανέφερε η "
+"κάμερα. Το ίδιο κείμενο διατηρείται στη συνομιλία (chatter) της κάμερας."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__execution_time
 msgid "Execution Time"
 msgstr "Χρόνος εκτέλεσης"
@@ -3406,6 +3468,7 @@ msgstr "Θύρα HTTP"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__id
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__id
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_diagnostic__id
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery__id
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__id
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__id
@@ -3585,6 +3648,7 @@ msgstr "Τελευταία Φορά Online"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__write_uid
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__write_uid
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_diagnostic__write_uid
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery__write_uid
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__write_uid
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__write_uid
@@ -3594,6 +3658,7 @@ msgstr "Τελευταία ενημέρωση από"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__write_date
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__write_date
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_diagnostic__write_date
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery__write_date
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__write_date
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__write_date
@@ -3640,8 +3705,8 @@ msgid ""
 "detection."
 msgstr ""
 "Πινακίδες καταχωρημένες σε αυτή την κάμερα και η λίστα ANPR στην οποία "
-"ανήκουν (επιτρεπόμενες, αποκλεισμένες, επισκέπτης κ.λπ.). Η κάμερα εφαρμόζει "
-"τη λίστα σε κάθε ανίχνευση πινακίδας."
+"ανήκουν (επιτρεπόμενες, αποκλεισμένες, επισκέπτης κ.λπ.). Η κάμερα εφαρμόζει"
+" τη λίστα σε κάθε ανίχνευση πινακίδας."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_command__state
@@ -3690,8 +3755,8 @@ msgstr ""
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__rfid_whitelist_count
 msgid ""
-"Live count of plates classified as Whitelist (auto-grant). Used by the smart "
-"button on the form."
+"Live count of plates classified as Whitelist (auto-grant). Used by the smart"
+" button on the form."
 msgstr ""
 "Τρέχων αριθμός πινακίδων ταξινομημένων στη Λευκή Λίστα (αυτόματη έγκριση). "
 "Χρησιμοποιείται από το έξυπνο κουμπί στη φόρμα."
@@ -3792,11 +3857,11 @@ msgstr "Όνομα"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__name
 msgid ""
-"Name the camera will be created with. Pre-filled from the model and address; "
-"edit it to something meaningful before adopting."
+"Name the camera will be created with. Pre-filled from the model and address;"
+" edit it to something meaningful before adopting."
 msgstr ""
-"Το όνομα με το οποίο θα δημιουργηθεί η κάμερα. Συμπληρώνεται αυτόματα από το "
-"μοντέλο και τη διεύθυνση· επεξεργαστείτε το σε κάτι ουσιαστικό πριν την "
+"Το όνομα με το οποίο θα δημιουργηθεί η κάμερα. Συμπληρώνεται αυτόματα από το"
+" μοντέλο και τη διεύθυνση· επεξεργαστείτε το σε κάτι ουσιαστικό πριν την "
 "αποδεχτείτε."
 
 #. module: polimex_ip_cam
@@ -3861,15 +3926,18 @@ msgstr "Δεν εστάλησαν εντολές κάμερας σήμερα"
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_discovery_form
 msgid ""
 "No cameras answered on this network segment. Make sure Odoo runs on\n"
-"                    the same LAN as the cameras (discovery does not cross "
-"routers), then\n"
+"                    the same LAN as the cameras (discovery does not cross routers), then\n"
 "                    try again — or add a camera manually."
 msgstr ""
-"Καμία κάμερα δεν απάντησε σε αυτό το τμήμα δικτύου. Βεβαιωθείτε ότι το Odoo "
-"εκτελείται στο\n"
-"                    ίδιο LAN με τις κάμερες (η ανακάλυψη δεν διασχίζει "
-"δρομολογητές), στη συνέχεια\n"
+"Καμία κάμερα δεν απάντησε σε αυτό το τμήμα δικτύου. Βεβαιωθείτε ότι το Odoo εκτελείται στο\n"
+"                    ίδιο LAN με τις κάμερες (η ανακάλυψη δεν διασχίζει δρομολογητές), στη συνέχεια\n"
 "                    δοκιμάστε ξανά - ή προσθέστε μια κάμερα χειροκίνητα."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "No picture: %(error)s"
+msgstr "Χωρίς εικόνα: %(error)s"
 
 #. module: polimex_ip_cam
 #: model_terms:ir.actions.act_window,help:polimex_ip_cam.action_cctv_camera_blacklist
@@ -3882,6 +3950,22 @@ msgid "No plates whitelisted on this camera"
 msgstr "Δεν υπάρχουν πινακίδες στη Λευκή Λίστα αυτής της κάμερας"
 
 #. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "No problems found - everything the module needs answered correctly."
+msgstr ""
+"Δεν βρέθηκαν προβλήματα - όλα όσα χρειάζεται η ενότητα απάντησαν σωστά."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"None of the simplified variants passed either - send this report to support."
+msgstr ""
+"Κανένα από τα απλοποιημένα παραλλαγές δεν πέρασε επίσης - στείλτε αυτή την "
+"αναφορά στην υποστήριξη."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__connection_status__unknown
 msgid "Not checked yet"
 msgstr "Άγνωστο"
@@ -3890,7 +3974,8 @@ msgstr "Άγνωστο"
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "Not checked yet. Use “Check Connection” to test."
-msgstr "Δεν έχει ελεγχθεί ακόμα. Χρησιμοποιήστε «Έλεγχος Σύνδεσης» για δοκιμή."
+msgstr ""
+"Δεν έχει ελεγχθεί ακόμα. Χρησιμοποιήστε «Έλεγχος Σύνδεσης» για δοκιμή."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__connection_status__unreachable
@@ -3898,13 +3983,24 @@ msgid "Not reachable"
 msgstr "Μη προσβάσιμη"
 
 #. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera_command.py:0
+msgid ""
+"Not sent: the camera refused %(limit)s identical plate commands in a row, so"
+" the rest of this batch was stopped. First answer: %(error)s"
+msgstr ""
+"Δεν εστάλη: η κάμερα απέρριψε %(limit)s πανομοιότυπες εντολές πινακίδων στη "
+"σειρά, οπότε το υπόλοιπο αυτής της παρτίδας διακόπηκε. Πρώτη απάντηση: "
+"%(error)s"
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_card__camera_count
 msgid ""
 "Number of ANPR cameras this card (license plate) is registered with. Drives "
 "the Cameras smart button on the card form."
 msgstr ""
-"Αριθμός ANPR καμερών στις οποίες είναι καταχωρημένη αυτή η κάρτα (πινακίδα). "
-"Ενεργοποιεί το έξυπνο κουμπί Κάμερες στη φόρμα της κάρτας."
+"Αριθμός ANPR καμερών στις οποίες είναι καταχωρημένη αυτή η κάρτα (πινακίδα)."
+" Ενεργοποιεί το έξυπνο κουμπί Κάμερες στη φόρμα της κάρτας."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__message_needaction_counter
@@ -3962,6 +4058,12 @@ msgstr "Αναγνώστης Εξόδου %s"
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__prc
 msgid "PRC"
 msgstr "PRC"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "PROBLEMS FOUND (%(count)s):"
+msgstr "ΠΡΟΒΛΗΜΑΤΑ ΠΟΥ ΒΡΕΘΗΚΑΝ (%(count)s):"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__pst8pdt
@@ -4196,8 +4298,8 @@ msgstr "Κωδικός πρόσβασης"
 #. module: polimex_ip_cam
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
 msgid ""
-"Per-entrance parameters (lane direction, allowed list, snapshot mode) pulled "
-"from the camera. Use Get to read the current configuration; Set writes any "
+"Per-entrance parameters (lane direction, allowed list, snapshot mode) pulled"
+" from the camera. Use Get to read the current configuration; Set writes any "
 "local changes back to the device."
 msgstr ""
 "Παράμετροι ανά είσοδο (κατεύθυνση λωρίδας, επιτρεπόμενη λίστα, λειτουργία "
@@ -4282,6 +4384,17 @@ msgid "Portugal"
 msgstr "Portugal"
 
 #. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.cctv_camera_diagnostic_view_form
+msgid ""
+"Problems come first, details below them. The same\n"
+"                        report is saved in the camera's log, so runs can be\n"
+"                        compared over time."
+msgstr ""
+"Τα προβλήματα εμφανίζονται πρώτα, οι λεπτομέρειες ακολουθούν. Η ίδια\n"
+"                        αναφορά αποθηκεύεται στο ημερολόγιο της κάμερας, ώστε να μπορούν να\n"
+"                        συγκριθούν οι εκτελέσεις με την πάροδο του χρόνου."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__card_id
 msgid "RFID Card"
 msgstr "Κάρτα RFID"
@@ -4309,8 +4422,8 @@ msgstr "Συμβάν χρήστη RFID"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__door_id
 msgid ""
-"RFID doors whose readers are wired to this camera. Card assignments on these "
-"doors are mirrored to the camera's plate whitelist automatically."
+"RFID doors whose readers are wired to this camera. Card assignments on these"
+" doors are mirrored to the camera's plate whitelist automatically."
 msgstr ""
 "Πόρτες RFID των οποίων οι αναγνώστες είναι συνδεδεμένοι με αυτή την κάμερα. "
 "Οι αναθέσεις καρτών σε αυτές τις πόρτες αντικατοπτρίζονται αυτόματα στη "
@@ -4334,8 +4447,8 @@ msgstr "ROK"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__connection_error_detail
 msgid ""
-"Raw error returned by the last failed connection check (for support/"
-"diagnostics)."
+"Raw error returned by the last failed connection check (for "
+"support/diagnostics)."
 msgstr ""
 "Ακατέργαστο σφάλμα που επιστράφηκε από τον τελευταίο αποτυχημένο έλεγχο "
 "σύνδεσης (για υποστήριξη/διάγνωση)."
@@ -4379,6 +4492,11 @@ msgstr "Επαναφόρτωση Λευκής Λίστας"
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__command_type__remove_plate
 msgid "Remove Plate"
 msgstr "Αφαίρεση πινακίδας"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_diagnostic__report
+msgid "Report"
+msgstr "Αναφορά"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__request_data
@@ -4427,6 +4545,11 @@ msgstr ""
 "Σαρώστε το τοπικό δίκτυο για IP Κάμερες και προσθέστε αυτές που επιλέγετε."
 
 #. module: polimex_ip_cam
+#: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
+msgid "Self-Test"
+msgstr "Αυτοδιάγνωση"
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__serial_number
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__serial_number
 msgid "Serial Number"
@@ -4470,14 +4593,14 @@ msgstr "Ρυθμίσεις"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__sub_serial_number
 msgid ""
-"Short device serial the camera reports as 'deviceUUID' in ANPR events (ISAPI "
-"subSerialNumber). Incoming plate events are matched to this camera by this "
+"Short device serial the camera reports as 'deviceUUID' in ANPR events (ISAPI"
+" subSerialNumber). Incoming plate events are matched to this camera by this "
 "value. Filled automatically on Check Connection, or learned from the first "
 "event received from the camera's IP."
 msgstr ""
 "Σύντομος σειριακός αριθμός συσκευής που η κάμερα αναφέρει ως 'deviceUUID' "
-"στα συμβάντα ANPR (ISAPI subSerialNumber). Τα εισερχόμενα συμβάντα πινακίδων "
-"αντιστοιχίζονται σε αυτή την κάμερα βάσει αυτής της τιμής. Συμπληρώνεται "
+"στα συμβάντα ANPR (ISAPI subSerialNumber). Τα εισερχόμενα συμβάντα πινακίδων"
+" αντιστοιχίζονται σε αυτή την κάμερα βάσει αυτής της τιμής. Συμπληρώνεται "
 "αυτόματα κατά τον Έλεγχο Σύνδεσης ή μαθαίνεται από το πρώτο συμβάν που "
 "λαμβάνεται από τη διεύθυνση IP της κάμερας."
 
@@ -4556,9 +4679,68 @@ msgstr "Τεχνικές Λεπτομέρειες"
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid ""
+"The camera accepts a minimal record but REFUSES one shaped like your real "
+"data - the verdict below names the part it objects to."
+msgstr ""
+"Η κάμερα αποδέχεται μια ελάχιστη εγγραφή αλλά ΑΠΟΡΡΙΠΤΕΙ μία με τη μορφή των"
+" πραγματικών σας δεδομένων - η ετυμηγορία παρακάτω κατονομάζει το τμήμα στο "
+"οποίο αντιτίθεται."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
 "The camera answered but in an unexpected format (wrong model or firmware?)."
 msgstr ""
 "Η κάμερα απάντησε αλλά σε μη αναμενόμενη μορφή (λάθος μοντέλο ή firmware;)."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The camera clock is off by about %(sec)s seconds - recognitions will carry "
+"the wrong time."
+msgstr ""
+"Το ρολόι της κάμερας διαφέρει κατά περίπου %(sec)s δευτερόλεπτα - οι "
+"αναγνωρίσεις θα φέρουν λανθασμένη ώρα."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "The camera did not answer as expected: %(status)s %(error)s"
+msgstr "Η κάμερα δεν απάντησε όπως αναμενόταν: %(status)s %(error)s"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The camera has NO event destination configured - recognitions never reach "
+"this system. Run the camera setup again."
+msgstr ""
+"Η κάμερα ΔΕΝ έχει διαμορφωμένο προορισμό συμβάντων - οι αναγνωρίσεις δεν "
+"φτάνουν ποτέ σε αυτό το σύστημα. Εκτελέστε ξανά τη ρύθμιση της κάμερας."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The camera holds %(cam)s plate(s) while this system records %(odoo)s - "
+"refresh the plate list once the write path works."
+msgstr ""
+"Η κάμερα διατηρεί %(cam)s πινακίδα(ες) ενώ αυτό το σύστημα καταγράφει "
+"%(odoo)s - ανανεώστε τη λίστα πινακίδων μόλις λειτουργήσει η διαδρομή "
+"εγγραφής."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_diagnostic__camera_id
+msgid "The camera this self-test was run against."
+msgstr "Η κάμερα στην οποία εκτελέστηκε αυτή η αυτοδιάγνωση."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "The clock cannot be read: %(error)s"
+msgstr "Το ρολόι δεν μπορεί να διαβαστεί: %(error)s"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_system__anpr_confidence
@@ -4568,11 +4750,39 @@ msgid "The confidence level of the event"
 msgstr "Το επίπεδο εμπιστοσύνης του συμβάντος"
 
 #. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "The event destination cannot be read: %(error)s"
+msgstr "Ο προορισμός συμβάντων δεν μπορεί να διαβαστεί: %(error)s"
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_system__license_plate
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_user__license_plate
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_vending_event__license_plate
 msgid "The license plate recognized by the camera"
 msgstr "Η πινακίδα κυκλοφορίας που αναγνωρίστηκε από την κάμερα"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "The plate list on the camera cannot be read: %(error)s"
+msgstr "Η λίστα πινακίδων στην κάμερα δεν μπορεί να διαβαστεί: %(error)s"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "The self-test currently supports Hikvision cameras only."
+msgstr "Η αυτοδιάγνωση υποστηρίζει προς το παρόν μόνο κάμερες Hikvision."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The short serial differs: the camera reports %(got)s, this record says "
+"%(want)s."
+msgstr ""
+"Ο σύντομος σειριακός αριθμός διαφέρει: η κάμερα αναφέρει %(got)s, αυτή η "
+"εγγραφή αναφέρει %(want)s."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_event_system__snapshot
@@ -4582,16 +4792,24 @@ msgid "The snapshot of the camera"
 msgstr "Το στιγμιότυπο της κάμερας"
 
 #. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The test plate %(plate)s could not be removed afterwards: %(error)s - remove"
+" it from the camera's white list by hand."
+msgstr ""
+"Η δοκιμαστική πινακίδα %(plate)s δεν μπόρεσε να αφαιρεθεί στη συνέχεια: "
+"%(error)s - αφαιρέστε την χειροκίνητα από τη λίστα λευκή της κάμερας."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__tz
 msgid ""
 "The timezone of the camera's location. The camera's on-screen clock (burned "
 "onto recordings) and the plate timestamps are set in this timezone; Odoo "
 "stores everything in UTC and converts."
 msgstr ""
-"Η ζώνη ώρας της κάμερας. Χρησιμοποιείται για την εμφάνιση ημερομηνιών και "
-"ωρών στη σωστή ζώνη ώρας.\n"
-"Οι πινακίδες αποστέλλονται στην κάμερα με ημερομηνία και ώρα σε αυτή τη ζώνη "
-"ώρας."
+"Η ζώνη ώρας της κάμερας. Χρησιμοποιείται για την εμφάνιση ημερομηνιών και ωρών στη σωστή ζώνη ώρας.\n"
+"Οι πινακίδες αποστέλλονται στην κάμερα με ημερομηνία και ώρα σε αυτή τη ζώνη ώρας."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_rfid_rel__list_category
@@ -4758,6 +4976,16 @@ msgid "Username"
 msgstr "Όνομα χρήστη"
 
 #. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"VERDICT: the record passes %(label)s. That part of the data is what this "
+"firmware refuses."
+msgstr ""
+"ΕΤΥΜΗΓΟΡΙΑ: η εγγραφή περνά το %(label)s. Αυτό το τμήμα των δεδομένων είναι "
+"που απορρίπτει αυτό το firmware."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__w-su
 msgid "W-SU"
 msgstr "W-SU"
@@ -4826,6 +5054,17 @@ msgstr ""
 "στην πινακίδα που πρέπει να αποδέχεται η κάμερα."
 
 #. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"Writing to the plate list FAILS even for a minimal record - the write "
+"mechanism itself is refused. The camera's exact answer is in the details."
+msgstr ""
+"Η εγγραφή στη λίστα πινακίδων ΑΠΟΤΥΓΧΑΝΕΙ ακόμη και για μια ελάχιστη εγγραφή"
+" - ο ίδιος ο μηχανισμός εγγραφής απορρίπτεται. Η ακριβής απάντηση της "
+"κάμερας βρίσκεται στις λεπτομέρειες."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__connection_status__auth_failed
 msgid "Wrong credentials"
 msgstr "Λανθασμένα διαπιστευτήρια"
@@ -4848,8 +5087,82 @@ msgstr "Zulu"
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "[1] Identity (who answers at %(ip)s)"
+msgstr "[1] Ταυτότητα (ποιος απαντά στο %(ip)s)"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "[2] Picture"
+msgstr "[2] Εικόνα"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "[3] Clock"
+msgstr "[3] Ρολόι"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "[4] Where the camera sends its events"
+msgstr "[4] Πού στέλνει η κάμερα τα συμβάντα της"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "[5] Plate list - reading"
+msgstr "[5] Λίστα πινακίδων - ανάγνωση"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "[6] Plate list - what the camera itself speaks"
+msgstr "[6] Λίστα πινακίδων - τι μιλάει η ίδια η κάμερα"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "[7] Plate list - writing (one test plate, removed after)"
+msgstr ""
+"[7] Λίστα πινακίδων - εγγραφή (μία δοκιμαστική πινακίδα, αφαιρείται μετά)"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "[8] Barrier - deliberately NOT tested (it would move the gate)"
+msgstr "[8] Μπάρα - σκόπιμα ΔΕΝ ελέγχθηκε (θα κινούσε την μπάρα)"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "[9] Events arriving FROM the camera"
+msgstr "[9] Συμβάντα που φτάνουν ΑΠΟ την κάμερα"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "beginning of the camera's own export (its exact import format):"
+msgstr ""
+"αρχή της δικής της εξαγωγής της κάμερας (η ακριβής της μορφή εισαγωγής):"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "but exist in the camera memory. "
 msgstr "αλλά υπάρχουν στη μνήμη της κάμερας. "
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "check failed: %(error)s"
+msgstr "ο έλεγχος απέτυχε: %(error)s"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "difference from the server clock: about %(sec)s second(s)"
+msgstr "διαφορά από το ρολόι του διακομιστή: περίπου %(sec)s δευτερόλεπτο(α)"
 
 #. module: polimex_ip_cam
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
@@ -4859,10 +5172,92 @@ msgstr "π.χ. Κάμερα 1"
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "first record as the camera stores it:"
+msgstr "πρώτη εγγραφή όπως την αποθηκεύει η κάμερα:"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "last recognition recorded here: %(when)s"
+msgstr "τελευταία αναγνώριση που καταγράφηκε εδώ: %(when)s"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "last sign of life (heartbeat): %(when)s"
+msgstr "τελευταίο σημάδι ζωής (heartbeat): %(when)s"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "minimal record"
+msgstr "ελάχιστη εγγραφή"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "never"
+msgstr "ποτέ"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "nor in camera memory. "
 msgstr "ούτε στη μνήμη της κάμερας."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "picture received (%(size)s bytes)"
+msgstr "λήφθηκε εικόνα (%(size)s bytes)"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "plates on the camera: %(cam)s / recorded here: %(odoo)s"
+msgstr "πινακίδες στην κάμερα: %(cam)s / καταγεγραμμένες εδώ: %(odoo)s"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "record shaped like your real data"
+msgstr "εγγραφή με τη μορφή των πραγματικών σας δεδομένων"
 
 #. module: polimex_ip_cam
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_command_search
 msgid "string"
 msgstr "Συμβολοσειρά"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "the reported time could not be compared"
+msgstr "δεν ήταν δυνατή η σύγκριση της αναφερόμενης ώρας"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "with the validity times not marked as UTC (no 'Z')"
+msgstr "με τους χρόνους ισχύος να μην σημειώνονται ως UTC (χωρίς 'Z')"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "without the linked card number"
+msgstr "χωρίς τον συνδεδεμένο αριθμό κάρτας"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "without validity times"
+msgstr "χωρίς χρόνους ισχύος"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"your real records carry the same fields as the minimal one - nothing further"
+" to compare"
+msgstr ""
+"οι πραγματικές σας εγγραφές φέρουν τα ίδια πεδία με την ελάχιστη - δεν "
+"υπάρχει τίποτα άλλο για σύγκριση"

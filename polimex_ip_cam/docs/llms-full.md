@@ -383,6 +383,24 @@ Python class `CctvCamera` in `models/cctv_camera.py:30`.  Model.  Inherits: `mai
   - Remove a plate number from the camera's list.
   - effects: `message_post`
 
+### `cctv.camera.diagnostic` <a id='model-cctv-camera-diagnostic'></a>
+
+TransientModel holding the result of `cctv.camera.action_camera_diagnostics`
+(the "Self-Test" button, `group_cctv_manager` only). The action runs the full
+map of what the module uses from the camera - identity (`check_connection`,
+serial compared against the record), snapshot, clock (read-only drift check
+anchored in `camera.tz`), event destination (`get_http_host`), plate list
+read (`search_lp_audit`, count vs `rfid_rel_ids`), the list schema as the
+camera itself speaks it (`probe_vcl_capabilities` + `export_lp_list_xml` -
+the export is written in exactly the schema the firmware's import accepts),
+and one write round-trip with `DIAG_TEST_PLATE` ('TEST0001', added then
+removed). When the minimal record passes but a record shaped like the real
+data fails, the test bisects the shape (linked card number, 'Z'-suffixed
+validity times, no times) and the report names the refused part, quoting the
+camera verbatim. The barrier is deliberately never exercised. The report is
+shown in a dialog and posted to the camera's chatter. Fields: `camera_id`
+(M2O `cctv.camera`), `report` (Text).
+
 ### `cctv.camera.command` <a id='model-cctv-camera-command'></a>
 Python class `CctvCameraCommand` in `models/cctv_camera_command.py:12`.  Model.  Inherits: `mail.thread`, `mail.activity.mixin`.  Description: *Camera Command for Execution*.  Default order: `create_date desc`.
 

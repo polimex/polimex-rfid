@@ -76,6 +76,10 @@
                     <button name="action_get_snapshot" type="object" string="Take Snapshot"
                             class="oe_highlight" groups="polimex_ip_cam.group_cctv_manager"
                             invisible="not ip_address or not port or not username"/>
+                    <button name="action_camera_diagnostics" type="object" string="Self-Test"
+                            groups="polimex_ip_cam.group_cctv_manager"
+                            invisible="not ip_address or not port or not username"
+                            help="Checks everything this system uses from the camera - identity, picture, clock, event delivery, the plate list - and reports every problem in one place. Safe to run on a working camera: it only reads, apart from one test plate that is added and removed again."/>
                 </header>
                 <sheet>
                     <!-- Health banner: plain-language status + what to do, shown

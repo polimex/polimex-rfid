@@ -13,3 +13,4 @@ from . import test_refresh_company
 from . import test_import_guards
 from . import test_discovery
 from . import test_discovery_tour
+from . import test_camera_self_test

@@ -2,6 +2,7 @@
 
 from . import cctv_camera
 from . import cctv_camera_command
+from . import cctv_camera_diagnostic
 from . import cctv_camera_discovery_wizard
 from . import cctv_camera_rfid_rel
 from . import hr_rfid_card
