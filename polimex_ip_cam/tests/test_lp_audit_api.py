@@ -25,20 +25,20 @@ class TestLpRecordBody(TransactionCase):
     permanent createTime/effectiveTime window."""
 
     def test_listtype_and_plate_mapping(self):
-        allow = HikvisionCamera._lp_record_info({"plateNum": "CA1234AB", "listType": "0"})
-        block = HikvisionCamera._lp_record_info({"plateNum": "CA5678CD", "listType": "1"})
+        allow = HikvisionCamera("cam", 80, "u", "p")._lp_record_info({"plateNum": "CA1234AB", "listType": "0"})
+        block = HikvisionCamera("cam", 80, "u", "p")._lp_record_info({"plateNum": "CA5678CD", "listType": "1"})
         self.assertEqual(allow["LicensePlate"], "CA1234AB")
         self.assertEqual(allow["listType"], "allowList")   # 0 -> whitelist
         self.assertEqual(block["listType"], "blockList")   # 1 -> blacklist
 
     def test_default_validity_window(self):
-        info = HikvisionCamera._lp_record_info({"plateNum": "CA0002BB", "listType": "0"})
+        info = HikvisionCamera("cam", 80, "u", "p")._lp_record_info({"plateNum": "CA0002BB", "listType": "0"})
         self.assertEqual(info["createTime"], LP_DEFAULT_START_TIME)
         self.assertEqual(info["effectiveTime"], LP_DEFAULT_END_TIME)
         self.assertTrue(info["effectiveTime"], "effectiveTime must be non-empty")
 
     def test_cardno_and_times_passthrough(self):
-        info = HikvisionCamera._lp_record_info({
+        info = HikvisionCamera("cam", 80, "u", "p")._lp_record_info({
             "plateNum": "CA0001AA", "listType": "0", "cardNo": "12345",
             "startTime": "2026-06-16T15:00:00", "endTime": "2099-12-31T23:59:59",
         })

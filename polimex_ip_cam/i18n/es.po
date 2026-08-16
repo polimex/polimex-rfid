@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 08:03+0000\n"
-"PO-Revision-Date: 2026-08-16 11:06\n"
+"POT-Creation-Date: 2026-08-16 11:44+0000\n"
+"PO-Revision-Date: 2026-08-16 14:44\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: es\n"
@@ -3323,6 +3323,11 @@ msgid "Font awesome icon e.g. fa-tasks"
 msgstr "Icono de Font Awesome, p. ej. fa-tasks"
 
 #. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__lp_record_shape__full
+msgid "Full record"
+msgstr "Registro completo"
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__gb
 msgid "GB"
 msgstr "GB"
@@ -3759,6 +3764,11 @@ msgid ""
 msgstr ""
 "Recuento en tiempo real de matrículas clasificadas en Lista blanca (acceso "
 "automático). Usado por el botón inteligente del formulario."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__lp_record_shape
+msgid "Lp Record Shape"
+msgstr "Forma del registro de matrícula"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__met
@@ -4729,6 +4739,18 @@ msgstr ""
 "funcione."
 
 #. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera_command.py:0
+msgid ""
+"The camera refused part of the plate record and the record was sent again "
+"without it. From now on plates go to this camera as: %(shape)s. Entry and "
+"exit decisions are unaffected."
+msgstr ""
+"La cámara rechazó parte del registro de la matrícula y el registro se envió "
+"de nuevo sin él. A partir de ahora, las matrículas se envían a esta cámara "
+"como: %(shape)s. Las decisiones de entrada y salida no se ven afectadas."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_diagnostic__camera_id
 msgid "The camera this self-test was run against."
 msgstr "La cámara contra la que se ejecutó este autodiagnóstico."
@@ -5005,6 +5027,23 @@ msgid "Website communication history"
 msgstr "Historial de comunicaciones del sitio web"
 
 #. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__lp_record_shape
+msgid ""
+"What a plate record sent to this camera may contain. Filled in "
+"automatically: when the camera refuses a detail (some firmware versions do),"
+" the record is retried without it and the accepted form is remembered here, "
+"so every later plate goes straight through. Entry and exit decisions are "
+"unaffected - they are taken by the lists in this system, not by these "
+"details."
+msgstr ""
+"Lo que puede contener un registro de matrícula enviado a esta cámara. Se "
+"completa automáticamente: cuando la cámara rechaza un detalle (algunas "
+"versiones de firmware lo hacen), el registro se reintenta sin él y la forma "
+"aceptada se recuerda aquí, de modo que cada matrícula posterior se procesa "
+"directamente. Las decisiones de entrada y salida no se ven afectadas: las "
+"toman las listas de este sistema, no estos detalles."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__last_seen
 msgid "When the camera last answered a connection check successfully."
 msgstr ""
@@ -5051,6 +5090,16 @@ msgstr ""
 "Las matrículas en lista blanca se autorizan automáticamente al ser "
 "detectadas. Añada una fila seleccionando una tarjeta cuyo número coincida "
 "con la matrícula que la cámara debe aceptar."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__lp_record_shape__no_card
+msgid "Without the linked card number"
+msgstr "Sin el número de tarjeta vinculada"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__lp_record_shape__no_times
+msgid "Without validity times"
+msgstr "Sin horarios de validez"
 
 #. module: polimex_ip_cam
 #. odoo-python

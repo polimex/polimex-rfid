@@ -14,3 +14,4 @@ from . import test_import_guards
 from . import test_discovery
 from . import test_discovery_tour
 from . import test_camera_self_test
+from . import test_lp_write_ladder

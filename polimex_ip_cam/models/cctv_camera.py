@@ -281,12 +281,26 @@ class CctvCamera(models.Model):
             new_records += new_record
         return new_records
 
+    lp_record_shape = fields.Selection(
+        [('full', "Full record"),
+         ('no_card', "Without the linked card number"),
+         ('no_times', "Without validity times")],
+        default='full', required=True,
+        help="What a plate record sent to this camera may contain. Filled in "
+             "automatically: when the camera refuses a detail (some firmware "
+             "versions do), the record is retried without it and the accepted "
+             "form is remembered here, so every later plate goes straight "
+             "through. Entry and exit decisions are unaffected - they are "
+             "taken by the lists in this system, not by these details.",
+    )
+
     def get_api(self):
         # Always connect to the admin-configured endpoint. The ANPR webhook
         # must never feed an IP from the (unauthenticated) event body into
         # this credentialed client — see anpr_controller for the SSRF context.
         self.ensure_one()
-        return HikvisionCamera(self.ip_address, self.port, self.username, self.password)
+        return HikvisionCamera(self.ip_address, self.port, self.username, self.password,
+                               tz=self.tz, record_shape=self.lp_record_shape)
 
     @api.model
     def _resolve_anpr_camera(self, device_uuid, src_ip, source_verify_on):

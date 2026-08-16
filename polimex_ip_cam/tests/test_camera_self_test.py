@@ -161,9 +161,12 @@ class TestCameraSelfTest(TransactionCase):
         self.assertEqual(len(calls), commands.PLATE_FAILURE_STREAK_LIMIT,
                          'камерата продължи да бъде обстрелвана след присъдата')
         self.assertTrue(all(c.state == 'error' for c in commands))
-        stopped = commands.filtered(lambda c: 'Not sent' in (c.response_data or ''))
-        self.assertEqual(len(stopped), 10 - commands.PLATE_FAILURE_STREAK_LIMIT,
-                         'спрените команди не казват защо са спрени')
+        # Спрените команди носят ДОСЛОВНИЯ пръв отговор на камерата - това е
+        # обяснението "защо", независимо на какъв език говори интерфейсът.
+        stopped = commands[commands.PLATE_FAILURE_STREAK_LIMIT:]
+        self.assertTrue(
+            all('0x38410029' in (c.response_data or '') for c in stopped),
+            'спрените команди не цитират отговора, заради който са спрени')
 
     def test_a_different_device_at_the_address_is_called_out(self):
         """Отговаря ЧУЖД сериен номер -> проблем, не мълчалива подмяна."""

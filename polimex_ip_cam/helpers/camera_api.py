@@ -1,9 +1,12 @@
 import requests
 import xml.etree.ElementTree as ET          # building OUR requests (trusted, namespace-registered)
+from datetime import datetime
 from requests.auth import HTTPDigestAuth
 import logging
 import base64
 import json
+
+import pytz
 
 from lxml import etree
 
@@ -47,6 +50,14 @@ LP_READ_TYPE_TO_CATEGORY = {"whiteList": "whitelist", "blackList": "blacklist"}
 # the camera requires a non-empty effectiveTime.
 LP_DEFAULT_START_TIME = "2000-01-01T00:00:00"
 LP_DEFAULT_END_TIME = "2099-12-31T23:59:59"
+# The record shapes the write ladder can fall back through, best first.
+# 'full' is the live-validated field set; 'no_card' blanks the linked card
+# number; 'no_times' drops the validity window back to the permanent
+# defaults. Each step trades one OPTIONAL detail for the plate itself
+# arriving - the access decision is taken by the Odoo lists on every event,
+# so a camera-side record without a card number or a window still admits
+# and refuses exactly the same cars.
+LP_RECORD_SHAPES = ('full', 'no_card', 'no_times')
 
 
 def _ver20_tag(tag):
@@ -296,12 +307,22 @@ class BaseCamera:
       - get_snapshot(): Извличане на снимка от камерата.
     """
 
-    def __init__(self, ip_address, port, username, password, timeout=5):
+    def __init__(self, ip_address, port, username, password, timeout=5,
+                 tz=None, record_shape='full'):
         self.ip_address = ip_address
         self.port = port
         self.username = username
         self.password = password
         self.timeout = timeout
+        #: The camera's own time zone. Validity windows arrive here in UTC
+        #: (Odoo stores them so), but the camera compares them against ITS
+        #: wall clock - a window sent verbatim is off by the zone offset.
+        self.tz = tz
+        #: The record shape this camera is known to accept ('full', 'no_card',
+        #: 'no_times'). Discovered by the write ladder and persisted by the
+        #: caller, so the second and every later record skips the shapes the
+        #: firmware already refused.
+        self.record_shape = record_shape if record_shape in LP_RECORD_SHAPES else 'full'
 
     def __enter__(self):
         # Тук може да се извърши начална инициализация, ако е нужна
@@ -741,15 +762,50 @@ class HikvisionCamera(BaseCamera):
             return self._lp_audit_add(plate_entries)
         return self._vcl_add(plate_entries)
 
-    @staticmethod
-    def _lp_record_info(entry):
+    def _lp_time(self, value):
+        """A validity moment in the camera's own wall clock, no zone suffix.
+
+        The live-validated record format carries plain local times
+        ('2000-01-01T00:00:00'); the values arriving here are Odoo's, in UTC
+        and often 'Z'-suffixed. Sent verbatim they are doubly wrong: a suffix
+        the firmware may refuse outright, and a window shifted by the zone
+        offset even where it does not. Unparseable values pass through
+        untouched - refusing them is the camera's call, not ours.
+        """
+        if not value:
+            return None
+        text = str(value).strip()
+        try:
+            moment = datetime.fromisoformat(text.replace('Z', '+00:00'))
+        except ValueError:
+            return text
+        if moment.tzinfo is not None:
+            try:
+                zone = pytz.timezone(self.tz) if self.tz else pytz.UTC
+            except pytz.UnknownTimeZoneError:
+                zone = pytz.UTC
+            moment = moment.astimezone(zone).replace(tzinfo=None)
+        return moment.strftime('%Y-%m-%dT%H:%M:%S')
+
+    def _lp_record_info(self, entry, shape='full'):
         """Build one LicensePlateInfoList element for the JSON record upsert,
         mirroring the field set the camera web UI sends. Optional fields are
         passed as empty strings (the firmware rejects a record with keys
         omitted); the validity window maps to createTime (start) /
-        effectiveTime (end), defaulting to a permanent window."""
+        effectiveTime (end), defaulting to a permanent window.
+
+        ``shape`` degrades the OPTIONAL content only - 'no_card' blanks the
+        linked card number, 'no_times' falls back to the permanent window.
+        The plate and the bucket always travel in full.
+        """
         plate = entry.get("plateNum", "")
         card_no = entry.get("cardNo", "") or ""
+        if shape != 'full':
+            card_no = ""
+        start = self._lp_time(entry.get("startTime"))
+        end = self._lp_time(entry.get("endTime"))
+        if shape == 'no_times':
+            start = end = None
         return {
             "id": plate,
             "LicensePlate": plate,
@@ -769,8 +825,8 @@ class HikvisionCamera(BaseCamera):
             "operationType": "add",
             "virtualParkingNum": "",
             "groupName": "",
-            "createTime": entry.get("startTime") or LP_DEFAULT_START_TIME,
-            "effectiveTime": entry.get("endTime") or LP_DEFAULT_END_TIME,
+            "createTime": start or LP_DEFAULT_START_TIME,
+            "effectiveTime": end or LP_DEFAULT_END_TIME,
             "operation": "new",
         }
 
@@ -786,24 +842,47 @@ class HikvisionCamera(BaseCamera):
             return False
 
     def _lp_audit_add(self, plate_entries):
+        """JSON record upsert, walking the shape ladder when refused.
+
+        A firmware that rejects one OPTIONAL detail of the record (a linked
+        card number, a validity window) used to cost the plate itself: the
+        refusal read as a per-record failure and a thousand-plate reload
+        produced a thousand identical errors while the list stayed empty.
+        The ladder retries the same plates with that detail withdrawn, and
+        the accepted shape is reported back so the caller can persist it -
+        the next record then starts straight at what this camera speaks.
+        """
         url = (f"http://{self.ip_address}:{self.port}"
                f"/ISAPI/Traffic/channels/{LP_AUDIT_CHANNEL}/licensePlateAuditData/record?format=json")
-        payload = {"LicensePlateInfoList": [self._lp_record_info(e) for e in plate_entries]}
-        try:
-            response = requests.put(url, auth=HTTPDigestAuth(self.username, self.password),
-                                    headers={"Content-Type": "application/json"},
-                                    data=json.dumps(payload), timeout=self.timeout)
+        shapes = LP_RECORD_SHAPES[LP_RECORD_SHAPES.index(self.record_shape):]
+        last_error, last_status = None, None
+        for shape in shapes:
+            payload = {"LicensePlateInfoList":
+                       [self._lp_record_info(e, shape) for e in plate_entries]}
+            try:
+                response = requests.put(url, auth=HTTPDigestAuth(self.username, self.password),
+                                        headers={"Content-Type": "application/json"},
+                                        data=json.dumps(payload), timeout=self.timeout)
+            except Exception as e:
+                _logger.error("Hikvision LP-audit record upsert: Request error: %s",
+                              e, exc_info=True)
+                return {"status": "failed", "error": str(e)}
             if self._lp_audit_json_ok(response):
-                _logger.debug("Hikvision LP-audit record upsert OK: %s",
-                              [e.get("plateNum") for e in plate_entries])
-                return {"status": "success", "response": response.text}
-            error_detail = self._extract_error(response.text)
-            _logger.error("Hikvision LP-audit record upsert FAILED (HTTP %s). Error: %s",
-                          response.status_code, error_detail)
-            return {"status": "failed", "error": error_detail}
-        except Exception as e:
-            _logger.error("Hikvision LP-audit record upsert: Request error: %s", e, exc_info=True)
-            return {"status": "failed", "error": str(e)}
+                if shape != shapes[0]:
+                    _logger.warning(
+                        "Hikvision LP-audit: the camera refused the '%s' record "
+                        "shape and accepted '%s' - remembering it so later "
+                        "records go straight through. Last refusal: %s",
+                        shapes[0], shape, last_error)
+                _logger.debug("Hikvision LP-audit record upsert OK (%s): %s",
+                              shape, [e.get("plateNum") for e in plate_entries])
+                return {"status": "success", "response": response.text,
+                        "shape_used": shape}
+            last_error = self._extract_error(response.text)
+            last_status = response.status_code
+        _logger.error("Hikvision LP-audit record upsert FAILED (HTTP %s) in every "
+                      "record shape. Error: %s", last_status, last_error)
+        return {"status": "failed", "error": last_error}
 
     def _vcl_add(self, plate_entries):
         url = f"http://{self.ip_address}:{self.port}/ISAPI/ITC/Entrance/VCL"

@@ -186,6 +186,19 @@ class CctvCameraCommand(models.Model):
                         result = {"status": "success", "response": "Command executed."}
                 rec.response_data = str(result)
                 rec.state = "done" if result.get("status") == "success" else "error"
+                shape = result.get("shape_used") if isinstance(result, dict) else None
+                if shape and shape != rec.camera_id.lp_record_shape:
+                    # The ladder discovered what this firmware accepts; keep it
+                    # on the camera so the rest of the plates go straight
+                    # through instead of re-earning the same refusals.
+                    rec.camera_id.lp_record_shape = shape
+                    rec.camera_id.message_post(body=_(
+                        "The camera refused part of the plate record and the "
+                        "record was sent again without it. From now on plates "
+                        "go to this camera as: %(shape)s. Entry and exit "
+                        "decisions are unaffected.",
+                        shape=dict(rec.camera_id._fields['lp_record_shape']
+                                   .get_description(rec.env)['selection'])[shape]))
             except Exception as e:
                 rec.response_data = str(e)
                 rec.state = "error"

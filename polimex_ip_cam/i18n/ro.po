@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 08:03+0000\n"
-"PO-Revision-Date: 2026-08-16 11:06\n"
+"POT-Creation-Date: 2026-08-16 11:44+0000\n"
+"PO-Revision-Date: 2026-08-16 14:45\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: ro\n"
@@ -3322,6 +3322,11 @@ msgid "Font awesome icon e.g. fa-tasks"
 msgstr "Pictogramă Font Awesome, de ex. fa-tasks"
 
 #. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__lp_record_shape__full
+msgid "Full record"
+msgstr "Înregistrare completă"
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__gb
 msgid "GB"
 msgstr "GB"
@@ -3755,6 +3760,11 @@ msgid ""
 msgstr ""
 "Număr în timp real al plăcuțelor clasificate ca Listă albă (acces automat). "
 "Utilizat de butonul inteligent din formular."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera__lp_record_shape
+msgid "Lp Record Shape"
+msgstr "Formă înregistrare Lp"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__met
@@ -4720,6 +4730,18 @@ msgstr ""
 "funcționează."
 
 #. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera_command.py:0
+msgid ""
+"The camera refused part of the plate record and the record was sent again "
+"without it. From now on plates go to this camera as: %(shape)s. Entry and "
+"exit decisions are unaffected."
+msgstr ""
+"Camera a refuzat o parte din înregistrarea plăcuței, iar înregistrarea a "
+"fost retrimisă fără aceasta. De acum, plăcuțele vor ajunge la această cameră"
+" astfel: %(shape)s. Deciziile de intrare și ieșire nu sunt afectate."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_diagnostic__camera_id
 msgid "The camera this self-test was run against."
 msgstr "Camera pentru care a fost rulată această auto-testare."
@@ -4996,6 +5018,23 @@ msgid "Website communication history"
 msgstr "Istoric comunicare website"
 
 #. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__lp_record_shape
+msgid ""
+"What a plate record sent to this camera may contain. Filled in "
+"automatically: when the camera refuses a detail (some firmware versions do),"
+" the record is retried without it and the accepted form is remembered here, "
+"so every later plate goes straight through. Entry and exit decisions are "
+"unaffected - they are taken by the lists in this system, not by these "
+"details."
+msgstr ""
+"Ce poate conține o înregistrare de plăcuță trimisă către această cameră. Se "
+"completează automat: când camera refuză un detaliu (unele versiuni de "
+"firmware fac acest lucru), înregistrarea este retrimisă fără acesta, iar "
+"forma acceptată este memorată aici, astfel încât fiecare plăcuță ulterioară "
+"trece direct. Deciziile de intrare și ieșire nu sunt afectate - acestea sunt"
+" luate de listele din acest sistem, nu de aceste detalii."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__last_seen
 msgid "When the camera last answered a connection check successfully."
 msgstr ""
@@ -5041,6 +5080,16 @@ msgstr ""
 "Plăcuțele din lista albă primesc acces automat la detectare. Adăugați un "
 "rând selectând un card al cărui număr corespunde plăcuței pe care camera ar "
 "trebui să o accepte."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__lp_record_shape__no_card
+msgid "Without the linked card number"
+msgstr "Fără numărul de card asociat"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__lp_record_shape__no_times
+msgid "Without validity times"
+msgstr "Fără intervale de valabilitate"
 
 #. module: polimex_ip_cam
 #. odoo-python

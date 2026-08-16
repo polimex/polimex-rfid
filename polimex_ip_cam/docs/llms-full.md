@@ -401,6 +401,20 @@ camera verbatim. The barrier is deliberately never exercised. The report is
 shown in a dialog and posted to the camera's chatter. Fields: `camera_id`
 (M2O `cctv.camera`), `report` (Text).
 
+#### Plate-record write ladder (self-healing)
+
+`HikvisionCamera._lp_audit_add` normalises validity times at the wire
+boundary (`_lp_time`: UTC / 'Z'-suffixed values are converted to the
+camera's own zone and sent without a suffix - the live-validated format)
+and, when the firmware refuses a record as `badParameters`, retries it down
+the `LP_RECORD_SHAPES` ladder: `full` -> `no_card` (linked card number
+blanked) -> `no_times` (permanent window). The accepted shape is returned
+as `shape_used`; the command executor persists it to
+`cctv.camera.lp_record_shape` and posts one chatter note, so every later
+record starts at the shape this camera speaks. The degradation is safe by
+construction: entry/exit decisions are taken by the Odoo lists on each
+event, not by the camera-side record details.
+
 ### `cctv.camera.command` <a id='model-cctv-camera-command'></a>
 Python class `CctvCameraCommand` in `models/cctv_camera_command.py:12`.  Model.  Inherits: `mail.thread`, `mail.activity.mixin`.  Description: *Camera Command for Execution*.  Default order: `create_date desc`.
 
