@@ -277,7 +277,13 @@ action = {'type': 'ir.actions.client', 'tag': 'reload'}
                         <main>
                             <div class="d-flex justify-content-between align-items-start">
                                 <field class="fw-bolder fs-5" name="name"/>
-                                <field name="connection_status" widget="badge"/>
+                                <!-- Coloured like the form header: at a glance
+                                     green means working, red means look at it -
+                                     four identical grey pills said nothing. -->
+                                <field name="connection_status" widget="badge"
+                                       decoration-success="connection_status == 'connected'"
+                                       decoration-warning="connection_status in ('protocol_error', 'failed', 'unknown')"
+                                       decoration-danger="connection_status in ('unreachable', 'auth_failed', 'error')"/>
                             </div>
                             <div class="text-muted small">
                                 <field name="ip_address"/> - <field name="model"/>
