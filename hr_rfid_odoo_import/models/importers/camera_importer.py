@@ -55,6 +55,7 @@ class CameraImporter(PhaseImporter):
         self._import_cameras()
         self._import_camera_readers()
         self._import_camera_doors()
+        self._link_camera_readers()
         self._import_plate_links()
         self._say_what_is_left_to_do()
         return self.results
@@ -282,6 +283,55 @@ class CameraImporter(PhaseImporter):
         ))
 
     # ── Plate lists ───────────────────────────────────────────
+
+    def _link_camera_readers(self):
+        """The camera's own reader list - the field the event handler reads.
+
+        ``cctv.camera.reader_ids`` is a SEPARATE many2many, not the mirror of
+        ``hr.rfid.reader.camera_id``: the camera module fills it only in its
+        own setup flow, which a transferred camera never went through. The
+        readers arrived correctly linked by camera_id, the list stayed empty,
+        and every live recognition was dropped with "has no readers
+        configured" - measured at a live site, real cars unrecorded while
+        their readers sat right there.
+
+        Two faithful sources, merged add-only: the source camera's own list
+        (identity by id) and the readers whose camera_id points here (the
+        chain the module itself wires). Add-only also means a RE-RUN HEALS an
+        installation transferred before this step existed.
+        """
+        start = time.time()
+        model = 'cctv.camera'
+        source_lists = {}
+        if 'reader_ids' in self.b._get_source_fields(model):
+            for rec in self.b._read_all(model, self.b._company_domain(),
+                                        ['reader_ids']):
+                source_lists[rec['id']] = rec.get('reader_ids') or []
+
+        Reader = self.env['hr.rfid.reader'].sudo().with_context(active_test=False)
+        checked = healed = complete = 0
+        for source_id, target_id in (self.b.id_map.get(model) or {}).items():
+            camera = self.env[model].sudo().browse(target_id).exists()
+            if not camera:
+                continue
+            checked += 1
+            # _map_m2m returns the ORM command form [(6, 0, [ids])]; here the
+            # bare ids are merged with the wired-by-camera_id ones instead.
+            (_op, _zero, mapped_ids), = self.b._map_m2m(
+                'hr.rfid.reader', source_lists.get(source_id, []))
+            wanted = set(mapped_ids)
+            wanted |= set(Reader.search([('camera_id', '=', camera.id)]).ids)
+            missing = wanted - set(camera.reader_ids.ids)
+            if missing:
+                camera.write({'reader_ids': [(4, rid) for rid in sorted(missing)]})
+                healed += 1
+            else:
+                complete += 1
+
+        self.results.append(self.b._make_result(
+            '%s (reader links)' % model, checked, healed, complete,
+            duration=time.time() - start,
+        ))
 
     def _import_plate_links(self):
         """Which plate sits in which bucket on which camera."""

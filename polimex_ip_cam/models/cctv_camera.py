@@ -942,7 +942,7 @@ class CctvCamera(models.Model):
                 # type. They are auto-created with the camera, but a manager can
                 # detach/delete one — guard the index access so a live event on
                 # the public webhook can't IndexError into a 500.
-                if not self.reader_ids:
+                if not self._ensure_reader_links():
                     _logger.warning(
                         "Camera %s has no readers configured; cannot record the "
                         "ANPR event for plate %s.", self.name, plate_number)
@@ -1036,6 +1036,36 @@ class CctvCamera(models.Model):
             else:
                 _logger.warning("Unknown event type: %s for camera %s", event_type, self.name)
         return True
+
+    def _ensure_reader_links(self):
+        """The reader list the event handler depends on, self-repaired.
+
+        ``reader_ids`` is a separate many2many that only the module's own
+        setup flow fills; a camera that arrived through a data transfer has
+        its readers correctly wired by ``camera_id`` while this list is
+        empty - and every live recognition was dropped for it. Real cars at
+        a live site went unrecorded for hours over a link the module itself
+        wires. Repair it from the camera's own wiring instead of losing the
+        event; a camera with genuinely no readers still returns empty.
+        """
+        self.ensure_one()
+        if self.reader_ids:
+            return self.reader_ids
+        # In before Out - the handler picks [0] for entry and [1] for exit.
+        wired = self.env['hr.rfid.reader'].sudo().with_context(
+            active_test=False).search(
+            [('camera_id', '=', self.id)], order='number, id')
+        if wired:
+            # sudo: the ANPR webhook is unauthenticated; the write is scoped
+            # to linking this camera's own readers - the exact link setup
+            # would have created.
+            self.sudo().write(
+                {'reader_ids': [Command.link(r.id) for r in wired]})
+            _logger.info(
+                "Camera %s: reader list was empty while %s reader(s) are "
+                "wired to it - linked them so events are recorded.",
+                self.name, len(wired))
+        return self.reader_ids
 
     def add_plate_to_cam(self, plate_number, list_type):
         """

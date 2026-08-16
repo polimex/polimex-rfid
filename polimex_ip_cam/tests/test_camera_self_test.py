@@ -174,3 +174,45 @@ class TestCameraSelfTest(TransactionCase):
         report, _mocks = self._run()
         self.assertIn('DIFFERENT device', report,
                       'чуждото устройство на адреса не е обявено като проблем')
+
+
+@tagged('post_install', '-at_install', 'polimex_ip_cam', 'ipcam_self_test')
+class TestReaderListSelfRepair(TransactionCase):
+    """Камера с вързани четци, но празен списък, не губи събития.
+
+    Живият случай (2026-08-16): пренесените камери имаха четците си по
+    camera_id, списъкът reader_ids стоеше празен и всяко разпознаване се
+    изхвърляше с "has no readers configured" - реални коли, незаписани."""
+
+    def test_wired_readers_are_relinked_instead_of_dropping_the_event(self):
+        camera = self.env['cctv.camera'].create({
+            'name': 'ВХОД ХАН БОГРОВ', 'ip_address': '10.0.0.8',
+            'username': 'admin', 'password': 'x', 'brand': 'hikvision',
+            'tz': 'Europe/Sofia',
+        })
+        wired = self.env['hr.rfid.reader'].search(
+            [('camera_id', '=', camera.id)], order='number, id')
+        self.assertTrue(wired, 'камерата не е авто-провизирала четците си')
+        camera.reader_ids = [(5, 0, 0)]
+        self.assertFalse(camera.reader_ids)
+
+        linked = camera._ensure_reader_links()
+
+        self.assertEqual(linked, wired,
+                         'вързаните четци не бяха възстановени - събитието '
+                         'щеше да се изгуби')
+        self.assertEqual(linked[0].number, 1,
+                         'редът е In преди Out - обработката взима [0] за вход')
+
+    def test_a_camera_with_truly_no_readers_still_reports_empty(self):
+        camera = self.env['cctv.camera'].create({
+            'name': 'Гола камера', 'ip_address': '10.0.0.18',
+            'username': 'admin', 'password': 'x', 'brand': 'hikvision',
+            'tz': 'Europe/Sofia',
+        })
+        # Мениджър е разкачил и изтрил авто-провизираните четци.
+        self.env['hr.rfid.reader'].search(
+            [('camera_id', '=', camera.id)]).unlink()
+        camera.reader_ids = [(5, 0, 0)]
+        self.assertFalse(camera._ensure_reader_links(),
+                         'камера без никакви четци не бива да измисля връзки')

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-15 16:17+0000\n"
-"PO-Revision-Date: 2026-08-15 19:17\n"
+"POT-Creation-Date: 2026-08-16 12:02+0000\n"
+"PO-Revision-Date: 2026-08-16 15:03\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: el\n"
@@ -58,8 +58,8 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/camera_importer.py:0
 msgid ""
-"%(count)s door(s) arrived without the kind of card they accept, because that "
-"kind is not here. Set it on each door before the barrier is used again."
+"%(count)s door(s) arrived without the kind of card they accept, because that"
+" kind is not here. Set it on each door before the barrier is used again."
 msgstr ""
 "%(count)s θύρες έφτασαν χωρίς τον τύπο κάρτας που δέχονται, καθώς αυτός ο "
 "τύπος δεν υπάρχει εδώ. Ορίστε τον σε κάθε θύρα πριν χρησιμοποιηθεί ξανά η "
@@ -85,8 +85,8 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid ""
-"%(count)s record(s) clash with ones already here - decide about each of them "
-"in the list below before starting."
+"%(count)s record(s) clash with ones already here - decide about each of them"
+" in the list below before starting."
 msgstr ""
 "%(count)s εγγραφή(ές) συγκρούονται με ήδη υπάρχουσες - αποφασίστε για κάθε "
 "μία από αυτές στη λίστα παρακάτω πριν ξεκινήσετε."
@@ -123,8 +123,8 @@ msgstr "%(kind)s: δεν ήταν δυνατή η καταμέτρηση"
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/event_importer.py:0
 msgid ""
-"%(missing)s recognised plate event(s) are waiting for the camera capability. "
-"Add it here, then run the transfer again."
+"%(missing)s recognised plate event(s) are waiting for the camera capability."
+" Add it here, then run the transfer again."
 msgstr ""
 "%(missing)s αναγνωρισμένο(α) συμβάν(τα) πινακίδας αναμένουν τη δυνατότητα "
 "κάμερας. Προσθέστε την εδώ και εκτελέστε ξανά τη μεταφορά."
@@ -139,8 +139,8 @@ msgstr "%(missing)s συμβάντα αναγνωρισμένης πινακίδ
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/event_importer.py:0
 msgid ""
-"%(missing)s recognised plate event(s) stayed behind because events were left "
-"out of this transfer. Run it again with events switched on to bring them."
+"%(missing)s recognised plate event(s) stayed behind because events were left"
+" out of this transfer. Run it again with events switched on to bring them."
 msgstr ""
 "%(missing)s συμβάν/-τα αναγνωρισμένης πινακίδας παρέμειναν πίσω, επειδή τα "
 "συμβάντα εξαιρέθηκαν από αυτή τη μεταφορά. Εκτελέστε την ξανά με "
@@ -171,11 +171,17 @@ msgid "%d conflicts need resolution before import can proceed."
 msgstr "%d συγκρούσεις πρέπει να επιλυθούν πριν συνεχιστεί η εισαγωγή."
 
 #. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "+%(count)s more"
+msgstr "+%(count)s ακόμη"
+
+#. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid ""
-"<i class=\"fa fa-exclamation-triangle\"/> Module <strong>hr_attendance_late</"
-"strong> is installed on source but NOT on target. Install it to import "
-"attendance extra data."
+"<i class=\"fa fa-exclamation-triangle\"/> Module "
+"<strong>hr_attendance_late</strong> is installed on source but NOT on "
+"target. Install it to import attendance extra data."
 msgstr ""
 "<i class=\"fa fa-exclamation-triangle\"/> Το άρθρωμα "
 "<strong>hr_attendance_late</strong> είναι εγκατεστημένο στην πηγή αλλά ΟΧΙ "
@@ -189,26 +195,26 @@ msgid ""
 "target. Install it to import attendance data."
 msgstr ""
 "<i class=\"fa fa-exclamation-triangle\"/> Το άρθρωμα "
-"<strong>hr_attendance_multi_rfid</strong> είναι εγκατεστημένο στην πηγή αλλά "
-"ΟΧΙ στον στόχο. Εγκαταστήστε το για δεδομένα παρουσίας."
+"<strong>hr_attendance_multi_rfid</strong> είναι εγκατεστημένο στην πηγή αλλά"
+" ΟΧΙ στον στόχο. Εγκαταστήστε το για δεδομένα παρουσίας."
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid ""
-"<i class=\"fa fa-exclamation-triangle\"/> Module <strong>hr_rfid_vending</"
-"strong> is installed on source but NOT on target. Install it to import "
-"vending data."
+"<i class=\"fa fa-exclamation-triangle\"/> Module "
+"<strong>hr_rfid_vending</strong> is installed on source but NOT on target. "
+"Install it to import vending data."
 msgstr ""
 "<i class=\"fa fa-exclamation-triangle\"/> Το άρθρωμα "
-"<strong>hr_rfid_vending</strong> είναι εγκατεστημένο στην πηγή αλλά ΟΧΙ στον "
-"στόχο. Εγκαταστήστε το για δεδομένα πώλησης."
+"<strong>hr_rfid_vending</strong> είναι εγκατεστημένο στην πηγή αλλά ΟΧΙ στον"
+" στόχο. Εγκαταστήστε το για δεδομένα πώλησης."
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid ""
-"<i class=\"fa fa-exclamation-triangle\"/> Module <strong>rfid_service_base</"
-"strong> is installed on source but NOT on target. Install it to import "
-"service data."
+"<i class=\"fa fa-exclamation-triangle\"/> Module "
+"<strong>rfid_service_base</strong> is installed on source but NOT on target."
+" Install it to import service data."
 msgstr ""
 "<i class=\"fa fa-exclamation-triangle\"/> Το άρθρωμα "
 "<strong>rfid_service_base</strong> είναι εγκατεστημένο στην πηγή αλλά ΟΧΙ "
@@ -218,13 +224,11 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid ""
 "<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
-"                                Records that are already here are "
-"recognised\n"
+"                                Records that are already here are recognised\n"
 "                                and will not be duplicated."
 msgstr ""
 "<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
-"                                Οι εγγραφές που υπάρχουν ήδη εδώ "
-"αναγνωρίζονται\n"
+"                                Οι εγγραφές που υπάρχουν ήδη εδώ αναγνωρίζονται\n"
 "                                και δεν θα δημιουργηθούν εκ νέου."
 
 #. module: hr_rfid_odoo_import
@@ -274,10 +278,8 @@ msgstr "<strong>Χρήσιμο να γνωρίζετε</strong>"
 #: model_terms:ir.actions.act_window,help:hr_rfid_odoo_import.hr_rfid_odoo_import_run_action
 msgid ""
 "A transfer copies access control data from another Odoo system\n"
-"                    into this one - the equipment, the people, the cards and "
-"the\n"
-"                    history. Start one from Import from Odoo; it will appear "
-"here\n"
+"                    into this one - the equipment, the people, the cards and the\n"
+"                    history. Start one from Import from Odoo; it will appear here\n"
 "                    and keep going in the background."
 msgstr ""
 "Μια μεταφορά αντιγράφει δεδομένα ελέγχου πρόσβασης από άλλο σύστημα Odoo σε "
@@ -358,6 +360,12 @@ msgid "Cameras - still to be done"
 msgstr "Κάμερες - εκκρεμούν"
 
 #. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "Cameras that would drop their events"
+msgstr "Κάμερες που θα απορρίψουν τα συμβάντα τους"
+
+#. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "Cancel"
 msgstr "Ακύρωση"
@@ -385,13 +393,32 @@ msgid ""
 "Cannot start import: there are %d blocking issues to resolve. Check the "
 "warnings above."
 msgstr ""
-"Η εισαγωγή δεν μπορεί να ξεκινήσει: %d ζητήματα. Ελέγξτε τις προειδοποιήσεις."
+"Η εισαγωγή δεν μπορεί να ξεκινήσει: %d ζητήματα. Ελέγξτε τις "
+"προειδοποιήσεις."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "Cards"
 msgstr "Κάρτες"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "Cards held by a person of another company"
+msgstr "Κάρτες που κατέχονται από άτομο άλλης εταιρείας"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "Cards that belong to nobody"
+msgstr "Κάρτες που δεν ανήκουν σε κανέναν"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "Chains that cross companies"
+msgstr "Αλυσίδες που διασχίζουν εταιρείες"
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
@@ -450,8 +477,7 @@ msgstr "Βρέθηκαν συγκρούσεις"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid ""
 "Connect to the source Odoo instance to import RFID access control data.\n"
-"                                The source server must be running and "
-"accessible."
+"                                The source server must be running and accessible."
 msgstr ""
 "Συνδεθείτε στην πηγή Odoo για εισαγωγή δεδομένων RFID.\n"
 "                                Ο διακομιστής πρέπει να είναι προσβάσιμος."
@@ -484,6 +510,12 @@ msgstr "Πίνακες Εισόδων/Εξόδων Ελεγκτή"
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "Controllers"
 msgstr "Ελεγκτές"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "Controllers hidden behind an archived module"
+msgstr "Ελεγκτές κρυμμένοι πίσω από αρχειοθετημένη ενότητα"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_user_groups
@@ -626,9 +658,27 @@ msgstr "Json Ολοκληρωμένων Φάσεων"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "Door permissions across companies"
+msgstr "Δικαιώματα θυρών μεταξύ εταιρειών"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "Doors"
 msgstr "Θύρες"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "Doors attached to no equipment"
+msgstr "Θύρες μη συνδεδεμένες σε εξοπλισμό"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "Doors that no reader serves"
+msgstr "Θύρες που δεν εξυπηρετούνται από κανέναν αναγνώστη"
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_run_form
@@ -718,8 +768,8 @@ msgstr ""
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__conflict_field
 msgid ""
-"Field on which the two records collide (typically the unique constraint that "
-"fired)."
+"Field on which the two records collide (typically the unique constraint that"
+" fired)."
 msgstr ""
 "Πεδίο στο οποίο συγκρούονται οι δύο εγγραφές (συνήθως ο περιορισμός "
 "μοναδικότητας που ενεργοποιήθηκε)."
@@ -769,19 +819,14 @@ msgstr "Έχει Μήνυμα"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid ""
 "Here is what the other system holds for the\n"
-"                                companies you picked. Nothing has been "
-"touched\n"
-"                                yet - the transfer starts only when you "
-"press\n"
+"                                companies you picked. Nothing has been touched\n"
+"                                yet - the transfer starts only when you press\n"
 "                                the button below, and then runs on its own."
 msgstr ""
 "Εδώ φαίνονται τα δεδομένα που διατηρεί το άλλο σύστημα για τις\n"
-"                                εταιρείες που επιλέξατε. Δεν έχει γίνει "
-"καμία αλλαγή\n"
-"                                ακόμη - η μεταφορά ξεκινά μόνο όταν "
-"πατήσετε\n"
-"                                το κουμπί παρακάτω, και στη συνέχεια "
-"εκτελείται αυτόματα."
+"                                εταιρείες που επιλέξατε. Δεν έχει γίνει καμία αλλαγή\n"
+"                                ακόμη - η μεταφορά ξεκινά μόνο όταν πατήσετε\n"
+"                                το κουμπί παρακάτω, και στη συνέχεια εκτελείται αυτόματα."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__progress
@@ -892,7 +937,8 @@ msgstr "Εισαγωγή όλων των συνεργατών"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_all_partners
-msgid "Import all partners from selected companies, not just RFID-linked ones."
+msgid ""
+"Import all partners from selected companies, not just RFID-linked ones."
 msgstr "Εισαγωγή όλων, όχι μόνο συνδεδεμένων με RFID."
 
 #. module: hr_rfid_odoo_import
@@ -1052,8 +1098,8 @@ msgstr ""
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_attendance_extra
 msgid ""
-"Include the daily roll-ups produced by hr_attendance_late (late/overtime/"
-"extra time)."
+"Include the daily roll-ups produced by hr_attendance_late "
+"(late/overtime/extra time)."
 msgstr ""
 "Συμπεριλάβετε τις ημερήσιες συγκεντρωτικές αναφορές που παράγονται από το "
 "hr_attendance_late (καθυστέρηση/υπερωρία/επιπλέον χρόνος)."
@@ -1092,15 +1138,16 @@ msgid ""
 "Include vending balances, history and events. Only visible if both source "
 "and target have hr_rfid_vending installed."
 msgstr ""
-"Συμπεριλάβετε υπόλοιπα, ιστορικό και συμβάντα πωλητών αυτόματων μηχανημάτων. "
-"Ορατό μόνο εάν τόσο η πηγή όσο και ο στόχος έχουν εγκατεστημένο το "
+"Συμπεριλάβετε υπόλοιπα, ιστορικό και συμβάντα πωλητών αυτόματων μηχανημάτων."
+" Ορατό μόνο εάν τόσο η πηγή όσο και ο στόχος έχουν εγκατεστημένο το "
 "hr_rfid_vending."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_hardware
 msgid "Include webstacks, controllers, doors, readers and time schedules."
 msgstr ""
-"Συμπεριλάβετε webstacks, ελεγκτές, θύρες, αναγνώστες και προγράμματα ωραρίου."
+"Συμπεριλάβετε webstacks, ελεγκτές, θύρες, αναγνώστες και προγράμματα "
+"ωραρίου."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__installed_modules_json
@@ -1152,8 +1199,8 @@ msgid ""
 "detected. If the source has multiple databases, enter the exact database "
 "name here."
 msgstr ""
-"Αφήστε κενό εάν ο διακομιστής προέλευσης φιλοξενεί μία μόνο βάση δεδομένων - "
-"θα εντοπιστεί αυτόματα. Εάν η πηγή έχει πολλαπλές βάσεις δεδομένων, "
+"Αφήστε κενό εάν ο διακομιστής προέλευσης φιλοξενεί μία μόνο βάση δεδομένων -"
+" θα εντοπιστεί αυτόματα. Εάν η πηγή έχει πολλαπλές βάσεις δεδομένων, "
 "εισαγάγετε εδώ το ακριβές όνομα της βάσης δεδομένων."
 
 #. module: hr_rfid_odoo_import
@@ -1189,8 +1236,8 @@ msgid ""
 "have read access to every model the import will fetch."
 msgstr ""
 "Στοιχεία σύνδεσης χρήστη με δικαιώματα διαχειριστή στην εγκατάσταση Odoo "
-"προέλευσης - ο χρήστης πρέπει να έχει δικαίωμα ανάγνωσης σε κάθε μοντέλο που "
-"θα ανακτήσει η εισαγωγή."
+"προέλευσης - ο χρήστης πρέπει να έχει δικαίωμα ανάγνωσης σε κάθε μοντέλο που"
+" θα ανακτήσει η εισαγωγή."
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_run_form
@@ -1303,8 +1350,8 @@ msgstr ""
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__rejected_count
 msgid ""
 "Number of records the database refused because another record already holds "
-"the same unique value. Unlike Skipped, these were meant to come across - any "
-"figure above zero means data did not arrive and the run needs a look. A "
+"the same unique value. Unlike Skipped, these were meant to come across - any"
+" figure above zero means data did not arrive and the run needs a look. A "
 "missing required value is a different case: it fails the whole step, which "
 "shows up as Error."
 msgstr ""
@@ -1312,8 +1359,8 @@ msgstr ""
 "εγγραφή κατείχε ήδη την ίδια μοναδική τιμή. Σε αντίθεση με τις "
 "Παραλειφθείσες, αυτές προορίζονταν να μεταφερθούν - οποιαδήποτε τιμή πάνω "
 "από το μηδέν σημαίνει ότι δεδομένα δεν έφτασαν και η εκτέλεση χρειάζεται "
-"έλεγχο. Μια απούσα υποχρεωτική τιμή είναι διαφορετική περίπτωση: αποτυγχάνει "
-"ολόκληρο το βήμα, το οποίο εμφανίζεται ως Σφάλμα."
+"έλεγχο. Μια απούσα υποχρεωτική τιμή είναι διαφορετική περίπτωση: αποτυγχάνει"
+" ολόκληρο το βήμα, το οποίο εμφανίζεται ως Σφάλμα."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__source_count
@@ -1328,16 +1375,16 @@ msgid ""
 "Number of source records mapped to an existing target record instead of "
 "being created anew."
 msgstr ""
-"Αριθμός εγγραφών προέλευσης που αντιστοιχίστηκαν σε υπάρχουσα εγγραφή στόχου "
-"αντί να δημιουργηθούν εκ νέου."
+"Αριθμός εγγραφών προέλευσης που αντιστοιχίστηκαν σε υπάρχουσα εγγραφή στόχου"
+" αντί να δημιουργηθούν εκ νέου."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__source_model
 msgid ""
 "Odoo model name of the conflicting record (e.g. hr.rfid.card, res.partner)."
 msgstr ""
-"Όνομα μοντέλου Odoo της εγγραφής σε σύγκρουση (π.χ. hr.rfid.card, res."
-"partner)."
+"Όνομα μοντέλου Odoo της εγγραφής σε σύγκρουση (π.χ. hr.rfid.card, "
+"res.partner)."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__model
@@ -1355,14 +1402,14 @@ msgid ""
 "One line per step. \"Skipped\" lines say why that\n"
 "                                    kind of data was left behind."
 msgstr ""
-"Μία γραμμή ανά βήμα. Οι γραμμές «Παραλείφθηκε» αναφέρουν γιατί αυτός ο τύπος "
-"δεδομένων παραλείφθηκε."
+"Μία γραμμή ανά βήμα. Οι γραμμές «Παραλείφθηκε» αναφέρουν γιατί αυτός ο τύπος"
+" δεδομένων παραλείφθηκε."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__company_line_ids
 msgid ""
-"One row per company discovered on the source. Operator picks which to import "
-"and which existing target company to merge into."
+"One row per company discovered on the source. Operator picks which to import"
+" and which existing target company to merge into."
 msgstr ""
 "Μία γραμμή ανά εταιρεία που εντοπίστηκε στην πηγή. Ο χειριστής επιλέγει "
 "ποιες θα εισαχθούν και σε ποια υπάρχουσα εταιρεία στόχο θα συγχωνευτούν."
@@ -1414,8 +1461,8 @@ msgstr "Κωδικός"
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__source_password
 msgid ""
-"Password for that account. Kept only while the transfer runs and cleared the "
-"moment it ends."
+"Password for that account. Kept only while the transfer runs and cleared the"
+" moment it ends."
 msgstr ""
 "Κωδικός πρόσβασης για αυτόν τον λογαριασμό. Διατηρείται μόνο κατά την "
 "εκτέλεση της μεταφοράς και διαγράφεται μόλις αυτή ολοκληρωθεί."
@@ -1532,10 +1579,22 @@ msgstr "Json Δεικτών Ανάγνωσης"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "Readers wired to nothing"
+msgstr "Αναγνώστες μη συνδεδεμένοι πουθενά"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "Readers without a door"
+msgstr "Αναγνώστες χωρίς θύρα"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid ""
-"Records from %(existing)s are already here, and this transfer is filed under "
-"\"%(current)s\". You have named the system yourself, so the two are kept "
+"Records from %(existing)s are already here, and this transfer is filed under"
+" \"%(current)s\". You have named the system yourself, so the two are kept "
 "apart: anything they both hold will end up here twice."
 msgstr ""
 "Εγγραφές από %(existing)s υπάρχουν ήδη εδώ, και αυτή η μεταφορά έχει "
@@ -1547,11 +1606,11 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid ""
-"Records from %(existing)s are already here. This transfer would file its own "
-"under \"%(current)s\", so the two would be treated as separate systems and "
-"everything they both hold would come across a second time - the same people, "
-"the same doors, the same events. If this is the system you transferred from "
-"before, put its name in the Source identity box on the first page. If it "
+"Records from %(existing)s are already here. This transfer would file its own"
+" under \"%(current)s\", so the two would be treated as separate systems and "
+"everything they both hold would come across a second time - the same people,"
+" the same doors, the same events. If this is the system you transferred from"
+" before, put its name in the Source identity box on the first page. If it "
 "really is a different system, put \"%(current)s\" in that same box to say "
 "so, and start again."
 msgstr ""
@@ -1589,19 +1648,20 @@ msgstr "Εκτέλεση"
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid ""
 "Running this transfer again later puts the equipment and the cards back to "
-"what the other system holds - a card switched off here comes back on, a door "
-"renamed here gets its old name back. People, contacts, departments and "
-"access groups keep the details corrected here. A list the other system keeps "
-"is rebuilt from it, so a department added here to an access group is taken "
+"what the other system holds - a card switched off here comes back on, a door"
+" renamed here gets its old name back. People, contacts, departments and "
+"access groups keep the details corrected here. A list the other system keeps"
+" is rebuilt from it, so a department added here to an access group is taken "
 "out of it again. No record is deleted."
 msgstr ""
-"Η επανεκτέλεση αυτής της μεταφοράς αργότερα επαναφέρει τον εξοπλισμό και τις "
-"κάρτες στην κατάσταση που κατέχει το άλλο σύστημα - μια κάρτα που "
+"Η επανεκτέλεση αυτής της μεταφοράς αργότερα επαναφέρει τον εξοπλισμό και τις"
+" κάρτες στην κατάσταση που κατέχει το άλλο σύστημα - μια κάρτα που "
 "απενεργοποιήθηκε εδώ επανενεργοποιείται, μια θύρα που μετονομάστηκε εδώ "
 "επανακτά το παλιό της όνομα. Άτομα, επαφές, τμήματα και ομάδες πρόσβασης "
 "διατηρούν τις λεπτομέρειες που διορθώθηκαν εδώ. Μια λίστα που τηρεί το άλλο "
 "σύστημα ανακατασκευάζεται από αυτό, οπότε ένα τμήμα που προστέθηκε εδώ σε "
-"μια ομάδα πρόσβασης αφαιρείται ξανά από αυτήν. Καμία εγγραφή δεν διαγράφεται."
+"μια ομάδα πρόσβασης αφαιρείται ξανά από αυτήν. Καμία εγγραφή δεν "
+"διαγράφεται."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__step_totals_json
@@ -1639,8 +1699,8 @@ msgstr "Παραλείφθηκαν"
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__orphan_event_cutoff
 msgid ""
-"Some system events are recorded against the communication module alone, with "
-"no controller attached (power-on, module connected). They are usually the "
+"Some system events are recorded against the communication module alone, with"
+" no controller attached (power-on, module connected). They are usually the "
 "bulk of the log. Set a date to bring across only the recent ones and leave "
 "the older noise behind; leave empty to bring all of them. Events that do "
 "name a controller are always imported in full."
@@ -1776,8 +1836,8 @@ msgstr "Η εγκατάσταση προέλευσης έχει εγκατεστ
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_has_vending
 msgid ""
-"Source instance has the hr_rfid_vending module installed (detected from Test "
-"Connection)."
+"Source instance has the hr_rfid_vending module installed (detected from Test"
+" Connection)."
 msgstr ""
 "Η εγκατάσταση προέλευσης έχει εγκατεστημένη την ενότητα hr_rfid_vending "
 "(εντοπίστηκε από τη Δοκιμή Σύνδεσης)."
@@ -1916,8 +1976,8 @@ msgstr "Δοκιμή σύνδεσης"
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_run.py:0
 msgid ""
-"The account used to read the other system is not allowed to see: %(fields)s. "
-"Everything else about these records came across. If those details matter, "
+"The account used to read the other system is not allowed to see: %(fields)s."
+" Everything else about these records came across. If those details matter, "
 "widen that account's access rights over there and run the transfer again."
 msgstr ""
 "Ο λογαριασμός που χρησιμοποιείται για την ανάγνωση του άλλου συστήματος δεν "
@@ -1935,8 +1995,8 @@ msgid ""
 msgstr ""
 "Οι κάμερες δεν μπορούν να μεταφερθούν με τα στοιχεία πρόσβασής τους: ο "
 "λογαριασμός που χρησιμοποιείται για την ανάγνωση του άλλου συστήματος δεν "
-"επιτρέπεται να τις δει. Δώστε σε αυτόν τον λογαριασμό δικαιώματα διαχειριστή "
-"καμερών εκεί και ξεκινήστε ξανά τη μεταφορά."
+"επιτρέπεται να τις δει. Δώστε σε αυτόν τον λογαριασμό δικαιώματα διαχειριστή"
+" καμερών εκεί και ξεκινήστε ξανά τη μεταφορά."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__source_ref
@@ -1984,9 +2044,9 @@ msgid ""
 "or simply continue if there is nothing worth bringing."
 msgstr ""
 "Το άλλο σύστημα διατηρεί %(feature)s, αλλά αυτό το σύστημα δεν μπορεί ακόμη "
-"να αναλάβει αυτά τα δεδομένα. Προσθέστε τη δυνατότητα εδώ και εκτελέστε ξανά "
-"τη μεταφορά για να τα μεταφέρετε - ή απλώς συνεχίστε εάν δεν υπάρχει τίποτα "
-"άξιο μεταφοράς."
+"να αναλάβει αυτά τα δεδομένα. Προσθέστε τη δυνατότητα εδώ και εκτελέστε ξανά"
+" τη μεταφορά για να τα μεταφέρετε - ή απλώς συνεχίστε εάν δεν υπάρχει τίποτα"
+" άξιο μεταφοράς."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2023,8 +2083,8 @@ msgstr "Το βήμα που εκτελείται αυτή τη στιγμή."
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid ""
-"The transfer cannot start: the scheduled task that does the work is switched "
-"off. Please ask your system administrator to switch it back on."
+"The transfer cannot start: the scheduled task that does the work is switched"
+" off. Please ask your system administrator to switch it back on."
 msgstr ""
 "Η μεταφορά δεν μπορεί να ξεκινήσει: η προγραμματισμένη εργασία που εκτελεί "
 "τη διαδικασία είναι απενεργοποιημένη. Παρακαλούμε ζητήστε από τον "
@@ -2034,8 +2094,8 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid ""
-"The transfer cannot start: the scheduled task that does the work is switched "
-"off. Switch it back on and try again."
+"The transfer cannot start: the scheduled task that does the work is switched"
+" off. Switch it back on and try again."
 msgstr ""
 "Η μεταφορά δεν μπορεί να ξεκινήσει: η προγραμματισμένη εργασία που εκτελεί "
 "τη διαδικασία είναι απενεργοποιημένη. Ενεργοποιήστε την ξανά και δοκιμάστε "
@@ -2071,21 +2131,15 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_run_form
 msgid ""
 "The transfer runs on its own, a piece at a time, and\n"
-"                            carries on if the server restarts. You can close "
-"this\n"
-"                            page and come back to it. The figures here are "
-"from the\n"
-"                            moment the page was opened - press Look again to "
-"see\n"
+"                            carries on if the server restarts. You can close this\n"
+"                            page and come back to it. The figures here are from the\n"
+"                            moment the page was opened - press Look again to see\n"
 "                            how far it has got."
 msgstr ""
 "Η μεταφορά εκτελείται αυτόνομα, τμηματικά, και\n"
-"                            συνεχίζει ακόμη και αν επανεκκινηθεί ο "
-"διακομιστής. Μπορείτε να κλείσετε αυτή τη\n"
-"                            σελίδα και να επιστρέψετε αργότερα. Τα στοιχεία "
-"εδώ αντιστοιχούν στη\n"
-"                            στιγμή που ανοίχτηκε η σελίδα - πατήστε Νέος "
-"έλεγχος για να δείτε\n"
+"                            συνεχίζει ακόμη και αν επανεκκινηθεί ο διακομιστής. Μπορείτε να κλείσετε αυτή τη\n"
+"                            σελίδα και να επιστρέψετε αργότερα. Τα στοιχεία εδώ αντιστοιχούν στη\n"
+"                            στιγμή που ανοίχτηκε η σελίδα - πατήστε Νέος έλεγχος για να δείτε\n"
 "                            πόσο έχει προχωρήσει."
 
 #. module: hr_rfid_odoo_import
@@ -2130,7 +2184,8 @@ msgstr ""
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__target_has_vending
 msgid ""
 "This (target) instance has hr_rfid_vending installed - the related "
-"import_vending toggle is only meaningful when both source and target have it."
+"import_vending toggle is only meaningful when both source and target have "
+"it."
 msgstr ""
 "Αυτή η (στόχος) εγκατάσταση έχει εγκατεστημένο το hr_rfid_vending - ο "
 "σχετικός διακόπτης import_vending έχει νόημα μόνο όταν το διαθέτουν και οι "
@@ -2145,30 +2200,17 @@ msgstr "Αυτή η (στόχος) εγκατάσταση έχει εγκατε�
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/hr_employee.py:0
 msgid ""
-"This attendance was brought over from another system and cannot be "
-"recalculated here.\n"
+"This attendance was brought over from another system and cannot be recalculated here.\n"
 "\n"
-"%(records)s attendance records of %(who)s are a copy of what the old system "
-"recorded. They cannot be worked out again from the door events, and "
-"recalculating them would break the link with the old system: the next "
-"transfer would no longer recognise them and would bring them over a second "
-"time.\n"
+"%(records)s attendance records of %(who)s are a copy of what the old system recorded. They cannot be worked out again from the door events, and recalculating them would break the link with the old system: the next transfer would no longer recognise them and would bring them over a second time.\n"
 "\n"
-"To refresh this data, run the transfer again. To recalculate the rest, "
-"choose a period without these records, or leave these people out."
+"To refresh this data, run the transfer again. To recalculate the rest, choose a period without these records, or leave these people out."
 msgstr ""
-"Αυτή η παρουσία μεταφέρθηκε από άλλο σύστημα και δεν μπορεί να "
-"επαναϋπολογιστεί εδώ.\n"
+"Αυτή η παρουσία μεταφέρθηκε από άλλο σύστημα και δεν μπορεί να επαναϋπολογιστεί εδώ.\n"
 "\n"
-"%(records)s εγγραφές παρουσίας του/της %(who)s είναι αντίγραφο όσων "
-"κατέγραψε το παλιό σύστημα. Δεν μπορούν να υπολογιστούν ξανά από τα συμβάντα "
-"θυρών, και ο επαναϋπολογισμός τους θα διέκοπτε τη σύνδεση με το παλιό "
-"σύστημα: η επόμενη μεταφορά δεν θα τις αναγνώριζε πλέον και θα τις μετέφερε "
-"ξανά.\n"
+"%(records)s εγγραφές παρουσίας του/της %(who)s είναι αντίγραφο όσων κατέγραψε το παλιό σύστημα. Δεν μπορούν να υπολογιστούν ξανά από τα συμβάντα θυρών, και ο επαναϋπολογισμός τους θα διέκοπτε τη σύνδεση με το παλιό σύστημα: η επόμενη μεταφορά δεν θα τις αναγνώριζε πλέον και θα τις μετέφερε ξανά.\n"
 "\n"
-"Για να ανανεώσετε αυτά τα δεδομένα, εκτελέστε ξανά τη μεταφορά. Για να "
-"επαναϋπολογίσετε τα υπόλοιπα, επιλέξτε μια περίοδο χωρίς αυτές τις εγγραφές, "
-"ή εξαιρέστε αυτά τα άτομα."
+"Για να ανανεώσετε αυτά τα δεδομένα, εκτελέστε ξανά τη μεταφορά. Για να επαναϋπολογίσετε τα υπόλοιπα, επιλέξτε μια περίοδο χωρίς αυτές τις εγγραφές, ή εξαιρέστε αυτά τα άτομα."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2204,12 +2246,12 @@ msgstr ""
 #: code:addons/hr_rfid_odoo_import/models/import_run.py:0
 msgid ""
 "This transfer stopped without finishing and has been closed. The access "
-"details it held have been cleared. Start a new one when you are ready - what "
-"already came across will not be brought over twice."
+"details it held have been cleared. Start a new one when you are ready - what"
+" already came across will not be brought over twice."
 msgstr ""
-"Αυτή η μεταφορά διακόπηκε χωρίς να ολοκληρωθεί και έχει κλείσει. Τα στοιχεία "
-"πρόσβασης που κατείχε έχουν διαγραφεί. Ξεκινήστε μια νέα όταν είστε έτοιμοι "
-"- όσα έχουν ήδη μεταφερθεί δεν θα μεταφερθούν ξανά."
+"Αυτή η μεταφορά διακόπηκε χωρίς να ολοκληρωθεί και έχει κλείσει. Τα στοιχεία"
+" πρόσβασης που κατείχε έχουν διαγραφεί. Ξεκινήστε μια νέα όταν είστε έτοιμοι"
+" - όσα έχουν ήδη μεταφερθεί δεν θα μεταφερθούν ξανά."
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
@@ -2219,8 +2261,8 @@ msgstr "Θα εισαχθούν δεδομένα από την πηγή Odoo. Σ
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__error_message
 msgid ""
-"Top-level error captured if the run aborted mid-way. Individual phase errors "
-"are also stored on their log rows."
+"Top-level error captured if the run aborted mid-way. Individual phase errors"
+" are also stored on their log rows."
 msgstr ""
 "Σφάλμα ανώτατου επιπέδου που καταγράφηκε εάν η εκτέλεση διακόπηκε στη μέση. "
 "Μεμονωμένα σφάλματα φάσεων αποθηκεύονται επίσης στις δικές τους γραμμές "
@@ -2266,8 +2308,8 @@ msgid ""
 "Untick to skip this source company entirely. Useful when you only want to "
 "migrate one tenant out of a multi-company source."
 msgstr ""
-"Αποεπιλέξτε για να παραλείψετε εντελώς αυτή την εταιρεία προέλευσης. Χρήσιμο "
-"όταν θέλετε να μεταφέρετε μόνο έναν πελάτη (tenant) από μια πηγή πολλαπλών "
+"Αποεπιλέξτε για να παραλείψετε εντελώς αυτή την εταιρεία προέλευσης. Χρήσιμο"
+" όταν θέλετε να μεταφέρετε μόνο έναν πελάτη (tenant) από μια πηγή πολλαπλών "
 "εταιρειών."
 
 #. module: hr_rfid_odoo_import
@@ -2344,8 +2386,8 @@ msgid ""
 msgstr ""
 "Τι να γίνει με αυτή τη σύγκρουση κατά την εισαγωγή - Σύνδεση: αντιμετωπίστε "
 "την υπάρχουσα εγγραφή εδώ ως το ίδιο πράγμα και επαναχρησιμοποιήστε την. "
-"Δημιουργία: μεταφέρετε την εγγραφή ως ξεχωριστή. Παράλειψη: αφήστε την εκτός "
-"εισαγωγής. Αν παραμείνει κενό, η εισαγωγή δεν θα ξεκινήσει, ώστε τίποτα να "
+"Δημιουργία: μεταφέρετε την εγγραφή ως ξεχωριστή. Παράλειψη: αφήστε την εκτός"
+" εισαγωγής. Αν παραμείνει κενό, η εισαγωγή δεν θα ξεκινήσει, ώστε τίποτα να "
 "μη συγχωνευτεί εν αγνοία σας."
 
 #. module: hr_rfid_odoo_import
@@ -2379,8 +2421,8 @@ msgid ""
 "follows the database name of the system being read."
 msgstr ""
 "Ποιο σύστημα προέλευσης καταγράφεται για αυτές τις εγγραφές. Αν παραμείνει "
-"κενό, ακολουθεί το όνομα βάσης δεδομένων του συστήματος από το οποίο γίνεται "
-"ανάγνωση."
+"κενό, ακολουθεί το όνομα βάσης δεδομένων του συστήματος από το οποίο γίνεται"
+" ανάγνωση."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__done_phases_json
@@ -2394,25 +2436,13 @@ msgstr ""
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_slug
 msgid ""
-"Which system the records come from. Leave it empty and it follows the name "
-"of the database being read, which is right for a one-off transfer.\n"
+"Which system the records come from. Leave it empty and it follows the name of the database being read, which is right for a one-off transfer.\n"
 "\n"
-"Fill it in when the same system is read from more than one place - a "
-"restored backup for the bulk of it, then the live server for what changed "
-"since. Both transfers must carry the SAME identity here, or the second one "
-"treats the live server as a different system and brings everything across a "
-"second time."
+"Fill it in when the same system is read from more than one place - a restored backup for the bulk of it, then the live server for what changed since. Both transfers must carry the SAME identity here, or the second one treats the live server as a different system and brings everything across a second time."
 msgstr ""
-"Από ποιο σύστημα προέρχονται οι εγγραφές. Αφήστε το κενό και θα ακολουθήσει "
-"το όνομα της βάσης δεδομένων από την οποία γίνεται ανάγνωση, κάτι σωστό για "
-"μια εφάπαξ μεταφορά.\n"
+"Από ποιο σύστημα προέρχονται οι εγγραφές. Αφήστε το κενό και θα ακολουθήσει το όνομα της βάσης δεδομένων από την οποία γίνεται ανάγνωση, κάτι σωστό για μια εφάπαξ μεταφορά.\n"
 "\n"
-"Συμπληρώστε το όταν το ίδιο σύστημα διαβάζεται από περισσότερα από ένα "
-"σημεία - ένα αποκατεστημένο αντίγραφο ασφαλείας για το μεγαλύτερο μέρος, και "
-"στη συνέχεια ο ζωντανός διακομιστής για ό,τι άλλαξε έκτοτε. Και οι δύο "
-"μεταφορές πρέπει να φέρουν εδώ την ΙΔΙΑ ταυτότητα, διαφορετικά η δεύτερη θα "
-"αντιμετωπίσει τον ζωντανό διακομιστή ως διαφορετικό σύστημα και θα μεταφέρει "
-"τα πάντα ξανά."
+"Συμπληρώστε το όταν το ίδιο σύστημα διαβάζεται από περισσότερα από ένα σημεία - ένα αποκατεστημένο αντίγραφο ασφαλείας για το μεγαλύτερο μέρος, και στη συνέχεια ο ζωντανός διακομιστής για ό,τι άλλαξε έκτοτε. Και οι δύο μεταφορές πρέπει να φέρουν εδώ την ΙΔΙΑ ταυτότητα, διαφορετικά η δεύτερη θα αντιμετωπίσει τον ζωντανό διακομιστή ως διαφορετικό σύστημα και θα μεταφέρει τα πάντα ξανά."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__user_id
@@ -2420,8 +2450,8 @@ msgid ""
 "Who started the transfer. The work runs in the background, so this is who "
 "gets told when it finishes."
 msgstr ""
-"Ποιος ξεκίνησε τη μεταφορά. Η εργασία εκτελείται στο παρασκήνιο, οπότε αυτός "
-"είναι ο παραλήπτης της ειδοποίησης όταν ολοκληρωθεί."
+"Ποιος ξεκίνησε τη μεταφορά. Η εργασία εκτελείται στο παρασκήνιο, οπότε αυτός"
+" είναι ο παραλήπτης της ειδοποίησης όταν ολοκληρωθεί."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__wizard_id
@@ -2443,8 +2473,8 @@ msgid ""
 "attached to them cannot be brought across. Ask an administrator for the "
 "rights to manage sites, then run the transfer again."
 msgstr ""
-"Δεν έχετε δικαίωμα δημιουργίας εγκαταστάσεων εδώ, οπότε οι εγκαταστάσεις και "
-"ό,τι είναι συνδεδεμένο με αυτές δεν μπορούν να μεταφερθούν. Ζητήστε από "
+"Δεν έχετε δικαίωμα δημιουργίας εγκαταστάσεων εδώ, οπότε οι εγκαταστάσεις και"
+" ό,τι είναι συνδεδεμένο με αυτές δεν μπορούν να μεταφερθούν. Ζητήστε από "
 "κάποιον διαχειριστή δικαιώματα διαχείρισης εγκαταστάσεων, στη συνέχεια "
 "εκτελέστε ξανά τη μεταφορά."
 
@@ -2485,6 +2515,59 @@ msgstr "παρουσία"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid ""
+"camera %(name)s has an empty reader list - its recognitions are being "
+"dropped"
+msgstr ""
+"η κάμερα %(name)s έχει κενή λίστα αναγνωστών - οι αναγνωρίσεις της "
+"απορρίπτονται"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "card %(number)s belongs to nobody"
+msgstr "η κάρτα %(number)s δεν ανήκει σε κανέναν"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid ""
+"card %(number)s of %(company)s is held by %(owner)s of %(owner_company)s"
+msgstr ""
+"η κάρτα %(number)s της %(company)s κατέχεται από τον/την %(owner)s της "
+"%(owner_company)s"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "controller %(name)s hangs off archived module %(module)s"
+msgstr "ο ελεγκτής %(name)s εξαρτάται από αρχειοθετημένη ενότητα %(module)s"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid ""
+"door %(door)s is of %(door_company)s while its module belongs to "
+"%(module_company)s"
+msgstr ""
+"η θύρα %(door)s ανήκει στην %(door_company)s ενώ η ενότητά της ανήκει στην "
+"%(module_company)s"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "door %(name)s has no readers"
+msgstr "η θύρα %(name)s δεν έχει αναγνώστες"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "door %(name)s is attached to no equipment"
+msgstr "η θύρα %(name)s δεν είναι συνδεδεμένη σε εξοπλισμό"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
 msgid ""
 "door №%(num)s \"%(name)s\" belongs to camera \"%(cam)s\" - it is attached "
@@ -2509,11 +2592,11 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
 msgid ""
-"door №%(num)s \"%(name)s\" is part of this transfer and still did not arrive "
-"- look at the hardware step above"
+"door №%(num)s \"%(name)s\" is part of this transfer and still did not arrive"
+" - look at the hardware step above"
 msgstr ""
-"η θύρα №%(num)s \"%(name)s\" αποτελεί μέρος αυτής της μεταφοράς και δεν έχει "
-"φτάσει ακόμα - ελέγξτε το βήμα εξοπλισμού παραπάνω"
+"η θύρα №%(num)s \"%(name)s\" αποτελεί μέρος αυτής της μεταφοράς και δεν έχει"
+" φτάσει ακόμα - ελέγξτε το βήμα εξοπλισμού παραπάνω"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2524,8 +2607,8 @@ msgid ""
 "they are not recognised as one - send this protocol to support"
 msgstr ""
 "θύρα №%(num)s \"%(name)s\" αποτελεί μέρος αυτής της μεταφοράς· υπάρχει εδώ "
-"θύρα με το ίδιο όνομα (№%(target)s) αλλά με διαφορετική ταυτότητα μεταφοράς, "
-"οπότε δεν αναγνωρίζονται ως η ίδια - αποστείλατε αυτό το πρωτόκολλο στην "
+"θύρα με το ίδιο όνομα (№%(target)s) αλλά με διαφορετική ταυτότητα μεταφοράς,"
+" οπότε δεν αναγνωρίζονται ως η ίδια - αποστείλατε αυτό το πρωτόκολλο στην "
 "υποστήριξη"
 
 #. module: hr_rfid_odoo_import
@@ -2533,6 +2616,13 @@ msgstr ""
 #: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
 msgid "door №%(num)s from the other system has no match here"
 msgstr "η θύρα №%(num)s από το άλλο σύστημα δεν έχει αντιστοιχία εδώ"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "group %(group)s grants door %(door)s of another company"
+msgstr ""
+"η ομάδα %(group)s παραχωρεί πρόσβαση στη θύρα %(door)s άλλης εταιρείας"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2599,6 +2689,18 @@ msgstr "δικαίωμα πρόσβασης %(rel)s: %(what)s"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "reader %(name)s has no door"
+msgstr "ο αναγνώστης %(name)s δεν έχει θύρα"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "reader %(name)s is attached to no equipment"
+msgstr "ο αναγνώστης %(name)s δεν είναι συνδεδεμένος σε εξοπλισμό"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
 msgid "record(s) %(which)s were refused by the database: %(cause)s"
 msgstr "η εγγραφή/ές %(which)s απορρίφθηκαν από τη βάση δεδομένων: %(cause)s"
@@ -2606,11 +2708,11 @@ msgstr "η εγγραφή/ές %(which)s απορρίφθηκαν από τη β
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__source_id
 msgid ""
-"res.company ID on the source instance - the natural key used to match across "
-"instances."
+"res.company ID on the source instance - the natural key used to match across"
+" instances."
 msgstr ""
-"Αναγνωριστικό res.company στην εγκατάσταση προέλευσης - το φυσικό κλειδί που "
-"χρησιμοποιείται για την αντιστοίχιση μεταξύ εγκαταστάσεων."
+"Αναγνωριστικό res.company στην εγκατάσταση προέλευσης - το φυσικό κλειδί που"
+" χρησιμοποιείται για την αντιστοίχιση μεταξύ εγκαταστάσεων."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2625,6 +2727,12 @@ msgid ""
 msgstr ""
 "Αναγνωριστικό res.users του συνδεδεμένου χρήστη προέλευσης. Αποθηκεύεται "
 "προσωρινά μετά τη Δοκιμή Σύνδεσης."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "the check itself could not run: %(error)s"
+msgstr "ο ίδιος ο έλεγχος δεν μπόρεσε να εκτελεστεί: %(error)s"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2647,9 +2755,9 @@ msgid ""
 "send this protocol to support."
 msgstr ""
 "Το άλλο σύστημα διαθέτει %(total)s συμβάν(τα) στην επιλεγμένη περίοδο, αλλά "
-"το φίλτρο της μεταφοράς δεν αντιστοίχισε κανένα από αυτά: %(module)s φτάνουν "
-"σε αυτό μέσω ενότητας επικοινωνίας και %(camera)s μέσω κάμερας. Αριθμοί που "
-"δεν συμφωνούν σημαίνουν ότι τα συμβάντα ανήκουν σε εξοπλισμό εκτός των "
+"το φίλτρο της μεταφοράς δεν αντιστοίχισε κανένα από αυτά: %(module)s φτάνουν"
+" σε αυτό μέσω ενότητας επικοινωνίας και %(camera)s μέσω κάμερας. Αριθμοί που"
+" δεν συμφωνούν σημαίνουν ότι τα συμβάντα ανήκουν σε εξοπλισμό εκτός των "
 "επιλεγμένων εταιρειών - αποστείλατε αυτό το πρωτόκολλο στην υποστήριξη."
 
 #. module: hr_rfid_odoo_import
@@ -2669,9 +2777,9 @@ msgid ""
 "the other system refused the part of the filter that goes through %(field)s "
 "- records reachable only that way were not read this time"
 msgstr ""
-"το άλλο σύστημα απέρριψε το τμήμα του φίλτρου που διέρχεται από το %(field)s "
-"- οι εγγραφές που είναι προσβάσιμες μόνο με αυτόν τον τρόπο δεν αναγνώστηκαν "
-"αυτή τη φορά"
+"το άλλο σύστημα απέρριψε το τμήμα του φίλτρου που διέρχεται από το %(field)s"
+" - οι εγγραφές που είναι προσβάσιμες μόνο με αυτόν τον τρόπο δεν "
+"αναγνώστηκαν αυτή τη φορά"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python

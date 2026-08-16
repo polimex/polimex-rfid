@@ -180,6 +180,7 @@ def build_registry():
     from .vending_importer import VendingImporter
     from .attendance_importer import AttendanceImporter
     from .service_importer import ServiceImporter
+    from .consistency_importer import ConsistencyImporter
     return [
         CoreImporter,
         PeopleImporter,
@@ -195,6 +196,7 @@ def build_registry():
         AttendanceImporter,
         ServiceImporter,
         IoTableImporter,
+        ConsistencyImporter,
     ]
 
 
