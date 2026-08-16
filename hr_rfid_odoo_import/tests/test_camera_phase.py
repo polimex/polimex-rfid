@@ -93,3 +93,58 @@ class TestCameraPhase(TransactionCase):
         self.assertIn(
             ('hr.rfid.reader', 'camera_id'), CameraImporter.REQUIRES_TARGET,
         )
+
+
+@tagged('post_install', '-at_install', 'rfid_odoo_import', 'rfid_import_cameras')
+class TestNotificationAddressFollowsTheServer(TransactionCase):
+    """Известяването сочи сървъра, който РАБОТИ, не онзи, който беше.
+
+    server_setup пътува дословно и редът ipAddress= назовава СТАРИЯ сървър -
+    целият мигриран парк уведомяваше машина, която вече не отговаря, и
+    единственият видим знак беше тихо остаряващ heartbeat (собственикът:
+    "камерата не е настроена към ИП от което я диагностицираме")."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.company = cls.env['res.company'].create({'name': 'Retarget Tenant'})
+        cls.company_map = {101: cls.company.id}
+
+    def _import(self, server_setup):
+        from unittest.mock import patch
+        from .test_company_scope import _FakeSource
+        from ..models.importers.camera_importer import CameraImporter
+        if 'cctv.camera' not in self.env:
+            self.skipTest('камерите не са част от тази инсталация')
+        base = _FakeSource(self.env, dict(self.company_map), {}, {
+            'cctv.camera': [{
+                'id': 301, 'name': 'Пренасочена', 'company_id': [101, 'X'],
+                'ip_address': '10.7.7.7', 'username': 'admin',
+                'password': 'x', 'brand': 'hikvision', 'tz': 'Europe/Sofia',
+                'server_setup': server_setup,
+            }],
+        })
+        with patch('odoo.addons.hr_rfid_odoo_import.models.importers.'
+                   'camera_importer.get_local_ip',
+                   return_value='192.168.0.99'):
+            importer = CameraImporter(base)
+            importer._import_cameras()
+        camera = self.env['cctv.camera'].browse(
+            base._map_m2o('cctv.camera', 301))
+        return camera, importer.results[-1]
+
+    def test_the_old_servers_address_is_replaced_and_said(self):
+        camera, row = self._import('ipAddress=192.168.0.190\nportNo=8069')
+        self.assertIn('ipAddress=192.168.0.99', camera.server_setup,
+                      'известяването остана насочено към стария сървър')
+        self.assertIn('portNo=8069', camera.server_setup,
+                      'портът е операторски избор - не се пипа')
+        self.assertNotIn('192.168.0.190', camera.server_setup)
+        self.assertIn('192.168.0.99', row['error'],
+                      'протоколът не казва, че адресът е пренасочен')
+
+    def test_an_address_already_here_travels_untouched_and_unmentioned(self):
+        camera, row = self._import('ipAddress=192.168.0.99\nportNo=80')
+        self.assertIn('ipAddress=192.168.0.99', camera.server_setup)
+        self.assertFalse(row['error'],
+                         'протоколът обявява пренасочване, каквото няма')

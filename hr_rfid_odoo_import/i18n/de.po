@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 12:02+0000\n"
-"PO-Revision-Date: 2026-08-16 15:02\n"
+"POT-Creation-Date: 2026-08-16 17:28+0000\n"
+"PO-Revision-Date: 2026-08-16 20:29\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -2739,6 +2739,18 @@ msgid ""
 msgstr ""
 "das Ereignis benennt weder ein Kommunikationsmodul noch eine Kamera, daher "
 "gibt es hier nichts, woran es angehängt werden könnte"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/camera_importer.py:0
+msgid ""
+"the notification address of %(count)s camera(s) was re-aimed from the old "
+"server to this one (%(local)s) - press Set HTTP Host on each camera to apply"
+" it"
+msgstr ""
+"die Benachrichtigungsadresse von %(count)s Kamera(s) wurde vom alten Server "
+"auf diesen (%(local)s) umgestellt - klicken Sie bei jeder Kamera auf HTTP-"
+"Host festlegen, um dies zu übernehmen"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python

@@ -12,6 +12,8 @@ import time
 
 from odoo.exceptions import UserError
 
+from odoo.addons.hr_rfid.models.hr_rfid_webstack import get_local_ip
+
 from .base_importer import BaseImporter
 from .phase import PhaseImporter
 
@@ -86,6 +88,31 @@ class CameraImporter(PhaseImporter):
 
     # ── Cameras ───────────────────────────────────────────────
 
+    @staticmethod
+    def _retarget_server_setup(setup_text, local_ip):
+        """The notification address, re-aimed at the server that now runs.
+
+        ``server_setup`` travels verbatim, and its ``ipAddress=`` line
+        faithfully names the OLD server - so every migrated camera park was
+        configured to notify a machine that no longer answers, and the only
+        visible sign was a quietly ageing heartbeat. Rewritten ONLY here, at
+        creation from a foreign source, where the value is guaranteed to be
+        the other machine's; an existing record's address may be a deliberate
+        proxy and is never touched (the self-test flags those instead).
+        Returns (new_text, changed).
+        """
+        lines, changed = [], False
+        for line in (setup_text or '').splitlines():
+            key = line.split('=', 1)[0].strip() if '=' in line else ''
+            if key == 'ipAddress':
+                old = line.split('=', 1)[1].strip()
+                if old and old != local_ip:
+                    lines.append('ipAddress=%s' % local_ip)
+                    changed = True
+                    continue
+            lines.append(line)
+        return '\n'.join(lines), changed
+
     def _import_cameras(self):
         start = time.time()
         model = 'cctv.camera'
@@ -98,7 +125,8 @@ class CameraImporter(PhaseImporter):
         source_records = self.b._read_all(
             model, self.b._company_domain(), fields_to_read)
 
-        imported = linked = skipped = 0
+        imported = linked = skipped = retargeted = 0
+        local_ip = get_local_ip()
         prefix = model.replace('.', '_')
         for rec in source_records:
             target_company_id = self.b._map_company(rec.get('company_id'))
@@ -112,6 +140,10 @@ class CameraImporter(PhaseImporter):
                 continue
             vals = {f: rec.get(f) for f in wanted if rec.get(f) not in (None, False)}
             vals['company_id'] = target_company_id
+            if vals.get('server_setup'):
+                vals['server_setup'], changed = self._retarget_server_setup(
+                    vals['server_setup'], local_ip)
+                retargeted += 1 if changed else 0
             # 'active' is meaningful even when False - an archived camera must
             # stay archived, and the loop above drops falsy values.
             if 'active' in wanted:
@@ -130,6 +162,11 @@ class CameraImporter(PhaseImporter):
         self.results.append(self.b._make_result(
             model, len(source_records), imported, linked, skipped,
             duration=time.time() - start,
+            error='' if not retargeted else self.env._(
+                "the notification address of %(count)s camera(s) was re-aimed "
+                "from the old server to this one (%(local)s) - press Set HTTP "
+                "Host on each camera to apply it",
+                count=retargeted, local=local_ip),
         ))
 
     # ── Readers and doors that hang off a camera ──────────────

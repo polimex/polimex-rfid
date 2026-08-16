@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 12:02+0000\n"
-"PO-Revision-Date: 2026-08-16 15:03\n"
+"POT-Creation-Date: 2026-08-16 17:28+0000\n"
+"PO-Revision-Date: 2026-08-16 20:29\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ro\n"
@@ -2714,6 +2714,18 @@ msgid ""
 msgstr ""
 "evenimentul nu numește nici un modul de comunicație, nici o cameră, deci nu "
 "există nimic aici de care să fie atașat"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/camera_importer.py:0
+msgid ""
+"the notification address of %(count)s camera(s) was re-aimed from the old "
+"server to this one (%(local)s) - press Set HTTP Host on each camera to apply"
+" it"
+msgstr ""
+"adresa de notificare a %(count)s cameră(e) a fost redirecționată de la "
+"vechiul server către acesta (%(local)s) - apăsați Setare Host HTTP pe "
+"fiecare cameră pentru a aplica modificarea"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
