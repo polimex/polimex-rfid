@@ -339,3 +339,80 @@ class TestUnreachableCameraIsOneProblemNotSixHundred(TransactionCase):
         self.assertEqual(len(calls), 1,
                          'недостъпната камера е обстрелвана повече от веднъж')
         self.assertTrue(all(c.state == 'error' for c in commands))
+
+
+@tagged('post_install', '-at_install', 'polimex_ip_cam', 'ipcam_self_test')
+class TestTheListHereLeads(TransactionCase):
+    """Политиката на собственика, дословно: "камерите когато са под наше
+    управление поддържат само нашите списъци. не ни интересува какво има
+    записано там. водещ е списъка при нас." """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.camera = cls.env['cctv.camera'].create({
+            'name': 'ВХОД', 'ip_address': '10.0.0.51', 'username': 'admin',
+            'password': 'x', 'brand': 'hikvision', 'tz': 'Europe/Sofia',
+        })
+        contact = cls.env['res.partner'].create({'name': 'Наш шофьор'})
+        plate = cls.env['hr.rfid.card'].with_context(
+            no_hardware_commands=True).create({
+                'number': 'CB7153HX', 'contact_id': contact.id,
+                'card_type': cls.env.ref('hr_rfid.hr_rfid_card_type_8').id,
+                'company_id': cls.env.company.id,
+            })
+        cls.camera.with_context(no_hardware_commands=True).rfid_rel_ids = [
+            (0, 0, {'card_id': plate.id, 'list_category': 'whitelist'})]
+
+    def test_sync_removes_what_is_not_ours_and_sends_what_is(self):
+        """Заварен чужд номер на камерата се маха; нашият се изпраща."""
+        Command = self.env['cctv.camera.command']
+        before = Command.search([])
+        patches = [
+            patch.object(HikvisionCamera, 'check_connection',
+                         return_value=dict(CONNECTED)),
+            patch.object(HikvisionCamera, 'search_lp_audit',
+                         return_value={'status': 'success', 'total': 2,
+                                       'plates': ['PB4181KC', 'CB7153HX'],
+                                       'records': [{'plate': 'PB4181KC'},
+                                                   {'plate': 'CB7153HX'}]}),
+            patch.object(HikvisionCamera, 'add_plate_to_list',
+                         return_value=dict(OK_WRITE)),
+            patch.object(HikvisionCamera, 'delete_plate_from_list',
+                         return_value=dict(OK_WRITE)),
+        ]
+        for p in patches:
+            p.start()
+            self.addCleanup(p.stop)
+        self.camera.action_reload_whitelist()
+        created = self.env['cctv.camera.command'].search([]) - before
+        removals = created.filtered(lambda c: c.command_type == 'remove_plate')
+        adds = created.filtered(lambda c: c.command_type == 'add_plate')
+        self.assertEqual(removals.mapped('request_data'), ['plateNum=PB4181KC'],
+                         'чуждият заварен номер не е предвиден за махане')
+        self.assertEqual(len(adds), 1, 'нашият номер не е изпратен')
+        self.assertIn('CB7153HX', adds.request_data)
+
+    def test_an_unreadable_camera_list_never_guesses_removals(self):
+        """Не можем ли да прочетем какво има на камерата - не махаме нищо."""
+        Command = self.env['cctv.camera.command']
+        before = Command.search([])
+        patches = [
+            patch.object(HikvisionCamera, 'check_connection',
+                         return_value=dict(CONNECTED)),
+            patch.object(HikvisionCamera, 'search_lp_audit',
+                         return_value={'status': 'failed', 'error': 'boom'}),
+            patch.object(HikvisionCamera, 'add_plate_to_list',
+                         return_value=dict(OK_WRITE)),
+        ]
+        for p in patches:
+            p.start()
+            self.addCleanup(p.stop)
+        self.camera.action_reload_whitelist()
+        created = self.env['cctv.camera.command'].search([]) - before
+        self.assertFalse(
+            created.filtered(lambda c: c.command_type == 'remove_plate'),
+            'махане на сляпо - без да знаем какво има на камерата')
+        self.assertTrue(
+            created.filtered(lambda c: c.command_type == 'add_plate'),
+            'нашите номера трябва да заминат въпреки нечетимия списък')

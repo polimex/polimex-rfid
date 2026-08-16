@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 13:47+0000\n"
-"PO-Revision-Date: 2026-08-16 16:47\n"
+"POT-Creation-Date: 2026-08-16 13:59+0000\n"
+"PO-Revision-Date: 2026-08-16 16:59\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: ro\n"
@@ -43,8 +43,13 @@ msgstr "%(label)s (câmpuri: %(shape)s): acceptat"
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
-msgid "%(queued)s plate(s) queued for sending."
-msgstr "%(queued)s plăcuță/plăcuțe puse în așteptare pentru trimitere."
+msgid ""
+"%(queued)s plate(s) queued for sending; %(removed)s foreign plate(s) queued "
+"for removal - the camera will hold exactly the list kept here."
+msgstr ""
+"%(queued)s plăcuță(e) în așteptare pentru trimitere; %(removed)s plăcuță(e) "
+"străină(e) în așteptare pentru eliminare - camera va păstra exact lista "
+"menținută aici."
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -4405,8 +4410,8 @@ msgstr "Plăcuță eliminată din listă"
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
-msgid "Plate list reload"
-msgstr "Reîncărcare listă de plăcuțe"
+msgid "Plate list sync"
+msgstr "Sincronizare listă de plăcuțe"
 
 #. module: polimex_ip_cam
 #. odoo-python

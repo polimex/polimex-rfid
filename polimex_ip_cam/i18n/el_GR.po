@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 13:47+0000\n"
-"PO-Revision-Date: 2026-08-16 16:47\n"
+"POT-Creation-Date: 2026-08-16 13:59+0000\n"
+"PO-Revision-Date: 2026-08-16 16:59\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: el\n"
@@ -43,8 +43,13 @@ msgstr "%(label)s (πεδία: %(shape)s): αποδεκτό"
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
-msgid "%(queued)s plate(s) queued for sending."
-msgstr "%(queued)s πινακίδα(ες) τέθηκαν σε αναμονή για αποστολή."
+msgid ""
+"%(queued)s plate(s) queued for sending; %(removed)s foreign plate(s) queued "
+"for removal - the camera will hold exactly the list kept here."
+msgstr ""
+"%(queued)s πινακίδα(ες) σε αναμονή αποστολής· %(removed)s ξένη(ες) "
+"πινακίδα(ες) σε αναμονή αφαίρεσης - η κάμερα θα διατηρήσει ακριβώς τη λίστα "
+"που τηρείται εδώ."
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -4414,8 +4419,8 @@ msgstr "Πινακίδα αφαιρέθηκε από τη λίστα"
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
-msgid "Plate list reload"
-msgstr "Επαναφόρτωση λίστας πινακίδων"
+msgid "Plate list sync"
+msgstr "Συγχρονισμός λίστας πινακίδων"
 
 #. module: polimex_ip_cam
 #. odoo-python

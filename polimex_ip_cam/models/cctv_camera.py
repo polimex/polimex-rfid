@@ -1133,18 +1133,41 @@ class CctvCamera(models.Model):
             if card_id in cam.rfid_card_ids.ids:
                 cam.rfid_rel_ids.filtered(lambda r: r.card_id.id == card_id).unlink()
 
+    def _read_camera_plates(self, cam_api):
+        """Every plate currently stored on the camera, across all pages.
+
+        Returns a set of plate strings, or None when the camera's list
+        cannot be read - the caller must then leave removals alone rather
+        than guess.
+        """
+        plates = set()
+        position = 0
+        while True:
+            page = cam_api.search_lp_audit(max_results=100, position=position)
+            if page.get('status') != 'success':
+                return None
+            plates.update(page.get('plates') or [])
+            total = page.get('total') or 0
+            position += len(page.get('records') or [])
+            if position >= total or not page.get('records'):
+                return plates
+
     def action_reload_whitelist(self):
-        """Reload each whitelist plate as a separate add_plate command.
+        """Make the camera's list EQUAL to the list kept here.
+
+        The owner's policy, verbatim: a camera under our management holds
+        only our lists - what is already recorded on it is of no interest,
+        the list here leads. So the reload both sends every plate of this
+        system and REMOVES from the camera every plate this system does not
+        keep (leftovers of the previous installation included).
 
         The camera is ASKED first. Reloading a 600-plate list against a
         camera that was simply off queued 600 commands and produced 600
-        errors for one communication problem - the operator's demand,
-        verbatim: the process must check whether the camera answers before
-        it starts firing numbers at it.
+        errors for one communication problem.
         """
         cmd_env = self.env['cctv.camera.command'].sudo()
         unreachable = []
-        queued = 0
+        queued = removed = 0
         for cam in self:
             if cam.brand != 'hikvision':
                 continue
@@ -1152,22 +1175,37 @@ class CctvCamera(models.Model):
                 if cam_api.check_connection().get('status') != 'connected':
                     unreachable.append(cam.name)
                     continue
-            # Филтрираме само whitelist записи
-            whitelist_rels = cam.rfid_rel_ids.filtered(
-                lambda r: r.list_category == 'whitelist'
-            )
-            for rel in whitelist_rels:
+                on_camera = self._read_camera_plates(cam_api)
+            ours = {(rel.card_id.number or '').strip(): rel
+                    for rel in cam.rfid_rel_ids if rel.card_id.number}
+            for rel in ours.values():
                 request_data = rel._hv_get_request_data()
                 if request_data:
                     try:
                         cmd_env.create([{
-                            'camera_id': rel.camera_id.id,
+                            'camera_id': cam.id,
                             'command_type': 'add_plate',
                             'request_data': request_data,
                         }])
                         queued += 1
                     except Exception as e:
                         _logger.error("Error creating add_plate command for relation ID %s: %s", rel.id, e)
+            if on_camera is None:
+                _logger.warning(
+                    "Camera %s: its stored plate list could not be read - "
+                    "our plates were sent, foreign ones were left in place.",
+                    cam.name)
+                continue
+            for foreign in sorted(on_camera - set(ours)):
+                try:
+                    cmd_env.create([{
+                        'camera_id': cam.id,
+                        'command_type': 'remove_plate',
+                        'request_data': 'plateNum=%s' % foreign,
+                    }])
+                    removed += 1
+                except Exception as e:
+                    _logger.error("Error creating remove_plate command for plate %s: %s", foreign, e)
         if unreachable:
             return self.balloon_warning_sticky(
                 title=_("Camera not reachable"),
@@ -1177,8 +1215,11 @@ class CctvCamera(models.Model):
                     "plate(s) were queued to the reachable cameras.",
                     cameras=', '.join(unreachable), queued=queued))
         return self.balloon_success(
-            title=_("Plate list reload"),
-            message=_("%(queued)s plate(s) queued for sending.", queued=queued))
+            title=_("Plate list sync"),
+            message=_(
+                "%(queued)s plate(s) queued for sending; %(removed)s foreign "
+                "plate(s) queued for removal - the camera will hold exactly "
+                "the list kept here.", queued=queued, removed=removed))
 
     # ── Self-test ──────────────────────────────────────────────
     #

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 13:47+0000\n"
-"PO-Revision-Date: 2026-08-16 16:47\n"
+"POT-Creation-Date: 2026-08-16 13:59+0000\n"
+"PO-Revision-Date: 2026-08-16 16:59\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: de\n"
@@ -44,8 +44,13 @@ msgstr "%(label)s (Felder: %(shape)s): akzeptiert"
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
-msgid "%(queued)s plate(s) queued for sending."
-msgstr "%(queued)s Kennzeichen zum Senden in die Warteschlange gestellt."
+msgid ""
+"%(queued)s plate(s) queued for sending; %(removed)s foreign plate(s) queued "
+"for removal - the camera will hold exactly the list kept here."
+msgstr ""
+"%(queued)s Kennzeichen zum Senden eingereiht; %(removed)s fremde(s) "
+"Kennzeichen zum Entfernen eingereiht - die Kamera wird genau die hier "
+"gepflegte Liste vorhalten."
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -4410,8 +4415,8 @@ msgstr "Kennzeichen aus der Liste entfernt"
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
-msgid "Plate list reload"
-msgstr "Kennzeichenliste neu laden"
+msgid "Plate list sync"
+msgstr "Kennzeichenlisten-Synchronisierung"
 
 #. module: polimex_ip_cam
 #. odoo-python

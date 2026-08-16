@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 13:47+0000\n"
-"PO-Revision-Date: 2026-08-16 16:47\n"
+"POT-Creation-Date: 2026-08-16 13:59+0000\n"
+"PO-Revision-Date: 2026-08-16 16:59\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: bg\n"
@@ -43,8 +43,12 @@ msgstr "%(label)s (полета: %(shape)s): прието"
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
-msgid "%(queued)s plate(s) queued for sending."
-msgstr "%(queued)s табела(и) бяха добавени в опашката за изпращане."
+msgid ""
+"%(queued)s plate(s) queued for sending; %(removed)s foreign plate(s) queued "
+"for removal - the camera will hold exactly the list kept here."
+msgstr ""
+"%(queued)s табела(и) в опашка за изпращане; %(removed)s чужда(и) табела(и) в"
+" опашка за премахване - камерата ще пази точно списъка, поддържан тук."
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -4409,8 +4413,8 @@ msgstr "Премахнат е номера от списъка"
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
-msgid "Plate list reload"
-msgstr "Презареждане на списъка с табели"
+msgid "Plate list sync"
+msgstr "Синхронизация на списъка с табели"
 
 #. module: polimex_ip_cam
 #. odoo-python
