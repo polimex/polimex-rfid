@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 13:38+0000\n"
-"PO-Revision-Date: 2026-08-16 16:39\n"
+"POT-Creation-Date: 2026-08-16 13:47+0000\n"
+"PO-Revision-Date: 2026-08-16 16:47\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: ro\n"
@@ -15,6 +15,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"%(cameras)s did not answer, so nothing was sent there - try again when the "
+"connection is back. %(queued)s plate(s) were queued to the reachable "
+"cameras."
+msgstr ""
+"%(cameras)s nu au răspuns, așa că nu s-a trimis nimic către acestea - "
+"încercați din nou când conexiunea revine. %(queued)s plăcuță/plăcuțe au fost"
+" puse în așteptare pentru camerele accesibile."
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -27,6 +39,12 @@ msgstr "%(label)s (câmpuri: %(shape)s): REFUZAT - %(error)s"
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "%(label)s (fields: %(shape)s): accepted"
 msgstr "%(label)s (câmpuri: %(shape)s): acceptat"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "%(queued)s plate(s) queued for sending."
+msgstr "%(queued)s plăcuță/plăcuțe puse în așteptare pentru trimitere."
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -2283,6 +2301,12 @@ msgstr "Nume cameră pentru identificare ușoară"
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Camera not reachable"
+msgstr "Camera nu este accesibilă"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid ""
 "Camera not reachable. Check that it is powered on, the network cable, and "
 "that the IP address is correct."
@@ -4381,6 +4405,12 @@ msgstr "Plăcuță eliminată din listă"
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Plate list reload"
+msgstr "Reîncărcare listă de plăcuțe"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "Plate number added to list successfully."
 msgstr "Numărul de înmatriculare a fost adăugat în listă cu succes."
 
@@ -5373,6 +5403,12 @@ msgstr "înregistrare structurată ca datele dvs. reale"
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_command_search
 msgid "string"
 msgstr "șir"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera_command.py:0
+msgid "the camera is not reachable on the network"
+msgstr "camera nu este accesibilă în rețea"
 
 #. module: polimex_ip_cam
 #. odoo-python

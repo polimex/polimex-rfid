@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 13:38+0000\n"
-"PO-Revision-Date: 2026-08-16 16:39\n"
+"POT-Creation-Date: 2026-08-16 13:47+0000\n"
+"PO-Revision-Date: 2026-08-16 16:47\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: el\n"
@@ -15,6 +15,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"%(cameras)s did not answer, so nothing was sent there - try again when the "
+"connection is back. %(queued)s plate(s) were queued to the reachable "
+"cameras."
+msgstr ""
+"Οι %(cameras)s δεν απάντησαν, επομένως δεν στάλθηκε τίποτα εκεί - δοκιμάστε "
+"ξανά όταν αποκατασταθεί η σύνδεση. %(queued)s πινακίδα(ες) τέθηκαν σε "
+"αναμονή για τις προσβάσιμες κάμερες."
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -27,6 +39,12 @@ msgstr "%(label)s (πεδία: %(shape)s): ΑΠΟΡΡΙΦΘΗΚΕ - %(error)s"
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "%(label)s (fields: %(shape)s): accepted"
 msgstr "%(label)s (πεδία: %(shape)s): αποδεκτό"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "%(queued)s plate(s) queued for sending."
+msgstr "%(queued)s πινακίδα(ες) τέθηκαν σε αναμονή για αποστολή."
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -2284,6 +2302,12 @@ msgstr "Όνομα κάμερας για εύκολη αναγνώριση"
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Camera not reachable"
+msgstr "Η κάμερα δεν είναι προσβάσιμη"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid ""
 "Camera not reachable. Check that it is powered on, the network cable, and "
 "that the IP address is correct."
@@ -4390,6 +4414,12 @@ msgstr "Πινακίδα αφαιρέθηκε από τη λίστα"
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Plate list reload"
+msgstr "Επαναφόρτωση λίστας πινακίδων"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "Plate number added to list successfully."
 msgstr "Η πινακίδα κυκλοφορίας προστέθηκε στη λίστα επιτυχώς."
 
@@ -5386,6 +5416,12 @@ msgstr "εγγραφή με τη μορφή των πραγματικών σας
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_command_search
 msgid "string"
 msgstr "Συμβολοσειρά"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera_command.py:0
+msgid "the camera is not reachable on the network"
+msgstr "η κάμερα δεν είναι προσβάσιμη στο δίκτυο"
 
 #. module: polimex_ip_cam
 #. odoo-python

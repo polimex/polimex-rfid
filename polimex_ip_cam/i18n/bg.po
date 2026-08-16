@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 13:38+0000\n"
-"PO-Revision-Date: 2026-08-16 16:39\n"
+"POT-Creation-Date: 2026-08-16 13:47+0000\n"
+"PO-Revision-Date: 2026-08-16 16:47\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: bg\n"
@@ -15,6 +15,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"%(cameras)s did not answer, so nothing was sent there - try again when the "
+"connection is back. %(queued)s plate(s) were queued to the reachable "
+"cameras."
+msgstr ""
+"%(cameras)s не отговори(ха), затова нищо не беше изпратено там - опитайте "
+"отново, когато връзката се възстанови. %(queued)s табела(и) бяха добавени в "
+"опашката за достъпните камери."
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -27,6 +39,12 @@ msgstr "%(label)s (полета: %(shape)s): ОТКАЗАНО - %(error)s"
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "%(label)s (fields: %(shape)s): accepted"
 msgstr "%(label)s (полета: %(shape)s): прието"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "%(queued)s plate(s) queued for sending."
+msgstr "%(queued)s табела(и) бяха добавени в опашката за изпращане."
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -2284,6 +2302,12 @@ msgstr "Име на камерата за лесно идентифициран�
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Camera not reachable"
+msgstr "Камерата не е достъпна"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid ""
 "Camera not reachable. Check that it is powered on, the network cable, and "
 "that the IP address is correct."
@@ -4385,6 +4409,12 @@ msgstr "Премахнат е номера от списъка"
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Plate list reload"
+msgstr "Презареждане на списъка с табели"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "Plate number added to list successfully."
 msgstr "Номерът е добавен успешно в списъка."
 
@@ -5373,6 +5403,12 @@ msgstr "запис с формата на вашите реални данни"
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_command_search
 msgid "string"
 msgstr "низ"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera_command.py:0
+msgid "the camera is not reachable on the network"
+msgstr "камерата не е достъпна в мрежата"
 
 #. module: polimex_ip_cam
 #. odoo-python

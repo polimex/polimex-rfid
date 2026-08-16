@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 13:38+0000\n"
-"PO-Revision-Date: 2026-08-16 16:39\n"
+"POT-Creation-Date: 2026-08-16 13:47+0000\n"
+"PO-Revision-Date: 2026-08-16 16:47\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: it\n"
@@ -15,6 +15,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"%(cameras)s did not answer, so nothing was sent there - try again when the "
+"connection is back. %(queued)s plate(s) were queued to the reachable "
+"cameras."
+msgstr ""
+"%(cameras)s non ha risposto, quindi non è stato inviato nulla - riprova "
+"quando la connessione sarà ripristinata. %(queued)s targa/e sono state messe"
+" in coda per le telecamere raggiungibili."
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -27,6 +39,12 @@ msgstr "%(label)s (campi: %(shape)s): RIFIUTATO - %(error)s"
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "%(label)s (fields: %(shape)s): accepted"
 msgstr "%(label)s (campi: %(shape)s): accettato"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "%(queued)s plate(s) queued for sending."
+msgstr "%(queued)s targa/e in coda per l'invio."
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -2285,6 +2303,12 @@ msgstr "Nome telecamera per identificazione rapida"
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Camera not reachable"
+msgstr "Telecamera non raggiungibile"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid ""
 "Camera not reachable. Check that it is powered on, the network cable, and "
 "that the IP address is correct."
@@ -4388,6 +4412,12 @@ msgstr "Targa Rimossa dalla Lista"
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "Plate list reload"
+msgstr "Ricarica lista targhe"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "Plate number added to list successfully."
 msgstr "Numero di targa aggiunto alla lista con successo."
 
@@ -5391,6 +5421,12 @@ msgstr "record strutturato come i dati reali"
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_command_search
 msgid "string"
 msgstr "stringa"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera_command.py:0
+msgid "the camera is not reachable on the network"
+msgstr "la telecamera non è raggiungibile sulla rete"
 
 #. module: polimex_ip_cam
 #. odoo-python

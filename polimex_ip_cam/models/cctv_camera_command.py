@@ -205,7 +205,20 @@ class CctvCameraCommand(models.Model):
                 _logger.error("Error executing command %s: %s", rec.name, e)
             if rec.command_type in plate_types:
                 cam_id = rec.camera_id.id
-                if rec.state == 'error':
+                if (rec.state == 'error' and isinstance(result, dict)
+                        and result.get('unreachable')):
+                    # A camera that does not ANSWER fails every command of
+                    # the batch for the same one reason - stop at the first,
+                    # not the six-hundredth. The identical-answer streak
+                    # below never catches this case: the network error text
+                    # embeds a memory address that differs on every attempt.
+                    stopped[cam_id] = self.env._(
+                        "the camera is not reachable on the network")
+                    _logger.warning(
+                        "Camera %s is unreachable; stopping the rest of its "
+                        "plate commands in this batch after the first "
+                        "failure.", rec.camera_id.display_name)
+                elif rec.state == 'error':
                     error_text = rec.response_data or ''
                     streak = streaks.setdefault(cam_id, [None, 0])
                     streak[1] = streak[1] + 1 if streak[0] == error_text else 1

@@ -840,6 +840,26 @@ class HikvisionCamera(BaseCamera):
         }
 
     @staticmethod
+    def _request_failed(operation, exc):
+        """The failure dict for a request that never got an answer.
+
+        A network failure is one sentence, said once - reloading a 600-plate
+        list against a camera that was simply off produced 600 two-screen
+        tracebacks for one communication problem. ``unreachable`` lets the
+        command queue stop the rest of the batch at the FIRST such failure:
+        the identical-error breaker never fired on these, because the text
+        embeds a memory address that differs on every attempt.
+        """
+        if isinstance(exc, (requests.exceptions.ConnectionError,
+                            requests.exceptions.Timeout)):
+            _logger.warning("Hikvision %s: camera unreachable (%s)",
+                            operation, exc)
+            return {"status": "failed", "error": str(exc), "unreachable": True}
+        _logger.error("Hikvision %s: request error: %s", operation, exc,
+                      exc_info=True)
+        return {"status": "failed", "error": str(exc)}
+
+    @staticmethod
     def _lp_audit_json_ok(response):
         """An LP-audit JSON endpoint reports success as HTTP 200 + statusCode 1.
         Returns True only when both hold."""
@@ -874,9 +894,7 @@ class HikvisionCamera(BaseCamera):
                                         headers={"Content-Type": "application/json"},
                                         data=json.dumps(payload), timeout=self.timeout)
             except Exception as e:
-                _logger.error("Hikvision LP-audit record upsert: Request error: %s",
-                              e, exc_info=True)
-                return {"status": "failed", "error": str(e)}
+                return self._request_failed("LP-audit record upsert", e)
             if self._lp_audit_json_ok(response):
                 if shape != shapes[0]:
                     _logger.warning(
@@ -905,9 +923,7 @@ class HikvisionCamera(BaseCamera):
                         headers={"Content-Type": "application/json"},
                         data=json.dumps(payload), timeout=self.timeout)
                 except Exception as e:
-                    _logger.error("Hikvision LP-audit record upsert: Request "
-                                  "error: %s", e, exc_info=True)
-                    return {"status": "failed", "error": str(e)}
+                    return self._request_failed("LP-audit record upsert", e)
                 if self._lp_audit_json_ok(response):
                     _logger.info(
                         "Hikvision LP-audit: %s existing record(s) replaced - "
@@ -947,8 +963,7 @@ class HikvisionCamera(BaseCamera):
                           response.status_code, error_detail)
             return {"status": "failed", "error": error_detail}
         except Exception as e:
-            _logger.error("Hikvision add_plate_to_list (VCL): Request error: %s", e, exc_info=True)
-            return {"status": "failed", "error": str(e)}
+            return self._request_failed("add_plate_to_list (VCL)", e)
 
     def delete_plate_from_list(self, plate_entries):
         """Remove one or more plates. Routes to the LP-audit JSON delete
@@ -973,6 +988,9 @@ class HikvisionCamera(BaseCamera):
                 if not self._lp_audit_json_ok(response):
                     errors.append("%s: HTTP %s %s" % (plate, response.status_code, (response.text or "")[:120]))
             except Exception as e:
+                if isinstance(e, (requests.exceptions.ConnectionError,
+                                  requests.exceptions.Timeout)):
+                    return self._request_failed("LP-audit delete", e)
                 errors.append("%s: %s" % (plate, e))
         if errors:
             _logger.error("Hikvision LP-audit delete errors: %s", "; ".join(errors))
@@ -1004,8 +1022,7 @@ class HikvisionCamera(BaseCamera):
                           response.status_code, error_detail)
             return {"status": "failed", "error": error_detail}
         except Exception as e:
-            _logger.error("Hikvision delete_plate_from_list (VCL): Request error: %s", e, exc_info=True)
-            return {"status": "failed", "error": str(e)}
+            return self._request_failed("delete_plate_from_list (VCL)", e)
 
     def search_lp_audit(self, max_results=50, position=0, search_id="0"):
         """Read the plates currently stored on the camera's LP-audit list.

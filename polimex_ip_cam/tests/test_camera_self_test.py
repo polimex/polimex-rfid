@@ -277,3 +277,65 @@ class TestEntranceModeInTheReport(TransactionCase):
         self.assertIn('bEnable', report, 'конфигурацията липсва от доклада')
         self.assertIn('switched OFF', report,
                       'изключеният входен контрол не е обявен като проблем')
+
+
+@tagged('post_install', '-at_install', 'polimex_ip_cam', 'ipcam_self_test')
+class TestUnreachableCameraIsOneProblemNotSixHundred(TransactionCase):
+    """Собственикът, дословно: пуснатият процес по презареждане "не проверява
+    дали камерата отговаря, а започва 600 номера да праща и генерира 600
+    грешки за които всъщност проблемът е комуникационен"."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.camera = cls.env['cctv.camera'].create({
+            'name': 'ВХОД', 'ip_address': '10.0.0.41', 'username': 'admin',
+            'password': 'x', 'brand': 'hikvision', 'tz': 'Europe/Sofia',
+        })
+
+    def test_reload_asks_the_camera_first(self):
+        """Недостъпна камера = едно предупреждение, нула команди."""
+        contact = self.env['res.partner'].create({'name': 'Шофьор'})
+        plate = self.env['hr.rfid.card'].with_context(
+            no_hardware_commands=True).create({
+                'number': 'CB7153HX', 'contact_id': contact.id,
+                'card_type': self.env.ref('hr_rfid.hr_rfid_card_type_8').id,
+                'company_id': self.env.company.id,
+            })
+        self.camera.with_context(no_hardware_commands=True).rfid_rel_ids = [
+            (0, 0, {'card_id': plate.id, 'list_category': 'whitelist'})]
+        before = self.env['cctv.camera.command'].search_count([])
+        with patch.object(HikvisionCamera, 'check_connection',
+                          return_value={'status': 'unreachable',
+                                        'error': 'no route'}):
+            action = self.camera.action_reload_whitelist()
+        self.assertEqual(
+            self.env['cctv.camera.command'].search_count([]), before,
+            'към недостъпна камера пак се изстреляха команди')
+        self.assertEqual(action['params']['type'], 'warning',
+                         'операторът не е предупреден, че камерата мълчи')
+
+    def test_a_batch_stops_at_the_first_network_failure(self):
+        """Мрежовият отказ спира партидата ВЕДНАГА - не на 600-ната грешка.
+        Спирачката с 3 еднакви не хваща този случай: мрежовият текст носи
+        различен адрес в паметта при всеки опит."""
+        calls = []
+
+        def unreachable(entries):
+            calls.append(entries)
+            return {'status': 'failed',
+                    'error': "HTTPConnectionPool(host='10.0.0.41'): Max "
+                             "retries exceeded (object at 0x%x)" % id(entries),
+                    'unreachable': True}
+
+        commands = self.env['cctv.camera.command'].with_context(
+            no_hardware_commands=True).create([{
+                'camera_id': self.camera.id, 'command_type': 'add_plate',
+                'request_data': 'plateNum=CB%04dAB\nlistType=0' % i,
+            } for i in range(10)])
+        with patch.object(HikvisionCamera, 'add_plate_to_list',
+                          side_effect=unreachable):
+            commands.action_execute()
+        self.assertEqual(len(calls), 1,
+                         'недостъпната камера е обстрелвана повече от веднъж')
+        self.assertTrue(all(c.state == 'error' for c in commands))

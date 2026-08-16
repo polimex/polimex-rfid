@@ -1134,13 +1134,24 @@ class CctvCamera(models.Model):
                 cam.rfid_rel_ids.filtered(lambda r: r.card_id.id == card_id).unlink()
 
     def action_reload_whitelist(self):
-        """
-        Reload each whitelist plate as a separate add_plate command.
+        """Reload each whitelist plate as a separate add_plate command.
+
+        The camera is ASKED first. Reloading a 600-plate list against a
+        camera that was simply off queued 600 commands and produced 600
+        errors for one communication problem - the operator's demand,
+        verbatim: the process must check whether the camera answers before
+        it starts firing numbers at it.
         """
         cmd_env = self.env['cctv.camera.command'].sudo()
+        unreachable = []
+        queued = 0
         for cam in self:
             if cam.brand != 'hikvision':
                 continue
+            with cam.get_api() as cam_api:
+                if cam_api.check_connection().get('status') != 'connected':
+                    unreachable.append(cam.name)
+                    continue
             # Филтрираме само whitelist записи
             whitelist_rels = cam.rfid_rel_ids.filtered(
                 lambda r: r.list_category == 'whitelist'
@@ -1154,9 +1165,20 @@ class CctvCamera(models.Model):
                             'command_type': 'add_plate',
                             'request_data': request_data,
                         }])
+                        queued += 1
                     except Exception as e:
                         _logger.error("Error creating add_plate command for relation ID %s: %s", rel.id, e)
-        return True
+        if unreachable:
+            return self.balloon_warning_sticky(
+                title=_("Camera not reachable"),
+                message=_(
+                    "%(cameras)s did not answer, so nothing was sent there - "
+                    "try again when the connection is back. %(queued)s "
+                    "plate(s) were queued to the reachable cameras.",
+                    cameras=', '.join(unreachable), queued=queued))
+        return self.balloon_success(
+            title=_("Plate list reload"),
+            message=_("%(queued)s plate(s) queued for sending.", queued=queued))
 
     # ── Self-test ──────────────────────────────────────────────
     #
