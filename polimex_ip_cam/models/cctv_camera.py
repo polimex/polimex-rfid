@@ -1359,6 +1359,31 @@ class CctvCamera(models.Model):
                         "beginning of the camera's own export (its exact import format):"))
                     details.append('    %s' % export['body'][:600].replace('\n', '\n    '))
 
+            def entrance_mode():
+                # The entrance/list-mode document is what the setup flow
+                # writes (bEnable, ctrlMode, vehControlMeasure) - a camera
+                # whose list feature is off or reconfigured (a firmware
+                # update wipes it) refuses every record write while an
+                # identically-shaped write passes on its sibling. Comparing
+                # this section between a working and a refusing camera shows
+                # the delta verbatim.
+                result = cam.get_entrance_param()
+                if result.get('status') != 'success':
+                    problems.append(self.env._(
+                        "The entrance/list configuration cannot be read: "
+                        "%(error)s - if plate writes are refused, this is "
+                        "the first place to look.", error=result.get('error')))
+                    return
+                config = result.get('response') or {}
+                for key in sorted(config):
+                    details.append('  %s: %s' % (key, config[key]))
+                enabled = str(config.get('bEnable', '')).lower()
+                if enabled and enabled != 'true':
+                    problems.append(self.env._(
+                        "The entrance control of this camera is switched OFF "
+                        "(bEnable=%(value)s) - run the camera setup again.",
+                        value=config.get('bEnable')))
+
             def try_write(label, entry):
                 """One write attempt with the test plate, cleaned up on
                 success. Returns True when the camera accepted it."""
@@ -1483,6 +1508,7 @@ class CctvCamera(models.Model):
             section(self.env._("[4] Where the camera sends its events"), event_push)
             section(self.env._("[5] Plate list - reading"), list_read)
             section(self.env._("[6] Plate list - what the camera itself speaks"), list_schema)
+            section(self.env._("[6b] Entrance / list mode configuration"), entrance_mode)
             section(self.env._("[7] Plate list - writing (one test plate, removed after)"), list_write)
 
         details.append(self.env._("[8] Barrier - deliberately NOT tested (it would move the gate)"))

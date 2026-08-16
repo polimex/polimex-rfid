@@ -49,6 +49,10 @@ def _quiet_reads():
                          'plates': ['CB1234AB'], 'total': 1}),
         patch.object(HikvisionCamera, 'probe_vcl_capabilities',
                      return_value={'status': 'success', 'status_code': 404, 'body': ''}),
+        patch.object(HikvisionCamera, 'get_entrance_param',
+                     return_value={'status': 'success', 'response': {
+                         'bEnable': 'true', 'ctrlMode': '2',
+                         'vehControlMeasure.plateNumOnlyEnable': 'true'}}),
         patch.object(HikvisionCamera, 'export_lp_list_xml',
                      return_value={'status': 'success', 'status_code': 200,
                                    'body': '<LPListAuditData><LicensePlateInfoList/></LPListAuditData>'}),
@@ -238,3 +242,38 @@ class TestReaderListSelfRepair(TransactionCase):
         camera.reader_ids = [(5, 0, 0)]
         self.assertFalse(camera._ensure_reader_links(),
                          'камера без никакви четци не бива да измисля връзки')
+
+
+@tagged('post_install', '-at_install', 'polimex_ip_cam', 'ipcam_self_test')
+class TestEntranceModeInTheReport(TransactionCase):
+    """Живият факт: байтово еднакъв минимален запис минава на едната камера
+    и пада на другата - разликата е в НАСТРОЙКИТЕ на камерата. Докладът
+    показва входно-списъчната конфигурация дословно, а изключен режим е
+    обявен проблем (интуицията на собственика от първия ден: "ако е
+    пропуск в настройките")."""
+
+    def _camera(self):
+        return self.env['cctv.camera'].create({
+            'name': 'ВХОД', 'ip_address': '10.0.0.31', 'username': 'admin',
+            'password': 'x', 'brand': 'hikvision', 'tz': 'Europe/Sofia',
+        })
+
+    def test_a_switched_off_entrance_control_is_a_named_problem(self):
+        camera = self._camera()
+        patches = _quiet_reads() + [
+            patch.object(HikvisionCamera, 'get_entrance_param',
+                         return_value={'status': 'success',
+                                       'response': {'bEnable': 'false'}}),
+            patch.object(HikvisionCamera, 'add_plate_to_list',
+                         return_value=dict(OK_WRITE)),
+            patch.object(HikvisionCamera, 'delete_plate_from_list',
+                         return_value=dict(OK_WRITE)),
+        ]
+        for p in patches:
+            p.start()
+            self.addCleanup(p.stop)
+        action = camera.action_camera_diagnostics()
+        report = self.env['cctv.camera.diagnostic'].browse(action['res_id']).report
+        self.assertIn('bEnable', report, 'конфигурацията липсва от доклада')
+        self.assertIn('switched OFF', report,
+                      'изключеният входен контрол не е обявен като проблем')
