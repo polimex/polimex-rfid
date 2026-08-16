@@ -7,8 +7,8 @@ class CctvCameraDiagnostic(models.TransientModel):
 
     A dialog rather than a notification: the report is long (every problem
     plus every detail of the device), and the operator reads it, copies it,
-    or sends it to support. The same text is also posted in the camera's
-    chatter, so past test runs remain comparable.
+    or sends it to support. Deliberately NOT posted to the chatter - that is
+    a place for conversation, not for logs.
     """
     _name = 'cctv.camera.diagnostic'
     _description = 'Camera Self-Test Report'
@@ -20,5 +20,5 @@ class CctvCameraDiagnostic(models.TransientModel):
     report = fields.Text(
         readonly=True,
         help="Every problem found first, then every detail the camera "
-             "reported. The same text is kept in the camera's chatter.",
+             "reported. Copy it if you need to keep or send it.",
     )

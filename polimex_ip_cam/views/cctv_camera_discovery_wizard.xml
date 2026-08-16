@@ -7,8 +7,11 @@
             <form string="Discover Cameras">
                 <p class="text-muted">
                     Cameras found on your local network (Hikvision SADP and ONVIF).
-                    Remove the ones you do not want, rename the rest if you like, then
-                    click Add Cameras. Connection details are completed afterwards with
+                    The ones you already have are recognised by their serial number
+                    and carry their name here — seeing them in the list confirms
+                    they are alive; they will not be added again. Remove the new
+                    ones you do not want, rename the rest if you like, then click
+                    Add Cameras. Connection details are completed afterwards with
                     Check Connection on each new camera.
                 </p>
                 <p class="text-muted" invisible="found_camera_ids">
@@ -19,11 +22,15 @@
                 <field name="found_camera_ids">
                     <list string="Discovered Cameras" create="0" delete="1" editable="bottom"
                           decoration-warning="not activated">
+                        <field name="status" widget="badge"
+                               decoration-success="status == 'new'"
+                               decoration-muted="status == 'known'"/>
                         <field name="name"/>
+                        <field name="existing_camera_id" optional="show"/>
                         <field name="ip_address"/>
-                        <field name="brand"/>
+                        <field name="brand" optional="show"/>
                         <field name="model"/>
-                        <field name="serial_number" optional="show"/>
+                        <field name="serial_number" optional="hide"/>
                         <field name="mac_address" optional="hide"/>
                         <field name="http_port" optional="hide"/>
                         <field name="activated" optional="show"/>

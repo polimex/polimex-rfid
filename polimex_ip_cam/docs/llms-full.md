@@ -397,9 +397,13 @@ and one write round-trip with `DIAG_TEST_PLATE` ('TEST0001', added then
 removed). When the minimal record passes but a record shaped like the real
 data fails, the test bisects the shape (linked card number, 'Z'-suffixed
 validity times, no times) and the report names the refused part, quoting the
-camera verbatim. The barrier is deliberately never exercised. The report is
-shown in a dialog and posted to the camera's chatter. Fields: `camera_id`
-(M2O `cctv.camera`), `report` (Text).
+camera verbatim. The clock check mirrors the heartbeat canon: the offset the
+camera claims is dropped (the inverted Hikvision convention misstates it)
+and the wall clock is compared in the camera's own zone, against the same
+HEARTBEAT_CLOCK_DRIFT_TOLERANCE. The barrier is deliberately never
+exercised. The report lives in the dialog only - the chatter is for
+conversation, not for logs. Fields: `camera_id` (M2O `cctv.camera`),
+`report` (Text).
 
 #### Plate-record write ladder (self-healing)
 

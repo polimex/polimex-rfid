@@ -36,7 +36,7 @@ def _quiet_reads():
     return [
         patch.object(HikvisionCamera, 'check_connection', return_value=dict(CONNECTED)),
         patch.object(HikvisionCamera, 'get_snapshot',
-                     return_value={'status': 'success', 'image_data': b'x' * 42}),
+                     return_value={'status': 'success', 'snapshot_b64': 'x' * 56}),
         patch.object(HikvisionCamera, 'get_time_config',
                      return_value={'status': 'failed', 'error': 'no clock in this double'}),
         patch.object(HikvisionCamera, 'get_http_host',
@@ -66,8 +66,10 @@ class TestCameraSelfTest(TransactionCase):
             'password': 'x', 'brand': 'hikvision', 'tz': 'Europe/Sofia',
         })
 
-    def _run(self, add=None, delete=None):
-        patches = _quiet_reads() + [
+    def _run(self, add=None, delete=None, time_config=None):
+        patches = _quiet_reads() + ([
+            patch.object(HikvisionCamera, 'get_time_config',
+                         return_value=time_config)] if time_config else []) + [
             patch.object(HikvisionCamera, 'add_plate_to_list',
                          side_effect=add or (lambda entries: dict(OK_WRITE))),
             patch.object(HikvisionCamera, 'delete_plate_from_list',
@@ -95,10 +97,11 @@ class TestCameraSelfTest(TransactionCase):
         self.assertIn('PROBLEMS FOUND', report,
                       'недостъпният часовник трябва да излезе като проблем')
         self.assertIn('192.168.0.99', report, 'дестинацията на събитията липсва')
-        # Докладът остава и в дневника на камерата за сравнение по-късно.
-        self.assertTrue(any('Self-test' in (m.body or '') or 'PROBLEMS' in (m.body or '')
-                            for m in self.camera.message_ids),
-                        'докладът не е записан в дневника на камерата')
+        # Чатърът е за разговори, не за логове (собственикът, дословно) -
+        # докладът живее само в диалога.
+        self.assertFalse(
+            any('PROBLEMS' in (m.body or '') for m in self.camera.message_ids),
+            'докладът е издуднал чатъра на камерата')
 
     def test_a_working_camera_is_left_exactly_as_found(self):
         """Записът е един фиктивен номер и се маха: нула следи след теста."""
@@ -167,6 +170,25 @@ class TestCameraSelfTest(TransactionCase):
         self.assertTrue(
             all('0x38410029' in (c.response_data or '') for c in stopped),
             'спрените команди не цитират отговора, заради който са спрени')
+
+    def test_a_true_wall_clock_with_a_lying_offset_is_not_an_alarm(self):
+        """Живият случай: камерата обяви +02:00 при вярно стенно време и
+        докладът изкрещя "3599 секунди" - документираният капан с
+        инвертирания Hikvision офсет. Канонът от heartbeat-а: офсетът се
+        сваля, стенното време се закотвя в зоната на камерата."""
+        from datetime import datetime, timezone as dt_tz
+        import pytz as _pytz
+        sofia_wall = datetime.now(dt_tz.utc).astimezone(
+            _pytz.timezone('Europe/Sofia')).replace(microsecond=0)
+        lying_iso = sofia_wall.strftime('%Y-%m-%dT%H:%M:%S') + '+02:00'
+        report, _mocks = self._run(time_config={
+            'status': 'success', 'timeMode': 'ALL',
+            'timeZone': 'CST-2:00:00DST01:00:00', 'localTime': lying_iso})
+        self.assertNotIn('clock is off', report,
+                         'вярното стенно време е обявено за разминато - '
+                         'докладът вярва на лъжливия офсет')
+        self.assertIn('offset the camera claims is ignored', report,
+                      'докладът не обяснява защо офсетът не се ползва')
 
     def test_a_different_device_at_the_address_is_called_out(self):
         """Отговаря ЧУЖД сериен номер -> проблем, не мълчалива подмяна."""

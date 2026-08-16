@@ -121,17 +121,31 @@ class TestDiscoveryWizard(TransactionCase):
         self.assertEqual(action["res_model"], "cctv.camera")
         self.assertEqual(set(action["domain"][0][2]), set(created.ids))
 
-    def test_wizard_dedup_skips_registered(self):
-        # A camera already registered by serial must NOT be offered again.
-        self.Camera.create({
-            "name": "Existing", "ip_address": "10.9.9.9", "port": 80,
+    def test_wizard_names_the_registered_and_adds_only_the_new(self):
+        """Операторът вижда КОИ камери вече има, поименно - не джунгла от
+        серийни номера (собственикът, дословно: "как да разбера кои камери
+        вече сме добавили"). Познатата се показва с името на записа си -
+        което е и потвърждение, че е жива в мрежата - но не се добавя
+        втори път; само новата е кандидат."""
+        registered = self.Camera.create({
+            "name": "Бариера ВХОД", "ip_address": "10.9.9.9", "port": 80,
             "username": "admin", "password": "x", "tz": "Europe/Sofia",
             "serial_number": "DS-TCG406-E 20250322AIFX8693470",
         })
         wiz = self._wizard(self._results())
-        plates = wiz.found_camera_ids.mapped("serial_number")
-        self.assertNotIn("DS-TCG406-E 20250322AIFX8693470", plates)
-        self.assertEqual(len(wiz.found_camera_ids), 1)  # only the generic one remains
+        self.assertEqual(len(wiz.found_camera_ids), 2,
+                         'познатата камера е скрита - операторът губи '
+                         'потвърждението, че е жива')
+        known = wiz.found_camera_ids.filtered(lambda l: l.status == 'known')
+        self.assertEqual(known.existing_camera_id, registered)
+        self.assertEqual(known.name, 'Бариера ВХОД',
+                         'познатият ред не носи бизнес името, а джунглата')
+        before = self.Camera.search_count([])
+        wiz.action_create_cameras()
+        self.assertEqual(
+            self.Camera.search_count([]), before + 1,
+            'познатата камера е добавена втори път - серийният номер е '
+            'идентичността')
 
     def test_wizard_brand_agnostic(self):
         wiz = self._wizard([self._results()[1]])

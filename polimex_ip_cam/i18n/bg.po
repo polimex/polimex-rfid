@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 11:44+0000\n"
-"PO-Revision-Date: 2026-08-16 14:44\n"
+"POT-Creation-Date: 2026-08-16 12:32+0000\n"
+"PO-Revision-Date: 2026-08-16 15:33\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: bg\n"
@@ -433,6 +433,11 @@ msgstr "Африка/Тунис"
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__africa/windhoek
 msgid "Africa/Windhoek"
 msgstr "Африка/Виндхук"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_discovery_line__status__known
+msgid "Already added"
+msgstr "Вече добавена"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__america/adak
@@ -2354,14 +2359,20 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_discovery_form
 msgid ""
 "Cameras found on your local network (Hikvision SADP and ONVIF).\n"
-"                    Remove the ones you do not want, rename the rest if you like, then\n"
-"                    click Add Cameras. Connection details are completed afterwards with\n"
+"                    The ones you already have are recognised by their serial number\n"
+"                    and carry their name here — seeing them in the list confirms\n"
+"                    they are alive; they will not be added again. Remove the new\n"
+"                    ones you do not want, rename the rest if you like, then click\n"
+"                    Add Cameras. Connection details are completed afterwards with\n"
 "                    Check Connection on each new camera."
 msgstr ""
-"Намерени камери в локалната ви мрежа (Hikvision SADP и ONVIF).\n"
-"                    Премахнете тези, които не желаете, преименувайте останалите ако желаете, след което\n"
-"                    натиснете Добави камери. Данните за връзката се допълват след това с\n"
-"                    Проверка на връзката за всяка нова камера."
+"Камери, открити във вашата локална мрежа (Hikvision SADP и ONVIF).\n"
+"                    Тези, които вече имате, се разпознават по серийния им номер\n"
+"                    и запазват името си тук — виждането им в списъка потвърждава,\n"
+"                    че са активни; те няма да бъдат добавени отново. Премахнете новите,\n"
+"                    които не желаете, преименувайте останалите по желание, след което\n"
+"                    натиснете Добави камери. Данните за връзка се попълват впоследствие\n"
+"                    чрез Проверка на връзката за всяка нова камера."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__tz__canada/atlantic
@@ -3238,8 +3249,8 @@ msgstr "Европа/Цюрих"
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_diagnostic__report
 msgid ""
-"Every problem found first, then every detail the camera reported. The same "
-"text is kept in the camera's chatter."
+"Every problem found first, then every detail the camera reported. Copy it if"
+" you need to keep or send it."
 msgstr ""
 "Първо всеки открит проблем, после всеки детайл, докладван от камерата. "
 "Същият текст се пази в чата на камерата."
@@ -3248,6 +3259,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__execution_time
 msgid "Execution Time"
 msgstr "Време на изпълнение"
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__existing_camera_id
+msgid "Existing Camera"
+msgstr "Съществуваща камера"
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera__connection_status__failed
@@ -3884,6 +3900,7 @@ msgstr "Настройки на мрежата"
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera_command.py:0
 #: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_command__state__new
+#: model:ir.model.fields.selection,name:polimex_ip_cam.selection__cctv_camera_discovery_line__status__new
 msgid "New"
 msgstr "Нов"
 
@@ -4391,13 +4408,11 @@ msgstr "Португалия"
 #. module: polimex_ip_cam
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.cctv_camera_diagnostic_view_form
 msgid ""
-"Problems come first, details below them. The same\n"
-"                        report is saved in the camera's log, so runs can be\n"
-"                        compared over time."
+"Problems come first, details below them. Copy the\n"
+"                        report if you need to keep or send it."
 msgstr ""
-"Проблемите са първи, детайлите са под тях. Същият\n"
-"                        отчет се запазва в лога на камерата, така че изпълненията могат\n"
-"                        да се сравняват във времето."
+"Проблемите са на първо място, детайлите са под тях. Копирайте отчета, ако "
+"трябва да го запазите или изпратите."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_rfid_rel__card_id
@@ -4650,6 +4665,11 @@ msgid "State"
 msgstr "Статус"
 
 #. module: polimex_ip_cam
+#: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_discovery_line__status
+msgid "Status"
+msgstr "Статус"
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera__activity_state
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_command__activity_state
 msgid ""
@@ -4698,6 +4718,12 @@ msgstr "Камерата отговори, но в неочакван форма
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "The camera answered the picture request with an empty image."
+msgstr "Камерата отговори на заявката за снимка с празно изображение."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid ""
 "The camera clock is off by about %(sec)s seconds - recognitions will carry "
 "the wrong time."
@@ -4730,6 +4756,17 @@ msgid ""
 msgstr ""
 "Камерата пази %(cam)s табела(и), докато тази система записва %(odoo)s - "
 "опреснете списъка с табели, щом пътят за запис проработи."
+
+#. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__existing_camera_id
+msgid ""
+"The camera record this device already is, recognised by its serial number "
+"(or, failing that, its address). Filled in by the scan; such a device will "
+"not be added a second time."
+msgstr ""
+"Записът за камера, който това устройство вече представлява, разпознат по "
+"серийния му номер (или, при липса на такъв, по адреса му). Попълва се от "
+"сканирането; такова устройство няма да бъде добавено повторно."
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -5054,6 +5091,17 @@ msgstr ""
 "пренасочите към тази крайна точка на Odoo."
 
 #. module: polimex_ip_cam
+#: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__status
+msgid ""
+"Whether this device is already registered here. The scan recognises "
+"registered cameras by serial number, so the list doubles as a check that "
+"they are alive on the network."
+msgstr ""
+"Дали това устройство вече е регистрирано тук. Сканирането разпознава "
+"регистрираните камери по сериен номер, така че списъкът служи и като "
+"проверка, че те са активни в мрежата."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__discovery_method
 msgid "Which probe found it: SADP, ONVIF, or both."
 msgstr "Коя проверка го е открила: SADP, ONVIF, или и двете."
@@ -5248,8 +5296,8 @@ msgstr "нито в паметта на камерата. "
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
-msgid "picture received (%(size)s bytes)"
-msgstr "изображението е получено (%(size)s байта)"
+msgid "picture received (about %(size)s bytes)"
+msgstr "снимката е получена (около %(size)s байта)"
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -5267,6 +5315,17 @@ msgstr "запис с формата на вашите реални данни"
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_command_search
 msgid "string"
 msgstr "низ"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"the offset the camera claims is ignored - these firmwares misstate it; the "
+"wall clock is compared in the camera's own time zone"
+msgstr ""
+"отместването, което камерата съобщава, се игнорира - тези фърмуери го "
+"посочват неправилно; часовникът се сравнява в собствената часова зона на "
+"камерата"
 
 #. module: polimex_ip_cam
 #. odoo-python

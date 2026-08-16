@@ -1,11 +1,13 @@
 from datetime import datetime, timezone
 
 import pytz
-from markupsafe import Markup
 
 from odoo import models, fields, api, _, Command, SUPERUSER_ID
 import logging
 from odoo.addons.polimex_ip_cam.helpers.camera_api import HikvisionCamera  # import our Hikvision-specific class
+from odoo.addons.polimex_ip_cam.controllers.anpr_controller import (
+    HEARTBEAT_CLOCK_DRIFT_TOLERANCE,
+)
 from odoo.addons.hr_rfid.models.hr_rfid_webstack import get_local_ip
 import json
 
@@ -1193,7 +1195,8 @@ class CctvCamera(models.Model):
         lines.append('')
         lines += details
         text = '\n'.join(lines)
-        self.message_post(body=Markup('<pre style="white-space:pre-wrap">%s</pre>') % text)
+        # Deliberately NOT posted to the chatter - the owner's words: the
+        # chatter is for conversation, not for logs. The dialog is the report.
         wizard = self.env['cctv.camera.diagnostic'].create({
             'camera_id': self.id, 'report': text,
         })
@@ -1249,14 +1252,20 @@ class CctvCamera(models.Model):
 
             def snapshot():
                 result = cam.get_snapshot()
-                if isinstance(result, dict) and result.get('status') == 'failed':
+                encoded = (result or {}).get('snapshot_b64') or ''
+                if not isinstance(result, dict) or result.get('status') != 'success':
                     problems.append(self.env._(
-                        "No picture: %(error)s", error=result.get('error')))
+                        "No picture: %(error)s",
+                        error=(result or {}).get('error')))
                     details.append('  %s' % result)
+                elif not encoded:
+                    problems.append(self.env._(
+                        "The camera answered the picture request with an "
+                        "empty image."))
                 else:
-                    size = len(result.get('image_data', b'') or b'') if isinstance(result, dict) else 0
                     details.append('  %s' % self.env._(
-                        "picture received (%(size)s bytes)", size=size))
+                        "picture received (about %(size)s bytes)",
+                        size=len(encoded) * 3 // 4))
 
             def clock():
                 result = cam.get_time_config()
@@ -1271,19 +1280,28 @@ class CctvCamera(models.Model):
                 if local_time:
                     try:
                         reported = datetime.fromisoformat(local_time)
-                        if reported.tzinfo is None:
-                            # The camera reports wall-clock time; anchor it in
-                            # the camera's own zone, exactly as the heartbeat
-                            # clock check does (re-anchor to camera.tz, never
-                            # trust the inverted Hikvision offset).
-                            tz = pytz.timezone(self.tz or 'UTC')
-                            reported = tz.localize(reported)
-                        drift = abs((reported.astimezone(timezone.utc)
+                        # The offset the camera CLAIMS is the documented trap:
+                        # Hikvision's inverted timeZone convention misstates it
+                        # (a UTC+3 camera claims +02:00 or -03:00), and trusting
+                        # it once produced an endless set_time loop - and, in
+                        # this very report, a false "3599 seconds off" alarm on
+                        # a camera that was 5 seconds true. The heartbeat canon
+                        # (anpr_controller: drop the offset, re-anchor the wall
+                        # clock in camera.tz) is mirrored here exactly.
+                        if reported.tzinfo is not None:
+                            details.append('  %s' % self.env._(
+                                "the offset the camera claims is ignored - "
+                                "these firmwares misstate it; the wall clock "
+                                "is compared in the camera's own time zone"))
+                            reported = reported.replace(tzinfo=None)
+                        cam_tz = pytz.timezone(self.tz) if self.tz else pytz.utc
+                        reported = cam_tz.localize(reported)
+                        drift = abs((reported.astimezone(pytz.utc)
                                      - datetime.now(timezone.utc)).total_seconds())
                         details.append('  %s' % self.env._(
                             "difference from the server clock: about %(sec)s second(s)",
                             sec=int(drift)))
-                        if drift > 120:
+                        if drift > HEARTBEAT_CLOCK_DRIFT_TOLERANCE:
                             problems.append(self.env._(
                                 "The camera clock is off by about %(sec)s seconds - "
                                 "recognitions will carry the wrong time.", sec=int(drift)))
