@@ -109,7 +109,18 @@ class CctvCameraCommand(models.Model):
                 env['cctv.camera.command'].sudo().browse(cmd_ids).action_execute()
 
     def _parse_request_data(self, request_data):
-        """Парсира request_data, съдържащ редове във формат 'param=value', и връща речник."""
+        """Парсира request_data: редове 'param=value' дават речник; JSON
+        масив (започва с '[') дава списък от речници - една команда, много
+        номера. Единичният формат остава непокътнат, за да не се пипа
+        работният процес на връзките карта-камера."""
+        text = (request_data or '').lstrip()
+        if text.startswith('['):
+            try:
+                data = json.loads(text)
+                if isinstance(data, list):
+                    return [d for d in data if isinstance(d, dict)]
+            except ValueError:
+                pass  # не е JSON - пада към ред-по-ред парсване
         data = {}
         if request_data:
             for line in request_data.splitlines():
@@ -144,6 +155,7 @@ class CctvCameraCommand(models.Model):
         stopped = {}       # camera_id -> the error that repeated
         plate_types = ('add_plate', 'remove_plate')
         for rec in self:
+            result = params = None
             if rec.state != 'new':
                 continue
             if rec.command_type in plate_types and rec.camera_id.id in stopped:
@@ -168,18 +180,25 @@ class CctvCameraCommand(models.Model):
                     elif rec.command_type == 'get_snapshot':
                         result = cam_api.get_snapshot()
                     elif rec.command_type == 'update_list':
-                        result = cam_api.update_lists()
+                        # Never worked: it called a method the camera client
+                        # does not have and died with AttributeError. An
+                        # explained refusal beats a crash.
+                        result = {"status": "failed", "error": _(
+                            "This command type is not supported - use the "
+                            "plate list sync on the camera instead.")}
                     elif rec.command_type == 'barrier_control':
                         result = self._execute_barrier_control(cam_api, params)
                     elif rec.command_type == 'add_plate':
-                        # При add_plate очакваме да има поне ключ 'plateNum'
-                        if 'plateNum' not in params:
+                        entries = params if isinstance(params, list) else [params]
+                        if not entries or not all(e.get('plateNum') for e in entries):
                             raise UserError(_("Missing required parameter 'plateNum' for add_plate command."))
-                        result = cam_api.add_plate_to_list([params])
+                        result = cam_api.add_plate_to_list(entries)
                     elif rec.command_type == 'remove_plate':
-                        if 'plateNum' not in params:
+                        entries = params if isinstance(params, list) else [params]
+                        if not entries or not all(e.get('plateNum') for e in entries):
                             raise UserError(_("Missing required parameter 'plateNum' for remove_plate command."))
-                        result = cam_api.delete_plate_from_list([{'plateNum': params.get('plateNum')}])
+                        result = cam_api.delete_plate_from_list(
+                            [{'plateNum': e.get('plateNum')} for e in entries])
                     elif rec.command_type == 'set_time':
                         result = cam_api.set_time_config(params)
                     else:
@@ -203,6 +222,22 @@ class CctvCameraCommand(models.Model):
                 rec.response_data = str(e)
                 rec.state = "error"
                 _logger.error("Error executing command %s: %s", rec.name, e)
+            if (rec.state == 'error' and rec.command_type in plate_types
+                    and isinstance(params, list) and len(params) > 1
+                    and isinstance(result, dict)
+                    and not result.get('unreachable')):
+                # A refused BATCH cannot say WHICH plate the camera objects
+                # to. Split it in two and let the halves narrow it down to
+                # the culprit on their own; the streak stop below keeps a
+                # mechanism-wide refusal from cascading.
+                half = len(params) // 2
+                self.sudo().create([
+                    {'camera_id': rec.camera_id.id,
+                     'command_type': rec.command_type,
+                     'request_data': json.dumps(chunk)}
+                    for chunk in (params[:half], params[half:])])
+                rec.response_data = (rec.response_data or '') + '\n' + _(
+                    "Split into two smaller commands to isolate the refused plate(s).")
             if rec.command_type in plate_types:
                 cam_id = rec.camera_id.id
                 if (rec.state == 'error' and isinstance(result, dict)

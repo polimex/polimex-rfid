@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 13:59+0000\n"
-"PO-Revision-Date: 2026-08-16 16:59\n"
+"POT-Creation-Date: 2026-08-16 15:05+0000\n"
+"PO-Revision-Date: 2026-08-16 18:05\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: de\n"
@@ -4705,6 +4705,14 @@ msgid "Snapshot retrieved and stored successfully."
 msgstr "Schnappschuss erfolgreich abgerufen und gespeichert."
 
 #. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera_command.py:0
+msgid "Split into two smaller commands to isolate the refused plate(s)."
+msgstr ""
+"In zwei kleinere Befehle aufteilen, um das/die abgelehnte(n) Kennzeichen zu "
+"isolieren."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,field_description:polimex_ip_cam.field_cctv_camera_command__state
 msgid "State"
 msgstr "Status"
@@ -4942,6 +4950,16 @@ msgstr "Der Listentyp, den diese Verknüpfung repräsentiert"
 #: model_terms:ir.actions.act_window,help:polimex_ip_cam.action_hr_rfid_card_cameras
 msgid "This card is not registered with any camera"
 msgstr "Diese Karte ist bei keiner Kamera registriert"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera_command.py:0
+msgid ""
+"This command type is not supported - use the plate list sync on the camera "
+"instead."
+msgstr ""
+"Dieser Befehlstyp wird nicht unterstützt - verwenden Sie stattdessen die "
+"Kennzeichenlisten-Synchronisierung auf der Kamera."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_command__execution_time

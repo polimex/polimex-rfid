@@ -30,6 +30,14 @@ def _tz_get(self):
     return _tzs
 
 
+#: How many plates travel in ONE queued command during a list sync. The
+#: camera API takes a list natively (LicensePlateInfoList / VCLDataList);
+#: one-command-per-plate turned a 600-plate reload into 600 round trips and
+#: 600 protocol rows. A refused batch is split in two by the executor until
+#: the culprit is isolated, so per-plate diagnosis survives batching.
+PLATE_SYNC_BATCH = 50
+
+
 class CctvCamera(models.Model):
     _name = 'cctv.camera'
     _description = 'CCTV Camera Management'
@@ -1178,34 +1186,41 @@ class CctvCamera(models.Model):
                 on_camera = self._read_camera_plates(cam_api)
             ours = {(rel.card_id.number or '').strip(): rel
                     for rel in cam.rfid_rel_ids if rel.card_id.number}
+            entries = []
             for rel in ours.values():
                 request_data = rel._hv_get_request_data()
                 if request_data:
-                    try:
-                        cmd_env.create([{
-                            'camera_id': cam.id,
-                            'command_type': 'add_plate',
-                            'request_data': request_data,
-                        }])
-                        queued += 1
-                    except Exception as e:
-                        _logger.error("Error creating add_plate command for relation ID %s: %s", rel.id, e)
+                    entries.append(cmd_env._parse_request_data(request_data))
+            for start in range(0, len(entries), PLATE_SYNC_BATCH):
+                chunk = entries[start:start + PLATE_SYNC_BATCH]
+                try:
+                    cmd_env.create([{
+                        'camera_id': cam.id,
+                        'command_type': 'add_plate',
+                        'request_data': json.dumps(chunk),
+                    }])
+                    queued += len(chunk)
+                except Exception as e:
+                    _logger.error("Error creating add_plate batch for camera %s: %s", cam.name, e)
             if on_camera is None:
                 _logger.warning(
                     "Camera %s: its stored plate list could not be read - "
                     "our plates were sent, foreign ones were left in place.",
                     cam.name)
                 continue
-            for foreign in sorted(on_camera - set(ours)):
+            foreign_plates = sorted(on_camera - set(ours))
+            for start in range(0, len(foreign_plates), PLATE_SYNC_BATCH):
+                chunk = [{'plateNum': plate}
+                         for plate in foreign_plates[start:start + PLATE_SYNC_BATCH]]
                 try:
                     cmd_env.create([{
                         'camera_id': cam.id,
                         'command_type': 'remove_plate',
-                        'request_data': 'plateNum=%s' % foreign,
+                        'request_data': json.dumps(chunk),
                     }])
-                    removed += 1
+                    removed += len(chunk)
                 except Exception as e:
-                    _logger.error("Error creating remove_plate command for plate %s: %s", foreign, e)
+                    _logger.error("Error creating remove_plate batch for camera %s: %s", cam.name, e)
         if unreachable:
             return self.balloon_warning_sticky(
                 title=_("Camera not reachable"),

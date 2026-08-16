@@ -388,9 +388,14 @@ class TestTheListHereLeads(TransactionCase):
         created = self.env['cctv.camera.command'].search([]) - before
         removals = created.filtered(lambda c: c.command_type == 'remove_plate')
         adds = created.filtered(lambda c: c.command_type == 'add_plate')
-        self.assertEqual(removals.mapped('request_data'), ['plateNum=PB4181KC'],
-                         'чуждият заварен номер не е предвиден за махане')
-        self.assertEqual(len(adds), 1, 'нашият номер не е изпратен')
+        self.assertEqual(len(removals), 1)
+        self.assertIn('PB4181KC', removals.request_data,
+                      'чуждият заварен номер не е предвиден за махане')
+        self.assertNotIn('CB7153HX', removals.request_data,
+                         'нашият номер е предвиден за махане')
+        self.assertEqual(len(adds), 1,
+                         'номерата пътуват в една партидна команда, не по '
+                         'команда на номер')
         self.assertIn('CB7153HX', adds.request_data)
 
     def test_an_unreadable_camera_list_never_guesses_removals(self):
@@ -416,3 +421,97 @@ class TestTheListHereLeads(TransactionCase):
         self.assertTrue(
             created.filtered(lambda c: c.command_type == 'add_plate'),
             'нашите номера трябва да заминат въпреки нечетимия списък')
+
+
+@tagged('post_install', '-at_install', 'polimex_ip_cam', 'ipcam_self_test')
+class TestPlatesTravelTogether(TransactionCase):
+    """Собственикът: "няма ли опция всички номера да се изпратят заедно
+    (без да се нарушава работния процес на модулния сет)". API-то е
+    групово поначало - раздробяваше командният слой."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.camera = cls.env['cctv.camera'].create({
+            'name': 'ВХОД', 'ip_address': '10.0.0.61', 'username': 'admin',
+            'password': 'x', 'brand': 'hikvision', 'tz': 'Europe/Sofia',
+        })
+
+    def _batch_command(self, plates):
+        import json as _json
+        return self.env['cctv.camera.command'].with_context(
+            no_hardware_commands=True).create([{
+                'camera_id': self.camera.id, 'command_type': 'add_plate',
+                'request_data': _json.dumps(
+                    [{'plateNum': p, 'listType': '0'} for p in plates]),
+            }])
+
+    def test_one_command_carries_many_plates(self):
+        calls = []
+
+        def record(entries):
+            calls.append(entries)
+            return dict(OK_WRITE)
+
+        command = self._batch_command(['CB0001AA', 'CB0002BB', 'CB0003CC'])
+        with patch.object(HikvisionCamera, 'add_plate_to_list',
+                          side_effect=record):
+            command.action_execute()
+        self.assertEqual(command.state, 'done')
+        self.assertEqual(len(calls), 1, 'партидата е раздробена на заявки')
+        self.assertEqual(len(calls[0]), 3,
+                         'трите номера не пътуват в една заявка')
+
+    def test_a_refused_batch_splits_itself_to_isolate_the_culprit(self):
+        """Отказана партида не казва КОЙ номер пречи - разцепва се, докато
+        виновникът остане сам с дословния отговор; диагнозата per номер
+        оцелява груповото изпращане."""
+        def refuse_when_bad_present(entries):
+            if any(e['plateNum'] == 'CB0002BB' for e in entries):
+                return dict(REFUSED)
+            return dict(OK_WRITE)
+
+        command = self._batch_command(['CB0001AA', 'CB0002BB', 'CB0003CC'])
+        Command = self.env['cctv.camera.command']
+        with patch.object(HikvisionCamera, 'add_plate_to_list',
+                          side_effect=refuse_when_bad_present), \
+             patch.object(HikvisionCamera, 'delete_plate_from_list',
+                          return_value=dict(OK_WRITE)):
+            command.action_execute()
+            # Разцепването ражда нови команди; изпълняваме ги както кронът
+            # би ги подкарал, докато бисекцията се изчерпи.
+            for _ in range(8):
+                pending = Command.search([
+                    ('camera_id', '=', self.camera.id),
+                    ('state', '=', 'new')])
+                if not pending:
+                    break
+                pending.action_execute()
+        all_commands = Command.search(
+            [('camera_id', '=', self.camera.id)])
+        self.assertEqual(command.state, 'error')
+        self.assertIn('Split into two', command.response_data)
+        done_texts = ' '.join(all_commands.filtered(
+            lambda c: c.state == 'done').mapped('request_data'))
+        self.assertIn('CB0001AA', done_texts,
+                      'здравите номера не стигнаха до камерата')
+        self.assertIn('CB0003CC', done_texts)
+        culprit = all_commands.filtered(
+            lambda c: c.state == 'error'
+            and 'CB0002BB' in (c.request_data or '')
+            and 'CB0001AA' not in (c.request_data or ''))
+        self.assertTrue(culprit, 'виновникът не е изолиран в самостоятелна команда')
+        self.assertTrue(any('0x38410029' in (c.response_data or '')
+                            for c in culprit),
+                        'изолираният виновник не носи дословния отговор')
+
+    def test_update_list_reports_instead_of_crashing(self):
+        """Никога не е работела: викаше несъществуващ метод и умираше с
+        AttributeError. Обясненият отказ е по-добър от крас."""
+        command = self.env['cctv.camera.command'].with_context(
+            no_hardware_commands=True).create([{
+                'camera_id': self.camera.id, 'command_type': 'update_list',
+            }])
+        command.action_execute()
+        self.assertEqual(command.state, 'error')
+        self.assertNotIn('AttributeError', command.response_data or '')
