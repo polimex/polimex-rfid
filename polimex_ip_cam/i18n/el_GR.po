@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 15:52+0000\n"
-"PO-Revision-Date: 2026-08-16 18:53\n"
+"POT-Creation-Date: 2026-08-16 16:33+0000\n"
+"PO-Revision-Date: 2026-08-16 19:33\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: el\n"
@@ -4796,6 +4796,21 @@ msgstr ""
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The camera correctly sends to this server (%(local)s), but the stored setup "
+"says %(cfg)s - pressing Set HTTP Host would aim it BACK at the old address. "
+"Fix the address in the camera's Server Setup first (or remove its ipAddress "
+"line to use this server's own)."
+msgstr ""
+"Η κάμερα στέλνει σωστά σε αυτόν τον διακομιστή (%(local)s), αλλά η "
+"αποθηκευμένη ρύθμιση αναφέρει %(cfg)s - πατώντας «Ορισμός HTTP Host» θα την "
+"στρέψετε ΞΑΝΑ στην παλιά διεύθυνση. Διορθώστε πρώτα τη διεύθυνση στο Server "
+"Setup της κάμερας (ή αφαιρέστε τη γραμμή ipAddress ώστε να χρησιμοποιηθεί η "
+"διεύθυνση αυτού του διακομιστή)."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "The camera did not answer as expected: %(status)s %(error)s"
 msgstr "Η κάμερα δεν απάντησε όπως αναμενόταν: %(status)s %(error)s"
 
@@ -4958,6 +4973,19 @@ msgstr ""
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_vending_event__snapshot
 msgid "The snapshot of the camera"
 msgstr "Το στιγμιότυπο της κάμερας"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The stored setup points to %(cfg)s while this server runs on %(local)s - an "
+"address inherited from the old server. Fix the camera's Server Setup (or "
+"remove its ipAddress line) before running Set HTTP Host."
+msgstr ""
+"Η αποθηκευμένη ρύθμιση δείχνει στο %(cfg)s ενώ αυτός ο διακομιστής "
+"λειτουργεί στο %(local)s - μια διεύθυνση κληρονομημένη από τον παλιό "
+"διακομιστή. Διορθώστε το Server Setup της κάμερας (ή αφαιρέστε τη γραμμή "
+"ipAddress) πριν εκτελέσετε το «Ορισμός HTTP Host»."
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -5503,6 +5531,12 @@ msgstr ""
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "the reported time could not be compared"
 msgstr "δεν ήταν δυνατή η σύγκριση της αναφερόμενης ώρας"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "this server runs on: %(local)s"
+msgstr "αυτός ο διακομιστής λειτουργεί στο: %(local)s"
 
 #. module: polimex_ip_cam
 #. odoo-python

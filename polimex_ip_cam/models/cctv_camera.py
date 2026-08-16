@@ -1070,6 +1070,11 @@ class CctvCamera(models.Model):
             'ipAddress': values.get('ipAddress') or get_local_ip(),
             'portNo': values.get('portNo') or '80',
             'url': values.get('url') or url,
+            # The address THIS server actually runs on - the third leg of
+            # the check. A migrated server_setup faithfully carries the OLD
+            # server's address, and a setup pressed in that state would aim
+            # the camera at the old machine again.
+            'local_ip': get_local_ip(),
         }
 
     def _ensure_reader_links(self):
@@ -1437,12 +1442,40 @@ class CctvCamera(models.Model):
                 # path - and the only visible sign was a quietly ageing
                 # heartbeat.
                 expected = self._expected_push_target()
+                local_ip = expected['local_ip']
                 details.append('  %s' % self.env._(
                     "expected by this system: %(host)s:%(port)s %(url)s",
                     host=expected['ipAddress'], port=expected['portNo'],
                     url=expected['url']))
-                if (got_host != expected['ipAddress']
-                        or str(host.get('portNo') or '80') != expected['portNo']):
+                details.append('  %s' % self.env._(
+                    "this server runs on: %(local)s", local=local_ip))
+                # Three-way check: the camera's live target, the stored
+                # setup, and the address this diagnosis runs FROM. A
+                # migrated setup faithfully carries the OLD server's
+                # address - the most dangerous case is a camera already
+                # aimed HERE that a well-meaning setup press would aim
+                # back at the old machine.
+                if expected['ipAddress'] != local_ip:
+                    if got_host == local_ip:
+                        problems.append(self.env._(
+                            "The camera correctly sends to this server "
+                            "(%(local)s), but the stored setup says "
+                            "%(cfg)s - pressing Set HTTP Host would aim it "
+                            "BACK at the old address. Fix the address in "
+                            "the camera's Server Setup first (or remove "
+                            "its ipAddress line to use this server's own).",
+                            local=local_ip, cfg=expected['ipAddress']))
+                    else:
+                        problems.append(self.env._(
+                            "The stored setup points to %(cfg)s while this "
+                            "server runs on %(local)s - an address "
+                            "inherited from the old server. Fix the "
+                            "camera's Server Setup (or remove its "
+                            "ipAddress line) before running Set HTTP Host.",
+                            cfg=expected['ipAddress'], local=local_ip))
+                if (got_host not in (expected['ipAddress'], local_ip)
+                        or (got_host == expected['ipAddress']
+                            and str(host.get('portNo') or '80') != expected['portNo'])):
                     problems.append(self.env._(
                         "The camera sends its events to %(got)s:%(got_port)s "
                         "while this system expects %(want)s:%(want_port)s - "

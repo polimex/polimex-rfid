@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 15:52+0000\n"
-"PO-Revision-Date: 2026-08-16 18:52\n"
+"POT-Creation-Date: 2026-08-16 16:33+0000\n"
+"PO-Revision-Date: 2026-08-16 19:33\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: de\n"
@@ -4790,6 +4790,22 @@ msgstr ""
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The camera correctly sends to this server (%(local)s), but the stored setup "
+"says %(cfg)s - pressing Set HTTP Host would aim it BACK at the old address. "
+"Fix the address in the camera's Server Setup first (or remove its ipAddress "
+"line to use this server's own)."
+msgstr ""
+"Die Kamera sendet korrekt an diesen Server (%(local)s), aber die "
+"gespeicherte Einrichtung besagt %(cfg)s - ein Drücken von \"HTTP-Host "
+"setzen\" würde sie WIEDER auf die alte Adresse ausrichten. Korrigieren Sie "
+"zunächst die Adresse in der Server-Einrichtung der Kamera (oder entfernen "
+"Sie deren ipAddress-Zeile, um die eigene Adresse dieses Servers zu "
+"verwenden)."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "The camera did not answer as expected: %(status)s %(error)s"
 msgstr "Die Kamera hat nicht wie erwartet geantwortet: %(status)s %(error)s"
 
@@ -4956,6 +4972,19 @@ msgstr ""
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_vending_event__snapshot
 msgid "The snapshot of the camera"
 msgstr "Der Schnappschuss der Kamera"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The stored setup points to %(cfg)s while this server runs on %(local)s - an "
+"address inherited from the old server. Fix the camera's Server Setup (or "
+"remove its ipAddress line) before running Set HTTP Host."
+msgstr ""
+"Die gespeicherte Einrichtung verweist auf %(cfg)s, während dieser Server "
+"unter %(local)s läuft - eine Adresse, die vom alten Server übernommen wurde."
+" Korrigieren Sie die Server-Einrichtung der Kamera (oder entfernen Sie deren"
+" ipAddress-Zeile), bevor Sie \"HTTP-Host setzen\" ausführen."
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -5503,6 +5532,12 @@ msgstr ""
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "the reported time could not be compared"
 msgstr "die gemeldete Zeit konnte nicht verglichen werden"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "this server runs on: %(local)s"
+msgstr "dieser Server läuft unter: %(local)s"
 
 #. module: polimex_ip_cam
 #. odoo-python

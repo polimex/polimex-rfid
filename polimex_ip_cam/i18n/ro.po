@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 15:52+0000\n"
-"PO-Revision-Date: 2026-08-16 18:53\n"
+"POT-Creation-Date: 2026-08-16 16:33+0000\n"
+"PO-Revision-Date: 2026-08-16 19:34\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: ro\n"
@@ -4783,6 +4783,21 @@ msgstr ""
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The camera correctly sends to this server (%(local)s), but the stored setup "
+"says %(cfg)s - pressing Set HTTP Host would aim it BACK at the old address. "
+"Fix the address in the camera's Server Setup first (or remove its ipAddress "
+"line to use this server's own)."
+msgstr ""
+"Camera trimite corect către acest server (%(local)s), dar configurația "
+"salvată indică %(cfg)s - apăsarea butonului Setează Gazdă HTTP ar "
+"redirecționa-o ÎNAPOI către adresa veche. Corectați mai întâi adresa în "
+"Configurarea Serverului camerei (sau eliminați linia ipAddress pentru a "
+"folosi adresa proprie a acestui server)."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "The camera did not answer as expected: %(status)s %(error)s"
 msgstr "Camera nu a răspuns conform așteptărilor: %(status)s %(error)s"
 
@@ -4946,6 +4961,19 @@ msgstr ""
 #: model:ir.model.fields,help:polimex_ip_cam.field_hr_rfid_vending_event__snapshot
 msgid "The snapshot of the camera"
 msgstr "Instantaneul camerei"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The stored setup points to %(cfg)s while this server runs on %(local)s - an "
+"address inherited from the old server. Fix the camera's Server Setup (or "
+"remove its ipAddress line) before running Set HTTP Host."
+msgstr ""
+"Configurația salvată indică %(cfg)s, în timp ce acest server rulează pe "
+"%(local)s - o adresă moștenită de la serverul vechi. Corectați Configurarea "
+"Serverului camerei (sau eliminați linia ipAddress) înainte de a executa "
+"Setează Gazdă HTTP."
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -5490,6 +5518,12 @@ msgstr ""
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "the reported time could not be compared"
 msgstr "ora raportată nu a putut fi comparată"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "this server runs on: %(local)s"
+msgstr "acest server rulează pe: %(local)s"
 
 #. module: polimex_ip_cam
 #. odoo-python

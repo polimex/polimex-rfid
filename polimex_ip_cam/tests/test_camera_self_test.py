@@ -540,8 +540,10 @@ class TestPushDestinationIsValidatedNotJustShown(TransactionCase):
         values.update(extra)
         return self.env['cctv.camera'].create(values)
 
-    def _report(self, camera, host_response):
+    def _report(self, camera, host_response, local_ip='192.168.0.99'):
         patches = _quiet_reads() + [
+            patch('odoo.addons.polimex_ip_cam.models.cctv_camera.get_local_ip',
+                  return_value=local_ip),
             patch.object(HikvisionCamera, 'get_http_host',
                          return_value={'status': 'success',
                                        'response': host_response}),
@@ -589,3 +591,32 @@ class TestPushDestinationIsValidatedNotJustShown(TransactionCase):
             'url': '/ipcam/anpr/event/FA9951877', 'protocolType': 'HTTP'})
         self.assertNotIn('Set HTTP Host', report,
                          'вярната дестинация е обявена за грешна')
+        self.assertIn('192.168.0.99', report)
+
+    def test_a_migrated_setup_that_would_revert_the_camera_is_called_out(self):
+        """Най-опасният случай (собственикът: "камерата не е настроена към
+        ИП от което я диагностицираме"): камерата ВЕЧЕ сочи този сървър, а
+        наследената настройка пази стария адрес - едно добронамерено Set
+        HTTP Host би я върнало назад."""
+        camera = self._camera(name='ВХОД мигрирал',
+                              server_setup='ipAddress=192.168.0.190\nportNo=80')
+        report = self._report(camera, {
+            'ipAddress': '192.168.0.99', 'portNo': '80',
+            'url': '/ipcam/anpr/event/FA9951877', 'protocolType': 'HTTP'})
+        self.assertIn('BACK', report,
+                      'опасността от връщане към стария адрес не е обявена')
+        self.assertIn('192.168.0.190', report)
+
+    def test_a_stale_setup_is_flagged_before_it_is_applied(self):
+        """Настройка, наследена от стария сървър, се хваща ПРЕДИ да бъде
+        приложена - камерата следва конфигурацията, но конфигурацията е
+        грешната."""
+        camera = self._camera(name='ВХОД стар',
+                              server_setup='ipAddress=192.168.0.190\nportNo=80')
+        report = self._report(camera, {
+            'ipAddress': '192.168.0.190', 'portNo': '80',
+            'url': '/ipcam/anpr/event/FA9951877', 'protocolType': 'HTTP'})
+        self.assertIn('inherited', report,
+                      'наследеният стар адрес в настройката не е обявен')
+        self.assertIn('this server runs on', report,
+                      'локалният адрес на сървъра липсва от доклада')
