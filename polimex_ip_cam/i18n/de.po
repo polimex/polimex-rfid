@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 15:05+0000\n"
-"PO-Revision-Date: 2026-08-16 18:05\n"
+"POT-Creation-Date: 2026-08-16 15:52+0000\n"
+"PO-Revision-Date: 2026-08-16 18:52\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: de\n"
@@ -4815,6 +4815,17 @@ msgstr ""
 "funktioniert."
 
 #. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The camera is reachable, yet its last sign of life here is %(minutes)s "
+"minute(s) old - its notifications are not arriving (they go to %(got)s)."
+msgstr ""
+"Die Kamera ist erreichbar, doch ihr letztes Lebenszeichen hier ist "
+"%(minutes)s Minute(n) alt - ihre Benachrichtigungen kommen nicht an (sie "
+"gehen an %(got)s)."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__existing_camera_id
 msgid ""
 "The camera record this device already is, recognised by its serial number "
@@ -4838,6 +4849,17 @@ msgstr ""
 "Datensatz wurde ohne diesen erneut gesendet. Ab jetzt werden Kennzeichen an "
 "diese Kamera als: %(shape)s übermittelt. Einfahrt- und "
 "Ausfahrtentscheidungen sind davon nicht betroffen."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The camera sends its events to %(got)s:%(got_port)s while this system "
+"expects %(want)s:%(want_port)s - run Set HTTP Host on the camera again."
+msgstr ""
+"Die Kamera sendet ihre Ereignisse an %(got)s:%(got_port)s, während dieses "
+"System %(want)s:%(want_port)s erwartet - führen Sie \"Set HTTP Host\" auf "
+"der Kamera erneut aus."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_diagnostic__camera_id
@@ -4877,6 +4899,20 @@ msgstr ""
 "Die Einfahrts-/Listenkonfiguration kann nicht gelesen werden: %(error)s - "
 "wenn Kennzeichen-Schreibvorgänge abgelehnt werden, ist dies die erste "
 "Stelle, die überprüft werden sollte."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The event address is \"%(got)s\" while this system expects \"%(want)s\" (it "
+"carries the camera's own identity - without it the camera is recognised by "
+"address alone, which breaks behind NAT). Run Set HTTP Host on the camera "
+"again."
+msgstr ""
+"Die Ereignisadresse lautet \"%(got)s\", während dieses System \"%(want)s\" "
+"erwartet (sie trägt die eigene Identität der Kamera - ohne sie wird die "
+"Kamera nur anhand der Adresse erkannt, was hinter NAT nicht funktioniert). "
+"Führen Sie \"Set HTTP Host\" auf der Kamera erneut aus."
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -5373,6 +5409,12 @@ msgstr "Abweichung von der Serverzeit: etwa %(sec)s Sekunde(n)"
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
 msgid "e.g. Camera 1"
 msgstr "z. B. Kamera 1"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "expected by this system: %(host)s:%(port)s %(url)s"
+msgstr "von diesem System erwartet: %(host)s:%(port)s %(url)s"
 
 #. module: polimex_ip_cam
 #. odoo-python

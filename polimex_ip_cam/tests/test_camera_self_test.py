@@ -42,7 +42,8 @@ def _quiet_reads():
         patch.object(HikvisionCamera, 'get_http_host',
                      return_value={'status': 'success', 'response': {
                          'ipAddress': '192.168.0.99', 'portNo': '8069',
-                         'url': '/cctv/events', 'protocolType': 'HTTP'}}),
+                         'url': '/ipcam/anpr/event/G12345678',
+                         'protocolType': 'HTTP'}}),
         patch.object(HikvisionCamera, 'search_lp_audit',
                      return_value={'status': 'success', 'records': [
                          {'plate': 'CB1234AB', 'type': 'whiteList'}],
@@ -68,6 +69,8 @@ class TestCameraSelfTest(TransactionCase):
         cls.camera = cls.env['cctv.camera'].create({
             'name': 'Вход', 'ip_address': '10.0.0.7', 'username': 'admin',
             'password': 'x', 'brand': 'hikvision', 'tz': 'Europe/Sofia',
+            'sub_serial_number': 'G12345678',
+            'server_setup': 'ipAddress=192.168.0.99\nportNo=8069',
         })
 
     def _run(self, add=None, delete=None, time_config=None):
@@ -490,7 +493,10 @@ class TestPlatesTravelTogether(TransactionCase):
         all_commands = Command.search(
             [('camera_id', '=', self.camera.id)])
         self.assertEqual(command.state, 'error')
-        self.assertIn('Split into two', command.response_data)
+        # Поведенчески, не текстово (бележката е преведена): разцепването
+        # е родило дъщерни команди.
+        self.assertGreater(len(all_commands), 1,
+                           'отказаната партида не роди дъщерни команди')
         done_texts = ' '.join(all_commands.filtered(
             lambda c: c.state == 'done').mapped('request_data'))
         self.assertIn('CB0001AA', done_texts,
@@ -515,3 +521,71 @@ class TestPlatesTravelTogether(TransactionCase):
         command.action_execute()
         self.assertEqual(command.state, 'error')
         self.assertNotIn('AttributeError', command.response_data or '')
+
+
+@tagged('post_install', '-at_install', 'polimex_ip_cam', 'ipcam_self_test')
+class TestPushDestinationIsValidatedNotJustShown(TransactionCase):
+    """Собственикът: "има ли настройката на пуш на камерата?!? за да се
+    валидира и къде сочи камерата и кога какво праща". На живия парк една
+    камера сочеше стар адрес, две - друг, със стария път без идентификатор
+    - и единственият видим знак беше тихо остаряващ heartbeat."""
+
+    def _camera(self, **extra):
+        values = {
+            'name': 'ВХОД', 'ip_address': '10.0.0.71', 'username': 'admin',
+            'password': 'x', 'brand': 'hikvision', 'tz': 'Europe/Sofia',
+            'sub_serial_number': 'FA9951877',
+            'server_setup': 'ipAddress=192.168.0.99\nportNo=80',
+        }
+        values.update(extra)
+        return self.env['cctv.camera'].create(values)
+
+    def _report(self, camera, host_response):
+        patches = _quiet_reads() + [
+            patch.object(HikvisionCamera, 'get_http_host',
+                         return_value={'status': 'success',
+                                       'response': host_response}),
+            patch.object(HikvisionCamera, 'add_plate_to_list',
+                         return_value=dict(OK_WRITE)),
+            patch.object(HikvisionCamera, 'delete_plate_from_list',
+                         return_value=dict(OK_WRITE)),
+        ]
+        for p in patches:
+            p.start()
+            self.addCleanup(p.stop)
+        action = camera.action_camera_diagnostics()
+        return self.env['cctv.camera.diagnostic'].browse(action['res_id']).report
+
+    def test_a_stale_destination_is_a_named_problem(self):
+        """Камера, сочеща стария сървър със стария път, е обявена с двете
+        разминавания - адрес и идентичност - не показана в сиво."""
+        report = self._report(self._camera(), {
+            'ipAddress': '192.168.0.190', 'portNo': '80',
+            'url': '/ipcam/anpr/event', 'protocolType': 'HTTP'})
+        self.assertIn('192.168.0.190', report)
+        self.assertIn('192.168.0.99', report,
+                      'очакваната дестинация липсва от доклада')
+        self.assertIn('Set HTTP Host', report,
+                      'проблемът не казва какво да се направи')
+        self.assertIn('FA9951877', report,
+                      'очакваният път с идентичността на камерата липсва')
+
+    def test_a_silent_reachable_camera_is_called_out(self):
+        """Достижима камера без признак на живот от часове = известяването
+        ѝ не стига дотук - това е проблем, не бележка под линия."""
+        from datetime import timedelta
+        from odoo import fields as odoo_fields
+        camera = self._camera(name='ВХОД тих')
+        camera.last_seen = odoo_fields.Datetime.now() - timedelta(hours=3)
+        report = self._report(camera, {
+            'ipAddress': '192.168.0.99', 'portNo': '80',
+            'url': '/ipcam/anpr/event/FA9951877', 'protocolType': 'HTTP'})
+        self.assertIn('not arriving', report,
+                      'мълчащата достижима камера не е обявена')
+
+    def test_a_correct_destination_raises_nothing(self):
+        report = self._report(self._camera(name='ВХОД ок'), {
+            'ipAddress': '192.168.0.99', 'portNo': '80',
+            'url': '/ipcam/anpr/event/FA9951877', 'protocolType': 'HTTP'})
+        self.assertNotIn('Set HTTP Host', report,
+                         'вярната дестинация е обявена за грешна')

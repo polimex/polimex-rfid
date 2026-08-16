@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 15:05+0000\n"
-"PO-Revision-Date: 2026-08-16 18:06\n"
+"POT-Creation-Date: 2026-08-16 15:52+0000\n"
+"PO-Revision-Date: 2026-08-16 18:53\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: ro\n"
@@ -4808,6 +4808,17 @@ msgstr ""
 "funcționează."
 
 #. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The camera is reachable, yet its last sign of life here is %(minutes)s "
+"minute(s) old - its notifications are not arriving (they go to %(got)s)."
+msgstr ""
+"Camera este accesibilă, dar ultimul semn de viață primit aici are "
+"%(minutes)s minut(e) vechime - notificările nu ajung (sunt trimise către "
+"%(got)s)."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__existing_camera_id
 msgid ""
 "The camera record this device already is, recognised by its serial number "
@@ -4830,6 +4841,17 @@ msgstr ""
 "Camera a refuzat o parte din înregistrarea plăcuței, iar înregistrarea a "
 "fost retrimisă fără aceasta. De acum, plăcuțele vor ajunge la această cameră"
 " astfel: %(shape)s. Deciziile de intrare și ieșire nu sunt afectate."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The camera sends its events to %(got)s:%(got_port)s while this system "
+"expects %(want)s:%(want_port)s - run Set HTTP Host on the camera again."
+msgstr ""
+"Camera își trimite evenimentele către %(got)s:%(got_port)s, în timp ce acest"
+" sistem așteaptă %(want)s:%(want_port)s - rulați din nou Set HTTP Host pe "
+"cameră."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_diagnostic__camera_id
@@ -4868,6 +4890,20 @@ msgid ""
 msgstr ""
 "Configurarea intrării/listei nu poate fi citită: %(error)s - dacă scrierile "
 "plăcuțelor sunt refuzate, acesta este primul loc de verificat."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The event address is \"%(got)s\" while this system expects \"%(want)s\" (it "
+"carries the camera's own identity - without it the camera is recognised by "
+"address alone, which breaks behind NAT). Run Set HTTP Host on the camera "
+"again."
+msgstr ""
+"Adresa evenimentului este \"%(got)s\", în timp ce acest sistem așteaptă "
+"\"%(want)s\" (aceasta conține identitatea proprie a camerei - fără ea, "
+"camera este recunoscută doar după adresă, ceea ce cauzează probleme în "
+"spatele NAT). Rulați din nou Set HTTP Host pe cameră."
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -5360,6 +5396,12 @@ msgstr "diferență față de ceasul serverului: aproximativ %(sec)s secundă(e)
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
 msgid "e.g. Camera 1"
 msgstr "de ex. Cameră 1"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "expected by this system: %(host)s:%(port)s %(url)s"
+msgstr "așteptat de acest sistem: %(host)s:%(port)s %(url)s"
 
 #. module: polimex_ip_cam
 #. odoo-python

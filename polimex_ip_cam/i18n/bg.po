@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 15:05+0000\n"
-"PO-Revision-Date: 2026-08-16 18:05\n"
+"POT-Creation-Date: 2026-08-16 15:52+0000\n"
+"PO-Revision-Date: 2026-08-16 18:52\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: bg\n"
@@ -4810,6 +4810,17 @@ msgstr ""
 "опреснете списъка с табели, щом пътят за запис проработи."
 
 #. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The camera is reachable, yet its last sign of life here is %(minutes)s "
+"minute(s) old - its notifications are not arriving (they go to %(got)s)."
+msgstr ""
+"Камерата е достъпна, но последният ѝ признак на живот тук е отпреди "
+"%(minutes)s минута(и) - нейните известия не пристигат (те се изпращат до "
+"%(got)s)."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__existing_camera_id
 msgid ""
 "The camera record this device already is, recognised by its serial number "
@@ -4831,6 +4842,17 @@ msgstr ""
 "Камерата отказа част от записа на табелата и записът беше изпратен отново "
 "без нея. Оттук нататък табелите се изпращат към тази камера като: %(shape)s."
 " Решенията за влизане и излизане не са засегнати."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The camera sends its events to %(got)s:%(got_port)s while this system "
+"expects %(want)s:%(want_port)s - run Set HTTP Host on the camera again."
+msgstr ""
+"Камерата изпраща събитията си до %(got)s:%(got_port)s, докато тази система "
+"очаква %(want)s:%(want_port)s - изпълнете отново „Задаване на HTTP хост“ на "
+"камерата."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_diagnostic__camera_id
@@ -4869,6 +4891,20 @@ msgid ""
 msgstr ""
 "Конфигурацията на входа/списъка не може да бъде прочетена: %(error)s - ако "
 "записите на табели се отказват, това е първото място за проверка."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The event address is \"%(got)s\" while this system expects \"%(want)s\" (it "
+"carries the camera's own identity - without it the camera is recognised by "
+"address alone, which breaks behind NAT). Run Set HTTP Host on the camera "
+"again."
+msgstr ""
+"Адресът на събитието е „%(got)s“, докато тази система очаква „%(want)s“ (той"
+" носи собствената идентичност на камерата - без нея камерата се разпознава "
+"само по адрес, което се проваля зад NAT). Изпълнете отново „Задаване на HTTP"
+" хост“ на камерата."
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -5360,6 +5396,12 @@ msgstr "разлика от часовника на сървъра: около %
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
 msgid "e.g. Camera 1"
 msgstr "напр. Камера 1"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "expected by this system: %(host)s:%(port)s %(url)s"
+msgstr "очаквано от тази система: %(host)s:%(port)s %(url)s"
 
 #. module: polimex_ip_cam
 #. odoo-python

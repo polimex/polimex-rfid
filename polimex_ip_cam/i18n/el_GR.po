@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 15:05+0000\n"
-"PO-Revision-Date: 2026-08-16 18:06\n"
+"POT-Creation-Date: 2026-08-16 15:52+0000\n"
+"PO-Revision-Date: 2026-08-16 18:53\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: el\n"
@@ -4821,6 +4821,17 @@ msgstr ""
 "εγγραφής."
 
 #. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The camera is reachable, yet its last sign of life here is %(minutes)s "
+"minute(s) old - its notifications are not arriving (they go to %(got)s)."
+msgstr ""
+"Η κάμερα είναι προσβάσιμη, ωστόσο το τελευταίο σημάδι λειτουργίας της εδώ "
+"είναι %(minutes)s λεπτό(ά) παλιό - οι ειδοποιήσεις της δεν φτάνουν "
+"(αποστέλλονται στο %(got)s)."
+
+#. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_discovery_line__existing_camera_id
 msgid ""
 "The camera record this device already is, recognised by its serial number "
@@ -4842,6 +4853,17 @@ msgstr ""
 "Η κάμερα απέρριψε μέρος της εγγραφής πινακίδας και η εγγραφή στάλθηκε ξανά "
 "χωρίς αυτό. Από εδώ και πέρα οι πινακίδες αποστέλλονται σε αυτή την κάμερα "
 "ως: %(shape)s. Οι αποφάσεις εισόδου και εξόδου δεν επηρεάζονται."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The camera sends its events to %(got)s:%(got_port)s while this system "
+"expects %(want)s:%(want_port)s - run Set HTTP Host on the camera again."
+msgstr ""
+"Η κάμερα αποστέλλει τα συμβάντα της στο %(got)s:%(got_port)s ενώ αυτό το "
+"σύστημα αναμένει %(want)s:%(want_port)s - εκτελέστε ξανά την ενέργεια "
+"«Ορισμός HTTP Host» στην κάμερα."
 
 #. module: polimex_ip_cam
 #: model:ir.model.fields,help:polimex_ip_cam.field_cctv_camera_diagnostic__camera_id
@@ -4880,6 +4902,20 @@ msgid ""
 msgstr ""
 "Η ρύθμιση εισόδου/λίστας δεν μπορεί να αναγνωστεί: %(error)s - εάν οι "
 "εγγραφές πινακίδων απορρίπτονται, αυτό είναι το πρώτο σημείο για έλεγχο."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"The event address is \"%(got)s\" while this system expects \"%(want)s\" (it "
+"carries the camera's own identity - without it the camera is recognised by "
+"address alone, which breaks behind NAT). Run Set HTTP Host on the camera "
+"again."
+msgstr ""
+"Η διεύθυνση συμβάντος είναι \"%(got)s\" ενώ αυτό το σύστημα αναμένει "
+"\"%(want)s\" (περιέχει τη μοναδική ταυτότητα της κάμερας - χωρίς αυτήν, η "
+"κάμερα αναγνωρίζεται μόνο βάσει διεύθυνσης, κάτι που αποτυγχάνει πίσω από "
+"NAT). Εκτελέστε ξανά την ενέργεια «Ορισμός HTTP Host» στην κάμερα."
 
 #. module: polimex_ip_cam
 #. odoo-python
@@ -5374,6 +5410,12 @@ msgstr "διαφορά από το ρολόι του διακομιστή: πε�
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_cctv_camera_form
 msgid "e.g. Camera 1"
 msgstr "π.χ. Κάμερα 1"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "expected by this system: %(host)s:%(port)s %(url)s"
+msgstr "αναμενόμενο από αυτό το σύστημα: %(host)s:%(port)s %(url)s"
 
 #. module: polimex_ip_cam
 #. odoo-python

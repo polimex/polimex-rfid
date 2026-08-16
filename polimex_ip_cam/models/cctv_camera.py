@@ -1047,6 +1047,31 @@ class CctvCamera(models.Model):
                 _logger.warning("Unknown event type: %s for camera %s", event_type, self.name)
         return True
 
+    def _expected_push_target(self):
+        """Where THIS system expects the camera to send its notifications.
+
+        Exactly what Set HTTP Host would write: the operator's server_setup
+        values with the module defaults on top - the identity-carrying URL
+        included once the sub-serial is known. The self-test compares the
+        camera's live configuration against this, so a stale destination
+        (an old server, the legacy identity-less path) is a named problem
+        instead of a quietly ageing heartbeat.
+        """
+        self.ensure_one()
+        values = {}
+        for line in (self.server_setup or '').splitlines():
+            if '=' in line:
+                key, value = line.split('=', 1)
+                values[key.strip()] = value.strip()
+        url = '/ipcam/anpr/event'
+        if self.sub_serial_number:
+            url = '/ipcam/anpr/event/%s' % self.sub_serial_number
+        return {
+            'ipAddress': values.get('ipAddress') or get_local_ip(),
+            'portNo': values.get('portNo') or '80',
+            'url': values.get('url') or url,
+        }
+
     def _ensure_reader_links(self):
         """The reader list the event handler depends on, self-repaired.
 
@@ -1399,11 +1424,50 @@ class CctvCamera(models.Model):
                             'protocolType', 'heartbeat'):
                     if host.get(key) not in (None, ''):
                         details.append('  %s: %s' % (key, host.get(key)))
-                if not (host.get('ipAddress') or host.get('hostName')):
+                got_host = host.get('ipAddress') or host.get('hostName')
+                if not got_host:
                     problems.append(self.env._(
                         "The camera has NO event destination configured - "
                         "recognitions never reach this system. Run the camera "
                         "setup again."))
+                    return
+                # VALIDATED against what Set HTTP Host would write, not just
+                # displayed: on a live park one camera pointed at one old
+                # address, two at another, with the legacy identity-less
+                # path - and the only visible sign was a quietly ageing
+                # heartbeat.
+                expected = self._expected_push_target()
+                details.append('  %s' % self.env._(
+                    "expected by this system: %(host)s:%(port)s %(url)s",
+                    host=expected['ipAddress'], port=expected['portNo'],
+                    url=expected['url']))
+                if (got_host != expected['ipAddress']
+                        or str(host.get('portNo') or '80') != expected['portNo']):
+                    problems.append(self.env._(
+                        "The camera sends its events to %(got)s:%(got_port)s "
+                        "while this system expects %(want)s:%(want_port)s - "
+                        "run Set HTTP Host on the camera again.",
+                        got=got_host, got_port=host.get('portNo') or '80',
+                        want=expected['ipAddress'],
+                        want_port=expected['portNo']))
+                if (host.get('url') or '') != expected['url']:
+                    problems.append(self.env._(
+                        "The event address is \"%(got)s\" while this system "
+                        "expects \"%(want)s\" (it carries the camera's own "
+                        "identity - without it the camera is recognised by "
+                        "address alone, which breaks behind NAT). Run Set "
+                        "HTTP Host on the camera again.",
+                        got=host.get('url') or '', want=expected['url']))
+                if self.last_seen:
+                    silent_for = (fields.Datetime.now()
+                                  - self.last_seen).total_seconds()
+                    if silent_for > 600:
+                        problems.append(self.env._(
+                            "The camera is reachable, yet its last sign of "
+                            "life here is %(minutes)s minute(s) old - its "
+                            "notifications are not arriving (they go to "
+                            "%(got)s).", minutes=int(silent_for // 60),
+                            got=got_host))
 
             def list_read():
                 result = cam.search_lp_audit(max_results=5)
