@@ -491,6 +491,16 @@ class HrRfidCardType(models.Model):
 
     def check_and_fix_card_numer(self, number):
         def normalize_plate(plate: str) -> str:
+            """What can be converted is converted silently; what cannot is
+            REFUSED out loud, naming the character (owner's rule, 2026-08-16).
+
+            The camera's recognition always comes back as Latin capitals and
+            digits, and the stored number must equal it or the event never
+            finds the card. Cyrillic lookalikes, lowercase and separators all
+            convert to that form, so they are fixed without a word. Anything
+            else used to be DROPPED silently - the operator typed junk, the
+            record kept a number that is not the plate, and nobody was told.
+            """
             mapping = {
                 'А': 'A', 'В': 'B', 'Е': 'E', 'К': 'K', 'М': 'M',
                 'Н': 'H', 'О': 'O', 'Р': 'P', 'С': 'C', 'Т': 'T', 'Х': 'X',
@@ -499,7 +509,9 @@ class HrRfidCardType(models.Model):
                 'н': 'H', 'о': 'O', 'р': 'P', 'с': 'C', 'т': 'T', 'х': 'X',
                 'у': 'Y',
             }
+            separators = set(' \t-.')
             result = []
+            refused = []
             for ch in plate:
                 if ch.isdigit():
                     result.append(ch)
@@ -507,6 +519,19 @@ class HrRfidCardType(models.Model):
                     result.append(mapping[ch])
                 elif 'A' <= ch <= 'Z' or 'a' <= ch <= 'z':
                     result.append(ch.upper())
+                elif ch in separators:
+                    continue
+                else:
+                    refused.append(ch)
+            if refused:
+                raise exceptions.UserError(_(
+                    'The plate number "%(entered)s" contains %(chars)s - not '
+                    'something a number plate can carry, and there is nothing '
+                    'it converts to. Enter the number exactly as it reads on '
+                    'the plate, e.g. CB5803CM.',
+                    entered=plate,
+                    chars=', '.join('"%s"' % c for c in dict.fromkeys(refused)),
+                ))
             return ''.join(result)
 
         self.ensure_one()

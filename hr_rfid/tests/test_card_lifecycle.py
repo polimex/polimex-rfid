@@ -171,3 +171,60 @@ class TestCardOwnerChange(RFIDAppCase):
         """Test internal number calculation for w34 format."""
         self.assertEqual(self.test_card_partner.internal_number, '0077312345',
                          'W34 internal number should equal card number')
+
+
+@tagged('standard', 'at_install', 'rfid', 'rfid_card')
+class TestPlateNumberEntry(RFIDAppCase):
+    """Номерът на табелата трябва да е равен на това, което камерата ще
+    разпознае - иначе събитието никога не намира картата.
+
+    Правилото на собственика (2026-08-16): "определено гръмко казваме че има
+    непозволен символ който не може да конвертираме. ако можем да
+    конвертираме просто го конвертираме и не казваме нищо."
+    """
+
+    def _plate(self, number):
+        return self.env['hr.rfid.card'].create({
+            'number': number,
+            'card_type': self.env.ref('hr_rfid.hr_rfid_card_type_8').id,
+            'employee_id': self.test_employee_id.id,
+            'company_id': self.test_company_id,
+        })
+
+    def test_convertible_input_is_fixed_without_a_word(self):
+        """Кирилски двойници, малки букви и разделители се поправят тихо -
+        операторът пише каквото вижда на табелата, системата пази каквото
+        камерата ще прати."""
+        card = self._plate('св 5803-см')
+        self.assertEqual(card.number, 'CB5803CM')
+
+    def test_junk_is_refused_out_loud_naming_the_character(self):
+        """Символ без съответствие на табела не се изтрива тихо - до днес
+        'CB5803§M' ставаше 'CB5803M' без думичка и записът пазеше номер,
+        който не е номерът."""
+        from odoo.exceptions import UserError
+        with self.assertRaises(UserError) as caught:
+            self._plate('CB5803§M')
+        self.assertIn('§', str(caught.exception),
+                      'отказът не назовава непозволения символ')
+
+    def test_the_round_trip_is_the_point(self):
+        """Въведеното с двойници се намира от събитието на камерата -
+        търсенето, което обработката на разпознаване прави."""
+        card = self._plate('рв4181кс')
+        found = self.env['hr.rfid.card'].with_context(
+            active_test=False).search([
+                ('number', '=', 'PB4181KC'),
+                ('company_id', '=', self.test_company_id),
+            ])
+        self.assertEqual(found, card,
+                         'камерното събитие няма да намери тази табела')
+
+    def test_ordinary_cards_keep_their_own_rules(self):
+        card = self.env['hr.rfid.card'].create({
+            'number': '12345',
+            'employee_id': self.test_employee_id.id,
+            'company_id': self.test_company_id,
+        })
+        self.assertEqual(card.number, '0000012345',
+                         'обикновената карта губи водещите си нули')
