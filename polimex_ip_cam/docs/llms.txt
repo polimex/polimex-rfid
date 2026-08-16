@@ -130,9 +130,14 @@ firmware that returns *notSupport* for VCL):
   body ``{"LicensePlateInfoList": [{...}]}``. Each record carries
   ``LicensePlate``, ``listType`` (``allowList``/``blockList``), ``cardNo`` /
   ``cardID``, a ``createTime`` (validity start) / ``effectiveTime`` (validity
-  end) window and ``operationType``/``operation``. The upsert merges by plate;
-  success is HTTP 200 with ``statusCode 1`` — any other status is a failure, so
-  a plate the camera rejected is not marked done in Odoo.
+  end) window and ``operationType``/``operation``. Success is HTTP 200 with
+  ``statusCode 1`` — any other status is a failure, so a plate the camera
+  rejected is not marked done in Odoo. **Proven live on V5.5.0 (build
+  260328, self-test on site, 2026-08-16): this firmware REFUSES a record
+  write onto a plate it already holds (badParameters / "Invalid XML
+  Content"), while accepting a fresh plate — the write ladder therefore
+  withdraws the exact plate and writes it again (the replace step) before
+  degrading anything else. V5.4.4 merged by plate directly.
 - Delete: ``PUT DelLicensePlateAuditData?format=json`` with
   ``{"deleteAllEnabled": false, "CompoundCond": {"plateColor": "", "licensePlate": "<plate>"}}``.
 
