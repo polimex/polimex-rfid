@@ -742,6 +742,15 @@ class HikvisionCamera(BaseCamera):
             # Cache only a conclusive answer.
             self._lp_audit_api = resp.status_code != 200
             return self._lp_audit_api
+        except (requests.exceptions.ConnectionError,
+                requests.exceptions.Timeout) as e:
+            # The camera is unreachable right now - a network condition the
+            # message states in full. The traceback added two screens of
+            # noise per probe on a live site while saying nothing more.
+            _logger.warning("Hikvision plate-list capability probe: camera "
+                            "unreachable (%s); assuming LP-audit API for this "
+                            "operation.", e)
+            return True
         except Exception as e:
             # Probe unreachable — assume the modern API (the deployed TCG
             # cameras) for THIS call and let the actual operation surface the
