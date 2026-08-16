@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 12:32+0000\n"
-"PO-Revision-Date: 2026-08-16 15:33\n"
+"POT-Creation-Date: 2026-08-16 12:42+0000\n"
+"PO-Revision-Date: 2026-08-16 15:42\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: el\n"
@@ -48,6 +48,16 @@ msgid ""
 msgstr ""
 "Μια ΔΙΑΦΟΡΕΤΙΚΗ συσκευή απαντά σε αυτή τη διεύθυνση: αναφέρει σειριακό "
 "αριθμό %(got)s, ενώ αυτή η εγγραφή αναφέρει %(want)s."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"A write onto a plate the camera already holds FAILS even with the replace "
+"step: %(error)s"
+msgstr ""
+"Η εγγραφή πάνω σε πινακίδα που η κάμερα ήδη διαθέτει ΑΠΟΤΥΓΧΑΝΕΙ ακόμη και "
+"με το βήμα αντικατάστασης: %(error)s"
 
 #. module: polimex_ip_cam
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_hr_rfid_user_ev_form_anpr_ext
@@ -5240,6 +5250,25 @@ msgstr "[9] Συμβάντα που φτάνουν ΑΠΟ την κάμερα"
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "a repeated write onto the existing test plate is accepted directly"
+msgstr ""
+"μια επαναλαμβανόμενη εγγραφή πάνω στην υπάρχουσα δοκιμαστική πινακίδα "
+"γίνεται αποδεκτή απευθείας"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"a repeated write onto the existing test plate needed the replace step "
+"(withdraw, then write) - this firmware refuses direct overwrites"
+msgstr ""
+"μια επαναλαμβανόμενη εγγραφή πάνω στην υπάρχουσα δοκιμαστική πινακίδα "
+"απαίτησε το βήμα αντικατάστασης (απόσυρση, έπειτα εγγραφή) - αυτό το "
+"firmware αρνείται τις απευθείας αντικαταστάσεις"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "beginning of the camera's own export (its exact import format):"
 msgstr ""
 "αρχή της δικής της εξαγωγής της κάμερας (η ακριβής της μορφή εισαγωγής):"
@@ -5290,6 +5319,12 @@ msgstr "τελευταίο σημάδι ζωής (heartbeat): %(when)s"
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "minimal record"
 msgstr "ελάχιστη εγγραφή"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "minimal record (fields: listType): accepted"
+msgstr "ελάχιστη εγγραφή (πεδία: listType): αποδεκτή"
 
 #. module: polimex_ip_cam
 #. odoo-python

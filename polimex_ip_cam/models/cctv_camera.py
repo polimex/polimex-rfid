@@ -1382,7 +1382,44 @@ class CctvCamera(models.Model):
 
             def list_write():
                 minimal = {'plateNum': self.DIAG_TEST_PLATE, 'listType': '0'}
-                minimal_ok = try_write(self.env._("minimal record"), minimal)
+                first = cam.add_plate_to_list([minimal])
+                minimal_ok = first.get('status') == 'success'
+                if minimal_ok:
+                    details.append('  %s' % self.env._(
+                        "minimal record (fields: listType): accepted"))
+                    # A SECOND write of the same plate, before the cleanup:
+                    # this site's cameras keep the lists the previous system
+                    # loaded, so on a live reload every real plate is a write
+                    # onto an EXISTING record - a clean test plate alone
+                    # proves nothing about that case.
+                    again = cam.add_plate_to_list([minimal])
+                    if again.get('status') != 'success':
+                        problems.append(self.env._(
+                            "A write onto a plate the camera already holds "
+                            "FAILS even with the replace step: %(error)s",
+                            error=again.get('error')))
+                    elif again.get('replaced'):
+                        details.append('  %s' % self.env._(
+                            "a repeated write onto the existing test plate "
+                            "needed the replace step (withdraw, then write) - "
+                            "this firmware refuses direct overwrites"))
+                    else:
+                        details.append('  %s' % self.env._(
+                            "a repeated write onto the existing test plate is "
+                            "accepted directly"))
+                    removed = cam.delete_plate_from_list([minimal])
+                    if removed.get('status') != 'success':
+                        problems.append(self.env._(
+                            "The test plate %(plate)s could not be removed "
+                            "afterwards: %(error)s - remove it from the "
+                            "camera's white list by hand.",
+                            plate=self.DIAG_TEST_PLATE,
+                            error=removed.get('error')))
+                else:
+                    details.append('  %s' % self.env._(
+                        "%(label)s (fields: %(shape)s): REFUSED - %(error)s",
+                        label=self.env._("minimal record"), shape='listType',
+                        error=first.get('error')))
                 if not minimal_ok:
                     problems.append(self.env._(
                         "Writing to the plate list FAILS even for a minimal "

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 12:32+0000\n"
-"PO-Revision-Date: 2026-08-16 15:33\n"
+"POT-Creation-Date: 2026-08-16 12:42+0000\n"
+"PO-Revision-Date: 2026-08-16 15:42\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: de\n"
@@ -48,6 +48,16 @@ msgid ""
 msgstr ""
 "An dieser Adresse antwortet ein ANDERES Gerät: Es meldet Seriennummer "
 "%(got)s, dieser Datensatz besagt %(want)s."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"A write onto a plate the camera already holds FAILS even with the replace "
+"step: %(error)s"
+msgstr ""
+"Ein Schreibvorgang auf ein von der Kamera bereits gespeichertes Kennzeichen "
+"SCHLÄGT selbst mit dem Ersetzungsschritt fehl: %(error)s"
 
 #. module: polimex_ip_cam
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_hr_rfid_user_ev_form_anpr_ext
@@ -5238,6 +5248,25 @@ msgstr "[9] Von der Kamera eingehende Ereignisse"
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "a repeated write onto the existing test plate is accepted directly"
+msgstr ""
+"ein wiederholter Schreibvorgang auf das vorhandene Testkennzeichen wird "
+"direkt akzeptiert"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"a repeated write onto the existing test plate needed the replace step "
+"(withdraw, then write) - this firmware refuses direct overwrites"
+msgstr ""
+"ein wiederholter Schreibvorgang auf das vorhandene Testkennzeichen "
+"erforderte den Ersetzungsschritt (Entfernen, dann Schreiben) - diese "
+"Firmware verweigert direkte Überschreibungen"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "beginning of the camera's own export (its exact import format):"
 msgstr "Anfang des eigenen Exports der Kamera (ihr genaues Importformat):"
 
@@ -5287,6 +5316,12 @@ msgstr "letztes Lebenszeichen (Heartbeat): %(when)s"
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "minimal record"
 msgstr "minimaler Datensatz"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "minimal record (fields: listType): accepted"
+msgstr "minimaler Datensatz (Felder: listType): akzeptiert"
 
 #. module: polimex_ip_cam
 #. odoo-python

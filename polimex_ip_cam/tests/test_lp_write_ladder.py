@@ -71,15 +71,22 @@ class TestTheWriteLadder(TransactionCase):
     def _put_refusing_cards(self, calls):
         def fake_put(url, **kwargs):
             body = json.loads(kwargs['data'])
-            calls.append(body)
+            if 'DelLicensePlateAuditData' in url:
+                calls.append('delete')
+                return _Resp()
             record = body['LicensePlateInfoList'][0]
+            calls.append(record)
             if record.get('cardNo'):
                 return REFUSAL
             return _Resp()
         return fake_put
 
     def test_a_refused_card_number_does_not_cost_the_plate(self):
-        """Фирмуер, който отказва свързаната карта, пак получава номера."""
+        """Фирмуер, който отказва свързаната карта, пак получава номера.
+
+        Пътят е каноничен: запис -> (изтегляне + повторен запис, ако
+        номерът вече съществува) -> запис без картата. Отказът тук не
+        зависи от съществуването, затова минава чак третата стъпка."""
         calls = []
         cam = _cam()
         cam._lp_audit_api = True
@@ -91,9 +98,12 @@ class TestTheWriteLadder(TransactionCase):
         self.assertEqual(result['status'], 'success',
                          'номерът се загуби заради незадължителна подробност')
         self.assertEqual(result['shape_used'], 'no_card')
-        self.assertEqual(len(calls), 2, 'стълбицата трябва да е точно два опита')
-        self.assertEqual(calls[1]['LicensePlateInfoList'][0]['cardNo'], '',
-                         'вторият опит трябва да оттегли картата, не да я повтори')
+        adds = [c for c in calls if c != 'delete']
+        self.assertEqual(adds[-1]['cardNo'], '',
+                         'финалният опит трябва да оттегли картата, не да я повтори')
+        self.assertEqual(len(adds), 3,
+                         'редът е запис -> повторен запис след изтегляне -> без карта')
+        self.assertIn('delete', calls, 'replace стъпката липсва')
 
     def test_a_remembered_shape_skips_the_doomed_attempt(self):
         """Запомнената форма праща записа директно - един опит, не два."""
@@ -117,6 +127,32 @@ class TestTheWriteLadder(TransactionCase):
         self.assertEqual(result['status'], 'failed')
         self.assertIn('0x38410029', str(result['error']),
                       'дословният отговор на камерата се губи')
+
+    def test_a_plate_already_on_the_camera_is_replaced_not_lost(self):
+        """Живият обект: камерите пазят списъците от старата система и
+        този фирмуер отказва запис върху съществуващ номер. Номерът не
+        се губи - изтегля се и се записва наново (replace, не гадаене)."""
+        seen = []
+
+        def fake_put(url, **kwargs):
+            body = json.loads(kwargs['data'])
+            if 'DelLicensePlateAuditData' in url:
+                seen.append('delete')
+                return _Resp()
+            seen.append('add')
+            # Отказва, докато номерът "съществува"; след изтриване минава.
+            return _Resp() if 'delete' in seen else REFUSAL
+
+        cam = _cam()
+        cam._lp_audit_api = True
+        with patch.object(camera_api.requests, 'put', side_effect=fake_put):
+            result = cam.add_plate_to_list([{'plateNum': 'PB4181KC',
+                                             'listType': '0'}])
+        self.assertEqual(result['status'], 'success',
+                         'номер, който камерата вече държи, се изгуби')
+        self.assertTrue(result.get('replaced'))
+        self.assertEqual(seen, ['add', 'delete', 'add'],
+                         'редът е запис -> изтегляне -> запис, нищо повече')
 
 
 @tagged('post_install', '-at_install', 'polimex_ip_cam', 'ipcam_lpaudit')

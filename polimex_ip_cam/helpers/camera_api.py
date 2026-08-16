@@ -865,6 +865,7 @@ class HikvisionCamera(BaseCamera):
                f"/ISAPI/Traffic/channels/{LP_AUDIT_CHANNEL}/licensePlateAuditData/record?format=json")
         shapes = LP_RECORD_SHAPES[LP_RECORD_SHAPES.index(self.record_shape):]
         last_error, last_status = None, None
+        replaced = False
         for shape in shapes:
             payload = {"LicensePlateInfoList":
                        [self._lp_record_info(e, shape) for e in plate_entries]}
@@ -886,9 +887,36 @@ class HikvisionCamera(BaseCamera):
                 _logger.debug("Hikvision LP-audit record upsert OK (%s): %s",
                               shape, [e.get("plateNum") for e in plate_entries])
                 return {"status": "success", "response": response.text,
-                        "shape_used": shape}
+                        "shape_used": shape, "replaced": replaced}
             last_error = self._extract_error(response.text)
             last_status = response.status_code
+            if not replaced:
+                # The plate may already LIVE on the camera - these lists
+                # survive from the previous system, and this firmware refuses
+                # an upsert onto an existing plate as badParameters while
+                # accepting a fresh one (a self-test's clean test plate goes
+                # through, every real plate does not). Withdraw exactly this
+                # plate and try the same shape once more: replace, not guess.
+                self._lp_audit_delete(plate_entries)
+                replaced = True
+                try:
+                    response = requests.put(
+                        url, auth=HTTPDigestAuth(self.username, self.password),
+                        headers={"Content-Type": "application/json"},
+                        data=json.dumps(payload), timeout=self.timeout)
+                except Exception as e:
+                    _logger.error("Hikvision LP-audit record upsert: Request "
+                                  "error: %s", e, exc_info=True)
+                    return {"status": "failed", "error": str(e)}
+                if self._lp_audit_json_ok(response):
+                    _logger.info(
+                        "Hikvision LP-audit: %s existing record(s) replaced - "
+                        "the camera refuses an upsert onto a plate it already "
+                        "holds.", [e.get("plateNum") for e in plate_entries])
+                    return {"status": "success", "response": response.text,
+                            "shape_used": shape, "replaced": True}
+                last_error = self._extract_error(response.text)
+                last_status = response.status_code
         _logger.error("Hikvision LP-audit record upsert FAILED (HTTP %s) in every "
                       "record shape. Error: %s", last_status, last_error)
         return {"status": "failed", "error": last_error}

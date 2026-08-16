@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 12:32+0000\n"
-"PO-Revision-Date: 2026-08-16 15:33\n"
+"POT-Creation-Date: 2026-08-16 12:42+0000\n"
+"PO-Revision-Date: 2026-08-16 15:42\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Team\n"
 "Language: bg\n"
@@ -48,6 +48,16 @@ msgid ""
 msgstr ""
 "На този адрес отговаря РАЗЛИЧНО устройство: то докладва сериен номер "
 "%(got)s, а този запис сочи %(want)s."
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"A write onto a plate the camera already holds FAILS even with the replace "
+"step: %(error)s"
+msgstr ""
+"Записът върху табела, която камерата вече съдържа, СЕ ПРОВАЛЯ дори със "
+"стъпката за замяна: %(error)s"
 
 #. module: polimex_ip_cam
 #: model_terms:ir.ui.view,arch_db:polimex_ip_cam.view_hr_rfid_user_ev_form_anpr_ext
@@ -5230,6 +5240,22 @@ msgstr "[9] Събития, пристигащи ОТ камерата"
 #. module: polimex_ip_cam
 #. odoo-python
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "a repeated write onto the existing test plate is accepted directly"
+msgstr "повторен запис върху съществуваща тестова табела се приема директно"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid ""
+"a repeated write onto the existing test plate needed the replace step "
+"(withdraw, then write) - this firmware refuses direct overwrites"
+msgstr ""
+"повторен запис върху съществуваща тестова табела изисква стъпката за замяна "
+"(изтегляне, после запис) - този фърмуер отказва директно презаписване"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "beginning of the camera's own export (its exact import format):"
 msgstr ""
 "начало на собствения износ на камерата (нейният точен формат за импорт):"
@@ -5280,6 +5306,12 @@ msgstr "последен признак на живот (heartbeat): %(when)s"
 #: code:addons/polimex_ip_cam/models/cctv_camera.py:0
 msgid "minimal record"
 msgstr "минимален запис"
+
+#. module: polimex_ip_cam
+#. odoo-python
+#: code:addons/polimex_ip_cam/models/cctv_camera.py:0
+msgid "minimal record (fields: listType): accepted"
+msgstr "минимален запис (полета: listType): приет"
 
 #. module: polimex_ip_cam
 #. odoo-python
