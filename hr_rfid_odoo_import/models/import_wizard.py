@@ -1301,7 +1301,9 @@ class HrRfidOdooImportWiz(models.TransientModel):
 
         except Exception as e:
             duration = time.time() - start_time
-            _logger.error("Phase %s failed: %s", phase_id, e, exc_info=True)
+            # phase_id already reads "Phase 2" - prefixing it again gave
+            # "Phase Phase 2 failed".
+            _logger.error("%s failed: %s", phase_id, e, exc_info=True)
             # Savepoint auto-rolled back - transaction is still clean. Върни и
             # id_map-а към състоянието отпреди фазата, за да не сочи към
             # изтрити записи.

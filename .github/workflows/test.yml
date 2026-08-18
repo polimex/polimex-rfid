@@ -185,8 +185,24 @@ jobs:
             --db_host=localhost --db_port=5432 \
             --db_user=odoo --db_password=odoo \
             --log-level=test 2>&1 | tee test.log
-          # Fail the job if the runner reported any failed/error tests.
-          if grep -qE "[1-9][0-9]* failed|[1-9][0-9]* error\(s\)" test.log; then
+          # The verdict is the runner's OWN summary line - the only line that
+          # states how many tests ran and how many of them failed. Grepping the
+          # whole log for "<n> failed" reads application text as a verdict: a
+          # phase whose id is "Phase 2" logged "Phase 2 failed: ..." from a test
+          # that deliberately exercises a refused row, and the job went red on a
+          # run where every one of 810 tests passed.
+          #
+          # A missing summary must fail too - that is what "the tests never ran"
+          # looks like, and it is indistinguishable from success to any grep
+          # that only hunts for bad news.
+          verdicts=$(grep -E "tests when loading database" test.log || true)
+          echo "--- verdict ---"
+          echo "${verdicts:-<none: the runner printed no summary>}"
+          if [ -z "$verdicts" ]; then
+            echo "::error::No test summary in the log - the tests did not run"
+            exit 1
+          fi
+          if echo "$verdicts" | grep -qvE "0 failed, 0 error\(s\) of [1-9][0-9]* tests"; then
             echo "::error::Tests reported failures or errors"
             exit 1
           fi
