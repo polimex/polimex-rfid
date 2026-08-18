@@ -27,3 +27,4 @@ from . import test_telemetry_bus
 from . import test_access_group_add_doors
 from . import test_onboarding_panel_errors
 from . import test_recalc_hook
+from . import test_one_door_two_schedules
